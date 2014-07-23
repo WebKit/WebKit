@@ -470,19 +470,41 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     ASSERT(m_flushingLayers);
     m_flushingLayers = false;
 
-#if PLATFORM(IOS)
-    updateCustomLayersAfterFlush();
+    updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
 
+#if PLATFORM(IOS)
     ChromeClient* client = this->chromeClient();
     if (client && isFlushRoot)
         client->didFlushCompositingLayers();
+#endif
+
+    startLayerFlushTimerIfNeeded();
+}
+
+void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlushIncludingSubframes()
+{
+    updateScrollCoordinatedLayersAfterFlush();
+
+    Frame& frame = m_renderView.frameView().frame();
+    for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().traverseNext(&frame)) {
+        RenderView* view = subframe->contentRenderer();
+        if (!view)
+            continue;
+
+        view->compositor().updateScrollCoordinatedLayersAfterFlush();
+    }
+}
+
+void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
+{
+#if PLATFORM(IOS)
+    updateCustomLayersAfterFlush();
 #endif
 
     for (auto it = m_scrollCoordinatedLayersNeedingUpdate.begin(), end = m_scrollCoordinatedLayersNeedingUpdate.end(); it != end; ++it)
         updateScrollCoordinatedStatus(**it);
 
     m_scrollCoordinatedLayersNeedingUpdate.clear();
-    startLayerFlushTimerIfNeeded();
 }
 
 #if PLATFORM(IOS)
@@ -600,7 +622,7 @@ void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer* g
 RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const
 {
     for (Frame* frame = &m_renderView.frameView().frame(); frame; frame = frame->tree().parent()) {
-        RenderLayerCompositor* compositor = frame->contentRenderer() ? &frame->contentRenderer()->compositor() : 0;
+        RenderLayerCompositor* compositor = frame->contentRenderer() ? &frame->contentRenderer()->compositor() : nullptr;
         if (compositor->isFlushingLayers())
             return compositor;
     }

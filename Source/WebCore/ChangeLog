@@ -1,5 +1,32 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171306.
+
+    2014-07-20  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK1] Single touch div scrolling doesn't work in framesets (breaks Word previews)
+            https://bugs.webkit.org/show_bug.cgi?id=135103
+            <rdar://problem/11830219>
+
+            Reviewed by Darin Adler.
+
+            After r166117 all layer flushing starts on the root frame; we no longer flush layers
+            for each frame during painting. However, flushing GraphicsLayers can set some state
+            on a subframe RenderLayerCompositor that is now never processed, which breaks scroll
+            layer registration.
+            
+            Fix by doing a walk of the Frame tree, and calling didFlushLayers() on subframe RenderLayerCompositors
+            before calling didFlushLayers() on self.
+
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+            (WebCore::RenderLayerCompositor::didFlushLayers):
+            (WebCore::RenderLayerCompositor::notifySubframesAfterLayerFlush):
+            (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers): Drive-by nullptr.
+            * rendering/RenderLayerCompositor.h:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171299.
 
     2014-07-21  Eric Carlson  <eric.carlson@apple.com>
