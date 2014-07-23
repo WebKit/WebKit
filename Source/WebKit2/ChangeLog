@@ -1,5 +1,24 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171167.
+
+    2014-07-16  Alexey Proskuryakov  <ap@apple.com>
+
+            A test that hangs at cleanup stage confuses webkitpy hugely
+            https://bugs.webkit.org/show_bug.cgi?id=122475
+            <rdar://problem/17184354>
+
+            Reviewed by Anders Carlsson.
+
+            Reset m_pageLoadState when the process exits cleanly - otherwise messages from a
+            new process for the same WebPageProxy would hit assertions.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::processDidCrash):
+            (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171197.
 
     2014-07-17  Brent Fulgham  <bfulgham@apple.com>

@@ -97,6 +97,8 @@ public:
     bool resetStateToConsistentValues();
     void resetPreferencesToConsistentValues();
 
+    void terminateWebContentProcess();
+
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 
     void setHandlesAuthenticationChallenges(bool value) { m_handlesAuthenticationChallenges = value; }

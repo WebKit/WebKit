@@ -4276,10 +4276,6 @@ void WebPageProxy::processDidCrash()
 
     resetStateAfterProcessExited();
 
-    // FIXME: Should we do this when the process exits cleanly, instead of just upon crashing?
-    auto transaction = m_pageLoadState.transaction();
-    m_pageLoadState.reset(transaction);
-
     m_loaderClient->processDidCrash(this);
 }
 
@@ -4434,6 +4430,9 @@ void WebPageProxy::resetStateAfterProcessExited()
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient.dismissDictionaryLookupPanel();
 #endif
+
+    auto transaction = m_pageLoadState.transaction();
+    m_pageLoadState.reset(transaction);
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters()

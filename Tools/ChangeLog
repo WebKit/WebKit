@@ -1,5 +1,25 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171167.
+
+    2014-07-16  Alexey Proskuryakov  <ap@apple.com>
+
+            A test that hangs at cleanup stage confuses webkitpy hugely
+            https://bugs.webkit.org/show_bug.cgi?id=122475
+            <rdar://problem/17184354>
+
+            Reviewed by Anders Carlsson.
+
+            Terminate WebContent process if it freezes between tests. Ideally, we should report
+            this somehow, but this is better than blaming the wrong test.
+
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::terminateWebContentProcess):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp: (WTR::TestInvocation::invoke):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171199.
 
     2014-07-17  Sam Weinig  <sam@webkit.org>
