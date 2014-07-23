@@ -60,8 +60,6 @@ LegacyProfiler* LegacyProfiler::profiler()
 
 void LegacyProfiler::startProfiling(ExecState* exec, const String& title)
 {
-    ASSERT_ARG(title, !title.isNull());
-
     if (!exec)
         return;
 
