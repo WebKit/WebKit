@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2013-2014 Apple Inc.  All rights reserved.
  * Copyright (C) 2013 Xueqing Huang <huangxueqing@baidu.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -664,6 +664,11 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     }
 
     FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(GlobalLock(urlFileDescriptor));
+    if (!fgd) {
+        GlobalFree(urlFileDescriptor);
+        return;
+    }
+
     ZeroMemory(fgd, sizeof(FILEGROUPDESCRIPTOR));
     fgd->cItems = 1;
     fgd->fgd[0].dwFlags = FD_FILESIZE;
@@ -674,6 +679,11 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     GlobalUnlock(urlFileDescriptor);
 
     char* fileContents = static_cast<char*>(GlobalLock(urlFileContent));
+    if (!fileContents) {
+        GlobalFree(urlFileDescriptor);
+        return;
+    }
+
     CopyMemory(fileContents, content.data(), content.length());
     GlobalUnlock(urlFileContent);
 
@@ -876,13 +886,17 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     ASSERT(image->image()->data());
 
     HRESULT hr = S_OK;
-    HGLOBAL memObj = 0;
     String fsPath;
-    memObj = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
+    HGLOBAL memObj = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
     if (!memObj)
         return 0;
 
     FILEGROUPDESCRIPTOR* fgd = (FILEGROUPDESCRIPTOR*)GlobalLock(memObj);
+    if (!fgd) {
+        GlobalFree(memObj);
+        return 0;
+    }
+
     memset(fgd, 0, sizeof(FILEGROUPDESCRIPTOR));
     fgd->cItems = 1;
     fgd->fgd[0].dwFlags = FD_FILESIZE;
@@ -893,6 +907,8 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     if (extension.isEmpty()) {
         // Do not continue processing in the rare and unusual case where a decoded image is not able 
         // to provide a filename extension. Something tricky (like a bait-n-switch) is going on
+        GlobalUnlock(memObj);
+        GlobalFree(memObj);
         return 0;
     }
     extension.insert(".", 0);
@@ -918,8 +934,13 @@ static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
         return 0;
 
     char* fileContents = (PSTR)GlobalLock(memObj);
+    if (!fileContents) {
+        GlobalFree(memObj);
+        return 0;
+    }
 
-    CopyMemory(fileContents, data->data(), data->size());
+    if (data->data())
+        CopyMemory(fileContents, data->data(), data->size());
 
     GlobalUnlock(memObj);
 
@@ -940,7 +961,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
             localPath = localPath.substring(1);
         const Vector<UChar>& localPathWide = localPath.charactersWithNullTermination();
         LPCWSTR localPathStr = localPathWide.data();
-        if (wcslen(localPathStr) + 1 < MAX_PATH)
+        if (localPathStr && wcslen(localPathStr) + 1 < MAX_PATH)
             wcscpy_s(filePath, MAX_PATH, localPathStr);
         else
             return 0;
@@ -974,7 +995,9 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
 
         // Write the data to this temp file.
         DWORD written;
-        BOOL tempWriteSucceeded = WriteFile(tempFileHandle, data->data(), data->size(), &written, 0);
+        BOOL tempWriteSucceeded = FALSE;
+        if (data->data())
+            tempWriteSucceeded = WriteFile(tempFileHandle, data->data(), data->size(), &written, 0);
         CloseHandle(tempFileHandle);
         if (!tempWriteSucceeded)
             return 0;
@@ -987,6 +1010,11 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         return 0;
 
     DROPFILES* dropFiles = (DROPFILES*) GlobalLock(memObj);
+    if (!dropFiles) {
+        GlobalFree(memObj);
+        return 0;
+    }
+
     dropFiles->pFiles = sizeof(DROPFILES);
     dropFiles->fWide = TRUE;
     wcscpy((LPWSTR)(dropFiles + 1), filePath);    
@@ -1019,7 +1047,8 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
     String fileName = cachedImage->response().suggestedFilename();
     HGLOBAL hDropContent = createGlobalHDropContent(url, fileName, imageBuffer);
     if (!hDropContent) {
-        GlobalFree(hDropContent);
+        GlobalFree(imageFileDescriptor);
+        GlobalFree(imageFileContent);
         return;
     }
 

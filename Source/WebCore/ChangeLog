@@ -1,5 +1,21 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171353
+
+    2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Fix Leak in WebCore::createGlobalImageFileDescriptor 
+            https://bugs.webkit.org/show_bug.cgi?id=134423
+            <rdar://problem/17492758>
+
+            Reviewed by Geoffrey Garen.
+
+            * platform/win/PasteboardWin.cpp:
+            (WebCore::createGlobalImageFileDescriptor): Unlock and release the
+            HGLOBAL when exiting early.
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171347
 
     2014-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
