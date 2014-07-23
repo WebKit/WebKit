@@ -1,5 +1,54 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171219.
+
+    2014-07-18  Tim Horton  <timothy_horton@apple.com>
+
+            [WK2] Provide a mechanism to grab the back-forward list for gesture navigation purposes from another WKWebView
+            https://bugs.webkit.org/show_bug.cgi?id=134999
+            <rdar://problem/17238025>
+
+            Reviewed by Sam Weinig.
+
+            In some cases, clients may need to throw a WKWebView with no back-forward list over
+            another WKWebView, and want to participate in gesture swipe as if they were actually
+            the page being overlaid.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration copyWithZone:]):
+            (-[WKWebViewConfiguration _alternateWebViewForNavigationGestures]):
+            (-[WKWebViewConfiguration _setAlternateWebViewForNavigationGestures:]):
+            * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+            Keep an "alternate" WKWebView "for navigation gestures", which ViewGestureController
+            will use as the real source of back-forward items, and the destination of the swipe navigation.
+            All swipe delegate callbacks will also fire from the alternate view, because it owns the items
+            and will be doing the navigation.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::setAlternateBackForwardListSourceView):
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            Send navigationGestureDidBegin via the alternate view's WebPageProxy if it exists.
+            Record a new snapshot on the current page, but copy it to the alternate view if necessary,
+            so that when swiping forward from the alternate view, it will have the "right" snapshot.
+            Get the target back forward item from the alternate view.
+            Send navigationGestureWillEnd via the alternate view's WebPageProxy if it exists.
+
+            (WebKit::ViewGestureController::canSwipeInDirection):
+            Determine if we can swipe in a direction by looking at the alternate view's back-forward list if necessary.
+
+            (WebKit::ViewGestureController::endSwipeGesture):
+            Send navigationGestureDidEnd via the alternate view's WebPageProxy if it exists.
+            Perform the navigation on the alternate view if necessary.
+
+            (WebKit::ViewGestureController::removeSwipeSnapshot):
+            Send navigationGestureSnapshotWasRemoved via the alternate view's WebPageProxy if it exists.
+
+            * UIProcess/mac/ViewGestureController.h:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171211.
 
     2014-07-17  Alexey Proskuryakov  <ap@apple.com>
