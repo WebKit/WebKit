@@ -57,8 +57,9 @@
 
 ;; Security framework
 (allow mach-lookup
-       (global-name "com.apple.ocspd")
-       (global-name "com.apple.securityd"))
+    (global-name "com.apple.ocspd")
+    (global-name "com.apple.securityd")
+    (global-name "com.apple.accountsd.accountmanager"))
 
 (deny file-write-create
        (vnode-type SYMLINK))

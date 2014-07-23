@@ -1,3 +1,20 @@
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
+        Merge r171365.
+
+    2014-07-22  Oliver Hunt  <oliver@apple.com>
+
+            Add accountsd access to network sandbox profile
+            https://bugs.webkit.org/show_bug.cgi?id=135176
+            <rdar://17656487>
+
+            Reviewed by Anders Carlsson.
+
+            This is available to the webcontent process already, but is also
+            needed for the networking process.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2014-07-18  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r171209.
