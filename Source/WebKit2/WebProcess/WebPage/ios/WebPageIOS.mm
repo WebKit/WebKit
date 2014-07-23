@@ -251,11 +251,15 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
 
 double WebPage::minimumPageScaleFactor() const
 {
+    if (!m_viewportConfiguration.allowsUserScaling())
+        return m_page->pageScaleFactor();
     return m_viewportConfiguration.minimumScale();
 }
 
 double WebPage::maximumPageScaleFactor() const
 {
+    if (!m_viewportConfiguration.allowsUserScaling())
+        return m_page->pageScaleFactor();
     return m_viewportConfiguration.maximumScale();
 }
 
@@ -2024,8 +2028,8 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     } else
         information.elementRect = IntRect();
 
-    information.minimumScaleFactor = m_viewportConfiguration.minimumScale();
-    information.maximumScaleFactor = m_viewportConfiguration.maximumScale();
+    information.minimumScaleFactor = minimumPageScaleFactor();
+    information.maximumScaleFactor = maximumPageScaleFactor();
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.hasNextNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), true);
     information.hasPreviousNode = hasFocusableElement(m_assistedNode.get(), m_page.get(), false);

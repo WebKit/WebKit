@@ -2862,8 +2862,8 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
 #if PLATFORM(IOS)
     layerTransaction.setScaleWasSetByUIProcess(scaleWasSetByUIProcess());
-    layerTransaction.setMinimumScaleFactor(minimumPageScaleFactor());
-    layerTransaction.setMaximumScaleFactor(maximumPageScaleFactor());
+    layerTransaction.setMinimumScaleFactor(m_viewportConfiguration.minimumScale());
+    layerTransaction.setMaximumScaleFactor(m_viewportConfiguration.maximumScale());
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
 #endif
 }
