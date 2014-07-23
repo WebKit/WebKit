@@ -1,5 +1,13 @@
 2014-07-22  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Build fix for bot.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::createLegibleOutputSubtypes): Declare 'wvtt' locally, rather
+        than relying on potentially unavailable declaration.
+
+2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Build fix for Windows bots
 
         * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Provide missing
