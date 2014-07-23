@@ -1,5 +1,17 @@
 2014-07-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL] EWebKit2.h should contain version information
+        https://bugs.webkit.org/show_bug.cgi?id=135189
+
+        Reviewed by Gyuyoung Kim.
+
+        Generate EWebKit2.h to contain the version information.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h.in: Renamed from Source/WebKit2/UIProcess/API/efl/EWebKit2.h.
+
+2014-07-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL] Do not generate forwarding header for ewk headers
         https://bugs.webkit.org/show_bug.cgi?id=135147
 

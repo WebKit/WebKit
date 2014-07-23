@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012-2014 Samsung Electronics
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +27,10 @@
 
 #ifndef EWebKit2_h
 #define EWebKit2_h
+
+#define EWK_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define EWK_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define EWK_VERSION_MICRO @PROJECT_VERSION_PATCH@
 
 #include "ewk_auth_request.h"
 #include "ewk_back_forward_list.h"
