@@ -1,5 +1,28 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171250.
+
+    2014-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] position:fixed in iframes with programmatic scroll could end up in the wrong place
+            https://bugs.webkit.org/show_bug.cgi?id=135078
+            <rdar://problem/17401823>
+
+            Reviewed by Tim Horton.
+            
+            When the UI-side scrolling tree receives a requested scroll position update, it scrolls
+            the node (e.g. a frame) then traverses child nodes to update them, e.g. for fixed position.
+            However, we would always use a viewport rect for the main document (from the scrolling tree),
+            which is not appropriate for subframes. Subframes should just use their own visible
+            rect to position fixed children.
+
+            Test: platform/mac-wk2/tiled-drawing/scrolling/frames/fixed-inside-frame.html
+
+            * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+            (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171246.
 
     2014-07-18  Beth Dakin  <bdakin@apple.com>

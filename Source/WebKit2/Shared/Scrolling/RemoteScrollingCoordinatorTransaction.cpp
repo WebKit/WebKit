@@ -581,7 +581,6 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateScrollingNode& node
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
         dumpProperty(ts, "scroll-origin", node.scrollOrigin());
 
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
         dumpProperty(ts, "requested-scroll-position", node.requestedScrollPosition());
         dumpProperty(ts, "requested-scroll-position-is-programatic", node.requestedScrollPositionRepresentsProgrammaticScroll());
@@ -626,6 +625,9 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateFrameScrollingNode&
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::TopContentInset))
         dumpProperty(ts, "top-content-inset", node.topContentInset());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
+        dumpProperty(ts, "frame-scale-factor", node.frameScaleFactor());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
         dumpProperty(ts, "scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));

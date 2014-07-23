@@ -1,5 +1,22 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171250.
+
+    2014-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] position:fixed in iframes with programmatic scroll could end up in the wrong place
+            https://bugs.webkit.org/show_bug.cgi?id=135078
+
+            Reviewed by Tim Horton.
+            
+            Test with position:fixed inside an iframe that scrolls programmatically.
+
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/fixed-inside-frame.html: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/autoscrolling-frame-with-fixed.html: Added.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171210.
 
     2014-07-17  Zalan Bujtas  <zalan@apple.com>
