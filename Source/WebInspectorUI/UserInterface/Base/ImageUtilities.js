@@ -26,6 +26,11 @@
 // Bump this version when making changes that affect the storage format.
 const _imageStorageFormatVersion = 1;
 
+// Use as a default where an image version is not otherwise specified.
+// Bump the base version when making changes that affect the result image.
+const baseDefaultImageVersion = 3;
+const defaultImageVersion = baseDefaultImageVersion + 0.01 * WebInspector.Platform.version.base + 0.0001 * WebInspector.Platform.version.release;
+
 try {
     var _generatedImageCacheDatabase = openDatabase("com.apple.WebInspector", 1, "Web Inspector Storage Database", 5 * 1024 * 1024);
 } catch (e) {
@@ -337,7 +342,7 @@ function generateColoredImagesForCSS(imagePath, specifications, width, height, c
     {
         const storageKey = storageKeyPrefix + canvasIdentifierPrefix + canvasIdentifier;
         const context = document.getCSSCanvasContext("2d", canvasIdentifierPrefix + canvasIdentifier, scaledWidth, scaledHeight);
-        restoreImageFromStorage(storageKey, context, scaledWidth, scaledHeight, specification.imageVersion || 0, function() {
+        restoreImageFromStorage(storageKey, context, scaledWidth, scaledHeight, specification.imageVersion || defaultImageVersion, function() {
             ensureImageIsLoaded(generateImage.bind(null, canvasIdentifier, specification));
         });
     }
@@ -374,7 +379,7 @@ function generateColoredImagesForCSS(imagePath, specifications, width, height, c
         context.drawImage(coloredImage, 0, 0, width, height);
 
         const storageKey = storageKeyPrefix + canvasIdentifierPrefix + canvasIdentifier;
-        saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, specification.imageVersion || 0);
+        saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, specification.imageVersion || defaultImageVersion);
         context.restore();
     }
 }
@@ -393,9 +398,7 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
     var scaledWidth = width * scaleFactor;
     var scaledHeight = height * scaleFactor;
 
-    // Bump the base version when making changes that affect the result image.
-    const baseImageVersion = 3;
-    const imageVersion = baseImageVersion + 0.01 * WebInspector.Platform.version.base + 0.0001 * WebInspector.Platform.version.release;
+    const imageVersion = defaultImageVersion;
 
     const storageKeyPrefix = "generated-embossed-image-";
 

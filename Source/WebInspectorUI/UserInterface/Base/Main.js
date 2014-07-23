@@ -187,55 +187,14 @@ WebInspector.contentLoaded = function()
     window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
     window.addEventListener("pagehide", this._pageHidden.bind(this));
 
-    // Check for a nightly build by looking for a plus in the version number and a small number of stylesheets (indicating combined resources).
-    var versionMatch = / AppleWebKit\/([^ ]+)/.exec(navigator.userAgent);
-    if (versionMatch && versionMatch[1].indexOf("+") !== -1 && document.styleSheets.length < 10)
-        document.body.classList.add("nightly-build");
-
     // Add platform style classes so the UI can be tweaked per-platform.
-    WebInspector.Platform = {
-        name: InspectorFrontendHost.platform(),
-        codeName: "",
-        version: {
-            base: 0,
-            release: 0,
-            toString: function()
-            {
-                return this.base + "." + this.version;
-            }
-        },
-        toString: function()
-        {
-            return this.name;
-        }
-    };
-
-    var isLegacyMacOS = false;
-    var osVersionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
-    if (osVersionMatch && osVersionMatch[1] === "10") {
-        WebInspector.Platform.version.base = 10;
-        switch(osVersionMatch[2]) {
-            case "10":
-                WebInspector.Platform.codeName = "yosemite";
-                WebInspector.Platform.version.release = 10;
-                break;
-            case "9":
-                WebInspector.Platform.codeName = "mavericks";
-                WebInspector.Platform.version.release = 9;
-                isLegacyMacOS = true;
-                break;
-            case "8":
-                WebInspector.Platform.codeName = "mountain-lion";
-                WebInspector.Platform.version.release = 8;
-                isLegacyMacOS = true;
-        }
-    }
-
-    document.body.classList.add(WebInspector.Platform + "-platform");
-    if (WebInspector.Platform.codeName)
-        document.body.classList.add(WebInspector.Platform.codeName);
-    if (isLegacyMacOS)
+    document.body.classList.add(WebInspector.Platform.name + "-platform");
+    if (WebInspector.Platform.isNightlyBuild)
+        document.body.classList.add("nightly-build");
+    if (WebInspector.Platform.isLegacyMacOS)
         document.body.classList.add("legacy");
+    if (WebInspector.Platform.version.name)
+        document.body.classList.add(WebInspector.Platform.version.name);
 
     this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WebInspector.DebuggableType.Web : WebInspector.DebuggableType.JavaScript;
     document.body.classList.add(this.debuggableType);

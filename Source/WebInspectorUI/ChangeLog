@@ -1,5 +1,50 @@
 2014-07-22  Dana Burkart  <dburkart@apple.com>
 
+        Merge r171312.
+
+    2014-07-21  Jonathan Wells  <jonowells@apple.com>
+
+            Back/Forward arrows (modern) are too large.
+            https://bugs.webkit.org/show_bug.cgi?id=135073
+
+            Reviewed by Joseph Pecoraro.
+
+            Changes to adjust new forward and back arrow sizes to be more consistent with the 
+            universal design language. Moved WebInspector.Platform definition to its own file.
+            Refactored handling of image versions inside ImageUtilities.js.
+
+            * UserInterface/Base/ImageUtilities.js:
+            (.restoreImage):
+            (.generateImage):
+            (generateColoredImagesForCSS):
+            Make the default image versioning smarter.
+
+            * UserInterface/Base/Main.js:
+            (WebInspector.contentLoaded):
+            (WebInspector.contentLoaded.WebInspector.Platform.version.toString): Deleted.
+            (WebInspector.contentLoaded.WebInspector.Platform.toString): Deleted.
+            * UserInterface/Base/Platform.js: Added.
+            Move platform information definition into Platform.js.
+
+            * UserInterface/Main.html: Include Platform.js.
+
+            * UserInterface/Views/ContentBrowser.js:
+            (WebInspector.ContentBrowser):
+            * UserInterface/Views/FindBanner.css:
+            (.find-banner > button > .glyph):
+            (body.mac-platform.legacy .find-banner > button > .glyph):
+            (.find-banner > button.segmented.left > .glyph):
+            (body.mac-platform.legacy .find-banner > button.segmented.left > .glyph):
+            (.find-banner > button.segmented.right > .glyph):
+            (body.mac-platform.legacy .find-banner > button.segmented.right > .glyph):
+            (.find-banner > button.segmented):
+            (body.mac-platform.legacy .find-banner > button.segmented):
+            * UserInterface/Views/FindBanner.js:
+            (WebInspector.FindBanner.prototype._generateButtonsGlyphsIfNeeded):
+            Size of forward and back arrows adjusted.
+
+2014-07-22  Dana Burkart  <dburkart@apple.com>
+
         Merge r171227.
 
     2014-07-18  Timothy Hatcher  <timothy@apple.com>

@@ -328,15 +328,15 @@ WebInspector.FindBanner.prototype = {
 
         var forwardArrow, backArrow;
         if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10) {
-            forwardArrow = "Images/ForwardArrowLegacy.svg";
-            backArrow = "Images/BackArrowLegacy.svg";
+            forwardArrow = {src: "Images/ForwardArrowLegacy.svg", width: 7, height: 7};
+            backArrow = {src: "Images/BackArrowLegacy.svg", width: 7, height: 7};
         } else {
-            forwardArrow = "Images/ForwardArrow.svg";
-            backArrow = "Images/BackArrow.svg";
+            forwardArrow = {src: "Images/ForwardArrow.svg", width: 7, height: 11};
+            backArrow = {src: "Images/BackArrow.svg", width: 7, height: 11};
         }
 
-        generateColoredImagesForCSS(backArrow, specifications, 7, 7, "find-banner-previous-arrow-");
-        generateColoredImagesForCSS(forwardArrow, specifications, 7, 7, "find-banner-next-arrow-");
+        generateColoredImagesForCSS(backArrow.src, specifications, backArrow.width, backArrow.height, "find-banner-previous-arrow-");
+        generateColoredImagesForCSS(forwardArrow.src, specifications, forwardArrow.width, forwardArrow.height, "find-banner-next-arrow-");
     }
 };
 

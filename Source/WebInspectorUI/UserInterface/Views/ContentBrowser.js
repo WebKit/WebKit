@@ -53,10 +53,9 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
         if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10) {
             forwardArrow = {src: "Images/ForwardArrowLegacy.svg", width: 9, height: 9};
             backArrow = {src: "Images/BackArrowLegacy.svg", width: 9, height: 9};
-        }
-        else {
-            forwardArrow = {src: "Images/ForwardArrow.svg", width: 10, height: 16};
-            backArrow = {src: "Images/BackArrow.svg", width: 10, height: 16};
+        } else {
+            forwardArrow = {src: "Images/ForwardArrow.svg", width: 8, height: 13};
+            backArrow = {src: "Images/BackArrow.svg", width: 8, height: 13};
         }
 
         this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backArrow.src, backArrow.width, backArrow.height);
