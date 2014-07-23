@@ -1,5 +1,58 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171370
+
+    2014-07-22  Enrica Casucci  <enrica@apple.com>
+
+            REGRESSION (WebKit2): Selection inside accelerated overflow:scroll doesn't track scrolling.
+            https://bugs.webkit.org/show_bug.cgi?id=135180
+            <rdar://problem/16721055>
+
+            Reviewed by Simon Fraser.
+
+            Adds notifications to the WKContentView to know when scrolling starts and ends
+            in an overflow scroll. When scrolling starts, we hide the selection and we restore
+            it when scrolling ends, though not before the selection information in the editor
+            state has been updated.
+            It also adds a new method to the EditorClient class to force the
+            selection update when scrolling is completed.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+            * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+            (WebKit::RemoteScrollingTree::scrollingTreeNodeWillStartScroll):
+            (WebKit::RemoteScrollingTree::scrollingTreeNodeDidEndScroll):
+            * UIProcess/Scrolling/RemoteScrollingTree.h:
+            * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+            * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+            (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]):
+            (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]):
+            (-[WKOverflowScrollViewDelegate scrollViewDidEndDecelerating:]):
+            (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollWillStart):
+            (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollDidEnd):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::overflowScrollWillStartScroll):
+            (WebKit::PageClientImpl::overflowScrollDidEndScroll):
+            * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+            (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll):
+            (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll):
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _overflowScrollingWillBegin]):
+            (-[WKContentView _overflowScrollingDidEnd]):
+            (-[WKContentView _updateChangedSelection]):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::overflowScrollWillStartScroll):
+            (WebKit::WebPageProxy::overflowScrollDidEndScroll):
+            * WebProcess/WebCoreSupport/WebEditorClient.h:
+            * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+            * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+            (WebKit::WebEditorClient::updateSelection):
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171368
 
     2014-07-22  Benjamin Poulain  <bpoulain@apple.com>

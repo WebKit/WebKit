@@ -1,5 +1,28 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171370
+
+    2014-07-22  Enrica Casucci  <enrica@apple.com>
+
+            REGRESSION (WebKit2): Selection inside accelerated overflow:scroll doesn't track scrolling.
+            https://bugs.webkit.org/show_bug.cgi?id=135180
+            <rdar://problem/16721055>
+
+            Reviewed by Simon Fraser.
+
+            AsyncScrollingCoordinator will force a selection update on iOS
+            when scrolling terminates in an overflow scroll.
+
+            * loader/EmptyClients.h:
+            * page/EditorClient.h:
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+            * page/scrolling/ScrollingTree.h:
+            (WebCore::ScrollingTree::scrollingTreeNodeWillStartScroll):
+            (WebCore::ScrollingTree::scrollingTreeNodeDidEndScroll):
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171355
 
     2014-07-21  Sam Weinig  <sam@webkit.org>

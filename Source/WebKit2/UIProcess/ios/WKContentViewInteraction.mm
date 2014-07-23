@@ -654,6 +654,25 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
     [self _cancelInteraction];
 }
 
+- (void)_overflowScrollingWillBegin
+{
+    [_webSelectionAssistant willStartScrollingOverflow];
+    [_textSelectionAssistant willStartScrollingOverflow];    
+}
+
+- (void)_overflowScrollingDidEnd
+{
+    // If scrolling ends before we've received a selection update,
+    // we postpone showing the selection until the update is received.
+    if (!_selectionNeedsUpdate) {
+        _shouldRestoreSelection = YES;
+        return;
+    }
+    [self _updateChangedSelection];
+    [_webSelectionAssistant didEndScrollingOverflow];
+    [_textSelectionAssistant didEndScrollingOverflow];
+}
+
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
@@ -2609,6 +2628,11 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     } else if (!_page->editorState().isContentEditable)
         [_webSelectionAssistant selectionChanged];
     _selectionNeedsUpdate = NO;
+    if (_shouldRestoreSelection) {
+        [_webSelectionAssistant didEndScrollingOverflow];
+        [_textSelectionAssistant didEndScrollingOverflow];
+        _shouldRestoreSelection = NO;
+    }
 }
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const IntRect&)elementRect

@@ -87,6 +87,17 @@ void RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture()
 {
     m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartPanGesture();
 }
+    
+void RemoteScrollingTree::scrollingTreeNodeWillStartScroll()
+{
+    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartScroll();
+}
+
+void RemoteScrollingTree::scrollingTreeNodeDidEndScroll()
+{
+    m_scrollingCoordinatorProxy.scrollingTreeNodeDidEndScroll();
+}
+
 #endif
 
 void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

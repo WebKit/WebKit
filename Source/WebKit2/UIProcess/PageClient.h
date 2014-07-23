@@ -273,6 +273,8 @@ public:
     virtual WebCore::FloatSize contentsSize() const = 0;
     virtual void overflowScrollViewWillStartPanGesture() = 0;
     virtual void overflowScrollViewDidScroll() = 0;
+    virtual void overflowScrollWillStartScroll() = 0;
+    virtual void overflowScrollDidEndScroll() = 0;
     virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 

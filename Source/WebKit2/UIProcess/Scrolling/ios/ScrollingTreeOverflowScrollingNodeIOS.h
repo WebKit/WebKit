@@ -40,6 +40,8 @@ public:
     static PassRefPtr<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
+    void overflowScrollWillStart();
+    void overflowScrollDidEnd();
     void overflowScrollViewWillStartPanGesture();
     void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteration);
 

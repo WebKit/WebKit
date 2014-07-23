@@ -119,6 +119,7 @@ public:
     virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) = 0;
     virtual void textWillBeDeletedInTextField(Element*) = 0;
     virtual void textDidChangeInTextArea(Element*) = 0;
+    virtual void overflowScrollPositionChanged() = 0;
 
 #if PLATFORM(IOS)
     virtual void startDelayingAndCoalescingContentChangeNotifications() = 0;
