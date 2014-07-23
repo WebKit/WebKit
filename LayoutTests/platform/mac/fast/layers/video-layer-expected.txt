@@ -23,9 +23,7 @@ layer at (65,241) size 16x16
   RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
 layer at (91,241) size 16x16
   RenderButton {BUTTON} at (32,5) size 16x16 [color=#FFFFFF]
-layer at (231,245) size 98x9
-  RenderFlexibleBox {DIV} at (171,8) size 99x10
-layer at (233,245) size 95x9
-  RenderFlexibleBox {DIV} at (2,0) size 95x9
-layer at (336,241) size 16x16
-  RenderButton {BUTTON} at (277,5) size 16x16 [color=#FFFFFF]
+layer at (246,245) size 113x9
+  RenderFlexibleBox {DIV} at (186,8) size 114x10
+layer at (248,245) size 110x9
+  RenderFlexibleBox {DIV} at (2,0) size 110x9

@@ -26,6 +26,7 @@ function Controller(root, video, host)
     this.updateThumbnail();
     this.updateCaptionButton();
     this.updateCaptionContainer();
+    this.updateFullscreenButton();
     this.updateVolume();
     this.updateHasAudio();
     this.updateHasVideo();
@@ -63,6 +64,8 @@ Controller.prototype = {
         progress: 'handleProgress',
         volumechange: 'handleVolumeChange',
         webkitfullscreenchange: 'handleFullscreenChange',
+        webkitbeginfullscreen: 'handleFullscreenChange',
+        webkitendfullscreen: 'handleFullscreenChange',
     },
     HideControlsDelay: 4 * 1000,
     RewindAmount: 30,
@@ -552,6 +555,7 @@ Controller.prototype = {
         this.updateDuration();
         this.updateCaptionButton();
         this.updateCaptionContainer();
+        this.updateFullscreenButton();
         this.updateProgress();
     },
 
@@ -614,7 +618,7 @@ Controller.prototype = {
 
     isFullScreen: function()
     {
-        return document.webkitCurrentFullScreenElement === this.video;
+        return this.video.webkitDisplayingFullscreen;
     },
 
     handleFullscreenChange: function(event)
@@ -827,12 +831,17 @@ Controller.prototype = {
         return true;
     },
 
+    updateFullscreenButton: function()
+    {
+        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, !this.video.webkitSupportsFullscreen);
+    },
+
     handleFullscreenButtonClicked: function(event)
     {
         if (this.isFullScreen())
-            document.webkitExitFullscreen();
+            this.video.webkitExitFullscreen();
         else
-            this.video.webkitRequestFullscreen();
+            this.video.webkitEnterFullscreen();
         return true;
     },
 

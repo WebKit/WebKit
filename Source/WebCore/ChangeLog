@@ -1,5 +1,28 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171184.
+
+    2014-07-17  Jer Noble  <jer.noble@apple.com>
+
+            Enable legacy fullscreen API in media controls
+            https://bugs.webkit.org/show_bug.cgi?id=134985
+
+            Reviewed by Eric Carlson.
+
+            Allow clients who have not enabled HTML5 Fullscreen APIs to still use fullscreen mode
+            with <video> elements by using the legacy, video-element-specific fullscreen APIs in
+            the <video> media controls.
+
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller):
+            (Controller.prototype.handleReadyStateChange):
+            (Controller.prototype.isFullScreen):
+            (Controller.prototype.handlePlayButtonClicked):
+            (Controller.prototype.updateFullscreenButton):
+            (Controller.prototype.handleFullscreenButtonClicked):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171376.
 
     2014-07-22  Tim Horton  <timothy_horton@apple.com>
