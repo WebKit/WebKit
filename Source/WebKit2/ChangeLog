@@ -1,3 +1,12 @@
+2014-07-22  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed build fix on EFL port after r171356.
+
+        Implement a dummy platformMediaCacheDirectory() to avoid undefined reference error.
+
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformMediaCacheDirectory):
+
 2014-07-22  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): Selection inside accelerated overflow:scroll doesn't track scrolling.
