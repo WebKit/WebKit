@@ -1,3 +1,15 @@
+2014-07-23  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Support abort() in SourceBufferPrivateAVFObjC.
+        https://bugs.webkit.org/show_bug.cgi?id=135163
+
+        Reviewed by Brent Fulgham.
+
+        Recreate the parser when asked to abort().
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+
 2014-07-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate accessibility/ to using nullptr instead of 0
