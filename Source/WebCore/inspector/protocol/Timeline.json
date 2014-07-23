@@ -5,7 +5,7 @@
         {
             "id": "EventType",
             "type": "string",
-            "enum": ["EventDispatch", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "ProbeSample", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
+            "enum": ["EventDispatch", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "ProbeSample", "ConsoleProfile", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
             "description": "Timeline record type."
         },
         {
@@ -39,6 +39,14 @@
                 { "name": "record", "$ref": "TimelineEvent", "description": "Timeline event record data." }
             ],
             "description": "Fired for every instrumentation event while timeline is started."
+        },
+        {
+            "name": "recordingStarted",
+            "description": "Fired when recording has started."
+        },
+        {
+            "name": "recordingStopped",
+            "description": "Fired when recording has stopped."
         }
     ]
 }

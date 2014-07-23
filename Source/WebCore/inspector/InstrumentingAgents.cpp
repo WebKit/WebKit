@@ -56,6 +56,7 @@ InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     , m_pageRuntimeAgent(nullptr)
     , m_workerRuntimeAgent(nullptr)
     , m_inspectorTimelineAgent(nullptr)
+    , m_persistentInspectorTimelineAgent(nullptr)
     , m_inspectorDOMStorageAgent(nullptr)
 #if ENABLE(WEB_REPLAY)
     , m_inspectorReplayAgent(nullptr)
@@ -84,6 +85,7 @@ void InstrumentingAgents::reset()
     m_pageRuntimeAgent = nullptr;
     m_workerRuntimeAgent = nullptr;
     m_inspectorTimelineAgent = nullptr;
+    m_persistentInspectorTimelineAgent = nullptr;
     m_inspectorDOMStorageAgent = nullptr;
 #if ENABLE(WEB_REPLAY)
     m_inspectorReplayAgent = nullptr;

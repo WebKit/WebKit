@@ -1,5 +1,22 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171195.
+
+    2014-07-17  Timothy Hatcher  <timothy@apple.com>
+
+            Make console.profile record to the Timeline.
+
+            https://bugs.webkit.org/show_bug.cgi?id=134643
+
+            Reviewed by Joseph Pecoraro.
+
+            * WebProcess/WebPage/WebInspector.cpp:
+            (WebKit::WebInspector::setJavaScriptProfilingEnabled):
+            (WebKit::WebInspector::startJavaScriptProfiling):
+            (WebKit::WebInspector::stopJavaScriptProfiling):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171194.
 
     2014-07-17  Brady Eidson  <beidson@apple.com>

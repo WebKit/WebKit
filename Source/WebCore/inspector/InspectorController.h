@@ -62,6 +62,7 @@ class InspectorDOMDebuggerAgent;
 class InspectorFrontendClient;
 class InspectorPageAgent;
 class InspectorResourceAgent;
+class InspectorTimelineAgent;
 class InstrumentingAgents;
 class Node;
 class Page;
@@ -144,6 +145,7 @@ private:
     PageDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     Inspector::InspectorProfilerAgent* m_profilerAgent;
+    InspectorTimelineAgent* m_timelineAgent;
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     std::unique_ptr<InspectorFrontendClient> m_inspectorFrontendClient;

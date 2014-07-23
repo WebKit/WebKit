@@ -109,45 +109,34 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (BOOL)isProfilingJavaScript
 {
-    return _frontend && [_frontend isProfilingJavaScript];
+    // No longer supported.
+    return NO;
 }
 
 - (void)toggleProfilingJavaScript:(id)sender
 {
-    [self showWindow];
-
-    if ([self isProfilingJavaScript])
-        [_frontend stopProfilingJavaScript];
-    else
-        [_frontend startProfilingJavaScript];
+    // No longer supported.
 }
 
 - (void)startProfilingJavaScript:(id)sender
 {
-    if (_frontend)
-        [_frontend startProfilingJavaScript];
+    // No longer supported.
 }
 
 - (void)stopProfilingJavaScript:(id)sender
 {
-    if (_frontend)
-        [_frontend stopProfilingJavaScript];
+    // No longer supported.
 }
 
 - (BOOL)isJavaScriptProfilingEnabled
 {
-    if (Page* page = core(_webView))
-        return page->inspectorController().profilerEnabled();
+    // No longer supported.
     return NO;
 }
 
 - (void)setJavaScriptProfilingEnabled:(BOOL)enabled
 {
-    Page* page = core(_webView);
-    if (!page)
-        return;
-
-    page->inspectorController().setProfilerEnabled(enabled);
+    // No longer supported.
 }
 
 - (BOOL)isTimelineProfilingEnabled

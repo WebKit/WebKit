@@ -79,6 +79,10 @@
     content: url(../Images/TimelineRecordProbeSampled.svg);
 }
 
+.console-profile-record .icon {
+    content: url(../Images/TimelineRecordConsoleProfile.svg);
+}
+
 .timer-record .icon {
     content: url(../Images/TimelineRecordTimer.svg);
 }

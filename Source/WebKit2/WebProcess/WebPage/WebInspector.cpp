@@ -277,25 +277,17 @@ void WebInspector::stopJavaScriptDebugging()
 
 void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
 {
-    m_page->corePage()->inspectorController().show();
-    if (!m_frontendClient)
-        return;
-
-    m_page->corePage()->inspectorController().setProfilerEnabled(enabled);
+    // No longer supported.
 }
 
 void WebInspector::startJavaScriptProfiling()
 {
-    m_page->corePage()->inspectorController().show();
-    if (m_frontendClient)
-        m_frontendClient->startProfilingJavaScript();
+    // No longer supported.
 }
 
 void WebInspector::stopJavaScriptProfiling()
 {
-    m_page->corePage()->inspectorController().show();
-    if (m_frontendClient)
-        m_frontendClient->stopProfilingJavaScript();
+    // No longer supported.
 }
 
 void WebInspector::startPageProfiling()

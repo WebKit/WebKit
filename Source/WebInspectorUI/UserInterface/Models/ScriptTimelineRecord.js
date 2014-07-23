@@ -46,7 +46,8 @@ WebInspector.ScriptTimelineRecord.EventType = {
     TimerRemoved: "script-timeline-record-timer-removed",
     AnimationFrameFired: "script-timeline-record-animation-frame-fired",
     AnimationFrameRequested: "script-timeline-record-animation-frame-requested",
-    AnimationFrameCanceled: "script-timeline-record-animation-frame-canceled"
+    AnimationFrameCanceled: "script-timeline-record-animation-frame-canceled",
+    ConsoleProfileRecorded: "script-timeline-record-console-profile-recorded"
 };
 
 WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeTimerIdentifierInMainTitle)
@@ -216,6 +217,10 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         return WebInspector.UIString("Event Dispatched");
     case WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
         return WebInspector.UIString("Probe Sample Recorded");
+    case WebInspector.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
+        if (details && (details instanceof String || typeof details === "string"))
+            return WebInspector.UIString("“%s” Profile Recorded").format(details);
+        return WebInspector.UIString("Console Profile Recorded");
     case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
         if (details && includeTimerIdentifierInMainTitle)
             return WebInspector.UIString("Timer %s Fired").format(details);

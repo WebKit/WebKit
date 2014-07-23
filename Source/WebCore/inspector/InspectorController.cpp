@@ -134,7 +134,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(WTF::move(domStorageAgentPtr));
 
     auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(m_instrumentingAgents.get(), pageAgent, InspectorTimelineAgent::PageInspector, inspectorClient);
-    InspectorTimelineAgent* timelineAgent = timelineAgentPtr.get();
+    m_timelineAgent = timelineAgentPtr.get();
     m_agents.append(WTF::move(timelineAgentPtr));
 
     auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(m_instrumentingAgents.get(), pageAgent, inspectorClient);
@@ -175,7 +175,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     }
 
     runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
-    timelineAgent->setPageScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
+    m_timelineAgent->setPageScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
     m_profilerAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
 }
 
@@ -380,16 +380,18 @@ void InspectorController::setIndicating(bool indicating)
 
 bool InspectorController::profilerEnabled() const
 {
-    return m_profilerAgent->enabled();
+    return m_instrumentingAgents->inspectorTimelineAgent();
 }
 
 void InspectorController::setProfilerEnabled(bool enable)
 {
-    ErrorString error;
-    if (enable)
-        m_profilerAgent->enable(&error);
-    else
-        m_profilerAgent->disable(&error);
+    if (enable) {
+        m_instrumentingAgents->setPersistentInspectorTimelineAgent(m_timelineAgent);
+        m_timelineAgent->start();
+    } else {
+        m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
+        m_timelineAgent->stop();
+    }
 }
 
 void InspectorController::resume()

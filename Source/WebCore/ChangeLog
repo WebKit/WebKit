@@ -1,5 +1,69 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171195.
+
+    2014-07-17  Timothy Hatcher  <timothy@apple.com>
+
+            Make console.profile record to the Timeline.
+
+            https://bugs.webkit.org/show_bug.cgi?id=134643
+
+            Reviewed by Joseph Pecoraro.
+
+            Passes existing profiler tests in fast/profiler.
+
+            * bindings/js/ScriptState.cpp:
+            (WebCore::domWindowFromExecState):
+            (WebCore::frameFromExecState):
+            (WebCore::scriptExecutionContextFromExecState):
+            (WebCore::mainWorldExecState):
+            (WebCore::execStateFromNode):
+            * bindings/js/ScriptState.h:
+            * inspector/InspectorController.cpp:
+            (WebCore::InspectorController::InspectorController):
+            (WebCore::InspectorController::profilerEnabled):
+            (WebCore::InspectorController::setProfilerEnabled):
+            * inspector/InspectorController.h:
+            * inspector/InspectorInstrumentation.cpp:
+            (WebCore::InspectorInstrumentation::startProfilingImpl):
+            (WebCore::InspectorInstrumentation::stopProfilingImpl):
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::didCreateFrontendAndBackend):
+            (WebCore::InspectorTimelineAgent::willDestroyFrontendAndBackend):
+            (WebCore::InspectorTimelineAgent::start):
+            (WebCore::InspectorTimelineAgent::stop):
+            (WebCore::startProfiling):
+            (WebCore::stopProfiling):
+            (WebCore::InspectorTimelineAgent::startFromConsole):
+            (WebCore::InspectorTimelineAgent::stopFromConsole):
+            (WebCore::InspectorTimelineAgent::didWriteHTML):
+            (WebCore::InspectorTimelineAgent::breakpointActionProbe):
+            (WebCore::toProtocol):
+            (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+            (WebCore::InspectorTimelineAgent::didCompleteRecordEntry):
+            (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+            (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+            (WebCore::InspectorTimelineAgent::sendEvent):
+            (WebCore::InspectorTimelineAgent::createRecordEntry):
+            (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+            * inspector/InspectorTimelineAgent.h:
+            (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+            (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+            * inspector/InstrumentingAgents.cpp:
+            (WebCore::InstrumentingAgents::InstrumentingAgents):
+            (WebCore::InstrumentingAgents::reset):
+            * inspector/InstrumentingAgents.h:
+            (WebCore::InstrumentingAgents::persistentInspectorTimelineAgent):
+            (WebCore::InstrumentingAgents::setPersistentInspectorTimelineAgent):
+            * inspector/TimelineRecordFactory.cpp:
+            (WebCore::TimelineRecordFactory::createConsoleProfileData):
+            * inspector/TimelineRecordFactory.h:
+            * inspector/protocol/Timeline.json:
+            * page/PageConsole.cpp:
+            (WebCore::PageConsole::profileEnd):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171188.
 
     2014-07-16  Sam Weinig  <sam@webkit.org>

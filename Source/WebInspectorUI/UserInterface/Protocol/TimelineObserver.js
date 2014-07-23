@@ -36,6 +36,16 @@ WebInspector.TimelineObserver.prototype = {
     eventRecorded: function(record)
     {
         WebInspector.timelineManager.eventRecorded(record);
+    },
+
+    recordingStarted: function()
+    {
+        WebInspector.timelineManager.capturingStarted();
+    },
+
+    recordingStopped: function()
+    {
+        WebInspector.timelineManager.capturingStopped();
     }
 };
 

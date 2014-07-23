@@ -51,22 +51,29 @@ DOMWindow* domWindowFromExecState(JSC::ExecState* scriptState)
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     if (!globalObject->inherits(JSDOMWindowBase::info()))
-        return 0;
+        return nullptr;
     return &JSC::jsCast<JSDOMWindowBase*>(globalObject)->impl();
+}
+
+Frame* frameFromExecState(JSC::ExecState* scriptState)
+{
+    ScriptExecutionContext* context = scriptExecutionContextFromExecState(scriptState);
+    Document* document = context && context->isDocument() ? toDocument(context) : nullptr;
+    return document ? document->frame() : nullptr;
 }
 
 ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState* scriptState)
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     if (!globalObject->inherits(JSDOMGlobalObject::info()))
-        return 0;
+        return nullptr;
     return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
 }
 
 JSC::ExecState* mainWorldExecState(Frame* frame)
 {
     if (!frame)
-        return 0;
+        return nullptr;
     JSDOMWindowShell* shell = frame->script().windowShell(mainThreadNormalWorld());
     return shell->window()->globalExec();
 }
@@ -74,12 +81,12 @@ JSC::ExecState* mainWorldExecState(Frame* frame)
 JSC::ExecState* execStateFromNode(DOMWrapperWorld& world, Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
     Frame* frame = node->document().frame();
     if (!frame)
-        return 0;
+        return nullptr;
     if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
-        return 0;
+        return nullptr;
     return frame->script().globalObject(world)->globalExec();
 }
 

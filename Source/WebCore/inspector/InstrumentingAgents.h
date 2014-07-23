@@ -105,6 +105,9 @@ public:
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
 
+    InspectorTimelineAgent* persistentInspectorTimelineAgent() const { return m_persistentInspectorTimelineAgent; }
+    void setPersistentInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_persistentInspectorTimelineAgent = agent; }
+
     InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
     void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
 
@@ -154,6 +157,7 @@ private:
     PageRuntimeAgent* m_pageRuntimeAgent;
     WorkerRuntimeAgent* m_workerRuntimeAgent;
     InspectorTimelineAgent* m_inspectorTimelineAgent;
+    InspectorTimelineAgent* m_persistentInspectorTimelineAgent;
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
 #if ENABLE(WEB_REPLAY)
     InspectorReplayAgent* m_inspectorReplayAgent;

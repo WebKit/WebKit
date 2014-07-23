@@ -61,17 +61,25 @@ WebInspector.TimelineManager.prototype = {
 
     startCapturing: function()
     {
+        TimelineAgent.start();
+    },
+
+    stopCapturing: function()
+    {
+        TimelineAgent.stop();
+    },
+
+    capturingStarted: function()
+    {
         if (this._isCapturing)
             return;
 
         this._isCapturing = true;
 
-        TimelineAgent.start();
-
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStarted);
     },
 
-    stopCapturing: function()
+    capturingStopped: function()
     {
         if (!this._isCapturing)
             return;
@@ -85,8 +93,6 @@ WebInspector.TimelineManager.prototype = {
             clearTimeout(this._deadTimeTimeout);
             delete this._deadTimeTimeout;
         }
-
-        TimelineAgent.stop();
 
         this._isCapturing = false;
         this._autoCapturingMainResource = null;
@@ -227,6 +233,12 @@ WebInspector.TimelineManager.prototype = {
             case TimelineAgent.EventType.TimeStamp:
                 var eventMarker = new WebInspector.TimelineMarker(startTime, WebInspector.TimelineMarker.Type.TimeStamp);
                 this._activeRecording.addEventMarker(eventMarker);
+                break;
+
+            case TimelineAgent.EventType.ConsoleProfile:
+                var profile = this._profileFromPayload(recordPayload.data.profile);
+                console.assert(profile);
+                this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.title, profile));
                 break;
 
             case TimelineAgent.EventType.FunctionCall:
