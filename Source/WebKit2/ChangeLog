@@ -1,5 +1,24 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171225.
+
+    2014-07-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            REGRESSION: Crash when typing into text field that clears itself on iOS
+
+            <https://bugs.webkit.org/show_bug.cgi?id=135044>
+            <rdar://problem/17640443>
+
+            Reviewed by Darin Adler.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::requestAutocorrectionData):
+            wordRangeFromPosition() returns null in some cases; null check range
+            before dereferencing it. Moved some variable declarations around to
+            better match our style.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171219.
 
     2014-07-18  Tim Horton  <timothy_horton@apple.com>

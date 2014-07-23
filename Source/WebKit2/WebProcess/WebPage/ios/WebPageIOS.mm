@@ -1620,7 +1620,6 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
 
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)
 {
-    RefPtr<Range> range;
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     if (!frame.selection().isCaret()) {
         send(Messages::WebPageProxy::AutocorrectionDataCallback(Vector<FloatRect>(), String(), 0, 0, callbackID));
@@ -1628,9 +1627,12 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
     }
 
     VisiblePosition position = frame.selection().selection().start();
-    Vector<SelectionRect> selectionRects;
+    RefPtr<Range> range = wordRangeFromPosition(position);
+    if (!range) {
+        send(Messages::WebPageProxy::AutocorrectionDataCallback(Vector<FloatRect>(), String(), 0, 0, callbackID));
+        return;
+    }
 
-    range = wordRangeFromPosition(position);
     String textForRange = plainTextReplacingNoBreakSpace(range.get());
     const unsigned maxSearchAttempts = 5;
     for (size_t i = 0;  i < maxSearchAttempts && textForRange != textForAutocorrection; ++i)
@@ -1641,6 +1643,8 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
         range = Range::create(*frame.document(), wordRangeFromPosition(position)->startPosition(), range->endPosition());
         textForRange = plainTextReplacingNoBreakSpace(range.get());
     }
+
+    Vector<SelectionRect> selectionRects;
     if (textForRange == textForAutocorrection)
         range->collectSelectionRects(selectionRects);
 
