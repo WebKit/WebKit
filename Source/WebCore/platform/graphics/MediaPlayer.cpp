@@ -893,6 +893,16 @@ void MediaPlayer::playbackTargetAvailabilityChanged()
 }
 #endif
 
+double MediaPlayer::maxFastForwardRate() const
+{
+    return m_private->maxFastForwardRate();
+}
+
+double MediaPlayer::minFastReverseRate() const
+{
+    return m_private->minFastReverseRate();
+}
+
 #if USE(NATIVE_FULLSCREEN_VIDEO)
 bool MediaPlayer::canEnterFullscreen() const
 {

@@ -108,6 +108,8 @@ public:
     void metadataDidArrive(RetainPtr<NSArray>, double);
     void firstFrameAvailableDidChange(bool);
     void trackEnabledDidChange(bool);
+    void canPlayFastReverseDidChange(bool);
+    void canPlayFastForwardDidChange(bool);
 
     virtual void setShouldBufferData(bool);
 
@@ -265,6 +267,9 @@ private:
     void updateDisableExternalPlayback();
 #endif
 
+    virtual double maxFastForwardRate() const override { return m_cachedCanPlayFastForward ? std::numeric_limits<double>::infinity() : 2.0; }
+    virtual double minFastReverseRate() const override { return m_cachedCanPlayFastReverse ? -std::numeric_limits<double>::infinity() : 0.0; }
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -336,6 +341,8 @@ private:
     bool m_shouldBufferData;
     bool m_cachedIsReadyForDisplay;
     bool m_haveBeenAskedToCreateLayer;
+    bool m_cachedCanPlayFastForward;
+    bool m_cachedCanPlayFastReverse;
 #if ENABLE(IOS_AIRPLAY)
     mutable bool m_allowsWirelessVideoPlayback;
 #endif

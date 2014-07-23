@@ -1,5 +1,23 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171288.
+
+    2014-07-20  Jeremy Jones  <jeremyj@apple.com>
+
+            Disable ff/rw based on canPlayFastForward and canPlayFastRewind.
+            https://bugs.webkit.org/show_bug.cgi?id=134894
+
+            Reviewed by Darin Adler.
+
+            Add setCanPlayFastReverse
+
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in: ditto
+            * WebProcess/ios/WebVideoFullscreenManager.h: ditto
+            * WebProcess/ios/WebVideoFullscreenManager.mm: ditto
+            (WebKit::WebVideoFullscreenManager::setCanPlayFastReverse): ditto
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171286.
 
     2014-07-20  Jeremy Jones  <jeremyj@apple.com>

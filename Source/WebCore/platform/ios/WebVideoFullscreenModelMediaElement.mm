@@ -106,8 +106,12 @@ void WebVideoFullscreenModelMediaElement::updateForEventName(const WTF::AtomicSt
     bool all = eventName == eventNameAll();
 
     if (all
-        || eventName == eventNames().durationchangeEvent)
+        || eventName == eventNames().durationchangeEvent) {
         m_videoFullscreenInterface->setDuration(m_mediaElement->duration());
+        // These is no standard event for minFastReverseRateChange; duration change is a reasonable proxy for it.
+        // It happens every time a new item becomes ready to play.
+        m_videoFullscreenInterface->setCanPlayFastReverse(m_mediaElement->minFastReverseRate() < 0.0);
+    }
 
     if (all
         || eventName == eventNames().pauseEvent

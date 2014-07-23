@@ -2567,6 +2567,16 @@ void MediaPlayerPrivateAVFoundationObjC::playbackTargetIsWirelessDidChange()
 }
 #endif
 
+void MediaPlayerPrivateAVFoundationObjC::canPlayFastForwardDidChange(bool newValue)
+{
+    m_cachedCanPlayFastForward = newValue;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange(bool newValue)
+{
+    m_cachedCanPlayFastReverse = newValue;
+}
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys;
@@ -2600,6 +2610,8 @@ NSArray* itemKVOProperties()
                 @"duration",
                 @"hasEnabledAudio",
                 @"timedMetadata",
+                @"canPlayFastForward",
+                @"canPlayFastReverse",
                 nil];
     }
     return keys;
@@ -2709,7 +2721,10 @@ NSArray* assetTrackMetadataKeyNames()
             if (CMTIME_IS_NUMERIC(itemTime))
                 now = std::max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::metadataDidArrive, m_callback, RetainPtr<NSArray>(newValue), now);
-        }
+        } else if ([keyPath isEqualToString:@"canPlayFastReverse"])
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange, m_callback, [newValue boolValue]);
+        else if ([keyPath isEqualToString:@"canPlayFastForward"])
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::canPlayFastForwardDidChange, m_callback, [newValue boolValue]);
     }
 
     if (context == MediaPlayerAVFoundationObservationContextPlayer && !willChange) {

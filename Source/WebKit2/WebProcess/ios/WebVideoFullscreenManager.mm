@@ -146,6 +146,11 @@ void WebVideoFullscreenManager::setSeekableRanges(const WebCore::TimeRanges& tim
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector(WTF::move(rangesVector)), m_page->pageID());
 }
 
+void WebVideoFullscreenManager::setCanPlayFastReverse(bool value)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetCanPlayFastReverse(value), m_page->pageID());
+}
+
 void WebVideoFullscreenManager::setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetAudioMediaSelectionOptions(options, selectedIndex), m_page->pageID());

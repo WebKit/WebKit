@@ -480,6 +480,9 @@ public:
     void setHasPlaybackTargetAvailabilityListeners(bool);
 #endif
 
+    double minFastReverseRate() const;
+    double maxFastForwardRate() const;
+
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     bool canEnterFullscreen() const;
 #endif

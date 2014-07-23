@@ -1,5 +1,45 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171288.
+
+    2014-07-20  Jeremy Jones  <jeremyj@apple.com>
+
+            Disable ff/rw based on canPlayFastForward and canPlayFastRewind.
+            https://bugs.webkit.org/show_bug.cgi?id=134894
+
+            Reviewed by Darin Adler.
+
+            * WebCore.exp.in: add symbol for canPlayFastReverse
+            * html/HTMLMediaElement.cpp: Add two new accessors
+            (WebCore::HTMLMediaElement::nextScanRate): possibly limit scanRate
+            (WebCore::HTMLMediaElement::canPlayFastForward): added
+            (WebCore::HTMLMediaElement::canPlayFastReverse): added
+            * html/HTMLMediaElement.h: declare two new methods
+            * platform/graphics/MediaPlayer.cpp: Plumb through two new accessors
+            (WebCore::MediaPlayer::maxFastForwardRate): added
+            (WebCore::MediaPlayer::minFastReverseRate): added
+            * platform/graphics/MediaPlayer.h: Declare new methods
+            * platform/graphics/MediaPlayerPrivate.h: Added two new methods.
+            (WebCore::MediaPlayerPrivateInterface::maxFastForwardRate): added
+            (WebCore::MediaPlayerPrivateInterface::minFastReverseRate): added
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h: member to cache ff/rw enabled state
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): observe on item canPlayFastForward canPlayFastReverse
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::canPlayFastForwardDidChange): added
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::canPlayFastReverseDidChange): added
+            (WebCore::itemKVOProperties): observe canPlayFastForward canPlayFastRewind
+            (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): ditto
+            * platform/ios/WebVideoFullscreenInterface.h: add new method
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.h: ditto
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: ditto
+            (WebVideoFullscreenInterfaceAVKit::setCanPlayFastReverse): Set value on WebAVPlayerController.
+            (-[WebAVPlayerController canScanBackward]): Deleted.
+            (+[WebAVPlayerController keyPathsForValuesAffectingCanScanBackward]): Deleted.
+            * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+            (WebVideoFullscreenModelMediaElement::updateForEventName): update canPlayFastReverse.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171287.
 
     2014-07-18  Gavin Barraclough  <baraclough@apple.com>
