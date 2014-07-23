@@ -1,5 +1,21 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171284.
+
+    2014-07-20  Dan Bernstein  <mitz@apple.com>
+
+            Test for <rdar://problems/17742611> -[_WKActivatedElementInfo image] is often empty
+            https://bugs.webkit.org/show_bug.cgi?id=135107
+
+            Reviewed by Sam Weinig.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/mac/RenderedImageFromDOMNode.mm: Added.
+            (-[RenderedImageFromDOMNodeFrameLoadDelegate webView:didFinishLoadForFrame:]):
+            (TestWebKitAPI::TEST):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171228.
 
     2014-07-18  Filip Pizlo  <fpizlo@apple.com>

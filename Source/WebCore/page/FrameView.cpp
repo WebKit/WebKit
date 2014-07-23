@@ -64,6 +64,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
 #include "RenderIFrame.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -3665,6 +3666,11 @@ void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect
 #ifndef NDEBUG
     RenderElement::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(&rootLayer->renderer());
 #endif
+
+    // To work around http://webkit.org/b/135106, ensure that the paint root isn't an inline with culled line boxes.
+    // FIXME: This can cause additional content to be included in the snapshot, so remove this once that bug is fixed.
+    while (eltRenderer && eltRenderer->isRenderInline() && !toRenderInline(eltRenderer)->firstLineBox())
+        eltRenderer = eltRenderer->parent();
 
     rootLayer->paint(context, dirtyRect, m_paintBehavior, eltRenderer);
     if (rootLayer->containsDirtyOverlayScrollbars())
