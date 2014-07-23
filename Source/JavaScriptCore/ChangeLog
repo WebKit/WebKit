@@ -3,6 +3,14 @@
         Build fix for non-clang compile.
 
         * jsc.cpp:
+        (WTF::RuntimeArray::put): Remove incorrect return statement
+        I added.
+
+2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Build fix for non-clang compile.
+
+        * jsc.cpp:
         (WTF::RuntimeArray::deleteProperty): Need (fake) return
         value when NO_RETURN_DUE_TO_CRASH is not defined.
 
