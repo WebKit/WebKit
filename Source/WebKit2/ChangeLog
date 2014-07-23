@@ -1,5 +1,33 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171322.
+
+    2014-07-21  Oliver Hunt  <oliver@apple.com>
+
+            Correct sandbox profiles to fix some excess privileges
+            https://bugs.webkit.org/show_bug.cgi?id=135134
+            <rdar://problem/17741886>
+            <rdar://problem/17739080>
+
+            Reviewed by Alexey Proskuryakov.
+
+            This cleans up our sandbox profiles to fix a few issues - the profiles
+            no longer allow us to issue file extension we have the ability to consume,
+            and tightens some of the other file access rules.
+
+            This means we have to addd some rules to allow us to access things
+            that we previously had access to due to lax file system restrictions.
+
+            Some of the features were fixable simply by using entitlements on the
+            process rather than custom rules.
+
+            * Configurations/WebContent-iOS.entitlements:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171320.
 
     2014-07-21  Simon Fraser  <simon.fraser@apple.com>
