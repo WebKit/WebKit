@@ -1,3 +1,48 @@
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
+        Merge r171190.
+
+    2014-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG Flush(SetLocal) store elimination is overzealous for captured variables in the presence of nodes that have no effects but may throw
+            https://bugs.webkit.org/show_bug.cgi?id=134988
+            <rdar://problem/17706349>
+
+            Reviewed by Oliver Hunt.
+            
+            Luckily, we also don't need this optimization to be super powerful: the only place
+            where it really matters is for getting rid of the redundancy between op_enter and
+            op_init_lazy_reg, and in that case, there is a small set of possible nodes between the
+            two things. This change updates the store eliminator to know about only that small,
+            obviously safe, set of nodes over which we can store-eliminate.
+            
+            This shouldn't have any performance impact in the DFG because this optimization kicks
+            in relatively rarely already. And once we tier up into the FTL, we get a much better
+            store elimination over LLVM IR, so this really shouldn't matter at all.
+            
+            The tricky part of this patch is that there is a close relative of this optimization,
+            for uncaptured variables that got flushed. This happens for arguments to inlined calls.
+            I make this work by splitting it into two different store eliminators.
+            
+            Note that in the process of crafting the tests, I realized that we were incorrectly
+            DCEing NewArrayWithSize. That's not cool, since that can throw an exception for
+            negative array sizes. If we ever did want to DCE this node, we'd need to lower the node
+            to a check node followed by the actual allocation.
+
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::uncapturedSetLocalStoreElimination):
+            (JSC::DFG::CSEPhase::capturedSetLocalStoreElimination):
+            (JSC::DFG::CSEPhase::setLocalStoreElimination):
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            (JSC::DFG::CSEPhase::SetLocalStoreEliminationResult::SetLocalStoreEliminationResult): Deleted.
+            * dfg/DFGNodeType.h:
+            * tests/stress/capture-escape-and-throw.js: Added.
+            (foo.f):
+            (foo):
+            * tests/stress/new-array-with-size-throw-exception-and-tear-off-arguments.js: Added.
+            (foo):
+            (bar):
+
 2014-07-17  Dean Jackson  <dino@apple.com>
 
         <rdar://problem/17675068> Disable some features on this branch.

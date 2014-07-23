@@ -928,48 +928,34 @@ private:
         return 0;
     }
     
-    struct SetLocalStoreEliminationResult {
-        SetLocalStoreEliminationResult()
-            : mayBeAccessed(false)
-            , mayExit(false)
-            , mayClobberWorld(false)
-        {
-        }
-        
-        bool mayBeAccessed;
-        bool mayExit;
-        bool mayClobberWorld;
-    };
-    SetLocalStoreEliminationResult setLocalStoreElimination(
-        VirtualRegister local, Node* expectedNode)
+    bool uncapturedSetLocalStoreElimination(VirtualRegister local, Node* expectedNode)
     {
-        SetLocalStoreEliminationResult result;
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
             switch (node->op()) {
             case GetLocal:
             case Flush:
                 if (node->local() == local)
-                    result.mayBeAccessed = true;
+                    return false;
                 break;
                 
             case GetLocalUnlinked:
                 if (node->unlinkedLocal() == local)
-                    result.mayBeAccessed = true;
+                    return false;
                 break;
                 
             case SetLocal: {
                 if (node->local() != local)
                     break;
                 if (node != expectedNode)
-                    result.mayBeAccessed = true;
-                return result;
+                    return false;
+                return true;
             }
                 
             case GetClosureVar:
             case PutClosureVar:
                 if (static_cast<VirtualRegister>(node->varNumber()) == local)
-                    result.mayBeAccessed = true;
+                    return false;
                 break;
                 
             case GetMyScope:
@@ -977,25 +963,24 @@ private:
                 if (node->origin.semantic.inlineCallFrame)
                     break;
                 if (m_graph.uncheckedActivationRegister() == local)
-                    result.mayBeAccessed = true;
+                    return false;
                 break;
                 
             case CheckArgumentsNotCreated:
             case GetMyArgumentsLength:
             case GetMyArgumentsLengthSafe:
                 if (m_graph.uncheckedArgumentsRegisterFor(node->origin.semantic) == local)
-                    result.mayBeAccessed = true;
+                    return false;
                 break;
                 
             case GetMyArgumentByVal:
             case GetMyArgumentByValSafe:
-                result.mayBeAccessed = true;
-                break;
+                return false;
                 
             case GetByVal:
                 // If this is accessing arguments then it's potentially accessing locals.
                 if (node->arrayMode().type() == Array::Arguments)
-                    result.mayBeAccessed = true;
+                    return false;
                 break;
                 
             case CreateArguments:
@@ -1005,19 +990,64 @@ private:
                 // are live. We could be clever here and check if the local qualifies as an
                 // argument register. But that seems like it would buy us very little since
                 // any kind of tear offs are rare to begin with.
-                result.mayBeAccessed = true;
-                break;
+                return false;
                 
             default:
                 break;
             }
-            result.mayExit |= node->canExit();
-            result.mayClobberWorld |= m_graph.clobbersWorld(node);
+            if (m_graph.clobbersWorld(node))
+                return false;
         }
         RELEASE_ASSERT_NOT_REACHED();
-        // Be safe in release mode.
-        result.mayBeAccessed = true;
-        return result;
+        return false;
+    }
+
+    bool capturedSetLocalStoreElimination(VirtualRegister local, Node* expectedNode)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            Node* node = m_currentBlock->at(i);
+            switch (node->op()) {
+            case GetLocal:
+            case Flush:
+                if (node->local() == local)
+                    return false;
+                break;
+                
+            case GetLocalUnlinked:
+                if (node->unlinkedLocal() == local)
+                    return false;
+                break;
+                
+            case SetLocal: {
+                if (node->local() != local)
+                    break;
+                if (node != expectedNode)
+                    return false;
+                return true;
+            }
+                
+            case Phantom:
+            case Check:
+            case HardPhantom:
+            case MovHint:
+            case JSConstant:
+            case DoubleConstant:
+            case Int52Constant:
+                break;
+                
+            default:
+                return false;
+            }
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    }
+    
+    bool setLocalStoreElimination(VariableAccessData* variableAccessData, Node* expectedNode)
+    {
+        if (variableAccessData->isCaptured())
+            return capturedSetLocalStoreElimination(variableAccessData->local(), expectedNode);
+        return uncapturedSetLocalStoreElimination(variableAccessData->local(), expectedNode);
     }
     
     bool invalidationPointElimination()
@@ -1215,7 +1245,6 @@ private:
         case Flush: {
             ASSERT(m_graph.m_form != SSA);
             VariableAccessData* variableAccessData = node->variableAccessData();
-            VirtualRegister local = variableAccessData->local();
             if (!node->child1()) {
                 // FIXME: It's silly that we punt on flush-eliminating here. We don't really
                 // need child1 to figure out what's going on.
@@ -1239,12 +1268,9 @@ private:
                 if (replacement->canExit())
                     break;
             }
-            SetLocalStoreEliminationResult result =
-                setLocalStoreElimination(local, replacement);
-            if (result.mayBeAccessed || result.mayClobberWorld)
+            if (!setLocalStoreElimination(variableAccessData, replacement))
                 break;
             ASSERT(replacement->op() == SetLocal);
-            // FIXME: Investigate using mayExit as a further optimization.
             node->convertToPhantom();
             Node* dataNode = replacement->child1().node();
             ASSERT(dataNode->hasResult());
