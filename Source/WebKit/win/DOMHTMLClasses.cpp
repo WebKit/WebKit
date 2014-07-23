@@ -1610,8 +1610,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLIFrameElement::contentFrame(
     if (!result)
         return E_POINTER;
     *result = 0;
-    ASSERT(m_element && m_element->hasTagName(iframeTag));
-    HTMLIFrameElement* iFrameElement = static_cast<HTMLIFrameElement*>(m_element);
+    ASSERT(m_element);
+    HTMLIFrameElement* iFrameElement = toHTMLIFrameElement(m_element);
     COMPtr<IWebFrame> webFrame = kit(iFrameElement->contentFrame());
     if (!webFrame)
         return E_FAIL;

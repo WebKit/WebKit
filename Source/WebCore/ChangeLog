@@ -1,3 +1,30 @@
+2014-07-22  Dana Burkart  <dburkart@apple.com>
+
+        Merge r152704.
+
+    2013-07-15  Kangil Han  <kangil.han@samsung.com>
+
+            Introduce toHTMLIFrameElement
+            https://bugs.webkit.org/show_bug.cgi?id=118672
+
+            Reviewed by Ryosuke Niwa.
+
+            To avoid direct use of static_cast, this patch introduces toHTMLIFrameElement for code cleanup.
+
+            * bindings/js/JSHTMLDocumentCustom.cpp:
+            (WebCore::JSHTMLDocument::nameGetter):
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::adjustRenderStyle):
+            * dom/Document.cpp:
+            (WebCore::Document::seamlessParentIFrame):
+            * html/HTMLIFrameElement.h:
+            (WebCore::toHTMLIFrameElement):
+            * rendering/RenderEmbeddedObject.cpp:
+            (WebCore::RenderEmbeddedObject::viewCleared):
+            * rendering/RenderIFrame.cpp:
+            (WebCore::RenderIFrame::isSeamless):
+            (WebCore::RenderIFrame::flattenFrame):
+
 2014-07-19  Lucas Forschler  <lforschler@apple.com>
 
         Merge r170946

@@ -257,7 +257,7 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
     if (!m_node->hasTagName(iframeTag))
         return 0;
 
-    Frame* frame = static_cast<HTMLIFrameElement*>(m_node.get())->contentFrame();
+    Frame* frame = toHTMLIFrameElement(m_node.get())->contentFrame();
     if (!frame)
         return 0;
 

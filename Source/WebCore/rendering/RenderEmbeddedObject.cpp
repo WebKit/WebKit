@@ -529,7 +529,7 @@ void RenderEmbeddedObject::viewCleared()
         int marginWidth = -1;
         int marginHeight = -1;
         if (node()->hasTagName(iframeTag)) {
-            HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
+            HTMLIFrameElement* frame = toHTMLIFrameElement(node());
             marginWidth = frame->marginWidth();
             marginHeight = frame->marginHeight();
         }

@@ -1,3 +1,19 @@
+2014-07-22  Dana Burkart  <dburkart@apple.com>
+
+        Merge r152704.
+
+    2013-07-15  Kangil Han  <kangil.han@samsung.com>
+
+            Introduce toHTMLIFrameElement
+            https://bugs.webkit.org/show_bug.cgi?id=118672
+
+            Reviewed by Ryosuke Niwa.
+
+            To avoid direct use of static_cast, this patch introduces toHTMLIFrameElement for code cleanup.
+
+            * DOMHTMLClasses.cpp:
+            (DOMHTMLIFrameElement::contentFrame):
+
 2014-03-18  Brent Fulgham  <bfulgham@apple.com>
 
         Build correction after last merge.
