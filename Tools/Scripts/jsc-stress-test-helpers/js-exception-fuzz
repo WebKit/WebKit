@@ -27,7 +27,6 @@ use strict;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use POSIX;
-use String::ShellQuote;
 
 # We first want to run the test once to determine what the number of encountered
 # checks is. Then we want to run it again some number of times with random check
