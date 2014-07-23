@@ -365,8 +365,16 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::shared().parentProcessConnection(), WTF::move(commitEncoder), WTF::move(contextsToFlush));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
-    dispatch_async(m_commitQueue, [backingStoreFlusher]{
+    uint64_t pageID = m_webPage.pageID();
+    dispatch_async(m_commitQueue, [backingStoreFlusher, pageID] {
         backingStoreFlusher->flush();
+
+        if (WebPage *webPage = WebProcess::shared().webPage(pageID)) {
+            std::chrono::milliseconds timestamp = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(monotonicallyIncreasingTime() * 1000));
+            dispatch_async(dispatch_get_main_queue(), ^{
+                webPage->didFlushLayerTreeAtTime(timestamp);
+            });
+        }
     });
 }
 

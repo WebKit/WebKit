@@ -1,5 +1,57 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171336.
+
+    2014-07-21  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] Improve event throttling for Scroll Events
+            https://bugs.webkit.org/show_bug.cgi?id=135082
+            <rdar://problem/17445266>
+
+            Reviewed by Simon Fraser.
+
+            In the WebKit layer, we want a measure that is representative of the responsiveness.
+
+            In this patch, I use the total delay between a VisibleContentRectUpdate being dispatched
+            by the UIProcess, and the time RemoteLayerTreeDrawingArea flushes the layer tree.
+
+            The value used for eventThrottlingDelay() is computed by averaging the new value with
+            the old values with a 80/20 split, favoring the old data. Favoring historical data
+            over the last timing avoid excessively throttling for a single slow frame.
+
+            The computation of m_estimatedMainThreadLatency can be improved in the future, this is
+            a first cut keeping things simple.
+
+            With m_estimatedMainThreadLatency in our hands, we can compute our eventThrottlingDelay().
+            If m_estimatedMainThreadLatency is smaller than a single frame timespan, we have a fast page
+            and nothing is throttled.
+
+            If is it more than a frame, we throttle such that we can at least render two frames
+            per event dispatch based on the historical data.
+
+            The exact values will need some tweaking, but this set ensures well written pages get
+            60 events per seconds, while slow pages do not waste too much time on events.
+
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+            (WebKit::WebChromeClient::eventThrottlingDelay):
+            * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+            (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+            (WebKit::ViewUpdateDispatcher::dispatchVisibleContentRectUpdate):
+            * WebProcess/WebPage/ViewUpdateDispatcher.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            (WebKit::WebPage::didFlushLayerTreeAtTime):
+            (WebKit::WebPage::didCommitLoad):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::eventThrottlingDelay):
+            (WebKit::WebPage::updateVisibleContentRects):
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+            (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171329.
 
     2014-07-21  Simon Fraser  <simon.fraser@apple.com>

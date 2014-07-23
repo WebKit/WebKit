@@ -1,5 +1,42 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171336.
+
+    2014-07-21  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] Improve event throttling for Scroll Events
+            https://bugs.webkit.org/show_bug.cgi?id=135082
+            <rdar://problem/17445266>
+
+            Reviewed by Simon Fraser.
+
+            This patch is composed of two parts. The first part in the WebKit layer
+            track an approximate measurement of the main thread responsiveness.
+            The second part in WebCore use that information to avoid sending events
+            if a page is unresponsive.
+
+            In WebCore, this patch only consider scroll events so far. Hopefully the concept
+            should be easy to generalize.
+
+            * loader/EmptyClients.h:
+            * page/ChromeClient.h:
+            Chrome client provides us with one information: how long an incoming event should be delayed.
+            Every port is free to implement whatever logic is suitable for them.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::FrameView):
+            (WebCore::FrameView::reset):
+            (WebCore::FrameView::delayedScrollEventTimerFired):
+            (WebCore::FrameView::scrollPositionChanged):
+            (WebCore::FrameView::sendScrollEvent):
+            * page/FrameView.h:
+            Scroll events do not have any associated information so they can be coalesced by just skipping
+            all input hapenning during the throttling delay.
+
+            The implementation is done by using a timer to delay the events.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171332.
 
     2014-07-21  Tim Horton  <timothy_horton@apple.com>

@@ -304,6 +304,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_userIsInteracting(false)
     , m_hasPendingBlurNotification(false)
     , m_useTestingViewportConfiguration(false)
+    , m_isInStableState(true)
+    , m_oldestNonStableUpdateVisibleContentRectsTimestamp(std::chrono::milliseconds::zero())
+    , m_estimatedLatency(std::chrono::milliseconds::zero())
     , m_screenSize(parameters.screenSize)
     , m_availableScreenSize(parameters.availableScreenSize)
     , m_deviceOrientation(0)
@@ -2864,6 +2867,20 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
 #endif
 }
+
+void WebPage::didFlushLayerTreeAtTime(std::chrono::milliseconds timestamp)
+{
+#if PLATFORM(IOS)
+    if (m_oldestNonStableUpdateVisibleContentRectsTimestamp != std::chrono::milliseconds::zero()) {
+        std::chrono::milliseconds elapsed = timestamp - m_oldestNonStableUpdateVisibleContentRectsTimestamp;
+        m_oldestNonStableUpdateVisibleContentRectsTimestamp = std::chrono::milliseconds::zero();
+
+        m_estimatedLatency = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(m_estimatedLatency.count() * 0.80 + elapsed.count() * 0.20));
+    }
+#else
+    UNUSED_PARAM(timestamp);
+#endif
+}
 #endif
 
     
@@ -4449,6 +4466,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_scaleWasSetByUIProcess = false;
     m_firstLayerTreeTransactionIDAfterDidCommitLoad = toRemoteLayerTreeDrawingArea(*m_drawingArea).nextTransactionID();
     m_userHasChangedPageScaleFactor = false;
+    m_estimatedLatency = std::chrono::milliseconds(1000 / 60);
 
     WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);
 

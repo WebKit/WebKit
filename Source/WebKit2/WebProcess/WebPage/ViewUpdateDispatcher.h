@@ -51,9 +51,14 @@ private:
 
     void dispatchVisibleContentRectUpdate();
 
+    struct UpdateData {
+        VisibleContentRectUpdateInfo visibleContentRectUpdateInfo;
+        double oldestTimestamp;
+    };
+
     RefPtr<WorkQueue> m_queue;
     SpinLock m_dataMutex;
-    HashMap<uint64_t, VisibleContentRectUpdateInfo> m_latestUpdate;
+    HashMap<uint64_t, UpdateData> m_latestUpdate;
 };
 
 } // namespace WebKit

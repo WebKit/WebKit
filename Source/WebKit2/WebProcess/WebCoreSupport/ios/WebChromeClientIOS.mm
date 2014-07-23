@@ -135,6 +135,11 @@ void WebChromeClient::showPlaybackTargetPicker(bool hasVideo)
     m_page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(hasVideo, m_page->rectForElementAtInteractionLocation()));
 }
 
+std::chrono::milliseconds WebChromeClient::eventThrottlingDelay()
+{
+    return m_page->eventThrottlingDelay();
+}
+
 int WebChromeClient::deviceOrientation() const
 {
     return m_page->deviceOrientation();
