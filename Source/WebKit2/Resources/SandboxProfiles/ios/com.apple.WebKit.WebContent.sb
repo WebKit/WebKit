@@ -27,10 +27,8 @@
 
 (import "common.sb")
 (import "removed-dev-nodes.sb")
-(import "apple-UI-apps.sb")
 
-(apple-ui-app "com.apple.WebKit.WebContent" 'with-opengl)
-(opengl)
+(uikit-app 'with-opengl)
 
 ;; Access to media controls
 (play-media)

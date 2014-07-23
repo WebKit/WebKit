@@ -1,5 +1,22 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171384
+
+    2014-07-22  Oliver Hunt  <oliver@apple.com>
+
+            Reduce the size of the root WebContent sandbox profile
+            https://bugs.webkit.org/show_bug.cgi?id=135182
+            <rdar://problem/17739108>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Switch from apple-ui-app to uikit-app as the root of the webcontent
+            profile.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171370
 
     2014-07-22  Enrica Casucci  <enrica@apple.com>
