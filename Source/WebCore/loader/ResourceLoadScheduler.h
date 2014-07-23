@@ -77,6 +77,10 @@ protected:
 
     void notifyDidScheduleResourceRequest(ResourceLoader*);
 
+#if USE(QUICK_LOOK)
+    bool maybeLoadQuickLookResource(ResourceLoader&);
+#endif
+
 private:
     void scheduleLoad(ResourceLoader*, ResourceLoadPriority);
     void scheduleServePendingRequests();

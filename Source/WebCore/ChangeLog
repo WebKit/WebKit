@@ -1,5 +1,23 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171314.
+
+    2014-07-21  Andy Estes  <aestes@apple.com>
+
+            [iOS] Handle QuickLook ResourceLoaders in the web process
+            https://bugs.webkit.org/show_bug.cgi?id=135113
+
+            Reviewed by David Kilzer.
+
+            No new tests. QuickLook is not testable from WebKit.
+
+            * WebCore.exp.in:
+            * loader/ResourceLoadScheduler.cpp:
+            (WebCore::ResourceLoadScheduler::maybeLoadQuickLookResource): Start loading the ResourceLoader if it is for a QuickLook resource.
+            * loader/ResourceLoadScheduler.h:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171308.
 
     2014-07-21  Beth Dakin  <bdakin@apple.com>

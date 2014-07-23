@@ -110,6 +110,14 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
         return;
     }
 
+#if USE(QUICK_LOOK)
+    if (maybeLoadQuickLookResource(*resourceLoader)) {
+        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader->url().string().utf8().data());
+        m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
+        return;
+    }
+#endif
+
     LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %i", resourceLoader->url().string().utf8().data(), priority);
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;

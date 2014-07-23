@@ -1,5 +1,23 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171314.
+
+    2014-07-21  Andy Estes  <aestes@apple.com>
+
+            [iOS] Handle QuickLook ResourceLoaders in the web process
+            https://bugs.webkit.org/show_bug.cgi?id=135113
+
+            Reviewed by David Kilzer.
+
+            The QuickLook framework registers a NSURLProtocol to handle loading subresources of the HTML documents it
+            generates. In order for these loads to succeed, we need to start them in the same process in which QuickLook
+            generated the main resource.
+
+            * WebProcess/Network/WebResourceLoadScheduler.cpp:
+            (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171303.
 
     2014-07-21  Brady Eidson  <beidson@apple.com>
