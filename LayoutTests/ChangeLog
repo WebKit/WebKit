@@ -1,5 +1,23 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171210.
+
+    2014-07-17  Zalan Bujtas  <zalan@apple.com>
+
+            Subpixel rendering: Embedded non-compositing rotate transform paints to wrong position.
+            https://bugs.webkit.org/show_bug.cgi?id=135028
+
+            Reviewed by Simon Fraser.
+
+            CTM always translates to where the layer's renderer() is going to paint.
+            It ensures that the pixel snapped renderer() always end up painting to (0, 0) which is
+            required to be able to position properly on transformed context.
+
+            * fast/layers/hidpi-transform-on-child-content-is-mispositioned-expected.html: Added.
+            * fast/layers/hidpi-transform-on-child-content-is-mispositioned.html: Added.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171195.
 
     2014-07-17  Timothy Hatcher  <timothy@apple.com>
