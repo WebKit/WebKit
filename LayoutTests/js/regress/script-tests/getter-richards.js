@@ -1,3 +1,5 @@
+//@ defaultQuickRun
+
 // Copyright 2006-2008 the V8 project authors. All rights reserved.
 // Copyright 2014 Apple Inc.
 // Redistribution and use in source and binary forms, with or without
