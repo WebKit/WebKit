@@ -164,6 +164,11 @@ void IOSurfacePool::addSurface(IOSurface* surface)
     if (surface->totalBytes() > m_maximumBytesCached)
         return;
 
+    // There's no reason to pool empty surfaces; we should never allocate them in the first place.
+    // This also covers isZero(), which would cause trouble when used as the key in m_cachedSurfaces.
+    if (surface->size().isEmpty())
+        return;
+
     bool surfaceIsInUse = surface->isInUse();
 
     willAddSurface(surface, surfaceIsInUse);

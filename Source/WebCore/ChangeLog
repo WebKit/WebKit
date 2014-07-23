@@ -1,5 +1,22 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171332.
+
+    2014-07-21  Tim Horton  <timothy_horton@apple.com>
+
+            Avoid putting empty-sized surfaces into IOSurfacePool
+            https://bugs.webkit.org/show_bug.cgi?id=135136
+
+            Reviewed by Simon Fraser.
+
+            * platform/graphics/cg/IOSurfacePool.cpp:
+            (WebCore::IOSurfacePool::addSurface):
+            Avoid adding 0x0 surfaces to the pool, because they will wreak havoc
+            when their size is used as the key in the CachedSurfaceMap.
+            Additionally, avoid any empty sizes, because they're just pointless.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171321.
 
     2014-07-21  Beth Dakin  <bdakin@apple.com>
