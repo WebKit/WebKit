@@ -159,6 +159,8 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* obj, unsigne
 
 static ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
 {
+    if (isJSArray(obj))
+        return jsCast<JSArray*>(obj)->length();
     return obj->get(exec, exec->propertyNames().length).toUInt32(exec);
 }
 
@@ -412,6 +414,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
     for (; k < length; k++) {
         JSValue element = thisObj->get(exec, k);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         if (!element.isUndefinedOrNull())
             stringJoiner.append(element.toWTFStringInline(exec));
         else
@@ -429,9 +433,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     Checked<unsigned, RecordOverflow> finalArraySize = 0;
 
     for (size_t i = 0;;) {
-        if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg))
-            finalArraySize += currentArray->length();
-        else
+        if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg)) {
+            finalArraySize += getLength(exec, currentArray);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        } else
             finalArraySize++;
         if (i == argCount)
             break;
@@ -450,7 +456,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     unsigned n = 0;
     for (size_t i = 0;;) {
         if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg)) {
-            unsigned length = currentArray->length();
+            unsigned length = getLength(exec, currentArray);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
             for (unsigned k = 0; k < length; ++k) {
                 JSValue v = getProperty(exec, currentArray, k);
                 if (exec->hadException())
