@@ -37,6 +37,10 @@
 {
     return YES;
 }
+- (BOOL)isVisible
+{
+    return YES;
+}
 @end
 
 namespace TestWebKitAPI {
@@ -45,6 +49,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 {
     NSRect rect = NSMakeRect(0, 0, 800, 600);
     m_view = [[WKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef];
+    [m_view setWindowOcclusionDetectionEnabled:NO];
 
     NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     m_window = [[ActiveOffscreenWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
@@ -66,7 +71,6 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
     [m_view setFrame:NSMakeRect(0, 0, width, height)];
 }
-
 
 WKPageRef PlatformWebView::page() const
 {

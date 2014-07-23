@@ -1,3 +1,15 @@
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
+        Merge r171199.
+
+    2014-07-17  Sam Weinig  <sam@webkit.org>
+
+            Fix failing API tests.
+
+            * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+            (-[ActiveOffscreenWindow isVisible]):
+            Override isVisible to make the NSWindows pretend they are visible.
+
 2014-07-17  Lucas Forschler  <lforschler@apple.com>
 
         Rollout r171167. <rdar://problem/17716602>
