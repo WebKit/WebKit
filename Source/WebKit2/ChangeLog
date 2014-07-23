@@ -1,5 +1,24 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171211.
+
+    2014-07-17  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (r171167): LoaderClient processDidCrash call is made after load state changes
+            https://bugs.webkit.org/show_bug.cgi?id=135032
+            <rdar://problem/17716602>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::processDidCrash): Create a transaction, so that the nested
+            transaction in resetStateAfterProcessExited() wouldn't be committed.
+            (WebKit::WebPageProxy::resetStateAfterProcessExited): Don't use auto - it was hiding
+            the most important fact that this is a stack object that can't be simply moved to
+            a different function.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171167.
 
     2014-07-16  Alexey Proskuryakov  <ap@apple.com>
