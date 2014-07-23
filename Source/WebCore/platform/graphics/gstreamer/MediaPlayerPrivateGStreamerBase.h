@@ -98,7 +98,12 @@ public:
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     virtual PlatformLayer* platformLayer() const { return const_cast<MediaPlayerPrivateGStreamerBase*>(this); }
+#if PLATFORM(WIN_CAIRO)
+    // FIXME: Accelerated rendering has not been implemented for WinCairo yet.
+    virtual bool supportsAcceleratedRendering() const { return false; }
+#else
     virtual bool supportsAcceleratedRendering() const { return true; }
+#endif
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float);
 #endif
 
