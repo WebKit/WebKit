@@ -1,5 +1,21 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171256.
+
+    2014-07-18  Tim Horton  <timothy_horton@apple.com>
+
+            ASSERTion failures in ViewGestureController indicating that we're copying WebBackForwardList
+            https://bugs.webkit.org/show_bug.cgi?id=135080
+            <rdar://problem/17734714>
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            (WebKit::ViewGestureController::canSwipeInDirection):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171253.
 
     2014-07-18  Yongjun Zhang  <yongjun_zhang@apple.com>
