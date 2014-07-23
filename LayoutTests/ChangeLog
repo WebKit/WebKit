@@ -1,3 +1,19 @@
+2014-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Ensure we compute the min and max height of replaced elements to 'none' or 0 when appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=135181
+
+        Reviewed by David Hyatt.
+
+        * css2.1/20110323/max-height-percentage-003-expected.html: Added.
+        * css2.1/20110323/max-height-percentage-003.html: Added.
+        * fast/replaced/max-height-percentage-quirks-expected.html: Added.
+        * fast/replaced/max-height-percentage-quirks.html: Added.
+        * fast/replaced/min-height-percentage-expected.html: Added.
+        * fast/replaced/min-height-percentage-quirks-expected.html: Added.
+        * fast/replaced/min-height-percentage-quirks.html: Added.
+        * fast/replaced/min-height-percentage.html: Added.
+
 2014-07-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         ASSERTION FAILED: generatingElement() in WebCore::RenderNamedFlowFragment::regionOversetState

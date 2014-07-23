@@ -1,5 +1,28 @@
 2014-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        Ensure we compute the min and max height of replaced elements to 'none' or 0 when appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=135181
+
+        Reviewed by David Hyatt.
+
+        If a replaced element has a percentage min or max height specified then that height value should
+        compute to 'none' for max-height and 0 for min-height when its containing block
+        does not have a height 'specified explicitly'.
+
+        This is based on a Blink patch by Robert Hogan.
+
+        Tests: css2.1/20110323/max-height-percentage-003.html
+               fast/replaced/max-height-percentage-quirks.html
+               fast/replaced/min-height-percentage-quirks.html
+               fast/replaced/min-height-percentage.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::logicalHeightComputesAsNone):
+        (WebCore::RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight):
+        * rendering/RenderBox.h:
+
+2014-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         Remove CSS_EXCLUSIONS compile flag and leftover code
         https://bugs.webkit.org/show_bug.cgi?id=135175
 

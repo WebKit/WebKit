@@ -2929,10 +2929,37 @@ LayoutUnit RenderBox::computeReplacedLogicalHeight() const
     return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style().logicalHeight()));
 }
 
+bool RenderBox::logicalHeightComputesAsNone(SizeType sizeType) const
+{
+    ASSERT(sizeType == MinSize || sizeType == MaxSize);
+    Length logicalHeight = sizeType == MinSize ? style().logicalMinHeight() : style().logicalMaxHeight();
+    Length initialLogicalHeight = sizeType == MinSize ? RenderStyle::initialMinSize() : RenderStyle::initialMaxSize();
+
+    if (logicalHeight == initialLogicalHeight)
+        return true;
+
+    if (!logicalHeight.isPercent() || isOutOfFlowPositioned())
+        return false;
+
+    // Anonymous block boxes are ignored when resolving percentage values that would refer to it:
+    // the closest non-anonymous ancestor box is used instead.
+    RenderBlock* containingBlock = this->containingBlock();
+    while (containingBlock->isAnonymous())
+        containingBlock = containingBlock->containingBlock();
+
+    return containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight();
+}
+
 LayoutUnit RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const
 {
-    LayoutUnit minLogicalHeight = computeReplacedLogicalHeightUsing(style().logicalMinHeight());
-    LayoutUnit maxLogicalHeight = style().logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style().logicalMaxHeight());
+    // If the height of the containing block is not specified explicitly (i.e., it depends on content height), and this element is not absolutely positioned,
+    // the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
+    LayoutUnit minLogicalHeight;
+    if (!logicalHeightComputesAsNone(MinSize))
+        minLogicalHeight = computeReplacedLogicalHeightUsing(style().logicalMinHeight());
+    LayoutUnit maxLogicalHeight = logicalHeight;
+    if (!logicalHeightComputesAsNone(MaxSize))
+        maxLogicalHeight =  computeReplacedLogicalHeightUsing(style().logicalMaxHeight());
     return std::max(minLogicalHeight, std::min(logicalHeight, maxLogicalHeight));
 }
 

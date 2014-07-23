@@ -702,6 +702,8 @@ private:
 
     virtual LayoutRect frameRectForStickyPositioning() const override final { return frameRect(); }
 
+    bool logicalHeightComputesAsNone(SizeType) const;
+
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
     LayoutRect m_frameRect;
