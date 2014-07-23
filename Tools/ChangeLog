@@ -1,5 +1,16 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171216.
+
+    2014-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+            Unreviewed, fix build for platforms that don't have ShellQuote.
+            
+            * Scripts/jsc-stress-test-helpers/js-exception-fuzz: Take a single argument that has the whole command string.
+            * Scripts/run-jsc-stress-tests: Do the escaping in Ruby.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171213.
 
     2014-07-15  Filip Pizlo  <fpizlo@apple.com>

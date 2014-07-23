@@ -74,6 +74,14 @@ def mysys(*cmd)
     raise "Command failed: #{$?.inspect}" unless system(*cmd)
 end
 
+def escapeAll(array)
+    array.map {
+        | v |
+        raise "Detected a non-string in #{inspect}" unless v.is_a? String
+        Shellwords.shellescape(v)
+    }.join(' ')
+end
+
 begin
     $numProcessors = `sysctl -n hw.activecpu 2>/dev/null`.to_i
 rescue
@@ -481,11 +489,7 @@ class Plan
         # It's important to remember that the test is actually run in a subshell, so if we change directory
         # in the subshell when we return we will be in our original directory. This is nice because we don't
         # have to bend over backwards to do things relative to the root.
-        "(cd ../#{Shellwords.shellescape(@directory.to_s)} && \"$@\" " + @arguments.map{
-            | v |
-            raise "Detected a non-string in #{inspect}" unless v.is_a? String
-            Shellwords.shellescape(v)
-        }.join(' ') + ")"
+        "(cd ../#{Shellwords.shellescape(@directory.to_s)} && \"$@\" " + escapeAll(@arguments) + ")"
     end
     
     def reproScriptCommand
@@ -734,7 +738,8 @@ def runProfiler
 end
 
 def runExceptionFuzz
-    addRunCommand("exception-fuzz", ["perl", (HELPERS_PATH + "js-exception-fuzz").to_s, pathToVM.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+    subCommand = escapeAll([pathToVM.to_s, $benchmark.to_s])
+    addRunCommand("exception-fuzz", ["perl", (HELPERS_PATH + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
 def runLayoutTest(kind, *options)

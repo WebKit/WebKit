@@ -57,7 +57,7 @@ GetOptions(
     'verbose' => \$verbose
 );
 
-my $commandString = shell_quote @ARGV;
+my $commandString = shift @ARGV;
 
 my $checkCount;
 
