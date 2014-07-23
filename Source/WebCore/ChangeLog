@@ -1,3 +1,15 @@
+2014-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Avoid building WebCore with ANGLE's OpenGL/EGL headers
+        https://bugs.webkit.org/show_bug.cgi?id=135167
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: Don't add ANGLE/include to the WebCore_INCLUDE_DIRECTORIES list
+        as this results in ANGLE's OpenGL and EGL headers being included, instead of the
+        headers that are provided by the system. Only the ANGLESupport library should be built
+        with that specific header inclusion path.
+
 2014-07-10  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r169105): Crash in selection
