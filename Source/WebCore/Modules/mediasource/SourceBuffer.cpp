@@ -576,6 +576,13 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
             erasedRanges->add(startTime, endTime);
         }
 
+        // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
+        // not yet displayed samples.
+        PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
+        possiblyEnqueuedRanges.intersectWith(erasedRanges->ranges());
+        if (possiblyEnqueuedRanges.length())
+            trackBuffer.needsReenqueueing = true;
+
         erasedRanges->invert();
         m_buffered->intersectWith(*erasedRanges);
 
@@ -584,8 +591,6 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         // the HTMLMediaElement.readyState attribute to HAVE_METADATA and stall playback.
         if (m_active && currentMediaTime >= start && currentMediaTime < end && m_private->readyState() > MediaPlayer::HaveMetadata)
             m_private->setReadyState(MediaPlayer::HaveMetadata);
-
-        trackBuffer.needsReenqueueing = true;
     }
 
     // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.

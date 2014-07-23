@@ -1,5 +1,25 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171215.
+
+    2014-07-17  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Re-enqueue after a removeCodedFrames() only if the removed frames overlap what may have possibly been enqueued but undisplayed.
+            https://bugs.webkit.org/show_bug.cgi?id=135039
+
+            Reviewed by Eric Carlson.
+
+            When a client calls removeCodedFrames(), we must re-enqueue those ranges if the removed samples overlap with
+            enqueued but possibly un-displayed samples. Otherwise, replacement samples may lead to decode errors as those
+            new samples dependencies are not met. But if we re-enqueue too frequently, this may cause subtle but noticible
+            display timing glitches, so only re-enqueue when removeCodedFrames have a possiblity of removing enqueued, but
+            not yet displayed samples.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::removeCodedFrames):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171210.
 
     2014-07-17  Zalan Bujtas  <zalan@apple.com>
