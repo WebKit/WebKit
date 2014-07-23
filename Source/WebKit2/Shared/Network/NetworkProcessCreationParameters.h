@@ -59,6 +59,11 @@ struct NetworkProcessCreationParameters {
     String cookieStorageDirectory;
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
 
+#if PLATFORM(IOS)
+    // FIXME: Remove this once <rdar://problem/17726660> is fixed.
+    String hstsDatabasePath;
+    SandboxExtension::Handle hstsDatabasePathExtensionHandle;
+#endif
     bool shouldUseTestingNetworkSession;
 
 #if ENABLE(CUSTOM_PROTOCOLS)

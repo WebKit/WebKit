@@ -1,5 +1,35 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171356
+
+    2014-07-22  Oliver Hunt  <oliver@apple.com>
+
+            Provide networking process with access to its HSTS db
+            https://bugs.webkit.org/show_bug.cgi?id=135121
+            <rdar://17654369>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Add an extension parameter to pass the hsts database file.
+            This requires us to create the Caches/com.apple.WebKit.Networking
+            directory in the UI process, as the network sandbox
+            does not allow it to create the containing directory.
+
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+            * Shared/Network/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * Shared/Network/NetworkProcessCreationParameters.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::ensureNetworkProcess):
+            (WebKit::WebContext::networkingHSTSDatabasePath):
+            * UIProcess/WebContext.h:
+            * UIProcess/mac/WebContextMac.mm:
+            (WebKit::WebContext::platformDefaultNetworkingHSTSDatabasePath):
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171352
 
     2014-07-22  Benjamin Poulain  <bpoulain@apple.com>

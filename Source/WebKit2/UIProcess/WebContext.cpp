@@ -420,6 +420,12 @@ void WebContext::ensureNetworkProcess()
     if (!parameters.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
+#if PLATFORM(IOS)
+    parameters.hstsDatabasePath = networkingHSTSDatabasePath();
+    if (!parameters.hstsDatabasePath.isEmpty())
+        SandboxExtension::createHandle(parameters.hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
+#endif
+
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     // Add any platform specific parameters
@@ -1206,6 +1212,11 @@ String WebContext::openGLCacheDirectory() const
         return m_overrideOpenGLCacheDirectory;
 
     return platformDefaultOpenGLCacheDirectory();
+}
+
+String WebContext::networkingHSTSDatabasePath() const
+{
+    return platformDefaultNetworkingHSTSDatabasePath();
 }
 
 String WebContext::mediaCacheDirectory() const
