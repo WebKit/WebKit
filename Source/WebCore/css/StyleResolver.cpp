@@ -59,6 +59,8 @@
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
 #include "CalculationValue.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContentData.h"
 #include "Counter.h"
 #include "CounterContent.h"
@@ -1147,6 +1149,19 @@ static bool isScrollableOverflow(EOverflow overflow)
 }
 #endif
 
+static inline bool fixedPositionCreatesStackingContext(Element* element)
+{
+    if (!element)
+        return false;
+
+    Page* page = element->document().page();
+    if (!page)
+        return false;
+
+    return page->settings().fixedPositionCreatesStackingContext()
+        || page->chrome().client().requiresAcceleratedCompositingForViewportConstrainedPosition();
+}
+
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, Element *e)
 {
     // Cache our original display.
@@ -1255,7 +1270,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.hasBlendMode()
         || style.hasIsolation()
         || style.position() == StickyPosition
-        || (style.position() == FixedPosition && e && e->document().page() && e->document().page()->settings().fixedPositionCreatesStackingContext())
+        || (style.position() == FixedPosition && fixedPositionCreatesStackingContext(e))
         || style.hasFlowFrom()
         ))
         style.setZIndex(0);

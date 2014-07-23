@@ -1,5 +1,22 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171308.
+
+    2014-07-21  Beth Dakin  <bdakin@apple.com>
+
+            Put position:fixed elements into layers when a WK1 view is layer-backed
+            https://bugs.webkit.org/show_bug.cgi?id=135075
+
+            Reviewed by Darin Adler.
+
+            Returns true when the WebHTMLView has a layer.
+
+            * WebCoreSupport/WebChromeClient.h:
+            * WebCoreSupport/WebChromeClient.mm:
+            (WebChromeClient::requiresAcceleratedCompositingForViewportConstrainedPosition):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171252.
 
     2014-07-18  Andy Estes  <aestes@apple.com>
