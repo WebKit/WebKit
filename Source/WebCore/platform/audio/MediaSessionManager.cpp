@@ -68,10 +68,10 @@ bool MediaSessionManager::has(MediaSession::MediaType type) const
     return false;
 }
 
-bool MediaSessionManager::hasActive() const
+bool MediaSessionManager::activeAudioSessionRequired() const
 {
     for (auto* session : m_sessions) {
-        if (session->mediaType() != MediaSession::None && (session->state() == MediaSession::State::Playing || session->state() == MediaSession::State::Paused))
+        if (session->mediaType() != MediaSession::None && session->state() == MediaSession::State::Playing)
             return true;
     }
     
