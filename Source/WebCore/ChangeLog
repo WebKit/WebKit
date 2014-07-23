@@ -1,3 +1,24 @@
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
+        Merge r171376.
+
+    2014-07-22  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r171016): Reproducible infinite spin selecting phone number
+            https://bugs.webkit.org/show_bug.cgi?id=135183
+            <rdar://problem/17727342>
+
+            Reviewed by Ryosuke Niwa.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::scanRangeForTelephoneNumbers):
+            Make use of TextIterator::subrange, which knows how to make a subrange from character positions,
+            instead of assuming that our character positions translate directly to positions in the incoming range.
+            Make use of DocumentMarkerController::addMarker, which takes a range and applies the marker to
+            all text nodes inside the range as appropriate.
+            Fix naming of the shadowed 'length' local.
+            Fix a typo in the comment.
+
 2014-07-17  Dean Jackson  <dino@apple.com>
 
         <rdar://problem/17675068> Disable some features on this branch.
