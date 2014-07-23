@@ -71,7 +71,7 @@ function TestBuild(repositories, builders, platform, rawRun) {
     this.buildTime = function () { return buildTime; }
     this.formattedBuildTime = function () {
         if (!buildTimeString)
-            new Date(buildTime).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+            buildTimeString = new Date(buildTime).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
         return buildTimeString;
     }
     this.builder = function () { return builders[rawRun.builder].name; }

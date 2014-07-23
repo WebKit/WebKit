@@ -1,3 +1,10 @@
+2014-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r171361.
+
+        * public/js/helper-classes.js:
+        (.this.formattedBuildTime):
+
 2014-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard spends 2s processing JSON data during the page loads
