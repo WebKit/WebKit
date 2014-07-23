@@ -2505,14 +2505,17 @@ bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
 }
 
 #if !PLATFORM(GTK)
+
 bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const
 {
     return false;
 }
+
 #endif
 
 #if !PLATFORM(MAC)
-void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, const HitTestResult&, Element*&, ContainerNode*&, ScrollableArea*&, bool&)
+
+void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, const HitTestResult&, RefPtr<Element>&, RefPtr<ContainerNode>&, ScrollableArea*&, bool&)
 {
 }
 
@@ -2535,15 +2538,15 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
 {
     return true;
 }
+
 #endif
 
-bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
+bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 {
     Document* document = m_frame.document();
-
     if (!document->renderView())
         return false;
-    
+
     RefPtr<FrameView> protector(m_frame.view());
 
     FrameView* view = m_frame.view();
@@ -2552,63 +2555,56 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     m_isHandlingWheelEvent = true;
     setFrameWasScrolledByUser();
-    LayoutPoint vPoint = view->windowToContents(e.position());
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
-    HitTestResult result(vPoint);
+    HitTestResult result(view->windowToContents(event.position()));
     document->renderView()->hitTest(request, result);
 
-    Element* element = result.innerElement();
-
-    bool isOverWidget = result.isOverWidget();
-
-    ContainerNode* scrollableContainer = nullptr;
+    RefPtr<Element> element = result.innerElement();
+    RefPtr<ContainerNode> scrollableContainer;
     ScrollableArea* scrollableArea = nullptr;
-    platformPrepareForWheelEvents(e, result, element, scrollableContainer, scrollableArea, isOverWidget);
+    bool isOverWidget = result.isOverWidget();
+    platformPrepareForWheelEvents(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
 #if PLATFORM(COCOA)
-    if (e.phase() == PlatformWheelEventPhaseNone && e.momentumPhase() == PlatformWheelEventPhaseNone) {
-#else
-    if (!e.useLatchedEventElement()) {
+    if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone)
 #endif
+    {
         m_latchedWheelEventElement = nullptr;
         m_previousWheelScrolledElement = nullptr;
     }
 
     // FIXME: It should not be necessary to do this mutation here.
-    // Instead, the handlers should know convert vertical scrolls
-    // appropriately.
-    PlatformWheelEvent event = e;
-    if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result, e))
-        event = event.copyTurningVerticalTicksIntoHorizontalTicks();
+    // Instead, the handlers should know convert vertical scrolls appropriately.
+    PlatformWheelEvent adjustedEvent = event;
+    if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result, event))
+        adjustedEvent = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
-    platformRecordWheelEvent(event);
+    platformRecordWheelEvent(adjustedEvent);
 
     if (element) {
-        // Figure out which view to send the event to.
-        RenderElement* target = element->renderer();
-        
-        if (isOverWidget && target && target->isWidget()) {
-            Widget* widget = toRenderWidget(target)->widget();
-            if (widget && passWheelEventToWidget(e, widget)) {
-                m_isHandlingWheelEvent = false;
-                if (scrollableArea)
-                    scrollableArea->setScrolledProgrammatically(false);
-                if (widget->platformWidget())
-                    return platformCompletePlatformWidgetWheelEvent(e, scrollableContainer);
-                return true;
+        if (isOverWidget) {
+            RenderElement* target = element->renderer();
+            if (target && target->isWidget()) {
+                Widget* widget = toRenderWidget(target)->widget();
+                if (widget && passWheelEventToWidget(event, widget)) {
+                    m_isHandlingWheelEvent = false;
+                    if (scrollableArea)
+                        scrollableArea->setScrolledProgrammatically(false);
+                    if (!widget->platformWidget())
+                        return true;
+                    return platformCompletePlatformWidgetWheelEvent(event, scrollableContainer.get());
+                }
             }
         }
 
-        if (!element->dispatchWheelEvent(event)) {
+        if (!element->dispatchWheelEvent(adjustedEvent)) {
             m_isHandlingWheelEvent = false;
-
             if (scrollableArea && scrollableArea->isScrolledProgrammatically()) {
-                // Web developer is controlling scrolling. Don't attempt to latch ourselves:
+                // Web developer is controlling scrolling, so don't attempt to latch.
                 clearLatchedState();
                 scrollableArea->setScrolledProgrammatically(false);
             }
-
             return true;
         }
     }
@@ -2616,7 +2612,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     if (scrollableArea)
         scrollableArea->setScrolledProgrammatically(false);
 
-    return platformCompleteWheelEvent(e, element, scrollableContainer, scrollableArea);
+    return platformCompleteWheelEvent(event, element.get(), scrollableContainer.get(), scrollableArea);
 }
 
 void EventHandler::clearLatchedState()

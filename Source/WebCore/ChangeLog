@@ -1,5 +1,31 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171283.
+
+    2014-07-20  Darin Adler  <darin@apple.com>
+
+            Crashes seen in wheel event handling
+            https://bugs.webkit.org/show_bug.cgi?id=135102
+
+            Reviewed by Beth Dakin.
+
+            Speculative fix based on guesses about what could be crashing.
+            The crash seems to be calling ref on an event target, and my guess is that this
+            has something to do with latching.
+
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::platformPrepareForWheelEvents): Updated argument types.
+            (WebCore::EventHandler::handleWheelEvent): Refactored a little and made some local
+            variables use RefPtr instead of raw pointers. Also added some comments.
+
+            * page/EventHandler.h: Changed argument types to RefPtr.
+
+            * page/mac/EventHandlerMac.mm:
+            (WebCore::EventHandler::platformPrepareForWheelEvents): Updated argument types.
+            Also added a FIXME.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171252.
 
     2014-07-18  Andy Estes  <aestes@apple.com>
