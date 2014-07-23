@@ -2802,8 +2802,7 @@ bool RenderLayerCompositor::isTrackingRepaints() const
 
 float RenderLayerCompositor::deviceScaleFactor() const
 {
-    Page* page = this->page();
-    return page ? page->deviceScaleFactor() : 1;
+    return m_renderView.document().deviceScaleFactor();
 }
 
 float RenderLayerCompositor::pageScaleFactor() const

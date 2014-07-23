@@ -364,7 +364,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
         RenderBox& renderBox = toRenderBox(renderer());
-        style.applyTransform(t, pixelSnappedForPainting(renderBox.borderBoxRect(), renderBox.document().deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
+        style.applyTransform(t, pixelSnappedForPainting(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     
@@ -1903,7 +1903,7 @@ void RenderLayerBacking::updateImageContents()
 FloatPoint3D RenderLayerBacking::computeTransformOriginForPainting(const LayoutRect& borderBox) const
 {
     const RenderStyle& style = renderer().style();
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    float deviceScaleFactor = this->deviceScaleFactor();
 
     FloatPoint3D origin;
     origin.setX(roundToDevicePixel(floatValueForLength(style.transformOriginX(), borderBox.width()), deviceScaleFactor));
