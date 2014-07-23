@@ -211,7 +211,6 @@ public:
 #endif
 
 private:
-    virtual bool requiresAcceleratedCompositingForViewportConstrainedPosition() const override;
 
     WebView *m_webView;
 };
