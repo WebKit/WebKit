@@ -1,3 +1,13 @@
+2014-07-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use NO_RETURN_DUE_TO_CRASH on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=13519
+
+        Reviewed by Mark Lam.
+
+        * svg/SVGZoomAndPan.h: Add NO_RETURN_DUE_TO_CRASH to
+        header so function declarations match implementation.
+
 2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSDOMWindowShell leaks on pages with media elements

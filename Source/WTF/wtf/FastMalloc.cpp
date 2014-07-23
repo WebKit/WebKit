@@ -189,7 +189,7 @@ namespace WTF {
 
 namespace Internal {
 #if !ENABLE(WTF_MALLOC_VALIDATION)
-WTF_EXPORT_PRIVATE void fastMallocMatchFailed(void*);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void fastMallocMatchFailed(void*);
 #else
 COMPILE_ASSERT(((sizeof(ValidationHeader) % sizeof(AllocAlignmentInteger)) == 0), ValidationHeader_must_produce_correct_alignment);
 #endif

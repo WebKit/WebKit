@@ -111,7 +111,7 @@ extern "C" {
 
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
-#if COMPILER(CLANG)
+#if COMPILER(CLANG) || COMPILER(MSVC)
 #define NO_RETURN_DUE_TO_CRASH NO_RETURN
 #else
 #define NO_RETURN_DUE_TO_CRASH
@@ -133,7 +133,7 @@ WTF_EXPORT_PRIVATE void WTFLog(WTFLogChannel*, const char* format, ...) WTF_ATTR
 WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel*, const char* format, ...) WTF_ATTRIBUTE_PRINTF(5, 6);
 WTF_EXPORT_PRIVATE void WTFLogAlwaysV(const char* format, va_list);
 WTF_EXPORT_PRIVATE void WTFLogAlways(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void WTFLogAlwaysAndCrash(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2) NO_RETURN_DUE_TO_CRASH;
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFLogAlwaysAndCrash(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 WTF_EXPORT_PRIVATE WTFLogChannel* WTFLogChannelByName(WTFLogChannel*[], size_t count, const char*);
 WTF_EXPORT_PRIVATE void WTFInitializeLogChannelStatesFromString(WTFLogChannel*[], size_t count, const char*);
 
@@ -156,7 +156,7 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 #ifdef __cplusplus
 extern "C" {
 #endif
-WTF_EXPORT_PRIVATE void WTFCrash() NO_RETURN_DUE_TO_CRASH;
+    WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash();
 #ifdef __cplusplus
 }
 #endif
@@ -168,7 +168,7 @@ WTF_EXPORT_PRIVATE void WTFCrash() NO_RETURN_DUE_TO_CRASH;
 #ifdef __cplusplus
 extern "C" {
 #endif
-    WTF_EXPORT_PRIVATE void WTFCrashWithSecurityImplication() NO_RETURN_DUE_TO_CRASH;
+    WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication();
 #ifdef __cplusplus
 }
 #endif

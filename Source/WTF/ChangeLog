@@ -1,3 +1,13 @@
+2014-07-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use NO_RETURN_DUE_TO_CRASH on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=13519
+
+        Reviewed by Mark Lam.
+
+        * wtf/Assertions.h: Add MSVC to list of compilers supporting this macro.
+        * wtf/FastMalloc.cpp: Correct function declaration for NO_RETURN_DUE_TO_CRASH.
+
 2014-07-22  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r169148, r169185, r169188, r169578, r169582, r169584, r169588, r169753 from ftlopt.

@@ -113,8 +113,8 @@ namespace JSC {
         static PassRef<StringImpl> add(ExecState*, StringImpl*);
         static PassRef<StringImpl> add(VM*, StringImpl*);
 
-        JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(ExecState*);
-        JS_EXPORT_PRIVATE static void checkCurrentAtomicStringTable(VM*);
+        JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomicStringTable(ExecState*);
+        JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomicStringTable(VM*);
     };
 
     template <> ALWAYS_INLINE bool Identifier::canUseSingleCharacterString(LChar)

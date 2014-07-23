@@ -76,9 +76,9 @@ public:
 
     // These methods only exist to allow us to compile JSSVGZoomAndPan.*.
     // These are never called, and thus ASSERT_NOT_REACHED.
-    void ref();
-    void deref();
-    void setZoomAndPan(unsigned short);
+    NO_RETURN_DUE_TO_ASSERT void ref();
+    NO_RETURN_DUE_TO_ASSERT void deref();
+    NO_RETURN_DUE_TO_ASSERT void setZoomAndPan(unsigned short);
 };
 
 } // namespace WebCore

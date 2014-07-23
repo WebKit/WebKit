@@ -356,7 +356,7 @@ public:
     static NO_RETURN_DUE_TO_CRASH bool deleteProperty(JSCell*, ExecState*, PropertyName)
     {
         RELEASE_ASSERT_NOT_REACHED();
-#if !COMPILER(CLANG)
+#if !COMPILER(CLANG) && !COMPILER(MSVC)
         return true;
 #endif
     }

@@ -1,3 +1,17 @@
+2014-07-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use NO_RETURN_DUE_TO_CRASH on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=135199
+
+        Reviewed by Mark Lam.
+
+        * jsc.cpp:
+        (WTF::RuntimeArray::deleteProperty): Stop using ugly
+        compiler work-around on Windows; use NO_RETURN_DUE_TO_CRASH
+        codepath instead.
+        * runtime/Identifier.h: Add NO_RETURN_DUE_TO_CRASH
+        to header so function declaration matches implementation.
+
 2014-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Remove CSS_EXCLUSIONS compile flag and leftover code
