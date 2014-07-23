@@ -220,4 +220,14 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
 }
 #endif
 
+void RemoteLayerTreeHost::detachRootLayer()
+{
+#if PLATFORM(IOS)
+    [m_rootLayer removeFromSuperview];
+#else
+    [asLayer(m_rootLayer) removeFromSuperlayer];
+#endif
+    m_rootLayer = nullptr;
+}
+
 } // namespace WebKit

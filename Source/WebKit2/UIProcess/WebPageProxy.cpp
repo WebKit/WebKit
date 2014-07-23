@@ -1130,13 +1130,14 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::IsVisuallyIdle;
 }
 
-void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, bool wantsReply)
+void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, bool wantsReply, ViewStateChangeDispatchMode dispatchMode)
 {
     m_potentiallyChangedViewStateFlags |= mayHaveChanged;
     m_viewStateChangeWantsReply = m_viewStateChangeWantsReply || wantsReply;
 
 #if PLATFORM(COCOA)
-    if (!isInWindow() && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow()) {
+    bool isNewlyInWindow = !isInWindow() && (mayHaveChanged & ViewState::IsInWindow) && m_pageClient.isViewInWindow();
+    if (dispatchMode == ViewStateChangeDispatchMode::Immediate || isNewlyInWindow) {
         dispatchViewStateChange();
         return;
     }

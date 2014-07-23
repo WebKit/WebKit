@@ -1,5 +1,42 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171191.
+
+    2014-07-17  Tim Horton  <timothy_horton@apple.com>
+
+            Sometimes purgeable (or empty!) tiles are shown on screen when resuming the app
+            https://bugs.webkit.org/show_bug.cgi?id=135018
+            <rdar://problem/17615038>
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/DrawingAreaProxy.h:
+            (WebKit::DrawingAreaProxy::hideContentUntilNextUpdate):
+            * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+            * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+            (WebKit::RemoteLayerTreeDrawingAreaProxy::hideContentUntilNextUpdate):
+            * UIProcess/mac/RemoteLayerTreeHost.h:
+            * UIProcess/mac/RemoteLayerTreeHost.mm:
+            (WebKit::RemoteLayerTreeHost::detachRootLayer):
+            Add a mechanism to "hide" drawing area content until the next commit,
+            by detaching the root layer. RemoteLayerTreeHost will automatically reattach
+            it at the next commit.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::viewStateDidChange):
+            * UIProcess/WebPageProxy.h:
+            Add a parameter to viewStateDidChange specifying whether dispatching the change
+            to the Web process is deferrable or not. We will also automatically use "Immediate" if
+            the view is coming in-window, like we did before.
+
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _applicationWillEnterForeground:]):
+            Make use of the aforementioned new mechanisms to ensure that we immediately dispatch
+            view state changes when coming into the foreground, and will have removed the root layer
+            if a commit didn't come in while waitForDidUpdateViewState blocks.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171365.
 
     2014-07-22  Oliver Hunt  <oliver@apple.com>

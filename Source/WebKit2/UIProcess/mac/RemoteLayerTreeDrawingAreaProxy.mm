@@ -398,4 +398,9 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function
     m_webPageProxy->process().send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTF::move(callbackFunction), nullptr)), m_webPageProxy->pageID());
 }
 
+void RemoteLayerTreeDrawingAreaProxy::hideContentUntilNextUpdate()
+{
+    m_remoteLayerTreeHost.detachRootLayer();
+}
+
 } // namespace WebKit
