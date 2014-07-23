@@ -93,6 +93,7 @@ public:
     virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) override;
     virtual void textWillBeDeletedInTextField(WebCore::Element* input) override;
     virtual void textDidChangeInTextArea(WebCore::Element*) override;
+    virtual void overflowScrollPositionChanged() override { }
 
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
     void handleInputMethodKeydown(WebCore::KeyboardEvent*);
