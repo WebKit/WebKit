@@ -1,5 +1,13 @@
 2014-07-22  Brent Fulgham  <bfulgham@apple.com>
 
+        Fix Windows (return a value!)
+
+        * jsc.cpp:
+        (functionQuit): Satisfy compiler's need for
+        a return value.
+
+2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
         Fix Windows (sleep -> Sleep)
 
         * jsc.cpp:

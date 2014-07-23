@@ -908,7 +908,7 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 {
     jscExit(EXIT_SUCCESS);
 
-#if COMPILER(MSVC) && OS(WINCE)
+#if COMPILER(MSVC)
     // Without this, Visual Studio will complain that this method does not return a value.
     return JSValue::encode(jsUndefined());
 #endif
