@@ -83,6 +83,7 @@
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
 #include "UserInputBridge.h"
+#include "ViewStateChangeObserver.h"
 #include "VisitedLinkState.h"
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
@@ -901,6 +902,16 @@ void Page::setIsInWindowInternal(bool isInWindow)
         resumeAnimatingImages();
 }
 
+void Page::addViewStateChangeObserver(ViewStateChangeObserver& observer)
+{
+    m_viewStateChangeObservers.add(&observer);
+}
+
+void Page::removeViewStateChangeObserver(ViewStateChangeObserver& observer)
+{
+    m_viewStateChangeObservers.remove(&observer);
+}
+
 void Page::suspendScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = true;
@@ -1196,6 +1207,8 @@ void Page::setViewState(ViewState::Flags viewState)
     if (!changed)
         return;
 
+    ViewState::Flags oldViewState = m_viewState;
+
     m_viewState = viewState;
     m_focusController->setViewState(viewState);
     if (m_pageThrottler)
@@ -1207,6 +1220,9 @@ void Page::setViewState(ViewState::Flags viewState)
         setIsInWindowInternal(viewState & ViewState::IsInWindow);
     if (changed & ViewState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(viewState & ViewState::IsVisuallyIdle);
+
+    for (auto* observer : m_viewStateChangeObservers)
+        observer->viewStateDidChange(oldViewState, m_viewState);
 }
 
 void Page::setIsVisible(bool isVisible)

@@ -102,6 +102,7 @@ class Settings;
 class StorageNamespace;
 class UserContentController;
 class ValidationMessageClient;
+class ViewStateChangeObserver;
 class VisitedLinkStore;
 
 typedef uint64_t LinkHash;
@@ -318,6 +319,9 @@ public:
     // Notification that this Page was moved into or out of a native window.
     void setIsInWindow(bool);
     bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
+
+    void addViewStateChangeObserver(ViewStateChangeObserver&);
+    void removeViewStateChangeObserver(ViewStateChangeObserver&);
 
     void suspendScriptedAnimations();
     void resumeScriptedAnimations();
@@ -577,6 +581,8 @@ private:
 
     RefPtr<UserContentController> m_userContentController;
     RefPtr<VisitedLinkStore> m_visitedLinkStore;
+
+    HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
 
     SessionID m_sessionID;
 };

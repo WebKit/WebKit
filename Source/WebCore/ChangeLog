@@ -1,5 +1,45 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171188.
+
+    2014-07-16  Sam Weinig  <sam@webkit.org>
+
+            Don't send geolocation permission requests when the page is not visible
+            <rdar://problem/17208715>
+            https://bugs.webkit.org/show_bug.cgi?id=134989
+
+            Reviewed by Darin Adler.
+
+            Instead of eagerly requesting geolocation permission for pages that aren't visible,
+            store a set of pending requests, and send them only once the page has become visible.
+
+            * Modules/geolocation/GeolocationController.cpp:
+            (WebCore::GeolocationController::GeolocationController):
+            (WebCore::GeolocationController::~GeolocationController):
+            (WebCore::GeolocationController::requestPermission):
+            (WebCore::GeolocationController::cancelPermissionRequest):
+            (WebCore::GeolocationController::viewStateDidChange):
+            (WebCore::provideGeolocationTo):
+            * Modules/geolocation/GeolocationController.h:
+            Store pending requests to be fired once the page is visible.
+
+            * WebCore.xcodeproj/project.pbxproj:
+            Add ViewStateChangeObserver.h
+
+            * page/Page.cpp:
+            (WebCore::Page::addViewStateChangeObserver):
+            (WebCore::Page::removeViewStateChangeObserver):
+            (WebCore::Page::setViewState):
+            * page/Page.h:
+            Add a set of registered view state observers, and notify them when the
+            view state changes.
+
+            * page/ViewStateChangeObserver.h: Added.
+            (WebCore::ViewStateChangeObserver::~ViewStateChangeObserver):
+            Add an observer that can register with the page for view state changes.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171184.
 
     2014-07-17  Jer Noble  <jer.noble@apple.com>
