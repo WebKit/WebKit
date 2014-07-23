@@ -89,8 +89,8 @@ public:
     void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
     void getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const;
     void clearSelection();
-    RenderObject* selectionStart() const { return m_selectionStart; }
-    RenderObject* selectionEnd() const { return m_selectionEnd; }
+    RenderObject* selectionUnsplitStart() const { return m_unsplitSelectionStart; }
+    RenderObject* selectionUnsplitEnd() const { return m_unsplitSelectionEnd; }
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
     void repaintSelection() const;
 
@@ -304,17 +304,19 @@ private:
     friend class LayoutStateDisabler;
 
     void splitSelectionBetweenSubtrees(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode);
-    void setSubtreeSelection(SelectionSubtreeRoot&, RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode);
+    void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&);
+    void updateSelectionForSubtrees(RenderSubtreesMap&, SelectionRepaintMode);
+    void applySubtreeSelection(SelectionSubtreeRoot&, RenderObject* start, RenderObject* end, int endPos, SelectionRepaintMode, const OldSelectionData&);
     LayoutRect subtreeSelectionBounds(const SelectionSubtreeRoot&, bool clipToVisibleContent = true) const;
     void repaintSubtreeSelection(const SelectionSubtreeRoot&) const;
 
 private:
     FrameView& m_frameView;
 
-    RenderObject* m_selectionStart;
-    RenderObject* m_selectionEnd;
-    int m_selectionStartPos;
-    int m_selectionEndPos;
+    RenderObject* m_unsplitSelectionStart;
+    RenderObject* m_unsplitSelectionEnd;
+    int m_unsplitSelectionStartPos;
+    int m_unsplitSelectionEndPos;
 
     uint64_t m_rendererCount;
 
