@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include <EWebKit2.h>
 #include <Ecore.h>
 #include <WebCore/IntRect.h>
 

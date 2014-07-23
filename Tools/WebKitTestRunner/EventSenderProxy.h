@@ -36,7 +36,7 @@
 #include <gdk/gdk.h>
 #include <wtf/HashSet.h>
 #elif PLATFORM(EFL)
-#include <WebKit/EWebKit2.h>
+#include "EWebKit2.h"
 #endif
 
 namespace WTR {

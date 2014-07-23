@@ -21,7 +21,7 @@
 #define EWK2UnitTestBase_h
 
 #include "EWK2UnitTestEnvironment.h"
-#include <EWebKit2.h>
+#include "EWebKit2.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Eina.h>

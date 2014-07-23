@@ -28,7 +28,6 @@
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestEnvironment.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
-#include <EWebKit2.h>
 
 using namespace EWK2UnitTest;
 
