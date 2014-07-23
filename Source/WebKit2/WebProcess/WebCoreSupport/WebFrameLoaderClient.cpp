@@ -1626,10 +1626,8 @@ void WebFrameLoaderClient::willChangeCurrentHistoryItem()
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
-    if (!m_frame->isMainFrame())
-        return;
 
-    webPage->willChangeCurrentHistoryItemForMainFrame();
+    webPage->willChangeCurrentHistoryItem();
 }
 
 #if USE(CONTENT_FILTERING)
