@@ -1,5 +1,12 @@
 2014-07-22  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Build fix for Windows bots
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Provide missing
+        structure definition when needed by bot.
+
+2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Build fix for EWS bots.
 
         * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Forward declare
