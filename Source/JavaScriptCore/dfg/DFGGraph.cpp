@@ -77,6 +77,16 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
 
 Graph::~Graph()
 {
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        BasicBlock* block = this->block(blockIndex);
+        if (!block)
+            continue;
+
+        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+            m_allocator.free(block->phis[phiIndex]);
+        for (unsigned nodeIndex = block->size(); nodeIndex--;)
+            m_allocator.free(block->at(nodeIndex));
+    }
     m_allocator.freeAll();
 }
 
@@ -211,8 +221,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, inContext(node->structureSet(), context));
     if (node->hasStructure())
         out.print(comma, inContext(*node->structure(), context));
-    if (node->hasStructureTransitionData())
-        out.print(comma, inContext(*node->structureTransitionData().previousStructure, context), " -> ", inContext(*node->structureTransitionData().newStructure, context));
+    if (node->hasTransition())
+        out.print(comma, pointerDumpInContext(node->transition(), context));
     if (node->hasFunction()) {
         out.print(comma, "function(", RawPointer(node->function()), ", ");
         if (node->function()->inherits(JSFunction::info())) {
@@ -338,9 +348,11 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "R:", sortedListDump(reads.direct(), ","));
     if (!writes.isEmpty())
         out.print(comma, "W:", sortedListDump(writes.direct(), ","));
-    out.print(comma, "bc#", node->origin.semantic.bytecodeIndex);
-    if (node->origin.semantic != node->origin.forExit)
-        out.print(comma, "exit: ", node->origin.forExit);
+    if (node->origin.isSet()) {
+        out.print(comma, "bc#", node->origin.semantic.bytecodeIndex);
+        if (node->origin.semantic != node->origin.forExit)
+            out.print(comma, "exit: ", node->origin.forExit);
+    }
     
     out.print(")");
 
@@ -356,7 +368,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
 
 void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
 {
-    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "):", block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "", block->cfaHasVisited ? "" : " (CFA-unreachable)", "\n");
     if (block->executionCount == block->executionCount)
         out.print(prefix, "  Execution count: ", block->executionCount, "\n");
     out.print(prefix, "  Predecessors:");
@@ -439,16 +451,17 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         if (!block)
             continue;
         dumpBlockHeader(out, "", block, DumpAllPhis, context);
+        out.print("  States: ", block->cfaStructureClobberStateAtHead, "\n");
         switch (m_form) {
         case LoadStore:
         case ThreadedCPS: {
-            out.print("  vars before: ");
+            out.print("  Vars Before: ");
             if (block->cfaHasVisited)
                 out.print(inContext(block->valuesAtHead, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  var links: ", block->variablesAtHead, "\n");
+            out.print("  Var Links: ", block->variablesAtHead, "\n");
             break;
         }
             
@@ -464,16 +477,17 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             dump(out, "", block->at(i), context);
             lastNode = block->at(i);
         }
+        out.print("  States: ", block->cfaBranchDirection, ", ", block->cfaStructureClobberStateAtTail, "\n");
         switch (m_form) {
         case LoadStore:
         case ThreadedCPS: {
-            out.print("  vars after: ");
+            out.print("  Vars After: ");
             if (block->cfaHasVisited)
                 out.print(inContext(block->valuesAtTail, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  var links: ", block->variablesAtTail, "\n");
+            out.print("  Var Links: ", block->variablesAtTail, "\n");
             break;
         }
             
@@ -800,8 +814,9 @@ JSArrayBufferView* Graph::tryGetFoldableView(Node* node)
     JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(valueOfJSConstant(node));
     if (!view)
         return 0;
-    if (!watchpoints().isStillValid(view))
+    if (!view->length())
         return 0;
+    WTF::loadLoadFence();
     return view;
 }
 
@@ -846,7 +861,6 @@ void Graph::visitChildren(SlotVisitor& visitor)
                     visitor.appendUnbarrieredReadOnlyPointer(node->structureSet()[i]);
                 break;
                 
-            case StructureTransitionWatchpoint:
             case NewObject:
             case ArrayifyToStructure:
             case NewStringObject:
@@ -858,9 +872,34 @@ void Graph::visitChildren(SlotVisitor& visitor)
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
                 visitor.appendUnbarrieredReadOnlyPointer(
-                    node->structureTransitionData().previousStructure);
+                    node->transition()->previous);
                 visitor.appendUnbarrieredReadOnlyPointer(
-                    node->structureTransitionData().newStructure);
+                    node->transition()->next);
+                break;
+                
+            case MultiGetByOffset:
+                for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
+                    GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
+                    visitor.appendUnbarrieredReadOnlyValue(variant.specificValue());
+                    const StructureSet& set = variant.structureSet();
+                    for (unsigned j = set.size(); j--;)
+                        visitor.appendUnbarrieredReadOnlyPointer(set[j]);
+
+                    // Don't need to mark anything in the structure chain because that would
+                    // have been decomposed into CheckStructure's. Don't need to mark the
+                    // callLinkStatus because we wouldn't use MultiGetByOffset if any of the
+                    // variants did that.
+                    ASSERT(!variant.callLinkStatus());
+                }
+                break;
+                    
+            case MultiPutByOffset:
+                for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
+                    PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
+                    visitor.appendUnbarrieredReadOnlyPointer(variant.oldStructure());
+                    if (variant.kind() == PutByIdVariant::Transition)
+                        visitor.appendUnbarrieredReadOnlyPointer(variant.newStructure());
+                }
                 break;
                 
             default:
@@ -868,6 +907,35 @@ void Graph::visitChildren(SlotVisitor& visitor)
             }
         }
     }
+}
+
+void Graph::assertIsWatched(Structure* structure)
+{
+    if (!structure->dfgShouldWatch())
+        return;
+    if (watchpoints().isWatched(structure->transitionWatchpointSet()))
+        return;
+    
+    DFG_CRASH(*this, nullptr, toCString("Structure ", pointerDump(structure), " is watchable but isn't being watched.").data());
+}
+
+void Graph::handleAssertionFailure(
+    Node* node, const char* file, int line, const char* function, const char* assertion)
+{
+    startCrashing();
+    dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
+    dataLog(file, "(", line, ") : ", function, "\n");
+    dataLog("\n");
+    if (node) {
+        dataLog("While handling node ", node, "\n");
+        dataLog("\n");
+    }
+    dataLog("Graph at time of failure:\n");
+    dump();
+    dataLog("\n");
+    dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
+    dataLog(file, "(", line, ") : ", function, "\n");
+    CRASH();
 }
 
 } } // namespace JSC::DFG

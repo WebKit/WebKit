@@ -62,11 +62,17 @@ AbstractInterpreter<AbstractStateType>::booleanResult(
     }
 
     // Next check if we can fold because we know that the source is an object or string and does not equal undefined.
-    if (isCellSpeculation(value.m_type)
-        && value.m_currentKnownStructure.hasSingleton()) {
-        Structure* structure = value.m_currentKnownStructure.singleton();
-        if (!structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
-            && structure->typeInfo().type() != StringType)
+    if (isCellSpeculation(value.m_type) && !value.m_structure.isTop()) {
+        bool allTrue = true;
+        for (unsigned i = value.m_structure.size(); i--;) {
+            Structure* structure = value.m_structure[i];
+            if (structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
+                || structure->typeInfo().type() == StringType) {
+                allTrue = false;
+                break;
+            }
+        }
+        if (allTrue)
             return DefinitelyTrue;
     }
     
@@ -105,9 +111,12 @@ void AbstractInterpreter<AbstractStateType>::executeEdges(unsigned indexInBlock)
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::verifyEdge(Node*, Edge edge)
+void AbstractInterpreter<AbstractStateType>::verifyEdge(Node* node, Edge edge)
 {
-    RELEASE_ASSERT(!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())));
+    if (!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())))
+        return;
+    
+    DFG_CRASH(m_graph, node, toCString("Edge verification error: ", node, "->", edge, " was expected to have type ", SpeculationDump(typeFilterFor(edge.useKind())), " but has type ", SpeculationDump(forNode(edge).m_type)).data());
 }
 
 template<typename AbstractStateType>
@@ -1273,7 +1282,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(
             m_graph,
             m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
-        m_state.setHaveStructures(true);
         break;
         
     case NewArrayBuffer:
@@ -1281,13 +1289,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(
             m_graph,
             m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
-        m_state.setHaveStructures(true);
         break;
 
     case NewArrayWithSize:
         node->setCanExit(true);
         forNode(node).setType(SpecArray);
-        m_state.setHaveStructures(true);
         break;
         
     case NewTypedArray:
@@ -1305,12 +1311,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph,
             m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructure(
                 node->typedArrayType()));
-        m_state.setHaveStructures(true);
         break;
             
     case NewRegexp:
         forNode(node).set(m_graph, m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
-        m_state.setHaveStructures(true);
         break;
             
     case ToThis: {
@@ -1338,13 +1342,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case NewObject:
         ASSERT(node->structure());
         forNode(node).set(m_graph, node->structure());
-        m_state.setHaveStructures(true);
         break;
         
     case CreateActivation:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->activationStructure());
-        m_state.setHaveStructures(true);
         break;
         
     case FunctionReentryWatchpoint:
@@ -1377,8 +1379,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // of GetMyArgumentsLength, because GetMyArgumentsLength is a clobbering operation.
         // We perform further optimizations on this later on.
         if (node->origin.semantic.inlineCallFrame) {
-            forNode(node).set(
-                m_graph, jsNumber(node->origin.semantic.inlineCallFrame->arguments.size() - 1));
+            setConstant(
+                node, jsNumber(node->origin.semantic.inlineCallFrame->arguments.size() - 1));
+            m_state.setDidClobber(true); // Pretend that we clobbered to prevent constant folding.
         } else
             forNode(node).setType(SpecInt32);
         node->setCanExit(
@@ -1474,7 +1477,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         if (isCellSpeculation(node->child1()->prediction())) {
-            if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {
+            // This use of onlyStructure() should be replaced by giving GetByIdStatus the ability
+            // to compute things based on a StructureSet, and then to factor ByteCodeParser's
+            // ability to generate code based on a GetByIdStatus out of ByteCodeParser so that
+            // ConstantFoldingPhase can use it.
+            // https://bugs.webkit.org/show_bug.cgi?id=133229
+            if (Structure* structure = forNode(node->child1()).m_structure.onlyStructure()) {
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     m_graph.m_vm, structure,
                     m_graph.identifiers()[node->identifierNumber()]);
@@ -1484,14 +1492,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     ASSERT(status[0].structureSet().size() == 1);
                     ASSERT(!status[0].chain());
                     
-                    if (status[0].specificValue())
+                    if (status[0].specificValue()) {
+                        if (status[0].specificValue().isCell()) {
+                            Structure* structure = status[0].specificValue().asCell()->structure();
+                            m_graph.watchpoints().consider(structure);
+                        }
                         setConstant(node, status[0].specificValue());
-                    else
+                    } else
                         forNode(node).makeHeapTop();
                     filter(node->child1(), status[0].structureSet());
                     
                     m_state.setFoundConstants(true);
-                    m_state.setHaveStructures(true);
                     break;
                 }
             }
@@ -1520,44 +1531,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
 
         StructureSet& set = node->structureSet();
-
-        if (value.m_currentKnownStructure.isSubsetOf(set)) {
+        
+        // It's interesting that we could have proven that the object has a larger structure set
+        // that includes the set we're testing. In that case we could make the structure check
+        // more efficient. We currently don't.
+        
+        if (value.m_structure.isSubsetOf(set)) {
             m_state.setFoundConstants(true);
             break;
         }
 
         node->setCanExit(true);
-        m_state.setHaveStructures(true);
-
-        // If this structure check is attempting to prove knowledge already held in
-        // the futurePossibleStructure set then the constant folding phase should
-        // turn this into a watchpoint instead.
-        if (value.m_futurePossibleStructure.isSubsetOf(set)
-            && value.m_futurePossibleStructure.hasSingleton()) {
-            m_state.setFoundConstants(true);
-            filter(value, value.m_futurePossibleStructure.singleton());
-            break;
-        }
 
         filter(value, set);
         break;
     }
         
-    case StructureTransitionWatchpoint: {
-        AbstractValue& value = forNode(node->child1());
-
-        filter(value, node->structure());
-        m_state.setHaveStructures(true);
-        node->setCanExit(true);
-        break;
-    }
-            
     case PutStructure:
     case PhantomPutStructure:
-        if (!forNode(node->child1()).m_currentKnownStructure.isClear()) {
-            clobberStructures(clobberLimit);
-            forNode(node->child1()).set(m_graph, node->structureTransitionData().newStructure);
-            m_state.setHaveStructures(true);
+        if (!forNode(node->child1()).m_structure.isClear()) {
+            observeTransition(
+                clobberLimit, node->transition()->previous, node->transition()->next);
+            forNode(node->child1()).set(m_graph, node->transition()->next);
         }
         break;
     case GetButterfly:
@@ -1616,7 +1611,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
-        m_state.setHaveStructures(true);
         break;
     }
     case Arrayify: {
@@ -1629,19 +1623,43 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         node->setCanExit(true);
         clobberStructures(clobberLimit);
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
-        m_state.setHaveStructures(true);
         break;
     }
     case ArrayifyToStructure: {
         AbstractValue& value = forNode(node->child1());
-        StructureSet set = node->structure();
-        if (value.m_futurePossibleStructure.isSubsetOf(set)
-            || value.m_currentKnownStructure.isSubsetOf(set))
+        if (value.m_structure.isSubsetOf(StructureSet(node->structure())))
             m_state.setFoundConstants(true);
         node->setCanExit(true);
         clobberStructures(clobberLimit);
-        filter(value, set);
-        m_state.setHaveStructures(true);
+        
+        // We have a bunch of options of how to express the abstract set at this point. Let set S
+        // be the set of structures that the value had before clobbering and assume that all of
+        // them are watchable. The new value should be the least expressible upper bound of the
+        // intersection of "values that currently have structure = node->structure()" and "values
+        // that have structure in S plus any structure transition-reachable from S". Assume that
+        // node->structure() is not in S but it is transition-reachable from S. Then we would
+        // like to say that the result is "values that have structure = node->structure() until
+        // we invalidate", but there is no way to express this using the AbstractValue syntax. So
+        // we must choose between:
+        //
+        // 1) "values that currently have structure = node->structure()". This is a valid
+        //    superset of the value that we really want, and it's specific enough to satisfy the
+        //    preconditions of the array access that this is guarding. It's also specific enough
+        //    to allow relevant optimizations in the case that we didn't have a contradiction
+        //    like in this example. Notice that in the abscence of any contradiction, this result
+        //    is precise rather than being a conservative LUB.
+        //
+        // 2) "values that currently hava structure in S plus any structure transition-reachable
+        //    from S". This is also a valid superset of the value that we really want, but it's
+        //    not specific enough to satisfy the preconditions of the array access that this is
+        //    guarding - so playing such shenanigans would preclude us from having assertions on
+        //    the typing preconditions of any array accesses. This would also not be a desirable
+        //    answer in the absence of a contradiction.
+        //
+        // Note that it's tempting to simply say that the resulting value is BOTTOM because of
+        // the contradiction. That would be wrong, since we haven't hit an invalidation point,
+        // yet.
+        value.set(m_graph, node->structure());
         break;
     }
     case GetIndexedPropertyStorage:
@@ -1669,7 +1687,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& value = forNode(node->child1());
         ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
 
-        if (Structure* structure = value.bestProvenStructure()) {
+        // This should just filter down the cases in MultiGetByOffset. If that results in all
+        // cases having the same offset then we should strength reduce it to a CheckStructure +
+        // GetByOffset.
+        // https://bugs.webkit.org/show_bug.cgi?id=133229
+        if (Structure* structure = value.m_structure.onlyStructure()) {
             bool done = false;
             for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
                 const GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
@@ -1691,7 +1713,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         StructureSet set;
         for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;)
-            set.addAll(node->multiGetByOffsetData().variants[i].structureSet());
+            set.merge(node->multiGetByOffsetData().variants[i].structureSet());
         
         filter(node->child1(), set);
         forNode(node).makeHeapTop();
@@ -1706,7 +1728,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& value = forNode(node->child1());
         ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
 
-        if (Structure* structure = value.bestProvenStructure()) {
+        // This should just filter down the cases in MultiPutByOffset. If that results in either
+        // one case, or nothing but replace cases and they have the same offset, then we should
+        // just strength reduce it to the appropriate combination of CheckStructure,
+        // [Re]AllocatePropertyStorage, PutStructure, and PutByOffset.
+        // https://bugs.webkit.org/show_bug.cgi?id=133229
+        if (Structure* structure = value.m_structure.onlyStructure()) {
             bool done = false;
             for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
                 const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
@@ -1716,7 +1743,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (variant.kind() == PutByIdVariant::Replace) {
                     filter(node->child1(), structure);
                     m_state.setFoundConstants(true);
-                    m_state.setHaveStructures(true);
                     done = true;
                     break;
                 }
@@ -1725,7 +1751,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 clobberStructures(clobberLimit);
                 forNode(node->child1()).set(m_graph, variant.newStructure());
                 m_state.setFoundConstants(true);
-                m_state.setHaveStructures(true);
                 done = true;
                 break;
             }
@@ -1733,25 +1758,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
         }
         
-        clobberStructures(clobberLimit);
-        
+        StructureSet oldSet;
         StructureSet newSet;
+        TransitionVector transitions;
         for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
             const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-            if (variant.kind() == PutByIdVariant::Replace) {
-                if (value.m_currentKnownStructure.contains(variant.structure()))
-                    newSet.addAll(variant.structure());
-                continue;
+            oldSet.add(variant.oldStructure());
+            if (variant.kind() == PutByIdVariant::Transition) {
+                transitions.append(Transition(variant.oldStructure(), variant.newStructure()));
+                newSet.add(variant.newStructure());
+            } else {
+                ASSERT(variant.kind() == PutByIdVariant::Replace);
+                newSet.add(variant.oldStructure());
             }
-            ASSERT(variant.kind() == PutByIdVariant::Transition);
-            if (value.m_currentKnownStructure.contains(variant.oldStructure()))
-                newSet.addAll(variant.newStructure());
         }
         
-        // Use filter(value, set) as a way of setting the structure set. This works because
-        // we would have already made the set be TOP before this. Filtering top is another 
-        // way of setting.
-        filter(node->child1(), newSet);
+        filter(node->child1(), oldSet);
+        observeTransitions(clobberLimit, transitions);
+        forNode(node->child1()).set(m_graph, newSet);
         break;
     }
     
@@ -1785,7 +1809,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutByIdFlush:
     case PutByIdDirect:
         node->setCanExit(true);
-        if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {
+        // This use of onlyStructure() should be replaced by giving PutByIdStatus the ability
+        // to compute things based on a StructureSet, and then to factor ByteCodeParser's
+        // ability to generate code based on a PutByIdStatus out of ByteCodeParser so that
+        // ConstantFoldingPhase can use it.
+        // https://bugs.webkit.org/show_bug.cgi?id=133229
+        if (Structure* structure = forNode(node->child1()).m_structure.onlyStructure()) {
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.m_vm,
                 m_graph.globalObjectFor(node->origin.semantic),
@@ -1796,13 +1825,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (status[0].kind() == PutByIdVariant::Replace) {
                     filter(node->child1(), structure);
                     m_state.setFoundConstants(true);
-                    m_state.setHaveStructures(true);
                     break;
                 }
-                if (status[0].kind() == PutByIdVariant::Transition) {
+                if (status[0].kind() == PutByIdVariant::Transition
+                    && structure->transitionWatchpointSetHasBeenInvalidated()) {
+                    m_graph.watchpoints().consider(status[0].newStructure());
                     clobberStructures(clobberLimit);
                     forNode(node->child1()).set(m_graph, status[0].newStructure());
-                    m_state.setHaveStructures(true);
                     m_state.setFoundConstants(true);
                     break;
                 }
@@ -1849,7 +1878,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case Upsilon: {
         m_state.createValueForNode(node->phi());
-        AbstractValue& value = forNode(node->child1());
+        AbstractValue value = forNode(node->child1());
         forNode(node) = value;
         forNode(node->phi()) = value;
         break;
@@ -1873,6 +1902,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case InvalidationPoint:
         node->setCanExit(true);
+        forAllValues(clobberLimit, AbstractValue::observeInvalidationPointFor);
+        m_state.setStructureClobberState(StructuresAreWatched);
         break;
 
     case CheckWatchdogTimer:
@@ -1955,6 +1986,7 @@ void AbstractInterpreter<AbstractStateType>::clobberWorld(
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigin& codeOrigin)
 {
+    SamplingRegion samplingRegion("DFG AI Clobber Captured Vars");
     if (codeOrigin.inlineCallFrame) {
         const BitVector& capturedVars = codeOrigin.inlineCallFrame->capturedVars;
         for (size_t i = capturedVars.size(); i--;) {
@@ -1976,40 +2008,80 @@ void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigi
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned clobberLimit)
+template<typename Functor>
+void AbstractInterpreter<AbstractStateType>::forAllValues(
+    unsigned clobberLimit, Functor& functor)
 {
-    if (!m_state.haveStructures())
-        return;
+    SamplingRegion samplingRegion("DFG AI For All Values");
     if (clobberLimit >= m_state.block()->size())
         clobberLimit = m_state.block()->size();
     else
         clobberLimit++;
     ASSERT(clobberLimit <= m_state.block()->size());
     for (size_t i = clobberLimit; i--;)
-        forNode(m_state.block()->at(i)).clobberStructures();
+        functor(forNode(m_state.block()->at(i)));
     if (m_graph.m_form == SSA) {
         HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();
         HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtHead.end();
         for (; iter != end; ++iter)
-            forNode(*iter).clobberStructures();
+            functor(forNode(*iter));
     }
     for (size_t i = m_state.variables().numberOfArguments(); i--;)
-        m_state.variables().argument(i).clobberStructures();
+        functor(m_state.variables().argument(i));
     for (size_t i = m_state.variables().numberOfLocals(); i--;)
-        m_state.variables().local(i).clobberStructures();
-    m_state.setHaveStructures(true);
+        functor(m_state.variables().local(i));
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned clobberLimit)
+{
+    SamplingRegion samplingRegion("DFG AI Clobber Structures");
+    forAllValues(clobberLimit, AbstractValue::clobberStructuresFor);
+    setDidClobber();
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::observeTransition(
+    unsigned clobberLimit, Structure* from, Structure* to)
+{
+    AbstractValue::TransitionObserver transitionObserver(from, to);
+    forAllValues(clobberLimit, transitionObserver);
+    setDidClobber();
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::observeTransitions(
+    unsigned clobberLimit, const TransitionVector& vector)
+{
+    AbstractValue::TransitionsObserver transitionsObserver(vector);
+    forAllValues(clobberLimit, transitionsObserver);
+    setDidClobber();
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::setDidClobber()
+{
     m_state.setDidClobber(true);
+    m_state.setStructureClobberState(StructuresAreClobbered);
+}
+
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out) const
+{
+    const_cast<AbstractInterpreter<AbstractStateType>*>(this)->dump(out);
 }
 
 template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 {
     CommaPrinter comma(" ");
+    HashSet<Node*> seen;
     if (m_graph.m_form == SSA) {
         HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();
         HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtHead.end();
         for (; iter != end; ++iter) {
             Node* node = *iter;
+            seen.add(node);
             AbstractValue& value = forNode(node);
             if (value.isClear())
                 continue;
@@ -2018,10 +2090,24 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
     }
     for (size_t i = 0; i < m_state.block()->size(); ++i) {
         Node* node = m_state.block()->at(i);
+        seen.add(node);
         AbstractValue& value = forNode(node);
         if (value.isClear())
             continue;
         out.print(comma, node, ":", value);
+    }
+    if (m_graph.m_form == SSA) {
+        HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtTail.begin();
+        HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtTail.end();
+        for (; iter != end; ++iter) {
+            Node* node = *iter;
+            if (seen.contains(node))
+                continue;
+            AbstractValue& value = forNode(node);
+            if (value.isClear())
+                continue;
+            out.print(comma, node, ":", value);
+        }
     }
 }
 

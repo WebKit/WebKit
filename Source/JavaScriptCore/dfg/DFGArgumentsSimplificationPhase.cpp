@@ -325,7 +325,6 @@ public:
                     break;
                     
                 case CheckStructure:
-                case StructureTransitionWatchpoint:
                 case CheckArray:
                     // We don't care about these because if we get uses of the relevant
                     // variable then we can safely get rid of these, too. This of course
@@ -441,7 +440,6 @@ public:
                 }
                     
                 case CheckStructure:
-                case StructureTransitionWatchpoint:
                 case CheckArray: {
                     // We can just get rid of this node, if it references a phantom argument.
                     if (!isOKToOptimize(node->child1().node()))

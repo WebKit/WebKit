@@ -54,12 +54,13 @@ public:
     
     bool isValid() { return m_block->cfaDidFinish; }
     
+    StructureClobberState structureClobberState() const { return m_block->cfaStructureClobberStateAtTail; }
+    
     void setDidClobber(bool) { }
+    void setStructureClobberState(StructureClobberState state) { RELEASE_ASSERT(state == m_block->cfaStructureClobberStateAtTail); }
     void setIsValid(bool isValid) { m_block->cfaDidFinish = isValid; }
     void setBranchDirection(BranchDirection) { }
     void setFoundConstants(bool) { }
-    bool haveStructures() const { return true; } // It's always safe to return true.
-    void setHaveStructures(bool) { }
 
 private:
     BasicBlock* m_block;

@@ -610,7 +610,6 @@ private:
         case SetArgument:
         case CheckStructure:
         case CheckExecutable:
-        case StructureTransitionWatchpoint:
         case CheckFunction:
         case PutStructure:
         case TearOffActivation:

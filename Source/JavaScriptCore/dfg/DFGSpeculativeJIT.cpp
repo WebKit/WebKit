@@ -4220,7 +4220,7 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
 
 void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 {
-    if (node->structureTransitionData().previousStructure->couldHaveIndexingHeader()) {
+    if (node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
         
         GPRReg baseGPR = base.gpr();
@@ -4240,8 +4240,8 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     GPRReg baseGPR = base.gpr();
     GPRReg scratchGPR1 = scratch1.gpr();
         
-    ASSERT(!node->structureTransitionData().previousStructure->outOfLineCapacity());
-    ASSERT(initialOutOfLineCapacity == node->structureTransitionData().newStructure->outOfLineCapacity());
+    ASSERT(!node->transition()->previous->outOfLineCapacity());
+    ASSERT(initialOutOfLineCapacity == node->transition()->next->outOfLineCapacity());
     
     JITCompiler::Jump slowPath =
         emitAllocateBasicStorage(
@@ -4259,11 +4259,11 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 
 void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
 {
-    size_t oldSize = node->structureTransitionData().previousStructure->outOfLineCapacity() * sizeof(JSValue);
+    size_t oldSize = node->transition()->previous->outOfLineCapacity() * sizeof(JSValue);
     size_t newSize = oldSize * outOfLineGrowthFactor;
-    ASSERT(newSize == node->structureTransitionData().newStructure->outOfLineCapacity() * sizeof(JSValue));
+    ASSERT(newSize == node->transition()->next->outOfLineCapacity() * sizeof(JSValue));
 
-    if (node->structureTransitionData().previousStructure->couldHaveIndexingHeader()) {
+    if (node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
         
         GPRReg baseGPR = base.gpr();

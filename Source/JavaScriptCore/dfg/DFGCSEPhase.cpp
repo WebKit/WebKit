@@ -460,17 +460,11 @@ private:
                     return true;
                 break;
                 
-            case StructureTransitionWatchpoint:
-                if (node->child1() == child1
-                    && structureSet.contains(node->structure()))
-                    return true;
-                break;
-                
             case PutStructure:
                 if (node->child1() == child1
-                    && structureSet.contains(node->structureTransitionData().newStructure))
+                    && structureSet.contains(node->transition()->next))
                     return true;
-                if (structureSet.contains(node->structureTransitionData().previousStructure))
+                if (structureSet.contains(node->transition()->previous))
                     return false;
                 break;
                 
@@ -519,12 +513,12 @@ private:
             switch (node->op()) {
             case CheckStructure:
                 if (node->child1() == child1
-                    && node->structureSet().containsOnly(structure))
+                    && node->structureSet().isSubsetOf(StructureSet(structure)))
                     return true;
                 break;
                 
             case PutStructure:
-                ASSERT(node->structureTransitionData().previousStructure != structure);
+                ASSERT(node->transition()->previous != structure);
                 break;
                 
             case PutByOffset:
@@ -546,11 +540,6 @@ private:
                     break;
                 }
                 return false;
-                
-            case StructureTransitionWatchpoint:
-                if (node->structure() == structure && node->child1() == child1)
-                    return true;
-                break;
                 
             case Arrayify:
             case ArrayifyToStructure:
@@ -1420,13 +1409,6 @@ private:
             if (cseMode == StoreElimination)
                 break;
             if (checkStructureElimination(node->structureSet(), node->child1().node()))
-                eliminate();
-            break;
-            
-        case StructureTransitionWatchpoint:
-            if (cseMode == StoreElimination)
-                break;
-            if (structureTransitionWatchpointElimination(node->structure(), node->child1().node()))
                 eliminate();
             break;
             

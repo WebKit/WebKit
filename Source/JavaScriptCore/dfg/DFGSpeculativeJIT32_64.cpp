@@ -3739,29 +3739,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case StructureTransitionWatchpoint: {
-        // There is a fascinating question here of what to do about array profiling.
-        // We *could* try to tell the OSR exit about where the base of the access is.
-        // The DFG will have kept it alive, though it may not be in a register, and
-        // we shouldn't really load it since that could be a waste. For now though,
-        // we'll just rely on the fact that when a watchpoint fires then that's
-        // quite a hint already.
-        
-        m_jit.addWeakReference(node->structure());
-        
-#if !ASSERT_DISABLED
-        SpeculateCellOperand op1(this, node->child1());
-        JITCompiler::Jump isOK = m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(op1.gpr(), JSCell::structureIDOffset()), TrustedImmPtr(node->structure()));
-        m_jit.abortWithReason(DFGIneffectiveWatchpoint);
-        isOK.link(&m_jit);
-#else
-        speculateCell(node->child1());
-#endif
-
-        noResult(node);
-        break;
-    }
-        
     case PhantomPutStructure: {
         ASSERT(isKnownCell(node->child1().node()));
         m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);

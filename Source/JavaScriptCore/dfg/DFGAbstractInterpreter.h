@@ -114,6 +114,7 @@ public:
     bool executeEffects(unsigned indexInBlock);
     bool executeEffects(unsigned clobberLimit, Node*);
     
+    void dump(PrintStream& out) const;
     void dump(PrintStream& out);
     
     template<typename T>
@@ -148,7 +149,14 @@ public:
 private:
     void clobberWorld(const CodeOrigin&, unsigned indexInBlock);
     void clobberCapturedVars(const CodeOrigin&);
+    
+    template<typename Functor>
+    void forAllValues(unsigned indexInBlock, Functor&);
+    
     void clobberStructures(unsigned indexInBlock);
+    void observeTransition(unsigned indexInBlock, Structure* from, Structure* to);
+    void observeTransitions(unsigned indexInBlock, const TransitionVector&);
+    void setDidClobber();
     
     enum BooleanResult {
         UnknownBooleanResult,
@@ -160,7 +168,7 @@ private:
     void setBuiltInConstant(Node* node, JSValue value)
     {
         AbstractValue& abstractValue = forNode(node);
-        abstractValue.set(m_graph, value);
+        abstractValue.set(m_graph, value, m_state.structureClobberState());
         abstractValue.fixTypeForRepresentation(node);
     }
     

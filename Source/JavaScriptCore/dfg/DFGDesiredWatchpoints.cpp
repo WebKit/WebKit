@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,14 +62,12 @@ void DesiredWatchpoints::addLazily(JSArrayBufferView* view)
     m_bufferViews.addLazily(view);
 }
 
-void DesiredWatchpoints::addLazily(CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSet* set)
+bool DesiredWatchpoints::consider(Structure* structure)
 {
-    m_sets.addLazily(codeOrigin, exitKind, set);
-}
-
-void DesiredWatchpoints::addLazily(CodeOrigin codeOrigin, ExitKind exitKind, InlineWatchpointSet& set)
-{
-    m_inlineSets.addLazily(codeOrigin, exitKind, &set);
+    if (!structure->dfgShouldWatch())
+        return false;
+    addLazily(structure->transitionWatchpointSet());
+    return true;
 }
 
 void DesiredWatchpoints::reallyAdd(CodeBlock* codeBlock, CommonData& commonData)

@@ -33,16 +33,29 @@
 
 namespace JSC { namespace DFG {
 
+void AbstractValue::observeTransitions(const TransitionVector& vector)
+{
+    if (m_type & SpecCell) {
+        m_structure.observeTransitions(vector);
+        ArrayModes newModes = 0;
+        for (unsigned i = vector.size(); i--;) {
+            if (m_arrayModes & asArrayModes(vector[i].previous->indexingType()))
+                newModes |= asArrayModes(vector[i].next->indexingType());
+        }
+        m_arrayModes |= newModes;
+    }
+    checkConsistency();
+}
+
 void AbstractValue::setMostSpecific(Graph& graph, JSValue value)
 {
     if (!!value && value.isCell()) {
         Structure* structure = value.asCell()->structure();
-        m_currentKnownStructure = structure;
-        setFuturePossibleStructure(graph, structure);
+        graph.watchpoints().consider(structure);
+        m_structure = structure;
         m_arrayModes = asArrayModes(structure->indexingType());
     } else {
-        m_currentKnownStructure.clear();
-        m_futurePossibleStructure.clear();
+        m_structure.clear();
         m_arrayModes = 0;
     }
         
@@ -50,19 +63,30 @@ void AbstractValue::setMostSpecific(Graph& graph, JSValue value)
     m_value = value;
         
     checkConsistency();
+    assertIsWatched(graph);
 }
 
-void AbstractValue::set(Graph& graph, JSValue value)
+void AbstractValue::set(Graph& graph, JSValue value, StructureClobberState clobberState)
 {
     if (!!value && value.isCell()) {
-        m_currentKnownStructure.makeTop();
         Structure* structure = value.asCell()->structure();
-        setFuturePossibleStructure(graph, structure);
-        m_arrayModes = asArrayModes(structure->indexingType());
-        clobberArrayModes();
+        if (graph.watchpoints().consider(structure)) {
+            // We should be able to assume that the watchpoint for this has already been set.
+            // But we can't because our view of what structure a value has keeps changing. That's
+            // why we call consider().
+            // https://bugs.webkit.org/show_bug.cgi?id=133426
+            m_structure = structure;
+            if (clobberState == StructuresAreClobbered) {
+                m_arrayModes = ALL_ARRAY_MODES;
+                m_structure.clobber();
+            } else
+                m_arrayModes = asArrayModes(structure->indexingType());
+        } else {
+            m_structure.makeTop();
+            m_arrayModes = ALL_ARRAY_MODES;
+        }
     } else {
-        m_currentKnownStructure.clear();
-        m_futurePossibleStructure.clear();
+        m_structure.clear();
         m_arrayModes = 0;
     }
     
@@ -70,17 +94,29 @@ void AbstractValue::set(Graph& graph, JSValue value)
     m_value = value;
     
     checkConsistency();
+    assertIsWatched(graph);
 }
 
 void AbstractValue::set(Graph& graph, Structure* structure)
 {
-    m_currentKnownStructure = structure;
-    setFuturePossibleStructure(graph, structure);
+    m_structure = structure;
     m_arrayModes = asArrayModes(structure->indexingType());
     m_type = speculationFromStructure(structure);
     m_value = JSValue();
     
     checkConsistency();
+    assertIsWatched(graph);
+}
+
+void AbstractValue::set(Graph& graph, const StructureSet& set)
+{
+    m_structure = set;
+    m_arrayModes = set.arrayModesFromStructures();
+    m_type = set.speculationFromStructures();
+    m_value = JSValue();
+    
+    checkConsistency();
+    assertIsWatched(graph);
 }
 
 void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
@@ -141,21 +177,18 @@ FiltrationResult AbstractValue::filter(Graph& graph, const StructureSet& other)
     
     m_type &= other.speculationFromStructures();
     m_arrayModes &= other.arrayModesFromStructures();
-    m_currentKnownStructure.filter(other);
+    m_structure.filter(other);
     
     // It's possible that prior to the above two statements we had (Foo, TOP), where
     // Foo is a SpeculatedType that is disjoint with the passed StructureSet. In that
     // case, we will now have (None, [someStructure]). In general, we need to make
     // sure that new information gleaned from the SpeculatedType needs to be fed back
     // into the information gleaned from the StructureSet.
-    m_currentKnownStructure.filter(m_type);
+    m_structure.filter(m_type);
     
-    if (m_currentKnownStructure.hasSingleton())
-        setFuturePossibleStructure(graph, m_currentKnownStructure.singleton());
-        
     filterArrayModesByType();
     filterValueByType();
-    return normalizeClarity();
+    return normalizeClarity(graph);
 }
 
 FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes)
@@ -175,14 +208,26 @@ FiltrationResult AbstractValue::filter(SpeculatedType type)
     if ((m_type & type) == m_type)
         return FiltrationOK;
     
+    // Fast path for the case that we don't even have a cell.
+    if (!(m_type & SpecCell)) {
+        m_type &= type;
+        FiltrationResult result;
+        if (m_type == SpecNone) {
+            clear();
+            result = Contradiction;
+        } else
+            result = FiltrationOK;
+        checkConsistency();
+        return result;
+    }
+    
     m_type &= type;
     
     // It's possible that prior to this filter() call we had, say, (Final, TOP), and
     // the passed type is Array. At this point we'll have (None, TOP). The best way
     // to ensure that the structure filtering does the right thing is to filter on
     // the new type (None) rather than the one passed (Array).
-    m_currentKnownStructure.filter(m_type);
-    m_futurePossibleStructure.filter(m_type);
+    m_structure.filter(type);
     filterArrayModesByType();
     filterValueByType();
     return normalizeClarity();
@@ -194,15 +239,6 @@ FiltrationResult AbstractValue::filterByValue(JSValue value)
     if (m_type)
         m_value = value;
     return result;
-}
-
-void AbstractValue::setFuturePossibleStructure(Graph& graph, Structure* structure)
-{
-    ASSERT(structure);
-    if (graph.watchpoints().isStillValid(structure->transitionWatchpointSet()))
-        m_futurePossibleStructure = structure;
-    else
-        m_futurePossibleStructure.makeTop();
 }
 
 void AbstractValue::filterValueByType()
@@ -250,8 +286,7 @@ bool AbstractValue::shouldBeClear() const
         return true;
     
     if (!(m_type & ~SpecCell)
-        && (!m_arrayModes
-            || m_currentKnownStructure.isClear()))
+        && (!m_arrayModes || m_structure.isClear()))
         return true;
     
     return false;
@@ -275,12 +310,18 @@ FiltrationResult AbstractValue::normalizeClarity()
     return result;
 }
 
+FiltrationResult AbstractValue::normalizeClarity(Graph& graph)
+{
+    FiltrationResult result = normalizeClarity();
+    assertIsWatched(graph);
+    return result;
+}
+
 #if !ASSERT_DISABLED
 void AbstractValue::checkConsistency() const
 {
     if (!(m_type & SpecCell)) {
-        ASSERT(m_currentKnownStructure.isClear());
-        ASSERT(m_futurePossibleStructure.isClear());
+        ASSERT(m_structure.isClear());
         ASSERT(!m_arrayModes);
     }
     
@@ -301,6 +342,11 @@ void AbstractValue::checkConsistency() const
     // we don't want to get pedantic about this as it would only increase the computational
     // complexity of the code.
 }
+
+void AbstractValue::assertIsWatched(Graph& graph) const
+{
+    m_structure.assertIsWatched(graph);
+}
 #endif
 
 void AbstractValue::dump(PrintStream& out) const
@@ -314,8 +360,7 @@ void AbstractValue::dumpInContext(PrintStream& out, DumpContext* context) const
     if (m_type & SpecCell) {
         out.print(
             ", ", ArrayModesDump(m_arrayModes), ", ",
-            inContext(m_currentKnownStructure, context), ", ",
-            inContext(m_futurePossibleStructure, context));
+            inContext(m_structure, context));
     }
     if (!!m_value)
         out.print(", ", inContext(m_value, context));

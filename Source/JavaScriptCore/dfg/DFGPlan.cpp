@@ -63,6 +63,7 @@
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
+#include "DFGWatchableStructureWatchingPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
 #include "Debugger.h"
 #include "JSCInlines.h"
@@ -234,6 +235,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performBackwardsPropagation(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
+    performWatchableStructureWatching(dfg);
     performInvalidationPointInjection(dfg);
     performTypeCheckHoisting(dfg);
     
@@ -311,6 +313,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performSSAConversion(dfg);
         performSSALowering(dfg);
         performCSE(dfg);
+        
+        // At this point we're not allowed to do any further code motion because our reasoning
+        // about code motion assumes that it's OK to insert GC points in random places.
+        
+        performStoreBarrierElision(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performLICM(dfg);

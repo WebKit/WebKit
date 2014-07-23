@@ -34,6 +34,12 @@ private:
     class Node {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        template<typename... Args>
+        Node(Args... args)
+            : m_item(args...)
+        {
+        }
+        
         T m_item;
         Node* m_next;
     };
@@ -53,9 +59,10 @@ public:
         }
     }
     
-    T* add()
+    template<typename... Args>
+    T* add(Args... args)
     {
-        Node* newNode = new Node;
+        Node* newNode = new Node(args...);
         newNode->m_next = m_head;
         m_head = newNode;
         return &newNode->m_item;

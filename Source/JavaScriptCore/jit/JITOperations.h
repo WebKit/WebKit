@@ -171,6 +171,8 @@ typedef void JIT_OPERATION (*V_JITOperation_ESsiJJI)(ExecState*, StructureStubIn
 typedef void JIT_OPERATION (*V_JITOperation_EVwsJ)(ExecState*, VariableWatchpointSet*, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_EZ)(ExecState*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_EVm)(ExecState*, VM*);
+typedef void JIT_OPERATION (*V_JITOperation_J)(EncodedJSValue);
+typedef void JIT_OPERATION (*V_JITOperation_Z)(int32_t);
 typedef char* JIT_OPERATION (*P_JITOperation_E)(ExecState*);
 typedef char* JIT_OPERATION (*P_JITOperation_EC)(ExecState*, JSCell*);
 typedef char* JIT_OPERATION (*P_JITOperation_ECli)(ExecState*, CallLinkInfo*);

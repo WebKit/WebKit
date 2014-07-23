@@ -35,15 +35,6 @@
 namespace JSC { namespace DFG {
 
 template<typename ReadFunctor, typename WriteFunctor>
-void clobberizeForAllocation(ReadFunctor& read, WriteFunctor& write)
-{
-    read(GCState);
-    read(BarrierState);
-    write(GCState);
-    write(BarrierState);
-}
-
-template<typename ReadFunctor, typename WriteFunctor>
 void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write)
 {
     // Some notes:
@@ -133,6 +124,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Int52Rep:
     case BooleanToNumber:
     case FiatInt52:
+    case MakeRope:
         return;
         
     case MovHint:
@@ -158,6 +150,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
+    case StoreBarrier:
+    case StoreBarrierWithNullCheck:
         write(SideState);
         return;
         
@@ -174,7 +168,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
 
     case CreateActivation:
     case CreateArguments:
-        clobberizeForAllocation(read, write);
+        read(HeapObjectCount);
+        write(HeapObjectCount);
         write(SideState);
         write(Watchpoint_fire);
         return;
@@ -186,7 +181,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ToThis:
     case CreateThis:
         read(MiscFields);
-        clobberizeForAllocation(read, write);
+        read(HeapObjectCount);
+        write(HeapObjectCount);
         return;
 
     case VarInjectionWatchpoint:
@@ -424,7 +420,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     }
         
     case CheckStructure:
-    case StructureTransitionWatchpoint:
     case InstanceOf:
         read(JSCell_structureID);
         return;
@@ -453,13 +448,11 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         
     case AllocatePropertyStorage:
         write(JSObject_butterfly);
-        clobberizeForAllocation(read, write);
         return;
         
     case ReallocatePropertyStorage:
         read(JSObject_butterfly);
         write(JSObject_butterfly);
-        clobberizeForAllocation(read, write);
         return;
         
     case GetButterfly:
@@ -475,7 +468,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(JSCell_indexingType);
         write(JSObject_butterfly);
         write(Watchpoint_fire);
-        clobberizeForAllocation(read, write);
         return;
         
     case GetIndexedPropertyStorage:
@@ -508,10 +500,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(AbstractHeap(NamedProperties, node->multiPutByOffsetData().identifierNumber));
         if (node->multiPutByOffsetData().writesStructures())
             write(JSCell_structureID);
-        if (node->multiPutByOffsetData().reallocatesStorage()) {
+        if (node->multiPutByOffsetData().reallocatesStorage())
             write(JSObject_butterfly);
-            clobberizeForAllocation(read, write);
-        }
         return;
         
     case PutByOffset:
@@ -577,15 +567,16 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case NewArrayBuffer:
     case NewRegexp:
     case NewStringObject:
-    case MakeRope:
     case NewFunctionNoCheck:
     case NewFunction:
     case NewFunctionExpression:
-        clobberizeForAllocation(read, write);
+        read(HeapObjectCount);
+        write(HeapObjectCount);
         return;
         
     case NewTypedArray:
-        clobberizeForAllocation(read, write);
+        read(HeapObjectCount);
+        write(HeapObjectCount);
         switch (node->child1().useKind()) {
         case Int32Use:
             return;
@@ -663,19 +654,14 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
 
     case ThrowReferenceError:
         write(SideState);
-        clobberizeForAllocation(read, write);
+        read(HeapObjectCount);
+        write(HeapObjectCount);
         return;
         
     case CountExecution:
     case CheckWatchdogTimer:
         read(InternalState);
         write(InternalState);
-        return;
-
-    case StoreBarrier:
-    case StoreBarrierWithNullCheck:
-        read(BarrierState);
-        write(BarrierState);
         return;
         
     case LastNodeType:

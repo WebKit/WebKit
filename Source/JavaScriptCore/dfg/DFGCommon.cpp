@@ -33,13 +33,21 @@
 
 namespace JSC { namespace DFG {
 
+static unsigned crashLock;
+
 void startCrashing()
 {
 #if ENABLE(COMPARE_AND_SWAP)
-    static unsigned lock;
-    while (!WTF::weakCompareAndSwap(&lock, 0, 1))
+    while (!WTF::weakCompareAndSwap(&crashLock, 0, 1))
         std::this_thread::yield();
+#else
+    crashLock = 1;
 #endif
+}
+
+bool isCrashing()
+{
+    return !!crashLock;
 }
 
 } } // namespace JSC::DFG

@@ -30,6 +30,7 @@
 
 #include "DFGBasicBlock.h"
 #include "DFGClobberize.h"
+#include "DFGDoesGC.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
@@ -58,11 +59,6 @@ public:
     }
 
 private:
-    bool couldCauseGC(Node* node)
-    {
-        return writesOverlap(m_graph, node, GCState);
-    }
-
     bool allocatesFreshObject(Node* node)
     {
         switch (node->op()) {
@@ -104,7 +100,7 @@ private:
 
     void handleNode(HashSet<Node*>& dontNeedBarriers, Node* node)
     {
-        if (couldCauseGC(node))
+        if (doesGC(m_graph, node))
             dontNeedBarriers.clear();
 
         if (allocatesFreshObject(node))

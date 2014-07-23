@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,6 @@
 #include "SpeculatedType.h"
 #include "Structure.h"
 #include "DumpContext.h"
-#include <wtf/CommaPrinter.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -41,156 +39,238 @@ class StructureAbstractValue;
 
 class StructureSet {
 public:
-    StructureSet() { }
+    StructureSet()
+    {
+        setEmpty();
+    }
     
     StructureSet(Structure* structure)
     {
-        ASSERT(structure);
-        m_structures.append(structure);
+        set(structure);
     }
     
-    void clear()
+    ALWAYS_INLINE StructureSet(const StructureSet& other)
     {
-        m_structures.clear();
+        copyFrom(other);
     }
     
-    void add(Structure* structure)
+    ALWAYS_INLINE StructureSet& operator=(const StructureSet& other)
     {
-        ASSERT(structure);
-        ASSERT(!contains(structure));
-        m_structures.append(structure);
+        if (this == &other)
+            return *this;
+        deleteStructureListIfNecessary();
+        copyFrom(other);
+        return *this;
     }
     
-    bool addAll(const StructureSet& other)
+    ~StructureSet()
     {
-        bool changed = false;
-        for (size_t i = 0; i < other.size(); ++i) {
-            if (contains(other[i]))
-                continue;
-            add(other[i]);
-            changed = true;
+        deleteStructureListIfNecessary();
+    }
+    
+    void clear();
+    
+    Structure* onlyStructure() const
+    {
+        if (isThin()) {
+            ASSERT(singleStructure());
+            return singleStructure();
         }
-        return changed;
+        ASSERT(structureList()->m_length == 1);
+        return structureList()->list()[0];
     }
     
-    void remove(Structure* structure)
+    bool isEmpty() const
     {
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (m_structures[i] != structure)
-                continue;
-            
-            m_structures[i] = m_structures.last();
-            m_structures.removeLast();
+        bool result = isThin() && !singleStructure();
+        if (result)
+            ASSERT(m_pointer != reservedValue);
+        return result;
+    }
+    
+    bool add(Structure*);
+    bool remove(Structure*);
+    bool contains(Structure*) const;
+    
+    bool merge(const StructureSet&);
+    void filter(const StructureSet&);
+    void exclude(const StructureSet&);
+    
+    template<typename Functor>
+    void genericFilter(Functor& functor)
+    {
+        if (isThin()) {
+            if (!singleStructure())
+                return;
+            if (functor(singleStructure()))
+                return;
+            clear();
             return;
         }
-    }
-    
-    bool contains(Structure* structure) const
-    {
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (m_structures[i] == structure)
-                return true;
+        
+        OutOfLineList* list = structureList();
+        for (unsigned i = 0; i < list->m_length; ++i) {
+            if (functor(list->list()[i]))
+                continue;
+            list->list()[i--] = list->list()[--list->m_length];
         }
-        return false;
+        if (!list->m_length)
+            clear();
     }
     
-    bool containsOnly(Structure* structure) const
-    {
-        if (size() != 1)
-            return false;
-        return singletonStructure() == structure;
-    }
-    
-    bool isSubsetOf(const StructureSet& other) const
-    {
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (!other.contains(m_structures[i]))
-                return false;
-        }
-        return true;
-    }
-    
+    bool isSubsetOf(const StructureSet&) const;
     bool isSupersetOf(const StructureSet& other) const
     {
         return other.isSubsetOf(*this);
     }
     
-    bool overlaps(const StructureSet& other) const
+    bool overlaps(const StructureSet&) const;
+    
+    size_t size() const
     {
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (other.contains(m_structures[i]))
-                return true;
+        if (isThin())
+            return !!singleStructure();
+        return structureList()->m_length;
+    }
+    
+    Structure* at(size_t i) const
+    {
+        if (isThin()) {
+            ASSERT(!i);
+            ASSERT(singleStructure());
+            return singleStructure();
         }
-        return false;
+        ASSERT(i < structureList()->m_length);
+        return structureList()->list()[i];
     }
-    
-    size_t size() const { return m_structures.size(); }
-    
-    // Call this if you know that the structure set must consist of exactly
-    // one structure.
-    Structure* singletonStructure() const
-    {
-        ASSERT(m_structures.size() == 1);
-        return m_structures[0];
-    }
-    
-    Structure* at(size_t i) const { return m_structures.at(i); }
     
     Structure* operator[](size_t i) const { return at(i); }
     
-    Structure* last() const { return m_structures.last(); }
-
-    SpeculatedType speculationFromStructures() const
+    Structure* last() const
     {
-        SpeculatedType result = SpecNone;
-        
-        for (size_t i = 0; i < m_structures.size(); ++i)
-            mergeSpeculation(result, speculationFromStructure(m_structures[i]));
-        
-        return result;
-    }
-    
-    ArrayModes arrayModesFromStructures() const
-    {
-        ArrayModes result = 0;
-        
-        for (size_t i = 0; i < m_structures.size(); ++i)
-            mergeArrayModes(result, asArrayModes(m_structures[i]->indexingType()));
-        
-        return result;
-    }
-    
-    bool operator==(const StructureSet& other) const
-    {
-        if (m_structures.size() != other.m_structures.size())
-            return false;
-        
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (!other.contains(m_structures[i]))
-                return false;
+        if (isThin()) {
+            ASSERT(singleStructure());
+            return singleStructure();
         }
-        
-        return true;
+        return structureList()->list()[structureList()->m_length - 1];
     }
     
-    void dumpInContext(PrintStream& out, DumpContext* context) const
-    {
-        CommaPrinter comma;
-        out.print("[");
-        for (size_t i = 0; i < m_structures.size(); ++i)
-            out.print(comma, inContext(*m_structures[i], context));
-        out.print("]");
-    }
+    bool operator==(const StructureSet& other) const;
     
-    void dump(PrintStream& out) const
-    {
-        dumpInContext(out, 0);
-    }
+    SpeculatedType speculationFromStructures() const;
+    ArrayModes arrayModesFromStructures() const;
+    
+    void dumpInContext(PrintStream&, DumpContext*) const;
+    void dump(PrintStream&) const;
     
 private:
     friend class DFG::StructureAbstractValue;
     
-    Vector<Structure*, 2> m_structures;
+    static const uintptr_t thinFlag = 1;
+    static const uintptr_t reservedFlag = 2;
+    static const uintptr_t flags = thinFlag | reservedFlag;
+    static const uintptr_t reservedValue = 4;
+
+    static const unsigned defaultStartingSize = 4;
+    
+    bool addOutOfLine(Structure*);
+    bool containsOutOfLine(Structure*) const;
+    
+    class ContainsOutOfLine {
+    public:
+        ContainsOutOfLine(const StructureSet& set)
+            : m_set(set)
+        {
+        }
+        
+        bool operator()(Structure* structure)
+        {
+            return m_set.containsOutOfLine(structure);
+        }
+    private:
+        const StructureSet& m_set;
+    };
+
+    ALWAYS_INLINE void copyFrom(const StructureSet& other)
+    {
+        if (other.isThin() || other.m_pointer == reservedValue) {
+            bool value = getReservedFlag();
+            m_pointer = other.m_pointer;
+            setReservedFlag(value);
+            return;
+        }
+        copyFromOutOfLine(other);
+    }
+    void copyFromOutOfLine(const StructureSet& other);
+    
+    class OutOfLineList {
+    public:
+        static OutOfLineList* create(unsigned capacity);
+        static void destroy(OutOfLineList*);
+        
+        Structure** list() { return bitwise_cast<Structure**>(this + 1); }
+        
+        OutOfLineList(unsigned length, unsigned capacity)
+            : m_length(length)
+            , m_capacity(capacity)
+        {
+        }
+
+        unsigned m_length;
+        unsigned m_capacity;
+    };
+    
+    ALWAYS_INLINE void deleteStructureListIfNecessary()
+    {
+        if (!isThin() && m_pointer != reservedValue)
+            OutOfLineList::destroy(structureList());
+    }
+    
+    bool isThin() const { return m_pointer & thinFlag; }
+    
+    void* pointer() const
+    {
+        return bitwise_cast<void*>(m_pointer & ~flags);
+    }
+    
+    Structure* singleStructure() const
+    {
+        ASSERT(isThin());
+        return static_cast<Structure*>(pointer());
+    }
+    
+    OutOfLineList* structureList() const
+    {
+        ASSERT(!isThin());
+        return static_cast<OutOfLineList*>(pointer());
+    }
+    
+    void set(Structure* structure)
+    {
+        set(bitwise_cast<uintptr_t>(structure), true);
+    }
+    void set(OutOfLineList* structures)
+    {
+        set(bitwise_cast<uintptr_t>(structures), false);
+    }
+    void setEmpty()
+    {
+        set(0, true);
+    }
+    void set(uintptr_t pointer, bool singleStructure)
+    {
+        m_pointer = pointer | (singleStructure ? thinFlag : 0) | (m_pointer & reservedFlag);
+    }
+    bool getReservedFlag() const { return m_pointer & reservedFlag; }
+    void setReservedFlag(bool value)
+    {
+        if (value)
+            m_pointer |= reservedFlag;
+        else
+            m_pointer &= ~reservedFlag;
+    }
+
+    uintptr_t m_pointer;
 };
 
 } // namespace JSC

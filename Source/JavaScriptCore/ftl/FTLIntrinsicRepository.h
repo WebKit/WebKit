@@ -91,6 +91,8 @@ namespace JSC { namespace FTL {
     macro(V_JITOperation_EC, functionType(voidType, intPtr, intPtr)) \
     macro(V_JITOperation_ECb, functionType(voidType, intPtr, intPtr)) \
     macro(V_JITOperation_EVwsJ, functionType(voidType, intPtr, intPtr, int64)) \
+    macro(V_JITOperation_J, functionType(voidType, int64)) \
+    macro(V_JITOperation_Z, functionType(voidType, int32)) \
     macro(Z_JITOperation_D, functionType(int32, doubleType))
 
 class IntrinsicRepository : public CommonValues {

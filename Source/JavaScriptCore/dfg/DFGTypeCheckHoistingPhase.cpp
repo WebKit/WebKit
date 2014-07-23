@@ -215,8 +215,7 @@ private:
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
                 switch (node->op()) {
-                case CheckStructure:
-                case StructureTransitionWatchpoint: {
+                case CheckStructure: {
                     Node* child = node->child1().node();
                     if (child->op() != GetLocal)
                         break;
@@ -285,13 +284,6 @@ private:
                             noticeStructureCheck(variable, subNode->structureSet());
                             break;
                         }
-                        case StructureTransitionWatchpoint: {
-                            if (subNode->child1() != source)
-                                break;
-                            
-                            noticeStructureCheck(variable, subNode->structure());
-                            break;
-                        }
                         default:
                             break;
                         }
@@ -331,7 +323,6 @@ private:
                 }
 
                 case CheckStructure:
-                case StructureTransitionWatchpoint:
                 case GetByOffset:
                 case PutByOffset:
                 case PutStructure:
@@ -384,13 +375,6 @@ private:
                                 break;
                             
                             noticeStructureCheckAccountingForArrayMode(variable, subNode->structureSet());
-                            break;
-                        }
-                        case StructureTransitionWatchpoint: {
-                            if (subNode->child1() != source)
-                                break;
-                            
-                            noticeStructureCheckAccountingForArrayMode(variable, subNode->structure());
                             break;
                         }
                         case CheckArray: {
@@ -503,7 +487,7 @@ private:
             noticeStructureCheck(variable, 0);
             return;
         }
-        noticeStructureCheck(variable, set.singletonStructure());
+        noticeStructureCheck(variable, set.onlyStructure());
     }
 
     void noticeCheckArray(VariableAccessData* variable, ArrayMode arrayMode)

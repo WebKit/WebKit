@@ -279,22 +279,26 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         return node->arrayMode().modeForPut().alreadyChecked(
             graph, node, state.forNode(graph.varArgChild(node, 0)));
 
-    case StructureTransitionWatchpoint:
-        return state.forNode(node->child1()).m_futurePossibleStructure.isSubsetOf(
-            StructureSet(node->structure()));
-        
     case PutStructure:
     case PhantomPutStructure:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
-        return state.forNode(node->child1()).m_currentKnownStructure.isSubsetOf(
-            StructureSet(node->structureTransitionData().previousStructure));
+        return state.forNode(node->child1()).m_structure.isSubsetOf(
+            StructureSet(node->transition()->previous));
         
     case GetByOffset:
     case GetGetterSetterByOffset:
-    case PutByOffset:
-        return state.forNode(node->child1()).m_currentKnownStructure.isValidOffset(
-            graph.m_storageAccessData[node->storageAccessDataIndex()].offset);
+    case PutByOffset: {
+        StructureAbstractValue& value = state.forNode(node->child1()).m_structure;
+        if (value.isTop())
+            return false;
+        PropertyOffset offset = graph.m_storageAccessData[node->storageAccessDataIndex()].offset;
+        for (unsigned i = value.size(); i--;) {
+            if (!value[i]->isValidOffset(offset))
+                return false;
+        }
+        return true;
+    }
         
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();

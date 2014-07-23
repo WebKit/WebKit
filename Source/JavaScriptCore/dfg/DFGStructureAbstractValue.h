@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGTransition.h"
 #include "JSCell.h"
 #include "SpeculatedType.h"
 #include "DumpContext.h"
@@ -37,300 +38,190 @@ namespace JSC { namespace DFG {
 
 class StructureAbstractValue {
 public:
-    StructureAbstractValue()
-        : m_structure(0)
-    {
-    }
-    
+    StructureAbstractValue() { }
     StructureAbstractValue(Structure* structure)
-        : m_structure(structure)
+        : m_set(structure)
     {
+        setClobbered(false);
+    }
+    StructureAbstractValue(const StructureSet& other)
+        : m_set(other)
+    {
+        setClobbered(false);
+    }
+    ALWAYS_INLINE StructureAbstractValue(const StructureAbstractValue& other)
+        : m_set(other.m_set)
+    {
+        setClobbered(other.isClobbered());
     }
     
-    StructureAbstractValue(const StructureSet& set)
+    ALWAYS_INLINE StructureAbstractValue& operator=(const StructureAbstractValue& other)
     {
-        switch (set.size()) {
-        case 0:
-            m_structure = 0;
-            break;
-            
-        case 1:
-            m_structure = set[0];
-            break;
-            
-        default:
-            m_structure = topValue();
-            break;
-        }
+        m_set = other.m_set;
+        setClobbered(other.isClobbered());
+        return *this;
     }
     
     void clear()
     {
-        m_structure = 0;
+        m_set.clear();
+        setClobbered(false);
     }
     
     void makeTop()
     {
-        m_structure = topValue();
+        m_set.deleteStructureListIfNecessary();
+        m_set.m_pointer = topValue;
     }
+    
+#if ASSERT_DISABLED
+    void assertIsWatched(Graph&) const { }
+#else
+    void assertIsWatched(Graph&) const;
+#endif
+    
+    void clobber();
+    void observeInvalidationPoint() { setClobbered(false); }
+    
+    void observeTransition(Structure* from, Structure* to);
+    void observeTransitions(const TransitionVector&);
     
     static StructureAbstractValue top()
     {
-        StructureAbstractValue value;
-        value.makeTop();
-        return value;
+        StructureAbstractValue result;
+        result.m_set.m_pointer = topValue;
+        return result;
     }
     
-    void add(Structure* structure)
-    {
-        ASSERT(!contains(structure) && !isTop());
-        if (m_structure)
-            makeTop();
-        else
-            m_structure = structure;
-    }
+    bool isClear() const { return m_set.isEmpty(); }
+    bool isTop() const { return m_set.m_pointer == topValue; }
+    bool isNeitherClearNorTop() const { return !isClear() && !isTop(); }
     
-    bool addAll(const StructureSet& other)
-    {
-        if (isTop() || !other.size())
-            return false;
-        if (other.size() > 1) {
-            makeTop();
-            return true;
-        }
-        if (!m_structure) {
-            m_structure = other[0];
-            return true;
-        }
-        if (m_structure == other[0])
-            return false;
-        makeTop();
-        return true;
-    }
+    // A clobbered abstract value means that the set currently contains the m_set set of
+    // structures plus TOP, except that the "plus TOP" will go away at the next invalidation
+    // point. Note that it's tempting to think of this as "the set of structures in m_set plus
+    // the set of structures transition-reachable from m_set" - but this isn't really correct,
+    // since if we add an unwatchable structure after clobbering, the two definitions are not
+    // equivalent. If we do this, the new unwatchable structure will be added to m_set.
+    // Invalidation points do not try to "clip" the set of transition-reachable structures from
+    // m_set by looking at reachability as this would mean that the new set is TOP. Instead they
+    // literally assume that the set is just m_set rather than m_set plus TOP.
+    bool isClobbered() const { return m_set.getReservedFlag(); }
     
-    bool addAll(const StructureAbstractValue& other)
+    bool add(Structure* structure);
+    
+    bool merge(const StructureSet& other);
+    
+    ALWAYS_INLINE bool merge(const StructureAbstractValue& other)
     {
-        if (!other.m_structure)
+        if (other.isClear())
             return false;
+        
         if (isTop())
             return false;
+        
         if (other.isTop()) {
             makeTop();
             return true;
         }
-        if (m_structure) {
-            if (m_structure == other.m_structure)
-                return false;
-            makeTop();
-            return true;
-        }
-        m_structure = other.m_structure;
-        return true;
-    }
-    
-    bool contains(Structure* structure) const
-    {
-        if (isTop())
-            return true;
-        if (m_structure == structure)
-            return true;
-        return false;
-    }
-    
-    bool isSubsetOf(const StructureSet& other) const
-    {
-        if (isTop())
-            return false;
-        if (!m_structure)
-            return true;
-        return other.contains(m_structure);
-    }
-    
-    bool doesNotContainAnyOtherThan(Structure* structure) const
-    {
-        if (isTop())
-            return false;
-        if (!m_structure)
-            return true;
-        return m_structure == structure;
-    }
-    
-    bool isSupersetOf(const StructureSet& other) const
-    {
-        if (isTop())
-            return true;
-        if (!other.size())
-            return true;
-        if (other.size() > 1)
-            return false;
-        return m_structure == other[0];
-    }
-    
-    bool isSubsetOf(const StructureAbstractValue& other) const
-    {
-        if (other.isTop())
-            return true;
-        if (isTop())
-            return false;
-        if (m_structure) {
-            if (other.m_structure)
-                return m_structure == other.m_structure;
-            return false;
-        }
-        return true;
-    }
-    
-    bool isSupersetOf(const StructureAbstractValue& other) const
-    {
-        return other.isSubsetOf(*this);
-    }
-    
-    void filter(const StructureSet& other)
-    {
-        if (!m_structure)
-            return;
         
-        if (isTop()) {
-            switch (other.size()) {
-            case 0:
-                m_structure = 0;
-                return;
-                
-            case 1:
-                m_structure = other[0];
-                return;
-                
-            default:
-                return;
-            }
-        }
-        
-        if (other.contains(m_structure))
-            return;
-        
-        m_structure = 0;
+        return mergeSlow(other);
     }
     
-    void filter(const StructureAbstractValue& other)
-    {
-        if (isTop()) {
-            m_structure = other.m_structure;
-            return;
-        }
-        if (m_structure == other.m_structure)
-            return;
-        if (other.isTop())
-            return;
-        m_structure = 0;
-    }
+    void filter(const StructureSet& other);
+    void filter(const StructureAbstractValue& other);
     
-    void filter(SpeculatedType other)
+    ALWAYS_INLINE void filter(SpeculatedType type)
     {
-        if (!(other & SpecCell)) {
+        if (!(type & SpecCell)) {
             clear();
             return;
         }
-        
-        if (isClearOrTop())
-            return;
-
-        if (!(speculationFromStructure(m_structure) & other))
-            m_structure = 0;
+        if (isNeitherClearNorTop())
+            filterSlow(type);
     }
     
-    bool isClear() const
+    ALWAYS_INLINE bool operator==(const StructureAbstractValue& other) const
     {
-        return !m_structure;
+        if ((m_set.isThin() && other.m_set.isThin()) || isTop() || other.isTop())
+            return m_set.m_pointer == other.m_set.m_pointer;
+        
+        return equalsSlow(other);
     }
-    
-    bool isTop() const { return m_structure == topValue(); }
-    
-    bool isClearOrTop() const { return m_structure <= topValue(); }
-    bool isNeitherClearNorTop() const { return !isClearOrTop(); }
     
     size_t size() const
     {
         ASSERT(!isTop());
-        return !!m_structure;
+        return m_set.size();
     }
     
     Structure* at(size_t i) const
     {
         ASSERT(!isTop());
-        ASSERT(m_structure);
-        ASSERT_UNUSED(i, !i);
-        return m_structure;
+        return m_set.at(i);
     }
     
-    Structure* operator[](size_t i) const
-    {
-        return at(i);
-    }
+    Structure* operator[](size_t i) const { return at(i); }
     
-    Structure* last() const
+    // FIXME: Eliminate all uses of this method. There shouldn't be any
+    // special-casing for the one-structure case.
+    // https://bugs.webkit.org/show_bug.cgi?id=133229
+    Structure* onlyStructure() const
     {
+        if (isTop() || size() != 1)
+            return nullptr;
         return at(0);
     }
     
-    SpeculatedType speculationFromStructures() const
-    {
-        if (isTop())
-            return SpecCell;
-        if (isClear())
-            return SpecNone;
-        return speculationFromStructure(m_structure);
-    }
+    void dumpInContext(PrintStream&, DumpContext*) const;
+    void dump(PrintStream&) const;
     
-    bool isValidOffset(PropertyOffset offset)
-    {
-        if (isTop())
-            return false;
-        if (isClear())
-            return true;
-        return m_structure->isValidOffset(offset);
-    }
-    
-    bool hasSingleton() const
-    {
-        return isNeitherClearNorTop();
-    }
-    
-    Structure* singleton() const
-    {
-        ASSERT(isNeitherClearNorTop());
-        return m_structure;
-    }
-    
-    bool operator==(const StructureAbstractValue& other) const
-    {
-        return m_structure == other.m_structure;
-    }
-    
-    void dumpInContext(PrintStream& out, DumpContext* context) const
-    {
-        if (isTop()) {
-            out.print("TOP");
-            return;
-        }
-        
-        out.print("[");
-        if (m_structure)
-            out.print(inContext(*m_structure, context));
-        out.print("]");
-    }
+    // The methods below are all conservative and err on the side of making 'this' appear bigger
+    // than it is. For example, contains() may return true if the set is clobbered or TOP.
+    // isSubsetOf() may return false in case of ambiguities. Therefore you should only perform
+    // optimizations as a consequence of the "this is smaller" return value - so false for
+    // contains(), true for isSubsetOf(), false for isSupersetOf(), and false for overlaps().
 
-    void dump(PrintStream& out) const
+    bool contains(Structure* structure) const;
+    
+    bool isSubsetOf(const StructureSet& other) const;
+    bool isSubsetOf(const StructureAbstractValue& other) const;
+    
+    bool isSupersetOf(const StructureSet& other) const;
+    bool isSupersetOf(const StructureAbstractValue& other) const
     {
-        dumpInContext(out, 0);
+        return other.isSubsetOf(*this);
     }
-
+    
+    bool overlaps(const StructureSet& other) const;
+    bool overlaps(const StructureAbstractValue& other) const;
+    
 private:
-    static Structure* topValue() { return reinterpret_cast<Structure*>(1); }
+    static const uintptr_t clobberedFlag = StructureSet::reservedFlag;
+    static const uintptr_t topValue = StructureSet::reservedValue;
+    static const unsigned polymorphismLimit = 10;
+    static const unsigned clobberedSupremacyThreshold = 2;
     
-    // NB. This must have a trivial destructor.
+    void filterSlow(SpeculatedType type);
+    bool mergeSlow(const StructureAbstractValue& other);
     
-    // This can only remember one structure at a time.
-    Structure* m_structure;
+    bool equalsSlow(const StructureAbstractValue& other) const;
+    
+    void makeTopWhenThin()
+    {
+        ASSERT(m_set.isThin());
+        m_set.m_pointer = topValue;
+    }
+    
+    bool mergeNotTop(const StructureSet& other);
+    
+    void setClobbered(bool clobbered)
+    {
+        ASSERT(!isTop() || !clobbered);
+        m_set.setReservedFlag(clobbered);
+    }
+    
+    StructureSet m_set;
 };
 
 } } // namespace JSC::DFG

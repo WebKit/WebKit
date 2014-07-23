@@ -64,8 +64,6 @@ public:
 private:
     void handle()
     {
-        DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, handleEdge);
-        
         switch (m_node->op()) {
         case CompareEqConstant:
         case IsUndefined:
@@ -119,13 +117,6 @@ private:
             addLazily(jsCast<JSFunction*>(m_node->function())->allocationProfileWatchpointSet());
             break;
             
-        case StructureTransitionWatchpoint:
-            m_graph.watchpoints().addLazily(
-                m_node->origin.semantic,
-                m_node->child1()->op() == WeakJSConstant ? BadWeakConstantCacheWatchpoint : BadCacheWatchpoint,
-                m_node->structure()->transitionWatchpointSet());
-            break;
-            
         case VariableWatchpoint:
             addLazily(m_node->variableWatchpointSet());
             break;
@@ -141,26 +132,6 @@ private:
         case TypedArrayWatchpoint:
             addLazily(m_node->typedArray());
             break;
-            
-        default:
-            break;
-        }
-    }
-    
-    void handleEdge(Node*, Edge edge)
-    {
-        switch (edge.useKind()) {
-        case StringObjectUse:
-        case StringOrStringObjectUse: {
-            Structure* stringObjectStructure = globalObject()->stringObjectStructure();
-            Structure* stringPrototypeStructure = stringObjectStructure->storedPrototype().asCell()->structure();
-            ASSERT(m_graph.watchpoints().isValidOrMixed(stringPrototypeStructure->transitionWatchpointSet()));
-            
-            m_graph.watchpoints().addLazily(
-                m_node->origin.semantic, NotStringObject,
-                stringPrototypeStructure->transitionWatchpointSet());
-            break;
-        }
             
         default:
             break;

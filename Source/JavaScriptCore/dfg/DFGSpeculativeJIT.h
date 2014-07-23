@@ -3130,7 +3130,7 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
     Structure* stringObjectStructure =
         m_jit.globalObjectFor(m_currentNode->origin.semantic)->stringObjectStructure();
     
-    if (!m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(stringObjectStructure))) {
+    if (!m_state.forNode(edge).m_structure.isSubsetOf(StructureSet(stringObjectStructure))) {
         speculationCheck(
             NotStringObject, JSValueRegs(), 0,
             m_jit.branchStructurePtr(

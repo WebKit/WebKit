@@ -1,3 +1,662 @@
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r169148, r169185, r169188, r169578, r169582, r169584, r169588, r169753 from ftlopt.
+        
+        Note that r169753 is merged out of order because it fixes a bug in r169588.
+
+    2014-06-10  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Structure::dfgShouldWatchIfPossible() is unsound
+            https://bugs.webkit.org/show_bug.cgi?id=133624
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * runtime/Structure.h:
+            (JSC::Structure::dfgShouldWatchIfPossible): Make it sound and add some verbiage.
+    
+    2014-06-04  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] AI should be able track structure sets larger than 1
+            https://bugs.webkit.org/show_bug.cgi?id=128073
+    
+            Reviewed by Oliver Hunt.
+            
+            This makes two major changes to how AI (abstract interpreter) proves that a value has
+            some structure:
+            
+            - StructureAbstractValue can now track an arbitrary number of structures. A set whose
+              size is greater than one means that the value may have any of the structures, and we
+              don't know which - but we do know that it cannot be any structure not in the set. The
+              structure abstract value can still be TOP, which means the set of all structures. We
+              artificially limit the set size to StructureAbstractValue::polymorphismLimit to guard
+              memory explosion on pathological programs. This limit is big enough that it wouldn't
+              kick in for normal code, since we have other heuristics that limit the number of
+              structures that we would allow an inline cache to know about.
+            
+            - We eagerly set watchpoints on all watchable structures and then we assume that
+              watchable structures are being watched, and that the watchpoint will jettison the code.
+              This allows tracking of watchable structures to be far simpler than before. Previously,
+              a structure being tracked as "future possible" was predicated on it being watchable but
+              we might not actually watch it. This makes algebra over sets of future possible
+              structures quite weird. But watching all watchable structures means that we simple say
+              that a structure set can be in the following states: unclobbered, which means it's just
+              a set of structures and it doesn't matter what is watchable or what isn't because we've
+              proven that the value must have one of these structures right now; and clobbered, which
+              means that we have a set of structures, plus all possible structures temporarily, with
+              invalidation removing the "plus all possible structures". Clobbering a set means that
+              if any of its structures are unwatchable, the set just becomes TOP; but if all
+              structures in the set are watchable then we just set the clobbered bit to add the "plus
+              all possible structures temporarily" thing. This precisely tracks the exact meaning of
+              watchability and invalidation points.
+            
+            Slight SunSpider slow-down, neutral on Octane, slight AsmBench speed-up. I believe that
+            we will ultimately undo the SunSpider slow-down by making further improvements to the set
+            representation. I believe that Octane perfromance will ultimately improve once we remove
+            remaining singleton special-cases. The ultimate goal of this is to remove the need to
+            try quite so desperately hard to make everything monomorphic as we do currently.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/StructureSet.cpp:
+            (JSC::StructureSet::clear):
+            (JSC::StructureSet::remove):
+            (JSC::StructureSet::filter):
+            (JSC::StructureSet::copyFromOutOfLine):
+            (JSC::StructureSet::StructureSet): Deleted.
+            (JSC::StructureSet::operator=): Deleted.
+            (JSC::StructureSet::copyFrom): Deleted.
+            * bytecode/StructureSet.h:
+            (JSC::StructureSet::StructureSet):
+            (JSC::StructureSet::operator=):
+            (JSC::StructureSet::isEmpty):
+            (JSC::StructureSet::genericFilter):
+            (JSC::StructureSet::ContainsOutOfLine::ContainsOutOfLine):
+            (JSC::StructureSet::ContainsOutOfLine::operator()):
+            (JSC::StructureSet::copyFrom):
+            (JSC::StructureSet::deleteStructureListIfNecessary):
+            (JSC::StructureSet::setEmpty):
+            (JSC::StructureSet::getReservedFlag):
+            (JSC::StructureSet::setReservedFlag):
+            * dfg/DFGAbstractInterpreter.h:
+            (JSC::DFG::AbstractInterpreter::setBuiltInConstant):
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::booleanResult):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::verifyEdge):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberCapturedVars):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::forAllValues):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberStructures):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransition):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransitions):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::setDidClobber):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::dump):
+            * dfg/DFGAbstractValue.cpp:
+            (JSC::DFG::AbstractValue::observeTransitions):
+            (JSC::DFG::AbstractValue::setMostSpecific):
+            (JSC::DFG::AbstractValue::set):
+            (JSC::DFG::AbstractValue::filter):
+            (JSC::DFG::AbstractValue::shouldBeClear):
+            (JSC::DFG::AbstractValue::normalizeClarity):
+            (JSC::DFG::AbstractValue::checkConsistency):
+            (JSC::DFG::AbstractValue::assertIsWatched):
+            (JSC::DFG::AbstractValue::dumpInContext):
+            (JSC::DFG::AbstractValue::setFuturePossibleStructure): Deleted.
+            * dfg/DFGAbstractValue.h:
+            (JSC::DFG::AbstractValue::clear):
+            (JSC::DFG::AbstractValue::clobberStructures):
+            (JSC::DFG::AbstractValue::clobberStructuresFor):
+            (JSC::DFG::AbstractValue::observeInvalidationPoint):
+            (JSC::DFG::AbstractValue::observeInvalidationPointFor):
+            (JSC::DFG::AbstractValue::observeTransition):
+            (JSC::DFG::AbstractValue::TransitionObserver::TransitionObserver):
+            (JSC::DFG::AbstractValue::TransitionObserver::operator()):
+            (JSC::DFG::AbstractValue::TransitionsObserver::TransitionsObserver):
+            (JSC::DFG::AbstractValue::TransitionsObserver::operator()):
+            (JSC::DFG::AbstractValue::isHeapTop):
+            (JSC::DFG::AbstractValue::setType):
+            (JSC::DFG::AbstractValue::operator==):
+            (JSC::DFG::AbstractValue::merge):
+            (JSC::DFG::AbstractValue::validate):
+            (JSC::DFG::AbstractValue::hasClobberableState):
+            (JSC::DFG::AbstractValue::assertIsWatched):
+            (JSC::DFG::AbstractValue::observeIndexingTypeTransition):
+            (JSC::DFG::AbstractValue::makeTop):
+            (JSC::DFG::AbstractValue::bestProvenStructure): Deleted.
+            * dfg/DFGAllocator.h:
+            * dfg/DFGArgumentsSimplificationPhase.cpp:
+            (JSC::DFG::ArgumentsSimplificationPhase::run):
+            * dfg/DFGArrayMode.cpp:
+            (JSC::DFG::ArrayMode::alreadyChecked):
+            * dfg/DFGAtTailAbstractState.h:
+            (JSC::DFG::AtTailAbstractState::structureClobberState):
+            (JSC::DFG::AtTailAbstractState::setStructureClobberState):
+            (JSC::DFG::AtTailAbstractState::setFoundConstants):
+            (JSC::DFG::AtTailAbstractState::haveStructures): Deleted.
+            (JSC::DFG::AtTailAbstractState::setHaveStructures): Deleted.
+            * dfg/DFGBasicBlock.cpp:
+            (JSC::DFG::BasicBlock::BasicBlock):
+            * dfg/DFGBasicBlock.h:
+            * dfg/DFGBranchDirection.h:
+            (JSC::DFG::branchDirectionToString):
+            (WTF::printInternal):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            * dfg/DFGCFAPhase.cpp:
+            (JSC::DFG::CFAPhase::performBlockCFA):
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::checkStructureElimination):
+            (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGCommon.cpp:
+            (JSC::DFG::startCrashing):
+            (JSC::DFG::isCrashing):
+            * dfg/DFGCommon.h:
+            * dfg/DFGCommonData.cpp:
+            (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+            (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+            (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+            * dfg/DFGDesiredWatchpoints.cpp:
+            (JSC::DFG::DesiredWatchpoints::consider):
+            (JSC::DFG::DesiredWatchpoints::addLazily): Deleted.
+            * dfg/DFGDesiredWatchpoints.h:
+            (JSC::DFG::GenericDesiredWatchpoints::reallyAdd):
+            (JSC::DFG::GenericDesiredWatchpoints::areStillValid):
+            (JSC::DFG::GenericDesiredWatchpoints::isWatched):
+            (JSC::DFG::DesiredWatchpoints::isWatched):
+            (JSC::DFG::WatchpointForGenericWatchpointSet::WatchpointForGenericWatchpointSet): Deleted.
+            (JSC::DFG::GenericDesiredWatchpoints::addLazily): Deleted.
+            (JSC::DFG::GenericDesiredWatchpoints::isStillValid): Deleted.
+            (JSC::DFG::GenericDesiredWatchpoints::shouldAssumeMixedState): Deleted.
+            (JSC::DFG::GenericDesiredWatchpoints::isValidOrMixed): Deleted.
+            (JSC::DFG::DesiredWatchpoints::isStillValid): Deleted.
+            (JSC::DFG::DesiredWatchpoints::shouldAssumeMixedState): Deleted.
+            (JSC::DFG::DesiredWatchpoints::isValidOrMixed): Deleted.
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+            (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::~Graph):
+            (JSC::DFG::Graph::dump):
+            (JSC::DFG::Graph::dumpBlockHeader):
+            (JSC::DFG::Graph::tryGetFoldableView):
+            (JSC::DFG::Graph::visitChildren):
+            (JSC::DFG::Graph::assertIsWatched):
+            (JSC::DFG::Graph::handleAssertionFailure):
+            * dfg/DFGGraph.h:
+            (JSC::DFG::Graph::convertToConstant):
+            (JSC::DFG::Graph::masqueradesAsUndefinedWatchpointIsStillValid):
+            (JSC::DFG::Graph::addStructureTransitionData): Deleted.
+            * dfg/DFGInPlaceAbstractState.cpp:
+            (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+            (JSC::DFG::InPlaceAbstractState::initialize):
+            (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+            (JSC::DFG::InPlaceAbstractState::reset):
+            (JSC::DFG::InPlaceAbstractState::merge):
+            * dfg/DFGInPlaceAbstractState.h:
+            (JSC::DFG::InPlaceAbstractState::structureClobberState):
+            (JSC::DFG::InPlaceAbstractState::setStructureClobberState):
+            (JSC::DFG::InPlaceAbstractState::setFoundConstants):
+            (JSC::DFG::InPlaceAbstractState::haveStructures): Deleted.
+            (JSC::DFG::InPlaceAbstractState::setHaveStructures): Deleted.
+            * dfg/DFGLivenessAnalysisPhase.cpp:
+            (JSC::DFG::LivenessAnalysisPhase::run):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasTransition):
+            (JSC::DFG::Node::transition):
+            (JSC::DFG::Node::hasStructure):
+            (JSC::DFG::StructureTransitionData::StructureTransitionData): Deleted.
+            (JSC::DFG::Node::convertToStructureTransitionWatchpoint): Deleted.
+            (JSC::DFG::Node::hasStructureTransitionData): Deleted.
+            (JSC::DFG::Node::structureTransitionData): Deleted.
+            * dfg/DFGNodeType.h:
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+            (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+            * dfg/DFGSpeculativeJIT.h:
+            (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGStructureAbstractValue.cpp: Added.
+            (JSC::DFG::StructureAbstractValue::assertIsWatched):
+            (JSC::DFG::StructureAbstractValue::clobber):
+            (JSC::DFG::StructureAbstractValue::observeTransition):
+            (JSC::DFG::StructureAbstractValue::observeTransitions):
+            (JSC::DFG::StructureAbstractValue::add):
+            (JSC::DFG::StructureAbstractValue::merge):
+            (JSC::DFG::StructureAbstractValue::mergeSlow):
+            (JSC::DFG::StructureAbstractValue::mergeNotTop):
+            (JSC::DFG::StructureAbstractValue::filter):
+            (JSC::DFG::StructureAbstractValue::filterSlow):
+            (JSC::DFG::StructureAbstractValue::contains):
+            (JSC::DFG::StructureAbstractValue::isSubsetOf):
+            (JSC::DFG::StructureAbstractValue::isSupersetOf):
+            (JSC::DFG::StructureAbstractValue::overlaps):
+            (JSC::DFG::StructureAbstractValue::equalsSlow):
+            (JSC::DFG::StructureAbstractValue::dumpInContext):
+            (JSC::DFG::StructureAbstractValue::dump):
+            * dfg/DFGStructureAbstractValue.h:
+            (JSC::DFG::StructureAbstractValue::StructureAbstractValue):
+            (JSC::DFG::StructureAbstractValue::operator=):
+            (JSC::DFG::StructureAbstractValue::clear):
+            (JSC::DFG::StructureAbstractValue::makeTop):
+            (JSC::DFG::StructureAbstractValue::assertIsWatched):
+            (JSC::DFG::StructureAbstractValue::observeInvalidationPoint):
+            (JSC::DFG::StructureAbstractValue::top):
+            (JSC::DFG::StructureAbstractValue::isClear):
+            (JSC::DFG::StructureAbstractValue::isTop):
+            (JSC::DFG::StructureAbstractValue::isNeitherClearNorTop):
+            (JSC::DFG::StructureAbstractValue::isClobbered):
+            (JSC::DFG::StructureAbstractValue::merge):
+            (JSC::DFG::StructureAbstractValue::filter):
+            (JSC::DFG::StructureAbstractValue::operator==):
+            (JSC::DFG::StructureAbstractValue::size):
+            (JSC::DFG::StructureAbstractValue::at):
+            (JSC::DFG::StructureAbstractValue::operator[]):
+            (JSC::DFG::StructureAbstractValue::onlyStructure):
+            (JSC::DFG::StructureAbstractValue::isSupersetOf):
+            (JSC::DFG::StructureAbstractValue::makeTopWhenThin):
+            (JSC::DFG::StructureAbstractValue::setClobbered):
+            (JSC::DFG::StructureAbstractValue::add): Deleted.
+            (JSC::DFG::StructureAbstractValue::addAll): Deleted.
+            (JSC::DFG::StructureAbstractValue::contains): Deleted.
+            (JSC::DFG::StructureAbstractValue::isSubsetOf): Deleted.
+            (JSC::DFG::StructureAbstractValue::doesNotContainAnyOtherThan): Deleted.
+            (JSC::DFG::StructureAbstractValue::isClearOrTop): Deleted.
+            (JSC::DFG::StructureAbstractValue::last): Deleted.
+            (JSC::DFG::StructureAbstractValue::speculationFromStructures): Deleted.
+            (JSC::DFG::StructureAbstractValue::isValidOffset): Deleted.
+            (JSC::DFG::StructureAbstractValue::hasSingleton): Deleted.
+            (JSC::DFG::StructureAbstractValue::singleton): Deleted.
+            (JSC::DFG::StructureAbstractValue::dumpInContext): Deleted.
+            (JSC::DFG::StructureAbstractValue::dump): Deleted.
+            (JSC::DFG::StructureAbstractValue::topValue): Deleted.
+            * dfg/DFGStructureClobberState.h: Added.
+            (JSC::DFG::merge):
+            (WTF::printInternal):
+            * dfg/DFGTransition.cpp: Added.
+            (JSC::DFG::Transition::dumpInContext):
+            (JSC::DFG::Transition::dump):
+            * dfg/DFGTransition.h: Added.
+            (JSC::DFG::Transition::Transition):
+            * dfg/DFGTypeCheckHoistingPhase.cpp:
+            (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+            (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+            * dfg/DFGWatchableStructureWatchingPhase.cpp: Added.
+            (JSC::DFG::WatchableStructureWatchingPhase::WatchableStructureWatchingPhase):
+            (JSC::DFG::WatchableStructureWatchingPhase::run):
+            (JSC::DFG::WatchableStructureWatchingPhase::tryWatch):
+            (JSC::DFG::performWatchableStructureWatching):
+            * dfg/DFGWatchableStructureWatchingPhase.h: Added.
+            * dfg/DFGWatchpointCollectionPhase.cpp:
+            (JSC::DFG::WatchpointCollectionPhase::handle):
+            (JSC::DFG::WatchpointCollectionPhase::handleEdge): Deleted.
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLIntrinsicRepository.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::ftlUnreachable):
+            (JSC::FTL::LowerDFGToLLVM::createPhiVariables):
+            (JSC::FTL::LowerDFGToLLVM::compileBlock):
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileUpsilon):
+            (JSC::FTL::LowerDFGToLLVM::compilePhi):
+            (JSC::FTL::LowerDFGToLLVM::compileDoubleRep):
+            (JSC::FTL::LowerDFGToLLVM::compileValueRep):
+            (JSC::FTL::LowerDFGToLLVM::compileValueToInt32):
+            (JSC::FTL::LowerDFGToLLVM::compileGetArgument):
+            (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+            (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+            (JSC::FTL::LowerDFGToLLVM::compileArithAddOrSub):
+            (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+            (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+            (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+            (JSC::FTL::LowerDFGToLLVM::compileArithMinOrMax):
+            (JSC::FTL::LowerDFGToLLVM::compileArithAbs):
+            (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+            (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+            (JSC::FTL::LowerDFGToLLVM::compileGetById):
+            (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentsLength):
+            (JSC::FTL::LowerDFGToLLVM::compileGetMyArgumentByVal):
+            (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+            (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+            (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPush):
+            (JSC::FTL::LowerDFGToLLVM::compileArrayPop):
+            (JSC::FTL::LowerDFGToLLVM::compileNewArray):
+            (JSC::FTL::LowerDFGToLLVM::compileNewArrayBuffer):
+            (JSC::FTL::LowerDFGToLLVM::compileAllocatePropertyStorage):
+            (JSC::FTL::LowerDFGToLLVM::compileReallocatePropertyStorage):
+            (JSC::FTL::LowerDFGToLLVM::compileToString):
+            (JSC::FTL::LowerDFGToLLVM::compileMakeRope):
+            (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+            (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+            (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+            (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+            (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+            (JSC::FTL::LowerDFGToLLVM::compare):
+            (JSC::FTL::LowerDFGToLLVM::boolify):
+            (JSC::FTL::LowerDFGToLLVM::terminate):
+            (JSC::FTL::LowerDFGToLLVM::lowInt32):
+            (JSC::FTL::LowerDFGToLLVM::lowInt52):
+            (JSC::FTL::LowerDFGToLLVM::opposite):
+            (JSC::FTL::LowerDFGToLLVM::lowCell):
+            (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+            (JSC::FTL::LowerDFGToLLVM::lowDouble):
+            (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+            (JSC::FTL::LowerDFGToLLVM::speculate):
+            (JSC::FTL::LowerDFGToLLVM::isArrayType):
+            (JSC::FTL::LowerDFGToLLVM::speculateStringObjectForStructureID):
+            (JSC::FTL::LowerDFGToLLVM::callCheck):
+            (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+            (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+            (JSC::FTL::LowerDFGToLLVM::setInt52):
+            (JSC::FTL::LowerDFGToLLVM::crash):
+            (JSC::FTL::LowerDFGToLLVM::compileStructureTransitionWatchpoint): Deleted.
+            * ftl/FTLOutput.cpp:
+            (JSC::FTL::Output::crashNonTerminal): Deleted.
+            * ftl/FTLOutput.h:
+            (JSC::FTL::Output::crash): Deleted.
+            * jit/JITOperations.h:
+            * jsc.cpp:
+            (WTF::jscExit):
+            (functionQuit):
+            (main):
+            (printUsageStatement):
+            (CommandLine::parseArguments):
+            * runtime/Structure.h:
+            (JSC::Structure::dfgShouldWatchIfPossible):
+            (JSC::Structure::dfgShouldWatch):
+            * tests/stress/arrayify-to-structure-contradiction.js: Added.
+            (foo):
+            * tests/stress/ftl-getmyargumentslength-inline.js: Added.
+            (foo):
+            * tests/stress/multi-put-by-offset-multiple-transitions.js: Added.
+            (foo):
+            (Foo):
+            * tests/stress/throw-from-ftl-in-loop.js: Added.
+            * tests/stress/throw-from-ftl.js: Added.
+            (foo):
+    
+    2014-06-03  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Unreviewed, roll out r169578. The build system needs some more love.
+    
+            * InlineRuntimeSymbolTable.h: Removed.
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * build-symbol-table-index.py:
+            * build-symbol-table-index.sh:
+            * copy-llvm-ir-to-derived-sources.sh:
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleCall):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::canBeKnownFunction): Deleted.
+            (JSC::DFG::Node::hasKnownFunction): Deleted.
+            (JSC::DFG::Node::knownFunction): Deleted.
+            (JSC::DFG::Node::giveKnownFunction): Deleted.
+            * ftl/FTLAbbreviatedTypes.h:
+            * ftl/FTLCompile.cpp:
+            (JSC::FTL::compile):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+            (JSC::FTL::LowerDFGToLLVM::lower):
+            (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+            (JSC::FTL::LowerDFGToLLVM::possiblyCompileInlineableNativeCall): Deleted.
+            (JSC::FTL::LowerDFGToLLVM::getFunctionBySymbol): Deleted.
+            (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol): Deleted.
+            (JSC::FTL::LowerDFGToLLVM::isInlinableSize): Deleted.
+            * ftl/FTLState.cpp:
+            (JSC::FTL::State::State):
+            * ftl/FTLState.h:
+            * heap/HandleStack.h:
+            * llvm/InitializeLLVM.h:
+            * llvm/InitializeLLVMMac.cpp: Removed.
+            * llvm/InitializeLLVMMac.mm: Added.
+            (JSC::initializeLLVMImpl):
+            * llvm/LLVMAPIFunctions.h:
+            * llvm/LLVMHeaders.h:
+            * runtime/BundlePath.h: Removed.
+            * runtime/BundlePath.mm: Removed.
+            * runtime/DateConversion.h:
+            * runtime/DateInstance.h:
+            * runtime/ExceptionHelpers.h:
+            * runtime/JSArray.h:
+            * runtime/JSCJSValue.h:
+            (JSC::JSValue::toFloat):
+            * runtime/JSDateMath.h:
+            * runtime/JSObject.h:
+            * runtime/JSWrapperObject.h:
+            * runtime/Options.h:
+            * runtime/RegExp.h:
+            * runtime/StringObject.h:
+            * runtime/Structure.h:
+            * tested-symbols.symlst: Removed.
+    
+    2014-06-03  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] FTL native inlining tests take far too long
+            https://bugs.webkit.org/show_bug.cgi?id=133498
+    
+            Unreviewed test gardening.
+            
+            Added a new exceptions test since the other one appears to not work.
+    
+            * tests/stress/ftl-library-exception.js:
+            * tests/stress/ftl-library-inline-gettimezoneoffset.js: Added.
+            (foo):
+            * tests/stress/ftl-library-inlining-exceptions-dataview.js: Added.
+            (foo):
+            * tests/stress/ftl-library-inlining-exceptions.js: Copied from LayoutTests/js/regress/script-tests/ftl-library-inlining-exceptions.js.
+            * tests/stress/ftl-library-inlining-loops.js: Copied from LayoutTests/js/regress/script-tests/ftl-library-inlining-loops.js.
+            * tests/stress/ftl-library-inlining-random.js:
+            * tests/stress/ftl-library-substring.js:
+    
+    2014-06-03  Matthew Mirman  <mmirman@apple.com>
+    
+            [ftlopt] Added system for inlining native functions via the FTL.
+            https://bugs.webkit.org/show_bug.cgi?id=131515
+    
+            Reviewed by Filip Pizlo.
+    
+            Also fixed the build to not compress the bitcode and to 
+            include all of the relevant runtime. With GCC_GENERATE_DEBUGGING_SYMBOLS = NO, 
+            the produced bitcode files are a 100th the size they were before.  
+            Now we can include all of the relevant runtime files with only a 3mb overhead. 
+            This is the same overhead as for two compressed files before, 
+            but done more efficiently (on both ends) and with less code.
+            
+            Deciding whether to inline native functions is left up to LLVM. 
+            The entire module containing the function is linked into the current 
+            compiled JS so that inlining the native functions shouldn't make them smaller.
+            
+            Rather than loading Runtime.symtbl at runtime FTLState.cpp now includes a file 
+            InlineRuntimeSymbolTable.h which statically builds the symbol table hash table.  
+            Currently build-symbol-table-index.py updates this file from the 
+            contents of tested-symbols.symlst when done building as a matter of convenience.  
+            However, in order to include the new contents of the file in the build
+            you'd need to build twice.  This will be fixed in future versions.
+    
+            * JavaScriptCore.xcodeproj/project.pbxproj: Added back runtime files to compile.
+            * build-symbol-table-index.py: Changed bitcode suffix. 
+            Added inclusion of only tested symbols.  
+            Added output to InlineRuntimeSymbolTable.h. 
+            * build-symbol-table-index.sh: Changed bitcode suffix.
+            * copy-llvm-ir-to-derived-sources.sh: Removed gzip compression.
+            * tested-symbols.symlst: Added.
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleCall):  
+            Now sets the knownFunction of the call node if such a function exists 
+            and emits a check that during runtime the callee is in fact known.
+            * dfg/DFGNode.h:
+            Added functions to set the known function of a call node.
+            (JSC::DFG::Node::canBeKnownFunction): Added.
+            (JSC::DFG::Node::hasKnownFunction): Added.
+            (JSC::DFG::Node::knownFunction): Added.
+            (JSC::DFG::Node::giveKnownFunction): Added.
+            * ftl/FTLAbbreviatedTypes.h: Added a typedef for LLVMMemoryBufferRef
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::isInlinableSize): Added. Hardcoded threshold to 275.
+            (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol): Added.
+            (JSC::FTL::LowerDFGToLLVM::getFunctionBySymbol): Added.
+            (JSC::FTL::LowerDFGToLLVM::possiblyCompileInlineableNativeCall): Added.
+            (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):  
+            Added call to possiblyCompileInlineableNativeCall
+            * ftl/FTLOutput.h:
+            (JSC::FTL::Output::allocaName):  Added. Useful for debugging.
+            * ftl/FTLState.cpp:
+            (JSC::FTL::State::State): Added an include for InlineRuntimeSymbolTable.h
+            * ftl/FTLState.h: Added symbol table hash table.
+            * ftl/FTLCompile.cpp:
+            (JSC::FTL::compile): Added inlining and dead function elimination passes.
+            * heap/HandleStack.h: Added JS_EXPORT_PRIVATE to a few functions to get inlining to compile.
+            * InlineRuntimeSymbolTable.h: Added.  
+            * llvm/InitializeLLVMMac.mm: Deleted.
+            * llvm/InitializeLLVMMac.cpp: Added.
+            * llvm/LLVMAPIFunctions.h: Added macros to include Bitcode parsing and linking functions.
+            * llvm/LLVMHeaders.h: Added includes for Bitcode parsing and linking.
+            * runtime/BundlePath.h: Added.
+            * runtime/BundlePath.mm: Added.
+            * runtime/DateInstance.h: Added JS_EXPORT_PRIVATE to a few functions to get inlining to compile.
+            * runtime/DateInstance.h: ditto.
+            * runtime/DateConversion.h: ditto.
+            * runtime/ExceptionHelpers.h: ditto.
+            * runtime/JSCJSValue.h: ditto.
+            * runtime/JSArray.h: ditto.
+            * runtime/JSDateMath.h: ditto.
+            * runtime/JSObject.h: ditto.
+            * runtime/JSObject.h: ditto.
+            * runtime/RegExp.h: ditto.
+            * runtime/Structure.h: ditto.
+            * runtime/Options.h:  Added maximumLLVMInstructionCountForNativeInlining.
+            * tests/stress/ftl-library-inlining-random.js: Added.
+            * tests/stress/ftl-library-substring.js: Added.
+    
+    2014-05-21  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG::clobberize should be blind to the effects of GC
+            https://bugs.webkit.org/show_bug.cgi?id=133166
+    
+            Reviewed by Goeffrey Garen.
+            
+            Move the computation of where GCs happen to DFG::doesGC().
+            
+            Large (>5x) speed-up on programs that do loop-invariant string concatenations.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * dfg/DFGAbstractHeap.h:
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            (JSC::DFG::clobberizeForAllocation): Deleted.
+            * dfg/DFGDoesGC.cpp: Added.
+            (JSC::DFG::doesGC):
+            * dfg/DFGDoesGC.h: Added.
+            * dfg/DFGStoreBarrierElisionPhase.cpp:
+            (JSC::DFG::StoreBarrierElisionPhase::handleNode):
+            (JSC::DFG::StoreBarrierElisionPhase::couldCauseGC): Deleted.
+    
+    2014-05-16  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] A StructureSet with one element should only require one word and no allocation
+            https://bugs.webkit.org/show_bug.cgi?id=133014
+    
+            Reviewed by Oliver Hunt.
+            
+            This makes it more efficient to use StructureSet in situations where the common case is
+            just one structure.
+            
+            I also took the opportunity to use the same set terminology we use in BitVector: merge,
+            filter, exclude, contains, etc.
+            
+            Eventually, this will be used to implement StructureAbstractValue as well.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/StructureSet.cpp: Added.
+            (JSC::StructureSet::StructureSet):
+            (JSC::StructureSet::operator=):
+            (JSC::StructureSet::clear):
+            (JSC::StructureSet::add):
+            (JSC::StructureSet::remove):
+            (JSC::StructureSet::contains):
+            (JSC::StructureSet::merge):
+            (JSC::StructureSet::filter):
+            (JSC::StructureSet::exclude):
+            (JSC::StructureSet::isSubsetOf):
+            (JSC::StructureSet::overlaps):
+            (JSC::StructureSet::operator==):
+            (JSC::StructureSet::speculationFromStructures):
+            (JSC::StructureSet::arrayModesFromStructures):
+            (JSC::StructureSet::dumpInContext):
+            (JSC::StructureSet::dump):
+            (JSC::StructureSet::addOutOfLine):
+            (JSC::StructureSet::containsOutOfLine):
+            (JSC::StructureSet::copyFrom):
+            (JSC::StructureSet::OutOfLineList::create):
+            (JSC::StructureSet::OutOfLineList::destroy):
+            * bytecode/StructureSet.h:
+            (JSC::StructureSet::StructureSet):
+            (JSC::StructureSet::~StructureSet):
+            (JSC::StructureSet::onlyStructure):
+            (JSC::StructureSet::isEmpty):
+            (JSC::StructureSet::size):
+            (JSC::StructureSet::at):
+            (JSC::StructureSet::operator[]):
+            (JSC::StructureSet::last):
+            (JSC::StructureSet::OutOfLineList::list):
+            (JSC::StructureSet::OutOfLineList::OutOfLineList):
+            (JSC::StructureSet::deleteStructureListIfNecessary):
+            (JSC::StructureSet::isThin):
+            (JSC::StructureSet::pointer):
+            (JSC::StructureSet::singleStructure):
+            (JSC::StructureSet::structureList):
+            (JSC::StructureSet::set):
+            (JSC::StructureSet::clear): Deleted.
+            (JSC::StructureSet::add): Deleted.
+            (JSC::StructureSet::addAll): Deleted.
+            (JSC::StructureSet::remove): Deleted.
+            (JSC::StructureSet::contains): Deleted.
+            (JSC::StructureSet::containsOnly): Deleted.
+            (JSC::StructureSet::isSubsetOf): Deleted.
+            (JSC::StructureSet::overlaps): Deleted.
+            (JSC::StructureSet::singletonStructure): Deleted.
+            (JSC::StructureSet::speculationFromStructures): Deleted.
+            (JSC::StructureSet::arrayModesFromStructures): Deleted.
+            (JSC::StructureSet::operator==): Deleted.
+            (JSC::StructureSet::dumpInContext): Deleted.
+            (JSC::StructureSet::dump): Deleted.
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::emitPrototypeChecks):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::convertToStructureTransitionWatchpoint):
+            * dfg/DFGTypeCheckHoistingPhase.cpp:
+            (JSC::DFG::TypeCheckHoistingPhase::noticeStructureCheck):
+    
 2014-07-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on the EFL port after r171362.

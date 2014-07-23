@@ -90,6 +90,7 @@ set(JavaScriptCore_SOURCES
     bytecode/SamplingTool.cpp
     bytecode/SpecialPointer.cpp
     bytecode/SpeculatedType.cpp
+    bytecode/StructureSet.cpp
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
     bytecode/UnlinkedCodeBlock.cpp
@@ -137,6 +138,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGDesiredWeakReferences.cpp
     dfg/DFGDesiredWriteBarriers.cpp
     dfg/DFGDisassembler.cpp
+    dfg/DFGDoesGC.cpp
     dfg/DFGDominators.cpp
     dfg/DFGDriver.cpp
     dfg/DFGEdge.cpp
@@ -191,9 +193,11 @@ set(JavaScriptCore_SOURCES
     dfg/DFGStaticExecutionCountEstimationPhase.cpp
     dfg/DFGStoreBarrierElisionPhase.cpp
     dfg/DFGStrengthReductionPhase.cpp
+    dfg/DFGStructureAbstractValue.cpp
     dfg/DFGThreadData.cpp
     dfg/DFGThunks.cpp
     dfg/DFGTierUpCheckInjectionPhase.cpp
+    dfg/DFGTransition.cpp
     dfg/DFGTypeCheckHoistingPhase.cpp
     dfg/DFGUnificationPhase.cpp
     dfg/DFGUseKind.cpp
@@ -204,6 +208,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGVariableEvent.cpp
     dfg/DFGVariableEventStream.cpp
     dfg/DFGVirtualRegisterAllocationPhase.cpp
+    dfg/DFGWatchableStructureWatchingPhase.cpp
     dfg/DFGWatchpointCollectionPhase.cpp
     dfg/DFGWorklist.cpp
 

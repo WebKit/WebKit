@@ -68,13 +68,11 @@ public:
         } while (m_changed);
         
         if (!m_graph.block(0)->ssa->liveAtHead.isEmpty()) {
-            startCrashing();
-            dataLog(
-                "Bad liveness analysis result: live at root is not empty: ",
-                nodeListDump(m_graph.block(0)->ssa->liveAtHead), "\n");
-            dataLog("IR at time of error:\n");
-            m_graph.dump();
-            CRASH();
+            DFG_CRASH(
+                m_graph, nullptr,
+                toCString(
+                    "Bad liveness analysis result: live at root is not empty: ",
+                    nodeListDump(m_graph.block(0)->ssa->liveAtHead)).data());
         }
         
         return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ static inline const char* branchDirectionToString(BranchDirection branchDirectio
 {
     switch (branchDirection) {
     case InvalidBranchDirection:
-        return "Invalid";
+        return "InvalidBranchDirection";
     case TakeTrue:
         return "TakeTrue";
     case TakeFalse:
@@ -80,6 +80,15 @@ static inline bool branchCondition(BranchDirection branchDirection)
 }
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+inline void printInternal(PrintStream& out, JSC::DFG::BranchDirection direction)
+{
+    out.print(JSC::DFG::branchDirectionToString(direction));
+}
+
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

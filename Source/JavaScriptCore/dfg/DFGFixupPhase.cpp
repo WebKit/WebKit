@@ -927,7 +927,6 @@ private:
 
         case CheckExecutable:
         case CheckStructure:
-        case StructureTransitionWatchpoint:
         case CheckFunction:
         case CheckHasInstance:
         case CreateThis:
@@ -1357,7 +1356,7 @@ private:
         
         JSObject* stringPrototypeObject = asObject(stringObjectStructure->storedPrototype());
         Structure* stringPrototypeStructure = stringPrototypeObject->structure();
-        if (!m_graph.watchpoints().isStillValid(stringPrototypeStructure->transitionWatchpointSet()))
+        if (!m_graph.watchpoints().consider(stringPrototypeStructure))
             return false;
         
         if (stringPrototypeStructure->isDictionary())

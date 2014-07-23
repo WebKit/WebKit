@@ -94,6 +94,17 @@ using namespace WTF;
 
 namespace {
 
+NO_RETURN_WITH_VALUE static void jscExit(int status)
+{
+#if ENABLE(DFG_JIT)
+    if (DFG::isCrashing()) {
+        for (;;)
+            pause();
+    }
+#endif // ENABLE(DFG_JIT)
+    exit(status);
+}
+
 class Element;
 class ElementHandleOwner;
 class Masuqerader;
@@ -890,7 +901,7 @@ EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 {
-    exit(EXIT_SUCCESS);
+    jscExit(EXIT_SUCCESS);
 
 #if COMPILER(MSVC) && OS(WINCE)
     // Without this, Visual Studio will complain that this method does not return a value.
@@ -1010,7 +1021,7 @@ int main(int argc, char** argv)
     ecore_shutdown();
 #endif
 
-    return res;
+    jscExit(res);
 }
 
 static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scripts, bool dump)
@@ -1154,7 +1165,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
     fprintf(stderr, "\n");
 
-    exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
+    jscExit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 void CommandLine::parseArguments(int argc, char** argv)
@@ -1243,7 +1254,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     if (needToDumpOptions)
         JSC::Options::dumpAllOptions(stderr);
     if (needToExit)
-        exit(EXIT_SUCCESS);
+        jscExit(EXIT_SUCCESS);
 }
 
 int jscmain(int argc, char** argv)

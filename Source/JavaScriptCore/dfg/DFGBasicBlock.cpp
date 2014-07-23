@@ -41,6 +41,8 @@ BasicBlock::BasicBlock(
     , cfaShouldRevisit(false)
     , cfaFoundConstants(false)
     , cfaDidFinish(true)
+    , cfaStructureClobberStateAtHead(StructuresAreWatched)
+    , cfaStructureClobberStateAtTail(StructuresAreWatched)
     , cfaBranchDirection(InvalidBranchDirection)
 #if !ASSERT_DISABLED
     , isLinked(false)

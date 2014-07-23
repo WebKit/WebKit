@@ -259,6 +259,8 @@ bool checkAndSet(T& left, U right)
 // when you're forcing a crash with diagnostics.
 void startCrashing();
 
+JS_EXPORT_PRIVATE bool isCrashing();
+
 } } // namespace JSC::DFG
 
 namespace WTF {

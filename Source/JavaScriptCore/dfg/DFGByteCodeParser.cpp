@@ -1921,6 +1921,7 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
 Node* ByteCodeParser::emitPrototypeChecks(
     Structure* structure, IntendedStructureChain* chain)
 {
+    ASSERT(structure);
     Node* base = 0;
     m_graph.chains().addLazily(chain);
     Structure* currentStructure = structure;
@@ -1962,7 +1963,7 @@ void ByteCodeParser::handleGetById(
         for (unsigned variantIndex = getByIdStatus.numVariants(); variantIndex--;) {
             if (getByIdStatus[variantIndex].chain()) {
                 emitPrototypeChecks(
-                    getByIdStatus[variantIndex].structureSet().singletonStructure(),
+                    getByIdStatus[variantIndex].structureSet().onlyStructure(),
                     getByIdStatus[variantIndex].chain());
             }
         }
@@ -1988,7 +1989,7 @@ void ByteCodeParser::handleGetById(
     
     if (variant.chain()) {
         base = emitPrototypeChecks(
-            variant.structureSet().singletonStructure(), variant.chain());
+            variant.structureSet().onlyStructure(), variant.chain());
     }
     
     // Unless we want bugs like https://bugs.webkit.org/show_bug.cgi?id=88783, we need to
@@ -2131,8 +2132,8 @@ void ByteCodeParser::handlePutById(
     ASSERT(variant.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
     
     Node* propertyStorage;
-    StructureTransitionData* transitionData = m_graph.addStructureTransitionData(
-        StructureTransitionData(variant.oldStructure(), variant.newStructure()));
+    Transition* transition = m_graph.m_transitions.add(
+        variant.oldStructure(), variant.newStructure());
 
     if (variant.oldStructure()->outOfLineCapacity()
         != variant.newStructure()->outOfLineCapacity()) {
@@ -2143,10 +2144,10 @@ void ByteCodeParser::handlePutById(
 
         if (!variant.oldStructure()->outOfLineCapacity()) {
             propertyStorage = addToGraph(
-                AllocatePropertyStorage, OpInfo(transitionData), base);
+                AllocatePropertyStorage, OpInfo(transition), base);
         } else {
             propertyStorage = addToGraph(
-                ReallocatePropertyStorage, OpInfo(transitionData),
+                ReallocatePropertyStorage, OpInfo(transition),
                 base, addToGraph(GetButterfly, base));
         }
     } else {
@@ -2156,7 +2157,7 @@ void ByteCodeParser::handlePutById(
             propertyStorage = addToGraph(GetButterfly, base);
     }
 
-    addToGraph(PutStructure, OpInfo(transitionData), base);
+    addToGraph(PutStructure, OpInfo(transition), base);
 
     addToGraph(
         PutByOffset,
@@ -3131,7 +3132,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     set(VirtualRegister(dst), addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(VirtualRegister(scope))));
                     break;
                 }
-                Node* base = cellConstantWithStructureCheck(globalObject, status[0].structureSet().singletonStructure());
+                Node* base = cellConstantWithStructureCheck(globalObject, status[0].structureSet().onlyStructure());
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 if (JSValue specificValue = status[0].specificValue())
                     set(VirtualRegister(dst), cellConstant(specificValue.asCell()));

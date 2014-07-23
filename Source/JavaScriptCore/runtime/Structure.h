@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -369,6 +369,22 @@ public:
     bool transitionWatchpointSetIsStillValid() const
     {
         return m_transitionWatchpointSet.isStillValid();
+    }
+    
+    bool dfgShouldWatchIfPossible() const
+    {
+        // FIXME: We would like to not watch things that are unprofitable to watch, like
+        // dictionaries. Unfortunately, we can't do such things: a dictionary could get flattened,
+        // in which case it will start to appear watchable and so the DFG will think that it is
+        // watching it. We should come up with a comprehensive story for not watching things that
+        // aren't profitable to watch.
+        // https://bugs.webkit.org/show_bug.cgi?id=133625
+        return true;
+    }
+    
+    bool dfgShouldWatch() const
+    {
+        return dfgShouldWatchIfPossible() && transitionWatchpointSetIsStillValid();
     }
         
     void addTransitionWatchpoint(Watchpoint* watchpoint) const

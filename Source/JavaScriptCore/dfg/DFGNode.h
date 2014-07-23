@@ -38,6 +38,7 @@
 #include "DFGNodeFlags.h"
 #include "DFGNodeOrigin.h"
 #include "DFGNodeType.h"
+#include "DFGTransition.h"
 #include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
 #include "GetByIdVariant.h"
@@ -65,19 +66,6 @@ struct MultiPutByOffsetData {
     
     bool writesStructures() const;
     bool reallocatesStorage() const;
-};
-
-struct StructureTransitionData {
-    Structure* previousStructure;
-    Structure* newStructure;
-    
-    StructureTransitionData() { }
-    
-    StructureTransitionData(Structure* previousStructure, Structure* newStructure)
-        : previousStructure(previousStructure)
-        , newStructure(newStructure)
-    {
-    }
 };
 
 struct NewArrayBufferData {
@@ -483,20 +471,6 @@ struct Node {
         m_opInfo = local.offset();
         m_opInfo2 = VirtualRegister().offset();
         children.reset();
-    }
-    
-    void convertToStructureTransitionWatchpoint(Structure* structure)
-    {
-        ASSERT(m_op == CheckStructure || m_op == ArrayifyToStructure);
-        ASSERT(!child2());
-        ASSERT(!child3());
-        m_opInfo = bitwise_cast<uintptr_t>(structure);
-        m_op = StructureTransitionWatchpoint;
-    }
-    
-    void convertToStructureTransitionWatchpoint()
-    {
-        convertToStructureTransitionWatchpoint(structureSet().singletonStructure());
     }
     
     void convertToGetByOffset(unsigned storageAccessDataIndex, Edge storage)
@@ -1101,7 +1075,7 @@ struct Node {
         return reinterpret_cast<void*>(m_opInfo);
     }
 
-    bool hasStructureTransitionData()
+    bool hasTransition()
     {
         switch (op()) {
         case PutStructure:
@@ -1114,10 +1088,10 @@ struct Node {
         }
     }
     
-    StructureTransitionData& structureTransitionData()
+    Transition* transition()
     {
-        ASSERT(hasStructureTransitionData());
-        return *reinterpret_cast<StructureTransitionData*>(m_opInfo);
+        ASSERT(hasTransition());
+        return reinterpret_cast<Transition*>(m_opInfo);
     }
     
     bool hasStructureSet()
@@ -1139,7 +1113,6 @@ struct Node {
     bool hasStructure()
     {
         switch (op()) {
-        case StructureTransitionWatchpoint:
         case ArrayifyToStructure:
         case NewObject:
         case NewStringObject:

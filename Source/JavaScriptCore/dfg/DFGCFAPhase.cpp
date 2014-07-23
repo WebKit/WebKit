@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,8 +92,11 @@ private:
         if (m_verbose)
             dataLog("   Block ", *block, ":\n");
         m_state.beginBasicBlock(block);
-        if (m_verbose)
+        if (m_verbose) {
             dataLog("      head vars: ", block->valuesAtHead, "\n");
+            if (m_graph.m_form == SSA)
+                dataLog("      head regs: ", mapDump(block->ssa->valuesAtHead), "\n");
+        }
         for (unsigned i = 0; i < block->size(); ++i) {
             if (m_verbose) {
                 Node* node = block->at(i);
@@ -102,10 +105,8 @@ private:
                 if (!safeToExecute(m_state, m_graph, node))
                     dataLog("(UNSAFE) ");
                 
-                m_interpreter.dump(WTF::dataFile());
+                dataLog(m_state.variables(), " ", m_interpreter);
                 
-                if (m_state.haveStructures())
-                    dataLog(" (Have Structures)");
                 dataLogF("\n");
             }
             if (!m_interpreter.execute(i)) {
@@ -121,8 +122,11 @@ private:
         }
         m_changed |= m_state.endBasicBlock(MergeToSuccessors);
         
-        if (m_verbose)
+        if (m_verbose) {
             dataLog("      tail vars: ", block->valuesAtTail, "\n");
+            if (m_graph.m_form == SSA)
+                dataLog("      head regs: ", mapDump(block->ssa->valuesAtTail), "\n");
+        }
     }
     
     void performForwardCFA()

@@ -33,6 +33,7 @@
 #include "DFGBranchDirection.h"
 #include "DFGFlushedAt.h"
 #include "DFGNode.h"
+#include "DFGStructureClobberState.h"
 #include "Operands.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -116,6 +117,8 @@ struct BasicBlock : RefCounted<BasicBlock> {
     bool cfaShouldRevisit;
     bool cfaFoundConstants;
     bool cfaDidFinish;
+    StructureClobberState cfaStructureClobberStateAtHead;
+    StructureClobberState cfaStructureClobberStateAtTail;
     BranchDirection cfaBranchDirection;
 #if !ASSERT_DISABLED
     bool isLinked;

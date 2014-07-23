@@ -1,3 +1,88 @@
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r169148, r169185, r169188, r169578, r169582, r169584, r169588, r169753 from ftlopt.
+
+    2014-06-04  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] AI should be able track structure sets larger than 1
+            https://bugs.webkit.org/show_bug.cgi?id=128073
+    
+            Reviewed by Oliver Hunt.
+    
+            * js/regress/get-by-id-bimorphic-check-structure-elimination-expected.txt: Added.
+            * js/regress/get-by-id-bimorphic-check-structure-elimination-simple-expected.txt: Added.
+            * js/regress/get-by-id-bimorphic-check-structure-elimination-simple.html: Added.
+            * js/regress/get-by-id-bimorphic-check-structure-elimination.html: Added.
+            * js/regress/get-by-id-check-structure-elimination-expected.txt: Added.
+            * js/regress/get-by-id-check-structure-elimination.html: Added.
+            * js/regress/get-by-id-quadmorphic-check-structure-elimination-simple-expected.txt: Added.
+            * js/regress/get-by-id-quadmorphic-check-structure-elimination-simple.html: Added.
+            * js/regress/script-tests/get-by-id-bimorphic-check-structure-elimination-simple.js: Added.
+            * js/regress/script-tests/get-by-id-bimorphic-check-structure-elimination.js: Added.
+            * js/regress/script-tests/get-by-id-check-structure-elimination.js: Added.
+            * js/regress/script-tests/get-by-id-quadmorphic-check-structure-elimination-simple.js: Added.
+    
+    2014-06-03  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] FTL native inlining tests take far too long
+            https://bugs.webkit.org/show_bug.cgi?id=133498
+    
+            Unreviewed test gardening.
+            
+            Move long-running tests that focus on correctness into JSC/tests/stress.
+            Speed up the performance tests by reducing allocation and call overhead.
+    
+            * js/regress/ftl-library-inlining-exceptions-expected.txt: Removed.
+            * js/regress/ftl-library-inlining-exceptions.html: Removed.
+            * js/regress/ftl-library-inlining-folding-expected.txt: Removed.
+            * js/regress/ftl-library-inlining-folding.html: Removed.
+            * js/regress/ftl-library-inlining-loops-expected.txt: Removed.
+            * js/regress/ftl-library-inlining-loops.html: Removed.
+            * js/regress/script-tests/ftl-library-inlining-dataview.js:
+            (foo): Deleted.
+            * js/regress/script-tests/ftl-library-inlining-exceptions.js: Removed.
+            * js/regress/script-tests/ftl-library-inlining-folding.js: Removed.
+            * js/regress/script-tests/ftl-library-inlining-loops.js: Removed.
+            * js/regress/script-tests/ftl-library-inlining.js:
+            (foo): Deleted.
+    
+    2014-06-03  Matthew Mirman  <mmirman@apple.com>
+    
+            [ftlopt] Added system for inlining native functions via the FTL.
+            https://bugs.webkit.org/show_bug.cgi?id=131515
+    
+            Reviewed by Filip Pizlo.
+    
+            Adds microbenchmarks. 
+    
+            * js/regress/script-tests/ftl-library-inlining.js: Added.
+            * js/regress/ftl-library-inlining-expected.txt: Added.
+            * js/regress/ftl-library-inlining.html: Added.
+            * js/regress/script-tests/ftl-library-inlining-dataview.js: Added.
+            * js/regress/ftl-library-inlining-dataview-expected.txt: Added.
+            * js/regress/ftl-library-inlining-dataview.html: Added.
+            * js/regress/script-tests/ftl-library-inlining-exceptions.js: Added.
+            * js/regress/ftl-library-inlining-exceptions-expected.txt: Added.        
+            * js/regress/ftl-library-inlining-exceptions.html: Added.                
+            * js/regress/script-tests/ftl-library-inlining-folding.js: Added.
+            * js/regress/ftl-library-inlining-folding-expected.txt: Added.        
+            * js/regress/ftl-library-inlining-folding-expected.html: Added.                
+            * js/regress/script-tests/ftl-library-inlining-loops.js: Added.
+            * js/regress/ftl-library-inlining-loops-expected.txt: Added.        
+            * js/regress/ftl-library-inlining-loops.html: Added.                
+            
+    2014-05-21  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG::clobberize should be blind to the effects of GC
+            https://bugs.webkit.org/show_bug.cgi?id=133166
+    
+            Reviewed by Geoffrey Garen.
+    
+            * js/regress/hoist-make-rope-expected.txt: Added.
+            * js/regress/hoist-make-rope.html: Added.
+            * js/regress/script-tests/hoist-make-rope.js: Added.
+            (foo):
+    
 2014-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix window-inactive css selectors when using querySelector.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,26 +39,7 @@
 
 namespace JSC { namespace DFG {
 
-template<typename WatchpointSetType>
-struct WatchpointForGenericWatchpointSet {
-    WatchpointForGenericWatchpointSet()
-        : m_exitKind(ExitKindUnset)
-        , m_set(0)
-    {
-    }
-    
-    WatchpointForGenericWatchpointSet(
-        CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSetType* set)
-        : m_codeOrigin(codeOrigin)
-        , m_exitKind(exitKind)
-        , m_set(set)
-    {
-    }
-    
-    CodeOrigin m_codeOrigin;
-    ExitKind m_exitKind;
-    WatchpointSetType* m_set;
-};
+class Graph;
 
 template<typename T>
 struct GenericSetAdaptor {
@@ -95,12 +76,6 @@ public:
         m_sets.add(set);
     }
     
-    void addLazily(CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSetType* set)
-    {
-        m_profiledWatchpoints.append(
-            WatchpointForGenericWatchpointSet<WatchpointSetType>(codeOrigin, exitKind, set));
-    }
-    
     void reallyAdd(CodeBlock* codeBlock, CommonData& common)
     {
         RELEASE_ASSERT(!m_reallyAdded);
@@ -110,14 +85,6 @@ public:
         for (; iter != end; ++iter) {
             common.watchpoints.append(CodeBlockJettisoningWatchpoint(codeBlock));
             Adaptor::add(codeBlock, *iter, &common.watchpoints.last());
-        }
-        
-        for (unsigned i = m_profiledWatchpoints.size(); i--;) {
-            WatchpointForGenericWatchpointSet<WatchpointSetType> watchpoint =
-                m_profiledWatchpoints[i];
-            common.profiledWatchpoints.append(
-                ProfiledCodeBlockJettisoningWatchpoint(watchpoint.m_codeOrigin, watchpoint.m_exitKind, codeBlock));
-            Adaptor::add(codeBlock, watchpoint.m_set, &common.profiledWatchpoints.last());
         }
         
         m_reallyAdded = true;
@@ -132,53 +99,16 @@ public:
                 return false;
         }
         
-        for (unsigned i = m_profiledWatchpoints.size(); i--;) {
-            if (Adaptor::hasBeenInvalidated(m_profiledWatchpoints[i].m_set))
-                return false;
-        }
-        
         return true;
     }
     
-#if ASSERT_DISABLED
-    bool isStillValid(WatchpointSetType* set)
+    bool isWatched(WatchpointSetType* set) const
     {
-        return !Adaptor::hasBeenInvalidated(set);
-    }
-    
-    bool shouldAssumeMixedState(WatchpointSetType*)
-    {
-        return true;
-    }
-#else
-    bool isStillValid(WatchpointSetType* set)
-    {
-        bool result = !Adaptor::hasBeenInvalidated(set);
-        m_firstKnownState.add(set, result);
-        return result;
-    }
-    
-    bool shouldAssumeMixedState(WatchpointSetType* set)
-    {
-        typename StateMap::iterator iter = m_firstKnownState.find(set);
-        if (iter == m_firstKnownState.end())
-            return false;
-        
-        return iter->value != !Adaptor::hasBeenInvalidated(set);
-    }
-#endif
-    
-    bool isValidOrMixed(WatchpointSetType* set)
-    {
-        return isStillValid(set) || shouldAssumeMixedState(set);
+        return m_sets.contains(set);
     }
 
 private:
-    Vector<WatchpointForGenericWatchpointSet<WatchpointSetType>> m_profiledWatchpoints;
     HashSet<WatchpointSetType*> m_sets;
-#if !ASSERT_DISABLED
-    StateMap m_firstKnownState;
-#endif
     bool m_reallyAdded;
 };
 
@@ -190,48 +120,24 @@ public:
     void addLazily(WatchpointSet*);
     void addLazily(InlineWatchpointSet&);
     void addLazily(JSArrayBufferView*);
-    void addLazily(CodeOrigin, ExitKind, WatchpointSet*);
-    void addLazily(CodeOrigin, ExitKind, InlineWatchpointSet&);
+    
+    bool consider(Structure*);
     
     void reallyAdd(CodeBlock*, CommonData&);
     
     bool areStillValid() const;
     
-    bool isStillValid(WatchpointSet* set)
+    bool isWatched(WatchpointSet* set)
     {
-        return m_sets.isStillValid(set);
+        return m_sets.isWatched(set);
     }
-    bool isStillValid(InlineWatchpointSet& set)
+    bool isWatched(InlineWatchpointSet& set)
     {
-        return m_inlineSets.isStillValid(&set);
+        return m_inlineSets.isWatched(&set);
     }
-    bool isStillValid(JSArrayBufferView* view)
+    bool isWatched(JSArrayBufferView* view)
     {
-        return m_bufferViews.isStillValid(view);
-    }
-    bool shouldAssumeMixedState(WatchpointSet* set)
-    {
-        return m_sets.shouldAssumeMixedState(set);
-    }
-    bool shouldAssumeMixedState(InlineWatchpointSet& set)
-    {
-        return m_inlineSets.shouldAssumeMixedState(&set);
-    }
-    bool shouldAssumeMixedState(JSArrayBufferView* view)
-    {
-        return m_bufferViews.shouldAssumeMixedState(view);
-    }
-    bool isValidOrMixed(WatchpointSet* set)
-    {
-        return m_sets.isValidOrMixed(set);
-    }
-    bool isValidOrMixed(InlineWatchpointSet& set)
-    {
-        return m_inlineSets.isValidOrMixed(&set);
-    }
-    bool isValidOrMixed(JSArrayBufferView* view)
-    {
-        return m_bufferViews.isValidOrMixed(view);
+        return m_bufferViews.isWatched(view);
     }
     
 private:

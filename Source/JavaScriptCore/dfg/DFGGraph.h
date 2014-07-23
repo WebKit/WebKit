@@ -170,8 +170,12 @@ public:
         return constantRegister;
     }
     
+    void assertIsWatched(Structure* structure);
+    
     void convertToConstant(Node* node, JSValue value)
     {
+        if (value.isCell())
+            assertIsWatched(value.asCell()->structure());
         if (value.isObject())
             node->convertToWeakConstant(value.asCell());
         else
@@ -406,12 +410,6 @@ public:
         return &m_structureSet.last();
     }
     
-    StructureTransitionData* addStructureTransitionData(const StructureTransitionData& structureTransitionData)
-    {
-        m_structureTransitionData.append(structureTransitionData);
-        return &m_structureTransitionData.last();
-    }
-    
     JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
     {
         return m_codeBlock->globalObjectFor(codeOrigin);
@@ -462,8 +460,7 @@ public:
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {
-        return m_plan.watchpoints.isStillValid(
-            globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint());
+        return globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid();
     }
     
     bool hasGlobalExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
@@ -823,6 +820,10 @@ public:
     
     virtual void visitChildren(SlotVisitor&) override;
     
+    NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
+        Node* node, const char* file, int line, const char* function,
+        const char* assertion);
+    
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;
@@ -839,7 +840,7 @@ public:
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
     SegmentedVector<StructureSet, 16> m_structureSet;
-    SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
+    Bag<Transition> m_transitions;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
     Bag<BranchData> m_branchData;
     Bag<SwitchData> m_switchData;
@@ -924,6 +925,17 @@ private:
             thingToDo(_node, _node->child3());                          \
         }                                                               \
     } while (false)
+
+#define DFG_ASSERT(graph, node, assertion) do {                         \
+        if (!!(assertion))                                              \
+            break;                                                      \
+        (graph).handleAssertionFailure(                                 \
+            (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+    } while (false)
+
+#define DFG_CRASH(graph, node, reason)                                  \
+    (graph).handleAssertionFailure(                                     \
+        (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason));
 
 } } // namespace JSC::DFG
 

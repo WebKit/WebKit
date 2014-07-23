@@ -401,14 +401,6 @@ public:
         call(trapIntrinsic());
     }
     
-    void crashNonTerminal();
-
-    void crash()
-    {
-        crashNonTerminal();
-        unreachable();
-    }
-    
     ValueFromBlock anchor(LValue value)
     {
         return ValueFromBlock(value, m_block);

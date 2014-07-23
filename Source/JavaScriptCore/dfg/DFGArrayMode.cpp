@@ -289,25 +289,48 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, Node* node) const
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value, IndexingType shape) const
 {
     switch (arrayClass()) {
-    case Array::OriginalArray:
-        return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray)
-            && graph.globalObjectFor(node->origin.semantic)->isOriginalArrayStructure(value.m_currentKnownStructure.singleton());
+    case Array::OriginalArray: {
+        if (value.m_structure.isTop())
+            return false;
+        for (unsigned i = value.m_structure.size(); i--;) {
+            Structure* structure = value.m_structure[i];
+            if ((structure->indexingType() & IndexingShapeMask) != shape)
+                return false;
+            if (!(structure->indexingType() & IsArray))
+                return false;
+            if (!graph.globalObjectFor(node->origin.semantic)->isOriginalArrayStructure(structure))
+                return false;
+        }
+        return true;
+    }
         
-    case Array::Array:
+    case Array::Array: {
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(shape | IsArray)))
             return true;
-        return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        if (value.m_structure.isTop())
+            return false;
+        for (unsigned i = value.m_structure.size(); i--;) {
+            Structure* structure = value.m_structure[i];
+            if ((structure->indexingType() & IndexingShapeMask) != shape)
+                return false;
+            if (!(structure->indexingType() & IsArray))
+                return false;
+        }
+        return true;
+    }
         
-    default:
+    default: {
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(shape) | asArrayModes(shape | IsArray)))
             return true;
-        return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape;
-    }
+        if (value.m_structure.isTop())
+            return false;
+        for (unsigned i = value.m_structure.size(); i--;) {
+            Structure* structure = value.m_structure[i];
+            if ((structure->indexingType() & IndexingShapeMask) != shape)
+                return false;
+        }
+        return true;
+    } }
 }
 
 bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value) const
@@ -336,23 +359,38 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value) c
         
     case Array::SlowPutArrayStorage:
         switch (arrayClass()) {
-        case Array::OriginalArray:
+        case Array::OriginalArray: {
             CRASH();
             return false;
+        }
         
-        case Array::Array:
+        case Array::Array: {
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
                 return true;
-            return value.m_currentKnownStructure.hasSingleton()
-                && hasAnyArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
-                && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+            if (value.m_structure.isTop())
+                return false;
+            for (unsigned i = value.m_structure.size(); i--;) {
+                Structure* structure = value.m_structure[i];
+                if (!hasAnyArrayStorage(structure->indexingType()))
+                    return false;
+                if (!(structure->indexingType() & IsArray))
+                    return false;
+            }
+            return true;
+        }
         
-        default:
+        default: {
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
                 return true;
-            return value.m_currentKnownStructure.hasSingleton()
-                && hasAnyArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
-        }
+            if (value.m_structure.isTop())
+                return false;
+            for (unsigned i = value.m_structure.size(); i--;) {
+                Structure* structure = value.m_structure[i];
+                if (!hasAnyArrayStorage(structure->indexingType()))
+                    return false;
+            }
+            return true;
+        } }
         
     case Array::Arguments:
         return speculationChecked(value.m_type, SpecArguments);

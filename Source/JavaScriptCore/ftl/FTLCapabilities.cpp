@@ -63,7 +63,6 @@ inline CapabilityLevel canCompile(Node* node)
     case BitLShift:
     case BitURShift:
     case CheckStructure:
-    case StructureTransitionWatchpoint:
     case ArrayifyToStructure:
     case PutStructure:
     case PhantomPutStructure:

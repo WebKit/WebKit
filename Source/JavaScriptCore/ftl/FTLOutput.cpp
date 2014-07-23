@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,11 +136,6 @@ void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBa
             m_context, branchWeights,
             constInt32(takenWeight.scaleToTotal(total)),
             constInt32(notTakenWeight.scaleToTotal(total))));
-}
-
-void Output::crashNonTerminal()
-{
-    call(intToPtr(constIntPtr(abort), pointerType(functionType(voidType))));
 }
 
 } } // namespace JSC::FTL

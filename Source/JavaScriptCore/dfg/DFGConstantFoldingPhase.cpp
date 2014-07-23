@@ -104,24 +104,9 @@ private:
                     set = node->structure();
                 else
                     set = node->structureSet();
-                if (value.m_currentKnownStructure.isSubsetOf(set)) {
+                if (value.m_structure.isSubsetOf(set)) {
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->convertToPhantom();
-                    eliminated = true;
-                    break;
-                }
-                StructureAbstractValue& structureValue = value.m_futurePossibleStructure;
-                if (structureValue.isSubsetOf(set)
-                    && structureValue.hasSingleton()) {
-                    Structure* structure = structureValue.singleton();
-                    m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
-                    AdjacencyList children = node->children;
-                    children.removeEdge(0);
-                    if (!!children.child1())
-                        m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->origin, children);
-                    node->children.setChild2(Edge());
-                    node->children.setChild3(Edge());
-                    node->convertToStructureTransitionWatchpoint(structure);
                     eliminated = true;
                     break;
                 }
@@ -163,7 +148,7 @@ private:
                 Node* child = childEdge.node();
                 MultiGetByOffsetData& data = node->multiGetByOffsetData();
 
-                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                Structure* structure = m_state.forNode(child).m_structure.onlyStructure();
                 if (!structure)
                     break;
                 
@@ -187,7 +172,7 @@ private:
                 Node* child = childEdge.node();
                 MultiPutByOffsetData& data = node->multiPutByOffsetData();
 
-                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                Structure* structure = m_state.forNode(child).m_structure.onlyStructure();
                 if (!structure)
                     break;
                 
@@ -212,7 +197,7 @@ private:
                 if (childEdge.useKind() != CellUse)
                     break;
                 
-                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                Structure* structure = m_state.forNode(child).m_structure.onlyStructure();
                 if (!structure)
                     break;
 
@@ -239,7 +224,7 @@ private:
                 
                 ASSERT(childEdge.useKind() == CellUse);
                 
-                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                Structure* structure = m_state.forNode(child).m_structure.onlyStructure();
                 if (!structure)
                     break;
                 
@@ -305,7 +290,7 @@ private:
             // then we refuse to fold.
             AbstractValue oldValue = m_state.forNode(node);
             AbstractValue constantValue;
-            constantValue.set(m_graph, value);
+            constantValue.set(m_graph, value, m_state.structureClobberState());
             constantValue.fixTypeForRepresentation(node);
             if (oldValue.merge(constantValue))
                 continue;
@@ -336,22 +321,17 @@ private:
         Edge childEdge = node->child1();
         Node* child = childEdge.node();
 
-        bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
         bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
         
         ASSERT(!variant.chain());
-        ASSERT(variant.structureSet().contains(structure));
+        ASSERT_UNUSED(structure, variant.structureSet().contains(structure));
         
         // Now before we do anything else, push the CFA forward over the GetById
         // and make sure we signal to the loop that it should continue and not
         // do any eliminations.
         m_interpreter.execute(indexInBlock);
         
-        if (needsWatchpoint) {
-            m_insertionSet.insertNode(
-                indexInBlock, SpecNone, StructureTransitionWatchpoint, origin,
-                OpInfo(structure), childEdge);
-        } else if (needsCellCheck) {
+        if (needsCellCheck) {
             m_insertionSet.insertNode(
                 indexInBlock, SpecNone, Phantom, origin, childEdge);
         }
@@ -388,7 +368,6 @@ private:
 
         ASSERT(variant.oldStructure() == structure);
         
-        bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
         bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
         
         // Now before we do anything else, push the CFA forward over the PutById
@@ -396,21 +375,16 @@ private:
         // do any eliminations.
         m_interpreter.execute(indexInBlock);
 
-        if (needsWatchpoint) {
-            m_insertionSet.insertNode(
-                indexInBlock, SpecNone, StructureTransitionWatchpoint, origin,
-                OpInfo(structure), childEdge);
-        } else if (needsCellCheck) {
+        if (needsCellCheck) {
             m_insertionSet.insertNode(
                 indexInBlock, SpecNone, Phantom, origin, childEdge);
         }
 
         childEdge.setUseKind(KnownCellUse);
 
-        StructureTransitionData* transitionData = 0;
+        Transition* transition = 0;
         if (variant.kind() == PutByIdVariant::Transition) {
-            transitionData = m_graph.addStructureTransitionData(
-                StructureTransitionData(structure, variant.newStructure()));
+            transition = m_graph.m_transitions.add(structure, variant.newStructure());
 
             if (node->op() == PutById) {
                 if (!structure->storedPrototype().isNull()) {
@@ -446,7 +420,7 @@ private:
             ASSERT(!isInlineOffset(variant.offset()));
             Node* allocatePropertyStorage = m_insertionSet.insertNode(
                 indexInBlock, SpecNone, AllocatePropertyStorage,
-                origin, OpInfo(transitionData), childEdge);
+                origin, OpInfo(transition), childEdge);
             m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, origin, Edge(node->child1().node(), KnownCellUse));
             propertyStorage = Edge(allocatePropertyStorage);
         } else {
@@ -456,7 +430,7 @@ private:
 
             Node* reallocatePropertyStorage = m_insertionSet.insertNode(
                 indexInBlock, SpecNone, ReallocatePropertyStorage, origin,
-                OpInfo(transitionData), childEdge,
+                OpInfo(transition), childEdge,
                 Edge(m_insertionSet.insertNode(
                     indexInBlock, SpecNone, GetButterfly, origin, childEdge)));
             m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, origin, Edge(node->child1().node(), KnownCellUse));
@@ -464,7 +438,7 @@ private:
         }
 
         if (variant.kind() == PutByIdVariant::Transition) {
-            Node* putStructure = m_graph.addNode(SpecNone, PutStructure, origin, OpInfo(transitionData), childEdge);
+            Node* putStructure = m_graph.addNode(SpecNone, PutStructure, origin, OpInfo(transition), childEdge);
             m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, origin, Edge(node->child1().node(), KnownCellUse));
             m_insertionSet.insert(indexInBlock, putStructure);
         }
@@ -482,16 +456,12 @@ private:
 
     void addStructureTransitionCheck(NodeOrigin origin, unsigned indexInBlock, JSCell* cell)
     {
+        if (m_graph.watchpoints().consider(cell->structure()))
+            return;
+
         Node* weakConstant = m_insertionSet.insertNode(
             indexInBlock, speculationFromValue(cell), WeakJSConstant, origin, OpInfo(cell));
         
-        if (m_graph.watchpoints().isStillValid(cell->structure()->transitionWatchpointSet())) {
-            m_insertionSet.insertNode(
-                indexInBlock, SpecNone, StructureTransitionWatchpoint, origin,
-                OpInfo(cell->structure()), Edge(weakConstant, CellUse));
-            return;
-        }
-
         m_insertionSet.insertNode(
             indexInBlock, SpecNone, CheckStructure, origin,
             OpInfo(m_graph.addStructureSet(cell->structure())), Edge(weakConstant, CellUse));

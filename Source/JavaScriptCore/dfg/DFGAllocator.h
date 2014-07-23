@@ -50,7 +50,7 @@ public:
     void* allocate(); // Use placement new to allocate, and avoid using this method.
     void free(T*); // Call this method to delete; never use 'delete' directly.
     
-    void freeAll(); // Only call this if T has a trivial destructor.
+    void freeAll(); // Only call this if you've either freed everything or if T has a trivial destructor.
     void reset(); // Like freeAll(), but also returns all memory to the OS.
     
     unsigned indexOf(const T*);
