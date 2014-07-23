@@ -1,5 +1,12 @@
 2014-07-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix 32-bit.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+
         Merge r169148, r169185, r169188, r169578, r169582, r169584, r169588, r169753 from ftlopt.
         
         Note that r169753 is merged out of order because it fixes a bug in r169588.
