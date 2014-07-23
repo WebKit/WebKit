@@ -1,5 +1,26 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171303.
+
+    2014-07-21  Brady Eidson  <beidson@apple.com>
+
+            DatabaseProcess doesn't relaunch after crashing.
+            <rdar://problem/17717343> and https://bugs.webkit.org/show_bug.cgi?id=135117
+
+            Reviewed by Alexey Proskuryakov.
+
+            * UIProcess/Databases/DatabaseProcessProxy.cpp:
+            (WebKit::DatabaseProcessProxy::didClose): Tell the WebContext.
+
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::databaseProcessCrashed): Notify supplements, then clear the DatabaseProcessProxy pointer.
+            * UIProcess/WebContext.h:
+
+            * UIProcess/WebContextSupplement.h:
+            (WebKit::WebContextSupplement::processDidClose): Added. No users right now, but the patch in bug 135035 will need this.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171288.
 
     2014-07-20  Jeremy Jones  <jeremyj@apple.com>
