@@ -3460,22 +3460,19 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
 
     while (scannerPosition < length && TelephoneNumberDetector::find(&characters[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
         // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
-        // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So substract 1 to get the same
+        // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So subtract 1 to get the same
         // convention as the old WebCore phone number parser (so that the rest of the code is still valid if we want to go back
         // to the old parser).
         --relativeEndPosition;
 
         ASSERT(scannerPosition + relativeEndPosition < length);
 
-        // It doesn't make sense to add the document marker to a match that's not in a text node.
-        if (!startNode->isTextNode())
-            continue;
+        unsigned subrangeOffset = scannerPosition + relativeStartPosition;
+        unsigned subrangeLength = relativeEndPosition - relativeStartPosition + 1;
 
-        unsigned startOffset = range.startOffset() + scannerPosition + relativeStartPosition;
-        unsigned length = relativeEndPosition - relativeStartPosition + 1;
-
-        markedRanges.append(Range::create(range.ownerDocument(), startNode, startOffset, startNode, startOffset + length));
-        range.ownerDocument().markers().addMarkerToNode(startNode, startOffset, length, DocumentMarker::TelephoneNumber);
+        RefPtr<Range> subrange = TextIterator::subrange(&range, subrangeOffset, subrangeLength);
+        markedRanges.append(subrange);
+        range.ownerDocument().markers().addMarker(subrange.get(), DocumentMarker::TelephoneNumber);
 
         scannerPosition += relativeEndPosition + 1;
     }
