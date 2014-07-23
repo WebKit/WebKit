@@ -1,3 +1,19 @@
+2014-07-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Copying and pasting trivial H2 content causes a crash in firstPositionInNode
+        https://bugs.webkit.org/show_bug.cgi?id=134897
+
+        Reviewed by Ryosuke Niwa.
+
+        ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder() attempts
+        to move pasted headings out of existed headings, with out regard to if the existing
+        heading is the contenteditable root.
+
+        Test: editing/pasteboard/heading-crash.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+
 2014-07-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove dead APIs from TiledBackingStore

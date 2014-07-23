@@ -619,7 +619,7 @@ static bool isProhibitedParagraphChild(const AtomicString& name)
     return elements.get().contains(name);
 }
 
-void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder(const InsertedNodes& insertedNodes)
+void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder(InsertedNodes& insertedNodes)
 {
     RefPtr<Node> pastEndNode = insertedNodes.pastLastLeaf();
     RefPtr<Node> next;
@@ -638,8 +638,15 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
         }
 
         if (isHeaderElement(node.get())) {
-            if (auto* headerElement = highestEnclosingNodeOfType(positionInParentBeforeNode(node.get()), isHeaderElement))
-                moveNodeOutOfAncestor(node, headerElement);
+            auto* headerElement = highestEnclosingNodeOfType(positionInParentBeforeNode(node.get()), isHeaderElement);
+            if (headerElement) {
+                if (headerElement->parentNode() && headerElement->parentNode()->isContentRichlyEditable())
+                    moveNodeOutOfAncestor(node, headerElement);
+                else {
+                    HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(toHTMLElement(node.get()));
+                    insertedNodes.didReplaceNode(node.get(), newSpanElement);
+                }
+            }
         }
     }
 }
