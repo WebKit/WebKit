@@ -1,5 +1,23 @@
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171363
+
+    2014-07-22  Oliver Hunt  <oliver@apple.com>
+
+            Remove unused com.apple.webkit.* rules from profiles
+            https://bugs.webkit.org/show_bug.cgi?id=135174
+            <rdar://17755931>
+
+            Reviewed by Anders Carlsson.
+
+            We never send these rules so we should just remove use of them
+            from the profiles.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171373
 
     2014-07-22  Jinwoo Song  <jinwoo7.song@samsung.com>

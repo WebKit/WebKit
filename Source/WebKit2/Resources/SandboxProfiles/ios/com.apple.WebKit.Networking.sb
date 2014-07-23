@@ -28,20 +28,14 @@
 (import "common.sb")
 (import "removed-dev-nodes.sb")
 
-;; Sandbox extensions
-(allow file-read* (extension "com.apple.webkit.read"))
-
 ;; Access to client's cache folder & re-vending to CFNetwork.
 ;; FIXME: Remove the webkti specific extension classes <rdar://problem/17755931>
 (allow file-issue-extension (require-all
-    (require-any (extension "com.apple.webkit.read-write") (extension "com.apple.app-sandbox.read-write"))
+    (extension "com.apple.app-sandbox.read-write")
     (extension-class "com.apple.nsurlstorage.extension-cache")))
 
 ;; App sandbox extensions
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
-
-;; Access to own cache & temp folders.
-(allow file-read* file-write* (extension "com.apple.webkit.read-write"))
 
 ;; IOKit user clients
 (allow iokit-open
