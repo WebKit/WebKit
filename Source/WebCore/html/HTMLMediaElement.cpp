@@ -416,6 +416,11 @@ HTMLMediaElement::~HTMLMediaElement()
     setMediaKeys(0);
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (m_isolatedWorld)
+        m_isolatedWorld->clearWrappers();
+#endif
+
     m_completelyLoaded = true;
     if (m_player)
         m_player->clearMediaPlayerClient();
