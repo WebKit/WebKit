@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebVideoFullscreenManagerMessages.h"
@@ -75,7 +76,8 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID
 {
     ASSERT(videoLayerID);
     m_layerHost = WKMakeRenderLayer(videoLayerID);
-    setupFullscreen(*m_layerHost.get(), initialRect);
+    UIView *parentView = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea())->remoteLayerTreeHost().rootLayer();
+    setupFullscreen(*m_layerHost.get(), initialRect, parentView);
 }
     
 void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<double, double>>& ranges)

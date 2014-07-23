@@ -1,3 +1,25 @@
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171345
+
+    2014-07-22  Jeremy Jones  <jeremyj@apple.com>
+
+            Don't create new UIWindow for video fullscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=135038
+
+            Reviewed by Darin Adler.
+
+            * WebCore.exp.in:
+            * platform/ios/WebVideoFullscreenControllerAVKit.h: use UIView instead of UIScreen.
+            * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+            (-[WebVideoFullscreenController enterFullscreen:]): provide parent UIView.
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.h: remove UIWindow.
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: 
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreen): ditto 
+            (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen): ditto
+            (WebVideoFullscreenInterfaceAVKit::invalidate): ditto
+            (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): ditto
+
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
         Merge r171336.

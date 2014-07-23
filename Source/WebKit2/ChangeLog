@@ -1,3 +1,21 @@
+2014-07-23  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171345
+
+    2014-07-22  Jeremy Jones  <jeremyj@apple.com>
+
+            Don't create new UIWindow for video fullscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=135038
+
+            Reviewed by Darin Adler.
+
+            Use root UIView to parent fullscreen interface.
+
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+            (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): pass parent UIView
+            * WebProcess/ios/WebVideoFullscreenManager.mm:
+            (WebKit::screenRectForNode): Use client rect instead of screen rect.
+
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
         Merge r171336.
