@@ -100,7 +100,7 @@ NO_RETURN_WITH_VALUE static void jscExit(int status)
     if (DFG::isCrashing()) {
         for (;;) {
 #if OS(WINDOWS)
-            sleep(1000);
+            Sleep(1000);
 #else
             pause();
 #endif
