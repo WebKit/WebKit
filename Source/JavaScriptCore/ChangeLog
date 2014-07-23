@@ -1,3 +1,14 @@
+2014-07-22  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [EFL] Build fix after the [ftlopt] branch merge.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dfg/DFGBranchDirection.h:
+        (JSC::DFG::branchDirectionToString):
+        * dfg/DFGStructureClobberState.h:
+        (JSC::DFG::merge):
+
 2014-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         Build fix for non-clang compile.

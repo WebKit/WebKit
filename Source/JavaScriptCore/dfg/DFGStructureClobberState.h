@@ -46,6 +46,7 @@ inline StructureClobberState merge(StructureClobberState a, StructureClobberStat
         return StructuresAreClobbered;
     }
     RELEASE_ASSERT_NOT_REACHED();
+    return StructuresAreClobbered;
 }
 
 } } // namespace JSC::DFG

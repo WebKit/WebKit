@@ -58,6 +58,9 @@ static inline const char* branchDirectionToString(BranchDirection branchDirectio
     case TakeBoth:
         return "TakeBoth";
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return "InvalidBranchDirection";
 }
     
 static inline bool isKnownDirection(BranchDirection branchDirection)
