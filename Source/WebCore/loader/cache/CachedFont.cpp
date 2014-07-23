@@ -98,9 +98,11 @@ bool CachedFont::ensureCustomFontData()
         SharedBuffer* buffer = m_data.get()->sharedBuffer();
         ASSERT(buffer);
 
+        bool fontIsWOFF = false;
+#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090) && (!PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED < 80000)
         RefPtr<SharedBuffer> sfntBuffer;
 
-        bool fontIsWOFF = isWOFF(buffer);
+        fontIsWOFF = isWOFF(buffer);
         if (fontIsWOFF) {
             Vector<char> sfnt;
             if (convertWOFFToSfnt(buffer, sfnt)) {
@@ -109,6 +111,7 @@ bool CachedFont::ensureCustomFontData()
             } else
                 buffer = nullptr;
         }
+#endif
 
         m_fontData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
         if (m_fontData)

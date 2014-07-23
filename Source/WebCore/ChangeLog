@@ -1,3 +1,15 @@
+2014-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] [OSX] Don't transcode WOFF on platforms that support it natively
+        https://bugs.webkit.org/show_bug.cgi?id=134904
+
+        Reviewed by Andreas Kling.
+
+        No new tests because there is no behavior change.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+
 2014-07-22  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Crash after plugin is unloaded.
