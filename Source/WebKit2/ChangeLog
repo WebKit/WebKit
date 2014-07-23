@@ -1,5 +1,25 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171326.
+
+    2014-07-21  Oliver Hunt  <oliver@apple.com>
+
+            Remove global cookie workaround from sandbox profiles
+            https://bugs.webkit.org/show_bug.cgi?id=135138
+            <rdar://17513375>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Remove the workaround needed for global cookie access, and silencing
+            of the associated sandbox violation.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * UIProcess/mac/WebContextMac.mm:
+            (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171322.
 
     2014-07-21  Oliver Hunt  <oliver@apple.com>
