@@ -1,5 +1,20 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171320.
+
+    2014-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Turn off position:fixed behavior when the keyboard is up
+            https://bugs.webkit.org/show_bug.cgi?id=132537
+
+            Reviewed by Benjamin Poulain.
+
+            Export RenderObject::localToContainerPoint().
+
+            * WebCore.exp.in:
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171316.
 
     2014-07-21  Jer Noble  <jer.noble@apple.com>

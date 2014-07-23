@@ -1989,14 +1989,33 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
     layoutIfNeeded();
 
-    if (RenderObject* renderer = m_assistedNode->renderer()) {
-        information.elementRect = m_page->focusController().focusedOrMainFrame().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
-        information.nodeFontSize = renderer->style().fontDescription().computedSize();
-    } else
-        information.elementRect = IntRect();
     // FIXME: This should return the selection rect, but when this is called at focus time
     // we don't have a selection yet. Using the last interaction location is a reasonable approximation for now.
+    // FIXME: should the selection rect always be inside the elementRect?
     information.selectionRect = IntRect(m_lastInteractionLocation, IntSize(1, 1));
+
+    if (RenderObject* renderer = m_assistedNode->renderer()) {
+        Frame& elementFrame = m_page->focusController().focusedOrMainFrame();
+        information.elementRect = elementFrame.view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+        information.nodeFontSize = renderer->style().fontDescription().computedSize();
+
+        bool inFixed = false;
+        renderer->localToContainerPoint(FloatPoint(), nullptr, 0, &inFixed);
+        information.insideFixedPosition = inFixed;
+        
+        if (inFixed && elementFrame.isMainFrame()) {
+            FrameView* frameView = elementFrame.view();
+            IntRect currentFixedPositionRect = frameView->customFixedPositionLayoutRect();
+            frameView->setCustomFixedPositionLayoutRect(frameView->renderView()->documentRect());
+            information.elementRect = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
+            frameView->setCustomFixedPositionLayoutRect(currentFixedPositionRect);
+            
+            if (!information.elementRect.contains(information.selectionRect))
+                information.selectionRect.setLocation(information.elementRect.location());
+        }
+    } else
+        information.elementRect = IntRect();
+
     information.minimumScaleFactor = m_viewportConfiguration.minimumScale();
     information.maximumScaleFactor = m_viewportConfiguration.maximumScale();
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();

@@ -37,6 +37,7 @@
 #import "WKFormSelectControl.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKWebViewConfiguration.h"
+#import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
@@ -2548,6 +2549,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         [self _startAssistingKeyboard];
         break;
     }
+    
+    if (information.insideFixedPosition)
+        [_webView _updateVisibleContentRects];
+
     [self reloadInputViews];
     [self _displayFormNodeInputView];
 

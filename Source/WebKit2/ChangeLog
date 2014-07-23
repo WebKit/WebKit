@@ -1,5 +1,41 @@
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
+        Merge r171320.
+
+    2014-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Turn off position:fixed behavior when the keyboard is up
+            https://bugs.webkit.org/show_bug.cgi?id=132537
+
+            Reviewed by Benjamin Poulain.
+            
+            Make interaction with form elements inside position:fixed less terrible by re-laying out
+            fixed elements relative to the document while we have an assisted node. This ensures
+            that all parts of a position:fixed are accessible (e.g. inputs on the right side
+            of a fixed-width top bar).
+            
+            * Shared/AssistedNodeInformation.cpp: Add a flag for being inside postion:fixed,
+            and encode/decode it.
+            (WebKit::AssistedNodeInformation::encode):
+            (WebKit::AssistedNodeInformation::decode):
+            * Shared/AssistedNodeInformation.h:
+            (WebKit::AssistedNodeInformation::AssistedNodeInformation):
+            * UIProcess/PageClient.h: Add isAssistingNode().
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::isAssistingNode):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::computeCustomFixedPositionRect): If we have an assisted
+            node, just use the document rect as the custom fixed position rect.
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::getAssistedNodeInformation): Get the selection rect first,
+            since we have to fix it up for position:fixed. If the element is inside fixed
+            position in the main frame, re-set the fixed position rect to the document rect
+            (which forces a layout), re-fetch elementRect, then set it back. This ensures
+            that the UI process gets an elementRect which it can zoom to correctly.
+
+2014-07-22 Dana Burkart <dburkart@apple.com>
+    
         Merge r171317.
 
     2014-07-21  Timothy Horton  <timothy_horton@apple.com>
