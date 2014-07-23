@@ -71,7 +71,7 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
 {
     if (!element || !isHTMLOptionElement(element) || !element->inRenderedDocument())
-        return 0;
+        return nullptr;
 
     AccessibilityObject* object = document()->axObjectCache()->getOrCreate(MenuListOptionRole);
     ASSERT_WITH_SECURITY_IMPLICATION(object->isMenuListOption());

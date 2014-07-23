@@ -110,30 +110,30 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
             return parent->isAccessibilityTable() ? toAccessibilityTable(parent) : 0;
     }
     
-    return 0;
+    return nullptr;
 }
     
 AccessibilityObject* AccessibilityTableRow::headerObject()
 {
     if (!m_renderer || !m_renderer->isTableRow())
-        return 0;
+        return nullptr;
     
     const auto& rowChildren = children();
     if (!rowChildren.size())
-        return 0;
+        return nullptr;
     
     // check the first element in the row to see if it is a TH element
     AccessibilityObject* cell = rowChildren[0].get();
     if (!cell->isTableCell())
-        return 0;
+        return nullptr;
     
     RenderObject* cellRenderer = toAccessibilityTableCell(cell)->renderer();
     if (!cellRenderer)
-        return 0;
+        return nullptr;
     
     Node* cellNode = cellRenderer->node();
     if (!cellNode || !cellNode->hasTagName(thTag))
-        return 0;
+        return nullptr;
     
     return cell;
 }

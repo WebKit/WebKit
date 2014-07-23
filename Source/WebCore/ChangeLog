@@ -1,3 +1,210 @@
+2014-07-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Migrate accessibility/ to using nullptr instead of 0
+        https://bugs.webkit.org/show_bug.cgi?id=135185
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::rootObject):
+        (WebCore::AXObjectCache::rootObjectForFrame):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::rootObject):
+        (WebCore::AXObjectCache::rootObjectForFrame):
+        (WebCore::AXObjectCache::rootAXEditableElement):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::disclosedByRow):
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::AccessibilityImageMapLink):
+        (WebCore::AccessibilityImageMapLink::parentObject):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::listBoxOptionAccessibilityObject):
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::AccessibilityListBoxOption):
+        (WebCore::AccessibilityListBoxOption::parentObject):
+        (WebCore::AccessibilityListBoxOption::listBoxOptionParentNode):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        * accessibility/AccessibilityMockObject.cpp:
+        (WebCore::AccessibilityMockObject::AccessibilityMockObject):
+        * accessibility/AccessibilityMockObject.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::detach):
+        (WebCore::AccessibilityNodeObject::firstChild):
+        (WebCore::AccessibilityNodeObject::lastChild):
+        (WebCore::AccessibilityNodeObject::previousSibling):
+        (WebCore::AccessibilityNodeObject::nextSibling):
+        (WebCore::AccessibilityNodeObject::parentObject):
+        (WebCore::AccessibilityNodeObject::document):
+        (WebCore::AccessibilityNodeObject::anchorElement):
+        (WebCore::nativeActionElement):
+        (WebCore::AccessibilityNodeObject::actionElement):
+        (WebCore::AccessibilityNodeObject::mouseButtonListener):
+        (WebCore::AccessibilityNodeObject::labelForElement):
+        (WebCore::AccessibilityNodeObject::menuItemElementForMenu):
+        (WebCore::AccessibilityNodeObject::menuButtonForMenu):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::detach):
+        (WebCore::AccessibilityObject::firstAccessibleObjectFromNode):
+        (WebCore::AccessibilityObject::findMatchingObjects):
+        (WebCore::renderListItemContainerForNode):
+        (WebCore::AccessibilityObject::accessibilityObjectForPosition):
+        (WebCore::AccessibilityObject::document):
+        (WebCore::AccessibilityObject::page):
+        (WebCore::AccessibilityObject::documentFrameView):
+        (WebCore::AccessibilityObject::anchorElementForNode):
+        (WebCore::AccessibilityObject::headingElementForNode):
+        (WebCore::AccessibilityObject::firstAnonymousBlockChild):
+        (WebCore::AccessibilityObject::element):
+        (WebCore::AccessibilityObject::focusedUIElement):
+        (WebCore::AccessibilityObject::scrollToMakeVisibleWithSubFocus):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::node):
+        (WebCore::AccessibilityObject::renderer):
+        (WebCore::AccessibilityObject::selectedRadioButton):
+        (WebCore::AccessibilityObject::selectedTabItem):
+        (WebCore::AccessibilityObject::accessibilityHitTest):
+        (WebCore::AccessibilityObject::firstChild):
+        (WebCore::AccessibilityObject::lastChild):
+        (WebCore::AccessibilityObject::previousSibling):
+        (WebCore::AccessibilityObject::nextSibling):
+        (WebCore::AccessibilityObject::parentObjectIfExists):
+        (WebCore::AccessibilityObject::observableObject):
+        (WebCore::AccessibilityObject::titleUIElement):
+        (WebCore::AccessibilityObject::correspondingLabelForControlElement):
+        (WebCore::AccessibilityObject::correspondingControlForLabelElement):
+        (WebCore::AccessibilityObject::scrollBar):
+        (WebCore::AccessibilityObject::anchorElement):
+        (WebCore::AccessibilityObject::actionElement):
+        (WebCore::AccessibilityObject::widget):
+        (WebCore::AccessibilityObject::widgetForAttachmentView):
+        (WebCore::AccessibilityObject::activeDescendant):
+        (WebCore::AccessibilityObject::mathRadicandObject):
+        (WebCore::AccessibilityObject::mathRootIndexObject):
+        (WebCore::AccessibilityObject::mathUnderObject):
+        (WebCore::AccessibilityObject::mathOverObject):
+        (WebCore::AccessibilityObject::mathNumeratorObject):
+        (WebCore::AccessibilityObject::mathDenominatorObject):
+        (WebCore::AccessibilityObject::mathBaseObject):
+        (WebCore::AccessibilityObject::mathSubscriptObject):
+        (WebCore::AccessibilityObject::mathSuperscriptObject):
+        (WebCore::AccessibilityObject::getScrollableAreaIfScrollable):
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::progressElement):
+        (WebCore::AccessibilityProgressIndicator::meterElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::detach):
+        (WebCore::AccessibilityRenderObject::renderBoxModelObject):
+        (WebCore::AccessibilityRenderObject::firstChild):
+        (WebCore::AccessibilityRenderObject::lastChild):
+        (WebCore::startOfContinuations):
+        (WebCore::childBeforeConsideringContinuations):
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+        (WebCore::nextContinuation):
+        (WebCore::AccessibilityRenderObject::renderParentObject):
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::node):
+        (WebCore::AccessibilityRenderObject::labelElementContainer):
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::setFocused):
+        (WebCore::AccessibilityRenderObject::topRenderer):
+        (WebCore::AccessibilityRenderObject::document):
+        (WebCore::AccessibilityRenderObject::widget):
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        (WebCore::AccessibilityRenderObject::documentFrameView):
+        (WebCore::AccessibilityRenderObject::widgetForAttachmentView):
+        (WebCore::AccessibilityRenderObject::rootEditableElementForPosition):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        (WebCore::AccessibilityRenderObject::remoteSVGElementHitTest):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::correspondingControlForLabelElement):
+        (WebCore::AccessibilityRenderObject::correspondingLabelForControlElement):
+        (WebCore::AccessibilityRenderObject::observableObject):
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole):
+        (WebCore::AccessibilityRenderObject::detachRemoteSVGRoot):
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        (WebCore::AccessibilityRenderObject::setAccessibleName):
+        (WebCore::AccessibilityRenderObject::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityRenderObject::mathRadicandObject):
+        (WebCore::AccessibilityRenderObject::mathRootIndexObject):
+        (WebCore::AccessibilityRenderObject::mathNumeratorObject):
+        (WebCore::AccessibilityRenderObject::mathDenominatorObject):
+        (WebCore::AccessibilityRenderObject::mathUnderObject):
+        (WebCore::AccessibilityRenderObject::mathOverObject):
+        (WebCore::AccessibilityRenderObject::mathBaseObject):
+        (WebCore::AccessibilityRenderObject::mathSubscriptObject):
+        (WebCore::AccessibilityRenderObject::mathSuperscriptObject):
+        * accessibility/AccessibilitySVGRoot.cpp:
+        (WebCore::AccessibilitySVGRoot::AccessibilitySVGRoot):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::detach):
+        (WebCore::AccessibilityScrollView::scrollBar):
+        (WebCore::AccessibilityScrollView::updateScrollbars):
+        (WebCore::AccessibilityScrollView::addChildScrollbar):
+        (WebCore::AccessibilityScrollView::clearChildren):
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::accessibilityHitTest):
+        (WebCore::AccessibilityScrollView::documentFrameView):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::document):
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButton::AccessibilitySpinButton):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        (WebCore::AccessibilityTable::clearChildren):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentTable):
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::parentTable):
+        (WebCore::AccessibilityTableRow::headerObject):
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::detachWrapper):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper detach]):
+        (-[WebAccessibilityObjectWrapper tableCellParent]):
+        (-[WebAccessibilityObjectWrapper tableParent]):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper convertRectToScreenSpace:]):
+        (rendererForView):
+        (-[WebAccessibilityObjectWrapper _convertToDOMRange:]):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::detachWrapper):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::detachFromParent):
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase detach]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (CreateCGColorIfDifferent):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (rendererForView):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * accessibility/win/AccessibilityObjectWrapperWin.h:
+        (WebCore::AccessibilityObjectWrapper::AccessibilityObjectWrapper):
+
 2014-07-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         ASSERTION FAILED: generatingElement() in WebCore::RenderNamedFlowFragment::regionOversetState

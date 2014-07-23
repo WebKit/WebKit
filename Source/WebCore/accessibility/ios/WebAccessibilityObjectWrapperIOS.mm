@@ -214,7 +214,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     // rdar://8798960 Make sure the object is gone early, so that anything _accessibilityUnregister 
     // does can't call back into the render tree.
-    m_object = 0;
+    m_object = nullptr;
 
     if ([self respondsToSelector:@selector(_accessibilityUnregister)])
         [self _accessibilityUnregister];
@@ -794,12 +794,12 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 - (AccessibilityTableCell*)tableCellParent
 {
     // Find if this element is in a table cell.
-    AccessibilityObject* cell = 0;
+    AccessibilityObject* cell = nullptr;
     for (cell = m_object; cell && !cell->isTableCell(); cell = cell->parentObject()) 
     { }
     
     if (!cell)
-        return 0;
+        return nil;
 
     return static_cast<AccessibilityTableCell*>(cell);
 }
@@ -807,12 +807,12 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 - (AccessibilityTable*)tableParent
 {
     // Find if the parent table for the table cell.
-    AccessibilityObject* parentTable = 0;
+    AccessibilityObject* parentTable = nullptr;
     for (parentTable = m_object; parentTable && !parentTable->isDataTable(); parentTable = parentTable->parentObject()) 
     { }
     
     if (!parentTable)
-        return 0;
+        return nil;
     
     return static_cast<AccessibilityTable*>(parentTable);
 }
@@ -1110,8 +1110,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }
     else {
         // Find the appropriate scroll view to use to convert the contents to the window.
-        ScrollView* scrollView = 0;
-        AccessibilityObject* parent = 0;
+        ScrollView* scrollView = nullptr;
+        AccessibilityObject* parent = nullptr;
         for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
             if (parent->isAccessibilityScrollView()) {
                 scrollView = toAccessibilityScrollView(parent)->scrollView();
@@ -1164,8 +1164,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         
     } else {
         // Find the appropriate scroll view to use to convert the contents to the window.
-        ScrollView* scrollView = 0;
-        AccessibilityObject* parent = 0;
+        ScrollView* scrollView = nullptr;
+        AccessibilityObject* parent = nullptr;
         for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
             if (parent->isAccessibilityScrollView()) {
                 scrollView = toAccessibilityScrollView(parent)->scrollView();
@@ -1417,16 +1417,16 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 static RenderObject* rendererForView(WAKView* view)
 {
     if (![view conformsToProtocol:@protocol(WebCoreFrameView)])
-        return 0;
+        return nil;
     
     WAKView<WebCoreFrameView>* frameView = (WAKView<WebCoreFrameView>*)view;
     Frame* frame = [frameView _web_frame];
     if (!frame)
-        return 0;
+        return nil;
     
     Node* node = frame->document()->ownerElement();
     if (!node)
-        return 0;
+        return nil;
     
     return node->renderer();
 }
@@ -1887,7 +1887,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 - (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
 {
     if (nsrange.location > INT_MAX)
-        return 0;
+        return nullptr;
     if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
         nsrange.length = INT_MAX - nsrange.location;
         
@@ -2474,8 +2474,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 // These are used by DRT so that it can know when notifications are sent.
 // Since they are static, only one callback can be installed at a time (that's all DRT should need).
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
-static AXPostedNotificationCallback AXNotificationCallback = 0;
-static void* AXPostedNotificationContext = 0;
+static AXPostedNotificationCallback AXNotificationCallback = nullptr;
+static void* AXPostedNotificationContext = nullptr;
 
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context
 {

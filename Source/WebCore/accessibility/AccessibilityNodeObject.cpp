@@ -123,7 +123,7 @@ void AccessibilityNodeObject::detach(AccessibilityDetachmentType detachmentType,
 {
     // AccessibilityObject calls clearChildren.
     AccessibilityObject::detach(detachmentType, cache);
-    m_node = 0;
+    m_node = nullptr;
 }
 
 void AccessibilityNodeObject::childrenChanged()
@@ -170,12 +170,12 @@ void AccessibilityNodeObject::updateAccessibilityRole()
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
 {
     if (!node())
-        return 0;
+        return nullptr;
     
     Node* firstChild = node()->firstChild();
 
     if (!firstChild)
-        return 0;
+        return nullptr;
     
     return axObjectCache()->getOrCreate(firstChild);
 }
@@ -183,11 +183,11 @@ AccessibilityObject* AccessibilityNodeObject::firstChild() const
 AccessibilityObject* AccessibilityNodeObject::lastChild() const
 {
     if (!node())
-        return 0;
+        return nullptr;
     
     Node* lastChild = node()->lastChild();
     if (!lastChild)
-        return 0;
+        return nullptr;
     
     return axObjectCache()->getOrCreate(lastChild);
 }
@@ -195,11 +195,11 @@ AccessibilityObject* AccessibilityNodeObject::lastChild() const
 AccessibilityObject* AccessibilityNodeObject::previousSibling() const
 {
     if (!node())
-        return 0;
+        return nullptr;
 
     Node* previousSibling = node()->previousSibling();
     if (!previousSibling)
-        return 0;
+        return nullptr;
 
     return axObjectCache()->getOrCreate(previousSibling);
 }
@@ -207,11 +207,11 @@ AccessibilityObject* AccessibilityNodeObject::previousSibling() const
 AccessibilityObject* AccessibilityNodeObject::nextSibling() const
 {
     if (!node())
-        return 0;
+        return nullptr;
 
     Node* nextSibling = node()->nextSibling();
     if (!nextSibling)
-        return 0;
+        return nullptr;
 
     return axObjectCache()->getOrCreate(nextSibling);
 }
@@ -224,7 +224,7 @@ AccessibilityObject* AccessibilityNodeObject::parentObjectIfExists() const
 AccessibilityObject* AccessibilityNodeObject::parentObject() const
 {
     if (!node())
-        return 0;
+        return nullptr;
 
     Node* parentObj = node()->parentNode();
     if (!parentObj)
@@ -233,7 +233,7 @@ AccessibilityObject* AccessibilityNodeObject::parentObject() const
     if (AXObjectCache* cache = axObjectCache())
         return cache->getOrCreate(parentObj);
     
-    return 0;
+    return nullptr;
 }
 
 LayoutRect AccessibilityNodeObject::elementRect() const
@@ -269,7 +269,7 @@ void AccessibilityNodeObject::setNode(Node* node)
 Document* AccessibilityNodeObject::document() const
 {
     if (!node())
-        return 0;
+        return nullptr;
     return &node()->document();
 }
 
@@ -961,7 +961,7 @@ Element* AccessibilityNodeObject::anchorElement() const
 {
     Node* node = this->node();
     if (!node)
-        return 0;
+        return nullptr;
 
     AXObjectCache* cache = axObjectCache();
 
@@ -972,7 +972,7 @@ Element* AccessibilityNodeObject::anchorElement() const
             return toElement(node);
     }
 
-    return 0;
+    return nullptr;
 }
 
 static bool isNodeActionElement(Node* node)
@@ -990,7 +990,7 @@ static bool isNodeActionElement(Node* node)
 static Element* nativeActionElement(Node* start)
 {
     if (!start)
-        return 0;
+        return nullptr;
     
     // Do a deep-dive to see if any nodes should be used as the action element.
     // We have to look at Nodes, since this method should only be called on objects that do not have children (like buttons).
@@ -1003,14 +1003,14 @@ static Element* nativeActionElement(Node* start)
         if (Element* subChild = nativeActionElement(child))
             return subChild;
     }
-    return 0;
+    return nullptr;
 }
     
 Element* AccessibilityNodeObject::actionElement() const
 {
     Node* node = this->node();
     if (!node)
-        return 0;
+        return nullptr;
 
     if (isNodeActionElement(node))
         return toElement(node);
@@ -1045,7 +1045,7 @@ Element* AccessibilityNodeObject::mouseButtonListener(MouseButtonListenerResultF
 {
     Node* node = this->node();
     if (!node)
-        return 0;
+        return nullptr;
 
     // check if our parent is a mouse button listener
     // FIXME: Do the continuation search like anchorElement does
@@ -1059,7 +1059,7 @@ Element* AccessibilityNodeObject::mouseButtonListener(MouseButtonListenerResultF
             return &element;
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool AccessibilityNodeObject::isDescendantOfBarrenParent() const
@@ -1165,7 +1165,7 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
 HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) const
 {
     if (!element->isHTMLElement() || !toHTMLElement(element)->isLabelable())
-        return 0;
+        return nullptr;
 
     const AtomicString& id = element->getIdAttribute();
     if (!id.isEmpty()) {
@@ -1222,7 +1222,7 @@ AccessibilityObject* AccessibilityNodeObject::menuForMenuButton() const
 Element* AccessibilityNodeObject::menuItemElementForMenu() const
 {
     if (ariaRoleAttribute() != MenuRole)
-        return 0;
+        return nullptr;
     
     return siblingWithAriaRole("menuitem", node());    
 }
@@ -1241,7 +1241,7 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
         if (menuItemAX && menuItemAX->isMenuButton())
             return menuItemAX;
     }
-    return 0;
+    return nullptr;
 }
 
 bool AccessibilityNodeObject::usesAltTagForTextComputation() const

@@ -76,11 +76,11 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
 AccessibilityTable* AccessibilityTableCell::parentTable() const
 {
     if (!m_renderer || !m_renderer->isTableCell())
-        return 0;
+        return nullptr;
 
     // If the document no longer exists, we might not have an axObjectCache.
     if (!axObjectCache())
-        return 0;
+        return nullptr;
     
     // Do not use getOrCreate. parentTable() can be called while the render tree is being modified 
     // by javascript, and creating a table element may try to access the render tree while in a bad state.
@@ -261,33 +261,33 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     // then it can act as the title ui element. (This is only in the
     // case when the table is not appearing as an AXTable.)
     if (isTableCell() || !m_renderer || !m_renderer->isTableCell())
-        return 0;
+        return nullptr;
 
     // Table cells that are th cannot have title ui elements, since by definition
     // they are title ui elements
     Node* node = m_renderer->node();
     if (node && node->hasTagName(thTag))
-        return 0;
+        return nullptr;
     
     RenderTableCell* renderCell = toRenderTableCell(m_renderer);
 
     // If this cell is in the first column, there is no need to continue.
     int col = renderCell->col();
     if (!col)
-        return 0;
+        return nullptr;
 
     int row = renderCell->rowIndex();
 
     RenderTableSection* section = renderCell->section();
     if (!section)
-        return 0;
+        return nullptr;
     
     RenderTableCell* headerCell = section->primaryCellAt(row, 0);
     if (!headerCell || headerCell == renderCell)
-        return 0;
+        return nullptr;
 
     if (!headerCell->element() || !headerCell->element()->hasTagName(thTag))
-        return 0;
+        return nullptr;
     
     return axObjectCache()->getOrCreate(headerCell);
 }

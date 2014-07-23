@@ -145,15 +145,15 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     // Find the corresponding accessibility object for the HTMLAreaElement. This should be
     // in the list of children for its corresponding image.
     if (!areaElement)
-        return 0;
+        return nullptr;
     
     HTMLImageElement* imageElement = areaElement->imageElement();
     if (!imageElement)
-        return 0;
+        return nullptr;
     
     AccessibilityObject* axRenderImage = areaElement->document().axObjectCache()->getOrCreate(imageElement);
     if (!axRenderImage)
-        return 0;
+        return nullptr;
     
     for (const auto& child : axRenderImage->children()) {
         if (!child->isImageMapLink())
@@ -163,13 +163,13 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
             return child.get();
     }    
     
-    return 0;
+    return nullptr;
 }
     
 AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 {
     if (!gAccessibilityEnabled)
-        return 0;
+        return nullptr;
 
     // get the focused node in the page
     Document* focusedDocument = page->focusController().focusedOrMainFrame().document();
@@ -179,7 +179,7 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 
     AccessibilityObject* obj = focusedDocument->axObjectCache()->getOrCreate(focusedElement ? static_cast<Node*>(focusedElement) : focusedDocument);
     if (!obj)
-        return 0;
+        return nullptr;
 
     if (obj->shouldFocusActiveDescendant()) {
         if (AccessibilityObject* descendant = obj->activeDescendant())
@@ -196,12 +196,12 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 AccessibilityObject* AXObjectCache::get(Widget* widget)
 {
     if (!widget)
-        return 0;
+        return nullptr;
         
     AXID axID = m_widgetObjectMapping.get(widget);
     ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
     if (!axID)
-        return 0;
+        return nullptr;
     
     return m_objects.get(axID);    
 }
@@ -209,12 +209,12 @@ AccessibilityObject* AXObjectCache::get(Widget* widget)
 AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
 {
     if (!renderer)
-        return 0;
+        return nullptr;
     
     AXID axID = m_renderObjectMapping.get(renderer);
     ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
     if (!axID)
-        return 0;
+        return nullptr;
 
     return m_objects.get(axID);    
 }
@@ -222,7 +222,7 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
 AccessibilityObject* AXObjectCache::get(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
 
     AXID renderID = node->renderer() ? m_renderObjectMapping.get(node->renderer()) : 0;
     ASSERT(!HashTraits<AXID>::isDeletedValue(renderID));
@@ -235,14 +235,14 @@ AccessibilityObject* AXObjectCache::get(Node* node)
         // rendered, but later something changes and it gets a renderer (like if it's
         // reparented).
         remove(nodeID);
-        return 0;
+        return nullptr;
     }
 
     if (renderID)
         return m_objects.get(renderID);
 
     if (!nodeID)
-        return 0;
+        return nullptr;
 
     return m_objects.get(nodeID);
 }
@@ -335,12 +335,12 @@ static PassRefPtr<AccessibilityObject> createFromNode(Node* node)
 AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
 {
     if (!widget)
-        return 0;
+        return nullptr;
 
     if (AccessibilityObject* obj = get(widget))
         return obj;
     
-    RefPtr<AccessibilityObject> newObj = 0;
+    RefPtr<AccessibilityObject> newObj = nullptr;
     if (widget->isFrameView())
         newObj = AccessibilityScrollView::create(toScrollView(widget));
     else if (widget->isScrollbar())
@@ -352,7 +352,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     // Catch the case if an (unsupported) widget type is used. Only FrameView and ScrollBar are supported now.
     ASSERT(newObj);
     if (!newObj)
-        return 0;
+        return nullptr;
 
     getAXID(newObj.get());
     
@@ -366,7 +366,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
 AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
 
     if (AccessibilityObject* obj = get(node))
         return obj;
@@ -375,7 +375,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
         return getOrCreate(node->renderer());
 
     if (!node->parentElement())
-        return 0;
+        return nullptr;
     
     // It's only allowed to create an AccessibilityObject from a Node if it's in a canvas subtree.
     // Or if it's a hidden element, but we still want to expose it because of other ARIA attributes.
@@ -388,7 +388,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 #endif
     
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
-        return 0;
+        return nullptr;
 
     RefPtr<AccessibilityObject> newObj = createFromNode(node);
 
@@ -413,7 +413,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 {
     if (!renderer)
-        return 0;
+        return nullptr;
 
     if (AccessibilityObject* obj = get(renderer))
         return obj;
@@ -441,7 +441,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 AccessibilityObject* AXObjectCache::rootObject()
 {
     if (!gAccessibilityEnabled)
-        return 0;
+        return nullptr;
 
     return getOrCreate(m_document.view());
 }
@@ -449,16 +449,16 @@ AccessibilityObject* AXObjectCache::rootObject()
 AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
 {
     if (!gAccessibilityEnabled)
-        return 0;
+        return nullptr;
 
     if (!frame)
-        return 0;
+        return nullptr;
     return getOrCreate(frame->view());
 }    
     
 AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
 {
-    RefPtr<AccessibilityObject> obj = 0;
+    RefPtr<AccessibilityObject> obj = nullptr;
     
     // will be filled in...
     switch (role) {
@@ -490,13 +490,13 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
         obj = AccessibilitySpinButtonPart::create();
         break;
     default:
-        obj = 0;
+        obj = nullptr;
     }
     
     if (obj)
         getAXID(obj.get());
     else
-        return 0;
+        return nullptr;
 
     m_objects.set(obj->axObjectID(), obj);    
     obj->init();

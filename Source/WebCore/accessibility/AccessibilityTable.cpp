@@ -50,7 +50,7 @@ using namespace HTMLNames;
 
 AccessibilityTable::AccessibilityTable(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
-    , m_headerContainer(0)
+    , m_headerContainer(nullptr)
     , m_isAccessibilityTable(true)
 {
 }
@@ -342,7 +342,7 @@ void AccessibilityTable::clearChildren()
 
     if (m_headerContainer) {
         m_headerContainer->detachFromParent();
-        m_headerContainer = 0;
+        m_headerContainer = nullptr;
     }
 }
 
@@ -537,7 +537,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
 {
     updateChildrenIfNecessary();
     if (column >= columnCount() || row >= rowCount())
-        return 0;
+        return nullptr;
     
     // Iterate backwards through the rows in case the desired cell has a rowspan and exists in a previous row.
     for (unsigned rowIndexCounter = row + 1; rowIndexCounter > 0; --rowIndexCounter) {
@@ -564,7 +564,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         }
     }
     
-    return 0;
+    return nullptr;
 }
 
 AccessibilityRole AccessibilityTable::roleValue() const

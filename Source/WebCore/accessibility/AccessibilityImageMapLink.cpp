@@ -40,8 +40,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 AccessibilityImageMapLink::AccessibilityImageMapLink()
-    : m_areaElement(0)
-    , m_mapElement(0)
+    : m_areaElement(nullptr)
+    , m_mapElement(nullptr)
 {
 }
 
@@ -60,7 +60,7 @@ AccessibilityObject* AccessibilityImageMapLink::parentObject() const
         return m_parent;
     
     if (!m_mapElement.get() || !m_mapElement->renderer())
-        return 0;
+        return nullptr;
     
     return m_mapElement->document().axObjectCache()->getOrCreate(m_mapElement->renderer());
 }

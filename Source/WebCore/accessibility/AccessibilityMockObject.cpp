@@ -29,7 +29,7 @@
 namespace WebCore {
     
 AccessibilityMockObject::AccessibilityMockObject()
-    : m_parent(0)
+    : m_parent(nullptr)
 {
 }
 

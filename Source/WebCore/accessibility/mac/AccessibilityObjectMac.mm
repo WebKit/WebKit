@@ -39,7 +39,7 @@ namespace WebCore {
 void AccessibilityObject::detachFromParent()
 {
     if (isAttachment())
-        overrideAttachmentParent(0);
+        overrideAttachmentParent(nullptr);
 }
 
 void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
@@ -61,7 +61,7 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
     // FrameView attachments are now handled by AccessibilityScrollView, 
     // so if this is the attachment, it should be ignored.
-    Widget* widget = 0;
+    Widget* widget = nullptr;
     if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
         return true;
 

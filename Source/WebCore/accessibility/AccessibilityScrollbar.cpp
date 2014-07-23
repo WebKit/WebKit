@@ -59,7 +59,7 @@ Document* AccessibilityScrollbar::document() const
 {
     AccessibilityObject* parent = parentObject();
     if (!parent)
-        return 0;
+        return nullptr;
     return parent->document();
 }
 

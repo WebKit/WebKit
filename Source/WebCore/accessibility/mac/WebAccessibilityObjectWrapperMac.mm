@@ -806,7 +806,7 @@ static CGColorRef CreateCGColorIfDifferent(NSColor* nsColor, CGColorRef existing
     // check for match with existing color
     if (existingColor && CGColorEqualToColor(cgColor, existingColor)) {
         CGColorRelease(cgColor);
-        cgColor = 0;
+        cgColor = nullptr;
     }
     
     return cgColor;
@@ -1749,8 +1749,8 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
     } else {
         
         // Find the appropriate scroll view to use to convert the contents to the window.
-        ScrollView* scrollView = 0;
-        AccessibilityObject* parent = 0;
+        ScrollView* scrollView = nullptr;
+        AccessibilityObject* parent = nullptr;
         for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
             if (parent->isAccessibilityScrollView()) {
                 scrollView = toAccessibilityScrollView(parent)->scrollView();
@@ -3322,16 +3322,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 static RenderObject* rendererForView(NSView* view)
 {
     if (![view conformsToProtocol:@protocol(WebCoreFrameView)])
-        return 0;
+        return nullptr;
     
     NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
     Frame* frame = [frameView _web_frame];
     if (!frame)
-        return 0;
+        return nullptr;
     
     Node* node = frame->document()->ownerElement();
     if (!node)
-        return 0;
+        return nullptr;
     
     return node->renderer();
 }
@@ -3420,7 +3420,7 @@ static RenderObject* rendererForView(NSView* view)
     NSNumber* number = nil;
     NSArray* array = nil;
     NSDictionary* dictionary = nil;
-    RefPtr<AccessibilityObject> uiElement = 0;
+    RefPtr<AccessibilityObject> uiElement = nullptr;
     NSPoint point = NSZeroPoint;
     bool pointSet = false;
     NSRange range = {0, 0};

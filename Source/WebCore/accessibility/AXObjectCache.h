@@ -272,22 +272,22 @@ inline AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(A
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }
 inline AXObjectCache::AXObjectCache(Document& document) : m_document(document), m_notificationPostTimer(this, (Timer<AXObjectCache>::TimerFiredFunction) nullptr) { }
 inline AXObjectCache::~AXObjectCache() { }
-inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return 0; }
-inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }
-inline AccessibilityObject* AXObjectCache::get(Node*) { return 0; }
-inline AccessibilityObject* AXObjectCache::get(Widget*) { return 0; }
-inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return 0; }
-inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return 0; }
-inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return 0; }
-inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return 0; }
-inline AccessibilityObject* AXObjectCache::rootObject() { return 0; }
-inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return 0; }
-inline Element* AXObjectCache::rootAXEditableElement(Node*) { return 0; }
+inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::rootObject() { return nullptr; }
+inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return nullptr; }
+inline Element* AXObjectCache::rootAXEditableElement(Node*) { return nullptr; }
 inline bool nodeHasRole(Node*, const String&) { return false; }
 inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }
 inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
 inline bool isNodeAriaVisible(Node*) { return true; }
-inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return 0; }
+inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return nullptr; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }

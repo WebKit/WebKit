@@ -70,14 +70,14 @@ LayoutRect AccessibilityTableColumn::elementRect() const
 AccessibilityObject* AccessibilityTableColumn::headerObject()
 {
     if (!m_parent)
-        return 0;
+        return nullptr;
     
     RenderObject* renderer = m_parent->renderer();
     if (!renderer)
-        return 0;
+        return nullptr;
     
     if (!m_parent->isAccessibilityTable())
-        return 0;
+        return nullptr;
     
     AccessibilityTable* parentTable = toAccessibilityTable(m_parent);
     if (parentTable->isAriaTable()) {
@@ -86,15 +86,15 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
                 return cell.get();
         }
         
-        return 0;
+        return nullptr;
     }
 
     if (!renderer->isTable())
-        return 0;
+        return nullptr;
     
     RenderTable* table = toRenderTable(renderer);
     
-    AccessibilityObject* headerObject = 0;
+    AccessibilityObject* headerObject = nullptr;
     
     // try the <thead> section first. this doesn't require th tags
     headerObject = headerObjectForSection(table->header(), false);
@@ -111,16 +111,16 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
 AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTableSection* section, bool thTagRequired)
 {
     if (!section)
-        return 0;
+        return nullptr;
     
     unsigned numCols = section->numColumns();
     if (m_columnIndex >= numCols)
-        return 0;
+        return nullptr;
     
     if (!section->numRows())
-        return 0;
+        return nullptr;
     
-    RenderTableCell* cell = 0;
+    RenderTableCell* cell = nullptr;
     // also account for cells that have a span
     for (int testCol = m_columnIndex; testCol >= 0; --testCol) {
         RenderTableCell* testCell = section->primaryCellAt(0, testCol);
@@ -142,7 +142,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     }
     
     if (!cell)
-        return 0;
+        return nullptr;
 
     return axObjectCache()->getOrCreate(cell);
 }

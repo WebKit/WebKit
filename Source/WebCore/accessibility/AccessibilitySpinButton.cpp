@@ -37,7 +37,7 @@ PassRefPtr<AccessibilitySpinButton> AccessibilitySpinButton::create()
 }
     
 AccessibilitySpinButton::AccessibilitySpinButton()
-    : m_spinButtonElement(0)
+    : m_spinButtonElement(nullptr)
 {
 }
 

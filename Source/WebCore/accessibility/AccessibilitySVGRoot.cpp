@@ -35,7 +35,7 @@ namespace WebCore {
 
 AccessibilitySVGRoot::AccessibilitySVGRoot(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
-    , m_parent(0)
+    , m_parent(nullptr)
 {
 }
 

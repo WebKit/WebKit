@@ -102,7 +102,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
 
 - (void)detach
 {
-    m_object = 0;
+    m_object = nullptr;
 }
 
 - (BOOL)updateObjectBackingStore

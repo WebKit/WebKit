@@ -91,19 +91,19 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
     // that is aria-level subtract 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent || !parent->isAccessibilityTable())
-        return 0;
+        return nullptr;
     
     // If the level is 1 or less, than nothing discloses this row.
     unsigned level = hierarchicalLevel();
     if (level <= 1)
-        return 0;
+        return nullptr;
     
     // Search for the previous row that matches the correct level.
     int index = rowIndex();
     auto& allRows = toAccessibilityTable(parent)->rows();
     int rowCount = allRows.size();
     if (index >= rowCount)
-        return 0;
+        return nullptr;
     
     for (int k = index - 1; k >= 0; --k) {
         AccessibilityObject* row = allRows[k].get();

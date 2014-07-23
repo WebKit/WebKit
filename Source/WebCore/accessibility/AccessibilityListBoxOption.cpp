@@ -46,7 +46,7 @@ namespace WebCore {
 using namespace HTMLNames;
     
 AccessibilityListBoxOption::AccessibilityListBoxOption()
-    : m_optionElement(0)
+    : m_optionElement(nullptr)
 {
 }
 
@@ -174,7 +174,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
 {
     HTMLSelectElement* parentNode = listBoxOptionParentNode();
     if (!parentNode)
-        return 0;
+        return nullptr;
     
     return m_optionElement->document().axObjectCache()->getOrCreate(parentNode);
 }
@@ -200,7 +200,7 @@ void AccessibilityListBoxOption::setSelected(bool selected)
 HTMLSelectElement* AccessibilityListBoxOption::listBoxOptionParentNode() const
 {
     if (!m_optionElement)
-        return 0;
+        return nullptr;
 
     if (isHTMLOptionElement(m_optionElement))
         return toHTMLOptionElement(m_optionElement)->ownerSelectElement();
@@ -208,7 +208,7 @@ HTMLSelectElement* AccessibilityListBoxOption::listBoxOptionParentNode() const
     if (isHTMLOptGroupElement(m_optionElement))
         return toHTMLOptGroupElement(m_optionElement)->ownerSelectElement();
 
-    return 0;
+    return nullptr;
 }
 
 int AccessibilityListBoxOption::listBoxOptionIndex() const

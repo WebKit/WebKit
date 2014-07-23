@@ -83,7 +83,7 @@ AccessibilityObject::AccessibilityObject()
     , m_role(UnknownRole)
     , m_lastKnownIsIgnoredValue(DefaultBehavior)
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
-    , m_wrapper(0)
+    , m_wrapper(nullptr)
 #endif
 {
 }
@@ -104,7 +104,7 @@ void AccessibilityObject::detach(AccessibilityDetachmentType detachmentType, AXO
     clearChildren();
 
 #if HAVE(ACCESSIBILITY)
-    setWrapper(0);
+    setWrapper(nullptr);
 #endif
 }
 
@@ -380,7 +380,7 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
 
     AXObjectCache* cache = node->document().axObjectCache();
     if (!cache)
@@ -394,7 +394,7 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
             node = NodeTraversal::nextSkippingChildren(node);
 
         if (!node)
-            return 0;
+            return nullptr;
 
         accessibleObject = cache->getOrCreate(node->renderer());
     }
@@ -487,7 +487,7 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
     // The first iteration of the outer loop will examine the children of the start object for matches. However, when
     // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
     // exception when no start object was specified because we want to search everything regardless of search direction.
-    AccessibilityObject* previousObject = 0;
+    AccessibilityObject* previousObject = nullptr;
     if (!isForward && startObject != this) {
         previousObject = startObject;
         startObject = startObject->parentObjectUnignored();
@@ -1070,7 +1070,7 @@ static RenderListItem* renderListItemContainerForNode(Node* node)
         if (renderer && renderer->isListItem())
             return toRenderListItem(renderer);
     }
-    return 0;
+    return nullptr;
 }
     
 // Returns the text associated with a list marker if this node is contained within a list item.
@@ -1326,11 +1326,11 @@ VisiblePosition AccessibilityObject::previousParagraphStartPosition(const Visibl
 AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
-        return 0;
+        return nullptr;
 
     RenderObject* obj = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     if (!obj)
-        return 0;
+        return nullptr;
 
     return obj->document().axObjectCache()->getOrCreate(obj);
 }
@@ -1454,7 +1454,7 @@ Document* AccessibilityObject::document() const
 {
     FrameView* frameView = documentFrameView();
     if (!frameView)
-        return 0;
+        return nullptr;
     
     return frameView->frame().document();
 }
@@ -1463,7 +1463,7 @@ Page* AccessibilityObject::page() const
 {
     Document* document = this->document();
     if (!document)
-        return 0;
+        return nullptr;
     return document->page();
 }
 
@@ -1474,7 +1474,7 @@ FrameView* AccessibilityObject::documentFrameView() const
         object = object->parentObject();
         
     if (!object)
-        return 0;
+        return nullptr;
 
     return object->documentFrameView();
 }
@@ -1509,16 +1509,16 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
 {
     RenderObject* obj = node->renderer();
     if (!obj)
-        return 0;
+        return nullptr;
     
     RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(obj);
     Element* anchor = axObj->anchorElement();
     if (!anchor)
-        return 0;
+        return nullptr;
     
     RenderObject* anchorRenderer = anchor->renderer();
     if (!anchorRenderer)
-        return 0;
+        return nullptr;
     
     return anchorRenderer->document().axObjectCache()->getOrCreate(anchorRenderer);
 }
@@ -1526,11 +1526,11 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
 AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
     
     RenderObject* renderObject = node->renderer();
     if (!renderObject)
-        return 0;
+        return nullptr;
     
     AccessibilityObject* axObject = renderObject->document().axObjectCache()->getOrCreate(renderObject);
     for (; axObject && axObject->roleValue() != HeadingRole; axObject = axObject->parentObject()) { }
@@ -1729,7 +1729,7 @@ AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
         if (child->renderer() && child->renderer()->isAnonymousBlock())
             return child;
     }
-    return 0;
+    return nullptr;
 }
 
 typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
@@ -1876,7 +1876,7 @@ Element* AccessibilityObject::element() const
     Node* node = this->node();
     if (node && node->isElementNode())
         return toElement(node);
-    return 0;
+    return nullptr;
 }
 
 const AtomicString& AccessibilityObject::placeholderValue() const
@@ -1964,11 +1964,11 @@ AccessibilityObject* AccessibilityObject::focusedUIElement() const
 {
     Document* doc = document();
     if (!doc)
-        return 0;
+        return nullptr;
     
     Page* page = doc->page();
     if (!page)
-        return 0;
+        return nullptr;
     
     return AXObjectCache::focusedUIElementForPage(page);
 }
@@ -2211,7 +2211,7 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocu
     // Search up the parent chain until we find the first one that's scrollable.
     AccessibilityObject* scrollParent = parentObject();
     ScrollableArea* scrollableArea;
-    for (scrollableArea = 0;
+    for (scrollableArea = nullptr;
          scrollParent && !(scrollableArea = scrollParent->getScrollableAreaIfScrollable());
          scrollParent = scrollParent->parentObject()) { }
     if (!scrollableArea)

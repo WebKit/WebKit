@@ -49,7 +49,7 @@ namespace WebCore {
 
     protected:
         AccessibilityObjectWrapper(AccessibilityObject* obj) : m_object(obj) { }
-        AccessibilityObjectWrapper() : m_object(0) { }
+        AccessibilityObjectWrapper() : m_object(nullptr) { }
 
         AccessibilityObject* m_object;
     };

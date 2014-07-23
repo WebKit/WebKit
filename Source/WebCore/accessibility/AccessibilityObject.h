@@ -556,8 +556,8 @@ public:
     virtual bool canSetExpandedAttribute() const { return false; }
     
     Element* element() const;
-    virtual Node* node() const { return 0; }
-    virtual RenderObject* renderer() const { return 0; }
+    virtual Node* node() const { return nullptr; }
+    virtual RenderObject* renderer() const { return nullptr; }
     virtual bool accessibilityIsIgnored() const;
     virtual AccessibilityObjectInclusion defaultObjectInclusion() const;
     bool accessibilityIsIgnoredByDefault() const;
@@ -571,8 +571,8 @@ public:
     virtual float maxValueForRange() const { return 0.0f; }
     virtual float minValueForRange() const { return 0.0f; }
     virtual float stepValueForRange() const { return 0.0f; }
-    virtual AccessibilityObject* selectedRadioButton() { return 0; }
-    virtual AccessibilityObject* selectedTabItem() { return 0; }    
+    virtual AccessibilityObject* selectedRadioButton() { return nullptr; }
+    virtual AccessibilityObject* selectedTabItem() { return nullptr; }
     virtual int layoutCount() const { return 0; }
     virtual double estimatedLoadingProgress() const { return 0; }
     static bool isARIAControl(AccessibilityRole);
@@ -610,19 +610,19 @@ public:
     virtual void determineARIADropEffects(Vector<String>&) { }
     
     // Called on the root AX object to return the deepest available element.
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const { return 0; }
+    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const { return nullptr; }
     // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
 
     virtual AccessibilityObject* focusedUIElement() const;
 
-    virtual AccessibilityObject* firstChild() const { return 0; }
-    virtual AccessibilityObject* lastChild() const { return 0; }
-    virtual AccessibilityObject* previousSibling() const { return 0; }
-    virtual AccessibilityObject* nextSibling() const { return 0; }
+    virtual AccessibilityObject* firstChild() const { return nullptr; }
+    virtual AccessibilityObject* lastChild() const { return nullptr; }
+    virtual AccessibilityObject* previousSibling() const { return nullptr; }
+    virtual AccessibilityObject* nextSibling() const { return nullptr; }
     virtual AccessibilityObject* parentObject() const = 0;
     virtual AccessibilityObject* parentObjectUnignored() const;
-    virtual AccessibilityObject* parentObjectIfExists() const { return 0; }
+    virtual AccessibilityObject* parentObjectIfExists() const { return nullptr; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual bool isDescendantOfBarrenParent() const { return false; }
@@ -632,13 +632,13 @@ public:
     PassRefPtr<Range> selectionRange() const;
     String selectText(AccessibilitySelectTextCriteria*);
     
-    virtual AccessibilityObject* observableObject() const { return 0; }
+    virtual AccessibilityObject* observableObject() const { return nullptr; }
     virtual void linkedUIElements(AccessibilityChildrenVector&) const { }
-    virtual AccessibilityObject* titleUIElement() const { return 0; }
+    virtual AccessibilityObject* titleUIElement() const { return nullptr; }
     virtual bool exposesTitleUIElement() const { return true; }
-    virtual AccessibilityObject* correspondingLabelForControlElement() const { return 0; }
-    virtual AccessibilityObject* correspondingControlForLabelElement() const { return 0; }
-    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) { return 0; }
+    virtual AccessibilityObject* correspondingLabelForControlElement() const { return nullptr; }
+    virtual AccessibilityObject* correspondingControlForLabelElement() const { return nullptr; }
+    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) { return nullptr; }
     
     virtual AccessibilityRole ariaRoleAttribute() const { return UnknownRole; }
     virtual bool isPresentationalChildOfAriaRole() const { return false; }
@@ -683,8 +683,8 @@ public:
     
     static AccessibilityObject* anchorElementForNode(Node*);
     static AccessibilityObject* headingElementForNode(Node*);
-    virtual Element* anchorElement() const { return 0; }
-    virtual Element* actionElement() const { return 0; }
+    virtual Element* anchorElement() const { return nullptr; }
+    virtual Element* actionElement() const { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
     IntRect pixelSnappedBoundingBoxRect() const { return pixelSnappedIntRect(boundingBoxRect()); }
     virtual LayoutRect elementRect() const = 0;
@@ -706,8 +706,8 @@ public:
     virtual String selectedText() const { return String(); }
     virtual const AtomicString& accessKey() const { return nullAtom; }
     const String& actionVerb() const;
-    virtual Widget* widget() const { return 0; }
-    virtual Widget* widgetForAttachmentView() const { return 0; }
+    virtual Widget* widget() const { return nullptr; }
+    virtual Widget* widgetForAttachmentView() const { return nullptr; }
     Page* page() const;
     virtual Document* document() const;
     virtual FrameView* documentFrameView() const;
@@ -758,7 +758,7 @@ public:
     virtual void visibleChildren(AccessibilityChildrenVector&) { }
     virtual void tabChildren(AccessibilityChildrenVector&) { }
     virtual bool shouldFocusActiveDescendant() const { return false; }
-    virtual AccessibilityObject* activeDescendant() const { return 0; }    
+    virtual AccessibilityObject* activeDescendant() const { return nullptr; }
     virtual void handleActiveDescendantChanged() { }
     virtual void handleAriaExpandedChanged() { }
     bool isDescendantOfObject(const AccessibilityObject*) const;
@@ -891,21 +891,21 @@ public:
     virtual bool isMathMultiscript() const { return false; }
 
     // Root components.
-    virtual AccessibilityObject* mathRadicandObject() { return 0; }
-    virtual AccessibilityObject* mathRootIndexObject() { return 0; }
+    virtual AccessibilityObject* mathRadicandObject() { return nullptr; }
+    virtual AccessibilityObject* mathRootIndexObject() { return nullptr; }
     
     // Under over components.
-    virtual AccessibilityObject* mathUnderObject() { return 0; }
-    virtual AccessibilityObject* mathOverObject() { return 0; }
+    virtual AccessibilityObject* mathUnderObject() { return nullptr; }
+    virtual AccessibilityObject* mathOverObject() { return nullptr; }
 
     // Fraction components.
-    virtual AccessibilityObject* mathNumeratorObject() { return 0; }
-    virtual AccessibilityObject* mathDenominatorObject() { return 0; }
+    virtual AccessibilityObject* mathNumeratorObject() { return nullptr; }
+    virtual AccessibilityObject* mathDenominatorObject() { return nullptr; }
 
     // Subscript/superscript components.
-    virtual AccessibilityObject* mathBaseObject() { return 0; }
-    virtual AccessibilityObject* mathSubscriptObject() { return 0; }
-    virtual AccessibilityObject* mathSuperscriptObject() { return 0; }
+    virtual AccessibilityObject* mathBaseObject() { return nullptr; }
+    virtual AccessibilityObject* mathSubscriptObject() { return nullptr; }
+    virtual AccessibilityObject* mathSuperscriptObject() { return nullptr; }
     
     // Fenced components.
     virtual String mathFencedOpenString() const { return String(); }
@@ -969,7 +969,7 @@ protected:
     virtual bool computeAccessibilityIsIgnored() const { return true; }
 
     // If this object itself scrolls, return its ScrollableArea.
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const { return 0; }
+    virtual ScrollableArea* getScrollableAreaIfScrollable() const { return nullptr; }
     virtual void scrollTo(const IntPoint&) const { }
 
     static bool isAccessibilityObjectSearchMatchAtIndex(AccessibilityObject*, AccessibilitySearchCriteria*, size_t);
