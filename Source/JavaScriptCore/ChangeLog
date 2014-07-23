@@ -1,5 +1,14 @@
 2014-07-23  Brent Fulgham  <bfulgham@apple.com>
 
+        Build fix after r171482.
+
+        Rubberstamped by Joe Pecoraro.
+
+        * runtime/Identifier.h: Make header declarations match
+        implementation file.
+
+2014-07-23  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Use NO_RETURN_DUE_TO_CRASH on Windows
         https://bugs.webkit.org/show_bug.cgi?id=135199
 
