@@ -98,8 +98,13 @@ NO_RETURN_WITH_VALUE static void jscExit(int status)
 {
 #if ENABLE(DFG_JIT)
     if (DFG::isCrashing()) {
-        for (;;)
+        for (;;) {
+#if OS(WINDOWS)
+            sleep(1000);
+#else
             pause();
+#endif
+        }
     }
 #endif // ENABLE(DFG_JIT)
     exit(status);
