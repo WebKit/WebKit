@@ -1,5 +1,62 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171201
+
+    2014-07-17  Benjamin Poulain  <benjamin@webkit.org>
+
+            [iOS][WK2] Add SPI to do a dynamic viewport update without showing any content
+            https://bugs.webkit.org/show_bug.cgi?id=135010
+
+            Reviewed by Darin Adler.
+
+            This patch add a new SPI, [WKWebView _resizeWhileHidingContentWithUpdates:] to perform all the work
+            of a dynamic viewport size update, but instead of animating the old content, it is hidden.
+
+            The patch is built on top of the animated resize mechanism. Instead of having an animation driving
+            the beginning and end, we let the content do that. The dynamic resize begins, it runs for as long as
+            the WebProcess needs, and it ends when first layer tree commit with the new content is processed.
+
+            The attribute "_isAnimatingResize" is generalized to support two modes of resizing: animated and
+            hiding content.
+
+            The attribute "_hasCommittedLoadForMainFrame" is rather silly. It is only needed because
+            [WKWebView _resizeWhileHidingContentWithUpdates:] is intended to be called a lot before the page
+            is initialized, and doing an animated resize would trash the WebProcess state.
+            I wish I had a better solution, this is not great.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _processDidExit]):
+            (-[WKWebView _didCommitLoadForMainFrame]):
+            (-[WKWebView _didCommitLayerTree:]):
+            This is the key to make this work properly. We want _resizeWhileHidingContentWithUpdates: to behave
+            exactly like an animated resize to avoid bugs. So we went to the whole update mechanism using
+            _resizeAnimationTransformAdjustments to accumulate the adjustments, now we need to restore a correct
+            view state.
+
+            Calling [WKWebView _endAnimatedResize] will do exactly that, but we need to make sure we do not hit
+            the synchronization path or we would be blocked there for a while, which is what we are trying to avoid.
+
+            After r171154, WebPageProxy keeps track of what stage of dynamic viewport update we are in. Since we are
+            executing the layer tree update stage, with the right transaction ID, WebPageProxy already knows we have
+            everything we need and does not use any synchronous messages.
+
+            (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:nextValidLayerTreeTransactionID:]):
+            (-[WKWebView _restorePageStateToExposedRect:scale:]):
+            (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+            (-[WKWebView _scrollToContentOffset:]):
+            (-[WKWebView _frameOrBoundsChanged]):
+            (-[WKWebView _updateVisibleContentRects]):
+            (-[WKWebView _setMinimumLayoutSizeOverride:]):
+            (-[WKWebView _setMinimumLayoutSizeOverrideForMinimalUI:]):
+            (-[WKWebView _setInterfaceOrientationOverride:]):
+            (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+            (-[WKWebView _endAnimatedResize]):
+            (-[WKWebView _resizeWhileHidingContentWithUpdates:]):
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171509
 
     2014-07-23  Simon Fraser  <simon.fraser@apple.com>
