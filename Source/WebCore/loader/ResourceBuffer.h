@@ -81,7 +81,7 @@ public:
     PassOwnPtr<PurgeableBuffer> releasePurgeableBuffer();
 
 #if USE(FOUNDATION)
-    SharedBuffer::NSDataRetainPtrWithoutImplicitConversionOperator createNSData();
+    RetainPtr<NSData> createNSData();
 #endif
 #if USE(CF)
     RetainPtr<CFDataRef> createCFData();

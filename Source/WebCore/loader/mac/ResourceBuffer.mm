@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-SharedBuffer::NSDataRetainPtrWithoutImplicitConversionOperator ResourceBuffer::createNSData()
+RetainPtr<NSData> ResourceBuffer::createNSData()
 {
     return m_sharedBuffer->createNSData();
 }
