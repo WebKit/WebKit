@@ -773,23 +773,25 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _usesMinimalUI = NO;
 }
 
-static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, WebCore::FloatPoint contentOffset)
+static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
     UIEdgeInsets contentInsets = scrollView.contentInset;
     CGSize contentSize = scrollView.contentSize;
     CGSize scrollViewSize = scrollView.bounds.size;
 
-    float maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
-    if (contentOffset.x() > maxHorizontalOffset)
-        contentOffset.setX(maxHorizontalOffset);
-    float maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
-    if (contentOffset.y() > maxVerticalOffset)
-        contentOffset.setY(maxVerticalOffset);
-    if (contentOffset.x() < -contentInsets.left)
-        contentOffset.setX(-contentInsets.left);
-    if (contentOffset.y() < -contentInsets.top)
-        contentOffset.setY(-contentInsets.top);
-    scrollView.contentOffset = contentOffset;
+    CGFloat maxHorizontalOffset = contentSize.width + contentInsets.right - scrollViewSize.width;
+    contentOffset.x = std::min(maxHorizontalOffset, contentOffset.x);
+    contentOffset.x = std::max(-contentInsets.left, contentOffset.x);
+
+    CGFloat maxVerticalOffset = contentSize.height + contentInsets.bottom - scrollViewSize.height;
+    contentOffset.y = std::min(maxVerticalOffset, contentOffset.y);
+    contentOffset.y = std::max(-contentInsets.top, contentOffset.y);
+    return contentOffset;
+}
+
+static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, WebCore::FloatPoint contentOffset)
+{
+    scrollView.contentOffset = contentOffsetBoundedInValidRange(scrollView, contentOffset);
 }
 
 // WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
@@ -986,29 +988,22 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return contentOffset;
 }
 
-- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset
+- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffsetInPageCoordinates
 {
     if (_isAnimatingResize)
         return;
 
-    WebCore::FloatPoint scaledOffset = contentOffset;
+    WebCore::FloatPoint scaledOffset = contentOffsetInPageCoordinates;
     CGFloat zoomScale = contentZoomScale(self);
     scaledOffset.scale(zoomScale, zoomScale);
 
-    WebCore::FloatPoint contentOffsetInDocument = scaledOffset;
-    WebCore::FloatSize documentSizeInSelfCoordinates([_contentView frame].size);
-    WebCore::FloatSize unobscuredRectSize(UIEdgeInsetsInsetRect(self.bounds, [self _computedContentInset]).size);
-
-    float maximumHorizontalOffset = documentSizeInSelfCoordinates.width() - unobscuredRectSize.width();
-    float maximumVerticalOffset = documentSizeInSelfCoordinates.height() - unobscuredRectSize.height();
-    contentOffsetInDocument = contentOffsetInDocument.shrunkTo(WebCore::FloatPoint(maximumHorizontalOffset, maximumVerticalOffset));
-    contentOffsetInDocument = contentOffsetInDocument.expandedTo(WebCore::FloatPoint(0, 0));
+    CGPoint contentOffsetInScrollViewCoordinates = [self _adjustedContentOffset:scaledOffset];
+    contentOffsetInScrollViewCoordinates = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
 
     [_scrollView _stopScrollingAndZoomingAnimations];
 
-    CGPoint adjustedContentOffset = [self _adjustedContentOffset:contentOffsetInDocument];
-    if (!CGPointEqualToPoint(adjustedContentOffset, [_scrollView contentOffset]))
-        [_scrollView setContentOffset:adjustedContentOffset];
+    if (!CGPointEqualToPoint(contentOffsetInScrollViewCoordinates, [_scrollView contentOffset]))
+        [_scrollView setContentOffset:contentOffsetInScrollViewCoordinates];
     else {
         // If we haven't changed anything, there would not be any VisibleContentRect update sent to the content.
         // The WebProcess would keep the invalid contentOffset as its scroll position.

@@ -1,5 +1,41 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171507
+
+    2014-07-23  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] r171124 is incorrect when the virtual keyboard is up
+            https://bugs.webkit.org/show_bug.cgi?id=135187
+
+            Reviewed by Simon Fraser.
+
+            Unfortunately, restricting the input into the document rect does not work.
+            When the keyboard is up, the keyboard bounds can overlap the WKWebView, and
+            the valid range should account for that.
+
+            Instead of playing with the keyboard rect, we can limit the scroll position
+            inside the valid range of UIScrollView. The keyboard always adjusts the UIScrollView
+            range as needed to give access to the content. Using that range is a bit more permissive
+            because the page could scroll to reveal content in the content inset defined by the client
+            of the API (this could actually be quite useful for hybrid apps).
+
+            There was already a function to change the content offset in the valid scrollview
+            range: changeContentOffsetBoundedInValidRange(), I extracted the range check
+            to contentOffsetBoundedInValidRange() for the needs of -[WKWebView _scrollToContentOffset:].
+
+            So...contentOffsetBoundedInValidRange() is cool, but it is not in the right coordinate
+            system. The scroll position we get from the WebProcess is in document coordinates, while
+            contentOffsetBoundedInValidRange() works with the UIScrollView coordinates.
+            To fix that, we scale the input position to get to the same scale as UIScrollView, then
+            apply the insets with the weirdly named [WKWebView _adjustedContentOffset:].
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (contentOffsetBoundedInValidRange):
+            (changeContentOffsetBoundedInValidRange):
+            (-[WKWebView _scrollToContentOffset:]):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171493
 
     2014-07-23  Oliver Hunt  <oliver@apple.com>
