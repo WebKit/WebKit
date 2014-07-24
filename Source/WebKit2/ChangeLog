@@ -1,5 +1,31 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171509
+
+    2014-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Some help.apple.com pages not scrollable
+            https://bugs.webkit.org/show_bug.cgi?id=135228
+            <rdar://problem/17790792>
+
+            Reviewed by Benjamin Poulain.
+
+            On pages which size their document to the device size, the WKContentView size
+            never changes after it's created. In this situation, we never set a bounds
+            on the _rootContentView, so it remains zero-sized which breaks hit testing
+            on all enclosed UIScrollViews for overflow:scroll.
+
+            Fix by making the _rootContentView and the _inspectorIndicationView use autosizing
+            so they are always the size of their parent view, and remove the explicit setting
+            of their bounds.
+
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView initWithFrame:context:configuration:webView:]):
+            (-[WKContentView setShowingInspectorIndication:]):
+            (-[WKContentView _didCommitLayerTree:]):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171507
 
     2014-07-23  Benjamin Poulain  <bpoulain@apple.com>
