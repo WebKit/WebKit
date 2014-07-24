@@ -28,7 +28,7 @@
 (import "UIKit-apps.sb")
 (import "removed-dev-nodes.sb")
 
-(uikit-app 'with-opengl)
+(uikit-app 'with-opengl 'with-location-services)
 
 ;; Access to media controls
 (play-media)
