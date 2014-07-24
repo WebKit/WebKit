@@ -25,7 +25,7 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-(import "common.sb")
+(import "UIKit-apps.sb")
 (import "removed-dev-nodes.sb")
 
 (uikit-app 'with-opengl)
