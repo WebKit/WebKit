@@ -3373,72 +3373,36 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
     static const int charactersToExtend = 15;
-    Position base = frameSelection.selection().base();
-    Position extent = frameSelection.selection().extent();
+    const VisibleSelection& visibleSelection = frameSelection.selection();
+    Position start = visibleSelection.start();
+    Position end = visibleSelection.end();
     for (int i = 0; i < charactersToExtend; ++i) {
-        base = base.previous(Character);
-        extent = extent.next(Character);
+        if (directionOfEnclosingBlock(start) == LTR)
+            start = start.previous(Character);
+        else
+            start = start.next(Character);
+
+        if (directionOfEnclosingBlock(end) == LTR)
+            end = end.next(Character);
+        else
+            end = end.previous(Character);
     }
 
     FrameSelection extendedSelection;
-    extendedSelection.setBase(base);
-    extendedSelection.setExtent(extent);
+    extendedSelection.setStart(start);
+    extendedSelection.setEnd(end);
     RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
 
-    for (TextIterator textChunk(extendedRange.get()); !textChunk.atEnd(); textChunk.advance()) {
-        Vector<RefPtr<Range>> markedChunkRanges;
-        Vector<RefPtr<Range>> markedEdgeRanges;
-
-        // Scan the text iterator range.
-        RefPtr<Range> range = textChunk.range();
-        scanRangeForTelephoneNumbers(*range, textChunk.text(), markedChunkRanges);
-
-        // If this text iterator range's end position is before the end of the full range,
-        // then scan a window that is a bit before and a bit after this text iterator range.
-        RefPtr<Range> edgeRange;
-        if (range->endPosition() < extendedRange->endPosition()) {
-            Position endPosition = range->endPosition();
-            Position startPosition = endPosition;
-            for (int i = 0; i < charactersToExtend; ++i) {
-                startPosition = startPosition.previous(Character);
-                endPosition = endPosition.next(Character);
-            }
-
-            edgeRange = Range::create(range->ownerDocument(), startPosition, endPosition);
-            scanRangeForTelephoneNumbers(*edgeRange, plainText(edgeRange.get()), markedEdgeRanges);
-        }
-
-        // Add both of these sets of ranges to the full set of marked ranges, double checking to
-        // make sure we don't end up with two equivalent ranges in the full set.
-        for (auto& chunkRange : markedChunkRanges) {
-            bool matchesEdgeRange = false;
-            for (auto& edgeRange : markedEdgeRanges) {
-                if (areRangesEqual(chunkRange.get(), edgeRange.get())) {
-                    matchesEdgeRange = true;
-                    break;
-                }
-            }
-
-            if (!matchesEdgeRange)
-                markedRanges.append(chunkRange);
-        }
-
-        for (auto& range : markedEdgeRanges)
-            markedRanges.append(range);
-
-        // If the edge range's end position is past the end position of the original range, we're done scanning.
-        if (edgeRange && edgeRange->endPosition() >= extendedRange->endPosition())
-            break;
-    }
+    scanRangeForTelephoneNumbers(*extendedRange, extendedRange->text(), markedRanges);
 
     // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
-    Vector<RefPtr<Range>> extendedMarkedRanges;
+    Vector<RefPtr<Range>> markedRangesIntersectingSelection;
     for (auto& range : markedRanges) {
         if (rangesOverlap(range.get(), selectedRange.get()))
-            extendedMarkedRanges.append(range);
+            markedRangesIntersectingSelection.append(range);
     }
 
-    client()->selectedTelephoneNumberRangesChanged(extendedMarkedRanges);
+    client()->selectedTelephoneNumberRangesChanged(markedRangesIntersectingSelection);
 }
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)
@@ -3471,6 +3435,7 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
         unsigned subrangeLength = relativeEndPosition - relativeStartPosition + 1;
 
         RefPtr<Range> subrange = TextIterator::subrange(&range, subrangeOffset, subrangeLength);
+
         markedRanges.append(subrange);
         range.ownerDocument().markers().addMarker(subrange.get(), DocumentMarker::TelephoneNumber);
 
