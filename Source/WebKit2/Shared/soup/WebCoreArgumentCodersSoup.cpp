@@ -141,5 +141,16 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     return true;
 }
 
+void ArgumentCoder<ProtectionSpace>::encodePlatformData(ArgumentEncoder&, const ProtectionSpace&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder&, ProtectionSpace&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 }
 

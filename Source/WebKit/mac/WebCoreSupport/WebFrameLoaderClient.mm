@@ -406,7 +406,7 @@ bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
     
-    NSURLProtectionSpace *webProtectionSpace = mac(protectionSpace);
+    NSURLProtectionSpace *webProtectionSpace = protectionSpace.nsSpace();
     
     if (implementations->canAuthenticateAgainstProtectionSpaceFunc) {
         if (id resource = [webView _objectForIdentifier:identifier]) {

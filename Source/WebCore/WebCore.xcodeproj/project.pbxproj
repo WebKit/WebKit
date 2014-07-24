@@ -1301,6 +1301,8 @@
 		371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */; };
 		37202199106213C600F25C4B /* FontSmoothingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 37202198106213C600F25C4B /* FontSmoothingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3727DFD5142AAE4500D449CB /* FontCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3727DFD4142AAE4500D449CB /* FontCacheIOS.mm */; };
+		372ADA38197F47B900FC501E /* ProtectionSpaceCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		372ADA3B197F687600FC501E /* ProtectionSpaceCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */; };
 		372C00C4129611F1005C9575 /* TextBoundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 372C00C3129611F1005C9575 /* TextBoundaries.cpp */; };
 		372C00D9129619F8005C9575 /* FindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 372C00D8129619F8005C9575 /* FindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */; };
@@ -1322,6 +1324,7 @@
 		379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E61C8126CA5C300B63E8D /* BaseCheckableInputType.h */; };
 		37ACCE420DA2980F0089E602 /* FontRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 37ACCE410DA2980F0089E602 /* FontRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ACCE620DA2AA960089E602 /* FontDescription.cpp */; };
+		37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */; };
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
@@ -1862,8 +1865,8 @@
 		514C76710CE923A1007EF3CD /* HTTPHeaderMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765C0CE923A1007EF3CD /* HTTPHeaderMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765D0CE923A1007EF3CD /* HTTPParsers.cpp */; };
 		514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765E0CE923A1007EF3CD /* HTTPParsers.h */; };
-		514C76740CE923A1007EF3CD /* ProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */; };
-		514C76750CE923A1007EF3CD /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76600CE923A1007EF3CD /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		514C76740CE923A1007EF3CD /* ProtectionSpaceBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */; };
+		514C76750CE923A1007EF3CD /* ProtectionSpaceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76630CE923A1007EF3CD /* ResourceHandle.cpp */; };
 		514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76640CE923A1007EF3CD /* ResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C767A0CE923A1007EF3CD /* ResourceHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76650CE923A1007EF3CD /* ResourceHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8317,6 +8320,8 @@
 		371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSUnicodeRangeValue.cpp; sourceTree = "<group>"; };
 		37202198106213C600F25C4B /* FontSmoothingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingMode.h; sourceTree = "<group>"; };
 		3727DFD4142AAE4500D449CB /* FontCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCacheIOS.mm; sourceTree = "<group>"; };
+		372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtectionSpaceCocoa.h; path = cocoa/ProtectionSpaceCocoa.h; sourceTree = "<group>"; };
+		372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProtectionSpaceCocoa.mm; path = cocoa/ProtectionSpaceCocoa.mm; sourceTree = "<group>"; };
 		372C00C3129611F1005C9575 /* TextBoundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBoundaries.cpp; sourceTree = "<group>"; };
 		372C00D8129619F8005C9575 /* FindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindOptions.h; sourceTree = "<group>"; };
 		3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyphMap.h; sourceTree = "<group>"; };
@@ -8341,6 +8346,7 @@
 		379E61C8126CA5C300B63E8D /* BaseCheckableInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCheckableInputType.h; sourceTree = "<group>"; };
 		37ACCE410DA2980F0089E602 /* FontRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontRenderingMode.h; sourceTree = "<group>"; };
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
+		37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
 		37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontComplexTextMac.cpp; sourceTree = "<group>"; };
 		37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
@@ -8944,8 +8950,8 @@
 		514C765C0CE923A1007EF3CD /* HTTPHeaderMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPHeaderMap.h; sourceTree = "<group>"; };
 		514C765D0CE923A1007EF3CD /* HTTPParsers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
 		514C765E0CE923A1007EF3CD /* HTTPParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPParsers.h; sourceTree = "<group>"; };
-		514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtectionSpace.cpp; sourceTree = "<group>"; };
-		514C76600CE923A1007EF3CD /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
+		514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtectionSpaceBase.cpp; sourceTree = "<group>"; };
+		514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpaceBase.h; sourceTree = "<group>"; };
 		514C76630CE923A1007EF3CD /* ResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandle.cpp; sourceTree = "<group>"; };
 		514C76640CE923A1007EF3CD /* ResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandle.h; sourceTree = "<group>"; };
 		514C76650CE923A1007EF3CD /* ResourceHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleClient.h; sourceTree = "<group>"; };
@@ -16342,8 +16348,9 @@
 				E13EF3421684ECF40034C83F /* NetworkStorageSession.h */,
 				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
 				447958031643B47B001E0A7F /* ParsedContentType.h */,
-				514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */,
-				514C76600CE923A1007EF3CD /* ProtectionSpace.h */,
+				37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */,
+				514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */,
+				514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */,
 				51A052551058874000CC9E95 /* ProtectionSpaceHash.h */,
 				1AF8E13212565A4400230FF7 /* ProxyServer.cpp */,
 				1AF8E1191256592600230FF7 /* ProxyServer.h */,
@@ -16750,6 +16757,8 @@
 		7E7DE1FE195CEF2D0035363B /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */,
+				372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */,
 				7E7DE1FC195CEF260035363B /* ResourceRequestCocoa.mm */,
 			);
 			name = cocoa;
@@ -25573,7 +25582,7 @@
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
 				1ACADD791880D91C00D8B71D /* ProgressTrackerClient.h in Headers */,
 				E4BBED0F14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h in Headers */,
-				514C76750CE923A1007EF3CD /* ProtectionSpace.h in Headers */,
+				514C76750CE923A1007EF3CD /* ProtectionSpaceBase.h in Headers */,
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
 				FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */,
@@ -26149,6 +26158,8 @@
 				B22279EC0D00BF220071B782 /* SVGFEGaussianBlurElement.h in Headers */,
 				B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */,
 				B22279EF0D00BF220071B782 /* SVGFEImageElement.h in Headers */,
+				372ADA38197F47B900FC501E /* ProtectionSpaceCocoa.h in Headers */,
+				37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */,
 				B22279F20D00BF220071B782 /* SVGFELightElement.h in Headers */,
 				B22279F40D00BF220071B782 /* SVGFEMergeElement.h in Headers */,
 				B22279F70D00BF220071B782 /* SVGFEMergeNodeElement.h in Headers */,
@@ -29072,7 +29083,7 @@
 				A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */,
 				1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */,
 				E4BBED0E14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp in Sources */,
-				514C76740CE923A1007EF3CD /* ProtectionSpace.cpp in Sources */,
+				514C76740CE923A1007EF3CD /* ProtectionSpaceBase.cpp in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
 				FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */,
@@ -29165,6 +29176,7 @@
 				1A3FF9C315265359002288A1 /* RenderNamedFlowThread.cpp in Sources */,
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
+				372ADA3B197F687600FC501E /* ProtectionSpaceCocoa.mm in Sources */,
 				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
 				D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */,
 				BCE93F471517C6D5008CCF74 /* RenderRegionSet.cpp in Sources */,

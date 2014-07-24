@@ -1,5 +1,94 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171540
+
+    2014-07-24  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/17766348> [Cocoa] WebCore::ProtectionSpace doesn’t preserve all NSURLProtectionSpace properties, such as the distinguishedNames array
+            https://bugs.webkit.org/show_bug.cgi?id=135229
+
+            Reviewed by Alexey Proskuryakov.
+
+            * CMakeLists.txt: Updated for rename of a source file.
+
+            * WebCore.exp.in: Updated.
+
+            * WebCore.vcxproj/WebCore.vcxproj: Updated for rename of source files, added
+            ProtectionSpaceCFNet.{cpp,h}.
+            * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
+            * WebCore.xcodeproj/project.pbxproj: Updated for rename of source files, added
+            ProtectionSpaceCococa.{h.mm}.
+
+            * platform/network/ProtectionSpace.cpp: Renamed to ProtectionSpaceBase.cpp.
+            * platform/network/ProtectionSpace.h: This file was renamed to ProtectionSpaceBase.h, and
+            in its place added a generic ProtectionSpace class that just derives from
+            ProtectionSpaceBase. For Cocoa and CFNetwork, ProtectionSpace{Cocoa,CFNet}.h is included
+            instead of the generic class.
+
+            * platform/network/ProtectionSpaceBase.cpp: Renamed ProtectionSpace.cpp to this.
+            (WebCore::ProtectionSpaceBase::ProtectionSpaceBase): Updated for rename.
+            (WebCore::ProtectionSpaceBase::host): Ditto.
+            (WebCore::ProtectionSpaceBase::port): Ditto.
+            (WebCore::ProtectionSpaceBase::serverType): Ditto.
+            (WebCore::ProtectionSpaceBase::isProxy): Ditto.
+            (WebCore::ProtectionSpaceBase::realm): Ditto.
+            (WebCore::ProtectionSpaceBase::authenticationScheme): Ditto.
+            (WebCore::ProtectionSpaceBase::receivesCredentialSecurely): Removed CFNetwork-specific part,
+            which is now implemented in ProtectionSpaceCFNet.cpp.
+            (WebCore::ProtectionSpaceBase::compare): Replaced operator== with this, and made it call
+            ProtectionSpace::platformCompare at the end if needed.
+
+            * platform/network/ProtectionSpaceBase.h: Renamed ProtectionSpace.h to this.
+            (WebCore::ProtectionSpaceBase::encodingRequiresPlatformData): Added with a default
+            implementation that returns false, for ProtectionSpace implementations to override.
+            (WebCore::ProtectionSpaceBase::platformCompare): Added with a default implementation that
+            returns true, for ProtectionSpace implementations to override.
+            (WebCore::operator==): Changed to call compare.
+
+            * platform/network/cf/AuthenticationCF.cpp:
+            (WebCore::AuthenticationChallenge::AuthenticationChallenge): Changed to use the
+            ProtectionSpace constructor that takes a CFURLProtectionSpaceRef.
+            (WebCore::createCF): Changed to use ProtectionSpace::cfSpace.
+
+            * platform/network/cf/AuthenticationCF.h: Guarded a couple of functiosn that aren’t used in
+            Cocoa with #if PLATFORM(WIN).
+
+            * platform/network/cf/CredentialStorageCFNet.cpp:
+            (WebCore::CredentialStorage::getFromPersistentStorage): Changed to use
+            ProtectionSpace::cfSpace.
+            (WebCore::CredentialStorage::saveToPersistentStorage): Ditto.
+
+            * platform/network/cf/ProtectionSpaceCFNet.cpp: Added.
+            (WebCore::ProtectionSpaceBase::receivesCredentialSecurely): Override with the
+            CFNetwork-specific test that was previously in ProtectionSpace.cpp.
+
+            * platform/network/cf/ProtectionSpaceCFNet.h: Copied from Source/WebCore/platform/network/ProtectionSpace.h.
+            Declare ProtectionSpace and override receivesCredentialSecurely.
+
+            * platform/network/mac/AuthenticationMac.h: Deleted the ProtectionSpace core() and mac().
+            * platform/network/mac/AuthenticationMac.mm:
+            (WebCore::AuthenticationChallenge::AuthenticationChallenge): Changed to use the
+            ProtectionSpace constructor that takes an NSURLProtectionSpace.
+            (WebCore::mac): Changed to use ProtectionSpace::nsSpace.
+
+            * platform/network/mac/CredentialStorageMac.mm:
+            (WebCore::CredentialStorage::getFromPersistentStorage): Ditto.
+
+            * platform/network/mac/ResourceHandleMac.mm:
+            (WebCore::ResourceHandle::receivedCredential): Changed to use the ProtectionSpace
+            constructor that takes an NSURLProtectionSpace.
+
+            * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+            (-[WebCoreResourceHandleAsDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+            Ditto.
+
+            * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+            (-[WebCoreResourceHandleAsOperationQueueDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+            Ditto.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171532
 
     2014-07-24  Benjamin Poulain  <benjamin@webkit.org>

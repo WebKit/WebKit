@@ -228,6 +228,8 @@ template<> struct ArgumentCoder<WebCore::AuthenticationChallenge> {
 template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
     static void encode(ArgumentEncoder&, const WebCore::ProtectionSpace&);
     static bool decode(ArgumentDecoder&, WebCore::ProtectionSpace&);
+    static void encodePlatformData(ArgumentEncoder&, const WebCore::ProtectionSpace&);
+    static bool decodePlatformData(ArgumentDecoder&, WebCore::ProtectionSpace&);
 };
 
 template<> struct ArgumentCoder<WebCore::Credential> {

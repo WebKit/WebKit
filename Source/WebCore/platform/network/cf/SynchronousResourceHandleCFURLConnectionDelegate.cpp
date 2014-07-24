@@ -252,7 +252,7 @@ Boolean SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtection
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtectionSpace(handle=%p (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
 #if PLATFORM(IOS)
-    ProtectionSpace coreProtectionSpace = core(protectionSpace);
+    ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace);
     if (coreProtectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeUnknown)
         return false;
     return m_handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);

@@ -1,5 +1,32 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171540
+
+    2014-07-24  Dan Bernstein  <mitz@apple.com>
+
+            WebKit2 part of <rdar://problem/17766348> [Cocoa] WebCore::ProtectionSpace doesn’t preserve all NSURLProtectionSpace properties, such as the distinguishedNames array
+            https://bugs.webkit.org/show_bug.cgi?id=135229
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Shared/Cocoa/WKNSURLProtectionSpace.mm: Changed to use ProtectionSpace::nsSpace.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<ProtectionSpace>::encode): If encoding the space requires encoding the
+            platform data, do that.
+            (IPC::ArgumentCoder<ProtectionSpace>::decode): If platform data was encoded, decode it.
+            * Shared/WebCoreArgumentCoders.h:
+
+            * Shared/mac/WebCoreArgumentCodersMac.mm:
+            (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData): Archive the NSURLProtectionSpace.
+            (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData): Unarchive it.
+
+            * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+            (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData): Added.
+            (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData): Added.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171532
 
     2014-07-24  Benjamin Poulain  <benjamin@webkit.org>

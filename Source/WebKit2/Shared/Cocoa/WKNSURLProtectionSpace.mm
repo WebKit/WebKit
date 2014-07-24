@@ -37,7 +37,7 @@ using namespace WebKit;
 
 - (NSObject *)_web_createTarget
 {
-    return [mac(reinterpret_cast<WebProtectionSpace*>(&self._apiObject)->protectionSpace()) copy];
+    return [reinterpret_cast<WebProtectionSpace*>(&self._apiObject)->protectionSpace().nsSpace() copy];
 }
 
 #pragma mark NSCopying protocol implementation

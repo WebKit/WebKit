@@ -139,7 +139,7 @@ using namespace WebCore;
     if (!m_handle)
         return NO;
 
-    return m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
+    return m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace));
 }
 #endif
 

@@ -22,26 +22,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef AuthenticationMac_h
-#define AuthenticationMac_h
 
-#ifdef __OBJC__
+#ifndef ProtectionSpaceCFNet_h
+#define ProtectionSpaceCFNet_h
 
-@class NSURLAuthenticationChallenge;
-@class NSURLCredential;
+#if !PLATFORM(WIN) || !USE(CFNETWORK)
+#error This header should only be included when targeting Windows and using CFNetwork.
+#endif
+
+#include "ProtectionSpaceBase.h"
 
 namespace WebCore {
 
-class AuthenticationChallenge;
-class Credential;
+class ProtectionSpace : public ProtectionSpaceBase {
+public:
+    ProtectionSpace() : ProtectionSpaceBase() { }
+    ProtectionSpace(const String& host, int port, ProtectionSpaceServerType serverType, const String& realm, ProtectionSpaceAuthenticationScheme authenticationScheme)
+        : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
+    {
+    }
 
-NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
-NSURLCredential *mac(const Credential&);
+    ProtectionSpace(WTF::HashTableDeletedValueType deletedValue) : ProtectionSpaceBase(deletedValue) { }
 
-AuthenticationChallenge core(NSURLAuthenticationChallenge *);
-Credential core(NSURLCredential *);
+    bool receivesCredentialSecurely() const;
+};
 
-}
-#endif // __OBJC__
+} // namespace WebCore
 
-#endif // AuthenticationMac_h
+#endif // ProtectionSpaceCFNet_h

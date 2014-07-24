@@ -1,3 +1,25 @@
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171540
+
+    2014-07-24  Dan Bernstein  <mitz@apple.com>
+
+            WebKit part of <rdar://problem/17766348> [Cocoa] WebCore::ProtectionSpace doesn’t preserve all NSURLProtectionSpace properties, such as the distinguishedNames array
+            https://bugs.webkit.org/show_bug.cgi?id=135229
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Misc/WebDownload.mm:
+            (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]): Chanegd to use the
+            ProtectionSpace constructor that takes an NSURLProtectionSpace.
+
+            * Plugins/WebBaseNetscapePluginView.mm:
+            (WebKit::getAuthenticationInfo): Ditto.
+
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace): Changed to use
+            ProtectionSpace::nsSpace.
+
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171370
