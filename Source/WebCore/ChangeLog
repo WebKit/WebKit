@@ -1,3 +1,25 @@
+2014-07-23  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171499. <rdar://problem/17783423>
+
+    2014-07-23  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r171376): Sometimes we detect less than the whole phone number
+            https://bugs.webkit.org/show_bug.cgi?id=135220
+            <rdar://problem/17783423>
+
+            Reviewed by Brady Eidson.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::scanSelectionForTelephoneNumbers):
+            Use the visible selection's start and end instead of base and extent, because they'll
+            always be in the right order in the case of a directional selection (base can be *after* extent
+            if you select from right to left). This fixes the code that expands the selection.
+
+            Pass the *entire* expanded selection to DataDetectors, instead of using TextIterator.
+            This way, we will find each number only once, and will never get part of a phone number once
+            and then the whole phone number later.
+
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171370
