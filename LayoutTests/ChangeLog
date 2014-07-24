@@ -1,3 +1,13 @@
+2014-07-24  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [New Multicolumn] Assertion failure when an input element has multicolumn style
+        https://bugs.webkit.org/show_bug.cgi?id=135234
+
+        Reviewed by Andrei Bucur.
+
+        * fast/multicol/newmulticol/input-as-multicol-expected.txt: Added.
+        * fast/multicol/newmulticol/input-as-multicol.html: Added.
+
 2014-07-23  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: InspectorBackend's promise-based agent API does not support multiple return values

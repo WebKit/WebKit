@@ -1,3 +1,19 @@
+2014-07-24  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [New Multicolumn] Assertion failure when an input element has multicolumn style
+        https://bugs.webkit.org/show_bug.cgi?id=135234
+
+        Reviewed by Andrei Bucur.
+
+        Restrict the assertion in RenderBlock::canComputeRegionRangeForBox
+        only to RenderNamedFlowThread objects since for RenderMultiColumnFlowThread
+        objects we can compute a range of regions during their parent block layout.   
+
+        Test: fast/multicol/newmulticol/input-as-multicol.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canComputeRegionRangeForBox):
+
 2014-07-23  Jeremy Jones  <jeremyj@apple.com>
 
         Transparent fullscreen background when video is not present.

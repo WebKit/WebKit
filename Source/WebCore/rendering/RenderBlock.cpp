@@ -3923,7 +3923,7 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
 static bool canComputeRegionRangeForBox(const RenderBlock* parentBlock, const RenderBox& childBox, const RenderFlowThread* flowThreadContainingBlock)
 {
     ASSERT(parentBlock);
-    ASSERT(!childBox.isRenderFlowThread());
+    ASSERT(!childBox.isRenderNamedFlowThread());
 
     if (!flowThreadContainingBlock)
         return false;
