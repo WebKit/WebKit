@@ -1,3 +1,15 @@
+2014-07-24  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Committers should mail webkit-committers not webkit-reviewers for reactivation
+        https://bugs.webkit.org/show_bug.cgi?id=135203
+
+        Reviewed by Ryosuke Niwa.
+
+        Only reviewers can send mail to webkit-reviewers. Amend the policy so that committers should
+        send mail to webkit-committers instead of webkit-reviewers.
+
+        * coding/commit-review-policy.html:
+
 2014-07-15  Alex Christensen  <achristensen@webkit.org>
 
         Make css jit benchmark work on IE11.
