@@ -1,5 +1,69 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171526
+
+    2014-07-24  Pratik Solanki  <psolanki@apple.com>
+
+            Sharing SharedBuffer between WebCore and ImageIO is racy and crash prone
+            https://bugs.webkit.org/show_bug.cgi?id=135069
+            <rdar://problem/17470655>
+
+            Reviewed by Simon Fraser.
+
+            When passing image data to ImageIO for decoding, we pass an NSData subclass that is a wraper
+            around SharedBuffer. This can be a problem when ImageIO tries to access the data on the CA
+            thread. End result is data corruption on large image loads and potential crashes. The fix is
+            to have SharedBuffer create a copy of its data if the data has been passed to ImageIO and
+            might be accessed concurrently.
+
+            Since Vector is not refcounted, we do this by having a new refcounted object in SharedBuffer
+            that contains the buffer and we pass that in our NSData subclass WebCoreSharedBufferData.
+            Code that would result in the Vector memory moving e.g. append(), resize(), now checks to
+            see if the buffer was shared and if so, will create a new copy of the vector. This ensures
+            that the main thread does not end up invalidating the vector memory that we have passed it
+            to ImageIO.
+
+            No new tests because no functional changes.
+
+            * loader/cache/CachedResource.cpp:
+            (WebCore::CachedResource::makePurgeable):
+                Remove early return - createPurgeableMemory() has the correct check now.
+            * platform/SharedBuffer.cpp:
+            (WebCore::SharedBuffer::SharedBuffer):
+            (WebCore::SharedBuffer::adoptVector):
+            (WebCore::SharedBuffer::createPurgeableBuffer):
+                Don't create purgeable buffer if we are sharing the buffer.
+            (WebCore::SharedBuffer::append):
+            (WebCore::SharedBuffer::clear):
+            (WebCore::SharedBuffer::copy):
+            (WebCore::SharedBuffer::duplicateDataBufferIfNecessary): Added.
+                Create a new copy of the data if we have shared the buffer and if appending to it would
+                exceed the capacity of the vector resulting in memmove.
+            (WebCore::SharedBuffer::appendToInternalBuffer): Added.
+            (WebCore::SharedBuffer::clearInternalBuffer): Added.
+            (WebCore::SharedBuffer::buffer):
+                Create a new copy of the buffer if we have shared it.
+            (WebCore::SharedBuffer::getSomeData):
+            * platform/SharedBuffer.h:
+            * platform/cf/SharedBufferCF.cpp:
+            (WebCore::SharedBuffer::SharedBuffer):
+            (WebCore::SharedBuffer::singleDataArrayBuffer):
+            (WebCore::SharedBuffer::maybeAppendDataArray):
+            * platform/mac/SharedBufferMac.mm:
+                Pass the InternalBuffer object to WebCoreSharedBufferData
+            (-[WebCoreSharedBufferData dealloc]):
+            (-[WebCoreSharedBufferData initWithSharedBufferInternalBuffer:]):
+            (-[WebCoreSharedBufferData length]):
+            (-[WebCoreSharedBufferData bytes]):
+            (WebCore::SharedBuffer::createNSData):
+                Call createCFData() instead of duplicating code.
+            (WebCore::SharedBuffer::createCFData):
+                If the data is in purgeable memory, make a copy of it since m_buffer was cleared when
+                creating the purgeable buffer.
+            (-[WebCoreSharedBufferData initWithSharedBuffer:]): Deleted.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171497
 
     2014-07-23  Pratik Solanki  <psolanki@apple.com>

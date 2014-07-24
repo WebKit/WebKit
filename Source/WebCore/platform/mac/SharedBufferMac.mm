@@ -32,15 +32,14 @@
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
-
 using namespace WebCore;
 
 @interface WebCoreSharedBufferData : NSData
 {
-    RefPtr<SharedBuffer> sharedBuffer;
+    RefPtr<SharedBuffer::DataBuffer> buffer;
 }
 
-- (id)initWithSharedBuffer:(SharedBuffer*)buffer;
+- (id)initWithSharedBufferDataBuffer:(SharedBuffer::DataBuffer*)dataBuffer;
 @end
 
 @implementation WebCoreSharedBufferData
@@ -58,7 +57,7 @@ using namespace WebCore;
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebCoreSharedBufferData class], self))
         return;
-    
+
     [super dealloc];
 }
 
@@ -67,24 +66,24 @@ using namespace WebCore;
     [super finalize];
 }
 
-- (id)initWithSharedBuffer:(SharedBuffer*)buffer
+- (id)initWithSharedBufferDataBuffer:(SharedBuffer::DataBuffer*)dataBuffer
 {
     self = [super init];
     
     if (self)
-        sharedBuffer = buffer;
-    
+        buffer = dataBuffer;
+
     return self;
 }
 
 - (NSUInteger)length
 {
-    return sharedBuffer->size();
+    return buffer->data.size();
 }
 
 - (const void *)bytes
 {
-    return reinterpret_cast<const void*>(sharedBuffer->data());
+    return reinterpret_cast<const void*>(buffer->data.data());
 }
 
 @end
@@ -98,7 +97,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
 
 RetainPtr<NSData> SharedBuffer::createNSData()
 {
-    return adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]);
+    return adoptNS((NSData *)createCFData().leakRef());
 }
 
 RetainPtr<CFDataRef> SharedBuffer::createCFData()
@@ -106,7 +105,14 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
     if (m_cfData)
         return m_cfData;
 
-    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]).leakRef());
+    data(); // Force data into m_buffer from segments or data array.
+    if (hasPurgeableBuffer()) {
+        RefPtr<SharedBuffer::DataBuffer> copiedBuffer = adoptRef(new DataBuffer);
+        copiedBuffer->data.append(data(), size());
+        return adoptCF(reinterpret_cast<CFDataRef>([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:copiedBuffer.get()]));
+    }
+
+    return adoptCF(reinterpret_cast<CFDataRef>([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.get()]));
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
