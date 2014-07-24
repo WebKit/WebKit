@@ -68,23 +68,7 @@ public:
     ~SharedBuffer();
     
 #if USE(FOUNDATION)
-    // FIXME: This class exists as a temporary workaround so that code that does:
-    // [buffer->createNSData() autorelease] will fail to compile.
-    // Once both Mac and iOS builds with this change we can change the return type to be RetainPtr<NSData>,
-    // since we're mostly worried about existing code breaking (it's unlikely that we'd use retain/release together
-    // with RetainPtr in new code.
-    class NSDataRetainPtrWithoutImplicitConversionOperator : public RetainPtr<NSData*> {
-    public:
-        template<typename T>
-        NSDataRetainPtrWithoutImplicitConversionOperator(RetainPtr<T*>&& other)
-            : RetainPtr<NSData*>(WTF::move(other))
-        {
-        }
-
-        explicit operator PtrType() = delete;
-    };
-
-    NSDataRetainPtrWithoutImplicitConversionOperator createNSData();
+    RetainPtr<NSData> createNSData();
     static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
 #endif
 #if USE(CF)
