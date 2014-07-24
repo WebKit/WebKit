@@ -582,6 +582,9 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
 
 - (JSValue *)jsWrapperForObject:(id)object
 {
+    JSC::ExecState* exec = toJS([m_context JSGlobalContextRef]);
+    JSC::DeferGC deferGC(exec->vm().heap);
+
     JSC::JSObject* jsWrapper = m_cachedJSWrappers.get(object);
     if (jsWrapper)
         return [JSValue valueWithJSValueRef:toRef(jsWrapper) inContext:m_context];
@@ -599,7 +602,6 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
     // (1) For immortal objects JSValues will effectively leak and this results in error output being logged - we should avoid adding associated objects to immortal objects.
     // (2) A long lived object may rack up many JSValues. When the contexts are released these will unprotect the associated JavaScript objects,
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
-    JSC::ExecState* exec = toJS([m_context JSGlobalContextRef]);
     jsWrapper = toJS(exec, valueInternalValue(wrapper)).toObject(exec);
     m_cachedJSWrappers.set(object, jsWrapper);
     return wrapper;

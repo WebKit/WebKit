@@ -1,3 +1,40 @@
+2014-07-24  Mark Lam  <mark.lam@apple.com>
+
+        JSWrapperMap's jsWrapperForObject() needs to defer GC.
+        <https://webkit.org/b/135258>
+
+        Reviewed by Oliver Hunt.
+
+        In the process of creating a JS wrapper, jsWrapperForObject() will create
+        the prototype and constructor of the corresponding ObjC class, as well as
+        for classes in its inheritance chain.  These prototypes and constructors
+        are stored in Weak references in the JSObjCClassInfo objects.  During all
+        the allocation that is being done to create all the prototypes and
+        constructors as well as the wrapper objects, a GC may occur thereby
+        collecting one or more of these newly created prototype and constructor
+        objects.
+
+        One example of where this problem can manifest is in wrapperForObject()
+        which is called from jsWrapperForObject().  In wrapperFoObject(), we do
+        the following steps:
+
+        1. reallocateConstructorAndOrPrototype() which creates the prototype
+           object and store it in JSObjCClassInfo's m_prototype which is a Weak
+           ref.
+        2. makeWrapper() to create the wrapper object, which may trigger a GC.
+           GC will collect the prototype object and nullify the corresponding
+           JSObjCClassInfo's m_prototype Weak ref.
+        3. call JSObjectSetPrototype() to set the JSObjCClassInfo's m_prototype
+           in the newly created wrapper.  This results in the wrapper getting a
+           jsNull as a prototype instead of the expected prototype object.
+
+        To ensure that the prototype and constructor objects are retained until
+        they can be referenced properly from the wrapper object,
+        jsWrapperForObject() should defer GC until it's done with its work.
+
+        * API/JSWrapperMap.mm:
+        (-[JSWrapperMap jsWrapperForObject:]):
+
 2014-07-23  Brent Fulgham  <bfulgham@apple.com>
 
         Build fix after r171482.
