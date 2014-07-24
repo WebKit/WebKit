@@ -1,3 +1,16 @@
+2014-07-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r171527.
+        https://bugs.webkit.org/show_bug.cgi?id=135265
+
+        Breaks JSC API tests (Requested by mlam on #webkit).
+
+        Reverted changeset:
+
+        "JSWrapperMap's jsWrapperForObject() needs to defer GC."
+        https://bugs.webkit.org/show_bug.cgi?id=135258
+        http://trac.webkit.org/changeset/171527
+
 2014-07-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Creating a JSGlobalObject with a custom JSClassRef results in a JSProxy with the wrong prototype
