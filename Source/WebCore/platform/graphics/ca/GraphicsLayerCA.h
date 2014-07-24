@@ -80,8 +80,6 @@ public:
     virtual void setReplicatedLayer(GraphicsLayer*) override;
 
     virtual void setPosition(const FloatPoint&) override;
-    virtual void forcePositionUpdate() override;
-
     virtual void setAnchorPoint(const FloatPoint3D&) override;
     virtual void setSize(const FloatSize&) override;
     virtual void setBoundsOrigin(const FloatPoint&) override;

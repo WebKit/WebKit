@@ -3759,10 +3759,8 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer)
     if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FrameScrollingNode))
         m_scrollingNodeToLayerMap.remove(nodeID);
 
-    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FixedNode)) {
+    if (ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(FixedNode))
         m_scrollingNodeToLayerMap.remove(nodeID);
-        backing->graphicsLayer()->forcePositionUpdate();
-    }
 
     backing->detachFromScrollingCoordinator();
 }

@@ -200,6 +200,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction))
         m_webPageProxy->setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
 
+#if PLATFORM(IOS)
+    m_webPageProxy->didCommitLayerTree(layerTreeTransaction);
+#endif
+
 #if ENABLE(ASYNC_SCROLLING)
     bool fixedOrStickyLayerChanged = false;
     m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction, fixedOrStickyLayerChanged);
@@ -212,10 +216,6 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     }
 #endif
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#if PLATFORM(IOS)
-    m_webPageProxy->didCommitLayerTree(layerTreeTransaction);
-#endif
 
     if (m_debugIndicatorLayerTreeHost) {
         float scale = indicatorScale(layerTreeTransaction.contentsSize());
