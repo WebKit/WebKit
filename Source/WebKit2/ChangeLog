@@ -1,5 +1,22 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171518
+
+    2014-07-24  Tim Horton  <timothy_horton@apple.com>
+
+            Crash at [WKContentView _applicationWillEnterForeground:] + 28
+            <rdar://problem/17797103>
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _applicationWillEnterForeground:]):
+            Drawing area can be null; null check it!
+            It's ok if we don't hide the content in this case, because if the drawing area is null,
+            it doesn't have any layers in the tree anyway.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171485
 
     2014-07-23  Dan Bernstein  <mitz@apple.com>
