@@ -47,7 +47,6 @@ extern "C" SecIdentityRef SecIdentityCreate(CFAllocatorRef allocator, SecCertifi
 #include <Security/SecKeyPriv.h>
 #endif
 
-extern "C" OSStatus SecKeyCopyPersistentRef(SecKeyRef key, CFDataRef* persistentRef);
 extern "C" OSStatus SecKeyFindWithPersistentRef(CFDataRef persistentRef, SecKeyRef* lookedUpData);
 #endif
 
@@ -628,6 +627,22 @@ void setAllowsDecodingSecKeyRef(bool allowsDecodingSecKeyRef)
 {
     secKeyRefDecodingAllowed = allowsDecodingSecKeyRef;
 }
+
+static CFDataRef copyPersistentRef(SecKeyRef key)
+{
+    // This function differs from SecItemCopyPersistentRef in that it specifies an access group.
+    // This is necessary in case there are multiple copies of the key in the keychain, because we
+    // need a reference to the one that the Networking process will be able to access.
+    CFDataRef persistentRef = nullptr;
+    SecItemCopyMatching((CFDictionaryRef)@{
+        (id)kSecReturnPersistentRef: @YES,
+        (id)kSecValueRef: (id)key,
+        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+        (id)kSecAttrAccessGroup: @"com.apple.identities",
+    }, (CFTypeRef*)&persistentRef);
+
+    return persistentRef;
+}
 #endif
 
 void encode(ArgumentEncoder& encoder, SecIdentityRef identity)
@@ -642,7 +657,7 @@ void encode(ArgumentEncoder& encoder, SecIdentityRef identity)
 
     CFDataRef keyData = nullptr;
 #if PLATFORM(IOS)
-    SecKeyCopyPersistentRef(key, &keyData);
+    keyData = copyPersistentRef(key);
 #endif
 #if PLATFORM(MAC)
     SecKeychainItemCreatePersistentReference((SecKeychainItemRef)key, &keyData);
