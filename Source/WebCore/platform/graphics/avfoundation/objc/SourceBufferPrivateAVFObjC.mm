@@ -721,7 +721,12 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
 
 void SourceBufferPrivateAVFObjC::abort()
 {
-    notImplemented();
+    // The parser does not have a mechanism for resetting to a clean state, so destroy and re-create it.
+    // FIXME(135164): Support resetting parser to the last appended initialization segment.
+    destroyParser();
+
+    m_parser = adoptNS([[getAVStreamDataParserClass() alloc] init]);
+    m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]);
 }
 
 void SourceBufferPrivateAVFObjC::destroyParser()
