@@ -50,10 +50,10 @@ class URL;
 struct KeypressCommand;
 #endif
 
-unsigned long frameIndexFromDocument(const Document*);
-unsigned long frameIndexFromFrame(const Frame*);
-Document* documentFromFrameIndex(Page*, unsigned long frameIndex);
-Frame* frameFromFrameIndex(Page*, unsigned long frameIndex);
+uint32_t frameIndexFromDocument(const Document*);
+uint32_t frameIndexFromFrame(const Frame*);
+Document* documentFromFrameIndex(Page*, uint32_t frameIndex);
+Frame* frameFromFrameIndex(Page*, uint32_t frameIndex);
 
 } // namespace WebCore
 

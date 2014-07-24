@@ -3,10 +3,10 @@
         "Global": [
             { "name": "bool", "mode": "SCALAR" },
             { "name": "double", "mode": "SCALAR" },
-            { "name": "int", "mode": "SCALAR" },
-            { "name": "unsigned", "mode": "SCALAR" },
-            { "name": "unsigned long", "mode": "SCALAR" },
-            { "name": "unsigned long long", "mode": "SCALAR" }
+            { "name": "uint32_t", "mode": "SCALAR", "description": "Unsigned 32-bit integer." },
+            { "name": "uint64_t", "mode": "SCALAR", "description": "Unsigned 64-bit integer." },
+            { "name": "int32_t", "mode": "SCALAR", "description": "Signed 32-bit integer." },
+            { "name": "int64_t", "mode": "SCALAR", "description": "Signed 64-bit integer." }
         ],
 
         "WTF": [

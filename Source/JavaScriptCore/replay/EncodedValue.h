@@ -92,7 +92,6 @@ template<> JS_EXPORT_PRIVATE int32_t EncodedValue::convertTo<int32_t>();
 template<> JS_EXPORT_PRIVATE int64_t EncodedValue::convertTo<int64_t>();
 template<> JS_EXPORT_PRIVATE uint32_t EncodedValue::convertTo<uint32_t>();
 template<> JS_EXPORT_PRIVATE uint64_t EncodedValue::convertTo<uint64_t>();
-template<> JS_EXPORT_PRIVATE unsigned long EncodedValue::convertTo<unsigned long>();
 template<> JS_EXPORT_PRIVATE String EncodedValue::convertTo<String>();
 
 template<typename T>
@@ -156,7 +155,6 @@ template<> struct EncodingTraits<int32_t> : public ScalarEncodingTraits<int32_t>
 template<> struct EncodingTraits<int64_t> : public ScalarEncodingTraits<int64_t> { };
 template<> struct EncodingTraits<uint32_t> : public ScalarEncodingTraits<uint32_t> { };
 template<> struct EncodingTraits<uint64_t> : public ScalarEncodingTraits<uint64_t> { };
-template<> struct EncodingTraits<unsigned long> : public ScalarEncodingTraits<unsigned long> { };
 
 template<> struct EncodingTraits<String> : public ScalarEncodingTraits<String> {
     static EncodedValue encodeValue(const String& value)

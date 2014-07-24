@@ -67,14 +67,14 @@ static void logDispatchedDOMEvent(const Event& event, bool eventIsUnrelated)
 
     // A DOM event is unrelated if it is being dispatched to a document that is neither capturing nor replaying.
     if (Node* node = target->toNode()) {
-        LOG(WebReplay, "%-20s --->%s DOM event: type=%s, target=%lu/node[%p] %s\n", "ReplayEvents",
+        LOG(WebReplay, "%-20s --->%s DOM event: type=%s, target=%u/node[%p] %s\n", "ReplayEvents",
             (eventIsUnrelated) ? "Unrelated" : "Dispatching",
             event.type().string().utf8().data(),
             frameIndexFromDocument((node->inDocument()) ? &node->document() : node->ownerDocument()),
             node,
             node->nodeName().utf8().data());
     } else if (DOMWindow* window = target->toDOMWindow()) {
-        LOG(WebReplay, "%-20s --->%s DOM event: type=%s, target=%lu/window[%p] %s\n", "ReplayEvents",
+        LOG(WebReplay, "%-20s --->%s DOM event: type=%s, target=%u/window[%p] %s\n", "ReplayEvents",
             (eventIsUnrelated) ? "Unrelated" : "Dispatching",
             event.type().string().utf8().data(),
             frameIndexFromDocument(window->document()),

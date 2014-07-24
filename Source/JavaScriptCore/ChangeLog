@@ -1,3 +1,17 @@
+2014-07-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: don't encode/decode primitive types that lack explicit sizes
+        https://bugs.webkit.org/show_bug.cgi?id=133430
+
+        Reviewed by Anders Carlsson.
+
+        Don't support encode/decode of unsigned long, since its size is compiler-dependent.
+
+        * replay/EncodedValue.cpp:
+        (JSC::EncodedValue::convertTo<unsigned long>):
+        (JSC::unsigned long>::encodeValue): Deleted.
+        * replay/EncodedValue.h:
+
 2014-07-24  Mark Lam  <mark.lam@apple.com>
 
         JSWrapperMap's jsWrapperForObject() needs to defer GC.

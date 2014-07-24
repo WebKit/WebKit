@@ -72,18 +72,18 @@ WEB_REPLAY_INPUT_NAMES_FOR_EACH(IMPORT_FROM_WEBCORE_NAMESPACE)
 
 namespace WebCore {
 
-unsigned long frameIndexFromDocument(const Document* document)
+uint32_t frameIndexFromDocument(const Document* document)
 {
     ASSERT(document);
     ASSERT(document->frame());
     return frameIndexFromFrame(document->frame());
 }
 
-unsigned long frameIndexFromFrame(const Frame* targetFrame)
+uint32_t frameIndexFromFrame(const Frame* targetFrame)
 {
     ASSERT(targetFrame);
 
-    unsigned long currentIndex = 0;
+    uint32_t currentIndex = 0;
     const Frame* mainFrame = &targetFrame->tree().top();
     for (const Frame* frame = mainFrame; frame; ++currentIndex, frame = frame->tree().traverseNext(mainFrame)) {
         if (frame == targetFrame)
@@ -94,20 +94,20 @@ unsigned long frameIndexFromFrame(const Frame* targetFrame)
     return 0;
 }
 
-Document* documentFromFrameIndex(Page* page, unsigned long frameIndex)
+Document* documentFromFrameIndex(Page* page, uint32_t frameIndex)
 {
     Frame* frame = frameFromFrameIndex(page, frameIndex);
     return frame ? frame->document() : nullptr;
 }
 
-Frame* frameFromFrameIndex(Page* page, unsigned long frameIndex)
+Frame* frameFromFrameIndex(Page* page, uint32_t frameIndex)
 {
     ASSERT(page);
     ASSERT(frameIndex >= 0);
 
     MainFrame* mainFrame = &page->mainFrame();
     Frame* frame = mainFrame;
-    unsigned long currentIndex = 0;
+    uint32_t currentIndex = 0;
     for (; currentIndex < frameIndex && frame; ++currentIndex, frame = frame->tree().traverseNext(mainFrame)) { }
 
     return frame;
@@ -294,7 +294,7 @@ bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedVal
     DECODE_TYPE_WITH_KEY(encodedValue, Vector<KeypressCommand>, commands);
 #endif
 
-    PlatformKeyboardEvent platformEvent = PlatformKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, keypad, systemKey, modifiers, timestamp);
+    PlatformKeyboardEvent platformEvent = PlatformKeyboardEvent(type, text, unmodifiedText, keyIdentifier, WTF::safeCast<int>(windowsVirtualKeyCode), WTF::safeCast<int>(nativeVirtualKeyCode), WTF::safeCast<int>(macCharCode), autoRepeat, keypad, systemKey, modifiers, timestamp);
 #if USE(APPKIT)
     input = std::make_unique<PlatformKeyboardEventAppKit>(platformEvent, handledByInputMethod, commands);
 #else
@@ -445,9 +445,13 @@ EncodedValue EncodingTraits<PluginData>::encodeValue(RefPtr<PluginData> input)
 {
     EncodedValue encodedData = EncodedValue::createObject();
 
+    Vector<uint32_t> castedMimePluginIndices(input->mimePluginIndices().size());
+    for (uint32_t index : input->mimePluginIndices())
+        castedMimePluginIndices.append(WTF::safeCast<uint32_t>(index));
+
     ENCODE_TYPE_WITH_KEY(encodedData, Vector<PluginInfo>, plugins, input->plugins());
     ENCODE_TYPE_WITH_KEY(encodedData, Vector<MimeClassInfo>, mimes, input->mimes());
-    ENCODE_TYPE_WITH_KEY(encodedData, Vector<size_t>, mimePluginIndices, input->mimePluginIndices());
+    ENCODE_TYPE_WITH_KEY(encodedData, Vector<uint32_t>, mimePluginIndices, castedMimePluginIndices);
 
     return encodedData;
 }
@@ -464,9 +468,13 @@ bool EncodingTraits<PluginData>::decodeValue(EncodedValue& encodedData, RefPtr<P
 {
     DECODE_TYPE_WITH_KEY(encodedData, Vector<PluginInfo>, plugins);
     DECODE_TYPE_WITH_KEY(encodedData, Vector<MimeClassInfo>, mimes);
-    DECODE_TYPE_WITH_KEY(encodedData, Vector<size_t>, mimePluginIndices);
+    DECODE_TYPE_WITH_KEY(encodedData, Vector<uint32_t>, mimePluginIndices);
 
-    input = adoptRef(new DeserializedPluginData(plugins, mimes, mimePluginIndices));
+    Vector<size_t> castedMimePluginIndices(mimePluginIndices.size());
+    for (uint32_t index : mimePluginIndices)
+        castedMimePluginIndices.append(WTF::safeCast<size_t>(index));
+
+    input = adoptRef(new DeserializedPluginData(plugins, mimes, castedMimePluginIndices));
 
     return true;
 }

@@ -90,11 +90,6 @@ template<> EncodedValue ScalarEncodingTraits<uint64_t>::encodeValue(const uint64
     return EncodedValue(InspectorBasicValue::create((double)value));
 }
 
-template<> EncodedValue ScalarEncodingTraits<unsigned long>::encodeValue(const unsigned long& value)
-{
-    return EncodedValue(InspectorBasicValue::create((double)value));
-}
-
 template<> bool EncodedValue::convertTo<bool>()
 {
     bool result;
@@ -152,15 +147,6 @@ template<> uint32_t EncodedValue::convertTo<uint32_t>()
 template<> uint64_t EncodedValue::convertTo<uint64_t>()
 {
     uint64_t result;
-    bool castSucceeded = m_value->asNumber(&result);
-    ASSERT_UNUSED(castSucceeded, castSucceeded);
-
-    return result;
-}
-
-template<> unsigned long EncodedValue::convertTo<unsigned long>()
-{
-    unsigned long result;
     bool castSucceeded = m_value->asNumber(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 

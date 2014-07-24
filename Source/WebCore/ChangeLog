@@ -1,3 +1,25 @@
+2014-07-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: don't encode/decode primitive types that lack explicit sizes
+        https://bugs.webkit.org/show_bug.cgi?id=133430
+
+        Reviewed by Anders Carlsson.
+
+        Remove uses of unsigned long in encode/decode methods because the type lacks an
+        explicit size. Move frame index serialization away from using unsigned long.
+
+        * replay/ReplayController.cpp:
+        (WebCore::logDispatchedDOMEvent): Fix the format string.
+        * replay/SerializationMethods.cpp:
+        (WebCore::frameIndexFromDocument):
+        (WebCore::frameIndexFromFrame):
+        (WebCore::documentFromFrameIndex):
+        (WebCore::frameFromFrameIndex):
+        (JSC::EncodingTraits<PluginData>::encodeValue):
+        (JSC::EncodingTraits<PluginData>::decodeValue):
+        * replay/SerializationMethods.h:
+        * replay/WebInputs.json: Remove primitive types without explicit sizes.
+
 2014-07-24  Pratik Solanki  <psolanki@apple.com>
 
         Sharing SharedBuffer between WebCore and ImageIO is racy and crash prone
