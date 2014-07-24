@@ -1,5 +1,17 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171393
+
+    2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+            Build fix for non-clang compile.
+
+            * jsc.cpp:
+            (WTF::RuntimeArray::deleteProperty): Need (fake) return
+            value when NO_RETURN_DUE_TO_CRASH is not defined.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171390
 
     2014-07-22  Mark Lam  <mark.lam@apple.com>

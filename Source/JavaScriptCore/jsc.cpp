@@ -335,11 +335,17 @@ public:
     static NO_RETURN_DUE_TO_CRASH void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&)
     {
         RELEASE_ASSERT_NOT_REACHED();
+#if !COMPILER(CLANG)
+        return true;
+#endif
     }
 
     static NO_RETURN_DUE_TO_CRASH bool deleteProperty(JSCell*, ExecState*, PropertyName)
     {
         RELEASE_ASSERT_NOT_REACHED();
+#if !COMPILER(CLANG)
+        return true;
+#endif
     }
 
     unsigned getLength() const { return m_vector.size(); }
