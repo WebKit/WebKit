@@ -170,6 +170,13 @@ PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
     return DOMWrapperWorld::create(JSDOMWindow::commonVM());
 }
 
+Vector<JSC::Strong<JSDOMWindowShell>> ScriptController::windowShells()
+{
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells;
+    copyValuesToVector(m_windowShells, windowShells);
+    return windowShells;
+}
+
 void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 {
     static_cast<WebCoreJSClientData*>(JSDOMWindow::commonVM().clientData)->getAllWorlds(worlds);
@@ -182,9 +189,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
 
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    Vector<JSC::Strong<JSDOMWindowShell>> windowShells;
-    copyValuesToVector(m_windowShells, windowShells);
-
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells = this->windowShells();
     for (size_t i = 0; i < windowShells.size(); ++i) {
         JSDOMWindowShell* windowShell = windowShells[i].get();
 
@@ -288,8 +293,9 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 
 void ScriptController::attachDebugger(JSC::Debugger* debugger)
 {
-    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter)
-        attachDebugger(iter->value.get(), debugger);
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells = this->windowShells();
+    for (size_t i = 0; i < windowShells.size(); ++i)
+        attachDebugger(windowShells[i].get(), debugger);
 }
 
 void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* debugger)
@@ -306,9 +312,11 @@ void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* de
 
 void ScriptController::updateDocument()
 {
-    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSLockHolder lock(iter->key->vm());
-        iter->value->window()->updateDocument();
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells = this->windowShells();
+    for (size_t i = 0; i < windowShells.size(); ++i) {
+        JSDOMWindowShell* windowShell = windowShells[i].get();
+        JSLockHolder lock(windowShell->world().vm());
+        windowShell->window()->updateDocument();
     }
 }
 
