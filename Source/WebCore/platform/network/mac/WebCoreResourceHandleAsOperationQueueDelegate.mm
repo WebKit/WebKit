@@ -182,7 +182,7 @@ using namespace WebCore;
             dispatch_semaphore_signal(m_semaphore);
             return;
         }
-        m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
+        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace));
     });
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);

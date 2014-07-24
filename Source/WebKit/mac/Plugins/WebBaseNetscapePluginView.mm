@@ -928,7 +928,7 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
     
     RetainPtr<NSURLProtectionSpace> protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:host port:port protocol:protocol realm:realm authenticationMethod:authenticationMethod]);
     
-    NSURLCredential *credential = mac(CredentialStorage::get(core(protectionSpace.get())));
+    NSURLCredential *credential = mac(CredentialStorage::get(ProtectionSpace(protectionSpace.get())));
     if (!credential)
         credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.get()];
     if (!credential)

@@ -1827,7 +1827,7 @@
     <ClCompile Include="..\platform\network\ParsedContentType.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\ProtectionSpace.cpp">
+    <ClCompile Include="..\platform\network\ProtectionSpaceBase.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\network\ProxyServer.cpp">
@@ -1879,6 +1879,9 @@
       <Filter>platform\network\cf</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\network\cf\NetworkStorageSessionCFNet.cpp">
+      <Filter>platform\network\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\cf\ProtectionSpaceCFNet.cpp">
       <Filter>platform\network\cf</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\network\cf\ProxyServerCFNet.cpp">
@@ -15360,6 +15363,9 @@
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\cf\FormDataStreamCFNet.h">
+      <Filter>platform\network\cf</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\platform\network\cf\ProtectionSpaceCFNet.h">
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\cf\ResourceError.h">

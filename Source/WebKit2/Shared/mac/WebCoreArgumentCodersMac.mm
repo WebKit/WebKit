@@ -33,6 +33,7 @@
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/ContentFilter.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 
@@ -282,6 +283,35 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     RetainPtr<NSError> nsError = adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:(NSDictionary *)userInfo.get()]);
 
     resourceError = ResourceError(nsError.get());
+    return true;
+}
+
+void ArgumentCoder<ProtectionSpace>::encodePlatformData(ArgumentEncoder& encoder, const ProtectionSpace& space)
+{
+    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+    [archiver setRequiresSecureCoding:YES];
+    [archiver encodeObject:space.nsSpace() forKey:@"protectionSpace"];
+    [archiver finishEncoding];
+    IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
+}
+
+bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder& decoder, ProtectionSpace& space)
+{
+    RetainPtr<CFDataRef> data;
+    if (!IPC::decode(decoder, data))
+        return false;
+
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
+    @try {
+        if (RetainPtr<NSURLProtectionSpace> nsSpace = [unarchiver decodeObjectOfClass:[NSURLProtectionSpace class] forKey:@"protectionSpace"])
+            space = ProtectionSpace(nsSpace.get());
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode NSURLProtectionSpace: %@", exception);
+    }
+
+    [unarchiver finishDecoding];
     return true;
 }
 

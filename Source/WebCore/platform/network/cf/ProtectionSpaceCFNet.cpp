@@ -22,26 +22,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef AuthenticationMac_h
-#define AuthenticationMac_h
 
-#ifdef __OBJC__
+#include "config.h"
+#include "ProtectionSpaceCFNet.h"
 
-@class NSURLAuthenticationChallenge;
-@class NSURLCredential;
+#if USE(CFNETWORK)
+
+#include "AuthenticationCF.h"
+#include <CFNetwork/CFURLProtectionSpacePriv.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class AuthenticationChallenge;
-class Credential;
-
-NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
-NSURLCredential *mac(const Credential&);
-
-AuthenticationChallenge core(NSURLAuthenticationChallenge *);
-Credential core(NSURLCredential *);
-
+bool ProtectionSpaceBase::receivesCredentialSecurely() const
+{
+    RetainPtr<CFURLProtectionSpaceRef> cfSpace = adoptCF(createCF(*this));
+    return cfSpace && CFURLProtectionSpaceReceivesCredentialSecurely(cfSpace.get());
 }
-#endif // __OBJC__
 
-#endif // AuthenticationMac_h
+} // namespace WebCore
+
+#endif // USE(CFNETWORK)

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
+#include "ProtectionSpaceBase.h"
+
 #include "ProtectionSpace.h"
 
 #if USE(CFNETWORK) && !PLATFORM(COCOA)
@@ -35,7 +37,7 @@ namespace WebCore {
 
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-ProtectionSpace::ProtectionSpace()
+ProtectionSpaceBase::ProtectionSpaceBase()
     : m_host("")
     , m_port(0)
     , m_serverType(ProtectionSpaceServerHTTP)
@@ -47,7 +49,7 @@ ProtectionSpace::ProtectionSpace()
  
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-ProtectionSpace::ProtectionSpace(const String& host, int port, ProtectionSpaceServerType serverType, const String& realm, ProtectionSpaceAuthenticationScheme authenticationScheme)
+ProtectionSpaceBase::ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType serverType, const String& realm, ProtectionSpaceAuthenticationScheme authenticationScheme)
     : m_host(host.length() ? host : "")
     , m_port(port)
     , m_serverType(serverType)
@@ -57,22 +59,22 @@ ProtectionSpace::ProtectionSpace(const String& host, int port, ProtectionSpaceSe
 {    
 }
     
-const String& ProtectionSpace::host() const 
-{ 
+const String& ProtectionSpaceBase::host() const
+{
     return m_host; 
 }
 
-int ProtectionSpace::port() const 
+int ProtectionSpaceBase::port() const
 {
     return m_port; 
 }
 
-ProtectionSpaceServerType ProtectionSpace::serverType() const 
+ProtectionSpaceServerType ProtectionSpaceBase::serverType() const
 {
-    return m_serverType; 
+    return m_serverType;
 }
 
-bool ProtectionSpace::isProxy() const
+bool ProtectionSpaceBase::isProxy() const
 {
     return (m_serverType == ProtectionSpaceProxyHTTP ||
             m_serverType == ProtectionSpaceProxyHTTPS ||
@@ -80,30 +82,25 @@ bool ProtectionSpace::isProxy() const
             m_serverType == ProtectionSpaceProxySOCKS);
 }
 
-const String& ProtectionSpace::realm() const 
+const String& ProtectionSpaceBase::realm() const
 { 
     return m_realm; 
 }
 
-ProtectionSpaceAuthenticationScheme ProtectionSpace::authenticationScheme() const 
+ProtectionSpaceAuthenticationScheme ProtectionSpaceBase::authenticationScheme() const
 { 
     return m_authenticationScheme; 
 }
 
-bool ProtectionSpace::receivesCredentialSecurely() const
+bool ProtectionSpaceBase::receivesCredentialSecurely() const
 {
-#if USE(CFNETWORK) && !PLATFORM(COCOA)
-    RetainPtr<CFURLProtectionSpaceRef> cfSpace = adoptCF(createCF(*this));
-    return cfSpace && CFURLProtectionSpaceReceivesCredentialSecurely(cfSpace.get());
-#else
-    return (m_serverType == ProtectionSpaceServerHTTPS || 
+    return (m_serverType == ProtectionSpaceServerHTTPS ||
             m_serverType == ProtectionSpaceServerFTPS || 
             m_serverType == ProtectionSpaceProxyHTTPS || 
             m_authenticationScheme == ProtectionSpaceAuthenticationSchemeHTTPDigest); 
-#endif
 }
 
-bool operator==(const ProtectionSpace& a, const ProtectionSpace& b)
+bool ProtectionSpaceBase::compare(const ProtectionSpace& a, const ProtectionSpace& b)
 {
     if (a.host() != b.host())
         return false;
@@ -116,10 +113,8 @@ bool operator==(const ProtectionSpace& a, const ProtectionSpace& b)
         return false;
     if (a.authenticationScheme() != b.authenticationScheme())
         return false;
-    
-    return true;
+
+    return ProtectionSpace::platformCompare(a, b);
 }
 
 }
-
-

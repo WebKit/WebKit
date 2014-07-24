@@ -2219,7 +2219,7 @@ set(WebCore_SOURCES
     platform/network/MIMEHeader.cpp
     platform/network/NetworkStateNotifier.cpp
     platform/network/ParsedContentType.cpp
-    platform/network/ProtectionSpace.cpp
+    platform/network/ProtectionSpaceBase.cpp
     platform/network/ProxyServer.cpp
     platform/network/ResourceErrorBase.cpp
     platform/network/ResourceHandle.cpp

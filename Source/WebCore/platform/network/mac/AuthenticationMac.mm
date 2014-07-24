@@ -29,18 +29,11 @@
 #import "AuthenticationChallenge.h"
 #import "AuthenticationClient.h"
 #import "Credential.h"
-#import "ProtectionSpace.h"
-
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLCredential.h>
 #import <Foundation/NSURLProtectionSpace.h>
 
 #if USE(CFNETWORK)
-
-@interface NSURLProtectionSpace (Details)
-- (CFURLProtectionSpaceRef) _cfurlprotectionspace;
-- (id)_initWithCFURLProtectionSpace:(CFURLProtectionSpaceRef)cfProtSpace;
-@end
 
 @interface NSURLAuthenticationChallenge (Details)
 #if PLATFORM(IOS)
@@ -139,17 +132,6 @@ Credential core(NSURLCredential *macCredential)
     return core([macCredential _cfurlcredential]);
 }
 
-ProtectionSpace core(NSURLProtectionSpace *macSpace)
-{
-    return core([macSpace _cfurlprotectionspace]);
-}
-
-NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
-{
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpace = adoptCF(createCF(coreSpace));
-    return [[[NSURLProtectionSpace alloc] _initWithCFURLProtectionSpace:protectionSpace.get()] autorelease];
-}
-
 NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 {
     AuthenticationClient* authClient = coreChallenge.authenticationClient();
@@ -187,7 +169,7 @@ AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protecti
 }
 
 AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
-    : AuthenticationChallengeBase(core([challenge protectionSpace]),
+    : AuthenticationChallengeBase(ProtectionSpace([challenge protectionSpace]),
                                   core([challenge proposedCredential]),
                                   [challenge previousFailureCount],
                                   [challenge failureResponse],
@@ -233,90 +215,12 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
     if (coreChallenge.nsURLAuthenticationChallenge())
         return coreChallenge.nsURLAuthenticationChallenge();
         
-    return [[[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:mac(coreChallenge.protectionSpace())
+    return [[[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().nsSpace()
                                                        proposedCredential:mac(coreChallenge.proposedCredential())
                                                      previousFailureCount:coreChallenge.previousFailureCount()
                                                           failureResponse:coreChallenge.failureResponse().nsURLResponse()
                                                                     error:coreChallenge.error()
                                                                    sender:coreChallenge.sender()] autorelease];
-}
-
-NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
-{
-    NSString *proxyType = nil;
-    NSString *protocol = nil;
-    switch (coreSpace.serverType()) {
-        case ProtectionSpaceServerHTTP:
-            protocol = @"http";
-            break;
-        case ProtectionSpaceServerHTTPS:
-            protocol = @"https";
-            break;
-        case ProtectionSpaceServerFTP:
-            protocol = @"ftp";
-            break;
-        case ProtectionSpaceServerFTPS:
-            protocol = @"ftps";
-            break;
-        case ProtectionSpaceProxyHTTP:
-            proxyType = NSURLProtectionSpaceHTTPProxy;
-            break;
-        case ProtectionSpaceProxyHTTPS:
-            proxyType = NSURLProtectionSpaceHTTPSProxy;
-            break;
-        case ProtectionSpaceProxyFTP:
-            proxyType = NSURLProtectionSpaceFTPProxy;
-            break;
-        case ProtectionSpaceProxySOCKS:
-            proxyType = NSURLProtectionSpaceSOCKSProxy;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-  
-    NSString *method = nil;
-    switch (coreSpace.authenticationScheme()) {
-        case ProtectionSpaceAuthenticationSchemeDefault:
-            method = NSURLAuthenticationMethodDefault;
-            break;
-        case ProtectionSpaceAuthenticationSchemeHTTPBasic:
-            method = NSURLAuthenticationMethodHTTPBasic;
-            break;
-        case ProtectionSpaceAuthenticationSchemeHTTPDigest:
-            method = NSURLAuthenticationMethodHTTPDigest;
-            break;
-        case ProtectionSpaceAuthenticationSchemeHTMLForm:
-            method = NSURLAuthenticationMethodHTMLForm;
-            break;
-        case ProtectionSpaceAuthenticationSchemeNTLM:
-            method = NSURLAuthenticationMethodNTLM;
-            break;
-        case ProtectionSpaceAuthenticationSchemeNegotiate:
-            method = NSURLAuthenticationMethodNegotiate;
-            break;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-        case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
-            method = NSURLAuthenticationMethodServerTrust;
-            break;
-        case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
-            method = NSURLAuthenticationMethodClientCertificate;
-            break;
-#endif
-        default:
-            ASSERT_NOT_REACHED();
-    }
-    
-    if (proxyType)
-        return [[[NSURLProtectionSpace alloc] initWithProxyHost:coreSpace.host()
-                                                           port:coreSpace.port()
-                                                           type:proxyType
-                                                          realm:coreSpace.realm()
-                                           authenticationMethod:method] autorelease];
-    return [[[NSURLProtectionSpace alloc] initWithHost:coreSpace.host()
-                                                  port:coreSpace.port()
-                                              protocol:protocol
-                                                 realm:coreSpace.realm()
-                                  authenticationMethod:method] autorelease];
 }
 
 NSURLCredential *mac(const Credential& coreCredential)
@@ -356,65 +260,6 @@ NSURLCredential *mac(const Credential& coreCredential)
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
 {
     return AuthenticationChallenge(macChallenge);
-}
-
-ProtectionSpace core(NSURLProtectionSpace *macSpace)
-{
-    ProtectionSpaceServerType serverType = ProtectionSpaceProxyHTTP;
-    
-    if ([macSpace isProxy]) {
-        NSString *proxyType = [macSpace proxyType];
-        if ([proxyType isEqualToString:NSURLProtectionSpaceHTTPProxy])
-            serverType = ProtectionSpaceProxyHTTP;
-        else if ([proxyType isEqualToString:NSURLProtectionSpaceHTTPSProxy])
-            serverType = ProtectionSpaceProxyHTTPS;
-        else if ([proxyType isEqualToString:NSURLProtectionSpaceFTPProxy])
-            serverType = ProtectionSpaceProxyFTP;
-        else if ([proxyType isEqualToString:NSURLProtectionSpaceSOCKSProxy])
-            serverType = ProtectionSpaceProxySOCKS;
-        else 
-            ASSERT_NOT_REACHED();
-    } else {
-        NSString *protocol = [macSpace protocol];
-        if ([protocol caseInsensitiveCompare:@"http"] == NSOrderedSame)
-            serverType = ProtectionSpaceServerHTTP;
-        else if ([protocol caseInsensitiveCompare:@"https"] == NSOrderedSame)
-            serverType = ProtectionSpaceServerHTTPS;
-        else if ([protocol caseInsensitiveCompare:@"ftp"] == NSOrderedSame)
-            serverType = ProtectionSpaceServerFTP;
-        else if ([protocol caseInsensitiveCompare:@"ftps"] == NSOrderedSame)
-            serverType = ProtectionSpaceServerFTPS;
-        else
-            ASSERT_NOT_REACHED();
-    }
-
-    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
-    NSString *method = [macSpace authenticationMethod];
-    if ([method isEqualToString:NSURLAuthenticationMethodDefault])
-        scheme = ProtectionSpaceAuthenticationSchemeDefault;
-    else if ([method isEqualToString:NSURLAuthenticationMethodHTTPBasic])
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
-    else if ([method isEqualToString:NSURLAuthenticationMethodHTTPDigest])
-        scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
-    else if ([method isEqualToString:NSURLAuthenticationMethodHTMLForm])
-        scheme = ProtectionSpaceAuthenticationSchemeHTMLForm;
-    else if ([method isEqualToString:NSURLAuthenticationMethodNTLM])
-        scheme = ProtectionSpaceAuthenticationSchemeNTLM;
-    else if ([method isEqualToString:NSURLAuthenticationMethodNegotiate])
-        scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    else if ([method isEqualToString:NSURLAuthenticationMethodClientCertificate])
-        scheme = ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
-    else if ([method isEqualToString:NSURLAuthenticationMethodServerTrust])
-        scheme = ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
-#endif
-    else {
-        scheme = ProtectionSpaceAuthenticationSchemeUnknown;
-        ASSERT_NOT_REACHED();
-    }
-        
-    return ProtectionSpace([macSpace host], [macSpace port], serverType, [macSpace realm], scheme);
-
 }
 
 Credential core(NSURLCredential *macCredential)

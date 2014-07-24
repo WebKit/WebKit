@@ -41,14 +41,17 @@ class ProtectionSpace;
 
 CFURLAuthChallengeRef createCF(const AuthenticationChallenge&);
 CFURLCredentialRef createCF(const Credential&);
+#if PLATFORM(WIN)
 CFURLProtectionSpaceRef createCF(const ProtectionSpace&);
+#endif
 
 #if PLATFORM(COCOA)
 AuthenticationChallenge core(CFURLAuthChallengeRef);
 #endif
 Credential core(CFURLCredentialRef);
+#if PLATFORM(WIN)
 ProtectionSpace core(CFURLProtectionSpaceRef);
-
+#endif
 }
 
 #endif // USE(CFNETWORK)

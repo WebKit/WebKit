@@ -258,7 +258,7 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-        ProtectionSpace coreProtectionSpace = core(protectionSpace);
+        ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace);
 #if PLATFORM(IOS)
         if (coreProtectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeUnknown) {
             m_boolResult = false;

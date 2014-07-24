@@ -459,6 +459,13 @@ bool ArgumentCoder<AuthenticationChallenge>::decode(ArgumentDecoder& decoder, Au
 
 void ArgumentCoder<ProtectionSpace>::encode(ArgumentEncoder& encoder, const ProtectionSpace& space)
 {
+    if (space.encodingRequiresPlatformData()) {
+        encoder << true;
+        encodePlatformData(encoder, space);
+        return;
+    }
+
+    encoder << false;
     encoder << space.host() << space.port() << space.realm();
     encoder.encodeEnum(space.authenticationScheme());
     encoder.encodeEnum(space.serverType());
@@ -466,6 +473,13 @@ void ArgumentCoder<ProtectionSpace>::encode(ArgumentEncoder& encoder, const Prot
 
 bool ArgumentCoder<ProtectionSpace>::decode(ArgumentDecoder& decoder, ProtectionSpace& space)
 {
+    bool hasPlatformData;
+    if (!decoder.decode(hasPlatformData))
+        return false;
+
+    if (hasPlatformData)
+        return decodePlatformData(decoder, space);
+
     String host;
     if (!decoder.decode(host))
         return false;

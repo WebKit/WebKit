@@ -47,8 +47,7 @@ namespace WebCore {
 
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpaceCF = adoptCF(createCF(protectionSpace));
-    RetainPtr<CFURLCredentialRef> credentialCF = adoptCF(wkCopyCredentialFromCFPersistentStorage(protectionSpaceCF.get()));
+    RetainPtr<CFURLCredentialRef> credentialCF = adoptCF(wkCopyCredentialFromCFPersistentStorage(protectionSpace.cfSpace()));
     return core(credentialCF.get());
 }
 
@@ -56,15 +55,14 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& pr
 void CredentialStorage::saveToPersistentStorage(const ProtectionSpace& protectionSpace, const Credential& credential)
 {
     RetainPtr<CFURLCredentialStorageRef> storageCF = adoptCF(CFURLCredentialStorageCreate(0));
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpaceCF = adoptCF(createCF(protectionSpace));
 
     if (credential.persistence() == CredentialPersistenceNone) {
         Credential sessionCredential(credential, CredentialPersistenceForSession);
         RetainPtr<CFURLCredentialRef> sessionCredentialCF = adoptCF(createCF(sessionCredential));
-        CFURLCredentialStorageSetDefaultCredentialForProtectionSpace(storageCF.get(), sessionCredentialCF.get(), protectionSpaceCF.get());
+        CFURLCredentialStorageSetDefaultCredentialForProtectionSpace(storageCF.get(), sessionCredentialCF.get(), protectionSpace.cfSpace());
     } else {
         RetainPtr<CFURLCredentialRef> credentialCF = adoptCF(createCF(credential));
-        CFURLCredentialStorageSetDefaultCredentialForProtectionSpace(storageCF.get(), credentialCF.get(), protectionSpaceCF.get());
+        CFURLCredentialStorageSetDefaultCredentialForProtectionSpace(storageCF.get(), credentialCF.get(), protectionSpace.cfSpace());
     }
 }
 #endif
