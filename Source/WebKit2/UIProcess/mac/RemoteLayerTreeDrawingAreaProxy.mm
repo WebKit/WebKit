@@ -205,11 +205,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
-    bool fixedOrStickyLayerChanged = false;
-    m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction, fixedOrStickyLayerChanged);
+    m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction);
 
 #if PLATFORM(IOS)
-    if (fixedOrStickyLayerChanged) {
+    if (m_webPageProxy->scrollingCoordinatorProxy()->hasFixedOrSticky()) {
         FloatRect customFixedPositionRect = m_webPageProxy->computeCustomFixedPositionRect(m_webPageProxy->unobscuredContentRect(), m_webPageProxy->displayedContentScale());
         // If we got a new layer for a fixed or sticky node, its position from the WebProcess is probably stale. We need to re-run the "viewport" changed logic to udpate it with our UI-side state.
         m_webPageProxy->scrollingCoordinatorProxy()->viewportChangedViaDelegatedScrolling(m_webPageProxy->scrollingCoordinatorProxy()->rootScrollingNodeID(), customFixedPositionRect, m_webPageProxy->displayedContentScale());

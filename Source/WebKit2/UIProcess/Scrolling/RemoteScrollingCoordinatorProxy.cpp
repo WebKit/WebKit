@@ -35,7 +35,6 @@
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingCoordinatorMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
-#include "RemoteScrollingTree.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
@@ -78,7 +77,7 @@ const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() cons
     return &remoteDrawingArea->remoteLayerTreeHost();
 }
 
-void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingCoordinatorTransaction& transaction, bool& fixedOrStickyLayerChanged)
+void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingCoordinatorTransaction& transaction)
 {
     OwnPtr<ScrollingStateTree> stateTree = const_cast<RemoteScrollingCoordinatorTransaction&>(transaction).scrollingStateTree().release();
     
@@ -88,12 +87,12 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
         return;
     }
 
-    connectStateNodeLayers(*stateTree, *layerTreeHost, fixedOrStickyLayerChanged);
+    connectStateNodeLayers(*stateTree, *layerTreeHost);
     m_scrollingTree->commitNewTreeState(stateTree.release());
 }
 
 #if !PLATFORM(IOS)
-void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost, bool& fixedOrStickyLayerChanged)
+void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
         if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
@@ -131,12 +130,7 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             break;
         }
         case FixedNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                fixedOrStickyLayerChanged = true;
-            break;
         case StickyNode:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                fixedOrStickyLayerChanged = true;
             break;
         }
     }

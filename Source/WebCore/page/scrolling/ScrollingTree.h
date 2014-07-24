@@ -128,6 +128,14 @@ public:
 
     bool hasLatchedNode() const { return m_latchedNode; }
     void setOrClearLatchedNode(const PlatformWheelEvent&, ScrollingNodeID);
+
+    bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
+    void fixedOrStickyNodeAdded() { ++m_fixedOrStickyNodeCount; }
+    void fixedOrStickyNodeRemoved()
+    {
+        ASSERT(m_fixedOrStickyNodeCount);
+        --m_fixedOrStickyNodeCount;
+    }
     
 protected:
     void setMainFrameScrollPosition(FloatPoint);
@@ -167,6 +175,7 @@ private:
     bool m_scrollingPerformanceLoggingEnabled;
     
     bool m_isHandlingProgrammaticScroll;
+    unsigned m_fixedOrStickyNodeCount;
 };
 
 #define SCROLLING_TREE_TYPE_CASTS(ToValueTypeName, predicate) \
