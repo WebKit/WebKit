@@ -206,7 +206,8 @@ private:
 
     _rootContentView = adoptNS([[UIView alloc] init]);
     [_rootContentView layer].masksToBounds = NO;
-    
+    [_rootContentView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+
     _fixedClippingView = adoptNS([[UIView alloc] init]);
     [_fixedClippingView layer].masksToBounds = YES;
     [_fixedClippingView layer].anchorPoint = CGPointZero;
@@ -313,6 +314,7 @@ private:
     if (show) {
         if (!_inspectorIndicationView) {
             _inspectorIndicationView = adoptNS([[WKInspectorIndicationView alloc] initWithFrame:[self bounds]]);
+            [_inspectorIndicationView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
             [self insertSubview:_inspectorIndicationView.get() aboveSubview:_rootContentView.get()];
         }
     } else {
@@ -443,11 +445,8 @@ private:
     CGRect oldBounds = [self bounds];
 
     BOOL boundsChanged = !CGRectEqualToRect(oldBounds, contentBounds);
-    if (boundsChanged) {
+    if (boundsChanged)
         [self setBounds:contentBounds];
-        [_rootContentView setFrame:contentBounds];
-        [_inspectorIndicationView setFrame:contentBounds];
-    }
 
     [_webView _didCommitLayerTree:layerTreeTransaction];
     
