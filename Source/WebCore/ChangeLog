@@ -1,5 +1,21 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171506
+
+    2014-07-23  Jeremy Jones  <jeremyj@apple.com>
+
+            Transparent fullscreen background when video is not present.
+            https://bugs.webkit.org/show_bug.cgi?id=135226
+
+            Reviewed by Simon Fraser.
+
+            Set background to black just before beginning the animation to fullscreen.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreen): set background color black.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171481
 
     2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>

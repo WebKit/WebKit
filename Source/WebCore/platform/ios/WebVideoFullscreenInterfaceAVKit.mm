@@ -785,6 +785,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        [[m_playerViewController view] setBackgroundColor:[getUIColorClass() blackColor]];
         [m_playerViewController enterFullScreenWithCompletionHandler:^(BOOL, NSError*)
         {
             [m_playerViewController setShowsPlaybackControls:YES];
