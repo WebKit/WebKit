@@ -502,6 +502,11 @@ void GraphicsLayerCA::setPosition(const FloatPoint& point)
     noteLayerPropertyChanged(GeometryChanged);
 }
 
+void GraphicsLayerCA::forcePositionUpdate()
+{
+    noteLayerPropertyChanged(GeometryChanged);
+}
+
 void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
 {
     if (point == m_anchorPoint)

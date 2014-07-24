@@ -1,3 +1,22 @@
+2014-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Header bar on nytimes articles lands in the wrong place after rubberbanding
+        https://bugs.webkit.org/show_bug.cgi?id=135221
+
+        Reviewed by Tim Horton.
+        
+        The call to didCommitLayerTree() can cause one or two visible rect updates,
+        via changes to the UIScrollView contentSize and contentOffset. As a result, we
+        would notify the scrolling tree about a viewport change, but using the old
+        scrolling tree rather than the new one, so we could move layers around for
+        nodes which are about to be removed from the tree.
+        
+        Fix by m_webPageProxy->didCommitLayerTree() after the scrolling tree has been
+        committed.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
 2014-07-23  Oliver Hunt  <oliver@apple.com>
 
         Add a pseudo target to create sandbox override roots

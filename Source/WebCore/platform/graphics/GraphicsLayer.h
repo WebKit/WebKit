@@ -291,6 +291,9 @@ public:
     const FloatPoint& position() const { return m_position; }
     virtual void setPosition(const FloatPoint& p) { m_position = p; }
 
+    // Ensure that the position is flushed to the underlying graphics framework.
+    virtual void forcePositionUpdate() { }
+
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncPosition(const FloatPoint& p) { m_position = p; }
 
