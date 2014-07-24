@@ -1,3 +1,16 @@
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171487
+
+    2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Unreviewed iOS build fix after r171355.
+
+            * TestWebKitAPI/Configurations/Base.xcconfig:
+            Since all the Tests/WebKit2Cocoa tests are already explicitly skipped on iOS,
+            simplify to skipping all the tests in the directory. PlatformUtilities are not
+            building on iOS, which means we are missing necessary Util functions.
+
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171355
