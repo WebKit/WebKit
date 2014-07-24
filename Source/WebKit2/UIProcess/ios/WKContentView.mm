@@ -510,7 +510,8 @@ private:
 - (void)_applicationWillEnterForeground:(NSNotification*)notification
 {
     _page->applicationWillEnterForeground();
-    _page->drawingArea()->hideContentUntilNextUpdate();
+    if (auto drawingArea = _page->drawingArea())
+        drawingArea->hideContentUntilNextUpdate();
     _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
 }
 
