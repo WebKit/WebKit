@@ -53,7 +53,11 @@ AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protecti
 
 AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallenge,
                                                  AuthenticationClient* authenticationClient)
+#if PLATFORM(COCOA)
     : AuthenticationChallengeBase(ProtectionSpace(CFURLAuthChallengeGetProtectionSpace(cfChallenge)),
+#else
+    : AuthenticationChallengeBase(core(CFURLAuthChallengeGetProtectionSpace(cfChallenge)),
+#endif
                                   core(CFURLAuthChallengeGetProposedCredential(cfChallenge)),
                                   CFURLAuthChallengeGetPreviousFailureCount(cfChallenge),
                                   (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(cfChallenge),
@@ -90,7 +94,13 @@ CFURLAuthChallengeRef createCF(const AuthenticationChallenge& coreChallenge)
 
     CFURLCredentialRef credential = createCF(coreChallenge.proposedCredential());
     
+#if PLATFORM(COCOA)
     CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, coreChallenge.protectionSpace().cfSpace(), credential,
+#else
+    RetainPtr<CFURLProtectionSpaceRef> protectionSpace = adoptCF(createCF(coreChallenge.protectionSpace()));
+
+    CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, protectionSpace, credential,
+#endif
                                         coreChallenge.previousFailureCount(),
                                         coreChallenge.failureResponse().cfURLResponse(),
                                         coreChallenge.error());
