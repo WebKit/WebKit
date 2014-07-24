@@ -45,6 +45,17 @@
 			name = WebKit2SandboxProfiles;
 			productName = WebKit2SandboxProfiles;
 		};
+		A7C0DC2D19804DEE00253CED /* WebKit2SandboxProfiles-IOSOverride */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = A7C0DC3219804DEE00253CED /* Build configuration list for PBXAggregateTarget "WebKit2SandboxProfiles-IOSOverride" */;
+			buildPhases = (
+				A7C0DC2E19804DEE00253CED /* CopyFiles */,
+			);
+			dependencies = (
+			);
+			name = "WebKit2SandboxProfiles-IOSOverride";
+			productName = WebKit2SandboxProfiles;
+		};
 		C0CE72851247E66800BC0EC4 /* Derived Sources */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
@@ -1112,6 +1123,9 @@
 		A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */; };
 		A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */; };
 		A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */; };
+		A7C0DC2F19804DEE00253CED /* com.apple.WebKit.Databases.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */; };
+		A7C0DC3019804DEE00253CED /* com.apple.WebKit.Networking.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */; };
+		A7C0DC3119804DEE00253CED /* com.apple.WebKit.WebContent.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */; };
 		A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */; };
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
 		A7E93CED1925331100A1DC48 /* ChildProcessIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7E93CEB192531AA00A1DC48 /* ChildProcessIOS.mm */; };
@@ -1954,6 +1968,18 @@
 				A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */,
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
 				A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7C0DC2E19804DEE00253CED /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/local/share/sandbox;
+			dstSubfolderSpec = 0;
+			files = (
+				A7C0DC2F19804DEE00253CED /* com.apple.WebKit.Databases.sb in CopyFiles */,
+				A7C0DC3019804DEE00253CED /* com.apple.WebKit.Networking.sb in CopyFiles */,
+				A7C0DC3119804DEE00253CED /* com.apple.WebKit.WebContent.sb in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8221,6 +8247,7 @@
 				51F7DC3F180CC93600212CA3 /* Databases */,
 				5180C713180CCA3100FDA612 /* Databases.Development */,
 				A7AADA1019395CA9003EA1C7 /* WebKit2SandboxProfiles */,
+				A7C0DC2D19804DEE00253CED /* WebKit2SandboxProfiles-IOSOverride */,
 			);
 		};
 /* End PBXProject section */
@@ -9996,6 +10023,27 @@
 			};
 			name = Production;
 		};
+		A7C0DC3319804DEE00253CED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "WebKit2SandboxProfiles-IOSOverride";
+			};
+			name = Debug;
+		};
+		A7C0DC3419804DEE00253CED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "WebKit2SandboxProfiles-IOSOverride";
+			};
+			name = Release;
+		};
+		A7C0DC3519804DEE00253CED /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "WebKit2SandboxProfiles-IOSOverride";
+			};
+			name = Production;
+		};
 		BC3DE47315A91764008D26FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */;
@@ -10336,6 +10384,16 @@
 				A7AADA1119395CA9003EA1C7 /* Debug */,
 				A7AADA1219395CA9003EA1C7 /* Release */,
 				A7AADA1319395CA9003EA1C7 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		A7C0DC3219804DEE00253CED /* Build configuration list for PBXAggregateTarget "WebKit2SandboxProfiles-IOSOverride" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A7C0DC3319804DEE00253CED /* Debug */,
+				A7C0DC3419804DEE00253CED /* Release */,
+				A7C0DC3519804DEE00253CED /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
