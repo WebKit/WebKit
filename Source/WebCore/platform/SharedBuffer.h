@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -158,6 +159,10 @@ public:
     void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
     bool hasPlatformData() const;
 
+    struct DataBuffer : public ThreadSafeRefCounted<DataBuffer> {
+        Vector<char> data;
+    };
+
 private:
     SharedBuffer();
     explicit SharedBuffer(unsigned);
@@ -177,8 +182,13 @@ private:
 
     void copyBufferAndClear(char* destination, unsigned bytesToCopy) const;
 
+    void appendToDataBuffer(const char *, unsigned) const;
+    void duplicateDataBufferIfNecessary() const;
+    void clearDataBuffer();
+
     unsigned m_size;
-    mutable Vector<char> m_buffer;
+    mutable RefPtr<DataBuffer> m_buffer;
+
     bool m_shouldUsePurgeableMemory;
     mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)

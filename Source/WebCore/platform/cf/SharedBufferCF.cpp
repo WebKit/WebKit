@@ -39,6 +39,7 @@ namespace WebCore {
 
 SharedBuffer::SharedBuffer(CFDataRef cfData)
     : m_size(0)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -128,6 +129,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
 
 SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
     : m_size(0)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -187,7 +189,7 @@ const char *SharedBuffer::singleDataArrayBuffer() const
 {
     // If we had previously copied data into m_buffer in copyDataArrayAndClear() or some other
     // function, then we can't return a pointer to the CFDataRef buffer.
-    if (m_buffer.size())
+    if (m_buffer->data.size())
         return 0;
 
     if (m_dataArray.size() != 1)
@@ -198,7 +200,7 @@ const char *SharedBuffer::singleDataArrayBuffer() const
 
 bool SharedBuffer::maybeAppendDataArray(SharedBuffer* data)
 {
-    if (m_buffer.size() || m_cfData || !data->m_dataArray.size())
+    if (m_buffer->data.size() || m_cfData || !data->m_dataArray.size())
         return false;
 #if !ASSERT_DISABLED
     unsigned originalSize = size();

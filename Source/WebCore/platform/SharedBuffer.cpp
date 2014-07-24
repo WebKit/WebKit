@@ -65,6 +65,7 @@ static inline void freeSegment(char* p)
 
 SharedBuffer::SharedBuffer()
     : m_size(0)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -77,7 +78,7 @@ SharedBuffer::SharedBuffer()
 
 SharedBuffer::SharedBuffer(unsigned size)
     : m_size(size)
-    , m_buffer(size)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -90,6 +91,7 @@ SharedBuffer::SharedBuffer(unsigned size)
 
 SharedBuffer::SharedBuffer(const char* data, unsigned size)
     : m_size(0)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -103,6 +105,7 @@ SharedBuffer::SharedBuffer(const char* data, unsigned size)
 
 SharedBuffer::SharedBuffer(const unsigned char* data, unsigned size)
     : m_size(0)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -129,8 +132,8 @@ SharedBuffer::~SharedBuffer()
 PassRefPtr<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
 {
     RefPtr<SharedBuffer> buffer = create();
-    buffer->m_buffer.swap(vector);
-    buffer->m_size = buffer->m_buffer.size();
+    buffer->m_buffer->data.swap(vector);
+    buffer->m_size = buffer->m_buffer->data.size();
     return buffer.release();
 }
 
@@ -232,7 +235,7 @@ void SharedBuffer::createPurgeableBuffer() const
         return;
 #endif
 
-    if (!hasOneRef())
+    if (!m_buffer->hasOneRef())
         return;
 
     if (!m_shouldUsePurgeableMemory)
@@ -242,11 +245,11 @@ void SharedBuffer::createPurgeableBuffer() const
     m_purgeableBuffer = PurgeableBuffer::createUninitialized(m_size, destination);
     if (!m_purgeableBuffer)
         return;
-    unsigned bufferSize = m_buffer.size();
+    unsigned bufferSize = m_buffer->data.size();
     if (bufferSize) {
-        memcpy(destination, m_buffer.data(), bufferSize);
+        memcpy(destination, m_buffer->data.data(), bufferSize);
         destination += bufferSize;
-        m_buffer.clear();
+        (const_cast<SharedBuffer*>(this))->clearDataBuffer();
     }
     copyBufferAndClear(destination, m_size - bufferSize);
 }
@@ -323,14 +326,14 @@ void SharedBuffer::append(const char* data, unsigned length)
     maybeTransferPlatformData();
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    unsigned positionInSegment = offsetInSegment(m_size - m_buffer.size());
+    unsigned positionInSegment = offsetInSegment(m_size - m_buffer->data.size());
     m_size += length;
 
     if (m_size <= segmentSize) {
         // No need to use segments for small resource data
-        if (m_buffer.isEmpty())
-            m_buffer.reserveInitialCapacity(length);
-        m_buffer.append(data, length);
+        if (m_buffer->data.isEmpty())
+            m_buffer->data.reserveInitialCapacity(length);
+        appendToDataBuffer(data, length);
         return;
     }
 
@@ -356,10 +359,10 @@ void SharedBuffer::append(const char* data, unsigned length)
         bytesToCopy = std::min(length, segmentSize);
     }
 #else
-    if (m_buffer.isEmpty())
-        m_buffer.reserveInitialCapacity(length);
-    m_buffer.append(data, length);
     m_size += length;
+    if (m_buffer->data.isEmpty())
+        m_buffer->data.reserveInitialCapacity(length);
+    appendToDataBuffer(data, length);
 #endif
 }
 
@@ -382,7 +385,7 @@ void SharedBuffer::clear()
 #endif
 
     m_size = 0;
-    m_buffer.clear();
+    clearDataBuffer();
     m_purgeableBuffer.clear();
 }
 
@@ -395,11 +398,11 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
     }
 
     clone->m_size = m_size;
-    clone->m_buffer.reserveCapacity(m_size);
-    clone->m_buffer.append(m_buffer.data(), m_buffer.size());
+    clone->m_buffer->data.reserveCapacity(m_size);
+    clone->m_buffer->data.append(m_buffer->data.data(), m_buffer->data.size());
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     for (unsigned i = 0; i < m_segments.size(); ++i)
-        clone->m_buffer.append(m_segments[i], segmentSize);
+        clone->m_buffer->data.append(m_segments[i], segmentSize);
 #else
     for (unsigned i = 0; i < m_dataArray.size(); ++i)
         clone->append(m_dataArray[i].get());
@@ -411,6 +414,31 @@ PassOwnPtr<PurgeableBuffer> SharedBuffer::releasePurgeableBuffer()
 { 
     ASSERT(hasOneRef()); 
     return m_purgeableBuffer.release(); 
+}
+
+void SharedBuffer::duplicateDataBufferIfNecessary() const
+{
+    if (m_buffer->hasOneRef() || m_size <= m_buffer->data.capacity())
+        return;
+
+    RefPtr<DataBuffer> newBuffer = adoptRef(new DataBuffer);
+    newBuffer->data.reserveInitialCapacity(m_size);
+    newBuffer->data = m_buffer->data;
+    m_buffer = newBuffer.release();
+}
+
+void SharedBuffer::appendToDataBuffer(const char *data, unsigned length) const
+{
+    duplicateDataBufferIfNecessary();
+    m_buffer->data.append(data, length);
+}
+
+void SharedBuffer::clearDataBuffer()
+{
+    if (!m_buffer->hasOneRef())
+        m_buffer = adoptRef(new DataBuffer);
+    else
+        m_buffer->data.clear();
 }
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -432,12 +460,13 @@ const Vector<char>& SharedBuffer::buffer() const
 #if ENABLE(DISK_IMAGE_CACHE)
     ASSERT(!isMemoryMapped());
 #endif
-    unsigned bufferSize = m_buffer.size();
+    unsigned bufferSize = m_buffer->data.size();
     if (m_size > bufferSize) {
-        m_buffer.resize(m_size);
-        copyBufferAndClear(m_buffer.data() + bufferSize, m_size - bufferSize);
+        duplicateDataBufferIfNecessary();
+        m_buffer->data.resize(m_size);
+        copyBufferAndClear(m_buffer->data.data() + bufferSize, m_size - bufferSize);
     }
-    return m_buffer;
+    return m_buffer->data;
 }
 
 unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) const
@@ -464,9 +493,9 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     }
 
     ASSERT_WITH_SECURITY_IMPLICATION(position < m_size);
-    unsigned consecutiveSize = m_buffer.size();
+    unsigned consecutiveSize = m_buffer->data.size();
     if (position < consecutiveSize) {
-        someData = m_buffer.data() + position;
+        someData = m_buffer->data.data() + position;
         return consecutiveSize - position;
     }
  
