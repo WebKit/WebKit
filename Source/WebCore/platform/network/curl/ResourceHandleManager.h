@@ -98,6 +98,10 @@ private:
     
     String m_proxy;
     ProxyType m_proxyType;
+
+#ifndef NDEBUG
+    FILE* m_logFile;
+#endif
 };
 
 }
