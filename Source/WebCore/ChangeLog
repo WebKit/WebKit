@@ -1,5 +1,32 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171532
+
+    2014-07-24  Benjamin Poulain  <benjamin@webkit.org>
+
+            [WK2] Fixed/Sticky layers can get mispositioned when the layer tree commit change their position or size
+            https://bugs.webkit.org/show_bug.cgi?id=135227
+            <rdar://problem/17279500>
+
+            Reviewed by Simon Fraser.
+
+            Keep track of the creation/destruction of Fixed and Sticky nodes in the ScrollingTree.
+
+            * page/scrolling/ScrollingTree.cpp:
+            (WebCore::ScrollingTree::ScrollingTree):
+            * page/scrolling/ScrollingTree.h:
+            (WebCore::ScrollingTree::hasFixedOrSticky):
+            (WebCore::ScrollingTree::fixedOrStickyNodeAdded):
+            (WebCore::ScrollingTree::fixedOrStickyNodeRemoved):
+            * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+            (WebCore::ScrollingTreeFixedNode::ScrollingTreeFixedNode):
+            (WebCore::ScrollingTreeFixedNode::~ScrollingTreeFixedNode):
+            * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+            (WebCore::ScrollingTreeStickyNode::ScrollingTreeStickyNode):
+            (WebCore::ScrollingTreeStickyNode::~ScrollingTreeStickyNode):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171526
 
     2014-07-24  Pratik Solanki  <psolanki@apple.com>

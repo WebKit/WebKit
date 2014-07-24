@@ -51,6 +51,7 @@ ScrollingTree::ScrollingTree()
     , m_latchedNode(0)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_isHandlingProgrammaticScroll(false)
+    , m_fixedOrStickyNodeCount(0)
 {
 }
 

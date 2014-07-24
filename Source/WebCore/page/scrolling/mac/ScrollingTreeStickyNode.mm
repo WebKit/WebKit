@@ -43,10 +43,12 @@ PassRefPtr<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTre
 ScrollingTreeStickyNode::ScrollingTreeStickyNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, StickyNode, nodeID)
 {
+    scrollingTree.fixedOrStickyNodeAdded();
 }
 
 ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
 {
+    scrollingTree().fixedOrStickyNodeRemoved();
 }
 
 void ScrollingTreeStickyNode::updateBeforeChildren(const ScrollingStateNode& stateNode)

@@ -1,5 +1,46 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171532
+
+    2014-07-24  Benjamin Poulain  <benjamin@webkit.org>
+
+            [WK2] Fixed/Sticky layers can get mispositioned when the layer tree commit change their position or size
+            https://bugs.webkit.org/show_bug.cgi?id=135227
+            <rdar://problem/17279500>
+
+            Reviewed by Simon Fraser.
+
+            In some cases, a fixed or sticky positioned layer would end up at its position corresponding to the WebProcess
+            instead of sticking the to real viewport in the UIProcess.
+
+            The sequence of event is:
+            1) A layer becomes fixed in some ScrollingTree transaction.
+            2) Later, some change in the WebProcess causes a LayerTree update for that exact same layer, but no corresponding
+               ScrollingTree update is made.
+            3) In the UIProcess, the position of the fixed layer is changed due to the LayerTree update.
+               But! There is no ScrollingTree change, updateScrollingTree() never sets fixedOrStickyLayerChanged to true,
+               and the position is not corrected.
+            -> The layer is now at the wrong position until the next VisibleContentRectUpdate.
+
+            Ideally, we should have fixedOrStickyLayerChanged track if either the position or size of a fixed layer changed
+            in the layer tree. This is tricky since the layer tree does not keep track of the fixed nodes of the scrolling tree.
+
+            Since this complexity seems risky at this point, I went for something simpler but with more overhead:
+            any time the scrolling tree contains either a fixed or sticky layer, viewportChangedViaDelegatedScrolling()
+            is called to "fix" the position.
+
+            * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+            (WebKit::RemoteScrollingCoordinatorProxy::updateScrollingTree):
+            (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+            * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+            (WebKit::RemoteScrollingCoordinatorProxy::hasFixedOrSticky):
+            * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+            (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+            * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+            (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171519
 
     2014-07-24  Oliver Hunt  <oliver@apple.com>
