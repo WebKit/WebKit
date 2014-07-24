@@ -99,7 +99,7 @@ CFURLAuthChallengeRef createCF(const AuthenticationChallenge& coreChallenge)
 #else
     RetainPtr<CFURLProtectionSpaceRef> protectionSpace = adoptCF(createCF(coreChallenge.protectionSpace()));
 
-    CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, protectionSpace, credential,
+    CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, protectionSpace.get(), credential,
 #endif
                                         coreChallenge.previousFailureCount(),
                                         coreChallenge.failureResponse().cfURLResponse(),

@@ -1,5 +1,11 @@
 2014-07-24  Dan Bernstein  <mitz@apple.com>
 
+        Fixed Windows build fix.
+
+        * platform/network/cf/AuthenticationCF.cpp:
+
+2014-07-24  Dan Bernstein  <mitz@apple.com>
+
         Attempted Windows build fix.
 
         * platform/network/cf/AuthenticationCF.cpp:
