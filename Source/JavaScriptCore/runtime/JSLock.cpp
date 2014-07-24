@@ -83,6 +83,7 @@ JSLock::JSLock(VM* vm)
     , m_lockDropDepth(0)
     , m_hasExclusiveThread(false)
     , m_vm(vm)
+    , m_entryAtomicStringTable(nullptr)
 {
 }
 
@@ -93,7 +94,7 @@ JSLock::~JSLock()
 void JSLock::willDestroyVM(VM* vm)
 {
     ASSERT_UNUSED(vm, m_vm == vm);
-    m_vm = 0;
+    m_vm = nullptr;
 }
 
 void JSLock::setExclusiveThread(std::thread::id threadId)
@@ -139,7 +140,10 @@ void JSLock::didAcquireLock()
     WTFThreadData& threadData = wtfThreadData();
     m_vm->setLastStackTop(threadData.savedLastStackTop());
 
+    ASSERT(!m_entryAtomicStringTable);
     m_entryAtomicStringTable = threadData.setCurrentAtomicStringTable(m_vm->atomicStringTable());
+    ASSERT(m_entryAtomicStringTable);
+
     m_vm->heap.machineThreads().addCurrentThread();
 }
 
@@ -170,7 +174,10 @@ void JSLock::willReleaseLock()
     if (m_vm)
         m_vm->setStackPointerAtVMEntry(nullptr);
 
-    wtfThreadData().setCurrentAtomicStringTable(m_entryAtomicStringTable);
+    if (m_entryAtomicStringTable) {
+        wtfThreadData().setCurrentAtomicStringTable(m_entryAtomicStringTable);
+        m_entryAtomicStringTable = nullptr;
+    }
 }
 
 void JSLock::lock(ExecState* exec)
