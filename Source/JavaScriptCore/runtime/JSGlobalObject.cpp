@@ -623,6 +623,9 @@ void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
     JSObject* objectPrototype = m_objectPrototype.get();
     if (oldLastInPrototypeChain != objectPrototype)
         oldLastInPrototypeChain->setPrototype(vm, objectPrototype);
+
+    // Whenever we change the prototype of the global object, we need to create a new JSProxy with the correct prototype.
+    setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype, PureForwardingProxyType), this));
 }
 
 void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
