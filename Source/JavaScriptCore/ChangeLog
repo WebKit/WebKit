@@ -1,5 +1,46 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171390
+
+    2014-07-22  Mark Lam  <mark.lam@apple.com>
+
+            Array.concat() should work on runtime arrays too.
+            <https://webkit.org/b/135179>
+
+            Reviewed by Geoffrey Garen.
+
+            * jsc.cpp:
+            (WTF::RuntimeArray::create):
+            (WTF::RuntimeArray::~RuntimeArray):
+            (WTF::RuntimeArray::destroy):
+            (WTF::RuntimeArray::getOwnPropertySlot):
+            (WTF::RuntimeArray::getOwnPropertySlotByIndex):
+            (WTF::RuntimeArray::put):
+            (WTF::RuntimeArray::deleteProperty):
+            (WTF::RuntimeArray::getLength):
+            (WTF::RuntimeArray::createPrototype):
+            (WTF::RuntimeArray::createStructure):
+            (WTF::RuntimeArray::finishCreation):
+            (WTF::RuntimeArray::RuntimeArray):
+            (WTF::RuntimeArray::lengthGetter):
+            (GlobalObject::finishCreation):
+            (functionCreateRuntimeArray):
+            - Added support to create a runtime array for testing purpose.
+            * runtime/ArrayPrototype.cpp:
+            (JSC::getLength):
+            - Added fast case for when the array object is a JSArray.
+            (JSC::arrayProtoFuncJoin):
+            - Added a needed but missing exception check.
+            (JSC::arrayProtoFuncConcat):
+            - Use getLength() to compute the array length instead of assuming that
+              the array is a JSArray instance.
+            * tests/stress/regexp-matches-array.js: Added.
+            (testArrayConcat):
+            * tests/stress/runtime-array.js: Added.
+            (testArrayConcat):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171328
 
     2014-07-21  Mark Lam  <mark.lam@apple.com>
