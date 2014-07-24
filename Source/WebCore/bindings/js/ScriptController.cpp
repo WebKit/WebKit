@@ -182,8 +182,11 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
 
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSDOMWindowShell* windowShell = iter->value.get();
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells;
+    copyValuesToVector(m_windowShells, windowShells);
+
+    for (size_t i = 0; i < windowShells.size(); ++i) {
+        JSDOMWindowShell* windowShell = windowShells[i].get();
 
         if (&windowShell->window()->impl() == newDOMWindow)
             continue;

@@ -1,5 +1,29 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171481
+
+    2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+            JSDOMWindowShell leaks on pages with media elements
+            https://bugs.webkit.org/show_bug.cgi?id=135178
+
+            Reviewed by Oliver Hunt.
+
+            The DOMWindowWorld for HTMLMediaElements with MEDIA_CONTROLS_SCRIPT
+            was not getting cleared and removed.
+
+            * bindings/js/ScriptController.cpp:
+            (WebCore::ScriptController::clearWindowShell):
+            Iterate over a copy of the values. A sweep / garbage collection caused by
+            any JSC allocation during iteration could trigger a mutation of the m_windowShells
+            table that was being iterating. So instead iterate a list that won't mutate.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::~HTMLMediaElement):
+            If we had an isolated world, release as much memory as possible.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171478
 
     2014-07-23  Jer Noble  <jer.noble@apple.com>
