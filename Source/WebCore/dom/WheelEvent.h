@@ -77,6 +77,7 @@ public:
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
+    const PlatformWheelEvent* wheelEvent() const { return m_wheelEvent.get(); }
     double deltaX() const { return m_deltaX; } // Positive when scrolling right.
     double deltaY() const { return m_deltaY; } // Positive when scrolling down.
     double deltaZ() const { return m_deltaZ; }
@@ -110,6 +111,7 @@ private:
     double m_deltaZ;
     unsigned m_deltaMode;
     bool m_directionInvertedFromDevice;
+    std::unique_ptr<PlatformWheelEvent> m_wheelEvent;
 
 #if PLATFORM(MAC)
     PlatformWheelEventPhase m_phase;

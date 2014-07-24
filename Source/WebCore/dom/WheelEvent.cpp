@@ -76,6 +76,7 @@ WheelEvent::WheelEvent(const PlatformWheelEvent& event, PassRefPtr<AbstractView>
     , m_deltaZ(0)
     , m_deltaMode(determineDeltaMode(event))
     , m_directionInvertedFromDevice(event.directionInvertedFromDevice())
+    , m_wheelEvent(std::make_unique<PlatformWheelEvent>(event))
 #if PLATFORM(MAC)
     , m_phase(event.phase())
     , m_momentumPhase(event.momentumPhase())

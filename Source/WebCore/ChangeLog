@@ -1,3 +1,19 @@
+2014-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Let WheelEvent wrap a PlatformWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=135244
+
+        When WheelEvent is initialized with a PlatformWheelEvent, store that PlatformWheelEvent for future use.
+
+        Reviewed by Beth Dakin.
+
+        No new tests because behavior should not have changed.
+
+        * dom/WheelEvent.cpp: Added method to access the PlatformWheelEvent.
+        (WebCore::WheelEvent::WheelEvent):
+        * dom/WheelEvent.h: Added field to store PlatformWheelEvent, if initialized via PlatformWheelEvent.
+        (WebCore::WheelEvent::wheelEvent):
+
 2014-07-24  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: don't encode/decode primitive types that lack explicit sizes
