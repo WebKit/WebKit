@@ -1,5 +1,21 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171545
+
+    2014-07-24  Dan Bernstein  <mitz@apple.com>
+
+            Attempted Windows build fix.
+
+            * platform/network/cf/AuthenticationCF.cpp:
+            (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+            * platform/network/cf/CredentialStorageCFNet.cpp:
+            (WebCore::CredentialStorage::getFromPersistentStorage):
+            * platform/network/cf/ProtectionSpaceCFNet.cpp:
+            (WebCore::ProtectionSpace::receivesCredentialSecurely):
+            (WebCore::ProtectionSpaceBase::receivesCredentialSecurely): Deleted.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171540
 
     2014-07-24  Dan Bernstein  <mitz@apple.com>
