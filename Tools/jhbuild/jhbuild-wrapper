@@ -113,7 +113,7 @@ def ensure_jhbuild(platform):
 
 # Work-around the fact that we may get called from inside the jhbuild environment
 # which will cause problems if we just cleaned the jhbuild install root
-if os.environ.has_key('UNDER_JHBUILD'):
+if os.environ.has_key('UNDER_JHBUILD') and os.environ.has_key('ACLOCAL_FLAGS'):
     del os.environ['ACLOCAL_FLAGS']
 
 try:

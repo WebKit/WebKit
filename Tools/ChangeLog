@@ -1,3 +1,13 @@
+2014-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] build-webkit script fails under jhbuild if ACLOCAL_FLAGS is unset
+        https://bugs.webkit.org/show_bug.cgi?id=135065
+
+        Reviewed by Martin Robinson.
+
+        * jhbuild/jhbuild-wrapper:
+        (ensure_jhbuild): do not assume jhbuild sets ACLOCAL_FLAGS
+
 2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed iOS build fix after r171355.
