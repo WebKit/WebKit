@@ -157,10 +157,15 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* obj, unsigne
     return slot.getValue(exec, index);
 }
 
-static void putProperty(ExecState* exec, JSObject* obj, PropertyName propertyName, JSValue value)
+static ALWAYS_INLINE unsigned getLength(ExecState* exec, JSObject* obj)
+{
+    return obj->get(exec, exec->propertyNames().length).toUInt32(exec);
+}
+
+static void putLength(ExecState* exec, JSObject* obj, JSValue value)
 {
     PutPropertySlot slot(obj);
-    obj->methodTable()->put(obj, exec, propertyName, value, slot);
+    obj->methodTable()->put(obj, exec, exec->propertyNames().length, value, slot);
 }
 
 static unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int argument, unsigned length, unsigned undefinedValue = 0)
@@ -296,7 +301,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     ASSERT(isJSArray(thisValue));
     JSArray* thisObj = asArray(thisValue);
     
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -335,7 +340,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -373,7 +378,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -475,13 +480,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
         return JSValue::encode(asArray(thisValue)->pop(exec));
 
     JSObject* thisObj = thisValue.toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
     JSValue result;
     if (length == 0) {
-        putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length));
+        putLength(exec, thisObj, jsNumber(length));
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, length - 1);
@@ -491,7 +496,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
             throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
-        putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
+        putLength(exec, thisObj, jsNumber(length - 1));
     }
     return JSValue::encode(result);
 }
@@ -507,7 +512,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     }
     
     JSObject* thisObj = thisValue.toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -525,14 +530,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     }
     
     JSValue newLength(static_cast<int64_t>(length) + static_cast<int64_t>(exec->argumentCount()));
-    putProperty(exec, thisObj, exec->propertyNames().length, newLength);
+    putLength(exec, thisObj, newLength);
     return JSValue::encode(newLength);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -570,20 +575,20 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
     JSValue result;
     if (length == 0) {
-        putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length));
+        putLength(exec, thisObj, jsNumber(length));
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, 0);
         shift<JSArray::ShiftCountForShift>(exec, thisObj, 0, 1, 0, length);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
+        putLength(exec, thisObj, jsNumber(length - 1));
     }
     return JSValue::encode(result);
 }
@@ -592,7 +597,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
 {
     // http://developer.netscape.com/docs/manuals/js/client/jsref/array.htm#1193713 or 15.4.4.10
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -700,7 +705,7 @@ static bool performSlowSort(ExecState* exec, JSObject* thisObj, unsigned length,
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (!length || exec->hadException())
         return JSValue::encode(thisObj);
 
@@ -775,7 +780,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     // 15.4.4.12
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     
@@ -824,7 +829,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             return JSValue::encode(jsUndefined());
     }
 
-    putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - deleteCount + additionalArgs));
+    putLength(exec, thisObj, jsNumber(length - deleteCount + additionalArgs));
     return JSValue::encode(result);
 }
 
@@ -833,7 +838,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
     // 15.4.4.13
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -849,14 +854,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
             return JSValue::encode(jsUndefined());
     }
     JSValue result = jsNumber(length + nrArgs);
-    putProperty(exec, thisObj, exec->propertyNames().length, result);
+    putLength(exec, thisObj, result);
     return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -933,7 +938,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1010,7 +1015,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
 {
     // 15.4.4.14
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1033,7 +1038,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
 {
     // 15.4.4.15
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+    unsigned length = getLength(exec, thisObj);
     if (!length)
         return JSValue::encode(jsNumber(-1));
 

@@ -1,3 +1,40 @@
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171328
+
+    2014-07-21  Mark Lam  <mark.lam@apple.com>
+
+            Refactor ArrayPrototype to use getLength() and putLength() utility functions.
+            https://bugs.webkit.org/show_bug.cgi?id=135139.
+
+            Reviewed by Oliver Hunt.
+
+            - Specialize putProperty() to putLength() because it is only used for setting
+              the length property.
+            - Added a getLength() utility function to get the value of the length property.
+            - Use these getLength() and putLength() functions instead of the existing code
+              to get and put the length property.  Less code to read, easier to understand.
+
+            * runtime/ArrayPrototype.cpp:
+            (JSC::getLength):
+            (JSC::putLength):
+            (JSC::arrayProtoFuncToString):
+            (JSC::arrayProtoFuncToLocaleString):
+            (JSC::arrayProtoFuncJoin):
+            (JSC::arrayProtoFuncPop):
+            (JSC::arrayProtoFuncPush):
+            (JSC::arrayProtoFuncReverse):
+            (JSC::arrayProtoFuncShift):
+            (JSC::arrayProtoFuncSlice):
+            (JSC::arrayProtoFuncSort):
+            (JSC::arrayProtoFuncSplice):
+            (JSC::arrayProtoFuncUnShift):
+            (JSC::arrayProtoFuncReduce):
+            (JSC::arrayProtoFuncReduceRight):
+            (JSC::arrayProtoFuncIndexOf):
+            (JSC::arrayProtoFuncLastIndexOf):
+            (JSC::putProperty): Deleted.
+
 2014-07-23  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171474 (rollout r171367 from trunk)
