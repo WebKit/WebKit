@@ -1,5 +1,17 @@
 2014-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        GTK jhbuild modules needs to build xserver with --disable-local-transport
+        https://bugs.webkit.org/show_bug.cgi?id=135262
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules:
+        Build X server with --disable-local-transport, since local transport
+        is only supported on Solaris, SCO, and System V. Fixes build on
+        Fedora.
+
+2014-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] build-webkit script fails under jhbuild if ACLOCAL_FLAGS is unset
         https://bugs.webkit.org/show_bug.cgi?id=135065
 
