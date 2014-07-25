@@ -112,7 +112,7 @@
     macro(ForceCompositingMode, forceCompositingMode, Bool, bool, false) \
     macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, DEFAULT_ACCELERATED_DRAWING_ENABLED) \
     macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, DEFAULT_CANVAS_USES_ACCELERATED_DRAWING) \
-    macro(WebGLEnabled, webGLEnabled, Bool, bool, true) \
+    macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
     macro(MultithreadedWebGLEnabled, multithreadedWebGLEnabled, Bool, bool, false) \
     macro(ForceSoftwareWebGLRendering, forceSoftwareWebGLRendering, Bool, bool, false) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \

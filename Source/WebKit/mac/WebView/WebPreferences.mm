@@ -492,7 +492,7 @@ public:
 #endif
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMultithreadedWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,

@@ -1,3 +1,13 @@
+2014-07-25  Dean Jackson  <dino@apple.com>
+
+        Revert back to the Safari behavior from Mavericks and Mountain Lion
+        on this branch.
+        <rdar://problem/17800530>
+
+        Reviewed by Ricky Mondello.
+
+        * Shared/WebPreferencesDefinitions.h: Set WebGL preference default to off.
+
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171471
