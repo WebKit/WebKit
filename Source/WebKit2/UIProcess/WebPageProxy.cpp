@@ -900,7 +900,7 @@ uint64_t WebPageProxy::goForward()
     if (!isValid())
         return reattachToWebProcessWithItem(forwardItem);
 
-    uint64_t navigationID = generateNavigationID();
+    uint64_t navigationID = m_backForwardList->currentItem()->itemIsInSameDocument(*forwardItem) ? 0 : generateNavigationID();
 
     m_process->send(Messages::WebPage::GoForward(navigationID, forwardItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
@@ -921,7 +921,7 @@ uint64_t WebPageProxy::goBack()
     if (!isValid())
         return reattachToWebProcessWithItem(backItem);
 
-    uint64_t navigationID = generateNavigationID();
+    uint64_t navigationID = m_backForwardList->currentItem()->itemIsInSameDocument(*backItem) ? 0 : generateNavigationID();
 
     m_process->send(Messages::WebPage::GoBack(navigationID, backItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
@@ -938,7 +938,7 @@ uint64_t WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
-    uint64_t navigationID = generateNavigationID();
+    uint64_t navigationID = m_backForwardList->currentItem()->itemIsInSameDocument(*item) ? 0 : generateNavigationID();
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigationID, item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();

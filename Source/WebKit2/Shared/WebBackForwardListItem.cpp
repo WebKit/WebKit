@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebBackForwardListItem.h"
 
+#include <WebCore/URL.h>
+
 namespace WebKit {
 
 static uint64_t highestUsedItemID = 0;
@@ -45,6 +47,55 @@ WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState backForw
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
+}
+
+static const FrameState* childItemWithDocumentSequenceNumber(const FrameState& frameState, int64_t number)
+{
+    for (const auto& child : frameState.children) {
+        if (child.documentSequenceNumber == number)
+            return &child;
+    }
+
+    return nullptr;
+}
+
+static bool documentTreesAreEqual(const FrameState& a, const FrameState& b)
+{
+    if (a.documentSequenceNumber != b.documentSequenceNumber)
+        return false;
+
+    if (a.children.size() != b.children.size())
+        return false;
+
+    for (const auto& child : a.children) {
+        const FrameState* otherChild = childItemWithDocumentSequenceNumber(b, child.documentSequenceNumber);
+        if (!otherChild || !documentTreesAreEqual(child, *otherChild))
+            return false;
+    }
+
+    return true;
+}
+
+bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& other) const
+{
+    if (m_pageID != other.m_pageID)
+        return false;
+
+    // The following logic must be kept in sync with WebCore::HistoryItem::shouldDoSameDocumentNavigationTo.
+
+    const FrameState& mainFrameState = m_itemState.pageState.mainFrameState;
+    const FrameState& otherMainFrameState = other.m_itemState.pageState.mainFrameState;
+
+    if (mainFrameState.stateObjectData || otherMainFrameState.stateObjectData)
+        return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
+
+    WebCore::URL url = WebCore::URL(WebCore::ParsedURLString, mainFrameState.urlString);
+    WebCore::URL otherURL = WebCore::URL(WebCore::ParsedURLString, otherMainFrameState.urlString);
+
+    if ((url.hasFragmentIdentifier() || otherURL.hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url, otherURL))
+        return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
+
+    return documentTreesAreEqual(mainFrameState, otherMainFrameState);
 }
 
 uint64_t WebBackForwardListItem::highedUsedItemID()

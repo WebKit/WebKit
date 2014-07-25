@@ -1,3 +1,25 @@
+2014-07-24  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/17593701> Assertion failure in WebPage::reload (!m_pendingNavigationID) when reloading after a same-document back navigation
+        https://bugs.webkit.org/show_bug.cgi?id=135129
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::childItemWithDocumentSequenceNumber): New helper function based on
+        WebCore::HistoryItem::childItemWithDocumentSequenceNumber.
+        (WebKit::documentTreesAreEqual): New helper function based on
+        WebCore::HistoryItem::hasSameDocumentTree.
+        (WebKit::WebBackForwardListItem::itemIsInSameDocument): Added. Based on
+        WebCore::HistoryItem::shouldDoSameDocumentNavigationTo.
+        * Shared/WebBackForwardListItem.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::goForward): Don’t assign a new navigation ID if the back-forward
+        navigation is a same-document navigation.
+        (WebKit::WebPageProxy::goBack): Ditto.
+        (WebKit::WebPageProxy::goToBackForwardItem): Ditto.
+
 2014-07-24  Tim Horton  <timothy_horton@apple.com>
 
         Sometimes WKWebView is blank after resuming the app, until you scroll
