@@ -177,14 +177,6 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
     setContentDispositionEncodingFallbackArray(cfRequest, encodingFallbacks.get());
 
-    if (m_cfRequest) {
-        RetainPtr<CFHTTPCookieStorageRef> cookieStorage = adoptCF(CFURLRequestCopyHTTPCookieStorage(m_cfRequest.get()));
-        if (cookieStorage)
-            CFURLRequestSetHTTPCookieStorage(cfRequest, cookieStorage.get());
-        CFURLRequestSetHTTPCookieStorageAcceptPolicy(cfRequest, CFURLRequestGetHTTPCookieStorageAcceptPolicy(m_cfRequest.get()));
-        CFURLRequestSetSSLProperties(cfRequest, CFURLRequestGetSSLProperties(m_cfRequest.get()));
-    }
-
 #if ENABLE(CACHE_PARTITIONING)
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {

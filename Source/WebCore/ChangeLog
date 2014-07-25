@@ -1,5 +1,30 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171559
+
+    2014-07-24  Daniel Bates  <dabates@apple.com>
+                And Alexey Proskuryakov  <ap@apple.com>
+
+            [iOS] REGRESSION (WebKit2): Can't login to Wordpress.com, facebook.com when always allowing cookies
+            https://bugs.webkit.org/show_bug.cgi?id=135273
+            <rdar://problem/17598815>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Fixes an issue where cookies may be created in the wrong cookie store.
+
+            Currently, when we update the CFURLRequest object associated with a ResourceRequest object
+            we explicitly set a cookie storage, cookie accept policy, and SSL properties based on the
+            corresponding values in the old CFURLRequest object (if we have one). This ultimately leads
+            to CFNetwork associating the cookies for the request with a different cookie store when we
+            handle the request in the NetworkProcess. Instead, we shouldn't set these properties
+            explicitly as we already copy them implicitly earlier (via CFURLRequestCreateMutableCopy()).
+
+            * platform/network/cf/ResourceRequestCFNet.cpp:
+            (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171505
 
     2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>
