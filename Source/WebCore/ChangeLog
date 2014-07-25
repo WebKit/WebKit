@@ -1,5 +1,27 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171567
+
+    2014-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK1] CSS viewport units use the wrong viewport size in WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=135254
+            <rdar://problem/17781423>
+
+            Reviewed by Tim Horton.
+
+            Test: fast/css/viewport-units-dynamic.html
+
+            In WebKit1 on iOS, we want to resolve viewport units against the visible
+            viewport, not the legacy WK1 notion of the "viewport" which is the entire document.
+
+            Fixes rendering of medium.com articles in WK1 views on iPad.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::viewportSizeForCSSViewportUnits):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171561
 
     2014-07-24  Myles C. Maxfield  <mmaxfield@apple.com>

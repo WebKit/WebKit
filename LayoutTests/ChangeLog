@@ -1,5 +1,23 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171567
+
+    2014-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK1] CSS viewport units use the wrong viewport size in WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=135254
+            <rdar://problem/17781423>
+
+            Reviewed by Tim Horton.
+
+            New test that ensures that viewport units are resolved against the correct
+            viewport size after the first style recalc.
+
+            * fast/css/viewport-units-dynamic.html: Added.
+            * platform/mac/fast/css/viewport-units-dynamic-expected.txt: Added.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171561
 
     2014-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
