@@ -187,6 +187,7 @@ function installDependenciesWithYum {
         libgpg-error-devel \
         mod_bw \
         mod_ssl \
+        perl-CGI \
         php \
         pulseaudio-utils \
         pygobject3-base \
