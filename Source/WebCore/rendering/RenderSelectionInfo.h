@@ -25,9 +25,8 @@
 #ifndef RenderSelectionInfo_h
 #define RenderSelectionInfo_h
 
-#include "GapRects.h"
 #include "IntRect.h"
-#include "RenderBlock.h"
+#include "RenderBox.h"
 #include "RenderText.h"
 
 namespace WebCore {

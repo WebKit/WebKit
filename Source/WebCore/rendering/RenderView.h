@@ -304,9 +304,7 @@ private:
     friend class LayoutStateDisabler;
 
     void splitSelectionBetweenSubtrees(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode);
-    void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&);
-    void updateSelectionForSubtrees(RenderSubtreesMap&, SelectionRepaintMode);
-    void applySubtreeSelection(SelectionSubtreeRoot&, RenderObject* start, RenderObject* end, int endPos, SelectionRepaintMode, const OldSelectionData&);
+    void setSubtreeSelection(SelectionSubtreeRoot&, RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode);
     LayoutRect subtreeSelectionBounds(const SelectionSubtreeRoot&, bool clipToVisibleContent = true) const;
     void repaintSubtreeSelection(const SelectionSubtreeRoot&) const;
 
