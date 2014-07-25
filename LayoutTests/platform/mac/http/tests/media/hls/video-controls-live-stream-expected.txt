@@ -2,6 +2,7 @@
 EVENT(play)
 EXPECTED (video.duration == 'Infinity') OK
 -webkit-media-text-track-container: classes: [hidden]
+-webkit-media-controls-panel-composited-parent: classes: []
 -webkit-media-controls-panel: classes: [paused]
 -webkit-media-controls-play-button: classes: [paused]
 -webkit-media-controls-status-display: classes: []
