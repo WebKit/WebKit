@@ -2428,7 +2428,7 @@ __ZN7WebCore7IntSizeC1ERK7_NSSize
 __ZNK7WebCore7IntSizecv7_NSSizeEv
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 __ZN7WebCore32shouldRegisterInsertionUndoGroupEP18NSAttributedString
 __ZN7WebCore44registerInsertionUndoGroupingWithUndoManagerEP13NSUndoManager
 #endif

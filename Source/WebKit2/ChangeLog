@@ -1,3 +1,14 @@
+2014-07-25  Gavin Barraclough  <baraclough@apple.com>
+
+        Yosemite version number is 101000
+        https://bugs.webkit.org/show_bug.cgi?id=135301
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2014-07-24  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Do not try to hit test a null mainFrameRenderView on dynamicViewportSizeUpdate()

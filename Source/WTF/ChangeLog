@@ -1,3 +1,13 @@
+2014-07-25  Gavin Barraclough  <baraclough@apple.com>
+
+        Yosemite version number is 101000
+        https://bugs.webkit.org/show_bug.cgi?id=135301
+
+        Reviewed by Sam Weinig.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+
 2014-07-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use NO_RETURN_DUE_TO_CRASH on Windows.

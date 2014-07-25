@@ -196,7 +196,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
        (global-name "com.apple.coreservices.launchservicesd")
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")
 #endif

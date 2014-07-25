@@ -172,7 +172,7 @@ const double progressAnimationNumFrames = 256;
 @implementation WebCoreRenderThemeBundle
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 @interface NSSearchFieldCell(Details)
 @property (getter=isCenteredLook) BOOL centeredLook;
 @end
@@ -1947,7 +1947,7 @@ NSSearchFieldCell* RenderThemeMac::search() const
         [m_search.get() setBezeled:YES];
         [m_search.get() setEditable:YES];
         [m_search.get() setFocusRingType:NSFocusRingTypeExterior];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [m_search.get() setCenteredLook:NO];
 #endif
     }

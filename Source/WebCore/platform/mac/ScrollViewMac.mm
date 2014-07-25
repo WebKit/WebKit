@@ -113,14 +113,14 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     IntRect visibleContentRect = enclosingIntRect([scrollView() documentVisibleRect]);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     visibleContentRect.move(scrollView().contentInsets.left, scrollView().contentInsets.top);
     visibleContentRect.contract(scrollView().contentInsets.left + scrollView().contentInsets.right, scrollView().contentInsets.top + scrollView().contentInsets.bottom);
 #endif
 
     if (includeScrollbars) {
         IntSize frameSize = IntSize([scrollView() frame].size);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         frameSize.contract(scrollView().contentInsets.left + scrollView().contentInsets.right, scrollView().contentInsets.top + scrollView().contentInsets.bottom);
 #endif
         visibleContentRect.setSize(frameSize);

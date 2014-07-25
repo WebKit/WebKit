@@ -1,3 +1,24 @@
+2014-07-25  Gavin Barraclough  <baraclough@apple.com>
+
+        Yosemite version number is 101000
+        https://bugs.webkit.org/show_bug.cgi?id=135301
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * platform/ContentFilter.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformVisibleContentRect):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::updateStates):
+        (WebCore::paintToggleButton):
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::copyCookiesForURLWithFirstPartyURL):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::resourcePrioritiesEnabled):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::search):
+
 2014-07-25  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] RenderViews paginated as RL or LR don't handle percentage widths correctly.

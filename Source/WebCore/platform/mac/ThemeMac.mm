@@ -34,7 +34,7 @@
 #import <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 @interface NSButtonCell(Details)
 - (void)_setState:(NSInteger)value animated:(BOOL)animated;
 - (void)_setHighlighted:(BOOL)flag animated:(BOOL)animated;
@@ -192,7 +192,7 @@ static void setControlSize(NSCell* cell, const std::array<IntSize, 3>& sizes, co
 
 static void updateStates(NSCell* cell, const ControlStates* controlStates, bool useAnimation = false)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
     UNUSED_PARAM(useAnimation);
 #endif
     ControlStates::States states = controlStates->states();
@@ -203,7 +203,7 @@ static void updateStates(NSCell* cell, const ControlStates* controlStates, bool 
     bool oldPressed = [cell isHighlighted];
     bool pressed = states & ControlStates::PressedState;
     if (pressed != oldPressed) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [(NSButtonCell*)cell _setHighlighted:pressed animated:useAnimation];
 #else
         [cell setHighlighted:pressed];
@@ -223,7 +223,7 @@ static void updateStates(NSCell* cell, const ControlStates* controlStates, bool 
     bool oldChecked = [cell state] == NSOnState;
     if (oldIndeterminate != indeterminate || checked != oldChecked) {
         NSCellStateValue newState = indeterminate ? NSMixedState : (checked ? NSOnState : NSOffState);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [(NSButtonCell*)cell _setState:newState animated:useAnimation];
 #else
         [cell setState:newState];
@@ -429,7 +429,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
     bool isAnimating = false;
     bool needsRepaint = false;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([toggleButtonCell _stateAnimationRunning]) {
         // AppKit's drawWithFrame appears to render the cell centered in the
         // provided rectangle/frame, so we need to manually position the
@@ -449,7 +449,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
         needsRepaint = drawCellFocusRing(toggleButtonCell, inflatedRect, view);
     [toggleButtonCell setControlView:nil];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     needsRepaint |= [toggleButtonCell _stateAnimationRunning];
 #endif
     controlStates->setNeedsRepaint(needsRepaint);

@@ -55,7 +55,7 @@ extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, u
 extern "C" void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 extern "C" void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 extern "C" void xpc_connection_set_bootstrap(xpc_connection_t connection, xpc_object_t bootstrap);
 
 // FIXME: Soft linking is temporary, make this into a regular function call once this function is available everywhere we need.
@@ -205,7 +205,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     auto connection = IPC::adoptXPC(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
     xpc_connection_set_instance(connection.get(), instanceUUID->uuid);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     // Inherit UI process localization. It can be different from child process default localization:
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
