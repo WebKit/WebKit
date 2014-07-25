@@ -36,11 +36,13 @@ use Getopt::Long;
 my $shouldPrintWarnings = 1;
 my $shouldShowHelp;
 my $shouldBeVerbose;
+my $shouldBeDryRun;
 
 my $getOptionsResult = GetOptions(
     'h|help' => \$shouldShowHelp,
     'v|verbose' => \$shouldBeVerbose,
     'w|warnings!' => \$shouldPrintWarnings,
+    'dry-run' => \$shouldBeDryRun,
 );
 
 if (!$getOptionsResult || $shouldShowHelp) {
@@ -49,6 +51,16 @@ Usage: @{[ basename($0) ]} [options] [path/to/file.exp.in ...]
   -h|--help           show this help message
   -v|--verbose        include verbose output about progress
   -w|--[no-]warnings  show or suppress warnings (default: show warnings)
+  --dry-run           do not change any files
+
+  Exit status:
+       0      if OK
+
+       1      if parse error
+
+       2      if file(s) should be sorted (only with --dry-run)
+
+       3      if parse error and file(s) should be sorted (only with --dry-run)
 END
     exit 1;
 }
@@ -83,7 +95,7 @@ sub sawError($)
 
     warn "ERROR: $error";
     $sawError = 1;
-    $exitStatus = 1;
+    $exitStatus |= 1;
 }
 
 for my $exportFile (@ARGV) {
@@ -138,11 +150,14 @@ for my $exportFile (@ARGV) {
 
     if ($before eq $after) {
         print STDERR "Leaving $exportFile alone since it is already sorted\n" if $shouldBeVerbose;
-    } else {
+    } elsif (!$shouldBeDryRun) {
         print STDERR "Writing sorted $exportFile\n" if $shouldBeVerbose;
         open OUT, ">", $exportFile or die "Could not overwrite $exportFile: $!";
         print OUT $after;
         close OUT;
+    } else {
+        print STDERR "$exportFile should be sorted \n" if $shouldBeVerbose;
+        $exitStatus |= 2;
     }
 }
 

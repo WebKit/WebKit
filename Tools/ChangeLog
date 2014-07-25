@@ -1,3 +1,17 @@
+2014-07-25  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Add --dry-run option to sort-export-file
+        https://bugs.webkit.org/show_bug.cgi?id=135048
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added --dry-run option to sort-export-file. Running the script with --dry-run
+        option does not sort the export files but creates a list of the files that
+        need to be sorted.
+
+        * Scripts/sort-export-file:
+        (sawError):
+
 2014-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         GTK jhbuild modules needs to build xserver with --disable-local-transport
