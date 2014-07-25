@@ -30,9 +30,12 @@
 
 #include "AsyncTask.h"
 #include "DatabaseProcessCreationParameters.h"
+#include "DatabaseProcessMessages.h"
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "UniqueIDBDatabase.h"
+#include "WebOriginDataManager.h"
+#include "WebOriginDataManagerMessages.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/MainThread.h>
 
@@ -48,6 +51,7 @@ DatabaseProcess& DatabaseProcess::shared()
 
 DatabaseProcess::DatabaseProcess()
     : m_queue(adoptRef(*WorkQueue::create("com.apple.WebKit.DatabaseProcess").leakRef()))
+    , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(this))
 {
 }
 
@@ -68,6 +72,17 @@ bool DatabaseProcess::shouldTerminate()
 void DatabaseProcess::didClose(IPC::Connection*)
 {
     RunLoop::current().stop();
+}
+
+void DatabaseProcess::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+{
+    if (messageReceiverMap().dispatchMessage(connection, decoder))
+        return;
+
+    if (decoder.messageReceiverName() == Messages::DatabaseProcess::messageReceiverName()) {
+        didReceiveDatabaseProcessMessage(connection, decoder);
+        return;
+    }
 }
 
 void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)

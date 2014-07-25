@@ -35,13 +35,14 @@ extern "C" {
 enum {
     kWKApplicationCacheOriginData = 1 << 0,
     kWKCookieOriginData = 1 << 1,
-    kWKDatabaseOriginData = 1 << 2,
+    kWKIndexedDatabaseData = 1 << 2,
     kWKKeyValueStorageOriginData = 1 << 3,
     kWKMediaCacheOriginData = 1 << 4,
     kWKPluginDataOriginData = 1 << 5,
     kWKResourceCacheOriginData = 1 << 6,
+    kWKWebSQLDatabaseOriginData = 1 << 7,
 
-    kWKAllOriginData = (1 << 7) - 1
+    kWKAllOriginData = 0xFFFFFFFF
 };
 typedef uint32_t WKOriginDataTypes;
 
@@ -50,36 +51,11 @@ WK_EXPORT WKTypeID WKOriginDataManagerGetTypeID();
 typedef void (*WKOriginDataManagerGetOriginsFunction)(WKArrayRef, WKErrorRef, void*);
 WK_EXPORT void WKOriginDataManagerGetOrigins(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, void* context, WKOriginDataManagerGetOriginsFunction function);
 
-WK_EXPORT void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, WKSecurityOriginRef origin);
-WK_EXPORT void WKOriginDataManagerDeleteAllEntries(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);
+typedef void (*WKOriginDataManagerDeleteEntriesCallbackFunction)(WKErrorRef, void*);
+WK_EXPORT void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, WKSecurityOriginRef origin, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction function);
+WK_EXPORT void WKOriginDataManagerDeleteEntriesModifiedBetweenDates(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, double startDate, double endDate, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction function);
+WK_EXPORT void WKOriginDataManagerDeleteAllEntries(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction function);
 
-// OriginDataManager Client
-typedef void (*WKOriginDataManagerChangeCallback)(WKOriginDataManagerRef originDataManager, const void *clientInfo);
-
-typedef struct WKOriginDataManagerChangeClientBase {
-    const void *                                                        clientInfo;
-    int                                                                 version;
-} WKOriginDataManagerChangeClientBase;
-
-typedef struct WKOriginDataManagerChangeClientV0 {
-    WKOriginDataManagerChangeClientBase                                 base;
-
-    // Version 0.
-    WKOriginDataManagerChangeCallback                                   didChange;
-} WKOriginDataManagerChangeClientV0;
-
-enum { kWKOriginDataManagerChangeClientVersion = 0 };
-typedef struct WKOriginDataManagerChangeClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKOriginDataManagerChangeCallback                                   didChange;
-} WKOriginDataManagerChangeClient WK_DEPRECATED("Use an explicit versioned struct instead");
-
-WK_EXPORT void WKOriginDataManagerStartObservingChanges(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);
-WK_EXPORT void WKOriginDataManagerStopObservingChanges(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);
-WK_EXPORT void WKOriginDataManagerSetChangeClient(WKOriginDataManagerRef originDataManger, const WKOriginDataManagerChangeClientBase* client);
 #ifdef __cplusplus
 }
 #endif

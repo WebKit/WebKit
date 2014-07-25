@@ -303,6 +303,7 @@ public:
     void ensureDatabaseProcess();
     void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
     void databaseProcessCrashed(DatabaseProcessProxy*);
+    template<typename T> void sendToDatabaseProcessRelaunchingIfNecessary(T&& message);
 #endif
 
 #if PLATFORM(COCOA)
@@ -614,6 +615,15 @@ void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
     }
     ASSERT_NOT_REACHED();
 }
+
+#if ENABLE(DATABASE_PROCESS)
+template<typename T>
+void WebContext::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
+{
+    ensureDatabaseProcess();
+    m_databaseProcess->send(std::forward<T>(message), 0);
+}
+#endif
 
 template<typename T>
 void WebContext::sendToAllProcesses(const T& message)

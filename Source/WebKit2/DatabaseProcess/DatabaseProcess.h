@@ -39,6 +39,7 @@ namespace WebKit {
 class AsyncTask;
 class DatabaseToWebProcessConnection;
 class UniqueIDBDatabase;
+class WebOriginDataManager;
 
 struct DatabaseProcessCreationParameters;
 
@@ -47,6 +48,7 @@ class DatabaseProcess : public ChildProcess  {
     friend class NeverDestroyed<DatabaseProcess>;
 public:
     static DatabaseProcess& shared();
+    ~DatabaseProcess();
 
     const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }
 
@@ -57,8 +59,6 @@ public:
     String absoluteIndexedDatabasePathFromDatabaseRelativePath(const String&);
 
     WorkQueue& queue() { return m_queue.get(); }
-
-    ~DatabaseProcess();
 
 private:
     DatabaseProcess();
@@ -74,6 +74,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
     virtual void didClose(IPC::Connection*) override;
     virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    void didReceiveDatabaseProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     // Message Handlers
     void initializeDatabaseProcess(const DatabaseProcessCreationParameters&);
@@ -95,6 +96,8 @@ private:
 
     Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
     Mutex m_databaseTaskMutex;
+
+    std::unique_ptr<WebOriginDataManager> m_webOriginDataManager;
 };
 
 } // namespace WebKit
