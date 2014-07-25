@@ -1044,7 +1044,7 @@ void ByteCodeParser::handleCall(
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
         return;
-    } else if (isFTL(m_graph.m_plan.mode)) {
+    } else if (isFTL(m_graph.m_plan.mode) && Options::optimizeNativeCalls()) {
         JSFunction* function = callLinkStatus.function();
         if (function && function->isHostFunction()) {
             emitFunctionChecks(callLinkStatus, callTarget, registerOffset, specializationKind);

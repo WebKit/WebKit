@@ -1,5 +1,14 @@
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Add an option to disable native call inlining. Disable it for now to see how it
+        affects the bots.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        * runtime/Options.h:
+
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
         Fix cloop.
 
         * dfg/DFGMayExit.cpp:

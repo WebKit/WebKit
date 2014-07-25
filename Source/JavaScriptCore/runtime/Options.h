@@ -167,6 +167,7 @@ typedef const char* optionString;
     v(bool, enableAccessInlining, true) \
     v(bool, enablePolyvariantDevirtualization, true) \
     v(bool, enablePolymorphicAccessInlining, true) \
+    v(bool, optimizeNativeCalls, false) \
     \
     v(bool, enableConcurrentJIT, true) \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1) \
