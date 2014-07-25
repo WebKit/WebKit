@@ -2216,11 +2216,12 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& minimumLayoutSize, cons
         visibleHorizontalFraction = frameView.unobscuredContentSize().width() / oldContentSize.width();
         IntPoint unobscuredContentRectCenter = frameView.unobscuredContentRect().center();
 
-        HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
         HitTestResult hitTestResult = HitTestResult(unobscuredContentRectCenter);
 
-        RenderView* mainFrameRenderView = frameView.renderView();
-        mainFrameRenderView->hitTest(request, hitTestResult);
+        if (RenderView* mainFrameRenderView = frameView.renderView()) {
+            HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
+            mainFrameRenderView->hitTest(request, hitTestResult);
+        }
 
         if (Node* node = hitTestResult.innerNode()) {
             if (RenderObject* renderer = node->renderer()) {

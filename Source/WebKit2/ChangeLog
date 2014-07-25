@@ -1,5 +1,29 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171576
+
+    2014-07-24  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] Do not try to hit test a null mainFrameRenderView on dynamicViewportSizeUpdate()
+            https://bugs.webkit.org/show_bug.cgi?id=135277
+            <rdar://problem/17804891>
+
+            Reviewed by Tim Horton.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::dynamicViewportSizeUpdate):
+            There is no guarantee that the main frame have its root view when performing a dynamicViewportSizeUpdate(),
+            we should not attempt to use the layer without null checking it first.
+
+            The odd part for me is <rdar://problem/17804891> is a little too frequent. In the vast majority of cases,
+            there is a RenderView, it seems actually pretty hard not to have one on dynamicViewportSizeUpdate().
+
+            Skipping hit testing is safe because it is a completely optional part of this algorithm.
+            When the hit test is not done, the new position is computed based on the relative position prior to
+            the size change.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171570
 
     2014-07-24  Tim Horton  <timothy_horton@apple.com>
