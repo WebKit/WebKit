@@ -123,10 +123,12 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
 #else
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
     if (fontData->isSVGFont()) {
-        ASSERT(iterator.run().renderingContext());
         // SVG font ligatures are handled during glyph selection, only kerning remaining.
-        if (typesettingFeatures & Kerning)
+        if (iterator.run().renderingContext() && (typesettingFeatures & Kerning)) {
+            // FIXME: We could pass the necessary context down to this level so we can lazily create rendering contexts at this point.
+            // However, a larger refactoring of SVG fonts might necessary to sidestep this problem completely.
             iterator.run().renderingContext()->applySVGKerning(fontData, iterator, glyphBuffer, lastGlyphCount);
+        }
     } else
 #endif
         fontData->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, typesettingFeatures);
