@@ -45,10 +45,13 @@
 #include <windows.h>
 #endif
 
+#include "CustomGlobalObjectClassTest.h"
+
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
 
+bool assertTrue(bool value, const char* message);
 extern void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 static JSGlobalContextRef context;
@@ -975,7 +978,7 @@ static void makeGlobalNumberValue(JSContextRef context) {
     v = NULL;
 }
 
-static bool assertTrue(bool value, const char* message)
+bool assertTrue(bool value, const char* message)
 {
     if (!value) {
         if (message)
@@ -2074,6 +2077,8 @@ int main(int argc, char* argv[])
 
     if (globalContextNameTest())
         printf("PASS: global context name behaves as expected.\n");
+
+    customGlobalObjectClassTest();
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");

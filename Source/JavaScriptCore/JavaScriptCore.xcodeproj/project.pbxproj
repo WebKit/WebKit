@@ -1647,6 +1647,7 @@
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFD8C900EEB2EE700283848 /* JumpTable.cpp */; };
 		BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFD8C910EEB2EE700283848 /* JumpTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C20328201981979D0088B499 /* CustomGlobalObjectClassTest.c in Sources */ = {isa = PBXBuildFile; fileRef = C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */; };
 		C20B25991706536200C21F4E /* Region.h in Headers */ = {isa = PBXBuildFile; fileRef = C20B25981706536200C21F4E /* Region.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C20BA92D16BB1C1500B3AEA2 /* StructureRareDataInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C20BA92C16BB1C1500B3AEA2 /* StructureRareDataInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */; };
@@ -3240,6 +3241,8 @@
 		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCFD8C900EEB2EE700283848 /* JumpTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JumpTable.cpp; sourceTree = "<group>"; };
 		BCFD8C910EEB2EE700283848 /* JumpTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpTable.h; sourceTree = "<group>"; };
+		C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CustomGlobalObjectClassTest.c; path = API/tests/CustomGlobalObjectClassTest.c; sourceTree = "<group>"; };
+		C203281F1981979D0088B499 /* CustomGlobalObjectClassTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomGlobalObjectClassTest.h; path = API/tests/CustomGlobalObjectClassTest.h; sourceTree = "<group>"; };
 		C20B25981706536200C21F4E /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
 		C20BA92C16BB1C1500B3AEA2 /* StructureRareDataInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureRareDataInlines.h; sourceTree = "<group>"; };
 		C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCThreadSharedData.cpp; sourceTree = "<group>"; };
@@ -3701,6 +3704,8 @@
 		141211000A48772600480255 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */,
+				C203281F1981979D0088B499 /* CustomGlobalObjectClassTest.h */,
 				C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */,
 				C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */,
 				C288B2DC18A54D3E007BE40B /* DateTests.h */,
@@ -6803,6 +6808,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */,
+				C20328201981979D0088B499 /* CustomGlobalObjectClassTest.c in Sources */,
 				C288B2DE18A54D3E007BE40B /* DateTests.mm in Sources */,
 				C2181FC218A948FB0025A235 /* JSExportTests.mm in Sources */,
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,

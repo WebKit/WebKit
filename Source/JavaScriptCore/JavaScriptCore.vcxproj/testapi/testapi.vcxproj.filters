@@ -8,5 +8,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\API\tests\testapi.c" />
+    <ClCompile Include="..\..\API\tests\CustomGlobalObjectClassTest.c" />
+    <ClInclude Include="..\..\API\tests\CustomGlobalObjectClassTest.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,37 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171543
+
+    2014-07-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+            Creating a JSGlobalObject with a custom JSClassRef results in a JSProxy with the wrong prototype
+            https://bugs.webkit.org/show_bug.cgi?id=135250
+
+            Reviewed by Geoffrey Garen.
+
+            JSGlobalObject::resetPrototype (which is called from JSGlobalContextCreateInGroup) doesn't change its 
+            JSProxy's prototype as well. This results in a JSProxy where no properties in the original prototype 
+            chain (as created from the JSClassRef hierarchy) are accessible. Changing resetPrototype to also change
+            the JSProxy's prototype fixes the issue.
+
+            * API/JSValueRef.cpp:
+            (JSValueIsObjectOfClass): Also fixed a bug where a JSProxy for a JSGlobalObject with a custom JSClassRef
+            would claim it wasn't of the specified class, even if the target was of the specified class.
+            * API/tests/CustomGlobalObjectClassTest.c: Added.
+            (jsDoSomething):
+            (customGlobalObjectClassTest):
+            * API/tests/CustomGlobalObjectClassTest.h: Added.
+            * API/tests/testapi.c:
+            (assertTrue):
+            (main):
+            * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+            * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::resetPrototype):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171395
 
     2014-07-22  Brent Fulgham  <bfulgham@apple.com>
