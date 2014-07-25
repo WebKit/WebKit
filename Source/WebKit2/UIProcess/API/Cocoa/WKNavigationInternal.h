@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKNavigation.h"
+#import "WKNavigationPrivate.h"
 
 #if WK_API_ENABLED
 
-@interface WKNavigation ()
+#import <wtf/RetainPtr.h>
 
-@property (nonatomic, readwrite, copy) NSURLRequest *request;
+@interface WKNavigation () {
+@package
+    RetainPtr<NSURLRequest> _request;
+}
 
 @end
 

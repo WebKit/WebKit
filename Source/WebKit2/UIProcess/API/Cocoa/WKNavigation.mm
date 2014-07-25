@@ -24,43 +24,19 @@
  */
 
 #import "config.h"
-#import "WKNavigation.h"
+#import "WKNavigationInternal.h"
 
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-@implementation WKNavigation {
-    RetainPtr<NSURLRequest> _request;
-}
+@implementation WKNavigation
 
-- (NSURLRequest *)initialRequest
-{
-    // FIXME: Implement.
-    return nil;
-}
-
-- (NSURLRequest *)request
+- (NSURLRequest *)_request
 {
     return _request.get();
 }
 
-- (void)setRequest:(NSURLRequest *)request
-{
-    _request = adoptNS([request copy]);
-}
-
-- (NSURLResponse *)response
-{
-    // FIXME: Implement.
-    return nil;
-}
-
-- (NSError *)error
-{
-    // FIXME: Implement.
-    return nil;
-}
 
 @end
 

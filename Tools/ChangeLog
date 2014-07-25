@@ -1,3 +1,17 @@
+2014-07-25  Anders Carlsson  <andersca@apple.com>
+
+        WKNavigation's properties are either always nil or don't behave as documented
+        https://bugs.webkit.org/show_bug.cgi?id=135267
+        <rdar://problem/17730536>
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+        (-[NavigationDelegate webView:didStartProvisionalNavigation:]):
+        (TEST):
+        (-[DidFailProvisionalNavigationDelegate webView:didStartProvisionalNavigation:]):
+        (-[DidFailProvisionalNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+
 2014-07-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] install-dependencies needs to install perl-CGI on Fedora

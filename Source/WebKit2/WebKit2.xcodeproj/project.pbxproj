@@ -421,6 +421,7 @@
 		1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC8702B130B49A2002C1257 /* WebPluginSiteDataManager.h */; };
 		1AC8702E130B49A2002C1257 /* WebPluginSiteDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */; };
 		1ACB7987191ECADD006A6A61 /* XPCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACB7986191ECADD006A6A61 /* XPCPtr.h */; };
+		1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ACECD2417162DB1001FC9EF /* StorageAreaMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */; };
 		1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */; };
 		1AD01BC81905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */; };
@@ -2404,6 +2405,7 @@
 		1AC8702B130B49A2002C1257 /* WebPluginSiteDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginSiteDataManager.h; sourceTree = "<group>"; };
 		1AC8702C130B49A2002C1257 /* WebPluginSiteDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPluginSiteDataManager.cpp; sourceTree = "<group>"; };
 		1ACB7986191ECADD006A6A61 /* XPCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCPtr.h; sourceTree = "<group>"; };
+		1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationPrivate.h; sourceTree = "<group>"; };
 		1ACECD2217162DB1001FC9EF /* StorageAreaMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaMap.cpp; sourceTree = "<group>"; };
 		1ACECD2317162DB1001FC9EF /* StorageAreaMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMap.h; sourceTree = "<group>"; };
 		1AD01BC61905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKErrorRecoveryAttempting.mm; sourceTree = "<group>"; };
@@ -5043,6 +5045,7 @@
 				1A4D664D18A3031B00D82E21 /* WKFrameInfoInternal.h */,
 				1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */,
 				1A5B1C4F1898606F004FCF9B /* WKNavigation.h */,
+				1ACC87B91981C341003D1AF4 /* WKNavigationPrivate.h */,
 				1A5B1C4E1898606F004FCF9B /* WKNavigation.mm */,
 				1A256E3618A1A788006FB922 /* WKNavigationAction.h */,
 				1A256E3518A1A788006FB922 /* WKNavigationAction.mm */,
@@ -7648,6 +7651,7 @@
 				517DD5BF180DA7D30081660B /* DatabaseProcessProxy.h in Headers */,
 				935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */,
 				51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */,
+				1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */,
 				1AAF08A2192681D100B6390C /* WebUserContentControllerProxy.h in Headers */,
 				BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */,
 				BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */,
