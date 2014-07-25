@@ -1,3 +1,9 @@
+2014-07-25  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed rebaseline of test. Uploaded wrong result.
+
+        * svg/css/parse-length-expected.txt:
+
 2014-07-24  Dirk Schulze  <krit@webkit.org>
 
         Turn x/y to presentation attributes
