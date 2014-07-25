@@ -195,6 +195,11 @@ bool ProtectionSpace::platformCompare(const ProtectionSpace& a, const Protection
     return [a.nsSpace() isEqual:b.nsSpace()];
 }
 
+bool ProtectionSpace::receivesCredentialSecurely() const
+{
+    return nsSpace().receivesCredentialSecurely;
+}
+
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 bool ProtectionSpace::encodingRequiresPlatformData(NSURLProtectionSpace *space)
 {

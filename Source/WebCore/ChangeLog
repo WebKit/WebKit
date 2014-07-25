@@ -1,3 +1,16 @@
+2014-07-25  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WebProtectionSpace::receivesCredentialSecurely incorrectly returns false in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=135241
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in: Export ProtectionSpace::receivesCredentialSecurely.
+
+        * platform/network/cocoa/ProtectionSpaceCocoa.h: Declare override of receivesCredentialSecurely.
+        * platform/network/cocoa/ProtectionSpaceCocoa.mm:
+        (WebCore::ProtectionSpace::receivesCredentialSecurely): Use -[NSURLProtectionSpace receivesCredentialSecurely].
+
 2014-07-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: iOS video playback controls look blurry.

@@ -58,6 +58,8 @@ public:
     bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
 #endif
 
+    bool receivesCredentialSecurely() const;
+
 #if USE(CFNETWORK)
     CFURLProtectionSpaceRef cfSpace() const;
 #endif
