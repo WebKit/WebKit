@@ -48,6 +48,7 @@ class JSString;
 class PropertyName;
 class PropertySlot;
 class PutPropertySlot;
+class Structure;
 #if ENABLE(DFG_JIT)
 namespace DFG {
 class JITCompiler;
@@ -246,7 +247,7 @@ public:
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
     // Integer conversions.
-    double toInteger(ExecState*) const;
+    JS_EXPORT_PRIVATE double toInteger(ExecState*) const;
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(ExecState*) const;
     int32_t toInt32(ExecState*) const;
     uint32_t toUInt32(ExecState*) const;
@@ -283,6 +284,7 @@ public:
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
+    void dumpInContextAssumingStructure(PrintStream&, DumpContext*, Structure*) const;
     void dumpForBacktrace(PrintStream&) const;
 
     JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;

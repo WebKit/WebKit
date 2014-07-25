@@ -46,7 +46,6 @@ bool doesGC(Graph& graph, Node* node)
     case JSConstant:
     case DoubleConstant:
     case Int52Constant:
-    case WeakJSConstant:
     case Identity:
     case GetCallee:
     case GetLocal:
@@ -119,6 +118,8 @@ bool doesGC(Graph& graph, Node* node)
     case CompareStrictEq:
     case Call:
     case Construct:
+    case NativeCall:
+    case NativeConstruct:
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:

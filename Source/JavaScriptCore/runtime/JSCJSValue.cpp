@@ -198,6 +198,13 @@ void JSValue::dump(PrintStream& out) const
 
 void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
+    dumpInContextAssumingStructure(
+        out, context, (!!*this && isCell()) ? asCell()->structure() : nullptr);
+}
+
+void JSValue::dumpInContextAssumingStructure(
+    PrintStream& out, DumpContext* context, Structure* structure) const
+{
     if (!*this)
         out.print("<JSValue()>");
     else if (isInt32())
@@ -214,7 +221,7 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
         out.printf("Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
 #endif
     } else if (isCell()) {
-        if (asCell()->inherits(JSString::info())) {
+        if (structure->classInfo()->isSubClassOf(JSString::info())) {
             JSString* string = jsCast<JSString*>(asCell());
             out.print("String");
             if (string->isRope())
@@ -230,11 +237,11 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
             } else
                 out.print(" (unresolved)");
             out.print(": ", impl);
-        } else if (asCell()->inherits(Structure::info()))
+        } else if (structure->classInfo()->isSubClassOf(Structure::info()))
             out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
         else {
             out.print("Cell: ", RawPointer(asCell()));
-            out.print(" (", inContext(*asCell()->structure(), context), ")");
+            out.print(" (", inContext(*structure, context), ")");
         }
 #if USE(JSVALUE64)
         out.print(", ID: ", asCell()->structureID());

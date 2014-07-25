@@ -35,15 +35,11 @@ namespace JSC { namespace DFG {
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
     /* A constant in the CodeBlock's constant pool. */\
-    macro(JSConstant, NodeResultJS | NodeDoesNotExit) \
+    macro(JSConstant, NodeResultJS) \
     \
     /* Constants with specific representations. */\
-    macro(DoubleConstant, NodeResultDouble | NodeDoesNotExit) \
-    macro(Int52Constant, NodeResultInt52 | NodeDoesNotExit) \
-    \
-    /* A constant not in the CodeBlock's constant pool. Uses get patched to jumps that exit the */\
-    /* code block. */\
-    macro(WeakJSConstant, NodeResultJS | NodeDoesNotExit) \
+    macro(DoubleConstant, NodeResultDouble) \
+    macro(Int52Constant, NodeResultInt52) \
     \
     /* Marker to indicate that an operation was optimized entirely and all that is left */\
     /* is to make one node alias another. CSE will later usually eliminate this node, */\
@@ -60,16 +56,16 @@ namespace JSC { namespace DFG {
     /* VariableAccessData, and thus will share predictions. */\
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, 0) \
-    macro(MovHint, NodeDoesNotExit) \
-    macro(ZombieHint, NodeDoesNotExit) \
+    macro(MovHint, 0) \
+    macro(ZombieHint, 0) \
     macro(GetArgument, NodeResultJS | NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
     macro(HardPhantom, NodeMustGenerate) /* Like Phantom, but we never remove any of its children. */ \
     macro(Check, 0) /* Used if we want just a type check but not liveness. DCE eithers kills this or converts it to Phantom. */\
-    macro(Upsilon, NodeDoesNotExit | NodeRelevantToOSR) \
-    macro(Phi, NodeDoesNotExit | NodeRelevantToOSR) \
-    macro(Flush, NodeMustGenerate | NodeDoesNotExit) \
-    macro(PhantomLocal, NodeMustGenerate | NodeDoesNotExit) \
+    macro(Upsilon, NodeRelevantToOSR) \
+    macro(Phi, NodeRelevantToOSR) \
+    macro(Flush, NodeMustGenerate) \
+    macro(PhantomLocal, NodeMustGenerate) \
     \
     /* Hint that this is where bytecode thinks is a good place to OSR. Note that this */\
     /* will exist even in inlined loops. This has no execution semantics but it must */\
@@ -92,7 +88,7 @@ namespace JSC { namespace DFG {
     macro(GetLocalUnlinked, NodeResultJS) \
     \
     /* Marker for an argument being set at the prologue of a function. */\
-    macro(SetArgument, NodeDoesNotExit) \
+    macro(SetArgument, 0) \
     \
     /* Marker of location in the IR where we may possibly perform jump replacement to */\
     /* invalidate this code block. */\
@@ -159,9 +155,9 @@ namespace JSC { namespace DFG {
     macro(CheckStructure, NodeMustGenerate) \
     macro(CheckExecutable, NodeMustGenerate) \
     macro(PutStructure, NodeMustGenerate) \
-    macro(PhantomPutStructure, NodeMustGenerate | NodeDoesNotExit) \
-    macro(AllocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
-    macro(ReallocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
+    macro(PhantomPutStructure, NodeMustGenerate) \
+    macro(AllocatePropertyStorage, NodeMustGenerate | NodeResultStorage) \
+    macro(ReallocatePropertyStorage, NodeMustGenerate | NodeResultStorage) \
     macro(GetButterfly, NodeResultStorage) \
     macro(CheckArray, NodeMustGenerate) \
     macro(Arrayify, NodeMustGenerate) \
@@ -220,6 +216,8 @@ namespace JSC { namespace DFG {
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
@@ -258,7 +256,7 @@ namespace JSC { namespace DFG {
     /* Nodes used for arguments. Similar to activation support, only it makes even less */\
     /* sense. */\
     macro(CreateArguments, NodeResultJS) \
-    macro(PhantomArguments, NodeResultJS | NodeDoesNotExit) \
+    macro(PhantomArguments, NodeResultJS) \
     macro(TearOffArguments, NodeMustGenerate) \
     macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate) \
     macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate) \

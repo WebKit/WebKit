@@ -162,6 +162,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 #if USE(JSVALUE32_64)
     m_jitCode->common.doubleConstants = WTF::move(m_graph.m_doubleConstants);
 #endif
+    
+    m_graph.registerFrozenValues();
 
     BitVector usedJumpTables;
     for (Bag<SwitchData>::iterator iter = m_graph.m_switchData.begin(); !!iter; ++iter) {
@@ -439,11 +441,7 @@ void JITCompiler::disassemble(LinkBuffer& linkBuffer)
 #if USE(JSVALUE32_64)
 void* JITCompiler::addressOfDoubleConstant(Node* node)
 {
-    ASSERT(m_graph.isNumberConstant(node));
-    JSValue jsvalue = node->valueOfJSConstant(codeBlock());
-    ASSERT(jsvalue.isDouble());
-
-    double value = jsvalue.asDouble();
+    double value = node->asNumber();
     int64_t valueBits = bitwise_cast<int64_t>(value);
     auto it = m_graph.m_doubleConstantsMap.find(valueBits);
     if (it != m_graph.m_doubleConstantsMap.end())

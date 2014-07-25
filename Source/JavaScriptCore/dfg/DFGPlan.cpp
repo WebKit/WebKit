@@ -239,34 +239,35 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performInvalidationPointInjection(dfg);
     performTypeCheckHoisting(dfg);
     
-    unsigned count = 1;
     dfg.m_fixpointState = FixpointNotConverged;
-    for (;; ++count) {
-        if (logCompilationChanges(mode))
-            dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", count);
-        bool changed = false;
+    
+    // For now we're back to avoiding a fixpoint. Note that we've ping-ponged on this decision
+    // many times. For maximum throughput, it's best to fixpoint. But the throughput benefit is
+    // small and not likely to show up in FTL anyway. On the other hand, not fixpointing means
+    // that the compiler compiles more quickly. We want the third tier to compile quickly, which
+    // not fixpointing accomplishes; and the fourth tier shouldn't need a fixpoint.
+    if (validationEnabled())
+        validate(dfg);
         
-        if (validationEnabled())
-            validate(dfg);
-        
-        changed |= performStrengthReduction(dfg);
+    performStrengthReduction(dfg);
+    performCSE(dfg);
+    performArgumentsSimplification(dfg);
+    performCPSRethreading(dfg);
+    performCFA(dfg);
+    performConstantFolding(dfg);
+    bool changed = false;
+    changed |= performCFGSimplification(dfg);
+    changed |= performCSE(dfg);
+    
+    if (validationEnabled())
+        validate(dfg);
+
+    performCPSRethreading(dfg);
+    if (changed) {
         performCFA(dfg);
-        changed |= performConstantFolding(dfg);
-        changed |= performArgumentsSimplification(dfg);
-        changed |= performCFGSimplification(dfg);
-        changed |= performCSE(dfg);
-        
-        if (!changed)
-            break;
-        
-        performCPSRethreading(dfg);
+        performConstantFolding(dfg);
     }
     
-    if (logCompilationChanges(mode))
-        dataLogF("DFG optimization fixpoint converged in %u iterations.\n", count);
-
-    dfg.m_fixpointState = FixpointConverged;
-
     // If we're doing validation, then run some analyses, to give them an opportunity
     // to self-validate. Now is as good a time as any to do this.
     if (validationEnabled()) {
@@ -276,10 +277,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
     switch (mode) {
     case DFGMode: {
+        dfg.m_fixpointState = FixpointConverged;
+    
         performTierUpCheckInjection(dfg);
 
         performStoreBarrierElision(dfg);
-        performStoreElimination(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
         performStackLayout(dfg);
@@ -320,12 +322,20 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performStoreBarrierElision(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
+        performConstantFolding(dfg);
+        if (performStrengthReduction(dfg)) {
+            // State-at-tail and state-at-head will be invalid if we did strength reduction since
+            // it might increase live ranges.
+            performLivenessAnalysis(dfg);
+            performCFA(dfg);
+        }
         performLICM(dfg);
         performIntegerCheckCombining(dfg);
         performCSE(dfg);
         
         // At this point we're not allowed to do any further code motion because our reasoning
         // about code motion assumes that it's OK to insert GC points in random places.
+        dfg.m_fixpointState = FixpointConverged;
         
         performStoreBarrierElision(dfg);
         performLivenessAnalysis(dfg);
@@ -406,8 +416,6 @@ bool Plan::isStillValid()
         return false;
     if (!watchpoints.areStillValid())
         return false;
-    if (!chains.areStillValid())
-        return false;
     return true;
 }
 
@@ -477,7 +485,6 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor, CodeBlockSet& cod
     codeBlocks.mark(codeBlock.get());
     codeBlocks.mark(profiledDFGCodeBlock.get());
     
-    chains.visitChildren(visitor);
     weakReferences.visitChildren(visitor);
     writeBarriers.visitChildren(visitor);
     transitions.visitChildren(visitor);
@@ -506,7 +513,6 @@ void Plan::cancel()
     inlineCallFrames = nullptr;
     watchpoints = DesiredWatchpoints();
     identifiers = DesiredIdentifiers();
-    chains = DesiredStructureChains();
     weakReferences = DesiredWeakReferences();
     writeBarriers = DesiredWriteBarriers();
     transitions = DesiredTransitions();

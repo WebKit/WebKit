@@ -32,8 +32,9 @@
 
 namespace JSC { namespace DFG {
 
-AtTailAbstractState::AtTailAbstractState()
-    : m_block(0)
+AtTailAbstractState::AtTailAbstractState(Graph& graph)
+    : m_graph(graph)
+    , m_block(0)
 {
 }
 
@@ -47,7 +48,7 @@ void AtTailAbstractState::createValueForNode(Node* node)
 AbstractValue& AtTailAbstractState::forNode(Node* node)
 {
     HashMap<Node*, AbstractValue>::iterator iter = m_block->ssa->valuesAtTail.find(node);
-    ASSERT(iter != m_block->ssa->valuesAtTail.end());
+    DFG_ASSERT(m_graph, node, iter != m_block->ssa->valuesAtTail.end());
     return iter->value;
 }
 

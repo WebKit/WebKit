@@ -119,12 +119,42 @@ CString sortedMapDump(const T& map, const Comparator& comparator, const char* ar
     return out.toCString();
 }
 
+template<typename T, typename U>
+class ListDumpInContext {
+public:
+    ListDumpInContext(const T& list, U* context, const char* comma)
+        : m_list(list)
+        , m_context(context)
+        , m_comma(comma)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        for (typename T::const_iterator iter = m_list.begin(); iter != m_list.end(); ++iter)
+            out.print(m_comma, inContext(*iter, m_context));
+    }
+
+private:
+    const T& m_list;
+    U* m_context;
+    CommaPrinter m_comma;
+};
+
+template<typename T, typename U>
+ListDumpInContext<T, U> listDumpInContext(
+    const T& list, U* context, const char* comma = ", ")
+{
+    return ListDumpInContext<T, U>(list, context, comma);
+}
+
 } // namespace WTF
 
 using WTF::listDump;
 using WTF::sortedListDump;
 using WTF::mapDump;
 using WTF::sortedMapDump;
+using WTF::listDumpInContext;
 
 #endif // ListDump_h
 

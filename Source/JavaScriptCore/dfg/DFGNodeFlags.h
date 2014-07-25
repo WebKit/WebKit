@@ -66,11 +66,9 @@ namespace JSC { namespace DFG {
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeDoesNotExit                 0x10000 // This flag is negated to make it natural for the default to be that a node does exit.
+#define NodeRelevantToOSR               0x10000
 
-#define NodeRelevantToOSR               0x20000
-
-#define NodeIsFlushed                   0x40000 // Used by Graph::computeIsFlushed(), will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                   0x20000 // Used by Graph::computeIsFlushed(), will tell you which local nodes are backwards-reachable from a Flush.
 
 typedef uint32_t NodeFlags;
 

@@ -556,29 +556,6 @@ public:
     bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecFullNumber); }
     bool isKnownNotCell(Node* node) { return !(m_state.forNode(node).m_type & SpecCell); }
     
-    // Checks/accessors for constant values.
-    bool isConstant(Node* node) { return m_jit.graph().isConstant(node); }
-    bool isJSConstant(Node* node) { return m_jit.graph().isJSConstant(node); }
-    bool isInt32Constant(Node* node) { return m_jit.graph().isInt32Constant(node); }
-    bool isDoubleConstant(Node* node) { return m_jit.graph().isDoubleConstant(node); }
-    bool isNumberConstant(Node* node) { return m_jit.graph().isNumberConstant(node); }
-    bool isBooleanConstant(Node* node) { return m_jit.graph().isBooleanConstant(node); }
-    bool isFunctionConstant(Node* node) { return m_jit.graph().isFunctionConstant(node); }
-    int32_t valueOfInt32Constant(Node* node) { return m_jit.graph().valueOfInt32Constant(node); }
-    double valueOfNumberConstant(Node* node) { return m_jit.graph().valueOfNumberConstant(node); }
-#if USE(JSVALUE32_64)
-    void* addressOfDoubleConstant(Node* node) { return m_jit.addressOfDoubleConstant(node); }
-#endif
-    JSValue valueOfJSConstant(Node* node) { return m_jit.graph().valueOfJSConstant(node); }
-    bool valueOfBooleanConstant(Node* node) { return m_jit.graph().valueOfBooleanConstant(node); }
-    JSFunction* valueOfFunctionConstant(Node* node) { return m_jit.graph().valueOfFunctionConstant(node); }
-    bool isNullConstant(Node* node)
-    {
-        if (!isConstant(node))
-            return false;
-        return valueOfJSConstant(node).isNull();
-    }
-
     StringImpl* identifierUID(unsigned index)
     {
         return m_jit.graph().identifiers()[index];
@@ -619,9 +596,9 @@ public:
 #endif
 
 #if USE(JSVALUE64)
-    MacroAssembler::Imm64 valueOfJSConstantAsImm64(Node* node)
+    static MacroAssembler::Imm64 valueOfJSConstantAsImm64(Node* node)
     {
-        return MacroAssembler::Imm64(JSValue::encode(valueOfJSConstant(node)));
+        return MacroAssembler::Imm64(JSValue::encode(node->asJSValue()));
     }
 #endif
 
@@ -957,7 +934,7 @@ public:
     }
     void initConstantInfo(Node* node)
     {
-        ASSERT(isInt32Constant(node) || isNumberConstant(node) || isJSConstant(node));
+        ASSERT(node->hasConstant());
         generationInfo(node).initConstant(node, node->refCount());
     }
     
@@ -1993,17 +1970,6 @@ public:
 
     void dump(const char* label = 0);
 
-    bool isInteger(Node* node)
-    {
-        if (node->hasInt32Result())
-            return true;
-
-        if (isInt32Constant(node))
-            return true;
-
-        return generationInfo(node).isJSInt32();
-    }
-    
     bool betterUseStrictInt52(Node* node)
     {
         return !generationInfo(node).isInt52();

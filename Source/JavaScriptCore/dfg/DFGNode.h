@@ -323,7 +323,6 @@ struct Node {
     
     bool mergeFlags(NodeFlags flags)
     {
-        ASSERT(!(flags & NodeDoesNotExit));
         NodeFlags newFlags = m_flags | flags;
         if (newFlags == m_flags)
             return false;
@@ -333,7 +332,6 @@ struct Node {
     
     bool filterFlags(NodeFlags flags)
     {
-        ASSERT(flags & NodeDoesNotExit);
         NodeFlags newFlags = m_flags & flags;
         if (newFlags == m_flags)
             return false;
@@ -381,19 +379,6 @@ struct Node {
         return m_flags & NodeMustGenerate;
     }
     
-    void setCanExit(bool exits)
-    {
-        if (exits)
-            m_flags &= ~NodeDoesNotExit;
-        else
-            m_flags |= NodeDoesNotExit;
-    }
-    
-    bool canExit()
-    {
-        return !(m_flags & NodeDoesNotExit);
-    }
-    
     bool isConstant()
     {
         switch (op()) {
@@ -404,11 +389,6 @@ struct Node {
         default:
             return false;
         }
-    }
-    
-    bool isWeakConstant()
-    {
-        return op() == WeakJSConstant;
     }
     
     bool isPhantomArguments()
@@ -422,7 +402,6 @@ struct Node {
         case JSConstant:
         case DoubleConstant:
         case Int52Constant:
-        case WeakJSConstant:
         case PhantomArguments:
             return true;
         default:
@@ -430,13 +409,16 @@ struct Node {
         }
     }
 
-    unsigned constantNumber()
+    FrozenValue* constant()
     {
-        ASSERT(isConstant());
-        return m_opInfo;
+        ASSERT(hasConstant());
+        if (op() == PhantomArguments)
+            return FrozenValue::emptySingleton();
+        return bitwise_cast<FrozenValue*>(m_opInfo);
     }
     
-    void convertToConstant(unsigned constantNumber)
+    // Don't call this directly - use Graph::convertToConstant() instead!
+    void convertToConstant(FrozenValue* value)
     {
         if (hasDoubleResult())
             m_op = DoubleConstant;
@@ -445,15 +427,7 @@ struct Node {
         else
             m_op = JSConstant;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
-        m_opInfo = constantNumber;
-        children.reset();
-    }
-    
-    void convertToWeakConstant(JSCell* cell)
-    {
-        m_op = WeakJSConstant;
-        m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
-        m_opInfo = bitwise_cast<uintptr_t>(cell);
+        m_opInfo = bitwise_cast<uintptr_t>(value);
         children.reset();
     }
     
@@ -518,59 +492,79 @@ struct Node {
         m_op = ToString;
     }
     
-    JSCell* weakConstant()
+    JSValue asJSValue()
     {
-        ASSERT(op() == WeakJSConstant);
-        return bitwise_cast<JSCell*>(m_opInfo);
+        return constant()->value();
+    }
+     
+    bool isInt32Constant()
+    {
+        return isConstant() && constant()->value().isInt32();
+    }
+     
+    int32_t asInt32()
+    {
+        return asJSValue().asInt32();
+    }
+     
+    uint32_t asUInt32()
+    {
+        return asInt32();
+    }
+     
+    bool isDoubleConstant()
+    {
+        return isConstant() && constant()->value().isDouble();
+    }
+     
+    bool isNumberConstant()
+    {
+        return isConstant() && constant()->value().isNumber();
     }
     
-    JSValue valueOfJSConstant(CodeBlock* codeBlock)
+    double asNumber()
     {
-        switch (op()) {
-        case WeakJSConstant:
-            return JSValue(weakConstant());
-        case JSConstant:
-        case DoubleConstant:
-        case Int52Constant:
-            return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
-        case PhantomArguments:
-            return JSValue();
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return JSValue(); // Have to return something in release mode.
-        }
+        return asJSValue().asNumber();
     }
-
-    bool isInt32Constant(CodeBlock* codeBlock)
+     
+    bool isMachineIntConstant()
     {
-        return isConstant() && valueOfJSConstant(codeBlock).isInt32();
+        return isConstant() && constant()->value().isMachineInt();
     }
-    
-    bool isDoubleConstant(CodeBlock* codeBlock)
+     
+    int64_t asMachineInt()
     {
-        bool result = isConstant() && valueOfJSConstant(codeBlock).isDouble();
-        if (result)
-            ASSERT(!isInt32Constant(codeBlock));
-        return result;
+        return asJSValue().asMachineInt();
     }
-    
-    bool isNumberConstant(CodeBlock* codeBlock)
+     
+    bool isBooleanConstant()
     {
-        bool result = isConstant() && valueOfJSConstant(codeBlock).isNumber();
-        ASSERT(result == (isInt32Constant(codeBlock) || isDoubleConstant(codeBlock)));
-        return result;
+        return isConstant() && constant()->value().isBoolean();
     }
-    
-    bool isMachineIntConstant(CodeBlock* codeBlock)
+     
+    bool asBoolean()
     {
-        return isConstant() && valueOfJSConstant(codeBlock).isMachineInt();
+        return constant()->value().asBoolean();
     }
-    
-    bool isBooleanConstant(CodeBlock* codeBlock)
+     
+    bool isCellConstant()
     {
-        return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
+        return isConstant() && constant()->value().isCell();
     }
-    
+     
+    JSCell* asCell()
+    {
+        return constant()->value().asCell();
+    }
+     
+    template<typename T>
+    T dynamicCastConstant()
+    {
+        if (!isCellConstant())
+            return nullptr;
+        return jsDynamicCast<T>(asCell());
+    }
+     
     bool containsMovHint()
     {
         switch (op()) {
@@ -983,6 +977,8 @@ struct Node {
         case GetMyArgumentByValSafe:
         case Call:
         case Construct:
+        case NativeCall:
+        case NativeConstruct:
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:
@@ -1019,8 +1015,8 @@ struct Node {
     bool canBeKnownFunction()
     {
         switch (op()) {
-        case Construct:
-        case Call:
+        case NativeConstruct:
+        case NativeCall:
             return true;
         default:
             return false;
@@ -1030,8 +1026,8 @@ struct Node {
     bool hasKnownFunction()
     {
         switch (op()) {
-        case Construct:
-        case Call:
+        case NativeConstruct:
+        case NativeCall:
             return (bool)m_opInfo;
         default:
             return false;
@@ -1061,12 +1057,10 @@ struct Node {
         }
     }
 
-    JSCell* function()
+    FrozenValue* function()
     {
         ASSERT(hasFunction());
-        JSCell* result = reinterpret_cast<JSFunction*>(m_opInfo);
-        ASSERT(JSValue(result).isFunction());
-        return result;
+        return reinterpret_cast<FrozenValue*>(m_opInfo);
     }
     
     bool hasExecutable()

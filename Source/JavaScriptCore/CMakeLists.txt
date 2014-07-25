@@ -68,6 +68,7 @@ set(JavaScriptCore_SOURCES
     bytecode/CodeBlockJettisoningWatchpoint.cpp
     bytecode/CodeOrigin.cpp
     bytecode/CodeType.cpp
+    bytecode/ConstantStructureCheck.cpp
     bytecode/DFGExitProfile.cpp
     bytecode/DeferredCompilationCallback.cpp
     bytecode/ExecutionCounter.cpp
@@ -132,7 +133,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGCriticalEdgeBreakingPhase.cpp
     dfg/DFGDCEPhase.cpp
     dfg/DFGDesiredIdentifiers.cpp
-    dfg/DFGDesiredStructureChains.cpp
     dfg/DFGDesiredTransitions.cpp
     dfg/DFGDesiredWatchpoints.cpp
     dfg/DFGDesiredWeakReferences.cpp
@@ -147,6 +147,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGFixupPhase.cpp
     dfg/DFGFlushFormat.cpp
     dfg/DFGFlushedAt.cpp
+    dfg/DFGFrozenValue.cpp
     dfg/DFGFunctionWhitelist.cpp
     dfg/DFGGraph.cpp
     dfg/DFGGraphSafepoint.cpp
@@ -162,6 +163,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGLivenessAnalysisPhase.cpp
     dfg/DFGLongLivedState.cpp
     dfg/DFGLoopPreHeaderCreationPhase.cpp
+    dfg/DFGMayExit.cpp
     dfg/DFGMinifiedNode.cpp
     dfg/DFGNaturalLoops.cpp
     dfg/DFGNode.cpp
@@ -203,6 +205,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGUseKind.cpp
     dfg/DFGValidate.cpp
     dfg/DFGValueSource.cpp
+    dfg/DFGValueStrength.cpp
     dfg/DFGVariableAccessData.cpp
     dfg/DFGVariableAccessDataDump.cpp
     dfg/DFGVariableEvent.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,14 +36,14 @@ JSValue LazyJSValue::getValue(VM& vm) const
 {
     switch (m_kind) {
     case KnownValue:
-        return value();
+        return value()->value();
     case SingleCharacterString:
         return jsSingleCharacterString(&vm, u.character);
     case KnownStringImpl:
         return jsString(&vm, u.stringImpl);
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return value();
+    return JSValue();
 }
 
 static TriState equalToSingleCharacter(JSValue value, UChar character)
@@ -81,11 +81,11 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
     case KnownValue:
         switch (other.m_kind) {
         case KnownValue:
-            return JSValue::pureStrictEqual(value(), other.value());
+            return JSValue::pureStrictEqual(value()->value(), other.value()->value());
         case SingleCharacterString:
-            return equalToSingleCharacter(value(), other.character());
+            return equalToSingleCharacter(value()->value(), other.character());
         case KnownStringImpl:
-            return equalToStringImpl(value(), other.stringImpl());
+            return equalToStringImpl(value()->value(), other.stringImpl());
         }
         break;
     case SingleCharacterString:
@@ -117,7 +117,7 @@ void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     switch (m_kind) {
     case KnownValue:
-        value().dumpInContext(out, context);
+        value()->dumpInContext(out, context);
         return;
     case SingleCharacterString:
         out.print("Lazy:SingleCharacterString(");

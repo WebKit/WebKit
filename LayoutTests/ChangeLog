@@ -1,3 +1,35 @@
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r169795, r169819, r169864, r169902, r169949, r169950, r170016, r170017, r170060, r170064 from ftlopt.
+
+    2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] A DFG inlined ById access variant should not speak of a chain, but only of what structures to test the base for, whether to use a constant as an alternate base for the actual access, and what structures to check on what additional cell constants
+            https://bugs.webkit.org/show_bug.cgi?id=133821
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * js/regress/poly-chain-access-different-prototypes-expected.txt: Added.
+            * js/regress/poly-chain-access-different-prototypes-simple-expected.txt: Added.
+            * js/regress/poly-chain-access-different-prototypes-simple.html: Added.
+            * js/regress/poly-chain-access-different-prototypes.html: Added.
+            * js/regress/script-tests/poly-chain-access-different-prototypes-simple.js: Added.
+            * js/regress/script-tests/poly-chain-access-different-prototypes.js: Added.
+    
+    2014-06-11  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG get_by_id should inline chain accesses with a slightly polymorphic base
+            https://bugs.webkit.org/show_bug.cgi?id=133751
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * js/regress/poly-chain-access-expected.txt: Added.
+            * js/regress/poly-chain-access-simpler-expected.txt: Added.
+            * js/regress/poly-chain-access-simpler.html: Added.
+            * js/regress/poly-chain-access.html: Added.
+            * js/regress/script-tests/poly-chain-access-simpler.js: Added.
+            * js/regress/script-tests/poly-chain-access.js: Added.
+    
 2014-07-25  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] RenderViews paginated as RL or LR don't handle percentage widths correctly.

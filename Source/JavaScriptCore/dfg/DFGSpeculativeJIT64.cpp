@@ -80,21 +80,9 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
-            if (isInt32Constant(edge.node())) {
-                info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
-                JSValue jsValue = jsNumber(valueOfInt32Constant(edge.node()));
-                m_jit.move(MacroAssembler::Imm64(JSValue::encode(jsValue)), gpr);
-            } else if (isNumberConstant(edge.node())) {
-                info.fillJSValue(*m_stream, gpr, DataFormatJSDouble);
-                JSValue jsValue(JSValue::EncodeAsDouble, valueOfNumberConstant(edge.node()));
-                m_jit.move(MacroAssembler::Imm64(JSValue::encode(jsValue)), gpr);
-            } else {
-                ASSERT(isJSConstant(edge.node()));
-                JSValue jsValue = valueOfJSConstant(edge.node());
-                m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-                info.fillJSValue(*m_stream, gpr, DataFormatJS);
-            }
-
+            JSValue jsValue = edge->asJSValue();
+            m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
+            info.fillJSValue(*m_stream, gpr, DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
         } else {
             DataFormat spillFormat = info.spillFormat();
@@ -637,14 +625,16 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 
 void SpeculativeJIT::emitCall(Node* node)
 {
-    if (node->op() != Call)
+
+    bool isCall = node->op() == Call;
+    if (!isCall)
         RELEASE_ASSERT(node->op() == Construct);
 
     // For constructors, the this argument is not passed but we have to make space
     // for it.
-    int dummyThisArgument = node->op() == Call ? 0 : 1;
+    int dummyThisArgument = isCall ? 0 : 1;
     
-    CallLinkInfo::CallType callType = node->op() == Call ? CallLinkInfo::Call : CallLinkInfo::Construct;
+    CallLinkInfo::CallType callType = isCall ? CallLinkInfo::Call : CallLinkInfo::Construct;
     
     Edge calleeEdge = m_jit.graph().m_varArgChildren[node->firstChild()];
     JSValueOperand callee(this, calleeEdge);
@@ -726,7 +716,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
-    if (edge->hasConstant() && !isInt32Constant(edge.node())) {
+    if (edge->hasConstant() && !edge->isInt32Constant()) {
         // Protect the silent spill/fill logic by failing early. If we "speculate" on
         // the constant then the silent filler may think that we have an int32 and a
         // constant, so it will try to fill this as an int32 constant. Bad things will
@@ -742,8 +732,8 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
 
         if (edge->hasConstant()) {
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            ASSERT(isInt32Constant(edge.node()));
-            m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
+            ASSERT(edge->isInt32Constant());
+            m_jit.move(MacroAssembler::Imm32(edge->asInt32()), gpr);
             info.fillInt32(*m_stream, gpr);
             returnFormat = DataFormatInt32;
             return gpr;
@@ -878,7 +868,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if ((edge->hasConstant() && !valueOfJSConstant(edge.node()).isMachineInt())) {
+        if (edge->hasConstant() && !edge->isMachineIntConstant()) {
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             return allocate();
         }
@@ -886,7 +876,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
-            JSValue jsValue = valueOfJSConstant(edge.node());
+            JSValue jsValue = edge->asJSValue();
             ASSERT(jsValue.isMachineInt());
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             int64_t value = jsValue.asMachineInt();
@@ -967,9 +957,9 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         if (edge->hasConstant()) {
             GPRReg gpr = allocate();
 
-            if (isNumberConstant(edge.node())) {
+            if (edge->isNumberConstant()) {
                 FPRReg fpr = fprAllocate();
-                m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(valueOfNumberConstant(edge.node()))), gpr);
+                m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(edge->asNumber())), gpr);
                 m_jit.move64ToDouble(gpr, fpr);
                 unlock(gpr);
 
@@ -1010,7 +1000,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
-            JSValue jsValue = valueOfJSConstant(edge.node());
+            JSValue jsValue = edge->asJSValue();
             if (jsValue.isCell()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
@@ -1096,7 +1086,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
-            JSValue jsValue = valueOfJSConstant(edge.node());
+            JSValue jsValue = edge->asJSValue();
             if (jsValue.isBoolean()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
@@ -1796,11 +1786,6 @@ void SpeculativeJIT::compile(Node* node)
         initConstantInfo(node);
         break;
 
-    case WeakJSConstant:
-        m_jit.addWeakReference(node->weakConstant());
-        initConstantInfo(node);
-        break;
-        
     case Identity: {
         // CSE should always eliminate this.
         RELEASE_ASSERT_NOT_REACHED();
@@ -1813,9 +1798,7 @@ void SpeculativeJIT::compile(Node* node)
         // If the CFA is tracking this variable and it found that the variable
         // cannot have been assigned, then don't attempt to proceed.
         if (value.isClear()) {
-            // FIXME: We should trap instead.
-            // https://bugs.webkit.org/show_bug.cgi?id=110383
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
+            m_compileOkay = false;
             break;
         }
         
@@ -1964,18 +1947,18 @@ void SpeculativeJIT::compile(Node* node)
     case BitAnd:
     case BitOr:
     case BitXor:
-        if (isInt32Constant(node->child1().node())) {
+        if (node->child1()->isInt32Constant()) {
             SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this, Reuse, op2);
 
-            bitOp(op, valueOfInt32Constant(node->child1().node()), op2.gpr(), result.gpr());
+            bitOp(op, node->child1()->asInt32(), op2.gpr(), result.gpr());
 
             int32Result(result.gpr(), node);
-        } else if (isInt32Constant(node->child2().node())) {
+        } else if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, Reuse, op1);
 
-            bitOp(op, valueOfInt32Constant(node->child2().node()), op1.gpr(), result.gpr());
+            bitOp(op, node->child2()->asInt32(), op1.gpr(), result.gpr());
 
             int32Result(result.gpr(), node);
         } else {
@@ -1994,11 +1977,11 @@ void SpeculativeJIT::compile(Node* node)
     case BitRShift:
     case BitLShift:
     case BitURShift:
-        if (isInt32Constant(node->child2().node())) {
+        if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, Reuse, op1);
 
-            shiftOp(op, op1.gpr(), valueOfInt32Constant(node->child2().node()) & 0x1f, result.gpr());
+            shiftOp(op, op1.gpr(), node->child2()->asInt32() & 0x1f, result.gpr());
 
             int32Result(result.gpr(), node);
         } else {
@@ -2307,7 +2290,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
         
     case CompareEqConstant:
-        ASSERT(isNullConstant(node->child2().node()));
+        ASSERT(node->child2()->asJSValue().isNull());
         if (nonSpeculativeCompareNull(node, node->child1()))
             return;
         break;
@@ -3804,7 +3787,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case CheckFunction: {
         SpeculateCellOperand function(this, node->child1());
-        speculationCheck(BadFunction, JSValueSource::unboxedCell(function.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node->function()));
+        speculationCheck(BadFunction, JSValueSource::unboxedCell(function.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node->function()->value().asCell()));
         noResult(node);
         break;
     }
@@ -3822,8 +3805,8 @@ void SpeculativeJIT::compile(Node* node)
         ASSERT(node->structureSet().size());
         
         ExitKind exitKind;
-        if (node->child1()->op() == WeakJSConstant)
-            exitKind = BadWeakConstantCache;
+        if (node->child1()->hasConstant())
+            exitKind = BadConstantCache;
         else
             exitKind = BadCache;
         
@@ -4757,7 +4740,9 @@ void SpeculativeJIT::compile(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
         break;
 #endif // ENABLE(FTL_JIT)
-        
+
+    case NativeCall:
+    case NativeConstruct:    
     case LastNodeType:
     case Phi:
     case Upsilon:

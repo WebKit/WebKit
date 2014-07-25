@@ -52,10 +52,10 @@ class Operands {
 public:
     Operands() { }
     
-    explicit Operands(size_t numArguments, size_t numLocals)
+    explicit Operands(size_t numArguments, size_t numLocals, const T& initialValue = Traits::defaultValue())
     {
-        m_arguments.fill(Traits::defaultValue(), numArguments);
-        m_locals.fill(Traits::defaultValue(), numLocals);
+        m_arguments.fill(initialValue, numArguments);
+        m_locals.fill(initialValue, numLocals);
     }
     
     template<typename U, typename OtherTraits>
@@ -96,7 +96,7 @@ public:
         return local(idx);
     }
     
-    void ensureLocals(size_t size)
+    void ensureLocals(size_t size, const T& ensuredValue = Traits::defaultValue())
     {
         if (size <= m_locals.size())
             return;
@@ -104,7 +104,7 @@ public:
         size_t oldSize = m_locals.size();
         m_locals.resize(size);
         for (size_t i = oldSize; i < m_locals.size(); ++i)
-            m_locals[i] = Traits::defaultValue();
+            m_locals[i] = ensuredValue;
     }
     
     void setLocal(size_t idx, const T& value)

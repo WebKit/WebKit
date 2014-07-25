@@ -40,9 +40,6 @@ class Graph;
 // on a few benchmarks, and is relatively cheap to run.
 bool performCSE(Graph&);
 
-// Perform just block-local store elimination.
-bool performStoreElimination(Graph&);
-
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

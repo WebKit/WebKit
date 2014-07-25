@@ -150,7 +150,7 @@ public:
                     
                     // Switch on constant -> jettison all other targets and merge.
                     if (block->last()->child1()->hasConstant()) {
-                        JSValue value = m_graph.valueOfJSConstant(block->last()->child1().node());
+                        FrozenValue* value = block->last()->child1()->constant();
                         TriState found = FalseTriState;
                         BasicBlock* targetBlock = 0;
                         for (unsigned i = data->cases.size(); found == FalseTriState && i--;) {

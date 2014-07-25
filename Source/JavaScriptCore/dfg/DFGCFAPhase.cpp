@@ -79,6 +79,19 @@ public:
             performForwardCFA();
         } while (m_changed);
         
+        if (m_graph.m_form != SSA) {
+            // Make sure we record the intersection of all proofs that we ever allowed the
+            // compiler to rely upon.
+            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+                BasicBlock* block = m_graph.block(blockIndex);
+                if (!block)
+                    continue;
+                block->intersectionOfCFAHasVisited &= block->cfaHasVisited;
+                for (unsigned i = block->intersectionOfPastValuesAtHead.size(); i--;)
+                    block->intersectionOfPastValuesAtHead[i].filter(block->valuesAtHead[i]);
+            }
+        }
+        
         return true;
     }
     

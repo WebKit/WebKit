@@ -27,6 +27,7 @@
 #define GetByIdVariant_h
 
 #include "CallLinkStatus.h"
+#include "ConstantStructureCheck.h"
 #include "IntendedStructureChain.h"
 #include "JSCJSValue.h"
 #include "PropertyOffset.h"
@@ -43,20 +44,8 @@ public:
     GetByIdVariant(
         const StructureSet& structureSet = StructureSet(),
         PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(),
-        PassRefPtr<IntendedStructureChain> chain = nullptr,
-        std::unique_ptr<CallLinkStatus> callLinkStatus = nullptr)
-        : m_structureSet(structureSet)
-        , m_chain(chain)
-        , m_specificValue(specificValue)
-        , m_offset(offset)
-        , m_callLinkStatus(std::move(callLinkStatus))
-    {
-        if (!structureSet.size()) {
-            ASSERT(offset == invalidOffset);
-            ASSERT(!specificValue);
-            ASSERT(!chain);
-        }
-    }
+        const IntendedStructureChain* chain = nullptr,
+        std::unique_ptr<CallLinkStatus> callLinkStatus = nullptr);
     
     ~GetByIdVariant();
     
@@ -66,10 +55,13 @@ public:
     bool isSet() const { return !!m_structureSet.size(); }
     bool operator!() const { return !isSet(); }
     const StructureSet& structureSet() const { return m_structureSet; }
-    IntendedStructureChain* chain() const { return const_cast<IntendedStructureChain*>(m_chain.get()); }
+    const ConstantStructureCheckVector& constantChecks() const { return m_constantChecks; }
+    JSObject* alternateBase() const { return m_alternateBase; }
     JSValue specificValue() const { return m_specificValue; }
     PropertyOffset offset() const { return m_offset; }
     CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
+    
+    bool attemptToMerge(const GetByIdVariant& other);
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
@@ -78,7 +70,8 @@ private:
     friend class GetByIdStatus;
     
     StructureSet m_structureSet;
-    RefPtr<IntendedStructureChain> m_chain;
+    ConstantStructureCheckVector m_constantChecks;
+    JSObject* m_alternateBase;
     JSValue m_specificValue;
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;

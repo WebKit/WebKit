@@ -64,7 +64,8 @@ public:
         result.m_kind = Transition;
         result.m_oldStructure = oldStructure;
         result.m_newStructure = newStructure;
-        result.m_structureChain = structureChain;
+        if (structureChain)
+            structureChain->gatherChecks(result.m_constantChecks);
         result.m_offset = offset;
         return result;
     }
@@ -92,10 +93,10 @@ public:
         return m_newStructure;
     }
     
-    IntendedStructureChain* structureChain() const
+    const ConstantStructureCheckVector& constantChecks() const
     {
         ASSERT(kind() == Transition);
-        return m_structureChain.get();
+        return m_constantChecks;
     }
     
     PropertyOffset offset() const
@@ -111,7 +112,7 @@ private:
     Kind m_kind;
     Structure* m_oldStructure;
     Structure* m_newStructure;
-    RefPtr<IntendedStructureChain> m_structureChain;
+    ConstantStructureCheckVector m_constantChecks;
     PropertyOffset m_offset;
 };
 

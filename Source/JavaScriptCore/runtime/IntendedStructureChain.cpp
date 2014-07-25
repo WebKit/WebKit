@@ -33,27 +33,37 @@
 
 namespace JSC {
 
-IntendedStructureChain::IntendedStructureChain(JSGlobalObject* globalObject, Structure* head)
+IntendedStructureChain::IntendedStructureChain(JSGlobalObject* globalObject, JSValue prototype)
     : m_globalObject(globalObject)
-    , m_head(head)
+    , m_prototype(prototype)
 {
-    JSValue prototype = head->prototypeForLookup(globalObject);
+    ASSERT(m_prototype.isNull() || m_prototype.isObject());
     if (prototype.isNull())
         return;
     for (Structure* current = asObject(prototype)->structure(); current; current = current->storedPrototypeStructure())
         m_vector.append(current);
 }
 
+IntendedStructureChain::IntendedStructureChain(JSGlobalObject* globalObject, Structure* head)
+    : m_globalObject(globalObject)
+    , m_prototype(head->prototypeForLookup(m_globalObject))
+{
+    if (m_prototype.isNull())
+        return;
+    for (Structure* current = asObject(m_prototype)->structure(); current; current = current->storedPrototypeStructure())
+        m_vector.append(current);
+}
+
 IntendedStructureChain::IntendedStructureChain(CodeBlock* codeBlock, Structure* head, Structure* prototypeStructure)
     : m_globalObject(codeBlock->globalObject())
-    , m_head(head)
+    , m_prototype(head->prototypeForLookup(m_globalObject))
 {
     m_vector.append(prototypeStructure);
 }
 
 IntendedStructureChain::IntendedStructureChain(CodeBlock* codeBlock, Structure* head, StructureChain* chain)
     : m_globalObject(codeBlock->globalObject())
-    , m_head(head)
+    , m_prototype(head->prototypeForLookup(m_globalObject))
 {
     for (unsigned i = 0; chain->head()[i]; ++i)
         m_vector.append(chain->head()[i].get());
@@ -61,7 +71,7 @@ IntendedStructureChain::IntendedStructureChain(CodeBlock* codeBlock, Structure* 
 
 IntendedStructureChain::IntendedStructureChain(CodeBlock* codeBlock, Structure* head, StructureChain* chain, unsigned count)
     : m_globalObject(codeBlock->globalObject())
-    , m_head(head)
+    , m_prototype(head->prototypeForLookup(m_globalObject))
 {
     for (unsigned i = 0; i < count; ++i)
         m_vector.append(chain->head()[i].get());
@@ -73,7 +83,7 @@ IntendedStructureChain::~IntendedStructureChain()
 
 bool IntendedStructureChain::isStillValid() const
 {
-    JSValue currentPrototype = m_head->prototypeForLookup(m_globalObject);
+    JSValue currentPrototype = m_prototype;
     for (unsigned i = 0; i < m_vector.size(); ++i) {
         if (asObject(currentPrototype)->structure() != m_vector[i])
             return false;
@@ -93,14 +103,6 @@ bool IntendedStructureChain::matches(StructureChain* chain) const
     return true;
 }
 
-StructureChain* IntendedStructureChain::chain(VM& vm) const
-{
-    ASSERT(isStillValid());
-    StructureChain* result = StructureChain::create(vm, m_head);
-    ASSERT(matches(result));
-    return result;
-}
-
 bool IntendedStructureChain::mayInterceptStoreTo(VM& vm, StringImpl* uid)
 {
     for (unsigned i = 0; i < m_vector.size(); ++i) {
@@ -118,8 +120,6 @@ bool IntendedStructureChain::mayInterceptStoreTo(VM& vm, StringImpl* uid)
 
 bool IntendedStructureChain::isNormalized()
 {
-    if (m_head->isProxy())
-        return false;
     for (unsigned i = 0; i < m_vector.size(); ++i) {
         Structure* structure = m_vector[i];
         if (structure->isProxy())
@@ -134,14 +134,32 @@ JSObject* IntendedStructureChain::terminalPrototype() const
 {
     ASSERT(!m_vector.isEmpty());
     if (m_vector.size() == 1)
-        return asObject(m_head->prototypeForLookup(m_globalObject));
+        return asObject(m_prototype);
     return asObject(m_vector[m_vector.size() - 2]->storedPrototype());
+}
+
+bool IntendedStructureChain::operator==(const IntendedStructureChain& other) const
+{
+    return m_globalObject == other.m_globalObject
+        && m_prototype == other.m_prototype
+        && m_vector == other.m_vector;
+}
+
+void IntendedStructureChain::gatherChecks(ConstantStructureCheckVector& vector) const
+{
+    JSValue currentPrototype = m_prototype;
+    for (unsigned i = 0; i < size(); ++i) {
+        JSObject* currentObject = asObject(currentPrototype);
+        Structure* currentStructure = at(i);
+        vector.append(ConstantStructureCheck(currentObject, currentStructure));
+        currentPrototype = currentStructure->prototypeForLookup(m_globalObject);
+    }
 }
 
 void IntendedStructureChain::visitChildren(SlotVisitor& visitor)
 {
     visitor.appendUnbarrieredPointer(&m_globalObject);
-    visitor.appendUnbarrieredPointer(&m_head);
+    visitor.appendUnbarrieredValue(&m_prototype);
     for (unsigned i = m_vector.size(); i--;)
         visitor.appendUnbarrieredPointer(&m_vector[i]);
 }
@@ -155,7 +173,7 @@ void IntendedStructureChain::dumpInContext(PrintStream& out, DumpContext* contex
 {
     out.print(
         "(global = ", RawPointer(m_globalObject), ", head = ",
-        pointerDumpInContext(m_head, context), ", vector = [");
+        inContext(m_prototype, context), ", vector = [");
     CommaPrinter comma;
     for (unsigned i = 0; i < m_vector.size(); ++i)
         out.print(comma, pointerDumpInContext(m_vector[i], context));

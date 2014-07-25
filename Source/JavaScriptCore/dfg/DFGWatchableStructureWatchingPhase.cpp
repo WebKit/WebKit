@@ -47,8 +47,11 @@ public:
         // These are pretty dumb, but needed to placate subsequent assertions. We con't actually
         // have to watch these because there is no way to transition away from it, but they are
         // watchable and so we will assert if they aren't watched.
-        tryWatch(m_graph.m_vm.stringStructure.get()); 
+        tryWatch(m_graph.m_vm.stringStructure.get());
         tryWatch(m_graph.m_vm.getterSetterStructure.get());
+        
+        for (FrozenValue* value : m_graph.m_frozenValues)
+            tryWatch(value->structure());
         
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
@@ -59,17 +62,8 @@ public:
                 Node* node = block->at(nodeIndex);
             
                 switch (node->op()) {
-                case JSConstant:
-                case WeakJSConstant:
-                    tryWatch(m_graph.valueOfJSConstant(node));
-                    break;
-                
-                case CheckFunction:
-                    tryWatch(node->function());
-                    break;
-                
                 case CheckExecutable:
-                    tryWatch(node->executable());
+                    tryWatch(node->executable()->structure());
                     break;
                 
                 case CheckStructure:
@@ -93,7 +87,7 @@ public:
                 case MultiGetByOffset:
                     for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
                         GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
-                        tryWatch(variant.specificValue());
+                        tryWatch(m_graph.freeze(variant.specificValue())->structure());
                         tryWatch(variant.structureSet());
                         // Don't need to watch anything in the structure chain because that would
                         // have been decomposed into CheckStructure's. Don't need to watch the
@@ -139,22 +133,12 @@ public:
             }
         }
         
+        m_graph.m_structureWatchpointState = WatchingAllWatchableStructures;
+        
         return true;
     }
 
 private:
-    void tryWatch(JSValue value)
-    {
-        if (value.isCell())
-            tryWatch(value.asCell());
-    }
-    
-    void tryWatch(JSCell* cell)
-    {
-        if (cell)
-            tryWatch(cell->structure());
-    }
-    
     void tryWatch(const StructureSet& set)
     {
         for (unsigned i = set.size(); i--;)
@@ -163,7 +147,8 @@ private:
     
     void tryWatch(Structure* structure)
     {
-        m_graph.watchpoints().consider(structure);
+        if (structure)
+            m_graph.watchpoints().consider(structure);
     }
 };
 

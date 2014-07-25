@@ -208,8 +208,7 @@ public:
                         // init_lazy_reg since it treats CreateArguments as reading
                         // local variables. That could be fixed, but it's easier to
                         // work around this here.
-                        if (source->op() == JSConstant
-                            && !source->valueOfJSConstant(codeBlock()))
+                        if (source->op() == JSConstant && !*source->constant())
                             break;
                         
                         // If the variable is totally dead, then ignore it.
@@ -511,7 +510,8 @@ public:
                         indexInBlock, SpecNone, CheckArgumentsNotCreated, origin);
                     
                     m_graph.convertToConstant(
-                        node, jsNumber(origin.semantic.inlineCallFrame->arguments.size() - 1));
+                        node, m_graph.freeze(
+                            jsNumber(origin.semantic.inlineCallFrame->arguments.size() - 1)));
                     changed = true;
                     break;
                 }
@@ -528,12 +528,9 @@ public:
                     }
                     if (!node->origin.semantic.inlineCallFrame)
                         break;
-                    if (!node->child1()->hasConstant())
+                    if (!node->child1()->isInt32Constant())
                         break;
-                    JSValue value = node->child1()->valueOfJSConstant(codeBlock());
-                    if (!value.isInt32())
-                        break;
-                    int32_t index = value.asInt32();
+                    int32_t index = node->child1()->asInt32();
                     if (index < 0
                         || static_cast<size_t>(index + 1) >=
                             node->origin.semantic.inlineCallFrame->arguments.size())

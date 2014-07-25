@@ -143,7 +143,6 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
 #if ENABLE(DFG_JIT)
     exitSiteData.m_takesSlowPath =
         profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitingJITType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint, exitingJITType))
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable, exitingJITType));
     exitSiteData.m_badFunction =
         profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction, exitingJITType));

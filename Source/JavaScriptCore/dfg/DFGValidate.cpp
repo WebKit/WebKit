@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlockWithJITType.h"
+#include "DFGMayExit.h"
 #include "JSCInlines.h"
 #include <wtf/Assertions.h>
 #include <wtf/BitVector.h>
@@ -197,12 +198,40 @@ public:
             for (size_t i = 0; i < block->size(); ++i) {
                 Node* node = block->at(i);
                 
-                if (node->hasStructure())
-                    VALIDATE((node), !!node->structure());
-                
+                VALIDATE((node), !mayExit(m_graph, node) || node->origin.forExit.isSet());
+                VALIDATE((node), !node->hasStructure() || !!node->structure());
+                VALIDATE((node), !node->hasFunction() || node->function()->value().isFunction());
+                 
+                if (!(node->flags() & NodeHasVarArgs)) {
+                    if (!node->child2())
+                        VALIDATE((node), !node->child3());
+                    if (!node->child1())
+                        VALIDATE((node), !node->child2());
+                }
+                 
                 switch (node->op()) {
                 case Identity:
                     VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
+                    break;
+                case MakeRope:
+                case ValueAdd:
+                case ArithAdd:
+                case ArithSub:
+                case ArithMul:
+                case ArithIMul:
+                case ArithDiv:
+                case ArithMod:
+                case ArithMin:
+                case ArithMax:
+                case CompareLess:
+                case CompareLessEq:
+                case CompareGreater:
+                case CompareGreaterEq:
+                case CompareEq:
+                case CompareEqConstant:
+                case CompareStrictEq:
+                    VALIDATE((node), !!node->child1());
+                    VALIDATE((node), !!node->child2());
                     break;
                 default:
                     break;
@@ -427,18 +456,18 @@ private:
                 continue;
             
             unsigned nodeIndex = 0;
-            for (; nodeIndex < block->size() && !block->at(nodeIndex)->origin.isSet(); nodeIndex++) { }
+            for (; nodeIndex < block->size() && !block->at(nodeIndex)->origin.forExit.isSet(); nodeIndex++) { }
             
             VALIDATE((block), nodeIndex < block->size());
             
             for (; nodeIndex < block->size(); nodeIndex++)
-                VALIDATE((block->at(nodeIndex)), block->at(nodeIndex)->origin.isSet());
+                VALIDATE((block->at(nodeIndex)), block->at(nodeIndex)->origin.forExit.isSet());
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 switch (node->op()) {
                 case Phi:
-                    VALIDATE((node), !node->origin.isSet());
+                    VALIDATE((node), !node->origin.forExit.isSet());
                     break;
                     
                 default:

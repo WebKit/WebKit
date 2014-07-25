@@ -58,11 +58,12 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
         if (edge->hasConstant()) {
             tagGPR = allocate();
             payloadGPR = allocate();
-            m_jit.move(Imm32(valueOfJSConstant(edge.node()).tag()), tagGPR);
-            m_jit.move(Imm32(valueOfJSConstant(edge.node()).payload()), payloadGPR);
+            JSValue value = edge->asJSValue();
+            m_jit.move(Imm32(value.tag()), tagGPR);
+            m_jit.move(Imm32(value.payload()), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderConstant);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderConstant);
-            info.fillJSValue(*m_stream, tagGPR, payloadGPR, isInt32Constant(edge.node()) ? DataFormatJSInt32 : DataFormatJS);
+            info.fillJSValue(*m_stream, tagGPR, payloadGPR, DataFormatJS);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat != DataFormatNone && spillFormat != DataFormatStorage);
@@ -638,14 +639,15 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 
 void SpeculativeJIT::emitCall(Node* node)
 {
-    if (node->op() != Call)
+    bool isCall = node->op() == Call;
+    if (!isCall)
         ASSERT(node->op() == Construct);
 
     // For constructors, the this argument is not passed but we have to make space
     // for it.
-    int dummyThisArgument = node->op() == Call ? 0 : 1;
+    int dummyThisArgument = isCall ? 0 : 1;
 
-    CallLinkInfo::CallType callType = node->op() == Call ? CallLinkInfo::Call : CallLinkInfo::Construct;
+    CallLinkInfo::CallType callType = isCall ? CallLinkInfo::Call : CallLinkInfo::Construct;
 
     Edge calleeEdge = m_jit.graph().m_varArgChildren[node->firstChild()];
     JSValueOperand callee(this, calleeEdge);
@@ -736,7 +738,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
-    if (edge->hasConstant() && !isInt32Constant(edge.node())) {
+    if (edge->hasConstant() && !edge->isInt32Constant()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         returnFormat = DataFormatInt32;
         return allocate();
@@ -745,9 +747,9 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     switch (info.registerFormat()) {
     case DataFormatNone: {
         if (edge->hasConstant()) {
-            ASSERT(isInt32Constant(edge.node()));
+            ASSERT(edge->isInt32Constant());
             GPRReg gpr = allocate();
-            m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
+            m_jit.move(MacroAssembler::Imm32(edge->asInt32()), gpr);
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             info.fillInt32(*m_stream, gpr);
             returnFormat = DataFormatInt32;
@@ -835,9 +837,9 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
     if (info.registerFormat() == DataFormatNone) {
 
         if (edge->hasConstant()) {
-            RELEASE_ASSERT(isNumberConstant(edge.node()));
+            RELEASE_ASSERT(edge->isNumberConstant());
             FPRReg fpr = fprAllocate();
-            m_jit.loadDouble(TrustedImmPtr(addressOfDoubleConstant(edge.node())), fpr);
+            m_jit.loadDouble(TrustedImmPtr(m_jit.addressOfDoubleConstant(edge.node())), fpr);
             m_fprs.retain(fpr, virtualRegister, SpillOrderConstant);
             info.fillDouble(*m_stream, fpr);
             return fpr;
@@ -874,7 +876,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         }
 
         if (edge->hasConstant()) {
-            JSValue jsValue = valueOfJSConstant(edge.node());
+            JSValue jsValue = edge->asJSValue();
             GPRReg gpr = allocate();
             if (jsValue.isCell()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
@@ -963,7 +965,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         }
         
         if (edge->hasConstant()) {
-            JSValue jsValue = valueOfJSConstant(edge.node());
+            JSValue jsValue = edge->asJSValue();
             GPRReg gpr = allocate();
             if (jsValue.isBoolean()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
@@ -1683,11 +1685,6 @@ void SpeculativeJIT::compile(Node* node)
         initConstantInfo(node);
         break;
 
-    case WeakJSConstant:
-        m_jit.addWeakReference(node->weakConstant());
-        initConstantInfo(node);
-        break;
-
     case Identity: {
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -1699,9 +1696,7 @@ void SpeculativeJIT::compile(Node* node)
         // If the CFA is tracking this variable and it found that the variable
         // cannot have been assigned, then don't attempt to proceed.
         if (value.isClear()) {
-            // FIXME: We should trap instead.
-            // https://bugs.webkit.org/show_bug.cgi?id=110383
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
+            m_compileOkay = false;
             break;
         }
         
@@ -1856,18 +1851,18 @@ void SpeculativeJIT::compile(Node* node)
     case BitAnd:
     case BitOr:
     case BitXor:
-        if (isInt32Constant(node->child1().node())) {
+        if (node->child1()->isInt32Constant()) {
             SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this, Reuse, op2);
 
-            bitOp(op, valueOfInt32Constant(node->child1().node()), op2.gpr(), result.gpr());
+            bitOp(op, node->child1()->asInt32(), op2.gpr(), result.gpr());
 
             int32Result(result.gpr(), node);
-        } else if (isInt32Constant(node->child2().node())) {
+        } else if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, Reuse, op1);
 
-            bitOp(op, valueOfInt32Constant(node->child2().node()), op1.gpr(), result.gpr());
+            bitOp(op, node->child2()->asInt32(), op1.gpr(), result.gpr());
 
             int32Result(result.gpr(), node);
         } else {
@@ -1886,11 +1881,11 @@ void SpeculativeJIT::compile(Node* node)
     case BitRShift:
     case BitLShift:
     case BitURShift:
-        if (isInt32Constant(node->child2().node())) {
+        if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, Reuse, op1);
 
-            shiftOp(op, op1.gpr(), valueOfInt32Constant(node->child2().node()) & 0x1f, result.gpr());
+            shiftOp(op, op1.gpr(), node->child2()->asInt32() & 0x1f, result.gpr());
 
             int32Result(result.gpr(), node);
         } else {
@@ -2158,7 +2153,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
         
     case CompareEqConstant:
-        ASSERT(isNullConstant(node->child2().node()));
+        ASSERT(node->child2()->asJSValue().isNull());
         if (nonSpeculativeCompareNull(node, node->child1()))
             return;
         break;
@@ -3693,7 +3688,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case CheckFunction: {
         SpeculateCellOperand function(this, node->child1());
-        speculationCheck(BadFunction, JSValueSource::unboxedCell(function.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node->function()));
+        speculationCheck(BadFunction, JSValueSource::unboxedCell(function.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node->function()->value().asCell()));
         noResult(node);
         break;
     }
@@ -4644,7 +4639,8 @@ void SpeculativeJIT::compile(Node* node)
         // This is a no-op.
         noResult(node);
         break;
-
+        
+        
     case Unreachable:
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -4664,6 +4660,8 @@ void SpeculativeJIT::compile(Node* node)
     case ArithIMul:
     case MultiGetByOffset:
     case MultiPutByOffset:
+    case NativeCall:
+    case NativeConstruct:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

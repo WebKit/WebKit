@@ -30,7 +30,6 @@
 #include "DFGCompilationKey.h"
 #include "DFGCompilationMode.h"
 #include "DFGDesiredIdentifiers.h"
-#include "DFGDesiredStructureChains.h"
 #include "DFGDesiredTransitions.h"
 #include "DFGDesiredWatchpoints.h"
 #include "DFGDesiredWeakReferences.h"
@@ -92,7 +91,6 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     DesiredWatchpoints watchpoints;
     DesiredIdentifiers identifiers;
-    DesiredStructureChains chains;
     DesiredWeakReferences weakReferences;
     DesiredWriteBarriers writeBarriers;
     DesiredTransitions transitions;

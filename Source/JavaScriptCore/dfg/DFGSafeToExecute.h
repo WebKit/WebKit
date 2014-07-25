@@ -111,7 +111,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case JSConstant:
     case DoubleConstant:
     case Int52Constant:
-    case WeakJSConstant:
     case Identity:
     case ToThis:
     case CreateThis:
@@ -260,7 +259,11 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetGetter:
     case GetSetter:
         return true;
-        
+
+    case NativeCall:
+    case NativeConstruct:
+        return false; // TODO: add a check for already checked.  https://bugs.webkit.org/show_bug.cgi?id=133769
+
     case GetByVal:
     case GetIndexedPropertyStorage:
     case GetArrayLength:

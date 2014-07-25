@@ -146,6 +146,8 @@ enum PredictionPass {
     FixupPass
 };
 
+enum StructureWatchpointState { HaveNotStartedWatching, WatchingAllWatchableStructures };
+
 enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointConverged };
 
 // Describes the form you can expect the entire graph to be in.

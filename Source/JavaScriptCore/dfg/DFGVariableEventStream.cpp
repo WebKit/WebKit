@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,20 +81,13 @@ struct MinifiedGenerationInfo {
 
 } // namespace
 
-bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, CodeBlock* codeBlock, MinifiedNode* node) const
+bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, MinifiedNode* node) const
 {
     if (!node)
         return false;
     
-    if (node->hasConstantNumber()) {
-        recovery = ValueRecovery::constant(
-            codeBlock->constantRegister(
-                FirstConstantRegisterIndex + node->constantNumber()).get());
-        return true;
-    }
-    
-    if (node->hasWeakConstant()) {
-        recovery = ValueRecovery::constant(node->weakConstant());
+    if (node->hasConstant()) {
+        recovery = ValueRecovery::constant(node->constant());
         return true;
     }
     
@@ -187,7 +180,7 @@ void VariableEventStream::reconstruct(
         
         ASSERT(source.kind() == HaveNode);
         MinifiedNode* node = graph.at(source.id());
-        if (tryToSetConstantRecovery(valueRecoveries[i], codeBlock, node))
+        if (tryToSetConstantRecovery(valueRecoveries[i], node))
             continue;
         
         MinifiedGenerationInfo info = generationInfos.get(source.id());

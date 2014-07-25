@@ -44,7 +44,6 @@ inline CapabilityLevel canCompile(Node* node)
     
     switch (node->op()) {
     case JSConstant:
-    case WeakJSConstant:
     case GetMyArgumentsLength:
     case GetLocal:
     case SetLocal:
@@ -119,6 +118,8 @@ inline CapabilityLevel canCompile(Node* node)
     case StoreBarrierWithNullCheck:
     case Call:
     case Construct:
+    case NativeCall:
+    case NativeConstruct:
     case ValueToInt32:
     case Branch:
     case LogicalNot:

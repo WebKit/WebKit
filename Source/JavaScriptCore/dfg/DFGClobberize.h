@@ -76,7 +76,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case JSConstant:
     case DoubleConstant:
     case Int52Constant:
-    case WeakJSConstant:
     case Identity:
     case Phantom:
     case HardPhantom:
@@ -202,6 +201,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ArrayPop:
     case Call:
     case Construct:
+    case NativeCall:
+    case NativeConstruct:
     case ToPrimitive:
     case In:
     case GetMyArgumentsLengthSafe:

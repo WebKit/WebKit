@@ -311,11 +311,11 @@ private:
             if (node->arithMode() != Arith::CheckOverflow
                 && node->arithMode() != Arith::CheckOverflowAndNegativeZero)
                 break;
-            if (!m_graph.isInt32Constant(node->child2().node()))
+            if (!node->child2()->isInt32Constant())
                 break;
             return RangeKeyAndAddend(
                 RangeKey::addition(node->child1()),
-                m_graph.valueOfInt32Constant(node->child2().node()));
+                node->child2()->asInt32());
         }
                 
         case CheckInBounds: {
@@ -325,15 +325,15 @@ private:
             
             Edge index = node->child1();
             
-            if (m_graph.isInt32Constant(index.node())) {
+            if (index->isInt32Constant()) {
                 source = Edge();
-                addend = m_graph.valueOfInt32Constant(index.node());
+                addend = index->asInt32();
             } else if (
                 index->op() == ArithAdd
                 && index->isBinaryUseKind(Int32Use)
-                && m_graph.isInt32Constant(index->child2().node())) {
+                && index->child2()->isInt32Constant()) {
                 source = index->child1();
-                addend = m_graph.valueOfInt32Constant(index->child2().node());
+                addend = index->child2()->asInt32();
             } else {
                 source = index;
                 addend = 0;
@@ -341,7 +341,7 @@ private:
             
             return RangeKeyAndAddend(RangeKey::arrayBounds(source, key), addend);
         }
-                
+            
         default:
             break;
         }

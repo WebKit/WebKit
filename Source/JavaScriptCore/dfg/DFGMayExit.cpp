@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,33 +24,66 @@
  */
 
 #include "config.h"
-#include "DFGDesiredStructureChains.h"
+#include "DFGMayExit.h"
 
-#if ENABLE(DFG_JIT)
-
-#include "JSCInlines.h"
+#include "DFGGraph.h"
+#include "DFGNode.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 
-DesiredStructureChains::DesiredStructureChains() { }
-DesiredStructureChains::~DesiredStructureChains() { }
+namespace {
 
-bool DesiredStructureChains::areStillValid() const
-{
-    for (unsigned i = 0; i < m_vector.size(); ++i) {
-        if (!m_vector[i]->isStillValid())
-            return false;
+class EdgeMayExit {
+public:
+    EdgeMayExit()
+        : m_result(false)
+    {
     }
-    return true;
-}
+    
+    void operator()(Node*, Edge edge)
+    {
+        m_result |= edge.willHaveCheck();
+    }
+    
+    bool result() const { return m_result; }
+    
+private:
+    bool m_result;
+};
 
-void DesiredStructureChains::visitChildren(SlotVisitor& visitor)
+} // anonymous namespace
+
+bool mayExit(Graph& graph, Node* node)
 {
-    for (unsigned i = m_vector.size(); i--;)
-        m_vector[i]->visitChildren(visitor);
+    switch (node->op()) {
+    case SetArgument:
+    case JSConstant:
+    case DoubleConstant:
+    case Int52Constant:
+    case MovHint:
+    case SetLocal:
+    case Flush:
+    case Phantom:
+    case Check:
+    case HardPhantom:
+    case GetLocal:
+    case LoopHint:
+    case PhantomArguments:
+    case Phi:
+    case Upsilon:
+    case ZombieHint:
+        break;
+        
+    default:
+        // If in doubt, return true.
+        return true;
+    }
+
+    EdgeMayExit functor;
+    DFG_NODE_DO_TO_CHILDREN(graph, node, functor);
+    return functor.result();
 }
 
 } } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
 

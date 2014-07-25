@@ -62,13 +62,14 @@ class LICMPhase : public Phase {
 public:
     LICMPhase(Graph& graph)
         : Phase(graph, "LICM")
+        , m_state(graph)
         , m_interpreter(graph, m_state)
     {
     }
     
     bool run()
     {
-        ASSERT(m_graph.m_form == SSA);
+        DFG_ASSERT(m_graph, nullptr, m_graph.m_form == SSA);
         
         m_graph.m_dominators.computeIfNecessary(m_graph);
         m_graph.m_naturalLoops.computeIfNecessary(m_graph);
@@ -123,11 +124,11 @@ public:
                 BasicBlock* predecessor = header->predecessors[i];
                 if (m_graph.m_dominators.dominates(header, predecessor))
                     continue;
-                RELEASE_ASSERT(!preHeader || preHeader == predecessor);
+                DFG_ASSERT(m_graph, nullptr, !preHeader || preHeader == predecessor);
                 preHeader = predecessor;
             }
             
-            RELEASE_ASSERT(preHeader->last()->op() == Jump);
+            DFG_ASSERT(m_graph, preHeader->last(), preHeader->last()->op() == Jump);
             
             data.preHeader = preHeader;
         }
@@ -267,7 +268,7 @@ private:
         // It just so happens that all of the nodes we currently know how to hoist
         // don't have var-arg children. That may change and then we can fix this
         // code. But for now we just assert that's the case.
-        RELEASE_ASSERT(!(node->flags() & NodeHasVarArgs));
+        DFG_ASSERT(m_graph, node, !(node->flags() & NodeHasVarArgs));
         
         nodeRef = m_graph.addNode(SpecNone, Phantom, originalOrigin, node->children);
         

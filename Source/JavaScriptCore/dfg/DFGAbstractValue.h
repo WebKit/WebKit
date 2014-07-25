@@ -30,6 +30,7 @@
 
 #include "ArrayProfile.h"
 #include "DFGFiltrationResult.h"
+#include "DFGFrozenValue.h"
 #include "DFGNodeFlags.h"
 #include "DFGStructureAbstractValue.h"
 #include "DFGStructureClobberState.h"
@@ -70,6 +71,11 @@ struct AbstractValue {
     void makeBytecodeTop()
     {
         makeTop(SpecBytecodeTop);
+    }
+    
+    void makeFullTop()
+    {
+        makeTop(SpecFullTop);
     }
     
     void clobberStructures()
@@ -173,8 +179,23 @@ struct AbstractValue {
         return result;
     }
     
-    void setMostSpecific(Graph&, JSValue);
-    void set(Graph&, JSValue, StructureClobberState);
+    static AbstractValue bytecodeTop()
+    {
+        AbstractValue result;
+        result.makeBytecodeTop();
+        return result;
+    }
+    
+    static AbstractValue fullTop()
+    {
+        AbstractValue result;
+        result.makeFullTop();
+        return result;
+    }
+    
+    void setOSREntryValue(Graph&, const FrozenValue&);
+    
+    void set(Graph&, const FrozenValue&, StructureClobberState);
     void set(Graph&, Structure*);
     void set(Graph&, const StructureSet&);
     
@@ -257,12 +278,10 @@ struct AbstractValue {
     }
     
     FiltrationResult filter(Graph&, const StructureSet&);
-    
     FiltrationResult filterArrayModes(ArrayModes);
-    
     FiltrationResult filter(SpeculatedType);
-    
-    FiltrationResult filterByValue(JSValue);
+    FiltrationResult filterByValue(const FrozenValue& value);
+    FiltrationResult filter(const AbstractValue&);
     
     bool validate(JSValue value) const
     {
@@ -349,7 +368,11 @@ struct AbstractValue {
     // implies nothing about the structure. Oddly, JSValue() (i.e. the empty value)
     // means either BOTTOM or TOP depending on the state of m_type: if m_type is
     // BOTTOM then JSValue() means BOTTOM; if m_type is not BOTTOM then JSValue()
-    // means TOP.
+    // means TOP. Also note that this value isn't necessarily known to the GC
+    // (strongly or even weakly - it may be an "fragile" value, see
+    // DFGValueStrength.h). If you perform any optimization based on a cell m_value
+    // that requires that the value be kept alive, you must call freeze() on that
+    // value, which will turn it into a weak value.
     JSValue m_value;
 
 private:

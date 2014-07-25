@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 
 class AtTailAbstractState {
 public:
-    AtTailAbstractState();
+    AtTailAbstractState(Graph&);
     
     ~AtTailAbstractState();
     
@@ -63,6 +63,7 @@ public:
     void setFoundConstants(bool) { }
 
 private:
+    Graph& m_graph;
     BasicBlock* m_block;
 };
 

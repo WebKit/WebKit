@@ -65,6 +65,8 @@ public:
         setNumChildren(numChildren);
     }
     
+    bool isEmpty() const { return !child1(); }
+    
     const Edge& child(unsigned i) const
     {
         ASSERT(i < Size);

@@ -67,17 +67,17 @@ public:
 private:
     bool isNotNegZero(Node* node)
     {
-        if (!m_graph.isNumberConstant(node))
+        if (!node->isNumberConstant())
             return false;
-        double value = m_graph.valueOfNumberConstant(node);
+        double value = node->asNumber();
         return (value || 1.0 / value > 0.0);
     }
     
     bool isNotPosZero(Node* node)
     {
-        if (!m_graph.isNumberConstant(node))
+        if (!node->isNumberConstant())
             return false;
-        double value = m_graph.valueOfNumberConstant(node);
+        double value = node->asNumber();
         return (value || 1.0 / value < 0.0);
     }
 
@@ -85,7 +85,7 @@ private:
     template<int power>
     bool isWithinPowerOfTwoForConstant(Node* node)
     {
-        JSValue immediateValue = node->valueOfJSConstant(codeBlock());
+        JSValue immediateValue = node->asJSValue();
         if (!immediateValue.isNumber())
             return false;
         double immediate = immediateValue.asNumber();
@@ -130,7 +130,7 @@ private:
             Node* shiftAmount = node->child2().node();
             if (shiftAmount->op() != JSConstant)
                 return false;
-            JSValue immediateValue = shiftAmount->valueOfJSConstant(codeBlock());
+            JSValue immediateValue = shiftAmount->asJSValue();
             if (!immediateValue.isInt32())
                 return false;
             return immediateValue.asInt32() > 32 - power;

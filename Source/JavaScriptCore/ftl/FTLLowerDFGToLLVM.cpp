@@ -153,13 +153,8 @@ public:
                 Node* m_node = block->at(nodeIndex);
                 if (m_node->hasKnownFunction()) {
                     int numArgs = m_node->numChildren();
-                    NativeFunction func = m_node->knownFunction()->nativeFunction();
-                    Dl_info info;
-                    if (dladdr((void*)func, &info)) {
-                        LValue callee = getFunctionBySymbol(info.dli_sname);
-                        if (callee && numArgs > maxNumberOfArguments)
-                            maxNumberOfArguments = numArgs;
-                    }
+                    if (numArgs > maxNumberOfArguments)
+                        maxNumberOfArguments = numArgs;
                 }
             }
         }
@@ -357,9 +352,6 @@ private:
             break;
         case Int52Constant:
             compileInt52Constant();
-            break;
-        case WeakJSConstant:
-            compileWeakJSConstant();
             break;
         case PhantomArguments:
             compilePhantomArguments();
@@ -639,6 +631,10 @@ private:
         case Construct:
             compileCallOrConstruct();
             break;
+        case NativeCall:
+        case NativeConstruct:
+            compileNativeCallOrConstruct();
+            break;
         case Jump:
             compileJump();
             break;
@@ -773,22 +769,17 @@ private:
     
     void compileDoubleConstant()
     {
-        setDouble(m_out.constDouble(m_graph.valueOfNumberConstant(m_node)));
+        setDouble(m_out.constDouble(m_node->asNumber()));
     }
     
     void compileInt52Constant()
     {
-        int64_t value = m_graph.valueOfJSConstant(m_node).asMachineInt();
+        int64_t value = m_node->asMachineInt();
         
         setInt52(m_out.constInt64(value << JSValue::int52ShiftAmount));
         setStrictInt52(m_out.constInt64(value));
     }
 
-    void compileWeakJSConstant()
-    {
-        setJSValue(weakPointer(m_node->weakConstant()));
-    }
-    
     void compilePhantomArguments()
     {
         setJSValue(m_out.constInt64(JSValue::encode(JSValue())));
@@ -1685,8 +1676,8 @@ private:
         LValue cell = lowCell(m_node->child1());
         
         ExitKind exitKind;
-        if (m_node->child1()->op() == WeakJSConstant)
-            exitKind = BadWeakConstantCache;
+        if (m_node->child1()->hasConstant())
+            exitKind = BadConstantCache;
         else
             exitKind = BadCache;
         
@@ -1724,7 +1715,7 @@ private:
         
         speculate(
             BadFunction, jsValueValue(cell), m_node->child1().node(),
-            m_out.notEqual(cell, weakPointer(m_node->function())));
+            m_out.notEqual(cell, weakPointer(m_node->function()->value().asCell())));
     }
     
     void compileCheckExecutable()
@@ -3295,8 +3286,8 @@ private:
                 result = m_out.constInt64(JSValue::encode(variant.specificValue()));
             else {
                 LValue propertyBase;
-                if (variant.chain())
-                    propertyBase = weakPointer(variant.chain()->terminalPrototype());
+                if (variant.alternateBase())
+                    propertyBase = weakPointer(variant.alternateBase());
                 else
                     propertyBase = base;
                 if (!isInlineOffset(variant.offset()))
@@ -3505,7 +3496,7 @@ private:
     
     void compileCompareEqConstant()
     {
-        ASSERT(m_graph.valueOfJSConstant(m_node->child2().node()).isNull());
+        ASSERT(m_node->child2()->asJSValue().isNull());
         setBoolean(
             equalNullOrUndefined(
                 m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined));
@@ -3598,7 +3589,7 @@ private:
     
     void compileCompareStrictEqConstant()
     {
-        JSValue constant = m_graph.valueOfJSConstant(m_node->child2().node());
+        JSValue constant = m_node->child2()->asJSValue();
 
         setBoolean(
             m_out.equal(
@@ -3631,15 +3622,65 @@ private:
         setBoolean(m_out.bitNot(boolify(m_node->child1())));
     }
 
+    void compileNativeCallOrConstruct() 
+    {
+        int dummyThisArgument = m_node->op() == NativeCall ? 0 : 1;
+        int numPassedArgs = m_node->numChildren() - 1;
+        int numArgs = numPassedArgs + dummyThisArgument;
+
+        ASSERT(m_node->hasKnownFunction());
+
+        JSFunction* knownFunction = m_node->knownFunction();
+        NativeFunction function = knownFunction->nativeFunction();
+
+        Dl_info info;
+        if (!dladdr((void*)function, &info))
+            ASSERT(false); // if we couldn't find the native function this doesn't bode well.
+
+        LValue callee = getFunctionBySymbol(info.dli_sname);
+
+        bool notInlinable;
+        if ((notInlinable = !callee))
+            callee = m_out.operation(function);
+
+        JSScope* scope = knownFunction->scopeUnchecked();
+        m_out.storePtr(m_callFrame, m_execStorage, m_heaps.CallFrame_callerFrame);
+        m_out.storePtr(constNull(m_out.intPtr), addressFor(m_execStorage, JSStack::CodeBlock));
+        m_out.storePtr(weakPointer(scope), addressFor(m_execStorage, JSStack::ScopeChain));
+        m_out.storePtr(weakPointer(knownFunction), addressFor(m_execStorage, JSStack::Callee));
+
+        m_out.store64(m_out.constInt64(numArgs), addressFor(m_execStorage, JSStack::ArgumentCount));
+
+        if (dummyThisArgument) 
+            m_out.storePtr(getUndef(m_out.int64), addressFor(m_execStorage, JSStack::ThisArgument));
+        
+        for (int i = 0; i < numPassedArgs; ++i) {
+            m_out.storePtr(lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
+                addressFor(m_execStorage, dummyThisArgument ? JSStack::FirstArgument : JSStack::ThisArgument, i * sizeof(Register)));
+        }
+
+        LValue calleeCallFrame = m_out.address(m_execState, m_heaps.CallFrame_callerFrame).value();
+        m_out.storePtr(m_out.ptrToInt(calleeCallFrame, m_out.intPtr), m_out.absolute(&vm().topCallFrame));
+
+        LType typeCalleeArg;
+        getParamTypes(getElementType(typeOf(callee)), &typeCalleeArg);
+
+        LValue argument = notInlinable 
+            ? m_out.ptrToInt(calleeCallFrame, typeCalleeArg) 
+            : m_out.bitCast(calleeCallFrame, typeCalleeArg);
+        LValue call = vmCall(callee, argument);
+
+        if (Options::verboseCompilation())
+            dataLog("Native calling: ", info.dli_sname, "\n");
+
+        setJSValue(call);
+    }
+
     void compileCallOrConstruct()
     {
         int dummyThisArgument = m_node->op() == Call ? 0 : 1;
         int numPassedArgs = m_node->numChildren() - 1;
         int numArgs = numPassedArgs + dummyThisArgument;
-
-        if (m_node->hasKnownFunction()
-            && possiblyCompileInlineableNativeCall(dummyThisArgument, numPassedArgs, numArgs))
-            return;
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(m_node, 0));
 
@@ -4019,50 +4060,6 @@ private:
 #endif
     }
     
-    bool possiblyCompileInlineableNativeCall(int dummyThisArgument, int numPassedArgs, int numArgs)
-    {
-        JSFunction* knownFunction = m_node->knownFunction();
-        NativeFunction function = knownFunction->nativeFunction();
-        Dl_info info;
-        if (dladdr((void*)function, &info)) {
-            LValue callee = getFunctionBySymbol(info.dli_sname);
-            LType typeCallee;
-            if (callee && (typeCallee = typeOf(callee)) && (typeCallee = getElementType(typeCallee))) {
-
-                JSScope* scope = knownFunction->scopeUnchecked();
-                m_out.storePtr(m_callFrame, m_execStorage, m_heaps.CallFrame_callerFrame);
-                m_out.storePtr(constNull(m_out.intPtr), addressFor(m_execStorage, JSStack::CodeBlock));
-                m_out.storePtr(weakPointer(scope), addressFor(m_execStorage, JSStack::ScopeChain));
-                m_out.storePtr(weakPointer(knownFunction), addressFor(m_execStorage, JSStack::Callee));
-
-                m_out.store64(m_out.constInt64(numArgs), addressFor(m_execStorage, JSStack::ArgumentCount));
-
-                if (dummyThisArgument) 
-                    m_out.storePtr(getUndef(m_out.int64), addressFor(m_execStorage, JSStack::ThisArgument));
-                
-                for (int i = 0; i < numPassedArgs; ++i) {
-                    m_out.storePtr(lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
-                        addressFor(m_execStorage, dummyThisArgument ? JSStack::FirstArgument : JSStack::ThisArgument, i * sizeof(Register)));
-                }
-
-                LType typeCalleeArg;
-                getParamTypes(typeCallee, &typeCalleeArg);
-                LValue calleeCallFrame = m_out.address(m_execState, m_heaps.CallFrame_callerFrame).value();
-                m_out.storePtr(m_out.ptrToInt(calleeCallFrame, m_out.intPtr), m_out.absolute(&vm().topCallFrame));
-                
-                LValue call = vmCall(callee, 
-                    m_out.bitCast(calleeCallFrame, typeCalleeArg));
-
-                if (Options::verboseCompilation())
-                    dataLog("Inlining: ", info.dli_sname, "\n");
-
-                setJSValue(call);
-                return true;
-            }
-        }
-        return false;
-    }
-
     LValue getFunctionBySymbol(const CString symbol)
     {
         if (!m_ftlState.symbolTable.contains(symbol)) 
@@ -4194,6 +4191,8 @@ private:
                 case PutById:
                 case Call:
                 case Construct:
+                case NativeCall:
+                case NativeConstruct:
                     return m_out.below(
                         m_callFrame,
                         m_out.loadPtr(
@@ -4999,7 +4998,7 @@ private:
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == Int32Use || edge.useKind() == KnownInt32Use));
         
         if (edge->hasConstant()) {
-            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            JSValue value = edge->asJSValue();
             if (!value.isInt32()) {
                 terminate(Uncountable);
                 return m_out.int32Zero;
@@ -5114,7 +5113,7 @@ private:
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || DFG::isCell(edge.useKind()));
         
         if (edge->op() == JSConstant) {
-            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            JSValue value = edge->asJSValue();
             if (!value.isCell()) {
                 terminate(Uncountable);
                 return m_out.intPtrZero;
@@ -5177,7 +5176,7 @@ private:
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BooleanUse);
         
         if (edge->hasConstant()) {
-            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            JSValue value = edge->asJSValue();
             if (!value.isBoolean()) {
                 terminate(Uncountable);
                 return m_out.booleanFalse;
@@ -5223,8 +5222,8 @@ private:
         DFG_ASSERT(m_graph, m_node, edge.useKind() != Int52RepUse);
         
         if (edge->hasConstant())
-            return m_out.constInt64(JSValue::encode(m_graph.valueOfJSConstant(edge.node())));
-        
+            return m_out.constInt64(JSValue::encode(edge->asJSValue()));
+
         LoweredNodeValue value = m_jsValueValues.get(edge.node());
         if (isValid(value))
             return value.value();
@@ -6202,8 +6201,7 @@ private:
         case JSConstant:
         case Int52Constant:
         case DoubleConstant:
-        case WeakJSConstant:
-            exit.m_values[index] = ExitValue::constant(m_graph.valueOfJSConstant(node));
+            exit.m_values[index] = ExitValue::constant(node->asJSValue());
             return true;
         case PhantomArguments:
             exit.m_values[index] = ExitValue::argumentsObjectThatWasNotCreated();

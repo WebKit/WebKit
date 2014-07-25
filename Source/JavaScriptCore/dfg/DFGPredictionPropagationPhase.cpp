@@ -141,9 +141,8 @@ private:
         bool changed = false;
         
         switch (op) {
-        case JSConstant:
-        case WeakJSConstant: {
-            SpeculatedType type = speculationFromValue(m_graph.valueOfJSConstant(node));
+        case JSConstant: {
+            SpeculatedType type = speculationFromValue(node->asJSValue());
             if (type == SpecInt52AsDouble && enableInt52())
                 type = SpecInt52;
             changed |= setPrediction(type);
@@ -188,6 +187,8 @@ private:
         case MultiGetByOffset:
         case Call:
         case Construct:
+        case NativeCall:
+        case NativeConstruct:
         case GetGlobalVar:
         case GetClosureVar: {
             changed |= setPrediction(node->getHeapPrediction());

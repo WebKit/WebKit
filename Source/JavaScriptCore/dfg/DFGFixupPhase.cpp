@@ -712,38 +712,6 @@ private:
                 fixIntOrBooleanEdge(node->child1());
             else if (node->child1()->shouldSpeculateNumberOrBoolean())
                 fixDoubleOrBooleanEdge(node->child1());
-
-            Node* logicalNot = node->child1().node();
-            if (logicalNot->op() == LogicalNot) {
-                
-                // Make sure that OSR exit can't observe the LogicalNot. If it can,
-                // then we must compute it and cannot peephole around it.
-                bool found = false;
-                bool ok = true;
-                for (unsigned i = m_indexInBlock; i--;) {
-                    Node* candidate = m_block->at(i);
-                    if (candidate == logicalNot) {
-                        found = true;
-                        break;
-                    }
-                    if (candidate->canExit()) {
-                        ok = false;
-                        found = true;
-                        break;
-                    }
-                }
-                ASSERT_UNUSED(found, found);
-                
-                if (ok) {
-                    Edge newChildEdge = logicalNot->child1();
-                    if (newChildEdge->hasBooleanResult()) {
-                        node->children.setChild1(newChildEdge);
-                        
-                        BranchData* data = node->branchData();
-                        std::swap(data->taken, data->notTaken);
-                    }
-                }
-            }
             break;
         }
             
@@ -848,7 +816,8 @@ private:
                     m_indexInBlock, SpecNone, Phantom, node->origin,
                     Edge(node->child1().node(), OtherUse));
                 observeUseKindOnNode<OtherUse>(node->child1().node());
-                node->convertToWeakConstant(m_graph.globalThisObjectFor(node->origin.semantic));
+                m_graph.convertToConstant(
+                    node, m_graph.globalThisObjectFor(node->origin.semantic));
                 break;
             }
             
@@ -1040,8 +1009,8 @@ private:
         
         case PutGlobalVar: {
             Node* globalObjectNode = m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, WeakJSConstant, node->origin, 
-                OpInfo(m_graph.globalObjectFor(node->origin.semantic)));
+                m_indexInBlock, SpecNone, JSConstant, node->origin, 
+                OpInfo(m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic))));
             // FIXME: This probably shouldn't have an unconditional barrier.
             // https://bugs.webkit.org/show_bug.cgi?id=133104
             Node* barrierNode = m_graph.addNode(
@@ -1073,7 +1042,6 @@ private:
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
         case JSConstant:
-        case WeakJSConstant:
         case GetLocal:
         case GetCallee:
         case Flush:
@@ -1088,6 +1056,8 @@ private:
         case AllocationProfileWatchpoint:
         case Call:
         case Construct:
+        case NativeCall:
+        case NativeConstruct:
         case NewObject:
         case NewArrayBuffer:
         case NewRegexp:
@@ -1199,9 +1169,9 @@ private:
             if (!edge)
                 break;
             edge.setUseKind(KnownStringUse);
-            if (!m_graph.isConstant(edge.node()))
+            JSString* string = edge->dynamicCastConstant<JSString*>();
+            if (!string)
                 continue;
-            JSString* string = jsCast<JSString*>(m_graph.valueOfJSConstant(edge.node()).asCell());
             if (string->length())
                 continue;
             
@@ -1666,27 +1636,15 @@ private:
     {
         Node* oldNode = edge.node();
         
-        ASSERT(oldNode->hasConstant());
-        JSValue value = m_graph.valueOfJSConstant(oldNode);
+        JSValue value = oldNode->asJSValue();
         if (value.isInt32())
             return;
         
         value = jsNumber(JSC::toInt32(value.asNumber()));
         ASSERT(value.isInt32());
-        unsigned constantRegister;
-        if (!codeBlock()->findConstant(value, constantRegister)) {
-            constantRegister = codeBlock()->addConstantLazily();
-            initializeLazyWriteBarrierForConstant(
-                m_graph.m_plan.writeBarriers,
-                codeBlock()->constants()[constantRegister],
-                codeBlock(),
-                constantRegister,
-                codeBlock()->ownerExecutable(),
-                value);
-        }
         edge.setNode(m_insertionSet.insertNode(
             m_indexInBlock, SpecInt32, JSConstant, m_currentNode->origin,
-            OpInfo(constantRegister)));
+            OpInfo(m_graph.freeze(value))));
     }
     
     void truncateConstantsIfNecessary(Node* node, AddSpeculationMode mode)
@@ -1789,7 +1747,7 @@ private:
         
         Node* shiftAmount = m_insertionSet.insertNode(
             m_indexInBlock, SpecInt32, JSConstant, node->origin,
-            OpInfo(m_graph.constantRegisterForConstant(jsNumber(logElementSize(type)))));
+            OpInfo(m_graph.freeze(jsNumber(logElementSize(type)))));
         
         // We can use a BitLShift here because typed arrays will never have a byteLength
         // that overflows int32.
@@ -1933,11 +1891,10 @@ private:
             
             addRequiredPhantom(edge.node());
 
-            if (edge->op() == JSConstant && m_graph.isNumberConstant(edge.node())) {
+            if (edge->isNumberConstant()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecBytecodeDouble, DoubleConstant, node->origin,
-                    OpInfo(m_graph.constantRegisterForConstant(
-                        jsDoubleNumber(m_graph.valueOfNumberConstant(edge.node())))));
+                    OpInfo(m_graph.freeze(jsDoubleNumber(edge->asNumber()))));
             } else if (edge->hasInt52Result()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
@@ -1958,10 +1915,10 @@ private:
             
             addRequiredPhantom(edge.node());
 
-            if (edge->op() == JSConstant && m_graph.isMachineIntConstant(edge.node())) {
+            if (edge->isMachineIntConstant()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecMachineInt, Int52Constant, node->origin,
-                    OpInfo(edge->constantNumber()));
+                    OpInfo(edge->constant()));
             } else if (edge->hasDoubleResult()) {
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecMachineInt, Int52Rep, node->origin,

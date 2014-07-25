@@ -62,23 +62,21 @@ public:
     }
     
     Node* insertConstant(
-        size_t index, NodeOrigin origin, JSValue value,
+        size_t index, NodeOrigin origin, FrozenValue* value,
         NodeType op = JSConstant)
     {
-        unsigned constantReg =
-            m_graph.constantRegisterForConstant(value);
         return insertNode(
-            index, speculationFromValue(value), op, origin, OpInfo(constantReg));
+            index, speculationFromValue(value->value()), op, origin, OpInfo(value));
     }
     
     Node* insertConstant(
-        size_t index, CodeOrigin origin, JSValue value, NodeType op = JSConstant)
+        size_t index, CodeOrigin origin, FrozenValue* value, NodeType op = JSConstant)
     {
         return insertConstant(index, NodeOrigin(origin), value, op);
     }
     
     Edge insertConstantForUse(
-        size_t index, NodeOrigin origin, JSValue value, UseKind useKind)
+        size_t index, NodeOrigin origin, FrozenValue* value, UseKind useKind)
     {
         NodeType op;
         if (isDouble(useKind))
@@ -91,7 +89,27 @@ public:
     }
     
     Edge insertConstantForUse(
-        size_t index, CodeOrigin origin, JSValue value, UseKind useKind)
+        size_t index, CodeOrigin origin, FrozenValue* value, UseKind useKind)
+    {
+        return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
+    }
+
+    Node* insertConstant(size_t index, NodeOrigin origin, JSValue value, NodeType op = JSConstant)
+    {
+        return insertConstant(index, origin, m_graph.freeze(value), op);
+    }
+    
+    Node* insertConstant(size_t index, CodeOrigin origin, JSValue value, NodeType op = JSConstant)
+    {
+        return insertConstant(index, origin, m_graph.freeze(value), op);
+    }
+    
+    Edge insertConstantForUse(size_t index, NodeOrigin origin, JSValue value, UseKind useKind)
+    {
+        return insertConstantForUse(index, origin, m_graph.freeze(value), useKind);
+    }
+    
+    Edge insertConstantForUse(size_t index, CodeOrigin origin, JSValue value, UseKind useKind)
     {
         return insertConstantForUse(index, NodeOrigin(origin), value, useKind);
     }

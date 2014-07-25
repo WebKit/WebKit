@@ -271,12 +271,12 @@ public:
     void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
     {
         // OSR entry is not allowed into blocks deemed unreachable by control flow analysis.
-        if (!basicBlock.cfaHasVisited)
+        if (!basicBlock.intersectionOfCFAHasVisited)
             return;
         
         OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
         
-        entry->m_expectedValues = basicBlock.valuesAtHead;
+        entry->m_expectedValues = basicBlock.intersectionOfPastValuesAtHead;
         
         // Fix the expected values: in our protocol, a dead variable will have an expected
         // value of (None, []). But the old JIT may stash some values there. So we really

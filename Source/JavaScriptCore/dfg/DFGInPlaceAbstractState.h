@@ -128,6 +128,12 @@ public:
     void setStructureClobberState(StructureClobberState value) { m_structureClobberState = value; }
     void setIsValid(bool isValid) { m_isValid = isValid; }
     void setBranchDirection(BranchDirection branchDirection) { m_branchDirection = branchDirection; }
+    
+    // This method is evil - it causes a huge maintenance headache and there is a gross amount of
+    // code devoted to it. It would be much nicer to just always run the constant folder on each
+    // block. But, the last time we did it, it was a 1% SunSpider regression:
+    // https://bugs.webkit.org/show_bug.cgi?id=133947
+    // So, we should probably keep this method.
     void setFoundConstants(bool foundConstants) { m_foundConstants = foundConstants; }
 
 private:

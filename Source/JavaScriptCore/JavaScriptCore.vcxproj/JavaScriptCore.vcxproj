@@ -321,6 +321,7 @@
     <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
     <ClCompile Include="..\bytecode\CodeType.cpp" />
+    <ClCompile Include="..\bytecode\ConstantStructureCheck.cpp" />
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
     <ClCompile Include="..\bytecode\DFGExitProfile.cpp" />
     <ClCompile Include="..\bytecode\ExecutionCounter.cpp" />
@@ -382,7 +383,6 @@
     <ClCompile Include="..\dfg\DFGCSEPhase.cpp" />
     <ClCompile Include="..\dfg\DFGDCEPhase.cpp" />
     <ClCompile Include="..\dfg\DFGDesiredIdentifiers.cpp" />
-    <ClCompile Include="..\dfg\DFGDesiredStructureChains.cpp" />
     <ClCompile Include="..\dfg\DFGDesiredTransitions.cpp" />
     <ClCompile Include="..\dfg\DFGDesiredWatchpoints.cpp" />
     <ClCompile Include="..\dfg\DFGDesiredWeakReferences.cpp" />
@@ -397,6 +397,7 @@
     <ClCompile Include="..\dfg\DFGFixupPhase.cpp" />
     <ClCompile Include="..\dfg\DFGFlushedAt.cpp" />
     <ClCompile Include="..\dfg\DFGFlushFormat.cpp" />
+    <ClCompile Include="..\dfg\DFGFrozenValue.cpp" />
     <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp" />
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
@@ -412,6 +413,7 @@
     <ClCompile Include="..\dfg\DFGLivenessAnalysisPhase.cpp" />
     <ClCompile Include="..\dfg\DFGLongLivedState.cpp" />
     <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGMayExit.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
     <ClCompile Include="..\dfg\DFGNaturalLoops.cpp" />
     <ClCompile Include="..\dfg\DFGNode.cpp" />
@@ -455,6 +457,7 @@
     <ClCompile Include="..\dfg\DFGUseKind.cpp" />
     <ClCompile Include="..\dfg\DFGValidate.cpp" />
     <ClCompile Include="..\dfg\DFGValueSource.cpp" />
+    <ClCompile Include="..\dfg\DFGValueStrength.cpp" />
     <ClCompile Include="..\dfg\DFGVariableAccessData.cpp" />
     <ClCompile Include="..\dfg\DFGVariableAccessDataDump.cpp" />
     <ClCompile Include="..\dfg\DFGVariableEvent.cpp" />
@@ -901,6 +904,7 @@
     <ClInclude Include="..\bytecode\CodeOrigin.h" />
     <ClInclude Include="..\bytecode\CodeType.h" />
     <ClInclude Include="..\bytecode\Comment.h" />
+    <ClInclude Include="..\bytecode\ConstantStructureCheck.h" />
     <ClInclude Include="..\bytecode\DataFormat.h" />
     <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
     <ClInclude Include="..\bytecode\DFGExitProfile.h" />
@@ -988,7 +992,6 @@
     <ClInclude Include="..\dfg\DFGCSEPhase.h" />
     <ClInclude Include="..\dfg\DFGDCEPhase.h" />
     <ClInclude Include="..\dfg\DFGDesiredIdentifiers.h" />
-    <ClInclude Include="..\dfg\DFGDesiredStructureChains.h" />
     <ClInclude Include="..\dfg\DFGDesiredTransitions.h" />
     <ClInclude Include="..\dfg\DFGDesiredWatchpoints.h" />
     <ClInclude Include="..\dfg\DFGDesiredWeakReferences.h" />
@@ -1008,6 +1011,7 @@
     <ClInclude Include="..\dfg\DFGFlushedAt.h" />
     <ClInclude Include="..\dfg\DFGFlushFormat.h" />
     <ClInclude Include="..\dfg\DFGFPRInfo.h" />
+    <ClInclude Include="..\dfg\DFGFrozenValue.h" />
     <ClInclude Include="..\dfg\DFGFunctionWhitelist.h" />
     <ClInclude Include="..\dfg\DFGGenerationInfo.h" />
     <ClInclude Include="..\dfg\DFGGPRInfo.h" />
@@ -1026,6 +1030,7 @@
     <ClInclude Include="..\dfg\DFGLivenessAnalysisPhase.h" />
     <ClInclude Include="..\dfg\DFGLongLivedState.h" />
     <ClInclude Include="..\dfg\DFGLoopPreHeaderCreationPhase.h" />
+    <ClInclude Include="..\dfg\DFGMayExit.h" />
     <ClInclude Include="..\dfg\DFGMergeMode.h" />
     <ClInclude Include="..\dfg\DFGMinifiedGraph.h" />
     <ClInclude Include="..\dfg\DFGMinifiedID.h" />
@@ -1083,6 +1088,7 @@
     <ClInclude Include="..\dfg\DFGValidate.h" />
     <ClInclude Include="..\dfg\DFGValueRecoveryOverride.h" />
     <ClInclude Include="..\dfg\DFGValueSource.h" />
+    <ClInclude Include="..\dfg\DFGValueStrength.h" />
     <ClInclude Include="..\dfg\DFGVariableAccessData.h" />
     <ClInclude Include="..\dfg\DFGVariableAccessDataDump.h" />
     <ClInclude Include="..\dfg\DFGVariableEvent.h" />

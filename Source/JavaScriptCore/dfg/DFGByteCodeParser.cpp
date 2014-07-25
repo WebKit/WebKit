@@ -132,18 +132,16 @@ public:
         , m_graph(graph)
         , m_currentBlock(0)
         , m_currentIndex(0)
-        , m_constantUndefined(UINT_MAX)
-        , m_constantNull(UINT_MAX)
-        , m_constantNaN(UINT_MAX)
-        , m_constant1(UINT_MAX)
-        , m_constants(m_codeBlock->numberOfConstantRegisters())
+        , m_constantUndefined(graph.freeze(jsUndefined()))
+        , m_constantNull(graph.freeze(jsNull()))
+        , m_constantNaN(graph.freeze(jsNumber(PNaN)))
+        , m_constantOne(graph.freeze(jsNumber(1)))
         , m_numArguments(m_codeBlock->numParameters())
         , m_numLocals(m_codeBlock->m_numCalleeRegisters)
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
         , m_inlineStackTop(0)
         , m_haveBuiltOperandMaps(false)
-        , m_emptyJSValueIndex(UINT_MAX)
         , m_currentInstruction(0)
     {
         ASSERT(m_profiledBlock);
@@ -194,7 +192,7 @@ private:
     void handlePutById(
         Node* base, unsigned identifierNumber, Node* value, const PutByIdStatus&,
         bool isDirect);
-    Node* emitPrototypeChecks(Structure*, IntendedStructureChain*);
+    void emitChecks(const ConstantStructureCheckVector&);
 
     Node* getScope(bool skipTop, unsigned skipCount);
     
@@ -217,12 +215,7 @@ private:
     // Get/Set the operands/result of a bytecode instruction.
     Node* getDirect(VirtualRegister operand)
     {
-        // Is this a constant?
-        if (operand.isConstant()) {
-            unsigned constant = operand.toConstantIndex();
-            ASSERT(constant < m_constants.size());
-            return getJSConstant(constant);
-        }
+        ASSERT(!operand.isConstant());
 
         // Is this an argument?
         if (operand.isArgument())
@@ -234,13 +227,30 @@ private:
 
     Node* get(VirtualRegister operand)
     {
+        if (operand.isConstant()) {
+            unsigned constantIndex = operand.toConstantIndex();
+            unsigned oldSize = m_constants.size();
+            if (constantIndex >= oldSize || !m_constants[constantIndex]) {
+                JSValue value = m_inlineStackTop->m_codeBlock->getConstant(operand.offset());
+                if (constantIndex >= oldSize) {
+                    m_constants.grow(constantIndex + 1);
+                    for (unsigned i = oldSize; i < m_constants.size(); ++i)
+                        m_constants[i] = nullptr;
+                }
+                m_constants[constantIndex] =
+                    addToGraph(JSConstant, OpInfo(m_graph.freezeStrong(value)));
+            }
+            ASSERT(m_constants[constantIndex]);
+            return m_constants[constantIndex];
+        }
+        
         if (inlineCallFrame()) {
             if (!inlineCallFrame()->isClosureCall) {
                 JSFunction* callee = inlineCallFrame()->calleeConstant();
                 if (operand.offset() == JSStack::Callee)
-                    return cellConstant(callee);
+                    return weakJSConstant(callee);
                 if (operand.offset() == JSStack::ScopeChain)
-                    return cellConstant(callee->scope());
+                    return weakJSConstant(callee->scope());
             }
         } else if (operand.offset() == JSStack::Callee)
             return addToGraph(GetCallee);
@@ -309,14 +319,7 @@ private:
                 if (JSValue value = set->inferredValue()) {
                     addToGraph(FunctionReentryWatchpoint, OpInfo(m_codeBlock->symbolTable()));
                     addToGraph(VariableWatchpoint, OpInfo(set));
-                    // Note: this is very special from an OSR exit standpoint. We wouldn't be
-                    // able to do this for most locals, but it works here because we're dealing
-                    // with a flushed local. For most locals we would need to issue a GetLocal
-                    // here and ensure that we have uses in DFG IR wherever there would have
-                    // been uses in bytecode. Clearly this optimization does not do this. But
-                    // that's fine, because we don't need to track liveness for captured
-                    // locals, and this optimization only kicks in for captured locals.
-                    return inferredConstant(value);
+                    return weakJSConstant(value);
                 }
             }
         }
@@ -367,8 +370,7 @@ private:
 
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         variableAccessData->mergeStructureCheckHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCacheWatchpoint));
+            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
@@ -424,8 +426,7 @@ private:
             variableAccessData->mergeShouldNeverUnbox(true);
         
         variableAccessData->mergeStructureCheckHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCacheWatchpoint));
+            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
@@ -466,18 +467,6 @@ private:
         return findArgumentPositionForLocal(operand);
     }
 
-    void addConstant(JSValue value)
-    {
-        unsigned constantIndex = m_codeBlock->addConstantLazily();
-        initializeLazyWriteBarrierForConstant(
-            m_graph.m_plan.writeBarriers,
-            m_codeBlock->constants()[constantIndex],
-            m_codeBlock,
-            constantIndex,
-            m_codeBlock->ownerExecutable(), 
-            value);
-    }
-    
     void flush(VirtualRegister operand)
     {
         flushDirect(m_inlineStackTop->remapOperand(operand));
@@ -554,32 +543,15 @@ private:
         flushForTerminal();
     }
 
-    // NOTE: Only use this to construct constants that arise from non-speculative
-    // constant folding. I.e. creating constants using this if we had constant
-    // field inference would be a bad idea, since the bytecode parser's folding
-    // doesn't handle liveness preservation.
-    Node* getJSConstantForValue(JSValue constantValue)
+    // Assumes that the constant should be strongly marked.
+    Node* jsConstant(JSValue constantValue)
     {
-        unsigned constantIndex;
-        if (!m_codeBlock->findConstant(constantValue, constantIndex)) {
-            addConstant(constantValue);
-            m_constants.append(ConstantRecord());
-        }
-        
-        ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
-        
-        return getJSConstant(constantIndex);
+        return addToGraph(JSConstant, OpInfo(m_graph.freezeStrong(constantValue)));
     }
 
-    Node* getJSConstant(unsigned constant)
+    Node* weakJSConstant(JSValue constantValue)
     {
-        Node* node = m_constants[constant].asJSValue;
-        if (node)
-            return node;
-
-        Node* result = addToGraph(JSConstant, OpInfo(constant));
-        m_constants[constant].asJSValue = result;
-        return result;
+        return addToGraph(JSConstant, OpInfo(m_graph.freeze(constantValue)));
     }
 
     // Helper functions to get/set the this value.
@@ -593,149 +565,6 @@ private:
         set(m_inlineStackTop->m_codeBlock->thisRegister(), value);
     }
 
-    // Convenience methods for checking nodes for constants.
-    bool isJSConstant(Node* node)
-    {
-        return node->op() == JSConstant;
-    }
-    bool isInt32Constant(Node* node)
-    {
-        return isJSConstant(node) && valueOfJSConstant(node).isInt32();
-    }
-    // Convenience methods for getting constant values.
-    JSValue valueOfJSConstant(Node* node)
-    {
-        ASSERT(isJSConstant(node));
-        return m_codeBlock->getConstant(FirstConstantRegisterIndex + node->constantNumber());
-    }
-    int32_t valueOfInt32Constant(Node* node)
-    {
-        ASSERT(isInt32Constant(node));
-        return valueOfJSConstant(node).asInt32();
-    }
-    
-    // This method returns a JSConstant with the value 'undefined'.
-    Node* constantUndefined()
-    {
-        // Has m_constantUndefined been set up yet?
-        if (m_constantUndefined == UINT_MAX) {
-            // Search the constant pool for undefined, if we find it, we can just reuse this!
-            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
-            for (m_constantUndefined = 0; m_constantUndefined < numberOfConstants; ++m_constantUndefined) {
-                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantUndefined);
-                if (testMe.isUndefined())
-                    return getJSConstant(m_constantUndefined);
-            }
-
-            // Add undefined to the CodeBlock's constants, and add a corresponding slot in m_constants.
-            ASSERT(m_constants.size() == numberOfConstants);
-            addConstant(jsUndefined());
-            m_constants.append(ConstantRecord());
-            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
-        }
-
-        // m_constantUndefined must refer to an entry in the CodeBlock's constant pool that has the value 'undefined'.
-        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantUndefined).isUndefined());
-        return getJSConstant(m_constantUndefined);
-    }
-
-    // This method returns a JSConstant with the value 'null'.
-    Node* constantNull()
-    {
-        // Has m_constantNull been set up yet?
-        if (m_constantNull == UINT_MAX) {
-            // Search the constant pool for null, if we find it, we can just reuse this!
-            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
-            for (m_constantNull = 0; m_constantNull < numberOfConstants; ++m_constantNull) {
-                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNull);
-                if (testMe.isNull())
-                    return getJSConstant(m_constantNull);
-            }
-
-            // Add null to the CodeBlock's constants, and add a corresponding slot in m_constants.
-            ASSERT(m_constants.size() == numberOfConstants);
-            addConstant(jsNull());
-            m_constants.append(ConstantRecord());
-            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
-        }
-
-        // m_constantNull must refer to an entry in the CodeBlock's constant pool that has the value 'null'.
-        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNull).isNull());
-        return getJSConstant(m_constantNull);
-    }
-
-    // This method returns a DoubleConstant with the value 1.
-    Node* one()
-    {
-        // Has m_constant1 been set up yet?
-        if (m_constant1 == UINT_MAX) {
-            // Search the constant pool for the value 1, if we find it, we can just reuse this!
-            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
-            for (m_constant1 = 0; m_constant1 < numberOfConstants; ++m_constant1) {
-                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1);
-                if (testMe.isInt32() && testMe.asInt32() == 1)
-                    return getJSConstant(m_constant1);
-            }
-
-            // Add the value 1 to the CodeBlock's constants, and add a corresponding slot in m_constants.
-            ASSERT(m_constants.size() == numberOfConstants);
-            addConstant(jsNumber(1));
-            m_constants.append(ConstantRecord());
-            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
-        }
-
-        // m_constant1 must refer to an entry in the CodeBlock's constant pool that has the integer value 1.
-        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).isInt32());
-        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).asInt32() == 1);
-        return getJSConstant(m_constant1);
-    }
-    
-    // This method returns a DoubleConstant with the value NaN.
-    Node* constantNaN()
-    {
-        JSValue nan = jsNaN();
-        
-        // Has m_constantNaN been set up yet?
-        if (m_constantNaN == UINT_MAX) {
-            // Search the constant pool for the value NaN, if we find it, we can just reuse this!
-            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
-            for (m_constantNaN = 0; m_constantNaN < numberOfConstants; ++m_constantNaN) {
-                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN);
-                if (JSValue::encode(testMe) == JSValue::encode(nan))
-                    return getJSConstant(m_constantNaN);
-            }
-
-            // Add the value nan to the CodeBlock's constants, and add a corresponding slot in m_constants.
-            ASSERT(m_constants.size() == numberOfConstants);
-            addConstant(nan);
-            m_constants.append(ConstantRecord());
-            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
-        }
-
-        // m_constantNaN must refer to an entry in the CodeBlock's constant pool that has the value nan.
-        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).isDouble());
-        ASSERT(std::isnan(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).asDouble()));
-        return getJSConstant(m_constantNaN);
-    }
-    
-    Node* cellConstant(JSCell* cell)
-    {
-        HashMap<JSCell*, Node*>::AddResult result = m_cellConstantNodes.add(cell, nullptr);
-        if (result.isNewEntry) {
-            ASSERT(!Heap::isZombified(cell));
-            result.iterator->value = addToGraph(WeakJSConstant, OpInfo(cell));
-        }
-        
-        return result.iterator->value;
-    }
-    
-    Node* inferredConstant(JSValue value)
-    {
-        if (value.isCell())
-            return cellConstant(value.asCell());
-        return getJSConstantForValue(value);
-    }
-    
     InlineCallFrame* inlineCallFrame()
     {
         return m_inlineStackTop->m_inlineCallFrame;
@@ -820,7 +649,7 @@ private:
         if (parameterSlots > m_parameterSlots)
             m_parameterSlots = parameterSlots;
 
-        int dummyThisArgument = op == Call ? 0 : 1;
+        int dummyThisArgument = op == Call || op == NativeCall ? 0 : 1;
         for (int i = 0 + dummyThisArgument; i < argCount; ++i)
             addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
 
@@ -831,16 +660,11 @@ private:
     
     Node* cellConstantWithStructureCheck(JSCell* object, Structure* structure)
     {
-        Node* objectNode = cellConstant(object);
+        Node* objectNode = weakJSConstant(object);
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), objectNode);
         return objectNode;
     }
     
-    Node* cellConstantWithStructureCheck(JSCell* object)
-    {
-        return cellConstantWithStructureCheck(object, object->structure());
-    }
-
     SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
     {
         ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
@@ -971,22 +795,6 @@ private:
         return node;
     }
     
-    bool structureChainIsStillValid(bool direct, Structure* previousStructure, StructureChain* chain)
-    {
-        if (direct)
-            return true;
-        
-        if (!previousStructure->storedPrototype().isNull() && previousStructure->storedPrototype().asCell()->structure() != chain->head()->get())
-            return false;
-        
-        for (WriteBarrier<Structure>* it = chain->head(); *it; ++it) {
-            if (!(*it)->storedPrototype().isNull() && (*it)->storedPrototype().asCell()->structure() != it[1].get())
-                return false;
-        }
-        
-        return true;
-    }
-    
     void buildOperandMapsIfNecessary();
     
     VM* m_vm;
@@ -999,36 +807,11 @@ private:
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
 
-    // We use these values during code generation, and to avoid the need for
-    // special handling we make sure they are available as constants in the
-    // CodeBlock's constant pool. These variables are initialized to
-    // UINT_MAX, and lazily updated to hold an index into the CodeBlock's
-    // constant pool, as necessary.
-    unsigned m_constantUndefined;
-    unsigned m_constantNull;
-    unsigned m_constantNaN;
-    unsigned m_constant1;
-    HashMap<JSCell*, unsigned> m_cellConstants;
-    HashMap<JSCell*, Node*> m_cellConstantNodes;
-
-    // A constant in the constant pool may be represented by more than one
-    // node in the graph, depending on the context in which it is being used.
-    struct ConstantRecord {
-        ConstantRecord()
-            : asInt32(0)
-            , asNumeric(0)
-            , asJSValue(0)
-        {
-        }
-
-        Node* asInt32;
-        Node* asNumeric;
-        Node* asJSValue;
-    };
-
-    // Track the index of the node whose result is the current value for every
-    // register value in the bytecode - argument, local, and temporary.
-    Vector<ConstantRecord, 16> m_constants;
+    FrozenValue* m_constantUndefined;
+    FrozenValue* m_constantNull;
+    FrozenValue* m_constantNaN;
+    FrozenValue* m_constantOne;
+    Vector<Node*, 16> m_constants;
 
     // The number of arguments passed to the function.
     unsigned m_numArguments;
@@ -1063,7 +846,6 @@ private:
         // (the machine code block, which is the transitive, though not necessarily
         // direct, caller).
         Vector<unsigned> m_identifierRemap;
-        Vector<unsigned> m_constantRemap;
         Vector<unsigned> m_constantBufferRemap;
         Vector<unsigned> m_switchRemap;
         
@@ -1134,11 +916,7 @@ private:
             if (!m_inlineCallFrame)
                 return operand;
             
-            if (operand.isConstant()) {
-                VirtualRegister result = VirtualRegister(m_constantRemap[operand.toConstantIndex()]);
-                ASSERT(result.isConstant());
-                return result;
-            }
+            ASSERT(!operand.isConstant());
 
             return VirtualRegister(operand.offset() + m_inlineCallFrame->stackOffset);
         }
@@ -1172,11 +950,6 @@ private:
     bool m_haveBuiltOperandMaps;
     // Mapping between identifier names and numbers.
     BorrowedIdentifierMap m_identifierMap;
-    // Mapping between values and constant numbers.
-    JSValueMap m_jsValueMap;
-    // Index of the empty value, or UINT_MAX if there is no mapping. This is a horrible
-    // work-around for the fact that JSValueMap can't handle "empty" values.
-    unsigned m_emptyJSValueIndex;
     
     CodeBlock* m_dfgCodeBlock;
     CallLinkStatus::ContextMap m_callContextMap;
@@ -1224,10 +997,8 @@ void ByteCodeParser::handleCall(
     ASSERT(registerOffset <= 0);
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
     
-    if (m_graph.isConstant(callTarget)) {
-        callLinkStatus = CallLinkStatus(
-            m_graph.valueOfJSConstant(callTarget)).setIsProved(true);
-    }
+    if (callTarget->hasConstant())
+        callLinkStatus = CallLinkStatus(callTarget->asJSValue()).setIsProved(true);
     
     if (!callLinkStatus.canOptimize()) {
         // Oddly, this conflates calls that haven't executed with calls that behaved sufficiently polymorphically
@@ -1273,13 +1044,24 @@ void ByteCodeParser::handleCall(
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
         return;
-    } else if (JSFunction* function = callLinkStatus.function())
-        if (function->isHostFunction()) {
+    } else if (isFTL(m_graph.m_plan.mode)) {
+        JSFunction* function = callLinkStatus.function();
+        if (function && function->isHostFunction()) {
             emitFunctionChecks(callLinkStatus, callTarget, registerOffset, specializationKind);
             knownFunction = function;
+
+            if (op == Call) 
+                op = NativeCall;
+            else {
+                ASSERT(op == Construct);
+                op = NativeConstruct;
+            }
         }
-    
-    addCall(result, op, callTarget, argumentCountIncludingThis, registerOffset)->giveKnownFunction(knownFunction);
+    }
+    Node* call = addCall(result, op, callTarget, argumentCountIncludingThis, registerOffset);
+
+    if (knownFunction) 
+        call->giveKnownFunction(knownFunction);
 }
 
 void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, Node* callTarget, int registerOffset, CodeSpecializationKind kind)
@@ -1298,7 +1080,7 @@ void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, No
     ASSERT(callLinkStatus.canOptimize());
     
     if (JSFunction* function = callLinkStatus.function())
-        addToGraph(CheckFunction, OpInfo(function), callTarget, thisArgument);
+        addToGraph(CheckFunction, OpInfo(m_graph.freeze(function)), callTarget, thisArgument);
     else {
         ASSERT(callLinkStatus.structure());
         ASSERT(callLinkStatus.executable());
@@ -1455,6 +1237,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     m_graph.m_inlineVariableData.append(inlineVariableData);
     
     parseCodeBlock();
+    prepareToParseBlock(); // Reset our state now that we're back to the outer code.
     
     m_currentIndex = oldIndex;
     
@@ -1544,7 +1327,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
 bool ByteCodeParser::handleMinMax(int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
 {
     if (argumentCountIncludingThis == 1) { // Math.min()
-        set(VirtualRegister(resultOperand), constantNaN());
+        set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
         return true;
     }
      
@@ -1569,7 +1352,7 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
     switch (intrinsic) {
     case AbsIntrinsic: {
         if (argumentCountIncludingThis == 1) { // Math.abs()
-            set(VirtualRegister(resultOperand), constantNaN());
+            set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
             return true;
         }
 
@@ -1593,7 +1376,7 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
     case CosIntrinsic:
     case SinIntrinsic: {
         if (argumentCountIncludingThis == 1) {
-            set(VirtualRegister(resultOperand), constantNaN());
+            set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
             return true;
         }
         
@@ -1740,19 +1523,19 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
     }
         
     case DFGTrueIntrinsic: {
-        set(VirtualRegister(resultOperand), getJSConstantForValue(jsBoolean(true)));
+        set(VirtualRegister(resultOperand), jsConstant(jsBoolean(true)));
         return true;
     }
         
     case OSRExitIntrinsic: {
         addToGraph(ForceOSRExit);
-        set(VirtualRegister(resultOperand), constantUndefined());
+        set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantUndefined)));
         return true;
     }
         
     case IsFinalTierIntrinsic: {
         set(VirtualRegister(resultOperand),
-            getJSConstantForValue(jsBoolean(Options::useFTLJIT() ? isFTL(m_graph.m_plan.mode) : true)));
+            jsConstant(jsBoolean(Options::useFTLJIT() ? isFTL(m_graph.m_plan.mode) : true)));
         return true;
     }
         
@@ -1762,7 +1545,7 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
             if (node->hasHeapPrediction())
                 node->setHeapPrediction(SpecInt32);
         }
-        set(VirtualRegister(resultOperand), constantUndefined());
+        set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantUndefined)));
         return true;
     }
         
@@ -1868,7 +1651,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         Node* result;
         
         if (argumentCountIncludingThis <= 1)
-            result = cellConstant(m_vm->smallStrings.emptyString());
+            result = jsConstant(m_vm->smallStrings.emptyString());
         else
             result = addToGraph(ToString, get(virtualRegisterForArgument(1, registerOffset)));
         
@@ -1924,20 +1707,10 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
     return result;
 }
 
-Node* ByteCodeParser::emitPrototypeChecks(
-    Structure* structure, IntendedStructureChain* chain)
+void ByteCodeParser::emitChecks(const ConstantStructureCheckVector& vector)
 {
-    ASSERT(structure);
-    Node* base = 0;
-    m_graph.chains().addLazily(chain);
-    Structure* currentStructure = structure;
-    JSObject* currentObject = 0;
-    for (unsigned i = 0; i < chain->size(); ++i) {
-        currentObject = asObject(currentStructure->prototypeForLookup(m_inlineStackTop->m_codeBlock));
-        currentStructure = chain->at(i);
-        base = cellConstantWithStructureCheck(currentObject, currentStructure);
-    }
-    return base;
+    for (unsigned i = 0; i < vector.size(); ++i)
+        cellConstantWithStructureCheck(vector[i].constant(), vector[i].structure());
 }
 
 void ByteCodeParser::handleGetById(
@@ -1966,13 +1739,8 @@ void ByteCodeParser::handleGetById(
         // 1) Emit prototype structure checks for all chains. This could sort of maybe not be
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
-        for (unsigned variantIndex = getByIdStatus.numVariants(); variantIndex--;) {
-            if (getByIdStatus[variantIndex].chain()) {
-                emitPrototypeChecks(
-                    getByIdStatus[variantIndex].structureSet().onlyStructure(),
-                    getByIdStatus[variantIndex].chain());
-            }
-        }
+        for (unsigned variantIndex = getByIdStatus.numVariants(); variantIndex--;)
+            emitChecks(getByIdStatus[variantIndex].constantChecks());
         
         // 2) Emit a MultiGetByOffset
         MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
@@ -1993,10 +1761,10 @@ void ByteCodeParser::handleGetById(
                 
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
     
-    if (variant.chain()) {
-        base = emitPrototypeChecks(
-            variant.structureSet().onlyStructure(), variant.chain());
-    }
+    emitChecks(variant.constantChecks());
+
+    if (variant.alternateBase())
+        base = weakJSConstant(variant.alternateBase());
     
     // Unless we want bugs like https://bugs.webkit.org/show_bug.cgi?id=88783, we need to
     // ensure that the base of the original get_by_id is kept alive until we're done with
@@ -2009,7 +1777,7 @@ void ByteCodeParser::handleGetById(
     
     Node* loadedValue;
     if (variant.specificValue())
-        loadedValue = cellConstant(variant.specificValue().asCell());
+        loadedValue = weakJSConstant(variant.specificValue());
     else {
         loadedValue = handleGetByOffset(
             prediction, base, identifierNumber, variant.offset(),
@@ -2093,11 +1861,7 @@ void ByteCodeParser::handlePutById(
             for (unsigned variantIndex = putByIdStatus.numVariants(); variantIndex--;) {
                 if (putByIdStatus[variantIndex].kind() != PutByIdVariant::Transition)
                     continue;
-                if (!putByIdStatus[variantIndex].structureChain())
-                    continue;
-                emitPrototypeChecks(
-                    putByIdStatus[variantIndex].oldStructure(),
-                    putByIdStatus[variantIndex].structureChain());
+                emitChecks(putByIdStatus[variantIndex].constantChecks());
             }
         }
         
@@ -2124,16 +1888,8 @@ void ByteCodeParser::handlePutById(
         return;
     }
 
-    if (variant.structureChain() && !variant.structureChain()->isStillValid()) {
-        emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
-        return;
-    }
-    
-    m_graph.chains().addLazily(variant.structureChain());
-                
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
-    if (!isDirect)
-        emitPrototypeChecks(variant.oldStructure(), variant.structureChain());
+    emitChecks(variant.constantChecks());
 
     ASSERT(variant.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
     
@@ -2183,9 +1939,7 @@ void ByteCodeParser::handlePutById(
 
 void ByteCodeParser::prepareToParseBlock()
 {
-    for (unsigned i = 0; i < m_constants.size(); ++i)
-        m_constants[i] = ConstantRecord();
-    m_cellConstantNodes.clear();
+    m_constants.resize(0);
 }
 
 Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
@@ -2217,8 +1971,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             VariableAccessData* variable = newVariableAccessData(
                 virtualRegisterForArgument(argument), m_codeBlock->isCaptured(virtualRegisterForArgument(argument)));
             variable->mergeStructureCheckHoistingFailed(
-                m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCacheWatchpoint));
+                m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
             variable->mergeCheckArrayHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
             
@@ -2264,13 +2017,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         // === Function entry opcodes ===
 
-        case op_enter:
+        case op_enter: {
+            Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
-                set(virtualRegisterForLocal(i), constantUndefined(), ImmediateNakedSet);
+                set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
             if (m_inlineStackTop->m_codeBlock->specializationKind() == CodeForConstruct)
-                set(virtualRegisterForArgument(0), constantUndefined(), ImmediateNakedSet);
+                set(virtualRegisterForArgument(0), undefined, ImmediateNakedSet);
             NEXT_OPCODE(op_enter);
+        }
             
         case op_touch_entry:
             if (m_inlineStackTop->m_codeBlock->symbolTable()->m_functionEnteredOnce.isStillValid())
@@ -2285,7 +2040,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
                     || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
                     || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
-                    || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCacheWatchpoint)
                     || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                     setThis(addToGraph(ToThis, op1));
                 } else {
@@ -2302,13 +2056,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int calleeOperand = currentInstruction[2].u.operand;
             Node* callee = get(VirtualRegister(calleeOperand));
             bool alreadyEmitted = false;
-            if (callee->op() == WeakJSConstant) {
-                JSCell* cell = callee->weakConstant();
-                ASSERT(cell->inherits(JSFunction::info()));
-                
-                JSFunction* function = jsCast<JSFunction*>(cell);
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>()) {
                 if (Structure* structure = function->allocationStructure()) {
-                    addToGraph(AllocationProfileWatchpoint, OpInfo(function));
+                    addToGraph(AllocationProfileWatchpoint, OpInfo(m_graph.freeze(function)));
                     // The callee is still live up to this point.
                     addToGraph(Phantom, callee);
                     set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(structure)));
@@ -2380,10 +2130,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadFunction)) {
                 set(VirtualRegister(currentInstruction[1].u.operand), get(VirtualRegister(JSStack::Callee)));
             } else {
+                FrozenValue* frozen = m_graph.freeze(cachedFunction);
                 ASSERT(cachedFunction->inherits(JSFunction::info()));
                 Node* actualCallee = get(VirtualRegister(JSStack::Callee));
-                addToGraph(CheckFunction, OpInfo(cachedFunction), actualCallee);
-                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(WeakJSConstant, OpInfo(cachedFunction)));
+                addToGraph(CheckFunction, OpInfo(frozen), actualCallee);
+                set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(JSConstant, OpInfo(frozen)));
             }
             NEXT_OPCODE(op_get_callee);
         }
@@ -2447,7 +2198,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int srcDst = currentInstruction[1].u.operand;
             VirtualRegister srcDstVirtualRegister = VirtualRegister(srcDst);
             Node* op = get(srcDstVirtualRegister);
-            set(srcDstVirtualRegister, makeSafe(addToGraph(ArithAdd, op, one())));
+            set(srcDstVirtualRegister, makeSafe(addToGraph(ArithAdd, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
             NEXT_OPCODE(op_inc);
         }
 
@@ -2455,7 +2206,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int srcDst = currentInstruction[1].u.operand;
             VirtualRegister srcDstVirtualRegister = VirtualRegister(srcDst);
             Node* op = get(srcDstVirtualRegister);
-            set(srcDstVirtualRegister, makeSafe(addToGraph(ArithSub, op, one())));
+            set(srcDstVirtualRegister, makeSafe(addToGraph(ArithSub, op, addToGraph(JSConstant, OpInfo(m_constantOne)))));
             NEXT_OPCODE(op_dec);
         }
 
@@ -2672,7 +2423,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_eq_null: {
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CompareEqConstant, value, constantNull()));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CompareEqConstant, value, addToGraph(JSConstant, OpInfo(m_constantNull))));
             NEXT_OPCODE(op_eq_null);
         }
 
@@ -2692,7 +2443,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_neq_null: {
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(LogicalNot, addToGraph(CompareEqConstant, value, constantNull())));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(LogicalNot, addToGraph(CompareEqConstant, value, addToGraph(JSConstant, OpInfo(m_constantNull)))));
             NEXT_OPCODE(op_neq_null);
         }
 
@@ -2817,7 +2568,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_jeq_null: {
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* value = get(VirtualRegister(currentInstruction[1].u.operand));
-            Node* condition = addToGraph(CompareEqConstant, value, constantNull());
+            Node* condition = addToGraph(CompareEqConstant, value, addToGraph(JSConstant, OpInfo(m_constantNull)));
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jeq_null))), condition);
             LAST_OPCODE(op_jeq_null);
         }
@@ -2825,7 +2576,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_jneq_null: {
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* value = get(VirtualRegister(currentInstruction[1].u.operand));
-            Node* condition = addToGraph(CompareEqConstant, value, constantNull());
+            Node* condition = addToGraph(CompareEqConstant, value, addToGraph(JSConstant, OpInfo(m_constantNull)));
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jneq_null), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jneq_null);
         }
@@ -2914,7 +2665,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 unsigned target = m_currentIndex + table.branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
-                data.cases.append(SwitchCase::withBytecodeIndex(jsNumber(static_cast<int32_t>(table.min + i)), target));
+                data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(table.min + i))), target));
             }
             flushIfTerminal(data);
             addToGraph(Switch, OpInfo(&data), get(VirtualRegister(currentInstruction[3].u.operand)));
@@ -3065,7 +2816,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             ASSERT(pointerIsFunction(currentInstruction[2].u.specialPointer));
             addToGraph(
                 CheckFunction,
-                OpInfo(actualPointerFor(m_inlineStackTop->m_codeBlock, currentInstruction[2].u.specialPointer)),
+                OpInfo(m_graph.freeze(static_cast<JSCell*>(actualPointerFor(
+                    m_inlineStackTop->m_codeBlock, currentInstruction[2].u.specialPointer)))),
                 get(VirtualRegister(currentInstruction[1].u.operand)));
             addToGraph(Jump, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_ptr)));
             LAST_OPCODE(op_jneq_ptr);
@@ -3084,7 +2836,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVar:
             case GlobalPropertyWithVarInjectionChecks:
             case GlobalVarWithVarInjectionChecks:
-                set(VirtualRegister(dst), cellConstant(m_inlineStackTop->m_codeBlock->globalObject()));
+                set(VirtualRegister(dst), weakJSConstant(m_inlineStackTop->m_codeBlock->globalObject()));
                 break;
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
@@ -3092,7 +2844,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (activation
                     && activation->symbolTable()->m_functionEnteredOnce.isStillValid()) {
                     addToGraph(FunctionReentryWatchpoint, OpInfo(activation->symbolTable()));
-                    set(VirtualRegister(dst), cellConstant(activation));
+                    set(VirtualRegister(dst), weakJSConstant(activation));
                     break;
                 }
                 set(VirtualRegister(dst),
@@ -3141,7 +2893,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 Node* base = cellConstantWithStructureCheck(globalObject, status[0].structureSet().onlyStructure());
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 if (JSValue specificValue = status[0].specificValue())
-                    set(VirtualRegister(dst), cellConstant(specificValue.asCell()));
+                    set(VirtualRegister(dst), weakJSConstant(specificValue.asCell()));
                 else
                     set(VirtualRegister(dst), handleGetByOffset(prediction, base, identifierNumber, operand));
                 break;
@@ -3160,7 +2912,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
                 
                 addToGraph(VariableWatchpoint, OpInfo(watchpointSet));
-                set(VirtualRegister(dst), inferredConstant(specificValue));
+                set(VirtualRegister(dst), weakJSConstant(specificValue));
                 break;
             }
             case ClosureVar:
@@ -3176,7 +2928,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         if (JSValue value = watchpointSet->inferredValue()) {
                             addToGraph(Phantom, scopeNode);
                             addToGraph(VariableWatchpoint, OpInfo(watchpointSet));
-                            set(VirtualRegister(dst), inferredConstant(value));
+                            set(VirtualRegister(dst), weakJSConstant(value));
                             break;
                         }
                     }
@@ -3277,7 +3029,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_init_lazy_reg: {
-            set(VirtualRegister(currentInstruction[1].u.operand), getJSConstantForValue(JSValue()));
+            set(VirtualRegister(currentInstruction[1].u.operand), jsConstant(JSValue()));
             ASSERT(operandIsLocal(currentInstruction[1].u.operand));
             m_graph.m_lazyVars.set(VirtualRegister(currentInstruction[1].u.operand).toLocal());
             NEXT_OPCODE(op_init_lazy_reg);
@@ -3432,13 +3184,6 @@ void ByteCodeParser::buildOperandMapsIfNecessary()
     
     for (size_t i = 0; i < m_codeBlock->numberOfIdentifiers(); ++i)
         m_identifierMap.add(m_codeBlock->identifier(i).impl(), i);
-    for (size_t i = 0; i < m_codeBlock->numberOfConstantRegisters(); ++i) {
-        JSValue value = m_codeBlock->getConstant(i + FirstConstantRegisterIndex);
-        if (!value)
-            m_emptyJSValueIndex = i + FirstConstantRegisterIndex;
-        else
-            m_jsValueMap.add(JSValue::encode(value), i + FirstConstantRegisterIndex);
-    }
     
     m_haveBuiltOperandMaps = true;
 }
@@ -3536,7 +3281,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         byteCodeParser->buildOperandMapsIfNecessary();
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_constantRemap.resize(codeBlock->numberOfConstantRegisters());
         m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
         m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
 
@@ -3546,24 +3290,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             if (result.isNewEntry)
                 byteCodeParser->m_graph.identifiers().addLazily(rep);
             m_identifierRemap[i] = result.iterator->value;
-        }
-        for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i) {
-            JSValue value = codeBlock->getConstant(i + FirstConstantRegisterIndex);
-            if (!value) {
-                if (byteCodeParser->m_emptyJSValueIndex == UINT_MAX) {
-                    byteCodeParser->m_emptyJSValueIndex = byteCodeParser->m_codeBlock->numberOfConstantRegisters() + FirstConstantRegisterIndex;
-                    byteCodeParser->addConstant(JSValue());
-                    byteCodeParser->m_constants.append(ConstantRecord());
-                }
-                m_constantRemap[i] = byteCodeParser->m_emptyJSValueIndex;
-                continue;
-            }
-            JSValueMap::AddResult result = byteCodeParser->m_jsValueMap.add(JSValue::encode(value), byteCodeParser->m_codeBlock->numberOfConstantRegisters() + FirstConstantRegisterIndex);
-            if (result.isNewEntry) {
-                byteCodeParser->addConstant(value);
-                byteCodeParser->m_constants.append(ConstantRecord());
-            }
-            m_constantRemap[i] = result.iterator->value;
         }
         for (unsigned i = 0; i < codeBlock->numberOfConstantBuffers(); ++i) {
             // If we inline the same code block multiple times, we don't want to needlessly
@@ -3595,13 +3321,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame = 0;
 
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_constantRemap.resize(codeBlock->numberOfConstantRegisters());
         m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
         m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i)
             m_identifierRemap[i] = i;
-        for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i)
-            m_constantRemap[i] = i + FirstConstantRegisterIndex;
         for (size_t i = 0; i < codeBlock->numberOfConstantBuffers(); ++i)
             m_constantBufferRemap[i] = i;
         for (size_t i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i)
@@ -3609,14 +3332,13 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_callsiteBlockHeadNeedsLinking = false;
     }
     
-    for (size_t i = 0; i < m_constantRemap.size(); ++i)
-        ASSERT(m_constantRemap[i] >= static_cast<unsigned>(FirstConstantRegisterIndex));
-    
     byteCodeParser->m_inlineStackTop = this;
 }
 
 void ByteCodeParser::parseCodeBlock()
 {
+    prepareToParseBlock();
+    
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
     if (m_graph.compilation()) {

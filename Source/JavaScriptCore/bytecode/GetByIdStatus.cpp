@@ -39,10 +39,20 @@ namespace JSC {
 
 bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
 {
+    // Attempt to merge this variant with an already existing variant.
+    for (unsigned i = 0; i < m_variants.size(); ++i) {
+        if (m_variants[i].attemptToMerge(variant))
+            return true;
+    }
+    
+    // Make sure there is no overlap. We should have pruned out opportunities for
+    // overlap but it's possible that an inline cache got into a weird state. We are
+    // defensive and bail if we detect crazy.
     for (unsigned i = 0; i < m_variants.size(); ++i) {
         if (m_variants[i].structureSet().overlaps(variant.structureSet()))
             return false;
     }
+    
     m_variants.append(variant);
     return true;
 }
@@ -51,9 +61,7 @@ bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
 bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType jitType)
 {
     return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, jitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint, jitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadWeakConstantCache, jitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadWeakConstantCacheWatchpoint, jitType));
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache, jitType));
 }
 #endif
 
@@ -185,10 +193,12 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
                     profiledBlock, structure, list->at(listIndex).chain(),
                     list->at(listIndex).chainCount()));
                 
-                if (!chain->isStillValid())
-                    return GetByIdStatus(slowPathState, true);
+                if (!chain->isStillValid()) {
+                    // This won't ever run again so skip it.
+                    continue;
+                }
                 
-                if (chain->head()->takesSlowPathInDFGForImpureProperty())
+                if (structure->takesSlowPathInDFGForImpureProperty())
                     return GetByIdStatus(slowPathState, true);
                 
                 size_t chainSize = chain->size();
@@ -215,35 +225,6 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             
             if (!isValidOffset(myOffset))
                 return GetByIdStatus(slowPathState, true);
-
-            if (!chain && !list->at(listIndex).doesCalls()) {
-                // For non-chain, non-getter accesses, we try to do some coalescing.
-                bool found = false;
-                for (unsigned variantIndex = 0; variantIndex < result.m_variants.size(); ++variantIndex) {
-                    GetByIdVariant& variant = result.m_variants[variantIndex];
-                    if (variant.m_chain)
-                        continue;
-                
-                    if (variant.m_offset != myOffset)
-                        continue;
-                
-                    if (variant.callLinkStatus())
-                        continue;
-                
-                    found = true;
-                    if (variant.m_structureSet.contains(structure))
-                        break;
-                
-                    if (variant.m_specificValue != JSValue(specificValue))
-                        variant.m_specificValue = JSValue();
-                
-                    variant.m_structureSet.add(structure);
-                    break;
-                }
-            
-                if (found)
-                    continue;
-            }
             
             std::unique_ptr<CallLinkStatus> callLinkStatus;
             switch (list->at(listIndex).type()) {
@@ -270,8 +251,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             }
             
             GetByIdVariant variant(
-                StructureSet(structure), myOffset, specificValue, chain,
+                StructureSet(structure), myOffset, specificValue, chain.get(),
                 std::move(callLinkStatus));
+            
             if (!result.appendVariant(variant))
                 return GetByIdStatus(slowPathState, true);
         }

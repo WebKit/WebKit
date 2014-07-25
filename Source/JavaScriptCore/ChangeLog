@@ -1,3 +1,651 @@
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r169795, r169819, r169864, r169902, r169949, r169950, r170016, r170017, r170060, r170064 from ftlopt.
+
+    2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Fold constant Phis
+            https://bugs.webkit.org/show_bug.cgi?id=133967
+    
+            Reviewed by Mark Hahnenberg.
+            
+            It's surprising but we didn't really do this before. Or, rather, we only did it
+            incidentally when we would likely crash if it ever happened.
+            
+            Making this work required cleaning up the validater a bit, so I did that too. I also added
+            mayExit() validation for nodes that didn't have origin.forExit (i.e. nodes that end up in
+            the Phi header of basic blocks). But this required beefing up mayExit() a bit.
+    
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGAdjacencyList.h:
+            (JSC::DFG::AdjacencyList::isEmpty):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::run):
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::fixUpsilons):
+            * dfg/DFGInPlaceAbstractState.h:
+            * dfg/DFGLICMPhase.cpp:
+            (JSC::DFG::LICMPhase::run):
+            (JSC::DFG::LICMPhase::attemptHoist):
+            * dfg/DFGMayExit.cpp:
+            (JSC::DFG::mayExit):
+            * dfg/DFGValidate.cpp:
+            (JSC::DFG::Validate::validate):
+            (JSC::DFG::Validate::validateSSA):
+    
+    2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Get rid of NodeDoesNotExit and also get rid of StoreEliminationPhase
+            https://bugs.webkit.org/show_bug.cgi?id=133985
+    
+            Reviewed by Michael Saboff and Mark Hahnenberg.
+            
+            Store elimination phase has never been very profitable, and now that LLVM can do dead
+            store elimination for us, this phase is just completely pointless.
+            
+            This phase is also the primary user of NodeDoesNotExit, which is a flag that the CFA
+            computes. It computes it poorly and we often get bugs in it. It's also a lot of code to
+            maintain.
+            
+            This patch does introduce a new mayExit() calculator that is independent of the CFA and
+            should be enough for most of the previous NodeDoesNotExit users. Currently it's only used
+            for assertions in the DFG backend, but we could use it if we ever brought back any of the
+            other optimizations that previously relied upon NodeDoesNotExit.
+            
+            This is performance-neutral, except for SunSpider, where it's a speed-up.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * dfg/DFGAbstractInterpreter.h:
+            (JSC::DFG::AbstractInterpreter::filterEdgeByUse):
+            (JSC::DFG::AbstractInterpreter::filterByType):
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::startExecuting):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::CSEPhase):
+            (JSC::DFG::CSEPhase::invalidationPointElimination):
+            (JSC::DFG::CSEPhase::setLocalStoreElimination):
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            (JSC::DFG::CSEPhase::performBlockCSE):
+            (JSC::DFG::performCSE):
+            (JSC::DFG::CSEPhase::globalVarStoreElimination): Deleted.
+            (JSC::DFG::CSEPhase::scopedVarStoreElimination): Deleted.
+            (JSC::DFG::CSEPhase::putStructureStoreElimination): Deleted.
+            (JSC::DFG::CSEPhase::putByOffsetStoreElimination): Deleted.
+            (JSC::DFG::CSEPhase::SetLocalStoreEliminationResult::SetLocalStoreEliminationResult): Deleted.
+            (JSC::DFG::performStoreElimination): Deleted.
+            * dfg/DFGCSEPhase.h:
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::resetExitStates): Deleted.
+            * dfg/DFGGraph.h:
+            * dfg/DFGMayExit.cpp: Added.
+            (JSC::DFG::mayExit):
+            * dfg/DFGMayExit.h: Added.
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::mergeFlags):
+            (JSC::DFG::Node::filterFlags):
+            (JSC::DFG::Node::setCanExit): Deleted.
+            (JSC::DFG::Node::canExit): Deleted.
+            * dfg/DFGNodeFlags.cpp:
+            (JSC::DFG::dumpNodeFlags):
+            * dfg/DFGNodeFlags.h:
+            * dfg/DFGNodeType.h:
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+            (JSC::DFG::SpeculativeJIT::bail):
+            (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+    
+    2014-06-15  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Remove the DFG optimization fixpoint and remove some obvious reasons why we previously benefited from it
+            https://bugs.webkit.org/show_bug.cgi?id=133931
+    
+            Reviewed by Oliver Hunt.
+    
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Trigger constant-folding for GetMyArgumentByVal (which means turning it into GetLocalUnlinked) and correct the handling of Upsilon so we don't fold them away.
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants): Implement constant-folding for GetMyArgumentByVal.
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl): Remove the fixpoint.
+    
+    2014-06-15  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG OSR entry should have a crystal-clear story for when it's safe to enter at a block with a set of values
+            https://bugs.webkit.org/show_bug.cgi?id=133935
+    
+            Reviewed by Oliver Hunt.
+    
+            * bytecode/Operands.h:
+            (JSC::Operands::Operands):
+            (JSC::Operands::ensureLocals):
+            * dfg/DFGAbstractValue.cpp:
+            (JSC::DFG::AbstractValue::filter): Now we can compute intersections of abstract values!
+            * dfg/DFGAbstractValue.h:
+            (JSC::DFG::AbstractValue::makeFullTop): Completeness.
+            (JSC::DFG::AbstractValue::bytecodeTop): Completeness.
+            (JSC::DFG::AbstractValue::fullTop): Completeness. We end up using this one.
+            * dfg/DFGBasicBlock.cpp:
+            (JSC::DFG::BasicBlock::BasicBlock):
+            (JSC::DFG::BasicBlock::ensureLocals):
+            * dfg/DFGBasicBlock.h: Remember the intersection of all things ever proven.
+            * dfg/DFGCFAPhase.cpp:
+            (JSC::DFG::CFAPhase::run): Compute the intersection.
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants): No need for the weirdo merge check since this fixes the root of the problem.
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::dumpBlockHeader): Better dumping.
+            (JSC::DFG::Graph::dump): Better dumping.
+            * dfg/DFGJITCompiler.h:
+            (JSC::DFG::JITCompiler::noticeOSREntry): Use the intersected abstract value.
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileCurrentBlock): Assert if the intersected state indicates the block shouldn't execute.
+    
+    2014-06-12  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] A DFG inlined ById access variant should not speak of a chain, but only of what structures to test the base for, whether to use a constant as an alternate base for the actual access, and what structures to check on what additional cell constants
+            https://bugs.webkit.org/show_bug.cgi?id=133821
+    
+            Reviewed by Mark Hahnenberg.
+            
+            This allows us to efficiently cache accesses that differ only in the prototypes on the path
+            from the base to the prototype that has the field.
+            
+            It also simplifies a bunch of code - IntendedStructureChain is now just an intermediate
+            data structure.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/ConstantStructureCheck.cpp: Added.
+            (JSC::ConstantStructureCheck::dumpInContext):
+            (JSC::ConstantStructureCheck::dump):
+            (JSC::structureFor):
+            (JSC::areCompatible):
+            (JSC::mergeInto):
+            * bytecode/ConstantStructureCheck.h: Added.
+            (JSC::ConstantStructureCheck::ConstantStructureCheck):
+            (JSC::ConstantStructureCheck::operator!):
+            (JSC::ConstantStructureCheck::constant):
+            (JSC::ConstantStructureCheck::structure):
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::computeForStubInfo):
+            * bytecode/GetByIdVariant.cpp:
+            (JSC::GetByIdVariant::GetByIdVariant):
+            (JSC::GetByIdVariant::operator=):
+            (JSC::GetByIdVariant::attemptToMerge):
+            (JSC::GetByIdVariant::dumpInContext):
+            * bytecode/GetByIdVariant.h:
+            (JSC::GetByIdVariant::constantChecks):
+            (JSC::GetByIdVariant::alternateBase):
+            (JSC::GetByIdVariant::GetByIdVariant): Deleted.
+            (JSC::GetByIdVariant::chain): Deleted.
+            * bytecode/PutByIdVariant.cpp:
+            (JSC::PutByIdVariant::dumpInContext):
+            * bytecode/PutByIdVariant.h:
+            (JSC::PutByIdVariant::transition):
+            (JSC::PutByIdVariant::constantChecks):
+            (JSC::PutByIdVariant::structureChain): Deleted.
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::emitChecks):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            (JSC::DFG::ByteCodeParser::cellConstantWithStructureCheck): Deleted.
+            (JSC::DFG::ByteCodeParser::structureChainIsStillValid): Deleted.
+            (JSC::DFG::ByteCodeParser::emitPrototypeChecks): Deleted.
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+            (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+            (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+            * dfg/DFGDesiredStructureChains.cpp: Removed.
+            * dfg/DFGDesiredStructureChains.h: Removed.
+            * dfg/DFGGraph.h:
+            (JSC::DFG::Graph::watchpoints):
+            (JSC::DFG::Graph::chains): Deleted.
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::isStillValid):
+            (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+            (JSC::DFG::Plan::cancel):
+            * dfg/DFGPlan.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+            * runtime/IntendedStructureChain.cpp:
+            (JSC::IntendedStructureChain::gatherChecks):
+            * runtime/IntendedStructureChain.h:
+            (JSC::IntendedStructureChain::at):
+            (JSC::IntendedStructureChain::operator[]):
+    
+    2014-06-12  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Constant folding and strength reduction should work in SSA
+            https://bugs.webkit.org/show_bug.cgi?id=133839
+    
+            Reviewed by Oliver Hunt.
+    
+            * dfg/DFGAtTailAbstractState.cpp:
+            (JSC::DFG::AtTailAbstractState::AtTailAbstractState):
+            (JSC::DFG::AtTailAbstractState::forNode):
+            * dfg/DFGAtTailAbstractState.h:
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::convertToConstant):
+            * dfg/DFGIntegerCheckCombiningPhase.cpp:
+            (JSC::DFG::IntegerCheckCombiningPhase::rangeKeyAndAddend): Fix an unrelated regression that this uncovered.
+            * dfg/DFGLICMPhase.cpp:
+            (JSC::DFG::LICMPhase::LICMPhase):
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+    
+    2014-06-11  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG get_by_id should inline chain accesses with a slightly polymorphic base
+            https://bugs.webkit.org/show_bug.cgi?id=133751
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::appendVariant):
+            (JSC::GetByIdStatus::computeForStubInfo):
+            * bytecode/GetByIdVariant.cpp:
+            (JSC::GetByIdVariant::attemptToMerge):
+            * bytecode/GetByIdVariant.h:
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeFor):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::emitPrototypeChecks):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            * runtime/IntendedStructureChain.cpp:
+            (JSC::IntendedStructureChain::IntendedStructureChain):
+            (JSC::IntendedStructureChain::isStillValid):
+            (JSC::IntendedStructureChain::isNormalized):
+            (JSC::IntendedStructureChain::terminalPrototype):
+            (JSC::IntendedStructureChain::operator==):
+            (JSC::IntendedStructureChain::visitChildren):
+            (JSC::IntendedStructureChain::dumpInContext):
+            (JSC::IntendedStructureChain::chain): Deleted.
+            * runtime/IntendedStructureChain.h:
+            (JSC::IntendedStructureChain::prototype):
+            (JSC::IntendedStructureChain::operator!=):
+            (JSC::IntendedStructureChain::head): Deleted.
+    
+    2014-06-11  Matthew Mirman  <mmirman@apple.com>
+    
+           Readded native calling to the FTL and Split the DFG nodes 
+           Call and Construct into NativeCall and NativeConstruct 
+           to better represent their semantics.
+           https://bugs.webkit.org/show_bug.cgi?id=133660
+    
+           Reviewed by Filip Pizlo.
+    
+           * dfg/DFGAbstractInterpreterInlines.h:
+           (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): 
+           Added NativeCall and NativeConstruct case
+           * dfg/DFGByteCodeParser.cpp:
+           (JSC::DFG::ByteCodeParser::addCall): added NativeCall case. 
+           (JSC::DFG::ByteCodeParser::handleCall): 
+           set to return NativeCall or NativeConstruct instead of Call or Construct
+           in the presence of a native function.
+           * dfg/DFGClobberize.h:
+           (JSC::DFG::clobberize): added NativeCall and NativeConstruct case.
+           * dfg/DFGDoesGC.cpp:
+           (JSC::DFG::doesGC): added NativeCall and NativeConstruct case.
+           * dfg/DFGFixupPhase.cpp:
+           (JSC::DFG::FixupPhase::fixupNode): added NativeCall and NativeConstruct case.
+           * dfg/DFGNode.h:
+           (JSC::DFG::Node::hasHeapPrediction): added NativeCall and NativeConstruct case.
+           (JSC::DFG::Node::canBeKnownFunction): changed to NativeCall and NativeConstruct.
+           (JSC::DFG::Node::hasKnownFunction): changed to NativeCall and NativeConstruct.
+           * dfg/DFGNodeType.h: added NativeCall and NativeConstruct.
+           * dfg/DFGPredictionPropagationPhase.cpp:
+           (JSC::DFG::PredictionPropagationPhase::propagate): added NativeCall and NativeConstruct case.
+           * dfg/DFGSafeToExecute.h:
+           (JSC::DFG::safeToExecute): added NativeCall and NativeConstruct case.
+           * dfg/DFGSpeculativeJIT32_64.cpp:
+           (JSC::DFG::SpeculativeJIT::emitCall): ditto
+           (JSC::DFG::SpeculativeJIT::compile): ditto
+           * dfg/DFGSpeculativeJIT64.cpp:
+           (JSC::DFG::SpeculativeJIT::emitCall): ditto
+           (JSC::DFG::SpeculativeJIT::compile): ditto
+           * ftl/FTLCapabilities.cpp:
+           (JSC::FTL::canCompile): ditto
+           * ftl/FTLLowerDFGToLLVM.cpp:  
+           (JSC::FTL::LowerDFGToLLVM::lower): ditto
+           (JSC::FTL::LowerDFGToLLVM::compileNode): ditto.
+           (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct): Added.
+           (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct): removed NativeCall and NativeConstruct functionality.
+           (JSC::FTL::LowerDFGToLLVM::didOverflowStack): added NativeCall and NativeConstruct case.
+           * runtime/JSCJSValue.h: added JS_EXPORT_PRIVATE to toInteger as it is apparently needed.
+           
+    2014-06-11  Matthew Mirman  <mmirman@apple.com>
+    
+            Ensured Native Calls and Construct and associated checks 
+            are only emitted during ftl mode.
+            https://bugs.webkit.org/show_bug.cgi?id=133718
+            
+            Reviewed by Filip Pizlo.
+            
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleCall): Added check for ftl mode 
+            before attaching the native function to Call or Construct.
+            
+    2014-06-10  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG should use its own notion of JSValue, which we should call FrozenValue, that will carry around a copy of its structure
+            https://bugs.webkit.org/show_bug.cgi?id=133426
+    
+            Reviewed by Geoffrey Garen.
+            
+            The impetus for this was to provide some sense and reason to race conditions arising from
+            cell constants having their structure changed on the main thread - this is harmess because
+            we defend against it, but when it goes wrong, it can be difficult to reproduce because it
+            requires a race. Giving the DFG the ability to "freeze" a cell's structure fixes this.
+            
+            But this patch goes quite a bit further, and completely rationalizes how the DFG reasons
+            about constants. It no longer relies on the CodeBlock constant pool at all, which allows
+            for a more object-oriented approach: for example a Node that has a constant can tell you
+            what constant it has without needing a CodeBlock.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/CallLinkStatus.cpp:
+            (JSC::CallLinkStatus::computeExitSiteData):
+            * bytecode/ExitKind.cpp:
+            (JSC::exitKindToString):
+            (JSC::exitKindIsCountable):
+            * bytecode/ExitKind.h:
+            (JSC::isWatchpoint): Deleted.
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::hasExitSite):
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::hasExitSite):
+            * dfg/DFGAbstractInterpreter.h:
+            (JSC::DFG::AbstractInterpreter::filterByValue):
+            (JSC::DFG::AbstractInterpreter::setBuiltInConstant):
+            (JSC::DFG::AbstractInterpreter::setConstant):
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterByValue):
+            * dfg/DFGAbstractValue.cpp:
+            (JSC::DFG::AbstractValue::setOSREntryValue):
+            (JSC::DFG::AbstractValue::set):
+            (JSC::DFG::AbstractValue::filterByValue):
+            (JSC::DFG::AbstractValue::setMostSpecific): Deleted.
+            * dfg/DFGAbstractValue.h:
+            * dfg/DFGArgumentsSimplificationPhase.cpp:
+            (JSC::DFG::ArgumentsSimplificationPhase::run):
+            * dfg/DFGBackwardsPropagationPhase.cpp:
+            (JSC::DFG::BackwardsPropagationPhase::isNotNegZero):
+            (JSC::DFG::BackwardsPropagationPhase::isNotPosZero):
+            (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwoForConstant):
+            (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::ByteCodeParser):
+            (JSC::DFG::ByteCodeParser::getDirect):
+            (JSC::DFG::ByteCodeParser::get):
+            (JSC::DFG::ByteCodeParser::getLocal):
+            (JSC::DFG::ByteCodeParser::setLocal):
+            (JSC::DFG::ByteCodeParser::setArgument):
+            (JSC::DFG::ByteCodeParser::jsConstant):
+            (JSC::DFG::ByteCodeParser::weakJSConstant):
+            (JSC::DFG::ByteCodeParser::cellConstantWithStructureCheck):
+            (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+            (JSC::DFG::ByteCodeParser::handleCall):
+            (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+            (JSC::DFG::ByteCodeParser::handleInlining):
+            (JSC::DFG::ByteCodeParser::handleMinMax):
+            (JSC::DFG::ByteCodeParser::handleIntrinsic):
+            (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::prepareToParseBlock):
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            (JSC::DFG::ByteCodeParser::buildOperandMapsIfNecessary):
+            (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+            (JSC::DFG::ByteCodeParser::parseCodeBlock):
+            (JSC::DFG::ByteCodeParser::addConstant): Deleted.
+            (JSC::DFG::ByteCodeParser::getJSConstantForValue): Deleted.
+            (JSC::DFG::ByteCodeParser::getJSConstant): Deleted.
+            (JSC::DFG::ByteCodeParser::isJSConstant): Deleted.
+            (JSC::DFG::ByteCodeParser::isInt32Constant): Deleted.
+            (JSC::DFG::ByteCodeParser::valueOfJSConstant): Deleted.
+            (JSC::DFG::ByteCodeParser::valueOfInt32Constant): Deleted.
+            (JSC::DFG::ByteCodeParser::constantUndefined): Deleted.
+            (JSC::DFG::ByteCodeParser::constantNull): Deleted.
+            (JSC::DFG::ByteCodeParser::one): Deleted.
+            (JSC::DFG::ByteCodeParser::constantNaN): Deleted.
+            (JSC::DFG::ByteCodeParser::cellConstant): Deleted.
+            (JSC::DFG::ByteCodeParser::inferredConstant): Deleted.
+            (JSC::DFG::ByteCodeParser::ConstantRecord::ConstantRecord): Deleted.
+            * dfg/DFGCFGSimplificationPhase.cpp:
+            (JSC::DFG::CFGSimplificationPhase::run):
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::constantCSE):
+            (JSC::DFG::CSEPhase::checkFunctionElimination):
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            (JSC::DFG::CSEPhase::weakConstantCSE): Deleted.
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGCommon.h:
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+            (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            (JSC::DFG::FixupPhase::fixupMakeRope):
+            (JSC::DFG::FixupPhase::truncateConstantToInt32):
+            (JSC::DFG::FixupPhase::attemptToMakeGetTypedArrayByteLength):
+            (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+            * dfg/DFGFrozenValue.cpp: Added.
+            (JSC::DFG::FrozenValue::emptySingleton):
+            (JSC::DFG::FrozenValue::dumpInContext):
+            (JSC::DFG::FrozenValue::dump):
+            * dfg/DFGFrozenValue.h: Added.
+            (JSC::DFG::FrozenValue::FrozenValue):
+            (JSC::DFG::FrozenValue::operator!):
+            (JSC::DFG::FrozenValue::value):
+            (JSC::DFG::FrozenValue::structure):
+            (JSC::DFG::FrozenValue::strengthenTo):
+            (JSC::DFG::FrozenValue::strength):
+            (JSC::DFG::FrozenValue::freeze):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::Graph):
+            (JSC::DFG::Graph::dump):
+            (JSC::DFG::Graph::tryGetActivation):
+            (JSC::DFG::Graph::tryGetFoldableView):
+            (JSC::DFG::Graph::registerFrozenValues):
+            (JSC::DFG::Graph::visitChildren):
+            (JSC::DFG::Graph::freezeFragile):
+            (JSC::DFG::Graph::freeze):
+            (JSC::DFG::Graph::freezeStrong):
+            (JSC::DFG::Graph::convertToConstant):
+            (JSC::DFG::Graph::convertToStrongConstant):
+            (JSC::DFG::Graph::assertIsWatched):
+            * dfg/DFGGraph.h:
+            (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+            (JSC::DFG::Graph::convertToConstant): Deleted.
+            (JSC::DFG::Graph::constantRegisterForConstant): Deleted.
+            (JSC::DFG::Graph::getJSConstantSpeculation): Deleted.
+            (JSC::DFG::Graph::isConstant): Deleted.
+            (JSC::DFG::Graph::isJSConstant): Deleted.
+            (JSC::DFG::Graph::isInt32Constant): Deleted.
+            (JSC::DFG::Graph::isDoubleConstant): Deleted.
+            (JSC::DFG::Graph::isNumberConstant): Deleted.
+            (JSC::DFG::Graph::isBooleanConstant): Deleted.
+            (JSC::DFG::Graph::isCellConstant): Deleted.
+            (JSC::DFG::Graph::isFunctionConstant): Deleted.
+            (JSC::DFG::Graph::isInternalFunctionConstant): Deleted.
+            (JSC::DFG::Graph::valueOfJSConstant): Deleted.
+            (JSC::DFG::Graph::valueOfInt32Constant): Deleted.
+            (JSC::DFG::Graph::valueOfNumberConstant): Deleted.
+            (JSC::DFG::Graph::valueOfBooleanConstant): Deleted.
+            (JSC::DFG::Graph::valueOfFunctionConstant): Deleted.
+            (JSC::DFG::Graph::mulImmediateShouldSpeculateInt32): Deleted.
+            * dfg/DFGInPlaceAbstractState.cpp:
+            (JSC::DFG::InPlaceAbstractState::initialize):
+            * dfg/DFGInsertionSet.h:
+            (JSC::DFG::InsertionSet::insertConstant):
+            (JSC::DFG::InsertionSet::insertConstantForUse):
+            * dfg/DFGIntegerCheckCombiningPhase.cpp:
+            (JSC::DFG::IntegerCheckCombiningPhase::rangeKeyAndAddend):
+            * dfg/DFGJITCompiler.cpp:
+            (JSC::DFG::JITCompiler::link):
+            * dfg/DFGLazyJSValue.cpp:
+            (JSC::DFG::LazyJSValue::getValue):
+            (JSC::DFG::LazyJSValue::strictEqual):
+            (JSC::DFG::LazyJSValue::dumpInContext):
+            * dfg/DFGLazyJSValue.h:
+            (JSC::DFG::LazyJSValue::LazyJSValue):
+            (JSC::DFG::LazyJSValue::tryGetValue):
+            (JSC::DFG::LazyJSValue::value):
+            (JSC::DFG::LazyJSValue::switchLookupValue):
+            * dfg/DFGMinifiedNode.cpp:
+            (JSC::DFG::MinifiedNode::fromNode):
+            * dfg/DFGMinifiedNode.h:
+            (JSC::DFG::belongsInMinifiedGraph):
+            (JSC::DFG::MinifiedNode::hasConstant):
+            (JSC::DFG::MinifiedNode::constant):
+            (JSC::DFG::MinifiedNode::hasConstantNumber): Deleted.
+            (JSC::DFG::MinifiedNode::constantNumber): Deleted.
+            (JSC::DFG::MinifiedNode::hasWeakConstant): Deleted.
+            (JSC::DFG::MinifiedNode::weakConstant): Deleted.
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasConstant):
+            (JSC::DFG::Node::constant):
+            (JSC::DFG::Node::convertToConstant):
+            (JSC::DFG::Node::asJSValue):
+            (JSC::DFG::Node::isInt32Constant):
+            (JSC::DFG::Node::asInt32):
+            (JSC::DFG::Node::asUInt32):
+            (JSC::DFG::Node::isDoubleConstant):
+            (JSC::DFG::Node::isNumberConstant):
+            (JSC::DFG::Node::asNumber):
+            (JSC::DFG::Node::isMachineIntConstant):
+            (JSC::DFG::Node::asMachineInt):
+            (JSC::DFG::Node::isBooleanConstant):
+            (JSC::DFG::Node::asBoolean):
+            (JSC::DFG::Node::isCellConstant):
+            (JSC::DFG::Node::asCell):
+            (JSC::DFG::Node::dynamicCastConstant):
+            (JSC::DFG::Node::function):
+            (JSC::DFG::Node::isWeakConstant): Deleted.
+            (JSC::DFG::Node::constantNumber): Deleted.
+            (JSC::DFG::Node::convertToWeakConstant): Deleted.
+            (JSC::DFG::Node::weakConstant): Deleted.
+            (JSC::DFG::Node::valueOfJSConstant): Deleted.
+            * dfg/DFGNodeType.h:
+            * dfg/DFGOSRExitCompiler.cpp:
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+            (JSC::DFG::SpeculativeJIT::silentSavePlanForFPR):
+            (JSC::DFG::SpeculativeJIT::silentFill):
+            (JSC::DFG::SpeculativeJIT::compileIn):
+            (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch):
+            (JSC::DFG::SpeculativeJIT::compilePeepHoleInt32Branch):
+            (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+            (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+            (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+            (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+            (JSC::DFG::SpeculativeJIT::compileAdd):
+            (JSC::DFG::SpeculativeJIT::compileArithSub):
+            (JSC::DFG::SpeculativeJIT::compileArithMod):
+            * dfg/DFGSpeculativeJIT.h:
+            (JSC::DFG::SpeculativeJIT::valueOfJSConstantAsImm64):
+            (JSC::DFG::SpeculativeJIT::initConstantInfo):
+            (JSC::DFG::SpeculativeJIT::isConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isJSConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isInt32Constant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isDoubleConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isNumberConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isBooleanConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isFunctionConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::valueOfInt32Constant): Deleted.
+            (JSC::DFG::SpeculativeJIT::valueOfNumberConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::addressOfDoubleConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::valueOfJSConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::valueOfBooleanConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::valueOfFunctionConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isNullConstant): Deleted.
+            (JSC::DFG::SpeculativeJIT::isInteger): Deleted.
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::fillJSValue):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::fillJSValue):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGStrengthReductionPhase.cpp:
+            (JSC::DFG::StrengthReductionPhase::handleNode):
+            * dfg/DFGValidate.cpp:
+            (JSC::DFG::Validate::validate):
+            * dfg/DFGValueStrength.cpp: Added.
+            (WTF::printInternal):
+            * dfg/DFGValueStrength.h: Added.
+            (JSC::DFG::merge):
+            * dfg/DFGVariableEventStream.cpp:
+            (JSC::DFG::VariableEventStream::tryToSetConstantRecovery):
+            (JSC::DFG::VariableEventStream::reconstruct):
+            * dfg/DFGVariableEventStream.h:
+            * dfg/DFGWatchableStructureWatchingPhase.cpp:
+            (JSC::DFG::WatchableStructureWatchingPhase::run):
+            (JSC::DFG::WatchableStructureWatchingPhase::tryWatch):
+            * dfg/DFGWatchpointCollectionPhase.cpp:
+            (JSC::DFG::WatchpointCollectionPhase::handle):
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLLink.cpp:
+            (JSC::FTL::link):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileDoubleConstant):
+            (JSC::FTL::LowerDFGToLLVM::compileInt52Constant):
+            (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+            (JSC::FTL::LowerDFGToLLVM::compileCheckFunction):
+            (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+            (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+            (JSC::FTL::LowerDFGToLLVM::lowInt32):
+            (JSC::FTL::LowerDFGToLLVM::lowCell):
+            (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+            (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+            (JSC::FTL::LowerDFGToLLVM::tryToSetConstantExitArgument):
+            (JSC::FTL::LowerDFGToLLVM::compileWeakJSConstant): Deleted.
+            * ftl/FTLOSRExitCompiler.cpp:
+            (JSC::FTL::compileStub):
+            * runtime/JSCJSValue.cpp:
+            (JSC::JSValue::dumpInContext):
+            (JSC::JSValue::dumpInContextAssumingStructure):
+            * runtime/JSCJSValue.h:
+    
 2014-07-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct build order in JavaScriptCore.submit.sln
@@ -3566,6 +4214,650 @@
         (JSC::reifyStaticProperties):
         Add a version of reifyStaticProperties that takes an array of HashTableValues
         rather than a HashTable.
+
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] Fold constant Phis
+        https://bugs.webkit.org/show_bug.cgi?id=133967
+
+        Reviewed by Mark Hahnenberg.
+        
+        It's surprising but we didn't really do this before. Or, rather, we only did it
+        incidentally when we would likely crash if it ever happened.
+        
+        Making this work required cleaning up the validater a bit, so I did that too. I also added
+        mayExit() validation for nodes that didn't have origin.forExit (i.e. nodes that end up in
+        the Phi header of basic blocks). But this required beefing up mayExit() a bit.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::isEmpty):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::fixUpsilons):
+        * dfg/DFGInPlaceAbstractState.h:
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::validateSSA):
+
+2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] Get rid of NodeDoesNotExit and also get rid of StoreEliminationPhase
+        https://bugs.webkit.org/show_bug.cgi?id=133985
+
+        Reviewed by Michael Saboff and Mark Hahnenberg.
+        
+        Store elimination phase has never been very profitable, and now that LLVM can do dead
+        store elimination for us, this phase is just completely pointless.
+        
+        This phase is also the primary user of NodeDoesNotExit, which is a flag that the CFA
+        computes. It computes it poorly and we often get bugs in it. It's also a lot of code to
+        maintain.
+        
+        This patch does introduce a new mayExit() calculator that is independent of the CFA and
+        should be enough for most of the previous NodeDoesNotExit users. Currently it's only used
+        for assertions in the DFG backend, but we could use it if we ever brought back any of the
+        other optimizations that previously relied upon NodeDoesNotExit.
+        
+        This is performance-neutral, except for SunSpider, where it's a speed-up.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filterEdgeByUse):
+        (JSC::DFG::AbstractInterpreter::filterByType):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::startExecuting):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::CSEPhase):
+        (JSC::DFG::CSEPhase::invalidationPointElimination):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::performBlockCSE):
+        (JSC::DFG::performCSE):
+        (JSC::DFG::CSEPhase::globalVarStoreElimination): Deleted.
+        (JSC::DFG::CSEPhase::scopedVarStoreElimination): Deleted.
+        (JSC::DFG::CSEPhase::putStructureStoreElimination): Deleted.
+        (JSC::DFG::CSEPhase::putByOffsetStoreElimination): Deleted.
+        (JSC::DFG::CSEPhase::SetLocalStoreEliminationResult::SetLocalStoreEliminationResult): Deleted.
+        (JSC::DFG::performStoreElimination): Deleted.
+        * dfg/DFGCSEPhase.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::resetExitStates): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGMayExit.cpp: Added.
+        (JSC::DFG::mayExit):
+        * dfg/DFGMayExit.h: Added.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::mergeFlags):
+        (JSC::DFG::Node::filterFlags):
+        (JSC::DFG::Node::setCanExit): Deleted.
+        (JSC::DFG::Node::canExit): Deleted.
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::SpeculativeJIT::bail):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2014-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] Remove the DFG optimization fixpoint and remove some obvious reasons why we previously benefited from it
+        https://bugs.webkit.org/show_bug.cgi?id=133931
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Trigger constant-folding for GetMyArgumentByVal (which means turning it into GetLocalUnlinked) and correct the handling of Upsilon so we don't fold them away.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): Implement constant-folding for GetMyArgumentByVal.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl): Remove the fixpoint.
+
+2014-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] DFG OSR entry should have a crystal-clear story for when it's safe to enter at a block with a set of values
+        https://bugs.webkit.org/show_bug.cgi?id=133935
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::Operands):
+        (JSC::Operands::ensureLocals):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filter): Now we can compute intersections of abstract values!
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::makeFullTop): Completeness.
+        (JSC::DFG::AbstractValue::bytecodeTop): Completeness.
+        (JSC::DFG::AbstractValue::fullTop): Completeness. We end up using this one.
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::ensureLocals):
+        * dfg/DFGBasicBlock.h: Remember the intersection of all things ever proven.
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run): Compute the intersection.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): No need for the weirdo merge check since this fixes the root of the problem.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpBlockHeader): Better dumping.
+        (JSC::DFG::Graph::dump): Better dumping.
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry): Use the intersected abstract value.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock): Assert if the intersected state indicates the block shouldn't execute.
+
+2014-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] A DFG inlined ById access variant should not speak of a chain, but only of what structures to test the base for, whether to use a constant as an alternate base for the actual access, and what structures to check on what additional cell constants
+        https://bugs.webkit.org/show_bug.cgi?id=133821
+
+        Reviewed by Mark Hahnenberg.
+        
+        This allows us to efficiently cache accesses that differ only in the prototypes on the path
+        from the base to the prototype that has the field.
+        
+        It also simplifies a bunch of code - IntendedStructureChain is now just an intermediate
+        data structure.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ConstantStructureCheck.cpp: Added.
+        (JSC::ConstantStructureCheck::dumpInContext):
+        (JSC::ConstantStructureCheck::dump):
+        (JSC::structureFor):
+        (JSC::areCompatible):
+        (JSC::mergeInto):
+        * bytecode/ConstantStructureCheck.h: Added.
+        (JSC::ConstantStructureCheck::ConstantStructureCheck):
+        (JSC::ConstantStructureCheck::operator!):
+        (JSC::ConstantStructureCheck::constant):
+        (JSC::ConstantStructureCheck::structure):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::operator=):
+        (JSC::GetByIdVariant::attemptToMerge):
+        (JSC::GetByIdVariant::dumpInContext):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::constantChecks):
+        (JSC::GetByIdVariant::alternateBase):
+        (JSC::GetByIdVariant::GetByIdVariant): Deleted.
+        (JSC::GetByIdVariant::chain): Deleted.
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::dumpInContext):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::transition):
+        (JSC::PutByIdVariant::constantChecks):
+        (JSC::PutByIdVariant::structureChain): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::emitChecks):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::cellConstantWithStructureCheck): Deleted.
+        (JSC::DFG::ByteCodeParser::structureChainIsStillValid): Deleted.
+        (JSC::DFG::ByteCodeParser::emitPrototypeChecks): Deleted.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDesiredStructureChains.cpp: Removed.
+        * dfg/DFGDesiredStructureChains.h: Removed.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::watchpoints):
+        (JSC::DFG::Graph::chains): Deleted.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::isStillValid):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::gatherChecks):
+        * runtime/IntendedStructureChain.h:
+        (JSC::IntendedStructureChain::at):
+        (JSC::IntendedStructureChain::operator[]):
+
+2014-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] Constant folding and strength reduction should work in SSA
+        https://bugs.webkit.org/show_bug.cgi?id=133839
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAtTailAbstractState.cpp:
+        (JSC::DFG::AtTailAbstractState::AtTailAbstractState):
+        (JSC::DFG::AtTailAbstractState::forNode):
+        * dfg/DFGAtTailAbstractState.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::convertToConstant):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::rangeKeyAndAddend): Fix an unrelated regression that this uncovered.
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::LICMPhase):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
+2014-06-11  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] DFG get_by_id should inline chain accesses with a slightly polymorphic base
+        https://bugs.webkit.org/show_bug.cgi?id=133751
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::appendVariant):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::attemptToMerge):
+        * bytecode/GetByIdVariant.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::emitPrototypeChecks):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::IntendedStructureChain):
+        (JSC::IntendedStructureChain::isStillValid):
+        (JSC::IntendedStructureChain::isNormalized):
+        (JSC::IntendedStructureChain::terminalPrototype):
+        (JSC::IntendedStructureChain::operator==):
+        (JSC::IntendedStructureChain::visitChildren):
+        (JSC::IntendedStructureChain::dumpInContext):
+        (JSC::IntendedStructureChain::chain): Deleted.
+        * runtime/IntendedStructureChain.h:
+        (JSC::IntendedStructureChain::prototype):
+        (JSC::IntendedStructureChain::operator!=):
+        (JSC::IntendedStructureChain::head): Deleted.
+
+2014-06-11  Matthew Mirman  <mmirman@apple.com>
+
+       Readded native calling to the FTL and Split the DFG nodes 
+       Call and Construct into NativeCall and NativeConstruct 
+       to better represent their semantics.
+       https://bugs.webkit.org/show_bug.cgi?id=133660
+
+       Reviewed by Filip Pizlo.
+
+       * dfg/DFGAbstractInterpreterInlines.h:
+       (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): 
+       Added NativeCall and NativeConstruct case
+       * dfg/DFGByteCodeParser.cpp:
+       (JSC::DFG::ByteCodeParser::addCall): added NativeCall case. 
+       (JSC::DFG::ByteCodeParser::handleCall): 
+       set to return NativeCall or NativeConstruct instead of Call or Construct
+       in the presence of a native function.
+       * dfg/DFGClobberize.h:
+       (JSC::DFG::clobberize): added NativeCall and NativeConstruct case.
+       * dfg/DFGDoesGC.cpp:
+       (JSC::DFG::doesGC): added NativeCall and NativeConstruct case.
+       * dfg/DFGFixupPhase.cpp:
+       (JSC::DFG::FixupPhase::fixupNode): added NativeCall and NativeConstruct case.
+       * dfg/DFGNode.h:
+       (JSC::DFG::Node::hasHeapPrediction): added NativeCall and NativeConstruct case.
+       (JSC::DFG::Node::canBeKnownFunction): changed to NativeCall and NativeConstruct.
+       (JSC::DFG::Node::hasKnownFunction): changed to NativeCall and NativeConstruct.
+       * dfg/DFGNodeType.h: added NativeCall and NativeConstruct.
+       * dfg/DFGPredictionPropagationPhase.cpp:
+       (JSC::DFG::PredictionPropagationPhase::propagate): added NativeCall and NativeConstruct case.
+       * dfg/DFGSafeToExecute.h:
+       (JSC::DFG::safeToExecute): added NativeCall and NativeConstruct case.
+       * dfg/DFGSpeculativeJIT32_64.cpp:
+       (JSC::DFG::SpeculativeJIT::emitCall): ditto
+       (JSC::DFG::SpeculativeJIT::compile): ditto
+       * dfg/DFGSpeculativeJIT64.cpp:
+       (JSC::DFG::SpeculativeJIT::emitCall): ditto
+       (JSC::DFG::SpeculativeJIT::compile): ditto
+       * ftl/FTLCapabilities.cpp:
+       (JSC::FTL::canCompile): ditto
+       * ftl/FTLLowerDFGToLLVM.cpp:  
+       (JSC::FTL::LowerDFGToLLVM::lower): ditto
+       (JSC::FTL::LowerDFGToLLVM::compileNode): ditto.
+       (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct): Added.
+       (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct): removed NativeCall and NativeConstruct functionality.
+       (JSC::FTL::LowerDFGToLLVM::didOverflowStack): added NativeCall and NativeConstruct case.
+       * runtime/JSCJSValue.h: added JS_EXPORT_PRIVATE to toInteger as it is apparently needed.
+       
+2014-06-11  Matthew Mirman  <mmirman@apple.com>
+
+        Ensured Native Calls and Construct and associated checks 
+        are only emitted during ftl mode.
+        https://bugs.webkit.org/show_bug.cgi?id=133718
+        
+        Reviewed by Filip Pizlo.
+        
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall): Added check for ftl mode 
+        before attaching the native function to Call or Construct.
+        
+2014-06-10  Filip Pizlo  <fpizlo@apple.com>
+
+        [ftlopt] DFG should use its own notion of JSValue, which we should call FrozenValue, that will carry around a copy of its structure
+        https://bugs.webkit.org/show_bug.cgi?id=133426
+
+        Reviewed by Geoffrey Garen.
+        
+        The impetus for this was to provide some sense and reason to race conditions arising from
+        cell constants having their structure changed on the main thread - this is harmess because
+        we defend against it, but when it goes wrong, it can be difficult to reproduce because it
+        requires a race. Giving the DFG the ability to "freeze" a cell's structure fixes this.
+        
+        But this patch goes quite a bit further, and completely rationalizes how the DFG reasons
+        about constants. It no longer relies on the CodeBlock constant pool at all, which allows
+        for a more object-oriented approach: for example a Node that has a constant can tell you
+        what constant it has without needing a CodeBlock.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeExitSiteData):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        (JSC::exitKindIsCountable):
+        * bytecode/ExitKind.h:
+        (JSC::isWatchpoint): Deleted.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::hasExitSite):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::hasExitSite):
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filterByValue):
+        (JSC::DFG::AbstractInterpreter::setBuiltInConstant):
+        (JSC::DFG::AbstractInterpreter::setConstant):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterByValue):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setOSREntryValue):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::filterByValue):
+        (JSC::DFG::AbstractValue::setMostSpecific): Deleted.
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isNotNegZero):
+        (JSC::DFG::BackwardsPropagationPhase::isNotPosZero):
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwoForConstant):
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getDirect):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::jsConstant):
+        (JSC::DFG::ByteCodeParser::weakJSConstant):
+        (JSC::DFG::ByteCodeParser::cellConstantWithStructureCheck):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::prepareToParseBlock):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::buildOperandMapsIfNecessary):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::addConstant): Deleted.
+        (JSC::DFG::ByteCodeParser::getJSConstantForValue): Deleted.
+        (JSC::DFG::ByteCodeParser::getJSConstant): Deleted.
+        (JSC::DFG::ByteCodeParser::isJSConstant): Deleted.
+        (JSC::DFG::ByteCodeParser::isInt32Constant): Deleted.
+        (JSC::DFG::ByteCodeParser::valueOfJSConstant): Deleted.
+        (JSC::DFG::ByteCodeParser::valueOfInt32Constant): Deleted.
+        (JSC::DFG::ByteCodeParser::constantUndefined): Deleted.
+        (JSC::DFG::ByteCodeParser::constantNull): Deleted.
+        (JSC::DFG::ByteCodeParser::one): Deleted.
+        (JSC::DFG::ByteCodeParser::constantNaN): Deleted.
+        (JSC::DFG::ByteCodeParser::cellConstant): Deleted.
+        (JSC::DFG::ByteCodeParser::inferredConstant): Deleted.
+        (JSC::DFG::ByteCodeParser::ConstantRecord::ConstantRecord): Deleted.
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::constantCSE):
+        (JSC::DFG::CSEPhase::checkFunctionElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::weakConstantCSE): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupMakeRope):
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        (JSC::DFG::FixupPhase::attemptToMakeGetTypedArrayByteLength):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        * dfg/DFGFrozenValue.cpp: Added.
+        (JSC::DFG::FrozenValue::emptySingleton):
+        (JSC::DFG::FrozenValue::dumpInContext):
+        (JSC::DFG::FrozenValue::dump):
+        * dfg/DFGFrozenValue.h: Added.
+        (JSC::DFG::FrozenValue::FrozenValue):
+        (JSC::DFG::FrozenValue::operator!):
+        (JSC::DFG::FrozenValue::value):
+        (JSC::DFG::FrozenValue::structure):
+        (JSC::DFG::FrozenValue::strengthenTo):
+        (JSC::DFG::FrozenValue::strength):
+        (JSC::DFG::FrozenValue::freeze):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::tryGetActivation):
+        (JSC::DFG::Graph::tryGetFoldableView):
+        (JSC::DFG::Graph::registerFrozenValues):
+        (JSC::DFG::Graph::visitChildren):
+        (JSC::DFG::Graph::freezeFragile):
+        (JSC::DFG::Graph::freeze):
+        (JSC::DFG::Graph::freezeStrong):
+        (JSC::DFG::Graph::convertToConstant):
+        (JSC::DFG::Graph::convertToStrongConstant):
+        (JSC::DFG::Graph::assertIsWatched):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+        (JSC::DFG::Graph::convertToConstant): Deleted.
+        (JSC::DFG::Graph::constantRegisterForConstant): Deleted.
+        (JSC::DFG::Graph::getJSConstantSpeculation): Deleted.
+        (JSC::DFG::Graph::isConstant): Deleted.
+        (JSC::DFG::Graph::isJSConstant): Deleted.
+        (JSC::DFG::Graph::isInt32Constant): Deleted.
+        (JSC::DFG::Graph::isDoubleConstant): Deleted.
+        (JSC::DFG::Graph::isNumberConstant): Deleted.
+        (JSC::DFG::Graph::isBooleanConstant): Deleted.
+        (JSC::DFG::Graph::isCellConstant): Deleted.
+        (JSC::DFG::Graph::isFunctionConstant): Deleted.
+        (JSC::DFG::Graph::isInternalFunctionConstant): Deleted.
+        (JSC::DFG::Graph::valueOfJSConstant): Deleted.
+        (JSC::DFG::Graph::valueOfInt32Constant): Deleted.
+        (JSC::DFG::Graph::valueOfNumberConstant): Deleted.
+        (JSC::DFG::Graph::valueOfBooleanConstant): Deleted.
+        (JSC::DFG::Graph::valueOfFunctionConstant): Deleted.
+        (JSC::DFG::Graph::mulImmediateShouldSpeculateInt32): Deleted.
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertConstant):
+        (JSC::DFG::InsertionSet::insertConstantForUse):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::rangeKeyAndAddend):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::getValue):
+        (JSC::DFG::LazyJSValue::strictEqual):
+        (JSC::DFG::LazyJSValue::dumpInContext):
+        * dfg/DFGLazyJSValue.h:
+        (JSC::DFG::LazyJSValue::LazyJSValue):
+        (JSC::DFG::LazyJSValue::tryGetValue):
+        (JSC::DFG::LazyJSValue::value):
+        (JSC::DFG::LazyJSValue::switchLookupValue):
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        (JSC::DFG::MinifiedNode::hasConstant):
+        (JSC::DFG::MinifiedNode::constant):
+        (JSC::DFG::MinifiedNode::hasConstantNumber): Deleted.
+        (JSC::DFG::MinifiedNode::constantNumber): Deleted.
+        (JSC::DFG::MinifiedNode::hasWeakConstant): Deleted.
+        (JSC::DFG::MinifiedNode::weakConstant): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::constant):
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::asJSValue):
+        (JSC::DFG::Node::isInt32Constant):
+        (JSC::DFG::Node::asInt32):
+        (JSC::DFG::Node::asUInt32):
+        (JSC::DFG::Node::isDoubleConstant):
+        (JSC::DFG::Node::isNumberConstant):
+        (JSC::DFG::Node::asNumber):
+        (JSC::DFG::Node::isMachineIntConstant):
+        (JSC::DFG::Node::asMachineInt):
+        (JSC::DFG::Node::isBooleanConstant):
+        (JSC::DFG::Node::asBoolean):
+        (JSC::DFG::Node::isCellConstant):
+        (JSC::DFG::Node::asCell):
+        (JSC::DFG::Node::dynamicCastConstant):
+        (JSC::DFG::Node::function):
+        (JSC::DFG::Node::isWeakConstant): Deleted.
+        (JSC::DFG::Node::constantNumber): Deleted.
+        (JSC::DFG::Node::convertToWeakConstant): Deleted.
+        (JSC::DFG::Node::weakConstant): Deleted.
+        (JSC::DFG::Node::valueOfJSConstant): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForFPR):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBooleanBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleInt32Branch):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::valueOfJSConstantAsImm64):
+        (JSC::DFG::SpeculativeJIT::initConstantInfo):
+        (JSC::DFG::SpeculativeJIT::isConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isJSConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isInt32Constant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isDoubleConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isNumberConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isBooleanConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isFunctionConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::valueOfInt32Constant): Deleted.
+        (JSC::DFG::SpeculativeJIT::valueOfNumberConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::addressOfDoubleConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::valueOfJSConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::valueOfBooleanConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::valueOfFunctionConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isNullConstant): Deleted.
+        (JSC::DFG::SpeculativeJIT::isInteger): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * dfg/DFGValueStrength.cpp: Added.
+        (WTF::printInternal):
+        * dfg/DFGValueStrength.h: Added.
+        (JSC::DFG::merge):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::tryToSetConstantRecovery):
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * dfg/DFGVariableEventStream.h:
+        * dfg/DFGWatchableStructureWatchingPhase.cpp:
+        (JSC::DFG::WatchableStructureWatchingPhase::run):
+        (JSC::DFG::WatchableStructureWatchingPhase::tryWatch):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileInt52Constant):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckFunction):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::tryToSetConstantExitArgument):
+        (JSC::FTL::LowerDFGToLLVM::compileWeakJSConstant): Deleted.
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContext):
+        (JSC::JSValue::dumpInContextAssumingStructure):
+        * runtime/JSCJSValue.h:
 
 2014-06-10  Filip Pizlo  <fpizlo@apple.com>
 

@@ -62,6 +62,16 @@ public:
                 changed |= foldConstants(block);
         }
         
+        if (changed && m_graph.m_form == SSA) {
+            // It's now possible that we have Upsilons pointed at JSConstants. Fix that.
+            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+                BasicBlock* block = m_graph.block(blockIndex);
+                if (!block)
+                    continue;
+                fixUpsilons(block);
+            }
+        }
+         
         return changed;
     }
 
@@ -123,7 +133,7 @@ private:
             }
                 
             case CheckFunction: {
-                if (m_state.forNode(node->child1()).value() != node->function())
+                if (m_state.forNode(node->child1()).value() != node->function()->value())
                     break;
                 node->convertToPhantom();
                 eliminated = true;
@@ -157,7 +167,7 @@ private:
                     if (!variant.structureSet().contains(structure))
                         continue;
                     
-                    if (variant.chain())
+                    if (variant.alternateBase())
                         break;
                     
                     emitGetByOffset(indexInBlock, node, structure, variant, data.identifierNumber);
@@ -204,7 +214,8 @@ private:
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     vm(), structure, m_graph.identifiers()[identifierNumber]);
                 
-                if (!status.isSimple() || status.numVariants() != 1) {
+                if (!status.isSimple() || status.numVariants() != 1 ||
+                    !status[0].constantChecks().isEmpty() || status[0].alternateBase()) {
                     // FIXME: We could handle prototype cases.
                     // https://bugs.webkit.org/show_bug.cgi?id=110386
                     break;
@@ -252,6 +263,34 @@ private:
                 node->convertToIdentity();
                 break;
             }
+                
+            case GetMyArgumentByVal: {
+                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                JSValue value = m_state.forNode(node->child1()).m_value;
+                if (inlineCallFrame && value && value.isInt32()) {
+                    int32_t index = value.asInt32();
+                    if (index >= 0
+                        && static_cast<size_t>(index + 1) < inlineCallFrame->arguments.size()) {
+                        // Roll the interpreter over this.
+                        m_interpreter.execute(indexInBlock);
+                        eliminated = true;
+                        
+                        int operand =
+                            inlineCallFrame->stackOffset +
+                            m_graph.baselineCodeBlockFor(inlineCallFrame)->argumentIndexAfterCapture(index);
+                        
+                        m_insertionSet.insertNode(
+                            indexInBlock, SpecNone, CheckArgumentsNotCreated, node->origin);
+                        m_insertionSet.insertNode(
+                            indexInBlock, SpecNone, Phantom, node->origin, node->children);
+                        
+                        node->convertToGetLocalUnlinked(VirtualRegister(operand));
+                        break;
+                    }
+                }
+                
+                break;
+            }
 
             default:
                 break;
@@ -280,32 +319,21 @@ private:
             }
             if (!node->shouldGenerate() || m_state.didClobber() || node->hasConstant())
                 continue;
-            JSValue value = m_state.forNode(node).value();
-            if (!value)
+            
+            // Interesting fact: this freezing that we do right here may turn an fragile value into
+            // a weak value. See DFGValueStrength.h.
+            FrozenValue* value = m_graph.freeze(m_state.forNode(node).value());
+            if (!*value)
                 continue;
             
-            // Check if merging the abstract value of the constant into the abstract value
-            // we've proven for this node wouldn't widen the proof. If it widens the proof
-            // (i.e. says that the set contains more things in it than it previously did)
-            // then we refuse to fold.
-            AbstractValue oldValue = m_state.forNode(node);
-            AbstractValue constantValue;
-            constantValue.set(m_graph, value, m_state.structureClobberState());
-            constantValue.fixTypeForRepresentation(node);
-            if (oldValue.merge(constantValue))
-                continue;
-                
             NodeOrigin origin = node->origin;
             AdjacencyList children = node->children;
             
-            if (node->op() == GetLocal)
-                m_graph.dethread();
-            else
-                ASSERT(!node->hasVariableAccessData(m_graph));
-            
             m_graph.convertToConstant(node, value);
-            m_insertionSet.insertNode(
-                indexInBlock, SpecNone, Phantom, origin, children);
+            if (!children.isEmpty()) {
+                m_insertionSet.insertNode(
+                    indexInBlock, SpecNone, Phantom, origin, children);
+            }
             
             changed = true;
         }
@@ -323,7 +351,7 @@ private:
 
         bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
         
-        ASSERT(!variant.chain());
+        ASSERT(!variant.alternateBase());
         ASSERT_UNUSED(structure, variant.structureSet().contains(structure));
         
         // Now before we do anything else, push the CFA forward over the GetById
@@ -337,7 +365,7 @@ private:
         }
         
         if (variant.specificValue()) {
-            m_graph.convertToConstant(node, variant.specificValue());
+            m_graph.convertToConstant(node, m_graph.freeze(variant.specificValue()));
             return;
         }
         
@@ -386,23 +414,11 @@ private:
         if (variant.kind() == PutByIdVariant::Transition) {
             transition = m_graph.m_transitions.add(structure, variant.newStructure());
 
-            if (node->op() == PutById) {
-                if (!structure->storedPrototype().isNull()) {
-                    addStructureTransitionCheck(
-                        origin, indexInBlock,
-                        structure->storedPrototype().asCell());
-                }
-
-                m_graph.chains().addLazily(variant.structureChain());
-
-                for (unsigned i = 0; i < variant.structureChain()->size(); ++i) {
-                    JSValue prototype = variant.structureChain()->at(i)->storedPrototype();
-                    if (prototype.isNull())
-                        continue;
-                    ASSERT(prototype.isCell());
-                    addStructureTransitionCheck(
-                        origin, indexInBlock, prototype.asCell());
-                }
+            for (unsigned i = 0; i < variant.constantChecks().size(); ++i) {
+                addStructureTransitionCheck(
+                    origin, indexInBlock,
+                    variant.constantChecks()[i].constant(),
+                    variant.constantChecks()[i].structure());
             }
         }
 
@@ -454,17 +470,39 @@ private:
         m_graph.m_storageAccessData.append(storageAccessData);
     }
 
-    void addStructureTransitionCheck(NodeOrigin origin, unsigned indexInBlock, JSCell* cell)
+    void addStructureTransitionCheck(NodeOrigin origin, unsigned indexInBlock, JSCell* cell, Structure* structure)
     {
         if (m_graph.watchpoints().consider(cell->structure()))
             return;
 
         Node* weakConstant = m_insertionSet.insertNode(
-            indexInBlock, speculationFromValue(cell), WeakJSConstant, origin, OpInfo(cell));
+            indexInBlock, speculationFromValue(cell), JSConstant, origin,
+            OpInfo(m_graph.freeze(cell)));
         
         m_insertionSet.insertNode(
             indexInBlock, SpecNone, CheckStructure, origin,
-            OpInfo(m_graph.addStructureSet(cell->structure())), Edge(weakConstant, CellUse));
+            OpInfo(m_graph.addStructureSet(structure)), Edge(weakConstant, CellUse));
+    }
+    
+    void fixUpsilons(BasicBlock* block)
+    {
+        for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+            Node* node = block->at(nodeIndex);
+            if (node->op() != Upsilon)
+                continue;
+            switch (node->phi()->op()) {
+            case Phi:
+                break;
+            case JSConstant:
+            case DoubleConstant:
+            case Int52Constant:
+                node->convertToPhantom();
+                break;
+            default:
+                DFG_CRASH(m_graph, node, "Bad Upsilon phi() pointer");
+                break;
+            }
+        }
     }
     
     InPlaceAbstractState m_state;

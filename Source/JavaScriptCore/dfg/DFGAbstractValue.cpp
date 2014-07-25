@@ -47,10 +47,10 @@ void AbstractValue::observeTransitions(const TransitionVector& vector)
     checkConsistency();
 }
 
-void AbstractValue::setMostSpecific(Graph& graph, JSValue value)
+void AbstractValue::setOSREntryValue(Graph& graph, const FrozenValue& value)
 {
-    if (!!value && value.isCell()) {
-        Structure* structure = value.asCell()->structure();
+    if (!!value && value.value().isCell()) {
+        Structure* structure = value.structure();
         graph.watchpoints().consider(structure);
         m_structure = structure;
         m_arrayModes = asArrayModes(structure->indexingType());
@@ -59,17 +59,17 @@ void AbstractValue::setMostSpecific(Graph& graph, JSValue value)
         m_arrayModes = 0;
     }
         
-    m_type = speculationFromValue(value);
-    m_value = value;
+    m_type = speculationFromValue(value.value());
+    m_value = value.value();
         
     checkConsistency();
     assertIsWatched(graph);
 }
 
-void AbstractValue::set(Graph& graph, JSValue value, StructureClobberState clobberState)
+void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobberState clobberState)
 {
-    if (!!value && value.isCell()) {
-        Structure* structure = value.asCell()->structure();
+    if (!!value && value.value().isCell()) {
+        Structure* structure = value.structure();
         if (graph.watchpoints().consider(structure)) {
             // We should be able to assume that the watchpoint for this has already been set.
             // But we can't because our view of what structure a value has keeps changing. That's
@@ -90,8 +90,8 @@ void AbstractValue::set(Graph& graph, JSValue value, StructureClobberState clobb
         m_arrayModes = 0;
     }
     
-    m_type = speculationFromValue(value);
-    m_value = value;
+    m_type = speculationFromValue(value.value());
+    m_value = value.value();
     
     checkConsistency();
     assertIsWatched(graph);
@@ -233,12 +233,45 @@ FiltrationResult AbstractValue::filter(SpeculatedType type)
     return normalizeClarity();
 }
 
-FiltrationResult AbstractValue::filterByValue(JSValue value)
+FiltrationResult AbstractValue::filterByValue(const FrozenValue& value)
 {
-    FiltrationResult result = filter(speculationFromValue(value));
+    FiltrationResult result = filter(speculationFromValue(value.value()));
     if (m_type)
-        m_value = value;
+        m_value = value.value();
     return result;
+}
+
+FiltrationResult AbstractValue::filter(const AbstractValue& other)
+{
+    m_type &= other.m_type;
+    m_structure.filter(other.m_structure);
+    m_arrayModes &= other.m_arrayModes;
+
+    m_structure.filter(m_type);
+    filterArrayModesByType();
+    filterValueByType();
+    
+    if (normalizeClarity() == Contradiction)
+        return Contradiction;
+    
+    if (m_value == other.m_value)
+        return FiltrationOK;
+    
+    // Neither of us are BOTTOM, so an empty value means TOP.
+    if (!m_value) {
+        // We previously didn't prove a value but now we have done so.
+        m_value = other.m_value; 
+        return FiltrationOK;
+    }
+    
+    if (!other.m_value) {
+        // We had proved a value but the other guy hadn't, so keep our proof.
+        return FiltrationOK;
+    }
+    
+    // We both proved there to be a specific value but they are different.
+    clear();
+    return Contradiction;
 }
 
 void AbstractValue::filterValueByType()

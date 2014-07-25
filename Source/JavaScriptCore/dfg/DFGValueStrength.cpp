@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDesiredStructureChains_h
-#define DFGDesiredStructureChains_h
+#include "config.h"
+#include "DFGValueStrength.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "IntendedStructureChain.h"
-#include <wtf/Vector.h>
+namespace WTF {
 
-namespace JSC { namespace DFG {
+using namespace JSC::DFG;
 
-class DesiredStructureChains {
-public:
-    DesiredStructureChains();
-    ~DesiredStructureChains();
-    
-    void addLazily(PassRefPtr<IntendedStructureChain> chain)
-    {
-        m_vector.append(chain);
+void printInternal(PrintStream& out, ValueStrength strength)
+{
+    switch (strength) {
+    case FragileValue:
+        out.print("Fragile");
+        return;
+    case WeakValue:
+        out.print("Weak");
+        return;
+    case StrongValue:
+        out.print("Strong");
+        return;
     }
-    
-    bool areStillValid() const;
-    
-    void visitChildren(SlotVisitor&);
-    
-private:
-    Vector<RefPtr<IntendedStructureChain>> m_vector;
-};
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-} } // namespace JSC::DFG
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGDesiredStructureChains_h
 

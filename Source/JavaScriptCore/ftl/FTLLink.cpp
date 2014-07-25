@@ -63,6 +63,8 @@ void link(State& state)
     if (!graph.m_plan.inlineCallFrames->isEmpty())
         state.jitCode->common.inlineCallFrames = graph.m_plan.inlineCallFrames;
     
+    graph.registerFrozenValues();
+
     // Create the entrypoint. Note that we use this entrypoint totally differently
     // depending on whether we're doing OSR entry or not.
     CCallHelpers jit(&vm, codeBlock);

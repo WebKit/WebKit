@@ -44,12 +44,8 @@ const char* exitKindToString(ExitKind kind)
         return "BadExecutable";
     case BadCache:
         return "BadCache";
-    case BadCacheWatchpoint:
-        return "BadCacheWatchpoint";
-    case BadWeakConstantCache:
-        return "BadWeakConstantCache";
-    case BadWeakConstantCacheWatchpoint:
-        return "BadWeakConstantCacheWatchpoint";
+    case BadConstantCache:
+        return "BadConstantCache";
     case BadIndexingType:
         return "BadIndexingType";
     case Overflow:
@@ -72,8 +68,6 @@ const char* exitKindToString(ExitKind kind)
         return "NotStringObject";
     case Uncountable:
         return "Uncountable";
-    case UncountableWatchpoint:
-        return "UncountableWatchpoint";
     case UncountableInvalidation:
         return "UncountableInvalidation";
     case WatchdogTimerFired:
@@ -92,7 +86,6 @@ bool exitKindIsCountable(ExitKind kind)
         RELEASE_ASSERT_NOT_REACHED();
     case BadType:
     case Uncountable:
-    case UncountableWatchpoint:
     case LoadFromHole: // Already counted directly by the baseline JIT.
     case StoreToHole: // Already counted directly by the baseline JIT.
     case OutOfBounds: // Already counted directly by the baseline JIT.

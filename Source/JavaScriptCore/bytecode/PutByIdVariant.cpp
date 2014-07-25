@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PutByIdVariant.h"
 
+#include <wtf/ListDump.h>
+
 namespace JSC {
 
 void PutByIdVariant::dump(PrintStream& out) const
@@ -48,8 +50,8 @@ void PutByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
     case Transition:
         out.print(
             "<Transition: ", pointerDumpInContext(oldStructure(), context), " -> ",
-            pointerDumpInContext(newStructure(), context), ", ",
-            pointerDumpInContext(structureChain(), context), ", ", offset(), ">");
+            pointerDumpInContext(newStructure(), context), ", [",
+            listDumpInContext(constantChecks(), context), "], ", offset(), ">");
         return;
     }
     

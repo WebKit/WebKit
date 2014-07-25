@@ -72,12 +72,9 @@ private:
         case BitOr:
             handleCommutativity();
 
-            if (m_node->child2()->isConstant()) {
-                JSValue op2 = m_graph.valueOfJSConstant(m_node->child2().node());
-                if (op2.isInt32() && !op2.asInt32()) {
-                    convertToIdentityOverChild1();
-                    break;
-                }
+            if (m_node->child2()->isInt32Constant() && !m_node->child2()->asInt32()) {
+                convertToIdentityOverChild1();
+                break;
             }
             break;
             
@@ -89,39 +86,29 @@ private:
         case BitLShift:
         case BitRShift:
         case BitURShift:
-            if (m_node->child2()->isConstant()) {
-                JSValue op2 = m_graph.valueOfJSConstant(m_node->child2().node());
-                if (op2.isInt32() && !(op2.asInt32() & 0x1f)) {
-                    convertToIdentityOverChild1();
-                    break;
-                }
+            if (m_node->child2()->isInt32Constant() && !(m_node->child2()->asInt32() & 0x1f)) {
+                convertToIdentityOverChild1();
+                break;
             }
             break;
             
         case UInt32ToNumber:
             if (m_node->child1()->op() == BitURShift
-                && m_node->child1()->child2()->isConstant()) {
-                JSValue shiftAmount = m_graph.valueOfJSConstant(
-                    m_node->child1()->child2().node());
-                if (shiftAmount.isInt32() && (shiftAmount.asInt32() & 0x1f)
-                    && m_node->arithMode() != Arith::DoOverflow) {
-                    m_node->convertToIdentity();
-                    m_changed = true;
-                    break;
-                }
+                && m_node->child1()->child2()->isInt32Constant()
+                && (m_node->child1()->child2()->asInt32() & 0x1f)
+                && m_node->arithMode() != Arith::DoOverflow) {
+                m_node->convertToIdentity();
+                m_changed = true;
+                break;
             }
             break;
             
         case ArithAdd:
             handleCommutativity();
             
-            if (m_graph.isInt32Constant(m_node->child2().node())) {
-                int32_t value = m_graph.valueOfInt32Constant(
-                    m_node->child2().node());
-                if (!value) {
-                    convertToIdentityOverChild1();
-                    break;
-                }
+            if (m_node->child2()->isInt32Constant() && !m_node->child2()->asInt32()) {
+                convertToIdentityOverChild1();
+                break;
             }
             break;
             
@@ -130,9 +117,9 @@ private:
             break;
             
         case ArithSub:
-            if (m_graph.isInt32Constant(m_node->child2().node())
+            if (m_node->child2()->isInt32Constant()
                 && m_node->isBinaryUseKind(Int32Use)) {
-                int32_t value = m_graph.valueOfInt32Constant(m_node->child2().node());
+                int32_t value = m_node->child2()->asInt32();
                 if (-value != value) {
                     m_node->setOp(ArithAdd);
                     m_node->child2().setNode(

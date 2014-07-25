@@ -51,9 +51,7 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
 bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType exitType)
 {
     return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCacheWatchpoint, exitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadWeakConstantCache, exitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadWeakConstantCacheWatchpoint, exitType));
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache, exitType));
     
 }
 #endif
@@ -307,7 +305,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
         // dictionaries if we have evidence to suggest that those objects were never used as
         // prototypes in a cacheable prototype access - i.e. there's a good chance that some of
         // the other checks below will fail.
-        if (!chain->isNormalized())
+        if (structure->isProxy() || !chain->isNormalized())
             return PutByIdStatus(TakesSlowPath);
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "JSCJSValue.h"
+#include "DFGFrozenValue.h"
 #include <wtf/text/StringImpl.h>
 
 namespace JSC { namespace DFG {
@@ -44,10 +44,10 @@ enum LazinessKind {
 
 class LazyJSValue {
 public:
-    LazyJSValue(JSValue value = JSValue())
+    LazyJSValue(FrozenValue* value = FrozenValue::emptySingleton())
         : m_kind(KnownValue)
     {
-        u.value = JSValue::encode(value);
+        u.value = value;
     }
     
     static LazyJSValue singleCharacterString(UChar character)
@@ -66,19 +66,19 @@ public:
         return result;
     }
     
-    JSValue tryGetValue() const
+    FrozenValue* tryGetValue(Graph&) const
     {
         if (m_kind == KnownValue)
             return value();
-        return JSValue();
+        return nullptr;
     }
     
     JSValue getValue(VM&) const;
     
-    JSValue value() const
+    FrozenValue* value() const
     {
         ASSERT(m_kind == KnownValue);
-        return JSValue::decode(u.value);
+        return u.value;
     }
     
     UChar character() const
@@ -102,7 +102,7 @@ public:
         // for a kind of value that can't.
         switch (m_kind) {
         case KnownValue:
-            return value().asInt32();
+            return value()->value().asInt32();
         case SingleCharacterString:
             return character();
         default:
@@ -116,7 +116,7 @@ public:
     
 private:
     union {
-        EncodedJSValue value;
+        FrozenValue* value;
         UChar character;
         StringImpl* stringImpl;
     } u;

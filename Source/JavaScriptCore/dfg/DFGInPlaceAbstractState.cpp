@@ -151,17 +151,18 @@ void InPlaceAbstractState::initialize()
             continue;
         if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
             continue;
-        for (size_t i = 0; i < m_graph.m_mustHandleAbstractValues.size(); ++i) {
-            int operand = m_graph.m_mustHandleAbstractValues.operandForIndex(i);
+        for (size_t i = 0; i < m_graph.m_mustHandleValues.size(); ++i) {
+            int operand = m_graph.m_mustHandleValues.operandForIndex(i);
             Node* node = block->variablesAtHead.operand(operand);
             if (!node)
                 continue;
-            AbstractValue value = m_graph.m_mustHandleAbstractValues[i];
-            AbstractValue& abstractValue = block->valuesAtHead.operand(operand);
+            AbstractValue source;
+            source.setOSREntryValue(m_graph, *m_graph.m_mustHandleValues[i]);
+            AbstractValue& target = block->valuesAtHead.operand(operand);
             VariableAccessData* variable = node->variableAccessData();
             FlushFormat format = variable->flushFormat();
-            abstractValue.merge(value);
-            abstractValue.fixTypeForRepresentation(resultFor(format));
+            target.merge(source);
+            target.fixTypeForRepresentation(resultFor(format));
         }
         block->cfaShouldRevisit = true;
     }

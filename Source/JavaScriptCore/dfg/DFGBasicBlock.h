@@ -134,6 +134,26 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Operands<AbstractValue> valuesAtHead;
     Operands<AbstractValue> valuesAtTail;
     
+    // The intersection of assumptions we have made previously at the head of this block. Note
+    // that under normal circumstances, each time we run the CFA, we will get strictly more precise
+    // results. But we don't actually require this to be the case. It's fine for the CFA to loosen
+    // up for any odd reason. It's fine when this happens, because anything that the CFA proves
+    // must be true from that point forward, except if some registered watchpoint fires, in which
+    // case the code won't ever run. So, the CFA proving something less precise later on is just an
+    // outcome of the CFA being imperfect; the more precise thing that it had proved earlier is no
+    // less true.
+    //
+    // But for the purpose of OSR entry, we need to make sure that we remember what assumptions we
+    // had used for optimizing any given basic block. That's what this is for.
+    //
+    // It's interesting that we could use this to make the CFA more precise: all future CFAs could
+    // filter their results with this thing to sort of maintain maximal precision. Because we
+    // expect CFA to usually be monotonically more precise each time we run it to fixpoint, this
+    // would not be a productive optimization: it would make setting up a basic block more
+    // expensive and would only benefit bizarre pathological cases.
+    Operands<AbstractValue> intersectionOfPastValuesAtHead;
+    bool intersectionOfCFAHasVisited;
+    
     float executionCount;
     
     // These fields are reserved for NaturalLoops.

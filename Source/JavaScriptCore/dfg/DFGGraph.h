@@ -33,6 +33,7 @@
 #include "DFGArgumentPosition.h"
 #include "DFGBasicBlock.h"
 #include "DFGDominators.h"
+#include "DFGFrozenValue.h"
 #include "DFGLongLivedState.h"
 #include "DFGNaturalLoops.h"
 #include "DFGNode.h"
@@ -145,43 +146,16 @@ public:
 
     void dethread();
     
-    void convertToConstant(Node* node, unsigned constantNumber)
-    {
-        if (node->op() == GetLocal)
-            dethread();
-        else
-            ASSERT(!node->hasVariableAccessData(*this));
-        node->convertToConstant(constantNumber);
-    }
+    FrozenValue* freezeFragile(JSValue value);
+    FrozenValue* freeze(JSValue value); // We use weak freezing by default.
+    FrozenValue* freezeStrong(JSValue value); // Shorthand for freeze(value)->markStrongly().
     
-    unsigned constantRegisterForConstant(JSValue value)
-    {
-        unsigned constantRegister;
-        if (!m_codeBlock->findConstant(value, constantRegister)) {
-            constantRegister = m_codeBlock->addConstantLazily();
-            initializeLazyWriteBarrierForConstant(
-                m_plan.writeBarriers,
-                m_codeBlock->constants()[constantRegister],
-                m_codeBlock,
-                constantRegister,
-                m_codeBlock->ownerExecutable(),
-                value);
-        }
-        return constantRegister;
-    }
+    void convertToConstant(Node* node, FrozenValue* value);
+    void convertToConstant(Node* node, JSValue value);
+    void convertToStrongConstant(Node* node, JSValue value);
     
     void assertIsWatched(Structure* structure);
     
-    void convertToConstant(Node* node, JSValue value)
-    {
-        if (value.isCell())
-            assertIsWatched(value.asCell()->structure());
-        if (value.isObject())
-            node->convertToWeakConstant(value.asCell());
-        else
-            convertToConstant(node, constantRegisterForConstant(value));
-    }
-
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(PrintStream& = WTF::dataFile(), DumpContext* = 0);
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
@@ -195,11 +169,6 @@ public:
     // preceding node. Returns true if anything was printed.
     bool dumpCodeOrigin(PrintStream&, const char* prefix, Node* previousNode, Node* currentNode, DumpContext*);
 
-    SpeculatedType getJSConstantSpeculation(Node* node)
-    {
-        return speculationFromValue(node->valueOfJSConstant(m_codeBlock));
-    }
-    
     AddSpeculationMode addSpeculationMode(Node* add, bool leftShouldSpeculateInt32, bool rightShouldSpeculateInt32, PredictionPass pass)
     {
         ASSERT(add->op() == ValueAdd || add->op() == ArithAdd || add->op() == ArithSub);
@@ -315,92 +284,6 @@ public:
             baselineCodeBlockFor(codeOrigin)->argumentIndexAfterCapture(argument));
     }
     
-    // Helper methods to check nodes for constants.
-    bool isConstant(Node* node)
-    {
-        return node->hasConstant();
-    }
-    bool isJSConstant(Node* node)
-    {
-        return node->hasConstant();
-    }
-    bool isInt32Constant(Node* node)
-    {
-        return node->isInt32Constant(m_codeBlock);
-    }
-    bool isDoubleConstant(Node* node)
-    {
-        return node->isDoubleConstant(m_codeBlock);
-    }
-    bool isNumberConstant(Node* node)
-    {
-        return node->isNumberConstant(m_codeBlock);
-    }
-    bool isMachineIntConstant(Node* node)
-    {
-        return node->isMachineIntConstant(m_codeBlock);
-    }
-    bool isBooleanConstant(Node* node)
-    {
-        return node->isBooleanConstant(m_codeBlock);
-    }
-    bool isCellConstant(Node* node)
-    {
-        if (!isJSConstant(node))
-            return false;
-        JSValue value = valueOfJSConstant(node);
-        return value.isCell() && !!value;
-    }
-    bool isFunctionConstant(Node* node)
-    {
-        if (!isJSConstant(node))
-            return false;
-        if (!getJSFunction(valueOfJSConstant(node)))
-            return false;
-        return true;
-    }
-    bool isInternalFunctionConstant(Node* node)
-    {
-        if (!isJSConstant(node))
-            return false;
-        JSValue value = valueOfJSConstant(node);
-        if (!value.isCell() || !value)
-            return false;
-        JSCell* cell = value.asCell();
-        if (!cell->inherits(InternalFunction::info()))
-            return false;
-        return true;
-    }
-    // Helper methods get constant values from nodes.
-    JSValue valueOfJSConstant(Node* node)
-    {
-        return node->valueOfJSConstant(m_codeBlock);
-    }
-    int32_t valueOfInt32Constant(Node* node)
-    {
-        JSValue value = valueOfJSConstant(node);
-        if (!value.isInt32()) {
-            dataLog("Value isn't int32: ", value, "\n");
-            dump();
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        return value.asInt32();
-    }
-    double valueOfNumberConstant(Node* node)
-    {
-        return valueOfJSConstant(node).asNumber();
-    }
-    bool valueOfBooleanConstant(Node* node)
-    {
-        return valueOfJSConstant(node).asBoolean();
-    }
-    JSFunction* valueOfFunctionConstant(Node* node)
-    {
-        JSCell* function = getJSFunction(valueOfJSConstant(node));
-        ASSERT(function);
-        return jsCast<JSFunction*>(function);
-    }
-
     static const char *opName(NodeType);
     
     StructureSet* addStructureSet(const StructureSet& structureSet)
@@ -686,8 +569,6 @@ public:
     void determineReachability();
     void resetReachability();
     
-    void resetExitStates();
-    
     unsigned varArgNumChildren(Node* node)
     {
         ASSERT(node->flags() & NodeHasVarArgs);
@@ -800,7 +681,6 @@ public:
     
     DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
     DesiredWatchpoints& watchpoints() { return m_plan.watchpoints; }
-    DesiredStructureChains& chains() { return m_plan.chains; }
     
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
@@ -818,6 +698,8 @@ public:
     JSArrayBufferView* tryGetFoldableView(Node*, ArrayMode);
     JSArrayBufferView* tryGetFoldableViewForChild1(Node*);
     
+    void registerFrozenValues();
+    
     virtual void visitChildren(SlotVisitor&) override;
     
     NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
@@ -831,10 +713,14 @@ public:
     
     NodeAllocator& m_allocator;
 
-    Operands<AbstractValue> m_mustHandleAbstractValues;
+    Operands<FrozenValue*> m_mustHandleValues;
     
     Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
+
+    HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
+    Bag<FrozenValue> m_frozenValues;
+    
     Vector<StorageAccessData> m_storageAccessData;
     Vector<Node*, 8> m_arguments;
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
@@ -865,6 +751,7 @@ public:
 #endif
     
     OptimizationFixpointState m_fixpointState;
+    StructureWatchpointState m_structureWatchpointState;
     GraphForm m_form;
     UnificationState m_unificationState;
     RefCountState m_refCountState;
@@ -877,7 +764,7 @@ private:
     {
         ASSERT(immediate->hasConstant());
         
-        JSValue immediateValue = immediate->valueOfJSConstant(m_codeBlock);
+        JSValue immediateValue = immediate->asJSValue();
         if (!immediateValue.isNumber() && !immediateValue.isBoolean())
             return DontSpeculateInt32;
         
