@@ -55,6 +55,7 @@ struct EditorState {
         , hasComposition(false)
 #if PLATFORM(IOS)
         , isReplaceAllowed(false)
+        , hasContent(false)
         , characterAfterSelection(0)
         , characterBeforeSelection(0)
         , twoCharacterBeforeSelection(0)
@@ -76,6 +77,7 @@ struct EditorState {
 
 #if PLATFORM(IOS)
     bool isReplaceAllowed;
+    bool hasContent;
     UChar32 characterAfterSelection;
     UChar32 characterBeforeSelection;
     UChar32 twoCharacterBeforeSelection;

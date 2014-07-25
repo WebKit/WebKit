@@ -2458,7 +2458,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (BOOL)hasContent
 {
-    return YES;
+    return _page->editorState().hasContent;
 }
 
 - (void)selectAll
