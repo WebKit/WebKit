@@ -1,3 +1,14 @@
+2014-07-25  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Unneeded MobileMe workaround in ResourceHandle::receivedCredential
+        https://bugs.webkit.org/show_bug.cgi?id=135297
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::receivedCredential): Removed the site-specific behavior for
+        gallery.me.com.
+
 2014-07-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r171480.
