@@ -1,5 +1,31 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171471
+
+    2014-07-23  Timothy Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r171239): Much more time spent taking snapshots during the PLT
+            https://bugs.webkit.org/show_bug.cgi?id=135177
+            <rdar://problem/17764847>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::willChangeCurrentHistoryItemForMainFrame):
+            (WebKit::WebPageProxy::willChangeCurrentHistoryItem): Deleted.
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::willChangeCurrentHistoryItem):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::willChangeCurrentHistoryItemForMainFrame):
+            (WebKit::WebPage::willChangeCurrentHistoryItem): Deleted.
+            * WebProcess/WebPage/WebPage.h:
+            Rename WillChangeCurrentHistoryItem to WillChangeCurrentHistoryItemForMainFrame.
+            Only send it when the current history item for the main frame changes.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171203
 
     2014-07-17  Enrica Casucci  <enrica@apple.com>

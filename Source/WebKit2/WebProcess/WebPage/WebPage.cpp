@@ -4848,9 +4848,9 @@ void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
     updateMainFrameScrollOffsetPinning();
 }
 
-void WebPage::willChangeCurrentHistoryItem()
+void WebPage::willChangeCurrentHistoryItemForMainFrame()
 {
-    send(Messages::WebPageProxy::WillChangeCurrentHistoryItem());
+    send(Messages::WebPageProxy::WillChangeCurrentHistoryItemForMainFrame());
 }
 
 } // namespace WebKit

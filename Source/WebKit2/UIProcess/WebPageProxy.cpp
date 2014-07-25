@@ -5176,7 +5176,7 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_isShowingNavigationGestureSnapshot = false;
 }
 
-void WebPageProxy::willChangeCurrentHistoryItem()
+void WebPageProxy::willChangeCurrentHistoryItemForMainFrame()
 {
     recordNavigationSnapshot();
 }
