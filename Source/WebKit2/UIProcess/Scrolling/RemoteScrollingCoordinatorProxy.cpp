@@ -49,6 +49,7 @@ namespace WebKit {
 RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_scrollingTree(RemoteScrollingTree::create(*this))
+    , m_requestedScrollInfo(nullptr)
     , m_propagatesMainFrameScrolls(true)
 {
 }
@@ -77,8 +78,10 @@ const RemoteLayerTreeHost* RemoteScrollingCoordinatorProxy::layerTreeHost() cons
     return &remoteDrawingArea->remoteLayerTreeHost();
 }
 
-void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingCoordinatorTransaction& transaction)
+void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingCoordinatorTransaction& transaction, RequestedScrollInfo& requestedScrollInfo)
 {
+    m_requestedScrollInfo = &requestedScrollInfo;
+
     OwnPtr<ScrollingStateTree> stateTree = const_cast<RemoteScrollingCoordinatorTransaction&>(transaction).scrollingStateTree().release();
     
     const RemoteLayerTreeHost* layerTreeHost = this->layerTreeHost();
@@ -89,6 +92,8 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
 
     connectStateNodeLayers(*stateTree, *layerTreeHost);
     m_scrollingTree->commitNewTreeState(stateTree.release());
+
+    m_requestedScrollInfo = nullptr;
 }
 
 #if !PLATFORM(IOS)
@@ -169,8 +174,11 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
 
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& scrollPosition, bool representsProgrammaticScroll)
 {
-    if (scrolledNodeID == rootScrollingNodeID())
-        m_webPageProxy.requestScroll(scrollPosition, representsProgrammaticScroll);
+    if (scrolledNodeID == rootScrollingNodeID() && m_requestedScrollInfo) {
+        m_requestedScrollInfo->requestsScrollPositionUpdate = true;
+        m_requestedScrollInfo->requestIsProgrammaticScroll = representsProgrammaticScroll;
+        m_requestedScrollInfo->requestedScrollPosition = scrollPosition;
+    }
 }
 
 } // namespace WebKit
