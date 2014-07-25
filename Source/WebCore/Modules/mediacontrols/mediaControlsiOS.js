@@ -456,11 +456,15 @@ ControllerIOS.prototype = {
         this._pageScaleFactor = newScaleFactor;
 
         if (newScaleFactor) {
-            var scaleTransform = "scale(" + (1 / newScaleFactor) + ")";
+            var scaleValue = 1 / newScaleFactor;
+            var scaleTransform = "scale(" + scaleValue + ")";
             if (this.controls.startPlaybackButton)
                 this.controls.startPlaybackButton.style.webkitTransform = scaleTransform;
             if (this.controls.panel) {
-                this.controls.panel.style.width = (newScaleFactor * 100) + "%";
+                var bottomAligment = -2 * scaleValue;
+                this.controls.panel.style.bottom = bottomAligment + "px";
+                this.controls.panel.style.paddingBottom = -(newScaleFactor * bottomAligment) + "px";
+                this.controls.panel.style.width = Math.ceil(newScaleFactor * 100) + "%";
                 this.controls.panel.style.webkitTransform = scaleTransform;
                 this.setNeedsTimelineMetricsUpdate();
                 this.updateProgress();
