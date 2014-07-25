@@ -29,6 +29,7 @@ namespace WebCore {
 
 SharedBuffer::SharedBuffer(SoupBuffer* soupBuffer)
     : m_size(0)
+    , m_buffer(adoptRef(new DataBuffer))
     , m_soupBuffer(soupBuffer)
 {
     ASSERT(soupBuffer);
