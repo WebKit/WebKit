@@ -1,3 +1,15 @@
+2014-07-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] CMake tries to install JavaScriptCore-3.0.gir outside of install prefix
+        https://bugs.webkit.org/show_bug.cgi?id=135288
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindGObjectIntrospection.cmake: pass correct libdir and
+        datadir to pkgconfig
+        * Source/cmake/OptionsGTK.cmake: define install directories early
+        enough to be used in FindGObjectIntrospection.cmake
+
 2014-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Remove CSS_EXCLUSIONS compile flag and leftover code
