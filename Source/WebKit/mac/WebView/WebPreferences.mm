@@ -555,9 +555,6 @@ public:
         [NSNumber numberWithFloat:-1.0f], WebKitMaxParseDurationPreferenceKey,
         [NSNumber numberWithBool:NO],     WebKitAllowMultiElementImplicitFormSubmissionPreferenceKey,
         [NSNumber numberWithInt:-1],      WebKitPageCacheSizePreferenceKey,
-        [NSNumber numberWithInt:-1],      WebKitObjectCacheSizePreferenceKey,
-        [NSNumber numberWithInt:-1],      WebKitNSURLMemoryCacheSizePreferenceKey,
-        [NSNumber numberWithInt:-1],      WebKitNSURLDiskCacheSizePreferenceKey,
         [NSNumber numberWithBool:NO],     WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
         [NSNumber numberWithInt:InterpolationLow], WebKitInterpolationQualityPreferenceKey,
         [NSNumber numberWithBool:YES],    WebKitPasswordEchoEnabledPreferenceKey,
@@ -1467,26 +1464,6 @@ public:
 - (int)_objectCacheSize
 {
     return [self _integerValueForKey:WebKitObjectCacheSizePreferenceKey];
-}
-
-- (void)_setNSURLMemoryCacheSize:(int)size
-{
-    [self _setIntegerValue:size forKey:WebKitNSURLMemoryCacheSizePreferenceKey];
-}
-
-- (int)_NSURLMemoryCacheSize
-{
-    return [self _integerValueForKey:WebKitNSURLMemoryCacheSizePreferenceKey];
-}
-
-- (void)_setNSURLDiskCacheSize:(int)size
-{
-    [self _setIntegerValue:size forKey:WebKitNSURLDiskCacheSizePreferenceKey];
-}
-
-- (int)_NSURLDiskCacheSize
-{
-    return [self _integerValueForKey:WebKitNSURLDiskCacheSizePreferenceKey];
 }
 
 - (void)_setAlwaysUseBaselineOfPrimaryFont:(BOOL)flag
