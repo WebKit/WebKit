@@ -144,6 +144,8 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
         &SVGNames::widthAttr,
         &word_spacingAttr,
         &writing_modeAttr,
+        &xAttr,
+        &yAttr,
     };
 
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(attributeNames); ++i) {
@@ -244,6 +246,8 @@ static NEVER_INLINE void populateCSSPropertyWithSVGDOMNameToAnimatedPropertyType
     static const TableEntry table[] = {
         { SVGNames::heightAttr, AnimatedLength },
         { SVGNames::widthAttr, AnimatedLength },
+        { xAttr, AnimatedLength },
+        { yAttr, AnimatedLength },
     };
 
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)

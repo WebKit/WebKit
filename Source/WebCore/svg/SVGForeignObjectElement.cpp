@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

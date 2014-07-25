@@ -569,6 +569,8 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyWebkitMarginBefore:
     case CSSPropertyWebkitMarginEnd:
     case CSSPropertyWebkitMarginStart:
+    case CSSPropertyX:
+    case CSSPropertyY:
         acceptsNegativeNumbers = true;
         return true;
     default:

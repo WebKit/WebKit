@@ -1,0 +1,5 @@
+PASS - "x" property for "x" element at 0.5s saw something close to: 150
+PASS - "y" property for "y" element at 0.5s saw something close to: 150
+PASS - "width" property for "width" element at 0.5s saw something close to: 150
+PASS - "height" property for "height" element at 0.5s saw something close to: 150
+

@@ -299,6 +299,10 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         m_implicitShorthand = false;
         return true;
     }
+    case CSSPropertyX:
+    case CSSPropertyY:
+        valid_primitive = (!id && validUnit(value, FLength | FPercent));
+        break;
     default:
         // If you crash here, it's because you added a css property and are not handling it
         // in either this switch statement or the one in CSSParser::parseValue

@@ -3,6 +3,7 @@
                   2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2005, 2006 Apple Inc.
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
+    Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -145,6 +146,16 @@ public:
     void setGlyphOrientationVertical(EGlyphOrientation val) { svg_inherited_flags._glyphOrientationVertical = val; }
     void setMaskType(EMaskType val) { svg_noninherited_flags.f.maskType = val; }
     void setPaintOrder(PaintOrder val) { svg_inherited_flags.paintOrder = val; }
+    void setX(const Length& obj)
+    {
+        if (!(layout->x == obj))
+            layout.access()->x = obj;
+    }
+    void setY(const Length& obj)
+    {
+        if (!(layout->y == obj))
+            layout.access()->y = obj;
+    }
 
     void setFillOpacity(float obj)
     {
@@ -342,6 +353,8 @@ public:
     const Color& lightingColor() const { return misc->lightingColor; }
     SVGLength baselineShiftValue() const { return misc->baselineShiftValue; }
     ShadowData* shadow() const { return shadowSVG->shadow.get(); }
+    const Length& x() const { return layout->x; }
+    const Length& y() const { return layout->y; }
     String clipperResource() const { return resources->clipper; }
     String filterResource() const { return resources->filter; }
     String maskerResource() const { return resources->masker; }
@@ -440,6 +453,7 @@ protected:
     DataRef<StyleStopData> stops;
     DataRef<StyleMiscData> misc;
     DataRef<StyleShadowSVGData> shadowSVG;
+    DataRef<StyleLayoutData> layout;
     DataRef<StyleResourceData> resources;
 
 private:

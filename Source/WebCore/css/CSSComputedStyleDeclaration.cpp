@@ -428,7 +428,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyGlyphOrientationHorizontal,
     CSSPropertyGlyphOrientationVertical,
     CSSPropertyWebkitSvgShadow,
-    CSSPropertyVectorEffect
+    CSSPropertyVectorEffect,
+    CSSPropertyX,
+    CSSPropertyY
 };
 
 const unsigned numComputedProperties = WTF_ARRAY_LENGTH(computedProperties);
@@ -2896,6 +2898,12 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:
             break;
+
+        // New positioning properties for SVG.
+        case CSSPropertyX:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().x(), style.get());
+        case CSSPropertyY:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().y(), style.get());
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyWebkitTextEmphasis:

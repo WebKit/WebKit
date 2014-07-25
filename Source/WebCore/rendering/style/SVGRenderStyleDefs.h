@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
+    Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
 
     Based on khtml code by:
     Copyright (C) 2000-2003 Lars Knoll (knoll@kde.org)
@@ -28,6 +29,7 @@
 #ifndef SVGRenderStyleDefs_h
 #define SVGRenderStyleDefs_h
 
+#include "Length.h"
 #include "SVGLength.h"
 #include "SVGPaint.h"
 #include "ShadowData.h"
@@ -286,6 +288,26 @@ namespace WebCore {
     private:
         StyleInheritedResourceData();
         StyleInheritedResourceData(const StyleInheritedResourceData&);
+    };
+
+    // Positioning and sizing properties.
+    class StyleLayoutData : public RefCounted<StyleLayoutData> {
+    public:
+        static PassRef<StyleLayoutData> create() { return adoptRef(*new StyleLayoutData); }
+        PassRef<StyleLayoutData> copy() const;
+
+        bool operator==(const StyleLayoutData&) const;
+        bool operator!=(const StyleLayoutData& other) const
+        {
+            return !(*this == other);
+        }
+
+        Length x;
+        Length y;
+
+    private:        
+        StyleLayoutData();
+        StyleLayoutData(const StyleLayoutData&);
     };
 
 } // namespace WebCore

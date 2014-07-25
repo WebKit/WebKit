@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

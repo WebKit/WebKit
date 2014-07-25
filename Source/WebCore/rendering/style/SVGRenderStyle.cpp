@@ -56,6 +56,7 @@ SVGRenderStyle::SVGRenderStyle()
     , stops(defaultSVGStyle().stops)
     , misc(defaultSVGStyle().misc)
     , shadowSVG(defaultSVGStyle().shadowSVG)
+    , layout(defaultSVGStyle().layout)
     , resources(defaultSVGStyle().resources)
 {
     setBitDefaults();
@@ -69,6 +70,7 @@ SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
     , stops(StyleStopData::create())
     , misc(StyleMiscData::create())
     , shadowSVG(StyleShadowSVGData::create())
+    , layout(StyleLayoutData::create())
     , resources(StyleResourceData::create())
 {
     setBitDefaults();
@@ -85,6 +87,7 @@ inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     , stops(other.stops)
     , misc(other.misc)
     , shadowSVG(other.shadowSVG)
+    , layout(other.layout)
     , resources(other.resources)
 {
 }
@@ -106,6 +109,7 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
         && stops == other.stops
         && misc == other.misc
         && shadowSVG == other.shadowSVG
+        && layout == other.layout
         && inheritedResources == other.inheritedResources
         && resources == other.resources
         && svg_inherited_flags == other.svg_inherited_flags
@@ -140,6 +144,7 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle* other)
     stops = other->stops;
     misc = other->misc;
     shadowSVG = other->shadowSVG;
+    layout = other->layout;
     resources = other->resources;
 }
 
@@ -222,6 +227,10 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     // Shadow changes require relayouts, as they affect the repaint rects.
     if (shadowSVG != other->shadowSVG)
         return StyleDifferenceLayout;
+
+    // The x or y properties require relayout.
+    if (layout != other->layout)
+        return StyleDifferenceLayout; 
 
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
     if (stroke != other->stroke) {

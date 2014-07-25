@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -115,6 +116,20 @@ void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const 
     }
 
     ASSERT_NOT_REACHED();
+}
+
+void SVGTextPositioningElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
+{
+    if (name == SVGNames::xAttr || name == SVGNames::yAttr)
+        return;
+    SVGTextContentElement::collectStyleForPresentationAttribute(name, value, style);
+}
+
+bool SVGTextPositioningElement::isPresentationAttribute(const QualifiedName& name) const
+{
+    if (name == SVGNames::xAttr || name == SVGNames::yAttr)
+        return false;
+    return SVGTextContentElement::isPresentationAttribute(name);
 }
 
 void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)

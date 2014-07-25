@@ -9,7 +9,7 @@ div { font-size: 8px; }
 <svg id="svg" width="0" height="0"></svg>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description("Test that 'with' presentation attribute is parsed with CSS presentation rules.");
+description("Test that 'width' presentation attribute is parsed with CSS presentation rules.");
 
 function computedStyle(property, value) {
     var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -28,7 +28,11 @@ function negativeTest(property, value) {
     testComputed(property, value, "auto");
 }
 
-// test mask-image
+function negativeTestZero(property, value) {
+    testComputed(property, value, "0px");
+}
+
+// Test 'width'.
 testComputed("width", "auto", "auto");
 testComputed("width", "  100", "100px");
 testComputed("width", "100   ", "100px");
@@ -40,13 +44,44 @@ testComputed("width", "20%", "20%");
 // testComputed("width", "1vh", "7.869999885559082px");
 // testComputed("width", "1vw", "14.029999732971191px");
 
-// negative tests
+// Test 'x'.
+testComputed("x", "  100", "100px");
+testComputed("x", "100   ", "100px");
+testComputed("x", "100px", "100px");
+testComputed("x", "1em", "16px");
+testComputed("x", "1ex", "12.800000190734863px");
+testComputed("x", "20%", "20%");
+testComputed("x", "-200px", "-200px");
+
+// Test 'y'.
+testComputed("y", "  100", "100px");
+testComputed("y", "100   ", "100px");
+testComputed("y", "100px", "100px");
+testComputed("y", "1em", "16px");
+testComputed("y", "1ex", "12.800000190734863px");
+testComputed("y", "20%", "20%");
+testComputed("y", "-200px", "-200px");
+
+// Negative tests for 'width'.
 negativeTest("width", "100   px");
 negativeTest("width", "100px;");
 negativeTest("width", "100px !important");
 negativeTest("width", "{ 100px }");
 negativeTest("width", "-100px");
 
+// Negative tests for 'x'.
+negativeTestZero("x", "auto", "auto");
+negativeTestZero("x", "100   px");
+negativeTestZero("x", "100px;");
+negativeTestZero("x", "100px !important");
+negativeTestZero("x", "{ 100px }");
+
+// Negative tests for 'y'.
+negativeTestZero("y", "auto");
+negativeTestZero("y", "100   px");
+negativeTestZero("y", "100px;");
+negativeTestZero("y", "100px !important");
+negativeTestZero("y", "{ 100px }");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

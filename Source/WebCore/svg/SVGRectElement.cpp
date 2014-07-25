@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -121,15 +122,15 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
-    if (attrName == SVGNames::widthAttr
+    if (attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::widthAttr
         || attrName == SVGNames::heightAttr) {
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    bool isLengthAttribute = attrName == SVGNames::xAttr
-                          || attrName == SVGNames::yAttr
-                          || attrName == SVGNames::rxAttr
+    bool isLengthAttribute = attrName == SVGNames::rxAttr
                           || attrName == SVGNames::ryAttr;
 
     if (isLengthAttribute)

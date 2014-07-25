@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -355,8 +356,7 @@ bool SVGAnimationElement::isAccumulated() const
 
 bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* element, const QualifiedName& attributeName)
 {
-    // FIXME: Must be isSVGTextPositioningElement(element) instead.
-    if (isSVGTextElement(element)
+    if (element->isTextContent()
         && (attributeName == SVGNames::xAttr || attributeName == SVGNames::yAttr))
         return false;
 

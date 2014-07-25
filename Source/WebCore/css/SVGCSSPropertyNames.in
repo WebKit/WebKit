@@ -51,3 +51,7 @@ vector-effect
 writing-mode [Inherited]
 
 -webkit-svg-shadow
+
+x
+y
+

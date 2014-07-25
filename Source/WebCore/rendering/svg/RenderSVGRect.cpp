@@ -73,7 +73,9 @@ void RenderSVGRect::updateShapeFromElement()
         m_usePathFallback = false;
     }
 
-    m_fillBoundingBox = FloatRect(FloatPoint(rectElement().x().value(lengthContext), rectElement().y().value(lengthContext)), boundingBoxSize);
+    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style().svgStyle().x(), LengthModeWidth),
+        lengthContext.valueForLength(style().svgStyle().y(), LengthModeHeight)),
+        boundingBoxSize);
 
     // To decide if the stroke contains a point we create two rects which represent the inner and
     // the outer stroke borders. A stroke contains the point, if the point is between them.

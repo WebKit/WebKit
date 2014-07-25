@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
+    Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
 
     Based on khtml code by:
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
@@ -274,6 +275,30 @@ bool StyleInheritedResourceData::operator==(const StyleInheritedResourceData& ot
     return markerStart == other.markerStart
         && markerMid == other.markerMid
         && markerEnd == other.markerEnd;
+}
+
+StyleLayoutData::StyleLayoutData()
+    : x(RenderStyle::initialZeroLength())
+    , y(RenderStyle::initialZeroLength())
+{
+}
+
+inline StyleLayoutData::StyleLayoutData(const StyleLayoutData& other)
+    : RefCounted<StyleLayoutData>()
+    , x(other.x)
+    , y(other.y)
+{
+}
+
+PassRef<StyleLayoutData> StyleLayoutData::copy() const
+{
+    return adoptRef(*new StyleLayoutData(*this));
+}
+
+bool StyleLayoutData::operator==(const StyleLayoutData& other) const
+{
+    return x == other.x
+        && y == other.y;
 }
 
 }

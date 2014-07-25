@@ -1632,6 +1632,11 @@ public:
     float strokeMiterLimit() const { return svgStyle().strokeMiterLimit(); }
     void setStrokeMiterLimit(float f) { accessSVGStyle().setStrokeMiterLimit(f); }
 
+    const Length& x() const { return svgStyle().x(); }
+    void setX(Length x) { accessSVGStyle().setX(x); }
+    const Length& y() const { return svgStyle().y(); }
+    void setY(Length y) { accessSVGStyle().setY(y); }
+
     float floodOpacity() const { return svgStyle().floodOpacity(); }
     void setFloodOpacity(float f) { accessSVGStyle().setFloodOpacity(f); }
 
@@ -1787,6 +1792,7 @@ public:
     static Length initialMargin() { return Length(Fixed); }
     static Length initialPadding() { return Length(Fixed); }
     static Length initialTextIndent() { return Length(Fixed); }
+    static Length initialZeroLength() { return Length(Fixed); }
 #if ENABLE(CSS3_TEXT)
     static TextIndentLine initialTextIndentLine() { return TextIndentFirstLine; }
     static TextIndentType initialTextIndentType() { return TextIndentNormal; }

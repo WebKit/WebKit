@@ -1,3 +1,74 @@
+2014-07-24  Dirk Schulze  <krit@webkit.org>
+
+        Turn x/y to presentation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135215
+
+        Reviewed by Dean Jackson.
+
+        This follows the patch for width and height presentation attributes and
+        turns x and y to presentation attributes as well:
+
+        http://trac.webkit.org/changeset/171341
+
+        Tests: svg/css/parse-length.html
+               transitions/svg-layout-transition.html
+
+        Added copyright where I forgot it in previous patch.
+
+        * css/CSSComputedStyleDeclaration.cpp: Computed style of x and y.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID): Add x and y to list.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): Resolve x and y.
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue): Parse x and y property.
+        * css/SVGCSSPropertyNames.in: Add x and y to list of names.
+        * css/StyleResolver.h:
+        * page/animation/CSSPropertyAnimation.cpp: Animate x and y as Length.
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h: Add x and y setters and getters.
+        * rendering/style/SVGRenderStyle.cpp: Add x and y setters for StyleLayoutData.
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        (WebCore::SVGRenderStyle::operator==):
+        (WebCore::SVGRenderStyle::copyNonInheritedFrom):
+        (WebCore::SVGRenderStyle::diff):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setX):
+        (WebCore::SVGRenderStyle::setY):
+        (WebCore::SVGRenderStyle::x):
+        (WebCore::SVGRenderStyle::y):
+        * rendering/style/SVGRenderStyleDefs.cpp: Add StyleLayoutData for style storing.
+        (WebCore::StyleLayoutData::StyleLayoutData):
+        (WebCore::StyleLayoutData::copy):
+        (WebCore::StyleLayoutData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::StyleLayoutData::create):
+        (WebCore::StyleLayoutData::operator!=):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        * rendering/svg/SVGPathData.cpp: Use RenderStyle values rather than attribute values.
+        (WebCore::updatePathFromRectElement):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isTargetAttributeCSSProperty): Fix text detection.
+        * svg/SVGElement.cpp: Add x and y to the relevant property lists.
+        (WebCore::populateAttributeNameToCSSPropertyIDMap):
+        (WebCore::populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap):
+        * svg/SVGFilterElement.cpp: Style update on change of x and y.
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        * svg/SVGMaskElement.cpp: Ditto.
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        * svg/SVGPatternElement.cpp: Ditto.
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp: Ditto.
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGTextPositioningElement.cpp: Exclude x and y of text elements since they
+            are lists instead of individual values. Solution about to be discussed
+            in the WG. Keep current behavior for now.
+        (WebCore::SVGTextPositioningElement::collectStyleForPresentationAttribute):
+        (WebCore::SVGTextPositioningElement::isPresentationAttribute):
+        * svg/SVGTextPositioningElement.h:
+
 2014-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Implement Pseudo Element

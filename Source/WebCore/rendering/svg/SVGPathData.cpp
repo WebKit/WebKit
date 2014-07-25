@@ -119,8 +119,8 @@ static void updatePathFromRectElement(SVGElement* element, Path& path)
     float height = lengthContext.valueForLength(style.height(), LengthModeHeight);
     if (height <= 0)
         return;
-    float x = rect->x().value(lengthContext);
-    float y = rect->y().value(lengthContext);
+    float x = lengthContext.valueForLength(style.svgStyle().x(), LengthModeWidth);
+    float y = lengthContext.valueForLength(style.svgStyle().y(), LengthModeHeight);
     float rx = rect->rx().value(lengthContext);
     float ry = rect->ry().value(lengthContext);
     bool hasRx = rx > 0;

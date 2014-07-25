@@ -88,6 +88,7 @@ class StyleRuleRegion;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
+class SVGSVGElement;
 class ViewportStyleResolver;
 class WebKitCSSFilterValue;
 struct ResourceLoaderOptions;

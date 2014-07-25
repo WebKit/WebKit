@@ -2593,6 +2593,10 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
 
     // UAs must treat 'word-wrap' as an alternate name for the 'overflow-wrap' property. So using the same handlers.
     setPropertyHandler(CSSPropertyWordWrap, ApplyPropertyDefault<EOverflowWrap, &RenderStyle::overflowWrap, EOverflowWrap, &RenderStyle::setOverflowWrap, EOverflowWrap, &RenderStyle::initialOverflowWrap>::createHandler());
+
+    setPropertyHandler(CSSPropertyX, ApplyPropertyLength<&RenderStyle::x, &RenderStyle::setX, &RenderStyle::initialZeroLength>::createHandler());
+    setPropertyHandler(CSSPropertyY, ApplyPropertyLength<&RenderStyle::y, &RenderStyle::setY, &RenderStyle::initialZeroLength>::createHandler());
+
     setPropertyHandler(CSSPropertyZIndex, ApplyPropertyAuto<int, &RenderStyle::zIndex, &RenderStyle::setZIndex, &RenderStyle::hasAutoZIndex, &RenderStyle::setHasAutoZIndex>::createHandler());
     setPropertyHandler(CSSPropertyZoom, ApplyPropertyZoom::createHandler());
 }
