@@ -1,5 +1,47 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171560
+
+    2014-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Header bar on nytimes articles lands in the wrong place after rubberbanding
+            https://bugs.webkit.org/show_bug.cgi?id=135221
+            <rdar://problem/17542454>
+
+            Reviewed by Benjamin Poulain.
+
+            The call to didCommitLayerTree() can cause one or two visible rect updates,
+            via changes to the UIScrollView contentSize and contentOffset. As a result, we
+            would notify the scrolling tree about a viewport change, but using the old
+            scrolling tree rather than the new one, so we could move layers around for
+            nodes which are about to be removed from the tree.
+
+            However, we also have to ensure that programmatic scrolls are applied after
+            didCommitLayerTree() has updated the view size, so have RemoteScrollingCoordinatorProxy
+            store data about programmatic scrolls and return them to the caller, which
+            can apply them after didCommitLayerTree().
+
+            * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp: Store a pointer to a RequestedScrollInfo
+            for the duration of the tree update, so that we can store requested scroll info in it.
+            (WebKit::RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy):
+            (WebKit::RemoteScrollingCoordinatorProxy::updateScrollingTree):
+            (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeRequestsScroll):
+            * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didCommitLayerTree): Give Mac a stub implementation.
+            * UIProcess/WebPageProxy.h: Group some editing-related functions together.
+            (WebKit::WebPageProxy::editorState):
+            (WebKit::WebPageProxy::canDelete):
+            (WebKit::WebPageProxy::hasSelectedRange):
+            (WebKit::WebPageProxy::isContentEditable):
+            (WebKit::WebPageProxy::maintainsInactiveSelection):
+            * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+            (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree): Ordering change: update
+            the layer tree, then call didCommitLayerTree(), then do the viewport update, followed
+            by any programmatic scroll.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171540
 
     2014-07-24  Dan Bernstein  <mitz@apple.com>

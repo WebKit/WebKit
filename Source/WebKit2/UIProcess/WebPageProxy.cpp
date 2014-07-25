@@ -1312,7 +1312,13 @@ void WebPageProxy::executeEditCommand(const String& commandName)
 
     m_process->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
 }
-    
+
+#if !PLATFORM(IOS)
+void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
+{
+}
+#endif
+
 #if USE(TILED_BACKING_STORE)
 void WebPageProxy::commitPageTransitionViewport()
 {

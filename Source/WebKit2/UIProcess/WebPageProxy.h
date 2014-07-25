@@ -377,6 +377,15 @@ public:
 
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, std::function<void (const String&, bool, int32_t, CallbackBase::Error)>);
+
+    const EditorState& editorState() const { return m_editorState; }
+    bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
+    bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
+    bool isContentEditable() const { return m_editorState.isContentEditable; }
+    
+    bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
+    void setMaintainsInactiveSelection(bool);
+
 #if PLATFORM(IOS)
     void executeEditCommand(const String& commandName, std::function<void (CallbackBase::Error)>);
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }
@@ -402,7 +411,6 @@ public:
     void setDeviceOrientation(int32_t);
     int32_t deviceOrientation() const { return m_deviceOrientation; }
     void willCommitLayerTree(uint64_t transactionID);
-    void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
     void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
     void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, std::function<void (const WebCore::IntPoint&, uint32_t, CallbackBase::Error)>);
@@ -442,13 +450,8 @@ public:
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
 #endif
 
-    const EditorState& editorState() const { return m_editorState; }
-    bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
-    bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
-    bool isContentEditable() const { return m_editorState.isContentEditable; }
-    
-    bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
-    void setMaintainsInactiveSelection(bool);
+    void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
+
 #if USE(TILED_BACKING_STORE) 
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
 #endif

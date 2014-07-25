@@ -68,7 +68,12 @@ public:
 
     const RemoteLayerTreeHost* layerTreeHost() const;
 
-    void updateScrollingTree(const RemoteScrollingCoordinatorTransaction&);
+    struct RequestedScrollInfo {
+        bool requestsScrollPositionUpdate { };
+        bool requestIsProgrammaticScroll { };
+        WebCore::FloatPoint requestedScrollPosition;
+    };
+    void updateScrollingTree(const RemoteScrollingCoordinatorTransaction&, RequestedScrollInfo&);
 
     void setPropagatesMainFrameScrolls(bool propagatesMainFrameScrolls) { m_propagatesMainFrameScrolls = propagatesMainFrameScrolls; }
     bool propagatesMainFrameScrolls() const { return m_propagatesMainFrameScrolls; }
@@ -86,6 +91,7 @@ private:
 
     WebPageProxy& m_webPageProxy;
     RefPtr<RemoteScrollingTree> m_scrollingTree;
+    RequestedScrollInfo* m_requestedScrollInfo;
     bool m_propagatesMainFrameScrolls;
 };
 
