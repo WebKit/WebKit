@@ -51,12 +51,12 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
     ScriptController& scriptController = frame.script();
-    ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells = scriptController.windowShells();
 
-    ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
-    for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
-        JSDOMWindow* window = iter->value->window();
-        m_windows.add(iter->key.get(), Strong<JSDOMWindow>(window->vm(), window));
+    for (size_t i = 0; i < windowShells.size(); ++i) {
+        JSDOMWindowShell* windowShell = windowShells[i].get();
+        JSDOMWindow* window = windowShell->window();
+        m_windows.add(&windowShell->world(), Strong<JSDOMWindow>(window->vm(), window));
         window->setConsoleClient(nullptr);
     }
 
@@ -74,11 +74,11 @@ void ScriptCachedFrameData::restore(Frame& frame)
 
     Page* page = frame.page();
     ScriptController& scriptController = frame.script();
-    ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
+    Vector<JSC::Strong<JSDOMWindowShell>> windowShells = scriptController.windowShells();
 
-    for (auto it = windowShells.begin(), end = windowShells.end(); it != end; ++it) {
-        DOMWrapperWorld* world = it->key.get();
-        JSDOMWindowShell* windowShell = it->value.get();
+    for (size_t i = 0; i < windowShells.size(); ++i) {
+        JSDOMWindowShell* windowShell = windowShells[i].get();
+        DOMWrapperWorld* world = &windowShell->world();
 
         if (JSDOMWindow* window = m_windows.get(world).get())
             windowShell->setWindow(window->vm(), window);

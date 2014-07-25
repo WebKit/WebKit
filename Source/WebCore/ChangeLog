@@ -1,5 +1,33 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171505
+
+    2014-07-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+            ScriptController::updateDocument ASSERT mutating map while iterating map
+            https://bugs.webkit.org/show_bug.cgi?id=135211
+
+            Reviewed by Oliver Hunt.
+
+            Avoid iterating over m_windowShells in more places. This prevents
+            the possibility of a collection during JSC allocation which might
+            cause a mutation to m_windowShells (HTMLMediaElement destruction).
+
+            Have ScriptController defriend ScriptCachedFrameData by providing
+            a getter for the list of window shells.
+
+            * bindings/js/ScriptCachedFrameData.cpp:
+            (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+            (WebCore::ScriptCachedFrameData::restore):
+            * bindings/js/ScriptController.cpp:
+            (WebCore::ScriptController::windowShells):
+            (WebCore::ScriptController::clearWindowShell):
+            (WebCore::ScriptController::attachDebugger):
+            (WebCore::ScriptController::updateDocument):
+            * bindings/js/ScriptController.h:
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171554
 
     2014-07-24  Dan Bernstein  <mitz@apple.com>
