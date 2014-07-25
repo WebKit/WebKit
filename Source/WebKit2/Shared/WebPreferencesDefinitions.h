@@ -46,6 +46,12 @@
 #define DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED true
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+#define DEFAULT_WEBGL_ENABLED false
+#else
+#define DEFAULT_WEBGL_ENABLED true
+#endif
+
 #if PLATFORM(COCOA)
 #define DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED true
 #define DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED true
@@ -112,7 +118,7 @@
     macro(ForceCompositingMode, forceCompositingMode, Bool, bool, false) \
     macro(AcceleratedDrawingEnabled, acceleratedDrawingEnabled, Bool, bool, DEFAULT_ACCELERATED_DRAWING_ENABLED) \
     macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, DEFAULT_CANVAS_USES_ACCELERATED_DRAWING) \
-    macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
+    macro(WebGLEnabled, webGLEnabled, Bool, bool, DEFAULT_WEBGL_ENABLED) \
     macro(MultithreadedWebGLEnabled, multithreadedWebGLEnabled, Bool, bool, false) \
     macro(ForceSoftwareWebGLRendering, forceSoftwareWebGLRendering, Bool, bool, false) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \

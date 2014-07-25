@@ -492,7 +492,11 @@ public:
 #endif
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
+#else
+        [NSNumber numberWithBool:YES],   WebKitWebGLEnabledPreferenceKey,
+#endif
         [NSNumber numberWithBool:NO],   WebKitMultithreadedWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,

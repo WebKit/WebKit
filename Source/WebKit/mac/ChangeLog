@@ -4,6 +4,17 @@
         on this branch.
         <rdar://problem/17800530>
 
+        Follow-up comment from Dan Bernstein.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Make sure this only applies to Mavericks and Mountain Lion.
+
+2014-07-25  Dean Jackson  <dino@apple.com>
+
+        Revert back to the Safari behavior from Mavericks and Mountain Lion
+        on this branch.
+        <rdar://problem/17800530>
+
         Reviewed by Ricky Mondello.
 
         * WebView/WebPreferences.mm:
