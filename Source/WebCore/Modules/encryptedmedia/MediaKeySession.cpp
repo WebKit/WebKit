@@ -54,6 +54,7 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* key
     , m_keyRequestTimer(this, &MediaKeySession::keyRequestTimerFired)
     , m_addKeyTimer(this, &MediaKeySession::addKeyTimerFired)
 {
+    m_session->setClient(this);
 }
 
 MediaKeySession::~MediaKeySession()
@@ -68,8 +69,10 @@ void MediaKeySession::setError(MediaKeyError* error)
 
 void MediaKeySession::close()
 {
-    if (m_session)
+    if (m_session) {
         m_session->releaseKeys();
+        m_session->setClient(nullptr);
+    }
     m_session = nullptr;
     m_asyncEventQueue.cancelAllEvents();
 }
