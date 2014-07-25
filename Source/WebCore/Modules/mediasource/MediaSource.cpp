@@ -739,6 +739,11 @@ bool MediaSource::isClosed() const
     return readyState() == closedKeyword();
 }
 
+bool MediaSource::isEnded() const
+{
+    return readyState() == endedKeyword();
+}
+
 void MediaSource::close()
 {
     setReadyState(closedKeyword());

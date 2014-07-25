@@ -65,6 +65,8 @@ public:
     void removedFromRegistry();
     void openIfInEndedState();
     bool isOpen() const;
+    bool isClosed() const;
+    bool isEnded() const;
     void sourceBufferDidChangeAcitveState(SourceBuffer*, bool);
     void streamEndedWithError(const AtomicString& error, ExceptionCode&);
 
@@ -76,7 +78,6 @@ public:
 
     bool attachToElement(HTMLMediaElement*);
     void close();
-    bool isClosed() const;
     void monitorSourceBuffers();
     void completeSeek();
 

@@ -52,6 +52,7 @@ namespace WebCore {
 
 class AudioTrackList;
 class MediaSource;
+class PlatformTimeRanges;
 class SourceBufferPrivate;
 class TextTrackList;
 class TimeRanges;
@@ -159,6 +160,8 @@ private:
     void removeCodedFrames(const MediaTime& start, const MediaTime& end);
 
     void reportExtraMemoryCost();
+
+    std::unique_ptr<PlatformTimeRanges> bufferedAccountingForEndOfStream() const;
 
     // Internals
     friend class Internals;
