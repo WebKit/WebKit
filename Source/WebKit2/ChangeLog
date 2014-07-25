@@ -1,5 +1,23 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171570
+
+    2014-07-24  Tim Horton  <timothy_horton@apple.com>
+
+            Sometimes WKWebView is blank after resuming the app, until you scroll
+            https://bugs.webkit.org/show_bug.cgi?id=135275
+            <rdar://problem/17803170>
+
+            Reviewed by Benjamin Poulain.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::dispatchViewStateChange):
+            If the UI process is waiting for a didUpdateViewState, we need to *always*
+            get a reply from the Web Process, so dispatchViewStateChange should *always*
+            send SetViewState even if nothing changed (so that we get the reply).
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171560
 
     2014-07-24  Simon Fraser  <simon.fraser@apple.com>

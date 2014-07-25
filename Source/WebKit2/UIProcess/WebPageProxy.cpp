@@ -1187,7 +1187,7 @@ void WebPageProxy::dispatchViewStateChange()
     if (m_viewWasEverInWindow && (changed & ViewState::IsInWindow) && isInWindow())
         m_viewStateChangeWantsReply = true;
 
-    if (changed)
+    if (changed || m_viewStateChangeWantsReply)
         m_process->send(Messages::WebPage::SetViewState(m_viewState, m_viewStateChangeWantsReply), m_pageID);
 
     // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
