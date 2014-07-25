@@ -1,5 +1,29 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171558
+
+    2014-07-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+            JSLock release should only modify the AtomicStringTable if it modified in acquire
+            https://bugs.webkit.org/show_bug.cgi?id=135143
+
+            Reviewed by Darin Adler.
+
+            * runtime/JSLock.cpp:
+            (JSC::JSLock::JSLock):
+            Initialize the member variable to nullptr.
+
+            (JSC::JSLock::willDestroyVM):
+            Update style to use nullptr instead of 0.
+
+            (JSC::JSLock::willReleaseLock):
+            We should only reset the thread data's atomic string table if
+            didAcquireLock changed it. m_entryAtomicStringTable will have
+            been set by didAcquireLock if it changed, or nullptr if it didn't.
+            This way we are sure we are balanced, regardless of m_vm changes.
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171543
 
     2014-07-24  Mark Hahnenberg  <mhahnenberg@apple.com>
