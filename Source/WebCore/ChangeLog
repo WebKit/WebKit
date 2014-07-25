@@ -1,5 +1,27 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171561
+
+    2014-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Crash when measuring a glyphs from a fallback SVG font
+            https://bugs.webkit.org/show_bug.cgi?id=135264
+
+            Reviewed by Simon Fraser.
+
+            We can't realize font data for all fallback fonts ahead
+            of time, but we don't have all the necessary context to
+            realize SVG fallback data when it's needed. For now, we
+            can just bail; however, a larger, more invasive fix is
+            in order.
+
+            Test: svg/text/svg-fallback-font-crash.html
+
+            * platform/graphics/WidthIterator.cpp:
+            (WebCore::applyFontTransforms):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171559
 
     2014-07-24  Daniel Bates  <dabates@apple.com>
