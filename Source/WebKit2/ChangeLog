@@ -1,3 +1,16 @@
+2014-07-25  Oliver Hunt  <oliver@apple.com>
+
+        Creating incorrect sandbox extension for hsts plist due to missing /
+        https://bugs.webkit.org/show_bug.cgi?id=135309
+
+        Reviewed by Sam Weinig.
+
+        So it turns out that you do actually need /'s in paths...
+        Now we actually create the correct extension.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformDefaultNetworkingHSTSDatabasePath):
+
 2014-07-24  Anders Carlsson  <andersca@apple.com>
 
         WKNavigation's properties are either always nil or don't behave as documented

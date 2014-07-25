@@ -316,7 +316,7 @@ String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
         return String();
     }
 
-    return path + "HSTS.plist";
+    return path + "/HSTS.plist";
 #else
     notImplemented();
     return [@"" stringByStandardizingPath];
