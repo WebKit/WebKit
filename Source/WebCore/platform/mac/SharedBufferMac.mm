@@ -105,6 +105,11 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
     if (m_cfData)
         return m_cfData;
 
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    if (m_dataArray.size() == 1)
+        return m_dataArray.at(0);
+#endif
+
     data(); // Force data into m_buffer from segments or data array.
     if (hasPurgeableBuffer()) {
         RefPtr<SharedBuffer::DataBuffer> copiedBuffer = adoptRef(new DataBuffer);
