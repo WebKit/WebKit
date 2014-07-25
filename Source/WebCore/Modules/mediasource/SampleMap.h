@@ -57,6 +57,7 @@ public:
     reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&);
     iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);
     iterator_range findSamplesWithinPresentationRange(const MediaTime&, const MediaTime&);
+    iterator_range findSamplesWithinPresentationRangeFromEnd(const MediaTime&, const MediaTime&);
 
 private:
     MapType m_samples;

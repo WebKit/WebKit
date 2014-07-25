@@ -1,3 +1,20 @@
+2014-07-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] High CPU usage in SampleMap::findSamplesWithinPresentationRange() with a large number of buffered samples.
+        https://bugs.webkit.org/show_bug.cgi?id=135247
+
+        Reviewed by Geoffrey Garen.
+
+        Anchor our search for overlapping frames to the end of the search range when the overlap range is sufficiently
+        close to the end of the search range. The common case for this search is when a sample is about to be appended
+        to the end of the sample queue, so this should turn most searches into no-ops.
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::PresentationOrderSampleMap::findSamplesWithinPresentationRangeFromEnd):
+        * Modules/mediasource/SampleMap.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2014-07-25  Gavin Barraclough  <baraclough@apple.com>
 
         Yosemite version number is 101000

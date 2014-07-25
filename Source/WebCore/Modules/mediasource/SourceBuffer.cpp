@@ -1145,9 +1145,29 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         if (trackBuffer.highestPresentationTimestamp.isValid() && trackBuffer.highestPresentationTimestamp <= presentationTimestamp) {
             // Remove all coded frames from track buffer that have a presentation timestamp greater than highest
             // presentation timestamp and less than or equal to frame end timestamp.
-            auto iter_pair = trackBuffer.samples.presentationOrder().findSamplesWithinPresentationRange(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
-            if (iter_pair.first != trackBuffer.samples.presentationOrder().end())
-                erasedSamples.addRange(iter_pair.first, iter_pair.second);
+            do {
+                // NOTE: Searching from the end of the trackBuffer will be vastly more efficient if the search range is
+                // near the end of the buffered range. Use a linear-backwards search if the search range is within one
+                // frame duration of the end:
+                if (!m_buffered)
+                    break;
+
+                unsigned bufferedLength = m_buffered->ranges().length();
+                if (!bufferedLength)
+                    break;
+
+                bool ignoreValid;
+                MediaTime highestBufferedTime = m_buffered->ranges().end(bufferedLength - 1, ignoreValid);
+
+                PresentationOrderSampleMap::iterator_range range;
+                if (highestBufferedTime - trackBuffer.highestPresentationTimestamp < trackBuffer.lastFrameDuration)
+                    range = trackBuffer.samples.presentationOrder().findSamplesWithinPresentationRangeFromEnd(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
+                else
+                    range = trackBuffer.samples.presentationOrder().findSamplesWithinPresentationRange(trackBuffer.highestPresentationTimestamp, frameEndTimestamp);
+
+                if (range.first != trackBuffer.samples.presentationOrder().end())
+                    erasedSamples.addRange(range.first, range.second);
+            } while(false);
         }
 
         // 1.16 Remove decoding dependencies of the coded frames removed in the previous step:
