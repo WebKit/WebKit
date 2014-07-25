@@ -1,3 +1,28 @@
+2014-07-25  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171619. <rdar://problem/17811922>
+
+    2014-07-25  Pratik Solanki  <psolanki@apple.com>
+
+            [iOS] REGRESSION(r171526): Images fail to load sometimes
+            https://bugs.webkit.org/show_bug.cgi?id=135304
+            <rdar://problem/17811922>
+
+            Reviewed by Alexey Proskuryakov.
+
+            SharedBuffer::createCFData() calls data() as a way to coalesce the data array elements and
+            segments into m_buffer. However, data() has an optimization where if we had a single element
+            in the data array, it would just return that and not do coalescing. So when we passed
+            m_buffer to WebCoreSharedData, we passed a buffer with no data in it.
+
+            Fix this by bringing the optimization to createCFData() and return the CFDataRef from the
+            data array if we just have a single element.
+
+            No new tests. Should be covered by existing tests.
+
+            * platform/mac/SharedBufferMac.mm:
+            (WebCore::SharedBuffer::createCFData):
+
 2014-07-25  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171593
