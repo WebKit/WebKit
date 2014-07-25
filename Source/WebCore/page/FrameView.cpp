@@ -4522,7 +4522,7 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
     if (m_hasOverrideViewportSize)
         return m_overrideViewportSize;
     
-    return visibleContentRectIncludingScrollbars(ScrollableArea::LegacyIOSDocumentVisibleRect).size();
+    return visibleContentRectIncludingScrollbars().size();
 }
     
 } // namespace WebCore
