@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
+# Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "JavaScriptCore.vcxproj", "{22413D41-3A18-42B7-92A8-CEDC6CE86920}"
@@ -32,6 +32,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntAssembly", "LLInt\LLIn
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntDesiredOffsets", "LLInt\LLIntDesiredOffsets\LLIntDesiredOffsets.vcxproj", "{877150A0-41B3-4730-9D98-1B8298098B14}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLIntOffsetsExtractor", "LLInt\LLIntOffsetsExtractor\LLIntOffsetsExtractor.vcxproj", "{D595E3F6-24F2-4C60-935C-95D50C6B3E96}"
 	ProjectSection(ProjectDependencies) = postProject
