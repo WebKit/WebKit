@@ -466,7 +466,7 @@
 		0F09087F1444FDB200028917 /* ScrollbarTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */; };
 		0F099D0817B968A100FF84B9 /* WebCoreTypedArrayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */; };
 		0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; };
+		0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13164016ED0CDE0035CC04 /* PlatformCAFiltersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersMac.mm */; };
 		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
