@@ -464,6 +464,11 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
             m_prototype = toJS(JSValueToObject(cContext, valueInternalValue(prototype), 0));
         }
     } else {
+        // We need to hold a reference to the superclass prototype here on the stack
+        // to that it won't get GC'ed while we do allocations between now and when we
+        // set it in this class' prototype below.
+        JSC::JSObject* superClassPrototype = superClassInfo->m_prototype.get();
+
         const char* className = class_getName(m_class);
 
         // Create or grab the prototype/constructor pair.
@@ -493,13 +498,15 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
         });
 
         // Set [Prototype].
-        JSObjectSetPrototype([m_context JSGlobalContextRef], toRef(m_prototype.get()), toRef(superClassInfo->m_prototype.get()));
+        JSObjectSetPrototype([m_context JSGlobalContextRef], toRef(m_prototype.get()), toRef(superClassPrototype));
     }
 }
 
 - (void)reallocateConstructorAndOrPrototype
 {
     [self allocateConstructorAndPrototypeWithSuperClassInfo:[m_context.wrapperMap classInfoForClass:class_getSuperclass(m_class)]];
+    // We should not add any code here that can trigger a GC or the prototype and
+    // constructor that we just created may be collected before they can be used.
 }
 
 - (JSValue *)wrapperForObject:(id)object
@@ -519,9 +526,12 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
     if (!m_prototype)
         [self reallocateConstructorAndOrPrototype];
     ASSERT(!!m_prototype);
+    // We need to hold a reference to the prototype here on the stack to that it won't
+    // get GC'ed while we create the wrapper below.
+    JSC::JSObject* prototype = m_prototype.get();
 
     JSObjectRef wrapper = makeWrapper([m_context JSGlobalContextRef], m_classRef, object);
-    JSObjectSetPrototype([m_context JSGlobalContextRef], wrapper, toRef(m_prototype.get()));
+    JSObjectSetPrototype([m_context JSGlobalContextRef], wrapper, toRef(prototype));
     return [JSValue valueWithJSValueRef:wrapper inContext:m_context];
 }
 
@@ -530,6 +540,9 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
     if (!m_constructor)
         [self reallocateConstructorAndOrPrototype];
     ASSERT(!!m_constructor);
+    // If we need to add any code here in the future that can trigger a GC, we should
+    // cache the constructor pointer in a stack local var first so that it is protected
+    // from the GC until it gets used below.
     return [JSValue valueWithJSValueRef:toRef(m_constructor.get()) inContext:m_context];
 }
 
