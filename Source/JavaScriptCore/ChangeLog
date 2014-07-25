@@ -1,5 +1,30 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171564
+
+    2014-07-24  Mark Lam  <mark.lam@apple.com>
+
+            JSWrapperMap's jsWrapperForObject() needs to keep weak prototype and constructors from being GCed.
+            <https://webkit.org/b/135258>
+
+            Reviewed by Mark Hahnenberg.
+
+            Where needed, we cache the prototype object pointer in a stack local var.
+            This allows it to be scanned by the GC, and hence be kept alive until
+            we use it.  The constructor object will in turn be kept alive by the
+            prototype object.
+
+            Also added some comments to warn against future code additions that could
+            regress this issue.
+
+            * API/JSWrapperMap.mm:
+            (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]):
+            (-[JSObjCClassInfo reallocateConstructorAndOrPrototype]):
+            (-[JSObjCClassInfo wrapperForObject:]):
+            (-[JSObjCClassInfo constructor]):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171558
 
     2014-07-24  Joseph Pecoraro  <pecoraro@apple.com>
