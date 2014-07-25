@@ -1,3 +1,20 @@
+2014-07-25  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] RenderViews paginated as RL or LR don't handle percentage widths correctly.
+        REGRESSION: Images don’t scale to fit in page in vertical text books
+
+        https://bugs.webkit.org/show_bug.cgi?id=135204
+        <rdar://problem/17043792>
+        
+        Reviewed by Simon Fraser.
+
+        Added fast/multicol/pagination/RightToLeft-max-width.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight):
+        Put back in the same code that used to exist for the old columns (but ported to the new
+        columns).
+    
 2014-07-25  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Unneeded MobileMe workaround in ResourceHandle::receivedCredential
