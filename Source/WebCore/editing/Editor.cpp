@@ -3393,6 +3393,11 @@ void Editor::scanSelectionForTelephoneNumbers()
     extendedSelection.setEnd(end);
     RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
 
+    if (!extendedRange) {
+        client()->selectedTelephoneNumberRangesChanged(markedRanges);
+        return;
+    }
+
     scanRangeForTelephoneNumbers(*extendedRange, extendedRange->text(), markedRanges);
 
     // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
