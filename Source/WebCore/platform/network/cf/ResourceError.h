@@ -78,13 +78,13 @@ public:
     operator NSError *() const;
 #endif
 
+    static bool platformCompare(const ResourceError& a, const ResourceError& b);
+
 private:
     friend class ResourceErrorBase;
 
     void platformLazyInit();
     void platformCopy(ResourceError&) const;
-    static bool platformCompare(const ResourceError& a, const ResourceError& b);
-
     bool m_dataIsUpToDate;
 #if USE(CFNETWORK)
     mutable RetainPtr<CFErrorRef> m_platformError;

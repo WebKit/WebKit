@@ -64,9 +64,10 @@ public:
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
 
+    static bool platformCompare(const ResourceError& a, const ResourceError& b);
+
 private:
     void platformCopy(ResourceError&) const;
-    static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
     unsigned m_tlsErrors;
     GRefPtr<GTlsCertificate> m_certificate;

@@ -78,7 +78,7 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
     if (a.isTimeout() != b.isTimeout())
         return false;
 
-    return platformCompare(a, b);
+    return ResourceError::platformCompare(a, b);
 }
 
 } // namespace WebCore

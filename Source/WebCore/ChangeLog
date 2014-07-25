@@ -1,5 +1,17 @@
 2014-07-25  Dan Bernstein  <mitz@apple.com>
 
+        ResourceErrorBase::compare doesn’t call the right platformCompare override
+        https://bugs.webkit.org/show_bug.cgi?id=135240
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::compare): Changed to call ResourceError::platformCompare.
+        * platform/network/cf/ResourceError.h: Made platformCompare public.
+        * platform/network/soup/ResourceError.h: Ditto.
+
+2014-07-25  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] WebProtectionSpace::receivesCredentialSecurely incorrectly returns false in some cases
         https://bugs.webkit.org/show_bug.cgi?id=135241
 
