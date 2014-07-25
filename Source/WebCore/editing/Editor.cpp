@@ -3531,7 +3531,7 @@ void Editor::editorUIUpdateTimerFired(Timer<Editor>&)
 #if ENABLE(DELETION_UI)
     m_deleteButtonController->respondToChangedSelection(oldSelection);
 #endif
-    if (m_editorUIUpdateTimerWasTriggeredByDictation)
+    if (!m_editorUIUpdateTimerWasTriggeredByDictation)
         m_alternativeTextController->respondToChangedSelection(oldSelection);
 
     m_oldSelectionForEditorUIUpdate = m_frame.selection().selection();

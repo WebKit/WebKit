@@ -1,5 +1,30 @@
 2014-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171580
+
+    2014-07-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r164401): Placing a caret doesn't bring up autocorrection panel
+            https://bugs.webkit.org/show_bug.cgi?id=135278
+
+            Reviewed by Tim Horton.
+
+            The bug was caused by editorUIUpdateTimerFired calling respondToChangedSelection only if the selection was
+            triggered by dictation instead of only if it was NOT triggered by dictation.
+
+            Prior to r164401, AlternativeTextController::respondToMarkerAtEndOfWord exited early when SetSelectionOptions
+            had DictationTriggered set. r164401 intended to move this check to editorUIUpdateTimerFired to avoid passing
+            options around but the boolean condition was erroneously flipped.
+
+            Fixed the bug by negating the condition in editorUIUpdateTimerFired.
+
+            No new tests for now since autocorrection panel cannot be tested automatically. (We should really automate this!)
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::editorUIUpdateTimerFired):
+
+2014-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171577
 
     2014-07-24  Tim Horton  <timothy_horton@apple.com>
