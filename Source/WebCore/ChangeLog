@@ -1,3 +1,41 @@
+2014-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Implement Pseudo Element
+        https://bugs.webkit.org/show_bug.cgi?id=134835
+
+        Reviewed by Benjamin Poulain.
+
+        Implement Pseudo Element handling for CSS JIT SelectorCompiler.
+        At first, we start with the simple implementation. We handle limited number of pseudo element,
+        before, after, first-line, first-letter.
+
+        Tests: fast/selectors/pseudo-element-inside-any.html
+               fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-any.html
+               fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-not.html
+               fast/selectors/querySelector-pseudo-element.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::loadCheckingContext):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::branchOnResolvingModeWithCheckingContext):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::branchOnResolvingMode):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::jumpIfNotResolvingStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPseudoElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement):
+        * cssjit/SelectorCompiler.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2014-07-24  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r169105): Crash in selection

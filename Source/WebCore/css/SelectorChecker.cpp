@@ -168,6 +168,11 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         return SelectorFailsLocally;
 
     if (context.selector->m_match == CSSSelector::PseudoElement) {
+        // In Selectors Level 4, a pseudo element inside a functional pseudo class is undefined (issue 7).
+        // Make it as matching failure until the spec clarifies this case.
+        if (context.inFunctionalPseudoClass)
+            return SelectorFailsCompletely;
+
         if (context.selector->isCustomPseudoElement()) {
             if (ShadowRoot* root = context.element->containingShadowRoot()) {
                 if (context.element->shadowPseudoId() != context.selector->value())

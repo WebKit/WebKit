@@ -1,3 +1,26 @@
+2014-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Implement Pseudo Element
+        https://bugs.webkit.org/show_bug.cgi?id=134835
+
+        Reviewed by Benjamin Poulain.
+
+        Implement Pseudo Element handling for CSS JIT SelectorCompiler.
+        At first, we start with the simple implementation. We handle limited number of pseudo element,
+        before, after, first-line, first-letter.
+
+        * fast/selectors/pseudo-element-inside-any-expected.html: Added.
+        * fast/selectors/pseudo-element-inside-any.html: Added.
+        Inside functional pseudo classes such as ":-webkit-any", when pseudo element comes (e.g. ":-webkit-any(::first-letter)"),
+        it produces a local failure. So if the other selectors are matched against the element, whole ":-webkit-any" succeeds.
+        For example, a selector ":-webkit-any(::first-letter, p)" matches against `p` elements.
+        * fast/selectors/querySelector-pseudo-element-expected.txt: Added.
+        * fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-any-expected.txt: Added.
+        * fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-any.html: Added.
+        * fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-not-expected.txt: Added.
+        * fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-not.html: Added.
+        * fast/selectors/querySelector-pseudo-element.html: Added.
+
 2014-07-24  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r169105): Crash in selection

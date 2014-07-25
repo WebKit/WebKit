@@ -285,6 +285,7 @@ public:
         static uint64_t flagIsUnique() { return oneBitMask << isUniqueOffset; }
         static uint64_t flagIsaffectedByActive() { return oneBitMask << affectedByActiveOffset; }
         static uint64_t flagIsaffectedByHover() { return oneBitMask << affectedByHoverOffset; }
+        static uint64_t flagPseudoStyle(PseudoId pseudo) { return oneBitMask << (pseudoBitsOffset - 1 + pseudo); }
         static uint64_t setFirstChildStateFlags() { return flagFirstChildState() | flagIsUnique(); }
         static uint64_t setLastChildStateFlags() { return flagLastChildState() | flagIsUnique(); }
     private:

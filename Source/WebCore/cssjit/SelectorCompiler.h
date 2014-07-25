@@ -72,6 +72,7 @@ namespace SelectorCompiler {
 struct CheckingContext {
     SelectorChecker::Mode resolvingMode;
     RenderStyle* elementStyle;
+    PseudoId pseudoId;
 };
 
 enum class SelectorContext {
