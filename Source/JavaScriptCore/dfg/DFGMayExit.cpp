@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGMayExit.h"
 
+#if ENABLE(DFG_JIT)
+
 #include "DFGGraph.h"
 #include "DFGNode.h"
 #include "Operations.h"
@@ -87,3 +89,4 @@ bool mayExit(Graph& graph, Node* node)
 
 } } // namespace JSC::DFG
 
+#endif // ENABLE(DFG_JIT)

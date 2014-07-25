@@ -1,5 +1,11 @@
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix cloop.
+
+        * dfg/DFGMayExit.cpp:
+
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
         Merge r169795, r169819, r169864, r169902, r169949, r169950, r170016, r170017, r170060, r170064 from ftlopt.
 
     2014-06-17  Filip Pizlo  <fpizlo@apple.com>
