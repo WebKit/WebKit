@@ -1,3 +1,18 @@
+2014-07-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win][ANGLE] Enable D3D11.
+        https://bugs.webkit.org/show_bug.cgi?id=135296
+
+        Reviewed by Alex Christensen.
+
+        Direct3D 11 is not enabled on Windows.
+
+        * ANGLE.vcxproj/libGLESv2.vcxproj: Added files.
+        * ANGLE.vcxproj/libGLESv2.vcxproj.filters: Ditto.
+        * ANGLE.vcxproj/libGLESv2Common.props: Enable D3D11.
+        * src/libGLESv2/precompiled.h: Header file does not exist, avoid include.
+        * changes.diff: Updated diff.
+
 2014-06-04  Alex Christensen  <achristensen@webkit.org>
 
         Enable WebGL on Windows.

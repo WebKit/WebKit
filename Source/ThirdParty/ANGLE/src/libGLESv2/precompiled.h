@@ -46,6 +46,8 @@
 #include <D3D10_1.h>
 #include <D3D11.h>
 #include <dxgi.h>
+#if !ANGLE_SKIP_DXGI_1_2_CHECK
 #include <dxgi1_2.h>
+#endif
 #include <D3Dcompiler.h>
 #endif // ANGLE_ENABLE_D3D11
