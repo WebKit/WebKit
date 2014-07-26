@@ -909,9 +909,14 @@ TreeElement.prototype.reveal = function()
 
 TreeElement.prototype.revealed = function()
 {
+    if (this.hidden)
+        return false;
+
     var currentAncestor = this.parent;
     while (currentAncestor && !currentAncestor.root) {
         if (!currentAncestor.expanded)
+            return false;
+        if (!currentAncestor.hidden)
             return false;
         currentAncestor = currentAncestor.parent;
     }

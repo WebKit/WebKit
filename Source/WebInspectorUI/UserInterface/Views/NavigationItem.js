@@ -29,6 +29,7 @@ WebInspector.NavigationItem = function(identifier, role, label) {
     this._identifier = identifier || null;
 
     this._element = document.createElement("div");
+    this._hidden = false;
     
     if (role) 
         this._element.setAttribute("role", role);
@@ -73,11 +74,16 @@ WebInspector.NavigationItem.prototype = {
 
     get hidden()
     {
-        return this._element.classList.contains(WebInspector.NavigationItem.HiddenStyleClassName);
+        return this._hidden;
     },
 
     set hidden(flag)
     {
+        if (this._hidden === flag)
+            return;
+
+        this._hidden = flag;
+
         if (flag)
             this._element.classList.add(WebInspector.NavigationItem.HiddenStyleClassName);
         else

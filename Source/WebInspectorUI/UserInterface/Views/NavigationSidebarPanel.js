@@ -261,6 +261,9 @@ WebInspector.NavigationSidebarPanel.prototype = {
     {
         console.assert(message);
 
+        if (this._emptyContentPlaceholderMessageElement.parentNode && this._emptyContentPlaceholderMessageElement.textContent === message)
+            return;
+
         this._emptyContentPlaceholderMessageElement.textContent = message;
         this.element.appendChild(this._emptyContentPlaceholderElement);
 
@@ -271,8 +274,10 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
     hideEmptyContentPlaceholder: function()
     {
-        if (this._emptyContentPlaceholderElement.parentNode)
-            this._emptyContentPlaceholderElement.parentNode.removeChild(this._emptyContentPlaceholderElement);
+        if (!this._emptyContentPlaceholderElement.parentNode)
+            return;
+
+        this._emptyContentPlaceholderElement.parentNode.removeChild(this._emptyContentPlaceholderElement);
 
         this._hideToolbarItemWhenEmpty = false;
         this._updateToolbarItemVisibility();
@@ -423,9 +428,19 @@ WebInspector.NavigationSidebarPanel.prototype = {
     },
 
     // Private
+    
+    _updateContentOverflowShadowVisibilitySoon: function()
+    {
+        if (this._updateContentOverflowShadowVisibilityIdentifier)
+            return;
+
+        this._updateContentOverflowShadowVisibilityIdentifier = setTimeout(this._updateContentOverflowShadowVisibility.bind(this), 0);
+    },
 
     _updateContentOverflowShadowVisibility: function()
     {
+        delete this._updateContentOverflowShadowVisibilityIdentifier;
+
         this.updateCustomContentOverflow();
 
         var scrollHeight = this._contentElement.scrollHeight;
@@ -520,7 +535,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         }
 
         this._checkForEmptyFilterResults();
-        this._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilitySoon();
         this._checkElementsForPendingViewStateCookie(treeElement);
     },
 
