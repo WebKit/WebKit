@@ -97,10 +97,12 @@ public:
     void filter(const StructureSet&);
     void exclude(const StructureSet&);
     
+#if ENABLE(DFG_JIT)
     void filter(const DFG::StructureAbstractValue&);
     void filter(SpeculatedType);
     void filterArrayModes(ArrayModes);
     void filter(const DFG::AbstractValue&);
+#endif // ENABLE(DFG_JIT)
     
     template<typename Functor>
     void genericFilter(Functor& functor)

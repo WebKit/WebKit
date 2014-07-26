@@ -161,6 +161,8 @@ void StructureSet::exclude(const StructureSet& other)
         clear();
 }
 
+#if ENABLE(DFG_JIT)
+
 namespace {
 
 class StructureAbstractValueContains {
@@ -234,6 +236,8 @@ void StructureSet::filter(const DFG::AbstractValue& other)
     filter(other.m_type);
     filterArrayModes(other.m_arrayModes);
 }
+
+#endif // ENABLE(DFG_JIT)
 
 bool StructureSet::isSubsetOf(const StructureSet& other) const
 {

@@ -297,7 +297,6 @@ static void dumpStructure(PrintStream& out, const char* name, ExecState* exec, S
         out.printf(" (offset = %d)", offset);
 }
 
-#if ENABLE(JIT) // unused when not ENABLE(JIT), leading to silly warnings
 static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, const Identifier& ident)
 {
     out.printf("chain = %p: [", chain);
@@ -313,7 +312,6 @@ static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, 
     }
     out.printf("]");
 }
-#endif
 
 void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int location, const StubInfoMap& map)
 {
@@ -408,7 +406,6 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
     
     UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
     
-#if ENABLE(LLINT)
     if (Structure* structure = instruction[4].u.structure.get()) {
         switch (exec->interpreter()->getOpcodeID(instruction[0].u.opcode)) {
         case op_put_by_id:
@@ -438,7 +435,6 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
             break;
         }
     }
-#endif
 
 #if ENABLE(JIT)
     if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {

@@ -1,5 +1,15 @@
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix cloop.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::dumpChain):
+        (JSC::CodeBlock::printPutByIdCacheStatus):
+        * bytecode/StructureSet.cpp:
+        * bytecode/StructureSet.h:
+
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
         Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.
 
     2014-06-27  Michael Saboff  <msaboff@apple.com>
