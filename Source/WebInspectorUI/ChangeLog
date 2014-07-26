@@ -1,3 +1,22 @@
+2014-07-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: ReplayManager uses undefined events and inconsistent event data
+        https://bugs.webkit.org/show_bug.cgi?id=135222
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.prototype.sessionCreated.this):
+        (WebInspector.ReplayManager.prototype.sessionCreated):
+        (WebInspector.ReplayManager.prototype.segmentLoaded):
+        (WebInspector.ReplayManager.prototype.segmentUnloaded):
+        (WebInspector.ReplayManager.prototype.stopCapturing):
+        (WebInspector.ReplayManager.prototype.replayToMarkIndex):
+        (WebInspector.ReplayManager.prototype.segmentCompleted.set catch):
+        (WebInspector.ReplayManager.prototype.segmentCompleted):
+        (WebInspector.ReplayManager.prototype.startCapturing):
+        (WebInspector.ReplayManager.prototype._changeSessionState):
+
 2014-07-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove accidental debugging console.log

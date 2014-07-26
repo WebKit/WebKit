@@ -228,7 +228,7 @@ WebInspector.ReplayManager.prototype = {
                 console.error("Error obtaining session data: ", error);
             });
 
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionCreated, {sessionId: sessionId});
+        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionAdded, {sessionId: sessionId});
     },
 
     sessionModified: function(sessionId)
@@ -272,7 +272,7 @@ WebInspector.ReplayManager.prototype = {
         this._segments.set(segmentId, incompleteSegment);
         this._segmentPromises.set(segmentId, Promise.resolve(incompleteSegment));
 
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SegmentCreated, {segmentIdentifier: segmentId});
+        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionSegmentAdded, {segmentIdentifier: segmentId});
     },
 
     segmentCompleted: function(segmentId)
@@ -320,8 +320,9 @@ WebInspector.ReplayManager.prototype = {
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Loaded);
 
+        var previousIdentifier = this._activeSegmentIdentifier;
         this._activeSegmentIdentifier = segmentId;
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SegmentLoaded);
+        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.ActiveSegmentChanged, {previousSegmentIdentifier: previousIdentifier});
    },
 
     segmentUnloaded: function()
@@ -329,9 +330,9 @@ WebInspector.ReplayManager.prototype = {
         console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Unloaded);
 
-        var unloadedSegmentIdentifier = this._activeSegmentIdentifier;
+        var previousIdentifier = this._activeSegmentIdentifier;
         this._activeSegmentIdentifier = null;
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.segmentUnloaded, {unloadedSegmentIdentifier: unloadedSegmentIdentifier});
+        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.ActiveSegmentChanged, {previousSegmentIdentifier: previousIdentifier});
     },
 
     // Private
@@ -363,7 +364,6 @@ WebInspector.ReplayManager.prototype = {
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
         // FIXME: Once the public API is asynchronous, we should assert that segmentState is Loaded.
 
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackWillStart);
         ReplayAgent.replayToPosition(replayPosition, this.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
     },
 
@@ -372,7 +372,6 @@ WebInspector.ReplayManager.prototype = {
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
         // FIXME: Once the public API is asynchronous, we should assert that segmentState is Loaded.
 
-        this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackWillStart);
         ReplayAgent.replayToCompletion(this.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
     },
 
