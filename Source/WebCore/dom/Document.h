@@ -1695,6 +1695,7 @@ private:
 
     bool m_hasInjectedPlugInsScript;
     bool m_renderTreeBeingDestroyed;
+    bool m_hasPreparedForDestruction;
 
     bool m_hasStyleWithViewportUnits;
 };

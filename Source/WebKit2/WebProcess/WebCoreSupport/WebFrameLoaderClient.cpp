@@ -887,10 +887,6 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    // If we're loading a custom representation, we don't want to hand off the data to WebCore.
-    if (m_frameHasCustomContentProvider)
-        return;
-
     if (!m_pluginView)
         loader->commitData(data, length);
 

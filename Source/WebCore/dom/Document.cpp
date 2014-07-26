@@ -515,6 +515,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_disabledFieldsetElementsCount(0)
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
+    , m_hasPreparedForDestruction(false)
     , m_hasStyleWithViewportUnits(false)
 {
     allDocuments().add(this);
@@ -2047,6 +2048,9 @@ void Document::destroyRenderTree()
 
 void Document::prepareForDestruction()
 {
+    if (m_hasPreparedForDestruction)
+        return;
+
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
     clearTouchEventListeners();
 #endif
@@ -2055,7 +2059,8 @@ void Document::prepareForDestruction()
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();
 
-    destroyRenderTree();
+    if (hasLivingRenderTree())
+        destroyRenderTree();
 
     if (isPluginDocument())
         toPluginDocument(this)->detachFromPluginElement();
@@ -2087,6 +2092,8 @@ void Document::prepareForDestruction()
         m_mediaQueryMatcher->documentDestroyed();
 
     disconnectFromFrame();
+
+    m_hasPreparedForDestruction = true;
 }
 
 void Document::removeAllEventListeners()
