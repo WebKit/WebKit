@@ -1,3 +1,9 @@
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Attempt to fix Windows.
+
+        * wtf/text/WTFString.h:
+
 2014-07-25  Gavin Barraclough  <baraclough@apple.com>
 
         Yosemite version number is 101000
