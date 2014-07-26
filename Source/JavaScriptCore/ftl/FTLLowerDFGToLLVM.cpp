@@ -476,9 +476,6 @@ private:
         case PutStructure:
             compilePutStructure();
             break;
-        case PhantomPutStructure:
-            compilePhantomPutStructure();
-            break;
         case GetById:
             compileGetById();
             break;
@@ -1804,11 +1801,6 @@ private:
         m_out.store32(
             weakStructure(newStructure),
             cell, m_heaps.JSCell_structureID);
-    }
-    
-    void compilePhantomPutStructure()
-    {
-        m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
     }
     
     void compileGetById()
@@ -3256,6 +3248,12 @@ private:
         LValue base = lowCell(m_node->child1());
         
         MultiGetByOffsetData& data = m_node->multiGetByOffsetData();
+
+        if (data.variants.isEmpty()) {
+            // Protect against creating a Phi function with zero inputs. LLVM doesn't like that.
+            terminate(BadCache);
+            return;
+        }
         
         Vector<LBasicBlock, 2> blocks(data.variants.size());
         for (unsigned i = data.variants.size(); i--;)
@@ -3333,8 +3331,10 @@ private:
         Vector<SwitchCase, 2> cases;
         for (unsigned i = data.variants.size(); i--;) {
             PutByIdVariant variant = data.variants[i];
-            cases.append(
-                SwitchCase(weakStructure(variant.oldStructure()), blocks[i], Weight(1)));
+            for (unsigned j = variant.oldStructure().size(); j--;) {
+                cases.append(
+                    SwitchCase(weakStructure(variant.oldStructure()[j]), blocks[i], Weight(1)));
+            }
         }
         m_out.switchInstruction(
             m_out.load32(base, m_heaps.JSCell_structureID), cases, exit, Weight(0));
@@ -3355,14 +3355,15 @@ private:
             } else {
                 m_graph.m_plan.transitions.addLazily(
                     codeBlock(), m_node->origin.semantic.codeOriginOwner(),
-                    variant.oldStructure(), variant.newStructure());
+                    variant.oldStructureForTransition(), variant.newStructure());
                 
                 storage = storageForTransition(
-                    base, variant.offset(), variant.oldStructure(), variant.newStructure());
+                    base, variant.offset(),
+                    variant.oldStructureForTransition(), variant.newStructure());
 
-                ASSERT(variant.oldStructure()->indexingType() == variant.newStructure()->indexingType());
-                ASSERT(variant.oldStructure()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
-                ASSERT(variant.oldStructure()->typeInfo().type() == variant.newStructure()->typeInfo().type());
+                ASSERT(variant.oldStructureForTransition()->indexingType() == variant.newStructure()->indexingType());
+                ASSERT(variant.oldStructureForTransition()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
+                ASSERT(variant.oldStructureForTransition()->typeInfo().type() == variant.newStructure()->typeInfo().type());
                 m_out.store32(
                     weakStructure(variant.newStructure()), base, m_heaps.JSCell_structureID);
             }
@@ -4136,7 +4137,9 @@ private:
         
         for (CString* symbol = namedFunctions.begin(); symbol != namedFunctions.end(); ++symbol) {
             LValue function = getNamedFunction(m_ftlState.module, symbol->data());
-            setVisibility(function, LLVMHiddenVisibility);
+            LLVMLinkage linkage = getLinkage(function);
+            if (linkage != LLVMInternalLinkage && linkage != LLVMPrivateLinkage)
+                setVisibility(function, LLVMHiddenVisibility);
             if (!isDeclaration(function)) {
                 setLinkage(function, LLVMPrivateLinkage);
 
@@ -4147,7 +4150,9 @@ private:
 
         for (CString* symbol = namedGlobals.begin(); symbol != namedGlobals.end(); ++symbol) {
             LValue global = getNamedGlobal(m_ftlState.module, symbol->data());
-            setVisibility(global, LLVMHiddenVisibility);
+            LLVMLinkage linkage = getLinkage(global);
+            if (linkage != LLVMInternalLinkage && linkage != LLVMPrivateLinkage)
+                setVisibility(global, LLVMHiddenVisibility);
             if (!isDeclaration(global))
                 setLinkage(global, LLVMPrivateLinkage);
         }

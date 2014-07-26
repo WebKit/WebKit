@@ -347,6 +347,7 @@
     <ClCompile Include="..\bytecode\StructureSet.cpp" />
     <ClCompile Include="..\bytecode\StructureStubClearingWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\StructureStubInfo.cpp" />
+    <ClCompile Include="..\bytecode\ToThisStatus.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
@@ -354,8 +355,8 @@
     <ClCompile Include="..\bytecompiler\BytecodeGenerator.cpp" />
     <ClCompile Include="..\bytecompiler\NodesCodegen.cpp" />
     <ClCompile Include="..\debugger\Debugger.cpp" />
-    <ClCompile Include="..\debugger\DebuggerActivation.cpp" />
     <ClCompile Include="..\debugger\DebuggerCallFrame.cpp" />
+    <ClCompile Include="..\debugger\DebuggerScope.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractHeap.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractValue.cpp" />
     <ClCompile Include="..\dfg\DFGArgumentsSimplificationPhase.cpp" />
@@ -937,6 +938,7 @@
     <ClInclude Include="..\bytecode\StructureSet.h" />
     <ClInclude Include="..\bytecode\StructureStubClearingWatchpoint.h" />
     <ClInclude Include="..\bytecode\StructureStubInfo.h" />
+    <ClInclude Include="..\bytecode\ToThisStatus.h" />
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h" />
     <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h" />
     <ClInclude Include="..\bytecode\ValueProfile.h" />
@@ -951,9 +953,9 @@
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\debugger\Breakpoint.h" />
     <ClInclude Include="..\debugger\Debugger.h" />
-    <ClInclude Include="..\debugger\DebuggerActivation.h" />
     <ClInclude Include="..\debugger\DebuggerCallFrame.h" />
     <ClInclude Include="..\debugger\DebuggerPrimitives.h" />
+    <ClInclude Include="..\debugger\DebuggerScope.h" />
     <ClInclude Include="..\dfg\DFGAbstractHeap.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreter.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreterInlines.h" />

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DebuggerActivation_h
-#define DebuggerActivation_h
+#ifndef DebuggerScope_h
+#define DebuggerScope_h
 
 #include "JSObject.h"
 
 namespace JSC {
 
-class DebuggerActivation : public JSNonFinalObject {
+class DebuggerScope : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static DebuggerActivation* create(VM& vm, JSObject* object)
+    static DebuggerScope* create(VM& vm, JSObject* object)
     {
-        DebuggerActivation* activation = new (NotNull, allocateCell<DebuggerActivation>(vm.heap)) DebuggerActivation(vm);
+        DebuggerScope* activation = new (NotNull, allocateCell<DebuggerScope>(vm.heap)) DebuggerScope(vm);
         activation->finishCreation(vm, object);
         return activation;
     }
@@ -62,10 +62,10 @@ protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* activation);
 
 private:
-    JS_EXPORT_PRIVATE DebuggerActivation(VM&);
+    JS_EXPORT_PRIVATE DebuggerScope(VM&);
     WriteBarrier<JSActivation> m_activation;
 };
 
 } // namespace JSC
 
-#endif // DebuggerActivation_h
+#endif // DebuggerScope_h

@@ -191,6 +191,13 @@ void InspectorRuntimeAgent::run(ErrorString*)
 {
 }
 
+void InspectorRuntimeAgent::getRuntimeTypeForVariableInTextRange(ErrorString*, const String& in_variableName, const String& in_id, int in_startLine, int in_startColumn, int in_endLine, int in_endColumn, String* out_types) 
+{
+    VM& vm = globalVM();
+    String types(vm.getTypesForVariableInRange(in_startLine, in_startColumn, in_endLine, in_endColumn, in_variableName, in_id));
+    *out_types = types;
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

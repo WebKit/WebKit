@@ -1,3 +1,121 @@
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.
+
+    2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Fold GetById/PutById to MultiGetByOffset/GetByOffset or MultiPutByOffset/PutByOffset, which implies handling non-singleton sets
+            https://bugs.webkit.org/show_bug.cgi?id=134090
+    
+            Reviewed by Oliver Hunt.
+    
+            * js/regress/fold-get-by-id-to-multi-get-by-offset-expected.txt: Added.
+            * js/regress/fold-get-by-id-to-multi-get-by-offset-rare-int-expected.txt: Added.
+            * js/regress/fold-get-by-id-to-multi-get-by-offset-rare-int.html: Added.
+            * js/regress/fold-get-by-id-to-multi-get-by-offset.html: Added.
+            * js/regress/fold-put-by-id-to-multi-put-by-offset-expected.txt: Added.
+            * js/regress/fold-put-by-id-to-multi-put-by-offset.html: Added.
+            * js/regress/script-tests/fold-get-by-id-to-multi-get-by-offset-rare-int.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            (Number):
+            * js/regress/script-tests/fold-get-by-id-to-multi-get-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            (Number):
+            * js/regress/script-tests/fold-put-by-id-to-multi-put-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+    
+    2014-06-19  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] LICM should be able to hoist CheckStructure even if the loop clobbers structures so long as the structures being checked are watchable
+            https://bugs.webkit.org/show_bug.cgi?id=134056
+    
+            Unreviewed, just landing the test cases for this attempted optimization. The test cases
+            will still be valid once we find a smart way of doing this optimization.
+    
+            * js/regress/hoist-poly-check-structure-effectful-loop-expected.txt: Added.
+            * js/regress/hoist-poly-check-structure-effectful-loop.html: Added.
+            * js/regress/hoist-poly-check-structure-expected.txt: Added.
+            * js/regress/hoist-poly-check-structure.html: Added.
+            * js/regress/script-tests/hoist-poly-check-structure-effectful-loop.js: Added.
+            (foo):
+            (test):
+            * js/regress/script-tests/hoist-poly-check-structure.js: Added.
+            (foo):
+            (test):
+    
+    2014-06-18  Filip Pizlo  <fpizlo@apple.com>
+    
+            DFG AI and constant folder should be able to precisely prune MultiGetByOffset/MultiPutByOffset even if the base structure abstract value is not a singleton
+            https://bugs.webkit.org/show_bug.cgi?id=133918
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * js/regress/fold-multi-get-by-offset-to-get-by-offset-expected.txt: Added.
+            * js/regress/fold-multi-get-by-offset-to-get-by-offset.html: Added.
+            * js/regress/fold-multi-get-by-offset-to-poly-get-by-offset-expected.txt: Added.
+            * js/regress/fold-multi-get-by-offset-to-poly-get-by-offset.html: Added.
+            * js/regress/fold-multi-put-by-offset-to-poly-put-by-offset-expected.txt: Added.
+            * js/regress/fold-multi-put-by-offset-to-poly-put-by-offset.html: Added.
+            * js/regress/fold-multi-put-by-offset-to-put-by-offset-expected.txt: Added.
+            * js/regress/fold-multi-put-by-offset-to-put-by-offset.html: Added.
+            * js/regress/fold-multi-put-by-offset-to-replace-or-transition-put-by-offset-expected.txt: Added.
+            * js/regress/fold-multi-put-by-offset-to-replace-or-transition-put-by-offset.html: Added.
+            * js/regress/fold-put-structure-expected.txt: Added.
+            * js/regress/fold-put-structure.html: Added.
+            * js/regress/script-tests/fold-multi-get-by-offset-to-get-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            * js/regress/script-tests/fold-multi-get-by-offset-to-poly-get-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            * js/regress/script-tests/fold-multi-put-by-offset-to-poly-put-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            * js/regress/script-tests/fold-multi-put-by-offset-to-put-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            * js/regress/script-tests/fold-multi-put-by-offset-to-replace-or-transition-put-by-offset.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+            * js/regress/script-tests/fold-put-structure.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (.bar):
+    
+    2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG put_by_id should inline accesses with a slightly polymorphic base
+            https://bugs.webkit.org/show_bug.cgi?id=133964
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * js/regress/put-by-id-replace-and-transition-expected.txt: Added.
+            * js/regress/put-by-id-replace-and-transition.html: Added.
+            * js/regress/put-by-id-slightly-polymorphic-expected.txt: Added.
+            * js/regress/put-by-id-slightly-polymorphic.html: Added.
+            * js/regress/script-tests/put-by-id-replace-and-transition.js: Added.
+            * js/regress/script-tests/put-by-id-slightly-polymorphic.js: Added.
+    
 2014-07-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Rounded rect gets non-renderable at certain subpixel size.

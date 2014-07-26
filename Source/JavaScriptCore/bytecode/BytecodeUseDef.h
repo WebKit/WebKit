@@ -65,6 +65,7 @@ void computeUsesForBytecodeOffset(
     case op_tear_off_activation:
     case op_profile_will_call:
     case op_profile_did_call:
+    case op_profile_types_with_high_fidelity:
     case op_throw:
     case op_push_with_scope:
     case op_end:
@@ -105,6 +106,7 @@ void computeUsesForBytecodeOffset(
     case op_put_by_id_transition_normal_out_of_line:
     case op_put_by_id_out_of_line:
     case op_put_by_id:
+    case op_put_to_scope_with_profile:
     case op_put_to_scope: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
@@ -249,6 +251,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_push_name_scope:
     case op_push_with_scope:
     case op_put_to_scope:
+    case op_put_to_scope_with_profile:
     case op_pop_scope:
     case op_end:
     case op_profile_will_call:
@@ -287,6 +290,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_put_by_val_direct:
     case op_put_by_index:
     case op_tear_off_arguments:
+    case op_profile_types_with_high_fidelity:
     case op_touch_entry:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);

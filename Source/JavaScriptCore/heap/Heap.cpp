@@ -35,6 +35,7 @@
 #include "HeapIterationScope.h"
 #include "HeapRootVisitor.h"
 #include "HeapStatistics.h"
+#include "HighFidelityLog.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
 #include "JSGlobalObject.h"
@@ -969,6 +970,8 @@ void Heap::collect(HeapOperation collectionType)
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC starting collection.\n");
 #endif
+    if (vm()->isProfilingTypesWithHighFidelity())
+        vm()->highFidelityLog()->processHighFidelityLog(false, "GC");
     
     double before = 0;
     if (Options::logGC()) {

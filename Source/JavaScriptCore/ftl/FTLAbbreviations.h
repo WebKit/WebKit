@@ -149,8 +149,7 @@ static inline void setFunctionCallingConv(LValue function, LCallConv convention)
 static inline void addTargetDependentFunctionAttr(LValue function, const char* key, const char* value) { llvm->AddTargetDependentFunctionAttr(function, key, value); }
 static inline void removeFunctionAttr(LValue function, LLVMAttribute pa) { llvm->RemoveFunctionAttr(function, pa); }
 
-
-
+static inline LLVMLinkage getLinkage(LValue global) { return llvm->GetLinkage(global); }
 static inline void setLinkage(LValue global, LLVMLinkage linkage) { llvm->SetLinkage(global, linkage); }
 static inline void setVisibility(LValue global, LLVMVisibility viz) { llvm->SetVisibility(global, viz); }
 static inline LLVMBool isDeclaration(LValue global) { return llvm->IsDeclaration(global); }
@@ -162,10 +161,6 @@ static inline const char * getValueName(LValue global) { return llvm->GetValueNa
 static inline LValue getNamedGlobal(LModule module, const char* name) { return llvm->GetNamedGlobal(module, name); }
 static inline LValue getFirstGlobal(LModule module) { return llvm->GetFirstGlobal(module); }
 static inline LValue getNextGlobal(LValue global) { return llvm->GetNextGlobal(global); }
-
-
-
-
 
 static inline LValue addExternFunction(LModule module, const char* name, LType type)
 {

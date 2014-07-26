@@ -1,5 +1,577 @@
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.
+
+    2014-06-27  Michael Saboff  <msaboff@apple.com>
+    
+            Unreviewed build fix after r169795.
+    
+            Fixed ASSERT for 32 bit build.
+    
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+    
+    2014-06-24  Saam Barati  <sbarati@apple.com>
+    
+            Web Inspector: debugger should be able to show variable types
+            https://bugs.webkit.org/show_bug.cgi?id=133395
+    
+            Reviewed by Filip Pizlo.
+    
+            Increase the amount of type information the VM gathers when directed
+            to do so. This initial commit is working towards the goal of
+            capturing, and then showing (via the Web Inspector) type information for all
+            assignment and load operations. This patch doesn't have the feature fully 
+            implemented, but it ensures the VM has no performance regressions
+            unless the feature is specifically turned on.
+    
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/BytecodeList.json:
+            * bytecode/BytecodeUseDef.h:
+            (JSC::computeUsesForBytecodeOffset):
+            (JSC::computeDefsForBytecodeOffset):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::dumpBytecode):
+            (JSC::CodeBlock::CodeBlock):
+            (JSC::CodeBlock::finalizeUnconditionally):
+            * bytecode/CodeBlock.h:
+            * bytecode/Instruction.h:
+            * bytecode/TypeLocation.h: Added.
+            (JSC::TypeLocation::TypeLocation):
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::emitMove):
+            (JSC::BytecodeGenerator::emitProfileTypesWithHighFidelity):
+            (JSC::BytecodeGenerator::emitPutToScope):
+            (JSC::BytecodeGenerator::emitPutById):
+            (JSC::BytecodeGenerator::emitPutByVal):
+            * bytecompiler/BytecodeGenerator.h:
+            (JSC::BytecodeGenerator::isProfilingTypesWithHighFidelity):
+            * bytecompiler/NodesCodegen.cpp:
+            (JSC::PostfixNode::emitResolve):
+            (JSC::PrefixNode::emitResolve):
+            (JSC::ReadModifyResolveNode::emitBytecode):
+            (JSC::AssignResolveNode::emitBytecode):
+            (JSC::ConstDeclNode::emitCodeSingle):
+            (JSC::ForInNode::emitBytecode):
+            * heap/Heap.cpp:
+            (JSC::Heap::collect):
+            * inspector/agents/InspectorRuntimeAgent.cpp:
+            (Inspector::InspectorRuntimeAgent::getRuntimeTypeForVariableInTextRange):
+            * inspector/agents/InspectorRuntimeAgent.h:
+            * inspector/protocol/Runtime.json:
+            * jsc.cpp:
+            (GlobalObject::finishCreation):
+            (functionDumpTypesForAllVariables):
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            (JSC::LLInt::putToScopeCommon):
+            * llint/LLIntSlowPaths.h:
+            * llint/LowLevelInterpreter.asm:
+            * runtime/HighFidelityLog.cpp: Added.
+            (JSC::HighFidelityLog::initializeHighFidelityLog):
+            (JSC::HighFidelityLog::~HighFidelityLog):
+            (JSC::HighFidelityLog::recordTypeInformationForLocation):
+            (JSC::HighFidelityLog::processHighFidelityLog):
+            (JSC::HighFidelityLog::actuallyProcessLogThreadFunction):
+            * runtime/HighFidelityLog.h: Added.
+            (JSC::HighFidelityLog::HighFidelityLog):
+            * runtime/HighFidelityTypeProfiler.cpp: Added.
+            (JSC::HighFidelityTypeProfiler::getTypesForVariableInRange):
+            (JSC::HighFidelityTypeProfiler::getGlobalTypesForVariableInRange):
+            (JSC::HighFidelityTypeProfiler::getLocalTypesForVariableInRange):
+            (JSC::HighFidelityTypeProfiler::insertNewLocation):
+            (JSC::HighFidelityTypeProfiler::getLocationBasedHash):
+            * runtime/HighFidelityTypeProfiler.h: Added.
+            * runtime/Options.h:
+            * runtime/Structure.cpp:
+            (JSC::Structure::toStructureShape):
+            * runtime/Structure.h:
+            * runtime/SymbolTable.cpp:
+            (JSC::SymbolTable::SymbolTable):
+            (JSC::SymbolTable::cloneCapturedNames):
+            (JSC::SymbolTable::uniqueIDForVariable):
+            (JSC::SymbolTable::uniqueIDForRegister):
+            (JSC::SymbolTable::globalTypeSetForRegister):
+            (JSC::SymbolTable::globalTypeSetForVariable):
+            * runtime/SymbolTable.h:
+            (JSC::SymbolTable::add):
+            (JSC::SymbolTable::set):
+            * runtime/TypeSet.cpp: Added.
+            (JSC::TypeSet::TypeSet):
+            (JSC::TypeSet::getRuntimeTypeForValue):
+            (JSC::TypeSet::addTypeForValue):
+            (JSC::TypeSet::removeDuplicatesInStructureHistory):
+            (JSC::TypeSet::seenTypes):
+            (JSC::TypeSet::dumpSeenTypes):
+            (JSC::StructureShape::StructureShape):
+            (JSC::StructureShape::markAsFinal):
+            (JSC::StructureShape::addProperty):
+            (JSC::StructureShape::propertyHash):
+            (JSC::StructureShape::leastUpperBound):
+            (JSC::StructureShape::stringRepresentation):
+            * runtime/TypeSet.h: Added.
+            (JSC::StructureShape::create):
+            (JSC::TypeSet::create):
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            (JSC::VM::getTypesForVariableInRange):
+            (JSC::VM::updateHighFidelityTypeProfileState):
+            (JSC::VM::dumpHighFidelityProfilingTypes):
+            * runtime/VM.h:
+            (JSC::VM::isProfilingTypesWithHighFidelity):
+            (JSC::VM::highFidelityLog):
+            (JSC::VM::highFidelityTypeProfiler):
+            (JSC::VM::nextLocation):
+            (JSC::VM::getNextUniqueVariableID):
+    
+    2014-06-26  Mark Lam  <mark.lam@apple.com>
+    
+            Remove unused instantiation of the WithScope structure.
+            <https://webkit.org/b/134331>
+    
+            Reviewed by Oliver Hunt.
+    
+            The WithScope structure instance is the VM is unused, and is now removed.
+    
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+    
+    2014-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Structure bit fields should have a consistent format
+            https://bugs.webkit.org/show_bug.cgi?id=134307
+    
+            Reviewed by Filip Pizlo.
+    
+            Currently we use C-style bit fields for a number of member variables in Structure to save space. 
+            This makes it difficult to load these fields in the JIT. We should instead use our own bitfield 
+            format to make it easy to load and test these variables in JIT code.
+    
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::putDirectNonIndexAccessor):
+            (JSC::JSObject::reifyStaticFunctionsForDelete):
+            * runtime/Structure.cpp:
+            (JSC::StructureTransitionTable::contains):
+            (JSC::StructureTransitionTable::get):
+            (JSC::StructureTransitionTable::add):
+            (JSC::Structure::Structure):
+            (JSC::Structure::materializePropertyMap):
+            (JSC::Structure::addPropertyTransition):
+            (JSC::Structure::despecifyFunctionTransition):
+            (JSC::Structure::toDictionaryTransition):
+            (JSC::Structure::freezeTransition):
+            (JSC::Structure::preventExtensionsTransition):
+            (JSC::Structure::takePropertyTableOrCloneIfPinned):
+            (JSC::Structure::nonPropertyTransition):
+            (JSC::Structure::flattenDictionaryStructure):
+            (JSC::Structure::addPropertyWithoutTransition):
+            (JSC::Structure::pin):
+            (JSC::Structure::allocateRareData):
+            (JSC::Structure::cloneRareDataFrom):
+            (JSC::Structure::getConcurrently):
+            (JSC::Structure::putSpecificValue):
+            (JSC::Structure::getPropertyNamesFromStructure):
+            (JSC::Structure::visitChildren):
+            (JSC::Structure::checkConsistency):
+            * runtime/Structure.h:
+            (JSC::Structure::isExtensible):
+            (JSC::Structure::isDictionary):
+            (JSC::Structure::isUncacheableDictionary):
+            (JSC::Structure::propertyAccessesAreCacheable):
+            (JSC::Structure::previousID):
+            (JSC::Structure::setHasGetterSetterPropertiesWithProtoCheck):
+            (JSC::Structure::setContainsReadOnlyProperties):
+            (JSC::Structure::disableSpecificFunctionTracking):
+            (JSC::Structure::objectToStringValue):
+            (JSC::Structure::setObjectToStringValue):
+            (JSC::Structure::setPreviousID):
+            (JSC::Structure::clearPreviousID):
+            (JSC::Structure::previous):
+            (JSC::Structure::rareData):
+            (JSC::Structure::didTransition): Deleted.
+            (JSC::Structure::hasGetterSetterProperties): Deleted.
+            (JSC::Structure::hasReadOnlyOrGetterSetterPropertiesExcludingProto): Deleted.
+            (JSC::Structure::setHasGetterSetterProperties): Deleted.
+            (JSC::Structure::hasNonEnumerableProperties): Deleted.
+            (JSC::Structure::staticFunctionsReified): Deleted.
+            (JSC::Structure::setStaticFunctionsReified): Deleted.
+            * runtime/StructureInlines.h:
+            (JSC::Structure::setEnumerationCache):
+            (JSC::Structure::enumerationCache):
+            (JSC::Structure::checkOffsetConsistency):
+    
+    2014-06-24  Mark Lam  <mark.lam@apple.com>
+    
+            [ftlopt] Renamed DebuggerActivation to DebuggerScope.
+            <https://webkit.org/b/134273>
+    
+            Reviewed by Michael Saboff.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * debugger/DebuggerActivation.cpp: Removed.
+            * debugger/DebuggerActivation.h: Removed.
+            * debugger/DebuggerScope.cpp: Copied from ../../trunk/Source/JavaScriptCore/debugger/DebuggerActivation.cpp.
+            (JSC::DebuggerScope::DebuggerScope):
+            (JSC::DebuggerScope::finishCreation):
+            (JSC::DebuggerScope::visitChildren):
+            (JSC::DebuggerScope::className):
+            (JSC::DebuggerScope::getOwnPropertySlot):
+            (JSC::DebuggerScope::put):
+            (JSC::DebuggerScope::deleteProperty):
+            (JSC::DebuggerScope::getOwnPropertyNames):
+            (JSC::DebuggerScope::defineOwnProperty):
+            (JSC::DebuggerActivation::DebuggerActivation): Deleted.
+            (JSC::DebuggerActivation::finishCreation): Deleted.
+            (JSC::DebuggerActivation::visitChildren): Deleted.
+            (JSC::DebuggerActivation::className): Deleted.
+            (JSC::DebuggerActivation::getOwnPropertySlot): Deleted.
+            (JSC::DebuggerActivation::put): Deleted.
+            (JSC::DebuggerActivation::deleteProperty): Deleted.
+            (JSC::DebuggerActivation::getOwnPropertyNames): Deleted.
+            (JSC::DebuggerActivation::defineOwnProperty): Deleted.
+            * debugger/DebuggerScope.h: Copied from ../../trunk/Source/JavaScriptCore/debugger/DebuggerActivation.h.
+            (JSC::DebuggerScope::create):
+            (JSC::DebuggerActivation::create): Deleted.
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+    
+    2014-06-24  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] PutByIdFlush can also be converted to a PutByOffset so don't assert otherwise
+            https://bugs.webkit.org/show_bug.cgi?id=134265
+    
+            Reviewed by Geoffrey Garen.
+            
+            More assertion fallout from the PutById folding work.
+    
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::convertToPutByOffset):
+    
+    2014-06-24  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] GC should notify us if it resets to_this
+            https://bugs.webkit.org/show_bug.cgi?id=128231
+    
+            Reviewed by Geoffrey Garen.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/BytecodeList.json:
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::dumpBytecode):
+            (JSC::CodeBlock::finalizeUnconditionally):
+            * bytecode/Instruction.h:
+            * bytecode/ToThisStatus.cpp: Added.
+            (JSC::merge):
+            (WTF::printInternal):
+            * bytecode/ToThisStatus.h: Added.
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::BytecodeGenerator):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * llint/LowLevelInterpreter32_64.asm:
+            * llint/LowLevelInterpreter64.asm:
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::SLOW_PATH_DECL):
+    
+    2014-06-24  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] StructureAbstractValue::onlyStructure() should return nullptr if isClobbered()
+            https://bugs.webkit.org/show_bug.cgi?id=134256
+    
+            Reviewed by Michael Saboff.
+            
+            This isn't testable right now (i.e. it's benign) but we should get it right anyway. The
+            point is to be able to precisely model what goes on in the snippets of code between a
+            side-effect and an InvalidationPoint.
+            
+            This patch also cleans up onlyStructure() by delegating more work to
+            StructureSet::onlyStructure().
+    
+            * dfg/DFGStructureAbstractValue.h:
+            (JSC::DFG::StructureAbstractValue::onlyStructure):
+    
+    2014-06-24  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt][REGRESSION] PutById AI is introducing watchable structures without watching them
+            https://bugs.webkit.org/show_bug.cgi?id=134260
+    
+            Reviewed by Geoffrey Garen.
+            
+            This was causing loads of assertion failures in debug builds.
+    
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    
+    2014-06-21  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Fold GetById/PutById to MultiGetByOffset/GetByOffset or MultiPutByOffset/PutByOffset, which implies handling non-singleton sets
+            https://bugs.webkit.org/show_bug.cgi?id=134090
+    
+            Reviewed by Oliver Hunt.
+            
+            This pretty much finishes off the work to eliminate the special-casing of singleton
+            structure sets by making it possible to fold GetById and PutById to various polymorphic
+            forms of the ByOffset nodes.
+            
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::computeForStubInfo):
+            (JSC::GetByIdStatus::computeFor):
+            * bytecode/GetByIdStatus.h:
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeFor):
+            * bytecode/PutByIdStatus.h:
+            * bytecode/PutByIdVariant.h:
+            (JSC::PutByIdVariant::constantChecks):
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+            (JSC::DFG::ConstantFoldingPhase::addChecks):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::convertToMultiGetByOffset):
+            (JSC::DFG::Node::convertToMultiPutByOffset):
+            * dfg/DFGSpeculativeJIT64.cpp: Also convert all release assertions to DFG assertions in this file, because I was hitting some of them while debugging.
+            (JSC::DFG::SpeculativeJIT::fillJSValue):
+            (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+            (JSC::DFG::SpeculativeJIT::emitCall):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Strict):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+            (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+            (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+            (JSC::DFG::SpeculativeJIT::emitBranch):
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGStructureAbstractValue.h:
+            (JSC::DFG::StructureAbstractValue::set):
+    
+    2014-06-19  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] StructureSet::onlyStructure() should return nullptr if it's not a singleton (instead of asserting)
+            https://bugs.webkit.org/show_bug.cgi?id=134077
+    
+            Reviewed by Sam Weinig.
+            
+            This makes StructureSet and StructureAbstractValue more consistent and fixes a debug assert
+            in the abstract interpreter.
+    
+            * bytecode/StructureSet.h:
+            (JSC::StructureSet::onlyStructure):
+    
+    2014-06-18  Filip Pizlo  <fpizlo@apple.com>
+    
+            DFG AI and constant folder should be able to precisely prune MultiGetByOffset/MultiPutByOffset even if the base structure abstract value is not a singleton
+            https://bugs.webkit.org/show_bug.cgi?id=133918
+    
+            Reviewed by Mark Hahnenberg.
+            
+            This also adds pruning of PutStructure, since I basically had no choice but
+            to implement such logic within MultiPutByOffset.
+            
+            Also adds a bunch of PutById cache status dumping to bytecode dumping.
+    
+            * bytecode/GetByIdVariant.cpp:
+            (JSC::GetByIdVariant::dumpInContext):
+            * bytecode/GetByIdVariant.h:
+            (JSC::GetByIdVariant::structureSet):
+            * bytecode/PutByIdVariant.h:
+            (JSC::PutByIdVariant::oldStructure):
+            * bytecode/StructureSet.cpp:
+            (JSC::StructureSet::filter):
+            (JSC::StructureSet::filterArrayModes):
+            * bytecode/StructureSet.h:
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGAbstractValue.cpp:
+            (JSC::DFG::AbstractValue::changeStructure):
+            (JSC::DFG::AbstractValue::contains):
+            * dfg/DFGAbstractValue.h:
+            (JSC::DFG::AbstractValue::couldBeType):
+            (JSC::DFG::AbstractValue::isType):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+            (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+            (JSC::DFG::ConstantFoldingPhase::addBaseCheck):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::freezeStrong):
+            * dfg/DFGGraph.h:
+            * dfg/DFGStructureAbstractValue.h:
+            (JSC::DFG::StructureAbstractValue::operator=):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+            * tests/stress/fold-multi-get-by-offset-to-get-by-offset-without-folding-the-structure-check.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (baz):
+            (.bar):
+            (.baz):
+            * tests/stress/fold-multi-put-by-offset-to-put-by-offset-without-folding-the-structure-check.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (baz):
+            (.bar):
+            (.baz):
+            * tests/stress/prune-multi-put-by-offset-replace-or-transition-variant.js: Added.
+            (foo):
+            (fu):
+            (bar):
+            (baz):
+            (.bar):
+            (.baz):
+    
+    2014-06-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Remove CompoundType and LeafType
+            https://bugs.webkit.org/show_bug.cgi?id=134037
+    
+            Reviewed by Filip Pizlo.
+    
+            We don't use them for anything. We'll replace them with a generic CellType type for all 
+            the objects that are JSCells, aren't JSObjects, and for which we generally don't care about 
+            their JSType at runtime.
+    
+            * llint/LLIntData.cpp:
+            (JSC::LLInt::Data::performAssertions):
+            * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+            (JSC::ArrayBufferNeuteringWatchpoint::createStructure):
+            * runtime/Executable.h:
+            (JSC::ExecutableBase::createStructure):
+            (JSC::NativeExecutable::createStructure):
+            * runtime/JSPromiseDeferred.h:
+            (JSC::JSPromiseDeferred::createStructure):
+            * runtime/JSPromiseReaction.h:
+            (JSC::JSPromiseReaction::createStructure):
+            * runtime/JSPropertyNameIterator.h:
+            (JSC::JSPropertyNameIterator::createStructure):
+            * runtime/JSType.h:
+            * runtime/JSTypeInfo.h:
+            (JSC::TypeInfo::TypeInfo):
+            * runtime/MapData.h:
+            (JSC::MapData::createStructure):
+            * runtime/PropertyMapHashTable.h:
+            (JSC::PropertyTable::createStructure):
+            * runtime/RegExp.h:
+            (JSC::RegExp::createStructure):
+            * runtime/SparseArrayValueMap.cpp:
+            (JSC::SparseArrayValueMap::createStructure):
+            * runtime/Structure.cpp:
+            (JSC::Structure::Structure):
+            * runtime/StructureChain.h:
+            (JSC::StructureChain::createStructure):
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::createStructure):
+            * runtime/SymbolTable.h:
+            (JSC::SymbolTable::createStructure):
+            * runtime/WeakMapData.h:
+            (JSC::WeakMapData::createStructure):
+    
+    2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] PutStructure and PhantomPutStructure shouldn't leave the world in a clobbered state
+            https://bugs.webkit.org/show_bug.cgi?id=134002
+    
+            Reviewed by Mark Hahnenberg.
+            
+            The effect of this bug was that if we had a PutStructure or PhantomPutStructure then any
+            JSConstants would be in a Clobbered state, so we wouldn't take advantage of our knowledge
+            of the structure if that structure was watchable.
+            
+            Also kill PhantomPutStructure.
+    
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransition):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransitions):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::visitChildren):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasTransition):
+            * dfg/DFGNodeType.h:
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGStructureAbstractValue.cpp:
+            (JSC::DFG::StructureAbstractValue::observeTransition):
+            (JSC::DFG::StructureAbstractValue::observeTransitions):
+            * dfg/DFGValidate.cpp:
+            (JSC::DFG::Validate::validate):
+            * dfg/DFGWatchableStructureWatchingPhase.cpp:
+            (JSC::DFG::WatchableStructureWatchingPhase::run):
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compilePhantomPutStructure): Deleted.
+    
+    2014-06-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG put_by_id should inline accesses with a slightly polymorphic base
+            https://bugs.webkit.org/show_bug.cgi?id=133964
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::appendVariant):
+            (JSC::PutByIdStatus::computeForStubInfo):
+            * bytecode/PutByIdVariant.cpp:
+            (JSC::PutByIdVariant::oldStructureForTransition):
+            (JSC::PutByIdVariant::writesStructures):
+            (JSC::PutByIdVariant::reallocatesStorage):
+            (JSC::PutByIdVariant::attemptToMerge):
+            (JSC::PutByIdVariant::attemptToMergeTransitionWithReplace):
+            (JSC::PutByIdVariant::dumpInContext):
+            * bytecode/PutByIdVariant.h:
+            (JSC::PutByIdVariant::PutByIdVariant):
+            (JSC::PutByIdVariant::replace):
+            (JSC::PutByIdVariant::transition):
+            (JSC::PutByIdVariant::structure):
+            (JSC::PutByIdVariant::oldStructure):
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::visitChildren):
+            * dfg/DFGNode.cpp:
+            (JSC::DFG::MultiPutByOffsetData::writesStructures):
+            (JSC::DFG::MultiPutByOffsetData::reallocatesStorage):
+            * ftl/FTLAbbreviations.h:
+            (JSC::FTL::getLinkage):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+            (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol):
+    
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
         Add an option to disable native call inlining. Disable it for now to see how it
         affects the bots.
 

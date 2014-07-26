@@ -166,7 +166,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         
         variant.m_structureSet.add(structure);
         variant.m_specificValue = JSValue(specificValue);
-        result.appendVariant(variant);
+        bool didAppend = result.appendVariant(variant);
+        ASSERT_UNUSED(didAppend, didAppend);
         return result;
     }
         
@@ -310,34 +311,43 @@ GetByIdStatus GetByIdStatus::computeFor(
     return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
 }
 
-GetByIdStatus GetByIdStatus::computeFor(VM& vm, Structure* structure, StringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFor(VM& vm, const StructureSet& set, StringImpl* uid)
 {
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.
     
-    if (!structure)
-        return GetByIdStatus(TakesSlowPath);
+    if (set.isEmpty())
+        return GetByIdStatus();
 
     if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
         return GetByIdStatus(TakesSlowPath);
     
-    if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
-        return GetByIdStatus(TakesSlowPath);
+    GetByIdStatus result;
+    result.m_state = Simple;
+    result.m_wasSeenInJIT = false;
+    for (unsigned i = 0; i < set.size(); ++i) {
+        Structure* structure = set[i];
+        if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
+            return GetByIdStatus(TakesSlowPath);
+        
+        if (!structure->propertyAccessesAreCacheable())
+            return GetByIdStatus(TakesSlowPath);
+        
+        unsigned attributes;
+        JSCell* specificValue;
+        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
+        if (!isValidOffset(offset))
+            return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
+        if (attributes & Accessor)
+            return GetByIdStatus(MakesCalls); // We could be smarter here, like strenght-reducing this to a Call.
+        if (structure->isDictionary())
+            specificValue = 0;
+        
+        if (!result.appendVariant(GetByIdVariant(structure, offset, specificValue)))
+            return GetByIdStatus(TakesSlowPath);
+    }
     
-    if (!structure->propertyAccessesAreCacheable())
-        return GetByIdStatus(TakesSlowPath);
-
-    unsigned attributes;
-    JSCell* specificValue;
-    PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
-    if (!isValidOffset(offset))
-        return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
-    if (attributes & Accessor)
-        return GetByIdStatus(MakesCalls);
-    if (structure->isDictionary())
-        specificValue = 0;
-    return GetByIdStatus(
-        Simple, false, GetByIdVariant(StructureSet(structure), offset, specificValue));
+    return result;
 }
 
 bool GetByIdStatus::makesCalls() const

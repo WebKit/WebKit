@@ -1891,20 +1891,19 @@ void ByteCodeParser::handlePutById(
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
     emitChecks(variant.constantChecks());
 
-    ASSERT(variant.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
+    ASSERT(variant.oldStructureForTransition()->transitionWatchpointSetHasBeenInvalidated());
     
     Node* propertyStorage;
     Transition* transition = m_graph.m_transitions.add(
-        variant.oldStructure(), variant.newStructure());
+        variant.oldStructureForTransition(), variant.newStructure());
 
-    if (variant.oldStructure()->outOfLineCapacity()
-        != variant.newStructure()->outOfLineCapacity()) {
+    if (variant.reallocatesStorage()) {
 
         // If we're growing the property storage then it must be because we're
         // storing into the out-of-line storage.
         ASSERT(!isInlineOffset(variant.offset()));
 
-        if (!variant.oldStructure()->outOfLineCapacity()) {
+        if (!variant.oldStructureForTransition()->outOfLineCapacity()) {
             propertyStorage = addToGraph(
                 AllocatePropertyStorage, OpInfo(transition), base);
         } else {
@@ -2036,7 +2035,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
                 Structure* cachedStructure = currentInstruction[2].u.structure.get();
-                if (!cachedStructure
+                if (currentInstruction[2].u.toThisStatus != ToThisOK
+                    || !cachedStructure
                     || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
                     || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
                     || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
@@ -2886,7 +2886,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalPropertyWithVarInjectionChecks: {
                 SpeculatedType prediction = getPrediction();
                 GetByIdStatus status = GetByIdStatus::computeFor(*m_vm, structure, uid);
-                if (status.state() != GetByIdStatus::Simple || status.numVariants() != 1) {
+                if (status.state() != GetByIdStatus::Simple
+                    || status.numVariants() != 1
+                    || status[0].structureSet().size() != 1) {
                     set(VirtualRegister(dst), addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(VirtualRegister(scope))));
                     break;
                 }
@@ -2971,11 +2973,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
                 PutByIdStatus status = PutByIdStatus::computeFor(*m_vm, globalObject, structure, uid, false);
-                if (status.numVariants() != 1 || status[0].kind() != PutByIdVariant::Replace) {
+                if (status.numVariants() != 1
+                    || status[0].kind() != PutByIdVariant::Replace
+                    || status[0].structure().size() != 1) {
                     addToGraph(PutById, OpInfo(identifierNumber), get(VirtualRegister(scope)), get(VirtualRegister(value)));
                     break;
                 }
-                Node* base = cellConstantWithStructureCheck(globalObject, status[0].structure());
+                ASSERT(status[0].structure().onlyStructure() == structure);
+                Node* base = cellConstantWithStructureCheck(globalObject, structure);
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 handlePutByOffset(base, identifierNumber, static_cast<PropertyOffset>(operand), get(VirtualRegister(value)));
                 // Keep scope alive until after put.

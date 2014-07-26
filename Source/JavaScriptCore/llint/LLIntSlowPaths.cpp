@@ -34,6 +34,7 @@
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
+#include "HighFidelityLog.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
@@ -169,7 +170,6 @@ namespace JSC { namespace LLInt {
         ExecState* __rcf_exec = (execCallee);                           \
         LLINT_RETURN_TWO(pc, __rcf_exec);                               \
     } while (false)
-    
 
 extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
@@ -539,6 +539,15 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
     if (!regExp->isValid())
         LLINT_THROW(createSyntaxError(exec, "Invalid flag supplied to RegExp constructor."));
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_profile_types_with_high_fidelity)
+{
+    LLINT_BEGIN();
+    TypeLocation* location = pc[2].u.location;
+    JSValue val = LLINT_OP_C(1).jsValue();
+    vm.highFidelityLog()->recordTypeInformationForLocation(val, location);
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
@@ -1435,9 +1444,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     LLINT_RETURN(slot.getValue(exec, ident));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
+static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc, VM& vm)
 {
-    LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(1).jsValue());
@@ -1445,7 +1453,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
 
     if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident))
-        LLINT_THROW(createUndefinedVariableError(exec, ident));
+        return createUndefinedVariableError(exec, ident);
 
     PutPropertySlot slot(scope, codeBlock->isStrictMode());
     scope->methodTable()->put(scope, exec, ident, value, slot);
@@ -1459,6 +1467,28 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
         }
     }
 
+    return nullptr;
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
+{
+    LLINT_BEGIN();
+    JSObject* error = putToScopeCommon(exec, pc, vm);
+    if (error)
+        LLINT_THROW(error);
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_to_scope_with_profile)
+{
+    // The format of this instruction is the same as put_to_scope with a TypeLocation appended: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
+    LLINT_BEGIN();
+    JSObject* error = putToScopeCommon(exec, pc, vm);
+    if (error)
+        LLINT_THROW(error);
+    TypeLocation* location = pc[7].u.location;
+    JSValue val = LLINT_OP_C(3).jsValue();
+    vm.highFidelityLog()->recordTypeInformationForLocation(val, location);
     LLINT_END();
 }
 

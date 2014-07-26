@@ -108,12 +108,14 @@ void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
     
     out.print(
         "<", inContext(structureSet(), context), ", ",
-        "[", listDumpInContext(m_constantChecks, context), "], ",
-        "alternateBase = ", inContext(JSValue(m_alternateBase), context), ", ",
-        "specificValue = ", inContext(specificValue(), context), ", ",
-        "offset = ", offset());
+        "[", listDumpInContext(m_constantChecks, context), "]");
+    if (m_alternateBase)
+        out.print(", alternateBase = ", inContext(JSValue(m_alternateBase), context));
+    if (specificValue())
+        out.print(", specificValue = ", inContext(specificValue(), context));
+    out.print(", offset = ", offset());
     if (m_callLinkStatus)
-        out.print("call = ", *m_callLinkStatus);
+        out.print(", call = ", *m_callLinkStatus);
     out.print(">");
 }
 

@@ -97,7 +97,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
                 
             default:
                 m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-                RELEASE_ASSERT(spillFormat & DataFormatJS);
+                DFG_ASSERT(m_jit.graph(), m_currentNode, spillFormat & DataFormatJS);
                 break;
             }
             info.fillJSValue(*m_stream, gpr, spillFormat);
@@ -137,10 +137,10 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
     case DataFormatDouble:
     case DataFormatInt52:
         // this type currently never occurs
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Bad data format");
         
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Corrupt data format");
         return InvalidGPRReg;
     }
 }
@@ -311,7 +311,7 @@ bool SpeculativeJIT::nonSpeculativeCompareNull(Node* node, Edge operand, bool in
     if (branchIndexInBlock != UINT_MAX) {
         Node* branchNode = m_block->at(branchIndexInBlock);
 
-        RELEASE_ASSERT(node->adjustedRefCount() == 1);
+        DFG_ASSERT(m_jit.graph(), node, node->adjustedRefCount() == 1);
         
         nonSpeculativePeepholeBranchNull(operand, branchNode, invert);
     
@@ -628,8 +628,8 @@ void SpeculativeJIT::emitCall(Node* node)
 
     bool isCall = node->op() == Call;
     if (!isCall)
-        RELEASE_ASSERT(node->op() == Construct);
-
+        DFG_ASSERT(m_jit.graph(), node, node->op() == Construct);
+    
     // For constructors, the this argument is not passed but we have to make space
     // for it.
     int dummyThisArgument = isCall ? 0 : 1;
@@ -741,7 +741,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         
         DataFormat spillFormat = info.spillFormat();
         
-        RELEASE_ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInt32);
+        DFG_ASSERT(m_jit.graph(), m_currentNode, (spillFormat & DataFormatJS) || spillFormat == DataFormatInt32);
         
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         
@@ -771,7 +771,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     }
 
     case DataFormatJS: {
-        RELEASE_ASSERT(!(type & SpecInt52));
+        DFG_ASSERT(m_jit.graph(), m_currentNode, !(type & SpecInt52));
         // Check the value is an integer.
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
@@ -834,10 +834,10 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     case DataFormatStorage:
     case DataFormatInt52:
     case DataFormatStrictInt52:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Bad data format");
         
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Corrupt data format");
         return InvalidGPRReg;
     }
 }
@@ -854,7 +854,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Strict(Edge edge)
 {
     DataFormat mustBeDataFormatInt32;
     GPRReg result = fillSpeculateInt32Internal<true>(edge, mustBeDataFormatInt32);
-    RELEASE_ASSERT(mustBeDataFormatInt32 == DataFormatInt32);
+    DFG_ASSERT(m_jit.graph(), m_currentNode, mustBeDataFormatInt32 == DataFormatInt32);
     return result;
 }
 
@@ -889,7 +889,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         
         DataFormat spillFormat = info.spillFormat();
         
-        RELEASE_ASSERT(spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52);
+        DFG_ASSERT(m_jit.graph(), m_currentNode, spillFormat == DataFormatInt52 || spillFormat == DataFormatStrictInt52);
         
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         
@@ -941,7 +941,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
     }
 
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Bad data format");
         return InvalidGPRReg;
     }
 }
@@ -972,7 +972,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         }
         
         DataFormat spillFormat = info.spillFormat();
-        RELEASE_ASSERT(spillFormat == DataFormatDouble);
+        DFG_ASSERT(m_jit.graph(), m_currentNode, spillFormat == DataFormatDouble);
         FPRReg fpr = fprAllocate();
         m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
@@ -980,7 +980,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         return fpr;
     }
 
-    RELEASE_ASSERT(info.registerFormat() == DataFormatDouble);
+    DFG_ASSERT(m_jit.graph(), m_currentNode, info.registerFormat() == DataFormatDouble);
     FPRReg fpr = info.fpr();
     m_fprs.lock(fpr);
     return fpr;
@@ -1060,10 +1060,10 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatStorage:
     case DataFormatInt52:
     case DataFormatStrictInt52:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Bad data format");
         
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Corrupt data format");
         return InvalidGPRReg;
     }
 }
@@ -1096,7 +1096,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
             terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
             return gpr;
         }
-        RELEASE_ASSERT(info.spillFormat() & DataFormatJS);
+        DFG_ASSERT(m_jit.graph(), m_currentNode, info.spillFormat() & DataFormatJS);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
@@ -1141,10 +1141,10 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     case DataFormatStorage:
     case DataFormatInt52:
     case DataFormatStrictInt52:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Bad data format");
         
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Corrupt data format");
         return InvalidGPRReg;
     }
 }
@@ -1608,7 +1608,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         return compileStringZeroLength(node);
 
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), node, "Bad use kind");
         break;
     }
 }
@@ -1763,7 +1763,7 @@ void SpeculativeJIT::emitBranch(Node* node)
     }
         
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), m_currentNode, "Bad use kind");
     }
 }
 
@@ -1788,7 +1788,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case Identity: {
         // CSE should always eliminate this.
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), node, "Unexpected Identity node");
         break;
     }
 
@@ -1869,7 +1869,7 @@ void SpeculativeJIT::compile(Node* node)
     case MovHint:
     case ZombieHint:
     case Check: {
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), node, "Unexpected node");
         break;
     }
 
@@ -1929,7 +1929,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad flush format");
             break;
         }
 
@@ -2067,7 +2067,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
         }
         break;
     }
@@ -2147,7 +2147,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
             break;
         }
         break;
@@ -2214,7 +2214,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
             break;
         }
         break;
@@ -2336,8 +2336,7 @@ void SpeculativeJIT::compile(Node* node)
         switch (node->arrayMode().type()) {
         case Array::SelectUsingPredictions:
         case Array::ForceExit:
-            RELEASE_ASSERT_NOT_REACHED();
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
+            DFG_CRASH(m_jit.graph(), node, "Bad array mode type");
             break;
         case Array::Generic: {
             JSValueOperand base(this, node->child1());
@@ -2538,12 +2537,10 @@ void SpeculativeJIT::compile(Node* node)
         switch (arrayMode.type()) {
         case Array::SelectUsingPredictions:
         case Array::ForceExit:
-            RELEASE_ASSERT_NOT_REACHED();
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
-            alreadyHandled = true;
+            DFG_CRASH(m_jit.graph(), node, "Bad array mode type");
             break;
         case Array::Generic: {
-            RELEASE_ASSERT(node->op() == PutByVal);
+            DFG_ASSERT(m_jit.graph(), node, node->op() == PutByVal);
             
             JSValueOperand arg1(this, child1);
             JSValueOperand arg2(this, child2);
@@ -3116,14 +3113,14 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
             break;
         }
         break;
     }
         
     case ToPrimitive: {
-        RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse);
         JSValueOperand op1(this, node->child1());
         GPRTemporary result(this, Reuse, op1);
         
@@ -3190,7 +3187,7 @@ void SpeculativeJIT::compile(Node* node)
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(node->indexingType())) {
             Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType());
-            RELEASE_ASSERT(structure->indexingType() == node->indexingType());
+            DFG_ASSERT(m_jit.graph(), node, structure->indexingType() == node->indexingType());
             ASSERT(
                 hasUndecided(structure->indexingType())
                 || hasInt32(structure->indexingType())
@@ -3441,7 +3438,7 @@ void SpeculativeJIT::compile(Node* node)
 
             emitAllocateJSArray(resultGPR, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), storageGPR, numElements);
             
-            RELEASE_ASSERT(indexingType & IsArray);
+            DFG_ASSERT(m_jit.graph(), node, indexingType & IsArray);
             JSValue* data = m_jit.codeBlock()->constantBuffer(node->startConstant());
             if (indexingType == ArrayWithDouble) {
                 for (unsigned index = 0; index < node->numConstants(); ++index) {
@@ -3495,7 +3492,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
             break;
         }
         break;
@@ -3725,7 +3722,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
             break;
         }
         break;
@@ -3775,7 +3772,7 @@ void SpeculativeJIT::compile(Node* node)
         }
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
             break;
         }
         break;
@@ -3831,13 +3828,6 @@ void SpeculativeJIT::compile(Node* node)
             done.link(&m_jit);
         }
         
-        noResult(node);
-        break;
-    }
-        
-    case PhantomPutStructure: {
-        ASSERT(isKnownCell(node->child1().node()));
-        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
         noResult(node);
         break;
     }
@@ -4246,7 +4236,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CreateActivation: {
-        RELEASE_ASSERT(!node->origin.semantic.inlineCallFrame);
+        DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
         
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);
@@ -4319,7 +4309,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case TearOffActivation: {
-        RELEASE_ASSERT(!node->origin.semantic.inlineCallFrame);
+        DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
 
         JSValueOperand activationValue(this, node->child1());
         GPRTemporary scratch(this);
@@ -4391,7 +4381,7 @@ void SpeculativeJIT::compile(Node* node)
                         m_jit.graph().machineArgumentsRegisterFor(node->origin.semantic))));
         }
         
-        RELEASE_ASSERT(!node->origin.semantic.inlineCallFrame);
+        DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
         m_jit.load32(JITCompiler::payloadFor(JSStack::ArgumentCount), resultGPR);
         m_jit.sub32(TrustedImm32(1), resultGPR);
         int32Result(resultGPR, node);
@@ -4467,7 +4457,7 @@ void SpeculativeJIT::compile(Node* node)
         JITCompiler::JumpList slowArgument;
         JITCompiler::JumpList slowArgumentOutOfBounds;
         if (m_jit.symbolTableFor(node->origin.semantic)->slowArguments()) {
-            RELEASE_ASSERT(!node->origin.semantic.inlineCallFrame);
+            DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
             const SlowArgument* slowArguments = m_jit.graph().m_slowArguments.get();
             
             slowArgumentOutOfBounds.append(
@@ -4534,7 +4524,7 @@ void SpeculativeJIT::compile(Node* node)
         JITCompiler::JumpList slowArgument;
         JITCompiler::JumpList slowArgumentOutOfBounds;
         if (m_jit.symbolTableFor(node->origin.semantic)->slowArguments()) {
-            RELEASE_ASSERT(!node->origin.semantic.inlineCallFrame);
+            DFG_ASSERT(m_jit.graph(), node, !node->origin.semantic.inlineCallFrame);
             const SlowArgument* slowArguments = m_jit.graph().m_slowArguments.get();
 
             slowArgumentOutOfBounds.append(
@@ -4669,7 +4659,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Unreachable:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), node, "Unexpected Unreachable node");
         break;
 
     case StoreBarrier:
@@ -4737,7 +4727,7 @@ void SpeculativeJIT::compile(Node* node)
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), node, "Unexpected tier-up node");
         break;
 #endif // ENABLE(FTL_JIT)
 
@@ -4753,7 +4743,7 @@ void SpeculativeJIT::compile(Node* node)
     case MultiGetByOffset:
     case MultiPutByOffset:
     case FiatInt52:
-        RELEASE_ASSERT_NOT_REACHED();
+        DFG_CRASH(m_jit.graph(), node, "Unexpected FTL node");
         break;
     }
 

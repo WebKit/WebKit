@@ -1,3 +1,19 @@
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.
+
+    2014-07-25  Mark Lam  <mark.lam@apple.com>
+    
+            [ftlopt] Renamed DebuggerActivation to DebuggerScope.
+            <https://webkit.org/b/134273>
+    
+            Reviewed by Michael Saboff.
+    
+            No new tests.
+    
+            * ForwardingHeaders/debugger/DebuggerActivation.h: Removed.
+            - Removed because this is not used.
+    
 2014-07-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Rounded rect gets non-renderable at certain subpixel size.

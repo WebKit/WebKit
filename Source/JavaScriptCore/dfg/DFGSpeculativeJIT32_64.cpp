@@ -3734,13 +3734,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case PhantomPutStructure: {
-        ASSERT(isKnownCell(node->child1().node()));
-        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
-        noResult(node);
-        break;
-    }
-
     case PutStructure: {
         Structure* oldStructure = node->transition()->previous;
         Structure* newStructure = node->transition()->next;

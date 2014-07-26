@@ -410,6 +410,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
         instructions().append(0);
+        instructions().append(0);
     }
 }
 
@@ -1002,6 +1003,10 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, CaptureMode captureMode
     instructions().append(src->index());
     if (captureMode == IsCaptured)
         instructions().append(watchableVariable(dst->index()));
+
+    if (!dst->isTemporary() && isProfilingTypesWithHighFidelity())
+        emitProfileTypesWithHighFidelity(dst, true);
+
     return dst;
 }
 
@@ -1109,6 +1114,18 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
     instructions().append(src1->index());
     instructions().append(src2->index());
     return dst;
+}
+
+void BytecodeGenerator::emitProfileTypesWithHighFidelity(RegisterID* registerToProfile, bool hasGlobalID)
+{
+    emitOpcode(op_profile_types_with_high_fidelity);
+    instructions().append(registerToProfile->index());
+    instructions().append(0); // placeholder for TypeLocation
+    // This is a flag indicating whether we should track this value to its globalID or not.
+    if (hasGlobalID)
+        instructions().append(1);
+    else
+        instructions().append(0);
 }
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
@@ -1255,13 +1272,18 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Identifie
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 
     // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
-    emitOpcode(op_put_to_scope);
+    if (isProfilingTypesWithHighFidelity())
+        emitOpcode(op_put_to_scope_with_profile);
+    else
+        emitOpcode(op_put_to_scope);
     instructions().append(scope->index());
     instructions().append(addConstant(identifier));
     instructions().append(value->index());
     instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
     instructions().append(0);
     instructions().append(0);
+    if (isProfilingTypesWithHighFidelity())
+        instructions().append(0);
     return value;
 }
 
@@ -1328,6 +1350,10 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
+
+    if (isProfilingTypesWithHighFidelity())
+        emitProfileTypesWithHighFidelity(value, false);
+
     return value;
 }
 
@@ -1424,6 +1450,10 @@ RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* proper
     instructions().append(property->index());
     instructions().append(value->index());
     instructions().append(arrayProfile);
+
+    if (isProfilingTypesWithHighFidelity())
+        emitProfileTypesWithHighFidelity(value, false);
+
     return value;
 }
 

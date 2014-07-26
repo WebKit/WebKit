@@ -94,6 +94,7 @@ set(JavaScriptCore_SOURCES
     bytecode/StructureSet.cpp
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
+    bytecode/ToThisStatus.cpp
     bytecode/UnlinkedCodeBlock.cpp
     bytecode/UnlinkedInstructionStream.cpp
     bytecode/ValueRecovery.cpp
@@ -103,8 +104,8 @@ set(JavaScriptCore_SOURCES
     bytecompiler/NodesCodegen.cpp
 
     debugger/Debugger.cpp
-    debugger/DebuggerActivation.cpp
     debugger/DebuggerCallFrame.cpp
+    debugger/DebuggerScope.cpp
 
     dfg/DFGAbstractHeap.cpp
     dfg/DFGAbstractValue.cpp

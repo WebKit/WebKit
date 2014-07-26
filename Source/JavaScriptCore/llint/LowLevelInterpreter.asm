@@ -150,9 +150,9 @@ const ArrayStorageShape        = 28
 const SlowPutArrayStorageShape = 30
 
 # Type constants.
-const StringType = 5
-const ObjectType = 18
-const FinalObjectType = 19
+const StringType = 6
+const ObjectType = 17
+const FinalObjectType = 18
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1
@@ -1242,3 +1242,11 @@ end
 _llint_op_init_global_const_nop:
     dispatch(5)
 
+_llint_op_profile_types_with_high_fidelity:
+    callSlowPath(_llint_slow_path_profile_types_with_high_fidelity)
+    dispatch(4)
+
+_llint_op_put_to_scope_with_profile:
+    traceExecution()
+    callSlowPath(_llint_slow_path_put_to_scope_with_profile)
+    dispatch(8)

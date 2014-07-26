@@ -1242,7 +1242,7 @@ void JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     Structure* structure = this->structure(vm);
     if (attributes & ReadOnly)
         structure->setContainsReadOnlyProperties();
-    structure->setHasCustomGetterSetterProperties(propertyName == vm.propertyNames->underscoreProto);
+    structure->setHasCustomGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
 }
 
 void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -1260,7 +1260,7 @@ void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSVa
     if (attributes & ReadOnly)
         structure->setContainsReadOnlyProperties();
 
-    structure->setHasGetterSetterProperties(propertyName == vm.propertyNames->underscoreProto);
+    structure->setHasGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
 }
 
 bool JSObject::hasProperty(ExecState* exec, PropertyName propertyName) const
@@ -1638,7 +1638,7 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
     // If this object's ClassInfo has no static properties, then nothing to reify!
     // We can safely set the flag to avoid the expensive check again in the future.
     if (!classInfo()->hasStaticProperties()) {
-        structure(vm)->setStaticFunctionsReified();
+        structure(vm)->setStaticFunctionsReified(true);
         return;
     }
 
@@ -1656,7 +1656,7 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
         }
     }
 
-    structure(vm)->setStaticFunctionsReified();
+    structure(vm)->setStaticFunctionsReified(true);
 }
 
 bool JSObject::removeDirect(VM& vm, PropertyName propertyName)

@@ -191,6 +191,17 @@ FiltrationResult AbstractValue::filter(Graph& graph, const StructureSet& other)
     return normalizeClarity(graph);
 }
 
+FiltrationResult AbstractValue::changeStructure(Graph& graph, const StructureSet& other)
+{
+    m_type &= other.speculationFromStructures();
+    m_arrayModes = other.arrayModesFromStructures();
+    m_structure = other;
+    
+    filterValueByType();
+    
+    return normalizeClarity(graph);
+}
+
 FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes)
 {
     ASSERT(arrayModes);
@@ -239,6 +250,13 @@ FiltrationResult AbstractValue::filterByValue(const FrozenValue& value)
     if (m_type)
         m_value = value.value();
     return result;
+}
+
+bool AbstractValue::contains(Structure* structure) const
+{
+    return couldBeType(speculationFromStructure(structure))
+        && (m_arrayModes & arrayModeFromStructure(structure))
+        && m_structure.contains(structure);
 }
 
 FiltrationResult AbstractValue::filter(const AbstractValue& other)

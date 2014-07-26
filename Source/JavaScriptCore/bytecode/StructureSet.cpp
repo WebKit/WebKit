@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StructureSet.h"
 
+#include "DFGAbstractValue.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -158,6 +159,80 @@ void StructureSet::exclude(const StructureSet& other)
     }
     if (!list->m_length)
         clear();
+}
+
+namespace {
+
+class StructureAbstractValueContains {
+public:
+    StructureAbstractValueContains(const DFG::StructureAbstractValue& value)
+        : m_value(value)
+    {
+    }
+    
+    bool operator()(Structure* structure)
+    {
+        return m_value.contains(structure);
+    }
+private:
+    const DFG::StructureAbstractValue& m_value;
+};
+
+class SpeculatedTypeContains {
+public:
+    SpeculatedTypeContains(SpeculatedType type)
+        : m_type(type)
+    {
+    }
+    
+    bool operator()(Structure* structure)
+    {
+        return m_type & speculationFromStructure(structure);
+    }
+private:
+    SpeculatedType m_type;
+};
+
+class ArrayModesContains {
+public:
+    ArrayModesContains(ArrayModes arrayModes)
+        : m_arrayModes(arrayModes)
+    {
+    }
+    
+    bool operator()(Structure* structure)
+    {
+        return m_arrayModes & arrayModeFromStructure(structure);
+    }
+private:
+    ArrayModes m_arrayModes;
+};
+
+} // anonymous namespace
+
+void StructureSet::filter(const DFG::StructureAbstractValue& other)
+{
+    StructureAbstractValueContains functor(other);
+    genericFilter(functor);
+}
+
+void StructureSet::filter(SpeculatedType type)
+{
+    SpeculatedTypeContains functor(type);
+    genericFilter(functor);
+}
+
+void StructureSet::filterArrayModes(ArrayModes arrayModes)
+{
+    ArrayModesContains functor(arrayModes);
+    genericFilter(functor);
+}
+
+void StructureSet::filter(const DFG::AbstractValue& other)
+{
+    filter(other.m_structure);
+    filter(other.m_type);
+    filterArrayModes(other.m_arrayModes);
 }
 
 bool StructureSet::isSubsetOf(const StructureSet& other) const

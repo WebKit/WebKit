@@ -283,7 +283,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
             graph, node, state.forNode(graph.varArgChild(node, 0)));
 
     case PutStructure:
-    case PhantomPutStructure:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
         return state.forNode(node->child1()).m_structure.isSubsetOf(

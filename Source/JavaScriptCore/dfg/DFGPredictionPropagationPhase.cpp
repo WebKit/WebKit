@@ -540,7 +540,6 @@ private:
         case GetLocalUnlinked:
         case GetMyArgumentsLength:
         case GetMyArgumentByVal:
-        case PhantomPutStructure:
         case PhantomArguments:
         case CheckArray:
         case Arrayify:

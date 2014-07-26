@@ -127,8 +127,7 @@ public:
 
     JS_EXPORT_PRIVATE bool isSealed(VM&);
     JS_EXPORT_PRIVATE bool isFrozen(VM&);
-    bool isExtensible() const { return !m_preventExtensions; }
-    bool didTransition() const { return m_didTransition; }
+    bool isExtensible() const { return !preventExtensions(); }
     bool putWillGrowOutOfLineStorage();
     size_t suggestedNewOutOfLineStorageCapacity(); 
 
@@ -143,12 +142,10 @@ public:
     PropertyOffset removePropertyWithoutTransition(VM&, PropertyName);
     void setPrototypeWithoutTransition(VM& vm, JSValue prototype) { m_prototype.set(vm, this, prototype); }
         
-    bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
-    bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
-
-    bool hasBeenFlattenedBefore() const { return m_hasBeenFlattenedBefore; }
-
-    bool propertyAccessesAreCacheable() { return m_dictionaryKind != UncachedDictionaryKind && !typeInfo().prohibitsPropertyCaching(); }
+    bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
+    bool isUncacheableDictionary() const { return dictionaryKind() == UncachedDictionaryKind; }
+  
+    bool propertyAccessesAreCacheable() { return dictionaryKind() != UncachedDictionaryKind && !typeInfo().prohibitsPropertyCaching(); }
 
     // We use SlowPath in GetByIdStatus for structures that may get new impure properties later to prevent
     // DFG from inlining property accesses since structures don't transition when a new impure property appears.
@@ -196,7 +193,7 @@ public:
     Structure* previousID() const
     {
         ASSERT(structure()->classInfo() == info());
-        if (m_hasRareData)
+        if (hasRareData())
             return rareData()->previousID();
         return previous();
     }
@@ -270,31 +267,23 @@ public:
 
     PropertyOffset getConcurrently(VM&, StringImpl* uid);
     PropertyOffset getConcurrently(VM&, StringImpl* uid, unsigned& attributes, JSCell*& specificValue);
-
-    bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
-    bool hasReadOnlyOrGetterSetterPropertiesExcludingProto() const { return m_hasReadOnlyOrGetterSetterPropertiesExcludingProto; }
-    void setHasGetterSetterProperties(bool is__proto__)
+    
+    void setHasGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {
-        m_hasGetterSetterProperties = true;
+        setHasGetterSetterProperties(true);
         if (!is__proto__)
-            m_hasReadOnlyOrGetterSetterPropertiesExcludingProto = true;
+            setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
     }
-
-    bool hasCustomGetterSetterProperties() const { return m_hasCustomGetterSetterProperties; }
-    void setHasCustomGetterSetterProperties(bool is__proto__)
+    
+    void setContainsReadOnlyProperties() { setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true); }
+    
+    void setHasCustomGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {
-        m_hasCustomGetterSetterProperties = true;
+        setHasCustomGetterSetterProperties(true);
         if (!is__proto__)
-            m_hasReadOnlyOrGetterSetterPropertiesExcludingProto = true;
+            setHasReadOnlyOrGetterSetterPropertiesExcludingProto(true);
     }
-
-    void setContainsReadOnlyProperties()
-    {
-        m_hasReadOnlyOrGetterSetterPropertiesExcludingProto = true;
-    }
-
-    bool hasNonEnumerableProperties() const { return m_hasNonEnumerableProperties; }
-        
+    
     bool isEmpty() const
     {
         ASSERT(checkOffsetConsistency());
@@ -302,7 +291,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE void despecifyDictionaryFunction(VM&, PropertyName);
-    void disableSpecificFunctionTracking() { m_specificFunctionThrashCount = maxSpecificFunctionThrashCount; }
+    void disableSpecificFunctionTracking() { setSpecificFunctionThrashCount(maxSpecificFunctionThrashCount); }
 
     void setEnumerationCache(VM&, JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
     JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
@@ -310,26 +299,16 @@ public:
 
     JSString* objectToStringValue()
     {
-        if (!m_hasRareData)
+        if (!hasRareData())
             return 0;
         return rareData()->objectToStringValue();
     }
 
     void setObjectToStringValue(VM& vm, JSString* value)
     {
-        if (!m_hasRareData)
+        if (!hasRareData())
             allocateRareData(vm);
         rareData()->setObjectToStringValue(vm, value);
-    }
-
-    bool staticFunctionsReified()
-    {
-        return m_staticFunctionReified;
-    }
-
-    void setStaticFunctionsReified()
-    {
-        m_staticFunctionReified = true;
     }
 
     const ClassInfo* classInfo() const { return m_classInfo; }
@@ -402,6 +381,8 @@ public:
     {
         return m_transitionWatchpointSet;
     }
+
+    PassRefPtr<StructureShape> toStructureShape();
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
@@ -410,6 +391,38 @@ public:
     static void dumpContextHeader(PrintStream&);
     
     DECLARE_EXPORT_INFO;
+
+private:
+    typedef enum { 
+        NoneDictionaryKind = 0,
+        CachedDictionaryKind = 1,
+        UncachedDictionaryKind = 2
+    } DictionaryKind;
+
+public:
+#define DEFINE_BITFIELD(type, lowerName, upperName, width, offset) \
+    static const uint32_t s_##lowerName##Shift = offset;\
+    static const uint32_t s_##lowerName##Mask = ((1 << (width - 1)) | ((1 << (width - 1)) - 1));\
+    type lowerName() const { return static_cast<type>((m_bitField >> offset) & s_##lowerName##Mask); }\
+    void set##upperName(type newValue) \
+    {\
+        m_bitField &= ~(s_##lowerName##Mask << offset);\
+        m_bitField |= (newValue & s_##lowerName##Mask) << offset;\
+    }
+
+    DEFINE_BITFIELD(DictionaryKind, dictionaryKind, DictionaryKind, 2, 0);
+    DEFINE_BITFIELD(bool, isPinnedPropertyTable, IsPinnedPropertyTable, 1, 2);
+    DEFINE_BITFIELD(bool, hasGetterSetterProperties, HasGetterSetterProperties, 1, 3);
+    DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
+    DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 5);
+    DEFINE_BITFIELD(unsigned, attributesInPrevious, AttributesInPrevious, 14, 6);
+    DEFINE_BITFIELD(unsigned, specificFunctionThrashCount, SpecificFunctionThrashCount, 2, 20);
+    DEFINE_BITFIELD(bool, preventExtensions, PreventExtensions, 1, 22);
+    DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 23);
+    DEFINE_BITFIELD(bool, staticFunctionsReified, StaticFunctionsReified, 1, 24);
+    DEFINE_BITFIELD(bool, hasRareData, HasRareData, 1, 25);
+    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 26);
+    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 27);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -428,11 +441,6 @@ private:
     // to unlock it.
     void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*&, PropertyTable*&);
     
-    typedef enum { 
-        NoneDictionaryKind = 0,
-        CachedDictionaryKind = 1,
-        UncachedDictionaryKind = 2
-    } DictionaryKind;
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind);
 
     PropertyOffset putSpecificValue(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
@@ -479,7 +487,7 @@ private:
 
     void setPreviousID(VM& vm, Structure* structure)
     {
-        if (m_hasRareData)
+        if (hasRareData())
             rareData()->setPreviousID(vm, structure);
         else
             m_previousOrRareData.set(vm, this, structure);
@@ -487,7 +495,7 @@ private:
 
     void clearPreviousID()
     {
-        if (m_hasRareData)
+        if (hasRareData())
             rareData()->clearPreviousID();
         else
             m_previousOrRareData.clear();
@@ -506,13 +514,13 @@ private:
 
     Structure* previous() const
     {
-        ASSERT(!m_hasRareData);
+        ASSERT(!hasRareData());
         return static_cast<Structure*>(m_previousOrRareData.get());
     }
 
     StructureRareData* rareData() const
     {
-        ASSERT(m_hasRareData);
+        ASSERT(hasRareData());
         return static_cast<StructureRareData*>(m_previousOrRareData.get());
     }
         
@@ -558,19 +566,7 @@ private:
     
     ConcurrentJITLock m_lock;
     
-    unsigned m_dictionaryKind : 2;
-    bool m_hasBeenFlattenedBefore : 1;
-    bool m_isPinnedPropertyTable : 1;
-    bool m_hasGetterSetterProperties : 1;
-    bool m_hasCustomGetterSetterProperties : 1;
-    bool m_hasReadOnlyOrGetterSetterPropertiesExcludingProto : 1;
-    bool m_hasNonEnumerableProperties : 1;
-    unsigned m_attributesInPrevious : 14;
-    unsigned m_specificFunctionThrashCount : 2;
-    unsigned m_preventExtensions : 1;
-    unsigned m_didTransition : 1;
-    unsigned m_staticFunctionReified : 1;
-    bool m_hasRareData : 1;
+    uint32_t m_bitField;
 };
 
 } // namespace JSC
