@@ -94,7 +94,6 @@ set(JavaScriptCore_SOURCES
     bytecode/StructureSet.cpp
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
-    bytecode/ToThisStatus.cpp
     bytecode/UnlinkedCodeBlock.cpp
     bytecode/UnlinkedInstructionStream.cpp
     bytecode/ValueRecovery.cpp
@@ -104,8 +103,8 @@ set(JavaScriptCore_SOURCES
     bytecompiler/NodesCodegen.cpp
 
     debugger/Debugger.cpp
+    debugger/DebuggerActivation.cpp
     debugger/DebuggerCallFrame.cpp
-    debugger/DebuggerScope.cpp
 
     dfg/DFGAbstractHeap.cpp
     dfg/DFGAbstractValue.cpp
@@ -396,8 +395,6 @@ set(JavaScriptCore_SOURCES
     runtime/FunctionExecutableDump.cpp
     runtime/FunctionPrototype.cpp
     runtime/GetterSetter.cpp
-    runtime/HighFidelityLog.cpp
-    runtime/HighFidelityTypeProfiler.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp
     runtime/InitializeThreading.cpp
@@ -503,7 +500,6 @@ set(JavaScriptCore_SOURCES
     runtime/StructureRareData.cpp
     runtime/SymbolTable.cpp
     runtime/TestRunnerUtils.cpp
-    runtime/TypeSet.cpp
     runtime/TypedArrayController.cpp
     runtime/TypedArrayType.cpp
     runtime/VM.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,23 @@
  */
 
 #include "config.h"
-#include "DebuggerScope.h"
+#include "DebuggerActivation.h"
 
 #include "JSActivation.h"
 #include "JSCInlines.h"
 
 namespace JSC {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerScope);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerActivation);
 
-const ClassInfo DebuggerScope::s_info = { "DebuggerScope", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(DebuggerScope) };
+const ClassInfo DebuggerActivation::s_info = { "DebuggerActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(DebuggerActivation) };
 
-DebuggerScope::DebuggerScope(VM& vm)
-    : JSNonFinalObject(vm, vm.debuggerScopeStructure.get())
+DebuggerActivation::DebuggerActivation(VM& vm)
+    : JSNonFinalObject(vm, vm.debuggerActivationStructure.get())
 {
 }
 
-void DebuggerScope::finishCreation(VM& vm, JSObject* activation)
+void DebuggerActivation::finishCreation(VM& vm, JSObject* activation)
 {
     Base::finishCreation(vm);
     ASSERT(activation);
@@ -48,9 +48,9 @@ void DebuggerScope::finishCreation(VM& vm, JSObject* activation)
     m_activation.set(vm, this, jsCast<JSActivation*>(activation));
 }
 
-void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -59,39 +59,39 @@ void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_activation);
 }
 
-String DebuggerScope::className(const JSObject* object)
+String DebuggerActivation::className(const JSObject* object)
 {
-    const DebuggerScope* thisObject = jsCast<const DebuggerScope*>(object);
+    const DebuggerActivation* thisObject = jsCast<const DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->className(thisObject->m_activation.get());
 }
 
-bool DebuggerScope::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool DebuggerActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    DebuggerScope* thisObject = jsCast<DebuggerScope*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->getOwnPropertySlot(thisObject->m_activation.get(), exec, propertyName, slot);
 }
 
-void DebuggerScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+void DebuggerActivation::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     thisObject->m_activation->methodTable()->put(thisObject->m_activation.get(), exec, propertyName, value, slot);
 }
 
-bool DebuggerScope::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool DebuggerActivation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
-    DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
     return thisObject->m_activation->methodTable()->deleteProperty(thisObject->m_activation.get(), exec, propertyName);
 }
 
-void DebuggerScope::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void DebuggerActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    DebuggerScope* thisObject = jsCast<DebuggerScope*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     thisObject->m_activation->methodTable()->getPropertyNames(thisObject->m_activation.get(), exec, propertyNames, mode);
 }
 
-bool DebuggerScope::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
+bool DebuggerActivation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    DebuggerScope* thisObject = jsCast<DebuggerScope*>(object);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->defineOwnProperty(thisObject->m_activation.get(), exec, propertyName, descriptor, shouldThrow);
 }
 

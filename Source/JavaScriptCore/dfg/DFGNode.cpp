@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 bool MultiPutByOffsetData::writesStructures() const
 {
     for (unsigned i = variants.size(); i--;) {
-        if (variants[i].writesStructures())
+        if (variants[i].kind() == PutByIdVariant::Transition)
             return true;
     }
     return false;
@@ -46,8 +46,14 @@ bool MultiPutByOffsetData::writesStructures() const
 bool MultiPutByOffsetData::reallocatesStorage() const
 {
     for (unsigned i = variants.size(); i--;) {
-        if (variants[i].reallocatesStorage())
-            return true;
+        if (variants[i].kind() != PutByIdVariant::Transition)
+            continue;
+        
+        if (variants[i].oldStructure()->outOfLineCapacity() ==
+            variants[i].newStructure()->outOfLineCapacity())
+            continue;
+        
+        return true;
     }
     return false;
 }

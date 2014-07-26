@@ -267,12 +267,12 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    bool couldBeType(SpeculatedType desiredType) const
+    bool couldBeType(SpeculatedType desiredType)
     {
         return !!(m_type & desiredType);
     }
     
-    bool isType(SpeculatedType desiredType) const
+    bool isType(SpeculatedType desiredType)
     {
         return !(m_type & ~desiredType);
     }
@@ -282,10 +282,6 @@ struct AbstractValue {
     FiltrationResult filter(SpeculatedType);
     FiltrationResult filterByValue(const FrozenValue& value);
     FiltrationResult filter(const AbstractValue&);
-    
-    FiltrationResult changeStructure(Graph&, const StructureSet&);
-    
-    bool contains(Structure*) const;
     
     bool validate(JSValue value) const
     {

@@ -233,17 +233,6 @@ public:
                     VALIDATE((node), !!node->child1());
                     VALIDATE((node), !!node->child2());
                     break;
-                case PutStructure:
-                    VALIDATE((node), !node->transition()->previous->dfgShouldWatch());
-                    break;
-                case MultiPutByOffset:
-                    for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
-                        const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-                        if (variant.kind() != PutByIdVariant::Transition)
-                            continue;
-                        VALIDATE((node), !variant.oldStructureForTransition()->dfgShouldWatch());
-                    }
-                    break;
                 default:
                     break;
                 }

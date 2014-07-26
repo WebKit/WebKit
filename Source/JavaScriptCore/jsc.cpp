@@ -25,7 +25,6 @@
 #include "ArrayPrototype.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
-#include "CodeBlock.h"
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
 #include "ExceptionHelpers.h"
@@ -471,7 +470,6 @@ static EncodedJSValue JSC_HOST_CALL functionUndefined2(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIdentity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables (ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -621,7 +619,6 @@ protected:
 
         addFunction(vm, "createImpureGetter", functionCreateImpureGetter, 1);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
-        addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 4);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1054,12 +1051,6 @@ EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*)
 EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState* exec)
 {
     return JSValue::encode(Masquerader::create(exec->vm(), exec->lexicalGlobalObject()));
-}
-
-EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState* exec)
-{
-    exec->vm().dumpHighFidelityProfilingTypes();
-    return JSValue::encode(jsUndefined());
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

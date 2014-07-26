@@ -70,7 +70,7 @@ public:
     }
     
     static PutByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, StringImpl* uid);
-    static PutByIdStatus computeFor(VM&, JSGlobalObject*, const StructureSet&, StringImpl* uid, bool isDirect);
+    static PutByIdStatus computeFor(VM&, JSGlobalObject*, Structure*, StringImpl* uid, bool isDirect);
     
     static PutByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, StringImpl* uid);
     

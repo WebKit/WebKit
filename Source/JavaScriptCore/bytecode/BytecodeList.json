@@ -10,7 +10,7 @@
             { "name" : "op_create_arguments", "length" : 2 },
             { "name" : "op_create_this", "length" : 4 },
             { "name" : "op_get_callee", "length" : 3 },
-            { "name" : "op_to_this", "length" : 4 },
+            { "name" : "op_to_this", "length" : 3 },
             { "name" : "op_new_object", "length" : 4 },
             { "name" : "op_new_array", "length" : 5 },
             { "name" : "op_new_array_with_size", "length" : 4 },
@@ -113,7 +113,6 @@
             { "name" : "op_resolve_scope", "length" : 6 },
             { "name" : "op_get_from_scope", "length" : 8 },
             { "name" : "op_put_to_scope", "length" : 7 },
-            { "name" : "op_put_to_scope_with_profile", "length" : 8 },
             { "name" : "op_push_with_scope", "length" : 2 },
             { "name" : "op_pop_scope", "length" : 1 },
             { "name" : "op_push_name_scope", "length" : 4 },
@@ -123,8 +122,7 @@
             { "name" : "op_debug", "length" : 3 },
             { "name" : "op_profile_will_call", "length" : 2 },
             { "name" : "op_profile_did_call", "length" : 2 },
-            { "name" : "op_end", "length" : 2 },
-            { "name" : "op_profile_types_with_high_fidelity", "length" : 4 }
+            { "name" : "op_end", "length" : 2 }
         ]
     },
     {

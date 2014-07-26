@@ -213,10 +213,10 @@
     <ClCompile Include="..\debugger\Debugger.cpp">
       <Filter>debugger</Filter>
     </ClCompile>
-    <ClCompile Include="..\debugger\DebuggerCallFrame.cpp">
+    <ClCompile Include="..\debugger\DebuggerActivation.cpp">
       <Filter>debugger</Filter>
     </ClCompile>
-    <ClCompile Include="..\debugger\DebuggerScope.cpp">
+    <ClCompile Include="..\debugger\DebuggerCallFrame.cpp">
       <Filter>debugger</Filter>
     </ClCompile>
     <ClCompile Include="..\disassembler\Disassembler.cpp">
@@ -1883,13 +1883,13 @@
     <ClInclude Include="..\debugger\Debugger.h">
       <Filter>debugger</Filter>
     </ClInclude>
+    <ClInclude Include="..\debugger\DebuggerActivation.h">
+      <Filter>debugger</Filter>
+    </ClInclude>
     <ClInclude Include="..\debugger\DebuggerCallFrame.h">
       <Filter>debugger</Filter>
     </ClInclude>
     <ClInclude Include="..\debugger\DebuggerPrimitives.h">
-      <Filter>debugger</Filter>
-    </ClInclude>
-    <ClInclude Include="..\debugger\DebuggerScope.h">
       <Filter>debugger</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGDriver.h">

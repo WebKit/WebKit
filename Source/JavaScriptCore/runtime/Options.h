@@ -274,7 +274,6 @@ typedef const char* optionString;
     v(unsigned, gcMaxHeapSize, 0) \
     v(bool, recordGCPauseTimes, false) \
     v(bool, logHeapStatisticsAtExit, false) \
-    v(bool, profileTypesWithHighFidelity, false) \
     \
     v(bool, enableExceptionFuzz, false) \
     v(unsigned, fireExceptionFuzzAt, 0)

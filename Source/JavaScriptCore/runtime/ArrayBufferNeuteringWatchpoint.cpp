@@ -57,7 +57,7 @@ ArrayBufferNeuteringWatchpoint* ArrayBufferNeuteringWatchpoint::create(VM& vm)
 
 Structure* ArrayBufferNeuteringWatchpoint::createStructure(VM& vm)
 {
-    return Structure::create(vm, 0, jsNull(), TypeInfo(CellType, StructureFlags), info());
+    return Structure::create(vm, 0, jsNull(), TypeInfo(CompoundType, StructureFlags), info());
 }
 
 } // namespace JSC

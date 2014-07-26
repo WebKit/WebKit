@@ -57,7 +57,7 @@ namespace JSC {
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+            return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
         }
         
         DECLARE_INFO;

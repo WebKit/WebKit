@@ -147,8 +147,8 @@ public:
     void dethread();
     
     FrozenValue* freezeFragile(JSValue value);
-    FrozenValue* freeze(JSValue value); // We use weak freezing by default. Shorthand for freezeFragile(value)->strengthenTo(WeakValue);
-    FrozenValue* freezeStrong(JSValue value); // Shorthand for freezeFragile(value)->strengthenTo(StrongValue).
+    FrozenValue* freeze(JSValue value); // We use weak freezing by default.
+    FrozenValue* freezeStrong(JSValue value); // Shorthand for freeze(value)->markStrongly().
     
     void convertToConstant(Node* node, FrozenValue* value);
     void convertToConstant(Node* node, JSValue value);

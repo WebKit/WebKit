@@ -186,6 +186,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutByVal:
     case PutByValAlias:
     case PutStructure:
+    case PhantomPutStructure:
     case GetByOffset:
     case GetGetterSetterByOffset:
     case PutByOffset:

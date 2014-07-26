@@ -1,3 +1,10 @@
+2014-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r171641-r171644. It broke some tests; will investigate and
+        reland later.
+
+        * ForwardingHeaders/debugger/DebuggerActivation.h: Added.
+
 2014-07-26  Timothy Horton  <timothy_horton@apple.com>
 
         Crash in Web Content Process under ~PDFDocument under clearTouchEventListeners at topDocument()

@@ -332,8 +332,6 @@ namespace JSC {
             return emitNode(n);
         }
 
-        void emitProfileTypesWithHighFidelity(RegisterID* dst, bool);
-
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
@@ -678,8 +676,6 @@ namespace JSC {
         StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 
         VM* m_vm;
-
-        bool isProfilingTypesWithHighFidelity() { return vm()->isProfilingTypesWithHighFidelity(); }
 
         OpcodeID m_lastOpcodeID;
 #ifndef NDEBUG

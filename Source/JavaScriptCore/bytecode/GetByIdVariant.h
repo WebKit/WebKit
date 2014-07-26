@@ -55,7 +55,6 @@ public:
     bool isSet() const { return !!m_structureSet.size(); }
     bool operator!() const { return !isSet(); }
     const StructureSet& structureSet() const { return m_structureSet; }
-    StructureSet& structureSet() { return m_structureSet; }
     const ConstantStructureCheckVector& constantChecks() const { return m_constantChecks; }
     JSObject* alternateBase() const { return m_alternateBase; }
     JSValue specificValue() const { return m_specificValue; }

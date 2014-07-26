@@ -64,6 +64,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckStructure:
     case ArrayifyToStructure:
     case PutStructure:
+    case PhantomPutStructure:
     case GetButterfly:
     case NewObject:
     case NewArray:

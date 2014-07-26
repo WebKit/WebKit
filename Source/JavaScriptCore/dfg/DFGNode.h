@@ -458,31 +458,14 @@ struct Node {
         m_flags &= ~NodeClobbersWorld;
     }
     
-    void convertToMultiGetByOffset(MultiGetByOffsetData* data)
-    {
-        ASSERT(m_op == GetById || m_op == GetByIdFlush);
-        m_opInfo = bitwise_cast<intptr_t>(data);
-        child1().setUseKind(CellUse);
-        m_op = MultiGetByOffset;
-        m_flags &= ~NodeClobbersWorld;
-    }
-    
     void convertToPutByOffset(unsigned storageAccessDataIndex, Edge storage)
     {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset);
+        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == MultiPutByOffset);
         m_opInfo = storageAccessDataIndex;
         children.setChild3(children.child2());
         children.setChild2(children.child1());
         children.setChild1(storage);
         m_op = PutByOffset;
-        m_flags &= ~NodeClobbersWorld;
-    }
-    
-    void convertToMultiPutByOffset(MultiPutByOffsetData* data)
-    {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush);
-        m_opInfo = bitwise_cast<intptr_t>(data);
-        m_op = MultiPutByOffset;
         m_flags &= ~NodeClobbersWorld;
     }
     
@@ -1124,6 +1107,7 @@ struct Node {
     {
         switch (op()) {
         case PutStructure:
+        case PhantomPutStructure:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage:
             return true;

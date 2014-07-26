@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,10 @@
 
 #include "MacroAssembler.h"
 #include "Opcode.h"
-#include "TypeLocation.h"
 #include "PropertySlot.h"
 #include "SpecialPointer.h"
 #include "Structure.h"
 #include "StructureChain.h"
-#include "ToThisStatus.h"
 #include "VirtualRegister.h"
 #include <wtf/VectorTraits.h>
 
@@ -120,8 +118,6 @@ struct Instruction {
         WriteBarrierBase<JSActivation> activation;
         void* pointer;
         bool* predicatePointer;
-        ToThisStatus toThisStatus;
-        TypeLocation* location;
     } u;
         
 private:

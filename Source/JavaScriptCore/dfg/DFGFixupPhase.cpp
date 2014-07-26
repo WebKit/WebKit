@@ -980,6 +980,7 @@ private:
         case Phi:
         case Upsilon:
         case GetArgument:
+        case PhantomPutStructure:
         case GetIndexedPropertyStorage:
         case GetTypedArrayByteOffset:
         case LastNodeType:

@@ -29,11 +29,11 @@ enum JSType : uint8_t {
     BooleanType,
     NumberType,
     NullType,
-
-    // The CellType value must come before any JSType that is a JSCell.
-    CellType,
     StringType,
+    LeafType,
 
+    // The CompoundType value must come before any JSType that may have children.
+    CompoundType,
     GetterSetterType,
     CustomGetterSetterType,
     APIValueWrapperType,

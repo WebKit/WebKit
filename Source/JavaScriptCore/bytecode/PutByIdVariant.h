@@ -28,7 +28,6 @@
 
 #include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
-#include "StructureSet.h"
 
 namespace JSC {
 
@@ -42,12 +41,13 @@ public:
     
     PutByIdVariant()
         : m_kind(NotSet)
-        , m_newStructure(nullptr)
+        , m_oldStructure(0)
+        , m_newStructure(0)
         , m_offset(invalidOffset)
     {
     }
     
-    static PutByIdVariant replace(const StructureSet& structure, PropertyOffset offset)
+    static PutByIdVariant replace(Structure* structure, PropertyOffset offset)
     {
         PutByIdVariant result;
         result.m_kind = Replace;
@@ -57,7 +57,7 @@ public:
     }
     
     static PutByIdVariant transition(
-        const StructureSet& oldStructure, Structure* newStructure,
+        Structure* oldStructure, Structure* newStructure,
         PassRefPtr<IntendedStructureChain> structureChain, PropertyOffset offset)
     {
         PutByIdVariant result;
@@ -75,37 +75,27 @@ public:
     bool isSet() const { return kind() != NotSet; }
     bool operator!() const { return !isSet(); }
     
-    const StructureSet& structure() const
+    Structure* structure() const
     {
         ASSERT(kind() == Replace);
         return m_oldStructure;
     }
     
-    const StructureSet& oldStructure() const
+    Structure* oldStructure() const
     {
         ASSERT(kind() == Transition || kind() == Replace);
         return m_oldStructure;
     }
-    
-    StructureSet& oldStructure()
-    {
-        ASSERT(kind() == Transition || kind() == Replace);
-        return m_oldStructure;
-    }
-    
-    Structure* oldStructureForTransition() const;
     
     Structure* newStructure() const
     {
         ASSERT(kind() == Transition);
         return m_newStructure;
     }
-
-    bool writesStructures() const;
-    bool reallocatesStorage() const;
     
     const ConstantStructureCheckVector& constantChecks() const
     {
+        ASSERT(kind() == Transition);
         return m_constantChecks;
     }
     
@@ -115,16 +105,12 @@ public:
         return m_offset;
     }
     
-    bool attemptToMerge(const PutByIdVariant& other);
-    
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
 private:
-    bool attemptToMergeTransitionWithReplace(const PutByIdVariant& replace);
-    
     Kind m_kind;
-    StructureSet m_oldStructure;
+    Structure* m_oldStructure;
     Structure* m_newStructure;
     ConstantStructureCheckVector m_constantChecks;
     PropertyOffset m_offset;

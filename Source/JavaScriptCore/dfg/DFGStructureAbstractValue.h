@@ -55,18 +55,6 @@ public:
         setClobbered(other.isClobbered());
     }
     
-    ALWAYS_INLINE StructureAbstractValue& operator=(Structure* structure)
-    {
-        m_set = structure;
-        setClobbered(false);
-        return *this;
-    }
-    ALWAYS_INLINE StructureAbstractValue& operator=(const StructureSet& other)
-    {
-        m_set = other;
-        setClobbered(false);
-        return *this;
-    }
     ALWAYS_INLINE StructureAbstractValue& operator=(const StructureAbstractValue& other)
     {
         m_set = other.m_set;
@@ -161,12 +149,6 @@ public:
         return equalsSlow(other);
     }
     
-    const StructureSet& set() const
-    {
-        ASSERT(!isTop());
-        return m_set;
-    }
-    
     size_t size() const
     {
         ASSERT(!isTop());
@@ -181,14 +163,14 @@ public:
     
     Structure* operator[](size_t i) const { return at(i); }
     
-    // In most cases, what you really want to do is verify whether the set is top or clobbered, and
-    // if not, enumerate the set of structures. Use this only in cases where the singleton case is
-    // meaningfully special, like for transitions.
+    // FIXME: Eliminate all uses of this method. There shouldn't be any
+    // special-casing for the one-structure case.
+    // https://bugs.webkit.org/show_bug.cgi?id=133229
     Structure* onlyStructure() const
     {
-        if (isTop() || isClobbered())
+        if (isTop() || size() != 1)
             return nullptr;
-        return m_set.onlyStructure();
+        return at(0);
     }
     
     void dumpInContext(PrintStream&, DumpContext*) const;

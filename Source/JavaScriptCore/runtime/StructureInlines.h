@@ -154,14 +154,14 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
 inline void Structure::setEnumerationCache(VM& vm, JSPropertyNameIterator* enumerationCache)
 {
     ASSERT(!isDictionary());
-    if (!hasRareData())
+    if (!m_hasRareData)
         allocateRareData(vm);
     rareData()->setEnumerationCache(vm, enumerationCache);
 }
 
 inline JSPropertyNameIterator* Structure::enumerationCache()
 {
-    if (!hasRareData())
+    if (!m_hasRareData)
         return 0;
     return rareData()->enumerationCache();
 }
@@ -247,7 +247,7 @@ ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
     PropertyTable* propertyTable = m_propertyTableUnsafe.get();
 
     if (!propertyTable) {
-        ASSERT(!isPinnedPropertyTable());
+        ASSERT(!m_isPinnedPropertyTable);
         return true;
     }
 

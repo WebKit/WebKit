@@ -889,6 +889,7 @@ void Graph::visitChildren(SlotVisitor& visitor)
                 break;
                 
             case PutStructure:
+            case PhantomPutStructure:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
                 visitor.appendUnbarrieredReadOnlyPointer(
@@ -916,9 +917,7 @@ void Graph::visitChildren(SlotVisitor& visitor)
             case MultiPutByOffset:
                 for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
                     PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-                    const StructureSet& set = variant.oldStructure();
-                    for (unsigned j = set.size(); j--;)
-                        visitor.appendUnbarrieredReadOnlyPointer(set[j]);
+                    visitor.appendUnbarrieredReadOnlyPointer(variant.oldStructure());
                     if (variant.kind() == PutByIdVariant::Transition)
                         visitor.appendUnbarrieredReadOnlyPointer(variant.newStructure());
                 }
@@ -952,7 +951,7 @@ FrozenValue* Graph::freeze(JSValue value)
 
 FrozenValue* Graph::freezeStrong(JSValue value)
 {
-    FrozenValue* result = freezeFragile(value);
+    FrozenValue* result = freeze(value);
     result->strengthenTo(StrongValue);
     return result;
 }

@@ -40,7 +40,7 @@
 #include "CustomGetterSetter.h"
 #include "DFGLongLivedState.h"
 #include "DFGWorklist.h"
-#include "DebuggerScope.h"
+#include "DebuggerActivation.h"
 #include "ErrorInstance.h"
 #include "FTLThunks.h"
 #include "FunctionConstructor.h"
@@ -48,8 +48,6 @@
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
-#include "HighFidelityTypeProfiler.h"
-#include "HighFidelityLog.h"
 #include "HostCallReturnValue.h"
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
@@ -91,7 +89,6 @@
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/AtomicStringTable.h>
-#include <wtf/CurrentTime.h>
 
 #if ENABLE(DFG_JIT)
 #include "ConservativeRoots.h"
@@ -233,7 +230,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_codeCache(CodeCache::create())
     , m_enabledProfiler(nullptr)
     , m_builtinExecutables(BuiltinExecutables::create(*this))
-    , m_nextUniqueVariableID(1)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
@@ -249,7 +245,7 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyNames = new CommonIdentifiers(this);
     structureStructure.set(*this, Structure::createStructure(*this));
     structureRareDataStructure.set(*this, StructureRareData::createStructure(*this, 0, jsNull()));
-    debuggerScopeStructure.set(*this, DebuggerScope::createStructure(*this, 0, jsNull()));
+    debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
     terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
     notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, 0, jsNull()));
@@ -268,6 +264,7 @@ VM::VM(VMType vmType, HeapType heapType)
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
     sparseArrayValueMapStructure.set(*this, SparseArrayValueMap::createStructure(*this, 0, jsNull()));
     arrayBufferNeuteringWatchpointStructure.set(*this, ArrayBufferNeuteringWatchpoint::createStructure(*this));
+    withScopeStructure.set(*this, JSWithScope::createStructure(*this, 0, jsNull()));
     unlinkedFunctionExecutableStructure.set(*this, UnlinkedFunctionExecutable::createStructure(*this, 0, jsNull()));
     unlinkedProgramCodeBlockStructure.set(*this, UnlinkedProgramCodeBlock::createStructure(*this, 0, jsNull()));
     unlinkedEvalCodeBlockStructure.set(*this, UnlinkedEvalCodeBlock::createStructure(*this, 0, jsNull()));
@@ -325,12 +322,6 @@ VM::VM(VMType vmType, HeapType heapType)
     // Initialize this last, as a free way of asserting that VM initialization itself
     // won't use this.
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
-
-    // FIXME: conditionally allocate this stuff based on whether or not the inspector is running OR this flag is enabled (not just if the flag is enabled).
-    if (Options::profileTypesWithHighFidelity()) {
-        m_highFidelityTypeProfiler = std::make_unique<HighFidelityTypeProfiler>();
-        m_highFidelityLog = std::make_unique<HighFidelityLog>();
-    }
 }
 
 VM::~VM()
@@ -920,46 +911,6 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
         waitForCompilationsToComplete();
         SetEnabledProfilerFunctor functor;
         heap.forEachCodeBlock(functor);
-    }
-}
-
-String VM::getTypesForVariableInRange(unsigned startLine, unsigned startColumn, unsigned endLine, unsigned endColumn, const String& variableName, const String& sourceIDAsString)
-{
-    if (!isProfilingTypesWithHighFidelity())
-        return "(Not Profiling)";
-
-    bool okay;
-    intptr_t sourceID = sourceIDAsString.toIntPtrStrict(&okay);
-    if (!okay)
-        CRASH();
-
-    updateHighFidelityTypeProfileState();
-    return m_highFidelityTypeProfiler->getTypesForVariableInRange(startLine, startColumn, endLine, endColumn, variableName, sourceID);
-}
-
-void VM::updateHighFidelityTypeProfileState()
-{
-    if (!isProfilingTypesWithHighFidelity())
-        return;
-
-    highFidelityLog()->processHighFidelityLog(false, "VM Update");
-}
-
-void VM::dumpHighFidelityProfilingTypes()
-{
-    if (!isProfilingTypesWithHighFidelity())
-        return;
-
-    updateHighFidelityTypeProfileState();
-    HighFidelityTypeProfiler* profiler = m_highFidelityTypeProfiler.get();
-    for (Bag<TypeLocation>::iterator iter = m_locationInfo.begin(); !!iter; ++iter) {
-        TypeLocation* location = *iter;
-        dataLogF("[Line, Column]::[%u, %u] ", location->m_line, location->m_column);
-        dataLog("\n\t\t#Local#\n\t\t",
-                profiler->getLocalTypesForVariableInRange(location->m_line, location->m_column, location->m_line, location->m_column, "", location->m_sourceID).replace("\n", "\n\t\t"),
-                "\n\t\t#Global#\n\t\t",
-                profiler->getGlobalTypesForVariableInRange(location->m_line, location->m_column, location->m_line, location->m_column, "", location->m_sourceID).replace("\n", "\n\t\t"),
-                "\n");
     }
 }
 

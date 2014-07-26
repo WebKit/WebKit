@@ -31,7 +31,6 @@
 
 #include "ConcurrentJITLock.h"
 #include "JSObject.h"
-#include "TypeSet.h"
 #include "VariableWatchpointSet.h"
 #include <memory>
 #include <wtf/HashTraits.h>
@@ -337,9 +336,6 @@ public:
     typedef JSCell Base;
 
     typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl>>, SymbolTableIndexHashTraits> Map;
-    typedef HashMap<RefPtr<StringImpl>, int64_t> UniqueIDMap;
-    typedef HashMap<RefPtr<StringImpl>, RefPtr<TypeSet>> UniqueTypeSetMap;
-    typedef HashMap<int, RefPtr<StringImpl>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> RegisterToVariableMap;
 
     static SymbolTable* create(VM& vm)
     {
@@ -353,7 +349,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(LeafType, StructureFlags), info());
     }
 
     // You must hold the lock until after you're done with the iterator.
@@ -417,12 +413,6 @@ public:
     
     Map::AddResult add(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
     {
-        if (m_uniqueIDMap) {
-            // Use a flag to indicate that we need to produce a unique ID. Because VM is in charge of creating uniqueIDs, 
-            // when uniqueID() is called, we check this flag to see if uniqueID creation is necessary.
-            m_uniqueIDMap->set(key, HighFidelityNeedsUniqueIDGeneration); 
-            m_registerToVariableMap->set(entry.getIndex(), key);
-        }
         return m_map.add(key, entry);
     }
     
@@ -434,10 +424,6 @@ public:
     
     Map::AddResult set(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
     {
-        if (m_uniqueIDMap) {
-            m_uniqueIDMap->set(key, HighFidelityNeedsUniqueIDGeneration); 
-            m_registerToVariableMap->set(entry.getIndex(), key);
-        }
         return m_map.set(key, entry);
     }
     
@@ -458,11 +444,6 @@ public:
         return contains(locker, key);
     }
     
-    int64_t uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM& vm);
-    int64_t uniqueIDForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm);
-    RefPtr<TypeSet> globalTypeSetForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm);
-    RefPtr<TypeSet> globalTypeSetForVariable(const ConcurrentJITLocker& locker, StringImpl* key, VM& vm);
-
     bool usesNonStrictEval() { return m_usesNonStrictEval; }
     void setUsesNonStrictEval(bool usesNonStrictEval) { m_usesNonStrictEval = usesNonStrictEval; }
 
@@ -513,10 +494,7 @@ private:
     ~SymbolTable();
 
     Map m_map;
-    std::unique_ptr<UniqueIDMap> m_uniqueIDMap;
-    std::unique_ptr<RegisterToVariableMap> m_registerToVariableMap;
-    std::unique_ptr<UniqueTypeSetMap> m_uniqueTypeSetMap;
-
+    
     int m_parameterCountIncludingThis;
     bool m_usesNonStrictEval;
 

@@ -1,3 +1,10 @@
+2014-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r171641-r171644. It broke some tests; will investigate and
+        reland later.
+
+        * WebView/WebScriptDebugDelegate.mm:
+
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.

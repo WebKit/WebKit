@@ -685,11 +685,11 @@ _llint_op_to_this:
     loadStructureWithScratch(t0, t1, t2)
     loadpFromInstruction(2, t2)
     bpneq t1, t2, .opToThisSlow
-    dispatch(4)
+    dispatch(3)
 
 .opToThisSlow:
     callSlowPath(_slow_path_to_this)
-    dispatch(4)
+    dispatch(3)
 
 
 _llint_op_new_object:

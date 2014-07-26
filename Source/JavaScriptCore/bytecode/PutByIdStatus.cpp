@@ -40,11 +40,7 @@ namespace JSC {
 bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
 {
     for (unsigned i = 0; i < m_variants.size(); ++i) {
-        if (m_variants[i].attemptToMerge(variant))
-            return true;
-    }
-    for (unsigned i = 0; i < m_variants.size(); ++i) {
-        if (m_variants[i].oldStructure().overlaps(variant.oldStructure()))
+        if (m_variants[i].oldStructure() == variant.oldStructure())
             return false;
     }
     m_variants.append(variant);
@@ -194,15 +190,11 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                     access.newStructure()->getConcurrently(*profiledBlock->vm(), uid);
                 if (!isValidOffset(offset))
                     return PutByIdStatus(TakesSlowPath);
-                RefPtr<IntendedStructureChain> chain;
-                if (access.chain()) {
-                    chain = adoptRef(new IntendedStructureChain(
-                        profiledBlock, access.oldStructure(), access.chain()));
-                    if (!chain->isStillValid())
-                        continue;
-                }
                 bool ok = result.appendVariant(PutByIdVariant::transition(
-                    access.oldStructure(), access.newStructure(), chain.get(), offset));
+                    access.oldStructure(), access.newStructure(),
+                    access.chain() ? adoptRef(new IntendedStructureChain(
+                        profiledBlock, access.oldStructure(), access.chain())) : 0,
+                    offset));
                 if (!ok)
                     return PutByIdStatus(TakesSlowPath);
                 break;
@@ -255,101 +247,88 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
     return computeFor(baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
 }
 
-PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, const StructureSet& set, StringImpl* uid, bool isDirect)
+PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, Structure* structure, StringImpl* uid, bool isDirect)
 {
     if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
         return PutByIdStatus(TakesSlowPath);
 
-    if (set.isEmpty())
-        return PutByIdStatus();
+    if (!structure)
+        return PutByIdStatus(TakesSlowPath);
     
-    PutByIdStatus result;
-    result.m_state = Simple;
-    for (unsigned i = 0; i < set.size(); ++i) {
-        Structure* structure = set[i];
-        
-        if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
-            return PutByIdStatus(TakesSlowPath);
+    if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
+        return PutByIdStatus(TakesSlowPath);
 
-        if (!structure->propertyAccessesAreCacheable())
-            return PutByIdStatus(TakesSlowPath);
+    if (!structure->propertyAccessesAreCacheable())
+        return PutByIdStatus(TakesSlowPath);
     
-        unsigned attributes;
-        JSCell* specificValue;
-        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
-        if (isValidOffset(offset)) {
-            if (attributes & CustomAccessor)
-                return PutByIdStatus(MakesCalls);
+    unsigned attributes;
+    JSCell* specificValue;
+    PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
+    if (isValidOffset(offset)) {
+        if (attributes & CustomAccessor)
+            return PutByIdStatus(MakesCalls);
 
-            if (attributes & (Accessor | ReadOnly))
-                return PutByIdStatus(TakesSlowPath);
-            if (specificValue) {
-                // We need the PutById slow path to verify that we're storing the right value into
-                // the specialized slot.
-                return PutByIdStatus(TakesSlowPath);
-            }
-            if (!result.appendVariant(PutByIdVariant::replace(structure, offset)))
-                return PutByIdStatus(TakesSlowPath);
-            continue;
+        if (attributes & (Accessor | ReadOnly))
+            return PutByIdStatus(TakesSlowPath);
+        if (specificValue) {
+            // We need the PutById slow path to verify that we're storing the right value into
+            // the specialized slot.
+            return PutByIdStatus(TakesSlowPath);
         }
+        return PutByIdVariant::replace(structure, offset);
+    }
     
-        // Our hypothesis is that we're doing a transition. Before we prove that this is really
-        // true, we want to do some sanity checks.
+    // Our hypothesis is that we're doing a transition. Before we prove that this is really
+    // true, we want to do some sanity checks.
     
-        // Don't cache put transitions on dictionaries.
-        if (structure->isDictionary())
-            return PutByIdStatus(TakesSlowPath);
+    // Don't cache put transitions on dictionaries.
+    if (structure->isDictionary())
+        return PutByIdStatus(TakesSlowPath);
 
-        // If the structure corresponds to something that isn't an object, then give up, since
-        // we don't want to be adding properties to strings.
-        if (structure->typeInfo().type() == StringType)
+    // If the structure corresponds to something that isn't an object, then give up, since
+    // we don't want to be adding properties to strings.
+    if (structure->typeInfo().type() == StringType)
+        return PutByIdStatus(TakesSlowPath);
+    
+    RefPtr<IntendedStructureChain> chain;
+    if (!isDirect) {
+        chain = adoptRef(new IntendedStructureChain(globalObject, structure));
+        
+        // If the prototype chain has setters or read-only properties, then give up.
+        if (chain->mayInterceptStoreTo(vm, uid))
             return PutByIdStatus(TakesSlowPath);
-    
-        RefPtr<IntendedStructureChain> chain;
-        if (!isDirect) {
-            chain = adoptRef(new IntendedStructureChain(globalObject, structure));
         
-            // If the prototype chain has setters or read-only properties, then give up.
-            if (chain->mayInterceptStoreTo(vm, uid))
-                return PutByIdStatus(TakesSlowPath);
-        
-            // If the prototype chain hasn't been normalized (i.e. there are proxies or dictionaries)
-            // then give up. The dictionary case would only happen if this structure has not been
-            // used in an optimized put_by_id transition. And really the only reason why we would
-            // bail here is that I don't really feel like having the optimizing JIT go and flatten
-            // dictionaries if we have evidence to suggest that those objects were never used as
-            // prototypes in a cacheable prototype access - i.e. there's a good chance that some of
-            // the other checks below will fail.
-            if (structure->isProxy() || !chain->isNormalized())
-                return PutByIdStatus(TakesSlowPath);
-        }
-    
-        // We only optimize if there is already a structure that the transition is cached to.
-        // Among other things, this allows us to guard against a transition with a specific
-        // value.
-        //
-        // - If we're storing a value that could be specific: this would only be a problem if
-        //   the existing transition did have a specific value already, since if it didn't,
-        //   then we would behave "as if" we were not storing a specific value. If it did
-        //   have a specific value, then we'll know - the fact that we pass 0 for
-        //   specificValue will tell us.
-        //
-        // - If we're not storing a value that could be specific: again, this would only be a
-        //   problem if the existing transition did have a specific value, which we check for
-        //   by passing 0 for the specificValue.
-        Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, 0, offset);
-        if (!transition)
-            return PutByIdStatus(TakesSlowPath); // This occurs in bizarre cases only. See above.
-        ASSERT(!transition->transitionDidInvolveSpecificValue());
-        ASSERT(isValidOffset(offset));
-    
-        bool didAppend = result.appendVariant(
-            PutByIdVariant::transition(structure, transition, chain.release(), offset));
-        if (!didAppend)
+        // If the prototype chain hasn't been normalized (i.e. there are proxies or dictionaries)
+        // then give up. The dictionary case would only happen if this structure has not been
+        // used in an optimized put_by_id transition. And really the only reason why we would
+        // bail here is that I don't really feel like having the optimizing JIT go and flatten
+        // dictionaries if we have evidence to suggest that those objects were never used as
+        // prototypes in a cacheable prototype access - i.e. there's a good chance that some of
+        // the other checks below will fail.
+        if (structure->isProxy() || !chain->isNormalized())
             return PutByIdStatus(TakesSlowPath);
     }
     
-    return result;
+    // We only optimize if there is already a structure that the transition is cached to.
+    // Among other things, this allows us to guard against a transition with a specific
+    // value.
+    //
+    // - If we're storing a value that could be specific: this would only be a problem if
+    //   the existing transition did have a specific value already, since if it didn't,
+    //   then we would behave "as if" we were not storing a specific value. If it did
+    //   have a specific value, then we'll know - the fact that we pass 0 for
+    //   specificValue will tell us.
+    //
+    // - If we're not storing a value that could be specific: again, this would only be a
+    //   problem if the existing transition did have a specific value, which we check for
+    //   by passing 0 for the specificValue.
+    Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, 0, offset);
+    if (!transition)
+        return PutByIdStatus(TakesSlowPath); // This occurs in bizarre cases only. See above.
+    ASSERT(!transition->transitionDidInvolveSpecificValue());
+    ASSERT(isValidOffset(offset));
+    
+    return PutByIdVariant::transition(structure, transition, chain.release(), offset);
 }
 
 void PutByIdStatus::dump(PrintStream& out) const

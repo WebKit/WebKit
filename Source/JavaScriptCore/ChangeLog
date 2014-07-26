@@ -1,3 +1,311 @@
+2014-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r171641-r171644. It broke some tests; will investigate and
+        reland later.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::printPutByIdCacheStatus): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::dumpInContext):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::structureSet):
+        * bytecode/Instruction.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::appendVariant):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::dumpInContext):
+        (JSC::PutByIdVariant::oldStructureForTransition): Deleted.
+        (JSC::PutByIdVariant::writesStructures): Deleted.
+        (JSC::PutByIdVariant::reallocatesStorage): Deleted.
+        (JSC::PutByIdVariant::attemptToMerge): Deleted.
+        (JSC::PutByIdVariant::attemptToMergeTransitionWithReplace): Deleted.
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::PutByIdVariant):
+        (JSC::PutByIdVariant::replace):
+        (JSC::PutByIdVariant::transition):
+        (JSC::PutByIdVariant::structure):
+        (JSC::PutByIdVariant::oldStructure):
+        (JSC::PutByIdVariant::newStructure):
+        (JSC::PutByIdVariant::constantChecks):
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::filter): Deleted.
+        (JSC::StructureSet::filterArrayModes): Deleted.
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::onlyStructure):
+        * bytecode/ToThisStatus.cpp: Removed.
+        * bytecode/ToThisStatus.h: Removed.
+        * bytecode/TypeLocation.h: Removed.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        (JSC::BytecodeGenerator::emitProfileTypesWithHighFidelity): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::isProfilingTypesWithHighFidelity): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ForInNode::emitBytecode):
+        * debugger/DebuggerActivation.cpp: Added.
+        (JSC::DebuggerActivation::DebuggerActivation):
+        (JSC::DebuggerActivation::finishCreation):
+        (JSC::DebuggerActivation::visitChildren):
+        (JSC::DebuggerActivation::className):
+        (JSC::DebuggerActivation::getOwnPropertySlot):
+        (JSC::DebuggerActivation::put):
+        (JSC::DebuggerActivation::deleteProperty):
+        (JSC::DebuggerActivation::getOwnPropertyNames):
+        (JSC::DebuggerActivation::defineOwnProperty):
+        * debugger/DebuggerActivation.h: Added.
+        (JSC::DebuggerActivation::create):
+        (JSC::DebuggerActivation::createStructure):
+        * debugger/DebuggerScope.cpp: Removed.
+        * debugger/DebuggerScope.h: Removed.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransition):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransitions):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::changeStructure): Deleted.
+        (JSC::DFG::AbstractValue::contains): Deleted.
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::couldBeType):
+        (JSC::DFG::AbstractValue::isType):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        (JSC::DFG::ConstantFoldingPhase::addBaseCheck): Deleted.
+        (JSC::DFG::ConstantFoldingPhase::addChecks): Deleted.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::visitChildren):
+        (JSC::DFG::Graph::freezeStrong):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::MultiPutByOffsetData::writesStructures):
+        (JSC::DFG::MultiPutByOffsetData::reallocatesStorage):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::hasTransition):
+        (JSC::DFG::Node::convertToMultiGetByOffset): Deleted.
+        (JSC::DFG::Node::convertToMultiPutByOffset): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Strict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::observeTransition):
+        (JSC::DFG::StructureAbstractValue::observeTransitions):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::onlyStructure):
+        (JSC::DFG::StructureAbstractValue::operator=): Deleted.
+        (JSC::DFG::StructureAbstractValue::set): Deleted.
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * dfg/DFGWatchableStructureWatchingPhase.cpp:
+        (JSC::DFG::WatchableStructureWatchingPhase::run):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::getLinkage): Deleted.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantomPutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypeForVariableInTextRange): Deleted.
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Runtime.json:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDumpTypesForAllVariables): Deleted.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::putToScopeCommon): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+        (JSC::ArrayBufferNeuteringWatchpoint::createStructure):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::createStructure):
+        (JSC::NativeExecutable::createStructure):
+        * runtime/HighFidelityLog.cpp: Removed.
+        * runtime/HighFidelityLog.h: Removed.
+        * runtime/HighFidelityTypeProfiler.cpp: Removed.
+        * runtime/HighFidelityTypeProfiler.h: Removed.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectCustomAccessor):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        * runtime/JSPromiseDeferred.h:
+        (JSC::JSPromiseDeferred::createStructure):
+        * runtime/JSPromiseReaction.h:
+        (JSC::JSPromiseReaction::createStructure):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        * runtime/JSType.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        * runtime/MapData.h:
+        (JSC::MapData::createStructure):
+        * runtime/Options.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::createStructure):
+        * runtime/RegExp.h:
+        (JSC::RegExp::createStructure):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::createStructure):
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains):
+        (JSC::StructureTransitionTable::get):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::pin):
+        (JSC::Structure::allocateRareData):
+        (JSC::Structure::cloneRareDataFrom):
+        (JSC::Structure::getConcurrently):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::checkConsistency):
+        (JSC::Structure::toStructureShape): Deleted.
+        * runtime/Structure.h:
+        (JSC::Structure::isExtensible):
+        (JSC::Structure::didTransition):
+        (JSC::Structure::isDictionary):
+        (JSC::Structure::isUncacheableDictionary):
+        (JSC::Structure::hasBeenFlattenedBefore):
+        (JSC::Structure::propertyAccessesAreCacheable):
+        (JSC::Structure::previousID):
+        (JSC::Structure::hasGetterSetterProperties):
+        (JSC::Structure::hasReadOnlyOrGetterSetterPropertiesExcludingProto):
+        (JSC::Structure::setHasGetterSetterProperties):
+        (JSC::Structure::hasCustomGetterSetterProperties):
+        (JSC::Structure::setHasCustomGetterSetterProperties):
+        (JSC::Structure::setContainsReadOnlyProperties):
+        (JSC::Structure::hasNonEnumerableProperties):
+        (JSC::Structure::disableSpecificFunctionTracking):
+        (JSC::Structure::objectToStringValue):
+        (JSC::Structure::setObjectToStringValue):
+        (JSC::Structure::staticFunctionsReified):
+        (JSC::Structure::setStaticFunctionsReified):
+        (JSC::Structure::transitionWatchpointSet):
+        (JSC::Structure::setPreviousID):
+        (JSC::Structure::clearPreviousID):
+        (JSC::Structure::previous):
+        (JSC::Structure::rareData):
+        (JSC::Structure::setHasGetterSetterPropertiesWithProtoCheck): Deleted.
+        (JSC::Structure::setHasCustomGetterSetterPropertiesWithProtoCheck): Deleted.
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::createStructure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setEnumerationCache):
+        (JSC::Structure::enumerationCache):
+        (JSC::Structure::checkOffsetConsistency):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::createStructure):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::cloneCapturedNames):
+        (JSC::SymbolTable::uniqueIDForVariable): Deleted.
+        (JSC::SymbolTable::uniqueIDForRegister): Deleted.
+        (JSC::SymbolTable::globalTypeSetForRegister): Deleted.
+        (JSC::SymbolTable::globalTypeSetForVariable): Deleted.
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTable::createStructure):
+        (JSC::SymbolTable::add):
+        (JSC::SymbolTable::set):
+        * runtime/TypeSet.cpp: Removed.
+        * runtime/TypeSet.h: Removed.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::getTypesForVariableInRange): Deleted.
+        (JSC::VM::updateHighFidelityTypeProfileState): Deleted.
+        (JSC::VM::dumpHighFidelityProfilingTypes): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::isProfilingTypesWithHighFidelity): Deleted.
+        (JSC::VM::highFidelityLog): Deleted.
+        (JSC::VM::highFidelityTypeProfiler): Deleted.
+        (JSC::VM::nextLocation): Deleted.
+        (JSC::VM::getNextUniqueVariableID): Deleted.
+        * runtime/WeakMapData.h:
+        (JSC::WeakMapData::createStructure):
+        * tests/stress/fold-multi-get-by-offset-to-get-by-offset-without-folding-the-structure-check.js: Removed.
+        * tests/stress/fold-multi-put-by-offset-to-put-by-offset-without-folding-the-structure-check.js: Removed.
+        * tests/stress/prune-multi-put-by-offset-replace-or-transition-variant.js: Removed.
+
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
         Attempt to fix non-Xcode platforms.

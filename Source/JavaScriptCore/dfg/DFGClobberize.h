@@ -440,6 +440,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case PutStructure:
+    case PhantomPutStructure:
         write(JSCell_structureID);
         write(JSCell_typeInfoType);
         write(JSCell_typeInfoFlags);

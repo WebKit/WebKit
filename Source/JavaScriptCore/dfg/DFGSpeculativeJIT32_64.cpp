@@ -867,6 +867,15 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     m_interpreter.filter(value, SpecCell);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+    
+    if (edge->hasConstant() && !edge->isCellConstant()) {
+        // Protect the silent spill/fill logic by failing early. If we "speculate" on
+        // the constant then the silent filler may think that we have a cell and a
+        // constant, so it will try to fill this as an cell constant. Bad things will
+        // happen.
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+        return allocate();
+    }
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -878,13 +887,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         if (edge->hasConstant()) {
             JSValue jsValue = edge->asJSValue();
             GPRReg gpr = allocate();
-            if (jsValue.isCell()) {
-                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
-                info.fillCell(*m_stream, gpr);
-                return gpr;
-            }
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+            m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
+            info.fillCell(*m_stream, gpr);
             return gpr;
         }
 
@@ -3734,6 +3739,13 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case PhantomPutStructure: {
+        ASSERT(isKnownCell(node->child1().node()));
+        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
+        noResult(node);
+        break;
+    }
+
     case PutStructure: {
         Structure* oldStructure = node->transition()->previous;
         Structure* newStructure = node->transition()->next;
