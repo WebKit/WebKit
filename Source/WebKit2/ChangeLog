@@ -1,5 +1,71 @@
 2014-07-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171622. <rdar://problem/15917314>
+
+    2014-07-25  Brady Eidson  <beidson@apple.com>
+
+            Clean up WKOriginDataManager and get it messaging to the DatabaseProcess
+            https://bugs.webkit.org/show_bug.cgi?id=135035
+
+            Reviewed by Sam Weinig.
+
+            * DatabaseProcess/DatabaseProcess.cpp:
+            (WebKit::DatabaseProcess::DatabaseProcess): Instantiate the WebOriginDataManager, installing its message handler.
+            (WebKit::DatabaseProcess::didReceiveMessage): Try the message receiver map, which will try the WebOriginDataManager.
+            * DatabaseProcess/DatabaseProcess.h:
+            * DatabaseProcess/DatabaseProcess.messages.in:
+
+            * UIProcess/API/C/WKOriginDataManager.cpp:
+            (WKOriginDataManagerDeleteEntriesForOrigin): Updated to also take a callback.
+            (WKOriginDataManagerDeleteEntriesModifiedBetweenDates): Added.
+            (WKOriginDataManagerDeleteAllEntries): Updated to also take a callback.
+            (WKOriginDataManagerStartObservingChanges): Deleted.
+            (WKOriginDataManagerStopObservingChanges): Deleted.
+            (WKOriginDataManagerSetChangeClient): Deleted.
+            * UIProcess/API/C/WKOriginDataManager.h:
+
+            * UIProcess/Databases/DatabaseProcessProxy.cpp:
+            (WebKit::DatabaseProcessProxy::didReceiveMessage): Send messages to the WebOriginDataManagerProxy supplement if appropriate.
+            * UIProcess/Databases/DatabaseProcessProxy.h:
+            * UIProcess/Databases/DatabaseProcessProxy.messages.in:
+
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::WebContext): Instantiate the WebOriginDataManagerProxy supplement.
+            * UIProcess/WebContext.h:
+            (WebKit::WebContext::sendToDatabaseProcessRelaunchingIfNecessary):
+
+            * UIProcess/WebOriginDataManagerProxy.cpp:
+            (WebKit::WebOriginDataManagerProxy::contextDestroyed):
+            (WebKit::WebOriginDataManagerProxy::processDidClose):
+            (WebKit::WebOriginDataManagerProxy::getOrigins):
+            (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin): Setup a callback with the message.
+            (WebKit::WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates): Added
+            (WebKit::WebOriginDataManagerProxy::didDeleteEntries): Call the callback.
+            (WebKit::WebOriginDataManagerProxy::deleteAllEntries): Setup a callback with the message.
+            (WebKit::WebOriginDataManagerProxy::didDeleteAllEntries): Call the callback.
+            (WebKit::WebOriginDataManagerProxy::startObservingChanges): Deleted.
+            (WebKit::WebOriginDataManagerProxy::stopObservingChanges): Deleted.
+            (WebKit::WebOriginDataManagerProxy::setChangeClient): Deleted.
+            (WebKit::WebOriginDataManagerProxy::didChange): Deleted.
+            * UIProcess/WebOriginDataManagerProxy.h:
+            * UIProcess/WebOriginDataManagerProxy.messages.in:
+
+            * UIProcess/WebOriginDataManagerProxyChangeClient.cpp: Removed.
+            * UIProcess/WebOriginDataManagerProxyChangeClient.h: Removed.
+
+            * WebKit2.xcodeproj/project.pbxproj:
+
+            * WebProcess/OriginData/WebOriginDataManager.cpp:
+            (WebKit::WebOriginDataManager::deleteEntriesForOrigin): Send the callback reply.
+            (WebKit::WebOriginDataManager::deleteEntriesModifiedBetweenDates): Added.
+            (WebKit::WebOriginDataManager::deleteAllEntries): Send the callback reply.
+            (WebKit::WebOriginDataManager::startObservingChanges): Deleted.
+            (WebKit::WebOriginDataManager::stopObservingChanges): Deleted.
+            * WebProcess/OriginData/WebOriginDataManager.h:
+            * WebProcess/OriginData/WebOriginDataManager.messages.in:
+
+2014-07-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171629. <rdar://problem/17654369>
 
     2014-07-25  Oliver Hunt  <oliver@apple.com>

@@ -102,53 +102,87 @@ void WebOriginDataManagerProxy::didGetOrigins(const Vector<SecurityOriginData>& 
     performAPICallbackWithSecurityOriginDataVector(originDatas, callback.get());
 }
 
-void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, WebSecurityOrigin* origin)
+void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, WebSecurityOrigin* origin, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    if (!context())
+    if (!(types & kWKIndexedDatabaseData))
         return;
+
+    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
+    // That's why having one single callback works.
+    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
+
+    RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
+
+    if (!context()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.release());
 
     SecurityOriginData securityOriginData;
     securityOriginData.protocol = origin->securityOrigin().protocol();
     securityOriginData.host = origin->securityOrigin().host();
     securityOriginData.port = origin->securityOrigin().port();
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::DeleteEntriesForOrigin(types, securityOriginData));
+    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteEntriesForOrigin(types, securityOriginData, callbackID));
 }
 
-void WebOriginDataManagerProxy::deleteAllEntries(WKOriginDataTypes types)
+void WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    if (!context())
+    if (!(types & kWKIndexedDatabaseData))
         return;
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::DeleteAllEntries(types));
+    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
+    // That's why having one single callback works.
+    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
+
+    RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
+
+    if (!context()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.release());
+
+    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteEntriesModifiedBetweenDates(types, startDate, endDate, callbackID));
 }
 
-void WebOriginDataManagerProxy::startObservingChanges(WKOriginDataTypes types)
+void WebOriginDataManagerProxy::didDeleteEntries(uint64_t callbackID)
 {
-    if (!context())
+    RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+    callback->performCallback();
+}
+
+void WebOriginDataManagerProxy::deleteAllEntries(WKOriginDataTypes types, std::function<void (CallbackBase::Error)> callbackFunction)
+{
+    if (!(types & kWKIndexedDatabaseData))
         return;
 
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::StartObservingChanges(types));
-}
+    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
+    // That's why having one single callback works.
+    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
 
-void WebOriginDataManagerProxy::stopObservingChanges(WKOriginDataTypes types)
-{
-    if (!context())
+    RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
+
+    if (!context()) {
+        callback->invalidate();
         return;
+    }
 
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::StartObservingChanges(types));
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.release());
+
+    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteAllEntries(types, callbackID));
 }
 
-void WebOriginDataManagerProxy::setChangeClient(const WKOriginDataManagerChangeClientBase *client)
+void WebOriginDataManagerProxy::didDeleteAllEntries(uint64_t callbackID)
 {
-    m_client.initialize(client);
-}
-
-void WebOriginDataManagerProxy::didChange()
-{
-    m_client.didChange(this);
+    RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+    callback->performCallback();
 }
 
 } // namespace WebKit

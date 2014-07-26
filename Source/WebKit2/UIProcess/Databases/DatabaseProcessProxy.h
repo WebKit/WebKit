@@ -57,6 +57,8 @@ private:
     virtual void didClose(IPC::Connection*) override;
     virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
+    void didReceiveDatabaseProcessProxyMessage(IPC::Connection*, IPC::MessageDecoder&);
+
     // Message handlers
     void didCreateDatabaseToWebProcessConnection(const IPC::Attachment&);
 

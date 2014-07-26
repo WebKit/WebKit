@@ -76,28 +76,24 @@ void WebOriginDataManager::getOrigins(WKOriginDataTypes, uint64_t callbackID)
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidGetOrigins(identifiers, callbackID), 0);
 }
 
-void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData& originData)
+void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData& origindata, uint64_t callbackID)
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
-    if (!origin)
-        return;
-
     // FIXME: delete entries for origin
+    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
 }
 
-void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes)
+void WebOriginDataManager::deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double, double, uint64_t callbackID)
+{
+    // FIXME: delete entries modified between the start and end date
+
+    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+}
+
+void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes, uint64_t callbackID)
 {
     // FIXME: delete entries
-}
 
-void WebOriginDataManager::startObservingChanges(WKOriginDataTypes)
-{
-    // FIXME: start observing changes
-}
-
-void WebOriginDataManager::stopObservingChanges(WKOriginDataTypes)
-{
-    // FIXME: stop observing changes
+    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
 }
 
 } // namespace WebKit

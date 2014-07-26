@@ -26,9 +26,9 @@
 #ifndef WebOriginDataManager_h
 #define WebOriginDataManager_h
 
+#include "ChildProcessSupplement.h"
 #include "MessageReceiver.h"
 #include "WKOriginDataManager.h"
-#include "WebProcessSupplement.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,20 +37,18 @@ namespace WebKit {
 class ChildProcess;
 struct SecurityOriginData;
 
-class WebOriginDataManager : public WebProcessSupplement, public IPC::MessageReceiver {
+class WebOriginDataManager : public ChildProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebOriginDataManager);
 public:
     WebOriginDataManager(ChildProcess*);
 
     static const char* supplementName();
 
-    void deleteAllEntries(WKOriginDataTypes);
-
 private:
-    void getOrigins(WKOriginDataTypes, uint64_t);
-    void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&);
-    void startObservingChanges(WKOriginDataTypes);
-    void stopObservingChanges(WKOriginDataTypes);
+    void getOrigins(WKOriginDataTypes, uint64_t callbackID);
+    void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, uint64_t callbackID);
+    void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, uint64_t callbackID);
+    void deleteAllEntries(WKOriginDataTypes, uint64_t callbackID);
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;

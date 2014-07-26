@@ -27,7 +27,10 @@
 #include "DatabaseProcessProxy.h"
 
 #include "DatabaseProcessMessages.h"
+#include "DatabaseProcessProxyMessages.h"
 #include "WebContext.h"
+#include "WebOriginDataManagerProxy.h"
+#include "WebOriginDataManagerProxyMessages.h"
 
 #if ENABLE(DATABASE_PROCESS)
 
@@ -64,6 +67,19 @@ void DatabaseProcessProxy::connectionWillOpen(IPC::Connection*)
 
 void DatabaseProcessProxy::connectionWillClose(IPC::Connection*)
 {
+}
+
+void DatabaseProcessProxy::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+{
+    if (decoder.messageReceiverName() == Messages::DatabaseProcessProxy::messageReceiverName()) {
+        didReceiveDatabaseProcessProxyMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::WebOriginDataManagerProxy::messageReceiverName()) {
+        m_webContext->supplement<WebOriginDataManagerProxy>()->didReceiveMessage(connection, decoder);
+        return;
+    }
 }
 
 void DatabaseProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)

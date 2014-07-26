@@ -789,6 +789,7 @@
 		3F889D171887859300FEADAF /* WebVideoFullscreenManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F889D0D1887699C00FEADAF /* WebVideoFullscreenManager.mm */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
+		510274321981AF8E008165ED /* WKOriginDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */; };
 		51032F19180F73BB00961BB7 /* WebToDatabaseProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */; };
 		51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F1B180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp */; };
@@ -1018,8 +1019,6 @@
 		755422C418062BF90046F6A8 /* WebOriginDataManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */; };
 		755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */; };
 		755422CC180773CE0046F6A8 /* WebOriginDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422C718064FFC0046F6A8 /* WebOriginDataManager.h */; };
-		759CCD581808F1640078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759CCD541808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp */; };
-		759CCD591808F1690078E8A8 /* WebOriginDataManagerProxyChangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 759CCD551808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.h */; };
 		759CCD5A1808F6160078E8A8 /* WebOriginDataManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422BF18062BE40046F6A8 /* WebOriginDataManagerProxy.h */; };
 		75A8D2C8187CCFAB00C39C9E /* _WKWebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2C4187CCF9F00C39C9E /* _WKWebsiteDataStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75A8D2C9187CCFAF00C39C9E /* _WKWebsiteDataStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75A8D2C5187CCF9F00C39C9E /* _WKWebsiteDataStore.mm */; };
@@ -3069,8 +3068,6 @@
 		755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebOriginDataManager.cpp; path = OriginData/WebOriginDataManager.cpp; sourceTree = "<group>"; };
 		755422C718064FFC0046F6A8 /* WebOriginDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebOriginDataManager.h; path = OriginData/WebOriginDataManager.h; sourceTree = "<group>"; };
 		755422C818064FFC0046F6A8 /* WebOriginDataManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebOriginDataManager.messages.in; path = OriginData/WebOriginDataManager.messages.in; sourceTree = "<group>"; };
-		759CCD541808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOriginDataManagerProxyChangeClient.cpp; sourceTree = "<group>"; };
-		759CCD551808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOriginDataManagerProxyChangeClient.h; sourceTree = "<group>"; };
 		75A8D2C4187CCF9F00C39C9E /* _WKWebsiteDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStore.h; sourceTree = "<group>"; };
 		75A8D2C5187CCF9F00C39C9E /* _WKWebsiteDataStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebsiteDataStore.mm; sourceTree = "<group>"; };
 		75A8D2D0187D17BF00C39C9E /* WKSessionRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSessionRef.cpp; sourceTree = "<group>"; };
@@ -5888,8 +5885,6 @@
 				755422BF18062BE40046F6A8 /* WebOriginDataManagerProxy.h */,
 				755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */,
 				755422C018062BE40046F6A8 /* WebOriginDataManagerProxy.messages.in */,
-				759CCD541808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp */,
-				759CCD551808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.h */,
 				5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */,
 				5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */,
 				BC7B6205129A0A6700D174A4 /* WebPageGroup.cpp */,
@@ -7369,6 +7364,7 @@
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
+				510274321981AF8E008165ED /* WKOriginDataManager.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
@@ -7803,7 +7799,6 @@
 				373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */,
 				1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
-				759CCD591808F1690078E8A8 /* WebOriginDataManagerProxyChangeClient.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
 				5175095A1897249700408FAC /* IDBIdentifier.h in Headers */,
 				1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */,
@@ -9376,7 +9371,6 @@
 				1AE52F9119201DA700A1FA37 /* APIContextConfiguration.cpp in Sources */,
 				3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */,
 				512F58F912A88A5400629530 /* WKCredential.cpp in Sources */,
-				759CCD581808F1640078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp in Sources */,
 				1A5B1C501898606F004FCF9B /* WKNavigation.mm in Sources */,
 				BC4075F7124FF0270068F20A /* WKData.cpp in Sources */,
 				F62A766112B1ABED0005F1B6 /* WKDatabaseManager.cpp in Sources */,

@@ -31,7 +31,6 @@
 #include "MessageReceiver.h"
 #include "WKOriginDataManager.h"
 #include "WebContextSupplement.h"
-#include "WebOriginDataManagerProxyChangeClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -55,21 +54,22 @@ public:
     virtual ~WebOriginDataManagerProxy();
 
     void getOrigins(WKOriginDataTypes, std::function<void (API::Array*, CallbackBase::Error)>);
-    void deleteEntriesForOrigin(WKOriginDataTypes, WebSecurityOrigin*);
-    void deleteAllEntries(WKOriginDataTypes);
-
-    void startObservingChanges(WKOriginDataTypes);
-    void stopObservingChanges(WKOriginDataTypes);
-    void setChangeClient(const WKOriginDataManagerChangeClientBase*);
+    void deleteEntriesForOrigin(WKOriginDataTypes, WebSecurityOrigin*, std::function<void (CallbackBase::Error)>);
+    void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void (CallbackBase::Error)>);
+    void deleteAllEntries(WKOriginDataTypes, std::function<void (CallbackBase::Error)>);
 
     using API::Object::ref;
     using API::Object::deref;
+
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
 private:
     explicit WebOriginDataManagerProxy(WebContext*);
 
     void didGetOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
-    void didChange();
+    void didDeleteEntries(uint64_t callbackID);
+    void didDeleteAllEntries(uint64_t callbackID);
 
     // WebContextSupplement
     virtual void contextDestroyed() override;
@@ -78,12 +78,8 @@ private:
     virtual void refWebContextSupplement() override;
     virtual void derefWebContextSupplement() override;
 
-    // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
-
-    WebOriginDataManagerProxyChangeClient m_client;
+    HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
 };
 
 } // namespace WebKit

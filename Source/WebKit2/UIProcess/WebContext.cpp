@@ -78,6 +78,7 @@
 #if ENABLE(DATABASE_PROCESS)
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessMessages.h"
+#include "WebOriginDataManagerProxy.h"
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
@@ -216,6 +217,9 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #endif
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManagerProxy>();
+#endif
+#if ENABLE(DATABASE_PROCESS)
+    addSupplement<WebOriginDataManagerProxy>();
 #endif
 
     contexts().append(this);

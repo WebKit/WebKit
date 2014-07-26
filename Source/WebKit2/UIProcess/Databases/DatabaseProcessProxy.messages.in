@@ -22,7 +22,7 @@
 
 #if ENABLE(DATABASE_PROCESS)
 
-messages -> DatabaseProcessProxy {
+messages -> DatabaseProcessProxy LegacyReceiver {
     DidCreateDatabaseToWebProcessConnection(IPC::Attachment connectionIdentifier)
 }
 
