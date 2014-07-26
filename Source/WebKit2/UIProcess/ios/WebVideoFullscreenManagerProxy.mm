@@ -34,6 +34,7 @@
 #include "WebVideoFullscreenManagerMessages.h"
 #include "WebVideoFullscreenManagerProxyMessages.h"
 #include <QuartzCore/CoreAnimation.h>
+#include <UIKit/UIKit.h>
 #include <WebKitSystemInterface.h>
 #include <WebCore/TimeRanges.h>
 
@@ -77,7 +78,7 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint32_t videoLayerID
     ASSERT(videoLayerID);
     m_layerHost = WKMakeRenderLayer(videoLayerID);
     UIView *parentView = toRemoteLayerTreeDrawingAreaProxy(m_page->drawingArea())->remoteLayerTreeHost().rootLayer();
-    setupFullscreen(*m_layerHost.get(), initialRect, parentView);
+    setupFullscreen(*m_layerHost.get(), initialRect, [parentView window]);
 }
     
 void WebVideoFullscreenManagerProxy::setSeekableRangesVector(Vector<std::pair<double, double>>& ranges)
