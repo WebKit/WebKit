@@ -185,7 +185,6 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
     {
         function numberCompare(columnIdentifier, nodeA, nodeB)
         {
-            console.log(columnIdentifier, nodeA, nodeB);
             return nodeA.data[columnIdentifier] - nodeB.data[columnIdentifier];
         }
         function localeCompare(columnIdentifier, nodeA, nodeB)
