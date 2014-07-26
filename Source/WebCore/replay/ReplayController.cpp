@@ -58,9 +58,9 @@
 
 namespace WebCore {
 
+#if !LOG_DISABLED
 static void logDispatchedDOMEvent(const Event& event, bool eventIsUnrelated)
 {
-#if !LOG_DISABLED
     EventTarget* target = event.target();
     if (!target)
         return;
@@ -81,11 +81,35 @@ static void logDispatchedDOMEvent(const Event& event, bool eventIsUnrelated)
             window,
             window->location()->href().utf8().data());
     }
-#else
-    UNUSED_PARAM(event);
-    UNUSED_PARAM(eventIsUnrelated);
-#endif
 }
+
+static const char* sessionStateToString(SessionState state)
+{
+    switch (state) {
+    case SessionState::Capturing:
+        return "Capturing";
+    case SessionState::Inactive:
+        return "Inactive";
+    case SessionState::Replaying:
+        return "Replaying";
+    }
+}
+
+static const char* segmentStateToString(SegmentState state)
+{
+    switch (state) {
+    case SegmentState::Appending:
+        return "Appending";
+    case SegmentState::Unloaded:
+        return "Unloaded";
+    case SegmentState::Loaded:
+        return "Loaded";
+    case SegmentState::Dispatching:
+        return "Dispatching";
+    }
+}
+
+#endif // !LOG_DISABLED
 
 ReplayController::ReplayController(Page& page)
     : m_page(page)
@@ -123,6 +147,8 @@ void ReplayController::setSessionState(SessionState state)
 {
     ASSERT(state != m_sessionState);
 
+    LOG(WebReplay, "%-20s SessionState transition: %10s --> %10s.\n", "ReplayController", sessionStateToString(m_sessionState), sessionStateToString(state));
+
     switch (m_sessionState) {
     case SessionState::Capturing:
         ASSERT(state == SessionState::Inactive);
@@ -145,6 +171,33 @@ void ReplayController::setSessionState(SessionState state)
     }
 }
 
+void ReplayController::setSegmentState(SegmentState state)
+{
+    ASSERT(state != m_segmentState);
+
+    LOG(WebReplay, "%-20s SegmentState transition: %10s --> %10s.\n", "ReplayController", segmentStateToString(m_segmentState), segmentStateToString(state));
+
+    switch (m_segmentState) {
+    case SegmentState::Appending:
+        ASSERT(state == SegmentState::Unloaded);
+        break;
+
+    case SegmentState::Unloaded:
+        ASSERT(state == SegmentState::Appending || state == SegmentState::Loaded);
+        break;
+
+    case SegmentState::Loaded:
+        ASSERT(state == SegmentState::Unloaded || state == SegmentState::Dispatching);
+        break;
+
+    case SegmentState::Dispatching:
+        ASSERT(state == SegmentState::Loaded);
+        break;
+    }
+
+    m_segmentState = state;
+}
+
 void ReplayController::switchSession(PassRefPtr<ReplaySession> session)
 {
     ASSERT(m_segmentState == SegmentState::Unloaded);
@@ -162,7 +215,7 @@ void ReplayController::createSegment()
     ASSERT(m_sessionState == SessionState::Capturing);
     ASSERT(m_segmentState == SegmentState::Unloaded);
 
-    m_segmentState = SegmentState::Appending;
+    setSegmentState(SegmentState::Appending);
 
     // Create a new segment but don't associate it with the current session
     // until we stop appending to it. This preserves the invariant that
@@ -190,7 +243,6 @@ void ReplayController::completeSegment()
 
     // Hold on to a reference so unloading the segment doesn't deallocate it.
     RefPtr<ReplaySessionSegment> segment = m_loadedSegment;
-    m_segmentState = SegmentState::Loaded;
     bool shouldSuppressNotifications = true;
     unloadSegment(shouldSuppressNotifications);
 
@@ -212,7 +264,7 @@ void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
     ASSERT(!m_loadedSegment);
 
     m_loadedSegment = segment;
-    m_segmentState = SegmentState::Loaded;
+    setSegmentState(SegmentState::Loaded);
 
     m_currentPosition.segmentOffset = segmentIndex;
     m_currentPosition.inputOffset = 0;
@@ -226,9 +278,9 @@ void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
 void ReplayController::unloadSegment(bool suppressNotifications)
 {
     ASSERT(m_sessionState != SessionState::Inactive);
-    ASSERT(m_segmentState == SegmentState::Loaded);
+    ASSERT(m_segmentState == SegmentState::Loaded || m_segmentState == SegmentState::Appending);
 
-    m_segmentState = SegmentState::Unloaded;
+    setSegmentState(SegmentState::Unloaded);
 
     LOG(WebReplay, "%-20s Clearing input cursors for page: %p\n", "ReplayController", &m_page);
 
@@ -282,7 +334,7 @@ void ReplayController::startPlayback()
     ASSERT(m_sessionState == SessionState::Replaying);
     ASSERT(m_segmentState == SegmentState::Loaded);
 
-    m_segmentState = SegmentState::Dispatching;
+    setSegmentState(SegmentState::Dispatching);
 
     LOG(WebReplay, "%-20s Starting playback to position (segment: %d, input: %d).\n", "ReplayController", m_targetPosition.segmentOffset, m_targetPosition.inputOffset);
     InspectorInstrumentation::playbackStarted(&m_page);
@@ -299,7 +351,7 @@ void ReplayController::pausePlayback()
     if (dispatcher().isRunning())
         dispatcher().pause();
 
-    m_segmentState = SegmentState::Loaded;
+    setSegmentState(SegmentState::Loaded);
 
     LOG(WebReplay, "%-20s Pausing playback at position (segment: %d, input: %d).\n", "ReplayController", m_currentPosition.segmentOffset, m_currentPosition.inputOffset);
     InspectorInstrumentation::playbackPaused(&m_page, m_currentPosition);
@@ -407,10 +459,14 @@ void ReplayController::willDispatchEvent(const Event& event, Frame* frame)
         document = window->document();
 
     ASSERT(document);
-
     InputCursor& cursor = document->inputCursor();
+
+#if !LOG_DISABLED
     bool eventIsUnrelated = !cursor.isCapturing() && !cursor.isReplaying();
     logDispatchedDOMEvent(event, eventIsUnrelated);
+#else
+    UNUSED_PARAM(cursor);
+#endif
 
 #if ENABLE_AGGRESSIVE_DETERMINISM_CHECKS
     // To ensure deterministic JS execution, all DOM events must be dispatched deterministically.

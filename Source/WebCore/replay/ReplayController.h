@@ -156,6 +156,7 @@ private:
     EventLoopInputDispatcher& dispatcher() const;
 
     void setSessionState(SessionState);
+    void setSegmentState(SegmentState);
     void setForceDeterministicSettings(bool);
 
     struct SavedSettings {

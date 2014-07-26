@@ -1,3 +1,31 @@
+2014-07-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: log and enforce session/segment state machine transitions
+        https://bugs.webkit.org/show_bug.cgi?id=135224
+
+        Reviewed by Timothy Hatcher.
+
+        For debugging purposes, log session and segment state transitions.
+        Assert that segment state transitions are valid.
+
+        No new tests. No behavior was changed.
+
+        * replay/ReplayController.cpp:
+        (WebCore::logDispatchedDOMEvent):
+        (WebCore::sessionStateToString):
+        (WebCore::segmentStateToString):
+        (WebCore::ReplayController::setSessionState):
+        (WebCore::ReplayController::setSegmentState):
+        (WebCore::ReplayController::createSegment):
+        (WebCore::ReplayController::completeSegment): Remove a wrong state transition.
+        (WebCore::ReplayController::loadSegmentAtIndex):
+        (WebCore::ReplayController::unloadSegment): Fix a now-erroneous assertion.
+        (WebCore::ReplayController::startPlayback):
+        (WebCore::ReplayController::pausePlayback):
+        (WebCore::ReplayController::willDispatchEvent):
+        (WebCore::ReplayController::cancelPlayback):
+        * replay/ReplayController.h:
+
 2014-07-26  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r171641-r171644. It broke some tests; will investigate and
