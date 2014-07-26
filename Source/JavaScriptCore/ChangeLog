@@ -1,5 +1,12 @@
 2014-07-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Attempt to fix non-Xcode platforms.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+
+2014-07-25  Filip Pizlo  <fpizlo@apple.com>
+
         Fix cloop.
 
         * bytecode/CodeBlock.cpp:
