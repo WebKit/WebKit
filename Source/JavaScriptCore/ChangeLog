@@ -1,5 +1,31 @@
 2014-07-27  Filip Pizlo  <fpizlo@apple.com>
 
+        [REGRESSION][ftlopt merge][32-bit] stress/prune-multi-put-by-offset-replace-or-transition-variant.js.dfg-eager hits an assertion in SpeculativeJIT::silentSavePlanForGPR
+        https://bugs.webkit.org/show_bug.cgi?id=135323
+
+        Reviewed by Oliver Hunt.
+        
+        SpeculativeJIT::silentSavePlanForGPR likes to believe that if a node is a constant,
+        then it's a constant that can be represented using that node's current DataFormat.
+        This doesn't work if the constant had been filled as a JSValue, and then one of the
+        fillSpeculateBlah() methods had speculated that it's of some type that the constant
+        isn't. Unless fillSpeculateBlah() specifically defends against this case, we'll have
+        a constant that claims to have a contradictory data format.
+        
+        This patch fixes such a bug in the 32-bit fillSpeculateCell(). The 64-bit
+        fillSpeculateCell() appears to not have this bug, but I added a similar defense
+        mechanism anyway just in case, since this is one of those mistakes that keeps
+        reappearing.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+
+2014-07-27  Filip Pizlo  <fpizlo@apple.com>
+
         Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.
         
         This fixes the previous mismerge and adds test coverage for the thing that went wrong.

@@ -343,6 +343,7 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
     } else if (registerFormat == DataFormatCell) {
         ASSERT(info.gpr() == source);
         if (node->hasConstant()) {
+            DFG_ASSERT(m_jit.graph(), m_currentNode, node->isCellConstant());
             node->asCell(); // To get the assertion.
             fillAction = SetCellConstant;
         } else {

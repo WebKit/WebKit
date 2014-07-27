@@ -995,19 +995,21 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
+    if (edge->hasConstant() && !edge->isCellConstant()) {
+        // Better to fail early on constants.
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+        return allocate();
+    }
+
     switch (info.registerFormat()) {
     case DataFormatNone: {
         GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
             JSValue jsValue = edge->asJSValue();
-            if (jsValue.isCell()) {
-                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-                info.fillJSValue(*m_stream, gpr, DataFormatJSCell);
-                return gpr;
-            }
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
+            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+            m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
+            info.fillJSValue(*m_stream, gpr, DataFormatJSCell);
             return gpr;
         }
         
