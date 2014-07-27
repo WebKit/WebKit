@@ -238,6 +238,19 @@ PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSampl
     return std::equal_range(begin(), end(), range, SamplePresentationTimeIsWithinRangeComparator());
 }
 
+PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesWithinPresentationRangeFromEnd(const MediaTime& beginTime, const MediaTime& endTime)
+{
+    reverse_iterator rangeEnd = std::find_if(rbegin(), rend(), [&beginTime] (PresentationOrderSampleMap::MapType::value_type value) {
+        return value.second->presentationTime() <= beginTime;
+    });
+
+    reverse_iterator rangeStart = std::find_if(rbegin(), rangeEnd, [&endTime] (PresentationOrderSampleMap::MapType::value_type value) {
+        return value.second->presentationTime() <= endTime;
+    });
+
+    return iterator_range(rangeStart.base(), rangeEnd.base());
+}
+
 DecodeOrderSampleMap::reverse_iterator_range DecodeOrderSampleMap::findDependentSamples(MediaSample* sample)
 {
     ASSERT(sample);
