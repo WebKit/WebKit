@@ -206,7 +206,10 @@ void RenderView::updateLogicalWidth()
 
 LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
 {
-    // FIXME: Need to patch for new columns?
+    // Make sure block progression pagination for percentages uses the column extent and
+    // not the view's extent. See https://bugs.webkit.org/show_bug.cgi?id=135204.
+    if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
+        return multiColumnFlowThread()->firstMultiColumnSet()->computedColumnHeight();
 
 #if PLATFORM(IOS)
     // Workaround for <rdar://problem/7166808>.
