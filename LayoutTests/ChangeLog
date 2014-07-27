@@ -1,5 +1,26 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171640. <rdar://problem/17812921>
+
+    2014-07-25  Zalan Bujtas  <zalan@apple.com>
+    
+            Subpixel rendering: Rounded rect gets non-renderable at certain subpixel size.
+            https://bugs.webkit.org/show_bug.cgi?id=135314
+            <rdar://problem/17812921>
+    
+            Reviewed by Tim Horton.
+    
+            While calculating the rounded rect for painting, the radius is adjusted to compensate
+            for the pixel snapped size. However while scaling the radius, certain values overflow
+            (float) mantissa and it produces a non-renderable rounded rect where the radius becomes bigger
+            than the rectangle dimensions. In such cases, we need to shrink the radius to make it
+            renderable again.
+    
+            * transitions/rounded-rect-becomes-non-renderable-while-transitioning-expected.txt: Added.
+            * transitions/rounded-rect-becomes-non-renderable-while-transitioning.html: Added.
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171624. <rdar://problem/17715503>
 
     2014-07-25  Jer Noble  <jer.noble@apple.com>
