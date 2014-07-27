@@ -177,7 +177,7 @@ bool PageClientImpl::isViewFocused()
 
 bool PageClientImpl::isViewVisible()
 {
-    return isViewInWindow() && [UIApplication sharedApplication].applicationState != UIApplicationStateBackground;
+    return isViewInWindow() && !m_contentView.isBackground;
 }
 
 bool PageClientImpl::isViewInWindow()
