@@ -1532,6 +1532,25 @@ void WebPage::selectWordBackward()
         frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).get(), position.affinity(), true);
 }
 
+void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    
+    VisiblePosition startPosition = frame.selection().selection().end();
+    if (startPosition.isNull())
+        return;
+    SelectionDirection direction = offset < 0 ? DirectionBackward : DirectionForward;
+    VisiblePosition position = startPosition;
+    for (int i = 0; i < abs(offset); ++i) {
+        position = positionOfNextBoundaryOfGranularity(position, CharacterGranularity, direction);
+        if (position.isNull())
+            break;
+    }
+    if (position.isNotNull() && startPosition != position)
+        frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).get(), position.affinity(), true);
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
 void WebPage::convertSelectionRectsToRootView(FrameView* view, Vector<SelectionRect>& selectionRects)
 {
     for (size_t i = 0; i < selectionRects.size(); ++i) {

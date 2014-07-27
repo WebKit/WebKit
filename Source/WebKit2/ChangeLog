@@ -1,5 +1,30 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171651. <rdar://problem/17682120>
+
+    2014-07-26  Enrica Casucci  <enrica@apple.com>
+    
+            [WebKit2 iOS]Add support for caret movement for the 3rd party keyboard protocol.
+            https://bugs.webkit.org/show_bug.cgi?id=135325
+            <rdar://problem/17682120>
+    
+            Reviewed by Sam Weinig.
+    
+            WKContentView now implements moveByOffset to support the
+            protocol for 3rd party keyboards.
+    
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView moveByOffset:]):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::moveSelectionByOffset):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::moveSelectionByOffset):
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171647. <rdar://problem/17315168>
 
     2014-07-26  Timothy Horton  <timothy_horton@apple.com>

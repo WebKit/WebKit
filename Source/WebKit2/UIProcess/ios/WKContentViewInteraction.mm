@@ -1697,6 +1697,17 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), static_cast<uint32_t>(toSelectionHandlePosition(handle)));
 }
 
+- (void)moveByOffset:(NSInteger)offset
+{
+    if (!offset)
+        return;
+    
+    [self beginSelectionChange];
+    _page->moveSelectionByOffset(offset, [self](CallbackBase::Error) {
+        [self endSelectionChange];
+    });
+}
+
 - (const WKAutoCorrectionData&)autocorrectionData
 {
     return _autocorrectionData;
