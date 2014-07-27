@@ -115,6 +115,12 @@ void PlatformTimeRanges::unionWith(const PlatformTimeRanges& other)
     m_ranges.swap(unioned.m_ranges);
 }
 
+MediaTime PlatformTimeRanges::start(unsigned index) const
+{
+    bool ignoredValid;
+    return start(index, ignoredValid);
+}
+
 MediaTime PlatformTimeRanges::start(unsigned index, bool& valid) const
 { 
     if (index >= length()) {
@@ -126,6 +132,12 @@ MediaTime PlatformTimeRanges::start(unsigned index, bool& valid) const
     return m_ranges[index].m_start;
 }
 
+MediaTime PlatformTimeRanges::end(unsigned index) const
+{
+    bool ignoredValid;
+    return end(index, ignoredValid);
+}
+
 MediaTime PlatformTimeRanges::end(unsigned index, bool& valid) const
 { 
     if (index >= length()) {
@@ -135,6 +147,22 @@ MediaTime PlatformTimeRanges::end(unsigned index, bool& valid) const
 
     valid = true;
     return m_ranges[index].m_end;
+}
+
+MediaTime PlatformTimeRanges::duration(unsigned index) const
+{
+    if (index >= length())
+        return MediaTime::invalidTime();
+
+    return m_ranges[index].m_end - m_ranges[index].m_start;
+}
+
+MediaTime PlatformTimeRanges::maximumBufferedTime() const
+{
+    if (!length())
+        return MediaTime::invalidTime();
+
+    return m_ranges[length() - 1].m_end;
 }
 
 void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)

@@ -1,5 +1,47 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171624. <rdar://problem/17715503>
+
+    2014-07-25  Jer Noble  <jer.noble@apple.com>
+    
+            [MSE] Playback stalls & readyState drops to HAVE_CURRENT_DATA at end of stream with unbalanced buffered SourceBuffers
+            https://bugs.webkit.org/show_bug.cgi?id=135291
+            <rdar://problem/17715503>
+    
+            Reviewed by Sam Weinig.
+    
+            Test: media/media-source/media-source-end-of-stream-buffered.html
+    
+            When determining the correct ReadyState for the MediaSource in monitorSourceBuffers(), use the same
+            definition of "buffered" as is used in the calculation of HTMLMediaElement.buffered and in the
+            Stream Ended algorithm. Namely, when the stream has ended, treat each SourceBuffer as if its last
+            buffered range extends to the duration of the stream. This allows playback to continue through to
+            the duration without stalling due to monitorSourceBuffers().
+    
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::bufferedAccountingForEndOfStream): Added; extends the last range in buffered
+                to MediaSource::duration() if the MediaSource is ended.
+            (WebCore::SourceBuffer::hasCurrentTime): Uses bufferedAccountingForEndOfStream().
+            (WebCore::SourceBuffer::hasFutureTime): Ditto.
+            (WebCore::SourceBuffer::canPlayThrough): Ditto.
+            * Modules/mediasource/SourceBuffer.h:
+    
+            Add a convenience method for determining whether the MediaSource has ended:
+            * Modules/mediasource/MediaSource.cpp:
+            (WebCore::MediaSource::isEnded):
+            * Modules/mediasource/MediaSource.h:
+    
+            Add start() and end() methods that don't take a (usually ignored) isValid inout parameter. Add duration()
+            and maximumBufferedTime() convenience methods:
+            * platform/graphics/PlatformTimeRanges.cpp:
+            (WebCore::PlatformTimeRanges::start):
+            (WebCore::PlatformTimeRanges::end):
+            (WebCore::PlatformTimeRanges::duration):
+            (WebCore::PlatformTimeRanges::maximumBufferedTime):
+            * platform/graphics/PlatformTimeRanges.h:
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171616. <rdar://problem/17736875>
 
     2014-07-25  Jer Noble  <jer.noble@apple.com>

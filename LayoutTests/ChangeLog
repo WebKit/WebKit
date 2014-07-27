@@ -1,5 +1,20 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171624. <rdar://problem/17715503>
+
+    2014-07-25  Jer Noble  <jer.noble@apple.com>
+    
+            [MSE] Playback stalls & readyState drops to HAVE_CURRENT_DATA at end of stream with unbalanced buffered SourceBuffers
+            https://bugs.webkit.org/show_bug.cgi?id=135291
+            <rdar://problem/17715503>
+    
+            Reviewed by Sam Weinig.
+    
+            * media/media-source/media-source-end-of-stream-buffered-expected.txt: Added.
+            * media/media-source/media-source-end-of-stream-buffered.html: Added.
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171609. <rdar://problem/17043792>
 
     2014-07-25  David Hyatt  <hyatt@apple.com>

@@ -1454,13 +1454,27 @@ void SourceBuffer::monitorBufferingRate()
     LOG(MediaSource, "SourceBuffer::monitorBufferingRate(%p) - m_avegareBufferRate: %lf", this, m_averageBufferRate);
 }
 
+std::unique_ptr<PlatformTimeRanges> SourceBuffer::bufferedAccountingForEndOfStream() const
+{
+    // FIXME: Revisit this method once the spec bug <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26436> is resolved.
+    std::unique_ptr<PlatformTimeRanges> virtualRanges = PlatformTimeRanges::create(m_buffered->ranges());
+    if (m_source->isEnded()) {
+        MediaTime start = virtualRanges->maximumBufferedTime();
+        MediaTime end = MediaTime::createWithDouble(m_source->duration());
+        if (start <= end)
+            virtualRanges->add(start, end);
+    }
+    return virtualRanges;
+}
+
 bool SourceBuffer::hasCurrentTime() const
 {
     if (isRemoved() || !m_buffered->length())
         return false;
 
     MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
-    return abs(m_buffered->ranges().nearest(currentTime) - currentTime) <= currentTimeFudgeFactor();
+    std::unique_ptr<PlatformTimeRanges> ranges = bufferedAccountingForEndOfStream();
+    return abs(ranges->nearest(currentTime) - currentTime) <= currentTimeFudgeFactor();
 }
 
 bool SourceBuffer::hasFutureTime() const
@@ -1468,21 +1482,21 @@ bool SourceBuffer::hasFutureTime() const
     if (isRemoved())
         return false;
 
-    const PlatformTimeRanges& ranges = m_buffered->ranges();
-    if (!ranges.length())
+    std::unique_ptr<PlatformTimeRanges> ranges = bufferedAccountingForEndOfStream();
+    if (!ranges->length())
         return false;
 
     MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
-    MediaTime nearest = ranges.nearest(currentTime);
+    MediaTime nearest = ranges->nearest(currentTime);
     if (abs(nearest - currentTime) > currentTimeFudgeFactor())
         return false;
 
-    size_t found = ranges.find(nearest);
+    size_t found = ranges->find(nearest);
     if (found == notFound)
         return false;
 
     bool ignoredValid = false;
-    return ranges.end(found, ignoredValid) - currentTime > currentTimeFudgeFactor();
+    return ranges->end(found, ignoredValid) - currentTime > currentTimeFudgeFactor();
 }
 
 bool SourceBuffer::canPlayThrough()
@@ -1498,17 +1512,15 @@ bool SourceBuffer::canPlayThrough()
         return true;
 
     // Add up all the time yet to be buffered.
-    MediaTime unbufferedTime = MediaTime::zeroTime();
     MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
     MediaTime duration = MediaTime::createWithDouble(m_source->duration());
 
-    PlatformTimeRanges unbufferedRanges = m_buffered->ranges();
-    unbufferedRanges.invert();
-    unbufferedRanges.intersectWith(PlatformTimeRanges(currentTime, std::max(currentTime, duration)));
-    bool valid = true;
-
-    for (size_t i = 0, end = unbufferedRanges.length(); i < end; ++i)
-        unbufferedTime += unbufferedRanges.end(i, valid) - unbufferedRanges.start(i, valid);
+    std::unique_ptr<PlatformTimeRanges> unbufferedRanges = bufferedAccountingForEndOfStream();
+    unbufferedRanges->invert();
+    unbufferedRanges->intersectWith(PlatformTimeRanges(currentTime, std::max(currentTime, duration)));
+    MediaTime unbufferedTime = unbufferedRanges->totalDuration();
+    if (!unbufferedTime.isValid())
+        return true;
 
     MediaTime timeRemaining = duration - currentTime;
     return unbufferedTime.toDouble() / m_averageBufferRate < timeRemaining.toDouble();

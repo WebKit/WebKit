@@ -46,8 +46,12 @@ public:
 
     PlatformTimeRanges& operator=(const PlatformTimeRanges&);
 
+    MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
+    MediaTime end(unsigned index) const;
     MediaTime end(unsigned index, bool& valid) const;
+    MediaTime duration(unsigned index) const;
+    MediaTime maximumBufferedTime() const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);
