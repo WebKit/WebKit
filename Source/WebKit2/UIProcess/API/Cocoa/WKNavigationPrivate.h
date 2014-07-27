@@ -23,20 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKNavigation.h>
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
-
-/*! A WKNavigation object can be used for tracking the loading progress of a webpage.
- @discussion A navigation is returned from the web view load methods, and is
- also passed to the navigation delegate methods, to uniquely identify a webpage
- load from start to finish.
- */
-WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface WKNavigation : NSObject
-
+@interface WKNavigation (WKPrivate)
+@property (nonatomic, readonly, copy) NSURLRequest *_request;
 @end
 
 #endif

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#import <WebKit/WKNavigation.h>
+#import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
@@ -45,7 +45,7 @@ static RetainPtr<WKNavigation> currentNavigation;
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     EXPECT_EQ(currentNavigation, navigation);
-    EXPECT_NOT_NULL(navigation.request);
+    EXPECT_NOT_NULL(navigation._request);
 }
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
@@ -88,7 +88,7 @@ TEST(WKNavigation, LoadRequest)
 
     currentNavigation = [webView loadRequest:request];
     ASSERT_NOT_NULL(currentNavigation);
-    ASSERT_TRUE([[currentNavigation request] isEqual:request]);
+    ASSERT_TRUE([[currentNavigation _request] isEqual:request]);
 
     TestWebKitAPI::Util::run(&isDone);
 }
@@ -101,13 +101,13 @@ TEST(WKNavigation, LoadRequest)
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     EXPECT_EQ(currentNavigation, navigation);
-    EXPECT_NOT_NULL(navigation.request);
+    EXPECT_NOT_NULL(navigation._request);
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     EXPECT_EQ(currentNavigation, navigation);
-    EXPECT_NOT_NULL(navigation.request);
+    EXPECT_NOT_NULL(navigation._request);
 
     EXPECT_TRUE([error.domain isEqualToString:NSURLErrorDomain]);
     EXPECT_EQ(NSURLErrorUnsupportedURL, error.code);
@@ -133,7 +133,7 @@ TEST(WKNavigation, DidFailProvisionalNavigation)
 
     currentNavigation = [webView loadRequest:request];
     ASSERT_NOT_NULL(currentNavigation);
-    ASSERT_TRUE([[currentNavigation request] isEqual:request]);
+    ASSERT_TRUE([[currentNavigation _request] isEqual:request]);
 
     TestWebKitAPI::Util::run(&isDone);
 }

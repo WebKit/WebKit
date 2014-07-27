@@ -167,7 +167,7 @@ RetainPtr<WKNavigation> NavigationState::createLoadRequestNavigation(uint64_t na
     ASSERT(!m_navigations.contains(navigationID));
 
     RetainPtr<WKNavigation> navigation = adoptNS([[WKNavigation alloc] init]);
-    [navigation setRequest:request];
+    navigation->_request = request;
 
     m_navigations.set(navigationID, navigation);
 
