@@ -1,5 +1,49 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171647. <rdar://problem/17315168>
+
+    2014-07-26  Timothy Horton  <timothy_horton@apple.com>
+    
+            Crash in Web Content Process under ~PDFDocument under clearTouchEventListeners at topDocument()
+            https://bugs.webkit.org/show_bug.cgi?id=135319
+            <rdar://problem/17315168>
+    
+            Reviewed by Darin Adler and Antti Koivisto.
+    
+            * dom/Document.h:
+            * dom/Document.cpp:
+            (WebCore::Document::Document):
+            (WebCore::Document::prepareForDestruction):
+            Add a flag on Document, m_hasPreparedForDestruction, which ensures
+            that each Document only goes through prepareForDestruction() once.
+            prepareForDestruction() can be called a number of times during teardown,
+            but it's only necessary to actually execute it once.
+            
+            This was previously achieved by virtue of all callers of prepareForDestruction()
+            first checking hasLivingRenderTree, and prepareForDestruction() tearing down
+            the render tree, but that meant that prepareForDestruction() was not called
+            for Documents who never had a render tree in the first place.
+    
+            The only part of prepareForDestruction() that is now predicated on hasLivingRenderTree()
+            is the call to destroyRenderTree(); the rest of the function has the potential to be relevant
+            for non-rendered placeholder documents and can safely deal with them in other ways.
+    
+            It is important to call prepareForDestruction() on non-rendered placeholder documents
+            because some of the cleanup (like disconnectFromFrame()) is critical to safe destruction.
+    
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::clear):
+            Call prepareForDestruction() even if we don't have a living render tree.
+            For the sake of minimizing change, removeFocusedNodeOfSubtree still
+            depends on having a living render tree before calling prepareForDestruction().
+    
+            * page/Frame.cpp:
+            (WebCore::Frame::setView):
+            (WebCore::Frame::setDocument):
+            Call prepareForDestruction() even if we don't have a living render tree.
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171640. <rdar://problem/17812921>
 
     2014-07-25  Zalan Bujtas  <zalan@apple.com>
