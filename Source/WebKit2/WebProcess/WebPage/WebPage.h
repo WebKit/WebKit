@@ -485,6 +485,7 @@ public:
     void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID);
     void extendSelection(uint32_t granularity);
     void selectWordBackward();
+    void moveSelectionByOffset(int32_t offset, uint64_t callbackID);
     void elementDidFocus(WebCore::Node*);
     void elementDidBlur(WebCore::Node*);
     void requestDictationContext(uint64_t callbackID);
