@@ -121,8 +121,6 @@ void MarkedSpace::lastChanceToFinalize()
 
 void MarkedSpace::sweep()
 {
-    if (Options::logGC())
-        dataLog("Eagerly sweeping...");
     m_heap->sweeper()->willFinishSweeping();
     forEachBlock<Sweep>();
 }

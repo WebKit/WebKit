@@ -1388,46 +1388,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case GetById:
-    case GetByIdFlush:
+    case GetByIdFlush: {
         if (!node->prediction()) {
             m_state.setIsValid(false);
             break;
         }
-        if (isCellSpeculation(node->child1()->prediction())) {
-            // This use of onlyStructure() should be replaced by giving GetByIdStatus the ability
-            // to compute things based on a StructureSet, and then to factor ByteCodeParser's
-            // ability to generate code based on a GetByIdStatus out of ByteCodeParser so that
-            // ConstantFoldingPhase can use it.
-            // https://bugs.webkit.org/show_bug.cgi?id=133229
-            if (Structure* structure = forNode(node->child1()).m_structure.onlyStructure()) {
-                GetByIdStatus status = GetByIdStatus::computeFor(
-                    m_graph.m_vm, structure,
-                    m_graph.identifiers()[node->identifierNumber()]);
-                if (status.isSimple() && status.numVariants() == 1) {
-                    // Assert things that we can't handle and that the computeFor() method
-                    // above won't be able to return.
-                    ASSERT(status[0].structureSet().size() == 1);
-                    ASSERT(status[0].constantChecks().isEmpty());
-                    ASSERT(!status[0].alternateBase());
+        
+        AbstractValue& value = forNode(node->child1());
+        if (!value.m_structure.isTop() && !value.m_structure.isClobbered()
+            && (node->child1().useKind() == CellUse || !(value.m_type & ~SpecCell))) {
+            GetByIdStatus status = GetByIdStatus::computeFor(
+                m_graph.m_vm, value.m_structure.set(),
+                m_graph.identifiers()[node->identifierNumber()]);
+            if (status.isSimple()) {
+                // Figure out what the result is going to be - is it TOP, a constant, or maybe
+                // something more subtle?
+                AbstractValue result;
+                for (unsigned i = status.numVariants(); i--;) {
+                    if (!status[i].specificValue()) {
+                        result.makeHeapTop();
+                        break;
+                    }
                     
-                    if (status[0].specificValue()) {
-                        if (status[0].specificValue().isCell()) {
-                            Structure* structure = status[0].specificValue().asCell()->structure();
-                            m_graph.watchpoints().consider(structure);
-                        }
-                        setConstant(node, *m_graph.freeze(status[0].specificValue()));
-                    } else
-                        forNode(node).makeHeapTop();
-                    filter(node->child1(), status[0].structureSet());
-                    
-                    m_state.setFoundConstants(true);
-                    break;
+                    AbstractValue thisResult;
+                    thisResult.set(
+                        m_graph, *m_graph.freeze(status[i].specificValue()),
+                        m_state.structureClobberState());
+                    result.merge(thisResult);
                 }
+                if (status.numVariants() == 1 || isFTL(m_graph.m_plan.mode))
+                    m_state.setFoundConstants(true);
+                forNode(node) = result;
+                break;
             }
         }
+
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;
+    }
             
     case GetArrayLength:
         forNode(node).setType(SpecInt32);
@@ -1462,11 +1461,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case PutStructure:
-    case PhantomPutStructure:
         if (!forNode(node->child1()).m_structure.isClear()) {
-            observeTransition(
-                clobberLimit, node->transition()->previous, node->transition()->next);
-            forNode(node->child1()).set(m_graph, node->transition()->next);
+            if (forNode(node->child1()).m_structure.onlyStructure() == node->transition()->next)
+                m_state.setFoundConstants(true);
+            else {
+                observeTransition(
+                    clobberLimit, node->transition()->previous, node->transition()->next);
+                forNode(node->child1()).changeStructure(m_graph, node->transition()->next);
+            }
         }
         break;
     case GetButterfly:
@@ -1595,39 +1597,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case MultiGetByOffset: {
-        AbstractValue& value = forNode(node->child1());
-        ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
-
-        // This should just filter down the cases in MultiGetByOffset. If that results in all
-        // cases having the same offset then we should strength reduce it to a CheckStructure +
-        // GetByOffset.
-        // https://bugs.webkit.org/show_bug.cgi?id=133229
-        if (Structure* structure = value.m_structure.onlyStructure()) {
-            bool done = false;
-            for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
-                const GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
-                if (!variant.structureSet().contains(structure))
-                    continue;
-                
-                if (variant.alternateBase())
-                    break;
-                
-                filter(value, structure);
-                forNode(node).makeHeapTop();
-                m_state.setFoundConstants(true);
-                done = true;
-                break;
+        // This code will filter the base value in a manner that is possibly different (either more
+        // or less precise) than the way it would be filtered if this was strength-reduced to a
+        // CheckStructure. This is fine. It's legal for different passes over the code to prove
+        // different things about the code, so long as all of them are sound. That even includes
+        // one guy proving that code should never execute (due to a contradiction) and another guy
+        // not finding that contradiction. If someone ever proved that there would be a
+        // contradiction then there must always be a contradiction even if subsequent passes don't
+        // realize it. This is the case here.
+        
+        // Ordinarily you have to be careful with calling setFoundConstants()
+        // because of the effect on compile times, but this node is FTL-only.
+        m_state.setFoundConstants(true);
+        
+        AbstractValue base = forNode(node->child1());
+        StructureSet baseSet;
+        AbstractValue result;
+        for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
+            GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
+            StructureSet set = variant.structureSet();
+            set.filter(base);
+            if (set.isEmpty())
+                continue;
+            baseSet.merge(set);
+            if (!variant.specificValue()) {
+                result.makeHeapTop();
+                continue;
             }
-            if (done)
-                break;
+            AbstractValue thisResult;
+            thisResult.set(
+                m_graph,
+                *m_graph.freeze(variant.specificValue()),
+                m_state.structureClobberState());
+            result.merge(thisResult);
         }
         
-        StructureSet set;
-        for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;)
-            set.merge(node->multiGetByOffsetData().variants[i].structureSet());
+        if (forNode(node->child1()).changeStructure(m_graph, baseSet) == Contradiction)
+            m_state.setIsValid(false);
         
-        filter(node->child1(), set);
-        forNode(node).makeHeapTop();
+        forNode(node) = result;
         break;
     }
             
@@ -1636,57 +1644,36 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case MultiPutByOffset: {
-        AbstractValue& value = forNode(node->child1());
-        ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
-
-        // This should just filter down the cases in MultiPutByOffset. If that results in either
-        // one case, or nothing but replace cases and they have the same offset, then we should
-        // just strength reduce it to the appropriate combination of CheckStructure,
-        // [Re]AllocatePropertyStorage, PutStructure, and PutByOffset.
-        // https://bugs.webkit.org/show_bug.cgi?id=133229
-        if (Structure* structure = value.m_structure.onlyStructure()) {
-            bool done = false;
-            for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
-                const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-                if (variant.oldStructure() != structure)
-                    continue;
-                
-                if (variant.kind() == PutByIdVariant::Replace) {
-                    filter(node->child1(), structure);
-                    m_state.setFoundConstants(true);
-                    done = true;
-                    break;
-                }
-                
-                ASSERT(variant.kind() == PutByIdVariant::Transition);
-                clobberStructures(clobberLimit);
-                forNode(node->child1()).set(m_graph, variant.newStructure());
-                m_state.setFoundConstants(true);
-                done = true;
-                break;
-            }
-            if (done)
-                break;
-        }
-        
-        StructureSet oldSet;
         StructureSet newSet;
         TransitionVector transitions;
+        
+        // Ordinarily you have to be careful with calling setFoundConstants()
+        // because of the effect on compile times, but this node is FTL-only.
+        m_state.setFoundConstants(true);
+        
+        AbstractValue base = forNode(node->child1());
+        
         for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
             const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-            oldSet.add(variant.oldStructure());
+            StructureSet thisSet = variant.oldStructure();
+            thisSet.filter(base);
+            if (thisSet.isEmpty())
+                continue;
             if (variant.kind() == PutByIdVariant::Transition) {
-                transitions.append(Transition(variant.oldStructure(), variant.newStructure()));
+                if (thisSet.onlyStructure() != variant.newStructure()) {
+                    transitions.append(
+                        Transition(variant.oldStructureForTransition(), variant.newStructure()));
+                } // else this is really a replace.
                 newSet.add(variant.newStructure());
             } else {
                 ASSERT(variant.kind() == PutByIdVariant::Replace);
-                newSet.add(variant.oldStructure());
+                newSet.merge(thisSet);
             }
         }
         
-        filter(node->child1(), oldSet);
         observeTransitions(clobberLimit, transitions);
-        forNode(node->child1()).set(m_graph, newSet);
+        if (forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
+            m_state.setIsValid(false);
         break;
     }
     
@@ -1715,37 +1702,47 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case PutById:
     case PutByIdFlush:
-    case PutByIdDirect:
-        // This use of onlyStructure() should be replaced by giving PutByIdStatus the ability
-        // to compute things based on a StructureSet, and then to factor ByteCodeParser's
-        // ability to generate code based on a PutByIdStatus out of ByteCodeParser so that
-        // ConstantFoldingPhase can use it.
-        // https://bugs.webkit.org/show_bug.cgi?id=133229
-        if (Structure* structure = forNode(node->child1()).m_structure.onlyStructure()) {
+    case PutByIdDirect: {
+        AbstractValue& value = forNode(node->child1());
+        if (!value.m_structure.isTop() && !value.m_structure.isClobbered()) {
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.m_vm,
                 m_graph.globalObjectFor(node->origin.semantic),
-                structure,
+                value.m_structure.set(),
                 m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
-            if (status.isSimple() && status.numVariants() == 1) {
-                if (status[0].kind() == PutByIdVariant::Replace) {
-                    filter(node->child1(), structure);
-                    m_state.setFoundConstants(true);
-                    break;
+            
+            if (status.isSimple()) {
+                StructureSet newSet;
+                TransitionVector transitions;
+                
+                for (unsigned i = status.numVariants(); i--;) {
+                    const PutByIdVariant& variant = status[i];
+                    if (variant.kind() == PutByIdVariant::Transition) {
+                        transitions.append(
+                            Transition(
+                                variant.oldStructureForTransition(), variant.newStructure()));
+                        m_graph.watchpoints().consider(variant.newStructure());
+                        newSet.add(variant.newStructure());
+                    } else {
+                        ASSERT(variant.kind() == PutByIdVariant::Replace);
+                        newSet.merge(variant.oldStructure());
+                    }
                 }
-                if (status[0].kind() == PutByIdVariant::Transition
-                    && structure->transitionWatchpointSetHasBeenInvalidated()) {
-                    m_graph.watchpoints().consider(status[0].newStructure());
-                    clobberStructures(clobberLimit);
-                    forNode(node->child1()).set(m_graph, status[0].newStructure());
+                
+                if (status.numVariants() == 1 || isFTL(m_graph.m_plan.mode))
                     m_state.setFoundConstants(true);
-                    break;
-                }
+                
+                observeTransitions(clobberLimit, transitions);
+                if (forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
+                    m_state.setIsValid(false);
+                break;
             }
         }
+        
         clobberWorld(node->origin.semantic, clobberLimit);
         break;
+    }
         
     case In:
         // FIXME: We can determine when the property definitely exists based on abstract
@@ -1948,7 +1945,8 @@ void AbstractInterpreter<AbstractStateType>::observeTransition(
 {
     AbstractValue::TransitionObserver transitionObserver(from, to);
     forAllValues(clobberLimit, transitionObserver);
-    setDidClobber();
+    
+    ASSERT(!from->dfgShouldWatch()); // We don't need to claim to be in a clobbered state because 'from' was never watchable (during the time we were compiling), hence no constants ever introduced into the DFG IR that ever had a watchable structure would ever have the same structure as from.
 }
 
 template<typename AbstractStateType>
@@ -1957,7 +1955,12 @@ void AbstractInterpreter<AbstractStateType>::observeTransitions(
 {
     AbstractValue::TransitionsObserver transitionsObserver(vector);
     forAllValues(clobberLimit, transitionsObserver);
-    setDidClobber();
+    
+    if (!ASSERT_DISABLED) {
+        // We don't need to claim to be in a clobbered state because none of the Transition::previous structures are watchable.
+        for (unsigned i = vector.size(); i--;)
+            ASSERT(!vector[i].previous->dfgShouldWatch());
+    }
 }
 
 template<typename AbstractStateType>

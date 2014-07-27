@@ -30,6 +30,99 @@
 
 namespace JSC {
 
+Structure* PutByIdVariant::oldStructureForTransition() const
+{
+    ASSERT(kind() == Transition);
+    ASSERT(m_oldStructure.size() <= 2);
+    for (unsigned i = m_oldStructure.size(); i--;) {
+        Structure* structure = m_oldStructure[i];
+        if (structure != m_newStructure)
+            return structure;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool PutByIdVariant::writesStructures() const
+{
+    return kind() == Transition;
+}
+
+bool PutByIdVariant::reallocatesStorage() const
+{
+    if (kind() != Transition)
+        return false;
+    
+    if (oldStructureForTransition()->outOfLineCapacity() == newStructure()->outOfLineCapacity())
+        return false;
+    
+    return true;
+}
+
+bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
+{
+    if (m_offset != other.m_offset)
+        return false;
+    
+    switch (m_kind) {
+    case Replace:
+        switch (other.m_kind) {
+        case Replace: {
+            ASSERT(m_constantChecks.isEmpty());
+            ASSERT(other.m_constantChecks.isEmpty());
+            
+            m_oldStructure.merge(other.m_oldStructure);
+            return true;
+        }
+            
+        case Transition: {
+            PutByIdVariant newVariant = other;
+            if (newVariant.attemptToMergeTransitionWithReplace(*this)) {
+                *this = newVariant;
+                return true;
+            }
+            return false;
+        }
+            
+        default:
+            return false;
+        }
+        
+    case Transition:
+        switch (other.m_kind) {
+        case Replace:
+            return attemptToMergeTransitionWithReplace(other);
+            
+        default:
+            return false;
+        }
+        
+    default:
+        return false;
+    }
+}
+
+bool PutByIdVariant::attemptToMergeTransitionWithReplace(const PutByIdVariant& replace)
+{
+    ASSERT(m_kind == Transition);
+    ASSERT(replace.m_kind == Replace);
+    ASSERT(m_offset == replace.m_offset);
+    ASSERT(!replace.writesStructures());
+    ASSERT(!replace.reallocatesStorage());
+    
+    // This sort of merging only works when we have one path along which we add a new field which
+    // transitions to structure S while the other path was already on structure S. This doesn't
+    // work if we need to reallocate anything or if the replace path is polymorphic.
+    
+    if (reallocatesStorage())
+        return false;
+    
+    if (replace.m_oldStructure.onlyStructure() != m_newStructure)
+        return false;
+    
+    m_oldStructure.merge(m_newStructure);
+    return true;
+}
+
 void PutByIdVariant::dump(PrintStream& out) const
 {
     dumpInContext(out, 0);
@@ -44,12 +137,12 @@ void PutByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         
     case Replace:
         out.print(
-            "<Replace: ", pointerDumpInContext(structure(), context), ", ", offset(), ">");
+            "<Replace: ", inContext(structure(), context), ", ", offset(), ">");
         return;
         
     case Transition:
         out.print(
-            "<Transition: ", pointerDumpInContext(oldStructure(), context), " -> ",
+            "<Transition: ", inContext(oldStructure(), context), " -> ",
             pointerDumpInContext(newStructure(), context), ", [",
             listDumpInContext(constantChecks(), context), "], ", offset(), ">");
         return;

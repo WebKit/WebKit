@@ -352,6 +352,11 @@ String Internals::address(Node* node)
     return String(buf);
 }
 
+String Internals::description(Deprecated::ScriptValue value)
+{
+    return toString(value.jsValue());
+}
+
 bool Internals::isPreloaded(const String& url)
 {
     Document* document = contextDocument();

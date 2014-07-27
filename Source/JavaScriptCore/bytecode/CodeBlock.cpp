@@ -39,6 +39,7 @@
 #include "DFGJITCode.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
+#include "HighFidelityTypeProfiler.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITStubs.h"
@@ -47,6 +48,7 @@
 #include "JSFunction.h"
 #include "JSNameScope.h"
 #include "LLIntEntrypoint.h"
+#include "TypeLocation.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
 #include "PolymorphicGetByIdList.h"
@@ -295,7 +297,6 @@ static void dumpStructure(PrintStream& out, const char* name, ExecState* exec, S
         out.printf(" (offset = %d)", offset);
 }
 
-#if ENABLE(JIT) // unused when not ENABLE(JIT), leading to silly warnings
 static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, const Identifier& ident)
 {
     out.printf("chain = %p: [", chain);
@@ -311,7 +312,6 @@ static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, 
     }
     out.printf("]");
 }
-#endif
 
 void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int location, const StubInfoMap& map)
 {
@@ -389,6 +389,118 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                     out.printf(")");
                 }
                 out.printf("]");
+            }
+            out.printf(")");
+        }
+    }
+#else
+    UNUSED_PARAM(map);
+#endif
+}
+
+void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int location, const StubInfoMap& map)
+{
+    Instruction* instruction = instructions().begin() + location;
+
+    const Identifier& ident = identifier(instruction[2].u.operand);
+    
+    UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
+    
+    if (Structure* structure = instruction[4].u.structure.get()) {
+        switch (exec->interpreter()->getOpcodeID(instruction[0].u.opcode)) {
+        case op_put_by_id:
+        case op_put_by_id_out_of_line:
+            out.print(" llint(");
+            dumpStructure(out, "struct", exec, structure, ident);
+            out.print(")");
+            break;
+            
+        case op_put_by_id_transition_direct:
+        case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
+            out.print(" llint(");
+            dumpStructure(out, "prev", exec, structure, ident);
+            out.print(", ");
+            dumpStructure(out, "next", exec, instruction[6].u.structure.get(), ident);
+            if (StructureChain* chain = instruction[7].u.structureChain.get()) {
+                out.print(", ");
+                dumpChain(out, exec, chain, ident);
+            }
+            out.print(")");
+            break;
+            
+        default:
+            out.print(" llint(unknown)");
+            break;
+        }
+    }
+
+#if ENABLE(JIT)
+    if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
+        StructureStubInfo& stubInfo = *stubPtr;
+        if (stubInfo.resetByGC)
+            out.print(" (Reset By GC)");
+        
+        if (stubInfo.seen) {
+            out.printf(" jit(");
+            
+            switch (stubInfo.accessType) {
+            case access_put_by_id_replace:
+                out.print("replace, ");
+                dumpStructure(out, "struct", exec, stubInfo.u.putByIdReplace.baseObjectStructure.get(), ident);
+                break;
+            case access_put_by_id_transition_normal:
+            case access_put_by_id_transition_direct:
+                out.print("transition, ");
+                dumpStructure(out, "prev", exec, stubInfo.u.putByIdTransition.previousStructure.get(), ident);
+                out.print(", ");
+                dumpStructure(out, "next", exec, stubInfo.u.putByIdTransition.structure.get(), ident);
+                if (StructureChain* chain = stubInfo.u.putByIdTransition.chain.get()) {
+                    out.print(", ");
+                    dumpChain(out, exec, chain, ident);
+                }
+                break;
+            case access_put_by_id_list: {
+                out.printf("list = [");
+                PolymorphicPutByIdList* list = stubInfo.u.putByIdList.list;
+                CommaPrinter comma;
+                for (unsigned i = 0; i < list->size(); ++i) {
+                    out.print(comma, "(");
+                    const PutByIdAccess& access = list->at(i);
+                    
+                    if (access.isReplace()) {
+                        out.print("replace, ");
+                        dumpStructure(out, "struct", exec, access.oldStructure(), ident);
+                    } else if (access.isSetter()) {
+                        out.print("setter, ");
+                        dumpStructure(out, "struct", exec, access.oldStructure(), ident);
+                    } else if (access.isCustom()) {
+                        out.print("custom, ");
+                        dumpStructure(out, "struct", exec, access.oldStructure(), ident);
+                    } else if (access.isTransition()) {
+                        out.print("transition, ");
+                        dumpStructure(out, "prev", exec, access.oldStructure(), ident);
+                        out.print(", ");
+                        dumpStructure(out, "next", exec, access.newStructure(), ident);
+                        if (access.chain()) {
+                            out.print(", ");
+                            dumpChain(out, exec, access.chain(), ident);
+                        }
+                    } else
+                        out.print("unknown");
+                    
+                    out.print(")");
+                }
+                out.print("]");
+                break;
+            }
+            case access_unset:
+                out.printf("unset");
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
             out.printf(")");
         }
@@ -660,6 +772,7 @@ void CodeBlock::dumpBytecode(
             Structure* structure = (++it)->u.structure.get();
             if (structure)
                 out.print(" cache(struct = ", RawPointer(structure), ")");
+            out.print(" ", (++it)->u.toThisStatus);
             break;
         }
         case op_new_object: {
@@ -720,6 +833,14 @@ void CodeBlock::dumpBytecode(
             printLocationAndOp(out, exec, location, it, "captured_mov");
             out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             ++it;
+            break;
+        }
+        case op_profile_types_with_high_fidelity: {
+            int r0 = (++it)->u.operand;
+            ++it;
+            ++it;
+            printLocationAndOp(out, exec, location, it, "op_profile_types_with_high_fidelity");
+            out.printf("%s", registerName(r0).data());
             break;
         }
         case op_not: {
@@ -920,26 +1041,32 @@ void CodeBlock::dumpBytecode(
         }
         case op_put_by_id: {
             printPutByIdOp(out, exec, location, it, "put_by_id");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_by_id_out_of_line: {
             printPutByIdOp(out, exec, location, it, "put_by_id_out_of_line");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_by_id_transition_direct: {
             printPutByIdOp(out, exec, location, it, "put_by_id_transition_direct");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_by_id_transition_direct_out_of_line: {
             printPutByIdOp(out, exec, location, it, "put_by_id_transition_direct_out_of_line");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_by_id_transition_normal: {
             printPutByIdOp(out, exec, location, it, "put_by_id_transition_normal");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_by_id_transition_normal_out_of_line: {
             printPutByIdOp(out, exec, location, it, "put_by_id_transition_normal_out_of_line");
+            printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
         case op_put_getter_setter: {
@@ -1342,6 +1469,7 @@ void CodeBlock::dumpBytecode(
                 operand);
             break;
         }
+        case op_put_to_scope_with_profile:
         case op_put_to_scope: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
@@ -1350,6 +1478,8 @@ void CodeBlock::dumpBytecode(
             ++it; // Structure
             int operand = (++it)->u.operand; // Operand
             printLocationAndOp(out, exec, location, it, "put_to_scope");
+            if (opcode == op_put_to_scope_with_profile)
+                ++it;
             out.printf("%s, %s, %s, %u<%s|%s>, <structure>, %d",
                 registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(),
                 modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
@@ -1747,6 +1877,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
 
+        case op_put_to_scope_with_profile:
         case op_put_to_scope: {
             // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[2].u.operand);
@@ -1762,9 +1893,68 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             } else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
+
+            if (pc[0].u.opcode == op_put_to_scope_with_profile) {
+                // The format of this instruction is: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
+                TypeLocation* location = vm()->nextLocation();
+                size_t instructionOffset = i + opLength - 1;
+                int divot, startOffset, endOffset; 
+                unsigned line = 0, column = 0;
+                expressionRangeForBytecodeOffset(instructionOffset, divot, startOffset, endOffset, line, column);
+
+                location->m_line = line;
+                location->m_column = column;
+                location->m_sourceID = m_ownerExecutable->sourceID();
+
+                // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
+                SymbolTable* symbolTable = 0;
+                if (op.type == ClosureVar) 
+                    symbolTable = op.activation->symbolTable();
+                else if (op.type == GlobalVar)
+                    symbolTable = m_globalObject.get()->symbolTable();
+                
+                if (symbolTable) {
+                    ConcurrentJITLocker locker(symbolTable->m_lock);
+                    location->m_globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
+                    location->m_globalTypeSet =symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
+                } else
+                    location->m_globalVariableID = HighFidelityNoGlobalIDExists;
+
+                vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+                instructions[i + 7].u.location = location;
+            }
             break;
         }
+
+        case op_profile_types_with_high_fidelity: {
+
+            VirtualRegister virtualRegister(pc[1].u.operand);
+            SymbolTable* symbolTable = m_symbolTable.get();
+            TypeLocation* location = vm()->nextLocation();
+            size_t instructionOffset = i + opLength - 1;
+            int divot, startOffset, endOffset; 
+            unsigned line = 0, column = 0;
+            expressionRangeForBytecodeOffset(instructionOffset, divot, startOffset, endOffset, line, column);
+
+            int hasGlobalIDFlag = pc[3].u.operand;
+            if (hasGlobalIDFlag) {
+                ConcurrentJITLocker locker(symbolTable->m_lock);
+                location->m_globalVariableID = symbolTable->uniqueIDForRegister(locker, virtualRegister.offset(), *vm());
+                location->m_globalTypeSet = symbolTable->globalTypeSetForRegister(locker, virtualRegister.offset(), *vm());
+            } else
+                location->m_globalVariableID = HighFidelityNoGlobalIDExists;
             
+
+            location->m_line = line;
+            location->m_column = column;
+            location->m_sourceID = m_ownerExecutable->sourceID();
+
+            vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+            instructions[i + 2].u.location = location;
+            break;
+        }
+
+
         case op_captured_mov:
         case op_new_captured_func: {
             if (pc[3].u.index == UINT_MAX) {
@@ -2185,6 +2375,8 @@ void CodeBlock::finalizeUnconditionally()
                 if (Options::verboseOSR())
                     dataLogF("Clearing LLInt to_this with structure %p.\n", curInstruction[2].u.structure.get());
                 curInstruction[2].u.structure.clear();
+                curInstruction[3].u.toThisStatus = merge(
+                    curInstruction[3].u.toThisStatus, ToThisClearedByGC);
                 break;
             case op_get_callee:
                 if (!curInstruction[2].u.jsCell || Heap::isMarked(curInstruction[2].u.jsCell.get()))
@@ -2203,6 +2395,7 @@ void CodeBlock::finalizeUnconditionally()
                 break;
             }
             case op_get_from_scope:
+            case op_put_to_scope_with_profile:
             case op_put_to_scope: {
                 ResolveModeAndType modeAndType =
                     ResolveModeAndType(curInstruction[4].u.operand);

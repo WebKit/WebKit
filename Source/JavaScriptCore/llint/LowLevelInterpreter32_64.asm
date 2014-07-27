@@ -760,11 +760,11 @@ _llint_op_to_this:
     bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
     loadpFromInstruction(2, t2)
     bpneq JSCell::m_structureID[t0], t2, .opToThisSlow
-    dispatch(3)
+    dispatch(4)
 
 .opToThisSlow:
     callSlowPath(_slow_path_to_this)
-    dispatch(3)
+    dispatch(4)
 
 
 _llint_op_new_object:

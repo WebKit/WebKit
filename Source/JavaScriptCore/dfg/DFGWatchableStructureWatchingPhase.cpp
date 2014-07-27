@@ -77,7 +77,6 @@ public:
                     break;
                 
                 case PutStructure:
-                case PhantomPutStructure:
                 case AllocatePropertyStorage:
                 case ReallocatePropertyStorage:
                     RELEASE_ASSERT(node->transition()->previous->transitionWatchpointSetHasBeenInvalidated());

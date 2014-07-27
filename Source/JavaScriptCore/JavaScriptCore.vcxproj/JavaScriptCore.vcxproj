@@ -347,6 +347,7 @@
     <ClCompile Include="..\bytecode\StructureSet.cpp" />
     <ClCompile Include="..\bytecode\StructureStubClearingWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\StructureStubInfo.cpp" />
+    <ClCompile Include="..\bytecode\ToThisStatus.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
@@ -354,8 +355,8 @@
     <ClCompile Include="..\bytecompiler\BytecodeGenerator.cpp" />
     <ClCompile Include="..\bytecompiler\NodesCodegen.cpp" />
     <ClCompile Include="..\debugger\Debugger.cpp" />
-    <ClCompile Include="..\debugger\DebuggerActivation.cpp" />
     <ClCompile Include="..\debugger\DebuggerCallFrame.cpp" />
+    <ClCompile Include="..\debugger\DebuggerScope.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractHeap.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractValue.cpp" />
     <ClCompile Include="..\dfg\DFGArgumentsSimplificationPhase.cpp" />
@@ -682,6 +683,8 @@
     <ClCompile Include="..\runtime\FunctionExecutableDump.cpp" />
     <ClCompile Include="..\runtime\FunctionPrototype.cpp" />
     <ClCompile Include="..\runtime\GetterSetter.cpp" />
+    <ClCompile Include="..\runtime\HighFidelityLog.cpp" />
+    <ClCompile Include="..\runtime\HighFidelityTypeProfiler.cpp" />
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
@@ -789,6 +792,7 @@
     <ClCompile Include="..\runtime\TestRunnerUtils.cpp" />
     <ClCompile Include="..\runtime\TypedArrayController.cpp" />
     <ClCompile Include="..\runtime\TypedArrayType.cpp" />
+    <ClCompile Include="..\runtime\TypeSet.cpp" />
     <ClCompile Include="..\runtime\VM.cpp" />
     <ClCompile Include="..\runtime\VMEntryScope.cpp" />
     <ClCompile Include="..\runtime\Watchdog.cpp" />
@@ -937,6 +941,8 @@
     <ClInclude Include="..\bytecode\StructureSet.h" />
     <ClInclude Include="..\bytecode\StructureStubClearingWatchpoint.h" />
     <ClInclude Include="..\bytecode\StructureStubInfo.h" />
+    <ClInclude Include="..\bytecode\ToThisStatus.h" />
+    <ClInclude Include="..\bytecode\TypeLocation.h" />
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h" />
     <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h" />
     <ClInclude Include="..\bytecode\ValueProfile.h" />
@@ -951,9 +957,9 @@
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\debugger\Breakpoint.h" />
     <ClInclude Include="..\debugger\Debugger.h" />
-    <ClInclude Include="..\debugger\DebuggerActivation.h" />
     <ClInclude Include="..\debugger\DebuggerCallFrame.h" />
     <ClInclude Include="..\debugger\DebuggerPrimitives.h" />
+    <ClInclude Include="..\debugger\DebuggerScope.h" />
     <ClInclude Include="..\dfg\DFGAbstractHeap.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreter.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreterInlines.h" />
@@ -1405,6 +1411,8 @@
     <ClInclude Include="..\runtime\GenericTypedArrayView.h" />
     <ClInclude Include="..\runtime\GenericTypedArrayViewInlines.h" />
     <ClInclude Include="..\runtime\GetterSetter.h" />
+    <ClInclude Include="..\runtime\HighFidelityLog.h" />
+    <ClInclude Include="..\runtime\HighFidelityTypeProfiler.h" />
     <ClInclude Include="..\runtime\Identifier.h" />
     <ClInclude Include="..\runtime\IndexingHeader.h" />
     <ClInclude Include="..\runtime\IndexingHeaderInlines.h" />
@@ -1561,6 +1569,7 @@
     <ClInclude Include="..\runtime\TypedArrayController.h" />
     <ClInclude Include="..\runtime\TypedArrayInlines.h" />
     <ClInclude Include="..\runtime\TypedArrayType.h" />
+    <ClInclude Include="..\runtime\TypeSet.h" />
     <ClInclude Include="..\runtime\TypedArrays.h" />
     <ClInclude Include="..\runtime\Uint16Array.h" />
     <ClInclude Include="..\runtime\Uint16WithFraction.h" />

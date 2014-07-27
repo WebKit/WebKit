@@ -28,6 +28,7 @@
     NoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
+    DOMString description(any value);
 
     [RaisesException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);

@@ -75,6 +75,7 @@ public:
     String elementRenderTreeAsText(Element*, ExceptionCode&);
 
     String address(Node*);
+    String description(Deprecated::ScriptValue);
 
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);

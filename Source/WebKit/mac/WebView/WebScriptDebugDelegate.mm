@@ -37,7 +37,6 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/runtime_root.h>
 #import <debugger/Debugger.h>
-#import <debugger/DebuggerActivation.h>
 #import <interpreter/CallFrame.h>
 #import <runtime/Completion.h>
 #import <runtime/JSFunction.h>

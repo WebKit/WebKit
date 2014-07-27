@@ -83,17 +83,14 @@ void StructureAbstractValue::clobber()
 void StructureAbstractValue::observeTransition(Structure* from, Structure* to)
 {
     SAMPLE("StructureAbstractValue observeTransition");
+    
+    ASSERT(!from->dfgShouldWatch());
 
     if (isTop())
         return;
     
     if (!m_set.contains(from))
         return;
-    
-    if (from->dfgShouldWatch()) {
-        setClobbered(true);
-        return;
-    }
     
     if (!m_set.add(to))
         return;
@@ -111,13 +108,12 @@ void StructureAbstractValue::observeTransitions(const TransitionVector& vector)
     
     StructureSet newStructures;
     for (unsigned i = vector.size(); i--;) {
+        ASSERT(!vector[i].previous->dfgShouldWatch());
+
         if (!m_set.contains(vector[i].previous))
             continue;
         
-        if (vector[i].previous->dfgShouldWatch())
-            setClobbered(true);
-        else
-            newStructures.add(vector[i].next);
+        newStructures.add(vector[i].next);
     }
     
     if (!m_set.merge(newStructures))

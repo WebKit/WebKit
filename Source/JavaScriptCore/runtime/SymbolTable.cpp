@@ -103,6 +103,11 @@ SymbolTable::SymbolTable(VM& vm)
     , m_captureEnd(0)
     , m_functionEnteredOnce(ClearWatchpoint)
 {
+    if (vm.isProfilingTypesWithHighFidelity()) {
+        m_uniqueIDMap = std::make_unique<UniqueIDMap>();
+        m_registerToVariableMap = std::make_unique<RegisterToVariableMap>();
+        m_uniqueTypeSetMap = std::make_unique<UniqueTypeSetMap>();
+    }
 }
 
 SymbolTable::~SymbolTable() { }
@@ -157,8 +162,71 @@ SymbolTable* SymbolTable::cloneCapturedNames(VM& vm)
         for (unsigned i = parameterCount(); i--;)
             result->m_slowArguments[i] = m_slowArguments[i];
     }
+
+    if (m_uniqueIDMap && result->m_uniqueIDMap) {
+
+        {
+            auto iter = m_uniqueIDMap->begin();
+            auto end = m_uniqueIDMap->end();
+            for (; iter != end; ++iter)
+                result->m_uniqueIDMap->set(iter->key, iter->value);
+        }
+
+        {
+            auto iter = m_registerToVariableMap->begin();
+            auto end = m_registerToVariableMap->end();
+            for (; iter != end; ++iter)
+                result->m_registerToVariableMap->set(iter->key, iter->value);
+        }
+
+        {
+            auto iter = m_uniqueTypeSetMap->begin();
+            auto end = m_uniqueTypeSetMap->end();
+            for (; iter != end; ++iter)
+                result->m_uniqueTypeSetMap->set(iter->key, iter->value);
+        }
+    }
+
     
     return result;
+}
+
+int64_t SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM& vm)
+{
+    auto iter = m_uniqueIDMap->find(key);
+    auto end = m_uniqueIDMap->end();
+    ASSERT_UNUSED(end, iter != end);
+
+    int64_t& id = iter->value;
+    if (id == HighFidelityNeedsUniqueIDGeneration) {
+        id = vm.getNextUniqueVariableID();
+        m_uniqueTypeSetMap->set(key, TypeSet::create()); //make a new global typeset for the ID
+    }
+         
+    return id;
+}
+
+int64_t SymbolTable::uniqueIDForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm)
+{
+    auto iter = m_registerToVariableMap->find(registerIndex);
+    auto end = m_registerToVariableMap->end();
+    ASSERT_UNUSED(end, iter != end);
+    return uniqueIDForVariable(locker, iter->value.get(), vm);
+}
+
+RefPtr<TypeSet> SymbolTable::globalTypeSetForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm)
+{
+    uniqueIDForRegister(locker, registerIndex, vm); //ensure it's created
+    auto iter = m_registerToVariableMap->find(registerIndex);
+    auto end = m_registerToVariableMap->end();
+    ASSERT_UNUSED(end, iter != end);
+    return globalTypeSetForVariable(locker, iter->value.get(), vm);
+}
+
+RefPtr<TypeSet> SymbolTable::globalTypeSetForVariable(const ConcurrentJITLocker& locker, StringImpl* key, VM& vm)
+{
+    uniqueIDForVariable(locker, key, vm);
+    return m_uniqueTypeSetMap->find(key)->value;
 }
 
 } // namespace JSC
