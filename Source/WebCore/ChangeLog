@@ -1,3 +1,36 @@
+2014-07-28  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r169105): Crash in selection
+        https://bugs.webkit.org/show_bug.cgi?id=134303
+
+        Reviewed by Mihnea Ovidenie.
+
+        When splitting the selection between different subtrees, all subtrees must have their selection cleared before
+        starting to apply the new selection. Otherwise, when selecting objects in a named flow thread and going up
+        its containing block chain, we can end up in the view's selection root, which has not yet been updated and so
+        we get inconsistent data.
+
+        To achieve this goal, the selection update was split into a "clear" and an "apply" method. The updateSelectionForSubtrees
+        method first iterates through all subtrees and performs the "clear" method and then starts all over again
+        and performs the "apply" method.
+
+        Test: fast/regions/selection/crash-deselect.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderSelectionInfo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::splitSelectionBetweenSubtrees):
+        (WebCore::RenderView::updateSelectionForSubtrees): Added, clears and re-applies selection for all selection subtrees.
+        (WebCore::RenderView::clearSubtreeSelection): Added, clears selection and returns previously selected information.
+        (WebCore::RenderView::applySubtreeSelection): Added, updates the selection status of all objects inside the selection tree, compares old and new data and repaints accordingly.
+        (WebCore::RenderView::setSubtreeSelection): Deleted.
+        * rendering/RenderView.h:
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeRoot):
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionSubtreeRoot::OldSelectionData::OldSelectionData):
+
 2014-07-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS: Fix :visited behavior for SubSelectors

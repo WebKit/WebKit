@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html id="webtest0">
+    <head id="webtest1">
+        <style id="webtest2"></style>
+        <style>
+            :last-child { -webkit-flow-into: foo; }
+        </style>
+        
+    </head>
+    <body id="webtest3">
+        <script id="example"></script>
+
+        <script type="text/javascript">
+            if (window.testRunner)
+                testRunner.dumpAsText(false);
+        </script>
+
+        <script>
+            var new_elem = document.createElement("canvas");
+            new_elem.setAttribute("id", "webtest11");
+            document.querySelector("#webtest0").appendChild(new_elem);
+
+            document.write("<br><summary>");
+        </script>
+        <summary>
+            <mathml id="webtest12">
+                <femerge></femerge>
+            </mathml>
+
+            <script>
+                function selectionTest() {
+                    try {
+                        wf_i = 0;
+                        for (; wf_i<40; wf_i++) {
+                            var range = document.createRange();
+
+                            range.setStartBefore(document.getElementById("webtest3"));
+                            range.setEndAfter(document.getElementById("webtest2"));
+                            range.deleteContents();
+                            
+                            var markElement = document.getElementById("webtest1").appendChild(document.createElementNS("", "mark"));
+                            range.setStartAfter(markElement);
+
+                            var appletElement = document.getElementById("example").appendChild(document.createElement("applet"));
+                            range.setEndAfter(appletElement);
+
+                            range.insertNode(document.getElementById("example"));
+                        }
+                    } catch(e) {
+                      document.write("Errlog selectionTest: " + e.name + ": " + e.message + " : index " + wf_i + " <br><table/>");
+                    }
+                }
+                selectionTest();
+            </script>
+            <sub>
+
+            <script>
+                document.designMode = "on";
+                document.execCommand("SelectAll");
+                document.write("Errlog webtest_fn_24: <br><nobr>");
+
+                var femergeElement = document.getElementById("webtest12").appendChild(document.createElement("femerge"));
+                var appletElement = document.getElementById("example").appendChild(document.createElement("applet"));
+                var gradientElement = document.body.appendChild(document.createElement("gradient"));
+                        
+                document.getElementById("webtest2").isEqualNode(femergeElement.insertBefore(document.documentElement, gradientElement));
+            </script>
+
+            <table></table>
+        </summary>
+    </body>
+</html>

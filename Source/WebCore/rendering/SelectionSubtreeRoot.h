@@ -31,6 +31,7 @@
 #define SelectionSubtreeRoot_h
 
 #include "RenderObject.h"
+#include "RenderSelectionInfo.h"
 
 namespace WebCore {
 
@@ -38,8 +39,28 @@ class Document;
 
 class SelectionSubtreeRoot {
 public:
+    
+    typedef HashMap<RenderObject*, std::unique_ptr<RenderSelectionInfo>> SelectedObjectMap;
+    typedef HashMap<RenderBlock*, std::unique_ptr<RenderBlockSelectionInfo>> SelectedBlockMap;
+    typedef HashMap<SelectionSubtreeRoot*, SelectionSubtreeRoot> RenderSubtreesMap;
+
+    struct OldSelectionData {
+        OldSelectionData()
+            : selectionStartPos(-1)
+            , selectionEndPos(-1)
+        {
+        }
+
+        int selectionStartPos;
+        int selectionEndPos;
+        SelectedObjectMap selectedObjects;
+        SelectedBlockMap selectedBlocks;
+    };
+    
+    typedef HashMap<SelectionSubtreeRoot*, std::unique_ptr<OldSelectionData>> SubtreeOldSelectionDataMap;
 
     SelectionSubtreeRoot();
+    SelectionSubtreeRoot(RenderObject* selectionStart, int selectionStartPos, RenderObject* selectionEnd, int selectionEndPos);
 
     RenderObject* selectionStart() const { return m_selectionStart; }
     int selectionStartPos() const { return m_selectionStartPos; }

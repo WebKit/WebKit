@@ -45,6 +45,14 @@ SelectionSubtreeRoot::SelectionSubtreeRoot()
 {
 }
 
+SelectionSubtreeRoot::SelectionSubtreeRoot(RenderObject* selectionStart, int selectionStartPos, RenderObject* selectionEnd, int selectionEndPos)
+    : m_selectionStart(selectionStart)
+    , m_selectionStartPos(selectionStartPos)
+    , m_selectionEnd(selectionEnd)
+    , m_selectionEndPos(selectionEndPos)
+{
+}
+
 void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
 {
     if (selectionClear())
