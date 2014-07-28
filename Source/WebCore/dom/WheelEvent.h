@@ -77,7 +77,7 @@ public:
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
-    const PlatformWheelEvent* wheelEvent() const { return m_wheelEvent.get(); }
+    const PlatformWheelEvent* wheelEvent() const { return m_initializedWithPlatformWheelEvent ? &m_wheelEvent : nullptr; }
     double deltaX() const { return m_deltaX; } // Positive when scrolling right.
     double deltaY() const { return m_deltaY; } // Positive when scrolling down.
     double deltaZ() const { return m_deltaZ; }
@@ -86,7 +86,7 @@ public:
     int wheelDeltaY() const { return m_wheelDelta.y(); } // Deprecated, negative when scrolling down.
     unsigned deltaMode() const { return m_deltaMode; }
 
-    bool webkitDirectionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
+    bool webkitDirectionInvertedFromDevice() const { return m_wheelEvent.directionInvertedFromDevice(); }
     // Needed for Objective-C legacy support
     bool isHorizontal() const { return m_wheelDelta.x(); }
 
@@ -94,8 +94,8 @@ public:
     virtual bool isMouseEvent() const override;
 
 #if PLATFORM(MAC)
-    PlatformWheelEventPhase phase() const { return m_phase; }
-    PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
+    PlatformWheelEventPhase phase() const { return m_wheelEvent.phase(); }
+    PlatformWheelEventPhase momentumPhase() const { return m_wheelEvent.momentumPhase(); }
 #endif
 
 private:
@@ -110,13 +110,8 @@ private:
     double m_deltaY;
     double m_deltaZ;
     unsigned m_deltaMode;
-    bool m_directionInvertedFromDevice;
-    std::unique_ptr<PlatformWheelEvent> m_wheelEvent;
-
-#if PLATFORM(MAC)
-    PlatformWheelEventPhase m_phase;
-    PlatformWheelEventPhase m_momentumPhase;
-#endif
+    PlatformWheelEvent m_wheelEvent;
+    bool m_initializedWithPlatformWheelEvent;
 };
 
 EVENT_TYPE_CASTS(WheelEvent)

@@ -50,7 +50,7 @@ WheelEvent::WheelEvent()
     , m_deltaY(0)
     , m_deltaZ(0)
     , m_deltaMode(DOM_DELTA_PIXEL)
-    , m_directionInvertedFromDevice(false)
+    , m_initializedWithPlatformWheelEvent(false)
 {
 }
 
@@ -61,6 +61,7 @@ WheelEvent::WheelEvent(const AtomicString& type, const WheelEventInit& initializ
     , m_deltaY(initializer.deltaY ? initializer.deltaY : -initializer.wheelDeltaY)
     , m_deltaZ(initializer.deltaZ)
     , m_deltaMode(initializer.deltaMode)
+    , m_initializedWithPlatformWheelEvent(false)
 {
 }
 
@@ -75,12 +76,8 @@ WheelEvent::WheelEvent(const PlatformWheelEvent& event, PassRefPtr<AbstractView>
     , m_deltaY(-event.deltaY())
     , m_deltaZ(0)
     , m_deltaMode(determineDeltaMode(event))
-    , m_directionInvertedFromDevice(event.directionInvertedFromDevice())
-    , m_wheelEvent(std::make_unique<PlatformWheelEvent>(event))
-#if PLATFORM(MAC)
-    , m_phase(event.phase())
-    , m_momentumPhase(event.momentumPhase())
-#endif
+    , m_wheelEvent(event)
+    , m_initializedWithPlatformWheelEvent(true)
 {
 }
 
@@ -103,7 +100,6 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     m_deltaY = -rawDeltaY;
 
     m_deltaMode = DOM_DELTA_PIXEL;
-    m_directionInvertedFromDevice = false;
 
     initCoordinates(IntPoint(pageX, pageY));
 }

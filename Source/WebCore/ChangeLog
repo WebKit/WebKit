@@ -1,3 +1,25 @@
+2014-07-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Let WheelEvent wrap a PlatformWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=135244
+
+        WheelEvent now wraps a PlatformWheelEvent. m_directionInvertedFromDevice, as well as m_phase and m_momentumPhase
+        have been removed, since the information is redundant in PlatformWheelEvent. Note that deltaX and deltaY have
+        NOT been replaced, since we need double precision instead of float precision.
+
+        Reviewed by Beth Dakin.
+
+        No new tests, since behavior should not have changed.
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::wheelEvent): Returns a non-null pointer to the PlatformWheelEvent iff WheelEvent was initialized by PlatformWheelEvent.
+        (WebCore::WheelEvent::webkitDirectionInvertedFromDevice): Updated to use PlatformWheelEvent.
+        (WebCore::WheelEvent::phase): Updated to use PlatformWheelEvent.
+        (WebCore::WheelEvent::momentumPhase): Updated to use PlatformWheelEvent.
+
 2014-07-28  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed 'merge' fix.
