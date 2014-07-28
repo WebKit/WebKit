@@ -708,10 +708,14 @@ private:
                 fixEdge<BooleanUse>(node->child1());
             else if (node->child1()->shouldSpeculateObjectOrOther())
                 fixEdge<ObjectOrOtherUse>(node->child1());
-            else if (node->child1()->shouldSpeculateInt32OrBoolean())
-                fixIntOrBooleanEdge(node->child1());
-            else if (node->child1()->shouldSpeculateNumberOrBoolean())
-                fixDoubleOrBooleanEdge(node->child1());
+            // FIXME: We should just be able to do shouldSpeculateInt32OrBoolean() and
+            // shouldSpeculateNumberOrBoolean() here, but we can't because then the Branch
+            // could speculate on the result of a non-speculative conversion node.
+            // https://bugs.webkit.org/show_bug.cgi?id=126778
+            else if (node->child1()->shouldSpeculateInt32())
+                fixEdge<Int32Use>(node->child1());
+            else if (node->child1()->shouldSpeculateNumber())
+                fixEdge<DoubleRepUse>(node->child1());
             break;
         }
             
@@ -1981,11 +1985,11 @@ private:
     {
         // Terminal nodes don't need post-phantoms, and inserting them would violate
         // the current requirement that a terminal is the last thing in a block. We
-        // should eventually change that requirement but even if we did, this would
-        // still be a valid optimization. All terminals accept just one input, and
-        // if that input is a conversion node then no further speculations will be
-        // performed.
-        
+        // should eventually change that requirement. Currently we get around this by
+        // ensuring that all terminals accept just one input, and if that input is a
+        // conversion node then no further speculations will be performed. See
+        // references to the bug, below, for places where we have to have hacks to
+        // work around this.
         // FIXME: Get rid of this by allowing Phantoms after terminals.
         // https://bugs.webkit.org/show_bug.cgi?id=126778
         
