@@ -384,7 +384,7 @@ enum TextAlignLast {
 };
 
 enum TextJustify {
-    TextJustifyAuto, TextJustifyNone, TextJustifyInterWord, TextJustifyInterIdeograph, TextJustifyInterCluster, TextJustifyDistribute, TextJustifyKashida
+    TextJustifyAuto, TextJustifyNone, TextJustifyInterWord, TextJustifyDistribute
 };
 #endif // CSS3_TEXT
 

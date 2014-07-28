@@ -244,10 +244,7 @@ justify
 //auto
 //none
 inter-word
-inter-ideograph
-inter-cluster
 distribute
-kashida
 //
 // CSS_PROP_LIST_STYLE_POSITION:
 //

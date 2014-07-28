@@ -1,3 +1,13 @@
+2014-07-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS3-Text] Adjust text-justify implementation to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=135317
+
+        Reviewed by Darin Adler.
+
+        * fast/css3-text/css3-text-justify/getComputedStyle/script-tests/getComputedStyle-text-justify-inherited.js:
+        * fast/css3-text/css3-text-justify/getComputedStyle/script-tests/getComputedStyle-text-justify.js:
+
 2014-07-28  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r169105): Crash in selection

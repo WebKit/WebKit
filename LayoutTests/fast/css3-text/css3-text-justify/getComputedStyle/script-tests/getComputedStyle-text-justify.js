@@ -49,10 +49,7 @@ debug('');
 valueSettingTest('auto');
 valueSettingTest('none');
 valueSettingTest('inter-word');
-valueSettingTest('inter-ideograph');
-valueSettingTest('inter-cluster');
 valueSettingTest('distribute');
-valueSettingTest('kashida');
 
 defaultValue = 'auto'
 e.style.webkitTextJustify = defaultValue;
@@ -66,6 +63,9 @@ invalidValueSettingTest('normal', defaultValue);
 invalidValueSettingTest('bold', defaultValue);
 invalidValueSettingTest('background', defaultValue);
 invalidValueSettingTest('ltr', defaultValue);
+invalidValueSettingTest('inter-ideograph', defaultValue);
+invalidValueSettingTest('inter-cluster', defaultValue);
+invalidValueSettingTest('kashida', defaultValue);
 
 computedValueSettingTest('inherit', 'auto');
 computedValueSettingTest('initial', 'auto');

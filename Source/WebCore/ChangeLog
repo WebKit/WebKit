@@ -1,3 +1,28 @@
+2014-07-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS3-Text] Adjust text-justify implementation to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=135317
+
+        Reviewed by Darin Adler.
+
+        Text-justify no longer accepts the following values: Inter-ideograph, inter-
+        cluster, and kashida. This patch removes them and updates the tests as well.
+
+        [1] http://dev.w3.org/csswg/css-text-3/#propdef-text-justify
+
+        Updated existing tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextJustify):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.h:
+
 2014-07-28  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r169105): Crash in selection

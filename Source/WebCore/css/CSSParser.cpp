@@ -973,8 +973,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextJustify:
-        // auto | none | inter-word | inter-ideograph | inter-cluster | distribute | kashida
-        if ((valueID >= CSSValueInterWord && valueID <= CSSValueKashida) || valueID == CSSValueAuto || valueID == CSSValueNone)
+        // auto | none | inter-word | distribute
+        if (valueID == CSSValueInterWord || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone)
             return true;
         break;
 #endif // CSS3_TEXT

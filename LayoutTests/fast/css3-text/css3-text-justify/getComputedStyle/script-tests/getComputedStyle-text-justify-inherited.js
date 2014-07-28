@@ -28,10 +28,7 @@ child = document.getElementById('child');
 inheritanceTest("auto");
 inheritanceTest("none");
 inheritanceTest("inter-word");
-inheritanceTest("inter-ideograph");
-inheritanceTest("inter-cluster");
 inheritanceTest("distribute");
-inheritanceTest("kashida");
 
-ownValueTest("inter-word", "inter-cluster");
-ownValueTest("inter-ideograph", "distribute");
+ownValueTest("inter-word", "distribute");
+ownValueTest("distribute", "none");
