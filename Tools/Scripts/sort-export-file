@@ -55,11 +55,8 @@ Usage: @{[ basename($0) ]} [options] [path/to/file.exp.in ...]
 
   Exit status:
        0      if OK
-
        1      if parse error
-
        2      if file(s) should be sorted (only with --dry-run)
-
        3      if parse error and file(s) should be sorted (only with --dry-run)
 END
     exit 1;

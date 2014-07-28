@@ -1,3 +1,12 @@
+2014-07-28  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Followup fix after r171594
+        https://bugs.webkit.org/show_bug.cgi?id=135048
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/sort-export-file: Removed extra newlines from help.
+
 2014-07-25  Anders Carlsson  <andersca@apple.com>
 
         WKNavigation's properties are either always nil or don't behave as documented
