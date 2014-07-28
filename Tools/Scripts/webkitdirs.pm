@@ -49,9 +49,11 @@ BEGIN {
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
    @EXPORT      = qw(
+       &XcodeCoverageSupportOptions
        &XcodeOptionString
        &XcodeOptionStringNoConfig
        &XcodeOptions
+       &XcodeStaticAnalyzerOption
        &appDisplayNameFromBundle
        &baseProductDir
        &chdirWebKit
@@ -641,6 +643,11 @@ sub XcodeCoverageSupportOptions()
     push @coverageSupportOptions, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
     push @coverageSupportOptions, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
     return @coverageSupportOptions;
+}
+
+sub XcodeStaticAnalyzerOption()
+{
+    return "RUN_CLANG_STATIC_ANALYZER=YES";
 }
 
 my $passedConfiguration;

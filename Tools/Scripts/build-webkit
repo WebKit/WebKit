@@ -62,6 +62,7 @@ my $onlyWebKitProject = 0;
 my $noWebKit1 = 0;
 my $noWebKit2 = 0;
 my $coverageSupport = 0;
+my $shouldRunStaticAnalyzer = 0;
 my $startTime = time();
 
 my @features = getFeatureOptionList();
@@ -91,7 +92,8 @@ Usage: $programName [options] [options to pass to build system]
   --sdk=<sdk>                       Use a specific Xcode SDK (iOS and Mac only)
   --device                          Use the current iphoneos.internal SDK (iOS only)
   --simulator                       Use the current iphonesimulator SDK (iOS only)
-  --coverage                        Enable Code Coverage support (Mac only)
+  --coverage                        Enable code coverage support (Mac only)
+  --analyze                         Enable static anaylsis (iOS and Mac only)
 
   --efl                             Build the EFL port
   --gtk                             Build the GTK+ port
@@ -125,6 +127,7 @@ my %options = (
     'no-webkit1' => \$noWebKit1,
     'no-webkit2' => \$noWebKit2,
     'coverage' => \$coverageSupport,
+    'analyze' => \$shouldRunStaticAnalyzer,
 );
 
 # Build usage text and options list from features
@@ -284,6 +287,7 @@ for my $dir (@projects) {
     if (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
+        push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
         if (isIOSWebKit()){
             push @local_options, qw(-target WebKitTestRunnerApp) if ($project eq "WebKitTestRunner") && !$clean;
