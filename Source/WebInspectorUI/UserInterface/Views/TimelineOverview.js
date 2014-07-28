@@ -234,8 +234,10 @@ WebInspector.TimelineOverview.prototype = {
             delete this._revealCurrentTime;
         }
 
+        const visibleDuration = this.visibleDuration;
+
         // Clamp the scroll start time to match what the scroll bar would allow.
-        var scrollStartTime = Math.min(this._scrollStartTime, this._endTime - this.visibleDuration);
+        var scrollStartTime = Math.min(this._scrollStartTime, this._endTime - visibleDuration);
         scrollStartTime = Math.max(this._startTime, scrollStartTime);
 
         this._timelineRuler.zeroTime = this._startTime;
@@ -253,7 +255,7 @@ WebInspector.TimelineOverview.prototype = {
             timelineOverviewGraph.zeroTime = this._startTime;
             timelineOverviewGraph.startTime = scrollStartTime;
             timelineOverviewGraph.currentTime = this._currentTime;
-            timelineOverviewGraph.endTime = scrollStartTime + this.visibleDuration;
+            timelineOverviewGraph.endTime = scrollStartTime + visibleDuration;
             timelineOverviewGraph.updateLayout();
         }
     },

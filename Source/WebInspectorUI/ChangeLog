@@ -1,3 +1,50 @@
+2014-07-28  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171645. <rdar://problem/17818693>
+
+    2014-07-26  Joseph Pecoraro  <pecoraro@apple.com>
+    
+            Web Inspector: Timelines performance is very slow, has many forced layouts
+            https://bugs.webkit.org/show_bug.cgi?id=135313
+    
+            Reviewed by Timothy Hatcher.
+    
+            * UserInterface/Views/NavigationItem.js:
+            (WebInspector.NavigationItem):
+            (WebInspector.NavigationItem.prototype.get hidden):
+            (WebInspector.NavigationItem.prototype.set hidden):
+            Don't have the parent navigation bar update layout if the hidden state did not change.
+            This greatly reduces the number of forced layouts as timeline nodes are added.
+    
+            * UserInterface/Views/NavigationSidebarPanel.js:
+            (WebInspector.NavigationSidebarPanel.prototype.showEmptyContentPlaceholder):
+            (WebInspector.NavigationSidebarPanel.prototype.hideEmptyContentPlaceholder):
+            Don't do any work if this is not changing the view.
+    
+            (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibilitySoon):
+            (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+            (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+            When first selecting a specific timeline (Layout / Scripts) we would have a very long hang
+            updating the content. Most of this was time spent updating the overflow shadow visibility
+            because every single tree element addition was causing a layout invalidation and forced layout.
+            Coalesce all of the tree element adds into a single update at the end.
+    
+            * UserInterface/Views/TimelineOverview.js:
+            (WebInspector.TimelineOverview.prototype.updateLayout):
+            Calculating the visible duration checks offsetLeft. Calculate this once, outside
+            of a loop down below, to prevent or reduce possible forced layouts.
+    
+            * UserInterface/Views/TreeOutline.js:
+            (TreeElement.prototype.revealed):
+            Prevent doing any work for timeline tree elements outside of the selected time range.
+            Previously they were considered revealed if a parent was expanded, even though that
+            parent was hidden. This greatly reduces the amount of work during a recording, since
+            previously we were potentially doing a forced layout for hidden nodes.
+    
+            * UserInterface/Views/TimelineSidebarPanel.js:
+            (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.looselyCompareRepresentedObjects):
+            Ignore ProfileNode, which may happen here in the Script timeline.
+    
 2014-07-22  Dana Burkart  <dburkart@apple.com>
 
         Merge r171312.

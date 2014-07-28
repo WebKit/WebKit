@@ -197,6 +197,9 @@ WebInspector.TimelineSidebarPanel.prototype = {
                 return false;
             }
 
+            if (candidateRepresentedObject instanceof WebInspector.ProfileNode)
+                return false;
+
             console.error("Unknown TreeElement");
             return false;
         }
