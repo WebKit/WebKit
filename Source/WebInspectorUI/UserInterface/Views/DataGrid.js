@@ -1129,7 +1129,7 @@ WebInspector.DataGrid.prototype = {
         if (this.dataGrid._refreshCallback && (!gridNode || gridNode !== this.placeholderNode))
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback.bind(this));
 
-        if (gridNode && gridNode.selectable && !gridNode.isEventWithinDisclosureTriangle(event)) {
+        if (gridNode && gridNode.selectable && gridNode.copyable && !gridNode.isEventWithinDisclosureTriangle(event)) {
             contextMenu.appendItem(WebInspector.UIString("Copy Row"), this._copyRow.bind(this, event.target));
 
             if (this.dataGrid._editCallback) {
@@ -1312,6 +1312,7 @@ WebInspector.DataGridNode = function(data, hasChildren)
 {
     this._expanded = false;
     this._selected = false;
+    this._copyable = true;
     this._shouldRefreshChildren = true;
     this._data = data || {};
     this.hasChildren = hasChildren || false;
@@ -1327,6 +1328,16 @@ WebInspector.DataGridNode.prototype = {
     get selectable()
     {
         return !this._element || !this._element.classList.contains("hidden");
+    },
+
+    get copyable()
+    {
+        return this._copyable;
+    },
+
+    set copyable(x)
+    {
+        this._copyable = x;
     },
 
     get element()

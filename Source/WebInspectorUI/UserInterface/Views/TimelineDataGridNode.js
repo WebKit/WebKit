@@ -27,6 +27,8 @@ WebInspector.TimelineDataGridNode = function(graphOnly, graphDataSource, hasChil
 {
     WebInspector.DataGridNode.call(this, {}, hasChildren);
 
+    this.copyable = false;
+
     this._graphOnly = graphOnly || false;
     this._graphDataSource = graphDataSource || null;
 
