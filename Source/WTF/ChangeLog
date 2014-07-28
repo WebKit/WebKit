@@ -1,3 +1,16 @@
+2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        Should not export symbols for base64Encode inline adapter methods
+        https://bugs.webkit.org/show_bug.cgi?id=135355
+
+        Unreviewed build fix.
+
+        Fixes the build break introduced by r171682, where a base64Encode
+        inline adapter method was used in another header, thus creating
+        multiple definitions of it (and problems with with weak symbols).
+
+        * wtf/text/Base64.h: Remove WTF_EXPORT_PRIVATE for inlined methods.
+
 2014-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.
