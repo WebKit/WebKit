@@ -15,29 +15,17 @@ Value of ancestor is 'inter-word':
 PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-word'
 PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-word'
 
-Value of ancestor is 'inter-ideograph':
-PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-ideograph'
-PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-ideograph'
-
-Value of ancestor is 'inter-cluster':
-PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-cluster'
-PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-cluster'
-
 Value of ancestor is 'distribute':
 PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'distribute'
 PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'distribute'
 
-Value of ancestor is 'kashida':
-PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'kashida'
-PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'kashida'
-
-Value of ancestor is 'inter-word, while child is 'inter-cluster':
+Value of ancestor is 'inter-word, while child is 'distribute':
 PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-word'
-PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-cluster'
-
-Value of ancestor is 'inter-ideograph, while child is 'distribute':
-PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-ideograph'
 PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'distribute'
+
+Value of ancestor is 'distribute, while child is 'none':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-justify').cssText is 'distribute'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-justify').cssText is 'none'
 
 PASS successfullyParsed is true
 

@@ -25,29 +25,11 @@ PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-word'
 PASS computedStyle.webkitTextJustify is 'inter-word'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-word'
 
-Value 'inter-ideograph':
-PASS e.style.webkitTextJustify is 'inter-ideograph'
-PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-ideograph'
-PASS computedStyle.webkitTextJustify is 'inter-ideograph'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-ideograph'
-
-Value 'inter-cluster':
-PASS e.style.webkitTextJustify is 'inter-cluster'
-PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-cluster'
-PASS computedStyle.webkitTextJustify is 'inter-cluster'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'inter-cluster'
-
 Value 'distribute':
 PASS e.style.webkitTextJustify is 'distribute'
 PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'distribute'
 PASS computedStyle.webkitTextJustify is 'distribute'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'distribute'
-
-Value 'kashida':
-PASS e.style.webkitTextJustify is 'kashida'
-PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'kashida'
-PASS computedStyle.webkitTextJustify is 'kashida'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'kashida'
 
 Invalid value test - '-webkit-left':
 PASS e.style.webkitTextJustify is 'auto'
@@ -104,6 +86,24 @@ PASS computedStyle.webkitTextJustify is 'auto'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
 
 Invalid value test - 'ltr':
+PASS e.style.webkitTextJustify is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
+PASS computedStyle.webkitTextJustify is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
+
+Invalid value test - 'inter-ideograph':
+PASS e.style.webkitTextJustify is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
+PASS computedStyle.webkitTextJustify is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
+
+Invalid value test - 'inter-cluster':
+PASS e.style.webkitTextJustify is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
+PASS computedStyle.webkitTextJustify is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
+
+Invalid value test - 'kashida':
 PASS e.style.webkitTextJustify is 'auto'
 PASS e.style.getPropertyCSSValue('-webkit-text-justify').cssText is 'auto'
 PASS computedStyle.webkitTextJustify is 'auto'

@@ -1,5 +1,14 @@
 2014-07-28  Zoltan Horvath  <zoltan@webkit.org>
 
+        [CSS3-Text] Update text-expectations after r171677
+
+        Unreviewed.
+
+        * fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify-expected.txt:
+        * fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify-inherited-expected.txt:
+
+2014-07-28  Zoltan Horvath  <zoltan@webkit.org>
+
         [CSS3-Text] Adjust text-justify implementation to the latest spec
         https://bugs.webkit.org/show_bug.cgi?id=135317
 
