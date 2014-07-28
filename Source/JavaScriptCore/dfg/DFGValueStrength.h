@@ -62,6 +62,8 @@ inline ValueStrength merge(ValueStrength a, ValueStrength b)
         return StrongValue;
     }
     RELEASE_ASSERT_NOT_REACHED();
+
+    return FragileValue;
 }
 
 } } // namespace JSC::DFG

@@ -40,6 +40,8 @@ Structure* PutByIdVariant::oldStructureForTransition() const
             return structure;
     }
     RELEASE_ASSERT_NOT_REACHED();
+
+    return nullptr;
 }
 
 bool PutByIdVariant::writesStructures() const

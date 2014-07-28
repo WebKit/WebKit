@@ -1,3 +1,14 @@
+2014-07-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on the EFL port
+
+        Build break because of -Werror=return-type
+
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::oldStructureForTransition):
+        * dfg/DFGValueStrength.h:
+        (JSC::DFG::merge):
+
 2014-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         [REGRESSION][ftlopt merge][32-bit] stress/prune-multi-put-by-offset-replace-or-transition-variant.js.dfg-eager hits an assertion in SpeculativeJIT::silentSavePlanForGPR
