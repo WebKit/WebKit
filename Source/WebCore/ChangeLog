@@ -1,3 +1,27 @@
+2014-07-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac, iOS] Paint-on closed captions get out-of-order in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=135332
+        <rdar://problem/15317278>
+
+        Reviewed by Brent Fulgham.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): If the
+        number of active cues is greater than the current set of CSS boxes representing
+        the cues, throw away the CSS boxes and re-layout all the cues.
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue): Add some logging.
+        (WebCore::InbandGenericTextTrack::removeGenericCue): Ditto.
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::isOrderedBefore): Revise ordering rules so that we put
+        newer cues earlier in the layout order so they are drawn towards the bottom
+        of the screen. Only do this for Generic captions.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings): Adjust logging
+        messages.
+        (WebCore::InbandTextTrackPrivateAVF::removeCompletedCues): Add logging.
+
 2014-07-28  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r160806): CSS zoom property doesn't work on anything inside anchors.
