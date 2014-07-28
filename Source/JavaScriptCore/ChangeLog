@@ -1,3 +1,10 @@
+2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        Unreviewed build fix after r171682.
+
+        * replay/EncodedValue.h: Don't mark the inlined Vector<char> specialization
+        as an exported symbol.
+
 2014-07-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION: JSObjectSetPrototype() does not work on result of JSGetGlobalObject()
