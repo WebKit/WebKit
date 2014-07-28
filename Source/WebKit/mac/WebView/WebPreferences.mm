@@ -554,7 +554,6 @@ public:
         [NSNumber numberWithInt:-1],      WebKitLayoutIntervalPreferenceKey,
         [NSNumber numberWithFloat:-1.0f], WebKitMaxParseDurationPreferenceKey,
         [NSNumber numberWithBool:NO],     WebKitAllowMultiElementImplicitFormSubmissionPreferenceKey,
-        [NSNumber numberWithInt:-1],      WebKitPageCacheSizePreferenceKey,
         [NSNumber numberWithBool:NO],     WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
         [NSNumber numberWithInt:InterpolationLow], WebKitInterpolationQualityPreferenceKey,
         [NSNumber numberWithBool:YES],    WebKitPasswordEchoEnabledPreferenceKey,
@@ -1444,26 +1443,6 @@ public:
 - (float)_maxParseDuration
 {
     return [self _floatValueForKey:WebKitMaxParseDurationPreferenceKey];
-}
-
-- (void)_setPageCacheSize:(int)size
-{
-    [self _setIntegerValue:size forKey:WebKitPageCacheSizePreferenceKey];
-}
-
-- (int)_pageCacheSize
-{
-    return [self _integerValueForKey:WebKitPageCacheSizePreferenceKey];
-}
-
-- (void)_setObjectCacheSize:(int)size
-{
-    [self _setIntegerValue:size forKey:WebKitObjectCacheSizePreferenceKey];
-}
-
-- (int)_objectCacheSize
-{
-    return [self _integerValueForKey:WebKitObjectCacheSizePreferenceKey];
 }
 
 - (void)_setAlwaysUseBaselineOfPrimaryFont:(BOOL)flag

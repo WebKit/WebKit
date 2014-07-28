@@ -95,10 +95,6 @@
 // default.
 #define WebKitEnableDeferredUpdatesPreferenceKey "WebKitEnableDeferredUpdates"
 
-// For debugging only.  Don't use these.
-#define WebKitPageCacheSizePreferenceKey "WebKitPageCacheSizePreferenceKey"
-#define WebKitObjectCacheSizePreferenceKey "WebKitObjectCacheSizePreferenceKey"
-
 // From WebHistory.h
 #define WebKitHistoryItemLimitKey "WebKitHistoryItemLimit" // default: "1000"
 #define WebKitHistoryAgeInDaysLimitKey "WebKitHistoryAgeInDaysLimit" // default: "7"

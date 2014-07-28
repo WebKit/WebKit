@@ -1,3 +1,19 @@
+2014-07-27  Pratik Solanki  <psolanki@apple.com>
+
+        Remove unused preference keys
+        https://bugs.webkit.org/show_bug.cgi?id=135280
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _setPageCacheSize:]): Deleted.
+        (-[WebPreferences _pageCacheSize]): Deleted.
+        (-[WebPreferences _setObjectCacheSize:]): Deleted.
+        (-[WebPreferences _objectCacheSize]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2014-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r170090, r170092, r170129, r170141, r170161, r170215, r170275, r170375, r170376, r170382, r170383, r170399, r170436, r170489, r170490, r170556 from ftlopt.

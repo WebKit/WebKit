@@ -1,3 +1,12 @@
+2014-07-27  Pratik Solanki  <psolanki@apple.com>
+
+        Remove unused preference keys
+        https://bugs.webkit.org/show_bug.cgi?id=135280
+
+        Reviewed by Darin Adler.
+
+        * WebPreferenceKeysPrivate.h:
+
 2014-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r171370.
