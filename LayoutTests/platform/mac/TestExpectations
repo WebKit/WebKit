@@ -1392,3 +1392,6 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failu
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
+
+# These features have been disabled on the branch.
+fast/css-grid-layout [ Skip ]
