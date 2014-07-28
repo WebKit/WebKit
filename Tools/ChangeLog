@@ -1,3 +1,12 @@
+2014-07-24  David Farler  <dfarler@apple.com>
+
+        ImageDiff builds for the simulator when running iOS layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=135270
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/build-imagediff: Added.
+
 2014-07-28  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Followup fix after r171594
