@@ -53,6 +53,7 @@ struct WebPageConfiguration;
 @package
     RefPtr<WebKit::WebPageProxy> _page;
     WKWebView *_webView;
+    BOOL _isBackground;
 }
 
 @property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;
@@ -60,6 +61,7 @@ struct WebPageConfiguration;
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isAssistingNode;
 @property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;
+@property (nonatomic, readonly) BOOL isBackground;
 
 - (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 

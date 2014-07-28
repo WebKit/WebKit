@@ -65,8 +65,8 @@
     _backgroundTask = UIBackgroundTaskInvalid;
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_applicationDidEnterBackgroundOrWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-    [center addObserver:self selector:@selector(_applicationDidEnterBackgroundOrWillEnterForeground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [center addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [center addObserver:self selector:@selector(_applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 
     return self;
 }
@@ -101,9 +101,15 @@
     }
 }
 
-- (void)_applicationDidEnterBackgroundOrWillEnterForeground:(NSNotification *)notification
+- (void)_applicationWillEnterForeground:(NSNotification *)notification
 {
-    _appIsBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+    _appIsBackground = NO;
+    [self _updateBackgroundTask];
+}
+
+- (void)_applicationDidEnterBackground:(NSNotification *)notification
+{
+    _appIsBackground = YES;
     [self _updateBackgroundTask];
 }
 

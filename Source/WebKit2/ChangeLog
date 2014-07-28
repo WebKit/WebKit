@@ -1,5 +1,40 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171663. <rdar://problem/17818308>
+
+    2014-07-27  Gavin Barraclough  <baraclough@apple.com>
+    
+            Don't rely on reading applicationState from within DidEnterBackground/WillEnterForeground
+            https://bugs.webkit.org/show_bug.cgi?id=135329
+            rdar://problem/17818308
+    
+            Reviewed by Sam Weinig.
+    
+            API may not be stable.
+    
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::isViewVisible):
+                - changed to use -[WKContentView isBackground]
+            * UIProcess/ios/ProcessAssertionIOS.mm:
+            (-[WKProcessAssertionBackgroundTaskManager init]):
+                - split notification handlers
+            (-[WKProcessAssertionBackgroundTaskManager _applicationWillEnterForeground:]):
+            (-[WKProcessAssertionBackgroundTaskManager _applicationDidEnterBackground:]):
+            (-[WKProcessAssertionBackgroundTaskManager _applicationDidEnterBackgroundOrWillEnterForeground:]): Deleted.
+                - Assume application is background is after DidEnterBackground, and not after WillEnterForeground
+            * UIProcess/ios/WKContentView.h:
+                - added isBackground.
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView initWithFrame:context:configuration:webView:]):
+                - check applicationState at init.
+            (-[WKContentView isBackground]):
+                - accessor
+            (-[WKContentView _applicationDidEnterBackground:]):
+            (-[WKContentView _applicationWillEnterForeground:]):
+                - update isBackground
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171651. <rdar://problem/17682120>
 
     2014-07-26  Enrica Casucci  <enrica@apple.com>

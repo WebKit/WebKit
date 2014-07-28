@@ -201,6 +201,8 @@ private:
     _page->setDelegatesScrolling(true);
 
     _webView = webView;
+    
+    _isBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
     WebContext::statistics().wkViewCount++;
 
@@ -284,6 +286,11 @@ private:
 - (BOOL)isAssistingNode
 {
     return [self isEditable];
+}
+
+- (BOOL)isBackground
+{
+    return _isBackground;
 }
 
 - (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight
@@ -504,11 +511,13 @@ private:
 
 - (void)_applicationDidEnterBackground:(NSNotification*)notification
 {
+    _isBackground = YES;
     _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
 }
 
 - (void)_applicationWillEnterForeground:(NSNotification*)notification
 {
+    _isBackground = NO;
     _page->applicationWillEnterForeground();
     if (auto drawingArea = _page->drawingArea())
         drawingArea->hideContentUntilNextUpdate();
