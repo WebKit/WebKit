@@ -35,6 +35,8 @@
 #include "CSSSegmentedFontFace.h"
 #include "Dictionary.h"
 #include "Document.h"
+#include "ExceptionCodeDescription.h"
+#include "Font.h"
 #include "FrameView.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -51,7 +53,7 @@ public:
         return adoptRef<LoadFontCallback>(new LoadFontCallback(numLoading, loadCallback, errorCallback));
     }
 
-    static PassRefPtr<LoadFontCallback> createFromParams(const Dictionary& params, const FontFamily& family)
+    static PassRefPtr<LoadFontCallback> createFromParams(const Dictionary& params, const Font& font)
     {
         RefPtr<VoidCallback> onsuccess;
         RefPtr<VoidCallback> onerror;
@@ -59,14 +61,14 @@ public:
         params.get("onerror", onerror);
         if (!onsuccess && !onerror)
             return 0;
-        int numFamilies = 0;
-        for (const FontFamily* f = &family; f; f = f->next())
-            numFamilies++;
+        int numFamilies = font.familyCount();
         return LoadFontCallback::create(numFamilies, onsuccess, onerror);
     }
 
     virtual void notifyLoaded() override;
     virtual void notifyError() override;
+    virtual ~LoadFontCallback() { };
+
 private:
     LoadFontCallback(int numLoading, PassRefPtr<VoidCallback> loadCallback, PassRefPtr<VoidCallback> errorCallback)
         : m_numLoading(numLoading)
@@ -234,10 +236,10 @@ void FontLoader::loadFont(const Dictionary& params)
     Font font;
     if (!resolveFontStyle(fontString, font))
         return;
-    RefPtr<LoadFontCallback> callback = LoadFontCallback::createFromParams(params, font.family());
+    RefPtr<LoadFontCallback> callback = LoadFontCallback::createFromParams(params, font);
     
-    for (const FontFamily* f = &font.family(); f; f = f->next()) {
-        CSSSegmentedFontFace* face = m_document->ensureStyleResolver()->fontSelector()->getFontFace(font.fontDescription(), f->family());
+    for (unsigned i = 0; i < font.familyCount(); i++) {
+        CSSSegmentedFontFace* face = m_document->ensureStyleResolver().fontSelector()->getFontFace(font.fontDescription(), font.familyAt(i));
         if (!face) {
             if (callback)
                 callback->notifyError();
@@ -253,17 +255,17 @@ bool FontLoader::checkFont(const String& fontString, const String&)
     Font font;
     if (!resolveFontStyle(fontString, font))
         return false;
-    for (const FontFamily* f = &font.family(); f; f = f->next()) {
-        CSSSegmentedFontFace* face = m_document->ensureStyleResolver()->fontSelector()->getFontFace(font.fontDescription(), f->family());
+    for (unsigned i = 0; i < font.familyCount(); i++) {
+        CSSSegmentedFontFace* face = m_document->ensureStyleResolver().fontSelector()->getFontFace(font.fontDescription(), font.familyAt(i));
         if (!face || !face->checkFont())
             return false;
     }
     return true;
 }
 
-static void applyPropertyToCurrentStyle(StyleResolver* styleResolver, CSSPropertyID id, const RefPtr<StyleProperties>& parsedStyle)
+static void applyPropertyToCurrentStyle(StyleResolver& styleResolver, CSSPropertyID id, const RefPtr<StyleProperties>& parsedStyle)
 {
-    styleResolver->applyPropertyToCurrentStyle(id, parsedStyle->getPropertyCSSValue(id).get());
+    styleResolver.applyPropertyToCurrentStyle(id, parsedStyle->getPropertyCSSValue(id).get());
 }
 
 bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
@@ -280,11 +282,8 @@ bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
 
     RefPtr<RenderStyle> style = RenderStyle::create();
 
-    FontFamily fontFamily;
-    fontFamily.setFamily(defaultFontFamily);
-
     FontDescription defaultFontDescription;
-    defaultFontDescription.setFamily(fontFamily);
+    defaultFontDescription.setOneFamily(defaultFontFamily);
     defaultFontDescription.setSpecifiedSize(defaultFontSize);
     defaultFontDescription.setComputedSize(defaultFontSize);
 
@@ -293,8 +292,8 @@ bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
     style->font().update(style->font().fontSelector());
 
     // Now map the font property longhands into the style.
-    StyleResolver* styleResolver = m_document->ensureStyleResolver();
-    styleResolver->applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), style.get());
+    StyleResolver& styleResolver = m_document->ensureStyleResolver();
+    styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), style.get());
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyFontStyle, parsedStyle);
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyFontVariant, parsedStyle);
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyFontWeight, parsedStyle);
@@ -302,13 +301,13 @@ bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
     // As described in BUG66291, setting font-size and line-height on a font may entail a CSSPrimitiveValue::computeLengthDouble call,
     // which assumes the fontMetrics are available for the affected font, otherwise a crash occurs (see http://trac.webkit.org/changeset/96122).
     // The updateFont() calls below update the fontMetrics and ensure the proper setting of font-size and line-height.
-    styleResolver->updateFont();
+    styleResolver.updateFont();
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyFontSize, parsedStyle);
-    styleResolver->updateFont();
+    styleResolver.updateFont();
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyLineHeight, parsedStyle);
 
     font = style->font();
-    font.update(styleResolver->fontSelector());
+    font.update(styleResolver.fontSelector());
     return true;
 }
 

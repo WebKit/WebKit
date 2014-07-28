@@ -1,3 +1,26 @@
+2014-07-28  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Update Font Loading Code
+        https://bugs.webkit.org/show_bug.cgi?id=135340
+
+        Reviewed by Antti Koivisto.
+
+        Update the Font Loading code to build again, as trunk has evolved
+        since the feature was originally written. Mostly, this requires
+        updating the code to work with the new Font representation.
+
+        The original tests were enabled only for the Chromium port.
+        They will need to be updated when the feature is enabled by default.
+
+        * WebCore.xcodeproj/project.pbxproj: Add missing files.
+        * css/FontLoader.cpp: Update to new Font representation.
+        (WebCore::LoadFontCallback::createFromParams):
+        (WebCore::LoadFontCallback::~LoadFontCallback):
+        (WebCore::FontLoader::loadFont):
+        (WebCore::FontLoader::checkFont):
+        (WebCore::applyPropertyToCurrentStyle):
+        (WebCore::FontLoader::resolveFontStyle):
+
 2014-07-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Let WheelEvent wrap a PlatformWheelEvent

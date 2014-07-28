@@ -6505,6 +6505,7 @@
 		FD45A959175D417100C21EC8 /* PolygonShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A87A175D3926002CD360 /* PolygonShape.cpp */; };
 		FD45A95A175D417100C21EC8 /* RectangleShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A87C175D3926002CD360 /* RectangleShape.cpp */; };
 		FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A885175D3926002CD360 /* ShapeInterval.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD4E5D3B1983175500D93A77 /* JSFontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD96C9A4198314A50086E156 /* JSFontLoader.cpp */; };
 		FD537352137B651800008DCE /* ZeroPole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537350137B651800008DCE /* ZeroPole.cpp */; };
 		FD537353137B651800008DCE /* ZeroPole.h in Headers */ = {isa = PBXBuildFile; fileRef = FD537351137B651800008DCE /* ZeroPole.h */; };
 		FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */; };
@@ -6545,6 +6546,7 @@
 		FD8AA63E169514A700D2EA68 /* JSPannerNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */; };
 		FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */; };
 		FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */; };
+		FD96C9971982FBDF0086E156 /* FontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD96C9961982FB4C0086E156 /* FontLoader.cpp */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
 		FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */; };
 		FDA15E9F12B03EE1003A583A /* JSAudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */; };
@@ -14118,6 +14120,8 @@
 		FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPannerNodeCustom.cpp; sourceTree = "<group>"; };
 		FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioScheduledSourceNode.cpp; sourceTree = "<group>"; };
 		FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioScheduledSourceNode.h; sourceTree = "<group>"; };
+		FD96C9961982FB4C0086E156 /* FontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontLoader.cpp; sourceTree = "<group>"; };
+		FD96C9A4198314A50086E156 /* JSFontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontLoader.cpp; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
 		FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBuffer.h; sourceTree = "<group>"; };
 		FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNode.cpp; sourceTree = "<group>"; };
@@ -16258,6 +16262,7 @@
 				409EBDC216B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h */,
 				40ECAE8016B8B68A00C36103 /* JSDOMError.cpp */,
 				40ECAE7D16B8B67200C36103 /* JSDOMError.h */,
+				FD96C9A4198314A50086E156 /* JSFontLoader.cpp */,
 				409EBDBF16B7F38E00CBA3FC /* JSFontLoader.h */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
@@ -22106,6 +22111,7 @@
 				FC9A0F73164094CF003D6B8D /* DOMWindowCSS.idl */,
 				FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */,
 				FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */,
+				FD96C9961982FB4C0086E156 /* FontLoader.cpp */,
 				409EBDB516B7EEA300CBA3FC /* FontLoader.h */,
 				409EBDB716B7EEBA00CBA3FC /* FontLoader.idl */,
 				CD4E0AFA11F7BC27009D3811 /* fullscreen.css */,
@@ -27051,6 +27057,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD4E5D3B1983175500D93A77 /* JSFontLoader.cpp in Sources */,
+				FD96C9971982FBDF0086E156 /* FontLoader.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,
 				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
