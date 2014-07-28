@@ -1958,7 +1958,13 @@ public:
     template<int datasize, SetFlags setFlags = DontSetFlags>
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, RegisterID rm)
     {
-        sub<datasize, setFlags>(rd, rn, rm, LSL, 0);
+        ASSERT_WITH_MESSAGE(!isSp(rd) || setFlags == DontSetFlags, "SUBS with shifted register does not support SP for Xd, it uses XZR for the register 31. SUBS with extended register support SP for Xd, but only if SetFlag is not used, otherwise register 31 is Xd.");
+        ASSERT_WITH_MESSAGE(!isSp(rm), "No encoding of SUBS supports SP for the third operand.");
+
+        if (isSp(rd) || isSp(rn))
+            sub<datasize, setFlags>(rd, rn, rm, UXTX, 0);
+        else
+            sub<datasize, setFlags>(rd, rn, rm, LSL, 0);
     }
 
     template<int datasize, SetFlags setFlags = DontSetFlags>
@@ -1972,12 +1978,8 @@ public:
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, RegisterID rm, ShiftType shift, int amount)
     {
         CHECK_DATASIZE();
-        if (isSp(rd) || isSp(rn)) {
-            ASSERT(shift == LSL);
-            ASSERT(!isSp(rm));
-            sub<datasize, setFlags>(rd, rn, rm, UXTX, amount);
-        } else
-            insn(addSubtractShiftedRegister(DATASIZE, AddOp_SUB, setFlags, shift, rm, amount, rn, rd));
+        ASSERT(!isSp(rd) && !isSp(rn) && !isSp(rm));
+        insn(addSubtractShiftedRegister(DATASIZE, AddOp_SUB, setFlags, shift, rm, amount, rn, rd));
     }
 
     template<int datasize>

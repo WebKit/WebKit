@@ -1,3 +1,41 @@
+2014-07-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] JIT::assertStackPointerOffset() crashes on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=135316
+
+        Reviewed by Geoffrey Garen.
+
+        JIT::assertStackPointerOffset() does a compare between an arbitrary register
+        and the stack pointer. This was not supported by the ARM64 assembler.
+
+        There are no variation that can take a stack pointer for Xd. There is one version of subs
+        that can take a stack pointer, but only for the Xn: the shift+extend one.
+        To solve the problem, I changed cmp to swap the registers if necessary, and I fixed
+        the implementation of sub.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::sub):
+        In the generic sub(reg, reg), I added assertions to catch the condition that cannot be generated
+        with either version of sub.
+
+        In sub(with shift), I remove the weird special case for SP. First, it was quite misleading because
+        the Rd case only works if "setflag == false". The other confusing part is going to addSubtractShiftedRegister()
+        gives you a reduce shift range, which could create subtle bug that only appear when SP is used.
+
+        Since I removed the weird case, I need to differentiate between the sub() that support SP, and the one that does
+        not elsewhere. That is why that branch has moved to the generic sub(reg, reg). Since at that point we know
+        the shift value must be zero, it is safe to call either variant.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branch64):
+        With the changes described above, we can now use SP for the left register. What do we do if the rightmost
+        register is SP?
+
+        For the case of JIT::assertStackPointerOffset(), the comparison is Equal so the order really does not matter,
+        we just switch the registers before generating the instruction.
+
+        For the generic case, just move the value of SP to a GPR before doing the CMP.
+
 2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
 
         Unreviewed build fix after r171682.

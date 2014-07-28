@@ -1651,6 +1651,16 @@ public:
 
     Jump branch64(RelationalCondition cond, RegisterID left, RegisterID right)
     {
+        if (right == ARM64Registers::sp) {
+            if (cond == Equal && left != ARM64Registers::sp) {
+                // CMP can only use SP for the left argument, since we are testing for equality, the order
+                // does not matter here.
+                std::swap(left, right);
+            } else {
+                move(right, getCachedDataTempRegisterIDAndInvalidate());
+                right = dataTempRegister;
+            }
+        }
         m_assembler.cmp<64>(left, right);
         return Jump(makeBranch(cond));
     }
