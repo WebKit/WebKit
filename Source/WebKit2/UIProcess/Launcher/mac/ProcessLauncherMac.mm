@@ -290,6 +290,13 @@ static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchO
     EnvironmentVariables environmentVariables;
     addDYLDEnvironmentAdditions(launchOptions, true, environmentVariables);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (launchOptions.processType == ProcessLauncher::PluginProcess) {
+        // Tagged pointers break video in Flash, see bug 135354.
+        environmentVariables.set("NSStringDisableTagged", "YES");
+    }
+#endif
+
     // Generate the uuid for the service instance we are about to create.
     // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
