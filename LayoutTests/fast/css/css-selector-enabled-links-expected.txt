@@ -1,0 +1,3 @@
+This test checks if :enabled CSS selector uses only Anchor and Area elements with 'href' attribute set.
+ 
+SUCCESS

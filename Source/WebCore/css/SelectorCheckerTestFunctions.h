@@ -27,6 +27,8 @@
 #define SelectorCheckerTestFunctions_h
 
 #include "FocusController.h"
+#include "HTMLAnchorElement.h"
+#include "HTMLAreaElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include <wtf/Compiler.h>
@@ -60,9 +62,12 @@ ALWAYS_INLINE bool isDisabled(const Element* element)
 
 ALWAYS_INLINE bool isEnabled(const Element* element)
 {
+    bool isEnabled = false;
     if (element->isFormControlElement() || isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
-        return !element->isDisabledFormControl();
-    return false;
+        isEnabled = !element->isDisabledFormControl();
+    else if (element->isLink())
+        isEnabled = isHTMLAnchorElement(element) || isHTMLAreaElement(element);
+    return isEnabled;
 }
 
 ALWAYS_INLINE bool isChecked(Element* element)
