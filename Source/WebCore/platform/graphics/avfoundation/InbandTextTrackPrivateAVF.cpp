@@ -80,8 +80,7 @@ typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 extern "C" {
 #pragma pack(push, 4)
 #ifndef CMTIME_H
-    typedef struct
-    {
+    typedef struct {
         int64_t value;
         int32_t timescale;
         uint32_t flags;
@@ -89,8 +88,7 @@ extern "C" {
     } CMTime;
 #endif
 
-    typedef struct
-    {
+    typedef struct {
         CMTime duration;
         CMTime presentationTimeStamp;
         CMTime decodeTimeStamp;

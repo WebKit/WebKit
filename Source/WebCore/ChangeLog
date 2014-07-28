@@ -1,3 +1,10 @@
+2014-07-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed 'merge' fix.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        Correct line endings to allow EWS merges again.
+
 2014-07-28  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS3-Text] Adjust text-justify implementation to the latest spec
