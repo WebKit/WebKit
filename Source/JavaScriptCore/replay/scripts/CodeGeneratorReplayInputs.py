@@ -360,6 +360,9 @@ class Type:
         else:
             return self.storage_type()
 
+    def encoding_type_argument(self, qualified=False):
+        return self.type_name(qualified=qualified)
+
 
 def check_for_required_properties(props, obj, what):
     for prop in props:
@@ -390,6 +393,9 @@ class VectorType(Type):
         return ""
 
     def type_name(self, qualified=False):
+        return "Vector<%s>" % self._element_type.storage_type(qualified=qualified)
+
+    def encoding_type_argument(self, qualified=False):
         return "Vector<%s>" % self._element_type.type_name(qualified=qualified)
 
     def argument_type(self, qualified=False):
@@ -881,7 +887,7 @@ class Generator:
         steps = []
         for (_member, _type) in self.generate_input_member_tuples(_input):
             should_qualify_type = _type.framework != self.traits_framework
-            put_method = "put<%s>" % _type.type_name(qualified=should_qualify_type)
+            put_method = "put<%s>" % _type.encoding_type_argument(qualified=should_qualify_type)
 
             steps.extend([
                 "    encodedValue.%s(ASCIILiteral(\"%s\"), input.%s());" % (put_method, _member.memberName, _member.memberName)
@@ -899,7 +905,7 @@ class Generator:
         steps = []
         for (_member, _type) in self.generate_input_member_tuples(_input):
             should_qualify_type = _type.framework != self.traits_framework
-            get_method = "get<%s>" % _type.type_name(qualified=should_qualify_type)
+            get_method = "get<%s>" % _type.encoding_type_argument(qualified=should_qualify_type)
 
             lines = [
                 "    %s %s;" % (_type.storage_type(qualified=should_qualify_type), _member.memberName),

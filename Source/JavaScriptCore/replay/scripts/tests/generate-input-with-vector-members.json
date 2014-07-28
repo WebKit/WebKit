@@ -9,7 +9,11 @@
         ],
 
         "WebCore": [
-            { "name": "WebThing", "mode": "SCALAR", "header": "things/WebThing.h"  }
+            { "name": "WebThing", "mode": "SCALAR", "header": "things/WebThing.h" },
+            {
+                "name": "HistoryItem", "mode": "SHARED",
+                "header": "history/HistoryItem.h"
+            }
         ]
     },
 
@@ -22,6 +26,14 @@
                 { "name": "doubles", "type": "double", "flags": ["VECTOR"] },
                 { "name": "jsthings", "type": "JSThing", "flags": ["VECTOR"] },
                 { "name": "webthings", "type": "WebThing", "flags": ["VECTOR"] }
+            ]
+        },
+        {
+            "name": "SavedHistory",
+            "description": "Save history items.",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                { "name": "entries", "type": "HistoryItem", "flags": ["VECTOR"] }
             ]
         }
     ]

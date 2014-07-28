@@ -32,12 +32,17 @@
 
 #if ENABLE(WEB_REPLAY)
 #include "InternalNamespaceHeaderIncludeDummy.h"
+#include <history/HistoryItem.h>
 #include <platform/ExternalNamespaceHeaderIncludeDummy.h>
 
+namespace WebCore {
+class HistoryItem;
+}
 
 
 namespace Test {
 class ArrayOfThings;
+class SavedHistory;
 } // namespace Test
 
 namespace JSC {
@@ -47,6 +52,14 @@ template<> struct InputTraits<Test::ArrayOfThings> {
 
     static void encode(JSC::EncodedValue&, const Test::ArrayOfThings&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ArrayOfThings>&);
+};
+
+template<> struct InputTraits<Test::SavedHistory> {
+    static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
+    static const AtomicString& type();
+
+    static void encode(JSC::EncodedValue&, const Test::SavedHistory&);
+    static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::SavedHistory>&);
 };
 
 } // namespace JSC
@@ -65,10 +78,21 @@ private:
     Vector<JSThing> m_jsthings;
     Vector<WebThing> m_webthings;
 };
+
+class SavedHistory : public NondeterministicInput<SavedHistory> {
+public:
+    SavedHistory(Vector<RefPtr<HistoryItem>>& entries);
+    virtual ~SavedHistory();
+
+    const Vector<RefPtr<HistoryItem>>& entries() const { return m_entries; }
+private:
+    Vector<RefPtr<HistoryItem>> m_entries;
+};
 } // namespace Test
 
 #define TEST_REPLAY_INPUT_NAMES_FOR_EACH(macro) \
     macro(ArrayOfThings) \
+    macro(SavedHistory) \
     \
 // end of TEST_REPLAY_INPUT_NAMES_FOR_EACH
 

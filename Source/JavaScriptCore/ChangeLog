@@ -1,5 +1,32 @@
 2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Replay: auto-decoding of parameterized vector's elements is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=135343
+
+        Reviewed by Timothy Hatcher.
+
+        Fix an incorrect type argument in EncodingTraits<Vector<T>>::encodeValue
+        that was using the element's decoded type as the type parameter to
+        EncodedValue::append<T>. It should instead be the raw type T. This
+        causes problems when encoding Vector<RefPtr<T>>, as it later tries to
+        use encoding traits for RefPtr<T> rather than for T.
+
+        Fix incorrect generated encoding traits argument for vectors of
+        RefCounted objects. Updated test to cover this scenario.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Type.encoding_type_argument):
+        (VectorType.type_name):
+        (VectorType):
+        (VectorType.encoding_type_argument):
+        (Generator.generate_input_encode_implementation):
+        (Generator.generate_input_decode_implementation):
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.cpp:
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h:
+        * replay/scripts/tests/generate-input-with-vector-members.json: Updated.
+
+2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Replay: incorrect serialization code generated for enum classes inside class scope
         https://bugs.webkit.org/show_bug.cgi?id=135342
 

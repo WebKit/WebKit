@@ -48,6 +48,16 @@ ArrayOfThings::ArrayOfThings(Vector<double>& doubles, Vector<JSThing>& jsthings,
 ArrayOfThings::~ArrayOfThings()
 {
 }
+
+SavedHistory::SavedHistory(Vector<RefPtr<HistoryItem>>& entries)
+    : NondeterministicInput<SavedHistory>()
+    , m_entries(entries)
+{
+}
+
+SavedHistory::~SavedHistory()
+{
+}
 } // namespace Test
 
 namespace JSC {
@@ -79,6 +89,27 @@ bool InputTraits<Test::ArrayOfThings>::decode(EncodedValue& encodedValue, std::u
         return false;
 
     input = std::make_unique<Test::ArrayOfThings>(doubles, jsthings, webthings);
+    return true;
+}
+
+const AtomicString& InputTraits<Test::SavedHistory>::type()
+{
+    static NeverDestroyed<const AtomicString> type("SavedHistory", AtomicString::ConstructFromLiteral);
+    return type;
+}
+
+void InputTraits<Test::SavedHistory>::encode(EncodedValue& encodedValue, const Test::SavedHistory& input)
+{
+    encodedValue.put<Vector<WebCore::HistoryItem>>(ASCIILiteral("entries"), input.entries());
+}
+
+bool InputTraits<Test::SavedHistory>::decode(EncodedValue& encodedValue, std::unique_ptr<Test::SavedHistory>& input)
+{
+    Vector<RefPtr<WebCore::HistoryItem>> entries;
+    if (!encodedValue.get<Vector<WebCore::HistoryItem>>(ASCIILiteral("entries"), entries))
+        return false;
+
+    input = std::make_unique<Test::SavedHistory>(entries);
     return true;
 }
 
