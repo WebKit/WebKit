@@ -1,3 +1,17 @@
+2014-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Keep non-DATABASE_PROCESS build
+        https://bugs.webkit.org/show_bug.cgi?id=135321
+
+        Reviewed by Gyuyoung Kim.
+
+        This is the patch for r171622 in non-DATABASE_PROCESS builds.
+        Change sendToDatabaseProcessRelaunchingIfNecessary to support non-DATABASE_PROCESS implementation.
+
+        * CMakeLists.txt:
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::sendToDatabaseProcessRelaunchingIfNecessary):
+
 2014-07-27  Gavin Barraclough  <baraclough@apple.com>
 
         Don't rely on reading applicationState from within DidEnterBackground/WillEnterForeground

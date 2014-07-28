@@ -161,6 +161,9 @@ public:
     template<typename T> void sendToNetworkingProcess(T&& message);
     template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
+    // Sends the message to WebProcess or DatabaseProcess as approporiate for current process model.
+    template<typename T> void sendToDatabaseProcessRelaunchingIfNecessary(T&& message);
+
     void processWillOpenConnection(WebProcessProxy*);
     void processWillCloseConnection(WebProcessProxy*);
     void processDidFinishLaunching(WebProcessProxy*);
@@ -303,7 +306,6 @@ public:
     void ensureDatabaseProcess();
     void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
     void databaseProcessCrashed(DatabaseProcessProxy*);
-    template<typename T> void sendToDatabaseProcessRelaunchingIfNecessary(T&& message);
 #endif
 
 #if PLATFORM(COCOA)
@@ -616,14 +618,16 @@ void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
     ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(DATABASE_PROCESS)
 template<typename T>
 void WebContext::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
 {
+#if ENABLE(DATABASE_PROCESS)
     ensureDatabaseProcess();
     m_databaseProcess->send(std::forward<T>(message), 0);
-}
+#else
+    sendToAllProcessesRelaunchingThemIfNecessary(std::forward<T>(message));
 #endif
+}
 
 template<typename T>
 void WebContext::sendToAllProcesses(const T& message)
