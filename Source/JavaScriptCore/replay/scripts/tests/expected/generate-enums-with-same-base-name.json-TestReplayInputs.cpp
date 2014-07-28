@@ -35,10 +35,12 @@
 #include <platform/ExternalNamespaceImplIncludeDummy.h>
 
 namespace Test {
-FormCombo::FormCombo(PlatformEvent::Type eventType, FormData::Type formType)
+FormCombo::FormCombo(PlatformEvent1::Type eventType1, PlatformEvent2::Type eventType2, FormData1::Type formType1, FormData2::Type formType2)
     : NondeterministicInput<FormCombo>()
-    , m_eventType(eventType)
-    , m_formType(formType)
+    , m_eventType1(eventType1)
+    , m_eventType2(eventType2)
+    , m_formType1(formType1)
+    , m_formType2(formType2)
 {
 }
 
@@ -56,40 +58,50 @@ const AtomicString& InputTraits<Test::FormCombo>::type()
 
 void InputTraits<Test::FormCombo>::encode(EncodedValue& encodedValue, const Test::FormCombo& input)
 {
-    encodedValue.put<PlatformEvent::Type>(ASCIILiteral("eventType"), input.eventType());
-    encodedValue.put<WebCore::FormData::Type>(ASCIILiteral("formType"), input.formType());
+    encodedValue.put<PlatformEvent1::Type>(ASCIILiteral("eventType1"), input.eventType1());
+    encodedValue.put<PlatformEvent2::Type>(ASCIILiteral("eventType2"), input.eventType2());
+    encodedValue.put<WebCore::FormData1::Type>(ASCIILiteral("formType1"), input.formType1());
+    encodedValue.put<WebCore::FormData2::Type>(ASCIILiteral("formType2"), input.formType2());
 }
 
 bool InputTraits<Test::FormCombo>::decode(EncodedValue& encodedValue, std::unique_ptr<Test::FormCombo>& input)
 {
-    PlatformEvent::Type eventType;
-    if (!encodedValue.get<PlatformEvent::Type>(ASCIILiteral("eventType"), eventType))
+    PlatformEvent1::Type eventType1;
+    if (!encodedValue.get<PlatformEvent1::Type>(ASCIILiteral("eventType1"), eventType1))
         return false;
 
-    WebCore::FormData::Type formType;
-    if (!encodedValue.get<WebCore::FormData::Type>(ASCIILiteral("formType"), formType))
+    PlatformEvent2::Type eventType2;
+    if (!encodedValue.get<PlatformEvent2::Type>(ASCIILiteral("eventType2"), eventType2))
         return false;
 
-    input = std::make_unique<Test::FormCombo>(eventType, formType);
+    WebCore::FormData1::Type formType1;
+    if (!encodedValue.get<WebCore::FormData1::Type>(ASCIILiteral("formType1"), formType1))
+        return false;
+
+    WebCore::FormData2::Type formType2;
+    if (!encodedValue.get<WebCore::FormData2::Type>(ASCIILiteral("formType2"), formType2))
+        return false;
+
+    input = std::make_unique<Test::FormCombo>(eventType1, eventType2, formType1, formType2);
     return true;
 }
-EncodedValue EncodingTraits<WebCore::FormData::Type>::encodeValue(const WebCore::FormData::Type& enumValue)
+EncodedValue EncodingTraits<WebCore::FormData1::Type>::encodeValue(const WebCore::FormData1::Type& enumValue)
 {
     EncodedValue encodedValue = EncodedValue::createArray();
-    if (enumValue & WebCore::FormData::Text) {
+    if (enumValue & WebCore::FormData1::Text) {
         encodedValue.append<String>(ASCIILiteral("Text"));
-        if (enumValue == WebCore::FormData::Text)
+        if (enumValue == WebCore::FormData1::Text)
             return encodedValue;
     }
-    if (enumValue & WebCore::FormData::Blob) {
+    if (enumValue & WebCore::FormData1::Blob) {
         encodedValue.append<String>(ASCIILiteral("Blob"));
-        if (enumValue == WebCore::FormData::Blob)
+        if (enumValue == WebCore::FormData1::Blob)
             return encodedValue;
     }
     return encodedValue;
 }
 
-bool EncodingTraits<WebCore::FormData::Type>::decodeValue(EncodedValue& encodedValue, WebCore::FormData::Type& enumValue)
+bool EncodingTraits<WebCore::FormData1::Type>::decodeValue(EncodedValue& encodedValue, WebCore::FormData1::Type& enumValue)
 {
     Vector<String> enumStrings;
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
@@ -97,31 +109,54 @@ bool EncodingTraits<WebCore::FormData::Type>::decodeValue(EncodedValue& encodedV
 
     for (String enumString : enumStrings) {
         if (enumString == "Text")
-            enumValue = static_cast<WebCore::FormData::Type>(enumValue | WebCore::FormData::Text);
+            enumValue = static_cast<WebCore::FormData1::Type>(enumValue | WebCore::FormData1::Text);
         if (enumString == "Blob")
-            enumValue = static_cast<WebCore::FormData::Type>(enumValue | WebCore::FormData::Blob);
+            enumValue = static_cast<WebCore::FormData1::Type>(enumValue | WebCore::FormData1::Blob);
     }
 
     return true;
 }
 
-EncodedValue EncodingTraits<PlatformEvent::Type>::encodeValue(const PlatformEvent::Type& enumValue)
+EncodedValue EncodingTraits<WebCore::FormData2::Type>::encodeValue(const WebCore::FormData2::Type& enumValue)
+{
+    switch (enumValue) {
+    case WebCore::FormData2::Type::Text: return EncodedValue::createString("Text");
+    case WebCore::FormData2::Type::Blob: return EncodedValue::createString("Blob");
+    default: ASSERT_NOT_REACHED(); return EncodedValue::createString("Error!");
+    }
+}
+
+bool EncodingTraits<WebCore::FormData2::Type>::decodeValue(EncodedValue& encodedValue, WebCore::FormData2::Type& enumValue)
+{
+    String enumString = encodedValue.convertTo<String>();
+    if (enumString == "Text") {
+        enumValue = WebCore::FormData2::Type::Text;
+        return true;
+    }
+    if (enumString == "Blob") {
+        enumValue = WebCore::FormData2::Type::Blob;
+        return true;
+    }
+    return false;
+}
+
+EncodedValue EncodingTraits<PlatformEvent1::Type>::encodeValue(const PlatformEvent1::Type& enumValue)
 {
     EncodedValue encodedValue = EncodedValue::createArray();
-    if (enumValue & PlatformEvent::Mouse) {
+    if (enumValue & PlatformEvent1::Mouse) {
         encodedValue.append<String>(ASCIILiteral("Mouse"));
-        if (enumValue == PlatformEvent::Mouse)
+        if (enumValue == PlatformEvent1::Mouse)
             return encodedValue;
     }
-    if (enumValue & PlatformEvent::Keyboard) {
+    if (enumValue & PlatformEvent1::Keyboard) {
         encodedValue.append<String>(ASCIILiteral("Keyboard"));
-        if (enumValue == PlatformEvent::Keyboard)
+        if (enumValue == PlatformEvent1::Keyboard)
             return encodedValue;
     }
     return encodedValue;
 }
 
-bool EncodingTraits<PlatformEvent::Type>::decodeValue(EncodedValue& encodedValue, PlatformEvent::Type& enumValue)
+bool EncodingTraits<PlatformEvent1::Type>::decodeValue(EncodedValue& encodedValue, PlatformEvent1::Type& enumValue)
 {
     Vector<String> enumStrings;
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
@@ -129,12 +164,35 @@ bool EncodingTraits<PlatformEvent::Type>::decodeValue(EncodedValue& encodedValue
 
     for (String enumString : enumStrings) {
         if (enumString == "Mouse")
-            enumValue = static_cast<PlatformEvent::Type>(enumValue | PlatformEvent::Mouse);
+            enumValue = static_cast<PlatformEvent1::Type>(enumValue | PlatformEvent1::Mouse);
         if (enumString == "Keyboard")
-            enumValue = static_cast<PlatformEvent::Type>(enumValue | PlatformEvent::Keyboard);
+            enumValue = static_cast<PlatformEvent1::Type>(enumValue | PlatformEvent1::Keyboard);
     }
 
     return true;
+}
+
+EncodedValue EncodingTraits<PlatformEvent2::Type>::encodeValue(const PlatformEvent2::Type& enumValue)
+{
+    switch (enumValue) {
+    case PlatformEvent2::Type::Mouse: return EncodedValue::createString("Mouse");
+    case PlatformEvent2::Type::Keyboard: return EncodedValue::createString("Keyboard");
+    default: ASSERT_NOT_REACHED(); return EncodedValue::createString("Error!");
+    }
+}
+
+bool EncodingTraits<PlatformEvent2::Type>::decodeValue(EncodedValue& encodedValue, PlatformEvent2::Type& enumValue)
+{
+    String enumString = encodedValue.convertTo<String>();
+    if (enumString == "Mouse") {
+        enumValue = PlatformEvent2::Type::Mouse;
+        return true;
+    }
+    if (enumString == "Keyboard") {
+        enumValue = PlatformEvent2::Type::Keyboard;
+        return true;
+    }
+    return false;
 }
 } // namespace JSC
 

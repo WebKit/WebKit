@@ -635,7 +635,7 @@ class Generator:
             include_for_destructor = _type.mode is TypeModes.SHARED
             # Enums within classes cannot be forward declared, so we include
             # headers with the relevant class declaration.
-            include_for_enclosing_class = _type.is_enum() and _type.enclosing_class is not None
+            include_for_enclosing_class = _type.enclosing_class is not None
             # Include headers for types like URL and String which are copied, not owned or shared.
             include_for_copyable_member = _type.mode is TypeModes.HEAVY_SCALAR
             if (not includes_for_types) ^ (include_for_destructor or include_for_enclosing_class or include_for_copyable_member):
@@ -801,10 +801,10 @@ class Generator:
         prefix_components = []
         if should_qualify_type:
             prefix_components.append(_type.framework.setting('namespace'))
-        if _type.is_enum_class():
-            prefix_components.append(_type.type_name())
-        if _type.enclosing_class is not None:
+        if _type.is_enum() and _type.enclosing_class is not None:
             prefix_components.append(_type.enclosing_class)
+        elif _type.is_enum_class():
+            prefix_components.append(_type.type_name(qualified=False))
         prefix_components.append("")
         enum_prefix = "::".join(prefix_components)
         encodeLines = []

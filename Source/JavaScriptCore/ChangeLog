@@ -1,5 +1,28 @@
 2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Replay: incorrect serialization code generated for enum classes inside class scope
+        https://bugs.webkit.org/show_bug.cgi?id=135342
+
+        Reviewed by Timothy Hatcher.
+
+        If an enum class is defined inside of a class scope, then the enum class
+        cannot be forward-declared and the relevant header should be included.
+        Some generated code used incorrectly-scoped enum values in this situation.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Generator.generate_includes.declaration.is):
+        (Generator.generate_enum_trait_implementation.is):
+        (Generator.generate_enum_trait_implementation):
+
+        Tests:
+
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp: Rebaselined.
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h: Rebaselined.
+        * replay/scripts/tests/generate-enums-with-same-base-name.json: Add enum
+        class types to this test case.
+
+2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Replay: vectors of characters should be base64-encoded
         https://bugs.webkit.org/show_bug.cgi?id=135341
 

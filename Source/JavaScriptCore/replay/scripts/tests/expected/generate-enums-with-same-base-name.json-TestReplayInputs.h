@@ -33,7 +33,8 @@
 #if ENABLE(WEB_REPLAY)
 #include "InternalNamespaceHeaderIncludeDummy.h"
 #include <platform/ExternalNamespaceHeaderIncludeDummy.h>
-#include <replay/FormData.h>
+#include <replay/FormData1.h>
+#include <replay/FormData2.h>
 #include <replay/PlatformEvent.h>
 
 
@@ -50,32 +51,50 @@ template<> struct InputTraits<Test::FormCombo> {
     static void encode(JSC::EncodedValue&, const Test::FormCombo&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::FormCombo>&);
 };
-template<> struct EncodingTraits<WebCore::FormData::Type> {
-    typedef WebCore::FormData::Type DecodedType;
+template<> struct EncodingTraits<WebCore::FormData1::Type> {
+    typedef WebCore::FormData1::Type DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::FormData::Type& value);
-    static bool decodeValue(EncodedValue&, WebCore::FormData::Type& value);
+    static EncodedValue encodeValue(const WebCore::FormData1::Type& value);
+    static bool decodeValue(EncodedValue&, WebCore::FormData1::Type& value);
 };
 
-template<> struct EncodingTraits<PlatformEvent::Type> {
-    typedef PlatformEvent::Type DecodedType;
+template<> struct EncodingTraits<WebCore::FormData2::Type> {
+    typedef WebCore::FormData2::Type DecodedType;
 
-    static EncodedValue encodeValue(const PlatformEvent::Type& value);
-    static bool decodeValue(EncodedValue&, PlatformEvent::Type& value);
+    static EncodedValue encodeValue(const WebCore::FormData2::Type& value);
+    static bool decodeValue(EncodedValue&, WebCore::FormData2::Type& value);
+};
+
+template<> struct EncodingTraits<PlatformEvent1::Type> {
+    typedef PlatformEvent1::Type DecodedType;
+
+    static EncodedValue encodeValue(const PlatformEvent1::Type& value);
+    static bool decodeValue(EncodedValue&, PlatformEvent1::Type& value);
+};
+
+template<> struct EncodingTraits<PlatformEvent2::Type> {
+    typedef PlatformEvent2::Type DecodedType;
+
+    static EncodedValue encodeValue(const PlatformEvent2::Type& value);
+    static bool decodeValue(EncodedValue&, PlatformEvent2::Type& value);
 };
 } // namespace JSC
 
 namespace Test {
 class FormCombo : public NondeterministicInput<FormCombo> {
 public:
-    FormCombo(PlatformEvent::Type eventType, FormData::Type formType);
+    FormCombo(PlatformEvent1::Type eventType1, PlatformEvent2::Type eventType2, FormData1::Type formType1, FormData2::Type formType2);
     virtual ~FormCombo();
 
-    PlatformEvent::Type eventType() const { return m_eventType; }
-    FormData::Type formType() const { return m_formType; }
+    PlatformEvent1::Type eventType1() const { return m_eventType1; }
+    PlatformEvent2::Type eventType2() const { return m_eventType2; }
+    FormData1::Type formType1() const { return m_formType1; }
+    FormData2::Type formType2() const { return m_formType2; }
 private:
-    PlatformEvent::Type m_eventType;
-    FormData::Type m_formType;
+    PlatformEvent1::Type m_eventType1;
+    PlatformEvent2::Type m_eventType2;
+    FormData1::Type m_formType1;
+    FormData2::Type m_formType2;
 };
 } // namespace Test
 
