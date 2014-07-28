@@ -55,6 +55,16 @@ PassRefPtr<InspectorArray> EncodedValue::asArray()
     return result.release();
 }
 
+EncodedValue EncodingTraits<Vector<char>>::encodeValue(const Vector<char>& buffer)
+{
+    return EncodedValue::createString(base64Encode(buffer));
+}
+
+bool EncodingTraits<Vector<char>>::decodeValue(EncodedValue& encodedBuffer, Vector<char>& decodedValue)
+{
+    return base64Decode(encodedBuffer.convertTo<String>(), decodedValue);
+}
+
 template<> EncodedValue ScalarEncodingTraits<bool>::encodeValue(const bool& value)
 {
     return EncodedValue(InspectorBasicValue::create(value));

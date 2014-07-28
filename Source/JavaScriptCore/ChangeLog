@@ -1,3 +1,19 @@
+2014-07-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: vectors of characters should be base64-encoded
+        https://bugs.webkit.org/show_bug.cgi?id=135341
+
+        Reviewed by Timothy Hatcher.
+
+        Without this specialization, encode/decode methods try to create an
+        array of single characters in JSON, rather than treating the
+        vector as a binary blob.
+
+        * replay/EncodedValue.cpp:
+        (JSC::EncodingTraits<Vector<char>>::encodeValue): Added.
+        (JSC::EncodingTraits<Vector<char>>::decodeValue): Added.
+        * replay/EncodedValue.h:
+
 2014-07-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

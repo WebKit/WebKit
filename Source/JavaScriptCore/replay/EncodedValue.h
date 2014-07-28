@@ -136,6 +136,13 @@ template<> struct EncodingTraits<EncodedValue> {
     // so encodeValue and decodeValue are intentionally omitted here.
 };
 
+// Specialize byte vectors to use base64 encoding.
+template<> struct EncodingTraits<Vector<char>> {
+    typedef Vector<char> DecodedType;
+    static JS_EXPORT_PRIVATE EncodedValue encodeValue(const DecodedType&);
+    static JS_EXPORT_PRIVATE bool decodeValue(EncodedValue&, DecodedType&);
+};
+
 template<typename T>
 struct ScalarEncodingTraits {
     typedef T DecodedType;
