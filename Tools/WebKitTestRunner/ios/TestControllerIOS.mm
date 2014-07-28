@@ -27,6 +27,7 @@
 #import "TestController.h"
 
 #import "CrashReporterInfo.h"
+#import <Foundation/Foundation.h>
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import <WebKit/WKStringCF.h>
@@ -40,6 +41,17 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
+    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
+    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%@_IN", identifier] UTF8String];
+    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%@_OUT", identifier] UTF8String];
+    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%@_ERROR", identifier] UTF8String];
+
+    int infd = open(stdinPath, O_RDWR);
+    dup2(infd, STDIN_FILENO);
+    int outfd = open(stdoutPath, O_RDWR);
+    dup2(outfd, STDOUT_FILENO);
+    int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
+    dup2(errfd, STDERR_FILENO);
 }
 
 void TestController::platformDestroy()

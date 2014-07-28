@@ -1506,11 +1506,8 @@ sub openDiffTool()
 
 sub unlinkFIFOs()
 {
-    if ($useWebKitTestRunner) {
-        unlink </tmp/WebKitTestRunner_*>;
-    } else {
-        unlink </tmp/DumpRenderTree_*>;
-    }
+    my $identifier = iOSDumpToolAppIdentifier();
+    unlink glob "/tmp/${identifier}_*";
 }
 
 sub buildDumpTool($)
@@ -1643,10 +1640,9 @@ sub openDumpTool()
 
         my $appIdentifier = iOSDumpToolAppIdentifier();
 
-        my $fifoName = $useWebKitTestRunner ? "WebKitTestRunner" : "DumpRenderTree";
-        my $fifoOut = "/tmp/${fifoName}_OUT";
-        my $fifoIn = "/tmp/${fifoName}_IN";
-        my $fifoError = "/tmp/${fifoName}_ERROR";
+        my $fifoOut = "/tmp/${appIdentifier}_OUT";
+        my $fifoIn = "/tmp/${appIdentifier}_IN";
+        my $fifoError = "/tmp/${appIdentifier}_ERROR";
 
         foreach my $fifo ($fifoOut, $fifoIn, $fifoError) {
             if (! -e $fifo) {

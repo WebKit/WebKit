@@ -77,6 +77,7 @@ unsigned worldIDForWorld(WebScriptWorld *);
 #if PLATFORM(IOS) && defined(__OBJC__)
 @interface DumpRenderTree : UIApplication {
     BOOL _hasFlushedWebThreadRunQueue;
+    UIBackgroundTaskIdentifier backgroundTaskIdentifier;
 }
 
 - (void)_waitForWebThread;

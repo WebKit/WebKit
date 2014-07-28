@@ -1,5 +1,24 @@
 2014-07-24  David Farler  <dfarler@apple.com>
 
+        Allow for multiple DumpRenderTree and WebKitTestRunner instances in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=135272
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Remove hard-coding of FIFO paths.
+        (-[DumpRenderTree applicationDidEnterBackground:]): Create background task.
+        (DumpRenderTreeMain): Set DumpRenderTree as UIApplication delegate.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: bgTask ivar.
+        * Scripts/old-run-webkit-tests: Update FIFO paths for ORWT.
+        * WebKitTestRunner/TestController.cpp: Remove hard-coding of FIFO paths.
+        * WebKitTestRunner/ios/TestControllerIOS.mm: Move dup2 calls to platformInitialize
+        * WebKitTestRunner/ios/mainIOS.mm: bgTask ivar.
+        (-[WebKitTestRunnerApp applicationDidEnterBackground:]): Create background task.
+        (main): Set WebKitTestRunnerApp as UIApplication delegate.
+
+2014-07-24  David Farler  <dfarler@apple.com>
+
         ImageDiff builds for the simulator when running iOS layout tests
         https://bugs.webkit.org/show_bug.cgi?id=135270
 

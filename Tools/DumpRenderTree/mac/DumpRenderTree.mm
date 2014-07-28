@@ -1119,11 +1119,16 @@ static void prepareConsistentTestingEnvironment()
 void dumpRenderTree(int argc, const char *argv[])
 {
 #if PLATFORM(IOS)
-    int infd = open("/tmp/DumpRenderTree_IN", O_RDWR);
+    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
+    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%@_IN", identifier] UTF8String];
+    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%@_OUT", identifier] UTF8String];
+    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%@_ERROR", identifier] UTF8String];
+
+    int infd = open(stdinPath, O_RDWR);
     dup2(infd, STDIN_FILENO);
-    int outfd = open("/tmp/DumpRenderTree_OUT", O_RDWR);
+    int outfd = open(stdoutPath, O_RDWR);
     dup2(outfd, STDOUT_FILENO);
-    int errfd = open("/tmp/DumpRenderTree_ERROR", O_RDWR | O_NONBLOCK);
+    int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
     dup2(errfd, STDERR_FILENO);
 #endif
 
@@ -1225,6 +1230,29 @@ static const char **_argv;
     });
 }
 
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    /* Apps will get suspended or killed some time after entering the background state but we want to be able to run multiple copies of DumpRenderTree. Periodically check to see if our remaining background time dips below a threshold and create a new background task.
+    */
+    void (^expirationHandler)() = ^ {
+        [application endBackgroundTask:backgroundTaskIdentifier];
+        backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+    };
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        NSTimeInterval timeRemaining;
+        while (true) {
+            timeRemaining = [application backgroundTimeRemaining];
+            if (timeRemaining <= 10.0 || backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
+                [application endBackgroundTask:backgroundTaskIdentifier];
+                backgroundTaskIdentifier = [application beginBackgroundTaskWithExpirationHandler:expirationHandler];
+            }
+            sleep(5);
+        }
+    });
+}
+
 // The test can end in response to a delegate callback while there are still methods queued on the Web Thread.
 // If we do not ensure the Web Thread has been run, the callback can be done on a WebView that no longer exists.
 // To avoid this, _waitForWebThread dispatches a call to the WebThread event loop, actively processing the delegate
@@ -1262,7 +1290,7 @@ int DumpRenderTreeMain(int argc, const char *argv[])
 #else
     _argc = argc;
     _argv = argv;
-    UIApplicationMain(argc, (char**)argv, @"DumpRenderTree", nil);
+    UIApplicationMain(argc, (char**)argv, @"DumpRenderTree", @"DumpRenderTree");
 #endif
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
