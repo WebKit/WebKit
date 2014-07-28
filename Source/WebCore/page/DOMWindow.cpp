@@ -821,31 +821,38 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
 
     Document* document = this->document();
     if (!document)
-        return 0;
+        return nullptr;
 
     if (!document->securityOrigin()->canAccessLocalStorage(0)) {
         ec = SECURITY_ERR;
-        return 0;
-    }
-
-    if (m_localStorage) {
-        if (!m_localStorage->area().canAccessStorage(m_frame)) {
-            ec = SECURITY_ERR;
-            return 0;
-        }
-        return m_localStorage.get();
+        return nullptr;
     }
 
     Page* page = document->page();
+    // FIXME: We should consider supporting access/modification to local storage
+    // after calling window.close(). See <https://bugs.webkit.org/show_bug.cgi?id=135330>.
+    if (!page || !page->isClosing()) {
+        if (m_localStorage) {
+            if (!m_localStorage->area().canAccessStorage(m_frame)) {
+                ec = SECURITY_ERR;
+                return nullptr;
+            }
+            return m_localStorage.get();
+        }
+    }
+
     if (!page)
-        return 0;
+        return nullptr;
+
+    if (page->isClosing())
+        return nullptr;
 
     if (!page->settings().localStorageEnabled())
-        return 0;
+        return nullptr;
 
     RefPtr<StorageArea> storageArea;
     if (!document->securityOrigin()->canAccessLocalStorage(document->topOrigin()))
@@ -855,7 +862,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 
     if (!storageArea->canAccessStorage(m_frame)) {
         ec = SECURITY_ERR;
-        return 0;
+        return nullptr;
     }
 
     m_localStorage = Storage::create(m_frame, storageArea.release());
@@ -1035,6 +1042,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
     if (!m_frame->loader().shouldClose())
         return;
 
+    page->setIsClosing();
     page->chrome().closeWindowSoon();
 }
 

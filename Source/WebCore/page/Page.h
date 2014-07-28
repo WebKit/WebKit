@@ -320,6 +320,9 @@ public:
     void setIsInWindow(bool);
     bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
 
+    void setIsClosing() { m_isClosing = true; }
+    bool isClosing() const { return m_isClosing; }
+
     void addViewStateChangeObserver(ViewStateChangeObserver&);
     void removeViewStateChangeObserver(ViewStateChangeObserver&);
 
@@ -585,6 +588,8 @@ private:
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
 
     SessionID m_sessionID;
+
+    bool m_isClosing;
 };
 
 inline PageGroup& Page::group()

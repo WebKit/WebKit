@@ -1,5 +1,40 @@
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171661. <rdar://problem/17315237>
+
+    2014-07-27  Daniel Bates  <dabates@apple.com>
+    
+            [WK2] Crash when accessing window.localStorage after calling window.close()
+            https://bugs.webkit.org/show_bug.cgi?id=135328
+            <rdar://problem/17315237>
+    
+            Reviewed by Sam Weinig.
+    
+            Fixes an issue where accessing local storage for the first time after calling window.close()
+            causes a crash.
+    
+            For now, we should disallow accessing local storage after calling window.close() regardless of
+            whether it's the first access to local storage as this seems like a bad idiom to support. Note,
+            this represents a change in behavior from WebKit1. If such usage of window.localStorage turns
+            out to be reasonable then we can visit this decision again in <https://bugs.webkit.org/show_bug.cgi?id=135330>.
+    
+            Tests: storage/domstorage/localstorage/access-storage-after-window-close.html
+                   storage/domstorage/localstorage/access-storage-then-set-value-in-storage-after-window-close.html
+                   storage/domstorage/localstorage/set-value-in-storage-after-window-close.html
+    
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::localStorage): Modified to only return the cached local storage or
+            create a new local storage so long as the page isn't being closed. Also, substitute nullptr
+            for 0.
+            (WebCore::DOMWindow::close): Call Page::setIsClosing() to mark that the page is closing.
+            * page/Page.cpp:
+            (WebCore::Page::Page): Initialize m_isClosing to false.
+            * page/Page.h:
+            (WebCore::Page::setIsClosing): Added.
+            (WebCore::Page::isClosing): Added.
+    
+2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171647. <rdar://problem/17315168>
 
     2014-07-26  Timothy Horton  <timothy_horton@apple.com>
