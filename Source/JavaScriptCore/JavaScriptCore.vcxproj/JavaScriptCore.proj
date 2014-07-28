@@ -60,7 +60,7 @@
     <Message Text="Building $(CONFIGURATION) Solution" />
     <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
     <Message Text="Output=$(WebKit_OutputDir)" />
-    <MSBuild Projects="@(JavaScriptCore)" Properties="Configuration=$(CONFIG)" Targets="ReBuild" />
+    <MSBuild Projects="@(JavaScriptCore)" Properties="Configuration=$(CONFIG)" Targets="Build" />
   </Target>
 
   <Target Name="PostBuild" AfterTargets="Build">
