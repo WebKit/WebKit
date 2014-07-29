@@ -1274,7 +1274,15 @@ void TestController::processDidCrash()
     if (!m_didPrintWebProcessCrashedMessage) {
 #if PLATFORM(COCOA)
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        fprintf(stderr, "#CRASHED - WebProcess (pid %ld)\n", static_cast<long>(pid));
+        // FIXME: Find a way to not hardcode the process name.
+#if PLATFORM(IOS)
+        const char* processName = "com.apple.WebKit.WebContent";
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
+        const char* processName = "com.apple.WebKit.WebContent.Development";
+#else
+        const char* processName = "WebProcess";
+#endif
+        fprintf(stderr, "#CRASHED - %s (pid %ld)\n", processName, static_cast<long>(pid));
 #else
         fputs("#CRASHED - WebProcess\n", stderr);
 #endif
