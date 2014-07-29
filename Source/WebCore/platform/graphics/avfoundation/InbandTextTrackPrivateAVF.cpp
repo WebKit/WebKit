@@ -435,7 +435,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                     if (!arrivingCue->doesExtendCueData(*cueData))
                         nonExtensionCues.append(arrivingCue);
                     else
-                        LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - found an extension cue (\"%s\") for time = %.2f, position =  %.2f, line =  %.2f", this, arrivingCue->content().utf8().data(), arrivingCue->startTime(), arrivingCue->position(), arrivingCue->line());
+                        LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - found an extension cue (\"%s\") for time = %.2f, end = %.2f, position =  %.2f, line =  %.2f", this, arrivingCue->content().utf8().data(), arrivingCue->startTime(), arrivingCue->endTime(), arrivingCue->position(), arrivingCue->line());
                 }
 
                 bool currentCueIsExtended = (arrivingCues.size() != nonExtensionCues.size());
@@ -449,7 +449,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                     cueData->setEndTime(m_currentCueEndTime);
                     cueData->setStatus(GenericCueData::Complete);
 
-                    LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - updating cue: start=%.2f, end=%.2f, content=\"%s\"", this, cueData->startTime(), m_currentCueEndTime, cueData->content().utf8().data());
+                    LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - updating cue \"%s\": start=%.2f, end=%.2f", this, cueData->content().utf8().data(), cueData->startTime(), m_currentCueEndTime);
                     client()->updateGenericCue(this, cueData.get());
                 } else {
                     // We have to assume that the implicit duration is invalid for cues delivered during a seek because the AVF decode pipeline may not
@@ -472,7 +472,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
 
         m_cues.append(cueData);
         
-        LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time = %.2f, position =  %.2f, line =  %.2f", this, cueData->startTime(), cueData->position(), cueData->line());
+        LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue \"%s\" for time = %.2f, end = %.2f, position =  %.2f, line =  %.2f", this, cueData->content().utf8().data(), cueData->startTime(), cueData->endTime(), cueData->position(), cueData->line());
 
         client()->addGenericCue(this, cueData.release());
     }
@@ -502,6 +502,8 @@ void InbandTextTrackPrivateAVF::removeCompletedCues()
         for (; currentCue >= 0; --currentCue) {
             if (m_cues[currentCue]->status() != GenericCueData::Complete)
                 continue;
+
+            LOG(Media, "InbandTextTrackPrivateAVF::removeCompletedCues(%p) - removing cue \"%s\": start=%.2f, end=%.2f", this, m_cues[currentCue]->content().utf8().data(), m_cues[currentCue]->startTime(), m_cues[currentCue]->endTime());
 
             m_cues.remove(currentCue);
         }

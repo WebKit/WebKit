@@ -202,9 +202,6 @@ bool TextTrackCueGeneric::doesExtendCue(const TextTrackCue& cue) const
 
 bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
 {
-    if (VTTCue::isOrderedBefore(that))
-        return true;
-
     if (that->cueType() == Generic && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
         std::pair<double, double> thisPosition = getPositionCoordinates();
@@ -212,7 +209,10 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
         return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
     }
 
-    return false;
+    if (that->cueType() == Generic)
+        return startTime() > that->startTime();
+    
+    return VTTCue::isOrderedBefore(that);
 }
     
 } // namespace WebCore
