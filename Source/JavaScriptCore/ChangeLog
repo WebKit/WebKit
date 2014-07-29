@@ -1,5 +1,31 @@
 2014-07-29  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171689. <rdar://problem/17844890>
+
+    2014-07-28  Filip Pizlo  <fpizlo@apple.com>
+    
+            Make sure that we don't use non-speculative BooleanToNumber for a speculative Branch
+            https://bugs.webkit.org/show_bug.cgi?id=135350
+            <rdar://problem/17509889>
+    
+            Reviewed by Mark Hahnenberg and Oliver Hunt.
+            
+            If we have an exiting node that uses a conversion node, then that exiting node
+            needs to have a Phantom after it for the the original node. But we can't do that
+            for Branch because https://bugs.webkit.org/show_bug.cgi?id=126778.
+    
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            (JSC::DFG::FixupPhase::clearPhantomsAtEnd):
+            * tests/stress/branch-check-int32-on-boolean-to-number-untyped.js: Added.
+            (foo):
+            (test):
+            * tests/stress/branch-check-number-on-boolean-to-number-untyped.js: Added.
+            (foo):
+            (test):
+    
+2014-07-29  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171688. <rdar://problem/17364180>
 
     2014-07-28  Joseph Pecoraro  <pecoraro@apple.com>
