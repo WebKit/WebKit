@@ -583,7 +583,10 @@ bool Editor::WebContentReader::readImage(PassRefPtr<SharedBuffer> buffer, const 
     typeAsFilenameWithExtension.replace('/', '.');
     URL imageURL = URL::fakeURLWithRelativePart(typeAsFilenameWithExtension);
 
-    fragment = frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(buffer, imageURL, type, emptyString(), emptyString()));
+    RefPtr<ArchiveResource> archiveResource = ArchiveResource::create(buffer, imageURL, type, emptyString(), emptyString());
+    archiveResource->setShouldLoadImmediately(true);
+
+    fragment = frame.editor().createFragmentForImageResourceAndAddResource(archiveResource.release());
     return fragment;
 }
 
