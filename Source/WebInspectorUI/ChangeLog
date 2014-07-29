@@ -1,5 +1,26 @@
 2014-07-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171721
+
+    2014-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Incorrectly sized TimelineDataGrid event bubble
+            https://bugs.webkit.org/show_bug.cgi?id=135371
+
+            Reviewed by Timothy Hatcher.
+
+            Previously the secondsPerPixel calculation was relying on an element
+            that may not be sized yet. This was resulting in a visibleWidth of 0
+            and resulted in secondsPerPixel being Infinity. Fortunately, the
+            graph data source already knows the secondsPerPixel so we can just
+            ask it. Getting the correct value and eliminating forced layouts.
+
+            * UserInterface/Views/OverviewTimelineView.js:
+            (WebInspector.OverviewTimelineView.prototype.get secondsPerPixel):
+            * UserInterface/Views/TimelineDataGridNode.js:
+
+2014-07-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171720
 
     2014-07-28  Joseph Pecoraro  <pecoraro@apple.com>

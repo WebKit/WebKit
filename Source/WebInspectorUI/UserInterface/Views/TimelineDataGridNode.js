@@ -234,12 +234,9 @@ WebInspector.TimelineDataGridNode.prototype = {
         if (!this.revealed)
             return;
 
-        var startTime = this._graphDataSource.startTime;
-        var currentTime = this._graphDataSource.currentTime;
-        var endTime = this._graphDataSource.endTime;
-        var duration = endTime - startTime;
-        var visibleWidth = this._graphContainerElement.offsetWidth;
-        var secondsPerPixel = duration / visibleWidth;
+        var secondsPerPixel = this._graphDataSource.secondsPerPixel;
+        console.assert(isFinite(secondsPerPixel) && secondsPerPixel > 0);
+
         var recordBarIndex = 0;
 
         function createBar(records, renderMode)

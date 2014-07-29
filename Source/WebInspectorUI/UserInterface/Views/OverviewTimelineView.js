@@ -69,6 +69,11 @@ WebInspector.OverviewTimelineView.prototype = {
         return WebInspector.UIString("Timeline Events");
     },
 
+    get secondsPerPixel()
+    {
+        return this._timelineRuler.secondsPerPixel;
+    },
+
     shown: function()
     {
         WebInspector.TimelineView.prototype.shown.call(this);
