@@ -1,3 +1,19 @@
+2014-07-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Alpha value of ewk_view_bg_color_set is not working
+        https://bugs.webkit.org/show_bug.cgi?id=135333
+
+        Reviewed by Gyuyoung Kim.
+
+        evas_object_image_alpha_set should be called for the transparent evas object.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::handleEvasObjectColorSet):
+        (EwkView::setBackgroundColor): Checked the alpha value of object and called evas_object_image_alpha_set.
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_bg_color_set): Moved the logic to EwkView.
+
 2014-07-28  Mark Rowe  <mrowe@apple.com>
 
         Web process crash causes UI process to die with an assertion failure in Connection::exceptionSourceEventHandler

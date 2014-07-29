@@ -733,12 +733,7 @@ void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, i
 
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
 
-    if (red == 255 && green == 255 && blue == 255 && alpha == 255)
-        WKViewSetDrawsBackground(impl->wkView(), true);
-    else
-        WKViewSetDrawsBackground(impl->wkView(), false);
-
-    WKViewSetBackgroundColor(impl->wkView(), red, green, blue, alpha);
+    impl->setBackgroundColor(red, green, blue, alpha);
 }
 
 void ewk_view_bg_color_get(const Evas_Object* ewkView, int* red, int* green, int* blue, int* alpha)

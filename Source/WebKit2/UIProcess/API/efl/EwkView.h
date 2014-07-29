@@ -181,6 +181,8 @@ public:
     PassRefPtr<cairo_surface_t> takeSnapshot();
     bool scrollBy(const WebCore::IntSize&);
 
+    void setBackgroundColor(int red, int green, int blue, int alpha);
+
     void didFindZoomableArea(const WKPoint&, const WKRect&);
 
     // FIXME: PageViewportController needs to fix a problem that current page is shown in (0,0) position when starting to load new page.

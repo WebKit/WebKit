@@ -1236,7 +1236,9 @@ void EwkView::handleEvasObjectColorSet(Evas_Object* evasObject, int red, int gre
     Ewk_View_Smart_Data* smartData = toSmartData(evasObject);
     ASSERT(smartData);
 
-    evas_object_image_alpha_set(smartData->image, alpha < 255);
+    int backgroundAlpha;
+    WKViewGetBackgroundColor(toEwkView(smartData)->wkView(), nullptr, nullptr, nullptr, &backgroundAlpha);
+    evas_object_image_alpha_set(smartData->image, alpha < 255 || backgroundAlpha < 255);
     parentSmartClass.color_set(evasObject, red, green, blue, alpha);
 }
 
@@ -1413,6 +1415,21 @@ bool EwkView::scrollBy(const IntSize& offset)
 
     // If the page position has not changed, notify the caller using the return value.
     return !(oldPosition == position);
+}
+
+void EwkView::setBackgroundColor(int red, int green, int blue, int alpha)
+{
+    if (red == 255 && green == 255 && blue == 255 && alpha == 255)
+        WKViewSetDrawsBackground(wkView(), true);
+    else
+        WKViewSetDrawsBackground(wkView(), false);
+
+    int objectAlpha;
+    Evas_Object* image = smartData()->image;
+    evas_object_color_get(image, nullptr, nullptr, nullptr, &objectAlpha);
+    evas_object_image_alpha_set(image, alpha < 255 || objectAlpha < 255);
+
+    WKViewSetBackgroundColor(wkView(), red, green, blue, alpha);
 }
 
 Evas_Smart_Class EwkView::parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
