@@ -31,6 +31,10 @@
 #include "WebOriginDataManagerMessages.h"
 #include "WebOriginDataManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
+#include <WebCore/SecurityOrigin.h>
+#include <wtf/NeverDestroyed.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -82,6 +86,14 @@ void WebOriginDataManagerProxy::derefWebContextSupplement()
 
 void WebOriginDataManagerProxy::getOrigins(WKOriginDataTypes types, std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
+    // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
+    // That's why having one single callback works.
+    // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
+    if (!(types & kWKIndexedDatabaseData)) {
+        callbackFunction(nullptr, CallbackBase::Error::None);
+        return;
+    }
+
     RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
 
     if (!context()) {
@@ -92,24 +104,32 @@ void WebOriginDataManagerProxy::getOrigins(WKOriginDataTypes types, std::functio
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::GetOrigins(types, callbackID));
+    context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::GetOrigins(types, callbackID));
 }
 
-void WebOriginDataManagerProxy::didGetOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)
+void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection* connection, const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID)
 {
     RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
-    performAPICallbackWithSecurityOriginDataVector(originDatas, callback.get());
+    MESSAGE_CHECK_BASE(callback, connection);
+
+    Vector<RefPtr<API::Object>> securityOrigins;
+    securityOrigins.reserveInitialCapacity(originIdentifiers.size());
+
+    for (const auto& originIdentifier : originIdentifiers)
+        securityOrigins.uncheckedAppend(WebSecurityOrigin::create(originIdentifier.securityOrigin()));
+
+    callback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).get());
 }
 
 void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, WebSecurityOrigin* origin, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    if (!(types & kWKIndexedDatabaseData))
-        return;
-
     // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
     // That's why having one single callback works.
     // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
+    if (!(types & kWKIndexedDatabaseData)) {
+        callbackFunction(CallbackBase::Error::None);
+        return;
+    }
 
     RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
 
@@ -131,12 +151,13 @@ void WebOriginDataManagerProxy::deleteEntriesForOrigin(WKOriginDataTypes types, 
 
 void WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    if (!(types & kWKIndexedDatabaseData))
-        return;
-
     // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
     // That's why having one single callback works.
     // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
+    if (!(types & kWKIndexedDatabaseData)) {
+        callbackFunction(CallbackBase::Error::None);
+        return;
+    }
 
     RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
 
@@ -151,20 +172,22 @@ void WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates(WKOriginDataTy
     context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteEntriesModifiedBetweenDates(types, startDate, endDate, callbackID));
 }
 
-void WebOriginDataManagerProxy::didDeleteEntries(uint64_t callbackID)
+void WebOriginDataManagerProxy::didDeleteEntries(IPC::Connection* connection, uint64_t callbackID)
 {
     RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+    MESSAGE_CHECK_BASE(callback, connection);
     callback->performCallback();
 }
 
 void WebOriginDataManagerProxy::deleteAllEntries(WKOriginDataTypes types, std::function<void (CallbackBase::Error)> callbackFunction)
 {
-    if (!(types & kWKIndexedDatabaseData))
-        return;
-
     // FIXME: Right now we only support IndexedDatabase data so we know that we're only sending this request to the DatabaseProcess.
     // That's why having one single callback works.
     // In the future when we message N-processes we'll have to wait for all N replies before responding to the client.
+    if (!(types & kWKIndexedDatabaseData)) {
+        callbackFunction(CallbackBase::Error::None);
+        return;
+    }
 
     RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
 
@@ -179,9 +202,10 @@ void WebOriginDataManagerProxy::deleteAllEntries(WKOriginDataTypes types, std::f
     context()->sendToDatabaseProcessRelaunchingIfNecessary(Messages::WebOriginDataManager::DeleteAllEntries(types, callbackID));
 }
 
-void WebOriginDataManagerProxy::didDeleteAllEntries(uint64_t callbackID)
+void WebOriginDataManagerProxy::didDeleteAllEntries(IPC::Connection* connection, uint64_t callbackID)
 {
     RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+    MESSAGE_CHECK_BASE(callback, connection);
     callback->performCallback();
 }
 

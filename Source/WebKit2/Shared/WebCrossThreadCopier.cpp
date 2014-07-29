@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBIdentifier.h"
+#include "SecurityOriginData.h"
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <WebCore/IDBKeyData.h>
 
@@ -77,6 +78,11 @@ Vector<Vector<IDBKeyData>> CrossThreadCopierBase<false, false, Vector<Vector<IDB
     }
 
     return result;
+}
+
+SecurityOriginData CrossThreadCopierBase<false, false, SecurityOriginData>::copy(const SecurityOriginData& securityOriginData)
+{
+    return securityOriginData.isolatedCopy();
 }
 
 ASCIILiteral CrossThreadCopierBase<false, false, ASCIILiteral>::copy(const ASCIILiteral& literal)
