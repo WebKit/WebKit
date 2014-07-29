@@ -1,5 +1,29 @@
 2014-07-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171709
+
+    2014-07-28  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS WK2] WKWebView sometime tries to change the size of a null DrawingAreaProxy
+            https://bugs.webkit.org/show_bug.cgi?id=135368
+            <rdar://problem/16988887>
+
+            Reviewed by Simon Fraser.
+
+            We should never assume DrawingAreaProxy exists in the API invoked by the clients
+            of WKWebView. There are at least two cases where the DrawingAreaProxy is null:
+            -In some path on initialization.
+            -After a crash.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _frameOrBoundsChanged]):
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+            We can safely null check and skip setting the size. If the call was skipped,
+            the size is set on DrawingAreaProxy initialization by querying the current
+            size through the page client.
+
+2014-07-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171706
 
     2014-07-28  Roger Fong  <roger_fong@apple.com>
