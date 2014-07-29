@@ -1,3 +1,22 @@
+2014-07-29  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171716
+
+    2014-07-28  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Unexpected dark border on selected but window inactive timeline
+            https://bugs.webkit.org/show_bug.cgi?id=135360
+
+            Update the border-top colors for the item adjacent to the selected item.
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/TimelineSidebarPanel.css:
+            (.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item):
+            (.sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item):
+
 2014-07-28  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171645. <rdar://problem/17818693>
