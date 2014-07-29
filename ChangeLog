@@ -1,3 +1,15 @@
+2014-07-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL][GTK] Remove ACCELERATED_COMPOSITING compile flag 
+        https://bugs.webkit.org/show_bug.cgi?id=135376
+
+        Reviewed by Gyuyoung Kim.
+
+        ACCELERATED_COMPOSITING was changed to the mandatory code after r163079.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-07-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] CMake tries to install JavaScriptCore-3.0.gir outside of install prefix

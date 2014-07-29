@@ -274,7 +274,6 @@ if (OPENGL_FOUND AND (GLX_FOUND OR EGL_FOUND))
     set(WTF_USE_3D_GRAPHICS 1)
 
     add_definitions(-DWTF_USE_OPENGL=1)
-    add_definitions(-DWTF_USE_ACCELERATED_COMPOSITING=1)
     add_definitions(-DWTF_USE_3D_GRAPHICS=1)
     add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
     add_definitions(-DWTF_USE_TEXTURE_MAPPER_GL=1)
