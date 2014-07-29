@@ -42,6 +42,7 @@
 #include "ImageBuffer.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
+#include "Logging.h"
 #include "MediaControls.h"
 #include "PageGroup.h"
 #include "RenderLayer.h"
@@ -1303,6 +1304,13 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // within the TextTrackCue instance itself. If parameters of the cue change,
     // the display tree is cleared.
 
+    // If the number of CSS boxes in the output is less than the number of cues
+    // we wish to render (e.g., we are adding another cue in a set of roll-up
+    // cues), remove all the existing CSS boxes representing the cues and re-add
+    // them so that the new cue is at the bottom.
+    if (childNodeCount() < activeCues.size())
+        removeChildren();
+    
     // 10. For each text track cue cue in cues that has not yet had
     // corresponding CSS boxes added to output, in text track cue order, run the
     // following substeps:
@@ -1319,6 +1327,8 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         ASSERT(cue->isActive());
         if (!cue->track() || !cue->track()->isRendered() || !cue->isActive() || cue->text().isEmpty())
             continue;
+
+        LOG(Media, "MediaControlTextTrackContainerElement::updateDisplay(%p) - adding and positioning cue #%zu: \"%s\", start=%.2f, end=%.2f, line=%.2f", this, i, cue->text().utf8().data(), cue->startTime(), cue->endTime(), cue->line());
 
         RefPtr<VTTCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size());
 #if ENABLE(WEBVTT_REGIONS)
