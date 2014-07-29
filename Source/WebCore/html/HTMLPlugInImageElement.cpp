@@ -223,12 +223,8 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<R
     return HTMLPlugInElement::createElementRenderer(WTF::move(style));
 }
 
-bool HTMLPlugInImageElement::willRecalcStyle(Style::Change change)
+bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
 {
-    // Make sure style recalcs scheduled by a child shadow tree don't trigger reconstruction and cause flicker.
-    if (change == Style::NoChange && styleChangeType() == NoStyleChange)
-        return true;
-
     // FIXME: There shoudn't be need to force render tree reconstruction here.
     // It is only done because loading and load event dispatching is tied to render tree construction.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
