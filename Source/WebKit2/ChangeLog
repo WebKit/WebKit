@@ -1,3 +1,14 @@
+2014-07-28  Mark Rowe  <mrowe@apple.com>
+
+        Web process crash causes UI process to die with an assertion failure in Connection::exceptionSourceEventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=135366
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::exceptionSourceEventHandler): Remove the assertion since it frequently fires during
+        normal development with debug builds.
+
 2014-07-28  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS WK2] WKWebView sometime tries to change the size of a null DrawingAreaProxy
