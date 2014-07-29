@@ -620,7 +620,7 @@ bool GraphicsLayerTextureMapper::shouldHaveBackingStore() const
     return drawsContent() && contentsAreVisible() && !m_size.isEmpty();
 }
 
-bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
+bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
 {
     ASSERT(!keyframesName.isEmpty());
 

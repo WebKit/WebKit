@@ -81,7 +81,7 @@ public:
 
     inline int changeMask() const { return m_changeMask; }
 
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
+    virtual bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double);
     virtual void pauseAnimation(const String&, double);
     virtual void removeAnimation(const String&);
     void setAnimations(const GraphicsLayerAnimations&);
