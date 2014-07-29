@@ -1,3 +1,13 @@
+2014-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF for !ENABLE(DATABASE_PROCESS) platforms.
+
+        * WebProcess/OriginData/WebOriginDataManager.cpp:
+        (WebKit::WebOriginDataManager::getOrigins):
+        (WebKit::WebOriginDataManager::deleteEntriesForOrigin):
+        (WebKit::WebOriginDataManager::deleteEntriesModifiedBetweenDates):
+        (WebKit::WebOriginDataManager::deleteAllEntries):
+
 2014-07-29  Brady Eidson  <beidson@apple.com>
 
         Make WKOriginDataManager actually operate on IndexedDatabases.

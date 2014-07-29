@@ -26,7 +26,10 @@
 #include "config.h"
 #include "WebOriginDataManager.h"
 
+#include "ChildProcess.h"
+#if ENABLE(DATABASE_PROCESS)
 #include "DatabaseProcess.h"
+#endif
 #include "SecurityOriginData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebOriginDataManagerMessages.h"
@@ -53,6 +56,7 @@ WebOriginDataManager::WebOriginDataManager(ChildProcess* childProcess)
 
 void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callbackID)
 {
+#if ENABLE(DATABASE_PROCESS)
     // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
     // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
     // for multiple types into the one callback.
@@ -60,6 +64,7 @@ void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callback
         DatabaseProcess::shared().getIndexedDatabaseOrigins(callbackID);
         return;
     }
+#endif
 
     Vector<SecurityOriginData> results;
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidGetOrigins(results, callbackID), 0);
@@ -67,6 +72,7 @@ void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callback
 
 void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& originData, uint64_t callbackID)
 {
+#if ENABLE(DATABASE_PROCESS)
     // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
     // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
     // for multiple types into the one callback.
@@ -74,12 +80,14 @@ void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes types, const
         DatabaseProcess::shared().deleteIndexedDatabaseEntriesForOrigin(originData, callbackID);
         return;
     }
+#endif
 
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
 }
 
 void WebOriginDataManager::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startTime, double endTime, uint64_t callbackID)
 {
+#if ENABLE(DATABASE_PROCESS)
     // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
     // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
     // for multiple types into the one callback.
@@ -87,11 +95,13 @@ void WebOriginDataManager::deleteEntriesModifiedBetweenDates(WKOriginDataTypes t
         DatabaseProcess::shared().deleteIndexedDatabaseEntriesModifiedBetweenDates(startTime, endTime, callbackID);
         return;
     }
+#endif
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
 }
 
 void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes types, uint64_t callbackID)
 {
+#if ENABLE(DATABASE_PROCESS)
     // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
     // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
     // for multiple types into the one callback.
@@ -99,6 +109,7 @@ void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes types, uint64_t ca
         DatabaseProcess::shared().deleteAllIndexedDatabaseEntries(callbackID);
         return;
     }
+#endif
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
 }
 
