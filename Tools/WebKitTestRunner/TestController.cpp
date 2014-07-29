@@ -680,7 +680,7 @@ void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 void TestController::updateWindowScaleForTest(const TestInvocation& test)
 {
     WTF::String localPathOrUrl = String(test.pathOrURL());
-    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("hidpi-") != notFound;
+    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("/hidpi-") != notFound;
     mainWebView()->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
 }
 

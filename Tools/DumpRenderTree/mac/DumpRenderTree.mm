@@ -1467,7 +1467,7 @@ static void changeWindowScaleIfNeeded(const char* testPathOrUR)
 {
     bool hasHighDPIWindow = [[[mainFrame webView] window] backingScaleFactor] != 1;
     WTF::String localPathOrUrl = String(testPathOrUR);
-    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("hidpi-") != notFound;
+    bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("/hidpi-") != notFound;
     if (hasHighDPIWindow == needsHighDPIWindow)
         return;
 

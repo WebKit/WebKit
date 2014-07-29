@@ -1,3 +1,13 @@
+2014-07-29  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/borders/border-radius-on-subpixel-position-non-hidpi.html fails on Retina machines
+        https://bugs.webkit.org/show_bug.cgi?id=135398
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac-wk2/TestExpectations: Let's try to unskip the test, maybe this was
+        the actual reason for it to appear failing?
+
 2014-07-29  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Assertion failure hit testing a region-based multicolumn in a region

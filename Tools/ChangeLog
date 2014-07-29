@@ -1,5 +1,19 @@
 2014-07-29  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/borders/border-radius-on-subpixel-position-non-hidpi.html fails on Retina machines
+        https://bugs.webkit.org/show_bug.cgi?id=135398
+
+        Reviewed by Zalan Bujtas.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::updateWindowScaleForTest):
+        "hidpi-" should be at the start. This allows "hidpi-" in both file and directory names.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (changeWindowScaleIfNeeded): Same fix.
+        For some reason, I wasn't seeing this test fail on WK1 even without the fix, not
+        sure why.
+
+2014-07-29  Alexey Proskuryakov  <ap@apple.com>
+
         PPT: run-webkit-tests doesn't upload crash logs to bots
         https://bugs.webkit.org/show_bug.cgi?id=135391
 
