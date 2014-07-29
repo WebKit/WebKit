@@ -166,10 +166,22 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar {
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
-    border-top-color: rgb(120, 139, 168);
+    border-top-color: rgb(185, 184, 185);
+}
+
+body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
+    border-top-color: rgb(212, 212, 212);
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item {
+    border-top-color: rgb(0, 128, 252);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
+    border-top-color: rgb(120, 139, 168);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item {
     border-top-color: rgb(107, 130, 164);
 }
 
