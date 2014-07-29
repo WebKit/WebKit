@@ -1,0 +1,9 @@
+Test that hit testing a region-based multicolumn element displayed in a region does not hit an assert.
+
+To manually test, move the mouse over the multicolumn element.
+
+On success, you should see PASS below
+
+PASS
+
+

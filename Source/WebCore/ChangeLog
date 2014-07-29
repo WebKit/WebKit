@@ -1,3 +1,20 @@
+2014-07-29  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Assertion failure hit testing a region-based multicolumn in a region
+        https://bugs.webkit.org/show_bug.cgi?id=135385
+
+        Reviewed by Andrei Bucur.
+
+        When a region-based multicolumn element is displayed and hit tested in a region,
+        we have to disable the named flow region information not only for painting,
+        but also for hit-testing. This is a follow-up for https://bugs.webkit.org/show_bug.cgi?id=132121,
+        which provided the fix for painting.
+
+        Test: fast/regions/assert-hit-test-multicol-in-region.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+
 2014-07-29  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup RenderSelectionInfoBase/RenderSelectionInfo/RenderBlockSelectionInfo.

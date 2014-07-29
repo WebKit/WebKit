@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #article {
+                -webkit-flow-into: flow;
+            }
+            #region {
+                -webkit-flow-from: flow;
+                position: absolute;
+                top: 200px;
+                left: 100px;
+                width: 400px;
+                height: 200px;
+            }
+            #multicol {
+                -webkit-column-count: 2;
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that hit testing a region-based multicolumn element displayed in a region does not hit an assert.</p>
+        <p>To manually test, move the mouse over the multicolumn element.</p>
+        <p>On success, you should see PASS below</p>
+        <p id="result">FAIL</p>
+        <div id="article">
+            <div id="multicol">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+        </div>
+        <div id="region">
+        </div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText(false);
+
+            if (window.eventSender) {
+                var region = document.getElementById("region");
+                window.eventSender.mouseMoveTo( region.offsetLeft + 10, region.offsetTop + 10 );
+                document.getElementById("multicol").style.visibility = "hidden";
+            }
+
+            document.getElementById("result").innerHTML = "PASS";
+        </script>
+    </body>
+</html>

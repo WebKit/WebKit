@@ -4748,6 +4748,11 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
         return 0;
 
+    // Disable named flow region information for in flow threads such as multi-col.
+    std::unique_ptr<CurrentRenderFlowThreadDisabler> flowThreadDisabler;
+    if (enclosingPaginationLayer(ExcludeCompositedPaginatedLayers))
+        flowThreadDisabler = std::make_unique<CurrentRenderFlowThreadDisabler>(&renderer().view());
+
     RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
 
     // Prevent hitting the fixed layers inside the flow thread when hitting through regions.

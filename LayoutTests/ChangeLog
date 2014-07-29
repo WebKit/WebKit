@@ -1,3 +1,13 @@
+2014-07-29  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Assertion failure hit testing a region-based multicolumn in a region
+        https://bugs.webkit.org/show_bug.cgi?id=135385
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/assert-hit-test-multicol-in-region-expected.txt: Added.
+        * fast/regions/assert-hit-test-multicol-in-region.html: Added.
+
 2014-07-28  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r164133): Selection disappears after scrolling on nytimes.com
