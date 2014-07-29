@@ -43,7 +43,6 @@
     <xi:include href="xml/WebKitContextMenuItem.xml"/>
     <xi:include href="xml/WebKitFormSubmissionRequest.xml"/>
     <xi:include href="xml/WebKitSecurityManager.xml"/>
-    <xi:include href="xml/WebKitWebViewGroup.xml"/>
     <xi:include href="xml/WebKitCertificateInfo.xml"/>
   </chapter>
 

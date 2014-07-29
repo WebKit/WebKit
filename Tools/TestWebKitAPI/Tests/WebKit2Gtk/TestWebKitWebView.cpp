@@ -46,10 +46,12 @@ static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
 static void testWebViewSettings(WebViewTest* test, gconstpointer)
 {
     WebKitSettings* defaultSettings = webkit_web_view_get_settings(test->m_webView);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultSettings));
     g_assert(defaultSettings);
     g_assert(webkit_settings_get_enable_javascript(defaultSettings));
 
     GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
     g_object_set(G_OBJECT(newSettings.get()), "enable-javascript", FALSE, NULL);
     webkit_web_view_set_settings(test->m_webView, newSettings.get());
 
@@ -63,10 +65,15 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView2.get())) == settings);
 
     GRefPtr<WebKitSettings> newSettings2 = adoptGRef(webkit_settings_new());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings2.get()));
     webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView2.get()), newSettings2.get());
     settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView2.get()));
     g_assert(settings == newSettings2.get());
     g_assert(webkit_settings_get_enable_javascript(settings));
+
+    GRefPtr<GtkWidget> webView3 = webkit_web_view_new_with_settings(newSettings2.get());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView3.get()));
+    g_assert(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView3.get())) == newSettings2.get());
 }
 
 static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)

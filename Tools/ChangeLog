@@ -1,3 +1,23 @@
+2014-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Remove WebKitWebViewGroup from WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=133729
+
+        Reviewed by Carlos Garcia Campos.
+
+        Removes WebKitWebViewGroup, effectively reverting the changes
+        introduced by r149117. The motivation for WebKitWebViewGroup
+        was using the user style sheet injection API, which has been
+        moved into WebKitUserContentManager, rendering it unneeded.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: Remove tests
+        for WebKitWebViewGroup.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewSettings):
+        Restore the assertions that check that settings objects are
+        released. Add test for webkit_web_view_new_with_settings().
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebViewGroup.cpp: Removed.
+
 2014-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Implement webkit_web_view_load_string() in WebKit2

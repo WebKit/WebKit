@@ -1,3 +1,78 @@
+2014-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Remove WebKitWebViewGroup from WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=133729
+
+        Reviewed by Carlos Garcia Campos.
+
+        Removes WebKitWebViewGroup, effectively reverting the changes
+        introduced by r149117. The motivation for WebKitWebViewGroup
+        was using the user style sheet injection API, which has been
+        moved into WebKitUserContentManager, rendering it unneeded.
+
+        * PlatformGTK.cmake: Remove WebKitWebViewGroup source files
+        from the build.
+        * UIProcess/API/C/gtk/WKView.cpp:
+        (WKViewCreate): Accomodate for changes in the signature of
+        webkitWebViewBaseCreate().
+        * UIProcess/API/gtk/WebKitSettings.cpp: Update API documentation.
+        * UIProcess/API/gtk/WebKitWebContext.cpp: Remove the default web
+        view group from WebKitWebContext.
+        (webkitWebContextCreatePageForWebView): Allow passing a
+        WebPreferences object at construction.
+        (webkitWebContextGetDefaultWebViewGroup): Deleted.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewUpdateSettings): Use WebPageProxy::setPreferences()
+        directly. Handle the case when webkit_web_view_set_settings()
+        is called on construction by doing an early-return.
+        (webkitWebViewConstructed): Call webkitWebViewUpdateSettings()
+        after creating the internal WebPageProxy object.
+        (webkitWebViewSetProperty): Removed "group" property, added
+        "settings" property.
+        (webkitWebViewGetProperty): Ditto.
+        (webkitWebViewDispose): Do not disconnect signal handler for
+        the (now unexistant) WebKitWebViewGroup.
+        (webkit_web_view_class_init): Removed "group" property, added
+        "settings" property.
+        (webkitWebViewHandleAuthenticationChallenge): Access the
+        WebKitWebSettings directly.
+        (webkit_web_view_new_with_related_view): Make new views share
+        settings with their related view.
+        (webkit_web_view_new_with_settings): Added.
+        (webkit_web_view_set_settings): Access the settings directly in
+        the WebKitWebView.
+        (webkit_web_view_get_settings): Ditto.
+        (webkit_web_view_set_zoom_level): Ditto.
+        (webkit_web_view_get_zoom_level): Ditto.
+        (webkitWebViewSettingsChanged): Deleted.
+        (webkitWebViewDisconnectSettingsChangedSignalHandler): Deleted.
+        (webkit_web_view_new_with_group): Deleted.
+        (webkit_web_view_get_group): Deleted.
+        * UIProcess/API/gtk/WebKitWebView.h: Removed API methods related
+        to WebKitWebViewGroup.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate): Allow passing a WebPreferences object
+        for constructing the WebPageProxy.
+        (webkitWebViewBaseUpdatePreferences): Instead of going through
+        the page group, use WebPageProxy::preferences() directly.
+        (webkitWebViewBaseCreateWebPage): Allow passing a WebPreferences
+        object for constructing the WebPageProxy.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Update the
+        prototypes of the internal functions.
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp: Removed.
+        * UIProcess/API/gtk/WebKitWebViewGroup.h: Removed.
+        * UIProcess/API/gtk/WebKitWebViewGroupPrivate.h: Removed.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Change public API
+        bits in the documentation.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Ditto.
+        * UIProcess/API/gtk/webkit2.h: Removed WebKitWebViewGroup.h header.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Accomodate for changes in the signature of
+        webkitWebViewBaseCreate().
+
 2014-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Implement webkit_web_view_load_string() in WebKit2

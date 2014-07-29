@@ -34,6 +34,8 @@
 #include "ExperimentalFeatures.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include <WebCore/UserAgentGtk.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
@@ -70,13 +72,12 @@ struct _WebKitSettingsPrivate {
 
 /**
  * SECTION:WebKitSettings
- * @short_description: Control the behaviour of #WebKitWebView<!-- -->s
- * @see_also: #WebKitWebViewGroup, #WebKitWebView
+ * @short_description: Control the behaviour of a #WebKitWebView
  *
- * #WebKitSettings can be applied to a #WebKitWebViewGroup to control text charset,
+ * #WebKitSettings can be applied to a #WebKitWebView to control text charset,
  * color, font sizes, printing mode, script support, loading of images and various
- * other things on the #WebKitWebView<!-- -->s of the group.
- * After creation, a #WebKitSettings object contains default settings.
+ * other things on a #WebKitWebView. After creation, a #WebKitSettings object
+ * contains default settings.
  *
  * <informalexample><programlisting>
  * /<!-- -->* Disable JavaScript. *<!-- -->/
@@ -1223,7 +1224,7 @@ WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
  * webkit_settings_new:
  *
  * Creates a new #WebKitSettings instance with default values. It must
- * be manually attached to a #WebKitWebViewGroup.
+ * be manually attached to a #WebKitWebView.
  * See also webkit_settings_new_with_settings().
  *
  * Returns: a new #WebKitSettings instance.
@@ -1240,7 +1241,7 @@ WebKitSettings* webkit_settings_new()
  *    %NULL-terminated
  *
  * Creates a new #WebKitSettings instance with the given settings. It must
- * be manually attached to a #WebKitWebViewGroup.
+ * be manually attached to a #WebKitWebView.
  *
  * Returns: a new #WebKitSettings instance.
  */
