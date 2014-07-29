@@ -1,3 +1,30 @@
+2014-07-29  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171704
+
+    2014-07-25  Jeffrey Pfau  <jpfau@apple.com>
+
+            IDB transactions never reset if the Web Process ends before cleaning up
+            https://bugs.webkit.org/show_bug.cgi?id=135218
+
+            Reviewed by Darin Adler.
+
+            * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+            (WebKit::DatabaseToWebProcessConnection::didClose):
+            * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+            (WebKit::UniqueIDBDatabase::unregisterConnection):
+            (WebKit::UniqueIDBDatabase::didCompleteTransactionOperation):
+            (WebKit::UniqueIDBDatabase::openBackingStoreTransaction):
+            (WebKit::UniqueIDBDatabase::resetBackingStoreTransaction):
+            (WebKit::UniqueIDBDatabase::didEstablishTransaction):
+            (WebKit::UniqueIDBDatabase::didResetTransaction):
+            (WebKit::UniqueIDBDatabase::resetAllTransactions):
+            (WebKit::UniqueIDBDatabase::finalizeRollback):
+            (WebKit::UniqueIDBDatabase::absoluteDatabaseDirectory):
+            * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+            * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+            (WebKit::UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction):
+
 2014-07-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171663. <rdar://problem/17818308>
