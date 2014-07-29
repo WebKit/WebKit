@@ -8532,7 +8532,7 @@
     <ClCompile Include="..\platform\network\BlobResourceHandle.cpp" />
     <ClCompile Include="..\platform\network\BlobRegistry.cpp" />
     <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp" />
-    <ClCompile Include="..\platform\network\Credential.cpp" />
+    <ClCompile Include="..\platform\network\CredentialBase.cpp" />
     <ClCompile Include="..\platform\network\CredentialStorage.cpp" />
     <ClCompile Include="..\platform\network\DataURL.cpp" />
     <ClCompile Include="..\platform\network\DNSResolveQueue.cpp" />
@@ -19764,6 +19764,7 @@
     <ClInclude Include="..\platform\network\BlobResourceHandle.h" />
     <ClInclude Include="..\platform\network\CookieStorage.h" />
     <ClInclude Include="..\platform\network\Credential.h" />
+    <ClInclude Include="..\platform\network\CredentialBase.h" />
     <ClInclude Include="..\platform\network\CredentialStorage.h" />
     <ClInclude Include="..\platform\network\DataURL.h" />
     <ClInclude Include="..\platform\network\DNSResolveQueue.h" />

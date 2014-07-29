@@ -22,69 +22,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef Credential_h
 #define Credential_h
 
-#include <wtf/text/WTFString.h>
-
-#define CERTIFICATE_CREDENTIALS_SUPPORTED (PLATFORM(COCOA))
-
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-#include <Security/SecBase.h>
-#include <wtf/RetainPtr.h>
-#endif
+#include "CredentialBase.h"
 
 namespace WebCore {
 
-enum CredentialPersistence {
-    CredentialPersistenceNone,
-    CredentialPersistenceForSession,
-    CredentialPersistencePermanent
-};
-
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-enum CredentialType {
-    CredentialTypePassword,
-    CredentialTypeClientCertificate
-};
-#endif
-
-class Credential {
-
+class Credential : public CredentialBase {
 public:
-    Credential();
-    Credential(const String& user, const String& password, CredentialPersistence);
-    Credential(const Credential& original, CredentialPersistence);
+    Credential()
+        : CredentialBase()
+    {
+    }
+
+    Credential(const String& user, const String& password, CredentialPersistence persistence)
+        : CredentialBase(user, password, persistence)
+    {
+    }
+
+    Credential(const Credential& original, CredentialPersistence persistence)
+        : CredentialBase(original, persistence)
+    {
+    }
+
 #if CERTIFICATE_CREDENTIALS_SUPPORTED
-    Credential(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence);
-#endif
-    
-    bool isEmpty() const;
-    
-    const String& user() const;
-    const String& password() const;
-    bool hasPassword() const;
-    CredentialPersistence persistence() const;
-    
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-    SecIdentityRef identity() const;
-    CFArrayRef certificates() const;
-    CredentialType type() const;
-#endif    
-    
-private:
-    String m_user;
-    String m_password;
-    CredentialPersistence m_persistence;
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-    RetainPtr<SecIdentityRef> m_identity;
-    RetainPtr<CFArrayRef> m_certificates;
-    CredentialType m_type;
+    Credential(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence persistence)
+        : CredentialBase(identity, certificates, persistence)
+    {
+    }
 #endif
 };
 
-bool operator==(const Credential& a, const Credential& b);
-inline bool operator!=(const Credential& a, const Credential& b) { return !(a == b); }
-    
-};
-#endif
+}
+
+#endif // Credential_h

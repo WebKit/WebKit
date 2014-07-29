@@ -22,14 +22,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
+#include "CredentialBase.h"
+
 #include "Credential.h"
 
 namespace WebCore {
 
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-Credential::Credential()
+CredentialBase::CredentialBase()
     : m_user("")
     , m_password("")
     , m_persistence(CredentialPersistenceNone)
@@ -41,7 +44,7 @@ Credential::Credential()
    
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-Credential::Credential(const String& user, const String& password, CredentialPersistence persistence)
+CredentialBase::CredentialBase(const String& user, const String& password, CredentialPersistence persistence)
     : m_user(user.length() ? user : "")
     , m_password(password.length() ? password : "")
     , m_persistence(persistence)
@@ -51,7 +54,7 @@ Credential::Credential(const String& user, const String& password, CredentialPer
 {
 }
     
-Credential::Credential(const Credential& original, CredentialPersistence persistence)
+CredentialBase::CredentialBase(const Credential& original, CredentialPersistence persistence)
     : m_user(original.user())
     , m_password(original.password())
     , m_persistence(persistence)
@@ -63,7 +66,7 @@ Credential::Credential(const Credential& original, CredentialPersistence persist
 {
 }
 
-bool Credential::isEmpty() const
+bool CredentialBase::isEmpty() const
 {
 #if CERTIFICATE_CREDENTIALS_SUPPORTED
     if (m_type == CredentialTypeClientCertificate && (m_identity || m_certificates))
@@ -73,28 +76,28 @@ bool Credential::isEmpty() const
     return m_user.isEmpty() && m_password.isEmpty();
 }
     
-const String& Credential::user() const
+const String& CredentialBase::user() const
 { 
     return m_user; 
 }
 
-const String& Credential::password() const 
+const String& CredentialBase::password() const
 { 
     return m_password; 
 }
 
-bool Credential::hasPassword() const 
+bool CredentialBase::hasPassword() const
 { 
     return !m_password.isEmpty(); 
 }
 
-CredentialPersistence Credential::persistence() const 
+CredentialPersistence CredentialBase::persistence() const
 { 
     return m_persistence; 
 }
     
 #if CERTIFICATE_CREDENTIALS_SUPPORTED
-Credential::Credential(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence persistence)
+CredentialBase::CredentialBase(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence persistence)
     : m_user("")
     , m_password("")
     , m_persistence(persistence)
@@ -104,17 +107,17 @@ Credential::Credential(SecIdentityRef identity, CFArrayRef certificates, Credent
 {
 }
     
-SecIdentityRef Credential::identity() const
+SecIdentityRef CredentialBase::identity() const
 {
     return m_identity.get();
 }
     
-CFArrayRef Credential::certificates() const
+CFArrayRef CredentialBase::certificates() const
 {
     return m_certificates.get();
 }
     
-CredentialType Credential::type() const
+CredentialType CredentialBase::type() const
 {
     return m_type;
 }
@@ -159,4 +162,3 @@ bool operator==(const Credential& a, const Credential& b)
 }
 
 }
-

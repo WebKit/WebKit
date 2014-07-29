@@ -1313,6 +1313,7 @@
 		3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */ = {isa = PBXBuildFile; fileRef = 3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
+		3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 379291781985EF3900F4B661 /* CredentialBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		379919961200DDF400EA041C /* WOFFFileFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379919941200DDF400EA041C /* WOFFFileFormat.cpp */; };
 		379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 379919951200DDF400EA041C /* WOFFFileFormat.h */; };
 		379919B21200DE5000EA041C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 379919B11200DE5000EA041C /* libz.dylib */; };
@@ -1858,7 +1859,7 @@
 		514C76510CE9234E007EF3CD /* ResourceHandleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */; };
 		514C76530CE9234E007EF3CD /* ResourceRequestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */; };
 		514C76550CE9234F007EF3CD /* ResourceResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */; };
-		514C766D0CE923A1007EF3CD /* Credential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76580CE923A1007EF3CD /* Credential.cpp */; };
+		514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76580CE923A1007EF3CD /* CredentialBase.cpp */; };
 		514C766E0CE923A1007EF3CD /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76590CE923A1007EF3CD /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765A0CE923A1007EF3CD /* FormData.cpp */; };
 		514C76700CE923A1007EF3CD /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765B0CE923A1007EF3CD /* FormData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8337,6 +8338,7 @@
 		3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontTraitsMask.h; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
+		379291781985EF3900F4B661 /* CredentialBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialBase.h; sourceTree = "<group>"; };
 		379919941200DDF400EA041C /* WOFFFileFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WOFFFileFormat.cpp; sourceTree = "<group>"; };
 		379919951200DDF400EA041C /* WOFFFileFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WOFFFileFormat.h; sourceTree = "<group>"; };
 		379919B11200DE5000EA041C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
@@ -8945,7 +8947,7 @@
 		514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleMac.mm; sourceTree = "<group>"; };
 		514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceRequestMac.mm; sourceTree = "<group>"; };
 		514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseMac.mm; sourceTree = "<group>"; };
-		514C76580CE923A1007EF3CD /* Credential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Credential.cpp; sourceTree = "<group>"; };
+		514C76580CE923A1007EF3CD /* CredentialBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialBase.cpp; sourceTree = "<group>"; };
 		514C76590CE923A1007EF3CD /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
 		514C765A0CE923A1007EF3CD /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; };
 		514C765B0CE923A1007EF3CD /* FormData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormData.h; sourceTree = "<group>"; };
@@ -16329,8 +16331,9 @@
 				2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */,
 				2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */,
 				E13F01EA1270E10D00DFBA71 /* CookieStorage.h */,
-				514C76580CE923A1007EF3CD /* Credential.cpp */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
+				514C76580CE923A1007EF3CD /* CredentialBase.cpp */,
+				379291781985EF3900F4B661 /* CredentialBase.h */,
 				51A052321058774F00CC9E95 /* CredentialStorage.cpp */,
 				51A052311058774F00CC9E95 /* CredentialStorage.h */,
 				B2F34FE50E82F81400F627CD /* DNS.h */,
@@ -24159,6 +24162,7 @@
 				A7B6E69F0B291A9600D0529F /* DragData.h in Headers */,
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
+				3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */,
 				498770DC1242C535002226BA /* DrawingBuffer.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
@@ -27282,7 +27286,7 @@
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,
 				D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */,
-				514C766D0CE923A1007EF3CD /* Credential.cpp in Sources */,
+				514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */,
 				51A052341058774F00CC9E95 /* CredentialStorage.cpp in Sources */,
 				7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */,
 				E1B4CD2510B322E200BFFD7E /* CredentialStorageMac.mm in Sources */,

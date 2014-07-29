@@ -1791,7 +1791,7 @@
     <ClCompile Include="..\platform\network\BlobResourceHandle.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\Credential.cpp">
+    <ClCompile Include="..\platform\network\CredentialBase.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\network\CredentialStorage.cpp">
@@ -8806,6 +8806,9 @@
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\Credential.h">
+      <Filter>platform\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\CredentialBase.h">
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\CredentialStorage.h">
