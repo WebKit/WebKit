@@ -207,7 +207,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
             return SelectorFailsCompletely;
 
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
-        if (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child))
+        if (context.firstSelectorOfTheFragment == context.selector && (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
             nextContext.visitedMatchType = VisitedMatchDisabled;
 
         nextContext.pseudoId = NOPSEUDO;
