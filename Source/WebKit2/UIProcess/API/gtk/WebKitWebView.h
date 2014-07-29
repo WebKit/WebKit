@@ -288,6 +288,13 @@ webkit_web_view_load_plain_text                      (WebKitWebView             
                                                       const gchar               *plain_text);
 
 WEBKIT_API void
+webkit_web_view_load_bytes                           (WebKitWebView             *web_view,
+                                                      GBytes                    *bytes,
+                                                      const gchar               *mime_type,
+                                                      const gchar               *encoding,
+                                                      const gchar               *base_uri);
+
+WEBKIT_API void
 webkit_web_view_load_request                         (WebKitWebView             *web_view,
                                                       WebKitURIRequest          *request);
 

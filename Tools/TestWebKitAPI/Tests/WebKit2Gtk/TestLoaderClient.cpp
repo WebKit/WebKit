@@ -89,6 +89,18 @@ static void testLoadPlainText(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappened(test->m_loadEvents);
 }
 
+static void testLoadBytes(LoadTrackingTest* test, gconstpointer)
+{
+    GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+    char* contents;
+    gsize contentsLength;
+    g_file_get_contents(filePath.get(), &contents, &contentsLength, nullptr);
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_take(contents, contentsLength));
+    test->loadBytes(bytes.get(), "image/vnd.microsoft.icon", nullptr, nullptr);
+    test->waitUntilLoadFinished();
+    assertNormalLoadHappened(test->m_loadEvents);
+}
+
 static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
 {
     GRefPtr<WebKitURIRequest> request(webkit_uri_request_new(kServer->getURIForPath("/normal").data()));
@@ -442,6 +454,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);
     LoadTrackingTest::add("WebKitWebView", "load-alternate-html", testLoadAlternateHTML);
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
+    LoadTrackingTest::add("WebKitWebView", "load-bytes", testLoadBytes);
     LoadTrackingTest::add("WebKitWebView", "load-request", testLoadRequest);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "title", testWebViewTitle);

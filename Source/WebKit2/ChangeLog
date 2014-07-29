@@ -1,3 +1,21 @@
+2014-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Implement webkit_web_view_load_string() in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=134735
+
+        Reviewed by Sergio Villar Senin.
+
+        Add webkit_web_view_load_bytes() that receives a GBytes to load
+        random data in the web view using the given MIME-Type, encoding
+        and base URL.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (releaseGBytes):
+        (webkit_web_view_load_bytes):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2014-07-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Alpha value of ewk_view_bg_color_set is not working

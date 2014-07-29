@@ -71,6 +71,15 @@ void WebViewTest::loadPlainText(const char* plainText)
     webkit_web_view_load_plain_text(m_webView, plainText);
 }
 
+void WebViewTest::loadBytes(GBytes* bytes, const char* mimeType, const char* encoding, const char* baseURI)
+{
+    if (!baseURI)
+        m_activeURI = "about:blank";
+    else
+        m_activeURI = baseURI;
+    webkit_web_view_load_bytes(m_webView, bytes, mimeType, encoding, baseURI);
+}
+
 void WebViewTest::loadRequest(WebKitURIRequest* request)
 {
     m_activeURI = webkit_uri_request_get_uri(request);

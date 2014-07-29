@@ -1,3 +1,30 @@
+2014-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Implement webkit_web_view_load_string() in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=134735
+
+        Reviewed by Sergio Villar Senin.
+
+        Add /webkit2/WebKitWebView/load-bytes test case and simplify
+        TestDOMXPathNSResolver by using webkit_web_view_load_bytes()
+        instead of a soup server just to sent the Content-type header.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMXPathNSResolver.cpp:
+        (testWebKitDOMXPathNSResolverNative):
+        (testWebKitDOMXPathNSResolverCustom):
+        (beforeAll):
+        (afterAll):
+        (serverCallback): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp:
+        (testLoadBytes):
+        (beforeAll):
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp:
+        (LoadTrackingTest::loadBytes):
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::loadBytes):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2014-07-28  Daniel Bates  <dabates@apple.com>
 
         Add support for running the Clang static analyzer when building WebKit and JSC

@@ -69,5 +69,10 @@
     <xi:include href="xml/api-index-2.4.xml"><xi:fallback /></xi:include>
   </index>
 
+  <index id="api-index-2-6" role="2.6">
+    <title>Index of new symbols in 2.6</title>
+    <xi:include href="xml/api-index-2.6.xml"><xi:fallback /></xi:include>
+  </index>
+
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
 </book>

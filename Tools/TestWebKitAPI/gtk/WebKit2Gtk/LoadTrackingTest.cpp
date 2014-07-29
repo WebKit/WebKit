@@ -174,6 +174,14 @@ void LoadTrackingTest::loadPlainText(const char* plainText)
     WebViewTest::loadPlainText(plainText);
 }
 
+void LoadTrackingTest::loadBytes(GBytes* bytes, const char* mimeType, const char* encoding, const char* baseURI)
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    m_error.reset();
+    WebViewTest::loadBytes(bytes, mimeType, encoding, baseURI);
+}
+
 void LoadTrackingTest::loadRequest(WebKitURIRequest* request)
 {
     m_loadEvents.clear();

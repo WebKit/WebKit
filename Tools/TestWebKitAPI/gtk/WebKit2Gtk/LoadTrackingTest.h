@@ -43,6 +43,7 @@ public:
     void loadHtml(const char* html, const char* baseURI);
     void loadPlainText(const char* plainText);
     void loadRequest(WebKitURIRequest*);
+    void loadBytes(GBytes*, const char* mimeType, const char* encoding, const char* baseURI);
     void reload();
     void goBack();
     void goForward();

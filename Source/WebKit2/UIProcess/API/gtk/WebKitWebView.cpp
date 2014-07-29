@@ -2135,6 +2135,45 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     getPage(webView)->loadPlainTextString(String::fromUTF8(plainText));
 }
 
+static void releaseGBytes(unsigned char*, const void* bytes)
+{
+    // Balanced by g_bytes_ref in webkit_web_view_load_bytes().
+    g_bytes_unref(static_cast<GBytes*>(const_cast<void*>(bytes)));
+}
+
+/**
+ * webkit_web_view_load_bytes:
+ * @web_view: a #WebKitWebView
+ * @bytes: input data to load
+ * @mime_type: (allow-none): the MIME type of @bytes, or %NULL
+ * @encoding: (allow-none): the character encoding of @bytes, or %NULL
+ * @base_uri: (allow-none): the base URI for relative locations or %NULL
+ *
+ * Load the specified @bytes into @web_view using the given @mime_type and @encoding.
+ * When @mime_type is %NULL, it defaults to "text/html".
+ * When @encoding is %NULL, it defaults to "UTF-8".
+ * When @base_uri is %NULL, it defaults to "about:blank".
+ * You can monitor the load operation by connecting to #WebKitWebView::load-changed signal.
+ *
+ * Since: 2.6
+ */
+void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const char* mimeType, const char* encoding, const char* baseURI)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(bytes);
+
+    gsize bytesDataSize;
+    gconstpointer bytesData = g_bytes_get_data(bytes, &bytesDataSize);
+    g_return_if_fail(bytesDataSize);
+
+    // Balanced by g_bytes_unref in releaseGBytes.
+    g_bytes_ref(bytes);
+
+    RefPtr<API::Data> data = API::Data::createWithoutCopying(static_cast<const unsigned char*>(bytesData), bytesDataSize, releaseGBytes, bytes);
+    getPage(webView)->loadData(data.get(), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+        encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
+}
+
 /**
  * webkit_web_view_load_request:
  * @web_view: a #WebKitWebView

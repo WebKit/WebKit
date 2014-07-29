@@ -19,14 +19,12 @@
 
 #include "config.h"
 
-#include "WebKitTestServer.h"
 #include "WebProcessTestRunner.h"
 #include "WebViewTest.h"
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 
 static WebProcessTestRunner* testRunner;
-static WebKitTestServer* kServer;
 
 static void runTest(WebViewTest* test, const char* name)
 {
@@ -38,46 +36,24 @@ static void runTest(WebViewTest* test, const char* name)
 
 static void testWebKitDOMXPathNSResolverNative(WebViewTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/native").data());
+    static const char* nativeXML = "<root xmlns:foo='http://www.example.org'><foo:child>SUCCESS</foo:child></root>";
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(nativeXML, strlen(nativeXML)));
+    test->loadBytes(bytes.get(), "text/xml", nullptr, nullptr);
     test->waitUntilLoadFinished();
     runTest(test, "native");
 }
 
 static void testWebKitDOMXPathNSResolverCustom(WebViewTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/custom").data());
+    static const char* customXML = "<root xmlns='http://www.example.com'><child>SUCCESS</child></root>";
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(customXML, strlen(customXML)));
+    test->loadBytes(bytes.get(), "text/xml", nullptr, nullptr);
     test->waitUntilLoadFinished();
     runTest(test, "custom");
 }
 
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-{
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
-        return;
-    }
-
-    if (g_str_equal(path, "/native")) {
-        soup_message_set_status(message, SOUP_STATUS_OK);
-        soup_message_headers_append(message->response_headers, "Content-Type", "text/xml");
-        static const char* nativeXML = "<root xmlns:foo='http://www.example.org'><foo:child>SUCCESS</foo:child></root>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, nativeXML, strlen(nativeXML));
-        soup_message_body_complete(message->response_body);
-    } else if (g_str_equal(path, "/custom")) {
-        soup_message_set_status(message, SOUP_STATUS_OK);
-        soup_message_headers_append(message->response_headers, "Content-Type", "text/xml");
-        static const char* customXML = "<root xmlns='http://www.example.com'><child>SUCCESS</child></root>";
-        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, customXML, strlen(customXML));
-        soup_message_body_complete(message->response_body);
-    } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
-}
-
 void beforeAll()
 {
-    kServer = new WebKitTestServer();
-    kServer->run(serverCallback);
-
     testRunner = new WebProcessTestRunner();
     webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
 
@@ -88,5 +64,4 @@ void beforeAll()
 void afterAll()
 {
     delete testRunner;
-    delete kServer;
 }
