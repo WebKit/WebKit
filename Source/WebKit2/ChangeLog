@@ -1,3 +1,17 @@
+2014-07-29  Daniel Bates  <dabates@apple.com>
+
+        Use WTF::move() instead of std::move() to help ensure move semantics
+        https://bugs.webkit.org/show_bug.cgi?id=135351
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/Cocoa/_WKSessionState.mm:
+        (-[_WKSessionState _initWithSessionState:]):
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        (toStringVector): Remove use of std::move(). It's unnecessary to call std::move() on an rvalue.
+        * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+        (WebKit::ServicesOverlayController::mouseEvent):
+
 2014-07-28  Pratik Solanki  <psolanki@apple.com>
 
         Get SharedBuffer.h out of ResourceBuffer.h (and a few other places)

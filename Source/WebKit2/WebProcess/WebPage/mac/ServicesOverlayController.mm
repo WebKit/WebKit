@@ -460,7 +460,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
 
     // Check and see if the mouse went up and we have a current mouse down highlight button.
     if (event.type() == WebEvent::MouseUp) {
-        RetainPtr<DDHighlightRef> mouseDownHighlight = std::move(m_currentMouseDownOnButtonHighlight);
+        RetainPtr<DDHighlightRef> mouseDownHighlight = WTF::move(m_currentMouseDownOnButtonHighlight);
 
         // If the mouse lifted while still over the highlight button that it went down on, then that is a click.
         if (onButton && mouseDownHighlight) {

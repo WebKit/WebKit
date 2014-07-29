@@ -253,7 +253,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             
             GetByIdVariant variant(
                 StructureSet(structure), myOffset, specificValue, chain.get(),
-                std::move(callLinkStatus));
+                WTF::move(callLinkStatus));
             
             if (!result.appendVariant(variant))
                 return GetByIdStatus(slowPathState, true);

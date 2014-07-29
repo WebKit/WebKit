@@ -1225,7 +1225,7 @@ namespace WTF {
         other.m_deletedCount = 0;
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = std::move(other.m_stats);
+        m_stats = WTF::move(other.m_stats);
         other.m_stats = nullptr;
 #endif
     }
@@ -1249,7 +1249,7 @@ namespace WTF {
         other.m_deletedCount = 0;
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = std::move(other.m_stats);
+        m_stats = WTF::move(other.m_stats);
         other.m_stats = nullptr;
 #endif
 

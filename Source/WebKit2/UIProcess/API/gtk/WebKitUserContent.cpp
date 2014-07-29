@@ -70,7 +70,7 @@ static inline Vector<String> toStringVector(const char* const* strv)
 
     Vector<String> result;
     for (auto str = strv; *str; ++str)
-        result.append(std::move(String::fromUTF8(*str)));
+        result.append(String::fromUTF8(*str));
     return result;
 }
 

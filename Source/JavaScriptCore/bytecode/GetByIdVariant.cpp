@@ -39,7 +39,7 @@ GetByIdVariant::GetByIdVariant(
     , m_alternateBase(nullptr)
     , m_specificValue(specificValue)
     , m_offset(offset)
-    , m_callLinkStatus(std::move(callLinkStatus))
+    , m_callLinkStatus(WTF::move(callLinkStatus))
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);
