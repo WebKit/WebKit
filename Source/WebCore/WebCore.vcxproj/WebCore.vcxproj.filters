@@ -2598,6 +2598,9 @@
     <ClCompile Include="..\rendering\RenderSearchField.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\RenderSelectionInfo.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\RenderSlider.cpp">
       <Filter>rendering</Filter>
     </ClCompile>

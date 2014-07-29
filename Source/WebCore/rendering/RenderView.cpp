@@ -753,13 +753,13 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == root.selectionStart() || os == root.selectionEnd()) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(os, clipToVisibleContent));
+            selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(*os, clipToVisibleContent));
             RenderBlock* cb = os->containingBlock();
             while (cb && !cb->isRenderView()) {
                 std::unique_ptr<RenderSelectionInfo>& blockInfo = selectedObjects.add(cb, nullptr).iterator->value;
                 if (blockInfo)
                     break;
-                blockInfo = std::make_unique<RenderSelectionInfo>(cb, clipToVisibleContent);
+                blockInfo = std::make_unique<RenderSelectionInfo>(*cb, clipToVisibleContent);
                 cb = cb->containingBlock();
             }
         }
@@ -805,13 +805,13 @@ void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
         if (o->selectionState() == SelectionNone)
             continue;
 
-        RenderSelectionInfo(o, true).repaint();
+        RenderSelectionInfo(*o, true).repaint();
 
         // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
         for (RenderBlock* block = o->containingBlock(); block && !block->isRenderView(); block = block->containingBlock()) {
             if (!processedBlocks.add(block).isNewEntry)
                 break;
-            RenderSelectionInfo(block, true).repaint();
+            RenderSelectionInfo(*block, true).repaint();
         }
     }
 }
@@ -954,14 +954,14 @@ void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, Selecti
         if ((os->canBeSelectionLeaf() || os == root.selectionStart() || os == root.selectionEnd())
             && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
-            oldSelectionData.selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(os, true));
+            oldSelectionData.selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(*os, true));
             if (blockRepaintMode == RepaintNewXOROld) {
                 RenderBlock* cb = os->containingBlock();
                 while (cb && !cb->isRenderView()) {
                     std::unique_ptr<RenderBlockSelectionInfo>& blockInfo = oldSelectionData.selectedBlocks.add(cb, nullptr).iterator->value;
                     if (blockInfo)
                         break;
-                    blockInfo = std::make_unique<RenderBlockSelectionInfo>(cb);
+                    blockInfo = std::make_unique<RenderBlockSelectionInfo>(*cb);
                     cb = cb->containingBlock();
                 }
             }
@@ -1008,10 +1008,10 @@ void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject*
     selectionIterator = SelectionIterator(o);
     while (o && o != stop) {
         if ((o->canBeSelectionLeaf() || o == start || o == end) && o->selectionState() != SelectionNone) {
-            std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(o, true);
+            std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(*o, true);
 
 #if ENABLE(SERVICE_CONTROLS)
-            for (auto& rect : selectionInfo->rects())
+            for (auto& rect : selectionInfo->collectedSelectionRects())
                 m_selectionRectGatherer.addRect(rect);
 #endif
 
@@ -1022,7 +1022,7 @@ void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject*
                 std::unique_ptr<RenderBlockSelectionInfo>& blockInfo = newSelectedBlocks.add(cb, nullptr).iterator->value;
                 if (blockInfo)
                     break;
-                blockInfo = std::make_unique<RenderBlockSelectionInfo>(cb);
+                blockInfo = std::make_unique<RenderBlockSelectionInfo>(*cb);
                 cb = cb->containingBlock();
 
 #if ENABLE(SERVICE_CONTROLS)

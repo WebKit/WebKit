@@ -96,6 +96,7 @@
 #include "RenderScrollbarPart.cpp"
 #include "RenderScrollbarTheme.cpp"
 #include "RenderSearchField.cpp"
+#include "RenderSelectionInfo.cpp"
 #include "RenderSlider.cpp"
 #include "RenderSnapshottedPlugIn.cpp"
 #include "RenderTable.cpp"

@@ -2352,6 +2352,7 @@ set(WebCore_SOURCES
     rendering/RenderScrollbarPart.cpp
     rendering/RenderScrollbarTheme.cpp
     rendering/RenderSearchField.cpp
+    rendering/RenderSelectionInfo.cpp
     rendering/RenderSlider.cpp
     rendering/RenderSnapshottedPlugIn.cpp
     rendering/RenderTable.cpp

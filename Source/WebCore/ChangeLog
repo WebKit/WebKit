@@ -1,3 +1,41 @@
+2014-07-29  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup RenderSelectionInfoBase/RenderSelectionInfo/RenderBlockSelectionInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=135326
+
+        Reviewed by Darin Adler.
+
+        1. Move implementation to RenderSelectInfo.cpp
+        2. RenderSelectionInfoBase/RenderSelectionInfo/RenderBlockSelectionInfo take Render* reference.
+        3. Remove unused functions.
+        4. Add RenderSelectionInfoBase::repaintRectangle()
+
+        No change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderSelectionInfo.cpp: Added.
+        (WebCore::RenderSelectionInfoBase::RenderSelectionInfoBase):
+        (WebCore::RenderSelectionInfoBase::repaintRectangle):
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo):
+        (WebCore::RenderSelectionInfo::repaint):
+        (WebCore::RenderBlockSelectionInfo::RenderBlockSelectionInfo):
+        (WebCore::RenderBlockSelectionInfo::repaint):
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfo::collectedSelectionRects):
+        (WebCore::RenderSelectionInfoBase::RenderSelectionInfoBase): Deleted.
+        (WebCore::RenderSelectionInfoBase::object): Deleted.
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo): Deleted.
+        (WebCore::RenderSelectionInfo::repaint): Deleted.
+        (WebCore::RenderSelectionInfo::rects): Deleted.
+        (WebCore::RenderBlockSelectionInfo::RenderBlockSelectionInfo): Deleted.
+        (WebCore::RenderBlockSelectionInfo::repaint): Deleted.
+        (WebCore::RenderBlockSelectionInfo::block): Deleted.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::subtreeSelectionBounds):
+        (WebCore::RenderView::repaintSubtreeSelection):
+        (WebCore::RenderView::clearSubtreeSelection):
+        (WebCore::RenderView::applySubtreeSelection):
+
 2014-07-28  Pratik Solanki  <psolanki@apple.com>
 
         Get SharedBuffer.h out of ResourceBuffer.h (and a few other places)
