@@ -1,3 +1,50 @@
+2014-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Moved the Cocoa-specific parts of CredentialBase into a Cocoa-specific Credential class.
+        Work towards fixing https://bugs.webkit.org/show_bug.cgi?id=135327
+
+        Reviewed by Alexey Proskuryakov.
+
+        No change in functionality.
+
+        * WebCore.exp.in: Updated for functions moved in the class hierarchy.
+
+        * WebCore.xcodeproj/project.pbxproj: Added CredentialCocoa.{h,mm}.
+
+        * platform/network/Credential.h: For Cocoa, include CredentialCocoa.h instead of the generic
+        class.
+        (WebCore::Credential::Credential): Removed #if CERTIFICATE_CREDENTIALS_SUPPORTED code.
+
+        * platform/network/CredentialBase.cpp:
+        (WebCore::CredentialBase::CredentialBase): Changed to use emptyString instead of "", removed
+        #if CERTIFICATE_CREDENTIALS_SUPPORTED code.
+        (WebCore::CredentialBase::isEmpty): Ditto.
+        (WebCore::CredentialBase::compare): Renamed operator== to this, removed
+        #if CERTIFICATE_CREDENTIALS_SUPPORTED code, but changed the end to call platformCompare.
+        (WebCore::CredentialBase::identity): Deleted.
+        (WebCore::CredentialBase::certificates): Deleted.
+        (WebCore::CredentialBase::type): Deleted.
+        * platform/network/CredentialBase.h: Removed #if CERTIFICATE_CREDENTIALS_SUPPORTED members.
+        (WebCore::CredentialBase::platformCompare): Added a base implementation that returns true.
+        (WebCore::operator==): Changed to use CredentialBase::compare.
+
+        * platform/network/cocoa/CredentialCocoa.h: Added.
+        (WebCore::Credential::Credential):
+        * platform/network/cocoa/CredentialCocoa.mm: Added.
+        (WebCore::Credential::Credential): Moved the constructor that takes an identity and
+        certificates here.
+        (WebCore::Credential::isEmpty): Moved here.
+        (WebCore::Credential::identity): Ditto.
+        (WebCore::Credential::certificates): Ditto.
+        (WebCore::Credential::type): Ditto.
+        (WebCore::Credential::platformCompare): Moved the code that compares client-certificate
+        credentials here.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac): Removed #if CERTIFICATE_CREDENTIALS_SUPPORTED guards in this Cocoa-only
+        file.
+        (WebCore::core): Ditto.
+
 2014-07-29  Daniel Bates  <dabates@apple.com>
 
         Use WTF::move() instead of std::move() to help ensure move semantics

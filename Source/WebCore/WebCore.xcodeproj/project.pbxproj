@@ -1314,6 +1314,8 @@
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
 		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
 		3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 379291781985EF3900F4B661 /* CredentialBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3792917D1987678F00F4B661 /* CredentialCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3792917B1987678F00F4B661 /* CredentialCocoa.mm */; };
+		3792917E1987678F00F4B661 /* CredentialCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 3792917C1987678F00F4B661 /* CredentialCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		379919961200DDF400EA041C /* WOFFFileFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 379919941200DDF400EA041C /* WOFFFileFormat.cpp */; };
 		379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 379919951200DDF400EA041C /* WOFFFileFormat.h */; };
 		379919B21200DE5000EA041C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 379919B11200DE5000EA041C /* libz.dylib */; };
@@ -8340,6 +8342,8 @@
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
 		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
 		379291781985EF3900F4B661 /* CredentialBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialBase.h; sourceTree = "<group>"; };
+		3792917B1987678F00F4B661 /* CredentialCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CredentialCocoa.mm; path = cocoa/CredentialCocoa.mm; sourceTree = "<group>"; };
+		3792917C1987678F00F4B661 /* CredentialCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CredentialCocoa.h; path = cocoa/CredentialCocoa.h; sourceTree = "<group>"; };
 		379919941200DDF400EA041C /* WOFFFileFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WOFFFileFormat.cpp; sourceTree = "<group>"; };
 		379919951200DDF400EA041C /* WOFFFileFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WOFFFileFormat.h; sourceTree = "<group>"; };
 		379919B11200DE5000EA041C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
@@ -16767,6 +16771,8 @@
 		7E7DE1FE195CEF2D0035363B /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				3792917C1987678F00F4B661 /* CredentialCocoa.h */,
+				3792917B1987678F00F4B661 /* CredentialCocoa.mm */,
 				372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */,
 				372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */,
 				7E7DE1FC195CEF260035363B /* ResourceRequestCocoa.mm */,
@@ -25674,6 +25680,7 @@
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
+				3792917E1987678F00F4B661 /* CredentialCocoa.h in Headers */,
 				A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */,
 				0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */,
 				439046D812DA25E800AF80A2 /* RenderMathMLBlock.h in Headers */,
@@ -28664,6 +28671,7 @@
 				B2FA3DC40AB75A6F000E5AC4 /* JSSVGPathSegCurvetoCubicSmoothRel.cpp in Sources */,
 				B2FA3DC60AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticAbs.cpp in Sources */,
 				B2FA3DC80AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticRel.cpp in Sources */,
+				3792917D1987678F00F4B661 /* CredentialCocoa.mm in Sources */,
 				B2FA3DCA0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp in Sources */,
 				B2FA3DCC0AB75A6F000E5AC4 /* JSSVGPathSegCurvetoQuadraticSmoothRel.cpp in Sources */,
 				B2C96D8D0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp in Sources */,

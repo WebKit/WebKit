@@ -28,13 +28,6 @@
 
 #include <wtf/text/WTFString.h>
 
-#define CERTIFICATE_CREDENTIALS_SUPPORTED (PLATFORM(COCOA))
-
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-#include <Security/SecBase.h>
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
 
 class Credential;
@@ -44,13 +37,6 @@ enum CredentialPersistence {
     CredentialPersistenceForSession,
     CredentialPersistencePermanent
 };
-
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-enum CredentialType {
-    CredentialTypePassword,
-    CredentialTypeClientCertificate
-};
-#endif
 
 class CredentialBase {
 
@@ -62,33 +48,24 @@ public:
     bool hasPassword() const;
     CredentialPersistence persistence() const;
     
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-    SecIdentityRef identity() const;
-    CFArrayRef certificates() const;
-    CredentialType type() const;
-#endif    
-    
+    static bool compare(const Credential&, const Credential&);
+
 protected:
     CredentialBase();
     CredentialBase(const String& user, const String& password, CredentialPersistence);
     CredentialBase(const Credential& original, CredentialPersistence);
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-    CredentialBase(SecIdentityRef, CFArrayRef certificates, CredentialPersistence);
-#endif
-    
+
+    static bool platformCompare(const Credential&, const Credential&) { return true; }
+
 private:
     String m_user;
     String m_password;
     CredentialPersistence m_persistence;
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-    RetainPtr<SecIdentityRef> m_identity;
-    RetainPtr<CFArrayRef> m_certificates;
-    CredentialType m_type;
-#endif
 };
 
-bool operator==(const Credential& a, const Credential& b);
+inline bool operator==(const Credential& a, const Credential& b) { return CredentialBase::compare(a, b); }
 inline bool operator!=(const Credential& a, const Credential& b) { return !(a == b); }
     
 };
+
 #endif

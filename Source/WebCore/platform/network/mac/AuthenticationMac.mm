@@ -242,14 +242,12 @@ NSURLCredential *mac(const Credential& coreCredential)
             ASSERT_NOT_REACHED();
     }
 
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
     if (coreCredential.type() == CredentialTypeClientCertificate) {
         return [[[NSURLCredential alloc] initWithIdentity:coreCredential.identity()
                                              certificates:(NSArray *)coreCredential.certificates()
                                               persistence:persistence]
                                               autorelease];
     }
-#endif
 
     return [[[NSURLCredential alloc] initWithUser:coreCredential.user()
                                         password:coreCredential.password()
@@ -278,11 +276,9 @@ Credential core(NSURLCredential *macCredential)
             ASSERT_NOT_REACHED();
     }
 
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
     SecIdentityRef identity = [macCredential identity];
     if (identity)
         return Credential(identity, (CFArrayRef)[macCredential certificates], persistence);
-#endif
     
     return Credential([macCredential user], [macCredential password], persistence);
 }

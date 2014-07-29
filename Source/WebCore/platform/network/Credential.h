@@ -26,7 +26,14 @@
 #ifndef Credential_h
 #define Credential_h
 
+#if PLATFORM(COCOA)
+#include "CredentialCocoa.h"
+#else
+
 #include "CredentialBase.h"
+
+// FIXME: Remove this macro once it is not used in WebKit.
+#define CERTIFICATE_CREDENTIALS_SUPPORTED 0
 
 namespace WebCore {
 
@@ -46,15 +53,10 @@ public:
         : CredentialBase(original, persistence)
     {
     }
-
-#if CERTIFICATE_CREDENTIALS_SUPPORTED
-    Credential(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence persistence)
-        : CredentialBase(identity, certificates, persistence)
-    {
-    }
-#endif
 };
 
 }
+
+#endif
 
 #endif // Credential_h
