@@ -50,6 +50,8 @@
 		<dict>
 			<key>DYLD_INSERT_LIBRARIES</key>
 			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/PluginProcess.app/Contents/MacOS/PluginProcessShim.dylib</string>
+			<key>NSStringDisableTagged</key>
+			<string>YES</string>
 		</dict>
 	</dict>
 </dict>
