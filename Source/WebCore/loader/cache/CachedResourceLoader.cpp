@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CachedResourceLoader.h"
 
+#include "ArchiveResource.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedSVGDocument.h"
 #include "CachedFont.h"
@@ -51,6 +52,7 @@
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
+#include "ResourceBuffer.h"
 #include "ResourceLoadScheduler.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -469,9 +471,17 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource->setLoadPriority(request.priority());
 
     if ((policy != Use || resource->stillNeedsLoad()) && CachedResourceRequest::NoDefer == request.defer()) {
-        resource->load(this, request.options());
+        ArchiveResource* archiveResource = m_documentLoader ? m_documentLoader->archiveResourceForURL(request.resourceRequest().url()) : nullptr;
 
-        // We don't support immediate loads, but we do support immediate failure.
+        if (archiveResource && archiveResource->shouldLoadImmediately()) {
+            resource->responseReceived(resource->response());
+            RefPtr<ResourceBuffer> buffer = ResourceBuffer::adoptSharedBuffer(archiveResource->data());
+            resource->finishLoading(buffer.get());
+            resource->finish();
+        } else
+            resource->load(this, request.options());
+
+        // We only sometimes support immediate loads, but we always support immediate failure.
         if (resource->errorOccurred()) {
             if (resource->inCache())
                 memoryCache()->remove(resource.get());
