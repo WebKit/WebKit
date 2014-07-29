@@ -352,6 +352,13 @@ static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
 #endif
 }
 
+void FrameSelection::setNeedsSelectionUpdate()
+{
+    m_pendingSelectionUpdate = true;
+    if (RenderView* view = m_frame->contentRenderer())
+        view->clearSelection();
+}
+
 void FrameSelection::updateAndRevealSelection()
 {
     if (!m_pendingSelectionUpdate)
@@ -2141,7 +2148,7 @@ void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
     updateAppearance();
 }
 
-void FrameSelection::layoutDidChange()
+void FrameSelection::didLayout()
 {
     setCaretRectNeedsUpdate();
     updateAndRevealSelection();

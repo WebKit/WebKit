@@ -31,6 +31,7 @@
 #include "CursorList.h"
 #include "EventHandler.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "FlowThreadController.h"
@@ -607,10 +608,8 @@ RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyC
 
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
-    // FIXME: The FrameSelection should be responsible for this when it
-    // is notified of DOM mutations.
     if (!documentBeingDestroyed() && oldChild.isSelectionBorder())
-        view().clearSelection();
+        frame().selection().setNeedsSelectionUpdate();
 
     if (!documentBeingDestroyed() && notifyChildren == NotifyChildren)
         oldChild.willBeRemovedFromTree();

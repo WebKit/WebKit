@@ -1,3 +1,16 @@
+2014-07-28  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r164133): Selection disappears after scrolling on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=135361
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensure that when a RenderElement, part of the current selection is removed,
+        we recalculate and update the selection soon after layout.
+
+        * fast/dynamic/selection-gets-cleared-when-part-of-it-gets-removed-expected.html: Added.
+        * fast/dynamic/selection-gets-cleared-when-part-of-it-gets-removed.html: Added.
+
 2014-07-28  Andreas Kling  <akling@apple.com>
 
         REGRESSION (r160806): CSS zoom property doesn't work on anything inside anchors.
