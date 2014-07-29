@@ -41,16 +41,19 @@ struct AbstractValue;
 class StructureSet {
 public:
     StructureSet()
+        : m_pointer(0)
     {
         setEmpty();
     }
     
     StructureSet(Structure* structure)
+        : m_pointer(0)
     {
         set(structure);
     }
     
     ALWAYS_INLINE StructureSet(const StructureSet& other)
+        : m_pointer(0)
     {
         copyFrom(other);
     }
