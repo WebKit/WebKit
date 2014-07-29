@@ -185,17 +185,10 @@ private:
     void didShutdownBackingStore(UniqueIDBDatabaseShutdownType);
     void didCompleteBoolRequest(uint64_t requestID, bool success);
 
-    void didEstablishTransaction(const IDBIdentifier& transactionIdentifier, bool success);
-    void didResetTransaction(const IDBIdentifier& transactionIdentifier, bool success);
-    void resetAllTransactions(const DatabaseProcessIDBConnection&);
-    void finalizeRollback(const IDBIdentifier& transactionId);
-
     bool m_acceptingNewRequests;
 
-    HashMap<const DatabaseProcessIDBConnection*, HashSet<IDBIdentifier>> m_establishedTransactions;
     Deque<RefPtr<AsyncRequest>> m_pendingMetadataRequests;
     HashMap<IDBIdentifier, RefPtr<AsyncRequest>> m_pendingTransactionRequests;
-    HashSet<IDBIdentifier> m_pendingTransactionRollbacks;
     HashMap<uint64_t, RefPtr<AsyncRequest>> m_pendingDatabaseTasks;
     RefPtr<AsyncRequest> m_pendingShutdownTask;
 

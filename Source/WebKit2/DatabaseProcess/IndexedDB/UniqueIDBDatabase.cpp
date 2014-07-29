@@ -113,10 +113,9 @@ void UniqueIDBDatabase::registerConnection(DatabaseProcessIDBConnection& connect
 void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& connection)
 {
     ASSERT(m_connections.contains(&connection));
-    resetAllTransactions(connection);
     m_connections.remove(&connection);
 
-    if (m_connections.isEmpty() && m_pendingTransactionRollbacks.isEmpty()) {
+    if (m_connections.isEmpty()) {
         shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
         DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
     }
@@ -338,12 +337,10 @@ void UniqueIDBDatabase::didCompleteTransactionOperation(const IDBIdentifier& tra
     ASSERT(RunLoop::isMain());
 
     RefPtr<AsyncRequest> request = m_pendingTransactionRequests.take(transactionIdentifier);
+    if (!request)
+        return;
 
-    if (request)
-        request->completeRequest(success);
-
-    if (m_pendingTransactionRollbacks.contains(transactionIdentifier))
-        finalizeRollback(transactionIdentifier);
+    request->completeRequest(success);
 }
 
 void UniqueIDBDatabase::changeDatabaseVersion(const IDBIdentifier& transactionIdentifier, uint64_t newVersion, std::function<void(bool)> successCallback)
@@ -717,7 +714,6 @@ void UniqueIDBDatabase::openBackingStoreTransaction(const IDBIdentifier& transac
 
     bool success = m_backingStore->establishTransaction(transactionIdentifier, objectStoreIDs, mode);
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didEstablishTransaction, transactionIdentifier, success));
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
@@ -748,7 +744,6 @@ void UniqueIDBDatabase::resetBackingStoreTransaction(const IDBIdentifier& transa
 
     bool success = m_backingStore->resetTransaction(transactionIdentifier);
 
-    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didResetTransaction, transactionIdentifier, success));
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCompleteTransactionOperation, transactionIdentifier, success));
 }
 
@@ -1073,62 +1068,6 @@ void UniqueIDBDatabase::didDeleteRangeInBackingStore(uint64_t requestID, uint32_
     ASSERT(request);
 
     request->completeRequest(errorCode, errorMessage);
-}
-
-void UniqueIDBDatabase::didEstablishTransaction(const IDBIdentifier& transactionIdentifier, bool success)
-{
-    ASSERT(RunLoop::isMain());
-    if (!success)
-        return;
-
-    auto transactions = m_establishedTransactions.add(&transactionIdentifier.connection(), HashSet<IDBIdentifier>());
-    transactions.iterator->value.add(transactionIdentifier);
-}
-
-void UniqueIDBDatabase::didResetTransaction(const IDBIdentifier& transactionIdentifier, bool success)
-{
-    ASSERT(RunLoop::isMain());
-    if (!success)
-        return;
-
-    auto transactions = m_establishedTransactions.find(&transactionIdentifier.connection());
-    if (transactions != m_establishedTransactions.end())
-        transactions.get()->value.remove(transactionIdentifier);
-}
-
-void UniqueIDBDatabase::resetAllTransactions(const DatabaseProcessIDBConnection& connection)
-{
-    ASSERT(RunLoop::isMain());
-    auto transactions = m_establishedTransactions.find(&connection);
-    if (transactions == m_establishedTransactions.end() || !m_acceptingNewRequests)
-        return;
-
-    for (auto& transactionIdentifier : transactions.get()->value) {
-        m_pendingTransactionRollbacks.add(transactionIdentifier);
-        if (!m_pendingTransactionRequests.contains(transactionIdentifier))
-            finalizeRollback(transactionIdentifier);
-    }
-}
-
-void UniqueIDBDatabase::finalizeRollback(const WebKit::IDBIdentifier& transactionId)
-{
-    ASSERT(RunLoop::isMain());
-    ASSERT(m_pendingTransactionRollbacks.contains(transactionId));
-    ASSERT(!m_pendingTransactionRequests.contains(transactionId));
-    rollbackTransaction(transactionId, [this, transactionId](bool) {
-        ASSERT(RunLoop::isMain());
-        if (m_pendingTransactionRequests.contains(transactionId))
-            return;
-
-        ASSERT(m_pendingTransactionRollbacks.contains(transactionId));
-        m_pendingTransactionRollbacks.remove(transactionId);
-        resetTransaction(transactionId, [this, transactionId](bool) {
-            if (m_acceptingNewRequests && m_connections.isEmpty() && m_pendingTransactionRollbacks.isEmpty()) {
-                shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
-                DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
-            }
-        });
-    });
 }
 
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const
