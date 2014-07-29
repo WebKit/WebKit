@@ -246,9 +246,11 @@ WebInspector.TimelineDataGridNode.prototype = {
         {
             var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
-            timelineRecordBar.renderMode = renderMode;
-            timelineRecordBar.records = records;
+                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
+            else {
+                timelineRecordBar.renderMode = renderMode;
+                timelineRecordBar.records = records;
+            }
             timelineRecordBar.refresh(this._graphDataSource);
             if (!timelineRecordBar.element.parentNode)
                 this._graphContainerElement.appendChild(timelineRecordBar.element);

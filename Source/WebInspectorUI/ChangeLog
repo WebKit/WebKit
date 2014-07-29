@@ -1,5 +1,32 @@
 2014-07-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171720
+
+    2014-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Reduce work creating the initial WebInspector.TimelineRecordBar
+            https://bugs.webkit.org/show_bug.cgi?id=135373
+
+            Reviewed by Timothy Hatcher.
+
+            Eliminate a bit of extra work creating TimelineRecordBars. Previously
+            the constructor would setup an empty list of records, and then we would
+            immediately after replace them. Now just set them in the constructor.
+
+            * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+            (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout.createBar):
+            (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout):
+            * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+            (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout.createBar):
+            (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout):
+            * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+            (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout.createBar):
+            (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout):
+            * UserInterface/Views/TimelineDataGridNode.js:
+            (WebInspector.TimelineDataGridNode.prototype.refreshGraph.createBar):
+
+2014-07-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171716
 
     2014-07-28  Timothy Hatcher  <timothy@apple.com>

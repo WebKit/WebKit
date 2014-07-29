@@ -84,9 +84,11 @@ WebInspector.NetworkTimelineOverviewGraph.prototype = {
         {
             var timelineRecordBar = rowRecordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = rowRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
-            timelineRecordBar.renderMode = renderMode;
-            timelineRecordBar.records = records;
+                timelineRecordBar = rowRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
+            else {
+                timelineRecordBar.renderMode = renderMode;
+                timelineRecordBar.records = records;
+            }
             timelineRecordBar.refresh(this);
             if (!timelineRecordBar.element.parentNode)
                 rowElement.appendChild(timelineRecordBar.element);

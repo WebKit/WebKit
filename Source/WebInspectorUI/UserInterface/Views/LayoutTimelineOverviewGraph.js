@@ -67,9 +67,11 @@ WebInspector.LayoutTimelineOverviewGraph.prototype = {
         {
             var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar;
-            timelineRecordBar.renderMode = renderMode;
-            timelineRecordBar.records = records;
+                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
+            else {
+                timelineRecordBar.renderMode = renderMode;
+                timelineRecordBar.records = records;
+            }
             timelineRecordBar.refresh(this);
             if (!timelineRecordBar.element.parentNode)
                 this.element.appendChild(timelineRecordBar.element);
