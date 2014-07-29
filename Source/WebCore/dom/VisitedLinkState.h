@@ -45,7 +45,7 @@ public:
 
     void invalidateStyleForAllLinks();
     void invalidateStyleForLink(LinkHash);
-    EInsideLink determineLinkState(Element*);
+    EInsideLink determineLinkState(Element&);
 
 private:
     EInsideLink determineLinkStateSlowCase(Element&);
@@ -54,11 +54,11 @@ private:
     HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 };
 
-inline EInsideLink VisitedLinkState::determineLinkState(Element* element)
+inline EInsideLink VisitedLinkState::determineLinkState(Element& element)
 {
-    if (!element || !element->isLink())
+    if (!element.isLink())
         return NotInsideLink;
-    return determineLinkStateSlowCase(*element);
+    return determineLinkStateSlowCase(element);
 }
 
 }
