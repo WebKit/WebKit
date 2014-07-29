@@ -1,5 +1,11 @@
 2014-07-28  Dan Bernstein  <mitz@apple.com>
 
+        iOS build fix.
+
+        * WebCore.exp.in:
+
+2014-07-28  Dan Bernstein  <mitz@apple.com>
+
         Introduced CredentialBase and made Credential derive from it
         Work towards fixing https://bugs.webkit.org/show_bug.cgi?id=135327
 
