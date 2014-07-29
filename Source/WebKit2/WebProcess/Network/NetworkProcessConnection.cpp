@@ -37,6 +37,7 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/SharedBuffer.h>
 
 #if ENABLE(NETWORK_PROCESS)
 

@@ -260,6 +260,10 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
 }
 
 #if ENABLE(OPENTYPE_MATH)
+OpenTypeMathData::~OpenTypeMathData()
+{
+}
+
 float OpenTypeMathData::getMathConstant(const SimpleFontData* font, MathConstant constant) const
 {
     int32_t value = 0;

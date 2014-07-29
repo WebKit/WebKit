@@ -27,15 +27,15 @@
 #define OpenTypeMathData_h
 
 #include "Glyph.h"
-#include "SharedBuffer.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class SimpleFontData;
 class FontPlatformData;
+class SharedBuffer;
+class SimpleFontData;
 
 class OpenTypeMathData : public RefCounted<OpenTypeMathData> {
 public:
@@ -43,6 +43,7 @@ public:
     {
         return adoptRef(new OpenTypeMathData(fontData));
     }
+    ~OpenTypeMathData();
 
     bool hasMathData() const { return m_mathBuffer; }
 

@@ -1,3 +1,18 @@
+2014-07-28  Pratik Solanki  <psolanki@apple.com>
+
+        Get SharedBuffer.h out of ResourceBuffer.h (and a few other places)
+        https://bugs.webkit.org/show_bug.cgi?id=131782
+
+        Original patch by Tim Horton.
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        Include SharedBuffer.h in implementation files.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        Un-indent namespace and remove SharedBuffer forward-declaration.
+
 2014-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Remove WebKitWebViewGroup from WebKit2 GTK+ API

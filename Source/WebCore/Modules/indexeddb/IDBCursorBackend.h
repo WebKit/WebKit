@@ -31,12 +31,12 @@
 
 #include "IDBDatabaseBackend.h"
 #include "IDBTransactionBackend.h"
-#include "SharedBuffer.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class IDBKeyRange;
+class SharedBuffer;
 
 class IDBCursorBackend : public RefCounted<IDBCursorBackend> {
 public:

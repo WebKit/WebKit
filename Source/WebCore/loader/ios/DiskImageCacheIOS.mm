@@ -30,6 +30,7 @@
 
 #include "FileSystemIOS.h"
 #include "Logging.h"
+#include "SharedBuffer.h"
 #include "WebCoreThread.h"
 #include "WebCoreThreadRun.h"
 #include <errno.h>

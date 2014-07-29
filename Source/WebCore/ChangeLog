@@ -1,3 +1,40 @@
+2014-07-28  Pratik Solanki  <psolanki@apple.com>
+
+        Get SharedBuffer.h out of ResourceBuffer.h (and a few other places)
+        https://bugs.webkit.org/show_bug.cgi?id=131782
+
+        Original patch by Tim Horton.
+        Reviewed by Darin Adler.
+
+        No new tests because no functional changes.
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBCursorBackend.h:
+        * loader/ios/DiskImageCacheIOS.h:
+        Forward declare SharedBuffer in headers.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        * loader/cache/CachedImage.cpp:
+        * loader/icon/IconLoader.cpp:
+        * loader/ios/DiskImageCacheIOS.mm:
+        * loader/cache/MemoryCache.cpp:
+        * loader/mac/ResourceBuffer.mm:
+        Include SharedBuffer.h in implementation files.
+
+        * Modules/notifications/Notification.h:
+        * loader/appcache/ApplicationCacheGroup.h:
+        Remove unnecessary includes.
+
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::adoptSharedBuffer):
+        * loader/ResourceBuffer.h:
+        Out-of-line adoptSharedBuffer so that the PassRefPtr doesn't require including SharedBuffer.h.
+
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+        * platform/graphics/opentype/OpenTypeMathData.h:
+        Out-of-line destructor to avoid requiring SharedBuffer.h for the RefPtr.
+        Forward-declare SharedBuffer in the header, include in implementation.
+
 2014-07-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] GraphicsLayerTextureMapper::addAnimation() box size parameter should be FloatSize

@@ -48,6 +48,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;

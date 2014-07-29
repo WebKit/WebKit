@@ -26,11 +26,11 @@
 #ifndef ResourceBuffer_h
 #define ResourceBuffer_h
 
-#include "SharedBuffer.h"
-
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 #if USE(FOUNDATION)
 OBJC_CLASS NSData;
@@ -46,7 +46,7 @@ public:
 
     static PassRefPtr<ResourceBuffer> create() { return adoptRef(new ResourceBuffer); }
     static PassRefPtr<ResourceBuffer> create(const char* data, unsigned size) { return adoptRef(new ResourceBuffer(data, size)); }
-    static PassRefPtr<ResourceBuffer> adoptSharedBuffer(PassRefPtr<SharedBuffer> shared) { return shared ? adoptRef(new ResourceBuffer(shared)) : 0; }
+    static PassRefPtr<ResourceBuffer> adoptSharedBuffer(PassRefPtr<SharedBuffer>);
 
     virtual ~ResourceBuffer();
 

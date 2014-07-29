@@ -38,6 +38,7 @@
 #include "PublicSuffix.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
+#include "SharedBuffer.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"

@@ -27,6 +27,7 @@
 #include "ResourceBuffer.h"
 
 #include "PurgeableBuffer.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -48,6 +49,11 @@ ResourceBuffer::ResourceBuffer(PassRefPtr<SharedBuffer> sharedBuffer)
     
 ResourceBuffer::~ResourceBuffer()
 {
+}
+
+PassRefPtr<ResourceBuffer> ResourceBuffer::adoptSharedBuffer(PassRefPtr<SharedBuffer> shared)
+{
+    return shared ? adoptRef(new ResourceBuffer(shared)) : nullptr;
 }
 
 const char* ResourceBuffer::data() const

@@ -29,7 +29,6 @@
 #include "DOMApplicationCache.h"
 #include "URL.h"
 #include "ResourceHandleClient.h"
-#include "SharedBuffer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

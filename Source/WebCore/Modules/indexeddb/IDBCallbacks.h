@@ -32,7 +32,6 @@
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "SharedBuffer.h"
 #include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -41,6 +40,7 @@ namespace WebCore {
 class DOMStringList;
 class IDBCursorBackend;
 class IDBDatabaseBackend;
+class SharedBuffer;
 
 struct IDBDatabaseMetadata;
 

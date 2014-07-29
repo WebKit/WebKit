@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "ResourceBuffer.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ResourceBuffer.h"
 
+#include "SharedBuffer.h"
+
 namespace WebCore {
 
 RetainPtr<NSData> ResourceBuffer::createNSData()

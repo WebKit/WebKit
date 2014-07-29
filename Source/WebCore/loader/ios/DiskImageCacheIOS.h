@@ -30,7 +30,6 @@
 
 #include "DiskImageCacheClientIOS.h"
 #include "FileSystem.h"
-#include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -41,6 +40,8 @@
 typedef unsigned DiskImageCacheId;
 
 namespace WebCore {
+
+class SharedBuffer;
 
 // Global disk image cache object.
 class DiskImageCache {

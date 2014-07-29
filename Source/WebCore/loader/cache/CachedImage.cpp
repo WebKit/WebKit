@@ -41,6 +41,7 @@
 #include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>

@@ -40,10 +40,9 @@ template<> struct ClientTraits<WKBundlePageEditorClientBase> {
 }
 
 namespace WebCore {
-    class CSSStyleDeclaration;
-    class Node;
-    class Range;
-    class SharedBuffer;
+class CSSStyleDeclaration;
+class Node;
+class Range;
 }
 
 namespace WebKit {

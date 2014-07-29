@@ -44,6 +44,7 @@
 #include "IDBTransaction.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
