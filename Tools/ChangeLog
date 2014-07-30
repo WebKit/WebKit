@@ -1,3 +1,15 @@
+2014-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove WebKitCertificateInfo from WebKit2GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=134830
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update the SSL test for the API changes.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp:
+        (testLoadFailedWithTLSErrors):
+
 2014-07-24  David Farler  <dfarler@apple.com>
 
         Add knowledge of the iOS Simulator to webkitpy

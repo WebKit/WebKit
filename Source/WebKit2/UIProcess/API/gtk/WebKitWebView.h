@@ -235,7 +235,8 @@ struct _WebKitWebViewClass {
     gboolean   (* authenticate)                (WebKitWebView               *web_view,
                                                 WebKitAuthenticationRequest *request);
     gboolean   (* load_failed_with_tls_errors) (WebKitWebView               *web_view,
-                                                WebKitCertificateInfo       *info,
+                                                GTlsCertificate             *certificate,
+                                                GTlsCertificateFlags         errors,
                                                 const gchar                 *host);
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);

@@ -25,7 +25,6 @@
 #define WebKitWebContext_h
 
 #include <glib-object.h>
-#include <webkit2/WebKitCertificateInfo.h>
 #include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
@@ -236,7 +235,7 @@ webkit_web_context_set_disk_cache_directory         (WebKitWebContext           
 
 WEBKIT_API void
 webkit_web_context_allow_tls_certificate_for_host   (WebKitWebContext              *context,
-                                                     WebKitCertificateInfo         *info,
+                                                     GTlsCertificate               *certificate,
                                                      const gchar                   *host);
 
 WEBKIT_API void

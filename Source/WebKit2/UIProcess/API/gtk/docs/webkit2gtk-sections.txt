@@ -1142,18 +1142,3 @@ WEBKIT_SCRIPT_WORLD_GET_CLASS
 WebKitScriptWorldPrivate
 webkit_script_world_get_type
 </SECTION>
-
-<SECTION>
-<FILE>WebKitCertificateInfo</FILE>
-WebKitCertificateInfo
-webkit_certificate_info_copy
-webkit_certificate_info_free
-webkit_certificate_info_get_tls_certificate
-webkit_certificate_info_get_tls_errors
-
-<SUBSECTION Standard>
-WEBKIT_TYPE_CERTIFICATE_INFO
-
-<SUBSECTION Private>
-webkit_certificate_info_get_type
-</SECTION>

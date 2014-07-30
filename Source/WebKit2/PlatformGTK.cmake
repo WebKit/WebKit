@@ -100,9 +100,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitBackForwardListItem.cpp
     UIProcess/API/gtk/WebKitBackForwardListItem.h
     UIProcess/API/gtk/WebKitBackForwardListPrivate.h
-    UIProcess/API/gtk/WebKitCertificateInfo.cpp
-    UIProcess/API/gtk/WebKitCertificateInfo.h
-    UIProcess/API/gtk/WebKitCertificateInfoPrivate.h
     UIProcess/API/gtk/WebKitContextMenu.cpp
     UIProcess/API/gtk/WebKitContextMenu.h
     UIProcess/API/gtk/WebKitContextMenuActions.cpp
@@ -324,7 +321,6 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAuthenticationRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitBackForwardList.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitBackForwardListItem.h
-    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitCertificateInfo.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitCredential.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenu.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenuActions.h
