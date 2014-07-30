@@ -89,8 +89,8 @@ public:
     void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);
     void getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const;
     void clearSelection();
-    RenderObject* selectionStart() const { return m_selectionStart; }
-    RenderObject* selectionEnd() const { return m_selectionEnd; }
+    RenderObject* selectionUnsplitStart() const { return m_selectionUnsplitStart; }
+    RenderObject* selectionUnsplitEnd() const { return m_selectionUnsplitEnd; }
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
     void repaintSelection() const;
 
@@ -313,10 +313,10 @@ private:
 private:
     FrameView& m_frameView;
 
-    RenderObject* m_selectionStart;
-    RenderObject* m_selectionEnd;
-    int m_selectionStartPos;
-    int m_selectionEndPos;
+    RenderObject* m_selectionUnsplitStart;
+    RenderObject* m_selectionUnsplitEnd;
+    int m_selectionUnsplitStartPos;
+    int m_selectionUnsplitEndPos;
 
     uint64_t m_rendererCount;
 

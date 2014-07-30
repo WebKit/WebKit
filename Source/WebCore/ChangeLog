@@ -1,3 +1,23 @@
+2014-07-30  Radu Stavila  <stavila@adobe.com>
+
+        Member name collision in RenderView and SelectionSubtreeRoot
+        https://bugs.webkit.org/show_bug.cgi?id=135233
+
+        Reviewed by Mihnea Ovidenie.
+
+        The selectionStart/End members in RenderView have been renamed to fix confusion caused by the fact that
+        RenderView inherits SelectionSubtreeRoot, which also has the same selectionStart/End members.
+
+        No new tests required, no new functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::getSelection):
+        * rendering/RenderView.h:
+
 2014-07-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Move TextureMapperLayer::textureMapper() definition into the header

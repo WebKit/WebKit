@@ -96,10 +96,10 @@ struct SelectionIterator {
 RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
     : RenderBlockFlow(document, WTF::move(style))
     , m_frameView(*document.view())
-    , m_selectionStart(0)
-    , m_selectionEnd(0)
-    , m_selectionStartPos(-1)
-    , m_selectionEndPos(-1)
+    , m_selectionUnsplitStart(0)
+    , m_selectionUnsplitEnd(0)
+    , m_selectionUnsplitStartPos(-1)
+    , m_selectionUnsplitEndPos(-1)
     , m_rendererCount(0)
     , m_maximalOutlineSize(0)
     , m_lazyRepaintTimer(this, &RenderView::lazyRepaintTimerFired)
@@ -845,15 +845,16 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     bool caretChanged = m_selectionWasCaret != frame().selection().isCaret();
     m_selectionWasCaret = frame().selection().isCaret();
     // Just return if the selection hasn't changed.
-    if (m_selectionStart == start && m_selectionStartPos == startPos &&
-        m_selectionEnd == end && m_selectionEndPos == endPos && !caretChanged)
+    if (m_selectionUnsplitStart == start && m_selectionUnsplitStartPos == startPos
+        && m_selectionUnsplitEnd == end && m_selectionUnsplitEndPos == endPos && !caretChanged) {
         return;
+    }
 
     // Set global positions for new selection.
-    m_selectionStart = start;
-    m_selectionStartPos = startPos;
-    m_selectionEnd = end;
-    m_selectionEndPos = endPos;
+    m_selectionUnsplitStart = start;
+    m_selectionUnsplitStartPos = startPos;
+    m_selectionUnsplitEnd = end;
+    m_selectionUnsplitEndPos = endPos;
 
     // If there is no RenderNamedFlowThreads we follow the regular selection.
     if (!hasRenderNamedFlowThreads()) {
@@ -1082,10 +1083,10 @@ void RenderView::applySubtreeSelection(SelectionSubtreeRoot& root, RenderObject*
 
 void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, RenderObject*& endRenderer, int& endOffset) const
 {
-    startRenderer = m_selectionStart;
-    startOffset = m_selectionStartPos;
-    endRenderer = m_selectionEnd;
-    endOffset = m_selectionEndPos;
+    startRenderer = m_selectionUnsplitStart;
+    startOffset = m_selectionUnsplitStartPos;
+    endRenderer = m_selectionUnsplitEnd;
+    endOffset = m_selectionUnsplitEndPos;
 }
 
 void RenderView::clearSelection()
