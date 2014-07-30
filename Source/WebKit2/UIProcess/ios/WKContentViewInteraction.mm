@@ -136,6 +136,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 - (void)scheduleChineseTransliterationForText:(NSString *)text;
 @end
 
+@interface UIWKSelectionAssistant (StagingToRemove)
+- (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
+@end
+
 @interface UIKeyboardImpl (StagingToRemove)
 - (void)didHandleWebKeyEvent;
 @end
@@ -1174,6 +1178,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     if (_textSelectionAssistant && [_textSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
         [_textSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().selectionRects[0].rect()];
+    else if (_webSelectionAssistant && [_webSelectionAssistant respondsToSelector:@selector(showTextServiceFor:fromRect:)])
+        [_webSelectionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().selectionRects[0].rect()];
 }
 
 - (NSString *)selectedText
