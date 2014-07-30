@@ -1,3 +1,17 @@
+2014-07-29  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed EFL gardening. Rebaseline tests after r170418.
+
+        * platform/efl/mathml/opentype/horizontal-expected.txt:
+        * platform/efl/mathml/opentype/horizontal-munderover-expected.txt:
+        * platform/efl/mathml/opentype/large-operators-expected.txt:
+        * platform/efl/mathml/opentype/vertical-expected.txt:
+        * platform/efl/mathml/presentation/menclose-notation-default-longdiv-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/roots-expected.png:
+        * platform/efl/mathml/presentation/roots-expected.txt:
+
 2014-07-29  Andreas Kling  <akling@apple.com>
 
         Crash when using 'em' units to specify font-size inside animation keyframe.
