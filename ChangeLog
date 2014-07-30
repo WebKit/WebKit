@@ -1,3 +1,13 @@
+2014-07-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Bump the minimum required version
+        https://bugs.webkit.org/show_bug.cgi?id=135382
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt: Bump the minimum required version to 2.8.11 after
+        we introduced usage of target_include_directories().
+
 2014-07-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL][GTK] Remove ACCELERATED_COMPOSITING compile flag 
