@@ -1,3 +1,25 @@
+2014-07-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] REGRESSION(r171742): Test /webkit2/WebKitWebView/disallow-modal-dialogs fails
+        https://bugs.webkit.org/show_bug.cgi?id=135412
+
+        Reviewed by Philippe Normand.
+
+        The problem is that WebPageProxy::setUIClient() calls
+        setCanRunModal() with the value of m_uiClient->canRunModal() which
+        is always true for us. We override that manually by calling
+        setCanRunModal() depending on the WebKitSettings. In r171742,
+        webkitWebViewUpdateSettings(), the method that overrides
+        setCanRunModal(), was moved before attachUIClientToView(), so the
+        value set by WebPageProxy::setUIClient() is the last one and takes
+        precedence. We need to make sure webkitWebViewUpdateSettings() is
+        always called after attachUIClientToView().
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Move webkitWebViewUpdateSettings()
+        call after attachUIClientToView() and add a comment to not forget
+        about it again.
+
 2014-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove WebKitCertificateInfo from WebKit2GTK+ API

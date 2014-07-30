@@ -496,7 +496,6 @@ static void webkitWebViewConstructed(GObject* object)
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
 
-    webkitWebViewUpdateSettings(webView);
     webkitWebViewBaseSetDownloadRequestHandler(WEBKIT_WEB_VIEW_BASE(webView), webkitWebViewHandleDownloadRequest);
 
     attachLoaderClientToView(webView);
@@ -505,6 +504,10 @@ static void webkitWebViewConstructed(GObject* object)
     attachFullScreenClientToView(webView);
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
+
+    // This needs to be after attachUIClientToView() because WebPageProxy::setUIClient() calls setCanRunModal() with true.
+    // See https://bugs.webkit.org/show_bug.cgi?id=135412.
+    webkitWebViewUpdateSettings(webView);
 
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView)->backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
