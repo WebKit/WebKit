@@ -29,6 +29,8 @@
 
 #include "Extensions3DOpenGLCommon.h"
 
+#if USE(OPENGL_ES_2)
+
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
@@ -124,5 +126,7 @@ protected:
 };
 
 } // namespace WebCore
+
+#endif // USE(OPENGL_ES_2)
 
 #endif // Extensions3DOpenGLES_h

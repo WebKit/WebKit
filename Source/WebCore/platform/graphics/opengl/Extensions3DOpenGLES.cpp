@@ -26,9 +26,11 @@
  */
 
 #include "config.h"
-#if USE(3D_GRAPHICS)
+
+#if USE(OPENGL_ES_2)
 #include "Extensions3DOpenGLES.h"
 
+#if USE(3D_GRAPHICS)
 #include "GraphicsContext3D.h"
 #include "NotImplemented.h"
 #include <EGL/egl.h>
@@ -303,3 +305,5 @@ String Extensions3DOpenGLES::getExtensions()
 } // namespace WebCore
 
 #endif // USE(3D_GRAPHICS)
+
+#endif // USE(OPENGL_ES_2)

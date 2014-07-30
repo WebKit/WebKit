@@ -1,3 +1,15 @@
+2014-07-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Build depends on OpenGL ES
+        https://bugs.webkit.org/show_bug.cgi?id=135289
+
+        Reviewed by Martin Robinson.
+
+        Guard the OpenGL ES code with USE(OPENGL_ES_2).
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+
 2014-07-30  Radu Stavila  <stavila@adobe.com>
 
         Member name collision in RenderView and SelectionSubtreeRoot
