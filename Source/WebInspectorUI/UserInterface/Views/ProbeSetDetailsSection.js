@@ -30,7 +30,7 @@ WebInspector.ProbeSetDetailsSection = function(probeSet)
     this._listeners = new WebInspector.EventListenerSet(this, "ProbeSetDetailsSection UI listeners");
     this._probeSet = probeSet;
 
-    var optionsElement = document.createElement("div");
+    var optionsElement = this._optionsElement = document.createElement("div");
     optionsElement.classList.add(WebInspector.ProbeSetDetailsSection.SectionOptionsStyleClassName);
 
     var removeProbeButton = optionsElement.createChild("img");
@@ -47,9 +47,10 @@ WebInspector.ProbeSetDetailsSection = function(probeSet)
     addProbeButton.classList.add(WebInspector.ProbeSetDetailsSection.AddProbeValueStyleClassName);
     this._listeners.register(addProbeButton, "click", this._addProbeButtonClicked);
 
-    var titleElement = this._probeSetPositionTextOrLink();
-    titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);
-    optionsElement.appendChild(titleElement);
+    // Update the source link when the breakpoint's resolved state changes,
+    // so that it can become a live location link when possible.
+    this._updateLinkElement();
+    this._listeners.register(this._probeSet.breakpoint, WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateLinkElement);
 
     this._dataGrid = new WebInspector.ProbeSetDataGrid(probeSet);
     var singletonRow = new WebInspector.DetailsSectionRow;
@@ -86,10 +87,27 @@ WebInspector.ProbeSetDetailsSection.prototype = {
 
     // Private
 
-    _probeSetPositionTextOrLink: function()
+    _updateLinkElement: function()
     {
         var breakpoint = this._probeSet.breakpoint;
-        return WebInspector.createSourceCodeLocationLink(breakpoint.sourceCodeLocation);
+        var titleElement = null;
+        if (breakpoint.resolved)
+            titleElement = WebInspector.createSourceCodeLocationLink(breakpoint.sourceCodeLocation);
+        else {
+            // Fallback for when we can't create a live source link.
+            console.assert(!breakpoint.sourceCodeLocation.sourceCode);
+
+            var location = breakpoint.sourceCodeLocation;
+            titleElement = WebInspector.linkifyLocation(breakpoint.url, location.displayLineNumber, location.displayColumnNumber);
+        }
+
+        titleElement.classList.add(WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName);
+
+        if (this._linkElement)
+            this._optionsElement.removeChild(this._linkElement);
+
+        this._linkElement = titleElement;
+        this._optionsElement.appendChild(this._linkElement);
     },
 
     _addProbeButtonClicked: function(event)
