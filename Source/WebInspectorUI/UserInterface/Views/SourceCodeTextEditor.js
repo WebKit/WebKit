@@ -839,7 +839,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this._addBreakpointWithEditorLineInfo(breakpoint, lineInfo);
 
         this._ignoreBreakpointAddedBreakpoint = breakpoint;
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+
+        var shouldSkipEventDispatch = false;
+        var shouldSpeculativelyResolveBreakpoint = true;
+        WebInspector.debuggerManager.addBreakpoint(breakpoint, shouldSkipEventDispatch, shouldSpeculativelyResolveBreakpoint);
         delete this._ignoreBreakpointAddedBreakpoint;
 
         // Return the more accurate location and breakpoint info.

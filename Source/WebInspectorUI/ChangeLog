@@ -1,3 +1,32 @@
+2014-07-29  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: breakpoints are always speculatively resolved when restored from local storage
+        https://bugs.webkit.org/show_bug.cgi?id=135396
+
+        Reviewed by Timothy Hatcher.
+
+        A longstanding quirk/optimization in the frontend is that we immediately set a breakpoint
+        as resolved if the breakpoint was successfully set in the backend. This ensures that clicking in
+        the gutter immediately produces a resolved breakpoint with only one round-trip.
+
+        However, not all breakpoints should be speculatively resolved, because the corresponding resource
+        may not be loaded yet. This situation causes problems for code that assumes a resolved breakpoint
+        also has a valid sourceCodeLocation.sourceCode.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.restoreBreakpointsSoon): Don't leak the variable to global scope.
+        (WebInspector.DebuggerManager):
+        (WebInspector.DebuggerManager.prototype.speculativelyResolveBreakpoint):
+        (WebInspector.DebuggerManager.prototype.addBreakpoint): Speculatively resolve here if requested
+        using the success callback passed to _setBreakpoint.
+
+        (WebInspector.DebuggerManager.prototype.didSetBreakpoint): Emit simulated
+        Debugger.breakpointResolved events since they are only sent by the backend when a script is parsed.
+
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorBreakpointAdded): Request speculative resolve.
+
 2014-07-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Eliminate more forced layouts during timeline recordings

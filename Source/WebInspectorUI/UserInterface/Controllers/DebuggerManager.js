@@ -67,7 +67,7 @@ WebInspector.DebuggerManager = function()
     this._updateBreakOnExceptionsState();
 
     function restoreBreakpointsSoon() {
-        for (cookie of this._breakpointsSetting.value)
+        for (var cookie of this._breakpointsSetting.value)
             this.addBreakpoint(new WebInspector.Breakpoint(cookie));
     }
 
@@ -227,7 +227,7 @@ WebInspector.DebuggerManager.prototype = {
         DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber});
     },
 
-    addBreakpoint: function(breakpoint, skipEventDispatch)
+    addBreakpoint: function(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
     {
         console.assert(breakpoint instanceof WebInspector.Breakpoint, "Bad argument to DebuggerManger.addBreakpoint: ", breakpoint);
         if (!breakpoint)
@@ -249,8 +249,12 @@ WebInspector.DebuggerManager.prototype = {
 
         this._breakpoints.push(breakpoint);
 
+        function speculativelyResolveBreakpoint(breakpoint) {
+            breakpoint.resolved = true;
+        }
+
         if (!breakpoint.disabled)
-            this._setBreakpoint(breakpoint);
+            this._setBreakpoint(breakpoint, shouldSpeculativelyResolve ? speculativelyResolveBreakpoint.bind(null, breakpoint) : null);
 
         if (!skipEventDispatch)
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint: breakpoint});
@@ -524,7 +528,7 @@ WebInspector.DebuggerManager.prototype = {
         // a multi-step process for the user that can be confusing.
         this.breakpointsEnabled = true;
 
-        function didSetBreakpoint(error, breakpointIdentifier)
+        function didSetBreakpoint(error, breakpointIdentifier, locations)
         {
             if (error)
                 return;
@@ -532,7 +536,13 @@ WebInspector.DebuggerManager.prototype = {
             this._breakpointIdMap[breakpointIdentifier] = breakpoint;
 
             breakpoint.identifier = breakpointIdentifier;
-            breakpoint.resolved = true;
+
+            // Debugger.setBreakpoint returns a single location.
+            if (!(locations instanceof Array))
+                locations = [locations];
+
+            for (var location of locations)
+                this.breakpointResolved(breakpointIdentifier, location);
 
             if (typeof callback === "function")
                 callback();
