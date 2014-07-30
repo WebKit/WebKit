@@ -25,6 +25,7 @@
 
 #include "Chrome.h"
 #include "FloatQuad.h"
+#include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
@@ -93,10 +94,8 @@ void RenderInline::willBeDestroyed()
         if (firstLineBox()) {
             // We can't wait for RenderBoxModelObject::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
-            // FIXME: The FrameSelection should be responsible for this when it
-            // is notified of DOM mutations.
             if (isSelectionBorder())
-                view().clearSelection();
+                frame().selection().setNeedsSelectionUpdate();
 
             // If line boxes are contained inside a root, that means we're an inline.
             // In that case, we need to remove all the line boxes so that the parent
