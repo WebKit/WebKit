@@ -27,7 +27,6 @@
 
 [
     GlobalContext=DOMWindow&WorkerGlobalScope,
-    JSNoStaticTables,
     ConstructorTemplate=Event,
 ] interface MessageEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString origin;

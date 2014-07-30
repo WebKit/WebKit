@@ -54,7 +54,7 @@ static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncAll(ExecState*);
 
 namespace JSC {
 
-const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::promiseConstructorTable, CREATE_METHOD_TABLE(JSPromiseConstructor) };
+const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::s_info, &promiseConstructorTable, CREATE_METHOD_TABLE(JSPromiseConstructor) };
 
 /* Source for JSPromiseConstructor.lut.h
 @begin promiseConstructorTable
@@ -161,7 +161,7 @@ CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
 
 bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::promiseConstructorTable(exec->vm()), jsCast<JSPromiseConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, promiseConstructorTable, jsCast<JSPromiseConstructor*>(object), propertyName, slot);
 }
 
 EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState* exec)

@@ -42,7 +42,6 @@ enum XMLHttpRequestResponseType {
     ConstructorCallWith=ScriptExecutionContext,
     JSCustomMarkFunction,
     EventTarget,
-    JSNoStaticTables,
 ] interface XMLHttpRequest {
     // From XMLHttpRequestEventTarget
     // event handler attributes

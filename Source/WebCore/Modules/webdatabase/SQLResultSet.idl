@@ -29,7 +29,6 @@
 [
     NoInterfaceObject,
     Conditional=SQL_DATABASE,
-    JSNoStaticTables,
     ImplementationLacksVTable
 ] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;

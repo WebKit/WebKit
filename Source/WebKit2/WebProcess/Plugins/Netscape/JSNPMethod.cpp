@@ -43,7 +43,7 @@ namespace WebKit {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNPMethod);
 
-const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(JSNPMethod) };
+const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, CREATE_METHOD_TABLE(JSNPMethod) };
 
 JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIdentifier npIdentifier)
     : InternalFunction(globalObject->vm(), structure)

@@ -501,7 +501,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
     return (JSObjectRef)result;
 }
 
-const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
+const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, 0, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
 ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback functionCallback, JSObjectCallAsConstructorCallback constructCallback, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
     : Base(vm, globalObject->objcCallbackFunctionStructure())

@@ -1,3 +1,205 @@
+2014-07-30  Andreas Kling  <akling@apple.com>
+
+        Static hash tables no longer need to be coupled with a VM.
+        <https://webkit.org/b/135421>
+
+        Now that the static hash tables are using char** instead of StringImpl**,
+        it's no longer necessary to make them per-VM.
+
+        This patch removes the hook in ClassInfo for providing your own static
+        hash table getter. Everyone now uses ClassInfo::staticPropHashTable.
+        Most of this patch is tweaking ClassInfo construction sites to pass one
+        less null pointer.
+
+        Also simplified Lookup.h to stop requiring ExecState/VM to access the
+        static hash tables.
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSAPIWrapperObject.mm:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * API/ObjCCallbackFunction.mm:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        * create_hash_table:
+        * debugger/DebuggerScope.cpp:
+        * inspector/JSInjectedScriptHost.cpp:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::arrayConstructorTable): Deleted.
+        (JSC::ExecState::arrayPrototypeTable): Deleted.
+        (JSC::ExecState::booleanPrototypeTable): Deleted.
+        (JSC::ExecState::dataViewTable): Deleted.
+        (JSC::ExecState::dateTable): Deleted.
+        (JSC::ExecState::dateConstructorTable): Deleted.
+        (JSC::ExecState::errorPrototypeTable): Deleted.
+        (JSC::ExecState::globalObjectTable): Deleted.
+        (JSC::ExecState::jsonTable): Deleted.
+        (JSC::ExecState::numberConstructorTable): Deleted.
+        (JSC::ExecState::numberPrototypeTable): Deleted.
+        (JSC::ExecState::objectConstructorTable): Deleted.
+        (JSC::ExecState::privateNamePrototypeTable): Deleted.
+        (JSC::ExecState::regExpTable): Deleted.
+        (JSC::ExecState::regExpConstructorTable): Deleted.
+        (JSC::ExecState::regExpPrototypeTable): Deleted.
+        (JSC::ExecState::stringConstructorTable): Deleted.
+        (JSC::ExecState::promisePrototypeTable): Deleted.
+        (JSC::ExecState::promiseConstructorTable): Deleted.
+        * jsc.cpp:
+        * parser/Lexer.h:
+        (JSC::Keywords::isKeyword):
+        (JSC::Keywords::getKeyword):
+        * runtime/Arguments.cpp:
+        * runtime/ArgumentsIteratorConstructor.cpp:
+        * runtime/ArgumentsIteratorPrototype.cpp:
+        * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getOwnPropertySlot):
+        * runtime/ArrayIteratorConstructor.cpp:
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertySlot):
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::getOwnPropertySlot):
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::hasStaticProperties):
+        (JSC::ClassInfo::propHashTable): Deleted.
+        * runtime/ConsolePrototype.cpp:
+        * runtime/CustomGetterSetter.cpp:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getOwnPropertySlot):
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertySlot):
+        * runtime/Error.cpp:
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::getOwnPropertySlot):
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/Executable.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/GetterSetter.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/JSAPIValueWrapper.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSArgumentsIterator.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSArrayBuffer.cpp:
+        * runtime/JSArrayBufferConstructor.cpp:
+        * runtime/JSArrayBufferPrototype.cpp:
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSArrayIterator.cpp:
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSConsole.cpp:
+        * runtime/JSDataView.cpp:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::getOwnPropertySlot):
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+        * runtime/JSMap.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSNameScope.cpp:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::getOwnPropertySlot):
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::findPropertyHashEntry):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        * runtime/JSObject.h:
+        * runtime/JSPromise.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::getOwnPropertySlot):
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::getOwnPropertySlot):
+        * runtime/JSPromiseReaction.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSProxy.cpp:
+        * runtime/JSSet.cpp:
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSString.cpp:
+        * runtime/JSTypedArrayConstructors.cpp:
+        * runtime/JSTypedArrayPrototypes.cpp:
+        * runtime/JSTypedArrays.cpp:
+        * runtime/JSVariableObject.cpp:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWithScope.cpp:
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        * runtime/Lookup.h:
+        (JSC::HashTable::initializeIfNeeded):
+        (JSC::HashTable::entry):
+        (JSC::HashTable::begin):
+        (JSC::HashTable::end):
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticFunctionSlot):
+        (JSC::getStaticValueSlot):
+        (JSC::lookupPut):
+        * runtime/MapConstructor.cpp:
+        * runtime/MapData.cpp:
+        * runtime/MapIteratorConstructor.cpp:
+        * runtime/MapIteratorPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/NameConstructor.cpp:
+        * runtime/NameInstance.cpp:
+        * runtime/NamePrototype.cpp:
+        (JSC::NamePrototype::getOwnPropertySlot):
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertySlot):
+        * runtime/NumberObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::getOwnPropertySlot):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getOwnPropertySlot):
+        * runtime/ObjectPrototype.cpp:
+        * runtime/PropertyTable.cpp:
+        * runtime/RegExp.cpp:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getOwnPropertySlot):
+        * runtime/RegExpMatchesArray.cpp:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlot):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::getOwnPropertySlot):
+        * runtime/SetConstructor.cpp:
+        * runtime/SetIteratorConstructor.cpp:
+        * runtime/SetIteratorPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/SparseArrayValueMap.cpp:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getOwnPropertySlot):
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::freezeTransition):
+        (JSC::ClassInfo::hasStaticSetterOrReadonlyProperties):
+        * runtime/StructureChain.cpp:
+        * runtime/StructureRareData.cpp:
+        * runtime/SymbolTable.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapData.cpp:
+        * runtime/WeakMapPrototype.cpp:
+        * testRegExp.cpp:
+
 2014-07-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Modify version numbering scheme to support 5-tuple versions

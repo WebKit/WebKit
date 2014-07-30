@@ -109,7 +109,7 @@ static const HashTableValue JSTestEventTargetTableValues[] =
 };
 
 static const HashTable JSTestEventTargetTable = { 1, 1, true, JSTestEventTargetTableValues, 0, JSTestEventTargetTableIndex };
-const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
+const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
 
 JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -134,7 +134,7 @@ static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
     { "dispatchEvent", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestEventTargetPrototypeFunctionDispatchEvent), (intptr_t) (1) },
 };
 
-const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
+const ClassInfo JSTestEventTargetPrototype::s_info = { "TestEventTargetPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventTargetPrototype) };
 
 void JSTestEventTargetPrototype::finishCreation(VM& vm)
 {
@@ -142,7 +142,7 @@ void JSTestEventTargetPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestEventTargetPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, 0 , CREATE_METHOD_TABLE(JSTestEventTarget) };
+const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, CREATE_METHOD_TABLE(JSTestEventTarget) };
 
 JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestEventTarget> impl)
     : JSDOMWrapper(structure, globalObject)

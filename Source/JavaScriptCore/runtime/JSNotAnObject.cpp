@@ -36,7 +36,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNotAnObject);
 
-const ClassInfo JSNotAnObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSNotAnObject) };
+const ClassInfo JSNotAnObject::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(JSNotAnObject) };
 
 // JSValue methods
 JSValue JSNotAnObject::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType)

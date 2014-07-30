@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo WeakMapData::s_info = { "WeakMapData", 0, 0, 0, CREATE_METHOD_TABLE(WeakMapData) };
+const ClassInfo WeakMapData::s_info = { "WeakMapData", 0, 0, CREATE_METHOD_TABLE(WeakMapData) };
 
 WeakMapData::WeakMapData(VM& vm)
     : Base(vm, vm.weakMapDataStructure.get())

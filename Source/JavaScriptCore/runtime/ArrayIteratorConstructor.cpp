@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo ArrayIteratorConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ArrayIteratorConstructor) };
+const ClassInfo ArrayIteratorConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(ArrayIteratorConstructor) };
 
 void ArrayIteratorConstructor::finishCreation(VM& vm)
 {

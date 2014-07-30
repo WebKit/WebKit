@@ -83,31 +83,40 @@ namespace JSC {
             return result;
         }
 
-        ALWAYS_INLINE void initializeIfNeeded(VM& vm) const
+        ALWAYS_INLINE void initializeIfNeeded() const
         {
             if (!keys)
-                createTable(vm);
-        }
-
-        ALWAYS_INLINE void initializeIfNeeded(ExecState* exec) const
-        {
-            if (!keys)
-                createTable(exec->vm());
+                createTable();
         }
 
         JS_EXPORT_PRIVATE void deleteTable() const;
 
         // Find an entry in the table, and return the entry.
-        ALWAYS_INLINE const HashTableValue* entry(VM& vm, PropertyName identifier) const
+        ALWAYS_INLINE const HashTableValue* entry(PropertyName propertyName) const
         {
-            initializeIfNeeded(vm);
-            return entry(identifier);
-        }
+            initializeIfNeeded();
 
-        ALWAYS_INLINE const HashTableValue* entry(ExecState* exec, PropertyName identifier) const
-        {
-            initializeIfNeeded(exec);
-            return entry(identifier);
+            StringImpl* impl = propertyName.uid();
+            if (!impl)
+                return 0;
+        
+            ASSERT(keys);
+
+            int indexEntry = impl->existingHash() & indexMask;
+            int valueIndex = index[indexEntry].value;
+            if (valueIndex == -1)
+                return 0;
+
+            while (true) {
+                if (WTF::equal(impl, keys[valueIndex]))
+                    return &values[valueIndex];
+
+                indexEntry = index[indexEntry].next;
+                if (indexEntry == -1)
+                    return nullptr;
+                valueIndex = index[indexEntry].value;
+                ASSERT(valueIndex != -1);
+            };
         }
 
         class ConstIterator {
@@ -161,45 +170,20 @@ namespace JSC {
             int m_position;
         };
 
-        ConstIterator begin(VM& vm) const
+        ConstIterator begin() const
         {
-            initializeIfNeeded(vm);
+            initializeIfNeeded();
             return ConstIterator(this, 0);
         }
-        ConstIterator end(VM& vm) const
+        ConstIterator end() const
         {
-            initializeIfNeeded(vm);
+            initializeIfNeeded();
             return ConstIterator(this, numberOfValues);
         }
 
     private:
-        ALWAYS_INLINE const HashTableValue* entry(PropertyName propertyName) const
-        {
-            StringImpl* impl = propertyName.uid();
-            if (!impl)
-                return 0;
-        
-            ASSERT(keys);
-
-            int indexEntry = impl->existingHash() & indexMask;
-            int valueIndex = index[indexEntry].value;
-            if (valueIndex == -1)
-                return 0;
-
-            while (true) {
-                if (WTF::equal(impl, keys[valueIndex]))
-                    return &values[valueIndex];
-
-                indexEntry = index[indexEntry].next;
-                if (indexEntry == -1)
-                    return nullptr;
-                valueIndex = index[indexEntry].value;
-                ASSERT(valueIndex != -1);
-            };
-        }
-
         // Convert the hash table keys to identifiers.
-        JS_EXPORT_PRIVATE void createTable(VM&) const;
+        JS_EXPORT_PRIVATE void createTable() const;
     };
 
     JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashTableValue*, JSObject* thisObject, PropertyName, PropertySlot&);
@@ -213,7 +197,7 @@ namespace JSC {
     template <class ThisImp, class ParentImp>
     inline bool getStaticPropertySlot(ExecState* exec, const HashTable& table, ThisImp* thisObj, PropertyName propertyName, PropertySlot& slot)
     {
-        const HashTableValue* entry = table.entry(exec, propertyName);
+        const HashTableValue* entry = table.entry(propertyName);
 
         if (!entry) // not found, forward to parent
             return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
@@ -241,7 +225,7 @@ namespace JSC {
         if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
             return true;
 
-        const HashTableValue* entry = table.entry(exec, propertyName);
+        const HashTableValue* entry = table.entry(propertyName);
         if (!entry)
             return false;
 
@@ -255,7 +239,7 @@ namespace JSC {
     template <class ThisImp, class ParentImp>
     inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp* thisObj, PropertyName propertyName, PropertySlot& slot)
     {
-        const HashTableValue* entry = table.entry(exec, propertyName);
+        const HashTableValue* entry = table.entry(propertyName);
 
         if (!entry) // not found, forward to parent
             return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
@@ -291,7 +275,7 @@ namespace JSC {
      */
     inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base, JSValue value, const HashTable& table, PutPropertySlot& slot)
     {
-        const HashTableValue* entry = table.entry(exec, propertyName);
+        const HashTableValue* entry = table.entry(propertyName);
 
         if (!entry)
             return false;

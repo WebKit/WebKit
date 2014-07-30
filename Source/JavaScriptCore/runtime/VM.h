@@ -238,28 +238,6 @@ namespace JSC {
         ExecState* topCallFrame;
         std::unique_ptr<Watchdog> watchdog;
 
-        const OwnPtr<const HashTable> arrayConstructorTable;
-        const OwnPtr<const HashTable> arrayPrototypeTable;
-        const OwnPtr<const HashTable> booleanPrototypeTable;
-        const OwnPtr<const HashTable> dataViewTable;
-        const OwnPtr<const HashTable> dateTable;
-        const OwnPtr<const HashTable> dateConstructorTable;
-        const OwnPtr<const HashTable> errorPrototypeTable;
-        const OwnPtr<const HashTable> globalObjectTable;
-        const OwnPtr<const HashTable> jsonTable;
-        const OwnPtr<const HashTable> numberConstructorTable;
-        const OwnPtr<const HashTable> numberPrototypeTable;
-        const OwnPtr<const HashTable> objectConstructorTable;
-        const OwnPtr<const HashTable> privateNamePrototypeTable;
-        const OwnPtr<const HashTable> regExpTable;
-        const OwnPtr<const HashTable> regExpConstructorTable;
-        const OwnPtr<const HashTable> regExpPrototypeTable;
-        const OwnPtr<const HashTable> stringConstructorTable;
-#if ENABLE(PROMISES)
-        const OwnPtr<const HashTable> promisePrototypeTable;
-        const OwnPtr<const HashTable> promiseConstructorTable;
-#endif
-
         Strong<Structure> structureStructure;
         Strong<Structure> structureRareDataStructure;
         Strong<Structure> debuggerScopeStructure;

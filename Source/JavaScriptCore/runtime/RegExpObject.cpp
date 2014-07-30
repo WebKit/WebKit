@@ -52,7 +52,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(RegExpObject);
 
-const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, 0, ExecState::regExpTable, CREATE_METHOD_TABLE(RegExpObject) };
+const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, &regExpTable, CREATE_METHOD_TABLE(RegExpObject) };
 
 /* Source for RegExpObject.lut.h
 @begin regExpTable
@@ -97,7 +97,7 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
         slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
     }
-    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec->vm()), jsCast<RegExpObject*>(object), propertyName, slot);
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, regExpTable, jsCast<RegExpObject*>(object), propertyName, slot);
 }
 
 bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

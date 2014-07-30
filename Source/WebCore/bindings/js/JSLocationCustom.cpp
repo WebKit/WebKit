@@ -82,7 +82,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
 
     bool sameDomainAccess = shouldAllowAccessToFrame(exec, frame);
 
-    const HashTableValue* entry = JSLocation::info()->propHashTable(exec)->entry(exec, propertyName);
+    const HashTableValue* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
     if (!entry) {
         if (sameDomainAccess)
             JSObject::put(this, exec, propertyName, value, slot);

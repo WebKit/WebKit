@@ -41,7 +41,7 @@ static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 
 namespace JSC {
 
-const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, 0, ExecState::errorPrototypeTable, CREATE_METHOD_TABLE(ErrorPrototype) };
+const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, &errorPrototypeTable, CREATE_METHOD_TABLE(ErrorPrototype) };
 
 /* Source for ErrorPrototype.lut.h
 @begin errorPrototypeTable
@@ -63,7 +63,7 @@ void ErrorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 
 bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec->vm()), jsCast<ErrorPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<ErrorInstance>(exec, errorPrototypeTable, jsCast<ErrorPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

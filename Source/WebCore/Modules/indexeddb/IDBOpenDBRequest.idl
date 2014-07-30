@@ -26,7 +26,6 @@
 [
     Conditional=INDEXED_DATABASE,
     EventTarget,
-    JSNoStaticTables,
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] interface IDBOpenDBRequest : IDBRequest {

@@ -123,7 +123,7 @@ void ExecutePromiseReactionMicrotask::run(ExecState* exec)
 }
 
 
-const ClassInfo JSPromiseReaction::s_info = { "JSPromiseReaction", 0, 0, 0, CREATE_METHOD_TABLE(JSPromiseReaction) };
+const ClassInfo JSPromiseReaction::s_info = { "JSPromiseReaction", 0, 0, CREATE_METHOD_TABLE(JSPromiseReaction) };
 
 JSPromiseReaction* JSPromiseReaction::create(VM& vm, JSPromiseDeferred* deferred, JSValue handler)
 {

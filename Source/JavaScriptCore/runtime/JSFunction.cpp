@@ -53,7 +53,7 @@ EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
     return throwVMError(exec, createNotAConstructorError(exec, exec->callee()));
 }
 
-const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFunction) };
+const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSFunction) };
 
 bool JSFunction::isHostFunctionNonInline() const
 {

@@ -109,28 +109,6 @@ using namespace WTF;
 
 namespace JSC {
 
-extern const HashTable arrayConstructorTable;
-extern const HashTable arrayPrototypeTable;
-extern const HashTable booleanPrototypeTable;
-extern const HashTable jsonTable;
-extern const HashTable dataViewTable;
-extern const HashTable dateTable;
-extern const HashTable dateConstructorTable;
-extern const HashTable errorPrototypeTable;
-extern const HashTable globalObjectTable;
-extern const HashTable numberConstructorTable;
-extern const HashTable numberPrototypeTable;
-JS_EXPORTDATA extern const HashTable objectConstructorTable;
-extern const HashTable privateNamePrototypeTable;
-extern const HashTable regExpTable;
-extern const HashTable regExpConstructorTable;
-extern const HashTable regExpPrototypeTable;
-extern const HashTable stringConstructorTable;
-#if ENABLE(PROMISES)
-extern const HashTable promisePrototypeTable;
-extern const HashTable promiseConstructorTable;
-#endif
-
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
 // ENABLE(JIT) or ENABLE(YARR_JIT) or both are enabled. The code below
 // just checks for ENABLE(JIT) or ENABLE(YARR_JIT) with this premise in mind.
@@ -172,27 +150,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , vmType(vmType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
-    , arrayConstructorTable(adoptPtr(new HashTable(JSC::arrayConstructorTable)))
-    , arrayPrototypeTable(adoptPtr(new HashTable(JSC::arrayPrototypeTable)))
-    , booleanPrototypeTable(adoptPtr(new HashTable(JSC::booleanPrototypeTable)))
-    , dataViewTable(adoptPtr(new HashTable(JSC::dataViewTable)))
-    , dateTable(adoptPtr(new HashTable(JSC::dateTable)))
-    , dateConstructorTable(adoptPtr(new HashTable(JSC::dateConstructorTable)))
-    , errorPrototypeTable(adoptPtr(new HashTable(JSC::errorPrototypeTable)))
-    , globalObjectTable(adoptPtr(new HashTable(JSC::globalObjectTable)))
-    , jsonTable(adoptPtr(new HashTable(JSC::jsonTable)))
-    , numberConstructorTable(adoptPtr(new HashTable(JSC::numberConstructorTable)))
-    , numberPrototypeTable(adoptPtr(new HashTable(JSC::numberPrototypeTable)))
-    , objectConstructorTable(adoptPtr(new HashTable(JSC::objectConstructorTable)))
-    , privateNamePrototypeTable(adoptPtr(new HashTable(JSC::privateNamePrototypeTable)))
-    , regExpTable(adoptPtr(new HashTable(JSC::regExpTable)))
-    , regExpConstructorTable(adoptPtr(new HashTable(JSC::regExpConstructorTable)))
-    , regExpPrototypeTable(adoptPtr(new HashTable(JSC::regExpPrototypeTable)))
-    , stringConstructorTable(adoptPtr(new HashTable(JSC::stringConstructorTable)))
-#if ENABLE(PROMISES)
-    , promisePrototypeTable(adoptPtr(new HashTable(JSC::promisePrototypeTable)))
-    , promiseConstructorTable(adoptPtr(new HashTable(JSC::promiseConstructorTable)))
-#endif
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new MarkedArgumentBuffer)
@@ -359,28 +316,6 @@ VM::~VM()
     delete interpreter;
 #ifndef NDEBUG
     interpreter = reinterpret_cast<Interpreter*>(0xbbadbeef);
-#endif
-
-    arrayPrototypeTable->deleteTable();
-    arrayConstructorTable->deleteTable();
-    booleanPrototypeTable->deleteTable();
-    dataViewTable->deleteTable();
-    dateTable->deleteTable();
-    dateConstructorTable->deleteTable();
-    errorPrototypeTable->deleteTable();
-    globalObjectTable->deleteTable();
-    jsonTable->deleteTable();
-    numberConstructorTable->deleteTable();
-    numberPrototypeTable->deleteTable();
-    objectConstructorTable->deleteTable();
-    privateNamePrototypeTable->deleteTable();
-    regExpTable->deleteTable();
-    regExpConstructorTable->deleteTable();
-    regExpPrototypeTable->deleteTable();
-    stringConstructorTable->deleteTable();
-#if ENABLE(PROMISES)
-    promisePrototypeTable->deleteTable();
-    promiseConstructorTable->deleteTable();
 #endif
 
     delete emptyList;

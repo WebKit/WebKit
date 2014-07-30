@@ -87,7 +87,7 @@ static inline bool isNumericCompareFunction(ExecState* exec, JSValue function, C
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecState::arrayPrototypeTable, CREATE_METHOD_TABLE(ArrayPrototype)};
+const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, &arrayPrototypeTable, CREATE_METHOD_TABLE(ArrayPrototype)};
 
 /* Source for ArrayPrototype.lut.h
 @begin arrayPrototypeTable 16
@@ -143,7 +143,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec->vm()), jsCast<ArrayPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSArray>(exec, arrayPrototypeTable, jsCast<ArrayPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Array Functions ----------------------------

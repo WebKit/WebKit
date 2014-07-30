@@ -49,7 +49,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 
 namespace JSC {
 
-const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, ExecState::regExpPrototypeTable, CREATE_METHOD_TABLE(RegExpPrototype) };
+const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, &regExpPrototypeTable, CREATE_METHOD_TABLE(RegExpPrototype) };
 
 /* Source for RegExpPrototype.lut.h
 @begin regExpPrototypeTable
@@ -67,7 +67,7 @@ RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure, RegExp* regExp)
 
 bool RegExpPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec->vm()), jsCast<RegExpPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<RegExpObject>(exec, regExpPrototypeTable, jsCast<RegExpPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------

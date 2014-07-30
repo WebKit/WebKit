@@ -182,7 +182,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         }
     }
 
-    const HashTableValue* entry = JSDOMWindow::info()->propHashTable(exec)->entry(exec, propertyName);
+    const HashTableValue* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName);
     if (entry) {
         slot.setCacheableCustom(thisObject, allowsAccess ? entry->attributes() : ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
         return true;
@@ -345,7 +345,7 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         return;
     }
 
-    if (lookupPut(exec, propertyName, thisObject, value, *s_info.propHashTable(exec), slot))
+    if (lookupPut(exec, propertyName, thisObject, value, *s_info.staticPropHashTable, slot))
         return;
 
     if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->impl()))

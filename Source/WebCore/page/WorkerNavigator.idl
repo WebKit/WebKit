@@ -29,7 +29,6 @@
 [
     NoInterfaceObject,
     GenerateIsReachable=Impl,
-    JSNoStaticTables,
 ] interface WorkerNavigator {
     readonly attribute DOMString appName;
     readonly attribute DOMString appVersion;

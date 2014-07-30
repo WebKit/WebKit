@@ -23,7 +23,6 @@
 #define WebCoreJSClientData_h
 
 #include "DOMWrapperWorld.h"
-#include "DOMObjectHashTableMap.h"
 #include "WebCoreTypedArrayController.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -71,8 +70,6 @@ public:
         ASSERT(m_worldSet.contains(&world));
         m_worldSet.remove(&world);
     }
-
-    DOMObjectHashTableMap hashTableMap;
 
 private:
     HashSet<DOMWrapperWorld*> m_worldSet;

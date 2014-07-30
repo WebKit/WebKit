@@ -29,7 +29,6 @@
  */
 
 [
-    JSNoStaticTables,
     ConstructorTemplate=Event
 ] interface CloseEvent : Event {
     [InitializedByEventConstructor] readonly attribute boolean wasClean;

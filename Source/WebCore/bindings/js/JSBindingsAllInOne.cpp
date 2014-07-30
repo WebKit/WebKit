@@ -27,7 +27,6 @@
 
 #include "ArrayValue.cpp"
 #include "CallbackFunction.cpp"
-#include "DOMObjectHashTableMap.cpp"
 #include "DOMWrapperWorld.cpp"
 #include "Dictionary.cpp"
 #include "GCController.cpp"

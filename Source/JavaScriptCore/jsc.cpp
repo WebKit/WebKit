@@ -94,6 +94,10 @@
 using namespace JSC;
 using namespace WTF;
 
+namespace JSC {
+extern const struct HashTable globalObjectTable;
+}
+
 namespace {
 
 NO_RETURN_WITH_VALUE static void jscExit(int status)
@@ -405,11 +409,11 @@ private:
     Vector<int> m_vector;
 };
 
-const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Element) };
-const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Masquerader) };
-const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Root) };
-const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ImpureGetter) };
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeArray) };
+const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, CREATE_METHOD_TABLE(Element) };
+const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, CREATE_METHOD_TABLE(Masquerader) };
+const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, CREATE_METHOD_TABLE(Root) };
+const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(ImpureGetter) };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 
 ElementHandleOwner* Element::handleOwner()
 {
@@ -646,7 +650,7 @@ protected:
     }
 };
 
-const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
+const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, &globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
 const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, 0, &shouldInterruptScriptBeforeTimeout };
 
 

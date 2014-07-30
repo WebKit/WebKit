@@ -334,39 +334,6 @@ sub AddClassForwardIfNeeded
     }
 }
 
-sub hashTableAccessor
-{
-    my $noStaticTables = shift;
-    my $className = shift;
-    if ($noStaticTables) {
-        return "get${className}Table(exec->vm())";
-    } else {
-        return "${className}Table";
-    }
-}
-
-sub prototypeHashTableAccessor
-{
-    my $noStaticTables = shift;
-    my $className = shift;
-    if ($noStaticTables) {
-        return "get${className}PrototypeTable(vm)";
-    } else {
-        return "${className}PrototypeTable";
-    }
-}
-
-sub constructorHashTableAccessor
-{
-    my $noStaticTables = shift;
-    my $constructorClassName = shift;
-    if ($noStaticTables) {
-        return "get${constructorClassName}Table(exec->vm())";
-    } else {
-        return "${constructorClassName}Table";
-    }
-}
-
 sub GetGenerateIsReachable
 {
     my $interface = shift;
@@ -460,10 +427,9 @@ sub GenerateGetOwnPropertySlotBody
 
     if ($hasAttributes) {
         if ($inlined) {
-            die "Cannot inline if NoStaticTables is set." if ($interface->extendedAttributes->{"JSNoStaticTables"});
             push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, *info()->staticPropHashTable, thisObject, propertyName, slot);\n");
         } else {
-            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, ${className}Table, thisObject, propertyName, slot);\n");
         }
     } else {
         push(@getOwnPropertySlotImpl, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");
@@ -1982,15 +1948,9 @@ sub GenerateImplementation
                                \%conditionals, $justGenerateValueArray);
 
     if ($justGenerateValueArray) {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
-    } elsif ($interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, "static const HashTable& get${className}PrototypeTable(VM& vm)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return getHashTableForGlobalData(vm, ${className}PrototypeTable);\n");
-        push(@implContent, "}\n\n");
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, get${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
@@ -2005,11 +1965,11 @@ sub GenerateImplementation
             if ($numConstants eq 0 && $numFunctions eq 0 && $numPrototypeAttributes eq 0) {
                 push(@implContent, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");        
             } elsif ($numConstants eq 0 && $numPrototypeAttributes eq 0) {
-                push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+                push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
             } elsif ($numFunctions eq 0 && $numPrototypeAttributes eq 0) {
-                push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+                push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
             } else {
-                push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+                push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, ${className}PrototypeTable, thisObject, propertyName, slot);\n");
             }
             push(@implContent, "}\n\n");
         } elsif ($numConstants > 0 || $numFunctions > 0 || $numPrototypeAttributes > 0) {
@@ -2051,24 +2011,12 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    if ($numInstanceAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, "static const HashTable& get${className}Table(VM& vm)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return getHashTableForGlobalData(vm, ${className}Table);\n");
-        push(@implContent, "}\n\n");
-    }
-
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
-    if ($numInstanceAttributes > 0 && !$interface->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numInstanceAttributes > 0) {
         push(@implContent, "&${className}Table");
     } else {
         push(@implContent, "0");
-    }
-    if ($numInstanceAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, ", get${className}Table ");
-    } else {
-        push(@implContent, ", 0 ");
     }
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
@@ -4728,7 +4676,7 @@ sub GenerateConstructorHelperMethods
         $leastConstructorLength = 0;
     }
 
-    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+    push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
 
     push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    : ${constructorParentClassName}(structure, globalObject)\n");

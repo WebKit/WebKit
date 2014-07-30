@@ -29,7 +29,6 @@
  */
 
 [
-    JSNoStaticTables,
     ConstructorTemplate=Event
 ] interface ErrorEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString message;

@@ -4257,9 +4257,6 @@
     <ClCompile Include="..\bindings\js\CallbackFunction.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\DOMObjectHashTableMap.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\DOMWrapperWorld.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -11470,9 +11467,6 @@
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\Dictionary.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\js\DOMObjectHashTableMap.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\DOMWrapperWorld.h">

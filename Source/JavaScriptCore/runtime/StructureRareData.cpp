@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo StructureRareData::s_info = { "StructureRareData", 0, 0, 0, CREATE_METHOD_TABLE(StructureRareData) };
+const ClassInfo StructureRareData::s_info = { "StructureRareData", 0, 0, CREATE_METHOD_TABLE(StructureRareData) };
 
 Structure* StructureRareData::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

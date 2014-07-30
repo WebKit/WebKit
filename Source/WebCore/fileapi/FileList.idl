@@ -24,7 +24,6 @@
  */
 
 [
-    JSNoStaticTables,
     ImplementationLacksVTable,
 ] interface FileList {
     readonly attribute unsigned long length;

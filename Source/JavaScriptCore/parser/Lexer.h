@@ -37,12 +37,12 @@ class Keywords {
 public:
     bool isKeyword(const Identifier& ident) const
     {
-        return m_keywordTable.entry(m_vm, ident);
+        return m_keywordTable.entry(ident);
     }
     
     const HashTableValue* getKeyword(const Identifier& ident) const
     {
-        return m_keywordTable.entry(m_vm, ident);
+        return m_keywordTable.entry(ident);
     }
     
     ~Keywords()

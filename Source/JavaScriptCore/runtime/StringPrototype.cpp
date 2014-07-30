@@ -83,7 +83,7 @@ static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*);
 static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
 static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 
-const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 0, CREATE_METHOD_TABLE(StringPrototype) };
+const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, CREATE_METHOD_TABLE(StringPrototype) };
 
 // ECMA 15.5.4
 StringPrototype::StringPrototype(VM& vm, Structure* structure)

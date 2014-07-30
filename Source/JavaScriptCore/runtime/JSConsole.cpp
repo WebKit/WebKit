@@ -31,6 +31,6 @@
 
 namespace JSC {
 
-const ClassInfo JSConsole::s_info = { "Console", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSConsole) };
+const ClassInfo JSConsole::s_info = { "Console", &Base::s_info, 0, CREATE_METHOD_TABLE(JSConsole) };
 
 }

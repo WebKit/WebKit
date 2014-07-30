@@ -32,7 +32,6 @@
     ConstructorRaisesException,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
-    JSNoStaticTables,
     InterfaceName=URL,
     ImplementationLacksVTable,
 ] interface DOMURL {

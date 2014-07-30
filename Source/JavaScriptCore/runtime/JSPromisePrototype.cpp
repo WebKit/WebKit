@@ -51,7 +51,7 @@ static EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState*);
 
 namespace JSC {
 
-const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &JSNonFinalObject::s_info, 0, ExecState::promisePrototypeTable, CREATE_METHOD_TABLE(JSPromisePrototype) };
+const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &JSNonFinalObject::s_info, &promisePrototypeTable, CREATE_METHOD_TABLE(JSPromisePrototype) };
 
 /* Source for JSPromisePrototype.lut.h
 @begin promisePrototypeTable
@@ -85,7 +85,7 @@ void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 
 bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::promisePrototypeTable(exec->vm()), jsCast<JSPromisePrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, promisePrototypeTable, jsCast<JSPromisePrototype*>(object), propertyName, slot);
 }
 
 EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState* exec)

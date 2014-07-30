@@ -32,7 +32,6 @@
     GlobalContext=DedicatedWorkerGlobalScope,
     CustomProxyToJSObject,
     JSGenerateToNativeObject,
-    JSNoStaticTables,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

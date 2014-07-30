@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSArrayIterator::s_info = { "ArrayIterator", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSArrayIterator) };
+const ClassInfo JSArrayIterator::s_info = { "ArrayIterator", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayIterator) };
 
 static EncodedJSValue JSC_HOST_CALL arrayIteratorNextKey(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayIteratorNextValue(ExecState*);

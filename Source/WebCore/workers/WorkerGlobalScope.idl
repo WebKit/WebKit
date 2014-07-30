@@ -31,7 +31,6 @@
     JSCustomGetOwnPropertySlotAndDescriptor,
     EventTarget,
     JSLegacyParent=JSWorkerGlobalScopeBase,
-    JSNoStaticTables,
 ] interface WorkerGlobalScope {
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

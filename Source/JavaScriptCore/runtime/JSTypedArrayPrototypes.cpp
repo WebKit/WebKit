@@ -32,7 +32,7 @@
 namespace JSC {
 
 #define MAKE_S_INFO(type) \
-    template<> const ClassInfo JS##type##Prototype::s_info = {#type "Prototype", &JS##type##Prototype::Base::s_info, 0, 0, CREATE_METHOD_TABLE(JS##type##Prototype)}
+    template<> const ClassInfo JS##type##Prototype::s_info = {#type "Prototype", &JS##type##Prototype::Base::s_info, 0, CREATE_METHOD_TABLE(JS##type##Prototype)}
 
 MAKE_S_INFO(Int8Array);
 MAKE_S_INFO(Int16Array);

@@ -32,7 +32,6 @@
     GlobalContext=DOMWindow&WorkerGlobalScope,
     GenerateIsReachable=Impl,
     CustomToJSObject,
-    JSNoStaticTables,
     CustomConstructor,
     CustomConstructor(sequence<any> blobParts, optional BlobPropertyBag options),
 ] interface Blob {

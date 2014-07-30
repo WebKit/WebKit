@@ -30,7 +30,6 @@
 
 [
     Conditional=SQL_DATABASE,
-    JSNoStaticTables,
     DoNotCheckConstants,
     ImplementationLacksVTable
 ] exception SQLException {

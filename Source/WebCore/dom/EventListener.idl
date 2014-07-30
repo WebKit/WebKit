@@ -21,7 +21,6 @@
 // Introduced in DOM Level 2:
 [
     NoInterfaceObject,
-    JSNoStaticTables,
     ObjCProtocol,
     CPPPureInterface,
 ] interface EventListener {

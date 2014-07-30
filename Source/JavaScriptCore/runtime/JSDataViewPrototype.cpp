@@ -36,11 +36,6 @@
 
 namespace JSC {
 
-const ClassInfo JSDataViewPrototype::s_info = {
-    "DataViewPrototype", &Base::s_info, 0, ExecState::dataViewTable,
-    CREATE_METHOD_TABLE(JSDataViewPrototype)
-};
-
 /* Source for JSDataViewPrototype.lut.h
 @begin dataViewTable
   getInt8               dataViewProtoFuncGetInt8             DontEnum|Function       0
@@ -61,6 +56,34 @@ const ClassInfo JSDataViewPrototype::s_info = {
   setFloat64            dataViewProtoFuncSetFloat64          DontEnum|Function       0
 @end
 */
+
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState*);
+
+}
+
+#include "JSDataViewPrototype.lut.h"
+
+namespace JSC {
+
+const ClassInfo JSDataViewPrototype::s_info = {
+    "DataViewPrototype", &Base::s_info, &dataViewTable,
+    CREATE_METHOD_TABLE(JSDataViewPrototype)
+};
 
 JSDataViewPrototype::JSDataViewPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)
@@ -87,7 +110,7 @@ bool JSDataViewPrototype::getOwnPropertySlot(
     JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticFunctionSlot<JSObject>(
-        exec, ExecState::dataViewTable(exec->vm()), jsCast<JSDataViewPrototype*>(object),
+        exec, dataViewTable, jsCast<JSDataViewPrototype*>(object),
         propertyName, slot);
 }
 
@@ -266,6 +289,3 @@ static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState* exec)
 }
 
 } // namespace JSC
-
-#include "JSDataViewPrototype.lut.h"
-

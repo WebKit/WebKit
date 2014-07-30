@@ -32,7 +32,7 @@ namespace WebCore {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSImageConstructor);
 
-const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
+const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
 
 JSImageConstructor::JSImageConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(structure, globalObject)

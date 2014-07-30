@@ -43,7 +43,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NumberConstructor);
 
-const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable, CREATE_METHOD_TABLE(NumberConstructor) };
+const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, &numberConstructorTable, CREATE_METHOD_TABLE(NumberConstructor) };
 
 /* Source for NumberConstructor.lut.h
 @begin numberConstructorTable
@@ -74,7 +74,7 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 
 bool NumberConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec->vm()), jsCast<NumberConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, numberConstructorTable, jsCast<NumberConstructor*>(object), propertyName, slot);
 }
 
 static EncodedJSValue numberConstructorNaNValue(ExecState*, JSObject*, EncodedJSValue, PropertyName)

@@ -1,3 +1,13 @@
+2014-07-30  Andreas Kling  <akling@apple.com>
+
+        Static hash tables no longer need to be coupled with a VM.
+        <https://webkit.org/b/135421>
+
+        Reviewed by Geoffrey Garen.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+
 2014-07-30  Dan Bernstein  <mitz@apple.com>
 
         Updated for changes to the WebCore::Credential API.

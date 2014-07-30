@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo SetIteratorConstructor::s_info = { "Set Iterator", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(SetIteratorConstructor) };
+const ClassInfo SetIteratorConstructor::s_info = { "Set Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(SetIteratorConstructor) };
 
 void SetIteratorConstructor::finishCreation(VM& vm, SetIteratorPrototype* prototype)
 {

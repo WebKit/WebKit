@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo PropertyTable::s_info = { "PropertyTable", 0, 0, 0, CREATE_METHOD_TABLE(PropertyTable) };
+const ClassInfo PropertyTable::s_info = { "PropertyTable", 0, 0, CREATE_METHOD_TABLE(PropertyTable) };
 
 PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
 {

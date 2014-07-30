@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo ConsolePrototype::s_info = { "ConsolePrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ConsolePrototype) };
+const ClassInfo ConsolePrototype::s_info = { "ConsolePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(ConsolePrototype) };
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncError(ExecState*);

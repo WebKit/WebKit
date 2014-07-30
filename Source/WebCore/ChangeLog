@@ -1,3 +1,109 @@
+2014-07-30  Andreas Kling  <akling@apple.com>
+
+        Static hash tables no longer need to be coupled with a VM.
+        <https://webkit.org/b/135421>
+
+        Update for JSC::ClassInfo changes.
+        
+        Remove the JSNoStaticTables mode for IDL code generation, which was used to
+        ensure that each VM had its own unique copy of certain static tables.
+        This was used for interfaces that could be used in workers, and now there's
+        no need to manually annotate these things anymore.
+
+        Also remove the DOMObjectHashTableMap class that was only used for this.
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/indexeddb/IDBAny.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseSync.idl:
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLException.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/SQLTransactionSync.idl:
+        * Modules/websockets/CloseEvent.idl:
+        * Modules/websockets/WebSocket.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMObjectHashTableMap.cpp: Removed.
+        * bindings/js/DOMObjectHashTableMap.h: Removed.
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getHashTableForGlobalData): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getStaticValueSlotEntryWithoutCaching):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::put):
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::putDelegate):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::putDelegate):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/js/WebCoreJSClientData.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateImplementation):
+        (GenerateConstructorHelperMethods):
+        (hashTableAccessor): Deleted.
+        (prototypeHashTableAccessor): Deleted.
+        (constructorHashTableAccessor): Deleted.
+        * bindings/scripts/IDLAttributes.txt:
+        * bridge/c/CRuntimeObject.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_object.cpp:
+        * crypto/CryptoKey.idl:
+        * css/CSSFontFaceLoadEvent.idl:
+        * dom/DOMCoreException.idl:
+        * dom/DOMStringList.idl:
+        * dom/ErrorEvent.idl:
+        * dom/Event.idl:
+        * dom/EventException.idl:
+        * dom/EventListener.idl:
+        * dom/MessageChannel.idl:
+        * dom/MessageEvent.idl:
+        * dom/MessagePort.idl:
+        * dom/ProgressEvent.idl:
+        * fileapi/Blob.idl:
+        * fileapi/File.idl:
+        * fileapi/FileError.idl:
+        * fileapi/FileException.idl:
+        * fileapi/FileList.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMURL.idl:
+        * page/EventSource.idl:
+        * page/WorkerNavigator.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/SharedWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/WorkerLocation.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestException.idl:
+        * xml/XMLHttpRequestProgressEvent.idl:
+        * xml/XMLHttpRequestUpload.idl:
+
 2014-07-30  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17199364> [Mac] Popup button arrows appear on the left, underlapping text, when the UI layout direction is right-to-left

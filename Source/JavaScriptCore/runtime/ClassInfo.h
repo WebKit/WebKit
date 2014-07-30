@@ -154,25 +154,6 @@ struct ClassInfo {
     // nullptrif there is none.
     const ClassInfo* parentClass;
 
-    // Static hash-table of properties.
-    // For classes that can be used from multiple threads, it is accessed via a getter function
-    // that would typically return a pointer to a thread-specific value.
-    const HashTable* propHashTable(ExecState* exec) const
-    {
-        if (classPropHashTableGetterFunction)
-            return &classPropHashTableGetterFunction(exec->vm());
-
-        return staticPropHashTable;
-    }
-
-    const HashTable* propHashTable(VM& vm) const
-    {
-        if (classPropHashTableGetterFunction)
-            return &classPropHashTableGetterFunction(vm);
-
-        return staticPropHashTable;
-    }
-
     bool isSubClassOf(const ClassInfo* other) const
     {
         for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
@@ -185,17 +166,15 @@ struct ClassInfo {
     bool hasStaticProperties() const
     {
         for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
-            if (ci->staticPropHashTable || ci->classPropHashTableGetterFunction)
+            if (ci->staticPropHashTable)
                 return true;
         }
         return false;
     }
 
-    bool hasStaticSetterOrReadonlyProperties(VM&) const;
+    bool hasStaticSetterOrReadonlyProperties() const;
 
     const HashTable* staticPropHashTable;
-    typedef const HashTable& (*ClassPropHashTableGetterFunction)(VM&);
-    const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
 
     MethodTable methodTable;
 

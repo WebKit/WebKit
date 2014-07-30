@@ -87,27 +87,6 @@ namespace JSC  {
         Interpreter* interpreter() { return vm().interpreter; }
         Heap* heap() { return &vm().heap; }
 
-        static const HashTable& arrayConstructorTable(VM& vm) { return *vm.arrayConstructorTable; }
-        static const HashTable& arrayPrototypeTable(VM& vm) { return *vm.arrayPrototypeTable; }
-        static const HashTable& booleanPrototypeTable(VM& vm) { return *vm.booleanPrototypeTable; }
-        static const HashTable& dataViewTable(VM& vm) { return *vm.dataViewTable; }
-        static const HashTable& dateTable(VM& vm) { return *vm.dateTable; }
-        static const HashTable& dateConstructorTable(VM& vm) { return *vm.dateConstructorTable; }
-        static const HashTable& errorPrototypeTable(VM& vm) { return *vm.errorPrototypeTable; }
-        static const HashTable& globalObjectTable(VM& vm) { return *vm.globalObjectTable; }
-        static const HashTable& jsonTable(VM& vm) { return *vm.jsonTable; }
-        static const HashTable& numberConstructorTable(VM& vm) { return *vm.numberConstructorTable; }
-        static const HashTable& numberPrototypeTable(VM& vm) { return *vm.numberPrototypeTable; }
-        static const HashTable& objectConstructorTable(VM& vm) { return *vm.objectConstructorTable; }
-        static const HashTable& privateNamePrototypeTable(VM& vm) { return *vm.privateNamePrototypeTable; }
-        static const HashTable& regExpTable(VM& vm) { return *vm.regExpTable; }
-        static const HashTable& regExpConstructorTable(VM& vm) { return *vm.regExpConstructorTable; }
-        static const HashTable& regExpPrototypeTable(VM& vm) { return *vm.regExpPrototypeTable; }
-        static const HashTable& stringConstructorTable(VM& vm) { return *vm.stringConstructorTable; }
-#if ENABLE(PROMISES)
-        static const HashTable& promisePrototypeTable(VM& vm) { return *vm.promisePrototypeTable; }
-        static const HashTable& promiseConstructorTable(VM& vm) { return *vm.promiseConstructorTable; }
-#endif
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }

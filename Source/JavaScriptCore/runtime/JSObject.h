@@ -966,7 +966,7 @@ private:
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
     void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure&);
 
-    const HashTableValue* findPropertyHashEntry(VM&, PropertyName) const;
+    const HashTableValue* findPropertyHashEntry(PropertyName) const;
         
     void putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         

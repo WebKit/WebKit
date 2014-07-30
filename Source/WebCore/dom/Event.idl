@@ -22,7 +22,6 @@
 [
     CustomToJSObject,
     ConstructorTemplate=Event,
-    JSNoStaticTables,
     ObjCPolymorphic,
 ] interface Event {
 

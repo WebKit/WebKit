@@ -31,7 +31,7 @@
 namespace JSC {
 
 const ClassInfo ArrayBufferNeuteringWatchpoint::s_info = {
-    "ArrayBufferNeuteringWatchpoint", 0, 0, 0,
+    "ArrayBufferNeuteringWatchpoint", 0, 0,
     CREATE_METHOD_TABLE(ArrayBufferNeuteringWatchpoint)
 };
 

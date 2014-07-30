@@ -33,7 +33,6 @@
     CustomProxyToJSObject,
     Conditional=SHARED_WORKERS,
     JSGenerateToNativeObject,
-    JSNoStaticTables,
 ] interface SharedWorkerGlobalScope : WorkerGlobalScope {
 
     readonly attribute DOMString name;

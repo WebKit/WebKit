@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(SetPrototype) };
+const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(SetPrototype) };
 
 static EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncClear(ExecState*);

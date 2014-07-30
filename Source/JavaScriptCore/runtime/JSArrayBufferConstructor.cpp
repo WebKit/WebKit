@@ -38,7 +38,7 @@ namespace JSC {
 static EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(ExecState*);
 
 const ClassInfo JSArrayBufferConstructor::s_info = {
-    "Function", &Base::s_info, 0, 0,
+    "Function", &Base::s_info, 0,
     CREATE_METHOD_TABLE(JSArrayBufferConstructor)
 };
 

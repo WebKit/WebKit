@@ -29,7 +29,6 @@
 [
     GlobalContext=WorkerGlobalScope,
     GenerateIsReachable=Impl,
-    JSNoStaticTables,
     ImplementationLacksVTable,
 ] interface WorkerLocation {
     readonly attribute DOMString href;

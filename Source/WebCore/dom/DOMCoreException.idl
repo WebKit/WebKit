@@ -27,7 +27,6 @@
  */
 
 [
-    JSNoStaticTables,
     DoNotCheckConstants,
     InterfaceName=DOMException,
     ImplementationLacksVTable,

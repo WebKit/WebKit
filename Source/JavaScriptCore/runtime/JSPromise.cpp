@@ -41,7 +41,7 @@ namespace JSC {
 
 static void triggerPromiseReactions(VM&, JSGlobalObject*, Vector<WriteBarrier<JSPromiseReaction>>&, JSValue);
 
-const ClassInfo JSPromise::s_info = { "Promise", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSPromise) };
+const ClassInfo JSPromise::s_info = { "Promise", &Base::s_info, 0, CREATE_METHOD_TABLE(JSPromise) };
 
 JSPromise* JSPromise::create(VM& vm, JSGlobalObject* globalObject, JSPromiseConstructor* constructor)
 {

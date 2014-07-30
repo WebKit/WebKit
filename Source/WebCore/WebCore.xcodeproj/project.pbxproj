@@ -5143,8 +5143,6 @@
 		BC53D911114310CC000D817E /* WebCoreJSClientData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53D910114310CC000D817E /* WebCoreJSClientData.h */; };
 		BC53DA2E1143121E000D817E /* DOMWrapperWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */; };
-		BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */; };
 		BC5823F50C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */; };
 		BC5825F30C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */; };
 		BC5A12DF0DC0414800C9AFAD /* CSSReflectValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */; };
@@ -12534,8 +12532,6 @@
 		BC53D910114310CC000D817E /* WebCoreJSClientData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreJSClientData.h; sourceTree = "<group>"; };
 		BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWrapperWorld.h; sourceTree = "<group>"; };
 		BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWrapperWorld.cpp; sourceTree = "<group>"; };
-		BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMObjectHashTableMap.h; sourceTree = "<group>"; };
-		BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMObjectHashTableMap.cpp; sourceTree = "<group>"; };
 		BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElementCustom.cpp; sourceTree = "<group>"; };
 		BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclarationCustom.cpp; sourceTree = "<group>"; };
 		BC59DEF8169DEDC30016AC34 /* Settings.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Settings.in; sourceTree = "<group>"; };
@@ -20764,8 +20760,6 @@
 				312D67B01535691F00563D0D /* Dictionary.cpp */,
 				316023EF1532C40C00D50FF4 /* Dictionary.h */,
 				B56576E717DA94E200A56BDC /* DOMConstructorWithDocument.h */,
-				BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */,
-				BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */,
 				BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */,
 				BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
@@ -24066,7 +24060,6 @@
 				85CA96EA0A9624E900690CCF /* DOMNotation.h in Headers */,
 				85E711D40AC5D5350053270F /* DOMNotationInternal.h in Headers */,
 				856C8AE40A912649005C687B /* DOMObject.h in Headers */,
-				BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */,
 				07AB997018DA3C740018771E /* RTCIceServerPrivate.h in Headers */,
 				85C7F5D00AAFB8D9004014DD /* DOMOverflowEvent.h in Headers */,
 				85989DCF0ACC8BBD00A0BC51 /* DOMOverflowEventInternal.h in Headers */,
@@ -27617,7 +27610,6 @@
 				85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */,
 				85CA96EB0A9624E900690CCF /* DOMNotation.mm in Sources */,
 				856C8AE50A912649005C687B /* DOMObject.mm in Sources */,
-				BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */,
 				85C7F5D10AAFB8D9004014DD /* DOMOverflowEvent.mm in Sources */,
 				E1284BD51044A01E00EAEB52 /* DOMPageTransitionEvent.mm in Sources */,
 				1ACE53E70A8D18E70022947D /* DOMParser.cpp in Sources */,

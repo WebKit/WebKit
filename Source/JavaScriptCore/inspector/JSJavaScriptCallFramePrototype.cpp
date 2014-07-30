@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantWITH_SCOPE(Exec
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCLOSURE_SCOPE(ExecState*);
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantCATCH_SCOPE(ExecState*);
 
-const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
+const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, 0, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
 
 #define JSC_NATIVE_NON_INDEX_ACCESSOR(jsName, cppName, attributes) \
     { \

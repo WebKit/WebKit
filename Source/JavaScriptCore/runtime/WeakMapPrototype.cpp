@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo WeakMapPrototype::s_info = { "WeakMap", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(WeakMapPrototype) };
+const ClassInfo WeakMapPrototype::s_info = { "WeakMap", &Base::s_info, 0, CREATE_METHOD_TABLE(WeakMapPrototype) };
 
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(ExecState*);

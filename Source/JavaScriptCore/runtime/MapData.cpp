@@ -38,7 +38,7 @@
 
 namespace JSC {
 
-const ClassInfo MapData::s_info = { "MapData", 0, 0, 0, CREATE_METHOD_TABLE(MapData) };
+const ClassInfo MapData::s_info = { "MapData", 0, 0, CREATE_METHOD_TABLE(MapData) };
 
 static const int32_t minimumMapSize = 8;
 

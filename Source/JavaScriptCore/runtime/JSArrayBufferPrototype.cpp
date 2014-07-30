@@ -70,7 +70,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
 }
 
 const ClassInfo JSArrayBufferPrototype::s_info = {
-    "ArrayBufferPrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
+    "ArrayBufferPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
 };
 
 JSArrayBufferPrototype::JSArrayBufferPrototype(VM& vm, Structure* structure)

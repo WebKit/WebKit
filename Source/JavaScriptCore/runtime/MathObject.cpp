@@ -74,7 +74,7 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState*);
 
 namespace JSC {
 
-const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(MathObject) };
+const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, CREATE_METHOD_TABLE(MathObject) };
 
 MathObject::MathObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

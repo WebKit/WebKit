@@ -91,7 +91,7 @@ EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecStat
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
 
-const ClassInfo JSTestNodeConstructor::s_info = { "TestNodeConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
+const ClassInfo JSTestNodeConstructor::s_info = { "TestNodeConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
 
 JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -119,7 +119,7 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
+const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
 void JSTestNodePrototype::finishCreation(VM& vm)
 {
@@ -127,7 +127,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestNodePrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, 0 , CREATE_METHOD_TABLE(JSTestNode) };
+const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
 
 JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNode> impl)
     : JSNode(structure, globalObject, impl)

@@ -28,7 +28,6 @@
 
 // Introduced in DOM Level 2:
 [
-    JSNoStaticTables,
     DoNotCheckConstants,
     ImplementationLacksVTable,
 ] exception EventException {

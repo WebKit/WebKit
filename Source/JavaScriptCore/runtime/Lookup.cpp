@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-void HashTable::createTable(VM&) const
+void HashTable::createTable() const
 {
     ASSERT(!keys);
     keys = static_cast<const char**>(fastMalloc(sizeof(char*) * numberOfValues));

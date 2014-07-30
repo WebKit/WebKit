@@ -320,7 +320,7 @@ sub output() {
         $i++;
     }
     print "};\n\n";
-    print "extern const struct HashTable $name =\n";
+    print "JS_EXPORT_PRIVATE extern const struct HashTable $name =\n";
     print "    \{ $packedSize, $compactHashSizeMask, $hasSetter, $nameEntries, 0, $nameIndex \};\n";
     print "} // namespace\n";
 }

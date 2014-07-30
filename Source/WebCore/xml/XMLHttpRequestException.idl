@@ -27,7 +27,6 @@
  */
 
 [
-    JSNoStaticTables,
     DoNotCheckConstants,
     ImplementationLacksVTable,
 ] exception XMLHttpRequestException {

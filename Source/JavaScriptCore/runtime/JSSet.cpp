@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSet::s_info = { "Set", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSSet) };
+const ClassInfo JSSet::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(JSSet) };
 
 void JSSet::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

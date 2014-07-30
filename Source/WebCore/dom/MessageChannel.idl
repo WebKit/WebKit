@@ -30,7 +30,6 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     JSCustomMarkFunction,
-    JSNoStaticTables,
     ImplementationLacksVTable
 ] interface MessageChannel {
 

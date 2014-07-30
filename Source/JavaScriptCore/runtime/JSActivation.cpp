@@ -38,7 +38,7 @@ using namespace std;
 
 namespace JSC {
 
-const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSActivation) };
+const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, CREATE_METHOD_TABLE(JSActivation) };
 
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

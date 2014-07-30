@@ -39,7 +39,6 @@
     ConstructorRaisesException,
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
-    JSNoStaticTables,
 ] interface WebSocket {
     readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute DOMString url;

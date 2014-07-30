@@ -31,7 +31,6 @@
 [
     NoInterfaceObject,
     Conditional=FONT_LOAD_EVENTS,
-    JSNoStaticTables,
     ConstructorTemplate=Event
 ] interface CSSFontFaceLoadEvent : Event {
     [InitializedByEventConstructor] readonly attribute CSSFontFaceRule fontface;
