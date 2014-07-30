@@ -99,7 +99,7 @@ WebInspector.TimelineRecording.prototype = {
         // Add the record to the global timeline by type.
         this._timelines.get(record.type).addRecord(record);
 
-        // Netowrk records don't have source code timelines.
+        // Network records don't have source code timelines.
         if (record.type === WebInspector.TimelineRecord.Type.Network)
             return;
 

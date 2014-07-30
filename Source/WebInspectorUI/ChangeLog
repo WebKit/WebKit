@@ -1,5 +1,82 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171790
+
+    2014-07-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: 80% of time during recording is spent creating source code locations for profile nodes
+            https://bugs.webkit.org/show_bug.cgi?id=135399
+
+            Reviewed by Timothy Hatcher.
+
+            Profiling the inspector while recording a timeline, a significant amount of
+            time was spent creating SourceCodeLocation objects for profiling information
+            and call frames. A lot of this data was eagerly being processed, even though
+            it would not immediately be presentable to the user.
+
+            This makes two significant changes. We create a LazySourceCodeLocation class
+            which does as little as possible until display information is requested. We
+            also lazily convert the profiler payload data to a Profile object, so the
+            processing is only done if you drill into the Script specific timeline.
+
+            This results in a significant performance improvement in the overview view.
+
+            * UserInterface/Controllers/TimelineManager.js:
+            (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+            (WebInspector.TimelineManager.prototype.eventRecorded):
+            (WebInspector.TimelineManager.prototype._callFramesFromPayload.createCallFrame):
+            (WebInspector.TimelineManager.prototype._callFramesFromPayload):
+            (WebInspector.TimelineManager.prototype._profileFromPayload.profileNodeFromPayload): Deleted.
+            (WebInspector.TimelineManager.prototype._profileFromPayload.profileNodeCallFromPayload): Deleted.
+            (WebInspector.TimelineManager.prototype._profileFromPayload): Deleted.
+            Do not eagerly process profile payloads. Instead pass the payload to ScriptTimelineRecords.
+            Likewise create callframes with lazy source code locations to do the minimum amount of work.
+
+            * UserInterface/Models/ScriptTimelineRecord.js:
+            (WebInspector.ScriptTimelineRecord):
+            (WebInspector.ScriptTimelineRecord.prototype.get profile):
+            (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeFromPayload):
+            (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeCallFromPayload):
+            (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload):
+            Only when the profile is asked do we process the profiler payload information.
+            This defer the processing until at least the user drills into the Script timeline.
+
+            * UserInterface/Main.html:
+            Add the new class and ensure SourceCodeLocation is available beforehand.
+
+            * UserInterface/Models/LazySourceCodeLocation.js: Added.
+            (WebInspector.LazySourceCodeLocation):
+            (WebInspector.LazySourceCodeLocation.prototype.isEqual):
+            (WebInspector.LazySourceCodeLocation.prototype.get sourceCode):
+            (WebInspector.LazySourceCodeLocation.prototype.set sourceCode):
+            (WebInspector.LazySourceCodeLocation.prototype.get formattedLineNumber):
+            (WebInspector.LazySourceCodeLocation.prototype.get formattedColumnNumber):
+            (WebInspector.LazySourceCodeLocation.prototype.formattedPosition):
+            (WebInspector.LazySourceCodeLocation.prototype.hasFormattedLocation):
+            (WebInspector.LazySourceCodeLocation.prototype.hasDifferentDisplayLocation):
+            (WebInspector.LazySourceCodeLocation.prototype.resolveMappedLocation):
+            (WebInspector.LazySourceCodeLocation.prototype._lazyInitialization):
+            Only when display information is requested will we perform extra processing.
+            For basic information we do not need to check for formatted (pretty-printed) info.
+
+            * UserInterface/Models/SourceCode.js:
+            (WebInspector.SourceCode.prototype.createLazySourceCodeLocation):
+            Provide an explict create function for lazy source codes.
+
+            * UserInterface/Models/SourceCodeLocation.js:
+            (WebInspector.SourceCodeLocation.prototype.set sourceCode):
+            (WebInspector.SourceCodeLocation.prototype.get displaySourceCode):
+            (WebInspector.SourceCodeLocation.prototype.get displayLineNumber):
+            (WebInspector.SourceCodeLocation.prototype.get displayColumnNumber):
+            (WebInspector.SourceCodeLocation.prototype.hasMappedLocation):
+            (WebInspector.SourceCodeLocation.prototype.setSourceCode):
+            (WebInspector.SourceCodeLocation.prototype.resolveMappedLocation):
+            (WebInspector.SourceCodeLocation.prototype._makeChangeAndDispatchChangeEventIfNeeded):
+            (WebInspector.SourceCodeLocation.prototype._resolveMappedLocation): Deleted.
+            Include two protected functions which LazySourceCodeLocation overrides.
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171787
 
     2014-07-29  Joseph Pecoraro  <pecoraro@apple.com>
