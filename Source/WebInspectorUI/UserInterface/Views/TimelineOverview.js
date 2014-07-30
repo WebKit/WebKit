@@ -69,6 +69,7 @@ WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
     this._endTime = 0;
     this._secondsPerPixel = this._secondsPerPixelSetting.value;
     this._scrollStartTime = 0;
+    this._cachedScrollContainerWidth = NaN;
 
     this.selectionStartTime = this._selectionStartTimeSetting.value;
     this.selectionDuration = this._selectionDurationSetting.value;
@@ -177,7 +178,12 @@ WebInspector.TimelineOverview.prototype = {
 
     get visibleDuration()
     {
-        return this._scrollContainer.offsetWidth * this._secondsPerPixel;
+        if (isNaN(this._cachedScrollContainerWidth)) {
+            this._cachedScrollContainerWidth = this._scrollContainer.offsetWidth;
+            console.assert(this._cachedScrollContainerWidth > 0);
+        }
+
+        return this._cachedScrollContainerWidth * this._secondsPerPixel;
     },
 
     get selectionStartTime()
@@ -213,6 +219,12 @@ WebInspector.TimelineOverview.prototype = {
     revealMarker: function(marker)
     {
         this.scrollStartTime = marker.time - (this.visibleDuration / 2);
+    },
+
+    updateLayoutForResize: function()
+    {
+        this._cachedScrollContainerWidth = NaN;
+        this.updateLayout();
     },
 
     updateLayout: function()
