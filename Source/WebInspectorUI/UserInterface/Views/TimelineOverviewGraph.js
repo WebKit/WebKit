@@ -34,6 +34,7 @@ WebInspector.TimelineOverviewGraph = function(recording)
     this._startTime = 0;
     this._endTime = 5;
     this._currentTime = 0;
+    this._timelineOverview = null;
 };
 
 WebInspector.TimelineOverviewGraph.StyleClassName = "timeline-overview-graph";
@@ -105,6 +106,16 @@ WebInspector.TimelineOverviewGraph.prototype = {
 
         if ((this._startTime <= oldCurrentTime && oldCurrentTime <= this._endTime) || (this._startTime <= this._currentTime && this._currentTime <= this._endTime))
             this.needsLayout();
+    },
+
+    get timelineOverview()
+    {
+        return this._timelineOverview;
+    },
+
+    set timelineOverview(x)
+    {
+        this._timelineOverview = x;
     },
 
     reset: function()
