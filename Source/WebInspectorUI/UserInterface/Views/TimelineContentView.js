@@ -156,7 +156,7 @@ WebInspector.TimelineContentView.prototype = {
 
     updateLayout: function()
     {
-        this._timelineOverview.updateLayout();
+        this._timelineOverview.updateLayoutForResize();
 
         if (!this._currentTimelineView)
             return;
