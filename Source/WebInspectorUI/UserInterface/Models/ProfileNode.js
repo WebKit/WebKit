@@ -45,18 +45,13 @@ WebInspector.ProfileNode = function(id, type, functionName, sourceCodeLocation, 
     this._parentNode = null;
     this._previousSibling = null;
     this._nextSibling = null;
+    this._computedTotalTimes = false;
 
     for (var i = 0; i < this._childNodes.length; ++i)
         this._childNodes[i].establishRelationships(this, this._childNodes[i - 1], this._childNodes[i + 1]);
 
     for (var i = 0; i < this._calls.length; ++i)
         this._calls[i].establishRelationships(this, this._calls[i - 1], this._calls[i + 1]);
-
-    var info = this.computeCallInfoForTimeRange(0, Infinity);
-    this._startTime = info.startTime;
-    this._endTime = info.endTime;
-    this._selfTime = info.selfTime;
-    this._totalTime = info.totalTime;
 };
 
 WebInspector.ProfileNode.Type = {
@@ -99,21 +94,25 @@ WebInspector.ProfileNode.prototype = {
 
     get startTime()
     {
+        this._computeTotalTimesIfNeeded();
         return this._startTime;
     },
 
     get endTime()
     {
+        this._computeTotalTimesIfNeeded();
         return this._endTime;
     },
 
     get selfTime()
     {
+        this._computeTotalTimesIfNeeded();
         return this._selfTime;
     },
 
     get totalTime()
     {
+        this._computeTotalTimesIfNeeded();
         return this._totalTime;
     },
 
@@ -216,5 +215,21 @@ WebInspector.ProfileNode.prototype = {
         this._parentNode = parentNode || null;
         this._previousSibling = previousSibling || null;
         this._nextSibling = nextSibling || null;
+    },
+
+    // Private
+
+    _computeTotalTimes: function()
+    {
+        if (this._computedTotalTimes)
+            return;
+
+        this._computedTotalTimes = true;
+
+        var info = this.computeCallInfoForTimeRange(0, Infinity);
+        this._startTime = info.startTime;
+        this._endTime = info.endTime;
+        this._selfTime = info.selfTime;
+        this._totalTime = info.totalTime;
     }
 };

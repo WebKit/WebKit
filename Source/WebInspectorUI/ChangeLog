@@ -1,5 +1,28 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171787
+
+    2014-07-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Only compute full ProfileNode times if needed - Legacy Profiler
+            https://bugs.webkit.org/show_bug.cgi?id=135406
+
+            Reviewed by Timothy Hatcher.
+
+            Full ProfileNode times are only used by the Legacy Profiler. The new profile
+            information in the Scripts Timelines currently never uses the pass. We should
+            avoid calculating it if we never use it.
+
+            * UserInterface/Models/ProfileNode.js:
+            (WebInspector.ProfileNode.prototype.get startTime):
+            (WebInspector.ProfileNode.prototype.get endTime):
+            (WebInspector.ProfileNode.prototype.get selfTime):
+            (WebInspector.ProfileNode.prototype.get totalTime):
+            (WebInspector.ProfileNode.prototype.establishRelationships):
+            (WebInspector.ProfileNode.prototype._computeTotalTimes):
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171786
 
     2014-07-29  Joseph Pecoraro  <pecoraro@apple.com>
