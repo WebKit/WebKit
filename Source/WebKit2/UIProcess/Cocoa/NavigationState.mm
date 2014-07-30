@@ -41,7 +41,6 @@
 #import "WKHistoryDelegatePrivate.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
-#import "WKNSURLProtectionSpace.h"
 #import "WKNSURLRequest.h"
 #import "WKNavigationActionInternal.h"
 #import "WKNavigationDataInternal.h"
@@ -54,6 +53,7 @@
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "WebProtectionSpace.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/Credential.h>
@@ -700,7 +700,7 @@ bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame
     if (!navigationDelegate)
         return false;
 
-    return [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView canAuthenticateAgainstProtectionSpace:wrapper(*protectionSpace)];
+    return [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView canAuthenticateAgainstProtectionSpace:protectionSpace->protectionSpace().nsSpace()];
 }
 
 void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy* authenticationChallenge)

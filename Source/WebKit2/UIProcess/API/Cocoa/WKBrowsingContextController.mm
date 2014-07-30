@@ -45,7 +45,6 @@
 #import "WKNSError.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
-#import "WKNSURLProtectionSpace.h"
 #import "WKPagePolicyClientInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKRenderingProgressEventsInternal.h"
@@ -56,6 +55,7 @@
 #import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebPageProxy.h"
+#import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <wtf/NeverDestroyed.h>
 
@@ -497,7 +497,7 @@ static bool canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef page, WKFrame
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:canAuthenticateAgainstProtectionSpace:)])
-        return [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext canAuthenticateAgainstProtectionSpace:wrapper(*toImpl(protectionSpace))];
+        return [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext canAuthenticateAgainstProtectionSpace:toImpl(protectionSpace)->protectionSpace().nsSpace()];
 
     return false;
 }
