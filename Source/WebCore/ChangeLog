@@ -1,3 +1,71 @@
+2014-07-30  Dan Bernstein  <mitz@apple.com>
+
+        Made Credential hold onto an NSURLCredential when needed.
+        Work towards fixing https://bugs.webkit.org/show_bug.cgi?id=135327
+
+        Reviewed by Alexey Proskuryakov.
+
+        No change in functionality.
+
+        * WebCore.exp.in: Updated.
+
+        * platform/network/Credential.h: Removed definition of CERTIFICATE_CREDENTIALS_SUPPORTED,
+        which is not used anymore.
+
+        * platform/network/CredentialBase.h:
+        (WebCore::CredentialBase::encodingRequiresPlatformData): Added a base implementation that
+        returns false.
+
+        * platform/network/cf/AuthenticationCF.cpp:
+        Changed to use the Credential constructor that takes an CFURLCredential, and the new
+        cfCredential member function. Made the createCF and core functions Windows-only and
+        therefore removed the CERTIFICATE_CREDENTIALS_SUPPORTED code from them.
+        * platform/network/cf/AuthenticationCF.h:
+
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::getFromPersistentStorage): Changed to construct a Credential
+        from a CFURLCredential.
+        (WebCore::CredentialStorage::saveToPersistentStorage): Changed to use the new cfCredential
+        member function.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Ditto to both.
+        (WebCore::ResourceHandle::receivedCredential): Ditto.
+
+        * platform/network/cocoa/CredentialCocoa.h:
+        Replaced the m_identity, m_certificates and m_type member variables with an m_nsCredential
+        one holding onto an NSURLCredential. Declared constructors from and getters for
+        NSURLCredential and CFURLCredentialRef.
+        (WebCore::Credential::encodingRequiresPlatformData): Override that checks the
+        NSURLCredential if necessary.
+
+        * platform/network/cocoa/CredentialCocoa.mm:
+        (WebCore::toNSURLCredentialPersistence): New helper function.
+        (WebCore::toCredentialPersistence): Ditto.
+        (WebCore::Credential::Credential): Defined constructors to create or take an
+        NSURLCredential.
+        (WebCore::Credential::cfCredential): Added.
+        (WebCore::Credential::nsCredential): Added. Returns nil for the empty credential.
+        (WebCore::Credential::isEmpty): Changed to check m_nsCredential.
+        (WebCore::Credential::platformCompare): Changed to compare m_nsCredential if needed.
+        (WebCore::Credential::encodingRequiresPlatformData): Returns true if the credential is not
+        a user and a password.
+
+        * platform/network/mac/AuthenticationMac.h: Removed mac and core functions for Credential.
+        * platform/network/mac/AuthenticationMac.mm:
+        (-[WebCoreAuthenticationClientAsChallengeSender useCredential:forAuthenticationChallenge:]):
+        Changed to use Credential constructor that takes an NSURLCredential.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge): Ditto. Also use the
+        nsCredential getter.
+
+        * platform/network/mac/CredentialStorageMac.mm:
+        (WebCore::CredentialStorage::getFromPersistentStorage): Use new Credential constructor.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Ditto. Also use the
+        nsCredential getter.
+        (WebCore::ResourceHandle::receivedCredential): Ditto.
+
 2014-07-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Build depends on OpenGL ES

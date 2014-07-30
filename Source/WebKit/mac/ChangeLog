@@ -1,3 +1,16 @@
+2014-07-30  Dan Bernstein  <mitz@apple.com>
+
+        Updated for changes to the WebCore::Credential API.
+        Work towards fixing https://bugs.webkit.org/show_bug.cgi?id=135327
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]): Use new nsCredential
+        getter.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebKit::getAuthenticationInfo): Ditto.
+
 2014-07-27  Pratik Solanki  <psolanki@apple.com>
 
         Remove unused preference keys

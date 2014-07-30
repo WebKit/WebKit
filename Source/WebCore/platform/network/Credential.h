@@ -32,9 +32,6 @@
 
 #include "CredentialBase.h"
 
-// FIXME: Remove this macro once it is not used in WebKit.
-#define CERTIFICATE_CREDENTIALS_SUPPORTED 0
-
 namespace WebCore {
 
 class Credential : public CredentialBase {

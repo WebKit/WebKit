@@ -152,5 +152,16 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(ArgumentDecoder&, Protec
     return false;
 }
 
+void ArgumentCoder<Credential>::encodePlatformData(ArgumentEncoder&, const Credential&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<Credential>::decodePlatformData(ArgumentDecoder&, Credential&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 }
 

@@ -26,51 +26,118 @@
 #import "config.h"
 #import "CredentialCocoa.h"
 
+#if USE(CFNETWORK)
+@interface NSURLCredential (WebDetails)
+- (id)_initWithCFURLCredential:(CFURLCredentialRef)credential;
+- (CFURLCredentialRef) _CFURLCredential;
+@end
+#endif
+
 namespace WebCore {
 
-Credential::Credential(SecIdentityRef identity, CFArrayRef certificates, CredentialPersistence persistence)
-    : CredentialBase(emptyString(), emptyString(), persistence)
-    , m_identity(identity)
-    , m_certificates(certificates)
-    , m_type(CredentialTypeClientCertificate)
+static NSURLCredentialPersistence toNSURLCredentialPersistence(CredentialPersistence persistence)
 {
+    switch (persistence) {
+    case CredentialPersistenceNone:
+        return NSURLCredentialPersistenceNone;
+    case CredentialPersistenceForSession:
+        return NSURLCredentialPersistenceForSession;
+    case CredentialPersistencePermanent:
+        return NSURLCredentialPersistencePermanent;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NSURLCredentialPersistenceNone;
+}
+
+static CredentialPersistence toCredentialPersistence(NSURLCredentialPersistence persistence)
+{
+    switch (persistence) {
+    case NSURLCredentialPersistenceNone:
+        return CredentialPersistenceNone;
+    case NSURLCredentialPersistenceForSession:
+        return CredentialPersistenceForSession;
+    case NSURLCredentialPersistencePermanent:
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    case NSURLCredentialPersistenceSynchronizable:
+#endif
+        return CredentialPersistencePermanent;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CredentialPersistenceNone;
+}
+
+Credential::Credential(const Credential& original, CredentialPersistence persistence)
+    : CredentialBase(original, persistence)
+{
+    NSURLCredential *originalNSURLCredential = original.m_nsCredential.get();
+    if (!originalNSURLCredential)
+        return;
+
+    if (NSString *user = originalNSURLCredential.user)
+        m_nsCredential = adoptNS([[NSURLCredential alloc] initWithUser:user password:originalNSURLCredential.password persistence:toNSURLCredentialPersistence(persistence)]);
+    else if (SecIdentityRef identity = originalNSURLCredential.identity)
+        m_nsCredential = adoptNS([[NSURLCredential alloc] initWithIdentity:identity certificates:originalNSURLCredential.certificates persistence:toNSURLCredentialPersistence(persistence)]);
+    else {
+        // It is not possible to set the persistence of server trust credentials.
+        ASSERT_NOT_REACHED();
+        m_nsCredential = originalNSURLCredential;
+    }
+}
+
+#if USE(CFNETWORK)
+Credential::Credential(CFURLCredentialRef credential)
+    : Credential(adoptNS([[NSURLCredential alloc] _initWithCFURLCredential:credential]).get())
+{
+}
+#endif
+
+Credential::Credential(NSURLCredential *credential)
+    : CredentialBase(credential.user, credential.password, toCredentialPersistence(credential.persistence))
+    , m_nsCredential(credential)
+{
+}
+
+#if USE(CFNETWORK)
+CFURLCredentialRef Credential::cfCredential() const
+{
+    return [nsCredential() _CFURLCredential];
+}
+#endif
+
+NSURLCredential *Credential::nsCredential() const
+{
+    if (m_nsCredential)
+        return m_nsCredential.get();
+
+    if (CredentialBase::isEmpty())
+        return nil;
+
+    m_nsCredential = adoptNS([[NSURLCredential alloc] initWithUser:user() password:password() persistence:toNSURLCredentialPersistence(persistence())]);
+
+    return m_nsCredential.get();
 }
 
 bool Credential::isEmpty() const
 {
-    if (m_type == CredentialTypeClientCertificate && (m_identity || m_certificates))
+    if (m_nsCredential)
         return false;
 
     return CredentialBase::isEmpty();
 }
 
-SecIdentityRef Credential::identity() const
-{
-    return m_identity.get();
-}
-    
-CFArrayRef Credential::certificates() const
-{
-    return m_certificates.get();
-}
-    
-CredentialType Credential::type() const
-{
-    return m_type;
-}
-
 bool Credential::platformCompare(const Credential& a, const Credential& b)
 {
-    if (a.type() != CredentialTypeClientCertificate || b.type() != CredentialTypeClientCertificate)
-        return a.type() == b.type();
+    if (!a.m_nsCredential && !b.m_nsCredential)
+        return true;
 
-    // FIXME: Is pointer comparison of the identity and certificates properties sufficient?
-    if (a.identity() != b.identity())
-        return false;
-    if (a.certificates() != b.certificates())
-        return false;
+    return [a.nsCredential() isEqual:b.nsCredential()];
+}
 
-    return true;
+bool Credential::encodingRequiresPlatformData(NSURLCredential *credential)
+{
+    return !credential.user;
 }
 
 } // namespace WebCore

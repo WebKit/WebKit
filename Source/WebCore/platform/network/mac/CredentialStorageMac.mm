@@ -37,7 +37,7 @@ namespace WebCore {
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
     NSURLCredential *credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:protectionSpace.nsSpace()];
-    return credential ? core(credential) : Credential();
+    return credential ? Credential(credential) : Credential();
 }
 
 #if PLATFORM(IOS)

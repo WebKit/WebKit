@@ -112,7 +112,7 @@ void Download::platformDidFinish()
 
 void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
 {
-    [authenticationChallenge.sender() useCredential:mac(credential) forAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
+    [authenticationChallenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
 }
 
 void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& authenticationChallenge)

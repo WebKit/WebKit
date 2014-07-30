@@ -28,18 +28,14 @@
 #ifdef __OBJC__
 
 @class NSURLAuthenticationChallenge;
-@class NSURLCredential;
 
 namespace WebCore {
 
 class AuthenticationChallenge;
-class Credential;
 
 NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
-NSURLCredential *mac(const Credential&);
 
 AuthenticationChallenge core(NSURLAuthenticationChallenge *);
-Credential core(NSURLCredential *);
 
 }
 #endif // __OBJC__

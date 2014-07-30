@@ -342,14 +342,19 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 #endif
 
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
-        RetainPtr<CFURLCredentialRef> credential = adoptCF(CFURLCredentialCreate(kCFAllocatorDefault, d->m_user.createCFString().get(), d->m_pass.createCFString().get(), 0, kCFURLCredentialPersistenceNone));
+        RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(CFURLCredentialCreate(kCFAllocatorDefault, d->m_user.createCFString().get(), d->m_pass.createCFString().get(), 0, kCFURLCredentialPersistenceNone));
+#if PLATFORM(COCOA)
+        Credential credential = Credential(cfCredential.get());
+#else
+        Credential credential = core(cfCredential.get());
+#endif
         
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();
-        CredentialStorage::set(core(credential.get()), challenge.protectionSpace(), urlToStore);
+        CredentialStorage::set(credential, challenge.protectionSpace(), urlToStore);
         
-        CFURLConnectionUseCredential(d->m_connection.get(), credential.get(), challenge.cfURLAuthChallengeRef());
+        CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
         d->m_user = String();
         d->m_pass = String();
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
@@ -372,8 +377,12 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                     // Store the credential back, possibly adding it as a default for this directory.
                     CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
+#if PLATFORM(COCOA)
+                CFURLConnectionUseCredential(d->m_connection.get(), credential.cfCredential(), challenge.cfURLAuthChallengeRef());
+#else
                 RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
                 CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
+#endif
                 return;
             }
         }
@@ -416,17 +425,25 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         // Manage per-session credentials internally, because once NSURLCredentialPersistencePerSession is used, there is no way
         // to ignore it for a particular request (short of removing it altogether).
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceNone);
-        RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential));
-        
+
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();      
         CredentialStorage::set(webCredential, challenge.protectionSpace(), urlToStore);
 
+#if PLATFORM(COCOA)
+        CFURLConnectionUseCredential(d->m_connection.get(), webCredential.cfCredential(), challenge.cfURLAuthChallengeRef());
+#else
+        RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential));
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
+#endif
     } else {
+#if PLATFORM(COCOA)
+        CFURLConnectionUseCredential(d->m_connection.get(), credential.cfCredential(), challenge.cfURLAuthChallengeRef());
+#else
         RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
+#endif
     }
 
     clearAuthentication();

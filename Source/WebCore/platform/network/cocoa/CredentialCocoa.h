@@ -30,50 +30,48 @@
 #include <Security/SecBase.h>
 #include <wtf/RetainPtr.h>
 
-// FIXME: Remove this macro once it is not used in WebKit.
-#define CERTIFICATE_CREDENTIALS_SUPPORTED 1
+#if USE(CFNETWORK)
+typedef const struct _CFURLCredential* CFURLCredentialRef;
+#endif
+
+OBJC_CLASS NSURLCredential;
 
 namespace WebCore {
-
-enum CredentialType {
-    CredentialTypePassword,
-    CredentialTypeClientCertificate
-};
 
 class Credential : public CredentialBase {
 public:
     Credential()
         : CredentialBase()
-        , m_type(CredentialTypePassword)
     {
     }
 
     Credential(const String& user, const String& password, CredentialPersistence persistence)
         : CredentialBase(user, password, persistence)
-        , m_type(CredentialTypePassword)
     {
     }
 
-    Credential(const Credential& original, CredentialPersistence persistence)
-        : CredentialBase(original, persistence)
-        , m_type(original.m_type)
-    {
-    }
+    Credential(const Credential&, CredentialPersistence);
 
-    Credential(SecIdentityRef, CFArrayRef certificates, CredentialPersistence);
+#if USE(CFNETWORK)
+    explicit Credential(CFURLCredentialRef);
+#endif
+    explicit Credential(NSURLCredential *);
 
     bool isEmpty() const;
 
-    SecIdentityRef identity() const;
-    CFArrayRef certificates() const;
-    CredentialType type() const;
+    bool encodingRequiresPlatformData() const { return m_nsCredential && encodingRequiresPlatformData(m_nsCredential.get()); }
+
+#if USE(CFNETWORK)
+    CFURLCredentialRef cfCredential() const;
+#endif
+    NSURLCredential *nsCredential() const;
 
     static bool platformCompare(const Credential&, const Credential&);
 
 private:
-    RetainPtr<SecIdentityRef> m_identity;
-    RetainPtr<CFArrayRef> m_certificates;
-    CredentialType m_type;
+    static bool encodingRequiresPlatformData(NSURLCredential *);
+
+    mutable RetainPtr<NSURLCredential> m_nsCredential;
 };
 
 } // namespace WebCore

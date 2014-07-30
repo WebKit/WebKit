@@ -47,7 +47,9 @@ public:
     const String& password() const;
     bool hasPassword() const;
     CredentialPersistence persistence() const;
-    
+
+    bool encodingRequiresPlatformData() const { return false; }
+
     static bool compare(const Credential&, const Credential&);
 
 protected:

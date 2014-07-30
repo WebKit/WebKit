@@ -549,7 +549,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                                                                 persistence:NSURLCredentialPersistenceForSession];
         d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
         d->m_currentWebChallenge = challenge;
-        receivedCredential(challenge, core(credential));
+        receivedCredential(challenge, Credential(credential));
         [credential release];
         // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
         d->m_user = String();
@@ -574,7 +574,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                     // Store the credential back, possibly adding it as a default for this directory.
                     CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                [challenge.sender() useCredential:mac(credential) forAuthenticationChallenge:mac(challenge)];
+                [challenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:mac(challenge)];
                 return;
             }
         }
@@ -658,9 +658,9 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();
         CredentialStorage::set(webCredential, ProtectionSpace([d->m_currentMacChallenge protectionSpace]), urlToStore);
-        [[d->m_currentMacChallenge sender] useCredential:mac(webCredential) forAuthenticationChallenge:d->m_currentMacChallenge];
+        [[d->m_currentMacChallenge sender] useCredential:webCredential.nsCredential() forAuthenticationChallenge:d->m_currentMacChallenge];
     } else
-        [[d->m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:d->m_currentMacChallenge];
+        [[d->m_currentMacChallenge sender] useCredential:credential.nsCredential() forAuthenticationChallenge:d->m_currentMacChallenge];
 
     clearAuthentication();
 }

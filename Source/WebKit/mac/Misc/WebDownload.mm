@@ -128,7 +128,7 @@ using namespace WebCore;
 #if !PLATFORM(IOS)
     // Try previously stored credential first.
     if (![challenge previousFailureCount]) {
-        NSURLCredential *credential = mac(CredentialStorage::get(ProtectionSpace([challenge protectionSpace])));
+        NSURLCredential *credential = CredentialStorage::get(ProtectionSpace([challenge protectionSpace])).nsCredential();
         if (credential) {
             [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
             return;

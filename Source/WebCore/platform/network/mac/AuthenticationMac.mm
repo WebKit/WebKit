@@ -30,7 +30,6 @@
 #import "AuthenticationClient.h"
 #import "Credential.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
-#import <Foundation/NSURLCredential.h>
 #import <Foundation/NSURLProtectionSpace.h>
 
 #if USE(CFNETWORK)
@@ -41,11 +40,6 @@
 #else
 +(NSURLAuthenticationChallenge *)_authenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
 #endif
-@end
-
-@interface NSURLCredential (Details)
-- (id) _initWithCFURLCredential:(CFURLCredentialRef)credential;
-- (CFURLCredentialRef) _cfurlcredential;
 @end
 
 #endif
@@ -88,7 +82,7 @@ using namespace WebCore;
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (m_client)
-        m_client->receivedCredential(core(challenge), core(credential));
+        m_client->receivedCredential(core(challenge), Credential(credential));
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -127,11 +121,6 @@ AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
     return AuthenticationChallenge([challengeSender cfChallenge], [challengeSender client]);
 }
 
-Credential core(NSURLCredential *macCredential)
-{
-    return core([macCredential _cfurlcredential]);
-}
-
 NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 {
     AuthenticationClient* authClient = coreChallenge.authenticationClient();
@@ -145,12 +134,6 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 #else
     return [[NSURLAuthenticationChallenge _authenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
 #endif
-}
-
-NSURLCredential *mac(const Credential& coreCredential)
-{
-    RetainPtr<CFURLCredentialRef> credential = adoptCF(createCF(coreCredential));
-    return [[[NSURLCredential alloc] _initWithCFURLCredential:credential.get()] autorelease];
 }
 
 #else
@@ -170,7 +153,7 @@ AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protecti
 
 AuthenticationChallenge::AuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
     : AuthenticationChallengeBase(ProtectionSpace([challenge protectionSpace]),
-                                  core([challenge proposedCredential]),
+                                  Credential([challenge proposedCredential]),
                                   [challenge previousFailureCount],
                                   [challenge failureResponse],
                                   [challenge error])
@@ -216,71 +199,16 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
         return coreChallenge.nsURLAuthenticationChallenge();
         
     return [[[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:coreChallenge.protectionSpace().nsSpace()
-                                                       proposedCredential:mac(coreChallenge.proposedCredential())
+                                                       proposedCredential:coreChallenge.proposedCredential().nsCredential()
                                                      previousFailureCount:coreChallenge.previousFailureCount()
                                                           failureResponse:coreChallenge.failureResponse().nsURLResponse()
                                                                     error:coreChallenge.error()
                                                                    sender:coreChallenge.sender()] autorelease];
 }
 
-NSURLCredential *mac(const Credential& coreCredential)
-{
-    if (coreCredential.isEmpty())
-        return nil;
-
-    NSURLCredentialPersistence persistence = NSURLCredentialPersistenceNone;
-    switch (coreCredential.persistence()) {
-        case CredentialPersistenceNone:
-            break;
-        case CredentialPersistenceForSession:
-            persistence = NSURLCredentialPersistenceForSession;
-            break;
-        case CredentialPersistencePermanent:
-            persistence = NSURLCredentialPersistencePermanent;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-
-    if (coreCredential.type() == CredentialTypeClientCertificate) {
-        return [[[NSURLCredential alloc] initWithIdentity:coreCredential.identity()
-                                             certificates:(NSArray *)coreCredential.certificates()
-                                              persistence:persistence]
-                                              autorelease];
-    }
-
-    return [[[NSURLCredential alloc] initWithUser:coreCredential.user()
-                                        password:coreCredential.password()
-                                     persistence:persistence]
-                                     autorelease];
-}
-
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
 {
     return AuthenticationChallenge(macChallenge);
-}
-
-Credential core(NSURLCredential *macCredential)
-{
-    CredentialPersistence persistence = CredentialPersistenceNone;
-    switch ([macCredential persistence]) {
-        case NSURLCredentialPersistenceNone:
-            break;
-        case NSURLCredentialPersistenceForSession:
-            persistence = CredentialPersistenceForSession;
-            break;
-        case NSURLCredentialPersistencePermanent:
-            persistence = CredentialPersistencePermanent;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-
-    SecIdentityRef identity = [macCredential identity];
-    if (identity)
-        return Credential(identity, (CFArrayRef)[macCredential certificates], persistence);
-    
-    return Credential([macCredential user], [macCredential password], persistence);
 }
 
 #endif // USE(CFNETWORK)

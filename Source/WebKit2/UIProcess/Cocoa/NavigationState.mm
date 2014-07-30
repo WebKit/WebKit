@@ -56,7 +56,7 @@
 #import "WebProcessProxy.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
-#import <WebCore/AuthenticationMac.h>
+#import <WebCore/Credential.h>
 #import <wtf/NeverDestroyed.h>
 
 #if USE(QUICK_LOOK)
@@ -724,7 +724,7 @@ void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(Web
                 case NSURLSessionAuthChallengeUseCredential: {
                     RefPtr<WebCredential> webCredential;
                     if (credential)
-                        webCredential = WebCredential::create(WebCore::core(credential));
+                        webCredential = WebCredential::create(WebCore::Credential(credential));
 
                     challenge->listener()->useCredential(webCredential.get());
                     break;
