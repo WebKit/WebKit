@@ -1,3 +1,57 @@
+2014-07-29  David Farler  <dfarler@apple.com>
+
+        iOS Simulator LayoutTestRelay
+        https://bugs.webkit.org/show_bug.cgi?id=135269
+
+        Reviewed by David Kilzer.
+
+        * LayoutTestRelay/Configurations/Base.xcconfig: Added.
+        * LayoutTestRelay/Configurations/DebugRelease.xcconfig: Added.
+        * LayoutTestRelay/LayoutTestRelay.xcodeproj/project.pbxproj: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTPipeRelay.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTPipeRelay.m: Added.
+        (-[LTPipeRelay inPipePath]):
+        (-[LTPipeRelay outPipePath]):
+        (-[LTPipeRelay errorPipePath]):
+        (-[LTPipeRelay outputStream]):
+        (-[LTPipeRelay initWithPrefix:]):
+        (-[LTPipeRelay setup]):
+        (-[LTPipeRelay tearDown]):
+        (-[LTPipeRelay connect]):
+        (-[LTPipeRelay disconnect]):
+        (-[LTPipeRelay createFIFOs]):
+        (-[LTPipeRelay destroyFIFOs]):
+        (-[LTPipeRelay relayStream:]):
+        (-[LTPipeRelay stream:handleEvent:]):
+        * LayoutTestRelay/LayoutTestRelay/LTRelay.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m: Added.
+        (-[LTRelayController uniqueAppPath]):
+        (-[LTRelayController uniqueAppURL]):
+        (-[LTRelayController uniqueAppIdentifier]):
+        (-[LTRelayController processName]):
+        (-[LTRelayController initWithDevice:productDir:appPath:identifierSuffix:dumpToolArguments:]):
+        (-[LTRelayController readFileHandle:]):
+        (-[LTRelayController receivedStandardOutputData:]):
+        (-[LTRelayController receivedStandardErrorData:]):
+        (-[LTRelayController disconnected]):
+        (-[LTRelayController connected]):
+        (-[LTRelayController crashWithMessage:]):
+        (-[LTRelayController launchSimulator]):
+        (-[LTRelayController bootDevice]):
+        (-[LTRelayController createUniqueApp]):
+        (-[LTRelayController killApp]):
+        (-[LTRelayController launchApp]):
+        (-[LTRelayController start]):
+        * LayoutTestRelay/LayoutTestRelay/main.m: Added.
+        (usage):
+        (getTestingSimDevice):
+        (getRequiredStringArgument):
+        (getRemainderArguments):
+        (main):
+        * LayoutTestRelay/Makefile: Added.
+        * Tools/Scripts/build-layouttestrelay: Added.
+
 2014-07-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Modify version numbering scheme to support 5-tuple versions
