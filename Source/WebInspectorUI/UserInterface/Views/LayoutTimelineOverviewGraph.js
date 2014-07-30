@@ -58,8 +58,7 @@ WebInspector.LayoutTimelineOverviewGraph.prototype = {
     {
         WebInspector.TimelineOverviewGraph.prototype.updateLayout.call(this);
 
-        var visibleWidth = this.element.offsetWidth;
-        var secondsPerPixel = (this.endTime - this.startTime) / visibleWidth;
+        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
 
         var recordBarIndex = 0;
 

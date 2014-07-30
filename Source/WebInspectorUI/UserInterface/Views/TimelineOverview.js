@@ -37,8 +37,10 @@ WebInspector.TimelineOverview = function(timelineOverviewGraphsMap)
 
     this._timelineOverviewGraphsMap = timelineOverviewGraphsMap;
 
-    for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+    for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values()) {
+        timelineOverviewGraph.timelineOverview = this;
         this._graphsContainer.appendChild(timelineOverviewGraph.element);
+    }
 
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;

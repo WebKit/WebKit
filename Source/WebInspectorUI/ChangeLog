@@ -1,3 +1,28 @@
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171783
+
+    2014-07-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Eliminate more forced layouts during timeline recordings
+            https://bugs.webkit.org/show_bug.cgi?id=135397
+
+            Reviewed by Timothy Hatcher.
+
+            Instead of computing the secondsPerPixel in each overview graph,
+            we can ask the overview view itself which has a cached value.
+            The computation used to force a layout, now it doesn't need to.
+
+            * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+            * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+            * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+            * UserInterface/Views/TimelineOverview.js:
+            (WebInspector.TimelineOverview):
+            * UserInterface/Views/TimelineOverviewGraph.js:
+            (WebInspector.TimelineOverviewGraph):
+            (WebInspector.TimelineOverviewGraph.prototype.get timelineOverview):
+            (WebInspector.TimelineOverviewGraph.prototype.set timelineOverview):
+
 2014-07-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171721
