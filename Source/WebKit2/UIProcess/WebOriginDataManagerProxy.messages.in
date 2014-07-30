@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebOriginDataManagerProxy {
-    DidGetOrigins(Vector<WebKit::SecurityOriginData> originIdentifiers, uint64_t callbackID);
-    DidDeleteEntries(uint64_t callbackID);
-    DidDeleteAllEntries(uint64_t callbackID);
+    DidGetOrigins(Vector<WebKit::SecurityOriginData> originIdentifiers, uint64_t callbackID) WantsConnection
+    DidDeleteEntries(uint64_t callbackID) WantsConnection
+    DidDeleteAllEntries(uint64_t callbackID) WantsConnection
 }

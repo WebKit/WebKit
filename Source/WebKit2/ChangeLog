@@ -1,3 +1,45 @@
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171749
+
+    2014-07-29  Brady Eidson  <beidson@apple.com>
+
+            Make WKOriginDataManager actually operate on IndexedDatabases.
+            https://bugs.webkit.org/show_bug.cgi?id=135346
+
+            Reviewed by Sam Weinig (and David Kilzer and Alex Christensen)
+
+            * DatabaseProcess/DatabaseProcess.cpp:
+            (WebKit::DatabaseProcess::DatabaseProcess):
+            (WebKit::DatabaseProcess::getIndexedDatabaseOrigins): 
+            (WebKit::DatabaseProcess::doGetIndexedDatabaseOrigins):
+            (WebKit::removeAllDatabasesForOriginPath): Utility to delete all database files for the given origin path
+                that have been modified between the given dates.
+            (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesForOrigin):
+            (WebKit::DatabaseProcess::doDeleteIndexedDatabaseEntriesForOrigin):
+            (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesModifiedBetweenDates):
+            (WebKit::DatabaseProcess::doDeleteIndexedDatabaseEntriesModifiedBetweenDates):
+            (WebKit::DatabaseProcess::deleteAllIndexedDatabaseEntries):
+            (WebKit::DatabaseProcess::doDeleteAllIndexedDatabaseEntries):
+            * DatabaseProcess/DatabaseProcess.h:
+
+            * Shared/WebCrossThreadCopier.cpp:
+            (WebCore::SecurityOriginData>::copy):
+            * Shared/WebCrossThreadCopier.h:
+
+            * UIProcess/WebOriginDataManagerProxy.cpp:
+            (WebKit::WebOriginDataManagerProxy::getOrigins):
+            (WebKit::WebOriginDataManagerProxy::didGetOrigins):
+            (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin):
+            (WebKit::WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates):
+            (WebKit::WebOriginDataManagerProxy::deleteAllEntries):
+
+            * WebProcess/OriginData/WebOriginDataManager.cpp:
+            (WebKit::WebOriginDataManager::getOrigins): Pipe IDB requests through to the DatabaseProcess.
+            (WebKit::WebOriginDataManager::deleteEntriesForOrigin): Ditto.
+            (WebKit::WebOriginDataManager::deleteEntriesModifiedBetweenDates): Ditto.
+            (WebKit::WebOriginDataManager::deleteAllEntries): Ditto.
+
 2014-07-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171748

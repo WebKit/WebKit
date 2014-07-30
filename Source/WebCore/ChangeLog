@@ -1,5 +1,18 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171749
+
+    2014-07-29  Brady Eidson  <beidson@apple.com>
+
+            Make WKOriginDataManager actually operate on IndexedDatabases.
+            https://bugs.webkit.org/show_bug.cgi?id=135346
+
+            Reviewed by Sam Weinig (and David Kilzer and Alex Christensen)
+
+            * WebCore.exp.in:
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171718
 
     2014-07-28  Zalan Bujtas  <zalan@apple.com>

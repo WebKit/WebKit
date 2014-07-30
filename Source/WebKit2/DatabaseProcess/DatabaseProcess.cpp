@@ -34,9 +34,12 @@
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "UniqueIDBDatabase.h"
+#include "WebCrossThreadCopier.h"
 #include "WebOriginDataManager.h"
 #include "WebOriginDataManagerMessages.h"
+#include "WebOriginDataManagerProxyMessages.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/TextEncoding.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
@@ -53,6 +56,9 @@ DatabaseProcess::DatabaseProcess()
     : m_queue(adoptRef(*WorkQueue::create("com.apple.WebKit.DatabaseProcess").leakRef()))
     , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(this))
 {
+    // Make sure the UTF8Encoding encoding and the text encoding maps have been built on the main thread before a background thread needs it.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=135365 - Need a more explicit way of doing this besides accessing the UTF8Encoding.
+    UTF8Encoding();
 }
 
 DatabaseProcess::~DatabaseProcess()
@@ -183,6 +189,126 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 #else
     notImplemented();
 #endif
+}
+
+void DatabaseProcess::getIndexedDatabaseOrigins(uint64_t callbackID)
+{
+    postDatabaseTask(createAsyncTask(*this, &DatabaseProcess::doGetIndexedDatabaseOrigins, callbackID));
+}
+
+void DatabaseProcess::doGetIndexedDatabaseOrigins(uint64_t callbackID)
+{
+    Vector<SecurityOriginData> results;
+
+    if (m_indexedDatabaseDirectory.isEmpty()) {
+        send(Messages::WebOriginDataManagerProxy::DidGetOrigins(results, callbackID), 0);
+        return;
+    }
+
+    Vector<String> originPaths = listDirectory(m_indexedDatabaseDirectory, "*");
+    for (auto& originPath : originPaths) {
+        URL url;
+        url.setProtocol(ASCIILiteral("file"));
+        url.setPath(originPath);
+
+        String databaseIdentifier = url.lastPathComponent();
+
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::maybeCreateFromDatabaseIdentifier(databaseIdentifier);
+        if (!securityOrigin)
+            continue;
+
+        results.append(SecurityOriginData::fromSecurityOrigin(securityOrigin.get()));
+    }
+
+    send(Messages::WebOriginDataManagerProxy::DidGetOrigins(results, callbackID), 0);
+}
+
+static void removeAllDatabasesForOriginPath(const String& originPath, double startDate, double endDate)
+{
+    // FIXME: We should also close/invalidate any live handles to the database files we are about to delete.
+    // Right now:
+    //     - For read-only operations, they will continue functioning as normal on the unlinked file.
+    //     - For write operations, they will start producing errors as SQLite notices the missing backing store.
+    // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=135347
+
+    Vector<String> databasePaths = listDirectory(originPath, "*");
+
+    for (auto& databasePath : databasePaths) {
+        String databaseFile = pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
+
+        if (!fileExists(databaseFile))
+            continue;
+
+        time_t modTime;
+        getFileModificationTime(databaseFile, modTime);
+
+        if (modTime < startDate || modTime > endDate)
+            continue;
+
+        deleteFile(databaseFile);
+        deleteEmptyDirectory(databasePath);
+    }
+
+    deleteEmptyDirectory(originPath);
+}
+
+void DatabaseProcess::deleteIndexedDatabaseEntriesForOrigin(const SecurityOriginData& origin, uint64_t callbackID)
+{
+    postDatabaseTask(createAsyncTask(*this, &DatabaseProcess::doDeleteIndexedDatabaseEntriesForOrigin, origin, callbackID));
+}
+
+void DatabaseProcess::doDeleteIndexedDatabaseEntriesForOrigin(const SecurityOriginData& originData, uint64_t callbackID)
+{
+    if (m_indexedDatabaseDirectory.isEmpty()) {
+        send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+        return;
+    }
+
+    RefPtr<SecurityOrigin> origin = originData.securityOrigin();
+    String databaseIdentifier = origin->databaseIdentifier();
+    String originPath = pathByAppendingComponent(m_indexedDatabaseDirectory, databaseIdentifier);
+
+    removeAllDatabasesForOriginPath(originPath, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
+
+    send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+}
+
+void DatabaseProcess::deleteIndexedDatabaseEntriesModifiedBetweenDates(double startDate, double endDate, uint64_t callbackID)
+{
+    postDatabaseTask(createAsyncTask(*this, &DatabaseProcess::doDeleteIndexedDatabaseEntriesModifiedBetweenDates, startDate, endDate, callbackID));
+}
+
+void DatabaseProcess::doDeleteIndexedDatabaseEntriesModifiedBetweenDates(double startDate, double endDate, uint64_t callbackID)
+{
+    if (m_indexedDatabaseDirectory.isEmpty()) {
+        send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+        return;
+    }
+
+    Vector<String> originPaths = listDirectory(m_indexedDatabaseDirectory, "*");
+    for (auto& originPath : originPaths)
+        removeAllDatabasesForOriginPath(originPath, startDate, endDate);
+
+    send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+}
+
+void DatabaseProcess::deleteAllIndexedDatabaseEntries(uint64_t callbackID)
+{
+    postDatabaseTask(createAsyncTask(*this, &DatabaseProcess::doDeleteAllIndexedDatabaseEntries, callbackID));
+}
+
+void DatabaseProcess::doDeleteAllIndexedDatabaseEntries(uint64_t callbackID)
+{
+    if (m_indexedDatabaseDirectory.isEmpty()) {
+        send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
+        return;
+    }
+
+    Vector<String> originPaths = listDirectory(m_indexedDatabaseDirectory, "*");
+    for (auto& originPath : originPaths)
+        removeAllDatabasesForOriginPath(originPath, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
+
+    send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
 }
 
 #if !PLATFORM(COCOA)

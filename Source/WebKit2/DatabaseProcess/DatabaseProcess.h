@@ -60,6 +60,11 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
+    void getIndexedDatabaseOrigins(uint64_t callbackID);
+    void deleteIndexedDatabaseEntriesForOrigin(const SecurityOriginData&, uint64_t callbackID);
+    void deleteIndexedDatabaseEntriesModifiedBetweenDates(double startDate, double endDate, uint64_t callbackID);
+    void deleteAllIndexedDatabaseEntries(uint64_t callbackID);
+
 private:
     DatabaseProcess();
 
@@ -85,6 +90,10 @@ private:
     // For execution on work queue thread only
     void performNextDatabaseTask();
     void ensurePathExists(const String&);
+    void doGetIndexedDatabaseOrigins(uint64_t callbackID);
+    void doDeleteIndexedDatabaseEntriesForOrigin(const SecurityOriginData&, uint64_t callbackID);
+    void doDeleteIndexedDatabaseEntriesModifiedBetweenDates(double startDate, double endDate, uint64_t callbackID);
+    void doDeleteAllIndexedDatabaseEntries(uint64_t callbackID);
 
     Vector<RefPtr<DatabaseToWebProcessConnection>> m_databaseToWebProcessConnections;
 
