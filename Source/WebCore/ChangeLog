@@ -1,3 +1,25 @@
+2014-07-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Move TextureMapperLayer::textureMapper() definition into the header
+        https://bugs.webkit.org/show_bug.cgi?id=135384
+
+        Reviewed by Martin Robinson.
+
+        Move the definitions of TextureMapperLayer::textureMapper() and TextureMapperLayer::rootLayer()
+        into the TextureMapperLayer header. This makes both functions inline-able, removing unnecessary
+        calling overhead in GraphicsLayerTextureMapper::flushCompositingState() and
+        GraphicsLayerTextureMapper::updateBackingStoreIfNeeded().
+
+        TextureMapperLayer::rootLayer() now also returns a reference.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::~TextureMapperLayer):
+        (WebCore::TextureMapperLayer::rootLayer): Deleted.
+        (WebCore::TextureMapperLayer::textureMapper): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (WebCore::TextureMapperLayer::textureMapper):
+        (WebCore::TextureMapperLayer::rootLayer):
+
 2014-07-29  Andreas Kling  <akling@apple.com>
 
         Crash when using 'em' units to specify font-size inside animation keyframe.

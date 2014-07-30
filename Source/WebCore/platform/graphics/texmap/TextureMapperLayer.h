@@ -74,7 +74,7 @@ public:
     void setIsScrollable(bool isScrollable) { m_isScrollable = isScrollable; }
     bool isScrollable() const { return m_isScrollable; }
 
-    TextureMapper* textureMapper() const;
+    TextureMapper* textureMapper() const { return rootLayer().m_textureMapper; }
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
 
     void setChildren(const Vector<TextureMapperLayer*>&);
@@ -134,7 +134,14 @@ public:
     void addChild(TextureMapperLayer*);
 
 private:
-    const TextureMapperLayer* rootLayer() const;
+    const TextureMapperLayer& rootLayer() const
+    {
+        if (m_effectTarget)
+            return m_effectTarget->rootLayer();
+        if (m_parent)
+            return m_parent->rootLayer();
+        return *this;
+    }
     void computeTransformsRecursive();
 
     static int compareGraphicsLayersZValue(const void* a, const void* b);

@@ -41,15 +41,6 @@ public:
     { }
 };
 
-const TextureMapperLayer* TextureMapperLayer::rootLayer() const
-{
-    if (m_effectTarget)
-        return m_effectTarget->rootLayer();
-    if (m_parent)
-        return m_parent->rootLayer();
-    return this;
-}
-
 void TextureMapperLayer::computeTransformsRecursive()
 {
     if (m_state.size.isEmpty() && m_state.masksToBounds)
@@ -465,11 +456,6 @@ TextureMapperLayer::~TextureMapperLayer()
         m_children[i]->m_parent = nullptr;
 
     removeFromParent();
-}
-
-TextureMapper* TextureMapperLayer::textureMapper() const
-{
-    return rootLayer()->m_textureMapper;
 }
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
