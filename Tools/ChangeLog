@@ -1,3 +1,20 @@
+2014-07-24  David Farler  <dfarler@apple.com>
+
+        Add knowledge of the iOS Simulator to webkitpy
+        http://bugs.webkit.org/show_bug.cgi?id=133963
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration): Add --ios-sim*
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        --runtime and --device-type args added.
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/driver.py: Add simulator driver.
+        (IOSSimulatorDriver): Added.
+        * Scripts/webkitpy/port/factory.py: Add simulator platform.
+        * Scripts/webkitpy/port/ios.py: Added.
+
 2014-07-29  Alexey Proskuryakov  <ap@apple.com>
 
         fast/borders/border-radius-on-subpixel-position-non-hidpi.html fails on Retina machines

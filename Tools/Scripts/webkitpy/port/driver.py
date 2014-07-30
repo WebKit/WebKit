@@ -193,7 +193,6 @@ class Driver(object):
         crash_log = None
         if crashed:
             self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
-
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
                 pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
@@ -494,6 +493,25 @@ class Driver(object):
         # This checks if the required system dependencies for the driver are met.
         # Since this is the generic class implementation, just return True.
         return True
+
+
+class IOSSimulatorDriver(Driver):
+    def cmd_line(self, pixel_tests, per_test_args):
+        cmd = super(IOSSimulatorDriver, self).cmd_line(pixel_tests, per_test_args)
+        relay_tool = self._port.relay_path
+        dump_tool = cmd[0]
+        dump_tool_args = cmd[1:]
+        product_dir = self._port._build_path()
+        runtime = self._port.get_option('runtime')
+        device_type = self._port.get_option('device_type')
+        relay_args = [
+            '-runtime', runtime,
+            '-deviceType', device_type,
+            '-suffix', str(self._worker_number),
+            '-productDir', product_dir,
+            '-app', dump_tool,
+        ]
+        return [relay_tool] + relay_args + ['--'] + dump_tool_args
 
 
 class ContentBlock(object):

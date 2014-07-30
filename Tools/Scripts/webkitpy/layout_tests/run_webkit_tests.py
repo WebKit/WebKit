@@ -284,6 +284,11 @@ def parse_args(args):
         optparse.make_option("--no-timeout", action="store_true", default=False, help="Disable test timeouts"),
     ]))
 
+    option_group_definitions.append(("iOS Simulator Options", [
+        optparse.make_option('--runtime', help='iOS Simulator runtime identifier'),
+        optparse.make_option('--device-type', help='iOS Simulator device type identifier'),
+    ]))
+
     option_group_definitions.append(("Miscellaneous Options", [
         optparse.make_option("--lint-test-files", action="store_true",
         default=False, help=("Makes sure the test files parse for all "
