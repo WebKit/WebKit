@@ -1,2 +1,2 @@
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
-if exist "%WEBKIT_LIBRARIES%\tools\VersionStamper\VersionStamper.exe" "%WEBKIT_LIBRARIES%\tools\VersionStamper\VersionStamper.exe" --verbose "%TARGETPATH%"
+perl "%WEBKIT_LIBRARIES%\tools\scripts\version-stamp.pl" "%INTDIR%" "%TARGETPATH%"

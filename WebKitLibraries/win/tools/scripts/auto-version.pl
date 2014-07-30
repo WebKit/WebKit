@@ -29,7 +29,6 @@ use Win32;
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 sub splitVersion($);
-sub splitBuildMajorVersion($);
 
 die "You must supply an output path as the argument.\n" if ($#ARGV < 0);
 
@@ -71,11 +70,9 @@ if (!defined $ENVIRONMENT_VERSION) {
 my $PROPOSED_VERSION = (defined $ENVIRONMENT_VERSION) ? $ENVIRONMENT_VERSION : $FALLBACK_VERSION;
 chomp($PROPOSED_VERSION);
 
-my ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION, $ADJUSTED_PROPOSED_VERSION) = splitVersion($PROPOSED_VERSION);
+my ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION, $BUILD_VARIANT_VERSION, $ADJUSTED_PROPOSED_VERSION) = splitVersion($PROPOSED_VERSION);
 
-my ($MAJOR_VERSION, $MINOR_VERSION) = splitBuildMajorVersion($BUILD_MAJOR_VERSION);
-my $TINY_VERSION = $BUILD_MINOR_VERSION;
-my $VARIANT_VERSION = $BUILD_TINY_VERSION;
+my $TINY_VERSION = $BUILD_TINY_VERSION;
 my $VERSION_TEXT = $ADJUSTED_PROPOSED_VERSION;
 my $VERSION_TEXT_SHORT = $VERSION_TEXT;
 
@@ -102,10 +99,10 @@ print OUTPUT_FILE <<EOF;
 #define __VERSION_TEXT__ "$VERSION_TEXT"
 #define __BUILD_NUMBER__ "$VERSION_TEXT"
 #define __BUILD_NUMBER_SHORT__ "$VERSION_TEXT_SHORT"
-#define __VERSION_MAJOR__ $MAJOR_VERSION
-#define __VERSION_MINOR__ $MINOR_VERSION
-#define __VERSION_TINY__ $TINY_VERSION
-#define __VERSION_BUILD__ $VARIANT_VERSION
+#define __VERSION_MAJOR__ $BUILD_MAJOR_VERSION
+#define __VERSION_MINOR__ $BUILD_MINOR_VERSION
+#define __VERSION_TINY__ $BUILD_TINY_VERSION
+#define __VERSION_BUILD__ $BUILD_VARIANT_VERSION
 #define __BUILD_NUMBER_MAJOR__ $BUILD_MAJOR_VERSION
 #define __BUILD_NUMBER_MINOR__ $BUILD_MINOR_VERSION
 #define __BUILD_NUMBER_VARIANT__ $BUILD_TINY_VERSION
@@ -117,6 +114,16 @@ if (defined $COPYRIGHT_END_YEAR) {
 }
 close(OUTPUT_FILE);
 
+sub packTwoValues($$)
+{
+    my $first = shift;
+    my $second = shift;
+
+    die "First version component ($first) is too large. Must be between 0 and 99" if ($first > 99);
+    die "Second version component ($second) is too large. Must be between 0 and 999" if ($second > 999);
+
+    return $first * 1000 + $second;
+}
 
 sub splitVersion($)
 {
@@ -134,11 +141,22 @@ sub splitVersion($)
     # Have the minor and tiny components default to zero if not present.
     my $BUILD_MINOR_VERSION = 0;
     my $BUILD_TINY_VERSION = 0;
+    my $BUILD_MICRO_VERSION = 0;
+    my $BUILD_NANO_VERSION = 0;
     if ($componentCount > 1) {
         $BUILD_MINOR_VERSION = $components[1];
-        if ($componentCount > 2) {
-            $BUILD_TINY_VERSION = $components[2];
-        }
+    }
+    if ($componentCount > 2) {
+        $BUILD_TINY_VERSION = $components[2];
+    }
+    if ($componentCount > 3) {
+        $BUILD_MICRO_VERSION = $components[3];
+    }
+
+    my $RETURN_NANO_VERSION = $BUILD_MICRO_VERSION;
+    if ($componentCount > 4) {
+        $BUILD_NANO_VERSION = $components[4];
+        $RETURN_NANO_VERSION = $BUILD_NANO_VERSION;
     }
 
     # Cut the major component down to three characters by dropping any
@@ -151,25 +169,6 @@ sub splitVersion($)
 
     $PROPOSED_VERSION = substr($PROPOSED_VERSION, $charactersToRemove);
 
-    return ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION, $PROPOSED_VERSION);
+    return ($BUILD_MAJOR_VERSION, packTwoValues($BUILD_MINOR_VERSION, $BUILD_TINY_VERSION), packTwoValues($BUILD_MICRO_VERSION, $BUILD_NANO_VERSION), $RETURN_NANO_VERSION, $PROPOSED_VERSION);
 }
 
-sub splitBuildMajorVersion($)
-{
-    # Split the first component further by using the first digit for the
-    # major version and the remaining two characters as the minor version.
-    # The minor version is shifted down to the tiny version, with the tiny
-    # version becoming the variant version.
-    my ($MAJOR_VERSION, $MINOR_VERSION);
-    {
-        if ($BUILD_MAJOR_VERSION =~ m/^[^\d]*(\d)(\d{1,})/) {
-            $MAJOR_VERSION = $1;
-            $MINOR_VERSION = $2;
-        } else {
-            $MAJOR_VERSION = $BUILD_MAJOR_VERSION;
-            $MINOR_VERSION = '';
-        }
-    }
-
-    return ($MAJOR_VERSION, $MINOR_VERSION);
-}
