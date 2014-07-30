@@ -85,24 +85,7 @@ WebInspector.SourceCodeLocation.prototype = {
 
     set sourceCode(sourceCode)
     {
-        console.assert((this._sourceCode === null && sourceCode instanceof WebInspector.SourceCode) || (this._sourceCode instanceof WebInspector.SourceCode && sourceCode === null));
-
-        if (sourceCode === this._sourceCode)
-            return;
-
-        this._makeChangeAndDispatchChangeEventIfNeeded(function() {
-            if (this._sourceCode) {
-                this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-                this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
-            }
-
-            this._sourceCode = sourceCode;
-
-            if (this._sourceCode) {
-                this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-                this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
-            }
-        });
+        this.setSourceCode(sourceCode);
     },
 
     // Raw line and column in the original source code.
@@ -146,19 +129,19 @@ WebInspector.SourceCodeLocation.prototype = {
 
     get displaySourceCode()
     {
-        this._resolveMappedLocation();
+        this.resolveMappedLocation();
         return this._mappedResource || this._sourceCode;
     },
 
     get displayLineNumber()
     {
-        this._resolveMappedLocation();
+        this.resolveMappedLocation();
         return isNaN(this._mappedLineNumber) ? this._formattedLineNumber : this._mappedLineNumber;
     },
 
     get displayColumnNumber()
     {
-        this._resolveMappedLocation();
+        this.resolveMappedLocation();
         return isNaN(this._mappedColumnNumber) ? this._formattedColumnNumber : this._mappedColumnNumber;
     },
 
@@ -196,7 +179,7 @@ WebInspector.SourceCodeLocation.prototype = {
 
     hasMappedLocation: function()
     {
-        this._resolveMappedLocation();
+        this.resolveMappedLocation();
         return this._mappedResource !== null;
     },
 
@@ -287,6 +270,65 @@ WebInspector.SourceCodeLocation.prototype = {
         }.bind(this));
     },
 
+    // Protected
+
+    setSourceCode: function(sourceCode)
+    {
+        console.assert((this._sourceCode === null && sourceCode instanceof WebInspector.SourceCode) || (this._sourceCode instanceof WebInspector.SourceCode && sourceCode === null));
+
+        if (sourceCode === this._sourceCode)
+            return;
+
+        this._makeChangeAndDispatchChangeEventIfNeeded(function() {
+            if (this._sourceCode) {
+                this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+                this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+            }
+
+            this._sourceCode = sourceCode;
+
+            if (this._sourceCode) {
+                this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+                this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+            }
+        });
+    },
+
+    resolveMappedLocation: function()
+    {
+        if (this._mappedLocationIsResolved)
+            return;
+
+        console.assert(this._mappedResource === null);
+        console.assert(isNaN(this._mappedLineNumber));
+        console.assert(isNaN(this._mappedColumnNumber));
+
+        this._mappedLocationIsResolved = true;
+
+        if (!this._sourceCode)
+            return;
+
+        var sourceMaps = this._sourceCode.sourceMaps;
+        if (!sourceMaps.length)
+            return;
+
+        for (var i = 0; i < sourceMaps.length; ++i) {
+            var sourceMap = sourceMaps[i];
+            var entry = sourceMap.findEntry(this._lineNumber, this._columnNumber);
+            if (!entry || entry.length === 2)
+                continue;
+            console.assert(entry.length === 5);
+            var url = entry[2];
+            var sourceMapResource = sourceMap.resourceForURL(url);
+            if (!sourceMapResource)
+                return;
+            this._mappedResource = sourceMapResource;
+            this._mappedLineNumber = entry[3];
+            this._mappedColumnNumber = entry[4];
+            return;
+        }
+    },
+
     // Private
 
     _locationString: function(sourceCode, lineNumber, columnNumber, columnStyle, nameStyle, prefix)
@@ -337,41 +379,6 @@ WebInspector.SourceCodeLocation.prototype = {
         this._mappedColumnNumber = mappedColumnNumber;
     },
 
-    _resolveMappedLocation: function()
-    {
-        if (this._mappedLocationIsResolved)
-            return;
-
-        console.assert(this._mappedResource === null);
-        console.assert(isNaN(this._mappedLineNumber));
-        console.assert(isNaN(this._mappedColumnNumber));
-
-        this._mappedLocationIsResolved = true;
-
-        if (!this._sourceCode)
-            return;
-
-        var sourceMaps = this._sourceCode.sourceMaps;
-        if (!sourceMaps.length)
-            return;
-
-        for (var i = 0; i < sourceMaps.length; ++i) {
-            var sourceMap = sourceMaps[i];
-            var entry = sourceMap.findEntry(this._lineNumber, this._columnNumber);
-            if (!entry || entry.length === 2)
-                continue;
-            console.assert(entry.length === 5);
-            var url = entry[2];
-            var sourceMapResource = sourceMap.resourceForURL(url);
-            if (!sourceMapResource)
-                return;
-            this._mappedResource = sourceMapResource;
-            this._mappedLineNumber = entry[3];
-            this._mappedColumnNumber = entry[4];
-            return;
-        }
-    },
-
     _resolveFormattedLocation: function()
     {
         if (this._sourceCode && this._sourceCode.formatterSourceMap) {
@@ -402,7 +409,7 @@ WebInspector.SourceCodeLocation.prototype = {
         if (changeFunction)
             changeFunction.call(this);
 
-        this._resolveMappedLocation();
+        this.resolveMappedLocation();
         this._resolveFormattedLocation();
 
         // If the display source code is non-null then the addresses are not NaN and can be compared.

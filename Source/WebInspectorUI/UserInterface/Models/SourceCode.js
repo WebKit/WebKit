@@ -142,6 +142,11 @@ WebInspector.SourceCode.prototype = {
         return new WebInspector.SourceCodeLocation(this, lineNumber, columnNumber);
     },
 
+    createLazySourceCodeLocation: function(lineNumber, columnNumber)
+    {
+        return new WebInspector.LazySourceCodeLocation(this, lineNumber, columnNumber);
+    },
+
     createSourceCodeTextRange: function(textRange)
     {
         return new WebInspector.SourceCodeTextRange(this, textRange);
