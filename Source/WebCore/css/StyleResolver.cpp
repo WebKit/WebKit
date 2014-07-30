@@ -825,6 +825,7 @@ PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementS
 
     // Create the style
     state.setStyle(RenderStyle::clone(elementStyle));
+    state.setParentStyle(RenderStyle::clone(elementStyle));
     state.setLineHeightValue(0);
 
     TextDirection direction;

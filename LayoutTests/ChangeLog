@@ -1,5 +1,22 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171785
+
+    2014-07-29  Andreas Kling  <akling@apple.com>
+
+            Crash when using 'em' units to specify font-size inside animation keyframe.
+            <https://webkit.org/b/135395>
+            <rdar://problem/17851910>
+
+            Add a reduced test case to cover this bug.
+
+            Reviewed by Simon Fraser.
+
+            * fast/animation/keyframe-with-font-size-in-em-units-expected.txt: Added.
+            * fast/animation/keyframe-with-font-size-in-em-units.html: Added.
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171718
 
     2014-07-28  Zalan Bujtas  <zalan@apple.com>

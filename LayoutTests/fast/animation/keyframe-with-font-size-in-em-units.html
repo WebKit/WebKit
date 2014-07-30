@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@-webkit-keyframes foo {
+    from {
+        font-size: 2em;
+    }
+}
+#foo {
+    -webkit-animation: foo 1s linear 0.0s infinite;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div id="foo"></div>
+<span>PASS (no crash)</span>
+</body>
+</html>

@@ -1,5 +1,29 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171785
+
+    2014-07-29  Andreas Kling  <akling@apple.com>
+
+            Crash when using 'em' units to specify font-size inside animation keyframe.
+            <https://webkit.org/b/135395>
+            <rdar://problem/17851910>
+
+            We'd forgotten to initialize the "parent style" when resolving keyframe
+            styles, and this led to a crash in length conversion where the code
+            assumes a parent style will be present.
+
+            To keep this fix minimal, simply make the "parent style" a clone of the
+            base element style.
+
+            Reviewed by Simon Fraser.
+
+            Test: fast/animation/keyframe-with-font-size-in-em-units.html
+
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::styleForKeyframe):
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171766
 
     2014-07-29  Pratik Solanki  <psolanki@apple.com>
