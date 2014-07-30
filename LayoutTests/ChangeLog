@@ -1,3 +1,10 @@
+2014-07-30  Pratik Solanki  <psolanki@apple.com>
+
+        Move iphone-simulator test results landed in r171094 to the correct directory.
+
+        * platform/ios-sim/fast/events/ontouchstart-active-selector-expected.txt: Renamed from LayoutTests/platform/iphone-simulator/fast/events/ontouchstart-active-selector-expected.txt.
+        * platform/ios-sim/fast/events/ontouchstart-active-selector.html: Renamed from LayoutTests/platform/iphone-simulator/fast/events/ontouchstart-active-selector.html.
+
 2014-07-29  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed EFL gardening. Rebaseline tests after r170418.
