@@ -1,5 +1,37 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171766
+
+    2014-07-29  Pratik Solanki  <psolanki@apple.com>
+
+            [iOS] REGRESSION(r171526): PDF documents fail to load in WebKit1 with disk image caching enabled
+            https://bugs.webkit.org/show_bug.cgi?id=135359
+            <rdar://problem/17824645>
+
+            Reviewed by Darin Adler.
+
+            r171526 broke the case where we have a memory mapped file from the DiskImageCache in the
+            SharedBuffer. In such a case, m_buffer is empty and createCFData() returned an
+            WebCoreSharedBufferData with an empty buffer.
+
+            Fix this by taking the easy route of bringing back the old code for the disk image cache
+            file backed case. In the long run we probably want to remove the iOS specific disk image
+            cache anyway.
+
+            Review also uncovered another bug in r171526 where we were balancing an Objective-C alloc
+            with a CFRelease which is incorrect when running under GC. Fix that by using adoptNS along
+            with adoptCF which is what the code did before.
+
+            No new tests because the bug only occurs on device and we can't run tests on device yet.
+
+            * platform/mac/SharedBufferMac.mm:
+            (-[WebCoreSharedBufferData initWithDiskImageSharedBuffer:]):
+            (-[WebCoreSharedBufferData length]):
+            (-[WebCoreSharedBufferData bytes]):
+            (WebCore::SharedBuffer::createCFData):
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171749
 
     2014-07-29  Brady Eidson  <beidson@apple.com>
