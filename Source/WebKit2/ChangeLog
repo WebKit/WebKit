@@ -1,3 +1,19 @@
+2014-07-29  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Do not initialize g_type system explicitly in the ewk_init()
+        https://bugs.webkit.org/show_bug.cgi?id=135407
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL build requires glib version 2.38 but g_type_init() has been deprecated
+        since version 2.36. As the type system is initialized automatically since
+        version 2.36, we do not need to call g_type_init() in the ewk_init().
+
+        https://developer.gnome.org/gobject/unstable/gobject-Type-Information.html#g-type-init
+
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init):
+
 2014-07-29  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION [WebKit2 iOS]: Cannot add shortcut to user dictionary from non editable content.
