@@ -46,6 +46,7 @@
 #import "Image.h"
 #import "JSNode.h"
 #import "NodeFilter.h"
+#import "Page.h"
 #import "Range.h"
 #import "RenderImage.h"
 #import "ScriptController.h"
@@ -609,7 +610,13 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!frame)
         return nil;
 
-    return createDragImageForRange(*frame, *range, forceBlackText).autorelease();
+    RetainPtr<NSImage> renderedImage = createDragImageForRange(*frame, *range, forceBlackText);
+
+    IntSize size([renderedImage size]);
+    size.scale(1 / frame->page()->deviceScaleFactor());
+    [renderedImage setSize:size];
+
+    return renderedImage.autorelease();
 }
 
 - (NSArray *)textRects
