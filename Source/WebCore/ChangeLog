@@ -1,5 +1,21 @@
 2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
 
+        Clean up YouTubeEmbedShadowElement
+        https://bugs.webkit.org/show_bug.cgi?id=135437
+
+        Reviewed by Andreas Kling.
+
+        * html/shadow/YouTubeEmbedShadowElement.cpp:
+        (WebCore::YouTubeEmbedShadowElement::YouTubeEmbedShadowElement):
+        (WebCore::YouTubeEmbedShadowElement::pluginElement): Deleted.
+        This is unused in WebCore.
+
+        (WebCore::YouTubeEmbedShadowElement::shadowPseudoId): Deleted.
+        Use the generic pseudo path instead of a custom shadowPseudoId.
+        * html/shadow/YouTubeEmbedShadowElement.h:
+
+2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
+
         Remove shadowPseudoId() from InputFieldSpeechButtonElement and SearchFieldCancelButtonElement
         https://bugs.webkit.org/show_bug.cgi?id=135438
 
