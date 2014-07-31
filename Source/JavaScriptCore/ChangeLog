@@ -1,3 +1,23 @@
+2014-07-30  Andreas Kling  <akling@apple.com>
+
+        PropertyName's internal string is always atomic.
+        <https://webkit.org/b/135451>
+
+        Now that we've merged the JSC::Identifier and WTF::AtomicString tables,
+        we know that any string that's an Identifier is guaranteed to be atomic.
+
+        A PropertyName can be either an Identifier or a PrivateName, and the
+        private names are also guaranteed to be atomic internally.
+
+        Make PropertyName vend AtomicStringImpl* instead of StringImpl*.
+
+        Reviewed by Benjamin Poulain.
+
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+        (JSC::PropertyName::uid):
+        (JSC::PropertyName::publicName):
+
 2014-07-30  Andy Estes  <aestes@apple.com>
 
         USE(CONTENT_FILTERING) should be ENABLE(CONTENT_FILTERING)

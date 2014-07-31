@@ -1,3 +1,27 @@
+2014-07-30  Andreas Kling  <akling@apple.com>
+
+        PropertyName's internal string is always atomic.
+        <https://webkit.org/b/135451>
+
+        Use PropertyName::publicName() directly instead of taking the slow route
+        through AtomicString::findStringWithHash().
+
+        These strings are always atomic, and findStringWithHash() would trudge
+        through a full hash lookup just to discover that indeed, they are!
+
+        Reviewed by Benjamin Poulain.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::findAtomicString): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::canGetItemsForName):
+        (WebCore::JSHTMLDocument::nameGetter):
+
 2014-07-30  Benjamin Poulain  <benjamin@webkit.org>
 
         ElementRuleCollector: group the shadow tree code

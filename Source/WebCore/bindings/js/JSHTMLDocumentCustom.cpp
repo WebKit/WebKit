@@ -53,7 +53,7 @@ using namespace HTMLNames;
 
 bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, PropertyName propertyName)
 {
-    AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
+    AtomicStringImpl* atomicPropertyName = propertyName.publicName();
     return atomicPropertyName && document->hasDocumentNamedItem(*atomicPropertyName);
 }
 
@@ -62,7 +62,7 @@ EncodedJSValue JSHTMLDocument::nameGetter(ExecState* exec, JSObject* slotBase, E
     JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(slotBase);
     HTMLDocument& document = thisObj->impl();
 
-    AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
+    AtomicStringImpl* atomicPropertyName = propertyName.publicName();
     if (!atomicPropertyName || !document.hasDocumentNamedItem(*atomicPropertyName))
         return JSValue::encode(jsUndefined());
 

@@ -79,25 +79,27 @@ ALWAYS_INLINE uint32_t toUInt32FromStringImpl(StringImpl* impl)
 class PropertyName {
 public:
     PropertyName(const Identifier& propertyName)
-        : m_impl(propertyName.impl())
+        : m_impl(static_cast<AtomicStringImpl*>(propertyName.impl()))
     {
         ASSERT(!m_impl || m_impl->isAtomic());
     }
 
     PropertyName(const PrivateName& propertyName)
-        : m_impl(propertyName.uid())
+        : m_impl(static_cast<AtomicStringImpl*>(propertyName.uid()))
     {
-        ASSERT(m_impl && m_impl->isEmptyUnique());
+        ASSERT(m_impl);
+        ASSERT(m_impl->isEmptyUnique());
+        ASSERT(m_impl->isAtomic());
     }
 
-    StringImpl* uid() const
+    AtomicStringImpl* uid() const
     {
         return m_impl;
     }
 
-    StringImpl* publicName() const
+    AtomicStringImpl* publicName() const
     {
-        return m_impl->isEmptyUnique() ? 0 : m_impl;
+        return m_impl->isEmptyUnique() ? nullptr : m_impl;
     }
 
     static const uint32_t NotAnIndex = UINT_MAX;
@@ -108,7 +110,7 @@ public:
     }
 
 private:
-    StringImpl* m_impl;
+    AtomicStringImpl* m_impl;
 };
 
 inline bool operator==(PropertyName a, const Identifier& b)

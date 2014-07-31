@@ -98,15 +98,6 @@ JSValue jsStringOrUndefined(ExecState* exec, const URL& url)
     return jsStringWithCache(exec, url.string());
 }
 
-AtomicStringImpl* findAtomicString(PropertyName propertyName)
-{
-    StringImpl* impl = propertyName.publicName();
-    if (!impl)
-        return 0;
-    ASSERT(impl->existingHash());
-    return AtomicString::findStringWithHash(*impl);
-}
-
 String valueToStringWithNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isNull())

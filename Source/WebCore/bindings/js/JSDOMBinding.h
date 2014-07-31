@@ -283,7 +283,6 @@ JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&);
 String propertyNameToString(JSC::PropertyName);
 
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
-AtomicStringImpl* findAtomicString(JSC::PropertyName);
 
 String valueToStringWithNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null
 String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined

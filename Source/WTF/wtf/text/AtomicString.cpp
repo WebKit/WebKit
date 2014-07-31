@@ -432,31 +432,6 @@ PassRefPtr<StringImpl> AtomicString::addSlowCase(AtomicStringTable& stringTable,
     return *addResult.iterator;
 }
 
-template<typename CharacterType>
-static inline HashSet<StringImpl*>::iterator findString(const StringImpl* stringImpl)
-{
-    HashAndCharacters<CharacterType> buffer = { stringImpl->existingHash(), stringImpl->characters<CharacterType>(), stringImpl->length() };
-    return stringTable().find<HashAndCharactersTranslator<CharacterType>>(buffer);
-}
-
-AtomicStringImpl* AtomicString::findStringWithHash(const StringImpl& stringImpl)
-{
-    ASSERT(stringImpl.existingHash());
-
-    if (!stringImpl.length())
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
-
-    AtomicStringTableLocker locker;
-    HashSet<StringImpl*>::iterator iterator;
-    if (stringImpl.is8Bit())
-        iterator = findString<LChar>(&stringImpl);
-    else
-        iterator = findString<UChar>(&stringImpl);
-    if (iterator == stringTable().end())
-        return 0;
-    return static_cast<AtomicStringImpl*>(*iterator);
-}
-
 void AtomicString::remove(StringImpl* string)
 {
     ASSERT(string->isAtomic());

@@ -1,3 +1,17 @@
+2014-07-30  Andreas Kling  <akling@apple.com>
+
+        PropertyName's internal string is always atomic.
+        <https://webkit.org/b/135451>
+
+        Remove AtomicString::findStringWithHash() since nobody uses it anymore.
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::findString): Deleted.
+        (WTF::AtomicString::findStringWithHash): Deleted.
+        * wtf/text/AtomicString.h:
+
 2014-07-30  Andy Estes  <aestes@apple.com>
 
         USE(CONTENT_FILTERING) should be ENABLE(CONTENT_FILTERING)
