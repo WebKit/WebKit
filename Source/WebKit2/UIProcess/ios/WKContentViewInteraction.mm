@@ -1618,6 +1618,8 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(SelectionFlags flags)
         uiFlags |= UIWKWordIsNearTap;
     if (flags & IsBlockSelection)
         uiFlags |= UIWKIsBlockSelection;
+    if (flags & PhraseBoundaryChanged)
+        uiFlags |= UIWKPhraseBoundaryChanged;
 
     return static_cast<UIWKSelectionFlags>(uiFlags);
 }
