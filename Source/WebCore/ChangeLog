@@ -1,5 +1,12 @@
 2014-07-31  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix building with the OS X 10.9 SDK while targeting OS X 10.8.
+
+        * platform/network/cocoa/CredentialCocoa.mm:
+        (WebCore::toCredentialPersistence):
+
+2014-07-31  Dan Bernstein  <mitz@apple.com>
+
         Reverted r171854, because it broke building with the OS X 10.8 SDK.
 
         * platform/network/cocoa/CredentialCocoa.mm:
