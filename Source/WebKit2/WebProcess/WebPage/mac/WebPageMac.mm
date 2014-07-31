@@ -102,6 +102,11 @@ void WebPage::platformInitialize()
     m_mockAccessibilityElement = mockAccessibilityElement;
 }
 
+void WebPage::platformDetach()
+{
+    [m_mockAccessibilityElement setWebPage:nullptr];
+}
+    
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
     if (!m_page)

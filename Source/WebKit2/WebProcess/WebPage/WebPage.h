@@ -853,6 +853,7 @@ private:
     virtual uint64_t messageSenderDestinationID() override;
 
     void platformInitialize();
+    void platformDetach();
 
     void didReceiveWebPageMessage(IPC::Connection*, IPC::MessageDecoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);

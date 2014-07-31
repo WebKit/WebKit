@@ -61,6 +61,10 @@ void WebPage::platformInitialize()
 #endif
 }
 
+void WebPage::platformDetach()
+{
+}
+
 #if HAVE(ACCESSIBILITY)
 void WebPage::updateAccessibilityTree()
 {

@@ -101,6 +101,11 @@ void WebPage::platformInitialize()
     platformInitializeAccessibility();
 }
 
+void WebPage::platformDetach()
+{
+    [m_mockAccessibilityElement setWebPage:nullptr];
+}
+    
 void WebPage::platformInitializeAccessibility()
 {
     m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);

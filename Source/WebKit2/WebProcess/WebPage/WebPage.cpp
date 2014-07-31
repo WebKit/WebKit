@@ -500,6 +500,8 @@ WebPage::~WebPage()
         WebProcess::shared().eventDispatcher().removeScrollingTreeForPage(this);
 #endif
 
+    platformDetach();
+    
     m_sandboxExtensionTracker.invalidate();
 
     for (auto* pluginView : m_pluginViews)
