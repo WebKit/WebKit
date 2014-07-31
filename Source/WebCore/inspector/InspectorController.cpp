@@ -380,7 +380,7 @@ void InspectorController::setIndicating(bool indicating)
 
 bool InspectorController::profilerEnabled() const
 {
-    return m_instrumentingAgents->inspectorTimelineAgent();
+    return m_instrumentingAgents->persistentInspectorTimelineAgent();
 }
 
 void InspectorController::setProfilerEnabled(bool enable)
