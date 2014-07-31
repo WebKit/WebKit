@@ -1,5 +1,16 @@
 2014-07-30  Benjamin Poulain  <benjamin@webkit.org>
 
+        ElementRuleCollector: group the shadow tree code
+        https://bugs.webkit.org/show_bug.cgi?id=135410
+
+        Reviewed by Andreas Kling.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        Little cleanup: group the shadow tree rule collection in the same block.
+
+2014-07-30  Benjamin Poulain  <benjamin@webkit.org>
+
         Cleanup DetailsMarkerControl
         https://bugs.webkit.org/show_bug.cgi?id=135429
 

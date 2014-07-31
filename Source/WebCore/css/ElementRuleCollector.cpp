@@ -146,17 +146,20 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     ASSERT(matchRequest.ruleSet);
     ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::ResolvingStyle && !m_style), "When resolving style, the SelectorChecker must have a style to set the pseudo elements and/or to do marking. The SelectorCompiler also rely on that behavior.");
 
-    const AtomicString& pseudoId = m_element.shadowPseudoId();
-    if (!pseudoId.isEmpty())
-        collectMatchingRulesForList(matchRequest.ruleSet->shadowPseudoElementRules(pseudoId.impl()), matchRequest, ruleRange);
-
 #if ENABLE(VIDEO_TRACK)
     if (m_element.isWebVTTElement())
         collectMatchingRulesForList(matchRequest.ruleSet->cuePseudoRules(), matchRequest, ruleRange);
 #endif
-    // Only match UA rules in shadow tree.
-    if (!MatchingUARulesScope::isMatchingUARules() && m_element.treeScope().rootNode().isShadowRoot())
-        return;
+
+    if (m_element.isInShadowTree()) {
+        const AtomicString& pseudoId = m_element.shadowPseudoId();
+        if (!pseudoId.isEmpty())
+            collectMatchingRulesForList(matchRequest.ruleSet->shadowPseudoElementRules(pseudoId.impl()), matchRequest, ruleRange);
+
+        // Only match UA rules in shadow tree.
+        if (!MatchingUARulesScope::isMatchingUARules())
+            return;
+    }
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
