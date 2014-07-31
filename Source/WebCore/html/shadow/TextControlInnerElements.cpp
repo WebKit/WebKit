@@ -192,18 +192,13 @@ inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& 
     : HTMLDivElement(divTag, document)
     , m_capturing(false)
 {
+    setPseudo(AtomicString("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
     setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document& document)
 {
     return adoptRef(new SearchFieldCancelButtonElement(document));
-}
-
-const AtomicString& SearchFieldCancelButtonElement::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
-    return pseudoId;
 }
 
 void SearchFieldCancelButtonElement::willDetachRenderers()
@@ -275,6 +270,7 @@ inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(Document& do
     , m_state(Idle)
     , m_listenerId(0)
 {
+    setPseudo(AtomicString("-webkit-input-speech-button", AtomicString::ConstructFromLiteral));
     setHasCustomStyleResolveCallbacks();
 }
 
@@ -457,12 +453,6 @@ void InputFieldSpeechButtonElement::stopSpeechInput()
 {
     if (m_state == Recording)
         speechInput()->stopRecording(m_listenerId);
-}
-
-const AtomicString& InputFieldSpeechButtonElement::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-input-speech-button", AtomicString::ConstructFromLiteral));
-    return pseudoId;
 }
 
 #endif // ENABLE(INPUT_SPEECH)

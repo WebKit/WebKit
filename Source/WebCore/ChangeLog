@@ -1,3 +1,19 @@
+2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove shadowPseudoId() from InputFieldSpeechButtonElement and SearchFieldCancelButtonElement
+        https://bugs.webkit.org/show_bug.cgi?id=135438
+
+        Reviewed by Andreas Kling.
+
+        Use the generic path.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::shadowPseudoId): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::shadowPseudoId): Deleted.
+        * html/shadow/TextControlInnerElements.h:
+
 2014-07-30  Andy Estes  <aestes@apple.com>
 
         USE(CONTENT_FILTERING) should be ENABLE(CONTENT_FILTERING)

@@ -103,7 +103,6 @@ public:
 
 private:
     SearchFieldCancelButtonElement(Document&);
-    virtual const AtomicString& shadowPseudoId() const override;
     virtual void willDetachRenderers() override;
     virtual bool isMouseFocusable() const override { return false; }
 
@@ -143,7 +142,6 @@ private:
     InputFieldSpeechButtonElement(Document&);
     SpeechInput* speechInput();
     void setState(SpeechInputState state);
-    virtual const AtomicString& shadowPseudoId() const;
     virtual bool isMouseFocusable() const override { return false; }
     virtual void willAttachRenderers() override;
     virtual void willDetachRenderers() override;
