@@ -1,3 +1,20 @@
+2014-07-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171851. <rdar://problem/17719026>
+
+    2014-07-31  Jer Noble  <jer.noble@apple.com>
+    
+            REGRESSION(??): [iOS] Disabling MediaPlaybackRequiresUserGesture does not remove user gesture requirement for entering full screen.
+            https://bugs.webkit.org/show_bug.cgi?id=135443
+    
+            Reviewed by Dean Jackson.
+    
+            Allow full screen mode to be entered without a user gesture if the gesture requirement for media playback
+            has been unset.
+    
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::HTMLMediaElement):
+    
 2014-07-30  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171766. <rdar://problem/17824645>
