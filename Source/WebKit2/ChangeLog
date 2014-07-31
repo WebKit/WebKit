@@ -1,3 +1,17 @@
+2014-07-31  Dan Bernstein  <mitz@apple.com>
+
+        WebKit part of: Server trust authentication challenges aren’t sent to the navigation delegate
+        https://bugs.webkit.org/show_bug.cgi?id=135327
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame):
+        Return true for server trust protection spaces if the delegate implements
+        -webView:didReceiveAuthenticationChallenge:completionHandler:.
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame): Removed
+        an assertion that is no longer true due to the above.
+
 2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.1 release.

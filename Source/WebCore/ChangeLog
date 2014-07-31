@@ -1,5 +1,19 @@
 2014-07-31  Dan Bernstein  <mitz@apple.com>
 
+        WebCore part of: Server trust authentication challenges aren’t sent to the navigation delegate
+        https://bugs.webkit.org/show_bug.cgi?id=135327
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::receivedCredential): Don’t try to change the persistence of
+        credentials used for server trust, because the platform doesn’t support persistence values
+        other than Session for server trust.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::receivedCredential): Ditto.
+
+2014-07-31  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix building with the OS X 10.9 SDK while targeting OS X 10.8.
 
         * platform/network/cocoa/CredentialCocoa.mm:
