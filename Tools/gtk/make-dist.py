@@ -81,6 +81,10 @@ class File(object):
         self.source_root = source_root
         self.tarball_root = tarball_root
 
+    def should_skip_file(self, path):
+        # Do not skip files explicitly added from the manifest.
+        return False
+
     def get_files(self):
         yield (self.source_root, self.tarball_root)
 
@@ -91,11 +95,24 @@ class Directory(object):
         self.tarball_root = tarball_root
         self.rules = Ruleset()
 
+        self.files_in_version_control = self.list_files_in_version_control()
+
     def add_rule(self, rule):
         self.rules.add_rule(rule)
 
     def get_tarball_path(self, filename):
         return filename.replace(self.source_root, self.tarball_root, 1)
+
+    def list_files_in_version_control(self):
+        # FIXME: Only git is supported for now.
+        p = subprocess.Popen(['git', 'ls-tree', '-r', '--name-only', 'HEAD', self.source_root], stdout=subprocess.PIPE)
+        out = p.communicate()[0]
+        if not out:
+            return []
+        return out.rstrip('\n').split('\n')
+
+    def should_skip_file(self, path):
+        return path not in self.files_in_version_control
 
     def get_files(self):
         for root, dirs, files in os.walk(self.source_root):
@@ -189,9 +206,18 @@ class Manifest(object):
         elif parts[0] == "include" and len(parts) > 1:
             self.add_rule(Rule(Rule.Result.INCLUDE, self.resolve_variables(parts[1])))
 
+    def should_skip_file(self, directory, filename):
+        # Only allow files that are not in version control when they are explicitly included in the manifest from the build dir.
+        if filename.startswith(self.build_root):
+            return False
+
+        return directory.should_skip_file(filename)
+
     def get_files(self):
         for directory in self.directories:
             for file_tuple in directory.get_files():
+                if self.should_skip_file(directory, file_tuple[0]):
+                    continue
                 yield file_tuple
 
     def create_tarfile(self, output):

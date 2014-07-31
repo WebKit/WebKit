@@ -1,3 +1,22 @@
+2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not include files that are not in git in the tarball
+        https://bugs.webkit.org/show_bug.cgi?id=134804
+
+        Reviewed by Philippe Normand.
+
+        Skip all files in the source tree that are not under version control
+        except for files added from the build dir like the documentation.
+
+        * gtk/make-dist.py:
+        (Directory.__init__): Initialize the list of files under control version.
+        (Directory.list_cms_files): Helper function to list all files
+        under the control version for the current source root.
+        (Directory.should_skip_file): Return True for files that are not
+        under control version only when the source root is also under
+        control version.
+        (Directory.get_files): Filter the files also using should_skip_file().
+
 2014-07-29  David Farler  <dfarler@apple.com>
 
         iOS Simulator LayoutTestRelay
