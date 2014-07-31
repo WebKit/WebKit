@@ -27,7 +27,11 @@
     width: 1px;
 
     background-image: linear-gradient(rgb(190, 190, 190), rgb(190, 190, 190));
-    background-size: 100% 13px;
+    background-size: 100% 16px;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+body.mac-platform.legacy .navigation-bar .item.divider {
+    background-size: 100% 13px;
 }

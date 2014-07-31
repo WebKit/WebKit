@@ -31,21 +31,23 @@
 .scope-bar > li {
     display: inline-block;
     margin: 0 2px;
-    padding: 0 8px 3px;
+    padding: 1px 8px 3px;
     font-size: 11px;
     line-height: 11px;
     color: rgb(46, 46, 46);
     background-color: transparent;
     border: 1px solid transparent;
-    border-radius: 9px;
+    border-radius: 3px;
     text-align: center;
-
-    transition: 200ms ease-in-out;
-    transition-property: background-color, border-color;
 }
 
 body.mac-platform.legacy .scope-bar > li {
     font-weight: bold;
+    padding: 0 8px 3px;
+    border-radius: 9px;
+
+    transition: 200ms ease-in-out;
+    transition-property: background-color, border-color;
 }
 
 .scope-bar > li.selected,
@@ -54,13 +56,19 @@ body.mac-platform.legacy .scope-bar > li {
 }
 
 .scope-bar > li:hover {
+    color: white;
+    background-color: rgba(34, 131, 246, 0.5);
+}
+
+body.mac-platform.legacy .scope-bar > li:hover {
+    color: inherit;
     border-color: rgba(0, 0, 0, 0.15);
+    background-color: transparent;
 }
 
 .scope-bar > li.selected {
-    color: rgb(52, 141, 220);
-    border-color: rgba(52, 141, 220, 1);
-    font-weight: bold;
+    color: white;
+    background-color: rgba(34, 131, 246, 1);
 }
 
 body.mac-platform.legacy .scope-bar > li.selected {
@@ -70,6 +78,20 @@ body.mac-platform.legacy .scope-bar > li.selected {
 }
 
 .scope-bar > li:active {
+    color: white;
+    background-color: rgba(34, 131, 246, 0.55);
+}
+
+body.mac-platform.legacy .scope-bar > li:active {
+    color: inherit;
     background-color: rgba(0, 0, 0, 0.16);
     border-color: rgba(0, 0, 0, 0.40);
+}
+
+.scope-bar > li.selected:active {
+    background-color: rgba(31, 105, 238, 1);
+}
+
+body.mac-platform.legacy .scope-bar > li.selected:active {
+    background-color: rgba(0, 0, 0, 0.16);
 }

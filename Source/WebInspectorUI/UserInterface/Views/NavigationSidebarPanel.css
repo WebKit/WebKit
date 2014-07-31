@@ -28,10 +28,14 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: 22px;
+    bottom: 28px;
 
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation > .content {
+    bottom: 22px;
 }
 
 .sidebar > .panel.navigation > .filter-bar {

@@ -412,8 +412,9 @@
     display: none;
 }
 
-.log-search-bar > input {
+.search-bar.log-search-bar > input[type="search"] {
     width: 150px;
+    border: 1px solid rgba(0, 0, 0, 0.35);
 }
 
 .search-in-progress .console-item.filtered-out-by-search {
@@ -432,7 +433,7 @@
 
 /* @media reader currently blocked by: http://webkit.org/b/118096 */
 @media reader {
-    .console-user-command::before, 
+    .console-user-command::before,
     .console-messages:focus .console-item.selected .console-user-command::before,
     .console-user-command-result.console-log-level::before,
     .console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {

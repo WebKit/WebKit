@@ -141,6 +141,10 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 #split-content-browser > .navigation-bar {
     cursor: row-resize;
 
+    background-color: rgb(242, 242, 242);
+}
+
+body.mac-platform.legacy #split-content-browser > .navigation-bar {
     background-image: linear-gradient(to bottom, rgb(248, 248, 248), rgb(226, 226, 226));
 }
 

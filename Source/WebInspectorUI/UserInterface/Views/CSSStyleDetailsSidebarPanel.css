@@ -28,17 +28,22 @@
     top: 0;
     left: 0;
     right: 0;
+    -webkit-align-content: center;
 }
 
 .sidebar > .panel.details.css-style > .content {
     position: absolute;
-    top: 22px;
+    top: 29px;
     left: 0;
     right: 0;
     bottom: 0;
 
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+body.mac-platform.legacy .sidebar > .panel.details.css-style > .content {
+    top: 22px;
 }
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
