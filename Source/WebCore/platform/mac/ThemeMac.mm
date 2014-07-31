@@ -563,7 +563,9 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
 
     if (states & ControlStates::DefaultState) {
         [window setDefaultButtonCell:buttonCell];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
         wkAdvanceDefaultButtonPulseAnimation(buttonCell);
+#endif
     } else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
 

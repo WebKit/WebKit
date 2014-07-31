@@ -106,6 +106,8 @@ public:
     // A view associated to the contained document.
     NSView* documentViewFor(const RenderObject&) const;
 
+    virtual bool defaultButtonHasAnimation() const override;
+
 protected:
     RenderThemeMac();
     virtual ~RenderThemeMac();

@@ -114,9 +114,11 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         setupInnerStyle(&m_inner->style());
 
     if (!m_default && theme().isDefault(*this)) {
-        if (!m_timer)
-            m_timer = std::make_unique<Timer<RenderButton>>(this, &RenderButton::timerFired);
-        m_timer->startRepeating(0.03);
+        if (theme().defaultButtonHasAnimation()) {
+            if (!m_timer)
+                m_timer = std::make_unique<Timer<RenderButton>>(this, &RenderButton::timerFired);
+            m_timer->startRepeating(0.03);
+        }
         m_default = true;
     } else if (m_default && !theme().isDefault(*this)) {
         m_default = false;

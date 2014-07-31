@@ -1,3 +1,28 @@
+2014-07-31  Dean Jackson  <dino@apple.com>
+
+        Default buttons do not pulse in OS X 10.10
+        https://bugs.webkit.org/show_bug.cgi?id=135447
+        <rdar://problem/17875896>
+
+        Reviewed by Dan Bernstein.
+
+        OS X Yosemite does not have the animated pulsing default
+        buttons seen in previous releases. We don't need to have
+        a timer in RenderButton constantly triggering repaints.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintButton): No need to advance the animation.
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleDidChange): Ask the theme if it
+        should advance the animation.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::defaultButtonHasAnimation): Virtual function
+        indicating if the button needs to repaint.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::defaultButtonHasAnimation): Provide platform
+        specific result on Yosemite and above.
+
 2014-07-31  Tim Horton  <timothy_horton@apple.com>
 
         DOM::renderedImageForcingBlackText returns an image with the wrong logical size on 2x displays

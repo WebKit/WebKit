@@ -249,6 +249,8 @@ public:
     virtual IntSize imageControlsButtonPositionOffset() const { return IntSize(); }
 #endif
 
+    virtual bool defaultButtonHasAnimation() const { return false; }
+
 protected:
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;

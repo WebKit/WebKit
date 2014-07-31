@@ -2024,6 +2024,15 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(strToTruncate, width, font, StringTruncator::EnableRoundingHacks);
 }
 
+bool RenderThemeMac::defaultButtonHasAnimation() const
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    return false;
+#else
+    return true;
+#endif
+}
+
 #if ENABLE(SERVICE_CONTROLS)
 NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
 {
