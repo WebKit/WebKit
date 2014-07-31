@@ -64,6 +64,8 @@ void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callback
         DatabaseProcess::shared().getIndexedDatabaseOrigins(callbackID);
         return;
     }
+#else
+    UNUSED_PARAM(types);
 #endif
 
     Vector<SecurityOriginData> results;
@@ -80,6 +82,9 @@ void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes types, const
         DatabaseProcess::shared().deleteIndexedDatabaseEntriesForOrigin(originData, callbackID);
         return;
     }
+#else
+    UNUSED_PARAM(types);
+    UNUSED_PARAM(originData);
 #endif
 
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
@@ -95,6 +100,10 @@ void WebOriginDataManager::deleteEntriesModifiedBetweenDates(WKOriginDataTypes t
         DatabaseProcess::shared().deleteIndexedDatabaseEntriesModifiedBetweenDates(startTime, endTime, callbackID);
         return;
     }
+#else
+    UNUSED_PARAM(types);
+    UNUSED_PARAM(startTime);
+    UNUSED_PARAM(endTime);
 #endif
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
 }
@@ -109,6 +118,8 @@ void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes types, uint64_t ca
         DatabaseProcess::shared().deleteAllIndexedDatabaseEntries(callbackID);
         return;
     }
+#else
+    UNUSED_PARAM(types);
 #endif
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
 }

@@ -1,3 +1,16 @@
+2014-07-31  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        Clean up the WebKit build from unused parameter warning in Webkit2/WebProcess module
+        https://bugs.webkit.org/show_bug.cgi?id=135413
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/OriginData/WebOriginDataManager.cpp:
+        (WebKit::WebOriginDataManager::getOrigins):
+        (WebKit::WebOriginDataManager::deleteEntriesForOrigin):
+        (WebKit::WebOriginDataManager::deleteEntriesModifiedBetweenDates):
+        (WebKit::WebOriginDataManager::deleteAllEntries):
+
 2014-07-31  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Crash accessing m_page in WKAccessibilityPageObject
