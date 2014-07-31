@@ -1,3 +1,17 @@
+2014-07-30  Filip Pizlo  <fpizlo@apple.com>
+
+        NewFunctionExpression and NewFunctionNoCheck should setHaveStructures(true)
+        https://bugs.webkit.org/show_bug.cgi?id=135430
+
+        Reviewed by Mark Hahnenberg.
+
+        We already handled this correctly after the ftlopt merge, but it's useful to have the test.
+
+        * tests/stress/new-function-expression-has-structures.js: Added.
+        (foo.f):
+        (foo.f.prototype.f):
+        (foo):
+
 2014-07-30  Andreas Kling  <akling@apple.com>
 
         Speculative Windows build fix.
