@@ -1,5 +1,24 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171829
+
+    2014-07-30  Enrica Casucci  <enrica@apple.com>
+
+            REGRESSION (WK2 iOS): Inline editing for Chinese and Japanese keyboards does not work in Safari.
+            https://bugs.webkit.org/show_bug.cgi?id=135449
+            <rdar://problem/17824833>
+
+            Reviewed by Benjamin Poulain.
+
+            The WebProcess sends the notification that the gesture modified the phrase boundary,
+            but the flag was not being converted properly, therefore we failed to notify
+            the text input system that a change had occurred.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (toUIWKSelectionFlags):
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171749
 
     2014-07-29  Brady Eidson  <beidson@apple.com>
