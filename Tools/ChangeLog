@@ -1,5 +1,14 @@
 2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ make distcheck.
+
+        * gtk/make-dist.py:
+        (ensure_version_if_possible): Use 4.0 instead of 3.0 as binary
+        version to find the pkg-config file.
+        * gtk/manifest.txt: Add missing resource to the tarball.
+
+2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] make distcheck is building from sources dir instead of dist dir
         https://bugs.webkit.org/show_bug.cgi?id=135457
 

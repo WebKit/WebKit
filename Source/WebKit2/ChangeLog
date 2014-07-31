@@ -1,5 +1,12 @@
 2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ make distcheck.
+
+        * Shared/InteractionInformationAtPosition.h: Only include
+        WebCore/SelectionRect.h for IOS.
+
+2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Bump binary version for 2.6
         https://bugs.webkit.org/show_bug.cgi?id=133724
 
