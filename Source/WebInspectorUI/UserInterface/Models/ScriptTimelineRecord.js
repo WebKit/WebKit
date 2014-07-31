@@ -284,6 +284,7 @@ WebInspector.ScriptTimelineRecord.prototype = {
             return;
 
         var payload = this._profilePayload;
+        delete this._profilePayload;
 
         console.assert(payload.rootNodes instanceof Array);
 
