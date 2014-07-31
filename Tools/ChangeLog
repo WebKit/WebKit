@@ -1,3 +1,15 @@
+2014-07-31  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        [webkitpy] Make diff_text generate correct diff if there is no newline at the end of file
+        https://bugs.webkit.org/show_bug.cgi?id=135381
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.diff_text):
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_diff_text):
+
 2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ make distcheck.

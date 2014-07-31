@@ -108,6 +108,11 @@ class PortTest(unittest.TestCase):
         port.diff_text(
             u'a\xac\u1234\u20ac\U00008000', 'act', 'exp.txt', 'act.txt')
 
+        t1 = "A\n\nB"
+        t2 = "A\n\nB\n\n\n"
+        t3 = "--- exp.txt\n+++ act.txt\n@@ -1,3 +1,5 @@\n A\n \n-B\n\ No newline at end of file\n+B\n+\n+\n"
+        self.assertEqual(t3, port.diff_text(t1, t2, 'exp.txt', 'act.txt'))
+
         # And make sure we actually get diff output.
         diff = port.diff_text('foo', 'bar', 'exp.txt', 'act.txt')
         self.assertIn('foo', diff)

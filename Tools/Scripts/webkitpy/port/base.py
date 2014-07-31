@@ -313,7 +313,12 @@ class Port(object):
                                     actual_text.splitlines(True),
                                     expected_filename,
                                     actual_filename)
-        return ''.join(diff)
+        result = ""
+        for line in diff:
+            result += line
+            if not line.endswith('\n'):
+                result += '\n\ No newline at end of file\n'
+        return result
 
     def check_for_leaks(self, process_name, process_pid):
         # Subclasses should check for leaks in the running process
