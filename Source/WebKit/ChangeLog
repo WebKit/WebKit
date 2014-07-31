@@ -1,3 +1,14 @@
+2014-07-31  Andreas Kling  <akling@apple.com>
+
+        Speculative Windows build fixery, part II.
+
+        This seems to indicate that adding the globalObjectTable to the exports file
+        was the wrong idea:
+
+        1>WebKit.exp : error LNK2001: unresolved external symbol "struct JSC::HashTable const JSC::globalObjectTable" (?globalObjectTable@JSC@@3UHashTable@1@B)
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-07-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Modify version numbering scheme to support 5-tuple versions
