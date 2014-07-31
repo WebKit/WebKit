@@ -375,6 +375,11 @@ LayoutRect RenderNamedFlowThread::decorationsClipRectForBoxInNamedFlowFragment(c
     return visualOverflowRect;
 }
 
+RenderBlock* RenderNamedFlowThread::fragmentFromRenderBoxAsRenderBlock(RenderBox* renderBox, const IntPoint& absolutePoint, const RenderBox& flowedBox)
+{
+    return toRenderNamedFlowThread(renderBox)->fragmentFromAbsolutePointAndBox(absolutePoint, flowedBox);
+}
+
 RenderNamedFlowFragment* RenderNamedFlowThread::fragmentFromAbsolutePointAndBox(const IntPoint& absolutePoint, const RenderBox& flowedBox)
 {
     RenderRegion* startRegion = nullptr;

@@ -62,6 +62,8 @@ public:
     bool hasChild(RenderElement& child) const { return m_flowThreadChildList.contains(&child); }
 #endif
 
+    static RenderBlock* fragmentFromRenderBoxAsRenderBlock(RenderBox*, const IntPoint& absolutePoint, const RenderBox& flowedBox);
+
     void pushDependencies(RenderNamedFlowThreadList&);
 
     virtual void addRegionToThread(RenderRegion*) override;

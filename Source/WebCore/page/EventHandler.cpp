@@ -73,6 +73,7 @@
 #include "RenderFrameSet.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -283,16 +284,50 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Element** stopElement, const IntPoint& wheelEventAbsolutePoint)
+static inline bool didScrollInScrollableAreaForSingleAxis(ScrollableArea* scrollableArea, WheelEvent* wheelEvent, ScrollEventAxis axis)
 {
-    if (!delta)
-        return false;
-    if (!node->renderer())
-        return false;
-    RenderBox& enclosingBox = node->renderer()->enclosingBox();
-    float absDelta = delta > 0 ? delta : -delta;
+    float delta = axis == ScrollEventAxis::Vertical ? wheelEvent->deltaY() : wheelEvent->deltaX();
+    ScrollDirection negativeDirection = axis == ScrollEventAxis::Vertical ? ScrollUp : ScrollLeft;
+    ScrollDirection positiveDirection = axis == ScrollEventAxis::Vertical ? ScrollDown : ScrollRight;
+    return scrollableArea->scroll(delta < 0 ? negativeDirection : positiveDirection, wheelGranularityToScrollGranularity(wheelEvent->deltaMode()), delta > 0 ? delta : -delta);
+}
 
-    return enclosingBox.scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement, &enclosingBox, wheelEventAbsolutePoint);
+static inline bool handleWheelEventInAppropriateEnclosingBoxForSingleAxis(Node* startNode, WheelEvent* wheelEvent, Element** stopElement, ScrollEventAxis axis)
+{
+    if (!startNode->renderer() || (axis == ScrollEventAxis::Vertical && !wheelEvent->deltaY()) || (axis == ScrollEventAxis::Horizontal && !wheelEvent->deltaX()))
+        return false;
+
+    RenderBox& initialEnclosingBox = startNode->renderer()->enclosingBox();
+    if (initialEnclosingBox.isListBox())
+        return didScrollInScrollableAreaForSingleAxis(static_cast<RenderListBox*>(&initialEnclosingBox), wheelEvent, axis);
+
+    RenderBox* currentEnclosingBox = &initialEnclosingBox;
+    while (currentEnclosingBox) {
+        if (RenderLayer* boxLayer = currentEnclosingBox->layer()) {
+            const PlatformWheelEvent* platformEvent = wheelEvent->wheelEvent();
+            bool scrollingWasHandled;
+            if (platformEvent != nullptr)
+                scrollingWasHandled = boxLayer->handleWheelEvent(axis == ScrollEventAxis::Vertical ? platformEvent->copyIgnoringHorizontalDelta() : platformEvent->copyIgnoringVerticalDelta());
+            else
+                scrollingWasHandled = didScrollInScrollableAreaForSingleAxis(boxLayer, wheelEvent, axis);
+
+            if (scrollingWasHandled) {
+                if (stopElement)
+                    *stopElement = currentEnclosingBox->element();
+                return true;
+            }
+        }
+
+        if (stopElement && *stopElement && *stopElement == currentEnclosingBox->element())
+            return true;
+
+        currentEnclosingBox = currentEnclosingBox->containingBlock();
+        if (currentEnclosingBox && currentEnclosingBox->isRenderNamedFlowThread())
+            currentEnclosingBox = RenderNamedFlowThread::fragmentFromRenderBoxAsRenderBlock(currentEnclosingBox, roundedIntPoint(wheelEvent->absoluteLocation()), initialEnclosingBox);
+        if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
+            return false;
+    }
+    return false;
 }
 
 #if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS))
@@ -2631,7 +2666,6 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
         return;
     
     Element* stopElement = m_previousWheelScrolledElement.get();
-    ScrollGranularity granularity = wheelGranularityToScrollGranularity(wheelEvent->deltaMode());
     DominantScrollGestureDirection dominantDirection = DominantScrollGestureDirection::None;
 
     // Workaround for scrolling issues <rdar://problem/14758615>.
@@ -2642,10 +2676,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (dominantDirection != DominantScrollGestureDirection::Vertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
+    if (dominantDirection != DominantScrollGestureDirection::Vertical && handleWheelEventInAppropriateEnclosingBoxForSingleAxis(startNode, wheelEvent, &stopElement, ScrollEventAxis::Horizontal))
         wheelEvent->setDefaultHandled();
     
-    if (dominantDirection != DominantScrollGestureDirection::Horizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopElement, roundedIntPoint(wheelEvent->absoluteLocation())))
+    if (dominantDirection != DominantScrollGestureDirection::Horizontal && handleWheelEventInAppropriateEnclosingBoxForSingleAxis(startNode, wheelEvent, &stopElement, ScrollEventAxis::Vertical))
         wheelEvent->setDefaultHandled();
     
     if (!m_latchedWheelEventElement)

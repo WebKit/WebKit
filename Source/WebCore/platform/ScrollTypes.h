@@ -123,6 +123,8 @@ namespace WebCore {
 
     enum ScrollbarControlSize { RegularScrollbar, SmallScrollbar };
 
+    enum class ScrollEventAxis { Horizontal, Vertical };
+
     typedef unsigned ScrollbarControlState;
 
     enum ScrollbarControlStateMask {

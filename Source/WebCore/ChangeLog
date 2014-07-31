@@ -1,3 +1,26 @@
+2014-07-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor EventHandler to call ScrollAnimator::handleWheelEvent for overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=135195
+
+        Reviewed by Beth Dakin.
+
+        ScrollableArea::handleWheelEvent is not currently being used to handle wheel events for overflow scrolling; it instead directly invokes ScrollableArea::scroll.
+        In order to expose wheel phases on Mac, the PlatformWheelEvent itself should propagate down to ScrollableArea, not just the scroll granularity, direction and
+        multiplier required by ScrollableArea::scroll. With this patch, PlatformWheelEvent will be "shipped" along with the WheelEvent.
+
+        No new tests, since behavior should not have changed.
+
+        * page/EventHandler.cpp:
+        (WebCore::didScrollInScrollableAreaForSingleAxis): Calls ScrollableArea::scroll directly using WheelEvent's data. Used to handle programmatic WheelEvents, e.g. from JavaScript.
+        (WebCore::handleWheelEventInAppropriateEnclosingBoxForSingleAxis): Finds the correct ScrollableArea and attempts to scroll it using the information contained in the WheelEvent via ScrollableArea::handleWheelEvent
+        (WebCore::EventHandler::defaultWheelEventHandler): Updated to use handleWheelEventInAppropriateEnclosingBoxForSingleAxis instead of scrollNode.
+        (WebCore::scrollNode): Deleted.
+        * rendering/RenderListBox.h: Made RenderListBox::scroll public so it can be invoked from EventHandler::handleWheelEventInAppropriateEnclosingBoxForSingleAxis.
+        * rendering/RenderNamedFlowThread.cpp: Refactored to let EventHandler update nextScrollBlock in the case of isRenderNamedFlowThread().
+        (WebCore::RenderNamedFlowThread::fragmentFromRenderBoxAsRenderBlock): 
+        * rendering/RenderNamedFlowThread.h:
+
 2014-07-31  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of: Server trust authentication challenges aren’t sent to the navigation delegate
