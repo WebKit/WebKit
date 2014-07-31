@@ -238,7 +238,7 @@
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Conditional=FONT_LOAD_EVENTS] readonly attribute FontLoader fontloader;
+    [Conditional=FONT_LOAD_EVENTS] readonly attribute FontLoader fonts;
 #endif
 
 #if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)

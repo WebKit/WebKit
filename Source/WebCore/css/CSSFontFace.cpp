@@ -156,13 +156,13 @@ void CSSFontFace::notifyFontLoader(LoadState newState)
 
     switch (newState) {
     case Loading:
-        document->fontloader()->beginFontLoading(m_rule.get());
+        document->fonts()->beginFontLoading(m_rule.get());
         break;
     case Loaded:
-        document->fontloader()->fontLoaded(m_rule.get());
+        document->fonts()->fontLoaded(m_rule.get());
         break;
     case Error:
-        document->fontloader()->loadError(m_rule.get(), m_activeSource);
+        document->fonts()->loadError(m_rule.get(), m_activeSource);
         break;
     default:
         break;
@@ -173,7 +173,7 @@ void CSSFontFace::notifyLoadingDone()
 {
     Document* document = (*m_segmentedFontFaces.begin())->fontSelector()->document();
     if (document)
-        document->fontloader()->loadingDone();
+        document->fonts()->loadingDone();
 }
 #endif
 

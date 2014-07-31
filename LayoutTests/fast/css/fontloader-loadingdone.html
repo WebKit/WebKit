@@ -22,23 +22,23 @@ description('Test that onloadingdone is fired after style recalculation.');
 window.jsTestIsAsync = true;
 
 function runTests() {
-    document.fontloader.onloadingdone = function() {
+    document.fonts.onloadingdone = function() {
         debug('loadingdone');
         testDiv = document.getElementById('test');
         shouldBeEqualToString('window.getComputedStyle(testDiv, 0).width', '48px');
     };
 
-    document.fontloader.notifyWhenFontsReady(function() {
+    document.fonts.notifyWhenFontsReady(function() {
         debug('notifyWhenFontsReady() callback');
         shouldBeEqualToString('window.getComputedStyle(testDiv, 0).width', '48px');
         finishJSTest();
     });
 }
 
-if (document.fontloader)
+if (document.fonts)
     runTests();
 else {
-    testFailed('document.fontloader does not exist');
+    testFailed('document.fonts does not exist');
     finishJSTest();
 }
 </script>

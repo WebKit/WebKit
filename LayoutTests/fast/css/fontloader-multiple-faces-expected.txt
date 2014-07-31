@@ -8,7 +8,7 @@ PASS events['loadstart'] is 2
 PASS events['load'] is 2
 PASS events['error'] is undefined
 PASS events['loadingdone'] is undefined
-PASS document.fontloader.checkFont('10px TestFont') is true
+PASS document.fonts.checkFont('10px TestFont') is true
 PASS events['loadingdone'] is 1
 PASS successfullyParsed is true
 

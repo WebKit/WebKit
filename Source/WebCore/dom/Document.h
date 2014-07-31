@@ -1265,7 +1265,7 @@ public:
     virtual SecurityOrigin* topOrigin() const override;
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    PassRefPtr<FontLoader> fontloader();
+    PassRefPtr<FontLoader> fonts();
 #endif
 
     void ensurePlugInsInjectedScript(DOMWrapperWorld&);

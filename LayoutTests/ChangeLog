@@ -1,3 +1,24 @@
+2014-07-31  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Rename document.fontloader to document.fonts
+        https://bugs.webkit.org/show_bug.cgi?id=135393
+
+        Reviewed by Bem Jones-Bey.
+
+        Update tests to use the new document.fonts name.
+
+        * fast/css/fontloader-download-error.html:
+        * fast/css/fontloader-events.html:
+        * fast/css/fontloader-loadingdone.html:
+        * fast/css/fontloader-multiple-faces-download-error-expected.txt:
+        * fast/css/fontloader-multiple-faces-download-error.html:
+        * fast/css/fontloader-multiple-faces-expected.txt:
+        * fast/css/fontloader-multiple-faces.html:
+        * fast/css/fontloader-multiple-families-expected.txt:
+        * fast/css/fontloader-multiple-families.html:
+        * http/tests/webfont/fontloader-loading-attribute-expected.txt:
+        * http/tests/webfont/fontloader-loading-attribute.html:
+
 2014-07-31  Andrei Bucur  <abucur@adobe.com>
 
         REGRESSION: Search highlight is broken in RTL multicolumn content

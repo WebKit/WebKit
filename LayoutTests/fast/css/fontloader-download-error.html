@@ -47,11 +47,11 @@ function logEvent(e) {
 }
 
 function runTests() {
-    document.fontloader.addEventListener('loadstart', logEvent);
-    document.fontloader.addEventListener('load', logEvent);
-    document.fontloader.addEventListener('error', logEvent);
+    document.fonts.addEventListener('loadstart', logEvent);
+    document.fonts.addEventListener('load', logEvent);
+    document.fonts.addEventListener('error', logEvent);
 
-    document.fontloader.notifyWhenFontsReady(function() {
+    document.fonts.notifyWhenFontsReady(function() {
         shouldBe("events['myfont1']", "['loadstart', 'error']");
         shouldBe("events['myfont2']", "['loadstart', 'error']");
         shouldBe("events['myfont3']", "['loadstart', 'error']");
@@ -61,10 +61,10 @@ function runTests() {
     });
 }
 
-if (document.fontloader)
+if (document.fonts)
     runTests();
 else {
-    testFailed('document.fontloader does not exist');
+    testFailed('document.fonts does not exist');
     finishJSTest();
 }
 </script>

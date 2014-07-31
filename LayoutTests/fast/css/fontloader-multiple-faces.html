@@ -27,14 +27,14 @@ function countEvent(e) {
 }
 
 function runTests() {
-    document.fontloader.addEventListener('loading', countEvent);
-    document.fontloader.addEventListener('loadstart', countEvent);
-    document.fontloader.addEventListener('load', countEvent);
-    document.fontloader.addEventListener('error', countEvent);
-    document.fontloader.addEventListener('loadingdone', countEvent);
+    document.fonts.addEventListener('loading', countEvent);
+    document.fonts.addEventListener('loadstart', countEvent);
+    document.fonts.addEventListener('load', countEvent);
+    document.fonts.addEventListener('error', countEvent);
+    document.fonts.addEventListener('loadingdone', countEvent);
 
-    document.fontloader.loadFont({ font: '10px TestFont', onsuccess: onsuccess, onerror: onerror });
-    document.fontloader.notifyWhenFontsReady(verify);
+    document.fonts.loadFont({ font: '10px TestFont', onsuccess: onsuccess, onerror: onerror });
+    document.fonts.notifyWhenFontsReady(verify);
 }
 
 function onsuccess() {
@@ -43,7 +43,7 @@ function onsuccess() {
     shouldBe("events['load']", "2");
     shouldBe("events['error']", "undefined");
     shouldBe("events['loadingdone']", "undefined");
-    shouldBe("document.fontloader.checkFont('10px TestFont')", "true");
+    shouldBe("document.fonts.checkFont('10px TestFont')", "true");
 }
 
 function onerror() {
@@ -56,10 +56,10 @@ function verify() {
     finishJSTest();
 }
 
-if (document.fontloader)
+if (document.fonts)
     runTests();
 else {
-    testFailed('document.fontloader does not exist');
+    testFailed('document.fonts does not exist');
     finishJSTest();
 }
 </script>

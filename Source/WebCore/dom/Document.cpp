@@ -6074,7 +6074,7 @@ Document* Document::ensureTemplateDocument()
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
-PassRefPtr<FontLoader> Document::fontloader()
+PassRefPtr<FontLoader> Document::fonts()
 {
     if (!m_fontloader)
         m_fontloader = FontLoader::create(this);

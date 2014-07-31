@@ -22,22 +22,22 @@ function handleEvent(e) {
 }
 
 function runTests() {
-    document.fontloader.onloading = handleEvent;
-    document.fontloader.onloadingdone = handleEvent;
-    document.fontloader.onloadstart = handleEvent;
-    document.fontloader.onload = handleEvent;
-    document.fontloader.onerror = handleEvent;
+    document.fonts.onloading = handleEvent;
+    document.fonts.onloadingdone = handleEvent;
+    document.fonts.onloadstart = handleEvent;
+    document.fonts.onload = handleEvent;
+    document.fonts.onerror = handleEvent;
 
-    document.fontloader.notifyWhenFontsReady(function() {
+    document.fonts.notifyWhenFontsReady(function() {
         shouldBe('numberOfEvents', '4');
         finishJSTest();
     });
 }
 
-if (document.fontloader)
+if (document.fonts)
     runTests();
 else {
-    testFailed('document.fontloader does not exist');
+    testFailed('document.fonts does not exist');
     finishJSTest();
 }
 </script>
