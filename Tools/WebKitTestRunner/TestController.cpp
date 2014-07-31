@@ -1198,7 +1198,14 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
 
 bool TestController::canAuthenticateAgainstProtectionSpaceInFrame(WKPageRef, WKFrameRef, WKProtectionSpaceRef protectionSpace, const void*)
 {
-    return WKProtectionSpaceGetAuthenticationScheme(protectionSpace) <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
+    WKProtectionSpaceAuthenticationScheme authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
+
+    if (authenticationScheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
+        return host == "localhost" || host == "127.0.0.1";
+    }
+
+    return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
 }
 
 void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
@@ -1249,6 +1256,18 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
 
 void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge)
 {
+    WKProtectionSpaceRef protectionSpace = WKAuthenticationChallengeGetProtectionSpace(authenticationChallenge);
+    WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(authenticationChallenge);
+
+    if (WKProtectionSpaceGetAuthenticationScheme(protectionSpace) == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        // Any non-empty credential signals to accept the server trust. Since the cross-platform API
+        // doesn't expose a way to create a credential from server trust, we use a password credential.
+
+        WKRetainPtr<WKCredentialRef> credential = adoptWK(WKCredentialCreate(toWK("accept server trust").get(), toWK("").get(), kWKCredentialPersistenceNone));
+        WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
+        return;
+    }
+
     String message;
     if (!m_handlesAuthenticationChallenges)
         message = "didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n";
@@ -1256,7 +1275,6 @@ void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WK
         message = String::format("didReceiveAuthenticationChallenge - Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data());
     m_currentInvocation->outputText(message);
 
-    WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(authenticationChallenge);
     if (!m_handlesAuthenticationChallenges) {
         WKAuthenticationDecisionListenerUseCredential(decisionListener, 0);
         return;
