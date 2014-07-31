@@ -1444,7 +1444,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     LLINT_RETURN(slot.getValue(exec, ident));
 }
 
-static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc, VM& vm)
+static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc, VM&)
 {
     CodeBlock* codeBlock = exec->codeBlock();
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);

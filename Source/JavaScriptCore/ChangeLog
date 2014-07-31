@@ -1,3 +1,13 @@
+2014-07-31  Tanay C  <tanay.c@samsung.com>
+
+        Build warning in webkit/Source/JavaScriptCore/llint/LLIntSlowPaths.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=135414
+
+        Reviewed by Csaba Osztrogonác.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::putToScopeCommon):removed unused parameter from function definition
+
 2014-07-30  Filip Pizlo  <fpizlo@apple.com>
 
         NewFunctionExpression and NewFunctionNoCheck should setHaveStructures(true)
