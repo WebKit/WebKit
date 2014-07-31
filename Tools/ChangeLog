@@ -1,5 +1,19 @@
 2014-07-31  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac, iOS] Remove -setAllowsAnyHTTPSCertificate calls
+        https://bugs.webkit.org/show_bug.cgi?id=135472
+
+        Reviewed by Dan Bernstein.
+
+        We now handle server trust challenges, and don't need such hacks.
+
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
+2014-07-31  Alexey Proskuryakov  <ap@apple.com>
+
         media/track/add-and-remove-track.html and media/media-fragments/TC0001.html are flaky
         on Mac WK2 EWS, asserting under TestRunner::removeAllWebNotificationPermissions
         https://bugs.webkit.org/show_bug.cgi?id=135418
