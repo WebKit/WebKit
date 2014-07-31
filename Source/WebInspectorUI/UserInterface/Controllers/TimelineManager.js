@@ -62,11 +62,19 @@ WebInspector.TimelineManager.prototype = {
     startCapturing: function()
     {
         TimelineAgent.start();
+
+        // COMPATIBILITY (iOS 7): recordingStarted event did not exist yet. Start explicitly.
+        if (!TimelineAgent.hasEvent("recordingStarted"))
+            this.capturingStarted();
     },
 
     stopCapturing: function()
     {
         TimelineAgent.stop();
+
+        // COMPATIBILITY (iOS 7): recordingStopped event did not exist yet. Stop explicitly.
+        if (!TimelineAgent.hasEvent("recordingStopped"))
+            this.capturingStopped();
     },
 
     capturingStarted: function()
