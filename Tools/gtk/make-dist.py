@@ -244,7 +244,7 @@ class Distcheck(object):
         with closing(tarfile.open(tarball_path, 'r')) as tarball:
             tarball.extractall(self.build_root)
 
-    def configure(self, build_dir, install_dir):
+    def configure(self, dist_dir, build_dir, install_dir):
         def create_dir(directory, directory_type):
             try:
                 os.mkdir(directory)
@@ -255,7 +255,7 @@ class Distcheck(object):
         create_dir(build_dir, "build")
         create_dir(install_dir, "install")
 
-        command = ['cmake', '-DPORT=GTK', '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', self.source_root]
+        command = ['cmake', '-DPORT=GTK', '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
         subprocess.check_call(command, cwd=build_dir)
 
     def build(self, build_dir):
@@ -280,7 +280,7 @@ class Distcheck(object):
         install_dir = os.path.join(dist_dir, self.INSTALL_DIRECTORY_NAME)
 
         self.extract_tarball(tarball)
-        self.configure(build_dir, install_dir)
+        self.configure(dist_dir, build_dir, install_dir)
         self.build(build_dir)
         self.install(build_dir)
         self.clean(dist_dir)
