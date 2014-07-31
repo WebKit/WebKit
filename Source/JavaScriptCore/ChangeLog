@@ -1,3 +1,15 @@
+2014-07-31  Mark Lam  <mark.lam@apple.com>
+
+        JSCell::classInfo() belongs in JSCellInlines.h.
+        <https://webkit.org/b/135475>
+
+        Reviewed by Mark Hahnenberg.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::classInfo):
+        * runtime/JSDestructibleObject.h:
+        (JSC::JSCell::classInfo): Deleted.
+
 2014-07-31  Tanay C  <tanay.c@samsung.com>
 
         Build warning in webkit/Source/JavaScriptCore/llint/LLIntSlowPaths.cpp
