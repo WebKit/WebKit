@@ -1,4 +1,30 @@
 =================
+WebKitGTK+  2.5.1
+=================
+
+What's new in WebKitGTK+ 2.5.1?
+
+  - WebKit1 API has been removed.
+  - Binary version bump to make WebKit1 and WebKit2 parallel installable.
+  - Switch to CMake build system.
+  - The WebKitWebView::create signal now receives a WebKitNavigationAction
+    with information about the navigation action that triggered the signal.
+  - WebKitWebViewGroup has been removed from the API and WebKitUserContentManager
+    has been added to handle user stylesheets.
+  - WebKitCertificateInfo has also been removed. WebKitWebView::load-failed-with-tls-errors
+    signal now receives a GTlsCertificate and GTlsCertificateFlags, and
+    webkit_web_context_allow_tls_certificate_for_host() receives a GTlsCertificate.
+  - The view mode API (webkit_web_view_set_view_mode() and webkit_web_view_get_view_mode())
+    has been removed, since WebCore doesn't support view source mode anymore.
+  - The DOM bindings API has been split into stable and unstable parts,
+    and all deprecated methods have been removed. The stable part will
+    keep API/ABI backwards compatibility, while the unstable part might change.
+  - Add API to load arbitrary data optionally giving the encoding and MIME Type.
+  - Add support for plugins using GTK+ 3.
+  - Add HighDPI support for non-accelerated compositing contents.
+  - Use a different user agent string depending on the site.
+
+=================
 WebKitGTK+  2.3.4
 =================
 

@@ -1,5 +1,11 @@
 2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.1 release.
+
+        * gtk/NEWS: Add release notes for 2.5.1.
+
+2014-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ make distcheck.
 
         * Shared/InteractionInformationAtPosition.h: Only include
