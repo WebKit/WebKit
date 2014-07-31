@@ -544,6 +544,15 @@ webkit.org/b/131729 fast/events/touch [ Skip ]
 webkit.org/b/131729 http/tests [ Skip ]
 webkit.org/b/131729 webgl [ Skip ]
 
+webkit.org/b/135194 webgl/1.0.1/conformance/textures/texture-size-cube-maps.html [ Crash Timeout ]
+webkit.org/b/135194 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Crash Timeout ]
+
+webkit.org/b/135196 webgl/1.0.2/conformance/attribs/gl-vertex-attrib-render.html [ Crash Failure Timeout ]
+webkit.org/b/135196 webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Crash Timeout ]
+webkit.org/b/124935 webkit.org/b/135196 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Crash Timeout ]
+webkit.org/b/135196 webgl/conformance/ogles/GL/sin/sin_001_to_006.html [ Crash Timeout ]
+webkit.org/b/135196 webgl/conformance/ogles/GL/vec3/vec3_001_to_008.html [ Crash Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -783,7 +792,6 @@ webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Failure P
 webkit.org/b/124934 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 
 webkit.org/b/124935 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
-webkit.org/b/124935 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Failure Pass ]
 
 # Started to crash after r163871
 webkit.org/b/128905 media/video-fast-seek.html [ Crash Pass ]
@@ -1599,14 +1607,10 @@ webgl/1.0.1/conformance/glsl/misc/shader-with-for-scoping.html [ Failure ]
 webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html [ Failure ]
 webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html [ Failure ]
 webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html [ Failure ]
-webgl/1.0.1/conformance/textures/texture-size-cube-maps.html [ Failure ]
-webgl/1.0.2/conformance/attribs/gl-vertex-attrib-render.html [ Failure ]
 webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure ]
 webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ Failure ]
 webgl/1.0.2/conformance/glsl/literals/float_literal.vert.html [ Failure ]
-webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
-webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
 webgl/1.0.2/conformance/textures/texture-attachment-formats.html [ Failure ]
 webgl/1.0.2/conformance/textures/texture-size-cube-maps.html [ Failure ]
@@ -1616,8 +1620,6 @@ webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Failure ]
 webgl/conformance/attribs/gl-vertex-attrib-render.html [ Failure ]
 webgl/conformance/context/context-lost-restored.html [ Failure ]
 webgl/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Failure ]
-webgl/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
-webgl/conformance/ogles/GL/vec3/vec3_001_to_008.html [ Failure ]
 
 # ANGLE_instanced_arrays not implemented on efl
 fast/canvas/webgl/angle-instanced-arrays.html [ Skip ]
