@@ -95,7 +95,7 @@ using namespace JSC;
 using namespace WTF;
 
 namespace JSC {
-extern const struct HashTable globalObjectTable;
+WTF_IMPORT extern const struct HashTable globalObjectTable;
 }
 
 namespace {

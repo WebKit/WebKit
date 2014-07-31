@@ -46,7 +46,7 @@
 #endif
 
 namespace JSC {
-extern const struct HashTable globalObjectTable;
+WTF_IMPORT extern const struct HashTable globalObjectTable;
 }
 
 const int MaxLineLength = 100 * 1024;

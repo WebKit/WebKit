@@ -1,5 +1,14 @@
 2014-07-30  Andreas Kling  <akling@apple.com>
 
+        Speculative Windows build fix.
+
+        Try to dllimport the dllexported global object HashTable.
+
+        * jsc.cpp:
+        * testRegExp.cpp:
+
+2014-07-30  Andreas Kling  <akling@apple.com>
+
         PropertyName's internal string is always atomic.
         <https://webkit.org/b/135451>
 
