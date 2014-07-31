@@ -1,5 +1,23 @@
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171802
+
+    2014-07-30  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/17199364> [Mac] Popup button arrows appear on the left, underlapping text, when the UI layout direction is right-to-left
+            https://bugs.webkit.org/show_bug.cgi?id=135426
+
+            Reviewed by Dean Jackson.
+
+            No test, because the UI layout direction in the test harness is always left-to-right.
+
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::popupButton): Forced the user interface layout direction of the
+            NSPopUpButtonCell to left-to-right. Added a FIXME about how we could make this vary based on
+            the direction of the <select>, though that would require additional changes elsewhere.
+
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171785
 
     2014-07-29  Andreas Kling  <akling@apple.com>

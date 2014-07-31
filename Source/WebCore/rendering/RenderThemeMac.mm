@@ -1934,6 +1934,11 @@ NSPopUpButtonCell* RenderThemeMac::popupButton() const
         m_popupButton = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popupButton.get() setUsesItemFromMenu:NO];
         [m_popupButton.get() setFocusRingType:NSFocusRingTypeExterior];
+        // We don't want the app's UI layout direction to affect the appearance of popup buttons in
+        // web content, which has its own layout direction.
+        // FIXME: Make this depend on the directionality of the select element, once the rest of the
+        // rendering code can account for the popup arrows appearing on the other side.
+        [m_popupButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
     }
 
     return m_popupButton.get();
