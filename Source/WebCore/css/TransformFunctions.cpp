@@ -78,7 +78,7 @@ static TransformOperation::OperationType transformOperationType(WebKitCSSTransfo
 
 static Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion>(conversionData) : Length(Undefined);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
 }
 
 bool transformsForValue(CSSValue* value, const CSSToLengthConversionData& conversionData, TransformOperations& outOperations)

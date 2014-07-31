@@ -230,7 +230,7 @@ class ApplyPropertyClip {
 private:
     static Length convertToLength(StyleResolver* styleResolver, CSSPrimitiveValue* value)
     {
-        return value->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion | AutoConversion>(styleResolver->state().cssToLengthConversionData());
+        return value->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(styleResolver->state().cssToLengthConversionData());
     }
 public:
     static void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver)

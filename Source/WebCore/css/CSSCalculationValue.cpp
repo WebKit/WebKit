@@ -228,7 +228,7 @@ private:
         case CalcPercentLength: {
             CSSPrimitiveValue* primitiveValue = m_value.get();
             return std::make_unique<CalcExpressionLength>(primitiveValue
-                ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | FractionConversion>(conversionData) : Length(Undefined));
+                ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion>(conversionData) : Length(Undefined));
         }
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.

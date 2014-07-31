@@ -4565,8 +4565,7 @@ enum LengthConversion {
     FixedFloatConversion = 1 << 1,
     AutoConversion = 1 << 2,
     PercentConversion = 1 << 3,
-    FractionConversion = 1 << 4,
-    CalculatedConversion = 1 << 5
+    CalculatedConversion = 1 << 4
 };
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
@@ -4579,8 +4578,6 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLen
         return Length(computeLength<double>(conversionData), Fixed);
     if ((supported & PercentConversion) && isPercentage())
         return Length(getDoubleValue(), Percent);
-    if ((supported & FractionConversion) && isNumber())
-        return Length(getDoubleValue() * 100.0, Percent);
     if ((supported & AutoConversion) && getValueID() == CSSValueAuto)
         return Length(Auto);
     if ((supported & CalculatedConversion) && isCalculated())

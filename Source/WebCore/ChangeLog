@@ -1,3 +1,40 @@
+2014-07-31  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        Eliminate "FractionConversion" from CSSPrimitiveValue::convertToLength
+        https://bugs.webkit.org/show_bug.cgi?id=135377
+
+        Reviewed by Darin Adler.
+
+        The FractionConversion argument in CSSPrimitiveValue::convertToLength
+        doesn't seem to actually have a purpose. It is for converting numbers
+        into Length(x * 100, Percent), but this case shouldn't be reachable.
+        The original patch introducing it doesn't shed any light either:
+        [https://bugs.webkit.org/show_bug.cgi?id=74913
+
+        This patch removes the now unused FractionConversion argument. Note
+        that we can probably also merge the two Fixed conversions, as the
+        two only differ in clamping large numbers (probably unintended).
+
+        Patch by Timothy Loh, backported from Blink: https://codereview.chromium.org/71253002
+
+        No new tests.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::determineCategory):
+        * css/CSSParser.cpp:
+        (WebCore::parseTransformTranslateArguments):
+        (WebCore::parseTranslateTransformValue):
+        (WebCore::parseTransformArguments): Deleted.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyClip::convertToLength):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::convertToIntLength):
+        (WebCore::StyleResolver::convertToFloatLength):
+        * css/TransformFunctions.cpp:
+        (WebCore::convertToFloatLength):
+
 2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.profile missing profile information
