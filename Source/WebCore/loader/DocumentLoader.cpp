@@ -73,7 +73,7 @@
 #include "ArchiveFactory.h"
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 #include "ContentFilter.h"
 #endif
 
@@ -404,7 +404,7 @@ void DocumentLoader::finishedLoading(double finishTime)
         frameLoader()->notifier().dispatchDidFinishLoading(this, identifier, finishTime);
     }
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && m_contentFilter->needsMoreData()) {
         m_contentFilter->finishedAddingData();
         int length;
@@ -662,7 +662,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     }
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     if (response.url().protocolIsInHTTPFamily() && ContentFilter::isEnabled())
         m_contentFilter = std::make_unique<ContentFilter>(response);
 #endif
@@ -819,7 +819,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
         bool userChosen;
         String encoding;
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
         // The content filter's replacement data has a known encoding that might
         // differ from the response's encoding.
         if (m_contentFilter && m_contentFilter->didBlockData()) {
@@ -858,7 +858,7 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
     ASSERT(!mainResourceLoader() || !mainResourceLoader()->defersLoading());
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     bool loadWasBlockedBeforeFinishing = false;
     if (m_contentFilter && m_contentFilter->needsMoreData()) {
         m_contentFilter->addData(data, length);
@@ -887,7 +887,7 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
     if (!isMultipartReplacingLoad())
         commitLoad(data, length);
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     if (loadWasBlockedBeforeFinishing)
         cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
 #endif

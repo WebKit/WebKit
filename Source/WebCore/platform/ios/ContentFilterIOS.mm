@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ContentFilter.h"
 
-#if PLATFORM(IOS) && USE(CONTENT_FILTERING)
+#if PLATFORM(IOS) && ENABLE(CONTENT_FILTERING)
 
 #import "ResourceRequest.h"
 #import "WebCoreThreadRun.h"
@@ -64,4 +64,4 @@ bool ContentFilter::handleUnblockRequestAndDispatchIfSuccessful(const ResourceRe
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS) && USE(CONTENT_FILTERING)
+#endif // PLATFORM(IOS) && ENABLE(CONTENT_FILTERING)

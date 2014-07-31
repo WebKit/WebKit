@@ -2964,14 +2964,14 @@ _wkSetRequestStorageSession
 __ZN7WebCore14ResourceHandle25continueWillCacheResponseEP19NSCachedURLResponse
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 __ZN7WebCore13ContentFilter6decodeEP17NSKeyedUnarchiverRS0_
 __ZN7WebCore13ContentFilterC1Ev
 __ZN7WebCore13ContentFilterD1Ev
 __ZNK7WebCore13ContentFilter6encodeEP15NSKeyedArchiver
 #endif
 
-#if USE(CONTENT_FILTERING) && PLATFORM(IOS)
+#if ENABLE(CONTENT_FILTERING) && PLATFORM(IOS)
 __ZN7WebCore13ContentFilter43handleUnblockRequestAndDispatchIfSuccessfulERKNS_15ResourceRequestENSt3__18functionIFvvEEE
 #endif
 

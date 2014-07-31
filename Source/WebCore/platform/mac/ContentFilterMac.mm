@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ContentFilter.h"
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 
 #import "ResourceResponse.h"
 #import "SoftLinking.h"
@@ -256,4 +256,4 @@ bool ContentFilter::decode(NSKeyedUnarchiver *unarchiver, ContentFilter& content
 
 } // namespace WebCore
 
-#endif // USE(CONTENT_FILTERING)
+#endif // ENABLE(CONTENT_FILTERING)

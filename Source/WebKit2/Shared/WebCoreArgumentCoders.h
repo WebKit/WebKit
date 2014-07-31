@@ -105,7 +105,7 @@ struct ViewportArguments;
 }
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 namespace WebCore {
 class ContentFilter;
 }
@@ -446,7 +446,7 @@ template<> struct ArgumentCoder<WebCore::BlobPart> {
     static bool decode(ArgumentDecoder&, WebCore::BlobPart&);
 };
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 template<> struct ArgumentCoder<WebCore::ContentFilter> {
     static void encode(ArgumentEncoder&, const WebCore::ContentFilter&);
     static bool decode(ArgumentDecoder&, WebCore::ContentFilter&);

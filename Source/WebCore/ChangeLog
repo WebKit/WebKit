@@ -1,3 +1,27 @@
+2014-07-30  Andy Estes  <aestes@apple.com>
+
+        USE(CONTENT_FILTERING) should be ENABLE(CONTENT_FILTERING)
+        https://bugs.webkit.org/show_bug.cgi?id=135439
+
+        Reviewed by Tim Horton.
+
+        We now support two different platform content filters, and will soon support a mock content filter (as part of
+        webkit.org/b/128858). This makes content filtering a feature of WebKit, not just an adoption of a third-party
+        library. ENABLE() is the correct macro to use for such a feature.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.exp.in:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::dataReceived):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoaderClient.h:
+        * platform/ContentFilter.h:
+        * platform/ios/ContentFilterIOS.mm:
+        * platform/mac/ContentFilterMac.mm:
+
 2014-07-30  Andreas Kling  <akling@apple.com>
 
         Static hash tables no longer need to be coupled with a VM.

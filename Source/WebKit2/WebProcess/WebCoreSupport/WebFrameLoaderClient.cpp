@@ -1628,7 +1628,7 @@ void WebFrameLoaderClient::willChangeCurrentHistoryItem()
     webPage->willChangeCurrentHistoryItemForMainFrame();
 }
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter)
 {
     if (WebPage* webPage = m_frame->page())

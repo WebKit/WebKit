@@ -35,7 +35,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 #include <WebCore/ContentFilter.h>
 #endif
 
@@ -117,7 +117,7 @@ public:
     WebFramePolicyListenerProxy* setUpPolicyListenerProxy(uint64_t listenerID);
     WebFormSubmissionListenerProxy* setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     void setContentFilterForBlockedLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter) { m_contentFilterForBlockedLoad = WTF::move(contentFilter); }
     bool contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest&);
 #endif
@@ -136,7 +136,7 @@ private:
     RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     std::unique_ptr<WebCore::ContentFilter> m_contentFilterForBlockedLoad;
 #endif
 };

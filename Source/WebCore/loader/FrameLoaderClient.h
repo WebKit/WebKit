@@ -98,7 +98,7 @@ namespace WebCore {
     class QuickLookHandle;
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     class ContentFilter;
 #endif
 
@@ -336,7 +336,7 @@ namespace WebCore {
         virtual void didCreateQuickLookHandle(QuickLookHandle&) { }
 #endif
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
         virtual void contentFilterDidBlockLoad(std::unique_ptr<ContentFilter>) { }
 #endif
     };

@@ -409,7 +409,7 @@ namespace WebCore {
         friend class ApplicationCacheHost;  // for substitute resource delivery
         OwnPtr<ApplicationCacheHost> m_applicationCacheHost;
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
         std::unique_ptr<ContentFilter> m_contentFilter;
 #endif
     };

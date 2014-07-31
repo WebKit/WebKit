@@ -127,7 +127,7 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
     m_frameLoadState.didStartProvisionalLoad(url);
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
     m_contentFilterForBlockedLoad = nullptr;
 #endif
 }
@@ -233,7 +233,7 @@ void WebFrameProxy::setUnreachableURL(const String& unreachableURL)
     m_frameLoadState.setUnreachableURL(unreachableURL);
 }
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 bool WebFrameProxy::contentFilterDidHandleNavigationAction(const WebCore::ResourceRequest& request)
 {
 #if PLATFORM(IOS)

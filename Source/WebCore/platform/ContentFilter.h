@@ -26,7 +26,7 @@
 #ifndef ContentFilter_h
 #define ContentFilter_h
 
-#if USE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -94,6 +94,6 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(CONTENT_FILTERING)
+#endif // ENABLE(CONTENT_FILTERING)
 
 #endif // ContentFilter_h
