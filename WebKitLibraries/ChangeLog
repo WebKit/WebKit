@@ -1,3 +1,26 @@
+2014-07-30  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171825
+
+    2014-07-29  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] Modify version numbering scheme to support 5-tuple versions
+            https://bugs.webkit.org/show_bug.cgi?id=135400
+            <rdar://problem/17849033>
+    
+            Reviewed by David Kilzer.
+    
+            Revise the auto-version.pl script so that it generates a set of packed
+            version tuples that allow us to map 5-tuple versions into something
+            that will work with Windows' 3-tuple version structure.
+    
+            * win/tools/scripts/auto-version.pl:
+            (packTwoValues): Added,
+            (splitVersion): Revised to return packed combination of minor-tiny and
+            micro-nano to be used as "MINOR" and "TINY" portion of version.
+            (splitBuildMajorVersion): Deleted.
+            * win/tools/scripts/version-stamp.pl: Added.
+
 2014-07-22 Dana Burkart <dburkart@apple.com>
     
         Merge r171305.

@@ -18,6 +18,6 @@ echo Copying resources...
 mkdir "%ResourcesDirectory%" 2>NUL
 xcopy /y /d "%PROJECTDIR%\..\..\win\WebKit.resources\Info.plist" "%ResourcesDirectory%" >NUL
 
-if exist "%WEBKIT_LIBRARIES%\tools\VersionStamper\VersionStamper.exe" "%WEBKIT_LIBRARIES%\tools\VersionStamper\VersionStamper.exe" --verbose "%TARGETPATH%"
+perl "%WEBKIT_LIBRARIES%\tools\scripts\version-stamp.pl" "%INTDIR%" "%TARGETPATH%"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
