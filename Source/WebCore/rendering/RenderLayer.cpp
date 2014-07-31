@@ -2730,12 +2730,12 @@ IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrol
     IntRect rect = scrollbarRect;
     rect.move(scrollbarOffset(scrollbar));
 
-    return renderer().view().frameView().convertFromRenderer(&renderer(), rect);
+    return renderer().view().frameView().convertFromRendererToContainingView(&renderer(), rect);
 }
 
 IntRect RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
 {
-    IntRect rect = renderer().view().frameView().convertToRenderer(&renderer(), parentRect);
+    IntRect rect = renderer().view().frameView().convertFromContainingViewToRenderer(&renderer(), parentRect);
     rect.move(-scrollbarOffset(scrollbar));
     return rect;
 }
@@ -2744,12 +2744,12 @@ IntPoint RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scro
 {
     IntPoint point = scrollbarPoint;
     point.move(scrollbarOffset(scrollbar));
-    return renderer().view().frameView().convertFromRenderer(&renderer(), point);
+    return renderer().view().frameView().convertFromRendererToContainingView(&renderer(), point);
 }
 
 IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
 {
-    IntPoint point = renderer().view().frameView().convertToRenderer(&renderer(), parentPoint);
+    IntPoint point = renderer().view().frameView().convertFromContainingViewToRenderer(&renderer(), parentPoint);
     point.move(-scrollbarOffset(scrollbar));
     return point;
 }

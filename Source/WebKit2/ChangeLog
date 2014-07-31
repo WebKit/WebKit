@@ -1,3 +1,17 @@
+2014-07-31  Beth Dakin  <bdakin@apple.com>
+
+        Hit-testing broken in WebKit 1 views with AppKit's contentInsets
+        https://bugs.webkit.org/show_bug.cgi?id=135434
+        -and corresponding-
+        <rdar://problem/17850323>
+
+        Reviewed by Benjamin Poulain.
+
+        Re-named functions.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::convertFromScrollbarToContainingView):
+        (WebKit::PDFPlugin::convertFromContainingViewToScrollbar):
+
 2014-07-31  Oliver Hunt  <oliver@apple.com>
 
         Various SSO services need the networking process to be able to spoof its bundle id

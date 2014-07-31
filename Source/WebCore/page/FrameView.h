@@ -387,10 +387,10 @@ public:
     void scrollElementToRect(Element*, const IntRect&);
 
     // Methods to convert points and rects between the coordinate space of the renderer, and this view.
-    IntRect convertFromRenderer(const RenderElement*, const IntRect&) const;
-    IntRect convertToRenderer(const RenderElement*, const IntRect&) const;
-    IntPoint convertFromRenderer(const RenderElement*, const IntPoint&) const;
-    IntPoint convertToRenderer(const RenderElement*, const IntPoint&) const;
+    IntRect convertFromRendererToContainingView(const RenderElement*, const IntRect&) const;
+    IntRect convertFromContainingViewToRenderer(const RenderElement*, const IntRect&) const;
+    IntPoint convertFromRendererToContainingView(const RenderElement*, const IntPoint&) const;
+    IntPoint convertFromContainingViewToRenderer(const RenderElement*, const IntPoint&) const;
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
 
@@ -465,8 +465,8 @@ public:
     virtual int footerHeight() const override { return m_footerHeight; }
     void setFooterHeight(int);
 
-    virtual float topContentInset() const override;
-    void topContentInsetDidChange();
+    virtual float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const override;
+    void topContentInsetDidChange(float newTopContentInset);
 
     virtual void willStartLiveResize() override;
     virtual void willEndLiveResize() override;
