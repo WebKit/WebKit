@@ -52,17 +52,12 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
     , m_repeatingTimer(this, &SpinButtonElement::repeatingTimerFired)
 {
     setHasCustomStyleResolveCallbacks();
+    setPseudo(AtomicString("-webkit-inner-spin-button", AtomicString::ConstructFromLiteral));
 }
 
 PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
     return adoptRef(new SpinButtonElement(document, spinButtonOwner));
-}
-
-const AtomicString& SpinButtonElement::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, innerPseudoId, ("-webkit-inner-spin-button", AtomicString::ConstructFromLiteral));
-    return innerPseudoId;
 }
 
 void SpinButtonElement::willDetachRenderers()

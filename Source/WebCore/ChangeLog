@@ -1,5 +1,19 @@
 2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
 
+        Remove SpinButtonElement::shadowPseudoId
+        https://bugs.webkit.org/show_bug.cgi?id=135436
+
+        Reviewed by Andreas Kling.
+
+        Use the generic pseudo.
+
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::shadowPseudoId): Deleted.
+        * html/shadow/SpinButtonElement.h:
+
+2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
+
         Clean up YouTubeEmbedShadowElement
         https://bugs.webkit.org/show_bug.cgi?id=135437
 

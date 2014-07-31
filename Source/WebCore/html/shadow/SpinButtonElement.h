@@ -69,7 +69,6 @@ public:
 private:
     SpinButtonElement(Document&, SpinButtonOwner&);
 
-    virtual const AtomicString& shadowPseudoId() const override;
     virtual void willDetachRenderers() override;
     virtual bool isSpinButtonElement() const override { return true; }
     virtual bool isDisabledFormControl() const override { return shadowHost() && shadowHost()->isDisabledFormControl(); }
