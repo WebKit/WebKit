@@ -86,7 +86,7 @@ static inline void appendKeyValuePair(WebMemoryStatistics& stats, const String& 
 
 static ApplicationMemoryStats sampleMemoryAllocatedForApplication()
 {
-    ApplicationMemoryStats applicationStats;
+    ApplicationMemoryStats applicationStats = {0, 0, 0, 0, 0, 0, 0};
     char processPath[maxProcessPath];
     snprintf(processPath, maxProcessPath, "/proc/self/statm");
     FILE* statmFileDescriptor = fopen(processPath, "r");

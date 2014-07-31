@@ -1,3 +1,15 @@
+2014-07-31  Przemyslaw Kuczynski  <p.kuczynski@samsung.com>
+
+        Fix uninitialized scalar variable
+        https://bugs.webkit.org/show_bug.cgi?id=135461
+
+        Reviewed by Alexey Proskuryakov.
+
+        If fopen fails, returned ApplicationMemoryStats structure will be uninitialized
+
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::sampleMemoryAllocatedForApplication): Initialized applicationStats.
+
 2014-07-31  Rohit Kumar  <kumar.rohit@samsung.com>
 
         Clean up the WebKit build from unused parameter warning in Webkit2/WebProcess module
