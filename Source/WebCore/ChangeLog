@@ -1,3 +1,10 @@
+2014-07-31  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix building with the OS X 10.9 SDK while targeting OS X 10.8.
+
+        * platform/network/cocoa/CredentialCocoa.mm:
+        (WebCore::toCredentialPersistence):
+
 2014-07-31  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(??): [iOS] Disabling MediaPlaybackRequiresUserGesture does not remove user gesture requirement for entering full screen.

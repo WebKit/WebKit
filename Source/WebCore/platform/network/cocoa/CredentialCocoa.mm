@@ -26,6 +26,13 @@
 #import "config.h"
 #import "CredentialCocoa.h"
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED == 1080
+// This value is available in OS X 10.8 but only appeared in the OS X 10.9 SDK.
+enum {
+    NSURLCredentialPersistenceSynchronizable = 3
+};
+#endif
+
 #if USE(CFNETWORK)
 @interface NSURLCredential (WebDetails)
 - (id)_initWithCFURLCredential:(CFURLCredentialRef)credential;
@@ -58,9 +65,7 @@ static CredentialPersistence toCredentialPersistence(NSURLCredentialPersistence 
     case NSURLCredentialPersistenceForSession:
         return CredentialPersistenceForSession;
     case NSURLCredentialPersistencePermanent:
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     case NSURLCredentialPersistenceSynchronizable:
-#endif
         return CredentialPersistencePermanent;
     }
 
