@@ -1,3 +1,16 @@
+2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a layout test for Geolocation's request queueing for hidden pages
+        https://bugs.webkit.org/show_bug.cgi?id=135402
+
+        Reviewed by Zalan Bujtas.
+
+        Sam added the queueing feature in r171188. This patch adds a layout test
+        for the simplest case.
+
+        * fast/dom/Geolocation/requestQueuingForHiddenPage-expected.txt: Added.
+        * fast/dom/Geolocation/requestQueuingForHiddenPage.html: Added.
+
 2014-07-30  Pratik Solanki  <psolanki@apple.com>
 
         Move iphone-simulator test results landed in r171094 to the correct directory.
