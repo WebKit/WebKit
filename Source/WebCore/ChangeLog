@@ -1,3 +1,25 @@
+2014-07-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Cleanup DetailsMarkerControl
+        https://bugs.webkit.org/show_bug.cgi?id=135429
+
+        Reviewed by Andreas Kling.
+
+        Remove the override of shadowPseudoId(). This is a simple type of shadowId,
+        it should use the generic pseudo() path.
+
+        Move DetailsMarkerControl::create() out-of-line. One could justify inlining the constructor,
+        inlining the ::create() function has little value.
+
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::create):
+        (WebCore::DetailsMarkerControl::DetailsMarkerControl):
+        (WebCore::DetailsMarkerControl::rendererIsNeeded):
+        (WebCore::DetailsMarkerControl::shadowPseudoId): Deleted.
+        (WebCore::DetailsMarkerControl::summaryElement): Deleted.
+        * html/shadow/DetailsMarkerControl.h:
+        (WebCore::DetailsMarkerControl::create): Deleted.
+
 2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove UploadButtonElement::shadowPseudoId()

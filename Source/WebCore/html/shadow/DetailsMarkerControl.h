@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,11 +33,8 @@
 #define DetailsMarkerControl_h
 
 #include "HTMLDivElement.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
-
-class HTMLSummaryElement;
 
 class DetailsMarkerControl final : public HTMLDivElement {
 public:
@@ -47,15 +45,7 @@ private:
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual bool rendererIsNeeded(const RenderStyle&) override;
-    virtual const AtomicString& shadowPseudoId() const override;
-
-    HTMLSummaryElement* summaryElement();
 };
-
-inline PassRefPtr<DetailsMarkerControl> DetailsMarkerControl::create(Document& document)
-{
-    return adoptRef(new DetailsMarkerControl(document));
-}
 
 }
 

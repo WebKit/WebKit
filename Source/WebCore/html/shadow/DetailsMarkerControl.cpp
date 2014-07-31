@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,11 +39,15 @@
 
 namespace WebCore {
 
-using namespace HTMLNames;
+PassRefPtr<DetailsMarkerControl> DetailsMarkerControl::create(Document& document)
+{
+    return adoptRef(new DetailsMarkerControl(document));
+}
 
 DetailsMarkerControl::DetailsMarkerControl(Document& document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, document)
 {
+    setPseudo(AtomicString("-webkit-details-marker", AtomicString::ConstructFromLiteral));
 }
 
 RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(PassRef<RenderStyle> style)
@@ -52,18 +57,7 @@ RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(PassRef<Ren
 
 bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)
 {
-    return summaryElement()->isMainSummary() && HTMLDivElement::rendererIsNeeded(style);
-}
-
-const AtomicString& DetailsMarkerControl::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-details-marker", AtomicString::ConstructFromLiteral));
-    return pseudId;
-}
-
-HTMLSummaryElement* DetailsMarkerControl::summaryElement()
-{
-    return toHTMLSummaryElement(shadowHost());
+    return toHTMLSummaryElement(shadowHost())->isMainSummary() && HTMLDivElement::rendererIsNeeded(style);
 }
 
 }
