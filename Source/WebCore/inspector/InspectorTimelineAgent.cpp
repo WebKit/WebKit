@@ -76,14 +76,22 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::InspectorFro
     m_backendDispatcher = InspectorTimelineBackendDispatcher::create(backendDispatcher, this);
 
     m_instrumentingAgents->setPersistentInspectorTimelineAgent(this);
+
+    if (m_scriptDebugServer)
+        m_scriptDebugServer->recompileAllJSFunctions();
 }
 
-void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
     m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
+
+    if (reason != InspectorDisconnectReason::InspectedTargetDestroyed) {
+        if (m_scriptDebugServer)
+            m_scriptDebugServer->recompileAllJSFunctions();
+    }
 
     ErrorString error;
     stop(&error);
@@ -209,26 +217,29 @@ void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scri
 {
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
 
-    if (frame && !m_recordingProfile) {
-        m_recordingProfile = true;
+    if (frame && !m_recordingProfileDepth) {
+        ++m_recordingProfileDepth;
         startProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
     }
 }
 
 void InspectorTimelineAgent::didCallFunction(Frame* frame)
 {
-    if (frame && m_recordingProfile) {
-        if (m_recordStack.isEmpty())
-            return;
+    if (frame && m_recordingProfileDepth) {
+        --m_recordingProfileDepth;
+        ASSERT(m_recordingProfileDepth >= 0);
 
-        TimelineRecordEntry& entry = m_recordStack.last();
-        ASSERT(entry.type == TimelineRecordType::FunctionCall);
+        if (!m_recordingProfileDepth) {
+            if (m_recordStack.isEmpty())
+                return;
 
-        RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
-        if (profile)
-            TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
+            TimelineRecordEntry& entry = m_recordStack.last();
+            ASSERT(entry.type == TimelineRecordType::FunctionCall);
 
-        m_recordingProfile = false;
+            RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline FunctionCall"));
+            if (profile)
+                TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
+        }
     }
 
     didCompleteCurrentRecord(TimelineRecordType::FunctionCall);
@@ -380,26 +391,29 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 {
     pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, frame);
 
-    if (frame && !m_recordingProfile) {
-        m_recordingProfile = true;
+    if (frame && !m_recordingProfileDepth) {
+        ++m_recordingProfileDepth;
         startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
     }
 }
 
 void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
 {
-    if (frame && m_recordingProfile) {
-        if (m_recordStack.isEmpty())
-            return;
+    if (frame && m_recordingProfileDepth) {
+        --m_recordingProfileDepth;
+        ASSERT(m_recordingProfileDepth >= 0);
+        
+        if (!m_recordingProfileDepth) {
+            if (m_recordStack.isEmpty())
+                return;
 
-        TimelineRecordEntry& entry = m_recordStack.last();
-        ASSERT(entry.type == TimelineRecordType::EvaluateScript);
+            TimelineRecordEntry& entry = m_recordStack.last();
+            ASSERT(entry.type == TimelineRecordType::EvaluateScript);
 
-        RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
-        if (profile)
-            TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
-
-        m_recordingProfile = false;
+            RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
+            if (profile)
+                TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
+        }
     }
 
     didCompleteCurrentRecord(TimelineRecordType::EvaluateScript);
@@ -666,8 +680,8 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)
     , m_client(client)
+    , m_recordingProfileDepth(0)
     , m_enabled(false)
-    , m_recordingProfile(false)
 {
 }
 

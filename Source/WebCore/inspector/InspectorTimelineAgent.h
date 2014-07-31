@@ -282,8 +282,8 @@ private:
 
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
+    int m_recordingProfileDepth;
     bool m_enabled;
-    bool m_recordingProfile;
 };
 
 } // namespace WebCore
