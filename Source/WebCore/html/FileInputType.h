@@ -43,7 +43,7 @@ class DragData;
 class FileList;
 class Icon;
 
-class FileInputType : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient {
+class FileInputType final : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient {
 public:
     explicit FileInputType(HTMLInputElement&);
     virtual ~FileInputType();

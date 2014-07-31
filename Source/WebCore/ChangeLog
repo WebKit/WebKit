@@ -1,5 +1,22 @@
 2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
 
+        Remove UploadButtonElement::shadowPseudoId()
+        https://bugs.webkit.org/show_bug.cgi?id=135435
+
+        Reviewed by Andreas Kling.
+
+        Use the generic pseudo() path instead of a custom shadowPseudoId().
+
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::create):
+        (WebCore::UploadButtonElement::createForMultiple):
+        (WebCore::UploadButtonElement::UploadButtonElement):
+        Set the type in the common constructor instead of the call sites.
+        (WebCore::UploadButtonElement::shadowPseudoId): Deleted.
+        * html/FileInputType.h:
+
+2014-07-30  Benjamin Poulain  <bpoulain@apple.com>
+
         Remove SpinButtonElement::shadowPseudoId
         https://bugs.webkit.org/show_bug.cgi?id=135436
 

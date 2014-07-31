@@ -45,21 +45,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class UploadButtonElement : public HTMLInputElement {
+class UploadButtonElement final : public HTMLInputElement {
 public:
     static PassRefPtr<UploadButtonElement> create(Document&);
     static PassRefPtr<UploadButtonElement> createForMultiple(Document&);
 
 private:
     UploadButtonElement(Document&);
-
-    virtual const AtomicString& shadowPseudoId() const override;
 };
 
 PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document& document)
 {
     RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
-    button->setType("button");
     button->setValue(fileButtonChooseFileLabel());
     return button.release();
 }
@@ -67,7 +64,6 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document& document)
 PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document& document)
 {
     RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
-    button->setType("button");
     button->setValue(fileButtonChooseMultipleFilesLabel());
     return button.release();
 }
@@ -75,12 +71,8 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document&
 UploadButtonElement::UploadButtonElement(Document& document)
     : HTMLInputElement(inputTag, document, 0, false)
 {
-}
-
-const AtomicString& UploadButtonElement::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-file-upload-button", AtomicString::ConstructFromLiteral));
-    return pseudoId;
+    setType(ASCIILiteral("button"));
+    setPseudo(AtomicString("-webkit-file-upload-button", AtomicString::ConstructFromLiteral));
 }
 
 FileInputType::FileInputType(HTMLInputElement& element)
