@@ -1,3 +1,27 @@
+2014-07-31  Alexey Proskuryakov  <ap@apple.com>
+
+        media/track/add-and-remove-track.html and media/media-fragments/TC0001.html are flaky
+        on Mac WK2 EWS, asserting under TestRunner::removeAllWebNotificationPermissions
+        https://bugs.webkit.org/show_bug.cgi?id=135418
+
+        Reviewed by Anders Carlsson.
+
+        This was only happening in shared web process mode, because WKBundlePostMessage
+        has different behavior then. When there is no process, the message is dropped on
+        the floor in multiple process mode, but it's stored to be delivered after launch
+        in shared process mode.
+
+        So, calling resetStateToConsistentValues() resulted in storing a Reset bundle message
+        that was delivered immediately after launch, when there was nothing to reset.
+
+        We don't actually need to reset anything at this point, as the previous call has
+        already reset everything UI process side, and web process is brand new. All we need
+        is to reattach the page to a process, as invoke() expects one to exist.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::reattachPageToWebProcess):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp: (WTR::TestInvocation::invoke):
+
 2014-07-31  Dan Bernstein  <mitz@apple.com>
 
         [WK2] Regression tests can't load HTTPS pages with NetworkProcess due to self-signed certificate

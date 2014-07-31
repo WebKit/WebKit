@@ -205,7 +205,8 @@ end:
         // The process froze while loading about:blank, let's start a fresh one.
         // It would be nice to report that the previous test froze after dumping results, but we have no way to do that.
         TestController::shared().terminateWebContentProcess();
-        TestController::shared().resetStateToConsistentValues();
+        // Make sure that we have a process, as invoke() will need one to send bundle messages for the next test.
+        TestController::shared().reattachPageToWebProcess();
     }
 }
 

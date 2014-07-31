@@ -98,6 +98,7 @@ public:
     void resetPreferencesToConsistentValues();
 
     void terminateWebContentProcess();
+    void reattachPageToWebProcess();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 

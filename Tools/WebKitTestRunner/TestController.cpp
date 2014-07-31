@@ -663,6 +663,14 @@ void TestController::terminateWebContentProcess()
     WKPageTerminate(m_mainWebView->page());
 }
 
+void TestController::reattachPageToWebProcess()
+{
+    // Loading a web page is the only way to reattach an existing page to a process.
+    m_doneResetting = false;
+    WKPageLoadURL(m_mainWebView->page(), blankURL());
+    runUntil(m_doneResetting, LongTimeout);
+}
+
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
     bool isSVGW3CTest = strstr(test.pathOrURL(), "svg/W3C-SVG-1.1") || strstr(test.pathOrURL(), "svg\\W3C-SVG-1.1");
