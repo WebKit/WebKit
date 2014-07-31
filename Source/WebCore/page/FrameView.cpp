@@ -3690,7 +3690,7 @@ void FrameView::paintContents(GraphicsContext* context, const IntRect& dirtyRect
     while (eltRenderer && eltRenderer->isRenderInline() && !toRenderInline(eltRenderer)->firstLineBox())
         eltRenderer = eltRenderer->parent();
 
-    rootLayer->paint(context, dirtyRect, m_paintBehavior, eltRenderer);
+    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, eltRenderer);
     if (rootLayer->containsDirtyOverlayScrollbars())
         rootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, eltRenderer);
 

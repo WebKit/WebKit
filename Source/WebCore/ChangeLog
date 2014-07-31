@@ -1,3 +1,25 @@
+2014-07-31  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Region painting needs to take subpixel accumulation into account.
+        https://bugs.webkit.org/show_bug.cgi?id=135469
+
+        Similar to non-region painting, when the context is translated, we need to propagate
+        the subpixel difference so that renderers get snapped to the same position as if they
+        were not part of a region.
+
+        Reviewed by Simon Fraser.
+
+        Covered by existing tests/not testable (webkit.org/b/135470)
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+
 2014-07-31  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Video in an <embed> has a bad aspect ratio when in fullscreen mode.

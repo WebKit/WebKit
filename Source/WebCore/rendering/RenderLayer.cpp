@@ -3546,11 +3546,11 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
     return ScrollableArea::scroll(direction, granularity, multiplier);
 }
 
-void RenderLayer::paint(GraphicsContext* context, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject* subtreePaintRoot, PaintLayerFlags paintFlags)
+void RenderLayer::paint(GraphicsContext* context, const LayoutRect& damageRect, const LayoutSize& subpixelAccumulation, PaintBehavior paintBehavior, RenderObject* subtreePaintRoot, PaintLayerFlags paintFlags)
 {
     OverlapTestRequestMap overlapTestRequests;
 
-    LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, LayoutSize(), subtreePaintRoot, &overlapTestRequests);
+    LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, subpixelAccumulation, subtreePaintRoot, &overlapTestRequests);
     paintLayer(context, paintingInfo, paintFlags);
 
     OverlapTestRequestMap::iterator end = overlapTestRequests.end();
@@ -6680,21 +6680,19 @@ void RenderLayer::filterNeedsRepaint()
 void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, RenderNamedFlowFragment* region, LayoutRect paintDirtyRect, LayoutPoint paintOffset, PaintBehavior paintBehavior, PaintLayerFlags paintFlags)
 {
     LayoutRect regionContentBox = toRenderBox(region->layerOwner()).contentBoxRect();
-    LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location()) + region->fragmentContainer().scrolledContentOffset();
-
-    FloatPoint adjustedPaintOffset = roundedForPainting(LayoutPoint(-moveOffset.width(), -moveOffset.height()), renderer().document().deviceScaleFactor());
-    paintDirtyRect.move(moveOffset);
-
-    context->save();
-    context->translate(adjustedPaintOffset.x(), adjustedPaintOffset.y());
-
     CurrentRenderFlowThreadMaintainer flowThreadMaintainer(toRenderFlowThread(&renderer()));
     CurrentRenderRegionMaintainer regionMaintainer(*region);
-
     region->setRegionObjectsRegionStyle();
-    paint(context, paintDirtyRect, paintBehavior, nullptr, paintFlags | PaintLayerTemporaryClipRects);
-    region->restoreRegionObjectsOriginalStyle();
 
+    LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location()) + region->fragmentContainer().scrolledContentOffset();
+    FloatPoint adjustedPaintOffset = roundedForPainting(toLayoutPoint(moveOffset), renderer().document().deviceScaleFactor());
+    context->save();
+    context->translate(-adjustedPaintOffset.x(), -adjustedPaintOffset.y());
+
+    LayoutSize subpixelAccumulation = moveOffset - toLayoutSize(LayoutPoint(adjustedPaintOffset));
+    paintDirtyRect.move(moveOffset);
+    paint(context, paintDirtyRect, subpixelAccumulation, paintBehavior, nullptr, paintFlags | PaintLayerTemporaryClipRects);
+    region->restoreRegionObjectsOriginalStyle();
     context->restore();
 }
 

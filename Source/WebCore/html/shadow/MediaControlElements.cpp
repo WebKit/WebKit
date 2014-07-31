@@ -1534,7 +1534,7 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
     if (!buffer)
         return nullptr;
 
-    layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, nullptr, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+    layer->paint(buffer->context(), paintingRect, LayoutSize(), PaintBehaviorFlattenCompositingLayers, nullptr, RenderLayer::PaintLayerPaintingCompositingAllPhases);
 
     return buffer->copyImage();
 }

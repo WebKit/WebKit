@@ -671,7 +671,8 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* subtreePaintRoot = nullptr, PaintLayerFlags = 0);
+    void paint(GraphicsContext*, const LayoutRect& damageRect, const LayoutSize& subpixelAccumulation = LayoutSize(), PaintBehavior = PaintBehaviorNormal,
+        RenderObject* subtreePaintRoot = nullptr, PaintLayerFlags = 0);
     bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior, RenderObject* subtreePaintRoot = nullptr);
