@@ -1,5 +1,13 @@
 2014-07-31  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed typo correction (and build fix).
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]): Use correct
+        property name (_fullScreenIsEnabled -> _fullScreenEnabled)
+
+2014-07-31  Brent Fulgham  <bfulgham@apple.com>
+
         MiniBrowser Should Support Fullscreen Videos in WebKit2 Mode
         https://bugs.webkit.org/show_bug.cgi?id=135482
 

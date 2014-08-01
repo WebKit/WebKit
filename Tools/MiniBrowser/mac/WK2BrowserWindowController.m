@@ -59,7 +59,7 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
         configuration.preferences._tiledScrollingIndicatorVisible = [self tiledScrollingIndicatorVisible];
         configuration.preferences._compositingBordersVisible = [self layerBordersVisible];
         configuration.preferences._compositingRepaintCountersVisible = [self layerBordersVisible];
-        configuration.preferences._fullScreenIsEnabled = YES;
+        configuration.preferences._fullScreenEnabled = YES;
     }
     _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:configuration];
 
