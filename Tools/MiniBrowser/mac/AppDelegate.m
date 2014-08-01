@@ -25,21 +25,20 @@
 
 #import "AppDelegate.h"
 
+#import "SettingsController.h"
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebKit2.h>
-
-static NSString *defaultURL = @"http://www.webkit.org/";
-static NSString *useWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
-static NSString *defaultURLPreferenceKey = @"DefaultURL";
 
 enum {
     WebKit1NewWindowTag = 1,
     WebKit2NewWindowTag = 2
 };
 
-@implementation BrowserAppDelegate
+@implementation BrowserAppDelegate {
+    NSMutableSet *_browserWindowControllers;
+}
 
 - (id)init
 {
@@ -51,6 +50,13 @@ enum {
     return self;
 }
 
+- (void)awakeFromNib
+{
+    NSMenuItem *item = [[NSMenuItem alloc] init];
+    [item setSubmenu:[[SettingsController shared] menu]];
+    [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
+}
+
 - (IBAction)newWindow:(id)sender
 {
     BrowserWindowController *controller = nil;
@@ -58,7 +64,7 @@ enum {
     BOOL useWebKit2 = NO;
 
     if (![sender respondsToSelector:@selector(tag)])
-        useWebKit2 = [self _useWebKit2ByDefault];
+        useWebKit2 = [SettingsController shared].useWebKit2ByDefault;
     else
         useWebKit2 = [sender tag] == WebKit2NewWindowTag;
     
@@ -74,7 +80,7 @@ enum {
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindowControllers addObject:controller];
     
-    [controller loadURLString:defaultURL];
+    [controller loadURLString:[SettingsController shared].defaultURL];
 }
 
 - (void)browserWindowWillClose:(NSWindow *)window
@@ -89,11 +95,6 @@ enum {
     [webHistory release];
 
     [self _updateNewWindowKeyEquivalents];
-    
-    [[NSUserDefaults standardUserDefaults] setBool:@YES forKey:@"WebKitDeveloperExtrasEnabled"];
-    NSString *newDefaultURL = [[NSUserDefaults standardUserDefaults] stringForKey:defaultURLPreferenceKey];
-    if (newDefaultURL)
-        defaultURL = [newDefaultURL retain];
 
     [self newWindow:self];
 }
@@ -149,38 +150,24 @@ enum {
     }];
 }
 
-- (IBAction)toggleUseWebKit2ByDefault:(id)sender
+- (void)didChangeSettings
 {
-    BOOL newUseWebKit2ByDefault = ![self _useWebKit2ByDefault];
-    if (!newUseWebKit2ByDefault)
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:useWebKit2ByDefaultPreferenceKey];
-    else
-        [[NSUserDefaults standardUserDefaults] setBool:newUseWebKit2ByDefault forKey:useWebKit2ByDefaultPreferenceKey];
     [self _updateNewWindowKeyEquivalents];
-}
 
-- (BOOL)_useWebKit2ByDefault
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:useWebKit2ByDefaultPreferenceKey];
+    // Let all of the BrowserWindowControllers know that a setting changed, so they can attempt to dynamically update.
+    for (BrowserWindowController<BrowserController> *browserWindowController in _browserWindowControllers)
+        [browserWindowController didChangeSettings];
 }
 
 - (void)_updateNewWindowKeyEquivalents
 {
-    if ([self _useWebKit2ByDefault]) {
+    if ([[SettingsController shared] useWebKit2ByDefault]) {
         [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
         [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask];
     } else {
         [_newWebKit1WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask];
         [_newWebKit2WindowItem setKeyEquivalentModifierMask:NSCommandKeyMask | NSAlternateKeyMask];
     }
-}
-
-- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
-{
-    if ([menuItem action] == @selector(toggleUseWebKit2ByDefault:))
-        [menuItem setState:[self _useWebKit2ByDefault] ? NSOnState : NSOffState];
-
-    return YES;
 }
 
 @end

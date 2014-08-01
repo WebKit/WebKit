@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import "AppDelegate.h"
+#import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -37,10 +38,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
-static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
-
-static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
-static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisibleKey";
 
 @interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -55,13 +52,10 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
     static WKWebViewConfiguration *configuration;
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
-
-        configuration.preferences._tiledScrollingIndicatorVisible = [self tiledScrollingIndicatorVisible];
-        configuration.preferences._compositingBordersVisible = [self layerBordersVisible];
-        configuration.preferences._compositingRepaintCountersVisible = [self layerBordersVisible];
         configuration.preferences._fullScreenEnabled = YES;
     }
     _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:configuration];
+    [self didChangeSettings];
 
     _webView.allowsMagnification = YES;
     _webView.allowsBackForwardNavigationGestures = YES;
@@ -132,7 +126,8 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
     
     // Disabled until missing WK2 functionality is exposed via API/SPI.
     if (action == @selector(dumpSourceToConsole:)
-        || action == @selector(find:))
+        || action == @selector(find:)
+        || action == @selector(forceRepaint:))
         return NO;
     
     if (action == @selector(showHideWebView:))
@@ -141,16 +136,6 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
-    else if (action == @selector(togglePaginationMode:))
-        [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleTransparentWindow:))
-        [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
-    else if (action == @selector(toggleUISideCompositing:))
-        [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleLayerBordersVisibility:))
-        [menuItem setState:[self layerBordersVisible] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleTiledScrollingIndicatorVisibility:))
-        [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -162,6 +147,7 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
 
 - (IBAction)forceRepaint:(id)sender
 {
+    // FIXME: This doesn't actually force a repaint.
     [_webView setNeedsDisplay:YES];
 }
 
@@ -232,7 +218,7 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    [(BrowserAppDelegate *)[NSApp delegate] browserWindowWillClose:[self window]];
+    [(BrowserAppDelegate *)[NSApp delegate] browserWindowWillClose:self.window];
     [self autorelease];
 }
 
@@ -283,68 +269,34 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
     self.currentZoomFactor /= DefaultZoomFactorRatio;
 }
 
-- (BOOL)isPaginated
+- (void)didChangeSettings
 {
-    return _webView._paginationMode != _WKPaginationModeUnpaginated;
-}
+    SettingsController *settings = [SettingsController shared];
+    WKPreferences *preferences = _webView.configuration.preferences;
 
-- (IBAction)togglePaginationMode:(id)sender
-{
-    if (self.isPaginated)
-        _webView._paginationMode = _WKPaginationModeUnpaginated;
-    else {
-        _webView._paginationMode = _WKPaginationModeLeftToRight;
-        _webView._pageLength = _webView.bounds.size.width / 2;
-        _webView._gapBetweenPages = 10;
+    preferences._tiledScrollingIndicatorVisible = settings.tiledScrollingIndicatorVisible;
+    preferences._compositingBordersVisible = settings.layerBordersVisible;
+    preferences._compositingRepaintCountersVisible = settings.layerBordersVisible;
+
+    BOOL useTransparentWindows = settings.useTransparentWindows;
+    if (useTransparentWindows != _webView._drawsTransparentBackground) {
+        [self.window setOpaque:!useTransparentWindows];
+        [self.window setHasShadow:!useTransparentWindows];
+
+        _webView._drawsTransparentBackground = useTransparentWindows;
+
+        [self.window display];
     }
-}
 
-- (IBAction)toggleTransparentWindow:(id)sender
-{
-    BOOL isTransparent = _webView._drawsTransparentBackground;
-    isTransparent = !isTransparent;
-
-    [[self window] setOpaque:!isTransparent];
-    [[self window] setHasShadow:!isTransparent];
-
-    _webView._drawsTransparentBackground = isTransparent;
-
-    [[self window] display];    
-}
-
-- (BOOL)isUISideCompositingEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
-}
-
-- (IBAction)toggleUISideCompositing:(id)sender
-{
-    [[NSUserDefaults standardUserDefaults] setBool:![self isUISideCompositingEnabled] forKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
-}
-
-- (BOOL)layerBordersVisible
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:LayerBordersVisiblePreferenceKey];
-}
-
-- (IBAction)toggleLayerBordersVisibility:(id)sender
-{
-    BOOL newState = ![self layerBordersVisible];
-    [[NSUserDefaults standardUserDefaults] setBool:newState forKey:LayerBordersVisiblePreferenceKey];
-    _webView.configuration.preferences._compositingBordersVisible = newState;
-    _webView.configuration.preferences._compositingRepaintCountersVisible = newState;
-}
-
-- (BOOL)tiledScrollingIndicatorVisible
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:TiledScrollingIndicatorVisiblePreferenceKey];
-}
-
-- (IBAction)toggleTiledScrollingIndicatorVisibility:(id)sender
-{
-    BOOL newState = ![self tiledScrollingIndicatorVisible];
-    [[NSUserDefaults standardUserDefaults] setBool:newState forKey:TiledScrollingIndicatorVisiblePreferenceKey];
-    _webView.configuration.preferences._tiledScrollingIndicatorVisible = newState;
+    BOOL usePaginatedMode = settings.usePaginatedMode;
+    if (usePaginatedMode != (_webView._paginationMode != _WKPaginationModeUnpaginated)) {
+        if (usePaginatedMode) {
+            _webView._paginationMode = _WKPaginationModeLeftToRight;
+            _webView._pageLength = _webView.bounds.size.width / 2;
+            _webView._gapBetweenPages = 10;
+        } else
+            _webView._paginationMode = _WKPaginationModeUnpaginated;
+    }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

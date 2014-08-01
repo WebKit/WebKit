@@ -1,5 +1,125 @@
 2014-08-01  Tim Horton  <timothy_horton@apple.com>
 
+        Make it easer to add switches to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=135499
+
+        Reviewed by Simon Fraser.
+
+        Add a single class to manage a set of persistent, global settings for MiniBrowser.
+        Add a new menu that contains items to toggle the aforementioned settings (moving them out of the Debug menu).
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        Add SettingsController.{m, h}.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        Move _browserWindowControllers to the implementation.
+        Get rid of toggleUseWebKit2ByDefault, because SettingsController now takes care
+        of that; instead, we'll receive didChangeSettings.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        Move the default URL, default URL preference key, and use-WebKit2-by-default
+        preference key into SettingsController.
+
+        (-[BrowserAppDelegate awakeFromNib]):
+        Add the dynamically-generated SettingsController menu just to the left of the Debug menu.
+
+        (-[BrowserAppDelegate newWindow:]):
+        Ask SettingsController if we should use WebKit2 by default, and what the initial URL to load is.
+
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]):
+        SettingsController now takes care of reading the default URL preference.
+        WK1BrowserWindowController now takes care of enabling the developer extras, via WebPreferences.
+
+        (-[BrowserAppDelegate didChangeSettings]):
+        When settings change, update the key equivalents for the new-window menu items, as they
+        might have changed (as use-WebKit2-by-default is one of the settings).
+
+        Dispatch settings change notifications to all live BrowserControllers.
+
+        (-[BrowserAppDelegate _updateNewWindowKeyEquivalents]):
+        (-[BrowserAppDelegate toggleUseWebKit2ByDefault:]): Deleted.
+        (-[BrowserAppDelegate _useWebKit2ByDefault]): Deleted.
+        (-[BrowserAppDelegate validateMenuItem:]): Deleted.
+        All menu item validation for settings is moved into SettingsController.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        Simplify the BrowserWindowController interface; "toggling" settings will happen inside SettingsController,
+        the BrowserWindowController subclasses will be able to a) know when any setting changes, b) query the current setting state.
+
+        * MiniBrowser/mac/MainMenu.xib:
+        Remove the settings menu items from the "Debug" menu.
+
+        * MiniBrowser/mac/SettingsController.h: Added.
+        * MiniBrowser/mac/SettingsController.m: Added.
+        (+[SettingsController shared]):
+        (-[SettingsController menu]):
+
+        (-[SettingsController _addItemWithTitle:action:indented:]):
+        (-[SettingsController _addHeaderWithTitle:]):
+        NSMenuItem-creating helpers.
+
+        (-[SettingsController _populateMenu]):
+        Build the menu. Ideally this and the validation step would eventually be made more dynamic.
+
+        (-[SettingsController validateMenuItem:]):
+        Validate menu items; since they can be used to toggle the default state of a setting,
+        we'll always return YES. However, we will use this opportunity to set the 'checked' state
+        of each item.
+
+
+        (-[SettingsController _toggleBooleanDefault:]):
+        Toggle the given boolean default, and notify BrowserAppDelegate that something changed.
+
+        (-[SettingsController toggleUseWebKit2ByDefault:]):
+        (-[SettingsController useWebKit2ByDefault]):
+        (-[SettingsController toggleUseTransparentWindows:]):
+        (-[SettingsController useTransparentWindows]):
+        (-[SettingsController toggleUsePaginatedMode:]):
+        (-[SettingsController usePaginatedMode]):
+        (-[SettingsController toggleUseUISideCompositing:]):
+        (-[SettingsController useUISideCompositing]):
+        (-[SettingsController toggleShowLayerBorders:]):
+        (-[SettingsController layerBordersVisible]):
+        (-[SettingsController toggleShowTiledScrollingIndicator:]):
+        (-[SettingsController tiledScrollingIndicatorVisible]):
+        (-[SettingsController toggleEnableSubPixelCSSOMMetrics:]):
+        (-[SettingsController subPixelCSSOMMetricsEnabled]):
+        (-[SettingsController defaultURL]):
+        Toggle or return the current state of each preference.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        (-[WK1BrowserWindowController windowWillClose:]):
+        (-[WK1BrowserWindowController find:]):
+        (-[WK1BrowserWindowController dumpSourceToConsole:]):
+        (-[WK1BrowserWindowController didChangeSettings]):
+        (-[WK1BrowserWindowController webView:didReceiveTitle:forFrame:]):
+        (-[WK1BrowserWindowController isPaginated]): Deleted.
+        (-[WK1BrowserWindowController togglePaginationMode:]): Deleted.
+        (-[WK1BrowserWindowController toggleTransparentWindow:]): Deleted.
+        (-[WK1BrowserWindowController isSubpixelCSSOMElementMetricsEnabled]): Deleted.
+        (-[WK1BrowserWindowController toggleSubpixelCSSOMElementMetricsEnabled:]): Deleted.
+        (-[WK1BrowserWindowController layerBordersVisible]): Deleted.
+        (-[WK1BrowserWindowController toggleLayerBordersVisibility:]): Deleted.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController forceRepaint:]):
+        (-[WK2BrowserWindowController windowWillClose:]):
+        (-[WK2BrowserWindowController didChangeSettings]):
+        (-[WK2BrowserWindowController isPaginated]): Deleted.
+        (-[WK2BrowserWindowController togglePaginationMode:]): Deleted.
+        (-[WK2BrowserWindowController toggleTransparentWindow:]): Deleted.
+        (-[WK2BrowserWindowController isUISideCompositingEnabled]): Deleted.
+        (-[WK2BrowserWindowController toggleUISideCompositing:]): Deleted.
+        (-[WK2BrowserWindowController layerBordersVisible]): Deleted.
+        (-[WK2BrowserWindowController toggleLayerBordersVisibility:]): Deleted.
+        (-[WK2BrowserWindowController tiledScrollingIndicatorVisible]): Deleted.
+        (-[WK2BrowserWindowController toggleTiledScrollingIndicatorVisibility:]): Deleted.
+
+2014-08-01  Tim Horton  <timothy_horton@apple.com>
+
         MiniBrowser doesn't support data URLs
         https://bugs.webkit.org/show_bug.cgi?id=135492
 

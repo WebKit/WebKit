@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,53 +25,19 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol BrowserController
+@interface SettingsController : NSObject
 
-- (IBAction)fetch:(id)sender;
-- (IBAction)reload:(id)sender;
-- (IBAction)forceRepaint:(id)sender;
-- (IBAction)goBack:(id)sender;
-- (IBAction)goForward:(id)sender;
++ (instancetype)shared;
 
-- (IBAction)showHideWebView:(id)sender;
-- (IBAction)removeReinsertWebView:(id)sender;
+@property (nonatomic, readonly) NSMenu *menu;
 
-- (IBAction)zoomIn:(id)sender;
-- (IBAction)zoomOut:(id)sender;
-- (IBAction)resetZoom:(id)sender;
-- (BOOL)canZoomIn;
-- (BOOL)canZoomOut;
-- (BOOL)canResetZoom;
-
-- (IBAction)toggleZoomMode:(id)sender;
-
-- (IBAction)dumpSourceToConsole:(id)sender;
-- (IBAction)find:(id)sender;
-
-- (void)didChangeSettings;
+@property (nonatomic, readonly) BOOL useWebKit2ByDefault;
+@property (nonatomic, readonly) BOOL useTransparentWindows;
+@property (nonatomic, readonly) BOOL usePaginatedMode;
+@property (nonatomic, readonly) BOOL layerBordersVisible;
+@property (nonatomic, readonly) BOOL tiledScrollingIndicatorVisible;
+@property (nonatomic, readonly) BOOL useUISideCompositing;
+@property (nonatomic, readonly) BOOL subPixelCSSOMMetricsEnabled;
+@property (nonatomic, readonly) NSString *defaultURL;
 
 @end
-
-@interface BrowserWindowController : NSWindowController {
-    IBOutlet NSProgressIndicator *progressIndicator;
-    IBOutlet NSButton *reloadButton;
-    IBOutlet NSButton *backButton;
-    IBOutlet NSButton *forwardButton;
-    IBOutlet NSToolbar *toolbar;
-    IBOutlet NSTextField *urlText;
-    IBOutlet NSView *containerView;
-    
-    IBOutlet NSWindow *findPanelWindow;
-
-    BOOL _zoomTextOnly;
-}
-
-- (void)loadURLString:(NSString *)urlString;
-- (NSString *)addProtocolIfNecessary:(NSString *)address;
-
-- (void)applicationTerminating;
-
-- (IBAction)openLocation:(id)sender;
-
-@end
-

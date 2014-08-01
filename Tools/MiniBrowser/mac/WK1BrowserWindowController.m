@@ -25,12 +25,13 @@
 
 #import "WK1BrowserWindowController.h"
 
-#import <WebKit/WebKit.h>
-#import <WebKit/WebViewPrivate.h>
 #import "AppDelegate.h"
+#import "SettingsController.h"
+#import <WebKit/WebKit.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPreferenceKeysPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 @interface WK1BrowserWindowController ()
 @end
@@ -42,12 +43,13 @@
     _webView = [[WebView alloc] initWithFrame:[containerView bounds] frameName:nil groupName:@"MiniBrowser"];
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
-    // Set the WebView delegates
     [_webView setFrameLoadDelegate:self];
     [_webView setUIDelegate:self];
     [_webView setResourceLoadDelegate:self];
     [_webView setPolicyDelegate:self];
+
     [[WebPreferences standardPreferences] setFullScreenEnabled:YES];
+    [[WebPreferences standardPreferences] setDeveloperExtrasEnabled:YES];
 
     [containerView addSubview:_webView];
 }
@@ -131,14 +133,6 @@
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
-    else if (action == @selector(togglePaginationMode:))
-        [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleTransparentWindow:))
-        [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
-    else if (action == @selector(toggleSubpixelCSSOMElementMetricsEnabled:))
-        [menuItem setState:[self isSubpixelCSSOMElementMetricsEnabled] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleLayerBordersVisibility:))
-        [menuItem setState:[self layerBordersVisible] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -168,7 +162,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    [(BrowserAppDelegate *)[NSApp delegate] browserWindowWillClose:[self window]];
+    [(BrowserAppDelegate *)[NSApp delegate] browserWindowWillClose:self.window];
     [self autorelease];
 }
 
@@ -226,66 +220,41 @@
     _zoomTextOnly = !_zoomTextOnly;
 }
 
-- (BOOL)isPaginated
-{
-    return [_webView _paginationMode] != WebPaginationModeUnpaginated;
-}
-
-- (IBAction)togglePaginationMode:(id)sender
-{
-    if ([self isPaginated]) {
-        [_webView _setPaginationMode:WebPaginationModeUnpaginated];
-    } else {
-        [_webView _setPaginationMode:WebPaginationModeRightToLeft];
-        [_webView _setPageLength:_webView.bounds.size.width / 2];
-        [_webView _setGapBetweenPages:10];
-    }
-}
-
-- (IBAction)toggleTransparentWindow:(id)sender
-{
-    BOOL isTransparent = ![[self window] isOpaque];
-    isTransparent = !isTransparent;
-    
-    [[self window] setOpaque:!isTransparent];
-    [[self window] setHasShadow:!isTransparent];
-
-    if (isTransparent)
-        [_webView setBackgroundColor:[NSColor clearColor]];
-    else
-        [_webView setBackgroundColor:[NSColor whiteColor]];
-
-    [[self window] display];
-}
-
-- (BOOL)isSubpixelCSSOMElementMetricsEnabled
-{
-    return [[WebPreferences standardPreferences] subpixelCSSOMElementMetricsEnabled];
-}
-
-- (IBAction)toggleSubpixelCSSOMElementMetricsEnabled:(id)sender
-{
-    [[WebPreferences standardPreferences] setSubpixelCSSOMElementMetricsEnabled:![self isSubpixelCSSOMElementMetricsEnabled]];
-}
-
-- (BOOL)layerBordersVisible
-{
-    return [[WebPreferences standardPreferences] showDebugBorders];
-}
-
-- (IBAction)toggleLayerBordersVisibility:(id)sender
-{
-    BOOL newValue = ![self layerBordersVisible];
-    [[WebPreferences standardPreferences] setShowDebugBorders:newValue];
-    [[WebPreferences standardPreferences] setShowRepaintCounter:newValue];
-}
-
 - (IBAction)find:(id)sender
 {
 }
 
 - (IBAction)dumpSourceToConsole:(id)sender
 {
+}
+
+- (void)didChangeSettings
+{
+    SettingsController *settings = [SettingsController shared];
+
+    [[WebPreferences standardPreferences] setSubpixelCSSOMElementMetricsEnabled:settings.subPixelCSSOMMetricsEnabled];
+    [[WebPreferences standardPreferences] setShowDebugBorders:settings.layerBordersVisible];
+    [[WebPreferences standardPreferences] setShowRepaintCounter:settings.layerBordersVisible];
+
+    BOOL useTransparentWindows = settings.useTransparentWindows;
+    if (useTransparentWindows != !self.window.isOpaque) {
+        [self.window setOpaque:!useTransparentWindows];
+        [self.window setHasShadow:!useTransparentWindows];
+
+        [_webView setBackgroundColor:useTransparentWindows ? [NSColor clearColor] : [NSColor whiteColor]];
+
+        [self.window display];
+    }
+
+    BOOL usePaginatedMode = settings.usePaginatedMode;
+    if (usePaginatedMode != (_webView._paginationMode != WebPaginationModeUnpaginated)) {
+        if (usePaginatedMode) {
+            [_webView _setPaginationMode:WebPaginationModeLeftToRight];
+            [_webView _setPageLength:_webView.bounds.size.width / 2];
+            [_webView _setGapBetweenPages:10];
+        } else
+            [_webView _setPaginationMode:WebPaginationModeUnpaginated];
+    }
 }
 
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
@@ -312,7 +281,7 @@
     if (frame != [sender mainFrame])
         return;
 
-    [[self window] setTitle:[title stringByAppendingString:@" [WK1]"]];
+    [self.window setTitle:[title stringByAppendingString:@" [WK1]"]];
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame

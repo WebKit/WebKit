@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
     </dependencies>
@@ -425,13 +425,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Debug" id="535">
                         <items>
-                            <menuItem title="Use WebKit2 By Default" id="GmH-08-ZX9">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleUseWebKit2ByDefault:" target="494" id="xgA-9P-zY6"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="kgf-Bs-8S1"/>
                             <menuItem title="Force Repaint" keyEquivalent="r" id="545">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
@@ -451,43 +444,6 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="553"/>
-                            <menuItem title="Paginated Mode" id="569">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="togglePaginationMode:" target="-1" id="570"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Transparent Window" id="576">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleTransparentWindow:" target="-1" id="578"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="UI-Side Compositing" id="BDx-He-jOK">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleUISideCompositing:" target="-1" id="1Ed-C5-0po"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Layer Borders" id="00T-EI-Wqj">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleLayerBordersVisibility:" target="-1" id="gmt-1Z-XcQ"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Tiled Scrolling Indicator" id="iBU-Yy-GuV">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleTiledScrollingIndicatorVisibility:" target="-1" id="RJB-dt-xSR"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Enable Sub-Pixel offsetWidth etc." state="on" id="8X5-i6-t2d">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleSubpixelCSSOMElementMetricsEnabled:" target="-1" id="Lbe-UQ-A9U"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="568"/>
                             <menuItem title="Dump Source To Console" id="566">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
