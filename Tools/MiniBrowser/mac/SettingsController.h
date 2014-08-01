@@ -25,7 +25,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface SettingsController : NSObject
+@interface SettingsController : NSObject {
+    NSMenu *_menu;
+}
 
 + (instancetype)shared;
 

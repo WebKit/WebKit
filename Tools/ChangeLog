@@ -1,3 +1,10 @@
+2014-08-01  Timothy Horton  <timothy_horton@apple.com>
+
+        Build fix for 32-bit after r171926.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+
 2014-08-01  Tim Horton  <timothy_horton@apple.com>
 
         Confusing build fix after r171926.

@@ -42,9 +42,7 @@ static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPix
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
-@implementation SettingsController {
-    NSMenu *_menu;
-}
+@implementation SettingsController
 
 @synthesize menu=_menu;
 
