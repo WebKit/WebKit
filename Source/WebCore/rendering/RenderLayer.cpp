@@ -191,14 +191,14 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
 #endif
     , m_renderer(rendererLayerModelObject)
-    , m_parent(0)
-    , m_previous(0)
-    , m_next(0)
-    , m_first(0)
-    , m_last(0)
+    , m_parent(nullptr)
+    , m_previous(nullptr)
+    , m_next(nullptr)
+    , m_first(nullptr)
+    , m_last(nullptr)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
-    , m_enclosingPaginationLayer(0)
+    , m_enclosingPaginationLayer(nullptr)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
@@ -1139,7 +1139,7 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
                     do {
                         r = r->parent();
                         if (r == &renderer())
-                            r = 0;
+                            r = nullptr;
                     } while (r && !r->nextSibling());
                     if (r)
                         r = r->nextSibling();
@@ -1894,7 +1894,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     // FIXME: Special casing RenderFlowThread so much for fixed positioning here is not great.
     RenderFlowThread* fixedFlowThreadContainer = position == FixedPosition ? renderer.flowThreadContainingBlock() : 0;
     if (fixedFlowThreadContainer && !fixedFlowThreadContainer->isOutOfFlowPositioned())
-        fixedFlowThreadContainer = 0;
+        fixedFlowThreadContainer = nullptr;
 
     // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFlowThread
     // may need to be revisited in a future patch.
@@ -1916,7 +1916,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call offsetFromAncestor() across a layer with a transform,
         // so we should always find the ancestor at or before we find the fixed position container.
-        RenderLayer* fixedPositionContainerLayer = 0;
+        RenderLayer* fixedPositionContainerLayer = nullptr;
         bool foundAncestor = false;
         for (RenderLayer* currLayer = layer->parent(); currLayer; currLayer = currLayer->parent()) {
             if (currLayer == ancestorLayer)
@@ -2338,7 +2338,7 @@ static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameEl
 
 void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
-    RenderLayer* parentLayer = 0;
+    RenderLayer* parentLayer = nullptr;
     LayoutRect newRect = rect;
 
     // We may end up propagating a scroll event. It is important that we suspend events until 
@@ -2372,7 +2372,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         Element* ownerElement = renderer().document().ownerElement();
 
         if (ownerElement && ownerElement->renderer()) {
-            HTMLFrameElementBase* frameElementBase = 0;
+            HTMLFrameElementBase* frameElementBase = nullptr;
 
             if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))
                 frameElementBase = toHTMLFrameElementBase(ownerElement);
@@ -2395,7 +2395,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                     newRect.setX(rect.x() - frameView.scrollX() + frameView.x());
                     newRect.setY(rect.y() - frameView.scrollY() + frameView.y());
                 } else
-                    parentLayer = 0;
+                    parentLayer = nullptr;
             }
         } else {
 #if !PLATFORM(IOS)
@@ -2962,7 +2962,7 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 
     scrollbar->removeFromParent();
     scrollbar->disconnectFromScrollableArea();
-    scrollbar = 0;
+    scrollbar = nullptr;
 }
 
 bool RenderLayer::scrollsOverflow() const
@@ -4040,7 +4040,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     // is done by passing a nil subtreePaintRoot down to our renderer (as if no subtreePaintRoot was ever set).
     // Otherwise, our renderer tree may or may not contain the subtreePaintRoot root, so we pass that root along
     // so it will be tested against as we descend through the renderers.
-    RenderObject* subtreePaintRootForRenderer = 0;
+    RenderObject* subtreePaintRootForRenderer = nullptr;
     if (localPaintingInfo.subtreePaintRoot && !renderer().isDescendantOf(localPaintingInfo.subtreePaintRoot))
         subtreePaintRootForRenderer = localPaintingInfo.subtreePaintRoot;
 
@@ -4708,7 +4708,7 @@ RenderLayer* RenderLayer::hitTestFixedLayersInNamedFlows(RenderLayer* /*rootLaye
     renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
 
     // Hit test the layers
-    RenderLayer* resultLayer = 0;
+    RenderLayer* resultLayer = nullptr;
     for (int i = fixedLayers.size() - 1; i >= 0; --i) {
         RenderLayer* fixedLayer = fixedLayers.at(i);
 
@@ -4821,8 +4821,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
     // descendants.
     double localZOffset = -std::numeric_limits<double>::infinity();
-    double* zOffsetForDescendantsPtr = 0;
-    double* zOffsetForContentsPtr = 0;
+    double* zOffsetForDescendantsPtr = nullptr;
+    double* zOffsetForContentsPtr = nullptr;
     
     bool depthSortDescendants = false;
     if (preserves3D()) {
@@ -4831,13 +4831,13 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         zOffsetForDescendantsPtr = zOffset ? zOffset : &localZOffset;
         zOffsetForContentsPtr = zOffset ? zOffset : &localZOffset;
     } else if (zOffset) {
-        zOffsetForDescendantsPtr = 0;
+        zOffsetForDescendantsPtr = nullptr;
         // Container needs us to give back a z offset for the hit layer.
         zOffsetForContentsPtr = zOffset;
     }
 
     // This variable tracks which layer the mouse ends up being inside.
-    RenderLayer* candidateLayer = 0;
+    RenderLayer* candidateLayer = nullptr;
 
     // Check the fixed positioned layers within flow threads that are positioned by the view.
     RenderLayer* hitLayer = hitTestFixedLayersInNamedFlows(rootLayer, request, result, hitTestRect, hitTestLocation,
@@ -5084,12 +5084,12 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
     if (!hasSelfPaintingLayerDescendant())
         return 0;
 
-    RenderLayer* resultLayer = 0;
+    RenderLayer* resultLayer = nullptr;
     for (int i = list->size() - 1; i >= 0; --i) {
         RenderLayer* childLayer = list->at(i);
         if (childLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
             continue;
-        RenderLayer* hitLayer = 0;
+        RenderLayer* hitLayer = nullptr;
         HitTestResult tempResult(result.hitTestLocation());
         hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
 
@@ -6767,7 +6767,7 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
 
     LayoutRect regionContentBox = toRenderBlockFlow(&renderer())->contentBoxRect();
 
-    RenderLayer* resultLayer = 0;
+    RenderLayer* resultLayer = nullptr;
     for (int i = fragments.size() - 1; i >= 0; --i) {
         const LayerFragment& fragment = fragments.at(i);
 

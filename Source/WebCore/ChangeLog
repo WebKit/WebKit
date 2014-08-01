@@ -1,3 +1,24 @@
+2014-08-01  Simon Fraser  <simon.fraser@apple.com>
+
+        nullptr goodness in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=135512
+
+        Reviewed by Brent Fulgham.
+
+        Use nullptr in RenderLayer.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::destroyScrollbar):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::calculateClipRects):
+
 2014-08-01  Tim Horton  <timothy_horton@apple.com>
 
         Build fix for iOS
