@@ -1,3 +1,14 @@
+2014-08-01  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r171891): platform/mac/fast/scrolling/scroll-select-bottom-test.html        
+        failing
+        https://bugs.webkit.org/show_bug.cgi?id=135485
+
+        Now that WK1 really tests contentInset, this test no longer works on platforms 
+        that do not support the real contentInset
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-08-01  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Enable Feature Queries on EFL/GTK
