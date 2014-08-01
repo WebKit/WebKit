@@ -83,6 +83,7 @@ private:
 inline Structure* StructureIDTable::get(StructureID structureID)
 {
 #if USE(JSVALUE64)
+    ASSERT(structureID && structureID < m_capacity);
     return table()[structureID].structure;
 #else
     return structureID;

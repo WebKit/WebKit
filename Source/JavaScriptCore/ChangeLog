@@ -1,3 +1,25 @@
+2014-08-01  Mark Lam  <mark.lam@apple.com>
+
+        Add some structure related assertions.
+        <https://webkit.org/b/135523>
+
+        Reviewed by Geoffrey Garen.
+
+        Adding 2 assertions:
+        1. assert that we don't index pass the end of the StructureIDTable.
+           This should never happen, but this assertion will help catch bugs
+           where a bad structureID gets passed in.
+        2. assert that cells in MarkedBlock::callDestructor() that are not
+           zapped should have a non-null StructureID.  This will help us catch
+           bugs where the other cell header flag bits get set after the cell is
+           zapped, thereby making the cell look like an unzapped cell but has a
+           null structureID.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::get):
+
 2014-08-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r171946 to fix non-Apple builds.

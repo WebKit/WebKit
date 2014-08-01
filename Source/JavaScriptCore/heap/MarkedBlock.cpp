@@ -61,6 +61,7 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
     if (cell->isZapped())
         return;
 
+    ASSERT(cell->structureID());
     if (dtorType == MarkedBlock::Normal)
         jsCast<JSDestructibleObject*>(cell)->classInfo()->methodTable.destroy(cell);
     else
