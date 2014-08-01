@@ -1,3 +1,11 @@
+2014-08-01  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Update test expectations for crashing webgl tests.
+
+        * platform/efl/TestExpectations:
+
 2014-07-31  Beth Dakin  <bdakin@apple.com>
 
         platform/mac/fast/scrolling/scroll-select-bottom-test.html failing on Mavericks 
