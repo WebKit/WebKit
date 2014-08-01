@@ -163,7 +163,7 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setOfflineWebApplicationCacheEnabled(offlineApplicationCacheIsEnabled);
 }
 
-- (BOOL)_fullScreenIsEnabled
+- (BOOL)_fullScreenEnabled
 {
     return _preferences->fullScreenEnabled();
 }
