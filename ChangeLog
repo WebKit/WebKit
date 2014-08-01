@@ -1,3 +1,16 @@
+2014-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CMake] GTK and EFL are using PROJECT_VERSION_PATCH to define the micro version
+        https://bugs.webkit.org/show_bug.cgi?id=135501
+
+        Reviewed by Gyuyoung Kim.
+
+        Use PROJECT_VERSION_MICRO instead.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitHelpers.cmake:
+
 2014-07-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Bump ewebkit version to 1.11

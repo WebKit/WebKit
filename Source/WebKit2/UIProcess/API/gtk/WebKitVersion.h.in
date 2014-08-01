@@ -53,7 +53,7 @@ G_BEGIN_DECLS
  * application compile time, rather than from the library linked
  * against at application run time.
  */
-#define WEBKIT_MICRO_VERSION (@PROJECT_VERSION_PATCH@)
+#define WEBKIT_MICRO_VERSION (@PROJECT_VERSION_MICRO@)
 
 /**
  * WEBKIT_CHECK_VERSION:

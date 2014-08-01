@@ -30,7 +30,7 @@
 
 #define EWK_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
 #define EWK_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#define EWK_VERSION_MICRO @PROJECT_VERSION_PATCH@
+#define EWK_VERSION_MICRO @PROJECT_VERSION_MICRO@
 
 #include "ewk_auth_request.h"
 #include "ewk_back_forward_list.h"
