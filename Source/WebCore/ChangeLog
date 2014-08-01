@@ -1,3 +1,15 @@
+2014-07-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [EFL] Add support for building with Geoclue2.
+        https://bugs.webkit.org/show_bug.cgi?id=135455
+
+        Reviewed by Gyuyoung Kim.
+
+        No new tests required, no new functionality.
+
+        * PlatformEfl.cmake: Generate derived sources for Geoclue2Interface
+        and include gio-unix path.
+
 2014-07-31  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Region painting needs to take subpixel accumulation into account.

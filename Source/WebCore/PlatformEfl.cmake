@@ -206,6 +206,17 @@ list(APPEND WebCore_SOURCES
     plugins/PluginViewNone.cpp
 )
 
+if (WTF_USE_GEOCLUE2)
+    list(APPEND WebCore_SOURCES
+        ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
+    )
+    execute_process(COMMAND pkg-config --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)
+    add_custom_command(
+         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.h
+         COMMAND gdbus-codegen --interface-prefix org.freedesktop.GeoClue2. --c-namespace Geoclue --generate-c-code ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface ${GEOCLUE_DBUS_INTERFACE}
+    )
+endif ()
+
 if (ENABLE_BATTERY_STATUS OR (EFL_REQUIRED_VERSION VERSION_LESS 1.8))
     list(APPEND WebCore_INCLUDE_DIRECTORIES ${DBUS_INCLUDE_DIRS})
     list(APPEND WebCore_INCLUDE_DIRECTORIES ${E_DBUS_INCLUDE_DIRS})
@@ -272,6 +283,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${EVAS_INCLUDE_DIRS}
     ${FREETYPE2_INCLUDE_DIRS}
     ${GEOCLUE_INCLUDE_DIRS}
+    ${GIO_UNIX_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
