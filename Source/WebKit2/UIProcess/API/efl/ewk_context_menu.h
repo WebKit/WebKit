@@ -31,8 +31,7 @@
 #ifndef ewk_context_menu_h
 #define ewk_context_menu_h
 
-#include "ewk_defines.h"
-#include <Eina.h>
+#include "ewk_context_menu_item.h"
 
 #ifdef __cplusplus
 extern "C" {

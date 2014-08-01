@@ -1,3 +1,14 @@
+2014-07-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] remove ewk_defines.h
+        https://bugs.webkit.org/show_bug.cgi?id=135456
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_context_menu.h:
+        * UIProcess/API/efl/ewk_context_menu_item.h: Moved the declaration from ewk_defines.h
+        * UIProcess/API/efl/ewk_defines.h: Removed.
+
 2014-07-31  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed typo correction.

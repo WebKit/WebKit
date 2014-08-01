@@ -31,12 +31,21 @@
 #ifndef ewk_context_menu_item_h
 #define ewk_context_menu_item_h
 
-#include "ewk_defines.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * Declare Ewk_Context_Menu as Ewk_Object.
+ *
+ * @see Ewk_Object
+ */
+typedef struct EwkObject Ewk_Context_Menu;
+
+/** Creates a type name for Ewk_Context_Menu_Item */
+typedef struct EwkContextMenuItem Ewk_Context_Menu_Item;
 
 /**
  * \enum    Ewk_Context_Menu_Item_Type
