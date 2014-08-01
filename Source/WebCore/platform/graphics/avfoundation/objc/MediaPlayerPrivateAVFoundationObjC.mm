@@ -1559,6 +1559,13 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
     if (!m_videoLayer)
         return;
 
+#if PLATFORM(IOS)
+    // Do not attempt to change the video gravity while in full screen mode.
+    // See setVideoFullscreenGravity().
+    if (m_videoFullscreenLayer)
+        return;
+#endif
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];    
     NSString* gravity = shouldMaintainAspectRatio() ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize;
