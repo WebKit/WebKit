@@ -1,3 +1,11 @@
+2014-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing sections to documentation.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add
+        WebKitUserContent and WebKitUserContentManager sections to the
+        documentation.
+
 2014-08-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unable to do make install since r171901
