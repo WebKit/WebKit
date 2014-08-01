@@ -1,5 +1,16 @@
 2014-07-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL][WK2] MiniBrower comes to crash when combo box is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=135378
+
+        Reviewed by Gyuyoung Kim.
+
+        Added doxygen comment of popup_menu_show/popup_menu_hide not to confuse the usage.
+
+        * UIProcess/API/efl/ewk_view.h:
+
+2014-07-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL] remove ewk_defines.h
         https://bugs.webkit.org/show_bug.cgi?id=135456
 

@@ -1250,15 +1250,6 @@ on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const 
 }
 
 static void
-on_popup_menu_discarded(void *user_data, Evas_Object *obj, void *event_info)
-{
-    // The user clicked outside the menu to discard it.
-    info("Popup menu was discarded.");
-    Browser_Window *window = (Browser_Window *)user_data;
-    ewk_popup_menu_close(window->popup.ewk_menu);
-}
-
-static void
 on_popup_menu_item_clicked(void *user_data, Evas_Object *obj, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -1314,7 +1305,6 @@ on_popup_menu_show(Ewk_View_Smart_Data *smartData, Eina_Rectangle rect, Ewk_Text
 
     window->popup.elm_menu = elm_menu_add(window->elm_window);
     window->popup.ewk_menu = ewk_menu;
-    evas_object_smart_callback_add(window->popup.elm_menu, "clicked", on_popup_menu_discarded, window);
 
     popup_menu_populate(window->popup.elm_menu, ewk_menu, window);
 

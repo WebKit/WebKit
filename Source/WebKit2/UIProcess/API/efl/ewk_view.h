@@ -117,7 +117,25 @@ struct Ewk_View_Smart_Class {
     Eina_Bool (*context_menu_show)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Context_Menu *menu);
     Eina_Bool (*context_menu_hide)(Ewk_View_Smart_Data *sd);
 
+    /**
+     * @brief smart method to notify that <select> tag is pressed.
+     *
+     * Application should implement this method to support select tag.
+     *
+     * @note After @c popup_menu_hide is called, @a menu will not be valid.
+     *
+     * @see ewk_popup_menu_selected_index_get
+     * @see ewk_popup_menu_selected_index_set
+     * @see ewk_popup_menu_close
+     */
     Eina_Bool (*popup_menu_show)(Ewk_View_Smart_Data *sd, Eina_Rectangle rect, Ewk_Text_Direction text_direction, double page_scale_factor, Ewk_Popup_Menu *menu);
+    /**
+     * @brief smart method to notify that current @a menu will be hidden and destroyed.
+     *
+     * @see ewk_popup_menu_selected_index_get
+     * @see ewk_popup_menu_selected_index_set
+     * @see ewk_popup_menu_close
+     */
     Eina_Bool (*popup_menu_hide)(Ewk_View_Smart_Data *sd);
 
     // event handling:

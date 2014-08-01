@@ -1,3 +1,17 @@
+2014-07-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] MiniBrower comes to crash when combo box is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=135378
+
+        Reviewed by Gyuyoung Kim.
+
+        "clicked" signal of elm_menu is emitted after EwkView calls popup_menu_hide
+        and removes Ewk_Popup_Menu instance.
+
+        * MiniBrowser/efl/main.c:
+        (on_popup_menu_show):
+        (on_popup_menu_discarded): Deleted.
+
 2014-07-31  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use RC_PROJECTBUILDVERSION as build portion of version
