@@ -1,3 +1,17 @@
+2014-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVGGlyph wastes space due to padding
+        https://bugs.webkit.org/show_bug.cgi?id=135520
+
+        Reviewed by Dean Jackson.
+
+        Rearrange members in SVGGlyph so there is no wasted padding space.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/SVGGlyph.h:
+        (WebCore::SVGGlyph::SVGGlyph):
+
 2014-07-31  Dean Jackson  <dino@apple.com>
 
         [Media iOS] Ensure there is a nice default fallback for missing wireless target names

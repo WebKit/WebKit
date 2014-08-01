@@ -51,16 +51,16 @@ struct SVGGlyph {
     };
 
     SVGGlyph()
-        : isPartOfLigature(false)
-        , orientation(Both)
-        , arabicForm(None)
+        : unicodeStringLength(0)
         , priority(0)
-        , tableEntry(0)
-        , unicodeStringLength(0)
         , horizontalAdvanceX(0)
         , verticalOriginX(0)
         , verticalOriginY(0)
         , verticalAdvanceY(0)
+        , tableEntry(0)
+        , isPartOfLigature(false)
+        , orientation(Both)
+        , arabicForm(None)
     {
     }
 
@@ -86,22 +86,25 @@ struct SVGGlyph {
             && languages == other.languages;
     }
 
-    bool isPartOfLigature : 1;
+    Vector<String> languages;
 
-    unsigned orientation : 2; // Orientation
-    unsigned arabicForm : 3; // ArabicForm
-    int priority;
-    Glyph tableEntry;
     size_t unicodeStringLength;
     String glyphName;
+
+    Path pathData;
+    int priority;
 
     float horizontalAdvanceX;
     float verticalOriginX;
     float verticalOriginY;
     float verticalAdvanceY;
 
-    Path pathData;
-    Vector<String> languages;
+    Glyph tableEntry;
+
+    unsigned isPartOfLigature : 1;
+
+    unsigned orientation : 2; // Orientation
+    unsigned arabicForm : 3; // ArabicForm
 };
 
 Vector<SVGGlyph::ArabicForm> charactersWithArabicForm(const String& input, bool rtl);
