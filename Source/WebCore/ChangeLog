@@ -2,6 +2,21 @@
 
         Merge r171259. <rdar://problem/17718984>
 
+    2014-07-20  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] ignore requests to set volume
+            https://bugs.webkit.org/show_bug.cgi?id=135081
+
+            Applied post-review comments from Darin Adler.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setVolume): Don't include unreachable
+                code on iOS.
+
+2014-07-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171259. <rdar://problem/17718984>
+
     2014-07-18  Eric Carlson  <eric.carlson@apple.com>
 
             [iOS] ignore requests to set volume

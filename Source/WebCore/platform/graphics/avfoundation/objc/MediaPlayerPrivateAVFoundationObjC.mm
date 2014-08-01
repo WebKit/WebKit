@@ -1156,13 +1156,14 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time, double negative
 void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
 {
 #if PLATFORM(IOS)
+    UNUSED_PARAM(volume);
     return;
-#endif
-
+#else
     if (!metaDataAvailable())
         return;
 
     [m_avPlayer.get() setVolume:volume];
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCaptionsVisible)
