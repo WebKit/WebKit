@@ -610,6 +610,8 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!frame)
         return nil;
 
+    // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.
+#if PLATFORM(MAC)
     RetainPtr<NSImage> renderedImage = createDragImageForRange(*frame, *range, forceBlackText);
 
     IntSize size([renderedImage size]);
@@ -617,6 +619,9 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     [renderedImage setSize:size];
 
     return renderedImage.autorelease();
+#else
+    return createDragImageForRange(*frame, *range, forceBlackText).autorelease();
+#endif
 }
 
 - (NSArray *)textRects

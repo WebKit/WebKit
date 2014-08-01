@@ -1,3 +1,11 @@
+2014-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix for iOS
+
+        * bindings/objc/DOM.mm:
+        (-[DOMRange renderedImageForcingBlackText:renderedImageForcingBlackText:]):
+        We use CGImageRef instead of NSImage here on iOS.
+
 2014-08-01  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         ASSERTION FAILED: listNode in WebCore::RenderListItem::updateListMarkerNumbers
