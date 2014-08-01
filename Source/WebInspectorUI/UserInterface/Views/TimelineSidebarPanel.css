@@ -28,13 +28,17 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 22px;
+    height: 29px;
     border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar {
+    height: 22px;
 }
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
     position: absolute;
-    top: 0;
+    top: 3px;
     left: 5px;
     width: 21px;
     height: 21px;
@@ -50,6 +54,10 @@
     background-image: -webkit-image-set(url(../Images/RecordingStopped.png) 1x, url(../Images/RecordingStopped@2x.png) 2x);
     background-repeat: no-repeat;
     background-size: 21px 21px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
+    top: 0;
 }
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
@@ -74,7 +82,7 @@
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-status {
     position: absolute;
-    top: 0;
+    top: 3px;
     right: 21px;
     left: 27px;
 
@@ -85,6 +93,10 @@
 
     color: rgb(76, 76, 76);
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-status {
+    top: 0;
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar {
@@ -117,23 +129,35 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar {
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar.timelines {
+    top: 29px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timelines {
     top: 22px;
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
     height: 23px;
     border-top: 1px solid rgb(179, 179, 179);
+    top: 159px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
     top: 152px;
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content {
     position: absolute;
-    top: 44px;
+    top: 51px;
     height: 108px;
     left: 0;
     right: 0;
 
     overflow: hidden;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content {
+    top: 44px;
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content .close-button {
@@ -191,6 +215,11 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-cont
 
 .sidebar > .panel.navigation.timeline > .content,
 .sidebar > .panel.navigation.timeline > .empty-content-placeholder {
+    top: 182px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content,
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .empty-content-placeholder {
     top: 175px;
 }
 
