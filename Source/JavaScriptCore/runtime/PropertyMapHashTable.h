@@ -210,7 +210,7 @@ public:
 #endif
 
 protected:
-    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal;
+    static const unsigned StructureFlags = StructureIsImmortal;
 
 private:
     PropertyTable(VM&, unsigned initialCapacity);

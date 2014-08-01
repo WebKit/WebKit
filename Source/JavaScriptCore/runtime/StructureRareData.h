@@ -64,7 +64,7 @@ private:
     StructureRareData(VM&, Structure*);
     StructureRareData(VM&, const StructureRareData*);
 
-    static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
+    static const unsigned StructureFlags = JSCell::StructureFlags;
 
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;

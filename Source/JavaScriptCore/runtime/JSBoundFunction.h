@@ -56,7 +56,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    const static unsigned StructureFlags = OverridesHasInstance | OverridesVisitChildren | Base::StructureFlags;
+    const static unsigned StructureFlags = OverridesHasInstance | Base::StructureFlags;
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

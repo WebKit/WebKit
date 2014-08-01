@@ -32,9 +32,6 @@ void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWrapperObject* thisObject = jsCast<JSWrapperObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-
     JSObject::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_internalValue);
 }

@@ -46,7 +46,7 @@ public:
     JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     
 protected:
-    static const unsigned StructureFlags = IsEnvironmentRecord | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
+    static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetPropertyNames | Base::StructureFlags;
     
     JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope, SymbolTable* symbolTable = 0)
         : Base(vm, structure, scope)

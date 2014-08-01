@@ -105,7 +105,7 @@ public:
     }
     
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     void finishCreation(CallFrame*);
     void finishCreation(CallFrame*, InlineCallFrame*);

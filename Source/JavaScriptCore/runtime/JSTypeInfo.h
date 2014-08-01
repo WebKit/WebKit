@@ -43,7 +43,6 @@ namespace JSC {
     static const unsigned IsEnvironmentRecord = 1 << 4;
     static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
     static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
-    static const unsigned OverridesVisitChildren = 1 << 7;
 
     static const unsigned OverridesGetPropertyNames = 1 << 8;
     static const unsigned ProhibitsPropertyCaching = 1 << 9;
@@ -89,7 +88,6 @@ namespace JSC {
         bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
         static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
         bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
-        bool overridesVisitChildren() const { return isSetOnFlags1(OverridesVisitChildren); }
         bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
         bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
         bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }

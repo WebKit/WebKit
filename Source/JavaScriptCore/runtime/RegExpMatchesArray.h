@@ -52,7 +52,7 @@ namespace JSC {
     protected:
         void finishCreation(VM&);
 
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
     private:
         ALWAYS_INLINE void reifyAllPropertiesIfNecessary(ExecState* exec)

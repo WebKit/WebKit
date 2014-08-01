@@ -77,7 +77,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
         JS_EXPORT_PRIVATE void finishCreation(VM&);
 
-        static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
         static void visitChildren(JSCell*, SlotVisitor&);
 

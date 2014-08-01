@@ -61,7 +61,7 @@ public:
 
     DECLARE_INFO;
 
-    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | Base::StructureFlags;
+    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
 
 private:
     WeakMapData(VM&);

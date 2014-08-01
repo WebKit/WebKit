@@ -45,10 +45,7 @@ void JSMapIterator::finishCreation(VM& vm, JSMap* iteratedObject)
 void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-        
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());        
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_iteratedObjectData);
 }

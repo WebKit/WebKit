@@ -1,3 +1,19 @@
+2014-07-31  Andreas Kling  <akling@apple.com>
+
+        Remove the JSC::OverridesVisitChildren flag.
+        <https://webkit.org/b/135489>
+
+        Tweak the bindings code generator to stop spitting out the flag.
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2014-08-01  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Volume is not remembered between items in a YouTube playlist

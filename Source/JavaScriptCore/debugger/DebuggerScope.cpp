@@ -52,9 +52,6 @@ void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-
     JSObject::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_activation);
 }

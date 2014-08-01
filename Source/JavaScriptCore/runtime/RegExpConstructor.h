@@ -70,7 +70,7 @@ namespace JSC {
 
     protected:
         void finishCreation(VM&, RegExpPrototype*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | Base::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
     private:
         RegExpConstructor(VM&, Structure*, RegExpPrototype*);

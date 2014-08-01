@@ -169,7 +169,7 @@ public:
     using Parent::methodTable;
 
 protected:
-    static const unsigned StructureFlags = ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | Parent::StructureFlags;
+    static const unsigned StructureFlags = ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesHasInstance | OverridesGetPropertyNames | Parent::StructureFlags;
 
 private:
     static String className(const JSObject*);
@@ -196,8 +196,6 @@ private:
     {
         JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
         ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), JSCallbackObject<Parent>::info());
-        COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-        ASSERT(thisObject->Parent::structure()->typeInfo().overridesVisitChildren());
         Parent::visitChildren(thisObject, visitor);
         thisObject->m_callbackObjectData->visitChildren(visitor);
     }

@@ -99,7 +99,6 @@ void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
 void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
 {
     JSAPIWrapperObject* thisObject = JSC::jsCast<JSAPIWrapperObject*>(cell);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     Base::visitChildren(cell, visitor);
 
     if (thisObject->wrappedObject())

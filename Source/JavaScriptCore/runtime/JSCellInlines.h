@@ -174,7 +174,6 @@ inline bool JSCell::isAPIValueWrapper() const
 
 inline void JSCell::setStructure(VM& vm, Structure* structure)
 {
-    ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
     ASSERT(structure->classInfo() == this->structure()->classInfo());
     ASSERT(!this->structure()
         || this->structure()->transitionWatchpointSetHasBeenInvalidated()

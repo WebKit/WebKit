@@ -36,9 +36,6 @@ void JSWithScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWithScope* thisObject = jsCast<JSWithScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_object);
 }

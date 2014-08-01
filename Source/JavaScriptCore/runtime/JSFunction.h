@@ -153,7 +153,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
 
     protected:
-        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
+        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesGetPropertyNames | JSObject::StructureFlags;
 
         JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
         JSFunction(VM&, FunctionExecutable*, JSScope*);

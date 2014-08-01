@@ -71,9 +71,6 @@ public:
     }
 
 private:
-
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesVisitChildren;
-
     JSMapIterator(VM& vm, Structure* structure, JSMap* iteratedObject, MapIterationKind kind)
         : Base(vm, structure)
         , m_iterator(iteratedObject->mapData()->begin())

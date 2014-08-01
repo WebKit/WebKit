@@ -136,7 +136,6 @@ void PropertyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     PropertyTable* thisObject = jsCast<PropertyTable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
     JSCell::visitChildren(thisObject, visitor);
 

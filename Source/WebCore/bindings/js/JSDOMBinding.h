@@ -102,7 +102,7 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesVisitChildren | JSDOMWrapper::StructureFlags;
+    static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSDOMWrapper::StructureFlags;
     DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
         : JSDOMWrapper(structure, globalObject)
     {

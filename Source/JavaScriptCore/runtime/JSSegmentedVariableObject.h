@@ -79,8 +79,6 @@ public:
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
 protected:
-    static const unsigned StructureFlags = OverridesVisitChildren | JSSymbolTableObject::StructureFlags;
-
     JSSegmentedVariableObject(VM& vm, Structure* structure, JSScope* scope)
         : JSSymbolTableObject(vm, structure, scope)
     {

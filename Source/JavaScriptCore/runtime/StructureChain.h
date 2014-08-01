@@ -67,7 +67,7 @@ namespace JSC {
         static void destroy(JSCell*);
 
     protected:
-        static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal;
+        static const unsigned StructureFlags = StructureIsImmortal;
 
         void finishCreation(VM& vm, Structure* head)
         {

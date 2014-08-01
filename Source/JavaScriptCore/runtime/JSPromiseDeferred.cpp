@@ -78,8 +78,6 @@ void JSPromiseDeferred::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSPromiseDeferred* thisObject = jsCast<JSPromiseDeferred*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
     Base::visitChildren(thisObject, visitor);
 

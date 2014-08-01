@@ -106,7 +106,6 @@ void JSPropertyNameIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSPropertyNameIterator* thisObject = jsCast<JSPropertyNameIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     visitor.appendValues(thisObject->m_jsStrings.get(), thisObject->m_jsStringsSize);
     visitor.append(&thisObject->m_cachedPrototypeChain);
 }

@@ -57,7 +57,7 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* activation);
 

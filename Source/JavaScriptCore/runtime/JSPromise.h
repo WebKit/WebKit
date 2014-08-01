@@ -75,7 +75,6 @@ public:
 private:
     JSPromise(VM&, Structure*);
     void finishCreation(VM&, JSPromiseConstructor*);
-    static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 

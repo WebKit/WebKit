@@ -205,7 +205,7 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionExecutableType, StructureFlags), info());
     }
 
-    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | JSCell::StructureFlags;
+    static const unsigned StructureFlags = StructureIsImmortal | JSCell::StructureFlags;
 
     DECLARE_EXPORT_INFO;
 };
@@ -578,7 +578,7 @@ private:
 
 protected:
 
-    static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal | Base::StructureFlags;
+    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
     static void visitChildren(JSCell*, SlotVisitor&);
 
 public:
@@ -594,8 +594,6 @@ protected:
         : Base(vm, structure, codeType, info)
     {
     }
-
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
     DECLARE_INFO;
 };
@@ -647,8 +645,6 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedProgramCodeBlockType, StructureFlags), info());
     }
 
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
-
     DECLARE_INFO;
 };
 
@@ -689,8 +685,6 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedEvalCodeBlockType, StructureFlags), info());
     }
 
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
-
     DECLARE_INFO;
 };
 
@@ -717,8 +711,6 @@ public:
     {
         return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionCodeBlockType, StructureFlags), info());
     }
-
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
     DECLARE_INFO;
 };

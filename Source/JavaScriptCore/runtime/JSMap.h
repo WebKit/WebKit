@@ -58,8 +58,6 @@ public:
     MapData* mapData() { return m_mapData.get(); }
 
 private:
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
-
     JSMap(VM& vm, Structure* structure)
         : Base(vm, structure)
     {

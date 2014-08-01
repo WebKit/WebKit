@@ -39,7 +39,7 @@ namespace JSC {
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesVisitChildren | OverridesGetPropertyNames), info());
+            return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesGetPropertyNames), info());
         }
         
         DECLARE_EXPORT_INFO;

@@ -168,7 +168,6 @@ public:
 
 protected:
     JSScope(VM&, Structure*, JSScope* next);
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
 private:
     WriteBarrier<JSScope> m_next;

@@ -71,9 +71,6 @@ public:
     static ptrdiff_t offsetOfNextIndex() { return OBJECT_OFFSETOF(JSArrayIterator, m_nextIndex); }
 
 private:
-
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesVisitChildren;
-
     JSArrayIterator(VM& vm, Structure* structure)
         : Base(vm, structure)
         , m_nextIndex(0)

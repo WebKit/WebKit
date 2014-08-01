@@ -76,7 +76,7 @@ namespace JSC {
         DECLARE_EXPORT_INFO;
 
     protected:
-        static const unsigned StructureFlags = OverridesVisitChildren | StructureIsImmortal;
+        static const unsigned StructureFlags = StructureIsImmortal;
 
         void finishCreation(VM& vm, PropertyNameArrayData* propertyNameArrayData, JSObject* object)
         {

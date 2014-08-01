@@ -91,7 +91,7 @@ public:
     static int registersOffset(SymbolTable*);
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:
     bool symbolTableGet(PropertyName, PropertySlot&);

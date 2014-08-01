@@ -59,9 +59,6 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-protected:
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
-
 private:
     JSWithScope(ExecState* exec, JSObject* object)
         : Base(

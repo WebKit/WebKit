@@ -68,7 +68,7 @@ protected:
         symbolTable()->add(identifier.impl(), SymbolTableEntry(-1, attributes));
     }
 
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | Base::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 
 private:
     JSNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next)

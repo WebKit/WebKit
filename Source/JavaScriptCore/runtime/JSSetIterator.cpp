@@ -45,10 +45,7 @@ void JSSetIterator::finishCreation(VM& vm, JSSet* iteratedObject)
 void JSSetIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSSetIterator* thisObject = jsCast<JSSetIterator*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-        
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());        
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_iteratedObjectData);
 }

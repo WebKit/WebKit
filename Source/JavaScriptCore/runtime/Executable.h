@@ -493,7 +493,6 @@ public:
 
 private:
     friend class ScriptExecutable;
-    static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
     EvalExecutable(ExecState*, const SourceCode&, bool);
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -546,8 +545,6 @@ public:
 
 private:
     friend class ScriptExecutable;
-    
-    static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
 
     ProgramExecutable(ExecState*, const SourceCode&);
 
@@ -672,7 +669,6 @@ private:
 
     friend class ScriptExecutable;
 
-    static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     RefPtr<FunctionCodeBlock> m_codeBlockForCall;
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;

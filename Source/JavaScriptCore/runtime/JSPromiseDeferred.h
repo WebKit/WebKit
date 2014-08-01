@@ -56,7 +56,6 @@ public:
 private:
     JSPromiseDeferred(VM&);
     void finishCreation(VM&, JSObject*, JSValue, JSValue);
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSObject> m_promise;

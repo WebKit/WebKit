@@ -1,3 +1,138 @@
+2014-07-31  Andreas Kling  <akling@apple.com>
+
+        Remove the JSC::OverridesVisitChildren flag.
+        <https://webkit.org/b/135489>
+
+        Except for 3 special classes, the visitChildren() call is always
+        dispatched through the method table (see SlotVisitor.cpp.)
+
+        The OverridesVisitChildren flag doesn't actually do anything.
+        It could be used to implement a non-virtual direct call to
+        JSCell::visitChildren, bypassing the method table for some objects,
+        but such a micro-optimization seems like a weak trade for all this
+        code complexity. Instead, just remove the flag.
+
+        This change frees up an inline flag bit in JSCell.
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSAPIWrapperObject.h:
+        * API/JSAPIWrapperObject.mm:
+        (JSC::JSAPIWrapperObject::visitChildren):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::visitChildren):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        (JSC::UnlinkedProgramCodeBlock::visitChildren):
+        * bytecode/UnlinkedCodeBlock.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::visitChildren):
+        * debugger/DebuggerScope.h:
+        * jsc.cpp:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        * runtime/Arguments.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildren):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSActivation.h:
+        * runtime/JSArrayIterator.cpp:
+        (JSC::JSArrayIterator::visitChildren):
+        * runtime/JSArrayIterator.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::setStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSMap.h:
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::visitChildren):
+        * runtime/JSMapIterator.h:
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::visitChildren):
+        * runtime/JSNameScope.h:
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::visitChildren):
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::visitChildren):
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromiseReaction.cpp:
+        (JSC::JSPromiseReaction::visitChildren):
+        * runtime/JSPromiseReaction.h:
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::visitChildren):
+        * runtime/JSProxy.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::visitChildren):
+        * runtime/JSScope.h:
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSSet.h:
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::visitChildren):
+        * runtime/JSSetIterator.h:
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::visitChildren):
+        * runtime/JSSymbolTableObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesVisitChildren): Deleted.
+        * runtime/JSWeakMap.h:
+        * runtime/JSWithScope.cpp:
+        (JSC::JSWithScope::visitChildren):
+        * runtime/JSWithScope.h:
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildren):
+        * runtime/JSWrapperObject.h:
+        * runtime/MapData.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::visitChildren):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::visitChildren):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::visitChildren):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::RegExpMatchesArray::visitChildren):
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildren):
+        * runtime/RegExpObject.h:
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::visitChildren):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren):
+        * runtime/StructureChain.h:
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        * runtime/StructureRareData.h:
+        * runtime/WeakMapData.h:
+
 2014-07-31  Mark Lam  <mark.lam@apple.com>
 
         JSCell::classInfo() belongs in JSCellInlines.h.

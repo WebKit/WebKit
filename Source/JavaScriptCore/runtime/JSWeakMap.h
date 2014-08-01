@@ -65,8 +65,6 @@ public:
     void clear(CallFrame*);
 
 private:
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
-
     JSWeakMap(VM& vm, Structure* structure)
         : Base(vm, structure)
     {

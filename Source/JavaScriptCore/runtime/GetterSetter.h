@@ -61,7 +61,7 @@ namespace JSC {
         void setSetter(VM& vm, JSObject* setter) { m_setter.setMayBeNull(vm, this, setter); }
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), info());
+            return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType), info());
         }
         
         static ptrdiff_t offsetOfGetter()

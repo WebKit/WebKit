@@ -38,7 +38,6 @@ void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     GetterSetter* thisObject = jsCast<GetterSetter*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     JSCell::visitChildren(thisObject, visitor);
 
     visitor.append(&thisObject->m_getter);

@@ -203,7 +203,7 @@ Structure::Structure(VM& vm)
     setStaticFunctionsReified(false);
     setHasRareData(false);
  
-    TypeInfo typeInfo = TypeInfo(CellType, OverridesVisitChildren | StructureIsImmortal);
+    TypeInfo typeInfo = TypeInfo(CellType, StructureIsImmortal);
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
@@ -1027,7 +1027,6 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Structure* thisObject = jsCast<Structure*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
     JSCell::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_globalObject);

@@ -4378,8 +4378,6 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_cachedAttribute1);
     visitor.append(&thisObject->m_cachedAttribute2);

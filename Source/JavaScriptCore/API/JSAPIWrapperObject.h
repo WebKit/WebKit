@@ -45,8 +45,6 @@ public:
     void setWrappedObject(void*);
 
 protected:
-    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
-    
     JSAPIWrapperObject(VM&, Structure*);
 
 private:
