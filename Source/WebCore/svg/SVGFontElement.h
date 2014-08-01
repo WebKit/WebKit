@@ -81,6 +81,7 @@ public:
     Glyph missingGlyph();
 
     const SVGMissingGlyphElement* firstMissingGlyphElement() const;
+    bool horizontalKerningMapIsEmpty() const { return m_horizontalKerningMap.isEmpty(); }
 
 private:
     SVGFontElement(const QualifiedName&, Document&);

@@ -72,6 +72,9 @@ bool SVGTextRunRenderingContext::applySVGKerning(const SimpleFontData* fontData,
     if (!fontElement || !fontFaceElement)
         return false;
 
+    if (fontElement->horizontalKerningMapIsEmpty())
+        return true;
+
     float scale = scaleEmToUnits(fontData->platformData().size(), fontFaceElement->unitsPerEm());
 
     String lastGlyphName;

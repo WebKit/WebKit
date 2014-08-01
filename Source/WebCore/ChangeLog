@@ -1,3 +1,19 @@
+2014-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVG Font kerning can take an early out if the font has no kerning information
+        https://bugs.webkit.org/show_bug.cgi?id=135524
+
+        Reviewed by Dean Jackson.
+
+        Rather than calling SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs() again
+        and again, skip the iteration entirely if every call would return 0.
+
+        No new tests because there is no behavior change.
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::applySVGKerning):
+        * svg/SVGFontElement.h:
+
 2014-08-01  Beth Dakin  <bdakin@apple.com>
 
         Inspector highlights clipped at the bottom on the page in WK1 views with 
