@@ -61,4 +61,28 @@ void WebPreferences::platformUpdateFloatValueForKey(const String&, float)
     notImplemented();
 }
 
+bool WebPreferences::platformGetStringUserValueForKey(const String&, String&)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPreferences::platformGetBoolUserValueForKey(const String&, bool&)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPreferences::platformGetUInt32UserValueForKey(const String&, uint32_t&)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPreferences::platformGetDoubleUserValueForKey(const String&, double&)
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace WebKit

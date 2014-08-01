@@ -91,6 +91,14 @@ private:
 
     void updatePrivateBrowsingValue(bool value);
 
+    void registerDefaultBoolValueForKey(const String&, bool);
+    void registerDefaultUInt32ValueForKey(const String&, uint32_t);
+
+    bool platformGetStringUserValueForKey(const String& key, String& userValue);
+    bool platformGetBoolUserValueForKey(const String&, bool&);
+    bool platformGetUInt32UserValueForKey(const String&, uint32_t&);
+    bool platformGetDoubleUserValueForKey(const String&, double&);
+
     const String m_identifier;
     const String m_keyPrefix;
     const String m_globalDebugKeyPrefix;

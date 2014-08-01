@@ -45,10 +45,10 @@ PassRefPtr<WebPreferences> WebPreferences::create(const String& identifier, cons
 PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
     RefPtr<WebPreferences> preferences = adoptRef(new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
-    preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
-    preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
-    preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
-    preferences->m_store.setOverrideDefaultsUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), WebCore::SecurityOrigin::AllowAllStorage);
+    preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
+    preferences->registerDefaultBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
+    preferences->registerDefaultBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);
+    preferences->registerDefaultUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey(), WebCore::SecurityOrigin::AllowAllStorage);
     return preferences.release();
 }
 
@@ -190,6 +190,22 @@ FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 bool WebPreferences::anyPagesAreUsingPrivateBrowsing()
 {
     return privateBrowsingPageCount;
+}
+
+void WebPreferences::registerDefaultBoolValueForKey(const String& key, bool value)
+{
+    m_store.setOverrideDefaultsBoolValueForKey(key, value);
+    bool userValue;
+    if (platformGetBoolUserValueForKey(key, userValue))
+        m_store.setBoolValueForKey(key, userValue);
+}
+
+void WebPreferences::registerDefaultUInt32ValueForKey(const String& key, uint32_t value)
+{
+    m_store.setOverrideDefaultsUInt32ValueForKey(key, value);
+    uint32_t userValue;
+    if (platformGetUInt32UserValueForKey(key, userValue))
+        m_store.setUInt32ValueForKey(key, userValue);
 }
 
 } // namespace WebKit
