@@ -2,6 +2,17 @@
 
         Unreviewed EFL gardening
 
+        Add test expectations for failing tests. Remove flaky test expectations that are
+        no longer correct.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/text/khmer-lao-font-expected.txt: Update expected result.
+        * svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt: Update after r171046.
+
+2014-08-01  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
         Update test expectations for crashing webgl tests.
 
         * platform/efl/TestExpectations:
