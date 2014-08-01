@@ -41,7 +41,7 @@ include(WebKitFeatures)
 # -----------------------------------------------------------------------------
 # Determine which port will be built
 # -----------------------------------------------------------------------------
-set(ALL_PORTS Efl WinCE GTK AppleWin WinCairo)
+set(ALL_PORTS Efl WinCE GTK AppleWin WinCairo Mac)
 set(PORT "NOPORT" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})")
 
 list(FIND ALL_PORTS ${PORT} RET)
@@ -54,7 +54,7 @@ string(TOLOWER ${PORT} WEBKIT_PORT_DIR)
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
 # -----------------------------------------------------------------------------
-find_package(BISON 2.4.1 REQUIRED)
+find_package(BISON 2.3 REQUIRED)
 find_package(FLEX 2.5.34 REQUIRED)
 
 # TODO Enforce version requirement for gperf

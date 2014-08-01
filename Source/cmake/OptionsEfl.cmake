@@ -34,6 +34,7 @@ add_definitions(-DWTF_USE_SOUP=1)
 add_definitions(-DWTF_USE_CAIRO=1)
 add_definitions(-DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1)
 
+set(WTF_LIBRARY_TYPE STATIC)
 set(WTF_OUTPUT_NAME wtf_efl)
 set(JavaScriptCore_OUTPUT_NAME javascriptcore_efl)
 set(WebCore_OUTPUT_NAME webcore_efl)

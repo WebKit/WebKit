@@ -1,3 +1,25 @@
+2014-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards cmake on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=135484
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt:
+        Added Mac to list of ports, even though it is not done yet.
+        Changed minimum bison version to version installed on Macs.
+        * Source/cmake/OptionsAppleWin.cmake:
+        Added some definitions.
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        Set WTF_LIBRARY_TYPE to STATIC to not change WTF linking on EFL or GTK ports.
+        * Source/cmake/OptionsMac.cmake: Added blank for now.
+        * Source/cmake/OptionsWinCairo.cmake:
+        * Source/cmake/OptionsWindows.cmake:
+        Added some definitions.
+        Removed /WX (warnings treated as error while compiling).
+        Copied warnings to ignore from WebKitLibraries/win/tools/vsprops/common.props.
+
 2014-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CMake] GTK and EFL are using PROJECT_VERSION_PATCH to define the micro version
