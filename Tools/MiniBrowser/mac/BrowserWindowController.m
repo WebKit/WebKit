@@ -64,6 +64,9 @@
     if ([address rangeOfString:@"://"].length > 0)
         return address;
 
+    if ([address hasPrefix:@"data:"])
+        return address;
+
     return [@"http://" stringByAppendingString:address];
 }
 

@@ -98,7 +98,7 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
 {
     [urlText setStringValue:[self addProtocolIfNecessary:[urlText stringValue]]];
 
-    [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[urlText stringValue]]]];
+    [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[[urlText stringValue] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]]];
 }
 
 - (IBAction)showHideWebView:(id)sender
@@ -423,7 +423,7 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
     if (!URL.absoluteString.length)
         return;
 
-    urlText.stringValue = [URL absoluteString];
+    urlText.stringValue = [[URL absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (void)loadURLString:(NSString *)urlString

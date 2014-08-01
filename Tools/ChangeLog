@@ -1,3 +1,21 @@
+2014-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        MiniBrowser doesn't support data URLs
+        https://bugs.webkit.org/show_bug.cgi?id=135492
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController addProtocolIfNecessary:]):
+        Don't add http:// to data: URLs.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController fetch:]):
+        (-[WK2BrowserWindowController updateTextFieldFromURL:]):
+        Percent-escape the contents of the address field before trying to make a URL.
+        Percent-unescape the URL when displaying it in the address field.
+        This is not great, but trivial and good-enough-for-Minibrowser.
+
 2014-07-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] MiniBrower comes to crash when combo box is pressed
