@@ -758,6 +758,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioR
         return;
 
     m_sampleBufferAudioRenderers.append(audioRenderer);
+
+    [audioRenderer setMuted:m_player->muted()];
+    [audioRenderer setVolume:m_player->volume()];
+
     [m_synchronizer addRenderer:audioRenderer];
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
