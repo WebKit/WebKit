@@ -206,9 +206,9 @@ public:
     // visibleContentScaleFactor is usually 1, except when the setting delegatesPageScaling is true and the
     // ScrollView is the main frame; in that case, visibleContentScaleFactor is equal to the page's pageScaleFactor.
     // Ports that don't use pageScaleFactor can treat unscaledUnobscuredVisibleContentSize and visibleContentRect().size() as equivalent.
-    // unscaledTotalVisibleContentSize() includes areas in the content that might be obscured by UI elements.
+    // unscaledVisibleContentSizeIncludingObscuredArea() includes areas in the content that might be obscured by UI elements.
     IntSize unscaledUnobscuredVisibleContentSize(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
-    IntSize unscaledTotalVisibleContentSize(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    IntSize unscaledVisibleContentSizeIncludingObscuredArea(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
     virtual float visibleContentScaleFactor() const { return 1; }
 
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
@@ -481,6 +481,8 @@ private:
     bool platformCanBlitOnScroll() const;
     IntRect platformVisibleContentRect(bool includeScrollbars) const;
     IntSize platformVisibleContentSize(bool includeScrollbars) const;
+    IntRect platformVisibleContentRectIncludingObscuredArea(bool includeScrollbars) const;
+    IntSize platformVisibleContentSizeIncludingObscuredArea(bool includeScrollbars) const;
     void platformSetContentsSize();
     IntRect platformContentsToScreen(const IntRect&) const;
     IntPoint platformScreenToContents(const IntPoint&) const;

@@ -266,7 +266,7 @@ IntRect ScrollView::unobscuredContentRectInternal(VisibleContentRectIncludesScro
     return IntRect(IntPoint(m_scrollOffset), expandedIntSize(visibleContentSize));
 }
 
-IntSize ScrollView::unscaledTotalVisibleContentSize(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
+IntSize ScrollView::unscaledVisibleContentSizeIncludingObscuredArea(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
         return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
@@ -291,10 +291,10 @@ IntSize ScrollView::unscaledTotalVisibleContentSize(VisibleContentRectIncludesSc
     
 IntSize ScrollView::unscaledUnobscuredVisibleContentSize(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
-    IntSize visibleContentSize = unscaledTotalVisibleContentSize(scrollbarInclusion);
-    
+    IntSize visibleContentSize = unscaledVisibleContentSizeIncludingObscuredArea(scrollbarInclusion);
+
     if (platformWidget())
-        return visibleContentSize;
+        return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
 
 #if USE(TILED_BACKING_STORE)
     if (!m_fixedVisibleContentRect.isEmpty())
@@ -1525,6 +1525,16 @@ void ScrollView::platformSetTopContentInset(float)
 }
 
 IntSize ScrollView::platformVisibleContentSize(bool) const
+{
+    return IntSize();
+}
+
+IntRect ScrollView::platformVisibleContentRectIncludingObscuredArea(bool) const
+{
+    return IntRect();
+}
+
+IntSize ScrollView::platformVisibleContentSizeIncludingObscuredArea(bool) const
 {
     return IntSize();
 }
