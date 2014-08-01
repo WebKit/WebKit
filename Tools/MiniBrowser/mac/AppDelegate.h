@@ -24,6 +24,8 @@
  */
 
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
+    NSMutableSet *_browserWindowControllers;
+
     IBOutlet NSMenuItem *_newWebKit1WindowItem;
     IBOutlet NSMenuItem *_newWebKit2WindowItem;
 }

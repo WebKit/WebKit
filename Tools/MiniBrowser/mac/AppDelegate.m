@@ -36,9 +36,7 @@ enum {
     WebKit2NewWindowTag = 2
 };
 
-@implementation BrowserAppDelegate {
-    NSMutableSet *_browserWindowControllers;
-}
+@implementation BrowserAppDelegate
 
 - (id)init
 {

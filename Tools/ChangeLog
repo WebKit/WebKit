@@ -1,5 +1,13 @@
 2014-08-01  Tim Horton  <timothy_horton@apple.com>
 
+        Confusing build fix after r171926.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        * MiniBrowser/mac/SettingsController.m:
+
+2014-08-01  Tim Horton  <timothy_horton@apple.com>
+
         Make it easer to add switches to MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=135499
 
