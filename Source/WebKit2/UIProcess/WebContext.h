@@ -433,8 +433,7 @@ private:
     String networkingHSTSDatabasePath() const;
     String platformDefaultNetworkingHSTSDatabasePath() const;
 
-    String mediaCacheDirectory() const;
-    String platformMediaCacheDirectory() const;
+    String containerTemporaryDirectory() const;
 
 #if PLATFORM(COCOA)
     void registerNotificationObservers();
@@ -532,7 +531,6 @@ private:
     String m_overrideDiskCacheDirectory;
     String m_overrideCookieStorageDirectory;
     String m_overrideOpenGLCacheDirectory;
-    String m_overrideMediaCacheDirectory;
 
     String m_webSQLDatabaseDirectory;
     String m_indexedDBDatabaseDirectory;
