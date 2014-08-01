@@ -1,3 +1,9 @@
+2014-07-31  Timothy Horton  <timothy_horton@apple.com>
+
+        Build fix for platforms where we should have automaticallyAdjustsContentInsets but it isn't public yet
+
+        * platform/mac/ScrollViewMac.mm:
+
 2014-07-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EFL] Add support for building with Geoclue2.
