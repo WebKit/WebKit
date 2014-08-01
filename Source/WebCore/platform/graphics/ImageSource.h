@@ -77,6 +77,9 @@ const int cAnimationLoopOnce = 0;
 const int cAnimationLoopInfinite = -1;
 const int cAnimationNone = -2;
 
+// SubsamplingLevel. 0 is no subsampling, 1 is half dimensions on each axis etc.
+typedef short SubsamplingLevel;
+
 class ImageSource {
     WTF_MAKE_NONCOPYABLE(ImageSource);
 public:
@@ -131,14 +134,14 @@ public:
     void setData(SharedBuffer* data, bool allDataReceived);
     String filenameExtension() const;
 
-    bool isSizeAvailable();
-    IntSize size(ImageOrientationDescription = ImageOrientationDescription()) const;
-    IntSize frameSizeAtIndex(size_t, ImageOrientationDescription = ImageOrientationDescription()) const;
+    SubsamplingLevel subsamplingLevelForScale(float) const;
+    bool allowSubsamplingOfFrameAtIndex(size_t) const;
 
-#if PLATFORM(IOS)
-    IntSize originalSize(RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
-    bool isSubsampled() const { return m_baseSubsampling; }
-#endif
+    bool isSizeAvailable();
+    // Always original size, without subsampling.
+    IntSize size(ImageOrientationDescription = ImageOrientationDescription()) const;
+    // Size of optionally subsampled frame.
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = 0, ImageOrientationDescription = ImageOrientationDescription()) const;
 
     bool getHotSpot(IntPoint&) const;
 
@@ -150,7 +153,7 @@ public:
 
     // Callers should not call this after calling clear() with a higher index;
     // see comments on clear() above.
-    PassNativeImagePtr createFrameAtIndex(size_t, float* scale = 0);
+    PassNativeImagePtr createFrameAtIndex(size_t, SubsamplingLevel = 0);
 
     float frameDurationAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.
@@ -159,7 +162,7 @@ public:
 
     // Return the number of bytes in the decoded frame. If the frame is not yet
     // decoded then return 0.
-    unsigned frameBytesAtIndex(size_t) const;
+    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = 0) const;
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     static unsigned maxPixelsPerDecodedImage() { return s_maxPixelsPerDecodedImage; }
@@ -175,11 +178,6 @@ private:
 #endif
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     static unsigned s_maxPixelsPerDecodedImage;
-#endif
-#if PLATFORM(IOS)
-    mutable int m_baseSubsampling;
-    mutable bool m_isProgressive;
-    CFDictionaryRef imageSourceOptions(ShouldSkipMetadata, int subsampling = 0) const;
 #endif
 };
 

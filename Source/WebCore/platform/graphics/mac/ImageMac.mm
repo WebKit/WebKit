@@ -57,9 +57,9 @@ void BitmapImage::invalidatePlatformData()
         return;
 
 #if USE(APPKIT)
-    m_nsImage = 0;
+    m_nsImage = nullptr;
 #endif
-    m_tiffRep = 0;
+    m_tiffRep = nullptr;
 }
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
