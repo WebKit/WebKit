@@ -29,7 +29,6 @@
 
 #include "ContentSecurityPolicy.h"
 #include "EventListener.h"
-#include "EventNames.h"
 #include "EventTarget.h"
 #include "GroupSettings.h"
 #include "ScriptExecutionContext.h"

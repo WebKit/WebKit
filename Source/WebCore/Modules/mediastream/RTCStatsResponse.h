@@ -30,7 +30,6 @@
 #include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
-#include "EventNames.h"
 #include "EventTarget.h"
 #include "MediaStreamTrack.h"
 #include "RTCStatsReport.h"

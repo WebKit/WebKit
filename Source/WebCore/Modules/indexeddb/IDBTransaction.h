@@ -32,7 +32,6 @@
 #include "DOMError.h"
 #include "Event.h"
 #include "EventListener.h"
-#include "EventNames.h"
 #include "EventTarget.h"
 #include "IDBDatabaseMetadata.h"
 #include "IndexedDB.h"

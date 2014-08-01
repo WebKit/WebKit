@@ -28,7 +28,6 @@
 #if ENABLE(GAMEPAD)
 
 #include "Event.h"
-#include "EventNames.h"
 #include "Gamepad.h"
 #include <wtf/RefPtr.h>
 

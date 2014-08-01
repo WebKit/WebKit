@@ -28,7 +28,6 @@
 
 #include "ApplicationCacheHost.h"
 #include "DOMWindowProperty.h"
-#include "EventNames.h"
 #include "EventTarget.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>

@@ -29,7 +29,6 @@
 #if ENABLE(IOS_AIRPLAY)
 
 #include "Event.h"
-#include "EventNames.h"
 
 namespace WebCore {
 
