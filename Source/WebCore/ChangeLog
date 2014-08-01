@@ -6,6 +6,20 @@
         -and corresponding-
         <rdar://problem/17850323>
 
+        Forgot to commit this one very critical part with 
+        http://trac.webkit.org/changeset/171951 
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSizeIncludingObscuredArea):
+
+2014-08-01  Beth Dakin  <bdakin@apple.com>
+
+        Inspector highlights clipped at the bottom on the page in WK1 views with 
+        contentInsets
+        https://bugs.webkit.org/show_bug.cgi?id=135480
+        -and corresponding-
+        <rdar://problem/17850323>
+
         Reviewed by Simon Fraser.
 
         unscaledTotalVisibleContentSize() was the main function on Mac that was expected 

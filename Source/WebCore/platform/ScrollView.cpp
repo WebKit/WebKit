@@ -269,7 +269,7 @@ IntRect ScrollView::unobscuredContentRectInternal(VisibleContentRectIncludesScro
 IntSize ScrollView::unscaledVisibleContentSizeIncludingObscuredArea(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
-        return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
+        return platformVisibleContentSizeIncludingObscuredArea(scrollbarInclusion == IncludeScrollbars);
 
 #if USE(TILED_BACKING_STORE)
     if (!m_fixedVisibleContentRect.isEmpty())
