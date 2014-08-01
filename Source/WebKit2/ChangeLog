@@ -1,3 +1,12 @@
+2014-08-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS WK2] Add extension read permission to network sandbox profile
+        <rdar://problem/17671574>
+
+        Reviewed by Alexey Proskuryakov and Oliver Hunt.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2014-08-01  Oliver Hunt  <oliver@apple.com>
 
         Various frameworks may want to use the container temp directory, so our current restrictions are too tight
