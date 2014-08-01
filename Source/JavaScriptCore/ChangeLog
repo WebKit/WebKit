@@ -1,3 +1,9 @@
+2014-08-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r171946 to fix non-Apple builds.
+
+        * bytecode/InlineCallFrameSet.cpp:
+
 2014-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CodeBlock fails to visit the Executables of its InlineCallFrames
