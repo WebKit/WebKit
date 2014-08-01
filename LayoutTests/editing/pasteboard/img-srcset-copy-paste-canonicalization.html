@@ -27,6 +27,13 @@
     var sourceImageSegments;
     var destinationImageSegments;
 
+    var finishTestCount = 0;
+    function maybeFinishTest() {
+        ++finishTestCount;
+        if (finishTestCount == 2)
+            finishJSTest();
+    }
+
     function runTests(href) {
         iframeHref = href;
 
@@ -53,10 +60,10 @@
 
         destinationImage.onerror = function() {
             testFailed("Image should not fail to load");
-            finishJSTest();
+            maybeFinishTest();
         }
-        image.onload = function() {
-            finishJSTest();
+        destinationImage.onload = function() {
+            maybeFinishTest();
         }
 
         sourceImageSegments = sourceImage.getAttribute("srcset").split(" ");
@@ -69,6 +76,7 @@
         shouldBe("destinationImageSegments[1]", "\"2x,\"");
         shouldBe("sourceImageSegments[3]", "\"1x\"");
         shouldBe("destinationImageSegments[3]", "\"1x\"");
+        maybeFinishTest();
     }
 </script>
 <script src="../../resources/js-test-post.js"></script>

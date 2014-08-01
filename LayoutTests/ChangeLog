@@ -1,3 +1,9 @@
+2014-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed post-review test fixup
+
+        * editing/pasteboard/img-srcset-copy-paste-canonicalization.html:
+
 2014-08-01  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r171891): platform/mac/fast/scrolling/scroll-select-bottom-test.html        
