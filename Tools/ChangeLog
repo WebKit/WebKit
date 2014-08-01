@@ -1,3 +1,14 @@
+2014-07-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use RC_PROJECTBUILDVERSION as build portion of version
+        https://bugs.webkit.org/show_bug.cgi?id=135478
+
+        Reviewed by David Kilzer.
+
+        Add new test suite for the version-stamp program.
+
+        * Scripts/webkitperl/auto-version_unittest/versionStampTests.pl: Added.
+
 2014-07-31  Dan Bernstein  <mitz@apple.com>
 
         Reverted r171893, because it broke http/tests/appcache/different-https-origin-resource-main.html,
