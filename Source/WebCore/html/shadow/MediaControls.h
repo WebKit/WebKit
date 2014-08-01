@@ -143,8 +143,6 @@ protected:
 
 private:
     virtual bool isMediaControls() const override { return true; }
-
-    virtual const AtomicString& shadowPseudoId() const override;
 };
 
 inline MediaControls* toMediaControls(Node* node)

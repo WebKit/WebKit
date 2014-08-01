@@ -1,3 +1,73 @@
+2014-07-31  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove shadowPseudoId() override from the shadow media controls
+        https://bugs.webkit.org/show_bug.cgi?id=135474
+
+        Reviewed by Eric Carlson.
+
+        Small cleanup.
+
+        * html/shadow/MediaControlElementTypes.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::MediaControlPanelElement):
+        (WebCore::MediaControlPanelEnclosureElement::MediaControlPanelEnclosureElement):
+        (WebCore::MediaControlOverlayEnclosureElement::MediaControlOverlayEnclosureElement):
+        (WebCore::MediaControlTimelineContainerElement::MediaControlTimelineContainerElement):
+        (WebCore::MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement):
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement):
+        (WebCore::MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement):
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement):
+        (WebCore::MediaControlPlayButtonElement::MediaControlPlayButtonElement):
+        (WebCore::MediaControlOverlayPlayButtonElement::MediaControlOverlayPlayButtonElement):
+        (WebCore::MediaControlSeekForwardButtonElement::MediaControlSeekForwardButtonElement):
+        (WebCore::MediaControlSeekBackButtonElement::MediaControlSeekBackButtonElement):
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlClosedCaptionsContainerElement::MediaControlClosedCaptionsContainerElement):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement):
+        (WebCore::MediaControlTimelineElement::MediaControlTimelineElement):
+        (WebCore::MediaControlPanelVolumeSliderElement::MediaControlPanelVolumeSliderElement):
+        (WebCore::MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement):
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement):
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxButtonElement):
+        (WebCore::MediaControlTimeRemainingDisplayElement::MediaControlTimeRemainingDisplayElement):
+        (WebCore::MediaControlCurrentTimeDisplayElement::MediaControlCurrentTimeDisplayElement):
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement):
+        (WebCore::MediaControlPanelElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlPanelEnclosureElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlOverlayEnclosureElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlTimelineContainerElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlVolumeSliderContainerElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlStatusDisplayElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlPanelMuteButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlPlayButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlOverlayPlayButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlSeekForwardButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlSeekBackButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlRewindButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlClosedCaptionsContainerElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlTimelineElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlPanelVolumeSliderElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlFullscreenVolumeSliderElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlFullscreenButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlTimeRemainingDisplayElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlCurrentTimeDisplayElement::shadowPseudoId): Deleted.
+        (WebCore::MediaControlTextTrackContainerElement::textTrackContainerElementShadowPseudoId): Deleted.
+        (WebCore::MediaControlTextTrackContainerElement::shadowPseudoId): Deleted.
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::MediaControls):
+        (WebCore::MediaControls::shadowPseudoId): Deleted.
+        * html/shadow/MediaControls.h:
+
 2014-07-31  Timothy Horton  <timothy_horton@apple.com>
 
         Build fix for platforms where we should have automaticallyAdjustsContentInsets but it isn't public yet

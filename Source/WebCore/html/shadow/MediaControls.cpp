@@ -52,6 +52,7 @@ MediaControls::MediaControls(Document& document)
     , m_isFullscreen(false)
     , m_isMouseOverControls(false)
 {
+    setPseudo(AtomicString("-webkit-media-controls", AtomicString::ConstructFromLiteral));
 }
 
 void MediaControls::setMediaController(MediaControllerInterface* controller)
@@ -361,12 +362,6 @@ void MediaControls::startHideFullscreenControlsTimer()
 void MediaControls::stopHideFullscreenControlsTimer()
 {
     m_hideFullscreenControlsTimer.stop();
-}
-
-const AtomicString& MediaControls::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls"));
-    return id;
 }
 
 bool MediaControls::containsRelatedTarget(Event* event)
