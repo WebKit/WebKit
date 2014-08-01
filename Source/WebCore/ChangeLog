@@ -1,3 +1,21 @@
+2014-08-01  Andreas Kling  <akling@apple.com>
+
+        Many DOM objects have InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero for no reason.
+        <https://webkit.org/b/135519>
+
+        Don't set this structure flag unless the object actually has an override
+        for getOwnPropertySlotByIndex().
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+
 2014-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         SVG Font kerning can take an early out if the font has no kerning information
