@@ -3022,4 +3022,9 @@ bool Element::canContainRangeEndPoint() const
     return !equalIgnoringCase(fastGetAttribute(roleAttr), "img");
 }
 
+String Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const
+{
+    return URL(base, attribute.value()).string();
+}
+
 } // namespace WebCore
