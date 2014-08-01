@@ -1,3 +1,16 @@
+2014-08-01  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        ASSERTION FAILED: listNode in WebCore::RenderListItem::updateListMarkerNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=134970
+
+        Reviewed by Zalan Bujtas.
+
+        Removed an unnecessary assert, because the null return value of enclosingList() is
+        handled properly after this assert.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateListMarkerNumbers):
+
 2014-08-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Replace DEPRECATED_DEFINE_STATIC_LOCAL with NeverDestroyed<T> in NavigatorContentUtils

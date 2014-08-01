@@ -497,7 +497,6 @@ void RenderListItem::updateListMarkerNumbers()
 {
     Element* listNode = enclosingList(this);
     // The list node can be the shadow root which has no renderer.
-    ASSERT(listNode);
     if (!listNode)
         return;
 
