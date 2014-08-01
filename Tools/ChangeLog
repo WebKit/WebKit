@@ -1,3 +1,14 @@
+2014-08-01  Bear Travis  <betravis@adobe.com>
+
+        [Feature Queries] Enable Feature Queries on EFL/GTK
+        https://bugs.webkit.org/show_bug.cgi?id=134902
+
+        Reviewed by Benjamin Poulain.
+
+        Turn the feature on by default for the build script.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2014-08-01  Timothy Horton  <timothy_horton@apple.com>
 
         Build fix for 32-bit after r171926.

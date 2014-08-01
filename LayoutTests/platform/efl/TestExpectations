@@ -1287,11 +1287,6 @@ webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
 
 webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
 
-# css3-conditionals support is not yet enabled.
-webkit.org/b/86146 css3/supports.html
-webkit.org/b/104822 css3/supports-cssom.html
-webkit.org/b/100324 css3/supports-dom-api.html
-
 # Occasionally fails if run after right after
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]

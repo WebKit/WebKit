@@ -1,3 +1,15 @@
+2014-08-01  Bear Travis  <betravis@adobe.com>
+
+        [Feature Queries] Enable Feature Queries on EFL/GTK
+        https://bugs.webkit.org/show_bug.cgi?id=134902
+
+        Reviewed by Benjamin Poulain.
+
+        Resume running the CSS Feature Query tests on the EFL and GTK platforms.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         URLs in srcset attributes are not made absolute upon copy and paste

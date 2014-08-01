@@ -185,7 +185,7 @@ my @features = (
       define => "ENABLE_CSS_GRID_LAYOUT", default => 1, value => \$cssGridLayoutSupport },
 
     { option => "css3-conditional-rules", desc => "Toggle CSS3 Conditional Rules support (i.e. \@supports)",
-      define => "ENABLE_CSS3_CONDITIONAL_RULES", default => 0, value => \$css3ConditionalRulesSupport },
+      define => "ENABLE_CSS3_CONDITIONAL_RULES", default => 1, value => \$css3ConditionalRulesSupport },
 
     { option => "css3-text", desc => "Toggle CSS3 Text support",
       define => "ENABLE_CSS3_TEXT", default => (isEfl() || isGtk()), value => \$css3TextSupport },
