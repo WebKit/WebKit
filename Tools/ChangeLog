@@ -1,3 +1,24 @@
+2014-08-01  Dan Bernstein  <mitz@apple.com>
+
+        commit-log-editor uses a non-standard message format when git index contains no ChangeLog changes
+        https://bugs.webkit.org/show_bug.cgi?id=135527
+
+        Reviewed by Tim Horton.
+
+        * Scripts/commit-log-editor:
+        In the case of a git repository when there are no changed ChangeLog files, changed to pass
+        the --delimiters option to prepare-ChangeLog, then process each entry in the output using
+        commitMessageFromChangeLogEntry.
+        (commitMessageFromChangeLogEntry): Factored out from createCommitMessage.
+        (sortKey): Factored out from createCommitMessage.
+        (createCommitMessage): Changed to use new sortKey and commitMessageFromChangeLogEntry
+        subroutines.
+
+        * Scripts/prepare-ChangeLog:
+        (main): Parse new --delimiters option.
+        (generateNewChangeLogs): When --no-write and --delimiters are both specified, always print
+        the label before each change log entry, and a "~" delimiter on a new line after each entry.
+
 2014-08-01  Bear Travis  <betravis@adobe.com>
 
         [Feature Queries] Enable Feature Queries on EFL/GTK

@@ -80,7 +80,7 @@ sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
 sub generateFunctionListsByRanges($$$$);
-sub generateNewChangeLogs($$$$$$$$$$$);
+sub generateNewChangeLogs($$$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_cpp($$);
@@ -131,12 +131,14 @@ sub main()
     my $checkWebKitStyle;
     my $openChangeLogs = 0;
     my $writeChangeLogs = 1;
+    my $delimiters = 0;
     my $showHelp = 0;
     my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
     my $updateChangeLogs = 1;
     my $parseOptionsResult =
         GetOptions("diff|d!" => \$spewDiff,
                    "bug|b:i" => \$bugNumber,
+                   "delimiters" => \$delimiters,
                    "description:s" => \$bugDescription,
                    "name:s" => \$name,
                    "email:s" => \$emailAddress,
@@ -164,6 +166,7 @@ sub main()
         print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
         print STDERR "  --[no-]update   Update ChangeLogs from svn before adding entry (default: update)\n";
         print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
+        print STDERR "  --delimiters    When writing to stdout, label and print a \"~\" after each entry\n";
         print STDERR "  --email=        Specify the email address to be used in the patch\n";
         return 1;
     }
@@ -222,7 +225,7 @@ sub main()
         resolveConflictedChangeLogs($changeLogs);
     }
 
-    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs);
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters);
 
     if ($writeChangeLogs) {
         print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -522,9 +525,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$$$$$$$$$)
+sub generateNewChangeLogs($$$$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
 
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
@@ -547,7 +550,7 @@ sub generateNewChangeLogs($$$$$$$$$$$)
             open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
         } else {
             open CHANGE_LOG, ">-" or die "Could not write to STDOUT\n.";
-            print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1;
+            print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1 && !$delimiters;
         }
 
         my $date = changeLogDate(ChangeLogTimeZone);
@@ -582,6 +585,7 @@ sub generateNewChangeLogs($$$$$$$$$$$)
             print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
         } else {
             print CHANGE_LOG "\n";
+            print "~\n"  if $delimiters;
         }
 
         close CHANGE_LOG;

@@ -38,6 +38,8 @@ use lib $FindBin::Bin;
 use VCSUtils;
 use webkitdirs;
 
+sub commitMessageFromChangeLogEntry($);
+sub sortKey($);
 sub createCommitMessage(@);
 sub loadTermReadKey();
 sub normalizeLineEndings($$);
@@ -176,11 +178,34 @@ if (isGit() && @changeLogs == 0) {
         chomp($webkitGenerateCommitMessage = `git config --bool core.webkitGenerateCommitMessage`);
     }
     if ($webkitGenerateCommitMessage ne "false") {
-        open CHANGELOG_ENTRIES, "-|", "$FindBin::Bin/prepare-ChangeLog --git-index --no-write --no-style" or die "prepare-ChangeLog failed: $!.\n";
-        while (<CHANGELOG_ENTRIES>) {
-            print NEWLOG normalizeLineEndings($_, $endl);
+        my %changeLogSort;
+        my %changeLogContents;
+        open my $changeLogEntries, "-|", "$FindBin::Bin/prepare-ChangeLog --git-index --no-write --no-style --delimiters" or die "prepare-ChangeLog failed: $!.\n";
+
+        while (!eof($changeLogEntries)) {
+            my $label = <$changeLogEntries>;
+            chomp $label;
+            $label =~ s/:$//;
+            ($changeLogContents{$label}) = commitMessageFromChangeLogEntry($changeLogEntries);
+            $changeLogSort{sortKey($label)} = $label;
         }
-        close CHANGELOG_ENTRIES;
+        close $changeLogEntries;
+
+        my $commonPrefix = removeLongestCommonPrefixEndingInNewline(%changeLogContents);
+
+        my @result;
+        push @result, normalizeLineEndings($commonPrefix, $endl);
+        for my $sortKey (sort keys %changeLogSort) {
+            my $label = $changeLogSort{$sortKey};
+            next if ($changeLogContents{$label} eq "\n");
+            if (keys %changeLogSort > 1) {
+                push @result, normalizeLineEndings("\n", $endl);
+                push @result, normalizeLineEndings("$label: ", $endl);
+            }
+            push @result, normalizeLineEndings($changeLogContents{$label}, $endl);
+        }
+
+        print NEWLOG join '', @result;
     }
 } else {
     print NEWLOG createCommitMessage(@changeLogs);
@@ -209,6 +234,77 @@ if ($foundComment) {
 
 unlink "$log.edit";
 
+sub commitMessageFromChangeLogEntry($)
+{
+    my ($changeLog) = @_;
+
+    my $commitMessage = "";
+    my $blankLines = "";
+    my $lineCount = 0;
+    my $date = "";
+    my $author = "";
+    my $email = "";
+    my $hasAuthorInfoToWrite = 0;
+
+    while (<$changeLog>) {
+        if (/^\S/) {
+            last if $commitMessage;
+        }
+        if (/\S/) {
+            $commitMessage .= $blankLines if $commitMessage;
+            $blankLines = "";
+
+            my $line = $_;
+            # Remove indentation spaces
+            $line =~ s/^ {8}//;
+
+            # Grab the author and the date line
+            if ($line =~ m/^([0-9]{4}-[0-9]{2}-[0-9]{2})\s+(.*[^\s])\s+<(.*)>/ && $lineCount == 0) {
+                $date = $1;
+                $author = $2;
+                $email = $3;
+                $hasAuthorInfoToWrite = 1;
+                next;
+            }
+
+            if ($hasAuthorInfoToWrite) {
+                my $isReviewedByLine = $line =~ m/^(?:Reviewed|Rubber[ \-]?stamped) by/;
+                my $isModifiedFileLine = $line =~ m/^\* .*:/;
+
+                # Insert the authorship line if needed just above the "Reviewed by" line or the
+                # first modified file (whichever comes first).
+                if ($isReviewedByLine || $isModifiedFileLine) {
+                    $hasAuthorInfoToWrite = 0;
+                    my $authorshipString = patchAuthorshipString($author, $email, $date);
+                    if ($authorshipString) {
+                        $commitMessage .= "$authorshipString\n";
+                        $commitMessage .= "\n" if $isModifiedFileLine;
+                    }
+                }
+            }
+
+
+            $lineCount++;
+            $commitMessage .= $line;
+        } else {
+            $blankLines .= $_;
+        }
+    }
+    return ($commitMessage, $hasAuthorInfoToWrite, $date, $author, $email);
+}
+
+sub sortKey($)
+{
+    my ($label) = @_;
+    my $sortKey = lc $label;
+    if ($label eq "top level") {
+        $sortKey = "";
+    } elsif ($label eq "LayoutTests") {
+        $sortKey = lc "~, LayoutTests last";
+    }
+    return $sortKey;
+}
+
 sub createCommitMessage(@)
 {
     my @changeLogs = @_;
@@ -218,59 +314,9 @@ sub createCommitMessage(@)
     my %changeLogSort;
     my %changeLogContents;
     for my $changeLog (@changeLogs) {
-        open CHANGELOG, $changeLog or die "Can't open $changeLog";
-        my $contents = "";
-        my $blankLines = "";
-        my $lineCount = 0;
-        my $date = "";
-        my $author = "";
-        my $email = "";
-        my $hasAuthorInfoToWrite = 0;
-        while (<CHANGELOG>) {
-            if (/^\S/) {
-                last if $contents;
-            }
-            if (/\S/) {
-                $contents .= $blankLines if $contents;
-                $blankLines = "";
+        open my $changeLogFile, $changeLog or die "Can't open $changeLog";
 
-                my $line = $_;
-
-                # Remove indentation spaces
-                $line =~ s/^ {8}//;
-
-                # Grab the author and the date line
-                if ($line =~ m/^([0-9]{4}-[0-9]{2}-[0-9]{2})\s+(.*[^\s])\s+<(.*)>/ && $lineCount == 0) {
-                    $date = $1;
-                    $author = $2;
-                    $email = $3;
-                    $hasAuthorInfoToWrite = 1;
-                    next;
-                }
-
-                if ($hasAuthorInfoToWrite) {
-                    my $isReviewedByLine = $line =~ m/^(?:Reviewed|Rubber[ \-]?stamped) by/;
-                    my $isModifiedFileLine = $line =~ m/^\* .*:/;
-
-                    # Insert the authorship line if needed just above the "Reviewed by" line or the
-                    # first modified file (whichever comes first).
-                    if ($isReviewedByLine || $isModifiedFileLine) {
-                        $hasAuthorInfoToWrite = 0;
-                        my $authorshipString = patchAuthorshipString($author, $email, $date);
-                        if ($authorshipString) {
-                            $contents .= "$authorshipString\n";
-                            $contents .= "\n" if $isModifiedFileLine;
-                        }
-                    }
-                }
-
-
-                $lineCount++;
-                $contents .= $line;
-            } else {
-                $blankLines .= $_;
-            }
-        }
+        my ($contents, $hasAuthorInfoToWrite, $date, $author, $email) = commitMessageFromChangeLogEntry($changeLogFile);
         if ($hasAuthorInfoToWrite) {
             # We didn't find anywhere to put the authorship info, so just put it at the end.
             my $authorshipString = patchAuthorshipString($author, $email, $date);
@@ -278,21 +324,14 @@ sub createCommitMessage(@)
             $hasAuthorInfoToWrite = 0;
         }
 
-        close CHANGELOG;
+        close $changeLogFile;
 
         $changeLog = File::Spec->abs2rel(File::Spec->rel2abs($changeLog), $topLevel);
 
         my $label = dirname($changeLog);
         $label = "top level" unless length $label;
 
-        my $sortKey = lc $label;
-        if ($label eq "top level") {
-            $sortKey = "";
-        } elsif ($label eq "LayoutTests") {
-            $sortKey = lc "~, LayoutTests last";
-        }
-
-        $changeLogSort{$sortKey} = $label;
+        $changeLogSort{sortKey($label)} = $label;
         $changeLogContents{$label} = $contents;
     }
 
