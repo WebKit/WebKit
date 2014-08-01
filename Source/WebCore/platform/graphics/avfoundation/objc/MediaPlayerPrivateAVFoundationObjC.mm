@@ -1155,6 +1155,10 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time, double negative
 
 void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
 {
+#if PLATFORM(IOS)
+    return;
+#endif
+
     if (!metaDataAvailable())
         return;
 
