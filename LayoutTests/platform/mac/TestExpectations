@@ -1409,3 +1409,5 @@ webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-add
 
 webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
+
+webkit.org/b/135485 platform/mac/fast/scrolling/scroll-select-bottom-test.html [ Skip ]
