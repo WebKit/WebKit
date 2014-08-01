@@ -1,3 +1,14 @@
+2014-07-31  Brent Fulgham  <bfulgham@apple.com>
+
+        MiniBrowser Should Support Fullscreen Videos in WebKit2 Mode
+        https://bugs.webkit.org/show_bug.cgi?id=135482
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]): Activate the Fullscreen
+        feature.
+
 2014-07-31  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac, iOS] Remove -setAllowsAnyHTTPSCertificate calls

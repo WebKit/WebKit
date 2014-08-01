@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
+@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenIsEnabled;
 
 @end
 

@@ -1,3 +1,19 @@
+2014-07-31  Brent Fulgham  <bfulgham@apple.com>
+
+        MiniBrowser Should Support Fullscreen Videos in WebKit2 Mode
+        https://bugs.webkit.org/show_bug.cgi?id=135482
+
+        Reviewed by Simon Fraser.
+        
+        Add accessors for the missing Fullscreen API so that MiniBrowser
+        can use them.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _fullScreenIsEnabled]): Added.
+        (-[WKPreferences _setFullScreenEnabled:]): Added.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Add accessor for
+        Fullscreen mode.
+
 2014-07-31  Beth Dakin  <bdakin@apple.com>
 
         Hit-testing broken in WebKit 1 views with AppKit's contentInsets
