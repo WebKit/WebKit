@@ -258,7 +258,7 @@ void BufferStorage11::copyData(BufferStorage* sourceStorage, unsigned int size,
             dest->setDataRevision(dest->getDataRevision() + 1);
         }
 
-        mSize = std::max(mSize, destOffset + size);
+        mSize = std::max<size_t>(mSize, destOffset + size);
     }
 }
 

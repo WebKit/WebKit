@@ -1,3 +1,11 @@
+2014-08-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * src/libGLESv2/renderer/d3d11/BufferStorage11.cpp:
+        (rx::BufferStorage11::copyData): Help compiler make
+        decision about types.
+
 2014-07-25  peavo@outlook.com  <peavo@outlook.com>
 
         [Win][ANGLE] Enable D3D11.
