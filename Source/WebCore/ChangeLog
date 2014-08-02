@@ -1,5 +1,18 @@
 2014-08-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix resource leak in FillLayersPropertyWrapper object member
+        https://bugs.webkit.org/show_bug.cgi?id=135462
+
+        Reviewed by Andreas Kling.
+
+        Fix leak of m_fillLayerPropertyWrapper by using unique_ptr<>.
+        Based on patch by Przemyslaw Kuczynski.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::FillLayersPropertyWrapper::FillLayersPropertyWrapper):
+
+2014-08-01  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up image subsampling code, make it less iOS-specific
         https://bugs.webkit.org/show_bug.cgi?id=134916
 
