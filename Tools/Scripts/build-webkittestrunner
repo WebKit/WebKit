@@ -60,7 +60,8 @@ chdir "Tools/WebKitTestRunner" or die;
 
 my $result;
 if (isAppleMacWebKit()) {
-    $result = buildXCodeProject("WebKitTestRunner", $clean, XcodeOptions(), @ARGV);
+    my @target = isIOSWebKit() ? ("-target", "WebKitTestRunnerApp") : ();
+    $result = buildXCodeProject("WebKitTestRunner", $clean, XcodeOptions(), (@ARGV, @target));
 } elsif (isAppleWinWebKit()) {
     $result = buildVisualStudioProject("WebKitTestRunner.sln", $clean);
 } elsif (isGtk() || isEfl()) {

@@ -1750,6 +1750,9 @@ sub buildXCodeProject($$@)
         push(@extraOptions, "clean");
     }
 
+    push(@extraOptions, ("-sdk", "iphonesimulator")) if willUseIOSSimulatorSDKWhenBuilding();
+    push(@extraOptions, ("-sdk", "iphoneos.internal")) if willUseIOSDeviceSDKWhenBuilding();
+
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 

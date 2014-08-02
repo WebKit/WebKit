@@ -1,5 +1,19 @@
 2014-07-30  David Farler  <dfarler@apple.com>
 
+        build-webkittestrunner doesn't build the app target for iOS SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=135433
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/build-dumprendertree: Build the app target on iOS.
+        * Scripts/build-webkittestrunner: Build the app target on iOS.
+        * Scripts/webkitdirs.pm: Add -sdk flags when building for iOS.
+        (buildXCodeProject):
+        * Scripts/webkitpy/port/ios.py: Use --sdk flags instead of SDKROOT.
+        (IOSSimulatorPort._build_driver_flags):
+
+2014-07-30  David Farler  <dfarler@apple.com>
+
         Remove iOS Perl DumpRenderTree support target
         https://bugs.webkit.org/show_bug.cgi?id=135271
 

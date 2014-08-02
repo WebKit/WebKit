@@ -154,7 +154,7 @@ class IOSSimulatorPort(Port):
 
     def _build_driver_flags(self):
         archs = ['ARCHS=i386'] if self.architecture() == 'x86' else []
-        sdk = ['SDKROOT=iphonesimulator']
+        sdk = ['--sdk', 'iphonesimulator']
         return archs + sdk
 
     def should_retry_crashes(self):
