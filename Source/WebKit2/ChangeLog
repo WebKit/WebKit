@@ -1,3 +1,13 @@
+2014-08-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/17891752> [iOS] WebKit links against libraries it doesn’t use
+        https://bugs.webkit.org/show_bug.cgi?id=135536
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig: Removed -lassertion_extension and -framework MobileAsset
+        from FRAMEWORK_AND_LIBRARY_LDFLAGS_iphonesimulator.
+
 2014-08-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS WK2] Add extension read permission to network sandbox profile
