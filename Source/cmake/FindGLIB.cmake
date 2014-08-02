@@ -56,6 +56,7 @@ get_filename_component(_GLIB_LIBRARY_DIR ${GLIB_LIBRARIES} PATH)
 find_path(GLIBCONFIG_INCLUDE_DIR
     NAMES glibconfig.h
     HINTS ${PC_LIBDIR} ${PC_LIBRARY_DIRS} ${_GLIB_LIBRARY_DIR}
+          ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
     PATH_SUFFIXES glib-2.0/include
 )
 

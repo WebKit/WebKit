@@ -1,3 +1,14 @@
+2014-08-01  Myles C. Maxfield  <litherum@gmail.com>
+
+        [CMake] Allow CMake to find GLib on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=132530
+
+        Reviewed by Gustavo Noronha Silva.
+
+        On FreeBSD, glibconfig.h is at /usr/local/include/glib-2.0/glibconfig.h.
+
+        * Source/cmake/FindGLIB.cmake:
+
 2014-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r171942): [CMAKE] [GTK] build broken (clean build).
