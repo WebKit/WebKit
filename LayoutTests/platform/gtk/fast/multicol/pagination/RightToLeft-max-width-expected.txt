@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderMultiColumnSet at (0,0) size 800x600
+layer at (273,0) size 527x600
+  RenderMultiColumnFlowThread at (0,0) size 527x600
+layer at (273,0) size 527x600
+  RenderBlock {HTML} at (0,0) size 527x600
+    RenderBody {BODY} at (16,8) size 495x584
+      RenderBlock {P} at (0,0) size 85x584
+        RenderText {#text} at (0,0) size 85x584
+          text run at (0,0) width 580: "1 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt"
+          text run at (17,0) width 536: "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+          text run at (34,0) width 510: "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in"
+          text run at (51,0) width 553: "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint"
+          text run at (68,0) width 584: "occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      RenderImage {IMG} at (164,0) size 180x100 [bgcolor=#00FF00]
+      RenderBlock {DIV} at (344,0) size 50x50 [bgcolor=#0000FF]
+      RenderBlock {P} at (410,0) size 85x584
+        RenderText {#text} at (0,0) size 85x584
+          text run at (0,0) width 580: "2 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt"
+          text run at (17,0) width 536: "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation"
+          text run at (34,0) width 510: "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in"
+          text run at (51,0) width 553: "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint"
+          text run at (68,0) width 584: "occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."

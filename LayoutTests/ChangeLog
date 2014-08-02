@@ -1,3 +1,12 @@
+2014-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures and flaky tests after 171341, r171591, r171567 and others.
+        * platform/gtk/fast/css/viewport-units-dynamic-expected.txt: Added. Rebaseline after r171567.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-max-width-expected.txt: Added. Rebaseline after r171609.
+        * platform/gtk/svg/zoom/page/zoom-foreignObject-expected.txt: Rebaseline after 171341.
+
 2014-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed post-review test fixup
