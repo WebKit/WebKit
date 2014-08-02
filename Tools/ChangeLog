@@ -1,3 +1,16 @@
+2014-08-02  Dan Bernstein  <mitz@apple.com>
+
+        prepare-ChangeLog --no-write shouldn’t require ChangeLog to exist
+        https://bugs.webkit.org/show_bug.cgi?id=135542
+
+        Reviewed by Tim Horton.
+
+        * Scripts/prepare-ChangeLog:
+        (main): Pass $writeChangeLogs for the new requireChangeLogToExist parameter of
+        findChangeLogs.
+        (findChangeLogs): Don’t require a ChangeLog file to exist if unless the
+        requireChangeLogToExist argument is true.
+
 2014-08-01  Dan Bernstein  <mitz@apple.com>
 
         commit-log-editor uses a non-standard message format when git index contains no ChangeLog changes

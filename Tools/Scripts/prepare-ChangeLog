@@ -75,7 +75,7 @@ sub diffHeaderFormat();
 sub extractLineRangeAfterChange($);
 sub extractLineRangeBeforeChange($);
 sub fetchBugDescriptionFromURL($$);
-sub findChangeLogs($);
+sub findChangeLogs($$);
 sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
@@ -216,7 +216,7 @@ sub main()
         $bugDescription = fetchBugDescriptionFromURL($bugURL, $bugNumber);
     }
 
-    my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists);
+    my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists, $writeChangeLogs);
 
     # Get the latest ChangeLog files from svn.
     my $changeLogs = getLatestChangeLogs($prefixes);
@@ -436,9 +436,9 @@ sub fetchBugDescriptionFromURL($$)
     return $bugDescription;
 }
 
-sub findChangeLogs($)
+sub findChangeLogs($$)
 {
-    my ($functionLists) = @_;
+    my ($functionLists, $requireChangeLogToExist) = @_;
 
     # Find the change logs.
     my %has_log;
@@ -455,7 +455,7 @@ sub findChangeLogs($)
             }
             last if $has_log;
         }
-        if (!$has_log) {
+        if (!$has_log && $requireChangeLogToExist) {
             print STDERR "No ChangeLog found for $file.\n";
         } else {
             push @{$filesInChangeLog{$prefix}}, $file;
