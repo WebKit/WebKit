@@ -1,8 +1,0 @@
-Changes
-IPhoneSimulatorNotification.xs
-Makefile.PL
-MANIFEST
-ppport.h
-README
-t/IPhoneSimulatorNotification.t
-lib/IPhoneSimulatorNotification.pm

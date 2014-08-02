@@ -13,7 +13,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				A1158D6818927B240088C17B /* PBXTargetDependency */,
 				2D403F211508736C005358D2 /* PBXTargetDependency */,
 				A134E52D188FC09200901D06 /* PBXTargetDependency */,
 				A84F608F08B1370E00E9745F /* PBXTargetDependency */,
@@ -146,13 +145,6 @@
 			remoteGlobalIDString = 2D403EB2150871F9005358D2;
 			remoteInfo = LayoutTestHelper;
 		};
-		A1158D6718927B240088C17B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A1158D6218927AF00088C17B;
-			remoteInfo = "Perl Support";
-		};
 		A1321CD7188FABE000125434 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -166,13 +158,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 9340994A08540CAE007F3BC8;
 			remoteInfo = DumpRenderTree;
-		};
-		A19317FE18928835001C52B1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A1158D7E18927E7A0088C17B;
-			remoteInfo = DumpRenderTree.app;
 		};
 		A193180118928C10001C52B1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -293,18 +278,6 @@
 		A1158D55189273EB0088C17B /* DumpRenderTreeBrowserView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeBrowserView.h; path = ios/DumpRenderTreeBrowserView.h; sourceTree = "<group>"; };
 		A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeBrowserView.mm; path = ios/DumpRenderTreeBrowserView.mm; sourceTree = "<group>"; };
 		A1158D57189273EB0088C17B /* PixelDumpSupportIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PixelDumpSupportIOS.mm; path = ios/PixelDumpSupportIOS.mm; sourceTree = "<group>"; };
-		A1158D6C18927CF10088C17B /* DumpRenderTreeSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpRenderTreeSupport.c; sourceTree = "<group>"; };
-		A1158D6D18927CF10088C17B /* DumpRenderTreeSupport_wrapPregenerated.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpRenderTreeSupport_wrapPregenerated.c; sourceTree = "<group>"; };
-		A1158D6E18927CF10088C17B /* DumpRenderTreeSupportPregenerated.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = DumpRenderTreeSupportPregenerated.pm; sourceTree = "<group>"; };
-		A1158D7018927CF10088C17B /* Changes */ = {isa = PBXFileReference; lastKnownFileType = text; path = Changes; sourceTree = "<group>"; };
-		A1158D7118927CF10088C17B /* IPhoneSimulatorNotification.xs */ = {isa = PBXFileReference; lastKnownFileType = text; path = IPhoneSimulatorNotification.xs; sourceTree = "<group>"; };
-		A1158D7318927CF20088C17B /* IPhoneSimulatorNotification.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = IPhoneSimulatorNotification.pm; sourceTree = "<group>"; };
-		A1158D7418927CF20088C17B /* Makefile.PL */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = Makefile.PL; sourceTree = "<group>"; };
-		A1158D7518927CF20088C17B /* MANIFEST */ = {isa = PBXFileReference; lastKnownFileType = text; path = MANIFEST; sourceTree = "<group>"; };
-		A1158D7618927CF20088C17B /* ppport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ppport.h; sourceTree = "<group>"; };
-		A1158D7718927CF20088C17B /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		A1158D7918927CF20088C17B /* IPhoneSimulatorNotification.t */ = {isa = PBXFileReference; lastKnownFileType = text; path = IPhoneSimulatorNotification.t; sourceTree = "<group>"; };
-		A1158D7A18927CF20088C17B /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		A1158D7F18927E7A0088C17B /* DumpRenderTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DumpRenderTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1321C9E188F9A3600125434 /* libDumpRenderTree.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDumpRenderTree.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A134E52F188FC27000901D06 /* DumpRenderTreeMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeMain.mm; path = mac/DumpRenderTreeMain.mm; sourceTree = "<group>"; };
@@ -658,53 +631,8 @@
 				A1158D55189273EB0088C17B /* DumpRenderTreeBrowserView.h */,
 				A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */,
 				A19317FC1892855F001C52B1 /* Info.plist */,
-				A1158D6B18927CF10088C17B /* PerlSupport */,
 			);
 			name = ios;
-			sourceTree = "<group>";
-		};
-		A1158D6B18927CF10088C17B /* PerlSupport */ = {
-			isa = PBXGroup;
-			children = (
-				A1158D6C18927CF10088C17B /* DumpRenderTreeSupport.c */,
-				A1158D6D18927CF10088C17B /* DumpRenderTreeSupport_wrapPregenerated.c */,
-				A1158D6E18927CF10088C17B /* DumpRenderTreeSupportPregenerated.pm */,
-				A1158D6F18927CF10088C17B /* IPhoneSimulatorNotification */,
-				A1158D7A18927CF20088C17B /* Makefile */,
-			);
-			name = PerlSupport;
-			path = ios/PerlSupport;
-			sourceTree = "<group>";
-		};
-		A1158D6F18927CF10088C17B /* IPhoneSimulatorNotification */ = {
-			isa = PBXGroup;
-			children = (
-				A1158D7018927CF10088C17B /* Changes */,
-				A1158D7118927CF10088C17B /* IPhoneSimulatorNotification.xs */,
-				A1158D7218927CF20088C17B /* lib */,
-				A1158D7418927CF20088C17B /* Makefile.PL */,
-				A1158D7518927CF20088C17B /* MANIFEST */,
-				A1158D7618927CF20088C17B /* ppport.h */,
-				A1158D7718927CF20088C17B /* README */,
-				A1158D7818927CF20088C17B /* t */,
-			);
-			path = IPhoneSimulatorNotification;
-			sourceTree = "<group>";
-		};
-		A1158D7218927CF20088C17B /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				A1158D7318927CF20088C17B /* IPhoneSimulatorNotification.pm */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		A1158D7818927CF20088C17B /* t */ = {
-			isa = PBXGroup;
-			children = (
-				A1158D7918927CF20088C17B /* IPhoneSimulatorNotification.t */,
-			);
-			path = t;
 			sourceTree = "<group>";
 		};
 		A803FF6409CAACC1009B2A37 /* Frameworks */ = {
@@ -800,24 +728,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
-
-/* Begin PBXLegacyTarget section */
-		A1158D6218927AF00088C17B /* Perl Support */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION) PLATFORM_NAME=$(PLATFORM_NAME)";
-			buildConfigurationList = A1158D6318927AF00088C17B /* Build configuration list for PBXLegacyTarget "Perl Support" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "$(SRCROOT)/ios/PerlSupport";
-			dependencies = (
-				A19317FF18928835001C52B1 /* PBXTargetDependency */,
-			);
-			name = "Perl Support";
-			passBuildSettingsInEnvironment = 1;
-			productName = "Perl Support";
-		};
-/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		141BF21E096A441D00E0753C /* TestNetscapePlugIn */ = {
@@ -956,7 +866,6 @@
 				B5A7525A08AF4A4A00138E45 /* ImageDiff */,
 				141BF21E096A441D00E0753C /* TestNetscapePlugIn */,
 				2D403EB2150871F9005358D2 /* LayoutTestHelper */,
-				A1158D6218927AF00088C17B /* Perl Support */,
 			);
 		};
 /* End PBXProject section */
@@ -1118,11 +1027,6 @@
 			target = 2D403EB2150871F9005358D2 /* LayoutTestHelper */;
 			targetProxy = 2D403F201508736C005358D2 /* PBXContainerItemProxy */;
 		};
-		A1158D6818927B240088C17B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A1158D6218927AF00088C17B /* Perl Support */;
-			targetProxy = A1158D6718927B240088C17B /* PBXContainerItemProxy */;
-		};
 		A1321CD8188FABE000125434 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A1321C9D188F9A3600125434 /* DumpRenderTree (Library) */;
@@ -1132,11 +1036,6 @@
 			isa = PBXTargetDependency;
 			target = 9340994A08540CAE007F3BC8 /* DumpRenderTree */;
 			targetProxy = A134E52C188FC09200901D06 /* PBXContainerItemProxy */;
-		};
-		A19317FF18928835001C52B1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A1158D7E18927E7A0088C17B /* DumpRenderTree.app */;
-			targetProxy = A19317FE18928835001C52B1 /* PBXContainerItemProxy */;
 		};
 		A193180218928C10001C52B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1264,24 +1163,6 @@
 				INFOPLIST_FILE = TestNetscapePlugIn/mac/Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				SKIP_INSTALL = NO;
-			};
-			name = Production;
-		};
-		A1158D6418927AF00088C17B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		A1158D6518927AF00088C17B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		A1158D6618927AF00088C17B /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
 			};
 			name = Production;
 		};
@@ -1419,16 +1300,6 @@
 				2D403F16150871F9005358D2 /* Debug */,
 				2D403F17150871F9005358D2 /* Release */,
 				2D403F18150871F9005358D2 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		A1158D6318927AF00088C17B /* Build configuration list for PBXLegacyTarget "Perl Support" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A1158D6418927AF00088C17B /* Debug */,
-				A1158D6518927AF00088C17B /* Release */,
-				A1158D6618927AF00088C17B /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

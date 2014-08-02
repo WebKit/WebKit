@@ -1,5 +1,26 @@
 2014-07-30  David Farler  <dfarler@apple.com>
 
+        Remove iOS Perl DumpRenderTree support target
+        https://bugs.webkit.org/show_bug.cgi?id=135271
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Remove the target.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport.c: Removed.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupportPregenerated.pm: Removed.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport_wrapPregenerated.c: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Changes: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/IPhoneSimulatorNotification.xs: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/MANIFEST: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Makefile.PL: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/README: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/ppport.h: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/t/IPhoneSimulatorNotification.t: Removed.
+        * DumpRenderTree/ios/PerlSupport/Makefile: Removed.
+
+2014-07-30  David Farler  <dfarler@apple.com>
+
         Remove old-run-webkit-tests
         https://bugs.webkit.org/show_bug.cgi?id=135374
 
