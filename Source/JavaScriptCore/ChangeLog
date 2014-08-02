@@ -1,3 +1,13 @@
+2014-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r171942): [CMAKE] [GTK] build broken (clean build).
+        https://bugs.webkit.org/show_bug.cgi?id=135522
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: Output the inspector headers inside inspector
+        subdirectory.
+
 2014-08-01  Mark Lam  <mark.lam@apple.com>
 
         Add some structure related assertions.

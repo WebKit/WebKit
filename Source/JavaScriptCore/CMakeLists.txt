@@ -883,7 +883,7 @@ add_custom_command(
     MAIN_DEPENDENCY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
     DEPENDS ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py
             ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspectorStrings.py
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json --output_h_dir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}" --output_cpp_dir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector" --output_js_dir "${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol" --output_type JavaScript --write_always
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json --output_h_dir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector" --output_cpp_dir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector" --output_js_dir "${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol" --output_type JavaScript --write_always
     VERBATIM)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector)
 

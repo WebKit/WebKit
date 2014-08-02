@@ -1,3 +1,15 @@
+2014-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r171942): [CMAKE] [GTK] build broken (clean build).
+        https://bugs.webkit.org/show_bug.cgi?id=135522
+
+        Reviewed by Martin Robinson.
+
+        No new tests required, no new functionality.
+
+        * CMakeLists.txt: Add missing include to the inspector headers
+        and fix the path to InspectorJSTypeBuilders.h
+
 2014-08-01  Simon Fraser  <simon.fraser@apple.com>
 
         Fix resource leak in FillLayersPropertyWrapper object member

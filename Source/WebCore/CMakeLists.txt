@@ -120,6 +120,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WTF_DIR}"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_BINARY_DIR}"
@@ -3275,7 +3276,7 @@ add_custom_command(
     DEPENDS ${WebCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py
             ${WebCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspectorStrings.py
             ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
-            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSTypeBuilders.h
+            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSTypeBuilders.h
     COMMAND ${PYTHON_EXECUTABLE} ${WebCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json --output_h_dir "${DERIVED_SOURCES_WEBCORE_DIR}" --output_cpp_dir "${DERIVED_SOURCES_WEBCORE_DIR}" --output_js_dir "${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol" --output_type Web --write_always
     VERBATIM)
 
