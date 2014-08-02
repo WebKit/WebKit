@@ -579,6 +579,11 @@ static const AtomicString& mediaSliderThumbShadowPseudoId()
 
 const AtomicString& SliderThumbElement::shadowPseudoId() const
 {
+    // FIXME: this code needs to go away, it is very very wrong.
+    // The value of shadowPseudoId() is needed to resolve the style of the shadow tree. In this case,
+    // that value depends on the style, which means the style needs to be computed twice to get
+    // a correct value: once to get the Input's appearance, then a second time to style the shadow tree correctly.
+
     HTMLInputElement* input = hostInput();
     if (!input)
         return sliderThumbShadowPseudoId();
@@ -623,6 +628,11 @@ RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(PassRef<R
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const
 {
+    // FIXME: this code needs to go away, it is very very wrong.
+    // The value of shadowPseudoId() is needed to resolve the style of the shadow tree. In this case,
+    // that value depends on the style, which means the style needs to be computed twice to get
+    // a correct value: once to get the Input's appearance, then a second time to style the shadow tree correctly.
+
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderContainer, ("-webkit-media-slider-container", AtomicString::ConstructFromLiteral));
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sliderContainer, ("-webkit-slider-container", AtomicString::ConstructFromLiteral));
 

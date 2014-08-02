@@ -330,6 +330,7 @@ public:
     ShadowRoot* userAgentShadowRoot() const;
     ShadowRoot& ensureUserAgentShadowRoot();
 
+    // FIXME: this should not be virtual, do not override this.
     virtual const AtomicString& shadowPseudoId() const;
 
     bool inActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
