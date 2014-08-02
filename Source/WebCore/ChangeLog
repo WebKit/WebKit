@@ -1,5 +1,30 @@
 2014-08-02  Benjamin Poulain  <bpoulain@apple.com>
 
+        Update the SearchFieldResultsButtonElement shadow Pseudo Id when HTMLInputElement's maxResults change
+        https://bugs.webkit.org/show_bug.cgi?id=135491
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace the shadowPseudoId() override + manual style invalidation by the generic pseudo ID update.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/InputType.cpp:
+        (WebCore::InputType::maxResultsAttributeChanged):
+        * html/InputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType):
+        (WebCore::updateResultButtonPseudoType):
+        (WebCore::SearchInputType::maxResultsAttributeChanged):
+        (WebCore::SearchInputType::createShadowSubtree):
+        (WebCore::SearchInputType::destroyShadowSubtree):
+        * html/SearchInputType.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::shadowPseudoId): Deleted.
+        * html/shadow/TextControlInnerElements.h:
+
+2014-08-02  Benjamin Poulain  <bpoulain@apple.com>
+
         Add warnings for the buggy implementations of shadowPseudoId()
         https://bugs.webkit.org/show_bug.cgi?id=135477
 

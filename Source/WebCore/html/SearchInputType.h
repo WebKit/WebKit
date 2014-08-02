@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,10 +37,9 @@
 
 namespace WebCore {
 
-class SearchFieldCancelButtonElement;
 class SearchFieldResultsButtonElement;
 
-class SearchInputType : public BaseTextInputType {
+class SearchInputType final : public BaseTextInputType {
 public:
     explicit SearchInputType(HTMLInputElement&);
 
@@ -47,6 +47,7 @@ public:
 
 private:
     virtual void addSearchResult() override;
+    virtual void maxResultsAttributeChanged() override;
     virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
     virtual const AtomicString& formControlType() const override;
     virtual bool shouldRespectSpeechAttribute() override;
@@ -65,7 +66,7 @@ private:
     bool searchEventsShouldBeDispatched() const;
     void startSearchEventTimer();
 
-    HTMLElement* m_resultsButton;
+    SearchFieldResultsButtonElement* m_resultsButton;
     HTMLElement* m_cancelButton;
     Timer<SearchInputType> m_searchEventTimer;
 };

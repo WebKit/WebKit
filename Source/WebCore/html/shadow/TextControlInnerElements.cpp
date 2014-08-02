@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -138,24 +138,6 @@ inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document
 PassRefPtr<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document& document)
 {
     return adoptRef(new SearchFieldResultsButtonElement(document));
-}
-
-const AtomicString& SearchFieldResultsButtonElement::shadowPseudoId() const
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, resultsId, ("-webkit-search-results-button", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, resultsDecorationId, ("-webkit-search-results-decoration", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, decorationId, ("-webkit-search-decoration", AtomicString::ConstructFromLiteral));
-    Element* host = shadowHost();
-    if (!host)
-        return resultsId;
-    if (HTMLInputElement* input = host->toInputElement()) {
-        if (input->maxResults() < 0)
-            return decorationId;
-        if (input->maxResults() > 0)
-            return resultsId;
-        return resultsDecorationId;
-    }
-    return resultsId;
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)

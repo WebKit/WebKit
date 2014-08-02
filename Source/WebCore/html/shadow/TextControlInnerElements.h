@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,6 @@ public:
 
 private:
     SearchFieldResultsButtonElement(Document&);
-    virtual const AtomicString& shadowPseudoId() const override;
     virtual bool isMouseFocusable() const override { return false; }
 };
 

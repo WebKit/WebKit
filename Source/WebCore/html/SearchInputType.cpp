@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,8 +46,8 @@ using namespace HTMLNames;
 
 SearchInputType::SearchInputType(HTMLInputElement& element)
     : BaseTextInputType(element)
-    , m_resultsButton(0)
-    , m_cancelButton(0)
+    , m_resultsButton(nullptr)
+    , m_cancelButton(nullptr)
     , m_searchEventTimer(this, &SearchInputType::searchEventTimerFired)
 {
 }
@@ -57,6 +58,22 @@ void SearchInputType::addSearchResult()
     if (RenderObject* renderer = element().renderer())
         toRenderSearchField(renderer)->addSearchResult();
 #endif
+}
+
+static void updateResultButtonPseudoType(SearchFieldResultsButtonElement& resultButton, int maxResults)
+{
+    if (!maxResults)
+        resultButton.setPseudo(AtomicString("-webkit-search-results-decoration", AtomicString::ConstructFromLiteral));
+    else if (maxResults < 0)
+        resultButton.setPseudo(AtomicString("-webkit-search-decoration", AtomicString::ConstructFromLiteral));
+    else if (maxResults > 0)
+        resultButton.setPseudo(AtomicString("-webkit-search-results-button", AtomicString::ConstructFromLiteral));
+}
+
+void SearchInputType::maxResultsAttributeChanged()
+{
+    if (m_resultsButton)
+        updateResultButtonPseudoType(*m_resultsButton, element().maxResults());
 }
 
 RenderPtr<RenderElement> SearchInputType::createInputRenderer(PassRef<RenderStyle> style)
@@ -97,6 +114,7 @@ void SearchInputType::createShadowSubtree()
 
     RefPtr<SearchFieldResultsButtonElement> resultsButton = SearchFieldResultsButtonElement::create(element().document());
     m_resultsButton = resultsButton.get();
+    updateResultButtonPseudoType(*m_resultsButton, element().maxResults());
     container->insertBefore(m_resultsButton, textWrapper, IGNORE_EXCEPTION);
 
     RefPtr<SearchFieldCancelButtonElement> cancelButton = SearchFieldCancelButtonElement::create(element().document());
@@ -135,8 +153,8 @@ void SearchInputType::handleKeydownEvent(KeyboardEvent* event)
 void SearchInputType::destroyShadowSubtree()
 {
     TextFieldInputType::destroyShadowSubtree();
-    m_resultsButton = 0;
-    m_cancelButton = 0;
+    m_resultsButton = nullptr;
+    m_cancelButton = nullptr;
 }
 
 void SearchInputType::startSearchEventTimer()
