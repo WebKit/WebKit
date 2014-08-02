@@ -1,3 +1,17 @@
+2014-08-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r171957.
+        https://bugs.webkit.org/show_bug.cgi?id=135538
+
+        Caused GTK assertions and test failures (Requested by smfr on
+        #webkit).
+
+        Reverted changeset:
+
+        "Clean up image subsampling code, make it less iOS-specific"
+        https://bugs.webkit.org/show_bug.cgi?id=134916
+        http://trac.webkit.org/changeset/171957
+
 2014-08-01  Myles C. Maxfield  <litherum@gmail.com>
 
         [CMake] Allow CMake to find GLib on FreeBSD

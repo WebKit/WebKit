@@ -29,8 +29,6 @@
 #include "config.h"
 #include "ImageSource.h"
 
-#if !USE(CG)
-
 #include "ImageDecoder.h"
 
 #include "ImageOrientation.h"
@@ -96,16 +94,6 @@ String ImageSource::filenameExtension() const
     return m_decoder ? m_decoder->filenameExtension() : String();
 }
 
-SubsamplingLevel ImageSource::subsamplingLevelForScale(float) const
-{
-    return 0;
-}
-
-bool ImageSource::allowSubsamplingOfFrameAtIndex(size_t) const
-{
-    return true;
-}
-
 bool ImageSource::isSizeAvailable()
 {
     return m_decoder && m_decoder->isSizeAvailable();
@@ -113,10 +101,10 @@ bool ImageSource::isSizeAvailable()
 
 IntSize ImageSource::size(ImageOrientationDescription description) const
 {
-    return frameSizeAtIndex(0, 0, description);
+    return frameSizeAtIndex(0, description);
 }
 
-IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel, ImageOrientationDescription description) const
+IntSize ImageSource::frameSizeAtIndex(size_t index, ImageOrientationDescription description) const
 {
     if (!m_decoder)
         return IntSize();
@@ -148,8 +136,10 @@ size_t ImageSource::frameCount() const
     return m_decoder ? m_decoder->frameCount() : 0;
 }
 
-PassNativeImagePtr ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel)
+PassNativeImagePtr ImageSource::createFrameAtIndex(size_t index, float* scale)
 {
+    UNUSED_PARAM(scale);
+
     if (!m_decoder)
         return 0;
 
@@ -207,7 +197,7 @@ bool ImageSource::frameIsCompleteAtIndex(size_t index)
     return buffer && buffer->status() == ImageFrame::FrameComplete;
 }
 
-unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel) const
+unsigned ImageSource::frameBytesAtIndex(size_t index) const
 {
     if (!m_decoder)
         return 0;
@@ -215,5 +205,3 @@ unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel) const
 }
 
 }
-
-#endif // USE(CG)

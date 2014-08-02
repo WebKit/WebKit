@@ -301,7 +301,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
-    destContext->drawNativeImage(image.get(), m_data.m_backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
+    destContext->drawNativeImage(image.get(), m_data.m_backingStoreSize, colorSpace, destRect, adjustedSrcRect, 1, op, blendMode);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)

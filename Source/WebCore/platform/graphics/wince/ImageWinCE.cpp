@@ -148,11 +148,6 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRectIn
     bmp->drawPattern(ctxt, tileRectIn, patternTransform, phase, styleColorSpace, op, destRect, m_source.size());
 }
 
-void BitmapImage::determineMinimumSubsamplingLevel() const
-{
-    m_minimumSubsamplingLevel = 0;
-}
-
 void BitmapImage::checkForSolidColor()
 {
     if (m_checkedForSolidColor)

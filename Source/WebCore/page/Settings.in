@@ -141,7 +141,6 @@ notificationsEnabled initial=true
 needsIsLoadingInAPISenseQuirk initial=false
 
 shouldRespectImageOrientation initial=defaultShouldRespectImageOrientation
-imageSubsamplingEnabled initial=defaultImageSubsamplingEnabled
 wantsBalancedSetDefersLoadingBehavior initial=false
 requestAnimationFrameEnabled initial=true
 deviceSupportsTouch initial=false

@@ -44,12 +44,12 @@
 
 namespace WebCore {
 
+// FIXME: We should better integrate the iOS and non-iOS code in this class. Unlike other ports, the
+// iOS port caches the metadata for a frame without decoding the image.
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
-    , m_minimumSubsamplingLevel(0)
-    , m_imageOrientation(OriginTopLeft)
-    , m_shouldRespectImageOrientation(false)
     , m_currentFrame(0)
+    , m_frames(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
@@ -61,9 +61,6 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     // FIXME: We should expose a setting to enable/disable progressive loading remove the PLATFORM(IOS)-guard.
     , m_progressiveLoadChunkTime(0)
     , m_progressiveLoadChunkCount(0)
-    , m_allowSubsampling(true)
-#else
-    , m_allowSubsampling(false)
 #endif
     , m_isSolidColor(false)
     , m_checkedForSolidColor(false)
@@ -81,17 +78,6 @@ BitmapImage::~BitmapImage()
 {
     invalidatePlatformData();
     stopAnimation();
-}
-
-bool BitmapImage::haveFrameAtIndex(size_t index)
-{
-    if (index >= frameCount())
-        return false;
-
-    if (index >= m_frames.size())
-        return false;
-
-    return m_frames[index].m_frame;
 }
 
 bool BitmapImage::hasSingleSecurityOrigin() const
@@ -166,7 +152,11 @@ void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared)
         imageObserver()->decodedSizeChanged(this, -safeCast<int>(frameBytesCleared));
 }
 
-void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, ImageFrameCaching frameCaching)
+#if PLATFORM(IOS)
+void BitmapImage::cacheFrame(size_t index, float scaleHint)
+#else
+void BitmapImage::cacheFrame(size_t index)
+#endif
 {
     size_t numFrames = frameCount();
     ASSERT(m_decodedSize == 0 || numFrames > 1);
@@ -174,27 +164,26 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
     if (m_frames.size() < numFrames)
         m_frames.grow(numFrames);
 
-    if (frameCaching == CacheMetadataAndFrame) {
-        m_frames[index].m_frame = m_source.createFrameAtIndex(index, subsamplingLevel);
-        m_frames[index].m_subsamplingLevel = subsamplingLevel;
-        if (numFrames == 1 && m_frames[index].m_frame)
-            checkForSolidColor();
-    }
+#if PLATFORM(IOS)
+    m_frames[index].m_frame = m_source.createFrameAtIndex(index, &scaleHint);
+    m_frames[index].m_subsamplingScale = scaleHint;
+#else
+    m_frames[index].m_frame = m_source.createFrameAtIndex(index);
+#endif
+    if (numFrames == 1 && m_frames[index].m_frame)
+        checkForSolidColor();
 
     m_frames[index].m_orientation = m_source.orientationAtIndex(index);
     m_frames[index].m_haveMetadata = true;
     m_frames[index].m_isComplete = m_source.frameIsCompleteAtIndex(index);
-
     if (repetitionCount(false) != cAnimationNone)
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
-
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
-    m_frames[index].m_frameBytes = m_source.frameBytesAtIndex(index, subsamplingLevel);
+    m_frames[index].m_frameBytes = m_source.frameBytesAtIndex(index);
 
-    const IntSize frameSize(index ? m_source.frameSizeAtIndex(index, subsamplingLevel) : m_size);
-    if (!subsamplingLevel && frameSize != m_size)
+    const IntSize frameSize(index ? m_source.frameSizeAtIndex(index) : m_size);
+    if (frameSize != m_size)
         m_hasUniformFrameSize = false;
-
     if (m_frames[index].m_frame) {
         int deltaBytes = safeCast<int>(m_frames[index].m_frameBytes);
         m_decodedSize += deltaBytes;
@@ -207,15 +196,30 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
     }
 }
 
+#if PLATFORM(IOS)
+void BitmapImage::cacheFrameInfo(size_t index)
+{
+    size_t numFrames = frameCount();
+
+    if (m_frames.size() < numFrames)
+        m_frames.resize(numFrames);
+
+    ASSERT(!m_frames[index].m_haveInfo);
+
+    if (shouldAnimate())
+        m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
+    m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
+    m_frames[index].m_haveInfo = true;
+}
+#endif
+
 void BitmapImage::didDecodeProperties() const
 {
     if (m_decodedSize)
         return;
-
     size_t updatedSize = m_source.bytesDecodedToDetermineProperties();
     if (m_decodedPropertiesSize == updatedSize)
         return;
-
     int deltaBytes = updatedSize - m_decodedPropertiesSize;
 #if !ASSERT_DISABLED
     bool overflow = updatedSize > m_decodedPropertiesSize && deltaBytes < 0;
@@ -234,13 +238,13 @@ void BitmapImage::updateSize(ImageOrientationDescription description) const
 
     m_size = m_source.size(description);
     m_sizeRespectingOrientation = m_source.size(ImageOrientationDescription(RespectImageOrientation, description.imageOrientation()));
-
     m_imageOrientation = static_cast<unsigned>(description.imageOrientation());
     m_shouldRespectImageOrientation = static_cast<unsigned>(description.respectImageOrientation());
-
+#if PLATFORM(IOS)
+    m_originalSize = m_source.originalSize();
+    m_originalSizeRespectingOrientation = m_source.originalSize(RespectImageOrientation);
+#endif
     m_haveSize = true;
-
-    determineMinimumSubsamplingLevel();
     didDecodeProperties();
 }
 
@@ -254,6 +258,29 @@ IntSize BitmapImage::sizeRespectingOrientation(ImageOrientationDescription descr
 {
     updateSize(description);
     return m_sizeRespectingOrientation;
+}
+
+#if PLATFORM(IOS)
+FloatSize BitmapImage::originalSize() const
+{
+    updateSize();
+    return m_originalSize;
+}
+
+IntSize BitmapImage::originalSizeRespectingOrientation() const
+{
+    updateSize();
+    return m_originalSizeRespectingOrientation;
+}
+#endif
+
+IntSize BitmapImage::currentFrameSize() const
+{
+    if (!m_currentFrame || m_hasUniformFrameSize)
+        return IntSize(size());
+    IntSize frameSize = m_source.frameSizeAtIndex(m_currentFrame);
+    didDecodeProperties();
+    return frameSize;
 }
 
 bool BitmapImage::getHotSpot(IntPoint& hotSpot) const
@@ -296,7 +323,6 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     }
     destroyMetadataAndNotify(frameBytesCleared);
 #else
-    // FIXME: why is this different for iOS?
     int deltaBytes = 0;
     if (!m_frames.isEmpty()) {
         int bytes = m_frames[m_frames.size() - 1].m_frameBytes;
@@ -364,59 +390,85 @@ bool BitmapImage::isSizeAvailable()
     return m_sizeAvailable;
 }
 
-bool BitmapImage::ensureFrameIsCached(size_t index, ImageFrameCaching frameCaching)
+#if !PLATFORM(IOS)
+bool BitmapImage::ensureFrameIsCached(size_t index)
 {
     if (index >= frameCount())
         return false;
 
-    if (index >= m_frames.size()
-        || (frameCaching == CacheMetadataAndFrame && !m_frames[index].m_frame)
-        || (frameCaching == CacheMetadataOnly && !m_frames[index].m_haveMetadata))
-        cacheFrame(index, 0, frameCaching);
-
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index);
     return true;
 }
+#else
+bool BitmapImage::ensureFrameInfoIsCached(size_t index)
+{
+    if (index >= frameCount())
+        return false;
 
-PassNativeImagePtr BitmapImage::frameAtIndex(size_t index, float presentationScaleHint)
+    if (index >= m_frames.size() || !m_frames[index].m_haveInfo)
+        cacheFrameInfo(index);
+    return true;
+}
+#endif
+
+PassNativeImagePtr BitmapImage::frameAtIndex(size_t index)
+{
+#if PLATFORM(IOS)
+    return frameAtIndex(index, 1.0f);
+#else
+    if (!ensureFrameIsCached(index))
+        return nullptr;
+    return m_frames[index].m_frame;
+#endif
+}
+
+#if PLATFORM(IOS)
+PassNativeImagePtr BitmapImage::frameAtIndex(size_t index, float scaleHint)
 {
     if (index >= frameCount())
         return nullptr;
 
-    SubsamplingLevel subsamplingLevel = std::min(m_source.subsamplingLevelForScale(presentationScaleHint), m_minimumSubsamplingLevel);
-
-    // We may have cached a frame with a higher subsampling level, in which case we need to
-    // re-decode with a lower level.
-    if (index < m_frames.size() && m_frames[index].m_frame && subsamplingLevel < m_frames[index].m_subsamplingLevel) {
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index, scaleHint);
+    else if (std::min(1.0f, scaleHint) > m_frames[index].m_subsamplingScale) {
         // If the image is already cached, but at too small a size, re-decode a larger version.
         int sizeChange = -m_frames[index].m_frameBytes;
+        ASSERT(static_cast<int>(m_decodedSize) + sizeChange >= 0);
         m_frames[index].clear(true);
         invalidatePlatformData();
         m_decodedSize += sizeChange;
-        WTFLogAlways("BitmapImage %p frameAtIndex recaching, m_decodedSize now %u (size change %d)", this, m_decodedSize, sizeChange);
         if (imageObserver())
             imageObserver()->decodedSizeChanged(this, sizeChange);
+
+        cacheFrame(index, scaleHint);
     }
-
-    // If we haven't fetched a frame yet, do so.
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
-        cacheFrame(index, subsamplingLevel, CacheMetadataAndFrame);
-
     return m_frames[index].m_frame;
 }
+#endif
 
 bool BitmapImage::frameIsCompleteAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+#if PLATFORM(IOS)
+    // FIXME: cacheFrameInfo does not set m_isComplete. Should it?
+    if (!ensureFrameInfoIsCached(index))
         return false;
-
+#else
+    if (!ensureFrameIsCached(index))
+        return false;
+#endif
     return m_frames[index].m_isComplete;
 }
 
 float BitmapImage::frameDurationAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+#if PLATFORM(IOS)
+    if (!ensureFrameInfoIsCached(index))
         return 0;
-
+#else
+    if (!ensureFrameIsCached(index))
+        return 0;
+#endif
     return m_frames[index].m_duration;
 }
 
@@ -427,9 +479,13 @@ PassNativeImagePtr BitmapImage::nativeImageForCurrentFrame()
 
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+#if PLATFORM(IOS)
+    if (!ensureFrameInfoIsCached(index))
+        return true; // FIXME: Why would an invalid index return true here?
+#else
+    if (m_frames.size() <= index)
         return true;
-
+#endif
     if (m_frames[index].m_haveMetadata)
         return m_frames[index].m_hasAlpha;
 
@@ -443,8 +499,14 @@ bool BitmapImage::currentFrameKnownToBeOpaque()
 
 ImageOrientation BitmapImage::frameOrientationAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index, CacheMetadataOnly))
+#if PLATFORM(IOS)
+    // FIXME: cacheFrameInfo does not set m_orientation. Should it?
+    if (!ensureFrameInfoIsCached(index))
         return DefaultImageOrientation;
+#else
+    if (!ensureFrameIsCached(index))
+        return DefaultImageOrientation;
+#endif
 
     if (m_frames[index].m_haveMetadata)
         return m_frames[index].m_orientation;

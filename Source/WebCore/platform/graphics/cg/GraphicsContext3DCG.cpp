@@ -332,8 +332,17 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         decoder.setData(m_image->data(), true);
         if (!decoder.frameCount())
             return false;
-
+#if PLATFORM(IOS)
+        float scaleHint = 1;
+        if (m_image->isBitmapImage()) {
+            FloatSize originalSize = toBitmapImage(m_image)->originalSize();
+            if (!originalSize.isEmpty())
+                scaleHint = std::min<float>(1, std::max(m_image->size().width() / originalSize.width(), m_image->size().width() / originalSize.height()));
+        }
+        m_decodedImage = adoptCF(decoder.createFrameAtIndex(0, &scaleHint));
+#else
         m_decodedImage = adoptCF(decoder.createFrameAtIndex(0));
+#endif
         m_cgImage = m_decodedImage.get();
     } else
         m_cgImage = m_image->nativeImageForCurrentFrame();
@@ -536,7 +545,7 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     context->scale(FloatSize(1, -1));
     context->translate(0, -imageHeight);
     context->setImageInterpolationQuality(InterpolationNone);
-    context->drawNativeImage(cgImage.get(), imageSize, ColorSpaceDeviceRGB, canvasRect, FloatRect(FloatPoint(), imageSize), CompositeCopy);
+    context->drawNativeImage(cgImage.get(), imageSize, ColorSpaceDeviceRGB, canvasRect, FloatRect(FloatPoint(), imageSize), 1, CompositeCopy);
 }
 
 } // namespace WebCore
