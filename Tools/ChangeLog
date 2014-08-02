@@ -1,3 +1,12 @@
+2014-07-30  David Farler  <dfarler@apple.com>
+
+        Remove old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=135374
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/old-run-webkit-tests: Removed.
+
 2014-08-02  Dan Bernstein  <mitz@apple.com>
 
         prepare-ChangeLog --no-write shouldn’t require ChangeLog to exist
