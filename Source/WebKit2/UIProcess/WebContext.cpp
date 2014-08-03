@@ -621,9 +621,9 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.openGLCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.openGLCacheDirectory, parameters.openGLCacheDirectoryExtensionHandle);
 
-    parameters.mediaCacheDirectory = mediaCacheDirectory();
-    if (!parameters.mediaCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.mediaCacheDirectory, parameters.mediaCacheDirectoryExtensionHandle);
+    parameters.containerTemporaryDirectory = containerTemporaryDirectory();
+    if (!parameters.containerTemporaryDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.containerTemporaryDirectory, parameters.containerTemporaryDirectoryExtensionHandle);
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
@@ -1221,14 +1221,6 @@ String WebContext::openGLCacheDirectory() const
 String WebContext::networkingHSTSDatabasePath() const
 {
     return platformDefaultNetworkingHSTSDatabasePath();
-}
-
-String WebContext::mediaCacheDirectory() const
-{
-    if (!m_overrideMediaCacheDirectory.isEmpty())
-        return m_overrideMediaCacheDirectory;
-
-    return platformMediaCacheDirectory();
 }
 
 void WebContext::useTestingNetworkSession()

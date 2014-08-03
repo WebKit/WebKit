@@ -323,16 +323,10 @@ String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
 #endif
 }
 
-String WebContext::platformMediaCacheDirectory() const
+String WebContext::containerTemporaryDirectory() const
 {
-#if PLATFORM(IOS)
     String path = NSTemporaryDirectory();
-    path = path + "/MediaCache";
     return stringByResolvingSymlinksInPath(path);
-#else
-    notImplemented();
-    return [@"" stringByStandardizingPath];
-#endif
 }
 
 String WebContext::platformDefaultWebSQLDatabaseDirectory()
