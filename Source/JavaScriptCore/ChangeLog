@@ -1,3 +1,25 @@
+2014-08-03  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r171946.
+
+    2014-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+            CodeBlock fails to visit the Executables of its InlineCallFrames
+            https://bugs.webkit.org/show_bug.cgi?id=135471
+
+            Reviewed by Geoffrey Garen.
+
+            CodeBlock needs to visit its InlineCallFrames' owner Executables. If it doesn't, they 
+            can be prematurely collected and cause crashes.
+
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::stronglyVisitStrongReferences):
+            * bytecode/CodeOrigin.h:
+            (JSC::InlineCallFrame::visitAggregate):
+            * bytecode/InlineCallFrameSet.cpp:
+            (JSC::InlineCallFrameSet::visitAggregate):
+            * bytecode/InlineCallFrameSet.h:
+
 2014-07-29  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171689. <rdar://problem/17844890>

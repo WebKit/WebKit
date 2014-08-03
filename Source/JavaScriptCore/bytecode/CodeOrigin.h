@@ -146,6 +146,11 @@ struct InlineCallFrame {
             return jsCast<JSFunction*>(calleeRecovery.constant());
         return 0;
     }
+
+    void visitAggregate(SlotVisitor& visitor)
+    {
+        visitor.append(&executable);
+    }
     
     // Get the callee given a machine call frame to which this InlineCallFrame belongs.
     JSFunction* calleeForCallFrame(ExecState*) const;
