@@ -1430,6 +1430,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case NewFunctionNoCheck:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->functionStructure());
+        m_state.setHaveStructures(true);
         break;
         
     case GetCallee:
