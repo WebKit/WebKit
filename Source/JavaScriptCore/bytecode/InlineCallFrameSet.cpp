@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "InlineCallFrameSet.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
