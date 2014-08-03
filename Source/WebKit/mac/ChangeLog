@@ -1,3 +1,16 @@
+2014-08-02  Jeremy Jones  <jeremyj@apple.com>
+
+        Support both window and view based video fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=135525
+
+        Reviewed by Simon Fraser.
+
+        Parenting in the view instead of the window gives the fullscreen implementation more latitude 
+        in how it implements the animation.
+
+        * WebView/WebView.mm:
+        (-[WebView _enterFullscreenForNode:]): Use view instead of window.
+
 2014-08-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17891752> [iOS] WebKit links against libraries it doesn’t use

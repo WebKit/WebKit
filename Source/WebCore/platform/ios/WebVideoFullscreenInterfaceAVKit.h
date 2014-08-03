@@ -62,12 +62,16 @@ class WebVideoFullscreenInterfaceAVKit
         
     RetainPtr<WebAVPlayerController> m_playerController;
     RetainPtr<AVPlayerViewController> m_playerViewController;
-    RetainPtr<UIViewController> m_viewController;
     RetainPtr<CALayer> m_videoLayer;
     RetainPtr<WebAVVideoLayer> m_videoLayerContainer;
     WebVideoFullscreenModel* m_videoFullscreenModel;
     WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver;
-        
+
+    // These are only used when fullscreen is presented in a separate window.
+    RetainPtr<UIWindow> m_window;
+    RetainPtr<UIViewController> m_viewController;
+    RetainPtr<UIView> m_parentView;
+
     WebAVPlayerController *playerController();
     
     void doEnterFullscreen();
