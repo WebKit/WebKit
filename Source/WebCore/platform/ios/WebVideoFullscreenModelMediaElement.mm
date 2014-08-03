@@ -158,6 +158,7 @@ void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer*
         return;
     
     m_videoFullscreenLayer = videoLayer;
+    [m_videoFullscreenLayer setFrame:m_videoFrame];
     
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
