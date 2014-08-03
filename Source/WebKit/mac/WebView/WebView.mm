@@ -227,7 +227,6 @@
 #import "WebVisiblePosition.h"
 #import <CFNetwork/CFURLCachePriv.h>
 #import <MobileGestalt.h>
-#import <UIKit/UIKit.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/GraphicsLayer.h>
@@ -8409,7 +8408,7 @@ bool LayerFlushController::flushLayers()
         _private->fullscreenController = [[WebVideoFullscreenController alloc] init];
         [_private->fullscreenController setMediaElement:videoElement];
 #if PLATFORM(IOS)
-        [_private->fullscreenController enterFullscreen:[(UIView *)[[[self window] hostLayer] delegate] window]];
+        [_private->fullscreenController enterFullscreen:(UIView *)[[[self window] hostLayer] delegate]];
 #else
         [_private->fullscreenController enterFullscreen:[[self window] screen]];
 #endif

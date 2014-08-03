@@ -50,12 +50,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static IntRect screenRectForNode(Node* node)
+static IntRect clientRectForNode(Node* node)
 {
     if (!node || !node->isElementNode())
         return IntRect();
 
-    return toElement(node)->screenRect();
+    return toElement(node)->clientRect();
 }
 
 PassRefPtr<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
@@ -97,7 +97,7 @@ void WebVideoFullscreenManager::enterFullscreenForNode(Node* node)
 
     m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess();
     
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), screenRectForNode(node)), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(m_layerHostingContext->contextID(), clientRectForNode(node)), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitFullscreenForNode(Node* node)
@@ -109,7 +109,7 @@ void WebVideoFullscreenManager::exitFullscreenForNode(Node* node)
         return;
 
     m_isAnimating = true;
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(screenRectForNode(node)), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::ExitFullscreen(clientRectForNode(node)), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::setDuration(double duration)
