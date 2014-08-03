@@ -1,5 +1,18 @@
 2014-08-03  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r171959.
+
+    2014-08-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+            [iOS WK2] Add extension read permission to network sandbox profile
+            <rdar://problem/17671574>
+
+            Reviewed by Alexey Proskuryakov and Oliver Hunt.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+2014-08-03  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r171943.
 
     2014-08-01  Oliver Hunt  <oliver@apple.com>

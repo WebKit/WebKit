@@ -36,6 +36,7 @@
 
 ;; App sandbox extensions
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
+(allow file-read* (extension "com.apple.app-sandbox.read"))
 
 ;; IOKit user clients
 (allow iokit-open
