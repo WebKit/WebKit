@@ -1,3 +1,16 @@
+2014-08-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        * platform/efl/TestExpectations: Add or update test expectations for failing tests.
+        * platform/efl/fast/text/international/cjk-segmentation-expected.txt: Added.
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt: Rebaseline after r167632.
+        * platform/efl/sputnik/Unicode/Unicode_320/S7.6_A2.2_T2-expected.txt: Added.
+        * platform/efl/sputnik/Unicode/Unicode_320/S7.6_A5.2_T8-expected.txt: Added.
+        * platform/efl/svg/text/non-bmp-positioning-lists-expected.png: Rebaseline after r168350 and r168543.
+        * platform/efl/svg/text/non-bmp-positioning-lists-expected.txt: Ditto.
+        * platform/efl/transforms/2d/hindi-rotated-expected.txt: Fix baseline.
+
 2014-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

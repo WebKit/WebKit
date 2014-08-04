@@ -463,9 +463,9 @@ webkit.org/b/105870 webaudio/audionode-channel-rules.html [ Pass Crash ]
 # Media regressions after updating to gstreamer 1.0.
 webkit.org/b/104809 media/video-src.html [ Crash Pass ]
 webkit.org/b/104809 media/video-src-blob.html [ Crash Failure ]
-webkit.org/b/104809 media/video-src-change.html [ Crash Pass ]
-webkit.org/b/104809 media/remove-from-document.html [ Crash Pass ]
-webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass ]
+webkit.org/b/104809 media/video-src-change.html [ Crash Pass Failure ]
+webkit.org/b/104809 media/remove-from-document.html [ Crash Pass Failure ]
+webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass Failure ]
 
 # Sometimes crashes in PlatformContextCairo::drawSurfaceToContext().
 webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass Failure ]
@@ -775,8 +775,8 @@ webkit.org/b/124934 svg/animations/svglengthlist-animation-3.html [ Failure Pass
 webkit.org/b/124935 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
 
 # Started to crash after r163871
-webkit.org/b/128905 media/video-fast-seek.html [ Crash Pass ]
-webkit.org/b/128905 media/video-extreme-playbackrate-crash.html [ Crash Pass ]
+webkit.org/b/128905 media/video-fast-seek.html [ Crash Pass Failure ]
+webkit.org/b/128905 media/video-extreme-playbackrate-crash.html [ Crash Pass Failure ]
 
 webkit.org/b/125517 compositing/regions/crash-transform-inside-region.html [ Crash Pass ]
 webkit.org/b/125517 compositing/regions/floated-region-with-transformed-child.html [ ImageOnlyFailure Pass ]
@@ -864,6 +864,10 @@ webkit.org/b/106405 http/tests/misc/401-alternative-content.php [ Crash Pass ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Crash Pass ]
 
 webkit.org/b/127723 accessibility/menu-list-sends-change-notification.html [ Crash Pass ]
+
+webkit.org/b/135561 mathml/opentype/opentype-stretchy-horizontal.html [ Failure Pass ]
+
+webkit.org/b/135562 svg/W3C-SVG-1.1/shapes-rect-02-t.svg [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -2043,3 +2047,5 @@ webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failur
 
 webkit.org/b/135504 svg/css/parse-height.html [ Failure ]
 webkit.org/b/135504 svg/css/parse-length.html [ Failure ]
+
+webkit.org/b/135564 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
