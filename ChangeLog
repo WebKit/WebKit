@@ -1,5 +1,21 @@
 2014-08-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Windowing target support should reflect the support in the GTK+ dependency
+        https://bugs.webkit.org/show_bug.cgi?id=134736
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindGTK3.cmake: Don't error out if the GTK+ dependency doesn't
+        support the X11 or Wayland windowing targets -- instead, if there's no support
+        the specific target is disabled, and an error is thrown only if neither of the
+        backends is enabled at the end..
+        For now the X11 target remains enabled by default, and the Wayland target is
+        kept disabled. Once it's possible to have both targets enabled at runtime in
+        WebKit, the Wayland target will be enabled as well and we'll leave it to the
+        GTK+ dependency to determine which targets can be enabled.
+
+2014-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [CMake] Add FindWayland.cmake
         https://bugs.webkit.org/show_bug.cgi?id=135540
 
