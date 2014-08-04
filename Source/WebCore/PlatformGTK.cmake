@@ -669,9 +669,7 @@ foreach (file ${GObjectDOMBindingsStable_IDL_FILES})
     get_filename_component(classname ${file} NAME_WE)
     list(APPEND GObjectDOMBindingsStable_CLASS_LIST ${classname})
     list(APPEND GObjectDOMBindingsStable_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
-    if (EXISTS "${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}Unstable.h")
-        list(APPEND GObjectDOMBindingsUnstable_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}Unstable.h)
-    endif ()
+    list(APPEND GObjectDOMBindingsUnstable_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}Unstable.h)
 endforeach ()
 
 foreach (file ${GObjectDOMBindingsUnstable_IDL_FILES})
@@ -749,13 +747,18 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
     "headers=${GObjectDOMBindingsStable_INSTALLED_HEADERS}\n"
 )
 
-set(GObjectDOMBindings_INSTALLED_HEADERS ${GObjectDOMBindingsStable_INSTALLED_HEADERS} ${GObjectDOMBindingsUnstable_INSTALLED_HEADERS})
-install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
+install(FILES ${GObjectDOMBindingsStable_INSTALLED_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
 )
 
+# Make unstable header optional if they don't exist
+install(FILES ${GObjectDOMBindingsUnstable_INSTALLED_HEADERS}
+        DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
+        OPTIONAL
+)
+
 # Some installed headers are not on the list of headers used for gir generation.
-set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS})
+set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindingsStable_INSTALLED_HEADERS})
 list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
      bindings/gobject/WebKitDOMEventTarget.h
      bindings/gobject/WebKitDOMNodeFilter.h

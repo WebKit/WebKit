@@ -1,3 +1,18 @@
+2014-08-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Install all unstable webkitdom headers
+        https://bugs.webkit.org/show_bug.cgi?id=135544
+
+        Reviewed by Gustavo Noronha Silva.
+
+        We were checking whether generated file existed before they had
+        been generated.
+
+        * PlatformGTK.cmake: Add Unstable.h header for all stable classes
+        to GObjectDOMBindingsUnstable_INSTALLED_HEADERS and split the
+        install command for stable and unstable headers making unstable
+        headers optional.
+
 2014-08-04  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error in OpenTypeMathData.cpp.
