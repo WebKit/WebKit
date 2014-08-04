@@ -54,6 +54,8 @@ def WTFString_SummaryProvider(valobj, dict):
 
 def WTFStringImpl_SummaryProvider(valobj, dict):
     provider = WTFStringImplProvider(valobj, dict)
+    if not provider.is_initialized():
+        return ""
     return "{ length = %d, is8bit = %d, contents = '%s' }" % (provider.get_length(), provider.is_8bit(), provider.to_string())
 
 
@@ -166,6 +168,9 @@ def ustring_to_string(valobj, error, length=None):
     else:
         length = int(length)
 
+    if length == 0:
+        return ""
+
     pointer = valobj.GetValueAsUnsigned()
     contents = valobj.GetProcess().ReadMemory(pointer, length * 2, lldb.SBError())
 
@@ -182,6 +187,9 @@ def lstring_to_string(valobj, error, length=None):
         length = guess_string_length(valobj, 1, error)
     else:
         length = int(length)
+
+    if length == 0:
+        return ""
 
     pointer = valobj.GetValueAsUnsigned()
     contents = valobj.GetProcess().ReadMemory(pointer, length, lldb.SBError())
@@ -209,6 +217,10 @@ class WTFStringImplProvider:
 
     def to_string(self):
         error = lldb.SBError()
+
+        if not self.is_initialized():
+            return u""
+
         if self.is_8bit():
             return lstring_to_string(self.get_data8(), error, self.get_length())
         return ustring_to_string(self.get_data16(), error, self.get_length())
@@ -217,6 +229,9 @@ class WTFStringImplProvider:
         # FIXME: find a way to access WTF::StringImpl::s_hashFlag8BitBuffer
         return bool(self.valobj.GetChildMemberWithName('m_hashAndFlags').GetValueAsUnsigned(0) \
             & 1 << 5)
+
+    def is_initialized(self):
+        return self.valobj.GetValueAsUnsigned() != 0
 
 
 class WTFStringProvider:

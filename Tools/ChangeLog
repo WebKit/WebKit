@@ -1,3 +1,19 @@
+2014-08-04  Matt Baker  <mattbaker@apple.com>
+
+        lldb_webkit.py throws exception when generating summary of null StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=129448
+
+        Reviewed by Jer Noble.
+
+        Added checks for null StringImpl and 0 byte ReadMemory calls.
+
+        * lldb/lldb_webkit.py:
+        (WTFStringImpl_SummaryProvider):
+        (ustring_to_string):
+        (lstring_to_string):
+        (WTFStringImplProvider.to_string):
+        (WTFStringImplProvider.is_initialized):
+
 2014-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not include JavaScriptCore stress tests in release tarballs
