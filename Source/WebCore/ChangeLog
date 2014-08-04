@@ -1,3 +1,27 @@
+2014-08-04  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Re-enqueing due to overlapping appended samples can cause stuttering playback
+        https://bugs.webkit.org/show_bug.cgi?id=135424
+
+        Reviewed by Eric Carlson.
+
+        If it become necessary to re-enqueue samples (due to appending overlapping samples which cause
+        existing samples to be removed), the previous behavior was to flush and re-enqueue the new
+        samples dependencies; i.e., everything up to and including the previous sync sample. This causes
+        the decoder to visibly stall while it decodes those non-displaying samples, which could be
+        a second or more worth of encoded video samples, depending on the frequency of sync samples.
+
+        Instead, when we are asked to re-enqueue, we will look for the next occurring sync sample.
+        If found, we can switch over to the replacement samples at that point in the decode queue.
+        This limits the overhead of a stream switch, and should allow for a visually seamless switch,
+        at the cost of having to wait for the next sync sample to occur to affect the switch.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::seekToTime): Clear the decode queue when seeking.
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete): Call reenqueueMediaForCurrentTime.
+        (WebCore::SourceBuffer::reenqueueMediaForCurrentTime): Switch over to the new stream only
+            at the next sync sample.
+
 2014-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: The Dictation command "Replace <phrase> with <phrase>" always capitalizes the replacement string

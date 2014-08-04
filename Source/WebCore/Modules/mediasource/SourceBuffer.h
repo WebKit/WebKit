@@ -150,6 +150,7 @@ private:
     bool validateInitializationSegment(const InitializationSegment&);
 
     struct TrackBuffer;
+    void reenqueueMediaForCurrentTime(TrackBuffer&, AtomicString trackID);
     void reenqueueMediaForTime(TrackBuffer&, AtomicString trackID, const MediaTime&);
     void provideMediaData(TrackBuffer&, AtomicString trackID);
     void didDropSample();
