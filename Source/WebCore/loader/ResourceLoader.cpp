@@ -62,6 +62,7 @@ ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     , m_cancellationStatus(NotCancelled)
     , m_defersLoading(frame->page()->defersLoading())
     , m_options(options)
+    , m_isQuickLookResource(false)
 {
 }
 
@@ -618,6 +619,7 @@ void ResourceLoader::unschedule(SchedulePair& pair)
 #if USE(QUICK_LOOK)
 void ResourceLoader::didCreateQuickLookHandle(QuickLookHandle& handle)
 {
+    m_isQuickLookResource = true;
     frameLoader()->client().didCreateQuickLookHandle(handle);
 }
 #endif

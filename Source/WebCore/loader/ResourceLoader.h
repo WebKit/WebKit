@@ -116,6 +116,7 @@ public:
 #if USE(QUICK_LOOK)
     virtual void didCreateQuickLookHandle(QuickLookHandle&) override;
 #endif
+    bool isQuickLookResource() { return m_isQuickLookResource; }
 
     const URL& url() const { return m_request.url(); }
     ResourceHandle* handle() const { return m_handle.get(); }
@@ -219,6 +220,7 @@ private:
     bool m_defersLoading;
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
+    bool m_isQuickLookResource;
 };
 
 inline const ResourceResponse& ResourceLoader::response() const

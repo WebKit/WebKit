@@ -40,6 +40,7 @@ namespace WebCore {
 CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type, SessionID sessionID)
     : CachedResource(resourceRequest, type, sessionID)
     , m_identifier(0)
+    , m_allowEncodedDataReplacement(true)
 {
     // FIXME: The wrong CachedResource::Type here may cause a bad cast elsewhere.
     ASSERT(isMainOrRawResource());
@@ -94,6 +95,8 @@ void CachedRawResource::finishLoading(ResourceBuffer* data)
             setEncodedSize(data->size());
         notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
     }
+
+    m_allowEncodedDataReplacement = !m_loader->isQuickLookResource();
 
     CachedResource::finishLoading(data);
     if (dataBufferingPolicy == BufferData && m_options.dataBufferingPolicy() == DoNotBufferData) {

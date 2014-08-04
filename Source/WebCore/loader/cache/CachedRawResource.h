@@ -60,7 +60,7 @@ private:
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
 
     virtual void switchClientsToRevalidatedResource() override;
-    virtual bool mayTryReplaceEncodedData() const override { return true; }
+    virtual bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
     virtual bool canReuse(const ResourceRequest&) const override;
 
@@ -72,6 +72,7 @@ private:
 #endif
 
     unsigned long m_identifier;
+    bool m_allowEncodedDataReplacement;
 
     struct RedirectPair {
     public:

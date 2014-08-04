@@ -1,3 +1,36 @@
+2014-08-04  Pratik Solanki  <psolanki@apple.com>
+
+        QuickLook resources are cache-replaced with their original binary data causing ASSERT(m_data->size() == newBuffer->size()) in CachedResource.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=135548
+        <rdar://problem/17891321>
+
+        Reviewed by David Kilzer.
+
+        When loading QuickLook resources, the SharedBuffer in the CachedResource is actually a
+        converted representation of the real QuickLook resource. Replacing this with the actual
+        network resource (which is what tryReplaceEncodedData() tried to do) is wrong and triggered
+        asserts in the code.
+
+        Fix this by having CachedRawResource::mayTryReplaceEncodedData() return false if we are
+        loading a QuickLook resource.
+
+        No new tests because we don't have a way to test QuickLook documents.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::didCreateQuickLookHandle):
+            Set a flag to indicate that we are loading a QuickLook document.
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::isQuickLookResource):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        (WebCore::CachedRawResource::finishLoading):
+            Check if we were loading a QuickLook document and if so disable encoded data
+            replacement.
+        * loader/cache/CachedRawResource.h:
+            Add a new bool field returned by mayTryReplaceEncodedData(). Default is true but it is
+            set to false in finishLoading() if we were loading QuickLook document.
+
 2014-08-04  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeking occasionally causes many frames to be displayed in "fast forward" mode
