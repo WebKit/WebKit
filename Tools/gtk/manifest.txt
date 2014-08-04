@@ -44,6 +44,7 @@ exclude \.xcodeproj$
 exclude .*\/(mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|efl|win|wince)\/.*$
 
 directory Source
+exclude Source/JavaScriptCore/tests
 exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/platform/efl/DefaultTheme
