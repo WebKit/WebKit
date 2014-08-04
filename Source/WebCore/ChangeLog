@@ -1,3 +1,18 @@
+2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Secure text fields need to support Search parameterized attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135568
+
+        Reviewed by Mario Sanchez Prada.
+ 
+        Secure text fields still need to support the fast searching that WebKit exposes, even though they don't support
+        other parameterized attributes.
+  
+        Test: platform/mac/accessibility/secure-text-field-supports-fast-search.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+
 2014-08-04  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Further fixes for "fast forward" playback after seeking in YouTube behavior.

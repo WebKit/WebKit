@@ -3119,7 +3119,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if (m_object->isPasswordField())
-        return [NSArray array];
+        return @[ NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute ];
     
     if (!m_object->isAccessibilityRenderObject())
         return paramAttrs;

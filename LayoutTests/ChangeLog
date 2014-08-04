@@ -1,5 +1,15 @@
 2014-08-04  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Secure text fields need to support Search parameterized attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135568
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/mac/accessibility/secure-text-field-supports-fast-search-expected.txt: Added.
+        * platform/mac/accessibility/secure-text-field-supports-fast-search.html: Added.
+
+2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
         AX: SelectText functionality always selects text after current selection even if closer selection is behind it
         https://bugs.webkit.org/show_bug.cgi?id=135546
 
