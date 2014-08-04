@@ -1,3 +1,21 @@
+2014-08-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] shape-margin not respected when it extends beyond an explicitly set margin
+        https://bugs.webkit.org/show_bug.cgi?id=135308
+
+        Reviewed by Dean Jackson.
+
+        When a zero height line is supplied and the image shape extends into
+        the margin box (only possible when a shape-margin is supplied), then
+        only an empty interval was being returned. This patch makes it
+        properly return the interval for the line in question.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-image-shape-margin.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShape::getExcludedIntervals): Handle the zero height
+        line case.
+
 2014-08-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: InlineTextBox mistakenly rounds offset value before painting.

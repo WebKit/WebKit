@@ -165,8 +165,12 @@ void RasterShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logical
     y2 = std::min(y2, intervals.bounds().maxY());
     IntShapeInterval excludedInterval;
 
-    for (int y = y1; y < y2;  y++)
-        excludedInterval.unite(intervals.intervalAt(y));
+    if (y1 == y2)
+        excludedInterval = intervals.intervalAt(y1);
+    else {
+        for (int y = y1; y < y2;  y++)
+            excludedInterval.unite(intervals.intervalAt(y));
+    }
 
     result.append(LineSegment(excludedInterval.x1(), excludedInterval.x2()));
 }

@@ -1,3 +1,17 @@
+2014-08-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] shape-margin not respected when it extends beyond an explicitly set margin
+        https://bugs.webkit.org/show_bug.cgi?id=135308
+
+        Reviewed by Dean Jackson.
+
+        Test case based on the one supplied by Rebecca Hauck in the bug
+        report.
+
+        * fast/shapes/resources/square.png: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-shape-margin-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-image-shape-margin.html: Added.
+
 2014-08-04  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: InlineTextBox mistakenly rounds offset value before painting.
