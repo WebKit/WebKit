@@ -160,6 +160,9 @@ private:
     LayoutUnit calculateMaxColumnHeight() const;
     LayoutUnit columnGap() const;
 
+    LayoutUnit columnLogicalLeft(unsigned) const;
+    LayoutUnit columnLogicalTop(unsigned) const;
+
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
     LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
 

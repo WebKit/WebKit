@@ -1,3 +1,31 @@
+2014-08-04  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171882
+
+    2014-07-31  Andrei Bucur  <abucur@adobe.com>
+
+            REGRESSION: Search highlight is broken in RTL multicolumn content
+            https://bugs.webkit.org/show_bug.cgi?id=135452
+
+            Reviewed by Simon Fraser.
+
+            The offsets for elements inside RTL multi-column elements are incorrectly computed because
+            the columns don't calculate their left position according to the writing direction.
+
+            The patch extracts the column position computation in two helper functions (for top and left)
+            so they can be used when needed in different parts of the code. In our case, the |columnLogicalLeft|
+            function should be used inside |columnTranslationForOffset|.
+
+            Test: fast/multicol/content-bounding-box-rtl.html
+
+            * rendering/RenderMultiColumnSet.cpp:
+            (WebCore::RenderMultiColumnSet::columnLogicalLeft): Return the logical left of a column relative to the set.
+            (WebCore::RenderMultiColumnSet::columnLogicalTop): Return the logical top of a column relative to the set.
+            (WebCore::RenderMultiColumnSet::columnRectAt): Split the code between columnLogicalLeft and columnLogicalTop.
+            (WebCore::RenderMultiColumnSet::collectLayerFragments): Make code clearer by adding a new line.
+            (WebCore::RenderMultiColumnSet::columnTranslationForOffset): Use columnLogicalLeft instead of duplicating logic.
+            * rendering/RenderMultiColumnSet.h:
+
 2014-08-03  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r171973.
