@@ -531,8 +531,8 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
 static PassRefPtr<Range> rangeClosestToRange(Range* referenceRange, PassRefPtr<Range> afterRange, PassRefPtr<Range> beforeRange)
 {
     ASSERT(referenceRange);
-    ASSERT(!afterRange || afterRange->startPosition() > referenceRange->startPosition());
-    ASSERT(!beforeRange || beforeRange->endPosition() < referenceRange->endPosition());
+    ASSERT(!afterRange || afterRange->startPosition() >= referenceRange->endPosition());
+    ASSERT(!beforeRange || beforeRange->endPosition() <= referenceRange->startPosition());
     
     if (!referenceRange || (!afterRange && !beforeRange))
         return nullptr;
@@ -541,8 +541,8 @@ static PassRefPtr<Range> rangeClosestToRange(Range* referenceRange, PassRefPtr<R
     if (!afterRange && beforeRange)
         return beforeRange;
     
-    unsigned positionsToAfterRange = Position::positionCountBetweenPositions(afterRange->startPosition(), referenceRange->startPosition());
-    unsigned positionsToBeforeRange = Position::positionCountBetweenPositions(afterRange->endPosition(), referenceRange->endPosition());
+    unsigned positionsToAfterRange = Position::positionCountBetweenPositions(afterRange->startPosition(), referenceRange->endPosition());
+    unsigned positionsToBeforeRange = Position::positionCountBetweenPositions(beforeRange->endPosition(), referenceRange->startPosition());
     
     return positionsToAfterRange < positionsToBeforeRange ? afterRange : beforeRange;
 }
