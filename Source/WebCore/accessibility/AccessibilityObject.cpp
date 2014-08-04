@@ -557,7 +557,7 @@ PassRefPtr<Range> AccessibilityObject::rangeOfStringClosestToRangeInDirection(Ra
         return nullptr;
     
     bool isBackwardSearch = searchDirection == SearchDirectionPrevious;
-    FindOptions findOptions = AtWordStarts | CaseInsensitive | StartInSelection;
+    FindOptions findOptions = AtWordStarts | AtWordEnds | CaseInsensitive | StartInSelection;
     if (isBackwardSearch)
         findOptions |= Backwards;
     
