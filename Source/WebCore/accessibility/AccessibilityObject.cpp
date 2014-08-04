@@ -647,9 +647,20 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
                 replacementString = closestString.lower();
                 replaceSelection = true;
                 break;
-            case FindAndReplaceActivity:
+            case FindAndReplaceActivity: {
                 replaceSelection = true;
+                
+                // When applying find and replace activities, we want to match the capitalization of the replaced text,
+                // (unless we're replacing with an abbreviation.)
+                String uppercaseReplacementString = replacementString.upper();
+                if (closestString.length() > 0 && replacementString.length() > 2 && replacementString != uppercaseReplacementString) {
+                    if (closestString[0] == closestString.upper()[0])
+                        makeCapitalized(&replacementString, 0);
+                    else
+                        replacementString = replacementString.lower();
+                }
                 break;
+            }
             case FindAndSelectActivity:
                 break;
             }

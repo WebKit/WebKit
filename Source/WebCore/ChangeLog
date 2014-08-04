@@ -1,3 +1,18 @@
+2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: The Dictation command "Replace <phrase> with <phrase>" always capitalizes the replacement string
+        https://bugs.webkit.org/show_bug.cgi?id=135557
+
+        Reviewed by Mario Sanchez Prada.
+
+        When replacing text, we should match the capitalization of the word being replaced 
+        (unless the replacement looks like an abbreviation).   
+ 
+        Test: platform/mac/accessibility/find-and-replace-match-capitalization.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectText):
+
 2014-08-04  Pratik Solanki  <psolanki@apple.com>
 
         QuickLook resources are cache-replaced with their original binary data causing ASSERT(m_data->size() == newBuffer->size()) in CachedResource.cpp
