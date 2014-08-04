@@ -1,3 +1,15 @@
+2014-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add FindWayland.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=135540
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindWayland.cmake: Added. Enables finding the Wayland
+        dependency. For now bundles the wayland-client, wayland-server and
+        wayland-egl pkg-config targets into one dependency, but these could
+        be split in the future if necessary.
+
 2014-08-03  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move DATA_INSTALL_DIR to ewebkit2-0
