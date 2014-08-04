@@ -94,8 +94,11 @@ ScriptController::~ScriptController()
 
     // It's likely that destroying m_windowShells will create a lot of garbage.
     if (!m_windowShells.isEmpty()) {
-        while (!m_windowShells.isEmpty())
-            destroyWindowShell(*m_windowShells.begin()->key);
+        while (!m_windowShells.isEmpty()) {
+            ShellMap::iterator iter = m_windowShells.begin();
+            iter->value->window()->setConsoleClient(nullptr);
+            destroyWindowShell(*iter->key);
+        }
         gcController().garbageCollectSoon();
     }
 }

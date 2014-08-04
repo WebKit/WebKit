@@ -1,3 +1,15 @@
+2014-08-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Always clear ConsoleClient when Page/WindowShell is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=135569
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        Whenever a window shell goes away, clear the console client.
+        We did this in clearWindowShell but not before destroying.
+
 2014-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: isWordEndMatch should allow for multiple word selections
