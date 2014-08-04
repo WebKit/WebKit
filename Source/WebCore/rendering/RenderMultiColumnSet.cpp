@@ -444,32 +444,52 @@ unsigned RenderMultiColumnSet::columnCount() const
     return count;
 }
 
-LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
+LayoutUnit RenderMultiColumnSet::columnLogicalLeft(unsigned index) const
 {
     LayoutUnit colLogicalWidth = computedColumnWidth();
-    LayoutUnit colLogicalHeight = computedColumnHeight();
-    LayoutUnit colLogicalTop = borderAndPaddingBefore();
     LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
     LayoutUnit colGap = columnGap();
-    
+
     bool progressionReversed = multiColumnFlowThread()->progressionIsReversed();
     bool progressionInline = multiColumnFlowThread()->progressionIsInline();
-    
+
     if (progressionInline) {
         if (style().isLeftToRightDirection() ^ progressionReversed)
             colLogicalLeft += index * (colLogicalWidth + colGap);
         else
             colLogicalLeft += contentLogicalWidth() - colLogicalWidth - index * (colLogicalWidth + colGap);
-    } else {
+    }
+
+    return colLogicalLeft;
+}
+
+LayoutUnit RenderMultiColumnSet::columnLogicalTop(unsigned index) const
+{
+    LayoutUnit colLogicalHeight = computedColumnHeight();
+    LayoutUnit colLogicalTop = borderAndPaddingBefore();
+    LayoutUnit colGap = columnGap();
+
+    bool progressionReversed = multiColumnFlowThread()->progressionIsReversed();
+    bool progressionInline = multiColumnFlowThread()->progressionIsInline();
+
+    if (!progressionInline) {
         if (!progressionReversed)
             colLogicalTop += index * (colLogicalHeight + colGap);
         else
             colLogicalTop += contentLogicalHeight() - colLogicalHeight - index * (colLogicalHeight + colGap);
     }
-    
+
+    return colLogicalTop;
+}
+
+LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
+{
+    LayoutUnit colLogicalWidth = computedColumnWidth();
+    LayoutUnit colLogicalHeight = computedColumnHeight();
+
     if (isHorizontalWritingMode())
-        return LayoutRect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
-    return LayoutRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
+        return LayoutRect(columnLogicalLeft(index), columnLogicalTop(index), colLogicalWidth, colLogicalHeight);
+    return LayoutRect(columnLogicalTop(index), columnLogicalLeft(index), colLogicalHeight, colLogicalWidth);
 }
 
 unsigned RenderMultiColumnSet::columnIndexAtOffset(LayoutUnit offset, ColumnIndexCalculationMode mode) const
@@ -766,6 +786,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
                 inlineOffset += contentLogicalWidth() - colLogicalWidth;
         }
         translationOffset.setWidth(inlineOffset);
+
         LayoutUnit blockOffset = initialBlockOffset + logicalTop() - flowThread()->logicalTop() + (isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x());
         if (!progressionIsInline) {
             if (!progressionReversed)
@@ -807,7 +828,6 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     unsigned startColumn = columnIndexAtOffset(offset);
     
     LayoutUnit colGap = columnGap();
-    LayoutUnit colLogicalWidth = computedColumnWidth();
     
     LayoutRect flowThreadPortion = flowThreadPortionRectAt(startColumn);
     LayoutPoint translationOffset;
@@ -817,15 +837,8 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
 
     LayoutUnit initialBlockOffset = initialBlockOffsetForPainting();
     
-    LayoutUnit inlineOffset = progressionIsInline ? startColumn * (colLogicalWidth + colGap) : LayoutUnit();
-    
-    bool leftToRight = style().isLeftToRightDirection() ^ progressionReversed;
-    if (!leftToRight) {
-        inlineOffset = -inlineOffset;
-        if (progressionReversed)
-            inlineOffset += contentLogicalWidth() - colLogicalWidth;
-    }
-    translationOffset.setX(inlineOffset);
+    translationOffset.setX(columnLogicalLeft(startColumn));
+
     LayoutUnit blockOffset = initialBlockOffset - (isHorizontalWritingMode() ? flowThreadPortion.y() : flowThreadPortion.x());
     if (!progressionIsInline) {
         if (!progressionReversed)
