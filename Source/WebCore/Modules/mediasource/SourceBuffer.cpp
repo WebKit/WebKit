@@ -1208,8 +1208,10 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // Add the coded frame with the presentation timestamp, decode timestamp, and frame duration to the track buffer.
         trackBuffer.samples.addSample(sample);
 
-        DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
-        trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
+        if (frameEndTimestamp > MediaTime::createWithDouble(m_source->currentTime())) {
+            DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
+            trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
+        }
 
         // 1.18 Set last decode timestamp for track buffer to decode timestamp.
         trackBuffer.lastDecodeTimestamp = decodeTimestamp;
@@ -1449,6 +1451,8 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString 
         nonDisplayingSamples.append(iter->second);
 
     m_private->flushAndEnqueueNonDisplayingSamples(nonDisplayingSamples, trackID);
+    if (!nonDisplayingSamples.isEmpty())
+        trackBuffer.lastEnqueuedPresentationTime = nonDisplayingSamples.last()->presentationTime();
 
     // Fill the decode queue with the remaining samples.
     trackBuffer.decodeQueue.clear();

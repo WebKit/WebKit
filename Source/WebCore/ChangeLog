@@ -1,3 +1,22 @@
+2014-08-04  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Further fixes for "fast forward" playback after seeking in YouTube behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=135572
+
+        Reviewed by Eric Carlson.
+
+        Two related fixes:
+
+        In reenqueueMediaForTime(), update TrackBuffer.lastEnqueuedPresentationTime when we flush samples, so that
+        the next time samples are re-enqueued, the starting point for re-enqueueing is correct.
+
+        In sourceBufferPrivateDidReceiveSample(), do not add samples to the decode queue if they are before the
+        current media time.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::reenqueueMediaForTime):
+
 2014-08-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: All-caps CSS properties are not shown in Computed pane
