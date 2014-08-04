@@ -1362,7 +1362,9 @@ void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferP
     if (it == m_trackBufferMap.end())
         return;
 
-    provideMediaData(it->value, trackID);
+    TrackBuffer& trackBuffer = it->value;
+    if (!trackBuffer.needsReenqueueing)
+        provideMediaData(trackBuffer, trackID);
 }
 
 void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString trackID)
