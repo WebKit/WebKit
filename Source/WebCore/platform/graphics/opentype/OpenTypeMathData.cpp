@@ -30,6 +30,7 @@
 #if ENABLE(OPENTYPE_MATH)
 #include "OpenTypeTypes.h"
 #endif
+#include "SharedBuffer.h"
 #include "SimpleFontData.h"
 
 using namespace std;
@@ -259,11 +260,11 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
 #endif
 }
 
-#if ENABLE(OPENTYPE_MATH)
 OpenTypeMathData::~OpenTypeMathData()
 {
 }
 
+#if ENABLE(OPENTYPE_MATH)
 float OpenTypeMathData::getMathConstant(const SimpleFontData* font, MathConstant constant) const
 {
     int32_t value = 0;

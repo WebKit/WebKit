@@ -1,3 +1,15 @@
+2014-08-04  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error in OpenTypeMathData.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=135541
+
+        Reviewed by Brent Fulgham.
+
+        The SharedBuffer class needs to be defined.
+        Also, the OpenTypeMathData constructor should be implemented when OPENTYPE_MATH is not enabled.
+
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+
 2014-08-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/17782529> REGRESSION: OS marketing version in iOS Simulator user-agent string is the host OS’s
