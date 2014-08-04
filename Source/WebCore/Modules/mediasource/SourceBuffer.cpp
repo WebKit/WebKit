@@ -317,7 +317,6 @@ void SourceBuffer::seekToTime(const MediaTime& time)
         TrackBuffer& trackBuffer = trackBufferPair.value;
         const AtomicString& trackID = trackBufferPair.key;
 
-        trackBuffer.decodeQueue.clear();
         reenqueueMediaForTime(trackBuffer, trackID, time);
     }
 }
@@ -499,13 +498,14 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     if (m_source)
         m_source->monitorSourceBuffers();
 
+    MediaTime currentMediaTime = MediaTime::createWithDouble(m_source->currentTime());
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
         const AtomicString& trackID = trackBufferPair.key;
 
         if (trackBuffer.needsReenqueueing) {
-            LOG(MediaSource, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - reenqueuing", this);
-            reenqueueMediaForCurrentTime(trackBuffer, trackID);
+            LOG(MediaSource, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - reenqueuing at time (%s)", this, toString(currentMediaTime).utf8().data());
+            reenqueueMediaForTime(trackBuffer, trackID, currentMediaTime);
         } else
             provideMediaData(trackBuffer, trackID);
     }
@@ -1208,10 +1208,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // Add the coded frame with the presentation timestamp, decode timestamp, and frame duration to the track buffer.
         trackBuffer.samples.addSample(sample);
 
-        if (frameEndTimestamp > MediaTime::createWithDouble(m_source->currentTime())) {
-            DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
-            trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
-        }
+        DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
+        trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
 
         // 1.18 Set last decode timestamp for track buffer to decode timestamp.
         trackBuffer.lastDecodeTimestamp = decodeTimestamp;
@@ -1364,9 +1362,7 @@ void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferP
     if (it == m_trackBufferMap.end())
         return;
 
-    TrackBuffer& trackBuffer = it->value;
-    if (!trackBuffer.needsReenqueueing)
-        provideMediaData(trackBuffer, trackID);
+    provideMediaData(it->value, trackID);
 }
 
 void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString trackID)
@@ -1393,33 +1389,6 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
     trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin(), sampleIt);
 
     LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
-}
-
-void SourceBuffer::reenqueueMediaForCurrentTime(TrackBuffer& trackBuffer, AtomicString trackID)
-{
-    if (!trackBuffer.decodeQueue.empty()) {
-        // If the decodeQueue is not empty, attempt to find the next sync sample after the last enqueued presentation time.
-        auto nextSyncSampleIter = trackBuffer.samples.decodeOrder().findSyncSampleAfterPresentationTime(trackBuffer.lastEnqueuedPresentationTime);
-
-        auto decodeEnd = trackBuffer.samples.decodeOrder().end();
-        if (nextSyncSampleIter != decodeEnd) {
-            // If a sync sample is found, remove all existing samples from the decode queue whose decodeTimestamps are
-            // greater-than-or-equal-to the sync sample's decodeTimestamp.
-            auto firstEnqueuedSampleToRemoveIter = trackBuffer.decodeQueue.lower_bound(nextSyncSampleIter->first);
-            trackBuffer.decodeQueue.erase(firstEnqueuedSampleToRemoveIter, trackBuffer.decodeQueue.end());
-
-            // Add the replacement samples, starting from the sync sample, to the decode queue.
-            for (auto iter = nextSyncSampleIter; iter != decodeEnd; ++iter)
-                trackBuffer.decodeQueue.insert(*iter);
-            trackBuffer.needsReenqueueing = false;
-
-            // And provide those replacement samples to the decoder.
-            provideMediaData(trackBuffer, trackID);
-            return;
-        }
-    }
-
-    reenqueueMediaForTime(trackBuffer, trackID, MediaTime::createWithDouble(m_source->currentTime()));
 }
 
 void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString trackID, const MediaTime& time)
@@ -1451,8 +1420,6 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString 
         nonDisplayingSamples.append(iter->second);
 
     m_private->flushAndEnqueueNonDisplayingSamples(nonDisplayingSamples, trackID);
-    if (!nonDisplayingSamples.isEmpty())
-        trackBuffer.lastEnqueuedPresentationTime = nonDisplayingSamples.last()->presentationTime();
 
     // Fill the decode queue with the remaining samples.
     trackBuffer.decodeQueue.clear();

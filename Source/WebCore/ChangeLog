@@ -1,3 +1,15 @@
+2014-08-04  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, rolling out r171992, r171995, & r172000.
+
+        The cumulative effect of those revisions was to cause decoding errors when switching resolutions on YouTube.
+
+        Reverted changesets:
+
+        https://bugs.webkit.org/show_bug.cgi?id=135422 / http://trac.webkit.org/changeset/171992
+        https://bugs.webkit.org/show_bug.cgi?id=135424 / http://trac.webkit.org/changeset/171995
+        https://bugs.webkit.org/show_bug.cgi?id=135572 / http://trac.webkit.org/changeset/172000
+
 2014-08-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Always clear ConsoleClient when Page/WindowShell is destroyed
