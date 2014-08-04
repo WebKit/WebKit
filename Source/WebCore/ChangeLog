@@ -1,3 +1,13 @@
+2014-08-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: All-caps CSS properties are not shown in Computed pane
+        https://bugs.webkit.org/show_bug.cgi?id=133700
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties):
+
 2014-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: SelectText functionality always selects text after current selection even if closer selection is behind it

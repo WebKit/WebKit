@@ -531,7 +531,7 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
         Inspector::TypeBuilder::CSS::CSSProperty::Status::Enum status = it->disabled ? Inspector::TypeBuilder::CSS::CSSProperty::Status::Disabled : Inspector::TypeBuilder::CSS::CSSProperty::Status::Active;
 
         RefPtr<Inspector::TypeBuilder::CSS::CSSProperty> property = Inspector::TypeBuilder::CSS::CSSProperty::create()
-            .setName(name)
+            .setName(name.lower())
             .setValue(propertyEntry.value);
 
         propertiesObject->addItem(property);
