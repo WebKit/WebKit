@@ -79,10 +79,8 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     GraphicsContextStateSaver stateSaver(context, textPaintStyle.strokeWidth > 0);
 
     updateGraphicsContext(context, textPaintStyle);
-    LayoutPoint adjustedPaintOffset = LayoutPoint(roundedForPainting(paintOffset, flow.document().deviceScaleFactor()));
-
     LayoutRect paintRect = paintInfo.rect;
-    paintRect.moveBy(-adjustedPaintOffset);
+    paintRect.moveBy(-paintOffset);
 
     auto resolver = runResolver(flow, layout);
     auto range = resolver.rangeForRect(paintRect);
@@ -92,9 +90,11 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
             continue;
         TextRun textRun(run.text());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        context.drawText(font, textRun, run.baseline() + adjustedPaintOffset);
+        FloatPoint textOrigin = run.baseline() + paintOffset;
+        textOrigin.setY(roundToDevicePixel(LayoutUnit(textOrigin.y()), flow.document().deviceScaleFactor()));
+        context.drawText(font, textRun, textOrigin);
         if (debugBordersEnabled)
-            paintDebugBorders(context, run.rect(), adjustedPaintOffset);
+            paintDebugBorders(context, run.rect(), paintOffset);
     }
 }
 

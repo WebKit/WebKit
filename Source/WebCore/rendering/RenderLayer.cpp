@@ -6691,7 +6691,7 @@ void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, Ren
 
     LayoutSize subpixelAccumulation = moveOffset - toLayoutSize(LayoutPoint(adjustedPaintOffset));
     paintDirtyRect.move(moveOffset);
-    paint(context, paintDirtyRect, subpixelAccumulation, paintBehavior, nullptr, paintFlags | PaintLayerTemporaryClipRects);
+    paint(context, paintDirtyRect, LayoutSize(-subpixelAccumulation.width(), -subpixelAccumulation.height()), paintBehavior, nullptr, paintFlags | PaintLayerTemporaryClipRects);
     region->restoreRegionObjectsOriginalStyle();
     context->restore();
 }

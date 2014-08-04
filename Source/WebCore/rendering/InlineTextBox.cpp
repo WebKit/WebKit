@@ -506,7 +506,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     LayoutUnit paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     LayoutUnit paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
     
-    FloatPoint adjustedPaintOffset = roundedForPainting(paintOffset, renderer().document().deviceScaleFactor());
+    FloatPoint localPaintOffset(paintOffset);
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
@@ -532,7 +532,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             LayoutUnit widthOfVisibleText = renderer().width(m_start, m_truncation, textPos(), isFirstLine());
             LayoutUnit widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
             LayoutSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0);
-            adjustedPaintOffset.move(isHorizontal() ? truncationOffset : truncationOffset.transposedSize());
+            localPaintOffset.move(isHorizontal() ? truncationOffset : truncationOffset.transposedSize());
         }
     }
 
@@ -540,10 +540,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     const RenderStyle& lineStyle = this->lineStyle();
     
-    adjustedPaintOffset.move(0, lineStyle.isHorizontalWritingMode() ? 0 : -logicalHeight());
+    localPaintOffset.move(0, lineStyle.isHorizontalWritingMode() ? 0 : -logicalHeight());
 
     FloatPoint boxOrigin = locationIncludingFlipping();
-    boxOrigin.move(adjustedPaintOffset.x(), adjustedPaintOffset.y());
+    boxOrigin.moveBy(localPaintOffset);
     FloatRect boxRect(boxOrigin, FloatSize(logicalWidth(), logicalHeight()));
 
     RenderCombineText* combinedText = lineStyle.hasTextCombine() && renderer().isCombineText() && toRenderCombineText(renderer()).isCombined() ? &toRenderCombineText(renderer()) : 0;
@@ -566,12 +566,6 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     // Set our font.
     const Font& font = fontToUse(lineStyle, renderer());
-
-    FloatPoint textOrigin = FloatPoint(boxOrigin.x(), boxOrigin.y() + font.fontMetrics().ascent());
-
-    if (combinedText)
-        combinedText->adjustTextOrigin(textOrigin, boxRect);
-
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
@@ -635,6 +629,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         emphasisMarkOffset = emphasisMarkAbove ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
 
     const ShadowData* textShadow = paintInfo.forceBlackText() ? 0 : lineStyle.textShadow();
+
+    FloatPoint textOrigin(boxOrigin.x(), boxOrigin.y() + font.fontMetrics().ascent());
+    if (combinedText)
+        combinedText->adjustTextOrigin(textOrigin, boxRect);
+
+    if (isHorizontal())
+        textOrigin.setY(roundToDevicePixel(LayoutUnit(textOrigin.y()), renderer().document().deviceScaleFactor()));
+    else
+        textOrigin.setX(roundToDevicePixel(LayoutUnit(textOrigin.x()), renderer().document().deviceScaleFactor()));
 
     TextPainter textPainter(*context, paintSelectedTextOnly, paintSelectedTextSeparately, font, sPos, ePos, length, emphasisMark, combinedText, textRun, boxRect, textOrigin, emphasisMarkOffset, textShadow, selectionShadow, isHorizontal(), textPaintStyle, selectionPaintStyle);
     textPainter.paintText();

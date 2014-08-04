@@ -1,3 +1,25 @@
+2014-08-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: InlineTextBox mistakenly rounds offset value before painting.
+        https://bugs.webkit.org/show_bug.cgi?id=135470
+
+        Reviewed by Simon Fraser.
+
+        This patch removes the premature paint offset adjustment for inlines. Premature snapping
+        could alter the final painting coordinates and push content to wrong positions.
+
+        This patch also enforces WebCore's pixel snapping strategy (round) on text painting.
+        It ensures that text positioning is in sync with other painting related operations including
+        clipping, box decorations etc. Underlying graphics libraries can take different directions on
+        text snapping, for example CG ceils text coordinates vertically (in horizontal context,
+        with the current settings). It can lead to undesired side effects.
+
+        * fast/inline/hidpi-inline-selection-leaves-gap-expected.html: Added.
+        * fast/inline/hidpi-inline-selection-leaves-gap.html: Added.
+        * fast/multicol/newmulticol/multicol-clip-rounded-corners-expected.html:
+        * fast/multicol/newmulticol/multicol-clip-rounded-corners.html: pixels are distributed properly.
+        No need to have the special 122px shortened width for col2.
+
 2014-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: isWordEndMatch should allow for multiple word selections

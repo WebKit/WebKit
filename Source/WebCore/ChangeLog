@@ -1,3 +1,28 @@
+2014-08-04  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: InlineTextBox mistakenly rounds offset value before painting.
+        https://bugs.webkit.org/show_bug.cgi?id=135470
+
+        Reviewed by Simon Fraser.
+
+        This patch removes the premature paint offset adjustment for inlines. Premature snapping
+        could alter the final painting coordinates and push content to wrong positions.
+
+        This patch also enforces WebCore's pixel snapping strategy (round) on text painting.
+        It ensures that text positioning is in sync with other painting related operations including
+        clipping, box decorations etc. Underlying graphics libraries can take different directions on
+        text snapping, for example CG ceils text coordinates vertically (in horizontal context,
+        with the current settings). It can lead to undesired side effects.
+
+        Test: fast/inline/hidpi-inline-selection-leaves-gap.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects): wrong direction used at r171896.
+        * rendering/SimpleLineLayoutFunctions.cpp: we don't paint vertical content here.
+        (WebCore::SimpleLineLayout::paintFlow):
+
 2014-08-04  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, rolling out r171992, r171995, & r172000.
