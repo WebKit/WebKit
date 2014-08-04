@@ -1,3 +1,28 @@
+2014-08-04  Saam Barati  <sbarati@apple.com>
+
+        Create a more generic way for VMEntryScope to notify those interested that it will be destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=135358
+
+        Reviewed by Geoffrey Garen.
+
+        When VMEntryScope is destroyed, and it has a flag set indicating that the
+        Debugger needs to recompile all functions, it calls Debugger::recompileAllJSFunctions. 
+        This flag is only used by Debugger to have VMEntryScope notify it when the
+        Debugger is safe to recompile all functions. This patch will substitute this
+        Debugger-specific recompilation flag with a list of callbacks that are notified 
+        when the outermost VMEntryScope dies. This creates a general purpose interface 
+        for being notified when the VM stops executing code via the event of the outermost 
+        VMEntryScope dying.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::addEntryScopeDidPopListener):
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMEntryScope.h:
+        (JSC::VMEntryScope::setRecompilationNeeded): Deleted.
+
 2014-08-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r171942): [CMAKE] [GTK] build broken (clean build).

@@ -36,7 +36,6 @@ namespace JSC {
 VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     : m_vm(vm)
     , m_globalObject(globalObject)
-    , m_recompilationNeeded(false)
 {
     ASSERT(wtfThreadData().stack().isGrowingDownward());
     if (!vm.entryScope) {
@@ -55,6 +54,11 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     vm.clearExceptionStack();
 }
 
+void VMEntryScope::addEntryScopeDidPopListener(void* key, EntryScopeDidPopListener listener)
+{
+    m_allEntryScopeDidPopListeners.set(key, listener);
+}
+
 VMEntryScope::~VMEntryScope()
 {
     if (m_vm.entryScope != this)
@@ -62,9 +66,11 @@ VMEntryScope::~VMEntryScope()
 
     m_vm.entryScope = nullptr;
 
-    if (m_recompilationNeeded) {
-        if (Debugger* debugger = m_globalObject->debugger())
-            debugger->recompileAllJSFunctions(&m_vm);
+    auto iter = m_allEntryScopeDidPopListeners.begin();
+    auto end = m_allEntryScopeDidPopListeners.end();
+    for ( ; iter != end; ++iter) {
+        EntryScopeDidPopListener listener = iter->value;
+        listener(&m_vm, m_globalObject);
     }
 }
 

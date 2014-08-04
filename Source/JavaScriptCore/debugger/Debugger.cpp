@@ -335,7 +335,14 @@ void Debugger::recompileAllJSFunctions(VM* vm)
     // If JavaScript is running, it's not safe to recompile, since we'll end
     // up throwing away code that is live on the stack.
     if (vm->entryScope) {
-        vm->entryScope->setRecompilationNeeded(true);
+        auto listener = [] (VM* vm, JSGlobalObject* globalObject) 
+        {
+            Debugger* debugger = globalObject->debugger();
+            if (debugger)
+                debugger->recompileAllJSFunctions(vm);
+        };
+
+        vm->entryScope->addEntryScopeDidPopListener(this, listener);
         return;
     }
 
