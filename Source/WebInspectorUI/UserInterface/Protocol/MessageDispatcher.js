@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 University of Washington
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +28,30 @@ WebInspector.messagesToDispatch = [];
 
 WebInspector.dispatchNextQueuedMessageFromBackend = function()
 {
-    for (var i = 0; i < this.messagesToDispatch.length; ++i)
-        InspectorBackend.dispatch(this.messagesToDispatch[i]);
+    var startCount = WebInspector.messagesToDispatch.length;
+    var startTime = Date.now();
+    var timeLimitPerRunLoop = 10; // milliseconds
 
-    this.messagesToDispatch = [];
+    var i = 0;
+    for (; i < WebInspector.messagesToDispatch.length; ++i) {
+        // Defer remaining messages if we have taken too long. In practice, single
+        // messages like Page.getResourceContent blow through the time budget.
+        if (Date.now() - startTime > timeLimitPerRunLoop)
+            break;
 
-    this._dispatchTimeout = null;
+        InspectorBackend.dispatch(WebInspector.messagesToDispatch[i]);
+    }
+
+    if (i === WebInspector.messagesToDispatch.length) {
+        WebInspector.messagesToDispatch = [];
+        WebInspector._dispatchTimeout = null;
+    } else {
+        WebInspector.messagesToDispatch = WebInspector.messagesToDispatch.slice(i);
+        WebInspector._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
+    }
+
+    if (InspectorBackend.dumpInspectorTimeStats)
+        console.log("time-stats: --- RunLoop duration: " + (Date.now() - startTime) + "ms; dispatched: " + (startCount - WebInspector.messagesToDispatch.length) + "; remaining: " + WebInspector.messagesToDispatch.length);
 }
 
 WebInspector.dispatchMessageFromBackend = function(message)
@@ -45,5 +64,5 @@ WebInspector.dispatchMessageFromBackend = function(message)
     if (this._dispatchTimeout)
         return;
 
-    this._dispatchTimeout = setTimeout(this.dispatchNextQueuedMessageFromBackend.bind(this), 0);
+    this._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
 }

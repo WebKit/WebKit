@@ -1,5 +1,38 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171881
+
+    2014-07-31  Brian J. Burg  <burg@cs.washington.edu>
+
+            Web Inspector: MessageDispatcher should not synchronously dispatch all backend messages
+            https://bugs.webkit.org/show_bug.cgi?id=135427
+
+            Reviewed by Timothy Hatcher.
+
+            The frontend dispatches all queued messages from the backend synchronously, even if there are
+            hundreds of messages, or even if some of the messages take a long time (>10ms) to process.
+
+            This patch adds a time limit to the frontend's message dispatcher. If the time limit is exceeded
+            when processing the message queue, unhandled messages remain in the queue and the dispatcher goes
+            to sleep until the next run loop (obtained by a new setTimeout).
+
+            This has the effect of removing stutters when the message queue has hundreds of small messages.
+            The outliers are still the same since some single messages can take over 200ms to be handled.
+
+            This patch also improves performance logging in InspectorBackend so that it is easier to see
+            message handling times and their distribution among run loop turns.
+
+            * UserInterface/Protocol/InspectorBackend.js:
+            (InspectorBackendClass): Add a new diagnostic flag that warns about slow message handling.
+            (InspectorBackendClass.prototype._dispatchCallback.get if): Improve logging.
+            (InspectorBackendClass.prototype._dispatchCallback): Improve logging.
+            (InspectorBackendClass.prototype._dispatchEvent): Improve logging.
+            * UserInterface/Protocol/MessageDispatcher.js:
+            (WebInspector.dispatchNextQueuedMessageFromBackend): Keep track of a time limit for message
+            dispatching, and set a new timeout if we exceed the time limit.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171869
 
     2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
