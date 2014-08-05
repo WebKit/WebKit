@@ -4545,7 +4545,7 @@ bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, d
     CSSParserValue* v = args->current();
     if (!validUnit(v, FNumber))
         return false;
-    result = v->fValue;
+    result = parsedDouble(v, ReleaseParsedCalcValue);
     v = args->next();
     if (!v)
         // The last number in the function has no comma after it, so we're done.

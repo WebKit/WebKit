@@ -1,3 +1,20 @@
+2014-08-05  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        Fixing calc() parameter parsing in cubic-bezier functions
+        https://bugs.webkit.org/show_bug.cgi?id=135605
+
+        Reviewed by Andreas Kling.
+
+        Before this patch, calc values in cubic-bezier functions weren't being read correctly
+        since they were handled as simple floats.
+
+        This is a backport of my fix in Blink: https://codereview.chromium.org/369313002/
+
+        Test: css3/calc/cubic-bezier-with-multiple-calcs-crash.html.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCubicBezierTimingFunctionValue):
+
 2014-08-05  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeking occasionally causes many frames to be displayed in "fast forward" mode
