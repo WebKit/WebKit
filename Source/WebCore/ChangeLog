@@ -1,3 +1,17 @@
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171259
+
+    2014-07-18  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] ignore requests to set volume
+            https://bugs.webkit.org/show_bug.cgi?id=135081
+
+            Reviewed by Jer Noble.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setVolume): Do nothing on iOS.
+
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171802
