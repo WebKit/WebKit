@@ -29,7 +29,7 @@
 (import "removed-dev-nodes.sb")
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
-;; FIXME: Remove the webkti specific extension classes <rdar://problem/17755931>
+;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>
 (allow file-issue-extension (require-all
     (extension "com.apple.app-sandbox.read-write")
     (extension-class "com.apple.nsurlstorage.extension-cache")))
@@ -37,6 +37,27 @@
 ;; App sandbox extensions
 (allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
 (allow file-read* (extension "com.apple.app-sandbox.read"))
+
+;; FIXME: <rdar://problem/17909681> SSO expects to be able to walk the parent
+;; bundle to find Info plists, so we jump through a few hoops here to provide
+;; enough access to make it possible.
+
+;; Disallow networking process from reading any bundles, even with the read extension
+(deny file-read* (subpath "/Applications") (extension "com.apple.app-sandbox.read"))
+(deny file-read* (subpath "/private/var/mobile/Containers/Bundle/Application") (extension "com.apple.app-sandbox.read"))
+
+;; Allow the networking process to read directories inside the bundle directories
+;; that we may have killed off above
+(allow file-read*
+    (require-all
+        (extension "com.apple.app-sandbox.read")
+        (vnode-type DIRECTORY)))
+
+;; Allow the networking process to read the Info.plist files
+(allow file-read*
+    (require-all
+        (extension "com.apple.app-sandbox.read")
+        (regex #"/Info\.plist$")))
 
 ;; IOKit user clients
 (allow iokit-open

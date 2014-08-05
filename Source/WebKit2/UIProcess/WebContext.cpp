@@ -428,6 +428,10 @@ void WebContext::ensureNetworkProcess()
     parameters.hstsDatabasePath = networkingHSTSDatabasePath();
     if (!parameters.hstsDatabasePath.isEmpty())
         SandboxExtension::createHandle(parameters.hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
+
+    parameters.parentBundleDirectory = parentBundleDirectory();
+    if (!parameters.parentBundleDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.parentBundleDirectory, SandboxExtension::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
 #endif
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
