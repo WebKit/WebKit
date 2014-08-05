@@ -826,16 +826,7 @@ sub builtDylibPathForName
     determineConfigurationProductDir();
 
     if (isGtk()) {
-        # WebKitGTK+ for GTK2, WebKitGTK+ for GTK3, and WebKit2 respectively.
-        my @libraries = ("libwebkitgtk-1.0", "libwebkitgtk-3.0", "libwebkit2gtk-3.0");
-        my $extension = isDarwin() ? ".dylib" : ".so";
-        my $builtLibraryPath = "$configurationProductDir/lib/";
-
-        foreach $libraryName (@libraries) {
-            my $libraryPath = "$builtLibraryPath" . $libraryName . $extension;
-            return $libraryPath if -e $libraryPath;
-        }
-        return "NotFound";
+        return "$configurationProductDir/lib/libwebkit2gtk-4.0" . isDarwin() ? ".dylib" : ".so";
     }
     if (isEfl()) {
         return "$configurationProductDir/lib/libewebkit2.so";
