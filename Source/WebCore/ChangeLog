@@ -1,5 +1,32 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171292
+
+    2014-07-20  Pratik Solanki  <psolanki@apple.com>
+
+            Reduce the chances of a race condition when sharing SharedBuffer
+            https://bugs.webkit.org/show_bug.cgi?id=135060
+            <rdar://problem/17729444>
+
+            Reviewed by Darin Adler.
+
+            We currently pass a SharedBuffer wrapped in WebCoreSharedBufferData to ImageIO for image
+            decoding. This is not thread safe since ImageIO will access this buffer on a separate
+            thread. We access SharedBuffer::buffer() on the other thread which resizes the Vector
+            m_buffer if m_size is greater than the vector size. Since the code in SharedBuffer::append()
+            sets m_size before appending the data to the buffer, m_size is out of sync with the m_buffer
+            size for the entire duration of the Vector append which could be doing a lot of copying if
+            the resource is large. While this change does not fix the race condition, we can at least
+            reduce the chances of SharedBuffer::buffer() calling resize() by setting m_size after the
+            cector has finished appending.
+
+            No new tests because no functional changes.
+
+            * platform/SharedBuffer.cpp:
+            (WebCore::SharedBuffer::append):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171279
 
     2014-07-20  Eric Carlson  <eric.carlson@apple.com>
