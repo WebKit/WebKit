@@ -112,6 +112,12 @@ void WebGeolocationClient::requestPermission(Geolocation* geolocation)
 
 #if !PLATFORM(IOS)
     Frame *frame = geolocation->frame();
+
+    if (!frame) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
     WebGeolocationPolicyListener* listener = [[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation];
 
