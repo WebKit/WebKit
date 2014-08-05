@@ -1,3 +1,27 @@
+2014-08-05  Andreas Kling  <akling@apple.com>
+
+        The JIT should cache property lookup misses.
+        <https://webkit.org/b/135578>
+
+        Add support for inline caching of object properties that don't exist.
+        Previously we'd fall back to the C++ slow-path whenever a property was missing.
+
+        It's implemented as a simple GetById-style stub that returns jsUndefined() as
+        long as the Structure chain check passes.
+
+        10x speedup on the included microbenchmark.
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/Repatch.cpp:
+        (JSC::toString):
+        (JSC::kindFor):
+        (JSC::generateByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::patchJumpToGetByIdStub):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isUnset):
+
 2014-08-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172009.

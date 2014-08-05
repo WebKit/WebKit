@@ -52,6 +52,8 @@
 
 namespace JSC {
 
+static void patchJumpToGetByIdStub(CodeBlock*, StructureStubInfo&, JITStubRoutine*);
+
 // Beware: in this code, it is not safe to assume anything about the following registers
 // that would ordinarily have well-known values:
 // - tagTypeNumberRegister
@@ -226,6 +228,7 @@ static void linkRestoreScratch(LinkBuffer& patchBuffer, bool needToRestoreScratc
 
 enum ByIdStubKind {
     GetValue,
+    GetUndefined,
     CallGetter,
     CallCustomGetter,
     CallSetter,
@@ -237,6 +240,8 @@ static const char* toString(ByIdStubKind kind)
     switch (kind) {
     case GetValue:
         return "GetValue";
+    case GetUndefined:
+        return "GetUndefined";
     case CallGetter:
         return "CallGetter";
     case CallCustomGetter:
@@ -255,6 +260,8 @@ static ByIdStubKind kindFor(const PropertySlot& slot)
 {
     if (slot.isCacheableValue())
         return GetValue;
+    if (slot.isUnset())
+        return GetUndefined;
     if (slot.isCacheableCustom())
         return CallCustomGetter;
     RELEASE_ASSERT(slot.isCacheableGetter());
@@ -299,7 +306,7 @@ static void generateByIdStub(
         static_cast<GPRReg>(stubInfo.patch.valueGPR));
     GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
     bool needToRestoreScratch = scratchGPR == InvalidGPRReg;
-    RELEASE_ASSERT(!needToRestoreScratch || kind == GetValue);
+    RELEASE_ASSERT(!needToRestoreScratch || (kind == GetValue || kind == GetUndefined));
     
     CCallHelpers stubJit(&exec->vm(), exec->codeBlock());
     if (needToRestoreScratch) {
@@ -357,24 +364,28 @@ static void generateByIdStub(
         }
     }
     
-    GPRReg baseForAccessGPR;
-    if (chain) {
-        // We could have clobbered scratchGPR earlier, so we have to reload from baseGPR to get the target.
-        if (loadTargetFromProxy)
-            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), baseForGetGPR);
-        stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
-        baseForAccessGPR = scratchGPR;
-    } else {
-        // For proxy objects, we need to do all the Structure checks before moving the baseGPR into 
-        // baseForGetGPR because if we fail any of the checks then we would have the wrong value in baseGPR
-        // on the slow path.
-        if (loadTargetFromProxy)
-            stubJit.move(scratchGPR, baseForGetGPR);
-        baseForAccessGPR = baseForGetGPR;
+    GPRReg baseForAccessGPR = InvalidGPRReg;
+    if (kind != GetUndefined) {
+        if (chain) {
+            // We could have clobbered scratchGPR earlier, so we have to reload from baseGPR to get the target.
+            if (loadTargetFromProxy)
+                stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), baseForGetGPR);
+            stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
+            baseForAccessGPR = scratchGPR;
+        } else {
+            // For proxy objects, we need to do all the Structure checks before moving the baseGPR into
+            // baseForGetGPR because if we fail any of the checks then we would have the wrong value in baseGPR
+            // on the slow path.
+            if (loadTargetFromProxy)
+                stubJit.move(scratchGPR, baseForGetGPR);
+            baseForAccessGPR = baseForGetGPR;
+        }
     }
 
     GPRReg loadedValueGPR = InvalidGPRReg;
-    if (kind != CallCustomGetter && kind != CallCustomSetter) {
+    if (kind == GetUndefined)
+        stubJit.moveTrustedValue(jsUndefined(), valueRegs);
+    else if (kind != CallCustomGetter && kind != CallCustomSetter) {
         if (kind == GetValue)
             loadedValueGPR = valueRegs.payloadGPR();
         else
@@ -408,7 +419,7 @@ static void generateByIdStub(
     std::unique_ptr<CallLinkInfo> callLinkInfo;
 
     MacroAssembler::Jump success, fail;
-    if (kind != GetValue) {
+    if (kind != GetValue && kind != GetUndefined) {
         // Need to make sure that whenever this call is made in the future, we remember the
         // place that we made it from. It just so happens to be the place that we are at
         // right now!
@@ -729,14 +740,45 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
     // FIXME: Cache property access for immediates.
     if (!baseValue.isCell())
         return GiveUpOnCache;
+
+    if (!slot.isCacheable() && !slot.isUnset())
+        return GiveUpOnCache;
+
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
-    if (!slot.isCacheable())
-        return GiveUpOnCache;
 
     InlineCacheAction action = actionForCell(*vm, baseCell);
     if (action != AttemptToCache)
         return action;
+
+    if (slot.isUnset()) {
+        // Property lookup miss - let's try to cache that.
+        size_t count = normalizePrototypeChain(exec, baseCell);
+        if (count == InvalidPrototypeChain)
+            return GiveUpOnCache;
+        StructureChain* prototypeChain = structure->prototypeChain(exec);
+        PolymorphicGetByIdList* list = PolymorphicGetByIdList::from(stubInfo);
+        if (list->isFull()) {
+            // We need this extra check because of recursion.
+            return GiveUpOnCache;
+        }
+
+        RefPtr<JITStubRoutine> stubRoutine;
+        generateByIdStub(
+            exec, GetUndefined, propertyName, FunctionPtr(), stubInfo, prototypeChain, count, invalidOffset,
+            structure, false, nullptr,
+            stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
+            CodeLocationLabel(list->currentSlowPathTarget(stubInfo)), stubRoutine);
+
+        list->addAccess(GetByIdAccess(
+            *vm, codeBlock->ownerExecutable(),
+            GetByIdAccess::SimpleInline,
+            stubRoutine, structure, prototypeChain, count));
+
+        patchJumpToGetByIdStub(codeBlock, stubInfo, stubRoutine.get());
+
+        return list->isFull() ? GiveUpOnCache : RetryCacheLater;
+    }
 
     // Optimize self access.
     if (slot.slotBase() == baseValue
@@ -760,7 +802,7 @@ void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& proper
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
-static void patchJumpToGetByIdStub(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JITStubRoutine* stubRoutine)
+void patchJumpToGetByIdStub(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JITStubRoutine* stubRoutine)
 {
     RELEASE_ASSERT(stubInfo.accessType == access_get_by_id_list);
     RepatchBuffer repatchBuffer(codeBlock);
