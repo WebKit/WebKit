@@ -105,8 +105,8 @@ public:
     virtual void removeSessionSegment(ErrorString*, SessionIdentifier, int segmentIndex) override;
 
     virtual void getAvailableSessions(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<SessionIdentifier>>&) override;
-    virtual void getSerializedSession(ErrorString*, SessionIdentifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>&) override;
-    virtual void getSerializedSegment(ErrorString*, SegmentIdentifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>&) override;
+    virtual void getSessionData(ErrorString*, SessionIdentifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>&) override;
+    virtual void getSegmentData(ErrorString*, SegmentIdentifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>&) override;
 
 private:
     PassRefPtr<ReplaySession> findSession(ErrorString*, SessionIdentifier);

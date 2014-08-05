@@ -140,7 +140,7 @@ WebInspector.ReplayManager.prototype = {
         if (this._sessionPromises.has(sessionId))
             return this._sessionPromises.get(sessionId);
 
-        var newPromise = ReplayAgent.getSerializedSession.promise(sessionId)
+        var newPromise = ReplayAgent.getSessionData.promise(sessionId)
             .then(function(payload) {
                 return Promise.resolve(WebInspector.ReplaySession.fromPayload(sessionId, payload));
             });
@@ -154,7 +154,7 @@ WebInspector.ReplayManager.prototype = {
         if (this._segmentPromises.has(segmentId))
             return this._segmentPromises.get(segmentId);
 
-        var newPromise = ReplayAgent.getSerializedSegment.promise(segmentId)
+        var newPromise = ReplayAgent.getSegmentData.promise(segmentId)
             .then(function(payload) {
                 return Promise.resolve(new WebInspector.ReplaySessionSegment(segmentId, payload));
             });

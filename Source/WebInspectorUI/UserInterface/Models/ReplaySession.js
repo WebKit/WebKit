@@ -57,7 +57,7 @@ WebInspector.ReplaySession.prototype = {
     segmentsChanged: function()
     {
         // The replay manager won't update the session's list of segments nor create a new session.
-        ReplayAgent.getSerializedSession.promise(this.identifier)
+        ReplayAgent.getSessionData.promise(this.identifier)
             .then(this._updateFromPayload.bind(this));
     },
 

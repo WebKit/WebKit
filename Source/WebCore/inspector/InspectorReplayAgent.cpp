@@ -471,7 +471,7 @@ void InspectorReplayAgent::getAvailableSessions(ErrorString*, RefPtr<Inspector::
         sessionsList->addItem(pair.key);
 }
 
-void InspectorReplayAgent::getSerializedSession(ErrorString* errorString, SessionIdentifier identifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>& serializedObject)
+void InspectorReplayAgent::getSessionData(ErrorString* errorString, SessionIdentifier identifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>& serializedObject)
 {
     RefPtr<ReplaySession> session = findSession(errorString, identifier);
     if (!session) {
@@ -482,7 +482,7 @@ void InspectorReplayAgent::getSerializedSession(ErrorString* errorString, Sessio
     serializedObject = buildInspectorObjectForSession(session);
 }
 
-void InspectorReplayAgent::getSerializedSegment(ErrorString* errorString, SegmentIdentifier identifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>& serializedObject)
+void InspectorReplayAgent::getSegmentData(ErrorString* errorString, SegmentIdentifier identifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>& serializedObject)
 {
     RefPtr<ReplaySessionSegment> segment = findSegment(errorString, identifier);
     if (!segment) {

@@ -119,8 +119,8 @@
             ]
         },
         {
-            "name": "getSerializedSession",
-            "description": "Returns the specified session serialized to a JSON object.",
+            "name": "getSessionData",
+            "description": "Returns an object for the specified session.",
             "parameters": [
                 { "name": "sessionIdentifier", "$ref": "SessionIdentifier" }
             ],
@@ -129,8 +129,8 @@
             ]
         },
         {
-            "name": "getSerializedSegment",
-            "description": "Returns the session segment serialized to a JSON object.",
+            "name": "getSegmentData",
+            "description": "Returns an object for the specified session segment.",
             "parameters": [
                 { "name": "id", "$ref": "SegmentIdentifier" }
             ],

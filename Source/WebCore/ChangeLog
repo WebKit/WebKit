@@ -1,3 +1,18 @@
+2014-08-05  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: rename protocol methods for getting replay session/segment data
+        https://bugs.webkit.org/show_bug.cgi?id=135618
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::getSessionData):
+        (WebCore::InspectorReplayAgent::getSegmentData):
+        (WebCore::InspectorReplayAgent::getSerializedSession): Deleted.
+        (WebCore::InspectorReplayAgent::getSerializedSegment): Deleted.
+        * inspector/InspectorReplayAgent.h:
+        * inspector/protocol/Replay.json:
+
 2014-08-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: Extremely flashy scrolling while a page is still loading (because of flush throttling)
