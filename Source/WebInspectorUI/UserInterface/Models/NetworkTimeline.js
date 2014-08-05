@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimeline = function()
+WebInspector.NetworkTimeline = function(type)
 {
-    WebInspector.Timeline.call(this);
+    WebInspector.Timeline.call(this, type);
 };
 
 WebInspector.NetworkTimeline.prototype = {

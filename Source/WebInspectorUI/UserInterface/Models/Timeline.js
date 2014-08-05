@@ -23,9 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Timeline = function()
+WebInspector.Timeline = function(type)
 {
+    if (this.constructor === WebInspector.Timeline) {
+        // When instantiated directly, potentially return an instance of a concrete subclass.
+        if (type === WebInspector.TimelineRecord.Type.Network)
+            return new WebInspector.NetworkTimeline(type);
+    }
+
     WebInspector.Object.call(this);
+
+    this._type = type;
 
     this.reset(true);
 };
@@ -55,6 +63,11 @@ WebInspector.Timeline.prototype = {
     get records()
     {
         return this._records;
+    },
+
+    get type()
+    {
+        return this._type;
     },
 
     reset: function(suppressEvents)

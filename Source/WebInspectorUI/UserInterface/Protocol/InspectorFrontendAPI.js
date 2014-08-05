@@ -56,6 +56,9 @@ InspectorFrontendAPI = {
 
     setTimelineProfilingEnabled: function(enabled)
     {
+        if (WebInspector.timelineManager.isCapturing() !== enabled)
+            return;
+
         if (enabled) {
             WebInspector.navigationSidebar.selectedSidebarPanel = WebInspector.timelineSidebarPanel;
             WebInspector.timelineSidebarPanel.showTimelineOverview();

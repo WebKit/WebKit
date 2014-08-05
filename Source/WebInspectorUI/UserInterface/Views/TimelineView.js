@@ -23,9 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineView = function()
+WebInspector.TimelineView = function(representedObject)
 {
+    if (this.constructor === WebInspector.TimelineView) {
+        // When instantiated directly return an instance of a type-based concrete subclass.
+
+        console.assert(representedObject && representedObject instanceof WebInspector.Timeline);
+
+        var timelineType = representedObject.type;
+        if (timelineType === WebInspector.TimelineRecord.Type.Network)
+            return new WebInspector.NetworkTimelineView(representedObject);
+
+        if (timelineType === WebInspector.TimelineRecord.Type.Layout)
+            return new WebInspector.LayoutTimelineView(representedObject);
+
+        if (timelineType === WebInspector.TimelineRecord.Type.Script)
+            return new WebInspector.ScriptTimelineView(representedObject);
+
+        throw Error("Can't make a Timeline for an unknown representedObject.");
+    }
+
+    // Concrete object instantiation.
+    console.assert(this.constructor !== WebInspector.TimelineView && this instanceof WebInspector.TimelineView);
+
     WebInspector.Object.call(this);
+
+    console.assert(representedObject instanceof WebInspector.Timeline || representedObject instanceof WebInspector.TimelineRecording);
+    this._representedObject = representedObject;
 
     this._contentTreeOutline = WebInspector.timelineSidebarPanel.createContentTreeOutline();
 
@@ -49,6 +73,11 @@ WebInspector.TimelineView.prototype = {
     __proto__: WebInspector.Object.prototype,
 
     // Public
+
+    get representedObject()
+    {
+        return this._representedObject;
+    },
 
     get navigationSidebarTreeOutline()
     {

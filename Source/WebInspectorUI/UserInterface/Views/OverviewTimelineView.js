@@ -25,11 +25,11 @@
 
 WebInspector.OverviewTimelineView = function(recording)
 {
-    WebInspector.TimelineView.call(this);
-
-    this._recording = recording;
+    WebInspector.TimelineView.call(this, recording);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
+
+    this._recording = recording;
 
     var columns = {"graph": {width: "100%"}};
 

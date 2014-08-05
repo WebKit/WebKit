@@ -31,11 +31,24 @@ WebInspector.TimelineManager = function()
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
 
-    this._activeRecording = new WebInspector.TimelineRecording;
+    this._recordings = [];
+    this._activeRecording = null;
     this._isCapturing = false;
+
+    this._nextRecordingIdentifier = 1;
+
+    function delayedWork()
+    {
+        this._loadNewRecording();
+    }
+
+    // Allow other code to set up listeners before firing the initial RecordingLoaded event.
+    setTimeout(delayedWork.bind(this), 0);
 };
 
 WebInspector.TimelineManager.Event = {
+    RecordingCreated: "timeline-manager-recording-created",
+    RecordingLoaded: "timeline-manager-recording-loaded",
     CapturingStarted: "timeline-manager-capturing-started",
     CapturingStopped: "timeline-manager-capturing-stopped"
 };
@@ -49,9 +62,16 @@ WebInspector.TimelineManager.prototype = {
 
     // Public
 
+    // The current recording that new timeline records will be appended to, if any.
     get activeRecording()
     {
+        console.assert(this._activeRecording || !this._isCapturing);
         return this._activeRecording;
+    },
+
+    get recordings()
+    {
+        return this._recordings.slice();
     },
 
     isCapturing: function()
@@ -59,23 +79,47 @@ WebInspector.TimelineManager.prototype = {
         return this._isCapturing;
     },
 
-    startCapturing: function()
+    startCapturing: function(shouldCreateRecording)
     {
-        TimelineAgent.start();
+        console.assert(!this._isCapturing, "TimelineManager is already capturing.");
+
+        if (!this._activeRecording || shouldCreateRecording)
+            this._loadNewRecording();
+
+        var result = TimelineAgent.start.promise();
 
         // COMPATIBILITY (iOS 7): recordingStarted event did not exist yet. Start explicitly.
-        if (!TimelineAgent.hasEvent("recordingStarted"))
-            this.capturingStarted();
+        if (!TimelineAgent.hasEvent("recordingStarted")) {
+            result.then(function() {
+                WebInspector.timelineManager.capturingStarted();
+            });
+        }
     },
 
     stopCapturing: function()
     {
+        console.assert(this._isCapturing, "TimelineManager is not capturing.");
+
         TimelineAgent.stop();
 
         // NOTE: Always stop immediately instead of waiting for a Timeline.recordingStopped event.
         // This way the UI feels as responsive to a stop as possible.
         this.capturingStopped();
     },
+
+    unloadRecording: function()
+    {
+        if (!this._activeRecording)
+            return;
+
+        if (this._isCapturing)
+            this.stopCapturing();
+
+        this._activeRecording.unloaded();
+        this._activeRecording = null;
+    },
+
+    // Protected
 
     capturingStarted: function()
     {
@@ -352,6 +396,26 @@ WebInspector.TimelineManager.prototype = {
 
     // Private
 
+    _loadNewRecording: function()
+    {
+        var identifier = this._nextRecordingIdentifier++;
+        var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
+        this._recordings.push(newRecording);
+        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingCreated, {recording: newRecording});
+
+        console.assert(newRecording.isWritable());
+
+        if (this._isCapturing)
+            this.stopCapturing();
+
+        var oldRecording = this._activeRecording;
+        if (oldRecording)
+            oldRecording.unloaded();
+
+        this._activeRecording = newRecording;
+        this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording: oldRecording});
+    },
+
     _callFramesFromPayload: function(payload)
     {
         if (!payload)
@@ -401,11 +465,12 @@ WebInspector.TimelineManager.prototype = {
         if (mainResource === this._autoCapturingMainResource)
             return false;
 
-        this.stopCapturing();
+        if (this._isCapturing)
+            this.stopCapturing();
 
         this._autoCapturingMainResource = mainResource;
 
-        this._activeRecording.reset();
+        this._loadNewRecording();
 
         this.startCapturing();
 

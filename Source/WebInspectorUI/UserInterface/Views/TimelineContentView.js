@@ -32,9 +32,8 @@ WebInspector.TimelineContentView = function(recording)
     this.element.classList.add(WebInspector.TimelineContentView.StyleClassName);
 
     this._discreteTimelineOverviewGraphMap = new Map;
-    this._discreteTimelineOverviewGraphMap.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimelineOverviewGraph(recording));
-    this._discreteTimelineOverviewGraphMap.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.LayoutTimelineOverviewGraph(recording));
-    this._discreteTimelineOverviewGraphMap.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.ScriptTimelineOverviewGraph(recording));
+    for (var [identifier, timeline] of recording.timelines)
+        this._discreteTimelineOverviewGraphMap.set(timeline, new WebInspector.TimelineOverviewGraph(timeline));
 
     this._timelineOverview = new WebInspector.TimelineOverview(this._discreteTimelineOverviewGraphMap);
     this._timelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
@@ -50,9 +49,8 @@ WebInspector.TimelineContentView = function(recording)
     this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);
 
     this._discreteTimelineViewMap = new Map;
-    this._discreteTimelineViewMap.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimelineView(recording));
-    this._discreteTimelineViewMap.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.LayoutTimelineView(recording));
-    this._discreteTimelineViewMap.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.ScriptTimelineView(recording));
+    for (var [identifier, timeline] of recording.timelines)
+        this._discreteTimelineViewMap.set(timeline, new WebInspector.TimelineView(timeline));
 
     function createPathComponent(displayName, className, representedObject)
     {
@@ -61,10 +59,14 @@ WebInspector.TimelineContentView = function(recording)
         return pathComponent;
     }
 
+    var networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
+    var layoutTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Layout);
+    var scriptTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Script);
+
     this._pathComponentMap = new Map;
-    this._pathComponentMap.set(WebInspector.TimelineRecord.Type.Network, createPathComponent.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, WebInspector.TimelineRecord.Type.Network));
-    this._pathComponentMap.set(WebInspector.TimelineRecord.Type.Layout, createPathComponent.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, WebInspector.TimelineRecord.Type.Layout));
-    this._pathComponentMap.set(WebInspector.TimelineRecord.Type.Script, createPathComponent.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, WebInspector.TimelineRecord.Type.Script));
+    this._pathComponentMap.set(networkTimeline, createPathComponent.call(this, WebInspector.UIString("Network Requests"), WebInspector.TimelineSidebarPanel.NetworkIconStyleClass, networkTimeline));
+    this._pathComponentMap.set(layoutTimeline, createPathComponent.call(this, WebInspector.UIString("Layout & Rendering"), WebInspector.TimelineSidebarPanel.ColorsIconStyleClass, layoutTimeline));
+    this._pathComponentMap.set(scriptTimeline, createPathComponent.call(this, WebInspector.UIString("JavaScript & Events"), WebInspector.TimelineSidebarPanel.ScriptIconStyleClass, scriptTimeline));
 
     var previousPathComponent = null;
     for (var pathComponent of this._pathComponentMap.values()) {
@@ -95,6 +97,9 @@ WebInspector.TimelineContentView = function(recording)
 WebInspector.TimelineContentView.StyleClassName = "timeline";
 WebInspector.TimelineContentView.ViewContainerStyleClassName = "view-container";
 
+WebInspector.TimelineContentView.SelectedTimelineTypeCookieKey = "timeline-content-view-selected-timeline-type";
+WebInspector.TimelineContentView.OverviewTimelineViewCookieValue = "timeline-content-view-overview-timeline-view";
+
 WebInspector.TimelineContentView.prototype = {
     constructor: WebInspector.TimelineContentView,
     __proto__: WebInspector.ContentView.prototype,
@@ -106,13 +111,14 @@ WebInspector.TimelineContentView.prototype = {
         this._showTimelineView(this._overviewTimelineView);
     },
 
-    showTimelineView: function(identifier)
+    showTimelineViewForTimeline: function(timeline)
     {
-        console.assert(this._discreteTimelineViewMap.has(identifier));
-        if (!this._discreteTimelineViewMap.has(identifier))
+        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        console.assert(this._discreteTimelineViewMap.has(timeline), timeline);
+        if (!this._discreteTimelineViewMap.has(timeline))
             return;
 
-        this._showTimelineView(this._discreteTimelineViewMap.get(identifier), identifier);
+        this._showTimelineView(this._discreteTimelineViewMap.get(timeline));
     },
 
     get allowedNavigationSidebarPanels()
@@ -128,7 +134,9 @@ WebInspector.TimelineContentView.prototype = {
 
     get selectionPathComponents()
     {
-        var pathComponents = this._currentTimelineViewIdentifier ? [this._pathComponentMap.get(this._currentTimelineViewIdentifier)] : [];
+        var pathComponents = [];
+        if (this._currentTimelineView.representedObject instanceof WebInspector.Timeline)
+            pathComponents.push(this._pathComponentMap.get(this._currentTimelineView.representedObject));
         pathComponents = pathComponents.concat(this._currentTimelineView.selectionPathComponents || []);
         return pathComponents;
     },
@@ -138,12 +146,18 @@ WebInspector.TimelineContentView.prototype = {
         return [this._clearTimelineNavigationItem];
     },
 
+    get currentTimelineView()
+    {
+        return this._currentTimelineView;
+    },
+
     shown: function()
     {
         if (!this._currentTimelineView)
             return;
 
         this._currentTimelineView.shown();
+        this._clearTimelineNavigationItem.enabled = this._recording.isWritable();
     },
 
     hidden: function()
@@ -162,6 +176,26 @@ WebInspector.TimelineContentView.prototype = {
             return;
 
         this._currentTimelineView.updateLayout();
+    },
+
+    saveToCookie: function(cookie)
+    {
+        cookie.type = WebInspector.ContentViewCookieType.Timelines;
+
+        if (!this._currentTimelineView || this._currentTimelineView === this._overviewTimelineView)
+            cookie[WebInspector.TimelineContentView.SelectedTimelineTypeCookieKey] = WebInspector.TimelineContentView.OverviewTimelineViewCookieValue;
+        else
+            cookie[WebInspector.TimelineContentView.SelectedTimelineTypeCookieKey] = this._currentTimelineView.representedObject.type;
+    },
+
+    restoreFromCookie: function(cookie)
+    {
+        var timelineType = cookie[WebInspector.TimelineContentView.SelectedTimelineTypeCookieKey];
+
+        if (timelineType === WebInspector.TimelineContentView.OverviewTimelineViewCookieValue)
+            this.showOverviewTimelineView();
+        else
+            this.showTimelineViewForTimeline(this.representedObject.timelines.get(timelineType));
     },
 
     matchTreeElementAgainstCustomFilters: function(treeElement)
@@ -224,7 +258,7 @@ WebInspector.TimelineContentView.prototype = {
 
     _pathComponentSelected: function(event)
     {
-        WebInspector.timelineSidebarPanel.showTimelineView(event.data.pathComponent.representedObject);
+        WebInspector.timelineSidebarPanel.showTimelineViewForType(event.data.pathComponent.representedObject.type);
     },
 
     _timelineViewSelectionPathComponentsDidChange: function()
@@ -232,11 +266,12 @@ WebInspector.TimelineContentView.prototype = {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     },
 
-    _showTimelineView: function(timelineView, identifier)
+    _showTimelineView: function(timelineView)
     {
         console.assert(timelineView instanceof WebInspector.TimelineView);
 
-        if (this._currentTimelineView === timelineView)
+        // If the content view is shown and then hidden, we must reattach the content tree outline and timeline view.
+        if (timelineView.visible && timelineView === this._currentTimelineView)
             return;
 
         if (this._currentTimelineView) {
@@ -247,7 +282,6 @@ WebInspector.TimelineContentView.prototype = {
         }
 
         this._currentTimelineView = timelineView;
-        this._currentTimelineViewIdentifier = identifier || null;
 
         WebInspector.timelineSidebarPanel.contentTreeOutline = timelineView && timelineView.navigationSidebarTreeOutline;
         WebInspector.timelineSidebarPanel.contentTreeOutlineLabel = timelineView && timelineView.navigationSidebarTreeOutlineLabel;

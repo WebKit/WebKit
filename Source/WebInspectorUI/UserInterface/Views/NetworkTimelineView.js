@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimelineView = function(recording)
+WebInspector.NetworkTimelineView = function(timeline)
 {
-    WebInspector.TimelineView.call(this);
+    WebInspector.TimelineView.call(this, timeline);
+
+    console.assert(timeline.type === WebInspector.TimelineRecord.Type.Network);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
@@ -84,8 +86,7 @@ WebInspector.NetworkTimelineView = function(recording)
     this.element.classList.add(WebInspector.NetworkTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
 
-    var networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
-    networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+    timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
     this._pendingRecords = [];
 };

@@ -1,5 +1,136 @@
 2014-08-05  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: support storing multiple timeline recordings in the manager
+        https://bugs.webkit.org/show_bug.cgi?id=132875
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds support for capturing multiple timeline recordings and switching
+        between them in the user interface using hierarchical path components.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Remove hard-coded priming of the timeline sidebar panel.
+        Instead, load the first recording in the timeline manager after the initial load.
+
+        (WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar): Don't suppress
+        onselect events when selecting the tree element for a newly shown content view. This
+        allows the sidebar to sync the current content view and timeline tree element selection
+        with what is displayed in the content browser.
+
+        * UserInterface/Controllers/TimelineManager.js: Add two new events, RecordingCreated and
+        RecordingLoaded. A recording is considered active when any new records recieved will be
+        appended to that recording. The user interface is not necessarily viewing the active
+        recording.
+
+        (WebInspector.TimelineManager.delayedWork):
+        (WebInspector.TimelineManager): Keep a list of recordings, and load the first recording
+        asynchronously so that everyone can add an event listener for it.
+
+        (WebInspector.TimelineManager.prototype.get activeRecording):
+        (WebInspector.TimelineManager.prototype.get recordings):
+        (WebInspector.TimelineManager.prototype.startCapturing):
+        (WebInspector.TimelineManager.prototype.stopCapturing): Use promises to make the iOS 7
+        fallback path better match the async semantics of the non-fallback path.
+
+        (WebInspector.TimelineManager.prototype.unloadRecording):
+        (WebInspector.TimelineManager.prototype._loadNewRecording): Stop capturing and unload
+        any existing recording before creating and loading a new recording.
+
+        (WebInspector.TimelineManager.prototype._startAutoCapturing): Create a new recording
+        rather than resetting the current recording.
+
+        * UserInterface/Models/NetworkTimeline.js:
+        (WebInspector.NetworkTimeline):
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline):
+        (WebInspector.Timeline.prototype.get type): Each timeline stores its TimelineRecord.Type
+        so that other code can create type-specific views using the Timeline as a representedObject.
+
+        * UserInterface/Models/TimelineRecording.js: For each recording, add new state for a unique identifier,
+        display string, and an isWritable flag. Once a recording is unloaded, it becomes read-only.
+        (WebInspector.TimelineRecording.prototype.get displayName):
+        (WebInspector.TimelineRecording.prototype.get identifier):
+        (WebInspector.TimelineRecording.prototype.isWritable):
+        (WebInspector.TimelineRecording.prototype.unloaded):
+        (WebInspector.TimelineRecording.prototype.reset): A recording can only be reset if it is writable.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled): Don't make redundant start/stop capturing calls.
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js: Use a timeline as the representedObject for all
+        timeline-specific graphs and views. Otherwise, use the recording.
+        (WebInspector.LayoutTimelineOverviewGraph):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        (WebInspector.LayoutTimelineView.prototype._treeElementSelected):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WebInspector.NetworkTimelineOverviewGraph):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype._networkTimelineRecordAdded):
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WebInspector.ScriptTimelineOverviewGraph):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+        (WebInspector.ScriptTimelineView.prototype._treeElementSelected):
+
+        * UserInterface/Views/TimelineContentView.js: Iterate over timeline objects when setting up maps. Use timelines
+        as keys rather than their type identifiers.
+        (WebInspector.TimelineContentView.prototype.showTimelineViewForTimeline): Renamed from showTimelineView. This
+        function takes a Timeline instance rather than an identifier, since the conten view is specific to one recording.
+        (WebInspector.TimelineContentView.prototype.get selectionPathComponents): Match types against the currently
+        visible timeline's representedObject.
+        (WebInspector.TimelineContentView.prototype.get currentTimelineView): Used by the sidebar panel to sync timeline
+        tree element selections to TimelineView shown by the TimelineContentView.
+        (WebInspector.TimelineContentView.prototype.shown): Sync enablement of the "Clear Timelines" button to recording
+        read-only state.
+
+        (WebInspector.TimelineContentView.prototype.saveToCookie):
+        (WebInspector.TimelineContentView.prototype.restoreFromCookie): Added. Only handle saving/restoring the subview.
+
+        (WebInspector.TimelineContentView.prototype._pathComponentSelected):
+        (WebInspector.TimelineContentView.prototype._showTimelineView): Relax the early return so that timeline views
+        and content tree outlines are reattached when re-navigating to the same timeline view via back-forward entries.
+        (WebInspector.TimelineContentView.prototype.showTimelineView): Deleted.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph):
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel): Keep a tree outline and tree element map for storing available recordings.
+        (WebInspector.TimelineSidebarPanel.createTimelineTreeElement):
+        (WebInspector.TimelineSidebarPanel.prototype.shown): Added.
+        (WebInspector.TimelineSidebarPanel.prototype.showDefaultContentView): Add a guard.
+        (WebInspector.TimelineSidebarPanel.prototype.get hasSelectedElement): Added. Selected recording tree elements
+        should be considered when deciding whether a represented object has been selected in the sidebar panel.
+
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.looselyCompareRepresentedObjects):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.get if):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineOverview):
+        (WebInspector.TimelineSidebarPanel.prototype.showTimelineViewForType): Renamed to explicit take a type identifier.
+        Delegate the actual showing of the timeline view to the onselect handler for the timelines tree outline.
+
+        (WebInspector.TimelineSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.TimelineSidebarPanel.prototype.saveStateToCookie): Fix a typo.
+        (WebInspector.TimelineSidebarPanel.prototype.restoreStateFromCookie): Fix a typo.
+        (WebInspector.TimelineSidebarPanel.prototype._recordingsTreeElementSelected): Sync the currently displayed
+        recording object and content view, and sync the selected tree element to the displayed timeline subview.
+
+        (WebInspector.TimelineSidebarPanel.prototype._timelinesTreeElementSelected): If this is a user action, show the timeline.
+        (WebInspector.TimelineSidebarPanel.prototype._contentBrowserCurrentContentViewDidChange): Use classList.toggle().
+        (WebInspector.TimelineSidebarPanel.prototype._recordingCreated): Dynamically add new recordings to the interface.
+        (WebInspector.TimelineSidebarPanel.prototype._recordingLoaded): Automatically show recordings when they are loaded.
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphClicked): Shift+click will force-create a new recording.
+        (WebInspector.TimelineSidebarPanel.prototype.initialize): Deleted.
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.get representedObject):
+
+2014-08-05  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: ReplayManager shouldn't assume replay status when the inspector is opened
         https://bugs.webkit.org/show_bug.cgi?id=135212
 

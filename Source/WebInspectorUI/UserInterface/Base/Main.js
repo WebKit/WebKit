@@ -257,8 +257,6 @@ WebInspector.contentLoaded = function()
     this.timelineSidebarPanel = new WebInspector.TimelineSidebarPanel;
     this.debuggerSidebarPanel = new WebInspector.DebuggerSidebarPanel;
 
-    this.timelineSidebarPanel.initialize();
-
     this.navigationSidebar.addSidebarPanel(this.resourceSidebarPanel);
     // FIXME: Enable timelines panel for JavaScript inspection.
     if (this.debuggableType !== WebInspector.DebuggableType.JavaScript)
@@ -911,7 +909,7 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
     var treeElement = selectedSidebarPanel.treeElementForRepresentedObject(representedObject);
 
     if (treeElement)
-        treeElement.revealAndSelect(true, false, true, true);
+        treeElement.revealAndSelect(true, false, false, true);
     else if (selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
         selectedSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
 

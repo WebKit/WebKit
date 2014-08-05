@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineView = function(recording)
+WebInspector.LayoutTimelineView = function(timeline)
 {
-    WebInspector.TimelineView.call(this);
+    WebInspector.TimelineView.call(this, timeline);
+
+    console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
@@ -68,8 +70,7 @@ WebInspector.LayoutTimelineView = function(recording)
     this.element.classList.add(WebInspector.LayoutTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
 
-    var layoutTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Layout);
-    layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
+    timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
     this._pendingRecords = [];
 };
@@ -187,7 +188,7 @@ WebInspector.LayoutTimelineView.prototype = {
         }
 
         if (!treeElement.record.sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineView(WebInspector.TimelineRecord.Type.Layout);
+            WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Layout);
             return;
         }
 

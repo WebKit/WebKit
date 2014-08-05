@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineView = function(recording)
+WebInspector.ScriptTimelineView = function(timeline)
 {
-    WebInspector.TimelineView.call(this);
+    WebInspector.TimelineView.call(this, timeline);
+
+    console.assert(timeline.type === WebInspector.TimelineRecord.Type.Script);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.ScriptTimelineView.TreeOutlineStyleClassName);
@@ -67,8 +69,7 @@ WebInspector.ScriptTimelineView = function(recording)
     this.element.classList.add(WebInspector.ScriptTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
 
-    var scriptTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Script);
-    scriptTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
+    timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
 
     this._pendingRecords = [];
 };
@@ -271,7 +272,7 @@ WebInspector.ScriptTimelineView.prototype = {
             console.error("Unknown tree element selected.");
 
         if (!sourceCodeLocation) {
-            WebInspector.timelineSidebarPanel.showTimelineView(WebInspector.TimelineRecord.Type.Script);
+            WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Script);
             return;
         }
 

@@ -24,15 +24,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimelineOverviewGraph = function(recording)
+WebInspector.NetworkTimelineOverviewGraph = function(timeline)
 {
-    WebInspector.TimelineOverviewGraph.call(this, recording);
+    WebInspector.TimelineOverviewGraph.call(this, timeline);
 
     this.element.classList.add(WebInspector.NetworkTimelineOverviewGraph.StyleClassName);
 
-    var networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
-    networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
-    networkTimeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this.needsLayout, this);
+    timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+    timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this.needsLayout, this);
 
     this.reset();
 };

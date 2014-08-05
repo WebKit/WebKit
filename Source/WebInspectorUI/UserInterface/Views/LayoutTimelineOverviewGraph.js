@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineOverviewGraph = function(recording)
+WebInspector.LayoutTimelineOverviewGraph = function(timeline)
 {
-    WebInspector.TimelineOverviewGraph.call(this, recording);
+    WebInspector.TimelineOverviewGraph.call(this, timeline);
 
     this.element.classList.add(WebInspector.LayoutTimelineOverviewGraph.StyleClassName);
 
-    this._layoutTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Layout);
+    this._layoutTimeline = timeline;
     this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
     this._timelineRecordBars = [];

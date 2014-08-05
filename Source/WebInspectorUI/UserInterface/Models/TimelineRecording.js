@@ -23,17 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecording = function()
+WebInspector.TimelineRecording = function(identifier, displayName)
 {
     WebInspector.Object.call(this);
 
+    this._identifier = identifier;
     this._timelines = new Map;
-    this._timelines.set(WebInspector.TimelineRecord.Type.Network, new WebInspector.NetworkTimeline);
-    this._timelines.set(WebInspector.TimelineRecord.Type.Script, new WebInspector.Timeline);
-    this._timelines.set(WebInspector.TimelineRecord.Type.Layout, new WebInspector.Timeline);
+    this._displayName = displayName;
+    this._isWritable = true;
 
-    for (var timeline of this._timelines.values())
+    for (var key of Object.keys(WebInspector.TimelineRecord.Type)) {
+        var type = WebInspector.TimelineRecord.Type[key];
+        var timeline = new WebInspector.Timeline(type);
+        this._timelines.set(type, timeline);
         timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
+    }
 
     this.reset(true);
 };
@@ -50,6 +54,16 @@ WebInspector.TimelineRecording.prototype = {
 
     // Public
 
+    get displayName()
+    {
+        return this._displayName;
+    },
+
+    get identifier()
+    {
+        return this._identifier;
+    },
+
     get timelines()
     {
         return this._timelines;
@@ -65,8 +79,20 @@ WebInspector.TimelineRecording.prototype = {
         return this._endTime;
     },
 
+    isWritable: function()
+    {
+        return this._isWritable;
+    },
+
+    unloaded: function()
+    {
+        this._isWritable = false;
+    },
+
     reset: function(suppressEvents)
     {
+        console.assert(this._isWritable, "Can't reset a read-only recording.");
+
         this._sourceCodeTimelinesMap = new Map;
         this._eventMarkers = [];
         this._startTime = NaN;

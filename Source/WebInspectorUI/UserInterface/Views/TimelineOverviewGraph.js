@@ -23,8 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverviewGraph = function(recording)
+WebInspector.TimelineOverviewGraph = function(timeline)
 {
+    if (this.constructor === WebInspector.TimelineOverviewGraph) {
+        // When instantiated directly return an instance of a type-based concrete subclass.
+
+        console.assert(timeline && timeline instanceof WebInspector.Timeline);
+
+        var timelineType = timeline.type;
+        if (timelineType === WebInspector.TimelineRecord.Type.Network)
+            return new WebInspector.NetworkTimelineOverviewGraph(timeline);
+
+        if (timelineType === WebInspector.TimelineRecord.Type.Layout)
+            return new WebInspector.LayoutTimelineOverviewGraph(timeline);
+
+        if (timelineType === WebInspector.TimelineRecord.Type.Script)
+            return new WebInspector.ScriptTimelineOverviewGraph(timeline);
+
+        throw Error("Can't make a graph for an unknown timeline.");
+    }
+
+    // Concrete object instantiation.
+    console.assert(this.constructor !== WebInspector.TimelineOverviewGraph && this instanceof WebInspector.TimelineOverviewGraph);
+
     WebInspector.Object.call(this);
 
     this.element = document.createElement("div");
