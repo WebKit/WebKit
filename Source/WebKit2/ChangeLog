@@ -1,5 +1,15 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172034
+
+    2014-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+            Build fix.
+
+            * UIProcess/WebContext.h:
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172031
 
     2014-08-05  Oliver Hunt  <oliver@apple.com>
