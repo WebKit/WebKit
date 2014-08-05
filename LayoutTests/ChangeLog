@@ -1,3 +1,22 @@
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171882
+
+    2014-07-31  Andrei Bucur  <abucur@adobe.com>
+
+            REGRESSION: Search highlight is broken in RTL multicolumn content
+            https://bugs.webkit.org/show_bug.cgi?id=135452
+
+            Reviewed by Simon Fraser.
+
+            A test that verifies the bounding boxes for content inside a RTL multi-column element are correctly computed:
+            - for static elements
+            - for relative positioned elements
+            - for absolutely positioned elements
+
+            * fast/multicol/content-bounding-box-rtl-expected.txt: Added.
+            * fast/multicol/content-bounding-box-rtl.html: Added.
+
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171785
