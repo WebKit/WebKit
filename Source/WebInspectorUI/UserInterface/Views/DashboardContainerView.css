@@ -91,7 +91,7 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard-container {
     left: 0;
     right: 0;
 
-    padding: 0 5px;
+    padding: 0 10px 0 5px;
 
     background-color: rgb(252, 252, 252);
     box-shadow: inset white 0 1px 0;
@@ -118,6 +118,10 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard {
 
 .toolbar .dashboard.visible {
     z-index: 1; /* Establish a stacking context. */
+}
+
+.toolbar .dashboard:not(.visible) {
+    opacity: 0;
 }
 
 .toolbar .dashboard.slide-out-up {
@@ -154,4 +158,51 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard {
     to {
         -webkit-transform: translateY(30px);
     }
+}
+
+.dashboard-container .advance-arrow {
+    position: absolute;
+    right: 0px;
+    width: 10px;
+    height: 10px;
+    margin: 4px;
+    opacity: 0.6;
+
+    z-index: 1000;
+    background-repeat: no-repeat;
+    background-size: 8px;
+    background-image: url(../Images/UpDownArrows.svg);
+
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}
+
+.dashboard-container .advance-arrow:hover {
+    opacity: 0.8;
+}
+
+.dashboard-container .advance-arrow:active {
+    opacity: 1;
+}
+
+.dashboard-container .advance-arrow.inactive {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toolbar.label-only .dashboard-container .advance-arrow {
+    width: 8px;
+    height: 8px;
+    margin: 2px 4px 2px 2px;
+    background-size: 6px;
+}
+
+.dashboard-container .advance-arrow.advance-forward {
+    top: 0;
+    background-position: 0% 0%;
+}
+
+.dashboard-container .advance-arrow.advance-backward {
+    bottom: 0;
+    background-position: 0% 100%;
 }

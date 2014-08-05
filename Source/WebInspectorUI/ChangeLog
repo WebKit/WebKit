@@ -1,3 +1,47 @@
+2014-08-05  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: cannot navigate between multiple applicable dashboards
+        https://bugs.webkit.org/show_bug.cgi?id=135130
+
+        Reviewed by Timothy Hatcher.
+
+        Add navigation arrows between dashboards when multiple dashboards are applicable.
+        For example, the user should be able to go back to the default dashboard while paused
+        at a breakpoint. Dashboards form a stack based on when they are first introduced.
+
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard): Increase padding-right a bit to make room for arrows.
+        (.toolbar .dashboard:not(.visible)): Fix a bug where higher dashboards in the dashboard stack
+        can shine through when animating between two lower dashboards that have transparent background.
+        This ensures that at most two dashboards (namely, the ones being animated) are displayed.
+
+        (.dashboard-container .advance-arrow): Main style class for navigation arrows.
+        (.dashboard-container .advance-arrow:hover):
+        (.dashboard-container .advance-arrow:active):
+        (.dashboard-container .advance-arrow.inactive):
+        (.toolbar.label-only .dashboard-container .advance-arrow): Make arrows slightly smaller when
+        the dashboards get shorter.
+
+        (.dashboard-container .advance-arrow.advance-forward):
+        (.dashboard-container .advance-arrow.advance-backward):
+        * UserInterface/Views/DashboardContainerView.js:
+        (WebInspector.DashboardContainerView): Arrow styles are updated when a dashboard is shown,
+        hidden, or closed. When moving away, we dismiss (i.e., set zero opacity) arrows at animation
+        start. When the animation finishes, redisplay arrows that are applicable for the new dashboard.
+
+        (WebInspector.DashboardContainerView.prototype._advanceForwardArrowClicked):
+        (WebInspector.DashboardContainerView.prototype._advanceBackwardArrowClicked):
+        (WebInspector.DashboardContainerView.prototype._dismissAdvanceArrows):
+        (WebInspector.DashboardContainerView.prototype._updateAdvanceArrowVisibility):
+        (WebInspector.DashboardContainerView.prototype._showDashboardAtIndex): There was a bug here
+        where it would unconditionally use the same animation direction when showing a dashboard, but
+        it was hard to spot without arrows that must correlate with the animation direction.
+
+        (WebInspector.DashboardContainerView.prototype.animationEnded):
+        (WebInspector.DashboardContainerView.prototype._showDashboardView):
+        (WebInspector.DashboardContainerView.prototype._hideDashboardView):
+        (WebInspector.DashboardContainerView.prototype._closeDashboardView):
+
 2014-08-05  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: shown() called on a content view when stepping over an instruction in the debugger
