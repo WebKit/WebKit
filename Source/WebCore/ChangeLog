@@ -1,5 +1,22 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171937
+
+    2014-08-01  Jer Noble  <jer.noble@apple.com>
+
+            [MSE][Mac] Volume is not remembered between items in a YouTube playlist
+            https://bugs.webkit.org/show_bug.cgi?id=135479
+
+            Reviewed by Eric Carlson.
+
+            When an AVSampleBufferAudioRenderer is added to the player, set its -volume and -muted
+            properties with the current values from the HTMLMediaElement. 
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171895
 
     2014-07-31  Jer Noble  <jer.noble@apple.com>
