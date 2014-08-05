@@ -3569,7 +3569,8 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     if (m_wasScrolledByUser == wasScrolledByUser)
         return;
     m_wasScrolledByUser = wasScrolledByUser;
-    updateLayerFlushThrottling();
+    if (frame().isMainFrame())
+        updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
 }
 
