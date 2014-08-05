@@ -1,3 +1,17 @@
+2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: add AccessibilityObject::computedLabelString() for WebAXI
+        https://bugs.webkit.org/show_bug.cgi?id=129939
+
+        Reviewed by Mario Sanchez Prada.
+
+        Provide a method that the WebKit Inspector can call in order to 
+        display an accessible name for an AX node.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibilityComputedLabel):
+        * accessibility/AccessibilityObject.h:
+
 2014-08-04  Tim Horton  <timothy_horton@apple.com>
 
         Lots of crashes in WebKit1 after r172013.

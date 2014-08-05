@@ -287,6 +287,15 @@ bool AccessibilityObject::accessibilityObjectContainsText(String* text) const
         || accessibilityDescription().contains(*text, false)
         || stringValue().contains(*text, false);
 }
+    
+String AccessibilityObject::accessibilityComputedLabel()
+{
+    Vector<AccessibilityText> text;
+    accessibilityText(text);
+    if (text.size())
+        return text[0].text;
+    return String();
+}
 
 bool AccessibilityObject::isBlockquote() const
 {
