@@ -117,6 +117,7 @@ audio::-webkit-media-text-track-container {
 video::-webkit-media-controls-panel-composited-parent {
     -webkit-transform: translateZ(0);
     width: 100%;
+    direction: ltr;
 }
 
 audio::-webkit-media-controls-panel,
@@ -143,7 +144,6 @@ video::-webkit-media-controls-panel {
 audio::-webkit-media-controls-panel {
     background-color: rgba(228, 228, 228, 1);
 }
-
 
 audio::-webkit-media-controls-panel {
     height: 39px;
