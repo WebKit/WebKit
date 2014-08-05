@@ -1,3 +1,18 @@
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r171866
+
+    2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: console.profile missing profile information
+            https://bugs.webkit.org/show_bug.cgi?id=135432
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Models/ScriptTimelineRecord.js:
+            Delete the payload information as soon as it has been processed.
+            It is no longer needed anymore and can be garbage collected.
+
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171790
