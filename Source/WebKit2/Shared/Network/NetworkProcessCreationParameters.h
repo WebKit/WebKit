@@ -63,6 +63,9 @@ struct NetworkProcessCreationParameters {
     // FIXME: Remove this once <rdar://problem/17726660> is fixed.
     String hstsDatabasePath;
     SandboxExtension::Handle hstsDatabasePathExtensionHandle;
+
+    String parentBundleDirectory;
+    SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
 #endif
     bool shouldUseTestingNetworkSession;
 

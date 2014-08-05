@@ -431,6 +431,10 @@ private:
     String networkingHSTSDatabasePath() const;
     String platformDefaultNetworkingHSTSDatabasePath() const;
 
+#if PLTFORM(IOS)
+    String parentBundleDirectory() const;
+#endif
+
     String containerTemporaryDirectory() const;
 
 #if PLATFORM(COCOA)
