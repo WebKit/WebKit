@@ -180,14 +180,13 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
 
                 if (context.selector->pseudoElementType() == CSSSelector::PseudoElementWebKitCustom && root->type() != ShadowRoot::UserAgentShadowRoot)
                     return SelectorFailsLocally;
-            } else if (m_mode != Mode::StyleInvalidation)
+            } else
                 return SelectorFailsLocally;
         } else {
             if ((!context.elementStyle && m_mode == Mode::ResolvingStyle) || m_mode == Mode::QueryingRules)
                 return SelectorFailsLocally;
 
-            // When invalidating style all pseudo elements need to match.
-            PseudoId pseudoId = m_mode == Mode::StyleInvalidation ? NOPSEUDO : CSSSelector::pseudoId(context.selector->pseudoElementType());
+            PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoElementType());
             if (pseudoId != NOPSEUDO)
                 dynamicPseudo = pseudoId;
         }

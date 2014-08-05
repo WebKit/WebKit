@@ -1,5 +1,44 @@
 2014-08-04  Benjamin Poulain  <benjamin@webkit.org>
 
+        Simplify the StyleInvalidation mode of rule collection
+        https://bugs.webkit.org/show_bug.cgi?id=135521
+
+        Reviewed by Antti Koivisto.
+
+        There are two branches where StyleInvalidation code is removed:
+        -Pseudo elements for shadow dom elements.
+        -Pseudo elements without dom tree counterpart.
+
+        The first can never be hit because StyleInvalidationAnalysis does a complete invalidation
+        when there is any shadow dom styling involved in the stylesheets.
+
+        Even if that branch was hit, not failing on custom pseudo elements would be equivalent
+        to ignoring those pseudo elements from the Selector. By doing so, we would match elements
+        that do not have shadow dom and invalidate pretty much everything.
+
+        Unlike pseudo elements without real elements, shadow dom elements are not matched separately with a different
+        context, thus we could generalize StyleInvalidationAnalysis to handle this case.
+
+
+        The second case handle pseudo elements that do not have a real element. That case no longer need to be handled
+        separately at the filter time, it has become a special case of SelectorChecker::match() after everything else
+        has matched.
+
+        The only condition for this to work is that the Context's pseudoId must be NOPSEUDO. This is the case
+        in practice since matching specific pseudo types would be a waste of time. ElementRuleCollector::collectMatchingRules()
+        has a new assertion to enforce that.
+
+        Test: fast/css/stylesheet-change-updates-pseudo-elements.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement):
+
+2014-08-04  Benjamin Poulain  <benjamin@webkit.org>
+
         Add a flag for the CSS Selectors level 4 implementation
         https://bugs.webkit.org/show_bug.cgi?id=135535
 

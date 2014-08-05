@@ -145,6 +145,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
 {
     ASSERT(matchRequest.ruleSet);
     ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::ResolvingStyle && !m_style), "When resolving style, the SelectorChecker must have a style to set the pseudo elements and/or to do marking. The SelectorCompiler also rely on that behavior.");
+    ASSERT_WITH_MESSAGE(!((m_mode == SelectorChecker::Mode::StyleInvalidation || m_mode == SelectorChecker::Mode::SharingRules) && m_pseudoStyleRequest.pseudoId != NOPSEUDO), "When in mode StyleInvalidation or SharingRules, SelectorChecker does not try to match the pseudo ID. While ElementRuleCollector supports matching a particular pseudoId in this case, this would indicate a error at the call site since matching a particular element should be unnecessary.");
 
 #if ENABLE(VIDEO_TRACK)
     if (m_element.isWebVTTElement())

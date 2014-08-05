@@ -2855,11 +2855,6 @@ void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudo
             failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, pseudoId)), Assembler::TrustedImm32(NOPSEUDO)));
         else {
             Assembler::Jump skip = m_assembler.branch8(Assembler::Equal, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, pseudoId)), Assembler::TrustedImm32(NOPSEUDO));
-
-            // When mode is StyleInvalidation, the pseudo element of the rightmost fragment is treated as NOPSEUDO.
-            // Since the requested pseudoId is not NOPSEUDO here, it becomes failure.
-            failureCases.append(branchOnResolvingModeWithCheckingContext(Assembler::Equal, SelectorChecker::Mode::StyleInvalidation, checkingContext));
-
             failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, pseudoId)), Assembler::TrustedImm32(CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElementType()))));
             skip.link(&m_assembler);
         }

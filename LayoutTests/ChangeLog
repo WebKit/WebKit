@@ -1,3 +1,18 @@
+2014-08-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Simplify the StyleInvalidation mode of rule collection
+        https://bugs.webkit.org/show_bug.cgi?id=135521
+
+        Reviewed by Antti Koivisto.
+
+        This test by:
+        1) Forcing the recalc of the user-agent stylesheet.
+        2) Wait for the page to finish loading.
+        3) Add a style changing only pseudo elements without corresponding shadow element.
+
+        * fast/css/stylesheet-change-updates-pseudo-elements-expected.html: Added.
+        * fast/css/stylesheet-change-updates-pseudo-elements.html: Added.
+
 2014-08-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
