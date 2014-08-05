@@ -3547,9 +3547,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [self _updateThumbnailViewLayer];
     else
         [self _setAcceleratedCompositingModeRootLayer:_data->_rootLayer.get()];
-
-    if (!thumbnailView.usesSnapshot)
-        _data->_page->viewStateDidChange(ViewState::WindowIsActive | ViewState::IsInWindow | ViewState::IsVisible);
 }
 
 - (_WKThumbnailView *)_thumbnailView
@@ -3562,7 +3559,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _WKThumbnailView *thumbnailView = _data->_thumbnailView;
     ASSERT(thumbnailView);
 
-    if (!thumbnailView.usesSnapshot || (thumbnailView._waitingForSnapshot && self.window))
+    if (thumbnailView._waitingForSnapshot && self.window)
         [self _reparentLayerTreeInThumbnailView];
 }
 

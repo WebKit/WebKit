@@ -87,11 +87,6 @@ void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void 
     function();
 }
 
-TransformationMatrix DrawingArea::rootLayerTransform() const
-{
-    return TransformationMatrix();
-}
-
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 PassRefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(PlatformDisplayID)
 {
