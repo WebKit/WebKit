@@ -1,5 +1,36 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171920
+
+    2014-08-01  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac] Fullscreen mode for some applications shows only a black screen.
+            https://bugs.webkit.org/show_bug.cgi?id=135493
+            <rdar://problem/17628212>
+
+            Reviewed by Jer Noble.
+
+            In some applications, the window hosting the WKView is an InProcess layer hosting mode.
+            The fullscreen window created by the WKFullScreenWindowController defaults to an
+            OutOfProcess mode.
+
+            When this kind of mismatch is encountered, the WK2 layer in the UI process is supposed
+            to send a message back to the WebProcess indicating that the layer hosting mode of the
+            containing window is different, so that the WebProcess can adjust its logic accordingly.
+            Unfortunately, the notification that this had happened was not getting sent to the
+            WebProcess due to an optimization in window state change logic (see Bug 135509 for
+            details).
+
+            The fix is to check layer hosting mode state when a WKView is added to a window, and
+            notify the WebProcess when it needs to change state to match.
+
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView viewDidMoveToWindow]): When moving to a new window, always call
+            'layerHostingModeDidChange' to pick up any changes in the layer hosting mode.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171891
 
     2014-07-31  Beth Dakin  <bdakin@apple.com>

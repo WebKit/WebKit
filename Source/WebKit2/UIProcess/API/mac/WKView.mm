@@ -2506,6 +2506,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
         [self _updateWindowAndViewFrames];
 
+        // FIXME(135509) This call becomes unnecessary once 135509 is fixed; remove.
+        _data->_page->layerHostingModeDidChange();
+
         if (!_data->_flagsChangedEventMonitor) {
             _data->_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
                 [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
