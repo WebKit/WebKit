@@ -1,3 +1,35 @@
+2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r172035. <rdar://problem/17869353>
+
+    2014-08-04  Andy Estes  <aestes@apple.com>
+
+            [iOS] The raw bytes of an iWork document's PDF preview are displayed rather than the PDF itself
+            https://bugs.webkit.org/show_bug.cgi?id=135596
+
+            Reviewed by David Kilzer.
+
+            Some iWork documents contain pre-rendered PDF previews. When WebKit asks QuickLook to convert such a document,
+            QuickLook will return this PDF as the converted response. However, until WebKit has sent the document's data to
+            QuickLook, -[QLPreviewConverter previewResponse] will misleadingly tell WebKit that the converted resource will
+            be of type 'text/html'. This leads WebKit to render the PDF preview as HTML.
+
+            Instead of querying QLPreviewConverter for the previewResponse before we've sent it any data, postpone calling
+            ResourceLoader::didReceiveResponse until we've begun to receive data via the QLPreviewConverter delegate. At
+            that point -[QLPreviewConverter previewResponse] will have the correct MIME type and we can call didReceiveResponse.
+
+            No new tests. QuickLook is not testable from WebKit.
+
+            * platform/network/ios/QuickLook.mm:
+            (-[WebResourceLoaderQuickLookDelegate connection:didReceiveDataArray:]): If didReceiveResponse has yet to be
+            called, call it now with QuickLookHandle::nsResponse().
+            (-[WebResourceLoaderQuickLookDelegate connection:didReceiveData:lengthReceived:]): Ditto.
+            (-[WebResourceLoaderQuickLookDelegate connection:didFailWithError:]): Ditto.
+            (-[WebResourceLoaderQuickLookDelegate connectionDidFinishLoading:]): Assert that didReceiveResponse has been called.
+            (-[WebResourceLoaderQuickLookDelegate clearHandle]): Cleared the raw pointer to QuickLookHandle.
+            (WebCore::QuickLookHandle::create): Pointed WebResourceLoaderQuickLookDelegate's quickLookHandle property to
+            the newly created QuickLookHandle.
+
 2014-08-04  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171882
