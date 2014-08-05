@@ -1,5 +1,73 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172104
+
+    2014-08-05  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r164337): Pages are sometimes cut off/oriented incorrectly after using WKThumbnailView
+            https://bugs.webkit.org/show_bug.cgi?id=135622
+            <rdar://problem/17202556>
+
+            Reviewed by Dan Bernstein.
+
+            In some cases (when the page changed scroll offset while thumbnailed),
+            when transitioning back to thumbnail scale = 1, we would get the math
+            wrong and end up with a non-identity sublayerTransform on the DrawingArea.
+
+            Luckily, none of this code is necessary anymore, as the only client
+            of WKThumbnailView only uses its snapshotting mode.
+
+            * Shared/ImageOptions.h:
+            Remove SnapshotOptionsRespectDrawingAreaTransform; DrawingArea no longer
+            has a rootLayerTransform().
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setThumbnailScale): Deleted.
+            * UIProcess/WebPageProxy.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            (WebKit::WebPage::scaledSnapshotWithOptions):
+            (WebKit::WebPage::snapshotAtSize):
+
+            (WebKit::WebPage::setThumbnailScale): Deleted.
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            Remove setThumbnailScale and SnapshotOptionsRespectDrawingAreaTransform.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didCommitLoad):
+            Revert this to its state before r164337, as we no longer have "thumbnail scale".
+
+            * UIProcess/API/Cocoa/_WKThumbnailView.h:
+            * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+            (-[_WKThumbnailView initWithFrame:fromWKView:]):
+            (-[_WKThumbnailView _viewWasUnparented]):
+            (-[_WKThumbnailView _viewWasParented]):
+            (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+            (-[_WKThumbnailView setScale:]):
+            Clean up code assuming _shouldApplyThumbnailScale = NO, _usesSnapshot = YES.
+
+            (-[_WKThumbnailView setUsesSnapshot:]):
+            (-[_WKThumbnailView usesSnapshot]):
+            Always return YES from usesSnapshot; we only support snapshotting WKThumbnailViews.
+            Ignore setUsesSnapshot.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setThumbnailView:]):
+            (-[WKView _updateThumbnailViewLayer]):
+            Stop checking usesSnapshot; it's always true.
+
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::setRootLayerTransform): Deleted.
+            * WebProcess/WebPage/DrawingArea.cpp:
+            (WebKit::DrawingArea::rootLayerTransform): Deleted.
+            * WebProcess/WebPage/DrawingArea.h:
+            (WebKit::DrawingArea::setRootLayerTransform): Deleted.
+            Remove rootLayerTransform() and setRootLayerTransform().
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172034
 
     2014-08-05  Alexey Proskuryakov  <ap@apple.com>

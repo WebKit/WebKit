@@ -691,12 +691,6 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     flushLayers();
 }
 
-void TiledCoreAnimationDrawingArea::setRootLayerTransform(const TransformationMatrix& transform)
-{
-    m_transform = transform;
-    [m_rootLayer setSublayerTransform:transform];
-}
-
 } // namespace WebKit
 
 #endif // !PLATFORM(IOS)

@@ -5051,14 +5051,6 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succ
 }
 #endif
 
-void WebPageProxy::setThumbnailScale(double scale)
-{
-    if (!isValid())
-        return;
-
-    m_process->send(Messages::WebPage::SetThumbnailScale(scale), m_pageID);
-}
-
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
 {
     m_process->send(Messages::WebPage::AddMIMETypeWithCustomContentProvider(mimeType), m_pageID);

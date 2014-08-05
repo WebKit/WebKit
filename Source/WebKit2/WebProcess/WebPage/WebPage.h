@@ -391,8 +391,6 @@ public:
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
 
-    void setThumbnailScale(double);
-
     bool isVisible() const { return m_viewState & WebCore::ViewState::IsVisible; }
     bool isVisibleOrOccluded() const { return m_viewState & WebCore::ViewState::IsVisibleOrOccluded; }
 
@@ -1271,10 +1269,6 @@ private:
     UserActivity m_processSuppressionDisabledByWebPreference;
 
     uint64_t m_pendingNavigationID;
-
-    double m_pageScaleWithoutThumbnailScale;
-    WebCore::IntPoint m_scrollPositionIgnoringThumbnailScale;
-    double m_thumbnailScale;
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;

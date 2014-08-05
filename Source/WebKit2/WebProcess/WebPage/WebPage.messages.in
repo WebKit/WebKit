@@ -379,8 +379,6 @@ messages -> WebPage LegacyReceiver {
   
     SetScrollPinningBehavior(uint32_t pinning)
 
-    SetThumbnailScale(double scale)
-
     GetBytecodeProfile(uint64_t callbackID)
     
     TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)

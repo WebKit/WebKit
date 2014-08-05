@@ -107,9 +107,6 @@ public:
     virtual PassRefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID);
 #endif
 
-    virtual WebCore::TransformationMatrix rootLayerTransform() const;
-    virtual void setRootLayerTransform(const WebCore::TransformationMatrix&) { }
-
 #if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;
 #endif

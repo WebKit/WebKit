@@ -103,9 +103,6 @@ private:
 
     void applyTransientZoomToLayers(double scale, WebCore::FloatPoint origin);
 
-    virtual WebCore::TransformationMatrix rootLayerTransform() const override {  return m_transform; }
-    virtual void setRootLayerTransform(const WebCore::TransformationMatrix&) override;
-
     void updateLayerHostingContext();
 
     void setRootCompositingLayer(CALayer *);
