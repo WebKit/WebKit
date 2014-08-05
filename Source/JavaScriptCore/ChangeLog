@@ -1,3 +1,20 @@
+2014-08-05  Alex Christensen  <achristensen@webkit.org>
+
+        More work on CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=135620
+
+        Reviewed by Laszlo Gombos.
+
+        * CMakeLists.txt:
+        Added missing source files.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        Include glib directories and libraries to find glib.h in EventLoop.cpp.
+        * PlatformMac.cmake:
+        Moved STATICALLY_LINKED_WITH_WTF definition away from the common CMakeLists
+        because it should not be defined on Windows.
+        Added remote inspector source files.
+
 2014-08-05  Peyton Randolph  <prandolph@apple.com>
 
         Rename MAC_LONG_PRESS feature flag to LONG_MOUSE_PRESS.

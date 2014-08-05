@@ -559,6 +559,7 @@ set(WebCore_IDL_FILES
 
     loader/appcache/DOMApplicationCache.idl
 
+    page/AbstractView.idl
     page/BarProp.idl
     page/Crypto.idl
     page/DOMSecurityPolicy.idl
@@ -581,6 +582,9 @@ set(WebCore_IDL_FILES
     page/SpeechInputResult.idl
     page/SpeechInputResultList.idl
     page/WebKitPoint.idl
+    page/WebKitNamespace.idl
+    page/UserMessageHandlersNamespace.idl
+    page/UserMessageHandler.idl
     page/WindowBase64.idl
     page/WindowTimers.idl
     page/WorkerNavigator.idl

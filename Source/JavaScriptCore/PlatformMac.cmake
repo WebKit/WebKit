@@ -17,4 +17,10 @@ list(APPEND JavaScriptCore_SOURCES
     API/JSVirtualMachine.mm
     API/JSWrapperMap.mm
     API/ObjCCallbackFunction.mm
+
+    inspector/remote/RemoteInspector.mm
+    inspector/remote/RemoteInspectorDebuggable.cpp
+    inspector/remote/RemoteInspectorDebuggableConnection.mm
+    inspector/remote/RemoteInspectorXPCConnection.mm
 )
+add_definitions(-DSTATICALLY_LINKED_WITH_WTF)

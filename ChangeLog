@@ -1,3 +1,13 @@
+2014-08-05  Alex Christensen  <achristensen@webkit.org>
+
+        More work on CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=135620
+
+        Reviewed by Laszlo Gombos.
+
+        * Source/cmake/OptionsMac.cmake:
+        Use UDIS86 by default on Mac.
+
 2014-08-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a flag for the CSS Selectors level 4 implementation

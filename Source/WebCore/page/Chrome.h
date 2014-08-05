@@ -163,7 +163,7 @@ public:
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
-    PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&)
+    PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&);
 #endif
 
     void runOpenPanel(Frame*, PassRefPtr<FileChooser>);

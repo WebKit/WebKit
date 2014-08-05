@@ -260,6 +260,7 @@ set(JavaScriptCore_SOURCES
 
     inspector/ConsoleMessage.cpp
     inspector/ContentSearchUtilities.cpp
+    inspector/EventLoop.cpp
     inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptBase.cpp
@@ -269,8 +270,11 @@ set(JavaScriptCore_SOURCES
     inspector/InspectorAgentRegistry.cpp
     inspector/InspectorBackendDispatcher.cpp
     inspector/InspectorValues.cpp
+    inspector/JSConsoleClient.cpp
     inspector/JSInjectedScriptHost.cpp
     inspector/JSInjectedScriptHostPrototype.cpp
+    inspector/JSGlobalObjectInspectorController.cpp
+    inspector/JSGlobalObjectScriptDebugServer.cpp
     inspector/JSJavaScriptCallFrame.cpp
     inspector/JSJavaScriptCallFramePrototype.cpp
     inspector/JavaScriptCallFrame.cpp
@@ -279,11 +283,16 @@ set(JavaScriptCore_SOURCES
     inspector/ScriptCallStack.cpp
     inspector/ScriptCallStackFactory.cpp
     inspector/ScriptDebugServer.cpp
+
     inspector/agents/InspectorAgent.cpp
     inspector/agents/InspectorConsoleAgent.cpp
     inspector/agents/InspectorDebuggerAgent.cpp
     inspector/agents/InspectorProfilerAgent.cpp
     inspector/agents/InspectorRuntimeAgent.cpp
+    inspector/agents/JSGlobalObjectConsoleAgent.cpp
+    inspector/agents/JSGlobalObjectDebuggerAgent.cpp
+    inspector/agents/JSGlobalObjectProfilerAgent.cpp
+    inspector/agents/JSGlobalObjectRuntimeAgent.cpp
 
     interpreter/AbstractPC.cpp
     interpreter/CallFrame.cpp
@@ -415,6 +424,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSArrayBufferView.cpp
     runtime/JSArrayIterator.cpp
     runtime/JSBoundFunction.cpp
+    runtime/JSGlobalObjectDebuggable.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCell.cpp
     runtime/JSConsole.cpp
@@ -1019,7 +1029,6 @@ add_subdirectory(shell)
 
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
 include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
-add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
 target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
 set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")

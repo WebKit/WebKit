@@ -12,8 +12,14 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cg"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/mac"
+    "${WEBCORE_DIR}/platform/network/cocoa"
+    "${WEBCORE_DIR}/platform/network/cf"
+    "${WEBCORE_DIR}/platform/network/mac"
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/plugins/mac"
+
+    "/usr/include/libxslt"
+    "/usr/include/libxml2"
 )
 
 list(APPEND WebCore_SOURCES
@@ -151,6 +157,26 @@ list(APPEND WebCore_SOURCES
     platform/network/cocoa/CredentialCocoa.mm
     platform/network/cocoa/ProtectionSpaceCocoa.mm
     platform/network/cocoa/ResourceRequestCocoa.mm
+
+    platform/network/cf/AuthenticationCF.cpp
+    platform/network/cf/CookieJarCFNet.cpp
+    platform/network/cf/CookieStorageCFNet.cpp
+    platform/network/cf/CredentialStorageCFNet.cpp
+    platform/network/cf/DNSCFNet.cpp
+    platform/network/cf/FormDataStreamCFNet.cpp
+    platform/network/cf/LoaderRunLoopCF.cpp
+    platform/network/cf/NetworkStorageSessionCFNet.cpp
+    platform/network/cf/ProtectionSpaceCFNet.cpp
+    platform/network/cf/ProxyServerCFNet.cpp
+    platform/network/cf/ResourceErrorCF.cpp
+    platform/network/cf/ResourceHandleCFNet.cpp
+    platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp
+    platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp
+    platform/network/cf/ResourceRequestCFNet.cpp
+    platform/network/cf/ResourceResponseCFNet.cpp
+    platform/network/cf/SocketStreamHandleCFNet.cpp
+    platform/network/cf/SynchronousLoaderClientCFNet.cpp
+    platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
     platform/network/mac/AuthenticationMac.mm
     platform/network/mac/BlobDataFileReferenceMac.mm
