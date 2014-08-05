@@ -40,15 +40,21 @@ SelectionRectGatherer::SelectionRectGatherer(RenderView& renderView)
 {
 }
 
-void SelectionRectGatherer::addRect(const LayoutRect& rect)
+void SelectionRectGatherer::addRect(RenderLayerModelObject *repaintContainer, const LayoutRect& rect)
 {
-    if (!rect.isEmpty())
-        m_rects.append(rect);
+    if (!rect.isEmpty()) {
+        LayoutRect absoluteRect(repaintContainer->localToAbsoluteQuad(FloatQuad(rect)).boundingBox());
+        m_rects.append(absoluteRect);
+    }
 }
 
-void SelectionRectGatherer::addRects(const GapRects& rects)
+void SelectionRectGatherer::addGapRects(RenderLayerModelObject *repaintContainer, const GapRects& rects)
 {
-    m_gapRects.append(rects);
+    GapRects absoluteGapRects;
+    absoluteGapRects.uniteLeft(LayoutRect(repaintContainer->localToAbsoluteQuad(FloatQuad(rects.left())).boundingBox()));
+    absoluteGapRects.uniteCenter(LayoutRect(repaintContainer->localToAbsoluteQuad(FloatQuad(rects.center())).boundingBox()));
+    absoluteGapRects.uniteRight(LayoutRect(repaintContainer->localToAbsoluteQuad(FloatQuad(rects.right())).boundingBox()));
+    m_gapRects.append(absoluteGapRects);
 }
 
 SelectionRectGatherer::Notifier::Notifier(SelectionRectGatherer& gatherer)
