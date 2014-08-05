@@ -1,5 +1,21 @@
 2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172053. <rdar://problem/17876385>
+
+    2014-08-05  Antti Koivisto  <antti@apple.com>
+    
+            REGRESSION: Extremely flashy scrolling while a page is still loading (because of flush throttling)
+            https://bugs.webkit.org/show_bug.cgi?id=135603
+            <rdar://problem/17876385>
+            
+            This hit ASSERT(frame().isMainFrame()) in FrameView::updateLayerFlushThrottling
+            running scrollbars/scrollbar-iframe-click-does-not-blur-content.html and a few other tests.
+    
+            * page/FrameView.cpp:
+            (WebCore::FrameView::setWasScrolledByUser): Only invoke updateLayerFlushThrottling for the main frame.
+    
+2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172039. <rdar://problem/17876385>
 
     2014-08-05  Antti Koivisto  <antti@apple.com>
