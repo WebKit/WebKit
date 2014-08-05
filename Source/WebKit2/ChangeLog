@@ -1,5 +1,49 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171928
+
+    2014-08-01  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/17862013> REGRESSION (r169357): Disabling "allow plug-ins" doesn't stick on quit/relaunch
+            https://bugs.webkit.org/show_bug.cgi?id=135511
+
+            Reviewed by Alexey Proskuryakov.
+
+            Since the values map in the preferences store doesn’t include values that are equal to the
+            defaults, we need to update it when a new default is registered.
+
+            * UIProcess/WebPreferences.cpp:
+            (WebKit::WebPreferences::createWithLegacyDefaults): Changed to use new member functions
+            for registering defaults.
+            (WebKit::WebPreferences::registerDefaultBoolValueForKey): Added. Sets an override default
+            in the store, and sets the user default, if there is one, on top of it.
+            (WebKit::WebPreferences::registerDefaultUInt32ValueForKey): Ditto.
+            * UIProcess/WebPreferences.h: Declared new member functions for getting the user default
+            value for a key.
+
+            * UIProcess/efl/WebPreferencesEfl.cpp:
+            (WebKit::WebPreferences::platformGetStringUserValueForKey): Added an implementation that
+            returns false, because the EFL port doesn’t support persistent user defaults.
+            (WebKit::WebPreferences::platformGetBoolUserValueForKey): Ditto.
+            (WebKit::WebPreferences::platformGetUInt32UserValueForKey): Ditto.
+            (WebKit::WebPreferences::platformGetDoubleUserValueForKey): Ditto.
+
+            * UIProcess/gtk/WebPreferencesGtk.cpp:
+            (WebKit::WebPreferences::platformGetStringUserValueForKey): Ditto for the GTK port.
+            (WebKit::WebPreferences::platformGetBoolUserValueForKey): Ditto.
+            (WebKit::WebPreferences::platformGetUInt32UserValueForKey): Ditto.
+            (WebKit::WebPreferences::platformGetDoubleUserValueForKey): Ditto.
+
+            * UIProcess/mac/WebPreferencesMac.mm:
+            (WebKit::WebPreferences::platformGetStringUserValueForKey): Added. Replaces
+            setStringValueIfInUserDefaults, on which it is based.
+            (WebKit::WebPreferences::platformGetBoolUserValueForKey): Similarly for booleans.
+            (WebKit::WebPreferences::platformGetUInt32UserValueForKey): Similarly for integers.
+            (WebKit::WebPreferences::platformGetDoubleUserValueForKey): Similarly for doubles.
+            (WebKit::WebPreferences::platformInitializeStore): Changed to use the above functions.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171920
 
     2014-08-01  Brent Fulgham  <bfulgham@apple.com>
