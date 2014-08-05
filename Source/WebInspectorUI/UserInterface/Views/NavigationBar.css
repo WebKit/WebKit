@@ -31,7 +31,7 @@
     box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
     border-bottom: 1px solid rgb(179, 179, 179);
 
-    height: 22px;
+    height: 29px;
 
     white-space: nowrap;
     overflow: hidden;
@@ -39,11 +39,19 @@
     outline: none;
 }
 
+body.mac-platform.legacy .navigation-bar {
+    height: 22px;
+}
+
 .navigation-bar .item {
     display: -webkit-flex;
     -webkit-align-items: center;
     -webkit-flex-wrap: wrap;
 
-    height: 21px;
+    height: 28px;
     outline: none;
+}
+
+body.mac-platform.legacy .navigation-bar .item {
+    height: 21px;
 }

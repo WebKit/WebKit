@@ -25,6 +25,11 @@
 
 .sidebar > .panel.navigation.resource > .content,
 .sidebar > .panel.navigation.resource > .empty-content-placeholder {
+    top: 28px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.resource > .content,
+body.mac-platform.legacy .sidebar > .panel.navigation.resource > .empty-content-placeholder {
     top: 21px;
 }
 
@@ -38,15 +43,25 @@
 
     box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
 
-    height: 21px;
+    height: 27px;
 
     white-space: nowrap;
     overflow: hidden;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar {
+    height: 21px;
 }
 
 .sidebar > .panel.navigation.resource > .search-bar > input[type="search"] {
     display: -webkit-flex;
     -webkit-flex: 1;
 
+    margin: 3px 6px;
+    padding-left: 4px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar > input[type="search"] {
     margin: 1px 6px;
+    padding-left: 0;
 }

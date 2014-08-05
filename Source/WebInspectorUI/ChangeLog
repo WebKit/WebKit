@@ -1,5 +1,86 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171885
+
+    2014-07-31  Jonathan Wells  <jonowells@apple.com>
+
+            Web Inspector: Sync button look and feel with Xcode updates.
+            https://bugs.webkit.org/show_bug.cgi?id=135445
+
+            Reviewed by Timothy Hatcher.
+
+            Update styles to match recent changes to Xcode text-only
+            buttons, the navigation bar, and search fields. Include
+            older style rules for older Mac platforms.
+
+            * UserInterface/Views/ButtonNavigationItem.css:
+            (.navigation-bar .item.button.text-only):
+            (body.mac-platform.legacy .navigation-bar .item.button.text-only):
+            * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+            (.sidebar > .panel.details.css-style > .navigation-bar):
+            (.sidebar > .panel.details.css-style > .content):
+            (body.mac-platform.legacy .sidebar > .panel.details.css-style > .content):
+            * UserInterface/Views/DebuggerSidebarPanel.css:
+            (.sidebar > .panel.navigation.debugger > .content):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.debugger > .content):
+            * UserInterface/Views/DividerNavigationItem.css:
+            (.navigation-bar .item.divider):
+            (body.mac-platform.legacy .navigation-bar .item.divider):
+            * UserInterface/Views/FilterBar.css:
+            (.filter-bar):
+            (body.mac-platform.legacy .filter-bar):
+            (.filter-bar > input[type="search"]):
+            (body.mac-platform.legacy .filter-bar > input[type="search"]):
+            * UserInterface/Views/LogContentView.css:
+            (.search-bar.log-search-bar > input[type="search"]):
+            (@media reader):
+            (.log-search-bar > input): Deleted.
+            * UserInterface/Views/Main.css:
+            (#split-content-browser > .navigation-bar):
+            (body.mac-platform.legacy #split-content-browser > .navigation-bar):
+            * UserInterface/Views/NavigationBar.css:
+            (.navigation-bar):
+            (body.mac-platform.legacy .navigation-bar):
+            (.navigation-bar .item):
+            (body.mac-platform.legacy .navigation-bar .item):
+            * UserInterface/Views/NavigationSidebarPanel.css:
+            (.sidebar > .panel.navigation > .content):
+            (body.mac-platform.legacy .sidebar > .panel.navigation > .content):
+            * UserInterface/Views/QuickConsole.css:
+            (.quick-console):
+            (body.mac-platform.legacy .quick-console):
+            * UserInterface/Views/RadioButtonNavigationItem.css:
+            (.navigation-bar .item.radio.button.text-only:hover):
+            (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only:hover):
+            (.navigation-bar .item.radio.button.text-only.selected):
+            (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected):
+            (.navigation-bar .item.radio.button.text-only:active):
+            (.navigation-bar .item.radio.button.text-only.selected:active):
+            (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected:active):
+            * UserInterface/Views/ResourceSidebarPanel.css:
+            (.sidebar > .panel.navigation.resource > .empty-content-placeholder):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.resource > .empty-content-placeholder):
+            (.sidebar > .panel.navigation.resource > .search-bar):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar):
+            (.sidebar > .panel.navigation.resource > .search-bar > input[type="search"]):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar > input[type="search"]):
+            * UserInterface/Views/ScopeBar.css:
+            (.scope-bar > li):
+            (body.mac-platform.legacy .scope-bar > li):
+            (.scope-bar > li:hover):
+            (body.mac-platform.legacy .scope-bar > li:hover):
+            (.scope-bar > li.selected):
+            (.scope-bar > li:active):
+            (body.mac-platform.legacy .scope-bar > li:active):
+            (.scope-bar > li.selected:active):
+            (body.mac-platform.legacy .scope-bar > li.selected:active):
+            * UserInterface/Views/SearchBar.css:
+            (.search-bar > input[type="search"]):
+            (body.mac-platform.legacy .search-bar > input[type="search"]):
+            Update styles and apply older styles to legacy Mac platforms.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171881
 
     2014-07-31  Brian J. Burg  <burg@cs.washington.edu>

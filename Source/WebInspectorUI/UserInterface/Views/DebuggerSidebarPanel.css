@@ -24,6 +24,10 @@
  */
 
 .sidebar > .panel.navigation.debugger > .content {
+    top: 29px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.debugger > .content {
     top: 22px;
 }
 
