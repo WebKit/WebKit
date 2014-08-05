@@ -1,5 +1,59 @@
 2014-08-05  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: ReplayManager shouldn't assume replay status when the inspector is opened
+        https://bugs.webkit.org/show_bug.cgi?id=135212
+
+        Reviewed by Timothy Hatcher.
+
+        The inspector could be closed and reopened at any point during capturing or replaying.
+        ReplayManager should query the current state on initialization rather than assuming
+        that the replay controller is still in its initial state.
+
+        ReplayManager's initialization code requires querying the backend for the current replay
+        state. This could race with replay protocol events that mutate the manager's state before
+        it is fully initialized, leading to undefined behavior.
+
+        To mitigate this, all protocol event handlers (called by ReplayObserver) are wrapped
+        with a guard that enqueues the callback if initialization is not yet complete. This
+        queue is implemented via multiple then-chaining of a shared 'initialization' promise
+        which resolves when initialization completes.
+
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.then):
+        (WebInspector.ReplayManager.catch):
+        (WebInspector.ReplayManager): Rewrite the initialization code to first query the replay
+        state, set the initialization flag to true, and then request and update session records.
+        The sessions must be loaded after querying initial state because ReplayManager.sessionCreated
+        requires replay state to be initialized.
+
+        (WebInspector.ReplayManager.prototype.get sessionState):
+        (WebInspector.ReplayManager.prototype.get segmentState):
+        (WebInspector.ReplayManager.prototype.get activeSessionIdentifier):
+        (WebInspector.ReplayManager.prototype.get activeSegmentIdentifier):
+        (WebInspector.ReplayManager.prototype.get playbackSpeed):
+        (WebInspector.ReplayManager.prototype.set playbackSpeed):
+        (WebInspector.ReplayManager.prototype.get currentPosition): Add assertions to catch uses of
+        manager state before the manager is fully initialized.
+
+        (WebInspector.ReplayManager.prototype.waitUntilInitialized): Added. It returns a shared promise
+        that is fulfilled when initialization is complete.
+
+        (WebInspector.ReplayManager.prototype.captureStarted):
+        (WebInspector.ReplayManager.prototype.captureStopped):
+        (WebInspector.ReplayManager.prototype.playbackStarted):
+        (WebInspector.ReplayManager.prototype.playbackHitPosition):
+        (WebInspector.ReplayManager.prototype.playbackPaused):
+        (WebInspector.ReplayManager.prototype.playbackFinished):
+        (WebInspector.ReplayManager.prototype.sessionModified):
+        (WebInspector.ReplayManager.prototype.sessionLoaded):
+        (WebInspector.ReplayManager.prototype.segmentCompleted.set catch):
+        (WebInspector.ReplayManager.prototype.segmentCompleted):
+        (WebInspector.ReplayManager.prototype.segmentRemoved.then):
+        (WebInspector.ReplayManager.prototype.segmentRemoved):
+        (WebInspector.ReplayManager.prototype.segmentLoaded): Add initialization guards.
+
+2014-08-05  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Replay: rename protocol methods for getting replay session/segment data
         https://bugs.webkit.org/show_bug.cgi?id=135618
 

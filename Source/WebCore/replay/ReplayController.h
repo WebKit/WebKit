@@ -136,10 +136,15 @@ public:
     void willDispatchEvent(const Event&, Frame*);
 
     Page& page() const { return m_page; }
+
     SessionState sessionState() const { return m_sessionState; }
+    SegmentState segmentState() const { return m_segmentState; }
+
     PassRefPtr<ReplaySession> loadedSession() const;
     PassRefPtr<ReplaySessionSegment> loadedSegment() const;
+
     JSC::InputCursor& activeInputCursor() const;
+    ReplayPosition currentPosition() const { return m_currentPosition; }
 
 private:
     // EventLoopInputDispatcherClient API

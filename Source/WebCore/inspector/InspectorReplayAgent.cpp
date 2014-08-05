@@ -93,6 +93,25 @@ static PassRefPtr<TypeBuilder::Replay::ReplaySession> buildInspectorObjectForSes
     return sessionObject.release();
 }
 
+static Inspector::TypeBuilder::Replay::SessionState::Enum buildInspectorObjectForSessionState(SessionState sessionState)
+{
+    switch (sessionState) {
+    case SessionState::Capturing: return Inspector::TypeBuilder::Replay::SessionState::Capturing;
+    case SessionState::Inactive: return Inspector::TypeBuilder::Replay::SessionState::Inactive;
+    case SessionState::Replaying: return Inspector::TypeBuilder::Replay::SessionState::Replaying;
+    }
+}
+
+static Inspector::TypeBuilder::Replay::SegmentState::Enum buildInspectorObjectForSegmentState(SegmentState segmentState)
+{
+    switch (segmentState) {
+    case SegmentState::Appending: return Inspector::TypeBuilder::Replay::SegmentState::Appending;
+    case SegmentState::Unloaded: return Inspector::TypeBuilder::Replay::SegmentState::Unloaded;
+    case SegmentState::Loaded: return Inspector::TypeBuilder::Replay::SegmentState::Loaded;
+    case SegmentState::Dispatching: return Inspector::TypeBuilder::Replay::SegmentState::Dispatching;
+    }
+}
+
 class SerializeInputToJSONFunctor {
 public:
     typedef PassRefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> ReturnType;
@@ -462,6 +481,18 @@ PassRefPtr<ReplaySessionSegment> InspectorReplayAgent::findSegment(ErrorString* 
     }
 
     return it->value;
+}
+
+void InspectorReplayAgent::currentReplayState(ErrorString*, SessionIdentifier* sessionIdentifier, Inspector::TypeBuilder::OptOutput<int>* segmentIdentifier, Inspector::TypeBuilder::Replay::SessionState::Enum* sessionState, Inspector::TypeBuilder::Replay::SegmentState::Enum* segmentState, RefPtr<Inspector::TypeBuilder::Replay::ReplayPosition>& replayPosition)
+{
+    *sessionState = buildInspectorObjectForSessionState(m_page.replayController().sessionState());
+    *segmentState = buildInspectorObjectForSegmentState(m_page.replayController().segmentState());
+
+    *sessionIdentifier = m_page.replayController().loadedSession()->identifier();
+    if (m_page.replayController().loadedSegment())
+        *segmentIdentifier = m_page.replayController().loadedSegment()->identifier();
+
+    replayPosition = buildInspectorObjectForPosition(m_page.replayController().currentPosition());
 }
 
 void InspectorReplayAgent::getAvailableSessions(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<SessionIdentifier>>& sessionsList)

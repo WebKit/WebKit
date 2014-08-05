@@ -34,6 +34,7 @@ WebInspector.ReplayManager = function()
     this._activeSessionIdentifier = null;
     this._activeSegmentIdentifier = null;
     this._currentPosition = new WebInspector.ReplayPosition(0, 0);
+    this._initialized = false;
 
     // These hold actual instances of sessions and segments.
     this._sessions = new Map;
@@ -49,10 +50,27 @@ WebInspector.ReplayManager = function()
     if (!window.ReplayAgent)
         return;
 
-    ReplayAgent.getAvailableSessions.promise()
+    var instance = this;
+
+    this._initializationPromise = ReplayAgent.currentReplayState.promise()
         .then(function(payload) {
+            console.assert(payload.sessionState in WebInspector.ReplayManager.SessionState, "Unknown session state: " + payload.sessionState);
+            console.assert(payload.segmentState in WebInspector.ReplayManager.SegmentState, "Unknown segment state: " + payload.segmentState);
+
+            instance._activeSessionIdentifier = payload.sessionIdentifier;
+            instance._activeSegmentIdentifier = payload.segmentIdentifier;
+            instance._sessionState = WebInspector.ReplayManager.SessionState[payload.sessionState];
+            instance._segmentState = WebInspector.ReplayManager.SegmentState[payload.segmentState];
+            instance._currentPosition = payload.replayPosition;
+
+            instance._initialized = true;
+        }).then(function() {
+            return ReplayAgent.getAvailableSessions.promise();
+        }).then(function(payload) {
             for (var sessionId of payload.ids)
-                WebInspector.replayManager.sessionCreated(sessionId);
+                instance.sessionCreated(sessionId);
+        }).catch(function(err) {
+            console.error("ReplayManager initialization failed: ", err);
         });
 };
 
@@ -99,42 +117,56 @@ WebInspector.ReplayManager.prototype = {
 
     // Public
 
+    // The following state is invalid unless called from a function that's chained
+    // to the (resolved) ReplayManager.waitUntilInitialized promise.
     get sessionState()
     {
+        console.assert(this._initialized);
         return this._sessionState;
     },
 
     get segmentState()
     {
+        console.assert(this._initialized);
         return this._segmentState;
     },
 
     get activeSessionIdentifier()
     {
+        console.assert(this._initialized);
         return this._activeSessionIdentifier;
     },
 
     get activeSegmentIdentifier()
     {
+        console.assert(this._initialized);
         return this._activeSegmentIdentifier;
     },
 
     get playbackSpeed()
     {
+        console.assert(this._initialized);
         return this._playbackSpeed;
     },
 
     set playbackSpeed(value)
     {
+        console.assert(this._initialized);
         this._playbackSpeed = value;
     },
 
     get currentPosition()
     {
+        console.assert(this._initialized);
         return this._currentPosition;
     },
 
     // These return promises even if the relevant instance is already created.
+    waitUntilInitialized: function()
+    {
+        return this._initializationPromise;
+    },
+
     getSession: function(sessionId)
     {
         if (this._sessionPromises.has(sessionId))
@@ -165,8 +197,15 @@ WebInspector.ReplayManager.prototype = {
 
     // Protected (called by ReplayObserver)
 
+    // Since these methods update session and segment state, they depend on the manager
+    // being properly initialized. So, each function body is prepended with a retry guard.
+    // This makes call sites simpler and avoids an extra event loop turn in the common case.
+
     captureStarted: function()
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.captureStarted.bind(this));
+
         this._changeSessionState(WebInspector.ReplayManager.SessionState.Capturing);
 
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.CaptureStarted);
@@ -174,6 +213,9 @@ WebInspector.ReplayManager.prototype = {
 
     captureStopped: function()
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.captureStopped.bind(this));
+
         this._changeSessionState(WebInspector.ReplayManager.SessionState.Inactive);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Unloaded);
 
@@ -182,6 +224,9 @@ WebInspector.ReplayManager.prototype = {
 
     playbackStarted: function()
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.playbackStarted.bind(this));
+
         if (this.sessionState === WebInspector.ReplayManager.SessionState.Inactive)
             this._changeSessionState(WebInspector.ReplayManager.SessionState.Replaying);
 
@@ -192,6 +237,9 @@ WebInspector.ReplayManager.prototype = {
 
     playbackHitPosition: function(replayPosition, timestamp)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.playbackHitPosition.bind(this, replayPosition, timestamp));
+
         console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
         console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Dispatching);
         console.assert(replayPosition instanceof WebInspector.ReplayPosition);
@@ -200,8 +248,11 @@ WebInspector.ReplayManager.prototype = {
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackPositionChanged);
     },
 
-    playbackPaused: function(mark)
+    playbackPaused: function(position)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.playbackPaused.bind(this, position));
+
         console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Loaded);
 
@@ -210,6 +261,9 @@ WebInspector.ReplayManager.prototype = {
 
     playbackFinished: function()
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.playbackFinished.bind(this));
+
         this._changeSessionState(WebInspector.ReplayManager.SessionState.Inactive);
         console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
 
@@ -218,13 +272,15 @@ WebInspector.ReplayManager.prototype = {
 
     sessionCreated: function(sessionId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.sessionCreated.bind(this, sessionId));
+
         console.assert(!this._sessions.has(sessionId), "Tried to add duplicate session identifier:", sessionId);
         var sessionMap = this._sessions;
         this.getSession(sessionId)
             .then(function(session) {
                 sessionMap.set(sessionId, session);
-            })
-            .catch(function(error) {
+            }).catch(function(error) {
                 console.error("Error obtaining session data: ", error);
             });
 
@@ -233,6 +289,9 @@ WebInspector.ReplayManager.prototype = {
 
     sessionModified: function(sessionId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.sessionModified.bind(this, sessionId));
+
         this.getSession(sessionId).then(function(session) {
             session.segmentsChanged();
         });
@@ -240,6 +299,9 @@ WebInspector.ReplayManager.prototype = {
 
     sessionRemoved: function(sessionId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.sessionRemoved.bind(this, sessionId));
+
         console.assert(this._sessions.has(sessionId), "Unknown session identifier:", sessionId);
 
         if (!this._sessionPromises.has(sessionId))
@@ -251,8 +313,7 @@ WebInspector.ReplayManager.prototype = {
         this.getSession(sessionId)
             .catch(function(error) {
                 return Promise.resolve();
-            })
-            .then(function() {
+            }).then(function() {
                 manager._sessionPromises.delete(sessionId);
                 var removedSession = manager._sessions.take(sessionId);
                 console.assert(removedSession);
@@ -262,6 +323,9 @@ WebInspector.ReplayManager.prototype = {
 
     segmentCreated: function(segmentId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.segmentCreated.bind(this, segmentId));
+
         console.assert(!this._segments.has(segmentId), "Tried to add duplicate segment identifier:", segmentId);
 
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Appending);
@@ -277,6 +341,9 @@ WebInspector.ReplayManager.prototype = {
 
     segmentCompleted: function(segmentId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.segmentCompleted.bind(this, segmentId));
+
         var placeholderSegment = this._segments.take(segmentId);
         console.assert(placeholderSegment instanceof WebInspector.IncompleteSessionSegment);
         this._segmentPromises.delete(segmentId);
@@ -285,14 +352,16 @@ WebInspector.ReplayManager.prototype = {
         this.getSegment(segmentId)
             .then(function(segment) {
                 segmentMap.set(segmentId, segment);
-            })
-            .catch(function(error) {
+            }).catch(function(error) {
                 console.error("Error obtaining segment data: ", error);
             });
     },
 
     segmentRemoved: function(segmentId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.segmentRemoved.bind(this, segmentId));
+
         console.assert(this._segments.has(segmentId), "Unknown segment identifier:", segmentId);
 
         if (!this._segmentPromises.has(segmentId))
@@ -304,8 +373,7 @@ WebInspector.ReplayManager.prototype = {
         this.getSegment(segmentId)
             .catch(function(error) {
                 return Promise.resolve();
-            })
-            .then(function() {
+            }).then(function() {
                 manager._segmentPromises.delete(segmentId);
                 var removedSegment = manager._segments.take(segmentId);
                 console.assert(removedSegment);
@@ -315,6 +383,9 @@ WebInspector.ReplayManager.prototype = {
 
     segmentLoaded: function(segmentId)
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.segmentLoaded.bind(this, segmentId));
+
         console.assert(this._segments.has(segmentId), "Unknown segment identifier:", segmentId);
 
         console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
@@ -327,6 +398,9 @@ WebInspector.ReplayManager.prototype = {
 
     segmentUnloaded: function()
     {
+        if (!this._initialized)
+            return this.waitUntilInitialized().then(this.segmentUnloaded.bind(this));
+
         console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Unloaded);
 

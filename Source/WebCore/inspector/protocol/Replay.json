@@ -11,6 +11,16 @@
             "type": "integer"
         },
         {
+            "id": "SessionState", "description": "State machine's state for the session.",
+            "type": "string",
+            "enum": ["Capturing", "Inactive", "Replaying"]
+        },
+        {
+            "id": "SegmentState", "description": "State machine's state for the session segment.",
+            "type": "string",
+            "enum": ["Appending", "Unloaded", "Loaded", "Dispatching"]
+        },
+        {
             "id": "ReplayPosition",
             "type": "object",
             "properties": [
@@ -109,6 +119,17 @@
             "parameters": [
                 { "name": "sessionIdentifier", "$ref": "SessionIdentifier" },
                 { "name": "segmentIndex", "type": "integer" }
+            ]
+        },
+        {
+            "name": "currentReplayState",
+            "description": "Returns the identifier, position, session state and segment state of the currently loaded session. This is necessary because the inspector may be closed and reopened in the middle of replay.",
+            "returns": [
+                { "name": "sessionIdentifier", "$ref": "SessionIdentifier" },
+                { "name": "segmentIdentifier", "$ref": "SegmentIdentifier", "optional": true, "description": "If no segment is currently loaded, then there is no valid segment identifier." },
+                { "name": "sessionState", "$ref": "SessionState" },
+                { "name": "segmentState", "$ref": "SegmentState" },
+                { "name": "replayPosition", "$ref": "ReplayPosition" }
             ]
         },
         {
