@@ -1,5 +1,27 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171869
+
+    2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Right edge of Timeline Record button does not work
+            https://bugs.webkit.org/show_bug.cgi?id=135444
+
+            Reviewed by Timothy Hatcher.
+
+            When hovering the record button we would show the status text, however
+            because the left edge of the status text box would overlap the right
+            edge of the record button causing completely unexpected behavior.
+
+            Position the status text correctly so that it never overlaps the record
+            button. 5px to match the left margin of the record button, and another
+            2px for some padding between the button and text.
+
+            * UserInterface/Views/TimelineSidebarPanel.css:
+            (.sidebar > .panel.navigation.timeline > .status-bar > .record-status):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171866
 
     2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
