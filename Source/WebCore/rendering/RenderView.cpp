@@ -996,7 +996,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
 
 #if ENABLE(SERVICE_CONTROLS)
             for (auto& rect : selectionInfo->rects())
-                m_selectionRectGatherer.addRect(rect);
+                m_selectionRectGatherer.addRect(selectionInfo->repaintContainer(), rect);
 #endif
 
             newSelectedObjects.set(o, WTF::move(selectionInfo));
@@ -1010,7 +1010,7 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
                 cb = cb->containingBlock();
 
 #if ENABLE(SERVICE_CONTROLS)
-                m_selectionRectGatherer.addRects(blockInfo->rects());
+                m_selectionRectGatherer.addGapRects(blockInfo->repaintContainer(), blockInfo->rects());
 #endif
             }
         }

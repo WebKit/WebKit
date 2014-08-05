@@ -1,5 +1,37 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172013
+
+    2014-08-04  Tim Horton  <timothy_horton@apple.com>
+
+            Selection services menu dropdown is in the wrong place when selecting some text on Yelp
+            https://bugs.webkit.org/show_bug.cgi?id=135582
+            <rdar://problem/17837636>
+
+            Reviewed by Simon Fraser.
+
+            * editing/SelectionRectGatherer.cpp:
+            (WebCore::SelectionRectGatherer::addRect):
+            (WebCore::SelectionRectGatherer::addGapRects):
+            (WebCore::SelectionRectGatherer::addRects): Deleted.
+            Rename addRects to addGapRects for clarity.
+            Map rects and gapRects to absolute RenderView coordinates so that
+            they are in a form WebKit2 can use. Previously they were sometimes
+            relative to a different repaint container, but that information was
+            lost when moving through SelectionRectGatherer.
+
+            Ideally we would keep selection rects as full quads instead of rects
+            for more of their life, but that problem is much deeper than just SelectionRectGatherer.
+
+            * editing/SelectionRectGatherer.h:
+            Add a comment clarifying the coordinate space of the stored selection rects.
+
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::applySubtreeSelection):
+            Rename addRects to addGapRects for clarity.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172006
 
     2014-08-04  Joseph Pecoraro  <pecoraro@apple.com>
