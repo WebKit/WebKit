@@ -1,5 +1,33 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171973
+
+    2014-08-02  Jeremy Jones  <jeremyj@apple.com>
+
+            Support both window and view based video fullscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=135525
+
+            Reviewed by Simon Fraser.
+
+            Presenting in a separate window gives greater flexibility for rotation separately from the app.
+            Presenting in the same window works better if the interface is rehosted in another process.
+
+            * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+            (-[WebVideoFullscreenController enterFullscreen:]): Use clientRect instead of screenRect.
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.h: Add m_window and m_parentView.
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: 
+            (-[WebAVVideoLayer setBounds:]): Parent view might not be fullscreen; use window instead.
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreen): Conditionally create UIWindow and UIViewController for fullscreen.
+            (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Video, not the container should have black background.
+            (WebVideoFullscreenInterfaceAVKit::exitFullscreen): Conditionally translate finalRect.
+            (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen): Clean up UIWindow and force status bar to correct orientation.
+            (WebVideoFullscreenInterfaceAVKit::invalidate): Clean up UIWindow.
+            (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): Hide window and exit without animation.
+            * platform/ios/WebVideoFullscreenModelMediaElement.mm:
+            (WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer): Apply frame, because it may have been set before the layer.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171952
 
     2014-08-01  Beth Dakin  <bdakin@apple.com>

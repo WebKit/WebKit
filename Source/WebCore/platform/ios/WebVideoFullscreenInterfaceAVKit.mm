@@ -42,6 +42,7 @@
 #import <AVKit/AVVideoLayer.h>
 #import <CoreMedia/CMTime.h>
 #import <UIKit/UIKit.h>
+#import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
@@ -59,6 +60,7 @@ SOFT_LINK_CLASS(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS(AVKit, AVValueTiming)
 
 SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIApplication)
 SOFT_LINK_CLASS(UIKit, UIScreen)
 SOFT_LINK_CLASS(UIKit, UIWindow)
 SOFT_LINK_CLASS(UIKit, UIView)
@@ -515,7 +517,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     if (![_avPlayerController delegate] || !_avPlayerViewController)
         return;
 
-    UIView* rootView = [[_avPlayerViewController parentViewController] view];
+    UIView* rootView = [[_avPlayerViewController view] window];
     if (!rootView)
         return;
 
@@ -742,10 +744,16 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
 
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
+        m_parentView = parentView;
 
-        m_viewController = adoptNS([[getUIViewControllerClass() alloc] init]);
-        [[m_viewController view] setFrame:parentView.bounds];
-        [parentView addSubview:[m_viewController view]];
+        if (!applicationIsAdSheet()) {
+            m_window = adoptNS([[getUIWindowClass() alloc] initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
+            [m_window setBackgroundColor:[getUIColorClass() clearColor]];
+            m_viewController = adoptNS([[getUIViewControllerClass() alloc] init]);
+            [[m_viewController view] setFrame:[m_window bounds]];
+            [m_window setRootViewController:m_viewController.get()];
+            [m_window makeKeyAndVisible];
+        }
         
         [m_videoLayer removeFromSuperlayer];
         
@@ -763,10 +771,17 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
         [m_playerViewController setDelegate:playerController()];
         [m_videoLayerContainer setPlayerViewController:m_playerViewController.get()];
 
-        [m_viewController addChildViewController:m_playerViewController.get()];
-        [[m_viewController view] addSubview:[m_playerViewController view]];
-        [m_playerViewController view].frame = initialRect;
+        if (m_viewController) {
+            [m_viewController addChildViewController:m_playerViewController.get()];
+            [[m_viewController view] addSubview:[m_playerViewController view]];
+            [m_playerViewController view].frame = [parentView convertRect:initialRect toView:nil];
+        } else {
+            [parentView addSubview:[m_playerViewController view]];
+            [m_playerViewController view].frame = initialRect;
+        }
+
         [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
+        [[m_playerViewController view] setNeedsLayout];
         [[m_playerViewController view] layoutIfNeeded];
 
         [CATransaction commit];
@@ -785,7 +800,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[m_playerViewController view] setBackgroundColor:[getUIColorClass() blackColor]];
+        [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() blackColor] CGColor]];
         [m_playerViewController enterFullScreenWithCompletionHandler:^(BOOL, NSError*)
         {
             [m_playerViewController setShowsPlaybackControls:YES];
@@ -804,11 +819,16 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [m_playerViewController setShowsPlaybackControls:NO];
-        [m_playerViewController view].frame = finalRect;
+        if (m_viewController)
+            [m_playerViewController view].frame = [m_parentView convertRect:finalRect toView:nil];
+        else
+            [m_playerViewController view].frame = finalRect;
+
         if ([m_videoLayerContainer videoLayerGravity] != AVVideoLayerGravityResizeAspect)
             [m_videoLayerContainer setVideoLayerGravity:AVVideoLayerGravityResizeAspect];
         [[m_playerViewController view] layoutIfNeeded];
         [m_playerViewController exitFullScreenWithCompletionHandler:^(BOOL, NSError*) {
+            [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
             [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
             if (m_fullscreenChangeObserver)
                 m_fullscreenChangeObserver->didExitFullscreen();
@@ -817,15 +837,29 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(WebCore::IntRect finalRect
     });
 }
 
+@interface UIApplication ()
+-(void)_setStatusBarOrientation:(UIInterfaceOrientation)o;
+@end
+
+@interface UIWindow ()
+-(UIInterfaceOrientation)interfaceOrientation;
+@end
+
 void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
 {
     // Retain this to extend object life until async block completes.
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (m_window) {
+            [m_window setHidden:YES];
+            [m_window setRootViewController:nil];
+            [[getUIApplicationClass() sharedApplication] _setStatusBarOrientation:[[m_parentView window] interfaceOrientation]];
+        }
         [m_playerViewController setDelegate:nil];
         [[m_playerViewController view] removeFromSuperview];
-        [m_playerViewController removeFromParentViewController];
+        if (m_viewController)
+            [m_playerViewController removeFromParentViewController];
         [m_playerViewController setPlayerController:nil];
         m_playerViewController = nil;
         [m_videoLayer removeFromSuperlayer];
@@ -835,6 +869,8 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
         m_videoLayerContainer = nil;
         [[m_viewController view] removeFromSuperview];
         m_viewController = nil;
+        m_window = nil;
+        m_parentView = nil;
         
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didCleanupFullscreen();
@@ -844,10 +880,14 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
 
 void WebVideoFullscreenInterfaceAVKit::invalidate()
 {
+    [m_window setHidden:YES];
+    [m_window setRootViewController:nil];
+    [m_playerViewController exitFullScreenAnimated:NO completionHandler:nil];
     m_playerController = nil;
     [m_playerViewController setDelegate:nil];
     [[m_playerViewController view] removeFromSuperview];
-    [m_playerViewController removeFromParentViewController];
+    if (m_viewController)
+        [m_playerViewController removeFromParentViewController];
     [m_playerViewController setPlayerController:nil];
     m_playerViewController = nil;
     [m_videoLayer removeFromSuperlayer];
@@ -857,6 +897,8 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
     m_videoLayerContainer = nil;
     [[m_viewController view] removeFromSuperview];
     m_viewController = nil;
+    m_window = nil;
+    m_parentView = nil;
 }
 
 void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
@@ -864,7 +906,8 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     __block RefPtr<WebVideoFullscreenInterfaceAVKit> protect(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        [m_playerViewController exitFullScreenWithCompletionHandler:^(BOOL, NSError*) {
+        [m_window setHidden:YES];
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:^(BOOL, NSError*) {
             protect = nullptr;
         }];
     });
