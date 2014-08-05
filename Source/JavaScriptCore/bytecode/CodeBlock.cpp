@@ -2398,6 +2398,14 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
     for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
         m_objectAllocationProfiles[i].visitAggregate(visitor);
 
+#if ENABLE(DFG_JIT)
+    if (JITCode::isOptimizingJIT(jitType())) {
+        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+        if (dfgCommon->inlineCallFrames.get())
+            dfgCommon->inlineCallFrames->visitAggregate(visitor);
+    }
+#endif
+
     updateAllPredictions();
 }
 
