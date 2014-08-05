@@ -79,22 +79,57 @@ _changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
         Filler change.
 """
 
-class CommitMessageForThisCommitTest(unittest.TestCase):
-    expected_commit_message = u"""Unreviewed build fix to un-break webkit-patch land.
+_changelog3 = u"""2014-07-17  David Kilzer  <ddkilzer@apple.com>
 
+        SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        <http://webkit.org/b/135006>
 
-Tools: 
-Move commit_message_for_this_commit from scm to checkout
-https://bugs.webkit.org/show_bug.cgi?id=36629
+        Reviewed by Darin Adler.
 
-* Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
-
-LayoutTests: 
-Second part of this complicated change by me, Tor Arne Vestb\u00f8!
-
-* Path/To/Complicated/File: Added.
+        * WebKit.xcodeproj/project.pbxproj: Remove references to unused
+        WebKit.xcconfig file.
 """
 
+_changelog4 = u"""2014-07-17  David Kilzer  <ddkilzer@apple.com>
+
+        SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        <http://webkit.org/b/135006>
+
+        Reviewed by Darin Adler.
+
+        * Path/To/Complicated/File: Added.
+"""
+
+_changelog5 = u"""2014-07-17  David Kilzer  <ddkilzer@apple.com>
+
+        SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        <http://webkit.org/b/135006>
+
+        Reviewed by Darin Adler.
+
+        Filler change.
+
+        * Path/To/Complicated/File: Added.
+"""
+
+_changelog6 = u"""2014-06-23  Daniel Bates  <dabates@apple.com>
+
+        Rolling out r170340 and r170339.
+
+        Changeset r170339 broke the Apple Windows Debug and Release builds.
+
+        Reverted changesets:
+
+        "[Win] Build fix after r134209"
+        http://trac.webkit.org/changeset/170340
+
+        "[Win] Clean up and refactor WinLauncher"
+        https://bugs.webkit.org/show_bug.cgi?id=134209
+        http://trac.webkit.org/changeset/170339
+"""
+
+
+class CommitMessageForThisCommitTest(unittest.TestCase):
     def setUp(self):
         # FIXME: This should not need to touch the filesystem, however
         # ChangeLog is difficult to mock at current.
@@ -110,8 +145,8 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
         # treat a bare .svn directory being part of an svn checkout.
         self.filesystem.maybe_make_directory(".svn")
 
-        self.changelogs = map(self.filesystem.abspath, (self.filesystem.join("Tools", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
-        for path, contents in zip(self.changelogs, (_changelog1, _changelog2)):
+    def mock_changelog(self, changelogs):
+        for path, contents in zip(self.changelog_paths, changelogs):
             self.filesystem.maybe_make_directory(self.filesystem.dirname(path))
             self.filesystem.write_text_file(path, contents)
 
@@ -119,7 +154,7 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
         self.filesystem.rmtree(self.temp_dir)
         self.filesystem.chdir(self.old_cwd)
 
-    def test_commit_message_for_this_commit(self):
+    def mock_checkout_for_test(self):
         executive = Executive()
 
         def mock_run(*args, **kwargs):
@@ -139,12 +174,163 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
         real_checkout = Checkout(real_scm)
         checkout = Checkout(mock_scm)
         checkout.script_path = real_checkout.script_path
-        checkout.modified_changelogs = lambda git_commit, changed_files=None: self.changelogs
+        checkout.modified_changelogs = lambda git_commit, changed_files=None: self.changelog_paths
+
+        return checkout
+
+    def test_commit_message_for_unreviewed_changelogs_with_different_messages(self):
+        expected_commit_message = u"""Unreviewed build fix to un-break webkit-patch land.
+
+Tools:
+
+Move commit_message_for_this_commit from scm to checkout
+https://bugs.webkit.org/show_bug.cgi?id=36629
+
+* Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
+
+LayoutTests:
+
+Second part of this complicated change by me, Tor Arne Vestb\u00f8!
+
+* Path/To/Complicated/File: Added.
+"""
+
+        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Tools", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
+
+        self.mock_changelog((_changelog1, _changelog2))
+        checkout = self.mock_checkout_for_test()
         commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
         # Throw away the first line - a warning about unknown VCS root.
         commit_message.message_lines = commit_message.message_lines[1:]
-        self.assertMultiLineEqual(commit_message.message(), self.expected_commit_message)
+        self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
+    def test_commit_message_for_one_reviewed_changelog(self):
+        expected_commit_message = u"""
+SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+<http://webkit.org/b/135006>
+
+Patch by David Kilzer <ddkilzer@apple.com> on 2014-07-17
+Reviewed by Darin Adler.
+
+* WebKit.xcodeproj/project.pbxproj: Remove references to unused
+WebKit.xcconfig file.
+"""
+
+        self.changelog_paths = map(self.filesystem.abspath, [self.filesystem.join("Source/WebKit", "ChangeLog")])
+
+        self.mock_changelog([_changelog3])
+        checkout = self.mock_checkout_for_test()
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
+        # Throw away the first line - a warning about unknown VCS root.
+        commit_message.message_lines = commit_message.message_lines[1:]
+        self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
+
+    def test_commit_message_for_changelogs_with_same_messages(self):
+        expected_commit_message = u"""SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+<http://webkit.org/b/135006>
+
+Patch by David Kilzer <ddkilzer@apple.com> on 2014-07-17
+Reviewed by Darin Adler.
+
+Source/WebKit:
+
+* WebKit.xcodeproj/project.pbxproj: Remove references to unused
+WebKit.xcconfig file.
+
+LayoutTests:
+
+* Path/To/Complicated/File: Added.
+"""
+
+        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Source/WebKit", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
+
+        self.mock_changelog((_changelog3, _changelog4))
+        checkout = self.mock_checkout_for_test()
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
+        # Throw away the first line - a warning about unknown VCS root.
+        commit_message.message_lines = commit_message.message_lines[1:]
+        self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
+
+    def test_commit_message_for_changelogs_with_different_messages(self):
+        expected_commit_message = u"""SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+<http://webkit.org/b/135006>
+
+Patch by David Kilzer <ddkilzer@apple.com> on 2014-07-17
+Reviewed by Darin Adler.
+
+Source/WebKit:
+
+* WebKit.xcodeproj/project.pbxproj: Remove references to unused
+WebKit.xcconfig file.
+
+LayoutTests:
+
+Filler change.
+
+* Path/To/Complicated/File: Added.
+"""
+
+        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Source/WebKit", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
+
+        self.mock_changelog((_changelog3, _changelog5))
+        checkout = self.mock_checkout_for_test()
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
+        # Throw away the first line - a warning about unknown VCS root.
+        commit_message.message_lines = commit_message.message_lines[1:]
+        self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
+
+    def test_commit_message_for_one_rollout_changelog(self):
+        expected_commit_message = u"""
+Rolling out r170340 and r170339.
+
+Changeset r170339 broke the Apple Windows Debug and Release builds.
+
+Reverted changesets:
+
+"[Win] Build fix after r134209"
+http://trac.webkit.org/changeset/170340
+
+"[Win] Clean up and refactor WinLauncher"
+https://bugs.webkit.org/show_bug.cgi?id=134209
+http://trac.webkit.org/changeset/170339
+
+Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
+"""
+
+        self.changelog_paths = map(self.filesystem.abspath, [self.filesystem.join("Tools", "ChangeLog")])
+
+        self.mock_changelog([_changelog6])
+        checkout = self.mock_checkout_for_test()
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
+        # Throw away the first line - a warning about unknown VCS root.
+        commit_message.message_lines = commit_message.message_lines[1:]
+        self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
+
+    def test_commit_message_for_rollout_changelogs_with_different_directories(self):
+        expected_commit_message = u"""Rolling out r170340 and r170339.
+
+Changeset r170339 broke the Apple Windows Debug and Release builds.
+
+Reverted changesets:
+
+"[Win] Build fix after r134209"
+http://trac.webkit.org/changeset/170340
+
+"[Win] Clean up and refactor WinLauncher"
+https://bugs.webkit.org/show_bug.cgi?id=134209
+http://trac.webkit.org/changeset/170339
+
+Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
+"""
+
+        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Tools", "ChangeLog"), self.filesystem.join("Source/WebCore", "ChangeLog")))
+
+        self.mock_changelog((_changelog6, _changelog6))
+        checkout = self.mock_checkout_for_test()
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
+        # Throw away the first line - a warning about unknown VCS root.
+        commit_message.message_lines = commit_message.message_lines[1:]
+        self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
 class CheckoutTest(unittest.TestCase):
     def _make_checkout(self):
@@ -221,7 +407,7 @@ class CheckoutTest(unittest.TestCase):
 
     def test_bug_id_for_this_commit(self):
         checkout = self._make_checkout()
-        checkout.commit_message_for_this_commit = lambda git_commit, changed_files=None: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
+        checkout.commit_message_for_this_commit = lambda git_commit, changed_files=None, return_stderr=False: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
         self.assertEqual(checkout.bug_id_for_this_commit(git_commit=None), 36629)
 
     def test_modified_changelogs(self):

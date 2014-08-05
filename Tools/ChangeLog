@@ -1,3 +1,26 @@
+2014-08-05  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Fix the commit-log-editor after r167243 and add more unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=131727
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/commit-log-editor:
+        (createCommitMessage):
+        (removeLongestCommonPrefixEndingInNewline):
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CommitMessageForThisCommitTest):
+        (CommitMessageForThisCommitTest.mock_changelog):
+        (CommitMessageForThisCommitTest.mock_checkout_for_test):
+        (CommitMessageForThisCommitTest.test_commit_message_for_unreviewed_changelogs_with_different_messages):
+        (test_commit_message_for_one_reviewed_changelog):
+        (test_commit_message_for_changelogs_with_same_messages):
+        (test_commit_message_for_changelogs_with_different_messages):
+        (test_commit_message_for_one_rollout_changelog):
+        (test_commit_message_for_rollout_changelogs_with_different_directories):
+        (setUp): Deleted.
+        (test_commit_message_for_this_commit): Deleted.
+
 2014-08-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] run-launcher --gtk is broken

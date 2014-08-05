@@ -344,7 +344,10 @@ sub createCommitMessage(@)
         next if ($changeLogContents{$label} eq "\n");
         if (keys %changeLogSort > 1) {
             push @result, normalizeLineEndings("\n", $endl);
-            push @result, normalizeLineEndings("$label: ", $endl);
+            push @result, normalizeLineEndings("$label:\n", $endl);
+        }
+        if (!$commonPrefix) {
+            push @result, normalizeLineEndings("\n", $endl);
         }
         push @result, normalizeLineEndings($changeLogContents{$label}, $endl);
     }
@@ -399,7 +402,7 @@ sub removeLongestCommonPrefixEndingInNewline(\%)
     foreach my $key (keys %{$hashOfStrings}) {
         $hashOfStrings->{$key} = substr($hashOfStrings->{$key}, $lastNewline);
     }
-    return substr($prefix, 0, $lastNewline + 1);
+    return substr($prefix, 0, $lastNewline);
 }
 
 sub isCommitLogEditor($)
