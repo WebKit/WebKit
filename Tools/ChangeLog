@@ -1,3 +1,15 @@
+2014-08-05  Vivek Galatage  <vivek.vg@samsung.com>
+
+        [gtk] Include llvm-dev(el) package to satisfy mesa build configuration
+        https://bugs.webkit.org/show_bug.cgi?id=135555
+
+        Reviewed by Philippe Normand.
+
+        Initial setup of gtk on linux requires this package to be installed.
+        This is required during the build configuration of mesa through jhbuild.
+
+        * gtk/install-dependencies:
+
 2014-08-05  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix the commit-log-editor after r167243 and add more unit tests
