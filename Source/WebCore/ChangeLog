@@ -39,6 +39,45 @@
 
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171866
+
+    2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: console.profile missing profile information
+            https://bugs.webkit.org/show_bug.cgi?id=135432
+
+            Reviewed by Timothy Hatcher.
+
+            By switching console.profile to start/stop the timeline we would
+            not have a chance to recompile JS functions with profiling information.
+            This used to work because whenever the inspector was open we would
+            have profiling information enabled. Go back to that behavior.
+
+            * inspector/InspectorController.cpp:
+            (WebCore::InspectorController::profilerEnabled):
+            Instead of checking if the timeline agent has started, check if the
+            timeline agent has been created. Going back to the normal behavior
+            of always having profiling information when the inspector is open.
+
+            * inspector/InspectorTimelineAgent.h:
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::didCreateFrontendAndBackend):
+            Recompile initializing the timeline agent to include profiling information.
+
+            (WebCore::InspectorTimelineAgent::willDestroyFrontendAndBackend):
+            Recompile destrying the timeline agent, only if needed.
+
+            (WebCore::InspectorTimelineAgent::willCallFunction):
+            (WebCore::InspectorTimelineAgent::didCallFunction):
+            (WebCore::InspectorTimelineAgent::willEvaluateScript):
+            (WebCore::InspectorTimelineAgent::didEvaluateScript):
+            Using a boolean to track nested calls would not give expected
+            behavior when un-nesting. Switch to a counter to ensure that
+            as we start profiling in the outermost level we then stop
+            profiling at that same level and not inside an inner nesting.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171851
 
     2014-07-31  Jer Noble  <jer.noble@apple.com>
