@@ -1,5 +1,22 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171895
+
+    2014-07-31  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Video in an <embed> has a bad aspect ratio when in fullscreen mode.
+            https://bugs.webkit.org/show_bug.cgi?id=135481
+
+            Reviewed by Simon Fraser.
+
+            Do not change the gravity of our AVPlayerLayer when in full screen mode; its gravity
+            is controlled by setVideoFullscreenGravity(), and should not be affected by style changes.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171932
 
     2014-08-01  Tim Horton  <timothy_horton@apple.com>
