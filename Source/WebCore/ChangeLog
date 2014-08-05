@@ -1,5 +1,23 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172026
+
+    2014-08-04  Jer Noble  <jer.noble@apple.com>
+
+            [MSE][Mac] Seeking past buffered range will not resume playback when seek completes.
+            https://bugs.webkit.org/show_bug.cgi?id=135591
+
+            Reviewed by Eric Carlson.
+
+            If a seek is delayed due to seeking into an unbuffered area, playback will not be restarted
+            at that point. Instead, playback must resume when enough media data has been added, and
+            the MediaSource indicates the seek should complete.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172018
 
     2014-08-04  Tim Horton  <timothy_horton@apple.com>

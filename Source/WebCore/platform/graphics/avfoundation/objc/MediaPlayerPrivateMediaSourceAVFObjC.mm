@@ -489,6 +489,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
         return;
     LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted(%p)", this);
     m_seekCompleted = true;
+    if (shouldBePlaying())
+        [m_synchronizer setRate:m_rate];
     if (!m_seeking)
         m_player->timeChanged();
 }
