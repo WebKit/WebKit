@@ -1,5 +1,16 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171892
+
+    2014-07-31  Beth Dakin  <bdakin@apple.com>
+
+            Test failure fix. I accidentally removed this file that is still used by another 
+            test in the directory.
+
+            * platform/mac-wk2/tiled-drawing/resources/iframe-to-hit-test.html: Added.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171891
 
     2014-07-31  Beth Dakin  <bdakin@apple.com>
