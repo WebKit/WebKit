@@ -10298,6 +10298,7 @@ inline void CSSParser::parseIdentifier(CharacterType*& result, CSSParserString& 
 
         parseIdentifierInternal(currentCharacter<CharacterType>(), result16, hasEscape);
 
+        result += result16 - start16;
         resultString.init(start16, result16 - start16);
 
         return;

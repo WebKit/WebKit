@@ -1,3 +1,29 @@
+2014-08-05  Martin Hodovan  <mhodovan.u-szeged@partner.samsung.com>
+
+        ASSERTION FAILED: name[0] == '@' && length >= 2 in WebCore::CSSParser::detectAtToken
+        https://bugs.webkit.org/show_bug.cgi?id=134632
+
+        At-rules must consist of at least two characters: the '@' symbol followed by
+        an identifier name. The failure of this condition makes the assertion fail.
+
+        The length of an at-rule is currently calculated by pointer arithmetic on
+        the 'result' pointer, which is expected to be set to the end of the at-rule
+        identifier by the WebCore::*CSSTokenizer::parseIdentifier method.
+        If the at-rule token is a sequence of 8-bit-only characters then
+        'result' will point correctly at the end of the identifier. However, if
+        the at-rule contains a 16-bit Unicode escape then 'result' will not be
+        updated correctly anymore, hence it cannot be used for length calculation.
+        The patch makes the parseIdentifier bump the result pointer even in the 16-bit slow case.
+
+        Patch by Renata Hodovan, backported from Chromium: https://codereview.chromium.org/241053002
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/atrule-with-escape-character-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::realLex):
+
 2014-08-04  Andy Estes  <aestes@apple.com>
 
         [iOS] The raw bytes of an iWork document's PDF preview are displayed rather than the PDF itself
