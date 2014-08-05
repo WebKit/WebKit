@@ -141,20 +141,12 @@ void ScrollView::platformSetTopContentInset(float topContentInset)
 IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    IntRect visibleContentRect = platformVisibleContentRectIncludingObscuredArea(includeScrollbars);
 
-    IntRect visibleContentRect = enclosingIntRect([scrollView() documentVisibleRect]);
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
     visibleContentRect.move(scrollView().contentInsets.left, scrollView().contentInsets.top);
     visibleContentRect.contract(scrollView().contentInsets.left + scrollView().contentInsets.right, scrollView().contentInsets.top + scrollView().contentInsets.bottom);
 #endif
-
-    if (includeScrollbars) {
-        IntSize frameSize = IntSize([scrollView() frame].size);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
-        frameSize.contract(scrollView().contentInsets.left + scrollView().contentInsets.right, scrollView().contentInsets.top + scrollView().contentInsets.bottom);
-#endif
-        visibleContentRect.setSize(frameSize);
-    }
 
     return visibleContentRect;
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -165,6 +157,27 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 IntSize ScrollView::platformVisibleContentSize(bool includeScrollbars) const
 {
     return platformVisibleContentRect(includeScrollbars).size();
+}
+
+IntRect ScrollView::platformVisibleContentRectIncludingObscuredArea(bool includeScrollbars) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    IntRect visibleContentRectIncludingObscuredArea = enclosingIntRect([scrollView() documentVisibleRect]);
+
+    if (includeScrollbars) {
+        IntSize frameSize = IntSize([scrollView() frame].size);
+        visibleContentRectIncludingObscuredArea.setSize(frameSize);
+    }
+
+    return visibleContentRectIncludingObscuredArea;
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return IntRect();
+}
+
+IntSize ScrollView::platformVisibleContentSizeIncludingObscuredArea(bool includeScrollbars) const
+{
+    return platformVisibleContentRectIncludingObscuredArea(includeScrollbars).size();
 }
 
 void ScrollView::platformSetContentsSize()

@@ -1,5 +1,59 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171951
+
+    2014-08-01  Beth Dakin  <bdakin@apple.com>
+
+            Inspector highlights clipped at the bottom on the page in WK1 views with 
+            contentInsets
+            https://bugs.webkit.org/show_bug.cgi?id=135480
+            -and corresponding-
+            <rdar://problem/17850323>
+
+            Reviewed by Simon Fraser.
+
+            unscaledTotalVisibleContentSize() was the main function on Mac that was expected 
+            to return the rect representing ALL visible content, including content that might 
+            be in an inset area and obscured by UI elements. This patch re-names that function 
+            to unscaledVisibleContentSizeIncludingObscuredArea(), and that patch makes that 
+            function return the right thing in the platformWidget() case.
+
+            Re-name.
+            * inspector/InspectorOverlay.cpp:
+            (WebCore::InspectorOverlay::update):
+
+            Return platformVisibleContentSizeIncludingObscuredArea() for the platformWidget() 
+            case and re-name.
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::unscaledVisibleContentSizeIncludingObscuredArea):
+
+            This was just wrong. It was returning the big rectangle instead of the small one 
+            for platformWidget().
+            (WebCore::ScrollView::unscaledUnobscuredVisibleContentSize):
+
+            New platform functions.
+            (WebCore::ScrollView::platformVisibleContentRectIncludingObscuredArea):
+            (WebCore::ScrollView::platformVisibleContentSizeIncludingObscuredArea):
+            (WebCore::ScrollView::unscaledTotalVisibleContentSize): Deleted.
+            * platform/ScrollView.h:
+            * platform/ios/ScrollViewIOS.mm:
+            (WebCore::ScrollView::platformVisibleContentRectIncludingObscuredArea):
+            (WebCore::ScrollView::platformVisibleContentSizeIncludingObscuredArea):
+            * platform/mac/ScrollViewMac.mm:
+            (WebCore::ScrollView::platformVisibleContentRect):
+            (WebCore::ScrollView::platformVisibleContentSize):
+            (WebCore::ScrollView::platformVisibleContentRectIncludingObscuredArea):
+            (WebCore::ScrollView::platformVisibleContentSizeIncludingObscuredArea):
+
+            Re-name.
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+            (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+            (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+            (WebCore::RenderLayerCompositor::ensureRootLayer):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172047
 
     2014-08-05  Dean Jackson  <dino@apple.com>

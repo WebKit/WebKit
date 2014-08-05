@@ -460,7 +460,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         rootLayer->flushCompositingState(visibleRect);
 #else
         // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
-        IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.unscaledTotalVisibleContentSize()) : frameView.visibleContentRect();
+        IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.unscaledVisibleContentSizeIncludingObscuredArea()) : frameView.visibleContentRect();
         if (!frameView.exposedRect().isInfinite())
             visibleRect.intersect(IntRect(frameView.exposedRect()));
         rootLayer->flushCompositingState(visibleRect);
@@ -1562,7 +1562,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
 {
     if (m_clipLayer) {
         const FrameView& frameView = m_renderView.frameView();
-        m_clipLayer->setSize(frameView.unscaledTotalVisibleContentSize());
+        m_clipLayer->setSize(frameView.unscaledVisibleContentSizeIncludingObscuredArea());
         m_clipLayer->setPosition(positionForClipLayer());
 
         frameViewDidScroll();
@@ -1970,7 +1970,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
         m_rootContentLayer->setAnchorPoint(FloatPoint3D());
     }
     if (m_clipLayer) {
-        m_clipLayer->setSize(m_renderView.frameView().unscaledTotalVisibleContentSize());
+        m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSizeIncludingObscuredArea());
         m_clipLayer->setPosition(positionForClipLayer());
     }
 
@@ -3268,7 +3268,7 @@ void RenderLayerCompositor::ensureRootLayer()
             m_clipLayer->addChild(m_scrollLayer.get());
             m_scrollLayer->addChild(m_rootContentLayer.get());
 
-            m_clipLayer->setSize(m_renderView.frameView().unscaledTotalVisibleContentSize());
+            m_clipLayer->setSize(m_renderView.frameView().unscaledVisibleContentSizeIncludingObscuredArea());
             m_clipLayer->setPosition(positionForClipLayer());
             m_clipLayer->setAnchorPoint(FloatPoint3D());
 

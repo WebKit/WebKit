@@ -344,8 +344,8 @@ void InspectorOverlay::update()
         return;
 
     FrameView* overlayView = overlayPage()->mainFrame().view();
-    IntSize viewportSize = view->unscaledTotalVisibleContentSize();
-    IntSize frameViewFullSize = view->unscaledTotalVisibleContentSize(ScrollableArea::IncludeScrollbars);
+    IntSize viewportSize = view->unscaledVisibleContentSizeIncludingObscuredArea();
+    IntSize frameViewFullSize = view->unscaledVisibleContentSizeIncludingObscuredArea(ScrollableArea::IncludeScrollbars);
     overlayPage()->setPageScaleFactor(m_page.pageScaleFactor(), IntPoint());
     frameViewFullSize.scale(m_page.pageScaleFactor());
     overlayView->resize(frameViewFullSize);

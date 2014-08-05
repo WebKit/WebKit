@@ -195,6 +195,16 @@ IntSize ScrollView::platformVisibleContentSize(bool includeScrollbars) const
     return IntSize();
 }
 
+IntRect ScrollView::platformVisibleContentRectIncludingObscuredArea(bool includeScrollbars) const
+{
+    return platformVisibleContentRect(includeScrollbars);
+}
+
+IntSize ScrollView::platformVisibleContentSizeIncludingObscuredArea(bool includeScrollbars) const
+{
+    return platformVisibleContentSize(includeScrollbars);
+}
+
 LegacyTileCache* ScrollView::legacyTileCache()
 {
     // Make tile cache pointer available via the main frame only. Tile cache interaction should be managed by
