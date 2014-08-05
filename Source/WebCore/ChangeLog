@@ -1,3 +1,19 @@
+2014-08-05  Dean Jackson  <dino@apple.com>
+
+        [Media iOS] Ensure there is a nice default fallback for missing wireless target names
+        https://bugs.webkit.org/show_bug.cgi?id=135488
+        <rdar://problem/17879156>
+
+        Reviewed by Antoine Quint.
+
+        Antoine found me on iMessage to tell me I'm an idiot and that I've
+        forgotten how to write JavaScript. Embarrassingly, this code is what
+        I originally had, but then second-guessed myself.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.updateWirelessPlaybackStatus): No need for the local
+        variable or conditional statement, since null and "" both evaluate as false.
+
 2014-08-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: Extremely flashy scrolling while a page is still loading (because of flush throttling)
