@@ -110,11 +110,8 @@ ControllerIOS.prototype = {
             var deviceType = "";
             var type = this.host.externalDeviceType;
             if (type == "airplay") {
-                var externalDeviceDisplayName = this.host.externalDeviceDisplayName;
-                if (!externalDeviceDisplayName || externalDeviceDisplayName == "")
-                    externalDeviceDisplayName = "Apple TV";
                 deviceType = this.UIString('##WIRELESS_PLAYBACK_DEVICE_TYPE##');
-                deviceName = this.UIString('##WIRELESS_PLAYBACK_DEVICE_NAME##', '##DEVICE_NAME##', externalDeviceDisplayName);
+                deviceName = this.UIString('##WIRELESS_PLAYBACK_DEVICE_NAME##', '##DEVICE_NAME##', this.host.externalDeviceDisplayName || "Apple TV");
             } else if (type == "tvout") {
                 deviceType = this.UIString('##TVOUT_DEVICE_TYPE##');
                 deviceName = this.UIString('##TVOUT_DEVICE_NAME##');
