@@ -1,3 +1,17 @@
+2014-08-05  Filip Pizlo  <fpizlo@apple.com>
+
+        NewFunctionExpression and NewFunctionNoCheck should setHaveStructures(true)
+        https://bugs.webkit.org/show_bug.cgi?id=135430
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/new-function-expression-has-structures.js: Added.
+        (foo.f):
+        (foo.f.prototype.f):
+        (foo):
+
 2014-07-30  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171825
