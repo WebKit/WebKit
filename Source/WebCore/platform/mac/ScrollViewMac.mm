@@ -36,6 +36,7 @@
 
 @interface NSScrollView (Details)
 - (NSEdgeInsets)contentInsets;
+@property BOOL automaticallyAdjustsContentInsets;
 @end
 
 @interface NSWindow (WebWindowDetails)

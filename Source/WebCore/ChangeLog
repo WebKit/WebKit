@@ -1,5 +1,15 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171905
+
+    2014-07-31  Timothy Horton  <timothy_horton@apple.com>
+
+            Build fix for platforms where we should have automaticallyAdjustsContentInsets but it isn't public yet
+
+            * platform/mac/ScrollViewMac.mm:
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171891
 
     2014-07-31  Beth Dakin  <bdakin@apple.com>
