@@ -1,5 +1,46 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172032
+
+    2014-08-05  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Seeking occasionally causes many frames to be displayed in "fast forward" mode
+            https://bugs.webkit.org/show_bug.cgi?id=135422
+
+            Reviewed by Eric Carlson.
+
+            Three related fixes:
+
+            In reenqueueMediaForTime(), update TrackBuffer.lastEnqueuedPresentationTime when we flush
+            samples, so that the next time samples are re-enqueued, the starting point for re-enqueueing
+            is correct.
+
+            In sourceBufferPrivateDidReceiveSample(), do not add samples to the decode queue
+            if they are before the current media time.
+
+            When a seek is pending, but samples for the new time is not yet present in the SourceBuffer,
+            the SourceBufferPrivate may signal that it's ready for new samples through the
+            sourceBufferPrivateDidBecomeReadyForMoreSamples() method. In this situation, we should not
+            continue to provideMediaData(), as that will append samples from the prior-to-seeking media
+            timeline. Since the timeline may have moved forward due to the seek, a decoder may decide to
+            display those frames as quickly as possible (the "fast forward" behavior) in order to catch
+            up to the new current time.
+
+            If a re-enqueue is pending, don't provide media data in response to being notified that the
+            SourceBufferPrivate is ready for more samples. Wait until samples for the new current time
+            are appended.
+
+            Also, don't provide media data if we are waiting for a seek to complete.
+
+            * Modules/mediasource/MediaSource.h:
+            (WebCore::MediaSource::isSeeking): Convenience method.
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+            (WebCore::SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples):
+            (WebCore::SourceBuffer::reenqueueMediaForTime):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172028
 
     2014-08-05  Chris Fleizach  <cfleizach@apple.com>

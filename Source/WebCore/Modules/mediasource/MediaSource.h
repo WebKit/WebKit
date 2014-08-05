@@ -79,6 +79,7 @@ public:
     bool attachToElement(HTMLMediaElement*);
     void close();
     void monitorSourceBuffers();
+    bool isSeeking() const { return m_pendingSeekTime.isValid(); }
     void completeSeek();
 
     void setDuration(double, ExceptionCode&);
