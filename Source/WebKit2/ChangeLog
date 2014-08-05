@@ -1,5 +1,38 @@
 2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172031. <rdar://problem/17864079>
+
+    2014-08-05  Oliver Hunt  <oliver@apple.com>
+    
+            SSO expects to be able to walk parent application's bundle
+            https://bugs.webkit.org/show_bug.cgi?id=135581
+            <rdar://problem/17864079>
+    
+            Reviewed by Alexey Proskuryakov.
+    
+            SSO expects to be able to walk the parent application's
+            bundle looking for Info plists. To allow this to actually
+            work we provide an extension from the ui process that
+            covers the bundle directory, and then in the profile
+            restrict access to the ability to read directories and
+            files named Info.plist.
+    
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            * Shared/Network/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * Shared/Network/NetworkProcessCreationParameters.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::ensureNetworkProcess):
+            (WebKit::WebContext::parentBundleDirectory):
+            * UIProcess/WebContext.h:
+            * UIProcess/mac/WebContextMac.mm:
+            (WebKit::WebContext::parentBundleDirectory):
+    
+2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172016. <rdar://problem/17896295>
 
     2014-08-04  Benjamin Poulain  <bpoulain@apple.com>

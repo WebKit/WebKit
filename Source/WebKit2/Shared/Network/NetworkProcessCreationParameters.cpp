@@ -47,6 +47,8 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
 #if PLATFORM(IOS)
     encoder << hstsDatabasePath;
     encoder << hstsDatabasePathExtensionHandle;
+    encoder << parentBundleDirectory;
+    encoder << parentBundleDirectoryExtensionHandle;
 #endif
     encoder << shouldUseTestingNetworkSession;
 #if ENABLE(CUSTOM_PROTOCOLS)
@@ -87,6 +89,10 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.hstsDatabasePath))
         return false;
     if (!decoder.decode(result.hstsDatabasePathExtensionHandle))
+        return false;
+    if (!decoder.decode(result.parentBundleDirectory))
+        return false;
+    if (!decoder.decode(result.parentBundleDirectoryExtensionHandle))
         return false;
 #endif
     if (!decoder.decode(result.shouldUseTestingNetworkSession))

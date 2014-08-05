@@ -323,6 +323,13 @@ String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
 #endif
 }
 
+#if PLATFORM(IOS)
+String WebContext::parentBundleDirectory() const
+{
+    return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
+}
+#endif
+
 String WebContext::containerTemporaryDirectory() const
 {
     String path = NSTemporaryDirectory();
