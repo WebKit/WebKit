@@ -1,5 +1,27 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171944
+
+    2014-07-31  Dean Jackson  <dino@apple.com>
+
+            [Media iOS] Ensure there is a nice default fallback for missing wireless target names
+            https://bugs.webkit.org/show_bug.cgi?id=135488
+            <rdar://problem/17879156>
+
+            Reviewed by Eric Carlson.
+
+            We occasionally run into cases where this.host.externalDeviceDisplayName
+            is empty or null, creating a pretty ugly/confusing string in the
+            wireless playback status screen.
+
+            If this happens, we should default to using "Apple TV".
+
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.updateWirelessPlaybackStatus): Check if the externalDeviceDisplayName
+            is empty or null, and fall back to "Apple TV" if so.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171937
 
     2014-08-01  Jer Noble  <jer.noble@apple.com>
