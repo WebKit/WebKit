@@ -1,3 +1,26 @@
+2014-08-05  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: shown() called on a content view when stepping over an instruction in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=135311
+
+        Reviewed by Timothy Hatcher.
+
+        ContentViewContainer should not repeatedly call ContentView.prototype.shown 
+        on ContentViews that are already visible. ContentViewContainer now passes
+        a flag to BackForwardEntry.prototype.prepareToShow indicating whether it should
+        call the shown function on the ContentView it is about to display.
+        ContentViewContainer.prototype.showBackForwardEntryForIndex passes in this
+        flag based on its ContentView being visible.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WebInspector.BackForwardEntry.prototype.prepareToShow):
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showBackForwardEntryForIndex):
+        (WebInspector.ContentViewContainer.prototype.replaceContentView):
+        (WebInspector.ContentViewContainer.prototype.closeAllContentViewsOfPrototype):
+        (WebInspector.ContentViewContainer.prototype.shown):
+        (WebInspector.ContentViewContainer.prototype._showEntry):
+
 2014-08-01  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: Timeline header height doesn't match style updates.

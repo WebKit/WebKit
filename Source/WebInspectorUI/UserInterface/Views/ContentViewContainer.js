@@ -190,16 +190,19 @@ WebInspector.ContentViewContainer.prototype = {
         if (this._currentIndex === index)
             return;
 
-        // Hide the currently visible content view.
         var previousEntry = this.currentBackForwardEntry;
-        if (previousEntry)
-            this._hideEntry(previousEntry);
-
         this._currentIndex = index;
         var currentEntry = this.currentBackForwardEntry;
         console.assert(currentEntry);
 
-        this._showEntry(currentEntry);
+        var isNewContentView = !previousEntry || !currentEntry.contentView.visible;
+        if (isNewContentView) {
+            // Hide the currently visible content view.
+            if (previousEntry)
+                this._hideEntry(previousEntry);
+            this._showEntry(currentEntry, true);
+        } else
+            this._showEntry(currentEntry, false);
 
         this.dispatchEventToListeners(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange);
     },
@@ -240,7 +243,7 @@ WebInspector.ContentViewContainer.prototype = {
 
         // Re-show the current entry, because its content view instance was replaced.
         if (currentlyShowing) {
-            this._showEntry(this.currentBackForwardEntry);
+            this._showEntry(this.currentBackForwardEntry, true);
             this.dispatchEventToListeners(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
     },
@@ -296,7 +299,7 @@ WebInspector.ContentViewContainer.prototype = {
         console.assert(currentEntry || (!currentEntry && this._currentIndex === -1));
 
         if (currentEntry && currentEntry.contentView !== oldCurrentContentView || backForwardListDidChange) {
-            this._showEntry(currentEntry);
+            this._showEntry(currentEntry, true);
             this.dispatchEventToListeners(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
     },
@@ -352,7 +355,7 @@ WebInspector.ContentViewContainer.prototype = {
         if (!currentEntry)
             return;
 
-        this._showEntry(currentEntry);
+        this._showEntry(currentEntry, true);
     },
 
     hidden: function()
@@ -393,12 +396,12 @@ WebInspector.ContentViewContainer.prototype = {
         contentView.closed();
     },
 
-    _showEntry: function(entry)
+    _showEntry: function(entry, shouldCallShown)
     {
         console.assert(entry instanceof WebInspector.BackForwardEntry);
 
         this._addContentViewElement(entry.contentView);
-        entry.prepareToShow();
+        entry.prepareToShow(shouldCallShown);
     },
 
     _hideEntry: function(entry)

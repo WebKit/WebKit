@@ -52,12 +52,13 @@ WebInspector.BackForwardEntry.prototype = {
         return Object.shallowCopy(this._cookie);
     },
 
-    prepareToShow: function()
+    prepareToShow: function(shouldCallShown)
     {
         this._restoreFromCookie();
 
         this.contentView.visible = true;
-        this.contentView.shown();
+        if (shouldCallShown)
+            this.contentView.shown();
         this.contentView.updateLayout();
     },
 
