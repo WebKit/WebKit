@@ -1,5 +1,49 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171940
+
+    2014-08-01  Jonathan Wells  <jonowells@apple.com>
+
+            Web Inspector: Timeline header height doesn't match style updates.
+            https://bugs.webkit.org/show_bug.cgi?id=135516
+
+            Reviewed by Timothy Hatcher.
+
+            Update the timeline header height to match the updates
+            to the navigation bars in other panels made in
+            https://bugs.webkit.org/show_bug.cgi?id=135445. Also
+            update the shadows on some of the search bars.
+
+            * UserInterface/Views/FilterBar.css:
+            (.filter-bar > input[type="search"]):
+            (body.mac-platform.legacy .filter-bar > input[type="search"]):
+            * UserInterface/Views/FindBanner.css:
+            (.find-banner > input[type="search"]):
+            (body.mac-platform.legacy .find-banner > input[type="search"]):
+            * UserInterface/Views/LogContentView.css:
+            (.search-bar.log-search-bar > input[type="search"]):
+            (body.mac-platform.legacy .search-bar.log-search-bar > input[type="search"]):
+            Remove inset shadows on search bars.
+
+            * UserInterface/Views/TimelineSidebarPanel.css:
+            (.sidebar > .panel.navigation.timeline > .status-bar):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar):
+            (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+            (.sidebar > .panel.navigation.timeline > .status-bar > .record-status):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-status):
+            (.sidebar > .panel.navigation.timeline > .title-bar.timelines):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timelines):
+            (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+            (.sidebar > .panel.navigation.timeline > .timelines-content):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content):
+            (.sidebar > .panel.navigation.timeline > .empty-content-placeholder):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .empty-content-placeholder):
+            Update the height of the timeline status bar.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171908
 
     2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
