@@ -359,6 +359,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(IOS_AIRPLAY)
         m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker);
 #endif
+    } else {
+        // Relax RequireUserGestureForFullscreen when mediaPlaybackRequiresUserGesture is not set:
+        m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForFullscreen);
     }
 #endif // !PLATFORM(IOS)
 
