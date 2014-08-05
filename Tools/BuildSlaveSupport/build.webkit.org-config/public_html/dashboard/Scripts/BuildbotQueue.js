@@ -49,7 +49,7 @@ BuildbotQueue = function(buildbot, id, info)
 
 BaseObject.addConstructorFunctions(BuildbotQueue);
 
-BuildbotQueue.MaximumQueuesToLoad = 10;
+BuildbotQueue.RecentIterationsToLoad = 10;
 
 BuildbotQueue.Event = {
     IterationsAdded: "iterations-added",
@@ -118,7 +118,7 @@ BuildbotQueue.prototype = {
         return null;
     },
 
-    update: function(iterationsToLoad)
+    update: function()
     {
         if (this.buildbot.needsAuthentication && this.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
             return;
@@ -132,15 +132,11 @@ BuildbotQueue.prototype = {
             if (data.currentBuilds instanceof Array)
                 data.currentBuilds.forEach(function(id) { currentBuilds[id] = true; });
 
-            if (!iterationsToLoad)
-                iterationsToLoad = data.cachedBuilds.length;
-
-            var stop = Math.max(0, data.cachedBuilds.length - iterationsToLoad);
-            var loadingStop = Math.max(0, data.cachedBuilds.length - BuildbotQueue.MaximumQueuesToLoad);
+            var loadingStop = Math.max(0, data.cachedBuilds.length - BuildbotQueue.RecentIterationsToLoad);
 
             var newIterations = [];
 
-            for (var i = data.cachedBuilds.length - 1; i >= stop; --i) {
+            for (var i = data.cachedBuilds.length - 1; i >= 0; --i) {
                 var iteration = this._knownIterations[data.cachedBuilds[i]];
                 if (!iteration) {
                     iteration = new BuildbotIteration(this, parseInt(data.cachedBuilds[i], 10), !(data.cachedBuilds[i] in currentBuilds));
