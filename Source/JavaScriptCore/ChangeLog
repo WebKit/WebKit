@@ -1,5 +1,15 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171949
+
+    2014-08-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+            URTBF after r171946 to fix non-Apple builds.
+
+            * bytecode/InlineCallFrameSet.cpp:
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171946
 
     2014-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
