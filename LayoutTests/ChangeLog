@@ -1,5 +1,19 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172028
+
+    2014-08-05  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Select text activity should return replaced text instead of previously selected text
+            https://bugs.webkit.org/show_bug.cgi?id=135595
+
+            Reviewed by Mario Sanchez Prada.
+
+            * platform/mac/accessibility/select-text-expected.txt:
+            * platform/mac/accessibility/select-text.html:
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171892
 
     2014-07-31  Beth Dakin  <bdakin@apple.com>

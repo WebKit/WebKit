@@ -1,5 +1,23 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172028
+
+    2014-08-05  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Select text activity should return replaced text instead of previously selected text
+            https://bugs.webkit.org/show_bug.cgi?id=135595
+
+            Reviewed by Mario Sanchez Prada.
+
+            When the select activity API is used to replace text, the replacement string should be returned instead of the old selected text.
+
+            Updated existing test: platform/mac/accessibility/select-text.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::AccessibilityObject::selectText):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172026
 
     2014-08-04  Jer Noble  <jer.noble@apple.com>

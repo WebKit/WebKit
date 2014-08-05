@@ -654,8 +654,13 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
                 break;
             }
             
-            if (replaceSelection)
+            // A bit obvious, but worth noting the API contract for this method is that we should
+            // return the replacement string when replacing, but the selected string if not.
+            if (replaceSelection) {
                 frame->editor().replaceSelectionWithText(replacementString, true, true);
+                return replacementString;
+            }
+            
             return closestString;
         }
     }

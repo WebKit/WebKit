@@ -78,35 +78,35 @@
         // Select and replace text closest to selection (single search string).
         selectElementText(target);
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "quick", "slow");
-        shouldBe("result", "'quick'");
+        shouldBe("result", "'slow'");
         selection = selectedText();
         shouldBe("selection", "'slow'");
         
         // Select and replace text closest to selection (multiple search strings).
         selectElementText(target);
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", ["dog", "fox"], "cat");
-        shouldBe("result", "'fox'");
+        shouldBe("result", "'cat'");
         selection = selectedText();
         shouldBe("selection", "'cat'");
 
         // Select brown and capitalize it.
         selectElementText(target);
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "brown", null, "AXSelectTextActivityFindAndCapitalize");
-        shouldBe("result", "'brown'");
+        shouldBe("result", "'Brown'");
         selection = selectedText();
         shouldBe("selection", "'Brown'");
 
         // Select Brown and lowercase it.
         selectElementText(target);
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "Brown", null, "AXSelectTextActivityFindAndLowercase");
-        shouldBe("result", "'Brown'");
+        shouldBe("result", "'brown'");
         selection = selectedText();
         shouldBe("selection", "'brown'");
 
         // Select brown and uppercase it.
         selectElementText(target);
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "brown", null, "AXSelectTextActivityFindAndUppercase");
-        shouldBe("result", "'brown'");
+        shouldBe("result", "'BROWN'");
         selection = selectedText();
         shouldBe("selection", "'BROWN'");
 
