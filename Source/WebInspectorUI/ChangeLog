@@ -1,5 +1,22 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171908
+
+    2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: "Stop Recording" button feels unresponsive, recording takes a long time to stop
+            https://bugs.webkit.org/show_bug.cgi?id=135490
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Controllers/TimelineManager.js:
+            (WebInspector.TimelineManager.prototype.stopCapturing):
+            Immediately stop the recording without waiting for an event from the backend.
+            This makes the Web Inspector UI feel responsive to the user stopping the recording.
+            This also matches behavior before r171195.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171894
 
     2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
