@@ -1,5 +1,27 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172083
+
+    2014-08-05  Dean Jackson  <dino@apple.com>
+
+            [iOS] Media controls layout incorrectly in RTL content
+            https://bugs.webkit.org/show_bug.cgi?id=135621
+            <rdar://problem/17849206>
+
+            Reviewed by Eric Carlson.
+
+            Media controls should always layout in LTR mode, even when the
+            page content is RTL. There already was a rule to do this on
+            non-iOS systems, but it wasn't getting included for iOS.
+            In this case I put the rule on the composited parent of the
+            controls in order to maintain the padding of the control panel.
+            This should still leave the captions unaffected.
+
+            * Modules/mediacontrols/mediaControlsiOS.css:
+            (video::-webkit-media-controls-panel-composited-parent): Add direction: ltr.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172053
 
     2014-08-05  Antti Koivisto  <antti@apple.com>
