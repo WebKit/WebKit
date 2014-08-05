@@ -1,3 +1,11 @@
+2014-08-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Turn off features we don't want to ship this cycle.
+        <rdar://problem/17922754>
+
+        * win/tools/vsprops/FeatureDefines.props: Match with
+        changes in <http://trac.webkit.org/changeset/171178>
+
 2014-07-31  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171870
