@@ -306,6 +306,11 @@ InspectorBackend.Agent.prototype = {
         return this._events[eventName];
     },
 
+    hasEvent: function(eventName)
+    {
+        return eventName in this._events;
+    },
+
     dispatchEvent: function(eventName, eventArguments)
     {
         if (!(eventName in this._dispatcher)) {

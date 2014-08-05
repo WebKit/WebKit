@@ -1,5 +1,28 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171894
+
+    2014-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Timeline recording is not working inspecting iOS 7 and earlier
+            https://bugs.webkit.org/show_bug.cgi?id=135466
+
+            Reviewed by Timothy Hatcher.
+
+            Start / stop capturing for older backends that won't emit start / stop events.
+
+            * UserInterface/Protocol/InspectorBackend.js:
+            (InspectorBackend.Agent.prototype.hasEvent):
+            Provide a way to check if an event is supported.
+
+            * UserInterface/Controllers/TimelineManager.js:
+            (WebInspector.TimelineManager.prototype.startCapturing):
+            (WebInspector.TimelineManager.prototype.stopCapturing):
+            Fallback to starting and stopping capturing manually if the backend
+            does not provide the events.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171885
 
     2014-07-31  Jonathan Wells  <jonowells@apple.com>
