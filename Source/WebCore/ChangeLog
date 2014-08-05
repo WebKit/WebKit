@@ -1,3 +1,14 @@
+2014-08-05  Peyton Randolph  <prandolph@apple.com>
+
+        Rename MAC_LONG_PRESS feature flag to LONG_MOUSE_PRESS.
+        https://bugs.webkit.org/show_bug.cgi?id=135276
+
+        Reviewed by Beth Dakin.
+
+        No new tests. Just a compiler flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-08-05  Dean Jackson  <dino@apple.com>
 
         [Media iOS] Ensure there is a nice default fallback for missing wireless target names
