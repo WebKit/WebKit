@@ -1,5 +1,46 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171943
+
+    2014-08-01  Oliver Hunt  <oliver@apple.com>
+
+            Various frameworks may want to use the container temp directory, so our current restrictions are too tight
+            https://bugs.webkit.org/show_bug.cgi?id=135518
+            <rdar://17869279>
+
+            Reviewed by Anders Carlsson.
+
+            We don't (and can't) have complete knowledge of what different frameworks
+            will want to use the container temporary directory for, and so our
+            current attempt to heavily restrict access is simply too tight.
+
+            This patch recognises this by simply giving read-write access to the
+            entire NSTemporary() directory (e.g. $container/tmp in the general case),
+            rather than the single sub directory we wishfully thought that we would
+            be able to get away with.
+
+            * Shared/WebProcessCreationParameters.cpp:
+            (WebKit::WebProcessCreationParameters::encode):
+            (WebKit::WebProcessCreationParameters::decode):
+            * Shared/WebProcessCreationParameters.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::createNewWebProcess):
+            (WebKit::WebContext::mediaCacheDirectory): Deleted.
+            * UIProcess/WebContext.h:
+            * UIProcess/efl/WebContextEfl.cpp:
+            (WebKit::WebContext::containerTemporaryDirectory):
+            (WebKit::WebContext::platformMediaCacheDirectory): Deleted.
+            * UIProcess/gtk/WebContextGtk.cpp:
+            (WebKit::WebContext::containerTemporaryDirectory):
+            (WebKit::WebContext::platformMediaCacheDirectory): Deleted.
+            * UIProcess/mac/WebContextMac.mm:
+            (WebKit::WebContext::containerTemporaryDirectory):
+            (WebKit::WebContext::platformMediaCacheDirectory): Deleted.
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171928
 
     2014-08-01  Dan Bernstein  <mitz@apple.com>

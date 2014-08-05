@@ -154,7 +154,7 @@ String WebContext::platformDefaultOpenGLCacheDirectory() const
     return String();
 }
 
-String WebContext::platformMediaCacheDirectory() const
+String WebContext::containerTemporaryDirectory() const
 {
     notImplemented();
     return String();
