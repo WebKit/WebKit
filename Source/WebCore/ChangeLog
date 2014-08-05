@@ -1,5 +1,23 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172018
+
+    2014-08-04  Tim Horton  <timothy_horton@apple.com>
+
+            Lots of crashes in WebKit1 after r172013.
+            https://bugs.webkit.org/show_bug.cgi?id=135582
+            <rdar://problem/17837636>
+
+            Reviewed by Enrica Casucci.
+
+            * editing/SelectionRectGatherer.cpp:
+            (WebCore::SelectionRectGatherer::addRect):
+            (WebCore::SelectionRectGatherer::addGapRects):
+            Don't try to do local-to-absolute coordinate conversion if we don't have
+            a repaint container, which happens a lot in WebKit1.
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172013
 
     2014-08-04  Tim Horton  <timothy_horton@apple.com>
