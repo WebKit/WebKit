@@ -2276,6 +2276,9 @@ static LayerFlushThrottleState::Flags determineLayerFlushThrottleState(Page& pag
     // We only throttle when constantly receiving new data during the inital page load.
     if (!page.progress().isMainLoadProgressing())
         return 0;
+    // Scrolling during page loading disables throttling.
+    if (page.mainFrame().view()->wasScrolledByUser())
+        return 0;
     // Disable for image documents so large GIF animations don't get throttled during loading.
     auto* document = page.mainFrame().document();
     if (!document || isImageDocument(*document))
@@ -3566,6 +3569,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     if (m_wasScrolledByUser == wasScrolledByUser)
         return;
     m_wasScrolledByUser = wasScrolledByUser;
+    updateLayerFlushThrottling();
     adjustTiledBackingCoverage();
 }
 
