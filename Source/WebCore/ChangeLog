@@ -1,5 +1,84 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171891
+
+    2014-07-31  Beth Dakin  <bdakin@apple.com>
+
+            Hit-testing broken in WebKit 1 views with AppKit's contentInsets
+            https://bugs.webkit.org/show_bug.cgi?id=135434
+            -and corresponding-
+            <rdar://problem/17850323>
+
+            Reviewed by Benjamin Poulain.
+
+            AppKit's contentInsets are factored into scroll positions and mouse positions, but
+            in WebCore, we generally want all of those things to be factored out so that, for
+            example, the scroll position of a document pinned to the top is the same whether
+            or not there is a contentInset. So to fix hit-testing in WebKit 1 views with
+            contentInsets, this patch factors the inset out or into of all coordinate
+            conversion methods just like we do for the WebKit2 contentInset.
+
+            This patch also adds the ability to test WK1 platformContentInsets with
+            window.internals, and it re-names convertFromRenderer to 
+            convertFromRendererToContainingView and also re-names convertToRenderer to
+            convertFromContainingViewToRenderer.
+
+            ScrollView::topContentInset() takes an optional parameter indicating whether the
+            caller wants the WebCore::Page contentInset or the platform content inset. It’s
+            necessary to distinguish between these cases because there is a lot of code that
+            only wants the WebCore::Page contentInset since that feature is actually
+            implemented in WebCore as opposed to being implemented at the platform level.
+            * WebCore.exp.in:
+            * page/FrameView.cpp:
+            (WebCore::FrameView::topContentInset):
+
+            For layout test purposes, set the platforTopContentInset here if there is a 
+            platformWidget().
+            (WebCore::FrameView::topContentInsetDidChange):
+
+            Re-named functions, also all coordinate conversion functions call 
+            topContentInset(ManualOrPlatformContentInset)
+            (WebCore::FrameView::convertFromContainingViewToRenderer):
+            (WebCore::FrameView::convertToContainingView):
+            (WebCore::FrameView::convertFromContainingView):
+            (WebCore::FrameView::convertFromRenderer): Deleted.
+            (WebCore::FrameView::convertToRenderer): Deleted.
+            * page/FrameView.h:
+            * page/Page.cpp:
+            (WebCore::Page::setTopContentInset):
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::documentScrollOffsetRelativeToViewOrigin):
+            (WebCore::ScrollView::documentScrollPositionRelativeToViewOrigin):
+            (WebCore::ScrollView::contentsToRootView):
+            (WebCore::ScrollView::rootViewToTotalContents):
+            (WebCore::ScrollView::contentsToWindow):
+            (WebCore::ScrollView::platformTopContentInset):
+            (WebCore::ScrollView::platformSetTopContentInset):
+            * platform/ScrollView.h:
+            (WebCore::ScrollView::topContentInset):
+            * platform/ios/ScrollViewIOS.mm:
+            (WebCore::ScrollView::platformTopContentInset):
+            (WebCore::ScrollView::platformSetTopContentInset):
+
+            Implement new platform inset-related functions using AppKit's implementation.
+            * platform/mac/ScrollViewMac.mm:
+            (WebCore::ScrollView::platformTopContentInset):
+            (WebCore::ScrollView::platformSetTopContentInset):
+
+            When we set the scroll position for the documentView, we have to factor the inset
+            back into the WebCore scroll position.
+            (WebCore::ScrollView::platformSetScrollPosition):
+
+            Re-named functions.
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::convertFromScrollbarToContainingView):
+            (WebCore::RenderLayer::convertFromContainingViewToScrollbar):
+            * rendering/RenderListBox.cpp:
+            (WebCore::RenderListBox::convertFromScrollbarToContainingView):
+            (WebCore::RenderListBox::convertFromContainingViewToScrollbar):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171889
 
     2014-07-31  Tim Horton  <timothy_horton@apple.com>

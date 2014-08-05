@@ -161,6 +161,15 @@ void ScrollView::setActualScrollPosition(const IntPoint& position)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+float ScrollView::platformTopContentInset(float) const
+{
+    return 0;
+}
+
+void ScrollView::platformSetTopContentInset()
+{
+}
+
 IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

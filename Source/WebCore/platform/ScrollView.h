@@ -156,7 +156,13 @@ public:
     void setCanBlitOnScroll(bool);
     bool canBlitOnScroll() const;
 
-    virtual float topContentInset() const { return 0; }
+    // There are at least three types of contentInset. Usually we just care about WebCoreContentInset, which is the inset
+    // that is set on a Page that requires WebCore to move its layers to accomodate the inset. However, there are platform
+    // concepts that are similar on both iOS and Mac when there is a platformWidget(). Sometimes we need the Mac platform value
+    // for topContentInset, so when the TopContentInsetType is WebCoreOrPlatformContentInset, platformTopContentInset()
+    // will be returned instead of the value set on Page.
+    enum class TopContentInsetType { WebCoreContentInset, WebCoreOrPlatformContentInset };
+    virtual float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const { return 0; }
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the unobscured viewport
     // width and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them
@@ -407,6 +413,9 @@ protected:
 
     // Called to update the scrollbars to accurately reflect the state of the view.
     void updateScrollbars(const IntSize& desiredOffset);
+
+    float platformTopContentInset() const;
+    void platformSetTopContentInset(float);
 
 private:
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
