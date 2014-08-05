@@ -1,5 +1,15 @@
 2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172034. <rdar://problem/17864079>
+
+    2014-08-05  Alexey Proskuryakov  <ap@apple.com>
+    
+            Build fix.
+    
+            * UIProcess/WebContext.h:
+    
+2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172031. <rdar://problem/17864079>
 
     2014-08-05  Oliver Hunt  <oliver@apple.com>
