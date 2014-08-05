@@ -80,7 +80,10 @@ struct PaintInfo {
         return !subtreePaintRoot || subtreePaintRoot == &renderer;
     }
 
+    bool forceTextColor() const { return forceBlackText() || forceWhiteText(); }
     bool forceBlackText() const { return paintBehavior & PaintBehaviorForceBlackText; }
+    bool forceWhiteText() const { return paintBehavior & PaintBehaviorForceWhiteText; }
+    Color forcedTextColor() const { return (forceBlackText()) ? Color::black : Color::white; }
 
     bool skipRootBackground() const { return paintBehavior & PaintBehaviorSkipRootBackground; }
     bool paintRootBackgroundOnly() const { return paintBehavior & PaintBehaviorRootBackgroundOnly; }

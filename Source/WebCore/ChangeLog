@@ -1,3 +1,37 @@
+2014-08-05  Peyton Randolph  <prandolph@apple.com>
+
+        Add the ability to force text to render in white, not just black
+        https://bugs.webkit.org/show_bug.cgi?id=135625
+
+        Reviewed by Beth Dakin.
+
+        This patch introduces PaintBehaviorForceWhiteText, a complement to PaintBehaviorForceBlackText. If
+        a client specifies both PaintBehaviorForceWhiteText and PaintBehaviorForceBlackText, the text will be
+        painted black.
+
+        No new tests.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint): Use the forced text color to paint the text if requested.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Disable the text shadow if a text color has been forced.
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::forceTextColor): 
+        Return true iff the client has requested to force a black or white text color.
+        (WebCore::PaintInfo::forceWhiteText):
+        Return true iff forcing white text has been requested.
+        (WebCore::PaintInfo::forcedTextColor): 
+        Return the forced text color. Currently only white and black are supported.
+        * rendering/PaintPhase.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents): Remove the forceBlackText-related code as it is redundant.
+        (WebCore::RenderLayer::paintForegroundForFragments): 
+        Remove forceBlackText parameter and infer the correct behavior from the given paint behavior.
+        * rendering/RenderLayer.h:
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle): Use the forced text color if available.
+        (WebCore::computeTextSelectionPaintStyle): Use the forced text color if available.
+
 2014-08-05  Alex Christensen  <achristensen@webkit.org>
 
         More work on CMake.

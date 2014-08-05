@@ -4047,7 +4047,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     if (localPaintingInfo.overlapTestRequests && isSelfPaintingLayer)
         performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
-    bool forceBlackText = localPaintingInfo.paintBehavior & PaintBehaviorForceBlackText;
     bool selectionOnly  = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
     
     PaintBehavior paintBehavior = PaintBehaviorNormal;
@@ -4087,7 +4086,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     if (isPaintingCompositedForeground) {
         if (shouldPaintContent)
             paintForegroundForFragments(layerFragments, context, transparencyLayerContext, paintingInfo.paintDirtyRect, haveTransparency,
-                localPaintingInfo, paintBehavior, subtreePaintRootForRenderer, selectionOnly, forceBlackText);
+                localPaintingInfo, paintBehavior, subtreePaintRootForRenderer, selectionOnly);
     }
 
     if (shouldPaintOutline)
@@ -4428,7 +4427,7 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
 
 void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragments, GraphicsContext* context, GraphicsContext* transparencyLayerContext,
     const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo& localPaintingInfo, PaintBehavior paintBehavior,
-    RenderObject* subtreePaintRootForRenderer, bool selectionOnly, bool forceBlackText)
+    RenderObject* subtreePaintRootForRenderer, bool selectionOnly)
 {
     // Begin transparency if we have something to paint.
     if (haveTransparency) {
@@ -4440,8 +4439,14 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
             }
         }
     }
-    
-    PaintBehavior localPaintBehavior = forceBlackText ? (PaintBehavior)PaintBehaviorForceBlackText : paintBehavior;
+
+    PaintBehavior localPaintBehavior;
+    if (localPaintingInfo.paintBehavior & PaintBehaviorForceBlackText)
+        localPaintBehavior = PaintBehaviorForceBlackText;
+    else if (localPaintingInfo.paintBehavior & PaintBehaviorForceWhiteText)
+        localPaintBehavior = PaintBehaviorForceWhiteText;
+    else
+        localPaintBehavior = paintBehavior;
 
     // Optimize clipping for the single fragment case.
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !layerFragments[0].foregroundRect.isEmpty();

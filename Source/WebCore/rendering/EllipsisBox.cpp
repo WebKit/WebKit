@@ -59,7 +59,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
         paintSelection(context, paintOffset, lineStyle, font);
 
         // Select the correct color for painting the text.
-        Color foreground = paintInfo.forceBlackText() ? Color::black : blockFlow().selectionForegroundColor();
+        Color foreground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : blockFlow().selectionForegroundColor();
         if (foreground.isValid() && foreground != textColor)
             context->setFillColor(foreground, lineStyle.colorSpace());
     }
