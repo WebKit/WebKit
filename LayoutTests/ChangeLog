@@ -1,3 +1,11 @@
+2014-08-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures after 172008 and r172010.
+        Remove expectations for test that now pass after r171964 (revert of r171957).
+        Update expectations for new flaky tests.
+
 2014-08-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] shape-margin not respected when it extends beyond an explicitly set margin
