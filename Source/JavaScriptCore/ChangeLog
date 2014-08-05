@@ -1,3 +1,17 @@
+2014-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=135528
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        Include necessary directories and copy all necessary forwarding headers.
+        Only compile UDis86Disassembler.cpp if we're using UDIS86.
+        * PlatformMac.cmake: Added.
+        * tools/CodeProfiling.cpp:
+        Compile fix.  Include sys/time.h on darwin, too.
+
 2014-08-04  Saam Barati  <sbarati@apple.com>
 
         Create a more generic way for VMEntryScope to notify those interested that it will be destroyed

@@ -213,6 +213,7 @@ set(WTF_INCLUDE_DIRECTORIES
     "${WTF_DIR}"
     "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/dtoa"
+    "${WTF_DIR}/wtf/text"
     "${WTF_DIR}/wtf/threads"
     "${WTF_DIR}/wtf/unicode"
     "${THIRDPARTY_DIR}"

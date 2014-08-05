@@ -33,7 +33,7 @@
 #include <signal.h>
 #endif
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(DARWIN)
 #include <sys/time.h>
 #endif
 

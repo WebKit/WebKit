@@ -1,3 +1,13 @@
+2014-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=135528
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsMac.cmake:
+        Made options list based on FeatureDefines.xcconfig files.
+
 2014-08-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Windowing target support should reflect the support in the GTK+ dependency

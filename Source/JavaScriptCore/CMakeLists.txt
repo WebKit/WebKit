@@ -15,6 +15,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/inspector"
     "${JAVASCRIPTCORE_DIR}/inspector/agents"
+    "${JAVASCRIPTCORE_DIR}/inspector/remote"
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
     "${JAVASCRIPTCORE_DIR}/llint"
@@ -26,6 +27,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/tools"
     "${JAVASCRIPTCORE_DIR}/yarr"
     "${WTF_DIR}"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
     "${CMAKE_SOURCE_DIR}/Source"
@@ -221,7 +223,6 @@ set(JavaScriptCore_SOURCES
     disassembler/ARMv7Disassembler.cpp
     disassembler/Disassembler.cpp
     disassembler/LLVMDisassembler.cpp
-    disassembler/UDis86Disassembler.cpp
     disassembler/X86Disassembler.cpp
 
     heap/BlockAllocator.cpp
@@ -580,6 +581,7 @@ if (WTF_USE_UDIS86)
         disassembler/udis86/udis86_syn-att.c
         disassembler/udis86/udis86_syn-intel.c
         disassembler/udis86/udis86_syn.c
+        disassembler/UDis86Disassembler.cpp
     )
 endif ()
 
@@ -797,23 +799,46 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
 )
 
 set(JavaScriptCore_FORWARDING_HEADERS_FILES
+    API/APICallbackFunction.h
     API/APICast.h
+    API/JSAPIWrapperObject.h
     API/JSBase.h
+    API/JSBasePrivate.h
     API/JSCTestRunnerUtils.h
+    API/JSCallbackConstructor.h
+    API/JSCallbackFunction.h
+    API/JSCallbackObject.h
+    API/JSCallbackObjectFunctions.h
+    API/JSClassRef.h
+    API/JSContext.h
+    API/JSContextInternal.h
+    API/JSContextPrivate.h
     API/JSContextRef.h
+    API/JSContextRefInternal.h
     API/JSContextRefPrivate.h
+    API/JSExport.h
+    API/JSManagedValue.h
+    API/JSManagedValueInternal.h
     API/JSObjectRef.h
     API/JSObjectRefPrivate.h
+    API/JSProfilerPrivate.h
     API/JSRetainPtr.h
     API/JSScriptRefPrivate.h
     API/JSStringRef.h
     API/JSStringRefBSTR.h
     API/JSStringRefCF.h
+    API/JSStringRefPrivate.h
+    API/JSValue.h
+    API/JSValueInternal.h
     API/JSValueRef.h
+    API/JSVirtualMachine.h
+    API/JSVirtualMachineInternal.h
     API/JSWeakObjectMapRefInternal.h
     API/JSWeakObjectMapRefPrivate.h
+    API/JSWrapperMap.h
     API/JavaScript.h
     API/JavaScriptCore.h
+    API/ObjcRuntimeExtras.h
     API/OpaqueJSString.h
     API/WebKitAvailability.h
 

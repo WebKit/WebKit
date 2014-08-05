@@ -1,3 +1,14 @@
+2014-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=135528
+
+        Reviewed by Gyuyoung Kim.
+
+        * wtf/CMakeLists.txt:
+        Include text directory.
+        * wtf/PlatformMac.cmake: Added.
+
 2014-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards cmake on Windows.
