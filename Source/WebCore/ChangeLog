@@ -1,5 +1,17 @@
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r171932
+
+    2014-08-01  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the iOS build after r171891
+
+            * platform/ios/ScrollViewIOS.mm:
+            (WebCore::ScrollView::platformTopContentInset):
+            (WebCore::ScrollView::platformSetTopContentInset):
+
+2014-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r171905
 
     2014-07-31  Timothy Horton  <timothy_horton@apple.com>
