@@ -143,6 +143,23 @@
         shouldBe("windowSelection.getRangeAt(0).startOffset", "56");
         shouldBe("windowSelection.getRangeAt(0).endOffset", "61");
 
+        // [https://bugs.webkit.org/show_bug.cgi?id=135575]
+        // When an existing range is already selected, we should not ignore that when searching for future activities.
+        // First find the range before the current selection.
+        var range = document.createRange();
+        range.setStart(document.getElementById("text2").firstChild, 7);
+        range.setEnd(document.getElementById("text2").firstChild, 10);
+        windowSelection.removeAllRanges();
+        windowSelection.addRange(range);
+        shouldBe("windowSelection.getRangeAt(0).toString()", "'The'");
+      
+        var text2 = accessibilityController.accessibleElementById("text2");
+        result = text2.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "the", null, "AXSelectTextActivityFindAndUppercase");
+        shouldBe("result", "'The'");
+        shouldBe("windowSelection.getRangeAt(0).toString()", "'THE'");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "7");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "10");
+
     }
 </script>
 

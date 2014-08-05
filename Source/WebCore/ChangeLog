@@ -1,3 +1,21 @@
+2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Select activity behavior does not work when an existing range is already selected
+        https://bugs.webkit.org/show_bug.cgi?id=135579
+
+        Reviewed by Mario Sanchez Prada.
+
+        If you have an existing range selected, and try to apply a select and replace operation, like capitalize,
+        searching for that range will fail because it skips the currently selected range.
+
+        For these cases, it seems the best way is to start the search from the start position, rather than relying on the
+        entire range.
+
+        Updated existing test: platform/mac/accessibility/select-text.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectText):
+
 2014-08-04  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Seeking past buffered range will not resume playback when seek completes.

@@ -1,3 +1,13 @@
+2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Select activity behavior does not work when an existing range is already selected
+        https://bugs.webkit.org/show_bug.cgi?id=135579
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/mac/accessibility/select-text-expected.txt:
+        * platform/mac/accessibility/select-text.html:
+
 2014-08-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify the StyleInvalidation mode of rule collection

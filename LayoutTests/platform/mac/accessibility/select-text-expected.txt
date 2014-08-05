@@ -1,6 +1,6 @@
 The slow BROWN cat jumps over the lazy dog.
 
-TEXT2: The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.
+TEXT2: THE quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.
 
 This tests the ability to select and replace text with respect to selection.
 
@@ -35,6 +35,11 @@ PASS windowSelection.getRangeAt(0).endOffset is 16
 PASS result is 'quick'
 PASS windowSelection.getRangeAt(0).startOffset is 56
 PASS windowSelection.getRangeAt(0).endOffset is 61
+PASS windowSelection.getRangeAt(0).toString() is 'The'
+PASS result is 'The'
+PASS windowSelection.getRangeAt(0).toString() is 'THE'
+PASS windowSelection.getRangeAt(0).startOffset is 7
+PASS windowSelection.getRangeAt(0).endOffset is 10
 PASS successfullyParsed is true
 
 TEST COMPLETE
