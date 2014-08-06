@@ -1,3 +1,21 @@
+2014-08-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build break since r172093
+        https://bugs.webkit.org/show_bug.cgi?id=135636
+
+        Reviewed by Gyuyoung Kim.
+
+        Since r172093, AbstractView.idl is added in CMake Build but CodeGeneratorJS.pm does not take care of it.
+
+        No new tests required, no new functionality.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToJSDeclaration):
+        (ShouldGenerateToJSImplementation):
+        (GetImplClassName): Added to rename implClassName to DOMWindow if interface name is AbstractView.
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2014-08-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [CG] strokeRect does not honor lineJoin

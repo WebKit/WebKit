@@ -491,6 +491,7 @@ sub ShouldGenerateToJSDeclaration
 {
     my ($hasParent, $interface) = @_;
     return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
+    return 0 if $interface->name eq "AbstractView";
     return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or $interface->extendedAttributes->{"CustomToJSObject"});
     return 0;
 }
@@ -499,6 +500,7 @@ sub ShouldGenerateToJSImplementation
 {
     my ($hasParent, $interface) = @_;
     return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
+    return 0 if $interface->name eq "AbstractView";
     return 1 if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"}) and !$interface->extendedAttributes->{"CustomToJSObject"});
     return 0;
 }
@@ -750,6 +752,14 @@ sub InstanceNeedsVisitChildren
         || $interface->extendedAttributes->{"ReportExtraMemoryCost"};
 }
 
+sub GetImplClassName
+{
+    my $name = shift;
+
+    return "DOMWindow" if $name eq "AbstractView";
+    return $name;
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -787,7 +797,7 @@ sub GenerateHeader
     
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
-    my $implType = $interfaceName;
+    my $implType = GetImplClassName($interfaceName);
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implType);
     $implType = $svgNativeType if $svgNativeType;
 
@@ -1672,7 +1682,8 @@ sub GenerateImplementation
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
     $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $indexedGetterFunction;
 
-    AddIncludesForTypeInImpl($interfaceName);
+    my $implType = GetImplClassName($interfaceName);
+    AddIncludesForTypeInImpl($implType);
 
     @implContent = ();
 
@@ -2022,7 +2033,6 @@ sub GenerateImplementation
     }
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
-    my $implType = $interfaceName;
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implType);
     $implType = $svgNativeType if $svgNativeType;
 
@@ -2277,12 +2287,12 @@ sub GenerateImplementation
                 push(@implContent, "    return JSValue::encode(castedThis->$implGetterFunctionName(exec));\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckSecurityForNode"}) {
                 $implIncludes{"JSDOMBinding.h"} = 1;
-                push(@implContent, "    $interfaceName& impl = castedThis->impl();\n");
+                push(@implContent, "    $implType& impl = castedThis->impl();\n");
                 push(@implContent, "    return JSValue::encode(shouldAllowAccessToNode(exec, impl." . $attribute->signature->name . "()) ? " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName()", "castedThis") . " : jsNull());\n");
             } elsif ($type eq "EventListener") {
                 $implIncludes{"EventListener.h"} = 1;
                 push(@implContent, "    UNUSED_PARAM(exec);\n");
-                push(@implContent, "    $interfaceName& impl = castedThis->impl();\n");
+                push(@implContent, "    $implType & impl = castedThis->impl();\n");
                 push(@implContent, "    if (EventListener* listener = impl.$implGetterFunctionName()) {\n");
                 push(@implContent, "        if (const JSEventListener* jsListener = JSEventListener::cast(listener)) {\n");
                 if ($interfaceName eq "Document" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
@@ -2346,7 +2356,7 @@ sub GenerateImplementation
 
                     unshift(@arguments, @callWithArgs);
                     my $jsType = NativeToJSValue($attribute->signature, 0, $interfaceName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
-                    push(@implContent, "    $interfaceName& impl = castedThis->impl();\n") if !$attribute->isStatic;
+                    push(@implContent, "    $implType & impl = castedThis->impl();\n") if !$attribute->isStatic;
                     if ($codeGenerator->IsSVGAnimatedType($type)) {
                         push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
                         push(@implContent, "    JSValue result = toJS(exec, castedThis->globalObject(), obj.get());\n");
@@ -2375,7 +2385,7 @@ sub GenerateImplementation
                     push(@implContent, "    $svgPropertyOrListPropertyType impl(*castedThis->impl());\n");
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 } else {
-                    push(@implContent, "    $interfaceName& impl = castedThis->impl();\n");
+                    push(@implContent, "    $implType & impl = castedThis->impl();\n");
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 }
 
@@ -2580,7 +2590,7 @@ sub GenerateImplementation
                     if ($windowEventListener) {
                         push(@implContent, "    JSDOMGlobalObject* globalObject = castedThis->globalObject();\n");
                     }
-                    push(@implContent, "    $interfaceName& impl = castedThis->impl();\n");
+                    push(@implContent, "    $implType& impl = castedThis->impl();\n");
                     if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerGlobalScope")) and $name eq "onerror") {
                         $implIncludes{"JSErrorHandler.h"} = 1;
                         push(@implContent, "    impl.set$implSetterFunctionName(createJSErrorHandler(exec, value, castedThis));\n");
