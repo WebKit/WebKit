@@ -28,7 +28,6 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "BundlePath.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGInPlaceAbstractState.h"
@@ -48,6 +47,10 @@
 #include <dlfcn.h>
 #include <llvm/InitializeLLVM.h>
 #include <wtf/ProcessID.h>
+
+#if ENABLE(FTL_NATIVE_CALL_INLINING)
+#include "BundlePath.h"
+#endif
 
 namespace JSC { namespace FTL {
 
@@ -631,10 +634,12 @@ private:
         case Construct:
             compileCallOrConstruct();
             break;
+#if ENABLE(FTL_NATIVE_CALL_INLINING)
         case NativeCall:
         case NativeConstruct:
             compileNativeCallOrConstruct();
             break;
+#endif
         case Jump:
             compileJump();
             break;
@@ -3630,7 +3635,7 @@ private:
     {
         setBoolean(m_out.bitNot(boolify(m_node->child1())));
     }
-
+#if ENABLE(FTL_NATIVE_CALL_INLINING)
     void compileNativeCallOrConstruct() 
     {
         int dummyThisArgument = m_node->op() == NativeCall ? 0 : 1;
@@ -3684,6 +3689,7 @@ private:
 
         setJSValue(call);
     }
+#endif
 
     void compileCallOrConstruct()
     {
@@ -4096,6 +4102,7 @@ private:
 #endif
     }
     
+#if ENABLE(FTL_NATIVE_CALL_INLINING)
     LValue getFunctionBySymbol(const CString symbol)
     {
         if (!m_ftlState.symbolTable.contains(symbol)) 
@@ -4195,6 +4202,7 @@ private:
         m_ftlState.nativeLoadedLibraries.add(path);
         return true;
     }
+#endif
 
     bool isInlinableSize(LValue function)
     {

@@ -1,3 +1,21 @@
+2014-08-06  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        [JSC] Build fix for FTL on EFL after ftlopt merge
+        https://bugs.webkit.org/show_bug.cgi?id=135565
+
+        Reviewed by Mark Lam.
+
+        Adding an enable guard for native inlining, since it now requires the bitcode
+        emitted from Clang, and we don't have a good way of creating it from other compilers.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLState.h:
+
 2014-08-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r172129. (ftlopt branch merge)

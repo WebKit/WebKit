@@ -732,6 +732,13 @@
 #define ENABLE_FTL_JIT 0
 #endif
 
+#if !defined(ENABLE_FTL_NATIVE_CALL_INLINING)
+#if COMPILER(CLANG)
+#define ENABLE_FTL_NATIVE_CALL_INLINING 1
+#else
+#define ENABLE_FTL_NATIVE_CALL_INLINING 0
+#endif // COMPILER(CLANG)
+#endif // !defined(ENABLE_FTL_NATIVE_CALL_INLINING)
 
 /* Generational collector for JSC */
 #if !defined(ENABLE_GGC)
