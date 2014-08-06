@@ -30,11 +30,14 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPreferencesKeys.h"
 #include <WebCore/Settings.h>
+#include <WebCore/TextEncodingRegistry.h>
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
 #import <WebKitSystemInterfaceIOS.h>
 #endif
+
+using namespace WebCore;
 
 namespace WebKit {
 

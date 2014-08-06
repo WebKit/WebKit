@@ -45,6 +45,8 @@ PassRefPtr<WebPreferences> WebPreferences::create(const String& identifier, cons
 PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
     RefPtr<WebPreferences> preferences = adoptRef(new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
+    // FIXME: The registerDefault...ValueForKey machinery is unnecessarily heavyweight and complicated.
+    // We can just compute different defaults for modern and legacy APIs in WebPreferencesDefinitions.h macros.
     preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledKey(), true);
     preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::javaEnabledForLocalFilesKey(), true);
     preferences->m_store.setOverrideDefaultsBoolValueForKey(WebPreferencesKey::pluginsEnabledKey(), true);

@@ -1,3 +1,21 @@
+2014-08-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r172172. <rdar://problem/17862892>
+
+    2014-08-06  Alexey Proskuryakov  <ap@apple.com>
+    
+            REGRESSION (WebKit2): iOS Safari default encoding doesn't follow system language
+            https://bugs.webkit.org/show_bug.cgi?id=135667
+            <rdar://problem/17862892>
+    
+            Reviewed by Anders Carlsson.
+    
+            * WebView/WebPreferences.mm: (+[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]):
+            Moved implementation to WebCore, so that it can be shared with WebKit2.
+    
+            * WebCoreSupport/WebSystemInterface.mm: (InitWebCoreSystemInterface):
+            We now use WKGetWebDefaultCFStringEncoding in WebCore, so it needs to be initialized.
+    
 2014-08-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172016. <rdar://problem/17896295>

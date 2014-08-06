@@ -76,6 +76,7 @@ bool (*wkIsGB18030ComplianceRequired)(void);
 void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight); 
 void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
+CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 
 #if USE(CFNETWORK)
 CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();

@@ -38,6 +38,7 @@ CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTrans
 CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
+CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
 NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
 void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
