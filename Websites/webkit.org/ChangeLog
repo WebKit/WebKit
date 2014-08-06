@@ -1,3 +1,14 @@
+2014-08-06  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Build error when OFFICIAL_BUILD != 1.
+        https://bugs.webkit.org/show_bug.cgi?id=135613
+
+        Reviewed by Alex Christensen.
+
+        Added python installation as a required step before building on Windows.
+
+        * building/tools.html:
+
 2014-07-24  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Committers should mail webkit-committers not webkit-reviewers for reactivation
