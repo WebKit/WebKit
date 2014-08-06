@@ -1,3 +1,21 @@
+2014-08-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Move parsing tests into fast/regions/parsing
+        https://bugs.webkit.org/show_bug.cgi?id=135649
+
+        Reviewed by Andrei Bucur.
+
+        Move files and adjust file paths.
+
+        * fast/regions/parsing/webkit-flow-from-parsing-expected.txt: Renamed from LayoutTests/fast/regions/webkit-flow-from-parsing-expected.txt.
+        * fast/regions/parsing/webkit-flow-from-parsing.html: Added.
+        * fast/regions/parsing/webkit-flow-into-parsing-expected.txt: Renamed from LayoutTests/fast/regions/webkit-flow-into-parsing-expected.txt.
+        * fast/regions/parsing/webkit-flow-into-parsing.html: Renamed from LayoutTests/fast/regions/webkit-flow-into-parsing.html.
+        * fast/regions/parsing/webkit-region-fragment-parsing-expected.txt: Renamed from LayoutTests/fast/regions/webkit-region-fragment-parsing-expected.txt.
+        * fast/regions/parsing/webkit-region-fragment-parsing.html: Added.
+        * fast/regions/webkit-flow-from-parsing.html: Removed.
+        * fast/regions/webkit-region-fragment-parsing.html: Removed.
+
 2014-08-06  Radu Stavila  <stavila@adobe.com>
 
         REGRESSION (r163382): Overflow hidden for inner elements breaks blurring
