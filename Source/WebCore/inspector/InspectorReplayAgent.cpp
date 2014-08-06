@@ -353,8 +353,8 @@ void InspectorReplayAgent::replayToPosition(ErrorString* errorString, const RefP
         return;
     }
 
-    if (sessionState() != SessionState::Inactive) {
-        *errorString = ASCIILiteral("Can't start replay while capture or playback is in progress.");
+    if (sessionState() == SessionState::Capturing) {
+        *errorString = ASCIILiteral("Can't start replay while capture is in progress.");
         return;
     }
 
@@ -363,8 +363,8 @@ void InspectorReplayAgent::replayToPosition(ErrorString* errorString, const RefP
 
 void InspectorReplayAgent::replayToCompletion(ErrorString* errorString, bool fastReplay)
 {
-    if (sessionState() != SessionState::Inactive) {
-        *errorString = ASCIILiteral("Can't start replay while capture or playback is in progress.");
+    if (sessionState() == SessionState::Capturing) {
+        *errorString = ASCIILiteral("Can't start replay while capture is in progress.");
         return;
     }
 

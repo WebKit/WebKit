@@ -1,5 +1,41 @@
 2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: convert ReplayManager to a promise-based API
+        https://bugs.webkit.org/show_bug.cgi?id=135249
+
+        Reviewed by Timothy Hatcher.
+
+        Convert replay commands to an asynchronous, promise-based API. This addresses
+        two problems with a synchronous replay API: clients can only use the synchronous
+        API if session and segment state are exactly correct, and trying to change state
+        to match this requirement requires chaining multiple commands and events.
+
+        The asynchronous API allows clients to issue replay commands with impunity,
+        as long as they can be unambiguously handled. For example, issuing
+        pausePlayback() while capturing is not allowed, but issuing startCapturing()
+        while replaying is allowed. The API also hides implementation details that
+        are not important, such as steps to unpause or temporarily disable the debugger.
+
+        This patch also cleans up uses of promises, such as adding error re-throwing.
+        It adds return type annotations to public ReplayManager asynchronous methods.
+
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.catch):
+        (WebInspector.ReplayManager):
+        (WebInspector.ReplayManager.prototype.createSession):
+        (WebInspector.ReplayManager.prototype.switchSession):
+        (WebInspector.ReplayManager.prototype.startCapturing):
+        (WebInspector.ReplayManager.prototype.stopCapturing):
+        (WebInspector.ReplayManager.prototype.replayToPosition):
+        (WebInspector.ReplayManager.prototype.replayToCompletion):
+        (WebInspector.ReplayManager.prototype.sessionCreated.catch): re-throw.
+        (WebInspector.ReplayManager.prototype.segmentCompleted.catch): re-throw.
+        (WebInspector.ReplayManager.prototype.segmentCompleted.catch): re-throw.
+        (WebInspector.ReplayManager.prototype.segmentUnloaded.catch): re-throw.
+        (WebInspector.ReplayManager.prototype.sessionCreated.catech): re-throw.
+
+2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: protocol command invocations should return a promise if no callback is supplied
         https://bugs.webkit.org/show_bug.cgi?id=130702
 

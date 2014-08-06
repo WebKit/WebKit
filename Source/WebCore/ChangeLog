@@ -1,3 +1,16 @@
+2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: convert ReplayManager to a promise-based API
+        https://bugs.webkit.org/show_bug.cgi?id=135249
+
+        Reviewed by Timothy Hatcher.
+
+        Fix some assertions to match ReplayController's preconditions.
+
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::replayToPosition):
+        (WebCore::InspectorReplayAgent::replayToCompletion):
+
 2014-08-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unable to scroll to bottom of nested scrollable areas

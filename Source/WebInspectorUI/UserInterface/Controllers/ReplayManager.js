@@ -69,8 +69,9 @@ WebInspector.ReplayManager = function()
         }).then(function(payload) {
             for (var sessionId of payload.ids)
                 instance.sessionCreated(sessionId);
-        }).catch(function(err) {
-            console.error("ReplayManager initialization failed: ", err);
+        }).catch(function(error) {
+            console.error("ReplayManager initialization failed: ", error);
+            throw error;
         });
 };
 
@@ -162,12 +163,13 @@ WebInspector.ReplayManager.prototype = {
     },
 
     // These return promises even if the relevant instance is already created.
-    waitUntilInitialized: function()
+    waitUntilInitialized: function()  // --> ()
     {
         return this._initializationPromise;
     },
 
-    getSession: function(sessionId)
+    // Return a promise that resolves to a session, if it exists.
+    getSession: function(sessionId) // --> (WebInspector.ReplaySession)
     {
         if (this._sessionPromises.has(sessionId))
             return this._sessionPromises.get(sessionId);
@@ -181,7 +183,8 @@ WebInspector.ReplayManager.prototype = {
         return newPromise;
     },
 
-    getSegment: function(segmentId)
+    // Return a promise that resolves to a session segment, if it exists.
+    getSegment: function(segmentId)  // --> (WebInspector.ReplaySessionSegment)
     {
         if (this._segmentPromises.has(segmentId))
             return this._segmentPromises.get(segmentId);
@@ -193,6 +196,193 @@ WebInspector.ReplayManager.prototype = {
 
         this._segmentPromises.set(segmentId, newPromise);
         return newPromise;
+    },
+
+    // Switch to the specified session.
+    // Returns a promise that resolves when the switch completes.
+    switchSession: function(sessionId) // --> ()
+    {
+        var manager = this;
+        var result = this.waitUntilInitialized();
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Capturing) {
+            result = result.then(function() {
+                return WebInspector.replayManager.stopCapturing();
+            });
+        }
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Replaying) {
+            result = result.then(function() {
+                return WebInspector.replayManager.stopPlayback();
+            });
+        }
+
+        result = result.then(function() {
+                console.assert(manager.sessionState === WebInspector.ReplayManager.SessionState.Inactive);
+                console.assert(manager.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
+
+                return manager.getSession(sessionId);
+            }).then(function ensureSessionDataIsLoaded(session) {
+                return ReplayAgent.switchSession(session.identifier);
+            }).catch(function(error) {
+                console.error("Failed to switch to session: ", error);
+                throw error;
+            });
+
+        return result;
+    },
+
+    // Start capturing into the current session as soon as possible.
+    // Returns a promise that resolves when capturing begins.
+    startCapturing: function() // --> ()
+    {
+        var manager = this;
+        var result = this.waitUntilInitialized();
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Capturing)
+            return result; // Already capturing.
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Replaying) {
+            result = result.then(function() {
+                return WebInspector.replayManager.stopPlayback();
+            });
+        }
+
+        result = result.then(function() {
+                console.assert(manager.sessionState === WebInspector.ReplayManager.SessionState.Inactive);
+                console.assert(manager.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
+
+                return ReplayAgent.startCapturing();
+            }).catch(function(error) {
+                console.error("Failed to start capturing: ", error);
+                throw error;
+            });
+
+        return result;
+    },
+
+    // Stop capturing into the current session as soon as possible.
+    // Returns a promise that resolves when capturing ends.
+    stopCapturing: function() // --> ()
+    {
+        console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Capturing, "Cannot stop capturing unless capture is active.");
+        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Appending);
+
+        return ReplayAgent.stopCapturing()
+            .catch(function(error) {
+                console.error("Failed to stop capturing: ", error);
+                throw error;
+            });
+    },
+
+    // Pause playback as soon as possible.
+    // Returns a promise that resolves when playback is paused.
+    pausePlayback: function() // --> ()
+    {
+        console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing, "Cannot pause playback while capturing.");
+
+        var manager = this;
+        var result = this.waitUntilInitialized();
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Inactive)
+            return result; // Already stopped.
+
+        if (this.sessionState !== WebInspector.ReplayManager.SegmentState.Dispatching)
+            return result; // Already stopped.
+
+        result = result.then(function() {
+                console.assert(manager.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
+                console.assert(manager.segmentState === WebInspector.ReplayManager.SegmentState.Dispatching);
+
+                return ReplayAgent.pausePlayback();
+            }).catch(function(error) {
+                console.error("Failed to pause playback: ", error);
+                throw error;
+            });
+
+        return result;
+    },
+
+    // Pause playback and unload the current session segment as soon as possible.
+    // Returns a promise that resolves when the current segment is unloaded.
+    stopPlayback: function() // --> ()
+    {
+        console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing, "Cannot stop playback while capturing.");
+
+        var manager = this;
+        var result = this.waitUntilInitialized();
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Inactive)
+            return result; // Already stopped.
+
+        result = result.then(function() {
+                console.assert(manager.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
+                console.assert(manager.segmentState !== WebInspector.ReplayManager.SegmentState.Appending);
+
+                return ReplayAgent.stopPlayback();
+            }).catch(function(error) {
+                console.error("Failed to stop playback: ", error);
+                throw error;
+            });
+
+        return result;
+    },
+
+    // Replay to the specified position as soon as possible using the current replay speed.
+    // Returns a promise that resolves when replay has begun (NOT when the position is reached).
+    replayToPosition: function(replayPosition) // --> ()
+    {
+        console.assert(replayPosition instanceof WebInspector.ReplayPosition, "Cannot replay to a position while capturing.");
+
+        var manager = this;
+        var result = this.waitUntilInitialized();
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Capturing) {
+            result = result.then(function() {
+                return WebInspector.replayManager.stopCapturing();
+            });
+        }
+
+        result = result.then(function() {
+                console.assert(manager.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
+                console.assert(manager.segmentState !== WebInspector.ReplayManager.SegmentState.Appending);
+
+                return ReplayAgent.replayToPosition(replayPosition, manager.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
+            }).catch(function(error) {
+                console.error("Failed to start playback to position: ", replayPosition, error);
+                throw error;
+            });
+
+        return result;
+    },
+
+    // Replay to the end of the session as soon as possible using the current replay speed.
+    // Returns a promise that resolves when replay has begun (NOT when the end is reached).
+    replayToCompletion: function() // --> ()
+    {
+        var manager = this;
+        var result = this.waitUntilInitialized();
+
+        if (this.segmentState === WebInspector.ReplayManager.SegmentState.Dispatching)
+            return result; // Already running.
+
+        if (this.sessionState === WebInspector.ReplayManager.SessionState.Capturing) {
+            result = result.then(function() {
+                return WebInspector.replayManager.stopCapturing();
+            });
+        }
+
+        result = result.then(function() {
+                console.assert(manager.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
+                console.assert(manager.segmentState === WebInspector.ReplayManager.SegmentState.Loaded || manager.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
+
+                return ReplayAgent.replayToCompletion(manager.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward)
+            }).catch(function(error) {
+                console.error("Failed to start playback to completion: ", error);
+                throw error;
+            });
+
+        return result;
     },
 
     // Protected (called by ReplayObserver)
@@ -282,6 +472,7 @@ WebInspector.ReplayManager.prototype = {
                 sessionMap.set(sessionId, session);
             }).catch(function(error) {
                 console.error("Error obtaining session data: ", error);
+                throw error;
             });
 
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.SessionAdded, {sessionId: sessionId});
@@ -309,10 +500,9 @@ WebInspector.ReplayManager.prototype = {
 
         var manager = this;
 
-        // Wait for any outstanding promise to settle so it doesn't get re-added.
         this.getSession(sessionId)
             .catch(function(error) {
-                return Promise.resolve();
+                // Wait for any outstanding promise to settle so it doesn't get re-added.
             }).then(function() {
                 manager._sessionPromises.delete(sessionId);
                 var removedSession = manager._sessions.take(sessionId);
@@ -354,6 +544,7 @@ WebInspector.ReplayManager.prototype = {
                 segmentMap.set(segmentId, segment);
             }).catch(function(error) {
                 console.error("Error obtaining segment data: ", error);
+                throw error;
             });
     },
 
@@ -407,62 +598,6 @@ WebInspector.ReplayManager.prototype = {
         var previousIdentifier = this._activeSegmentIdentifier;
         this._activeSegmentIdentifier = null;
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.ActiveSegmentChanged, {previousSegmentIdentifier: previousIdentifier});
-    },
-
-    // Private
-
-    // FIXME: these methods should be private and only accessed by implementations of the public API,
-    // which should properly chain async calls leading up to these low-level backend calls. Otherwise,
-    // their preconditions on session and segment state are too strong for scenarios triggered by the UI.
-
-    startCapturing: function()
-    {
-        console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Inactive);
-        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
-
-        ReplayAgent.startCapturing();
-    },
-
-    stopCapturing: function()
-    {
-        console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Capturing);
-        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Appending);
-
-        ReplayAgent.stopCapturing();
-    },
-
-    replayToMarkIndex: function(replayPosition)
-    {
-        console.assert(replayPosition instanceof WebInspector.ReplayPosition);
-
-        console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
-        // FIXME: Once the public API is asynchronous, we should assert that segmentState is Loaded.
-
-        ReplayAgent.replayToPosition(replayPosition, this.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
-    },
-
-    replayToCompletion: function()
-    {
-        console.assert(this.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
-        // FIXME: Once the public API is asynchronous, we should assert that segmentState is Loaded.
-
-        ReplayAgent.replayToCompletion(this.playbackSpeed === WebInspector.ReplayManager.PlaybackSpeed.FastForward);
-    },
-
-    pausePlayback: function()
-    {
-        console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
-        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Dispatching);
-
-        ReplayAgent.pausePlayback();
-    },
-
-    stopPlayback: function()
-    {
-        console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
-        console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Loaded);
-
-        ReplayAgent.stopPlayback();
     },
 
     // Private
