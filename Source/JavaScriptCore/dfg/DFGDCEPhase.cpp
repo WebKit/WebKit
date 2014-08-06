@@ -49,12 +49,22 @@ public:
         ASSERT(m_graph.m_form == ThreadedCPS || m_graph.m_form == SSA);
         
         // First reset the counts to 0 for all nodes.
+        //
+        // Also take this opportunity to pretend that Check nodes are not NodeMustGenerate. Check
+        // nodes are MustGenerate because they are executed for effect, but they follow the same
+        // DCE rules as nodes that aren't MustGenerate: they only contribute to the ref count of
+        // their children if the edges require checks. Non-checking edges are removed. Note that
+        // for any Checks left over, this phase will turn them back into NodeMustGenerate.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
-            for (unsigned indexInBlock = block->size(); indexInBlock--;)
-                block->at(indexInBlock)->setRefCount(0);
+            for (unsigned indexInBlock = block->size(); indexInBlock--;) {
+                Node* node = block->at(indexInBlock);
+                if (node->op() == Check)
+                    node->clearFlags(NodeMustGenerate);
+                node->setRefCount(0);
+            }
             for (unsigned phiIndex = block->phis.size(); phiIndex--;)
                 block->phis[phiIndex]->setRefCount(0);
         }
@@ -119,6 +129,30 @@ public:
             cleanVariables(m_graph.m_arguments);
         }
         
+        // Just do a basic HardPhantom/Phantom/Check clean-up.
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            unsigned sourceIndex = 0;
+            unsigned targetIndex = 0;
+            while (sourceIndex < block->size()) {
+                Node* node = block->at(sourceIndex++);
+                switch (node->op()) {
+                case Check:
+                case HardPhantom:
+                case Phantom:
+                    if (node->children.isEmpty())
+                        continue;
+                    break;
+                default:
+                    break;
+                }
+                block->at(targetIndex++) = node;
+            }
+            block->resize(targetIndex);
+        }
+        
         m_graph.m_refCountState = ExactRefCount;
         
         return true;
@@ -129,7 +163,7 @@ private:
     {
         // We may have an "unproved" untyped use for code that is unreachable. The CFA
         // will just not have gotten around to it.
-        if (edge.willNotHaveCheck())
+        if (edge.isProved() || edge.willNotHaveCheck())
             return;
         if (!edge->postfixRef())
             m_worklist.append(edge.node());
@@ -145,7 +179,7 @@ private:
     void countEdge(Node*, Edge edge)
     {
         // Don't count edges that are already counted for their type checks.
-        if (edge.willHaveCheck())
+        if (!(edge.isProved() || edge.willNotHaveCheck()))
             return;
         countNode(edge.node());
     }
@@ -214,10 +248,10 @@ private:
                     for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
                         Edge edge = m_graph.m_varArgChildren[childIdx];
 
-                        if (!edge || edge.willNotHaveCheck())
+                        if (!edge || edge.isProved() || edge.willNotHaveCheck())
                             continue;
 
-                        m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->origin, edge);
+                        m_insertionSet.insertNode(indexInBlock, SpecNone, Check, node->origin, edge);
                     }
 
                     node->convertToPhantom();
@@ -226,25 +260,20 @@ private:
                     break;
                 }
 
-                node->convertToPhantom();
-                eliminateIrrelevantPhantomChildren(node);
+                node->convertToCheck();
+                for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+                    Edge edge = node->children.child(i);
+                    if (!edge)
+                        continue;
+                    if (edge.isProved() || edge.willNotHaveCheck())
+                        node->children.removeEdge(i--);
+                }
                 node->setRefCount(1);
                 break;
             } }
         }
 
         m_insertionSet.execute(block);
-    }
-    
-    void eliminateIrrelevantPhantomChildren(Node* node)
-    {
-        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
-            Edge edge = node->children.child(i);
-            if (!edge)
-                continue;
-            if (edge.willNotHaveCheck())
-                node->children.removeEdge(i--);
-        }
     }
     
     template<typename VariablesVectorType>
@@ -254,7 +283,7 @@ private:
             Node* node = variables[i];
             if (!node)
                 continue;
-            if (node->op() != Phantom && node->shouldGenerate())
+            if (node->op() != Phantom && node->op() != Check && node->shouldGenerate())
                 continue;
             if (node->op() == GetLocal) {
                 node = node->child1().node();

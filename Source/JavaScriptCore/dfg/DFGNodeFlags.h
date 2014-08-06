@@ -70,6 +70,9 @@ namespace JSC { namespace DFG {
 
 #define NodeIsFlushed                   0x20000 // Used by Graph::computeIsFlushed(), will tell you which local nodes are backwards-reachable from a Flush.
 
+#define NodeMiscFlag1                   0x40000
+#define NodeMiscFlag2                   0x80000
+
 typedef uint32_t NodeFlags;
 
 static inline bool bytecodeUsesAsNumber(NodeFlags flags)

@@ -69,14 +69,13 @@ public:
     
         m_currentOffset += 1;
         if (m_currentOffset == m_highFidelityLogSize)
-            processHighFidelityLog(true, "Log Full");
+            processHighFidelityLog("Log Full");
     }
 
-    void processHighFidelityLog(bool asynchronously = false, String = "");
+    void processHighFidelityLog(String);
 
 private:
     void initializeHighFidelityLog();
-    static void actuallyProcessLogThreadFunction(void*);
 
     unsigned m_highFidelityLogSize;
     size_t m_currentOffset;

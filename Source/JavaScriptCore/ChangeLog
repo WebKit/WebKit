@@ -1,3 +1,725 @@
+2014-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r171389, r171495, r171508, r171510, r171605, r171606, r171611, r171614, r171763 from ftlopt.
+
+    2014-07-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Support for-in in the FTL
+            https://bugs.webkit.org/show_bug.cgi?id=134140
+    
+            Reviewed by Filip Pizlo.
+    
+            * dfg/DFGSSALoweringPhase.cpp:
+            (JSC::DFG::SSALoweringPhase::handleNode):
+            * ftl/FTLAbstractHeapRepository.cpp:
+            * ftl/FTLAbstractHeapRepository.h:
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLIntrinsicRepository.h:
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+            (JSC::FTL::LowerDFGToLLVM::compileHasIndexedProperty):
+            (JSC::FTL::LowerDFGToLLVM::compileHasGenericProperty):
+            (JSC::FTL::LowerDFGToLLVM::compileHasStructureProperty):
+            (JSC::FTL::LowerDFGToLLVM::compileGetDirectPname):
+            (JSC::FTL::LowerDFGToLLVM::compileGetEnumerableLength):
+            (JSC::FTL::LowerDFGToLLVM::compileGetStructurePropertyEnumerator):
+            (JSC::FTL::LowerDFGToLLVM::compileGetGenericPropertyEnumerator):
+            (JSC::FTL::LowerDFGToLLVM::compileGetEnumeratorPname):
+            (JSC::FTL::LowerDFGToLLVM::compileToIndexString):
+    
+    2014-07-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Remove JSPropertyNameIterator
+            https://bugs.webkit.org/show_bug.cgi?id=135066
+    
+            Reviewed by Geoffrey Garen.
+    
+            It has been replaced by JSPropertyNameEnumerator.
+    
+            * JavaScriptCore.order:
+            * bytecode/BytecodeBasicBlock.cpp:
+            (JSC::isBranch):
+            * bytecode/BytecodeList.json:
+            * bytecode/BytecodeUseDef.h:
+            (JSC::computeUsesForBytecodeOffset):
+            (JSC::computeDefsForBytecodeOffset):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::dumpBytecode):
+            * bytecode/PreciseJumpTargets.cpp:
+            (JSC::getJumpTargetsForBytecodeOffset):
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::emitGetPropertyNames): Deleted.
+            (JSC::BytecodeGenerator::emitNextPropertyName): Deleted.
+            * bytecompiler/BytecodeGenerator.h:
+            * interpreter/Interpreter.cpp:
+            * interpreter/Register.h:
+            * jit/JIT.cpp:
+            (JSC::JIT::privateCompileMainPass):
+            (JSC::JIT::privateCompileSlowCases):
+            * jit/JIT.h:
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emit_op_get_pnames): Deleted.
+            (JSC::JIT::emit_op_next_pname): Deleted.
+            * jit/JITOpcodes32_64.cpp:
+            (JSC::JIT::emit_op_get_pnames): Deleted.
+            (JSC::JIT::emit_op_next_pname): Deleted.
+            * jit/JITOperations.cpp:
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_get_by_pname): Deleted.
+            (JSC::JIT::emitSlow_op_get_by_pname): Deleted.
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emit_op_get_by_pname): Deleted.
+            (JSC::JIT::emitSlow_op_get_by_pname): Deleted.
+            * llint/LLIntOffsetsExtractor.cpp:
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL): Deleted.
+            * llint/LLIntSlowPaths.h:
+            * llint/LowLevelInterpreter.asm:
+            * llint/LowLevelInterpreter32_64.asm:
+            * llint/LowLevelInterpreter64.asm:
+            * runtime/CommonSlowPaths.cpp:
+            * runtime/JSPropertyNameIterator.cpp:
+            (JSC::JSPropertyNameIterator::JSPropertyNameIterator): Deleted.
+            (JSC::JSPropertyNameIterator::create): Deleted.
+            (JSC::JSPropertyNameIterator::destroy): Deleted.
+            (JSC::JSPropertyNameIterator::get): Deleted.
+            (JSC::JSPropertyNameIterator::visitChildren): Deleted.
+            * runtime/JSPropertyNameIterator.h:
+            (JSC::JSPropertyNameIterator::createStructure): Deleted.
+            (JSC::JSPropertyNameIterator::size): Deleted.
+            (JSC::JSPropertyNameIterator::setCachedStructure): Deleted.
+            (JSC::JSPropertyNameIterator::cachedStructure): Deleted.
+            (JSC::JSPropertyNameIterator::setCachedPrototypeChain): Deleted.
+            (JSC::JSPropertyNameIterator::cachedPrototypeChain): Deleted.
+            (JSC::JSPropertyNameIterator::finishCreation): Deleted.
+            (JSC::Register::propertyNameIterator): Deleted.
+            (JSC::StructureRareData::enumerationCache): Deleted.
+            (JSC::StructureRareData::setEnumerationCache): Deleted.
+            * runtime/Structure.cpp:
+            (JSC::Structure::addPropertyWithoutTransition):
+            (JSC::Structure::removePropertyWithoutTransition):
+            * runtime/Structure.h:
+            * runtime/StructureInlines.h:
+            (JSC::Structure::setEnumerationCache): Deleted.
+            (JSC::Structure::enumerationCache): Deleted.
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::visitChildren):
+            * runtime/StructureRareData.h:
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+    
+    2014-07-25  Saam Barati  <sbarati@apple.com>
+    
+            Fix 32-bit build breakage for type profiling
+            https://bugs.webkit.org/process_bug.cgi
+    
+            Reviewed by Mark Hahnenberg.
+    
+            32-bit builds currently break because global variable IDs for high
+            fidelity type profiling are int64_t. Change this to intptr_t so that
+            it's 32 bits on 32-bit platforms and 64 bits on 64-bit platforms.
+    
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::CodeBlock):
+            (JSC::CodeBlock::scopeDependentProfile):
+            * bytecode/TypeLocation.h:
+            * runtime/SymbolTable.cpp:
+            (JSC::SymbolTable::uniqueIDForVariable):
+            (JSC::SymbolTable::uniqueIDForRegister):
+            * runtime/SymbolTable.h:
+            * runtime/TypeLocationCache.cpp:
+            (JSC::TypeLocationCache::getTypeLocation):
+            * runtime/TypeLocationCache.h:
+            * runtime/VM.h:
+            (JSC::VM::getNextUniqueVariableID):
+    
+    2014-07-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Reindent PropertyNameArray.h
+            https://bugs.webkit.org/show_bug.cgi?id=135067
+    
+            Reviewed by Geoffrey Garen.
+    
+            * runtime/PropertyNameArray.h:
+            (JSC::RefCountedIdentifierSet::contains):
+            (JSC::RefCountedIdentifierSet::size):
+            (JSC::RefCountedIdentifierSet::add):
+            (JSC::PropertyNameArrayData::create):
+            (JSC::PropertyNameArrayData::propertyNameVector):
+            (JSC::PropertyNameArrayData::PropertyNameArrayData):
+            (JSC::PropertyNameArray::PropertyNameArray):
+            (JSC::PropertyNameArray::vm):
+            (JSC::PropertyNameArray::add):
+            (JSC::PropertyNameArray::addKnownUnique):
+            (JSC::PropertyNameArray::operator[]):
+            (JSC::PropertyNameArray::setData):
+            (JSC::PropertyNameArray::data):
+            (JSC::PropertyNameArray::releaseData):
+            (JSC::PropertyNameArray::identifierSet):
+            (JSC::PropertyNameArray::canAddKnownUniqueForStructure):
+            (JSC::PropertyNameArray::size):
+            (JSC::PropertyNameArray::begin):
+            (JSC::PropertyNameArray::end):
+            (JSC::PropertyNameArray::numCacheableSlots):
+            (JSC::PropertyNameArray::setNumCacheableSlotsForObject):
+            (JSC::PropertyNameArray::setBaseObject):
+            (JSC::PropertyNameArray::setPreviouslyEnumeratedLength):
+    
+    2014-07-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Refactor our current implementation of for-in
+            https://bugs.webkit.org/show_bug.cgi?id=134142
+    
+            Reviewed by Filip Pizlo.
+    
+            This patch splits for-in loops into three distinct parts:
+    
+            - Iterating over the indexed properties in the base object.
+            - Iterating over the Structure properties in the base object.
+            - Iterating over any other enumerable properties for that object and any objects in the prototype chain.
+     
+            It does this by emitting these explicit loops in bytecode, using a new set of bytecodes to 
+            support the various operations required for each loop.
+    
+            * API/JSCallbackObjectFunctions.h:
+            (JSC::JSCallbackObject<Parent>::getOwnNonIndexPropertyNames):
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/BytecodeList.json:
+            * bytecode/BytecodeUseDef.h:
+            (JSC::computeUsesForBytecodeOffset):
+            (JSC::computeDefsForBytecodeOffset):
+            * bytecode/CallLinkStatus.h:
+            (JSC::CallLinkStatus::CallLinkStatus):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::dumpBytecode):
+            (JSC::CodeBlock::CodeBlock):
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::emitGetByVal):
+            (JSC::BytecodeGenerator::emitComplexPopScopes):
+            (JSC::BytecodeGenerator::emitGetEnumerableLength):
+            (JSC::BytecodeGenerator::emitHasGenericProperty):
+            (JSC::BytecodeGenerator::emitHasIndexedProperty):
+            (JSC::BytecodeGenerator::emitHasStructureProperty):
+            (JSC::BytecodeGenerator::emitGetStructurePropertyEnumerator):
+            (JSC::BytecodeGenerator::emitGetGenericPropertyEnumerator):
+            (JSC::BytecodeGenerator::emitNextEnumeratorPropertyName):
+            (JSC::BytecodeGenerator::emitToIndexString):
+            (JSC::BytecodeGenerator::pushIndexedForInScope):
+            (JSC::BytecodeGenerator::popIndexedForInScope):
+            (JSC::BytecodeGenerator::pushStructureForInScope):
+            (JSC::BytecodeGenerator::popStructureForInScope):
+            (JSC::BytecodeGenerator::invalidateForInContextForLocal):
+            * bytecompiler/BytecodeGenerator.h:
+            (JSC::ForInContext::ForInContext):
+            (JSC::ForInContext::~ForInContext):
+            (JSC::ForInContext::isValid):
+            (JSC::ForInContext::invalidate):
+            (JSC::ForInContext::local):
+            (JSC::StructureForInContext::StructureForInContext):
+            (JSC::StructureForInContext::type):
+            (JSC::StructureForInContext::index):
+            (JSC::StructureForInContext::property):
+            (JSC::StructureForInContext::enumerator):
+            (JSC::IndexedForInContext::IndexedForInContext):
+            (JSC::IndexedForInContext::type):
+            (JSC::IndexedForInContext::index):
+            (JSC::BytecodeGenerator::pushOptimisedForIn): Deleted.
+            (JSC::BytecodeGenerator::popOptimisedForIn): Deleted.
+            * bytecompiler/NodesCodegen.cpp:
+            (JSC::ReadModifyResolveNode::emitBytecode):
+            (JSC::AssignResolveNode::emitBytecode):
+            (JSC::ForInNode::tryGetBoundLocal):
+            (JSC::ForInNode::emitLoopHeader):
+            (JSC::ForInNode::emitMultiLoopBytecode):
+            (JSC::ForInNode::emitBytecode):
+            * debugger/DebuggerScope.h:
+            * dfg/DFGAbstractHeap.h:
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGCapabilities.cpp:
+            (JSC::DFG::capabilityLevel):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGHeapLocation.cpp:
+            (WTF::printInternal):
+            * dfg/DFGHeapLocation.h:
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasHeapPrediction):
+            (JSC::DFG::Node::hasArrayMode):
+            * dfg/DFGNodeType.h:
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT.h:
+            (JSC::DFG::SpeculativeJIT::callOperation):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * jit/JIT.cpp:
+            (JSC::JIT::privateCompileMainPass):
+            (JSC::JIT::privateCompileSlowCases):
+            * jit/JIT.h:
+            (JSC::JIT::compileHasIndexedProperty):
+            (JSC::JIT::emitInt32Load):
+            * jit/JITInlines.h:
+            (JSC::JIT::emitDoubleGetByVal):
+            (JSC::JIT::emitLoadForArrayMode):
+            (JSC::JIT::emitContiguousGetByVal):
+            (JSC::JIT::emitArrayStorageGetByVal):
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emit_op_get_enumerable_length):
+            (JSC::JIT::emit_op_has_structure_property):
+            (JSC::JIT::emitSlow_op_has_structure_property):
+            (JSC::JIT::emit_op_has_generic_property):
+            (JSC::JIT::privateCompileHasIndexedProperty):
+            (JSC::JIT::emit_op_has_indexed_property):
+            (JSC::JIT::emitSlow_op_has_indexed_property):
+            (JSC::JIT::emit_op_get_direct_pname):
+            (JSC::JIT::emitSlow_op_get_direct_pname):
+            (JSC::JIT::emit_op_get_structure_property_enumerator):
+            (JSC::JIT::emit_op_get_generic_property_enumerator):
+            (JSC::JIT::emit_op_next_enumerator_pname):
+            (JSC::JIT::emit_op_to_index_string):
+            * jit/JITOpcodes32_64.cpp:
+            (JSC::JIT::emit_op_get_enumerable_length):
+            (JSC::JIT::emit_op_has_structure_property):
+            (JSC::JIT::emitSlow_op_has_structure_property):
+            (JSC::JIT::emit_op_has_generic_property):
+            (JSC::JIT::privateCompileHasIndexedProperty):
+            (JSC::JIT::emit_op_has_indexed_property):
+            (JSC::JIT::emitSlow_op_has_indexed_property):
+            (JSC::JIT::emit_op_get_direct_pname):
+            (JSC::JIT::emitSlow_op_get_direct_pname):
+            (JSC::JIT::emit_op_get_structure_property_enumerator):
+            (JSC::JIT::emit_op_get_generic_property_enumerator):
+            (JSC::JIT::emit_op_next_enumerator_pname):
+            (JSC::JIT::emit_op_to_index_string):
+            * jit/JITOperations.cpp:
+            * jit/JITOperations.h:
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emitDoubleLoad):
+            (JSC::JIT::emitContiguousLoad):
+            (JSC::JIT::emitArrayStorageLoad):
+            (JSC::JIT::emitDoubleGetByVal): Deleted.
+            (JSC::JIT::emitContiguousGetByVal): Deleted.
+            (JSC::JIT::emitArrayStorageGetByVal): Deleted.
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emitContiguousLoad):
+            (JSC::JIT::emitDoubleLoad):
+            (JSC::JIT::emitArrayStorageLoad):
+            (JSC::JIT::emitContiguousGetByVal): Deleted.
+            (JSC::JIT::emitDoubleGetByVal): Deleted.
+            (JSC::JIT::emitArrayStorageGetByVal): Deleted.
+            * llint/LowLevelInterpreter.asm:
+            * parser/Nodes.h:
+            * runtime/Arguments.cpp:
+            (JSC::Arguments::getOwnPropertyNames):
+            * runtime/ClassInfo.h:
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::SLOW_PATH_DECL):
+            * runtime/CommonSlowPaths.h:
+            * runtime/EnumerationMode.h: Added.
+            (JSC::shouldIncludeDontEnumProperties):
+            (JSC::shouldExcludeDontEnumProperties):
+            (JSC::shouldIncludeJSObjectPropertyNames):
+            (JSC::modeThatSkipsJSObject):
+            * runtime/JSActivation.cpp:
+            (JSC::JSActivation::getOwnNonIndexPropertyNames):
+            * runtime/JSArray.cpp:
+            (JSC::JSArray::getOwnNonIndexPropertyNames):
+            * runtime/JSArrayBuffer.cpp:
+            (JSC::JSArrayBuffer::getOwnNonIndexPropertyNames):
+            * runtime/JSArrayBufferView.cpp:
+            (JSC::JSArrayBufferView::getOwnNonIndexPropertyNames):
+            * runtime/JSCell.cpp:
+            (JSC::JSCell::getEnumerableLength):
+            (JSC::JSCell::getStructurePropertyNames):
+            (JSC::JSCell::getGenericPropertyNames):
+            * runtime/JSCell.h:
+            * runtime/JSFunction.cpp:
+            (JSC::JSFunction::getOwnNonIndexPropertyNames):
+            * runtime/JSGenericTypedArrayViewInlines.h:
+            (JSC::JSGenericTypedArrayView<Adaptor>::getOwnNonIndexPropertyNames):
+            * runtime/JSObject.cpp:
+            (JSC::getClassPropertyNames):
+            (JSC::JSObject::hasOwnProperty):
+            (JSC::JSObject::getOwnPropertyNames):
+            (JSC::JSObject::getOwnNonIndexPropertyNames):
+            (JSC::JSObject::getEnumerableLength):
+            (JSC::JSObject::getStructurePropertyNames):
+            (JSC::JSObject::getGenericPropertyNames):
+            * runtime/JSObject.h:
+            * runtime/JSPropertyNameEnumerator.cpp: Added.
+            (JSC::JSPropertyNameEnumerator::create):
+            (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+            (JSC::JSPropertyNameEnumerator::finishCreation):
+            (JSC::JSPropertyNameEnumerator::destroy):
+            (JSC::JSPropertyNameEnumerator::visitChildren):
+            * runtime/JSPropertyNameEnumerator.h: Added.
+            (JSC::JSPropertyNameEnumerator::createStructure):
+            (JSC::JSPropertyNameEnumerator::propertyNameAtIndex):
+            (JSC::JSPropertyNameEnumerator::identifierSet):
+            (JSC::JSPropertyNameEnumerator::cachedPrototypeChain):
+            (JSC::JSPropertyNameEnumerator::setCachedPrototypeChain):
+            (JSC::JSPropertyNameEnumerator::cachedStructure):
+            (JSC::JSPropertyNameEnumerator::cachedStructureID):
+            (JSC::JSPropertyNameEnumerator::cachedInlineCapacity):
+            (JSC::JSPropertyNameEnumerator::cachedStructureIDOffset):
+            (JSC::JSPropertyNameEnumerator::cachedInlineCapacityOffset):
+            (JSC::JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset):
+            (JSC::JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset):
+            (JSC::structurePropertyNameEnumerator):
+            (JSC::genericPropertyNameEnumerator):
+            * runtime/JSProxy.cpp:
+            (JSC::JSProxy::getEnumerableLength):
+            (JSC::JSProxy::getStructurePropertyNames):
+            (JSC::JSProxy::getGenericPropertyNames):
+            * runtime/JSProxy.h:
+            * runtime/JSSymbolTableObject.cpp:
+            (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+            * runtime/PropertyNameArray.cpp:
+            (JSC::PropertyNameArray::add):
+            (JSC::PropertyNameArray::setPreviouslyEnumeratedProperties):
+            * runtime/PropertyNameArray.h:
+            (JSC::RefCountedIdentifierSet::contains):
+            (JSC::RefCountedIdentifierSet::size):
+            (JSC::RefCountedIdentifierSet::add):
+            (JSC::PropertyNameArray::PropertyNameArray):
+            (JSC::PropertyNameArray::add):
+            (JSC::PropertyNameArray::addKnownUnique):
+            (JSC::PropertyNameArray::identifierSet):
+            (JSC::PropertyNameArray::canAddKnownUniqueForStructure):
+            (JSC::PropertyNameArray::setPreviouslyEnumeratedLength):
+            * runtime/RegExpObject.cpp:
+            (JSC::RegExpObject::getOwnNonIndexPropertyNames):
+            (JSC::RegExpObject::getPropertyNames):
+            (JSC::RegExpObject::getGenericPropertyNames):
+            * runtime/RegExpObject.h:
+            * runtime/StringObject.cpp:
+            (JSC::StringObject::getOwnPropertyNames):
+            * runtime/Structure.cpp:
+            (JSC::Structure::getPropertyNamesFromStructure):
+            (JSC::Structure::setCachedStructurePropertyNameEnumerator):
+            (JSC::Structure::cachedStructurePropertyNameEnumerator):
+            (JSC::Structure::setCachedGenericPropertyNameEnumerator):
+            (JSC::Structure::cachedGenericPropertyNameEnumerator):
+            (JSC::Structure::canCacheStructurePropertyNameEnumerator):
+            (JSC::Structure::canCacheGenericPropertyNameEnumerator):
+            (JSC::Structure::canAccessPropertiesQuickly):
+            * runtime/Structure.h:
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::visitChildren):
+            (JSC::StructureRareData::cachedStructurePropertyNameEnumerator):
+            (JSC::StructureRareData::setCachedStructurePropertyNameEnumerator):
+            (JSC::StructureRareData::cachedGenericPropertyNameEnumerator):
+            (JSC::StructureRareData::setCachedGenericPropertyNameEnumerator):
+            * runtime/StructureRareData.h:
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+    
+    2014-07-23  Saam Barati  <sbarati@apple.com>
+    
+            Make improvements to Type Profiling
+            https://bugs.webkit.org/show_bug.cgi?id=134860
+    
+            Reviewed by Filip Pizlo.
+    
+            I improved the API between the inspector and JSC. We no longer send one huge
+            string to the inspector. We now send structured data that represents the type
+            information that JSC has collected. I've also created a beginning implementation 
+            of a type lattice that allows us to resolve a display name for a type that
+            consists of a single word.
+    
+            I created a data structure that knows which functions have executed. This
+            solves the bug where types inside an un-executed function will resolve
+            to the type of the enclosing expression of that function. This data
+            structure may also be useful later if the inspector chooses to create a UI
+            around showing which functions have executed.
+    
+            Better type information is gathered for objects. StructureShape now
+            represents an object's prototype chain.  StructureShape also collects
+            the constructor name for an object.
+    
+            Expression ranges are now zero indexed.
+    
+            Removed some extraneous methods.
+    
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::CodeBlock):
+            (JSC::CodeBlock::scopeDependentProfile):
+            * bytecode/CodeBlock.h:
+            * bytecode/TypeLocation.h:
+            (JSC::TypeLocation::TypeLocation):
+            * bytecode/UnlinkedCodeBlock.cpp:
+            (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+            * bytecode/UnlinkedCodeBlock.h:
+            (JSC::UnlinkedFunctionExecutable::highFidelityTypeProfilingStartOffset):
+            (JSC::UnlinkedFunctionExecutable::highFidelityTypeProfilingEndOffset):
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::BytecodeGenerator):
+            (JSC::BytecodeGenerator::emitHighFidelityTypeProfilingExpressionInfo):
+            * bytecompiler/BytecodeGenerator.h:
+            (JSC::BytecodeGenerator::emitHighFidelityTypeProfilingExpressionInfo): Deleted.
+            * heap/Heap.cpp:
+            (JSC::Heap::collect):
+            * inspector/agents/InspectorRuntimeAgent.cpp:
+            (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+            (Inspector::InspectorRuntimeAgent::getRuntimeTypeForVariableAtOffset): Deleted.
+            * inspector/agents/InspectorRuntimeAgent.h:
+            * inspector/protocol/Runtime.json:
+            * runtime/Executable.cpp:
+            (JSC::ScriptExecutable::ScriptExecutable):
+            (JSC::ProgramExecutable::ProgramExecutable):
+            (JSC::FunctionExecutable::FunctionExecutable):
+            (JSC::ProgramExecutable::initializeGlobalProperties):
+            * runtime/Executable.h:
+            (JSC::ScriptExecutable::highFidelityTypeProfilingStartOffset):
+            (JSC::ScriptExecutable::highFidelityTypeProfilingEndOffset):
+            * runtime/FunctionHasExecutedCache.cpp: Added.
+            (JSC::FunctionHasExecutedCache::hasExecutedAtOffset):
+            (JSC::FunctionHasExecutedCache::insertUnexecutedRange):
+            (JSC::FunctionHasExecutedCache::removeUnexecutedRange):
+            * runtime/FunctionHasExecutedCache.h: Added.
+            (JSC::FunctionHasExecutedCache::FunctionRange::FunctionRange):
+            (JSC::FunctionHasExecutedCache::FunctionRange::operator==):
+            (JSC::FunctionHasExecutedCache::FunctionRange::hash):
+            * runtime/HighFidelityLog.cpp:
+            (JSC::HighFidelityLog::processHighFidelityLog):
+            (JSC::HighFidelityLog::actuallyProcessLogThreadFunction): Deleted.
+            * runtime/HighFidelityLog.h:
+            (JSC::HighFidelityLog::recordTypeInformationForLocation):
+            * runtime/HighFidelityTypeProfiler.cpp:
+            (JSC::HighFidelityTypeProfiler::logTypesForTypeLocation):
+            (JSC::HighFidelityTypeProfiler::insertNewLocation):
+            (JSC::HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector):
+            (JSC::descriptorMatchesTypeLocation):
+            (JSC::HighFidelityTypeProfiler::findLocation):
+            (JSC::HighFidelityTypeProfiler::getTypesForVariableInAtOffset): Deleted.
+            (JSC::HighFidelityTypeProfiler::getGlobalTypesForVariableAtOffset): Deleted.
+            (JSC::HighFidelityTypeProfiler::getLocalTypesForVariableAtOffset): Deleted.
+            * runtime/HighFidelityTypeProfiler.h:
+            (JSC::QueryKey::QueryKey):
+            (JSC::QueryKey::isHashTableDeletedValue):
+            (JSC::QueryKey::operator==):
+            (JSC::QueryKey::hash):
+            (JSC::QueryKeyHash::hash):
+            (JSC::QueryKeyHash::equal):
+            (JSC::HighFidelityTypeProfiler::functionHasExecutedCache):
+            (JSC::HighFidelityTypeProfiler::typeLocationCache):
+            * runtime/Structure.cpp:
+            (JSC::Structure::toStructureShape):
+            * runtime/Structure.h:
+            * runtime/TypeLocationCache.cpp: Added.
+            (JSC::TypeLocationCache::getTypeLocation):
+            * runtime/TypeLocationCache.h: Added.
+            (JSC::TypeLocationCache::LocationKey::LocationKey):
+            (JSC::TypeLocationCache::LocationKey::operator==):
+            (JSC::TypeLocationCache::LocationKey::hash):
+            * runtime/TypeSet.cpp:
+            (JSC::TypeSet::getRuntimeTypeForValue):
+            (JSC::TypeSet::addTypeForValue):
+            (JSC::TypeSet::seenTypes):
+            (JSC::TypeSet::doesTypeConformTo):
+            (JSC::TypeSet::displayName):
+            (JSC::TypeSet::allPrimitiveTypeNames):
+            (JSC::TypeSet::allStructureRepresentations):
+            (JSC::TypeSet::leastCommonAncestor):
+            (JSC::StructureShape::StructureShape):
+            (JSC::StructureShape::addProperty):
+            (JSC::StructureShape::propertyHash):
+            (JSC::StructureShape::leastCommonAncestor):
+            (JSC::StructureShape::stringRepresentation):
+            (JSC::StructureShape::inspectorRepresentation):
+            (JSC::StructureShape::leastUpperBound): Deleted.
+            * runtime/TypeSet.h:
+            (JSC::StructureShape::setConstructorName):
+            (JSC::StructureShape::constructorName):
+            (JSC::StructureShape::setProto):
+            * runtime/VM.cpp:
+            (JSC::VM::dumpHighFidelityProfilingTypes):
+            (JSC::VM::getTypesForVariableAtOffset): Deleted.
+            (JSC::VM::updateHighFidelityTypeProfileState): Deleted.
+            * runtime/VM.h:
+            (JSC::VM::isProfilingTypesWithHighFidelity):
+            (JSC::VM::highFidelityTypeProfiler):
+    
+    2014-07-23  Filip Pizlo  <fpizlo@apple.com>
+    
+            Fix debug build.
+    
+            * bytecode/CallLinkStatus.h:
+            (JSC::CallLinkStatus::CallLinkStatus):
+    
+    2014-07-20  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Phantoms in SSA form should be aggressively hoisted
+            https://bugs.webkit.org/show_bug.cgi?id=135111
+    
+            Reviewed by Oliver Hunt.
+            
+            In CPS form, Phantom means three things: (1) that the children should be kept alive so long
+            as they are relevant to OSR (due to a MovHint), (2) that the children are live-in-bytecode
+            at the point of the Phantom, and (3) that some checks should be performed. In SSA, the
+            second meaning is not used but the other two stay.
+            
+            The fact that a Phantom that is used to keep a node alive could be anywhere in the graph,
+            even in a totally different basic block, complicates some SSA transformations. It's not
+            possible to just jettison some successor, since tha successor could have a Phantom that we
+            care about.
+            
+            This change rationalizes how Phantoms work so that:
+            
+            1) Phantoms keep children alive so long as those children are relevant to OSR. This is true
+               in both CPS and SSA. This was true before and it's true now.
+            
+            2) Phantoms are used for live-in-bytecode only in CPS. This was true before and it's true
+               now, except that now we also don't bother preserving the live-in-bytecode information
+               that Phantoms convey, when we are in SSA.
+            
+            3) Phantoms may incidentally have checks, but in cases where we only want checks, we now
+               use Check instead of Phantom. Notably, DCE phase has dead nodes decay to Check, not
+               Phantom.
+            
+            The biggest part of this change is that in SSA, we canonicalize Phantoms:
+            
+            - All Phantoms are replaced with Check nodes that include only those edges that have
+              checks.
+            
+            - Nodes that were the children of any Phantoms have a Phantom right after them.
+            
+            For example, the following code:
+            
+                5: ArithAdd(@1, @2)
+                6: ArithSub(@5, @3)
+                7: Phantom(Int32:@5)
+            
+            would be turned into the following:
+            
+                5: ArithAdd(@1, @2)
+                8: Phantom(@5) // @5 was the child of a Phantom, so we create a new Phantom right after
+                               // @5. This is the only Phantom we will have for @5.
+                6: ArithSub(@5, @3)
+                7: Check(Int32:@5) // We replace the Phantom with a Check; in this case since Int32: is
+                                   // a checking edge, we leave it.
+            
+            This is a slight speed-up across the board, presumably because we now do a better job of
+            reducing the size of the graph during compilation. It could also be a fluke, though. The
+            main purpose of this is to unlock some other work (like CFG simplification in SSA). It will
+            become a requirement to run phantom canonicalization prior to some SSA phases. None of the
+            current phases need it, but future phases probably will.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            * dfg/DFGDCEPhase.cpp:
+            (JSC::DFG::DCEPhase::run):
+            (JSC::DFG::DCEPhase::findTypeCheckRoot):
+            (JSC::DFG::DCEPhase::countEdge):
+            (JSC::DFG::DCEPhase::fixupBlock):
+            (JSC::DFG::DCEPhase::eliminateIrrelevantPhantomChildren):
+            * dfg/DFGEdge.cpp:
+            (JSC::DFG::Edge::dump):
+            * dfg/DFGEdge.h:
+            (JSC::DFG::Edge::isProved):
+            (JSC::DFG::Edge::needsCheck): Deleted.
+            * dfg/DFGNodeFlags.h:
+            * dfg/DFGPhantomCanonicalizationPhase.cpp: Added.
+            (JSC::DFG::PhantomCanonicalizationPhase::PhantomCanonicalizationPhase):
+            (JSC::DFG::PhantomCanonicalizationPhase::run):
+            (JSC::DFG::performPhantomCanonicalization):
+            * dfg/DFGPhantomCanonicalizationPhase.h: Added.
+            * dfg/DFGPhantomRemovalPhase.cpp:
+            (JSC::DFG::PhantomRemovalPhase::run):
+            * dfg/DFGPhantomRemovalPhase.h:
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+            (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+    
+    2014-07-22  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Get rid of structure checks as a way of checking if a function is in fact a function
+            https://bugs.webkit.org/show_bug.cgi?id=135146
+    
+            Reviewed by Oliver Hunt.
+            
+            This greatly simplifies our closure call optimizations by taking advantage of the type
+            bits available in the cell header.
+    
+            * bytecode/CallLinkInfo.cpp:
+            (JSC::CallLinkInfo::visitWeak):
+            * bytecode/CallLinkStatus.cpp:
+            (JSC::CallLinkStatus::CallLinkStatus):
+            (JSC::CallLinkStatus::computeFor):
+            (JSC::CallLinkStatus::dump):
+            * bytecode/CallLinkStatus.h:
+            (JSC::CallLinkStatus::CallLinkStatus):
+            (JSC::CallLinkStatus::executable):
+            (JSC::CallLinkStatus::structure): Deleted.
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            (JSC::DFG::FixupPhase::observeUseKindOnNode):
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::SafeToExecuteEdge::operator()):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::checkArray):
+            (JSC::DFG::SpeculativeJIT::speculateCellTypeWithoutTypeFiltering):
+            (JSC::DFG::SpeculativeJIT::speculateCellType):
+            (JSC::DFG::SpeculativeJIT::speculateFunction):
+            (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+            (JSC::DFG::SpeculativeJIT::speculate):
+            * dfg/DFGSpeculativeJIT.h:
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGUseKind.cpp:
+            (WTF::printInternal):
+            * dfg/DFGUseKind.h:
+            (JSC::DFG::typeFilterFor):
+            (JSC::DFG::isCell):
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileCheckExecutable):
+            (JSC::FTL::LowerDFGToLLVM::speculate):
+            (JSC::FTL::LowerDFGToLLVM::isFunction):
+            (JSC::FTL::LowerDFGToLLVM::isNotFunction):
+            (JSC::FTL::LowerDFGToLLVM::speculateFunction):
+            * jit/ClosureCallStubRoutine.cpp:
+            (JSC::ClosureCallStubRoutine::ClosureCallStubRoutine):
+            (JSC::ClosureCallStubRoutine::markRequiredObjectsInternal):
+            * jit/ClosureCallStubRoutine.h:
+            (JSC::ClosureCallStubRoutine::structure): Deleted.
+            * jit/JIT.h:
+            (JSC::JIT::compileClosureCall): Deleted.
+            * jit/JITCall.cpp:
+            (JSC::JIT::privateCompileClosureCall): Deleted.
+            * jit/JITCall32_64.cpp:
+            (JSC::JIT::privateCompileClosureCall): Deleted.
+            * jit/JITOperations.cpp:
+            * jit/Repatch.cpp:
+            (JSC::linkClosureCall):
+            * jit/Repatch.h:
+    
 2014-08-06  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [ARM] Incorrect handling of Unicode characters

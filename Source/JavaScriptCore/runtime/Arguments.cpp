@@ -221,7 +221,7 @@ void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
             continue;
         propertyNames.add(Identifier::from(exec, i));
     }
-    if (mode == IncludeDontEnumProperties) {
+    if (shouldIncludeDontEnumProperties(mode)) {
         propertyNames.add(exec->propertyNames().callee);
         propertyNames.add(exec->propertyNames().length);
     }

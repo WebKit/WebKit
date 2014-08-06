@@ -23,33 +23,32 @@
 
 #include "JSCInlines.h"
 #include "JSObject.h"
+#include "JSPropertyNameEnumerator.h"
 #include "Structure.h"
 #include "StructureChain.h"
 
 namespace JSC {
 
-static const size_t setThreshold = 20;
-
 void PropertyNameArray::add(StringImpl* identifier)
 {
     ASSERT(!identifier || identifier == StringImpl::empty() || identifier->isAtomic());
-
-    size_t size = m_data->propertyNameVector().size();
-    if (size < setThreshold) {
-        for (size_t i = 0; i < size; ++i) {
-            if (identifier == m_data->propertyNameVector()[i].impl())
-                return;
-        }
-    } else {
-        if (m_set.isEmpty()) {
-            for (size_t i = 0; i < size; ++i)
-                m_set.add(m_data->propertyNameVector()[i].impl());
-        }
-        if (!m_set.add(identifier).isNewEntry)
-            return;
+    if (!ASSERT_DISABLED) {
+        uint32_t index = PropertyName(Identifier(m_vm, identifier)).asIndex();
+        ASSERT_UNUSED(index, index == PropertyName::NotAnIndex || index >= m_previouslyEnumeratedLength);
     }
 
+    if (m_alternateSet && m_alternateSet->contains(identifier))
+        return;
+
+    if (!m_set->add(identifier).isNewEntry)
+        return;
+
     addKnownUnique(identifier);
+}
+
+void PropertyNameArray::setPreviouslyEnumeratedProperties(const JSPropertyNameEnumerator* enumerator)
+{
+    m_alternateSet = enumerator->identifierSet();
 }
 
 } // namespace JSC

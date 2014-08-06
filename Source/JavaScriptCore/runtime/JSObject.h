@@ -464,6 +464,7 @@ public:
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, PropertyName) const;
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, unsigned propertyName) const;
     bool hasOwnProperty(ExecState*, PropertyName) const;
+    bool hasOwnProperty(ExecState*, unsigned) const;
 
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
@@ -476,6 +477,10 @@ public:
     JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+
+    JS_EXPORT_PRIVATE static uint32_t getEnumerableLength(ExecState*, JSObject*);
+    JS_EXPORT_PRIVATE static void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;

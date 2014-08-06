@@ -227,7 +227,7 @@ void JSArray::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pro
 {
     JSArray* thisObject = jsCast<JSArray*>(object);
 
-    if (mode == IncludeDontEnumProperties)
+    if (shouldIncludeDontEnumProperties(mode))
         propertyNames.add(exec->propertyNames().length);
 
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);

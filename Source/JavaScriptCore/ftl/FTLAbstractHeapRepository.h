@@ -59,6 +59,10 @@ namespace JSC { namespace FTL {
     macro(JSFunction_executable, JSFunction::offsetOfExecutable()) \
     macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
+    macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset()) \
+    macro(JSPropertyNameEnumerator_cachedPropertyNamesLength, JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset()) \
+    macro(JSPropertyNameEnumerator_cachedPropertyNamesVector, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()) \
+    macro(JSPropertyNameEnumerator_cachedStructureID, JSPropertyNameEnumerator::cachedStructureIDOffset()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSString_flags, JSString::offsetOfFlags()) \
     macro(JSString_length, JSString::offsetOfLength()) \

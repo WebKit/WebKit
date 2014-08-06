@@ -1510,38 +1510,6 @@ _llint_op_get_argument_by_val:
     dispatch(6)
 
 
-_llint_op_get_by_pname:
-    traceExecution()
-    loadisFromInstruction(3, t1)
-    loadConstantOrVariable(t1, t0)
-    loadisFromInstruction(4, t1)
-    assertNotConstant(t1)
-    bqneq t0, [cfr, t1, 8], .opGetByPnameSlow
-    loadisFromInstruction(2, t2)
-    loadisFromInstruction(5, t3)
-    loadConstantOrVariableCell(t2, t0, .opGetByPnameSlow)
-    assertNotConstant(t3)
-    loadq [cfr, t3, 8], t1
-    loadStructureWithScratch(t0, t2, t3)
-    bpneq t2, JSPropertyNameIterator::m_cachedStructure[t1], .opGetByPnameSlow
-    loadisFromInstruction(6, t3)
-    loadi PayloadOffset[cfr, t3, 8], t3
-    subi 1, t3
-    biaeq t3, JSPropertyNameIterator::m_numCacheableSlots[t1], .opGetByPnameSlow
-    bilt t3, JSPropertyNameIterator::m_cachedStructureInlineCapacity[t1], .opGetByPnameInlineProperty
-    addi firstOutOfLineOffset, t3
-    subi JSPropertyNameIterator::m_cachedStructureInlineCapacity[t1], t3
-.opGetByPnameInlineProperty:
-    loadPropertyAtVariableOffset(t3, t0, t0)
-    loadisFromInstruction(1, t1)
-    storeq t0, [cfr, t1, 8]
-    dispatch(7)
-
-.opGetByPnameSlow:
-    callSlowPath(_llint_slow_path_get_by_pname)
-    dispatch(7)
-
-
 macro contiguousPutByVal(storeCallback)
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .outOfBounds
 .storeResult:
@@ -1932,49 +1900,6 @@ _llint_op_to_primitive:
 .opToPrimitiveSlowCase:
     callSlowPath(_slow_path_to_primitive)
     dispatch(3)
-
-
-_llint_op_next_pname:
-    traceExecution()
-    loadisFromInstruction(3, t1)
-    loadisFromInstruction(4, t2)
-    assertNotConstant(t1)
-    assertNotConstant(t2)
-    loadi PayloadOffset[cfr, t1, 8], t0
-    bieq t0, PayloadOffset[cfr, t2, 8], .opNextPnameEnd
-    loadisFromInstruction(5, t2)
-    assertNotConstant(t2)
-    loadp [cfr, t2, 8], t2
-    loadp JSPropertyNameIterator::m_jsStrings[t2], t3
-    loadq [t3, t0, 8], t3
-    addi 1, t0
-    storei t0, PayloadOffset[cfr, t1, 8]
-    loadisFromInstruction(1, t1)
-    storeq t3, [cfr, t1, 8]
-    loadisFromInstruction(2, t3)
-    assertNotConstant(t3)
-    loadq [cfr, t3, 8], t3
-    loadStructureWithScratch(t3, t1, t0)
-    bpneq t1, JSPropertyNameIterator::m_cachedStructure[t2], .opNextPnameSlow
-    loadp JSPropertyNameIterator::m_cachedPrototypeChain[t2], t0
-    loadp StructureChain::m_vector[t0], t0
-    btpz [t0], .opNextPnameTarget
-.opNextPnameCheckPrototypeLoop:
-    bqeq Structure::m_prototype[t1], ValueNull, .opNextPnameSlow
-    loadq Structure::m_prototype[t1], t2
-    loadStructureWithScratch(t2, t1, t3)
-    bpneq t1, [t0], .opNextPnameSlow
-    addp 8, t0
-    btpnz [t0], .opNextPnameCheckPrototypeLoop
-.opNextPnameTarget:
-    dispatchIntIndirect(6)
-
-.opNextPnameEnd:
-    dispatch(7)
-
-.opNextPnameSlow:
-    callSlowPath(_llint_slow_path_next_pname) # This either keeps the PC where it was (causing us to loop) or sets it to target.
-    dispatch(0)
 
 
 _llint_op_catch:

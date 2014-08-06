@@ -47,7 +47,6 @@
 #include "JSBoundFunction.h"
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
-#include "JSPropertyNameIterator.h"
 #include "JSStackInlines.h"
 #include "JSString.h"
 #include "JSWithScope.h"

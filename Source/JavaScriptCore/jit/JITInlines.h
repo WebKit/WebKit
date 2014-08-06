@@ -32,6 +32,50 @@
 
 namespace JSC {
 
+#if USE(JSVALUE64)
+inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(Instruction* instruction, PatchableJump& badType)
+{
+    JumpList slowCases = emitDoubleLoad(instruction, badType);
+    moveDoubleTo64(fpRegT0, regT0);
+    sub64(tagTypeNumberRegister, regT0);
+    return slowCases;
+}
+#else
+inline MacroAssembler::JumpList JIT::emitDoubleGetByVal(Instruction* instruction, PatchableJump& badType)
+{
+    JumpList slowCases = emitDoubleLoad(instruction, badType);
+    moveDoubleToInts(fpRegT0, regT0, regT1);
+    return slowCases;
+}
+#endif // USE(JSVALUE64)
+
+ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(Instruction* currentInstruction, JITArrayMode arrayMode, PatchableJump& badType)
+{
+    switch (arrayMode) {
+    case JITInt32:
+        return emitInt32Load(currentInstruction, badType);
+    case JITDouble:
+        return emitDoubleLoad(currentInstruction, badType);
+    case JITContiguous:
+        return emitContiguousLoad(currentInstruction, badType);
+    case JITArrayStorage:
+        return emitArrayStorageLoad(currentInstruction, badType);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+inline MacroAssembler::JumpList JIT::emitContiguousGetByVal(Instruction* instruction, PatchableJump& badType, IndexingType expectedShape)
+{
+    return emitContiguousLoad(instruction, badType, expectedShape);
+}
+
+inline MacroAssembler::JumpList JIT::emitArrayStorageGetByVal(Instruction* instruction, PatchableJump& badType)
+{
+    return emitArrayStorageLoad(instruction, badType);
+}
+
 ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isDouble();

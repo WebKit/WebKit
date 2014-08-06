@@ -47,7 +47,6 @@ class CallLinkStatus {
 public:
     CallLinkStatus()
         : m_executable(0)
-        , m_structure(0)
         , m_couldTakeSlowPath(false)
         , m_isProved(false)
     {
@@ -62,13 +61,11 @@ public:
     
     explicit CallLinkStatus(JSValue);
     
-    CallLinkStatus(ExecutableBase* executable, Structure* structure)
+    CallLinkStatus(ExecutableBase* executable)
         : m_executable(executable)
-        , m_structure(structure)
         , m_couldTakeSlowPath(false)
         , m_isProved(false)
     {
-        ASSERT(!!executable == !!structure);
     }
     
     CallLinkStatus& setIsProved(bool isProved)
@@ -122,7 +119,6 @@ public:
     InternalFunction* internalFunction() const;
     Intrinsic intrinsicFor(CodeSpecializationKind) const;
     ExecutableBase* executable() const { return m_executable; }
-    Structure* structure() const { return m_structure; }
     bool isProved() const { return m_isProved; }
     bool canOptimize() const { return (m_callTarget || m_executable) && !m_couldTakeSlowPath; }
     
@@ -140,7 +136,6 @@ private:
     
     JSValue m_callTarget;
     ExecutableBase* m_executable;
-    Structure* m_structure;
     bool m_couldTakeSlowPath;
     bool m_isProved;
 };

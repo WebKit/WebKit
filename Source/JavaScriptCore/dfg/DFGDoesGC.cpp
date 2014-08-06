@@ -189,6 +189,11 @@ bool doesGC(Graph& graph, Node* node)
     case GetByOffset:
     case GetGetterSetterByOffset:
     case PutByOffset:
+    case GetEnumerableLength:
+    case HasGenericProperty:
+    case HasStructureProperty:
+    case HasIndexedProperty:
+    case GetDirectPname:
     case FiatInt52:
     case BooleanToNumber:
         return false;
@@ -213,6 +218,10 @@ bool doesGC(Graph& graph, Node* node)
     case NewFunctionExpression:
     case NewTypedArray:
     case ThrowReferenceError:
+    case GetStructurePropertyEnumerator:
+    case GetGenericPropertyEnumerator:
+    case GetEnumeratorPname:
+    case ToIndexString:
         return true;
         
     case MultiPutByOffset:

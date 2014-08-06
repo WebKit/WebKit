@@ -1613,37 +1613,6 @@ _llint_op_get_argument_by_val:
     dispatch(6)
 
 
-_llint_op_get_by_pname:
-    traceExecution()
-    loadi 12[PC], t0
-    loadConstantOrVariablePayload(t0, CellTag, t1, .opGetByPnameSlow)
-    loadi 16[PC], t0
-    bpneq t1, PayloadOffset[cfr, t0, 8], .opGetByPnameSlow
-    loadi 8[PC], t0
-    loadConstantOrVariablePayload(t0, CellTag, t2, .opGetByPnameSlow)
-    loadi 20[PC], t0
-    loadi PayloadOffset[cfr, t0, 8], t3
-    loadp JSCell::m_structureID[t2], t0
-    bpneq t0, JSPropertyNameIterator::m_cachedStructure[t3], .opGetByPnameSlow
-    loadi 24[PC], t0
-    loadi [cfr, t0, 8], t0
-    subi 1, t0
-    biaeq t0, JSPropertyNameIterator::m_numCacheableSlots[t3], .opGetByPnameSlow
-    bilt t0, JSPropertyNameIterator::m_cachedStructureInlineCapacity[t3], .opGetByPnameInlineProperty
-    addi firstOutOfLineOffset, t0
-    subi JSPropertyNameIterator::m_cachedStructureInlineCapacity[t3], t0
-.opGetByPnameInlineProperty:
-    loadPropertyAtVariableOffset(t0, t2, t1, t3)
-    loadi 4[PC], t0
-    storei t1, TagOffset[cfr, t0, 8]
-    storei t3, PayloadOffset[cfr, t0, 8]
-    dispatch(7)
-
-.opGetByPnameSlow:
-    callSlowPath(_llint_slow_path_get_by_pname)
-    dispatch(7)
-
-
 macro contiguousPutByVal(storeCallback)
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .outOfBounds
 .storeResult:
@@ -2036,46 +2005,6 @@ _llint_op_to_primitive:
 .opToPrimitiveSlowCase:
     callSlowPath(_slow_path_to_primitive)
     dispatch(3)
-
-
-_llint_op_next_pname:
-    traceExecution()
-    loadi 12[PC], t1
-    loadi 16[PC], t2
-    loadi PayloadOffset[cfr, t1, 8], t0
-    bieq t0, PayloadOffset[cfr, t2, 8], .opNextPnameEnd
-    loadi 20[PC], t2
-    loadi PayloadOffset[cfr, t2, 8], t2
-    loadp JSPropertyNameIterator::m_jsStrings[t2], t3
-    loadi [t3, t0, 8], t3
-    addi 1, t0
-    storei t0, PayloadOffset[cfr, t1, 8]
-    loadi 4[PC], t1
-    storei CellTag, TagOffset[cfr, t1, 8]
-    storei t3, PayloadOffset[cfr, t1, 8]
-    loadi 8[PC], t3
-    loadi PayloadOffset[cfr, t3, 8], t3
-    loadp JSCell::m_structureID[t3], t1
-    bpneq t1, JSPropertyNameIterator::m_cachedStructure[t2], .opNextPnameSlow
-    loadp JSPropertyNameIterator::m_cachedPrototypeChain[t2], t0
-    loadp StructureChain::m_vector[t0], t0
-    btpz [t0], .opNextPnameTarget
-.opNextPnameCheckPrototypeLoop:
-    bieq Structure::m_prototype + TagOffset[t1], NullTag, .opNextPnameSlow
-    loadp Structure::m_prototype + PayloadOffset[t1], t2
-    loadp JSCell::m_structureID[t2], t1
-    bpneq t1, [t0], .opNextPnameSlow
-    addp 4, t0
-    btpnz [t0], .opNextPnameCheckPrototypeLoop
-.opNextPnameTarget:
-    dispatchBranch(24[PC])
-
-.opNextPnameEnd:
-    dispatch(7)
-
-.opNextPnameSlow:
-    callSlowPath(_llint_slow_path_next_pname) # This either keeps the PC where it was (causing us to loop) or sets it to target.
-    dispatch(0)
 
 
 _llint_op_catch:

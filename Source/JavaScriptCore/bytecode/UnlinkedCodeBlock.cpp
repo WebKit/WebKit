@@ -99,6 +99,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_unlinkedBodyEndColumn(m_lineCount ? node->endColumn() : node->endColumn() - node->startColumn())
     , m_startOffset(node->source().startOffset() - source.startOffset())
     , m_sourceLength(node->source().length())
+    , m_highFidelityTypeProfilingStartOffset(node->functionNameStart())
+    , m_highFidelityTypeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_features(node->features())
     , m_functionMode(node->functionMode())
 {

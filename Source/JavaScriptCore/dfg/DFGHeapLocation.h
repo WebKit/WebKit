@@ -44,6 +44,7 @@ enum LocationKind {
     ClosureVariableLoc,
     GetterLoc,
     GlobalVariableLoc,
+    HasIndexedPropertyLoc,
     IndexedPropertyLoc,
     IndexedPropertyStorageLoc,
     InstanceOfLoc,

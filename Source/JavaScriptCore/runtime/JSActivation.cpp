@@ -115,14 +115,14 @@ void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec
     JSActivation* thisObject = jsCast<JSActivation*>(object);
 
     CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(thisObject->m_registers));
-    if (mode == IncludeDontEnumProperties && !thisObject->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
+    if (shouldIncludeDontEnumProperties(mode) && !thisObject->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
         propertyNames.add(exec->propertyNames().arguments);
 
     {
         ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
-            if (it->value.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
+            if (it->value.getAttributes() & DontEnum && !shouldIncludeDontEnumProperties(mode))
                 continue;
             if (!thisObject->isValid(it->value))
                 continue;

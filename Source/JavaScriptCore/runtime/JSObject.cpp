@@ -76,7 +76,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if ((!(iter->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)) && !((iter->attributes() & BuiltinOrFunction) && didReify))
+            if ((!(iter->attributes() & DontEnum) || shouldIncludeDontEnumProperties(mode)) && !((iter->attributes() & BuiltinOrFunction) && didReify))
                 propertyNames.add(Identifier(&vm, iter.key()));
         }
     }
@@ -1305,6 +1305,12 @@ bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
     return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
 }
 
+bool JSObject::hasOwnProperty(ExecState* exec, unsigned propertyName) const
+{
+    PropertySlot slot(this);
+    return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlotByIndex(const_cast<JSObject*>(this), exec, propertyName, slot);
+}
+
 bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
@@ -1485,6 +1491,12 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
 
 void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    if (!shouldIncludeJSObjectPropertyNames(mode)) {
+        // We still have to get non-indexed properties from any subclasses of JSObject that have them.
+        object->methodTable(exec->vm())->getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
+        return;
+    }
+
     // Add numeric properties first. That appears to be the accepted convention.
     // FIXME: Filling PropertyNameArray with an identifier for every integer
     // is incredibly inefficient for large arrays. We need a different approach,
@@ -1501,7 +1513,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
         for (unsigned i = 0; i < usedLength; ++i) {
             if (!butterfly->contiguous()[i])
                 continue;
-            propertyNames.add(Identifier::from(exec, i));
+            propertyNames.add(i);
         }
         break;
     }
@@ -1513,7 +1525,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
             double value = butterfly->contiguousDouble()[i];
             if (value != value)
                 continue;
-            propertyNames.add(Identifier::from(exec, i));
+            propertyNames.add(i);
         }
         break;
     }
@@ -1524,7 +1536,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
         unsigned usedVectorLength = std::min(storage->length(), storage->vectorLength());
         for (unsigned i = 0; i < usedVectorLength; ++i) {
             if (storage->m_vector[i])
-                propertyNames.add(Identifier::from(exec, i));
+                propertyNames.add(i);
         }
         
         if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
@@ -1533,13 +1545,13 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
             
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                if (mode == IncludeDontEnumProperties || !(it->value.attributes & DontEnum))
+                if (shouldIncludeDontEnumProperties(mode) || !(it->value.attributes & DontEnum))
                     keys.uncheckedAppend(static_cast<unsigned>(it->key));
             }
             
             std::sort(keys.begin(), keys.end());
             for (unsigned i = 0; i < keys.size(); ++i)
-                propertyNames.add(Identifier::from(exec, keys[i]));
+                propertyNames.add(keys[i]);
         }
         break;
     }
@@ -1547,7 +1559,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    
+
     object->methodTable(exec->vm())->getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
 }
 
@@ -1555,12 +1567,11 @@ void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pr
 {
     getClassPropertyNames(exec, object->classInfo(), propertyNames, mode, object->staticFunctionsReified());
 
+    if (!shouldIncludeJSObjectPropertyNames(mode))
+        return;
+    
     VM& vm = exec->vm();
-    bool canCachePropertiesFromStructure = !propertyNames.size();
     object->structure(vm)->getPropertyNamesFromStructure(vm, propertyNames, mode);
-
-    if (canCachePropertiesFromStructure)
-        propertyNames.setNumCacheableSlotsForObject(object, propertyNames.size());
 }
 
 double JSObject::toNumber(ExecState* exec) const
@@ -2690,5 +2701,86 @@ void JSObject::shiftButterflyAfterFlattening(VM& vm, size_t outOfLineCapacityBef
     memmove(newBase, currentBase, this->butterflyTotalSize());
     setButterflyWithoutChangingStructure(vm, Butterfly::fromBase(newBase, preCapacity, outOfLineCapacityAfter));
 }
+
+uint32_t JSObject::getEnumerableLength(ExecState* exec, JSObject* object)
+{
+    VM& vm = exec->vm();
+    Structure* structure = object->structure(vm);
+    if (structure->holesMustForwardToPrototype(vm))
+        return 0;
+    switch (object->indexingType()) {
+    case ALL_BLANK_INDEXING_TYPES:
+    case ALL_UNDECIDED_INDEXING_TYPES:
+        return 0;
+        
+    case ALL_INT32_INDEXING_TYPES:
+    case ALL_CONTIGUOUS_INDEXING_TYPES: {
+        Butterfly* butterfly = object->butterfly();
+        unsigned usedLength = butterfly->publicLength();
+        for (unsigned i = 0; i < usedLength; ++i) {
+            if (!butterfly->contiguous()[i])
+                return 0;
+        }
+        return usedLength;
+    }
+        
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        Butterfly* butterfly = object->butterfly();
+        unsigned usedLength = butterfly->publicLength();
+        for (unsigned i = 0; i < usedLength; ++i) {
+            double value = butterfly->contiguousDouble()[i];
+            if (value != value)
+                return 0;
+        }
+        return usedLength;
+    }
+        
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+        ArrayStorage* storage = object->m_butterfly->arrayStorage();
+        if (storage->m_sparseMap.get())
+            return 0;
+        
+        unsigned usedVectorLength = std::min(storage->length(), storage->vectorLength());
+        for (unsigned i = 0; i < usedVectorLength; ++i) {
+            if (!storage->m_vector[i])
+                return 0;
+        }
+        return usedVectorLength;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+void JSObject::getStructurePropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    VM& vm = exec->vm();
+    object->structure(vm)->getPropertyNamesFromStructure(vm, propertyNames, mode);
+}
+
+void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    VM& vm = exec->vm();
+    object->methodTable(vm)->getOwnPropertyNames(object, exec, propertyNames, modeThatSkipsJSObject(mode));
+
+    if (object->prototype().isNull())
+        return;
+
+    JSObject* prototype = asObject(object->prototype());
+    while (true) {
+        if (prototype->structure(vm)->typeInfo().overridesGetPropertyNames()) {
+            prototype->methodTable(vm)->getPropertyNames(prototype, exec, propertyNames, mode);
+            break;
+        }
+        prototype->methodTable(vm)->getOwnPropertyNames(prototype, exec, propertyNames, mode);
+        JSValue nextProto = prototype->prototype();
+        if (nextProto.isNull())
+            break;
+        prototype = asObject(nextProto);
+    }
+}
+
 
 } // namespace JSC

@@ -1795,13 +1795,65 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case In:
+    case In: {
         // FIXME: We can determine when the property definitely exists based on abstract
         // value information.
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
+    }
             
+    case GetEnumerableLength: {
+        forNode(node).setType(SpecInt32);
+        break;
+    }
+    case HasGenericProperty: {
+        forNode(node).setType(SpecBoolean);
+        break;
+    }
+    case HasStructureProperty: {
+        forNode(node).setType(SpecBoolean);
+        break;
+    }
+    case HasIndexedProperty: {
+        ArrayMode mode = node->arrayMode();
+        switch (mode.type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+        case Array::ArrayStorage: {
+            break;
+        }
+        default: {
+            clobberWorld(node->origin.semantic, clobberLimit);
+            break;
+        }
+        }
+        forNode(node).setType(SpecBoolean);
+        break;
+    }
+    case GetDirectPname: {
+        clobberWorld(node->origin.semantic, clobberLimit);
+        forNode(node).makeHeapTop();
+        break;
+    }
+    case GetStructurePropertyEnumerator: {
+        forNode(node).setType(SpecCell);
+        break;
+    }
+    case GetGenericPropertyEnumerator: {
+        forNode(node).setType(SpecCell);
+        break;
+    }
+    case GetEnumeratorPname: {
+        forNode(node).setType(SpecString | SpecOther);
+        break;
+    }
+    case ToIndexString: {
+        forNode(node).setType(SpecString);
+        break;
+    }
+
     case GetGlobalVar:
         forNode(node).makeHeapTop();
         break;
@@ -1866,11 +1918,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ProfileDidCall:
     case Phantom:
     case HardPhantom:
-    case Check:
     case CountExecution:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
         break;
+
+    case Check: {
+        // Simplify out checks that don't actually do checking.
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            Edge edge = node->children.child(i);
+            if (!edge)
+                break;
+            if (edge.isProved() || edge.willNotHaveCheck()) {
+                m_state.setFoundConstants(true);
+                break;
+            }
+        }
+        break;
+    }
 
     case StoreBarrier: {
         filter(node->child1(), SpecCell);

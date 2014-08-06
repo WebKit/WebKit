@@ -53,45 +53,25 @@ HighFidelityLog::~HighFidelityLog()
     delete[] m_nextBuffer;
 }
 
-void HighFidelityLog::processHighFidelityLog(bool asynchronously, String reason)
+void HighFidelityLog::processHighFidelityLog(String reason)
 {
-    // This should only be called from the main execution thread.
     if (!m_currentOffset)
         return;
 
     if (verbose)
         dataLog("Process caller:'", reason,"'");
 
-    ByteSpinLocker* locker = new ByteSpinLocker(m_lock);
-    ThreadData* data = new ThreadData;
-    data->m_proccessLogToOffset = m_currentOffset;
-    data->m_processLogPtr = m_logStartPtr;
-    data->m_locker = locker;
-
-    m_currentOffset = 0;
-    std::swap(m_logStartPtr, m_nextBuffer);
-    
-    if (asynchronously)
-        createThread(actuallyProcessLogThreadFunction, data, "ProcessHighFidelityLog");
-    else 
-        actuallyProcessLogThreadFunction(data);
-}
-
-void HighFidelityLog::actuallyProcessLogThreadFunction(void* arg)
-{
     double before = currentTimeMS();
-    ThreadData* data = static_cast<ThreadData*>(arg);
-    LogEntry* entry = data->m_processLogPtr;
+    LogEntry* entry = m_logStartPtr;
     HashMap<StructureID, RefPtr<StructureShape>> seenShapes;
-    size_t processLogToOffset = data->m_proccessLogToOffset; 
     size_t i = 0;
-    while (i < processLogToOffset) {
+    while (i < m_currentOffset) {
         StructureID id = entry->structureID;
         RefPtr<StructureShape> shape; 
         if (id) {
             auto iter = seenShapes.find(id);
             if (iter == seenShapes.end()) {
-                shape = entry->value.asCell()->structure()->toStructureShape();
+                shape = Heap::heap(entry->value.asCell())->structureIDTable().get(entry->structureID)->toStructureShape(entry->value);
                 seenShapes.set(id, shape);
             } else 
                 shape = iter->value;
@@ -105,11 +85,12 @@ void HighFidelityLog::actuallyProcessLogThreadFunction(void* arg)
         i++;
     }
 
-    delete data->m_locker;
-    delete data;
-    double after = currentTimeMS();
-    if (verbose)
+    m_currentOffset = 0;
+
+    if (verbose) {
+        double after = currentTimeMS();
         dataLogF(" Processing the log took: '%f' ms\n", after - before);
+    }
 }
 
 } //namespace JSC

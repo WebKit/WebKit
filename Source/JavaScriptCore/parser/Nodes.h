@@ -1280,6 +1280,10 @@ namespace JSC {
         ForInNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
 
     private:
+        RegisterID* tryGetBoundLocal(BytecodeGenerator&);
+        void emitLoopHeader(BytecodeGenerator&, RegisterID* propertyName);
+        void emitMultiLoopBytecode(BytecodeGenerator&, RegisterID* dst);
+
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
     

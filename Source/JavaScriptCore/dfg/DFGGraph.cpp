@@ -157,7 +157,6 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     NodeType op = node->op();
 
     unsigned refCount = node->refCount();
-    bool skipped = !refCount;
     bool mustGenerate = node->mustGenerate();
     if (mustGenerate)
         --refCount;
@@ -181,8 +180,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     //         arg# - an argument number.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
-    out.printf("% 4d:%s<%c%u:", (int)node->index(), skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
-    if (node->hasResult() && !skipped && node->hasVirtualRegister())
+    out.printf("% 4d:<%c%u:", (int)node->index(), mustGenerate ? '!' : ' ', refCount);
+    if (node->hasResult() && node->hasVirtualRegister() && node->virtualRegister().isValid())
         out.print(node->virtualRegister());
     else
         out.print("-");
@@ -352,12 +351,10 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     
     out.print(")");
 
-    if (!skipped) {
-        if (node->hasVariableAccessData(*this) && node->tryGetVariableAccessData())
-            out.print("  predicting ", SpeculationDump(node->tryGetVariableAccessData()->prediction()));
-        else if (node->hasHeapPrediction())
-            out.print("  predicting ", SpeculationDump(node->getHeapPrediction()));
-    }
+    if (node->hasVariableAccessData(*this) && node->tryGetVariableAccessData())
+        out.print("  predicting ", SpeculationDump(node->tryGetVariableAccessData()->prediction()));
+    else if (node->hasHeapPrediction())
+        out.print("  predicting ", SpeculationDump(node->getHeapPrediction()));
     
     out.print("\n");
 }

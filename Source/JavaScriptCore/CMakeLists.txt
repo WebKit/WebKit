@@ -186,6 +186,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGOSRExitJumpPlaceholder.cpp
     dfg/DFGOSRExitPreparation.cpp
     dfg/DFGOperations.cpp
+    dfg/DFGPhantomCanonicalizationPhase.cpp
     dfg/DFGPhantomRemovalPhase.cpp
     dfg/DFGPhase.cpp
     dfg/DFGPlan.cpp
@@ -451,7 +452,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSPromiseFunctions.cpp
     runtime/JSPromiseReaction.cpp
     runtime/JSPromisePrototype.cpp
-    runtime/JSPropertyNameIterator.cpp
     runtime/JSProxy.cpp
     runtime/JSScope.cpp
     runtime/JSSegmentedVariableObject.cpp

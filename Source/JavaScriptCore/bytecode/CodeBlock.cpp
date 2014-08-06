@@ -49,7 +49,7 @@
 #include "JSFunction.h"
 #include "JSNameScope.h"
 #include "LLIntEntrypoint.h"
-#include "TypeLocation.h"
+#include "TypeLocationCache.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
 #include "PolymorphicGetByIdList.h"
@@ -1109,17 +1109,6 @@ void CodeBlock::dumpBytecode(
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
-        case op_get_by_pname: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int r2 = (++it)->u.operand;
-            int r3 = (++it)->u.operand;
-            int r4 = (++it)->u.operand;
-            int r5 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "get_by_pname");
-            out.printf("%s, %s, %s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), registerName(r4).data(), registerName(r5).data());
-            break;
-        }
         case op_put_by_val: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1366,27 +1355,89 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
-        case op_get_pnames: {
-            int r0 = it[1].u.operand;
-            int r1 = it[2].u.operand;
-            int r2 = it[3].u.operand;
-            int r3 = it[4].u.operand;
-            int offset = it[5].u.operand;
-            printLocationAndOp(out, exec, location, it, "get_pnames");
-            out.printf("%s, %s, %s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), offset, location + offset);
-            it += OPCODE_LENGTH(op_get_pnames) - 1;
+        case op_get_enumerable_length: {
+            int dst = it[1].u.operand;
+            int base = it[2].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_get_enumerable_length");
+            out.printf("%s, %s", registerName(dst).data(), registerName(base).data());
+            it += OPCODE_LENGTH(op_get_enumerable_length) - 1;
             break;
         }
-        case op_next_pname: {
-            int dest = it[1].u.operand;
+        case op_has_indexed_property: {
+            int dst = it[1].u.operand;
             int base = it[2].u.operand;
-            int i = it[3].u.operand;
-            int size = it[4].u.operand;
-            int iter = it[5].u.operand;
-            int offset = it[6].u.operand;
-            printLocationAndOp(out, exec, location, it, "next_pname");
-            out.printf("%s, %s, %s, %s, %s, %d(->%d)", registerName(dest).data(), registerName(base).data(), registerName(i).data(), registerName(size).data(), registerName(iter).data(), offset, location + offset);
-            it += OPCODE_LENGTH(op_next_pname) - 1;
+            int propertyName = it[3].u.operand;
+            ArrayProfile* arrayProfile = it[4].u.arrayProfile;
+            printLocationAndOp(out, exec, location, it, "op_has_indexed_property");
+            out.printf("%s, %s, %s, %p", registerName(dst).data(), registerName(base).data(), registerName(propertyName).data(), arrayProfile);
+            it += OPCODE_LENGTH(op_has_indexed_property) - 1;
+            break;
+        }
+        case op_has_structure_property: {
+            int dst = it[1].u.operand;
+            int base = it[2].u.operand;
+            int propertyName = it[3].u.operand;
+            int enumerator = it[4].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_has_structure_property");
+            out.printf("%s, %s, %s, %s", registerName(dst).data(), registerName(base).data(), registerName(propertyName).data(), registerName(enumerator).data());
+            it += OPCODE_LENGTH(op_has_structure_property) - 1;
+            break;
+        }
+        case op_has_generic_property: {
+            int dst = it[1].u.operand;
+            int base = it[2].u.operand;
+            int propertyName = it[3].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_has_generic_property");
+            out.printf("%s, %s, %s", registerName(dst).data(), registerName(base).data(), registerName(propertyName).data());
+            it += OPCODE_LENGTH(op_has_generic_property) - 1;
+            break;
+        }
+        case op_get_direct_pname: {
+            int dst = it[1].u.operand;
+            int base = it[2].u.operand;
+            int propertyName = it[3].u.operand;
+            int index = it[4].u.operand;
+            int enumerator = it[5].u.operand;
+            ValueProfile* profile = it[6].u.profile;
+            printLocationAndOp(out, exec, location, it, "op_get_direct_pname");
+            out.printf("%s, %s, %s, %s, %s, %p", registerName(dst).data(), registerName(base).data(), registerName(propertyName).data(), registerName(index).data(), registerName(enumerator).data(), profile);
+            it += OPCODE_LENGTH(op_get_direct_pname) - 1;
+            break;
+
+        }
+        case op_get_structure_property_enumerator: {
+            int dst = it[1].u.operand;
+            int base = it[2].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_get_structure_property_enumerator");
+            out.printf("%s, %s", registerName(dst).data(), registerName(base).data());
+            it += OPCODE_LENGTH(op_get_structure_property_enumerator) - 1;
+            break;
+        }
+        case op_get_generic_property_enumerator: {
+            int dst = it[1].u.operand;
+            int base = it[2].u.operand;
+            int length = it[3].u.operand;
+            int structureEnumerator = it[4].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_get_generic_property_enumerator");
+            out.printf("%s, %s, %s, %s", registerName(dst).data(), registerName(base).data(), registerName(length).data(), registerName(structureEnumerator).data());
+            it += OPCODE_LENGTH(op_get_generic_property_enumerator) - 1;
+            break;
+        }
+        case op_next_enumerator_pname: {
+            int dst = it[1].u.operand;
+            int enumerator = it[2].u.operand;
+            int index = it[3].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_next_enumerator_pname");
+            out.printf("%s, %s, %s", registerName(dst).data(), registerName(enumerator).data(), registerName(index).data());
+            it += OPCODE_LENGTH(op_next_enumerator_pname) - 1;
+            break;
+        }
+        case op_to_index_string: {
+            int dst = it[1].u.operand;
+            int index = it[2].u.operand;
+            printLocationAndOp(out, exec, location, it, "op_to_index_string");
+            out.printf("%s, %s", registerName(dst).data(), registerName(index).data());
+            it += OPCODE_LENGTH(op_to_index_string) - 1;
             break;
         }
         case op_push_with_scope: {
@@ -1675,12 +1726,17 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     ASSERT(m_source);
     setNumParameters(unlinkedCodeBlock->numParameters());
 
+    if (vm()->isProfilingTypesWithHighFidelity())
+        vm()->highFidelityTypeProfiler()->functionHasExecutedCache()->removeUnexecutedRange(m_ownerExecutable->sourceID(), m_ownerExecutable->highFidelityTypeProfilingStartOffset(), m_ownerExecutable->highFidelityTypeProfilingEndOffset());
+
     setConstantRegisters(unlinkedCodeBlock->constantRegisters());
     if (unlinkedCodeBlock->usesGlobalObject())
         m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(*m_vm, ownerExecutable, m_globalObject.get());
     m_functionDecls.resizeToFit(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
+        if (vm()->isProfilingTypesWithHighFidelity())
+            vm()->highFidelityTypeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->highFidelityTypeProfilingStartOffset(), unlinkedExecutable->highFidelityTypeProfilingEndOffset());
         unsigned lineCount = unlinkedExecutable->lineCount();
         unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
         bool startColumnIsOnOwnerStartLine = !unlinkedExecutable->firstLineOffset();
@@ -1697,6 +1753,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     m_functionExprs.resizeToFit(unlinkedCodeBlock->numberOfFunctionExprs());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
+        if (vm()->isProfilingTypesWithHighFidelity())
+            vm()->highFidelityTypeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(m_ownerExecutable->sourceID(), unlinkedExecutable->highFidelityTypeProfilingStartOffset(), unlinkedExecutable->highFidelityTypeProfilingEndOffset());
         unsigned lineCount = unlinkedExecutable->lineCount();
         unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
         bool startColumnIsOnOwnerStartLine = !unlinkedExecutable->firstLineOffset();
@@ -1787,6 +1845,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + j].u.operand = pc[j].u.operand;
         }
         switch (pc[0].u.opcode) {
+        case op_has_indexed_property: {
+            int arrayProfileIndex = pc[opLength - 1].u.operand;
+            m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
+
+            instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
+            break;
+        }
         case op_call_varargs:
         case op_construct_varargs:
         case op_get_by_val:
@@ -1797,6 +1862,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
             FALLTHROUGH;
         }
+        case op_get_direct_pname:
         case op_get_by_id: {
             ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
@@ -1906,8 +1972,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             if (pc[0].u.opcode == op_get_from_scope_with_profile) {
                 // The format of this instruction is: get_from_scope_with_profile dst, scope, id, ResolveModeAndType, Structure, Operand, ..., TypeLocation
                 size_t instructionOffset = i + opLength - 1;
-                TypeLocation* location = vm()->nextLocation();
-                scopeDependentProfile(op, ident, instructionOffset, location);
+                TypeLocation* location = scopeDependentProfile(op, ident, instructionOffset);
                 instructions[i + 8].u.location = location;
             }
             break;
@@ -1933,8 +1998,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             if (pc[0].u.opcode == op_put_to_scope_with_profile) {
                 // The format of this instruction is: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
                 size_t instructionOffset = i + opLength - 1;
-                TypeLocation* location = vm()->nextLocation();
-                scopeDependentProfile(op, ident, instructionOffset, location);
+                TypeLocation* location = scopeDependentProfile(op, ident, instructionOffset);
                 instructions[i + 7].u.location = location;
             }
             break;
@@ -1943,44 +2007,52 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_profile_types_with_high_fidelity: {
             size_t instructionOffset = i + opLength - 1;
             unsigned divotStart, divotEnd;
+            GlobalVariableID globalVariableID;
+            RefPtr<TypeSet> globalTypeSet;
             bool shouldAnalyze = m_unlinkedCode->highFidelityTypeProfileExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
             VirtualRegister virtualRegister(pc[1].u.operand);
             SymbolTable* symbolTable = m_symbolTable.get();
-            TypeLocation* location = vm()->nextLocation();
-            location->m_divotStart = divotStart;
-            location->m_divotEnd = divotEnd;
-            location->m_sourceID = m_ownerExecutable->sourceID();
 
             ProfileTypesWithHighFidelityBytecodeFlag flag = static_cast<ProfileTypesWithHighFidelityBytecodeFlag>(pc[3].u.operand);
             switch (flag) {
             case ProfileTypesBytecodeHasGlobalID: {
                 ConcurrentJITLocker locker(symbolTable->m_lock);
-                location->m_globalVariableID = symbolTable->uniqueIDForRegister(locker, virtualRegister.offset(), *vm());
-                location->m_globalTypeSet = symbolTable->globalTypeSetForRegister(locker, virtualRegister.offset(), *vm());
+                globalVariableID = symbolTable->uniqueIDForRegister(locker, virtualRegister.offset(), *vm());
+                globalTypeSet = symbolTable->globalTypeSetForRegister(locker, virtualRegister.offset(), *vm());
                 break;
             }
             case ProfileTypesBytecodeDoesNotHaveGlobalID: 
-            case ProfileTypesBytecodeFunctionArgument:
+            case ProfileTypesBytecodeFunctionArgument: {
+                globalVariableID = HighFidelityNoGlobalIDExists;
+                break;
+            }
             case ProfileTypesBytecodeFunctionThisObject: {
-                location->m_globalVariableID = HighFidelityNoGlobalIDExists;
+                globalVariableID = HighFidelityThisStatement;
                 break;
             }
             case ProfileTypesBytecodeFunctionReturnStatement: {
-                location->m_globalTypeSet = returnStatementTypeSet();
-                location->m_globalVariableID = HighFidelityReturnStatement;
-                location->m_divotForFunctionOffsetIfReturnStatement = m_sourceOffset; 
+                globalTypeSet = returnStatementTypeSet();
+                globalVariableID = HighFidelityReturnStatement;
                 if (!shouldAnalyze) {
                     // Because some return statements are added implicitly (to return undefined at the end of a function), and these nodes don't emit expression ranges, give them some range.
                     // Currently, this divot is on the open brace of the function. 
-                    location->m_divotStart = location->m_divotEnd = location->m_divotForFunctionOffsetIfReturnStatement;
+                    divotStart = divotEnd = m_sourceOffset;
                     shouldAnalyze = true;
                 }
                 break;
             }
             }
 
-            if (shouldAnalyze)
+            std::pair<TypeLocation*, bool> locationPair = vm()->highFidelityTypeProfiler()->typeLocationCache()->getTypeLocation(globalVariableID, m_ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
+            TypeLocation* location = locationPair.first;
+            bool isNewLocation = locationPair.second;
+
+            if (ProfileTypesBytecodeFunctionReturnStatement)
+                location->m_divotForFunctionOffsetIfReturnStatement = m_sourceOffset;
+
+            if (shouldAnalyze && isNewLocation)
                 vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+
             instructions[i + 2].u.location = location;
             break;
         }
@@ -3863,13 +3935,12 @@ DFG::CapabilityLevel CodeBlock::capabilityLevel()
 }
 #endif
 
-void CodeBlock::scopeDependentProfile(ResolveOp op, const Identifier& ident, size_t instructionOffset, TypeLocation* location)
+TypeLocation* CodeBlock::scopeDependentProfile(ResolveOp op, const Identifier& ident, size_t instructionOffset)
 {
     unsigned divotStart, divotEnd;
     bool shouldAnalyze = m_unlinkedCode->highFidelityTypeProfileExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
-    location->m_divotStart = divotStart;
-    location->m_divotEnd = divotEnd;
-    location->m_sourceID = m_ownerExecutable->sourceID();
+    GlobalVariableID globalVariableID;
+    RefPtr<TypeSet> globalTypeSet;
 
     // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
     SymbolTable* symbolTable = nullptr;
@@ -3880,13 +3951,19 @@ void CodeBlock::scopeDependentProfile(ResolveOp op, const Identifier& ident, siz
     
     if (symbolTable) {
         ConcurrentJITLocker locker(symbolTable->m_lock);
-        location->m_globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
-        location->m_globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
+        globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
+        globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
     } else
-        location->m_globalVariableID = HighFidelityNoGlobalIDExists;
+        globalVariableID = HighFidelityNoGlobalIDExists;
 
-    if (shouldAnalyze)
+    std::pair<TypeLocation*, bool> locationPair = vm()->highFidelityTypeProfiler()->typeLocationCache()->getTypeLocation(globalVariableID, m_ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
+    TypeLocation* location = locationPair.first;
+    bool isNewLocation = locationPair.second;
+
+    if (shouldAnalyze & isNewLocation)
         vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+
+    return location;
 }
 
 } // namespace JSC

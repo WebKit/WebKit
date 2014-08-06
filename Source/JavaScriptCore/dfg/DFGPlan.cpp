@@ -49,6 +49,7 @@
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
+#include "DFGPhantomCanonicalizationPhase.h"
 #include "DFGPhantomRemovalPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
@@ -311,7 +312,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FailPath;
         }
         
-        performPhantomRemoval(dfg);
+        performPhantomRemoval(dfg); // Reduce the graph size a bit.
         performCriticalEdgeBreaking(dfg);
         performLoopPreHeaderCreation(dfg);
         performCPSRethreading(dfg);
@@ -321,6 +322,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performConstantFolding(dfg);
+        performPhantomCanonicalization(dfg); // Reduce the graph size a lot.
         if (performStrengthReduction(dfg)) {
             // State-at-tail and state-at-head will be invalid if we did strength reduction since
             // it might increase live ranges.
@@ -328,7 +330,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             performCFA(dfg);
         }
         performLICM(dfg);
-        performPhantomRemoval(dfg);
+        performPhantomCanonicalization(dfg);
         performIntegerCheckCombining(dfg);
         performGlobalCSE(dfg);
         
@@ -337,7 +339,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         dfg.m_fixpointState = FixpointConverged;
         
         performStoreBarrierElision(dfg);
-        performPhantomRemoval(dfg);
+        performPhantomCanonicalization(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         if (Options::validateFTLOSRExitLiveness())

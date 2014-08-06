@@ -77,13 +77,14 @@ namespace JSC {
         JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
         JS_EXPORT_PRIVATE void finishCreation(VM&);
 
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
         JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
         JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
     private:

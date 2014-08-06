@@ -185,6 +185,7 @@ private:
         case GetMyArgumentByValSafe:
         case GetByOffset:
         case MultiGetByOffset:
+        case GetDirectPname:
         case Call:
         case Construct:
         case NativeCall:
@@ -583,6 +584,39 @@ private:
         case In:
             changed |= setPrediction(SpecBoolean);
             break;
+
+        case GetEnumerableLength: {
+            changed |= setPrediction(SpecInt32);
+            break;
+        }
+        case HasGenericProperty: {
+            changed |= setPrediction(SpecBoolean);
+            break;
+        }
+        case HasStructureProperty: {
+            changed |= setPrediction(SpecBoolean);
+            break;
+        }
+        case HasIndexedProperty: {
+            changed |= setPrediction(SpecBoolean);
+            break;
+        }
+        case GetStructurePropertyEnumerator: {
+            changed |= setPrediction(SpecCell);
+            break;
+        }
+        case GetGenericPropertyEnumerator: {
+            changed |= setPrediction(SpecCell);
+            break;
+        }
+        case GetEnumeratorPname: {
+            changed |= setPrediction(SpecCell | SpecOther);
+            break;
+        }
+        case ToIndexString: {
+            changed |= setPrediction(SpecString);
+            break;
+        }
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.

@@ -158,6 +158,14 @@ inline CapabilityLevel canCompile(Node* node)
     case DoubleConstant:
     case Int52Constant:
     case BooleanToNumber:
+    case HasGenericProperty:
+    case HasStructureProperty:
+    case GetDirectPname:
+    case GetEnumerableLength:
+    case GetStructurePropertyEnumerator:
+    case GetGenericPropertyEnumerator:
+    case GetEnumeratorPname:
+    case ToIndexString:
         // These are OK.
         break;
     case Identity:
@@ -203,6 +211,17 @@ inline CapabilityLevel canCompile(Node* node)
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
                 break;
+            return CannotCompile;
+        }
+        break;
+    case HasIndexedProperty:
+        switch (node->arrayMode().type()) {
+        case Array::ForceExit:
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            break;
+        default:
             return CannotCompile;
         }
         break;
@@ -374,6 +393,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case CellUse:
                 case KnownCellUse:
                 case ObjectUse:
+                case FunctionUse:
                 case ObjectOrOtherUse:
                 case StringUse:
                 case KnownStringUse:

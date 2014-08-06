@@ -61,7 +61,7 @@ namespace JSC { namespace DFG {
     macro(GetArgument, NodeResultJS | NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
     macro(HardPhantom, NodeMustGenerate) /* Like Phantom, but we never remove any of its children. */ \
-    macro(Check, 0) /* Used if we want just a type check but not liveness. DCE eithers kills this or converts it to Phantom. */\
+    macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\
     macro(Upsilon, NodeRelevantToOSR) \
     macro(Phi, NodeRelevantToOSR) \
     macro(Flush, NodeMustGenerate) \
@@ -293,6 +293,17 @@ namespace JSC { namespace DFG {
     /* Write barriers ! */\
     macro(StoreBarrier, NodeMustGenerate) \
     macro(StoreBarrierWithNullCheck, NodeMustGenerate) \
+    \
+    /* For-in enumeration opcodes */\
+    macro(GetEnumerableLength, NodeMustGenerate | NodeResultJS) \
+    macro(HasIndexedProperty, NodeResultBoolean) \
+    macro(HasStructureProperty, NodeResultBoolean) \
+    macro(HasGenericProperty, NodeResultBoolean) \
+    macro(GetDirectPname, NodeMustGenerate | NodeHasVarArgs | NodeResultJS) \
+    macro(GetStructurePropertyEnumerator, NodeMustGenerate | NodeResultJS) \
+    macro(GetGenericPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
+    macro(GetEnumeratorPname, NodeMustGenerate | NodeResultJS) \
+    macro(ToIndexString, NodeResultJS)
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

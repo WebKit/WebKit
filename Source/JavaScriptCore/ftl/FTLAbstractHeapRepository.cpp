@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "GetterSetter.h"
+#include "JSPropertyNameEnumerator.h"
 #include "JSScope.h"
 #include "JSVariableObject.h"
 #include "JSCInlines.h"

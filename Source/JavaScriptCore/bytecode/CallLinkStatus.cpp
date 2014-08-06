@@ -40,14 +40,11 @@ static const bool verbose = false;
 CallLinkStatus::CallLinkStatus(JSValue value)
     : m_callTarget(value)
     , m_executable(0)
-    , m_structure(0)
     , m_couldTakeSlowPath(false)
     , m_isProved(false)
 {
     if (!value || !value.isCell())
         return;
-    
-    m_structure = value.asCell()->structure();
     
     if (!value.asCell()->inherits(JSFunction::info()))
         return;
@@ -176,14 +173,14 @@ CallLinkStatus CallLinkStatus::computeFor(const ConcurrentJITLocker&, CallLinkIn
         return takesSlowPath();
     
     if (ClosureCallStubRoutine* stub = callLinkInfo.stub.get())
-        return CallLinkStatus(stub->executable(), stub->structure());
+        return CallLinkStatus(stub->executable());
     
     JSFunction* target = callLinkInfo.lastSeenCallee.get();
     if (!target)
         return CallLinkStatus();
     
     if (callLinkInfo.hasSeenClosure)
-        return CallLinkStatus(target->executable(), target->structure());
+        return CallLinkStatus(target->executable());
 
     return CallLinkStatus(target);
 }
@@ -282,9 +279,6 @@ void CallLinkStatus::dump(PrintStream& out) const
         if (!isCompilationThread())
             out.print("/", m_executable->hashFor(CodeForCall));
     }
-    
-    if (m_structure)
-        out.print(comma, "Structure: ", RawPointer(m_structure));
 }
 
 } // namespace JSC

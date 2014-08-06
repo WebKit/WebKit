@@ -83,6 +83,7 @@ namespace JSC {
 class ExecState;
 class LLIntOffsetsExtractor;
 class RepatchBuffer;
+class TypeLocation;
 
 inline VirtualRegister unmodifiedArgumentsRegister(VirtualRegister argumentsRegister) { return VirtualRegister(argumentsRegister.offset() + 1); }
 
@@ -1019,7 +1020,7 @@ private:
             m_rareData = adoptPtr(new RareData);
     }
 
-    void scopeDependentProfile(ResolveOp, const Identifier&, size_t, TypeLocation*);
+    TypeLocation* scopeDependentProfile(ResolveOp, const Identifier&, size_t);
     
 #if ENABLE(JIT)
     void resetStubInternal(RepatchBuffer&, StructureStubInfo&);

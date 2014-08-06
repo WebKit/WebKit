@@ -52,8 +52,6 @@ static bool isBranch(OpcodeID opcodeID)
     case op_switch_imm:
     case op_switch_char:
     case op_switch_string:
-    case op_get_pnames:
-    case op_next_pname:
     case op_check_has_instance:
         return true;
     default:

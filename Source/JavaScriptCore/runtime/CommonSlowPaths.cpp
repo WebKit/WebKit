@@ -42,7 +42,7 @@
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSNameScope.h"
-#include "JSPropertyNameIterator.h"
+#include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "JSWithScope.h"
 #include "LLIntCommon.h"
@@ -535,6 +535,105 @@ SLOW_PATH_DECL(slow_path_enter)
     ScriptExecutable* ownerExecutable = exec->codeBlock()->ownerExecutable();
     Heap::heap(ownerExecutable)->writeBarrier(ownerExecutable);
     END();
+}
+
+SLOW_PATH_DECL(slow_path_get_enumerable_length)
+{
+    BEGIN();
+    JSValue baseValue = OP(2).jsValue();
+    if (baseValue.isUndefinedOrNull())
+        RETURN(jsNumber(0));
+
+    JSObject* base = baseValue.toObject(exec);
+    RETURN(jsNumber(base->methodTable(vm)->getEnumerableLength(exec, base)));
+}
+
+SLOW_PATH_DECL(slow_path_has_indexed_property)
+{
+    BEGIN();
+    JSObject* base = OP(2).jsValue().toObject(exec);
+    JSValue property = OP(3).jsValue();
+    pc[4].u.arrayProfile->observeStructure(base->structure(vm));
+    ASSERT(property.isUInt32());
+    RETURN(jsBoolean(base->hasProperty(exec, property.asUInt32())));
+}
+
+SLOW_PATH_DECL(slow_path_has_structure_property)
+{
+    BEGIN();
+    JSObject* base = OP(2).jsValue().toObject(exec);
+    JSValue property = OP(3).jsValue();
+    ASSERT(property.isString());
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(4).jsValue().asCell());
+    if (base->structure(vm)->id() == enumerator->cachedStructureID())
+        RETURN(jsBoolean(true));
+    RETURN(jsBoolean(base->hasProperty(exec, asString(property.asCell())->toIdentifier(exec))));
+}
+
+SLOW_PATH_DECL(slow_path_has_generic_property)
+{
+    BEGIN();
+    JSObject* base = OP(2).jsValue().toObject(exec);
+    JSValue property = OP(3).jsValue();
+    bool result;
+    if (property.isString())
+        result = base->hasProperty(exec, asString(property.asCell())->toIdentifier(exec));
+    else {
+        ASSERT(property.isUInt32());
+        result = base->hasProperty(exec, property.asUInt32());
+    }
+    RETURN(jsBoolean(result));
+}
+
+SLOW_PATH_DECL(slow_path_get_direct_pname)
+{
+    BEGIN();
+    JSValue baseValue = OP(2).jsValue();
+    JSValue property = OP(3).jsValue();
+    ASSERT(property.isString());
+    RETURN(baseValue.get(exec, property.toString(exec)->toIdentifier(exec)));
+}
+
+SLOW_PATH_DECL(slow_path_get_structure_property_enumerator)
+{
+    BEGIN();
+    JSValue baseValue = OP(2).jsValue();
+    if (baseValue.isUndefinedOrNull())
+        RETURN(JSPropertyNameEnumerator::create(vm));
+        
+    JSObject* base = baseValue.toObject(exec);
+    uint32_t length = OP(3).jsValue().asUInt32();
+
+    RETURN(structurePropertyNameEnumerator(exec, base, length));
+}
+
+SLOW_PATH_DECL(slow_path_get_generic_property_enumerator)
+{
+    BEGIN();
+    JSValue baseValue = OP(2).jsValue();
+    if (baseValue.isUndefinedOrNull())
+        RETURN(JSPropertyNameEnumerator::create(vm));
+    
+    JSObject* base = baseValue.toObject(exec);
+    uint32_t length = OP(3).jsValue().asUInt32();
+    JSPropertyNameEnumerator* structureEnumerator = jsCast<JSPropertyNameEnumerator*>(OP(4).jsValue().asCell());
+
+    RETURN(genericPropertyNameEnumerator(exec, base, length, structureEnumerator));
+}
+
+SLOW_PATH_DECL(slow_path_next_enumerator_pname)
+{
+    BEGIN();
+    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(OP(2).jsValue().asCell());
+    uint32_t index = OP(3).jsValue().asUInt32();
+    JSString* propertyName = enumerator->propertyNameAtIndex(index);
+    RETURN(propertyName ? propertyName : jsNull());
+}
+
+SLOW_PATH_DECL(slow_path_to_index_string)
+{
+    BEGIN();
+    RETURN(jsString(exec, Identifier::from(exec, OP(2).jsValue().asUInt32()).string()));
 }
 
 } // namespace JSC

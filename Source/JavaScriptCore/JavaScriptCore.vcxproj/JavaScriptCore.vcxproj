@@ -433,6 +433,7 @@
     <ClCompile Include="..\dfg\DFGOSRExitCompilerCommon.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitJumpPlaceholder.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp" />
+    <ClCompile Include="..\dfg\DFGPhantomCanonicalizationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPlan.cpp" />
@@ -726,7 +727,6 @@
     <ClCompile Include="..\runtime\JSPromiseFunctions.cpp" />
     <ClCompile Include="..\runtime\JSPromiseReaction.cpp" />
     <ClCompile Include="..\runtime\JSPromisePrototype.cpp" />
-    <ClCompile Include="..\runtime\JSPropertyNameIterator.cpp" />
     <ClCompile Include="..\runtime\JSProxy.cpp" />
     <ClCompile Include="..\runtime\JSScope.cpp" />
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp" />
@@ -1063,6 +1063,7 @@
     <ClInclude Include="..\dfg\DFGOSRExitCompilerCommon.h" />
     <ClInclude Include="..\dfg\DFGOSRExitJumpPlaceholder.h" />
     <ClInclude Include="..\dfg\DFGOSRExitPreparation.h" />
+    <ClInclude Include="..\dfg\DFGPhantomCanonicalizationPhase.h" />
     <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h" />
     <ClInclude Include="..\dfg\DFGPhase.h" />
     <ClInclude Include="..\dfg\DFGPlan.h" />
@@ -1479,7 +1480,6 @@
     <ClInclude Include="..\runtime\JSPromiseFunctions.h" />
     <ClInclude Include="..\runtime\JSPromiseReaction.h" />
     <ClInclude Include="..\runtime\JSPromisePrototype.h" />
-    <ClInclude Include="..\runtime\JSPropertyNameIterator.h" />
     <ClInclude Include="..\runtime\JSProxy.h" />
     <ClInclude Include="..\runtime\JSScope.h" />
     <ClInclude Include="..\runtime\JSSegmentedVariableObject.h" />

@@ -288,8 +288,14 @@ public:
         return !JSC::isValidOffset(m_offset);
     }
 
-    void setEnumerationCache(VM&, JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
-    JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
+    void setCachedStructurePropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    void setCachedGenericPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    JSPropertyNameEnumerator* cachedStructurePropertyNameEnumerator() const;
+    JSPropertyNameEnumerator* cachedGenericPropertyNameEnumerator() const;
+    bool canCacheStructurePropertyNameEnumerator() const;
+    bool canCacheGenericPropertyNameEnumerator() const;
+    bool canAccessPropertiesQuickly() const;
+
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, EnumerationMode);
 
     JSString* objectToStringValue()
@@ -397,7 +403,7 @@ public:
             structure->startWatchingInternalPropertiesIfNecessary(vm);
     }
 
-    PassRefPtr<StructureShape> toStructureShape();
+    PassRefPtr<StructureShape> toStructureShape(JSValue);
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

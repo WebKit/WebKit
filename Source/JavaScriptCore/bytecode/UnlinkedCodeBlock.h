@@ -125,6 +125,8 @@ public:
     unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() { return m_sourceLength; }
+    unsigned highFidelityTypeProfilingStartOffset() const { return m_highFidelityTypeProfilingStartOffset; }
+    unsigned highFidelityTypeProfilingEndOffset() const { return m_highFidelityTypeProfilingEndOffset; }
 
     String paramString() const;
 
@@ -185,6 +187,8 @@ private:
     unsigned m_unlinkedBodyEndColumn;
     unsigned m_startOffset;
     unsigned m_sourceLength;
+    unsigned m_highFidelityTypeProfilingStartOffset;
+    unsigned m_highFidelityTypeProfilingEndOffset;
 
     CodeFeatures m_features;
 

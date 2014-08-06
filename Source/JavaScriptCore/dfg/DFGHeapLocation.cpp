@@ -108,6 +108,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("GlobalVariableLoc");
         return;
         
+    case HasIndexedPropertyLoc:
+        out.print("HasIndexedPorpertyLoc");
+        return;
+        
     case IndexedPropertyLoc:
         out.print("IndexedPorpertyLoc");
         return;

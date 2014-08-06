@@ -244,6 +244,7 @@ namespace JSC {
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;
         Strong<Structure> propertyNameIteratorStructure;
+        Strong<Structure> propertyNameEnumeratorStructure;
         Strong<Structure> getterSetterStructure;
         Strong<Structure> customGetterSetterStructure;
         Strong<Structure> apiWrapperStructure;
@@ -270,6 +271,7 @@ namespace JSC {
         Strong<Structure> promiseReactionStructure;
 #endif
         Strong<JSCell> iterationTerminator;
+        Strong<JSCell> emptyPropertyNameEnumerator;
 
         AtomicStringTable* m_atomicStringTable;
         CommonIdentifiers* propertyNames;
@@ -493,13 +495,11 @@ namespace JSC {
         BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
         bool isProfilingTypesWithHighFidelity() { return !!m_highFidelityTypeProfiler; }
-        String getTypesForVariableAtOffset(unsigned divot, const String& variableName, const String& sourceID);
         HighFidelityLog* highFidelityLog() { return m_highFidelityLog.get(); }
         HighFidelityTypeProfiler* highFidelityTypeProfiler() { return m_highFidelityTypeProfiler.get(); }
-        void updateHighFidelityTypeProfileState();
         TypeLocation* nextLocation() { return m_locationInfo.add(); } //TODO: possible optmization: when codeblocks die, report which locations are no longer being changed so we don't walk over them
         JS_EXPORT_PRIVATE void dumpHighFidelityProfilingTypes();
-        int64_t getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
+        GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -551,7 +551,7 @@ namespace JSC {
         HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
         std::unique_ptr<HighFidelityTypeProfiler> m_highFidelityTypeProfiler;
         std::unique_ptr<HighFidelityLog> m_highFidelityLog;
-        int64_t m_nextUniqueVariableID;
+        GlobalVariableID m_nextUniqueVariableID;
         Bag<TypeLocation> m_locationInfo;
     };
 

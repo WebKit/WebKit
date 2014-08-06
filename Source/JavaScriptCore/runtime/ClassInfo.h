@@ -82,6 +82,12 @@ struct MethodTable {
     typedef void (*GetPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     GetPropertyNamesFunctionPtr getPropertyNames;
 
+    typedef uint32_t (*GetEnumerableLengthFunctionPtr)(ExecState*, JSObject*);
+    GetEnumerableLengthFunctionPtr getEnumerableLength;
+
+    GetPropertyNamesFunctionPtr getStructurePropertyNames;
+    GetPropertyNamesFunctionPtr getGenericPropertyNames;
+
     typedef String (*ClassNameFunctionPtr)(const JSObject*);
     ClassNameFunctionPtr className;
 
@@ -137,6 +143,9 @@ struct MethodTable {
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnNonIndexPropertyNames, \
         &ClassName::getPropertyNames, \
+        &ClassName::getEnumerableLength, \
+        &ClassName::getStructurePropertyNames, \
+        &ClassName::getGenericPropertyNames, \
         &ClassName::className, \
         &ClassName::customHasInstance, \
         &ClassName::defineOwnProperty, \

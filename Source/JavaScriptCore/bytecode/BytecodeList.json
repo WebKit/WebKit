@@ -70,7 +70,6 @@
             { "name" : "op_del_by_id", "length" : 4 },
             { "name" : "op_get_by_val", "length" : 6 },
             { "name" : "op_get_argument_by_val", "length" : 6 },
-            { "name" : "op_get_by_pname", "length" : 7 },
             { "name" : "op_put_by_val", "length" : 5 },
             { "name" : "op_put_by_val_direct", "length" : 5 },
             { "name" : "op_del_by_val", "length" : 4 },
@@ -108,8 +107,6 @@
             { "name" : "op_construct_varargs", "length" : 9 },
             { "name" : "op_strcat", "length" : 4 },
             { "name" : "op_to_primitive", "length" : 3 },
-            { "name" : "op_get_pnames", "length" : 6 },
-            { "name" : "op_next_pname", "length" : 7 },
             { "name" : "op_resolve_scope", "length" : 6 },
             { "name" : "op_get_from_scope", "length" : 8 },
             { "name" : "op_get_from_scope_with_profile", "length" : 9 },
@@ -125,7 +122,16 @@
             { "name" : "op_profile_will_call", "length" : 2 },
             { "name" : "op_profile_did_call", "length" : 2 },
             { "name" : "op_end", "length" : 2 },
-            { "name" : "op_profile_types_with_high_fidelity", "length" : 4 }
+            { "name" : "op_profile_types_with_high_fidelity", "length" : 4 },
+            { "name" : "op_get_enumerable_length", "length" : 3 },
+            { "name" : "op_has_indexed_property", "length" : 5 },
+            { "name" : "op_has_structure_property", "length" : 5 },
+            { "name" : "op_has_generic_property", "length" : 4 },
+            { "name" : "op_get_direct_pname", "length" : 7 },
+            { "name" : "op_get_structure_property_enumerator", "length" : 4 },
+            { "name" : "op_get_generic_property_enumerator", "length" : 5 },
+            { "name" : "op_next_enumerator_pname", "length" : 4 },
+            { "name" : "op_to_index_string", "length" : 3 }
         ]
     },
     {

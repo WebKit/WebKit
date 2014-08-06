@@ -378,7 +378,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
-    if (!thisObject->isHostOrBuiltinFunction() && (mode == IncludeDontEnumProperties)) {
+    if (!thisObject->isHostOrBuiltinFunction() && shouldIncludeDontEnumProperties(mode)) {
         VM& vm = exec->vm();
         // Make sure prototype has been reified.
         PropertySlot slot(thisObject);

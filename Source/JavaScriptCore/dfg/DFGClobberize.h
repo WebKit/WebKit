@@ -147,6 +147,87 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         def(PureValue(node));
         return;
         
+    case HasGenericProperty:
+    case HasStructureProperty:
+    case GetEnumerableLength:
+    case GetStructurePropertyEnumerator:
+    case GetGenericPropertyEnumerator: {
+        read(World);
+        write(SideState);
+        return;
+    }
+
+    case GetDirectPname: {
+        // This reads and writes world because it can end up calling a generic getByVal 
+        // if the Structure changed, which could in turn end up calling a getter.
+        read(World);
+        write(World);
+        return;
+    }
+
+    case ToIndexString:
+    case GetEnumeratorPname: {
+        def(PureValue(node));
+        return;
+    }
+
+    case HasIndexedProperty: {
+        read(JSObject_butterfly);
+        ArrayMode mode = node->arrayMode();
+        switch (mode.type()) {
+        case Array::Int32: {
+            if (mode.isInBounds()) {
+                read(Butterfly_publicLength);
+                read(IndexedInt32Properties);
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, node->child1(), node->child2()), node);
+                return;
+            }
+            read(World);
+            return;
+        }
+            
+        case Array::Double: {
+            if (mode.isInBounds()) {
+                read(Butterfly_publicLength);
+                read(IndexedDoubleProperties);
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, node->child1(), node->child2()), node);
+                return;
+            }
+            read(World);
+            return;
+        }
+            
+        case Array::Contiguous: {
+            if (mode.isInBounds()) {
+                read(Butterfly_publicLength);
+                read(IndexedContiguousProperties);
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, node->child1(), node->child2()), node);
+                return;
+            }
+            read(World);
+            return;
+        }
+
+        case Array::ArrayStorage: {
+            if (mode.isInBounds()) {
+                read(Butterfly_vectorLength);
+                read(IndexedArrayStorageProperties);
+                return;
+            }
+            read(World);
+            return;
+        }
+
+        default: {
+            read(World);
+            write(World);
+            return;
+        }
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return;
+    }
+
     case ArithAdd:
     case ArithSub:
     case ArithNegate:

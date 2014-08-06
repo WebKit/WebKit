@@ -1505,12 +1505,14 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
             generator.emitMove(result.get(), local.get());
             emitReadModifyAssignment(generator, result.get(), result.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
             generator.emitMove(local.get(), result.get());
+            generator.invalidateForInContextForLocal(local.get());
             if (generator.isProfilingTypesWithHighFidelity())
                 generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
             return generator.moveToDestinationIfNeeded(dst, result.get());
         }
         
         RegisterID* result = emitReadModifyAssignment(generator, local.get(), local.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
+        generator.invalidateForInContextForLocal(local.get());
         return generator.moveToDestinationIfNeeded(dst, result);
     }
 
@@ -1540,11 +1542,13 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
             RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
             generator.emitNode(tempDst.get(), m_right);
             generator.emitMove(local.get(), tempDst.get());
+            generator.invalidateForInContextForLocal(local.get());
             if (generator.isProfilingTypesWithHighFidelity())
                 generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
             return generator.moveToDestinationIfNeeded(dst, tempDst.get());
         }
         RegisterID* result = generator.emitNode(local.get(), m_right);
+        generator.invalidateForInContextForLocal(local.get());
         return generator.moveToDestinationIfNeeded(dst, result);
     }
 
@@ -1920,102 +1924,217 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ForInNode ------------------------------------
 
-void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* ForInNode::tryGetBoundLocal(BytecodeGenerator& generator)
 {
-    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
-
-    if (!m_lexpr->isAssignmentLocation()) {
-        emitThrowReferenceError(generator, "Left side of for-in statement is not a reference.");
-        return;
-    }
-
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
-
-    RefPtr<RegisterID> base = generator.newTemporary();
-    generator.emitNode(base.get(), m_expr);
-    RefPtr<RegisterID> i = generator.newTemporary();
-    RefPtr<RegisterID> size = generator.newTemporary();
-    RefPtr<RegisterID> expectedSubscript;
-    RefPtr<RegisterID> iter = generator.emitGetPropertyNames(generator.newTemporary(), base.get(), i.get(), size.get(), scope->breakTarget());
-    generator.emitJump(scope->continueTarget());
-
-    RefPtr<Label> loopStart = generator.newLabel();
-    generator.emitLabel(loopStart.get());
-    generator.emitLoopHint();
-
-    RegisterID* propertyName;
-    bool optimizedForinAccess = false;
     if (m_lexpr->isResolveNode()) {
         const Identifier& ident = static_cast<ResolveNode*>(m_lexpr)->identifier();
         Local local = generator.local(ident);
-        if (!local.get()) {
-            propertyName = generator.newTemporary();
-            RefPtr<RegisterID> protect = propertyName;
+        if (local.isCaptured())
+            return nullptr;
+        return local.get();
+    }
+
+    if (m_lexpr->isDeconstructionNode()) {
+        DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
+        auto binding = assignNode->bindings();
+        if (!binding->isBindingNode())
+            return nullptr;
+
+        auto simpleBinding = static_cast<BindingNode*>(binding);
+        const Identifier& ident = simpleBinding->boundProperty();
+        Local local = generator.local(ident);
+        if (local.isCaptured())
+            return nullptr;
+        return local.get();
+    }
+
+    return nullptr;
+}
+
+void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propertyName)
+{
+    if (m_lexpr->isResolveNode()) {
+        const Identifier& ident = static_cast<ResolveNode*>(m_lexpr)->identifier();
+        Local local = generator.local(ident);
+        if (local.get())
+            generator.emitMove(local.get(), propertyName);
+        else {
             if (generator.isStrictMode())
                 generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             RegisterID* scope = generator.emitResolveScope(generator.newTemporary(), ident);
             generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             generator.emitPutToScope(scope, ident, propertyName, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
-        } else {
-            expectedSubscript = generator.newTemporary();
-            propertyName = expectedSubscript.get();
-            generator.emitMove(local.get(), propertyName);
-            generator.pushOptimisedForIn(expectedSubscript.get(), iter.get(), i.get(), local.get());
-            optimizedForinAccess = true;
         }
-    } else if (m_lexpr->isDotAccessorNode()) {
+        return;
+    }
+    if (m_lexpr->isDotAccessorNode()) {
         DotAccessorNode* assignNode = static_cast<DotAccessorNode*>(m_lexpr);
         const Identifier& ident = assignNode->identifier();
-        propertyName = generator.newTemporary();
-        RefPtr<RegisterID> protect = propertyName;
         RegisterID* base = generator.emitNode(assignNode->base());
-
         generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
         generator.emitPutById(base, ident, propertyName);
-    } else if (m_lexpr->isBracketAccessorNode()) {
+        return;
+    }
+    if (m_lexpr->isBracketAccessorNode()) {
         BracketAccessorNode* assignNode = static_cast<BracketAccessorNode*>(m_lexpr);
-        propertyName = generator.newTemporary();
-        RefPtr<RegisterID> protect = propertyName;
         RefPtr<RegisterID> base = generator.emitNode(assignNode->base());
         RegisterID* subscript = generator.emitNode(assignNode->subscript());
-        
         generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
         generator.emitPutByVal(base.get(), subscript, propertyName);
-    } else {
-        ASSERT(m_lexpr->isDeconstructionNode());
-        DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
-        auto binding = assignNode->bindings();
-        if (binding->isBindingNode()) {
-            auto simpleBinding = static_cast<BindingNode*>(binding);
-            Identifier ident = simpleBinding->boundProperty();
-            Local local = generator.local(ident);
-            propertyName = local.get();
-            // FIXME: Should I emit expression info here?
-            if (!propertyName || local.isCaptured() || generator.isProfilingTypesWithHighFidelity())
-                goto genericBinding;
-            expectedSubscript = generator.emitMove(generator.newTemporary(), propertyName);
-            generator.pushOptimisedForIn(expectedSubscript.get(), iter.get(), i.get(), propertyName);
-            optimizedForinAccess = true;
-            goto completedSimpleBinding;
-        } else {
-        genericBinding:
-            propertyName = generator.newTemporary();
-            RefPtr<RegisterID> protect(propertyName);
-            assignNode->bindings()->bindValue(generator, propertyName);
-        }
-        completedSimpleBinding:
-        ;
+        return;
     }
 
-    generator.emitNode(dst, m_statement);
+    if (m_lexpr->isDeconstructionNode()) {
+        DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
+        auto binding = assignNode->bindings();
+        if (!binding->isBindingNode()) {
+            assignNode->bindings()->bindValue(generator, propertyName);
+            return;
+        }
 
-    if (optimizedForinAccess)
-        generator.popOptimisedForIn();
+        auto simpleBinding = static_cast<BindingNode*>(binding);
+        const Identifier& ident = simpleBinding->boundProperty();
+        Local local = generator.local(ident);
+        if (!local.get() || local.isCaptured()) {
+            assignNode->bindings()->bindValue(generator, propertyName);
+            return;
+        }
+        generator.emitMove(local.get(), propertyName);
+        return;
+    }
 
-    generator.emitLabel(scope->continueTarget());
-    generator.emitNextPropertyName(propertyName, base.get(), i.get(), size.get(), iter.get(), loopStart.get());
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (!m_lexpr->isAssignmentLocation()) {
+        emitThrowReferenceError(generator, "Left side of for-in statement is not a reference.");
+        return;
+    }
+
+    RefPtr<Label> end = generator.newLabel();
+
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
-    generator.emitLabel(scope->breakTarget());
+
+    RefPtr<RegisterID> base = generator.newTemporary();
+    RefPtr<RegisterID> length;
+    RefPtr<RegisterID> structureEnumerator;
+    generator.emitNode(base.get(), m_expr);
+    RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
+
+    // Indexed property loop.
+    {
+        LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+        RefPtr<Label> loopStart = generator.newLabel();
+        RefPtr<Label> loopEnd = generator.newLabel();
+
+        length = generator.emitGetEnumerableLength(generator.newTemporary(), base.get());
+        RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
+        RefPtr<RegisterID> propertyName = generator.newTemporary();
+
+        generator.emitLabel(loopStart.get());
+        generator.emitLoopHint();
+
+        RefPtr<RegisterID> result = generator.emitEqualityOp(op_less, generator.newTemporary(), i.get(), length.get());
+        generator.emitJumpIfFalse(result.get(), loopEnd.get());
+        generator.emitHasIndexedProperty(result.get(), base.get(), i.get());
+        generator.emitJumpIfFalse(result.get(), scope->continueTarget());
+
+        generator.emitToIndexString(propertyName.get(), i.get());
+        this->emitLoopHeader(generator, propertyName.get());
+
+        generator.pushIndexedForInScope(local.get(), i.get());
+        generator.emitNode(dst, m_statement);
+        generator.popIndexedForInScope(local.get());
+
+        generator.emitLabel(scope->continueTarget());
+        generator.emitInc(i.get());
+        generator.emitJump(loopStart.get());
+
+        generator.emitLabel(scope->breakTarget());
+        generator.emitJump(end.get());
+        generator.emitLabel(loopEnd.get());
+    }
+
+    // Structure property loop.
+    {
+        LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+        RefPtr<Label> loopStart = generator.newLabel();
+        RefPtr<Label> loopEnd = generator.newLabel();
+
+        structureEnumerator = generator.emitGetStructurePropertyEnumerator(generator.newTemporary(), base.get(), length.get());
+        RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
+        RefPtr<RegisterID> propertyName = generator.newTemporary();
+        generator.emitNextEnumeratorPropertyName(propertyName.get(), structureEnumerator.get(), i.get());
+
+        generator.emitLabel(loopStart.get());
+        generator.emitLoopHint();
+
+        RefPtr<RegisterID> result = generator.emitUnaryOp(op_eq_null, generator.newTemporary(), propertyName.get());
+        generator.emitJumpIfTrue(result.get(), loopEnd.get());
+        generator.emitHasStructureProperty(result.get(), base.get(), propertyName.get(), structureEnumerator.get());
+        generator.emitJumpIfFalse(result.get(), scope->continueTarget());
+
+        this->emitLoopHeader(generator, propertyName.get());
+
+        generator.pushStructureForInScope(local.get(), i.get(), propertyName.get(), structureEnumerator.get());
+        generator.emitNode(dst, m_statement);
+        generator.popStructureForInScope(local.get());
+
+        generator.emitLabel(scope->continueTarget());
+        generator.emitInc(i.get());
+        generator.emitNextEnumeratorPropertyName(propertyName.get(), structureEnumerator.get(), i.get());
+        generator.emitJump(loopStart.get());
+        
+        generator.emitLabel(scope->breakTarget());
+        generator.emitJump(end.get());
+        generator.emitLabel(loopEnd.get());
+    }
+
+    // Generic property loop.
+    {
+        LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+        RefPtr<Label> loopStart = generator.newLabel();
+        RefPtr<Label> loopEnd = generator.newLabel();
+
+        RefPtr<RegisterID> genericEnumerator = generator.emitGetGenericPropertyEnumerator(generator.newTemporary(), base.get(), length.get(), structureEnumerator.get());
+        RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
+        RefPtr<RegisterID> propertyName = generator.newTemporary();
+
+        generator.emitNextEnumeratorPropertyName(propertyName.get(), genericEnumerator.get(), i.get());
+        RefPtr<RegisterID> result = generator.emitUnaryOp(op_eq_null, generator.newTemporary(), propertyName.get());
+        generator.emitJumpIfTrue(result.get(), loopEnd.get());
+
+        generator.emitLabel(loopStart.get());
+        generator.emitLoopHint();
+
+        this->emitLoopHeader(generator, propertyName.get());
+
+        generator.emitNode(dst, m_statement);
+
+        generator.emitLabel(scope->continueTarget());
+        generator.emitInc(i.get());
+        generator.emitNextEnumeratorPropertyName(propertyName.get(), genericEnumerator.get(), i.get());
+        generator.emitUnaryOp(op_eq_null, result.get(), propertyName.get());
+        generator.emitJumpIfTrue(result.get(), loopEnd.get());
+
+        generator.emitHasGenericProperty(result.get(), base.get(), propertyName.get());
+        generator.emitJumpIfTrue(result.get(), loopStart.get());
+        generator.emitJump(scope->continueTarget());
+        
+        generator.emitLabel(scope->breakTarget());
+        generator.emitJump(end.get());
+        generator.emitLabel(loopEnd.get());
+    }
+
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitLabel(end.get());
+}
+
+void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    this->emitMultiLoopBytecode(generator, dst);
 }
 
 // ------------------------------ ForOfNode ------------------------------------

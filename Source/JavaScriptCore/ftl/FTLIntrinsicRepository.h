@@ -54,19 +54,24 @@ namespace JSC { namespace FTL {
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
     macro(C_JITOperation_EC, functionType(intPtr, intPtr, intPtr)) \
+    macro(C_JITOperation_ECZ, functionType(intPtr, intPtr, intPtr, int32)) \
+    macro(C_JITOperation_ECZC, functionType(intPtr, intPtr, intPtr, int32, intPtr)) \
     macro(C_JITOperation_EJ, functionType(intPtr, intPtr, int64)) \
     macro(C_JITOperation_EJssJss, functionType(intPtr, intPtr, intPtr, intPtr)) \
     macro(C_JITOperation_EJssJssJss, functionType(intPtr, intPtr, intPtr, intPtr, intPtr)) \
     macro(C_JITOperation_ESt, functionType(intPtr, intPtr, intPtr)) \
+    macro(C_JITOperation_EZ, functionType(intPtr, intPtr, int32)) \
     macro(D_JITOperation_D, functionType(doubleType, doubleType)) \
     macro(I_JITOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
     macro(J_JITOperation_E, functionType(int64, intPtr)) \
     macro(J_JITOperation_EA, functionType(int64, intPtr, intPtr)) \
     macro(J_JITOperation_EAZ, functionType(int64, intPtr, intPtr, int32)) \
     macro(J_JITOperation_ECJ, functionType(int64, intPtr, intPtr, int64)) \
+    macro(J_JITOperation_ECZ, functionType(int64, intPtr, intPtr, int32)) \
     macro(J_JITOperation_EDA, functionType(int64, intPtr, doubleType, intPtr)) \
     macro(J_JITOperation_EJ, functionType(int64, intPtr, int64)) \
     macro(J_JITOperation_EJA, functionType(int64, intPtr, int64, intPtr)) \
+    macro(J_JITOperation_EJC, functionType(int64, intPtr, int64, intPtr)) \
     macro(J_JITOperation_EJJ, functionType(int64, intPtr, int64, int64)) \
     macro(J_JITOperation_EJssZ, functionType(int64, intPtr, intPtr, int32)) \
     macro(J_JITOperation_ESsiJI, functionType(int64, intPtr, intPtr, int64, intPtr)) \
@@ -94,8 +99,9 @@ namespace JSC { namespace FTL {
     macro(V_JITOperation_EVwsJ, functionType(voidType, intPtr, intPtr, int64)) \
     macro(V_JITOperation_J, functionType(voidType, int64)) \
     macro(V_JITOperation_Z, functionType(voidType, int32)) \
-    macro(Z_JITOperation_D, functionType(int32, doubleType))
-
+    macro(Z_JITOperation_D, functionType(int32, doubleType)) \
+    macro(Z_JITOperation_EC, functionType(int32, intPtr, intPtr))
+    
 class IntrinsicRepository : public CommonValues {
 public:
     IntrinsicRepository(LContext);

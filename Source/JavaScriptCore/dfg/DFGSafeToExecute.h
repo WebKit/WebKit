@@ -53,6 +53,7 @@ public:
         case BooleanUse:
         case CellUse:
         case ObjectUse:
+        case FunctionUse:
         case FinalObjectUse:
         case ObjectOrOtherUse:
         case StringIdentUse:
@@ -258,6 +259,15 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case FiatInt52:
     case GetGetter:
     case GetSetter:
+    case GetEnumerableLength:
+    case HasGenericProperty:
+    case HasStructureProperty:
+    case HasIndexedProperty:
+    case GetDirectPname:
+    case GetStructurePropertyEnumerator:
+    case GetGenericPropertyEnumerator:
+    case GetEnumeratorPname:
+    case ToIndexString:
         return true;
 
     case NativeCall:

@@ -192,13 +192,13 @@ SymbolTable* SymbolTable::cloneCapturedNames(VM& vm)
     return result;
 }
 
-int64_t SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM& vm)
+GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM& vm)
 {
     auto iter = m_uniqueIDMap->find(key);
     auto end = m_uniqueIDMap->end();
     ASSERT_UNUSED(end, iter != end);
 
-    int64_t& id = iter->value;
+    GlobalVariableID& id = iter->value;
     if (id == HighFidelityNeedsUniqueIDGeneration) {
         id = vm.getNextUniqueVariableID();
         m_uniqueTypeSetMap->set(key, TypeSet::create()); //make a new global typeset for the ID
@@ -207,7 +207,7 @@ int64_t SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl*
     return id;
 }
 
-int64_t SymbolTable::uniqueIDForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm)
+GlobalVariableID SymbolTable::uniqueIDForRegister(const ConcurrentJITLocker& locker, int registerIndex, VM& vm)
 {
     auto iter = m_registerToVariableMap->find(registerIndex);
     auto end = m_registerToVariableMap->end();

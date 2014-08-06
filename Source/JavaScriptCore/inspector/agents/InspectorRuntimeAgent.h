@@ -66,8 +66,8 @@ public:
     virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
     virtual void releaseObjectGroup(ErrorString*, const String& objectGroup) override final;
     virtual void run(ErrorString*) override;
-    virtual void getRuntimeTypeForVariableAtOffset(ErrorString*, const String& in_variableName, const String& in_id, int in_divot, String* out_types) override;
-
+    virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString*, const RefPtr<Inspector::InspectorArray>& in_locations, RefPtr<Inspector::InspectorArray>& out_types) override;
+    
     void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
 
     bool enabled() const { return m_enabled; }

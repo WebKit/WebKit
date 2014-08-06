@@ -148,21 +148,6 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
-inline void Structure::setEnumerationCache(VM& vm, JSPropertyNameIterator* enumerationCache)
-{
-    ASSERT(!isDictionary());
-    if (!hasRareData())
-        allocateRareData(vm);
-    rareData()->setEnumerationCache(vm, enumerationCache);
-}
-
-inline JSPropertyNameIterator* Structure::enumerationCache()
-{
-    if (!hasRareData())
-        return 0;
-    return rareData()->enumerationCache();
-}
-
 inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
 {
     if (isObject())

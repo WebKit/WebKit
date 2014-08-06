@@ -1145,12 +1145,6 @@ _llint_op_strcat:
     dispatch(4)
 
 
-_llint_op_get_pnames:
-    traceExecution()
-    callSlowPath(_llint_slow_path_get_pnames)
-    dispatch(0) # The slow_path either advances the PC or jumps us to somewhere else.
-
-
 _llint_op_push_with_scope:
     traceExecution()
     callSlowPath(_llint_slow_path_push_with_scope)
@@ -1220,6 +1214,50 @@ _llint_native_call_trampoline:
 _llint_native_construct_trampoline:
     nativeCallTrampoline(NativeExecutable::m_constructor)
 
+_llint_op_get_enumerable_length:
+    traceExecution()
+    callSlowPath(_slow_path_get_enumerable_length)
+    dispatch(3)
+
+_llint_op_has_indexed_property:
+    traceExecution()
+    callSlowPath(_slow_path_has_indexed_property)
+    dispatch(5)
+
+_llint_op_has_structure_property:
+    traceExecution()
+    callSlowPath(_slow_path_has_structure_property)
+    dispatch(5)
+
+_llint_op_has_generic_property:
+    traceExecution()
+    callSlowPath(_slow_path_has_generic_property)
+    dispatch(4)
+
+_llint_op_get_direct_pname:
+    traceExecution()
+    callSlowPath(_slow_path_get_direct_pname)
+    dispatch(7)
+
+_llint_op_get_structure_property_enumerator:
+    traceExecution()
+    callSlowPath(_slow_path_get_structure_property_enumerator)
+    dispatch(4)
+
+_llint_op_get_generic_property_enumerator:
+    traceExecution()
+    callSlowPath(_slow_path_get_generic_property_enumerator)
+    dispatch(5)
+
+_llint_op_next_enumerator_pname:
+    traceExecution()
+    callSlowPath(_slow_path_next_enumerator_pname)
+    dispatch(4)
+
+_llint_op_to_index_string:
+    traceExecution()
+    callSlowPath(_slow_path_to_index_string)
+    dispatch(3)
 
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert

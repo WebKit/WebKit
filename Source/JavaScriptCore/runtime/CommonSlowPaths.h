@@ -224,6 +224,15 @@ SLOW_PATH_HIDDEN_DECL(slow_path_in);
 SLOW_PATH_HIDDEN_DECL(slow_path_del_by_val);
 SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);
+SLOW_PATH_HIDDEN_DECL(slow_path_get_enumerable_length);
+SLOW_PATH_HIDDEN_DECL(slow_path_has_generic_property);
+SLOW_PATH_HIDDEN_DECL(slow_path_has_structure_property);
+SLOW_PATH_HIDDEN_DECL(slow_path_has_indexed_property);
+SLOW_PATH_HIDDEN_DECL(slow_path_get_direct_pname);
+SLOW_PATH_HIDDEN_DECL(slow_path_get_structure_property_enumerator);
+SLOW_PATH_HIDDEN_DECL(slow_path_get_generic_property_enumerator);
+SLOW_PATH_HIDDEN_DECL(slow_path_next_enumerator_pname);
+SLOW_PATH_HIDDEN_DECL(slow_path_to_index_string);
 
 } // namespace JSC
 

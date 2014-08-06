@@ -39,7 +39,6 @@ namespace JSC {
     class ExecState;
     class JSActivation;
     class JSObject;
-    class JSPropertyNameIterator;
     class JSScope;
 
     typedef ExecState CallFrame;
@@ -63,7 +62,6 @@ namespace JSC {
         CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
         JSObject* function() const;
-        JSPropertyNameIterator* propertyNameIterator() const;
         JSScope* scope() const;
         int32_t unboxedInt32() const;
         int64_t unboxedInt52() const;

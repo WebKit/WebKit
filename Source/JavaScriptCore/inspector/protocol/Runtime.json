@@ -111,6 +111,39 @@
                 { "name": "startOffset", "type": "integer", "description": "Start offset of range (inclusive)." },
                 { "name": "endOffset", "type": "integer", "description": "End offset of range (exclusive)." }
             ]
+        },
+        {
+            "id": "StructureDescription",
+            "type": "object",
+            "properties": [
+                { "name": "fields", "type": "array",  "items": { "type": "string" }, "description": "Array of strings, where the strings represent object properties." },
+                { "name": "constructorName", "type": "string", "description": "Name of the constructor." },
+                { "name": "prototypeStructure", "$ref": "StructureDescription", "optional": "true", "description": "Pointer to the StructureRepresentation of the protoype if one exists." }
+            ]
+        },
+        {
+            "id": "TypeDescription",
+            "type": "object",
+            "description": "Container for type information that has been gathered.",
+            "properties": [
+                { "name": "displayTypeName", "type": "string", "optional": true, "description": "What the inspector should display as a simple type." },
+                { "name": "localPrimitiveTypeNames", "type": "array", "items": { "type": "string" }, "optional": "true", "description": "Array of type names for primtive types (int, string, etc) seen at an instruction" },
+                { "name": "localObjectTypeNames", "type": "array", "items": { "type": "string" }, "optional": "true", "description": "Array of type names for all object seen at an instruction" },
+                { "name": "localStructures", "type": "array", "items": { "$ref": "StructureDescription" }, "optional": true, "description": "Array of descriptions for all structures seen at this this instruction." },
+                { "name": "globalPrimitiveTypeNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Array of type names for all primitive types seen globally." },
+                { "name": "globalObjectTypeNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Array of type names for all primitive types seen globally." },
+                { "name": "globalStructures", "type": "array", "items": { "$ref": "StructureDescription" }, "optional": true, "description": "Array of descriptions for all structures seen for this variable." }
+            ]
+        },
+        {
+            "id": "TypeLocation",
+            "type": "object",
+            "description": "Describes the location of an expression we want type information for.",
+            "properties": [
+                { "name": "typeInformationDescriptor", "type": "integer", "description": "What kind of type information do we want (normal, function return values, 'this' statement)." },
+                { "name": "sourceID", "type": "string", "description": "sourceID uniquely identifying a script" },
+                { "name": "divot", "type": "integer", "description": "character offset for assignment range" }
+            ]
         }
     ],
     "commands": [
@@ -198,14 +231,12 @@
             "description": "Disables reporting of execution contexts creation."
         },
         {
-            "name": "getRuntimeTypeForVariableAtOffset",
+            "name": "getRuntimeTypesForVariablesAtOffsets",
             "parameters": [
-                { "name": "variableName", "type": "string", "description": "Variable we want type infromation for." },
-                { "name": "sourceID", "type": "string", "description": "sourceID uniquely identifying a script" },
-                { "name": "divot", "type": "integer", "description": "character offset for assignment range" }
+                { "name": "locations", "type": "array", "items": { "$ref": "TypeLocation" }, "description": "An array of type locations we're requesting information for. Results are expected in the same order they're sent in."}
             ],
             "returns": [
-                { "name": "types", "type": "string", "description": "Types for requested variable." }
+                { "name": "types", "type": "array", "item": { "$ref": "TypeDescription", "description": "Types for requested variable." } }
             ],
             "description": "Returns detailed informtation on given function."
         }

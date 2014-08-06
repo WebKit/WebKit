@@ -516,7 +516,7 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, Exe
             for (iterator it = staticValues->begin(); it != end; ++it) {
                 StringImpl* name = it->key.get();
                 StaticValueEntry* entry = it->value.get();
-                if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties)))
+                if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || shouldIncludeDontEnumProperties(mode)))
                     propertyNames.add(Identifier(exec, name));
             }
         }
@@ -527,7 +527,7 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, Exe
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
                 StringImpl* name = it->key.get();
                 StaticFunctionEntry* entry = it->value.get();
-                if (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties))
+                if (!(entry->attributes & kJSPropertyAttributeDontEnum) || shouldIncludeDontEnumProperties(mode))
                     propertyNames.add(Identifier(exec, name));
             }
         }

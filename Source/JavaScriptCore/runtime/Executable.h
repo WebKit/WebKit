@@ -365,6 +365,8 @@ public:
     int lastLine() const { return m_lastLine; }
     unsigned startColumn() const { return m_startColumn; }
     unsigned endColumn() const { return m_endColumn; }
+    unsigned highFidelityTypeProfilingStartOffset() const { return m_highFidelityTypeProfilingStartOffset; }
+    unsigned highFidelityTypeProfilingEndOffset() const { return m_highFidelityTypeProfilingEndOffset; }
 
     bool usesEval() const { return m_features & EvalFeature; }
     bool usesArguments() const { return m_features & ArgumentsFeature; }
@@ -435,6 +437,8 @@ protected:
     int m_lastLine;
     unsigned m_startColumn;
     unsigned m_endColumn;
+    unsigned m_highFidelityTypeProfilingStartOffset;
+    unsigned m_highFidelityTypeProfilingEndOffset;
 };
 
 class EvalExecutable : public ScriptExecutable {

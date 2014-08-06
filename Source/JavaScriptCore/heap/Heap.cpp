@@ -970,8 +970,6 @@ void Heap::collect(HeapOperation collectionType)
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC starting collection.\n");
 #endif
-    if (vm()->isProfilingTypesWithHighFidelity())
-        vm()->highFidelityLog()->processHighFidelityLog(false, "GC");
     
     double before = 0;
     if (Options::logGC()) {
@@ -980,6 +978,11 @@ void Heap::collect(HeapOperation collectionType)
     }
     
     SamplingRegion samplingRegion("Garbage Collection");
+    
+    if (vm()->isProfilingTypesWithHighFidelity()) {
+        DeferGCForAWhile awhile(*this);
+        vm()->highFidelityLog()->processHighFidelityLog("GC");
+    }
     
     RELEASE_ASSERT(!m_deferralDepth);
     ASSERT(vm()->currentThreadIsHoldingAPILock());

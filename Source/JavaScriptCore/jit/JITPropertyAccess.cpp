@@ -35,7 +35,6 @@
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "JSPropertyNameIterator.h"
 #include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "RepatchBuffer.h"
@@ -151,7 +150,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(m_bytecodeOffset, badType, mode, done));
 }
 
-JIT::JumpList JIT::emitDoubleGetByVal(Instruction*, PatchableJump& badType)
+JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
     
@@ -160,13 +159,11 @@ JIT::JumpList JIT::emitDoubleGetByVal(Instruction*, PatchableJump& badType)
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     loadDouble(BaseIndex(regT2, regT1, TimesEight), fpRegT0);
     slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
-    moveDoubleTo64(fpRegT0, regT0);
-    sub64(tagTypeNumberRegister, regT0);
     
     return slowCases;
 }
 
-JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType, IndexingType expectedShape)
+JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, IndexingType expectedShape)
 {
     JumpList slowCases;
     
@@ -179,7 +176,7 @@ JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType, 
     return slowCases;
 }
 
-JIT::JumpList JIT::emitArrayStorageGetByVal(Instruction*, PatchableJump& badType)
+JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
 
@@ -262,51 +259,6 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID 
     }
     signExtend32ToPtr(offset, offset);
     load64(BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), result);
-}
-
-void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int property = currentInstruction[3].u.operand;
-    unsigned expected = currentInstruction[4].u.operand;
-    int iter = currentInstruction[5].u.operand;
-    int i = currentInstruction[6].u.operand;
-
-    emitGetVirtualRegister(property, regT0);
-    addSlowCase(branch64(NotEqual, regT0, addressFor(expected)));
-    emitGetVirtualRegisters(base, regT0, iter, regT1);
-    emitJumpSlowCaseIfNotJSCell(regT0, base);
-
-    // Test base's structure
-    emitLoadStructure(regT0, regT2, regT3);
-    addSlowCase(branchPtr(NotEqual, regT2, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure))));
-    load32(addressFor(i), regT3);
-    sub32(TrustedImm32(1), regT3);
-    addSlowCase(branch32(AboveOrEqual, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_numCacheableSlots))));
-    Jump inlineProperty = branch32(Below, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructureInlineCapacity)));
-    add32(TrustedImm32(firstOutOfLineOffset), regT3);
-    sub32(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructureInlineCapacity)), regT3);
-    inlineProperty.link(this);
-    compileGetDirectOffset(regT0, regT0, regT3, regT1);
-
-    emitPutVirtualRegister(dst, regT0);
-}
-
-void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int property = currentInstruction[3].u.operand;
-
-    linkSlowCase(iter);
-    linkSlowCaseIfNotJSCell(iter, base);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-
-    emitGetVirtualRegister(base, regT0);
-    emitGetVirtualRegister(property, regT1);
-    callOperation(operationGetByValGeneric, dst, regT0, regT1);
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)

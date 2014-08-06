@@ -193,6 +193,15 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_switch_char:
     case op_in:
     case op_get_from_scope:
+    case op_get_enumerable_length:
+    case op_has_generic_property:
+    case op_has_structure_property:
+    case op_has_indexed_property:
+    case op_get_direct_pname:
+    case op_get_structure_property_enumerator:
+    case op_get_generic_property_enumerator:
+    case op_next_enumerator_pname:
+    case op_to_index_string:
         return CanCompileAndInline;
 
     case op_put_to_scope: {

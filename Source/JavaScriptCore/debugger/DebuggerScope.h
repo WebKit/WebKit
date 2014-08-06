@@ -94,7 +94,7 @@ private:
 
     JSScope* jsScope() const { return m_scope.get(); }
 
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     WriteBarrier<JSScope> m_scope;
     WriteBarrier<DebuggerScope> m_next;

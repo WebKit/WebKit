@@ -35,7 +35,6 @@
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "JSPropertyNameIterator.h"
 #include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "RepatchBuffer.h"
@@ -173,15 +172,13 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(m_bytecodeOffset, badType, mode, done));
 }
 
-JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType, IndexingType expectedShape)
+JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, IndexingType expectedShape)
 {
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT1, TrustedImm32(expectedShape));
-    
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
     slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength())));
-    
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     slowCases.append(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
@@ -189,32 +186,27 @@ JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType, 
     return slowCases;
 }
 
-JIT::JumpList JIT::emitDoubleGetByVal(Instruction*, PatchableJump& badType)
+JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT1, TrustedImm32(DoubleShape));
-    
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
     slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength())));
-    
     loadDouble(BaseIndex(regT3, regT2, TimesEight), fpRegT0);
     slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
-    moveDoubleToInts(fpRegT0, regT0, regT1);
     
     return slowCases;
 }
 
-JIT::JumpList JIT::emitArrayStorageGetByVal(Instruction*, PatchableJump& badType)
+JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
     
     add32(TrustedImm32(-ArrayStorageShape), regT1, regT3);
     badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
-    
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
     slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, ArrayStorage::vectorLengthOffset())));
-    
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     load32(BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     slowCases.append(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
@@ -611,54 +603,6 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
     }
     load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultPayload);
     load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultTag);
-}
-
-void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int property = currentInstruction[3].u.operand;
-    unsigned expected = currentInstruction[4].u.operand;
-    int iter = currentInstruction[5].u.operand;
-    int i = currentInstruction[6].u.operand;
-    
-    emitLoad2(property, regT1, regT0, base, regT3, regT2);
-    emitJumpSlowCaseIfNotJSCell(property, regT1);
-    addSlowCase(branchPtr(NotEqual, regT0, payloadFor(expected)));
-    // Property registers are now available as the property is known
-    emitJumpSlowCaseIfNotJSCell(base, regT3);
-    emitLoadPayload(iter, regT1);
-    
-    // Test base's structure
-    loadPtr(Address(regT2, JSCell::structureIDOffset()), regT0);
-    addSlowCase(branchPtr(NotEqual, regT0, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructure))));
-    load32(addressFor(i), regT3);
-    sub32(TrustedImm32(1), regT3);
-    addSlowCase(branch32(AboveOrEqual, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_numCacheableSlots))));
-    Jump inlineProperty = branch32(Below, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructureInlineCapacity)));
-    add32(TrustedImm32(firstOutOfLineOffset), regT3);
-    sub32(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructureInlineCapacity)), regT3);
-    inlineProperty.link(this);
-    compileGetDirectOffset(regT2, regT1, regT0, regT3);    
-    
-    emitStore(dst, regT1, regT0);
-}
-
-void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int property = currentInstruction[3].u.operand;
-    
-    linkSlowCaseIfNotJSCell(iter, property);
-    linkSlowCase(iter);
-    linkSlowCaseIfNotJSCell(iter, base);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    
-    emitLoad(base, regT1, regT0);
-    emitLoad(property, regT3, regT2);
-    callOperation(operationGetByValGeneric, dst, regT1, regT0, regT3, regT2);
 }
 
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)

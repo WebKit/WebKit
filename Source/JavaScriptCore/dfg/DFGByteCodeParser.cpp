@@ -1107,10 +1107,8 @@ void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, No
     if (JSFunction* function = callLinkStatus.function())
         addToGraph(CheckFunction, OpInfo(m_graph.freeze(function)), callTarget, thisArgument);
     else {
-        ASSERT(callLinkStatus.structure());
         ASSERT(callLinkStatus.executable());
         
-        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(callLinkStatus.structure())), callTarget);
         addToGraph(CheckExecutable, OpInfo(callLinkStatus.executable()), callTarget, thisArgument);
     }
 }
@@ -3206,6 +3204,82 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(In, get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));
             NEXT_OPCODE(op_in);
+        }
+
+        case op_get_enumerable_length: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetEnumerableLength, 
+                get(VirtualRegister(currentInstruction[2].u.operand))));
+            NEXT_OPCODE(op_get_enumerable_length);
+        }
+
+        case op_has_generic_property: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(HasGenericProperty, 
+                get(VirtualRegister(currentInstruction[2].u.operand)),
+                get(VirtualRegister(currentInstruction[3].u.operand))));
+            NEXT_OPCODE(op_has_generic_property);
+        }
+
+        case op_has_structure_property: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(HasStructureProperty, 
+                get(VirtualRegister(currentInstruction[2].u.operand)),
+                get(VirtualRegister(currentInstruction[3].u.operand)),
+                get(VirtualRegister(currentInstruction[4].u.operand))));
+            NEXT_OPCODE(op_has_structure_property);
+        }
+
+        case op_has_indexed_property: {
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            ArrayMode arrayMode = getArrayModeConsideringSlowPath(currentInstruction[4].u.arrayProfile, Array::Read);
+            Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
+            Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), base, property);
+            set(VirtualRegister(currentInstruction[1].u.operand), hasIterableProperty);
+            NEXT_OPCODE(op_has_indexed_property);
+        }
+
+        case op_get_direct_pname: {
+            SpeculatedType prediction = getPredictionWithoutOSRExit();
+            
+            Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
+            Node* index = get(VirtualRegister(currentInstruction[4].u.operand));
+            Node* enumerator = get(VirtualRegister(currentInstruction[5].u.operand));
+
+            addVarArgChild(base);
+            addVarArgChild(property);
+            addVarArgChild(index);
+            addVarArgChild(enumerator);
+            set(VirtualRegister(currentInstruction[1].u.operand), 
+                addToGraph(Node::VarArg, GetDirectPname, OpInfo(0), OpInfo(prediction)));
+
+            NEXT_OPCODE(op_get_direct_pname);
+        }
+
+        case op_get_structure_property_enumerator: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetStructurePropertyEnumerator, 
+                get(VirtualRegister(currentInstruction[2].u.operand)),
+                get(VirtualRegister(currentInstruction[3].u.operand))));
+            NEXT_OPCODE(op_get_structure_property_enumerator);
+        }
+
+        case op_get_generic_property_enumerator: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetGenericPropertyEnumerator, 
+                get(VirtualRegister(currentInstruction[2].u.operand)),
+                get(VirtualRegister(currentInstruction[3].u.operand)),
+                get(VirtualRegister(currentInstruction[4].u.operand))));
+            NEXT_OPCODE(op_get_generic_property_enumerator);
+        }
+
+        case op_next_enumerator_pname: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(GetEnumeratorPname, 
+                get(VirtualRegister(currentInstruction[2].u.operand)),
+                get(VirtualRegister(currentInstruction[3].u.operand))));
+            NEXT_OPCODE(op_next_enumerator_pname);
+        }
+
+        case op_to_index_string: {
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(ToIndexString, 
+                get(VirtualRegister(currentInstruction[2].u.operand))));
+            NEXT_OPCODE(op_to_index_string);
         }
 
         default:

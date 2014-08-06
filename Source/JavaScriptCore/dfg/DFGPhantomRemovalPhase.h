@@ -34,6 +34,9 @@ class Graph;
 
 // Cleans up unnecessary Phantoms and Phanton children. This reduces live ranges, but also, it
 // eliminates many Phantoms entirely. This invalidates liveness analysis.
+//
+// This should work over all IR forms; however, in SSA form it's better to run
+// PhantomCanonicalizationPhase since it's more powerful.
 
 bool performPhantomRemoval(Graph&);
 

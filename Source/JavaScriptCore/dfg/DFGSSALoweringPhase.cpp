@@ -69,6 +69,7 @@ private:
     {
         switch (m_node->op()) {
         case GetByVal:
+        case HasIndexedProperty:
             lowerBoundsCheck(m_node->child1(), m_node->child2(), m_node->child3());
             break;
             

@@ -1,3 +1,17 @@
+2014-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r171389, r171495, r171508, r171510, r171605, r171606, r171611, r171614, r171763 from ftlopt.
+
+    2014-08-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            Refactor our current implementation of for-in
+            https://bugs.webkit.org/show_bug.cgi?id=134142
+    
+            Reviewed by Filip Pizlo.
+    
+            * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+            (WebKit::JSNPObject::invalidate): Fixed an invalid ASSERT that was crashing in debug builds.
+    
 2014-08-06  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (WebKit2): iOS Safari default encoding doesn't follow system language

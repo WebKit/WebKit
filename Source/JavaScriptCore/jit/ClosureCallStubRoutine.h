@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,10 @@ class ClosureCallStubRoutine : public GCAwareJITStubRoutine {
 public:
     ClosureCallStubRoutine(
         const MacroAssemblerCodeRef&, VM&, const JSCell* owner,
-        Structure*, ExecutableBase*, const CodeOrigin&);
+        ExecutableBase*, const CodeOrigin&);
     
     virtual ~ClosureCallStubRoutine();
     
-    Structure* structure() const { return m_structure.get(); }
     ExecutableBase* executable() const { return m_executable.get(); }
     const CodeOrigin& codeOrigin() const { return m_codeOrigin; }
 
@@ -49,7 +48,6 @@ protected:
     virtual void markRequiredObjectsInternal(SlotVisitor&) override;
 
 private:
-    WriteBarrier<Structure> m_structure;
     WriteBarrier<ExecutableBase> m_executable;
     // This allows us to figure out who a call is linked to by searching through
     // stub routines.

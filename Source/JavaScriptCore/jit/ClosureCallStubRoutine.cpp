@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,8 @@ namespace JSC {
 
 ClosureCallStubRoutine::ClosureCallStubRoutine(
     const MacroAssemblerCodeRef& code, VM& vm, const JSCell* owner,
-    Structure* structure, ExecutableBase* executable, const CodeOrigin& codeOrigin)
+    ExecutableBase* executable, const CodeOrigin& codeOrigin)
     : GCAwareJITStubRoutine(code, vm)
-    , m_structure(vm, owner, structure)
     , m_executable(vm, owner, executable)
     , m_codeOrigin(codeOrigin)
 {
@@ -53,7 +52,6 @@ ClosureCallStubRoutine::~ClosureCallStubRoutine()
 
 void ClosureCallStubRoutine::markRequiredObjectsInternal(SlotVisitor& visitor)
 {
-    visitor.append(&m_structure);
     visitor.append(&m_executable);
 }
 

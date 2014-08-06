@@ -1607,8 +1607,8 @@ void linkSlowFor(
 }
 
 void linkClosureCall(
-    ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    Structure* structure, ExecutableBase* executable, MacroAssemblerCodePtr codePtr,
+    ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, 
+    ExecutableBase* executable, MacroAssemblerCodePtr codePtr,
     RegisterPreservationMode registers)
 {
     ASSERT(!callLinkInfo.stub);
@@ -1642,10 +1642,10 @@ void linkClosureCall(
 #endif
     
     slowPath.append(
-        branchStructure(stubJit,
+        stubJit.branch8(
             CCallHelpers::NotEqual,
-            CCallHelpers::Address(calleeGPR, JSCell::structureIDOffset()),
-            structure));
+            CCallHelpers::Address(calleeGPR, JSCell::typeInfoTypeOffset()),
+            CCallHelpers::TrustedImm32(JSFunctionType)));
     
     slowPath.append(
         stubJit.branchPtr(
@@ -1699,7 +1699,7 @@ void linkClosureCall(
             ("Closure call stub for %s, return point %p, target %p (%s)",
                 toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation.labelAtOffset(0).executableAddress(),
                 codePtr.executableAddress(), toCString(pointerDump(calleeCodeBlock)).data())),
-        *vm, callerCodeBlock->ownerExecutable(), structure, executable, callLinkInfo.codeOrigin));
+        *vm, callerCodeBlock->ownerExecutable(), executable, callLinkInfo.codeOrigin));
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
     

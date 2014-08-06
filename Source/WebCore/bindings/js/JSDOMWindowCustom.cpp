@@ -389,6 +389,33 @@ bool JSDOMWindow::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
 
+uint32_t JSDOMWindow::getEnumerableLength(ExecState* exec, JSObject* object)
+{
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
+    // Only allow the window to enumerated by frames in the same origin.
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->impl()))
+        return 0;
+    return Base::getEnumerableLength(exec, thisObject);
+}
+
+void JSDOMWindow::getStructurePropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
+    // Only allow the window to enumerated by frames in the same origin.
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->impl()))
+        return;
+    Base::getStructurePropertyNames(thisObject, exec, propertyNames, mode);
+}
+
+void JSDOMWindow::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
+    // Only allow the window to enumerated by frames in the same origin.
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->impl()))
+        return;
+    Base::getGenericPropertyNames(thisObject, exec, propertyNames, mode);
+}
+
 void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);

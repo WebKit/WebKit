@@ -35,6 +35,8 @@
 #if ENABLE(INSPECTOR)
 
 #include "Completion.h"
+#include "HighFidelityLog.h"
+#include "HighFidelityTypeProfiler.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorValues.h"
@@ -43,6 +45,7 @@
 #include "ScriptDebugServer.h"
 #include "SourceCode.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/CurrentTime.h>
 
 using namespace JSC;
 
@@ -191,11 +194,41 @@ void InspectorRuntimeAgent::run(ErrorString*)
 {
 }
 
-void InspectorRuntimeAgent::getRuntimeTypeForVariableAtOffset(ErrorString*, const String& in_variableName, const String& in_id, int in_divot, String* out_types) 
+void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* errorString, const RefPtr<Inspector::InspectorArray>& in_locations, RefPtr<Inspector::InspectorArray>& out_types)
 {
+    static const bool verbose = false;
     VM& vm = globalVM();
-    String types(vm.getTypesForVariableAtOffset(in_divot, in_variableName, in_id));
-    *out_types = types;
+    out_types = Inspector::InspectorArray::create();
+    if (!vm.isProfilingTypesWithHighFidelity())
+        return;
+
+    double start = currentTimeMS();
+    vm.highFidelityLog()->processHighFidelityLog("User Query");
+
+    for (size_t i = 0; i < in_locations->length(); i++) {
+        RefPtr<Inspector::InspectorValue> value = in_locations->get(i);
+        RefPtr<InspectorObject> location;
+        if (!value->asObject(&location)) {
+            *errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
+            return;
+        }
+
+        int descriptor;
+        String sourceIDAsString;
+        int divot;
+        location->getNumber(ASCIILiteral("typeInformationDescriptor"), &descriptor);
+        location->getString(ASCIILiteral("sourceID"), &sourceIDAsString);
+        location->getNumber(ASCIILiteral("divot"), &divot);
+        
+        RefPtr<Inspector::InspectorObject> typeDescription = Inspector::InspectorObject::create();
+        bool okay;
+        vm.highFidelityTypeProfiler()->getTypesForVariableAtOffsetForInspector(static_cast<TypeProfilerSearchDescriptor>(descriptor), divot, sourceIDAsString.toIntPtrStrict(&okay), typeDescription);
+        out_types->pushObject(typeDescription);
+    }
+
+    double end = currentTimeMS();
+    if (verbose)
+        dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", end - start);
 }
 
 } // namespace Inspector

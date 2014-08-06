@@ -30,7 +30,7 @@
 #include "DumpContext.h"
 #include "JSCInlines.h"
 #include "JSObject.h"
-#include "JSPropertyNameIterator.h"
+#include "JSPropertyNameEnumerator.h"
 #include "Lookup.h"
 #include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
@@ -712,8 +712,6 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 
 PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName propertyName, unsigned attributes)
 {
-    ASSERT(!enumerationCache());
-
     DeferGC deferGC(vm.heap);
     materializePropertyMapIfNecessaryForPinning(vm, deferGC);
     
@@ -725,7 +723,6 @@ PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName prop
 PropertyOffset Structure::removePropertyWithoutTransition(VM& vm, PropertyName propertyName)
 {
     ASSERT(isUncacheableDictionary());
-    ASSERT(!enumerationCache());
 
     DeferGC deferGC(vm.heap);
     materializePropertyMapIfNecessaryForPinning(vm, deferGC);
@@ -946,12 +943,12 @@ void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propert
     if (!propertyTable())
         return;
 
-    bool knownUnique = !propertyNames.size();
+    bool knownUnique = propertyNames.canAddKnownUniqueForStructure();
 
     PropertyTable::iterator end = propertyTable()->end();
     for (PropertyTable::iterator iter = propertyTable()->begin(); iter != end; ++iter) {
         ASSERT(hasNonEnumerableProperties() || !(iter->attributes & DontEnum));
-        if (!iter->key->isEmptyUnique() && (!(iter->attributes & DontEnum) || mode == IncludeDontEnumProperties)) {
+        if (!iter->key->isEmptyUnique() && (!(iter->attributes & DontEnum) || shouldIncludeDontEnumProperties(mode))) {
             if (knownUnique)
                 propertyNames.addKnownUnique(iter->key);
             else
@@ -1037,36 +1034,73 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyN
     }
 }
 
-
-PassRefPtr<StructureShape> Structure::toStructureShape()
+PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
 {
-    Vector<Structure*, 8> structures;
-    Structure* structure;
-    PropertyTable* table;
-    RefPtr<StructureShape> shape = StructureShape::create();
+    RefPtr<StructureShape> baseShape = StructureShape::create();
+    RefPtr<StructureShape> curShape = baseShape;
+    Structure* curStructure = this;
+    JSValue curValue = value;
+    while (curStructure) {
+        Vector<Structure*, 8> structures;
+        Structure* structure;
+        PropertyTable* table;
 
-    findStructuresAndMapForMaterialization(structures, structure, table);
-    
-    if (table) {
-        PropertyTable::iterator iter = table->begin();
-        PropertyTable::iterator end = table->end();
+        curStructure->findStructuresAndMapForMaterialization(structures, structure, table);
+        if (table) {
+            PropertyTable::iterator iter = table->begin();
+            PropertyTable::iterator end = table->end();
+            for (; iter != end; ++iter)
+                curShape->addProperty(iter->key);
+            
+            structure->m_lock.unlock();
+        }
+        for (unsigned i = structures.size(); i--;) {
+            Structure* structure = structures[i];
+            if (structure->m_nameInPrevious)
+                curShape->addProperty(structure->m_nameInPrevious.get());
+        }
 
-        for (; iter != end; ++iter)
-            shape->addProperty(iter->key);
-        
-        structure->m_lock.unlock();
+        bool foundCtorName = false;
+        if (JSObject* profilingVal = curValue.getObject()) {
+            ExecState* exec = profilingVal->globalObject()->globalExec();
+            PropertySlot slot(storedPrototype());
+            PropertyName constructor(exec->propertyNames().constructor);
+            if (profilingVal->getPropertySlot(exec, constructor, slot)) {
+                if (slot.isValue()) {
+                    JSValue constructorValue = slot.getValue(exec, constructor);
+                    if (constructorValue.isCell()) {
+                        if (JSCell* constructorCell = constructorValue.asCell()) {
+                            if (JSObject* ctorObject = constructorCell->getObject()) {
+                                if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject)) {
+                                    curShape->setConstructorName(constructorFunction->calculatedDisplayName(exec));
+                                    foundCtorName = true;
+                                } else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject)) {
+                                    curShape->setConstructorName(constructorFunction->calculatedDisplayName(exec));
+                                    foundCtorName = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!foundCtorName)
+            curShape->setConstructorName(curStructure->classInfo()->className);
+
+        curShape->markAsFinal();
+
+        if (curStructure->storedPrototypeStructure()) {
+            RefPtr<StructureShape> newShape = StructureShape::create();
+            curShape->setProto(newShape);
+            curShape = newShape;
+            curValue = curStructure->storedPrototype();
+        }
+
+        curStructure = curStructure->storedPrototypeStructure();
     }
     
-    for (unsigned i = structures.size(); i--;) {
-        Structure* structure = structures[i];
-        if (!structure->m_nameInPrevious)
-            continue;
-
-        shape->addProperty(structure->m_nameInPrevious.get());
-    }
-
-    shape->markAsFinal();
-    return shape.release();
+    return baseShape.release();
 }
 
 void Structure::dump(PrintStream& out) const
@@ -1210,6 +1244,76 @@ bool ClassInfo::hasStaticSetterOrReadonlyProperties() const
         }
     }
     return false;
+}
+
+void Structure::setCachedStructurePropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+{
+    ASSERT(!isDictionary());
+    if (!hasRareData())
+        allocateRareData(vm);
+    rareData()->setCachedStructurePropertyNameEnumerator(vm, enumerator);
+}
+
+JSPropertyNameEnumerator* Structure::cachedStructurePropertyNameEnumerator() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->cachedStructurePropertyNameEnumerator();
+}
+
+void Structure::setCachedGenericPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+{
+    ASSERT(!isDictionary());
+    if (!hasRareData())
+        allocateRareData(vm);
+    rareData()->setCachedGenericPropertyNameEnumerator(vm, enumerator);
+}
+
+JSPropertyNameEnumerator* Structure::cachedGenericPropertyNameEnumerator() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->cachedGenericPropertyNameEnumerator();
+}
+
+bool Structure::canCacheStructurePropertyNameEnumerator() const
+{
+    if (isDictionary())
+        return false;
+    return true;
+}
+
+bool Structure::canCacheGenericPropertyNameEnumerator() const
+{
+    if (!canCacheStructurePropertyNameEnumerator())
+        return false;
+
+    if (hasIndexedProperties(indexingType()))
+        return false;
+
+    StructureChain* structureChain = m_cachedPrototypeChain.get();
+    ASSERT(structureChain);
+    WriteBarrier<Structure>* structure = structureChain->head();
+    while (true) {
+        if (!structure->get())
+            break;
+        if (structure->get()->typeInfo().overridesGetPropertyNames())
+            return false;
+        structure++;
+    }
+
+    return true;
+}
+
+bool Structure::canAccessPropertiesQuickly() const
+{
+    if (hasNonEnumerableProperties())
+        return false;
+    if (hasGetterSetterProperties())
+        return false;
+    if (isUncacheableDictionary())
+        return false;
+    return true;
 }
 
 } // namespace JSC

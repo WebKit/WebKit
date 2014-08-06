@@ -42,7 +42,6 @@
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSNameScope.h"
-#include "JSPropertyNameIterator.h"
 #include "JSStackInlines.h"
 #include "JSString.h"
 #include "JSWithScope.h"
@@ -776,12 +775,6 @@ LLINT_SLOW_PATH_DECL(slow_path_get_argument_by_val)
     LLINT_RETURN_PROFILED(op_get_argument_by_val, getByVal(exec, arguments, LLINT_OP_C(3).jsValue()));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_get_by_pname)
-{
-    LLINT_BEGIN();
-    LLINT_RETURN(getByVal(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
 {
     LLINT_BEGIN();
@@ -1288,42 +1281,6 @@ LLINT_SLOW_PATH_DECL(slow_path_to_primitive)
 {
     LLINT_BEGIN();
     LLINT_RETURN(LLINT_OP_C(2).jsValue().toPrimitive(exec));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_get_pnames)
-{
-    LLINT_BEGIN();
-    JSValue v = LLINT_OP(2).jsValue();
-    if (v.isUndefinedOrNull()) {
-        pc += pc[5].u.operand;
-        LLINT_END();
-    }
-    
-    JSObject* o = v.toObject(exec);
-    Structure* structure = o->structure();
-    JSPropertyNameIterator* jsPropertyNameIterator = structure->enumerationCache();
-    if (!jsPropertyNameIterator || jsPropertyNameIterator->cachedPrototypeChain() != structure->prototypeChain(exec))
-        jsPropertyNameIterator = JSPropertyNameIterator::create(exec, o);
-    
-    LLINT_OP(1) = JSValue(jsPropertyNameIterator);
-    LLINT_OP(2) = JSValue(o);
-    LLINT_OP(3) = Register::withInt(0);
-    LLINT_OP(4) = Register::withInt(jsPropertyNameIterator->size());
-    
-    pc += OPCODE_LENGTH(op_get_pnames);
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_next_pname)
-{
-    LLINT_BEGIN();
-    JSObject* base = asObject(LLINT_OP(2).jsValue());
-    JSString* property = asString(LLINT_OP(1).jsValue());
-    if (base->hasProperty(exec, Identifier(exec, property->value(exec)))) {
-        // Go to target.
-        pc += pc[6].u.operand;
-    } // Else, don't change the PC, so the interpreter will reloop.
-    LLINT_END();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)

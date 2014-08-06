@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-class JSPropertyNameIterator;
+class JSPropertyNameEnumerator;
 class Structure;
 
 class StructureRareData : public JSCell {
@@ -55,8 +55,10 @@ public:
     JSString* objectToStringValue() const;
     void setObjectToStringValue(VM&, JSString* value);
 
-    JSPropertyNameIterator* enumerationCache();
-    void setEnumerationCache(VM&, JSPropertyNameIterator* value);
+    JSPropertyNameEnumerator* cachedStructurePropertyNameEnumerator() const;
+    JSPropertyNameEnumerator* cachedGenericPropertyNameEnumerator() const;
+    void setCachedStructurePropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    void setCachedGenericPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
 
     DECLARE_EXPORT_INFO;
 
@@ -69,7 +71,8 @@ private:
 
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;
-    WriteBarrier<JSPropertyNameIterator> m_enumerationCache;
+    WriteBarrier<JSPropertyNameEnumerator> m_cachedStructurePropertyNameEnumerator;
+    WriteBarrier<JSPropertyNameEnumerator> m_cachedGenericPropertyNameEnumerator;
     
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
     std::unique_ptr<PropertyWatchpointMap> m_replacementWatchpointSets;

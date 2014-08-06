@@ -115,10 +115,6 @@ public:
     {
         return proofStatus() == IsProved;
     }
-    bool needsCheck() const
-    {
-        return proofStatus() == NeedsCheck;
-    }
     
     bool willNotHaveCheck() const
     {

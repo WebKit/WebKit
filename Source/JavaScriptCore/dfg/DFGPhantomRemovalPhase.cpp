@@ -96,14 +96,15 @@ public:
             Node* lastNode = nullptr;
             while (sourceIndex < block->size()) {
                 Node* node = block->at(sourceIndex++);
-                if (node->op() == Phantom) {
+                switch (node->op()) {
+                case Phantom: {
                     if (lastNode && (lastNode->origin.forExit != node->origin.forExit || (lastNode->flags() & NodeHasVarArgs)))
                         lastNode = nullptr;
                     for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                         Edge edge = node->children.child(i);
                         if (!edge)
                             break;
-                        if (edge.useKind() != UntypedUse)
+                        if (edge.willHaveCheck())
                             continue; // Keep the type check.
                         if (edge->flags() & NodeRelevantToOSR) {
                             bool found = false;
@@ -123,8 +124,38 @@ public:
                         changed = true;
                     }
                     
+                    if (node->children.isEmpty()) {
+                        changed = true;
+                        continue;
+                    }
+                    break;
+                }
+                    
+                case Check: {
+                    for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+                        Edge edge = node->children.child(i);
+                        if (!edge)
+                            break;
+                        if (edge.willHaveCheck())
+                            continue;
+                        node->children.removeEdge(i--);
+                        changed = true;
+                    }
+                    if (node->children.isEmpty()) {
+                        changed = true;
+                        continue;
+                    }
+                    break;
+                }
+                    
+                case HardPhantom: {
                     if (node->children.isEmpty())
                         continue;
+                    break;
+                }
+                    
+                default:
+                    break;
                 }
                 lastNode = node;
                 block->at(targetIndex++) = node;

@@ -268,52 +268,6 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     emitPutCallResult(instruction);
 }
 
-void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
-{
-    JumpList slowCases;
-
-    slowCases.append(branchTestPtr(NonZero, regT0, tagMaskRegister));
-    slowCases.append(branchStructure(NotEqual, Address(regT0, JSCell::structureIDOffset()), expectedStructure));
-    slowCases.append(branchPtr(NotEqual, Address(regT0, JSFunction::offsetOfExecutable()), TrustedImmPtr(expectedExecutable)));
-    
-    loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT1);
-    emitPutToCallFrameHeader(regT1, JSStack::ScopeChain);
-    
-    Call call = nearCall();
-    Jump done = jump();
-    
-    slowCases.link(this);
-    move(TrustedImmPtr(callLinkInfo->callReturnLocation.executableAddress()), regT2);
-    restoreReturnAddressBeforeReturn(regT2);
-    Jump slow = jump();
-    
-    LinkBuffer patchBuffer(*m_vm, *this, m_codeBlock);
-    
-    patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
-    patchBuffer.link(done, callLinkInfo->hotPathOther.labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(m_vm->getCTIStub(virtualCallThunkGenerator).code()));
-    
-    RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
-        FINALIZE_CODE(
-            patchBuffer,
-            ("Baseline closure call stub for %s, return point %p, target %p (%s)",
-                toCString(*m_codeBlock).data(),
-                callLinkInfo->hotPathOther.labelAtOffset(0).executableAddress(),
-                codePtr.executableAddress(),
-                toCString(pointerDump(calleeCodeBlock)).data())),
-        *m_vm, m_codeBlock->ownerExecutable(), expectedStructure, expectedExecutable,
-        callLinkInfo->codeOrigin));
-    
-    RepatchBuffer repatchBuffer(m_codeBlock);
-    
-    repatchBuffer.replaceWithJump(
-        RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo->hotPathBegin),
-        CodeLocationLabel(stubRoutine->code().code()));
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(virtualCallThunkGenerator).code());
-
-    callLinkInfo->stub = stubRoutine.release();
-}
-
 void JIT::emit_op_call(Instruction* currentInstruction)
 {
     compileOpCall(op_call, currentInstruction, m_callLinkInfoIndex++);

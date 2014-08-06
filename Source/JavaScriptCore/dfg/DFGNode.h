@@ -1001,6 +1001,7 @@ struct Node {
     bool hasHeapPrediction()
     {
         switch (op()) {
+        case GetDirectPname:
         case GetById:
         case GetByIdFlush:
         case GetByVal:
@@ -1267,6 +1268,7 @@ struct Node {
         case ArrayifyToStructure:
         case ArrayPush:
         case ArrayPop:
+        case HasIndexedProperty:
             return true;
         default:
             return false;

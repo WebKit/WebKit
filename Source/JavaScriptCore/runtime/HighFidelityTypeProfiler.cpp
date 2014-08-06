@@ -26,40 +26,33 @@
 #include "config.h"
 #include "HighFidelityTypeProfiler.h"
 
+#include "InspectorJSTypeBuilders.h"
 #include "TypeLocation.h"
 
 namespace JSC {
 
 static const bool verbose = false;
 
-String HighFidelityTypeProfiler::getTypesForVariableInAtOffset(unsigned divot, const String& variableName, intptr_t sourceID)
+void HighFidelityTypeProfiler::logTypesForTypeLocation(TypeLocation* location)
 {
-    String global = getGlobalTypesForVariableAtOffset(divot, variableName, sourceID);
-    if (!global.isEmpty())
-        return global;
-    
-    return getLocalTypesForVariableAtOffset(divot, variableName, sourceID);
-}
+    TypeProfilerSearchDescriptor descriptor = location->m_globalVariableID == HighFidelityReturnStatement ? TypeProfilerSearchDescriptorFunctionReturn
+        : location->m_globalVariableID == HighFidelityThisStatement ? TypeProfilerSearchDescriptorThisStatement
+        : TypeProfilerSearchDescriptorNormal;
 
-String HighFidelityTypeProfiler::getGlobalTypesForVariableAtOffset(unsigned divot, const String& , intptr_t sourceID)
-{
-    TypeLocation* location = findLocation(divot, sourceID);
-    if (!location)
-        return  "";
+    dataLogF("[Start, End]::[%u, %u]\n", location->m_divotStart, location->m_divotEnd);
 
-    if (location->m_globalVariableID == HighFidelityNoGlobalIDExists)
-        return "";
+    if (findLocation(location->m_divotStart, location->m_sourceID, descriptor))
+        dataLog("\t\t[Entry IS in System]\n");
+    else
+        dataLog("\t\t[Entry IS NOT in system]\n");
 
-    return location->m_globalTypeSet->seenTypes();
-}
+    dataLog("\t\t", location->m_globalVariableID == HighFidelityReturnStatement ? "[Return Statement]"
+        : location->m_globalVariableID == HighFidelityThisStatement ? "[This Statement]"
+        : "[Normal Statement]", "\n");
 
-String HighFidelityTypeProfiler::getLocalTypesForVariableAtOffset(unsigned divot, const String& , intptr_t sourceID)
-{
-    TypeLocation* location = findLocation(divot, sourceID);
-    if (!location)
-        return  "";
-
-    return location->m_instructionTypeSet->seenTypes();
+    dataLog("\t\t#Local#\n\t\t", location->m_instructionTypeSet->seenTypes().replace("\n", "\n\t\t"), "\n");
+    if (location->m_globalTypeSet)
+        dataLog("\t\t#Global#\n\t\t", location->m_globalTypeSet->seenTypes().replace("\n", "\n\t\t"), "\n");
 }
 
 void HighFidelityTypeProfiler::insertNewLocation(TypeLocation* location)
@@ -76,22 +69,67 @@ void HighFidelityTypeProfiler::insertNewLocation(TypeLocation* location)
     bucket.append(location);
 }
 
-TypeLocation* HighFidelityTypeProfiler::findLocation(unsigned divot, intptr_t sourceID)
+void HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::InspectorObject>& ret)
 {
-    ASSERT(m_bucketMap.contains(sourceID)); 
+    TypeLocation* location = findLocation(divot, sourceID, descriptor);
+    if (!location)
+        return;
+
+    if (location->m_globalTypeSet && location->m_globalVariableID != HighFidelityNoGlobalIDExists) {
+        ret->setString(ASCIILiteral("displayTypeName"), location->m_globalTypeSet->displayName());
+        ret->setArray(ASCIILiteral("globalPrimitiveTypeNames"), location->m_globalTypeSet->allPrimitiveTypeNames()->asArray());
+        ret->setArray(ASCIILiteral("globalStructures"), location->m_globalTypeSet->allStructureRepresentations()->asArray());
+    } else
+        ret->setString(ASCIILiteral("displayTypeName"), location->m_instructionTypeSet->displayName());
+
+    ret->setArray(ASCIILiteral("localPrimitiveTypeNames"), location->m_instructionTypeSet->allPrimitiveTypeNames()->asArray());
+    ret->setArray(ASCIILiteral("localStructures"), location->m_instructionTypeSet->allStructureRepresentations()->asArray());
+}
+
+static bool descriptorMatchesTypeLocation(TypeProfilerSearchDescriptor descriptor, TypeLocation* location)
+{
+    if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID == HighFidelityReturnStatement)  
+        return true;
+
+    if (descriptor == TypeProfilerSearchDescriptorThisStatement && location->m_globalVariableID == HighFidelityThisStatement)  
+        return true;
+
+    if (descriptor == TypeProfilerSearchDescriptorNormal && location->m_globalVariableID != HighFidelityReturnStatement && location->m_globalVariableID != HighFidelityThisStatement)  
+        return true;
+
+    return false;
+}
+
+TypeLocation* HighFidelityTypeProfiler::findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor descriptor)
+{
+    QueryKey queryKey(sourceID, divot);
+    auto iter = m_queryCache.find(queryKey);
+    if (iter != m_queryCache.end())
+        return iter->value;
+
+    if (!m_functionHasExecutedCache.hasExecutedAtOffset(sourceID, divot))
+        return nullptr;
+
+    ASSERT(m_bucketMap.contains(sourceID));
 
     Vector<TypeLocation*>& bucket = m_bucketMap.find(sourceID)->value;
-    unsigned distance = UINT_MAX; // Because assignments may be nested, make sure we find the closest enclosing assignment to this character offset.
     TypeLocation* bestMatch = nullptr;
+    unsigned distance = UINT_MAX; // Because assignments may be nested, make sure we find the closest enclosing assignment to this character offset.
     for (size_t i = 0, size = bucket.size(); i < size; i++) {
         TypeLocation* location = bucket.at(i);
-        if (location->m_divotStart <= divot && divot <= location->m_divotEnd && location->m_divotEnd - location->m_divotStart <= distance) {
+        if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && descriptorMatchesTypeLocation(descriptor, location) && location->m_divotForFunctionOffsetIfReturnStatement == divot)
+            return location;
+
+        if (location->m_divotStart <= divot && divot <= location->m_divotEnd && location->m_divotEnd - location->m_divotStart <= distance && descriptorMatchesTypeLocation(descriptor, location)) {
             distance = location->m_divotEnd - location->m_divotStart;
             bestMatch = location;
         }
     }
 
-    // FIXME: BestMatch should never be null. This doesn't hold currently because we ignore some Eval/With/VarInjection variable assignments.
+    if (bestMatch)
+        m_queryCache.set(queryKey, bestMatch);
+    // FIXME: BestMatch should never be null past this point. This doesn't hold currently because we ignore var assignments when code contains eval/With (VarInjection). 
+    // https://bugs.webkit.org/show_bug.cgi?id=135184
     return bestMatch;
 }
 

@@ -898,7 +898,11 @@ private:
             break;
         }
 
-        case CheckExecutable:
+        case CheckExecutable: {
+            fixEdge<FunctionUse>(node->child1());
+            break;
+        }
+            
         case CheckStructure:
         case CheckFunction:
         case CheckHasInstance:
@@ -1040,6 +1044,64 @@ private:
                 observeUseKindOnNode<StringUse>(node);
             }
             break;
+
+        case GetEnumerableLength: {
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
+        case HasGenericProperty: {
+            fixEdge<StringUse>(node->child2());
+            break;
+        }
+        case HasStructureProperty: {
+            fixEdge<StringUse>(node->child2());
+            fixEdge<KnownCellUse>(node->child3());
+            break;
+        }
+        case HasIndexedProperty: {
+            node->setArrayMode(
+                node->arrayMode().refine(
+                    m_graph, node,
+                    node->child1()->prediction(),
+                    node->child2()->prediction(),
+                    SpecNone, node->flags()));
+            
+            blessArrayOperation(node->child1(), node->child2(), node->child3());
+            fixEdge<CellUse>(node->child1());
+            fixEdge<KnownInt32Use>(node->child2());
+            break;
+        }
+        case GetDirectPname: {
+            Edge& base = m_graph.varArgChild(node, 0);
+            Edge& property = m_graph.varArgChild(node, 1);
+            Edge& index = m_graph.varArgChild(node, 2);
+            Edge& enumerator = m_graph.varArgChild(node, 3);
+            fixEdge<CellUse>(base);
+            fixEdge<KnownCellUse>(property);
+            fixEdge<KnownInt32Use>(index);
+            fixEdge<KnownCellUse>(enumerator);
+            break;
+        }
+        case GetStructurePropertyEnumerator: {
+            fixEdge<CellUse>(node->child1());
+            fixEdge<KnownInt32Use>(node->child2());
+            break;
+        }
+        case GetGenericPropertyEnumerator: {
+            fixEdge<CellUse>(node->child1());
+            fixEdge<KnownInt32Use>(node->child2());
+            fixEdge<KnownCellUse>(node->child3());
+            break;
+        }
+        case GetEnumeratorPname: {
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownInt32Use>(node->child2());
+            break;
+        }
+        case ToIndexString: {
+            fixEdge<KnownInt32Use>(node->child1());
+            break;
+        }
             
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
@@ -1543,6 +1605,7 @@ private:
         case CellUse:
         case KnownCellUse:
         case ObjectUse:
+        case FunctionUse:
         case StringUse:
         case KnownStringUse:
         case StringObjectUse:
