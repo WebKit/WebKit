@@ -1,3 +1,12 @@
+2014-08-05  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AXI: Add label string once AccessibilityObject::computedLabel() is available
+        https://bugs.webkit.org/show_bug.cgi?id=129940
+
+        Reviewed by Chris Fleizach.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: LayoutTest expectation update.
+
 2014-07-29  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r170564, r170571, r170604, r170628, r170672, r170680, r170724, r170728, r170729, r170819, r170821, r170836, r170855, r170860, r170890, r170907, r170929, r171052, r171106, r171152, r171153, r171214 from ftlopt.

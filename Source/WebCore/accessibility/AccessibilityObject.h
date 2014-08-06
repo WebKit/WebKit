@@ -647,8 +647,8 @@ public:
 
     // Accessibility Text
     virtual void accessibilityText(Vector<AccessibilityText>&) { };
-    // A single methods for getting a computed label for an AXObject. It condenses the nuances of accessibilityText. Used by Inspector.
-    String accessibilityComputedLabel();
+    // A single method for getting a computed label for an AXObject. It condenses the nuances of accessibilityText. Used by Inspector.
+    String computedLabel();
     
     // A programmatic way to set a name on an AccessibleObject.
     virtual void setAccessibleName(const AtomicString&) { }

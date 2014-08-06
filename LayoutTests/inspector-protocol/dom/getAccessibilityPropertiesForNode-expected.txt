@@ -56,14 +56,14 @@ Total elements to be tested: 65.
 
 <div role="option" aria-busy="true">busy (self)</div>
     exists: true
-    label: 
+    label: busy (self)
     role: option
     busy: true
     parentNodeId: exists
 
 <div role="option">busy (parent)</div>
     exists: true
-    label: 
+    label: busy (parent)
     role: option
     busy: true
     parentNodeId: exists
@@ -83,13 +83,13 @@ Total elements to be tested: 65.
 
 <div role="tab" aria-selected="false">not selected</div>
     exists: true
-    label: 
+    label: not selected
     role: tab
     parentNodeId: exists
 
 <div role="tab" aria-selected="true">selected</div>
     exists: true
-    label: 
+    label: selected
     role: tab
     parentNodeId: exists
     selected: true
@@ -107,13 +107,13 @@ Total elements to be tested: 65.
 
 <div role="option" aria-selected="false">not selected</div>
     exists: true
-    label: 
+    label: not selected
     role: option
     parentNodeId: exists
 
 <div role="option" aria-selected="true">selected</div>
     exists: true
-    label: 
+    label: selected
     role: option
     parentNodeId: exists
     selected: true
@@ -157,7 +157,7 @@ Total elements to be tested: 65.
 
 <img src="data:image/gif..." alt="x" aria-hidden="true">
     exists: true
-    label: 
+    label: x
     role: img
     ignored: true
     ignoredByDefault: true
@@ -165,7 +165,7 @@ Total elements to be tested: 65.
 
 <img src="data:image/gif..." alt="x">
     exists: true
-    label: 
+    label: x
     role: img
 
 <img src="data:image/gif..." alt="">
@@ -202,7 +202,7 @@ Total elements to be tested: 65.
 
 <div role="radio" aria-checked="false">unchecked</div>
     exists: true
-    label: 
+    label: unchecked
     role: radio
     checked: false
     parentNodeId: exists
@@ -210,7 +210,7 @@ Total elements to be tested: 65.
 
 <div role="radio" aria-checked="mixed">unchecked [sic] mixed state will not be exposed on radios per ARIA spec.</div>
     exists: true
-    label: 
+    label: unchecked [sic] mixed state will not be exposed on radios per ARIA spec.
     role: radio
     checked: false
     parentNodeId: exists
@@ -218,7 +218,7 @@ Total elements to be tested: 65.
 
 <div role="radio" aria-checked="true">checked</div>
     exists: true
-    label: 
+    label: checked
     role: radio
     checked: true
     parentNodeId: exists
@@ -226,7 +226,7 @@ Total elements to be tested: 65.
 
 <div role="radio">unchecked (checked undefined evals to false on radio)</div>
     exists: true
-    label: 
+    label: unchecked (checked undefined evals to false on radio)
     role: radio
     checked: false
     parentNodeId: exists
@@ -250,7 +250,7 @@ Total elements to be tested: 65.
 
 <div role="checkbox" aria-checked="false">unchecked</div>
     exists: true
-    label: 
+    label: unchecked
     role: checkbox
     checked: false
     parentNodeId: exists
@@ -258,7 +258,7 @@ Total elements to be tested: 65.
 
 <div role="checkbox" aria-checked="mixed">mixed</div>
     exists: true
-    label: 
+    label: mixed
     role: checkbox
     checked: mixed
     parentNodeId: exists
@@ -266,7 +266,7 @@ Total elements to be tested: 65.
 
 <div role="checkbox" aria-checked="true">checked</div>
     exists: true
-    label: 
+    label: checked
     role: checkbox
     checked: true
     parentNodeId: exists
@@ -274,7 +274,7 @@ Total elements to be tested: 65.
 
 <div role="checkbox">unchecked (checked undefined evals to false on checkbox)</div>
     exists: true
-    label: 
+    label: unchecked (checked undefined evals to false on checkbox)
     role: checkbox
     checked: false
     parentNodeId: exists
@@ -386,7 +386,7 @@ Total elements to be tested: 65.
 
 <div role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
     exists: true
-    label: 
+    label: Not Pressed.
     role: 
     focused: false
     parentNodeId: exists
@@ -395,7 +395,7 @@ Total elements to be tested: 65.
 
 <div role="button" tabindex="0" aria-pressed="true">FIXME: Pressed is false. Expected true. http://webkit.org/b/129830</div>
     exists: true
-    label: 
+    label: FIXME: Pressed is false. Expected true. http://webkit.org/b/129830
     role: 
     focused: false
     parentNodeId: exists
@@ -404,7 +404,7 @@ Total elements to be tested: 65.
 
 <div role="button" tabindex="0" aria-disabled="true">disabled</div>
     exists: true
-    label: 
+    label: disabled
     role: button
     disabled: true
     focused: false

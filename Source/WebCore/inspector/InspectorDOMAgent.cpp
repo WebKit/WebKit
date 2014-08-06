@@ -1457,7 +1457,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool ignoredByDefault = false;
     TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
-    String label; // FIXME: Waiting on http://webkit.org/b/121134
+    String label;
     bool liveRegionAtomic = false;
     RefPtr<Inspector::TypeBuilder::Array<String>> liveRegionRelevant;
     TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Enum liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Off;
@@ -1552,6 +1552,8 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
             if (axObject->isARIAHidden() || axObject->isDOMHidden())
                 hidden = true;
             
+            label = axObject->computedLabel();
+
             if (axObject->supportsARIALiveRegion()) {
                 supportsLiveRegion = true;
                 liveRegionAtomic = axObject->ariaLiveRegionAtomic();

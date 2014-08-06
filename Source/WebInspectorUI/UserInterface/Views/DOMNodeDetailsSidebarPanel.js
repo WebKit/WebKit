@@ -360,6 +360,8 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                 else if (accessibilityProperties.invalid === DOMAgent.AccessibilityPropertiesInvalid.Spelling)
                     invalid = WebInspector.UIString("Spelling");
 
+                var label = accessibilityProperties.label;
+
                 var liveRegionStatus = "";
                 var liveRegionStatusNode = null;
                 var liveRegionStatusToken = accessibilityProperties.liveRegionStatus;
@@ -423,11 +425,6 @@ WebInspector.DOMNodeDetailsSidebarPanel.prototype = {
                     else
                         mouseEventNodeLink = linkForNodeId(mouseEventNodeId);
                 }
-
-                // FIXME: label will always come back as empty. Blocked by http://webkit.org/b/121134
-                var label = accessibilityProperties.label;
-                if (label && label !== domNode.getAttribute("aria-label"))
-                    label = WebInspector.UIString("%s (computed)").format(label);
 
                 var ownedNodeLinkList = linkListForNodeIds(accessibilityProperties.ownedNodeIds);
 

@@ -288,8 +288,12 @@ bool AccessibilityObject::accessibilityObjectContainsText(String* text) const
         || stringValue().contains(*text, false);
 }
     
-String AccessibilityObject::accessibilityComputedLabel()
+String AccessibilityObject::computedLabel()
 {
+    // This method is being called by WebKit inspector, which may happen at any time, so we need to update our backing store now.
+    // Also hold onto this object in case updateBackingStore deletes this node.
+    RefPtr<AccessibilityObject> protector(this);
+    updateBackingStore();
     Vector<AccessibilityText> text;
     accessibilityText(text);
     if (text.size())
