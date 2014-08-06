@@ -23,10 +23,10 @@
  */
 
 #include "config.h"
-#include "GraphicsContext3D.h"
 
 #if USE(3D_GRAPHICS)
 
+#include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include <WebCore/PlatformCALayerWin.h>
 #include <wtf/OwnPtr.h>
