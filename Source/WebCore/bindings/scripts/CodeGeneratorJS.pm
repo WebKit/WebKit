@@ -2292,7 +2292,7 @@ sub GenerateImplementation
             } elsif ($type eq "EventListener") {
                 $implIncludes{"EventListener.h"} = 1;
                 push(@implContent, "    UNUSED_PARAM(exec);\n");
-                push(@implContent, "    $implType & impl = castedThis->impl();\n");
+                push(@implContent, "    $implType& impl = castedThis->impl();\n");
                 push(@implContent, "    if (EventListener* listener = impl.$implGetterFunctionName()) {\n");
                 push(@implContent, "        if (const JSEventListener* jsListener = JSEventListener::cast(listener)) {\n");
                 if ($interfaceName eq "Document" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
@@ -2356,7 +2356,7 @@ sub GenerateImplementation
 
                     unshift(@arguments, @callWithArgs);
                     my $jsType = NativeToJSValue($attribute->signature, 0, $interfaceName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
-                    push(@implContent, "    $implType & impl = castedThis->impl();\n") if !$attribute->isStatic;
+                    push(@implContent, "    $implType& impl = castedThis->impl();\n") if !$attribute->isStatic;
                     if ($codeGenerator->IsSVGAnimatedType($type)) {
                         push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
                         push(@implContent, "    JSValue result = toJS(exec, castedThis->globalObject(), obj.get());\n");
@@ -2385,7 +2385,7 @@ sub GenerateImplementation
                     push(@implContent, "    $svgPropertyOrListPropertyType impl(*castedThis->impl());\n");
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 } else {
-                    push(@implContent, "    $implType & impl = castedThis->impl();\n");
+                    push(@implContent, "    $implType& impl = castedThis->impl();\n");
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 }
 

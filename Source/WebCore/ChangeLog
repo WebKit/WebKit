@@ -1,3 +1,10 @@
+2014-08-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed typo correction.
+
+        * bindings/scripts/CodeGeneratorJS.pm: removed unnecessary space.
+        (GenerateImplementation):
+
 2014-08-05  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Add label string once AccessibilityObject::computedLabel() is available
