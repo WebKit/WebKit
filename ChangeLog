@@ -1,5 +1,11 @@
 2014-08-06  David Farler  <dfarler@apple.com>
 
+        Unreviewed build fix: Make includes semicolon in assignment.
+
+        * Makefile.shared: Remove a ;
+
+2014-08-06  David Farler  <dfarler@apple.com>
+
         Set DSYMUTIL_NUM_THREADS to the number of logical cores
         https://bugs.webkit.org/show_bug.cgi?id=135655
 

@@ -25,7 +25,7 @@ OUTPUT_FILTER = $(SCRIPTS_PATH)/filter-build-webkit
 endif
 endif
 
-export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu);
+export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
 
 all:
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
