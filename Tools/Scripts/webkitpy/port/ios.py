@@ -186,7 +186,6 @@ class IOSSimulatorPort(Port):
 
     def setup_test_run(self):
         self._executive.run_command(['osascript', '-e', 'tell application "iOS Simulator" to quit'])
-        self._executive.run_command([self.xcrun_find('simctl'), 'shutdown', self.simulator_udid()], error_handler=lambda e: None)
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()

@@ -1,3 +1,15 @@
+2014-08-05  David Farler  <dfarler@apple.com>
+
+        [iOS] simctl can hang if run quickly after shutting down CoreSimulator services
+        https://bugs.webkit.org/show_bug.cgi?id=135626
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_test_run):
+        Remove call to simctl shutdown <device> - telling the simulator app to quit
+        will shut down all booted devices.
+
 2014-08-05  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unused argument from BuildbotQueue.update()
