@@ -1,3 +1,20 @@
+2014-08-06  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup InlineTextBox::paintSelection and ::localSelectionRect.
+        https://bugs.webkit.org/show_bug.cgi?id=135631
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * rendering/InlineTextBox.cpp: Ideally these 2 functions should share some more code.
+        (WebCore::InlineTextBox::localSelectionRect): Local coordinates should not be snapped/enclosed.
+        This change could potentially break some selections. Should that be the case, they need to be addressed
+        separately.
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection): Minor cleanup.
+        * rendering/InlineTextBox.h:
+
 2014-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Be able to disable gtk2 dependency

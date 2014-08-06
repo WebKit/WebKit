@@ -281,16 +281,9 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     // Avoid computing the font width when the entire line box is selected as an optimization.
     if (sPos || ePos != static_cast<int>(m_len))
         font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    IntRect snappedSelectionRect = enclosingIntRect(selectionRect);
-    LayoutUnit logicalWidth = snappedSelectionRect.width();
-    if (snappedSelectionRect.x() > logicalRight())
-        logicalWidth  = 0;
-    else if (snappedSelectionRect.maxX() > logicalRight())
-        logicalWidth = logicalRight() - snappedSelectionRect.x();
-
-    LayoutPoint topPoint = isHorizontal() ? LayoutPoint(snappedSelectionRect.x(), selectionTop) : LayoutPoint(selectionTop, snappedSelectionRect.x());
-    LayoutUnit width = isHorizontal() ? logicalWidth : selectionHeight;
-    LayoutUnit height = isHorizontal() ? selectionHeight : logicalWidth;
+    LayoutPoint topPoint = isHorizontal() ? LayoutPoint(selectionRect.x(), selectionTop) : LayoutPoint(selectionTop, selectionRect.x());
+    LayoutUnit width = isHorizontal() ? selectionRect.width() : selectionHeight;
+    LayoutUnit height = isHorizontal() ? selectionHeight : selectionRect.width();
 
     return LayoutRect(topPoint, LayoutSize(width, height));
 }
@@ -577,7 +570,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintDocumentMarkers(context, boxOrigin, lineStyle, font, true);
 
         if (haveSelection && !useCustomUnderlines)
-            paintSelection(context, boxOrigin, lineStyle, font, selectionPaintStyle.fillColor);
+            paintSelection(*context, boxOrigin, lineStyle, font, selectionPaintStyle.fillColor);
     }
 
     if (Page* page = renderer().frame().page()) {
@@ -704,10 +697,10 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = std::min(endPos - m_start, (int)m_len);
 }
 
-void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
+void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
 {
 #if ENABLE(TEXT_SELECTION)
-    if (context->paintingDisabled())
+    if (context.paintingDisabled())
         return;
 
     // See if we have a selection to paint at all.
@@ -725,8 +718,8 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (textColor == c)
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
-    GraphicsContextStateSaver stateSaver(*context);
-    updateGraphicsContext(*context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
+    GraphicsContextStateSaver stateSaver(context);
+    updateGraphicsContext(context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
     
     // If the text is truncated, let the thing being painted in the truncation
     // draw its own highlight.
@@ -744,16 +737,10 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (respectHyphen)
         ePos = textRun.length();
 
-    const RootInlineBox& rootBox = root();
-    LayoutUnit selectionBottom = rootBox.selectionBottom();
-    LayoutUnit selectionTop = rootBox.selectionTopAdjustedForPrecedingBlock();
-
-    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
-    LayoutUnit selectionHeight = std::max<LayoutUnit>(0, selectionBottom - selectionTop);
-
-    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selectionHeight);
+    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - root().selectionTopAdjustedForPrecedingBlock();
+    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, root().selectionHeightAdjustedForPrecedingBlock());
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    context->fillRect(directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
+    context.fillRect(directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(boxOrigin);

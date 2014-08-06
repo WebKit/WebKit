@@ -164,7 +164,7 @@ protected:
 
 private:
     void paintDecoration(GraphicsContext&, const FloatPoint& boxOrigin, TextDecoration, TextDecorationStyle, const ShadowData*, TextPainter&);
-    void paintSelection(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, Color textColor);
+    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, Color textColor);
     void paintDocumentMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&, bool grammar);
     void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, const RenderStyle&, const Font&);
 
