@@ -3586,36 +3586,34 @@ static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLaye
 void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsContext* context, const ClipRect& clipRect, BorderRadiusClippingRule rule)
 {
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    if (clipRect.rect() != paintingInfo.paintDirtyRect || clipRect.hasRadius()) {
+    if (clipRect.hasRadius()) {
+        context->save();
+        
+        // If the clip rect has been tainted by a border radius, then we have to walk up our layer chain applying the clips from
+        // any layers with overflow. The condition for being able to apply these clips is that the overflow object be in our
+        // containing block chain so we check that also.
+        for (RenderLayer* layer = rule == IncludeSelfForBorderRadius ? this : parent(); layer; layer = layer->parent()) {
+            if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && inContainingBlockChain(this, layer)) {
+                LayoutRect adjustedClipRect = LayoutRect(toLayoutPoint(layer->offsetFromAncestor(paintingInfo.rootLayer)), layer->size());
+                adjustedClipRect.move(paintingInfo.subpixelAccumulation);
+                context->clipRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(adjustedClipRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+            }
+            
+            if (layer == paintingInfo.rootLayer)
+                break;
+        }
+    } else if (clipRect.rect() != paintingInfo.paintDirtyRect) {
         context->save();
         LayoutRect adjustedClipRect = clipRect.rect();
         adjustedClipRect.move(paintingInfo.subpixelAccumulation);
         context->clip(pixelSnappedForPainting(adjustedClipRect, deviceScaleFactor));
     }
-
-    if (!clipRect.hasRadius())
-        return;
-
-    // If the clip rect has been tainted by a border radius, then we have to walk up our layer chain applying the clips from
-    // any layers with overflow. The condition for being able to apply these clips is that the overflow object be in our
-    // containing block chain so we check that also.
-    for (RenderLayer* layer = rule == IncludeSelfForBorderRadius ? this : parent(); layer; layer = layer->parent()) {
-        if (layer->renderer().hasOverflowClip() && layer->renderer().style().hasBorderRadius() && inContainingBlockChain(this, layer)) {
-            LayoutRect adjustedClipRect = LayoutRect(toLayoutPoint(layer->offsetFromAncestor(paintingInfo.rootLayer)), layer->size());
-            adjustedClipRect.move(paintingInfo.subpixelAccumulation);
-            context->clipRoundedRect(layer->renderer().style().getRoundedInnerBorderFor(adjustedClipRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
-        }
-
-        if (layer == paintingInfo.rootLayer)
-            break;
-    }
 }
 
 void RenderLayer::restoreClip(GraphicsContext* context, const LayoutRect& paintDirtyRect, const ClipRect& clipRect)
 {
-    if (clipRect.rect() == paintDirtyRect && !clipRect.hasRadius())
-        return;
-    context->restore();
+    if (clipRect.rect() != paintDirtyRect || clipRect.hasRadius())
+        context->restore();
 }
 
 static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, const RenderLayer* rootLayer, const RenderLayer* layer)

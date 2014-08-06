@@ -1,3 +1,15 @@
+2014-08-06  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r163382): Overflow hidden for inner elements breaks blurring
+        https://bugs.webkit.org/show_bug.cgi?id=135318
+
+        Reviewed by Zalan Bujtas.
+
+        Added test for filter applied on an element overflowing its parent, which has overflow:hidden.
+
+        * fast/filter-image/clipped-filter-expected.html: Added.
+        * fast/filter-image/clipped-filter.html: Added.
+
 2014-08-06  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Move selection tests under fast/regions/selection

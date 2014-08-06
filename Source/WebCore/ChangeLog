@@ -1,3 +1,20 @@
+2014-08-06  Radu Stavila  <stavila@adobe.com>
+
+        REGRESSION (r163382): Overflow hidden for inner elements breaks blurring
+        https://bugs.webkit.org/show_bug.cgi?id=135318
+
+        Reviewed by Zalan Bujtas.
+
+        For elements with border radius, clipping must be applied using clipRoundedRect.
+        This regressed in r163382, when normal clipping started being applied also
+        for elements having border radius.
+
+        Test: fast/filter-image/clipped-filter.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::restoreClip):
+
 2014-08-06  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup InlineTextBox::paintSelection and ::localSelectionRect.
