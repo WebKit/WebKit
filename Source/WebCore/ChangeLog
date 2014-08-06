@@ -1,5 +1,31 @@
 2014-08-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172151. <rdar://problem/17869353>
+
+    2014-08-06  Andy Estes  <aestes@apple.com>
+    
+            [iOS] QuickLook returns an invalid MIME type for some documents
+            https://bugs.webkit.org/show_bug.cgi?id=135651
+    
+            Reviewed by David Kilzer.
+    
+            In some cases QuickLook indicates a failure by returning a nil MIME type in -[QLPreviewConverter previewResponse]
+            rather than calling connection:didFailWithError:. Calling ResourceLoader::didReceiveResponse() with a response
+            containing a nil MIME type leads to a crash.
+    
+            Stop loading the resource and display an error page if QuickLook cannot provide a MIME type for the converted response.
+    
+            No new tests. QuickLook is not testable from WebKit.
+    
+            * platform/network/ios/QuickLook.mm:
+            (-[WebResourceLoaderQuickLookDelegate _sendDidReceiveResponseIfNecessary]): Called ResourceLoader::didFail() if
+            MIME type was nil. Called ResourceLoader::didReceiveResponse() otherwise.
+            (-[WebResourceLoaderQuickLookDelegate connection:didReceiveDataArray:]): Called -_sendDidReceiveResponseIfNecessary.
+            (-[WebResourceLoaderQuickLookDelegate connection:didReceiveData:lengthReceived:]): Ditto.
+            (-[WebResourceLoaderQuickLookDelegate connection:didFailWithError:]): Ditto.
+    
+2014-08-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172035. <rdar://problem/17869353>
 
     2014-08-04  Andy Estes  <aestes@apple.com>
