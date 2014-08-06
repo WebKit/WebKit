@@ -1,3 +1,18 @@
+2014-08-05  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [GTK] [CSS Shapes] Layout test fast/shapes/shape-outside-floats/shape-outside-image-shape-margin.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=135585
+
+        Reviewed by Zoltan Horvath.
+
+        The positioning was dependent on the font metrics of the <p> tag,
+        which differs between platforms. This fixes that, which should make
+        the test pass on all platforms.
+
+        * fast/shapes/shape-outside-floats/shape-outside-image-shape-margin-expected.html:
+        * fast/shapes/shape-outside-floats/shape-outside-image-shape-margin.html:
+        * platform/gtk/TestExpectations: 
+
 2014-08-05  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Crash going back on a specific tumblr blog (under ScrollingStateTree::removeNodeAndAllDescendants)

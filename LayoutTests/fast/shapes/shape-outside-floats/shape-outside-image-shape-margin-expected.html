@@ -4,9 +4,14 @@
     <title>CSS Reference File</title>
     <link rel="author" title="Rebecca Hauck" href="rhauck@adobe.com"/>
     <style type="text/css">
+        #outer {
+            position: relative;
+            width: 100px;
+            height: 250px;
+        }
         #container {
             position: absolute;
-            top: 170px;
+            top: 120px;
         }
         #shape-ref-div {
             width: 50px;
@@ -24,9 +29,11 @@
     <p>
         The test passes if the green rectangle is below the line. There should be no red.
     </p>
-    <div id="container">
-        <div id="line"><div>
-        <div id="shape-ref-div"></div>
+    <div id="outer">
+        <div id="container">
+            <div id="line"><div>
+            <div id="shape-ref-div"></div>
+        </div>
     </div>
 </body>
 </html>
