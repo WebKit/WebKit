@@ -110,12 +110,6 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
 
     ResourceResponse responseCopy(response);
 
-#if USE(QUICK_LOOK)
-    m_quickLookHandle = QuickLookHandle::create(resourceLoader(), response.nsURLResponse());
-    if (m_quickLookHandle)
-        responseCopy = ResourceResponse(m_quickLookHandle->nsResponse());
-#endif
-
     // FIXME: This should use CertificateInfo to avoid the platform ifdefs. See https://bugs.webkit.org/show_bug.cgi?id=124724.
 #if PLATFORM(COCOA)
     responseCopy.setCertificateChain(certificateInfo.certificateChain());
@@ -123,9 +117,18 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     responseCopy.setSoupMessageCertificate(certificateInfo.certificate());
     responseCopy.setSoupMessageTLSErrors(certificateInfo.tlsErrors());
 #endif
+
     if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(m_coreLoader.get(), responseCopy))
         return;
-    m_coreLoader->didReceiveResponse(responseCopy);
+
+#if USE(QUICK_LOOK)
+    // Refrain from calling didReceiveResponse if QuickLook will convert this response, since the MIME type of the
+    // converted resource isn't yet known. WebResourceLoaderQuickLookDelegate will later call didReceiveResponse upon
+    // receiving the converted data.
+    m_quickLookHandle = QuickLookHandle::create(resourceLoader(), responseCopy.nsURLResponse());
+    if (!m_quickLookHandle)
+#endif
+        m_coreLoader->didReceiveResponse(responseCopy);
 
     // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function(). 
     if (!m_coreLoader)
