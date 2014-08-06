@@ -60,9 +60,9 @@ static void drawTextOrEmphasisMarks(GraphicsContext& context, const Font& font, 
         context.drawEmphasisMarks(font, textRun, emphasisMark, point + IntSize(0, emphasisMarkOffset), from, to);
 }
 
-static bool isEmptyShadow(const ShadowData* shadowPtr)
+static bool isEmptyShadow(const ShadowData* shadow)
 {
-    if (!shadowPtr)
+    if (!shadow)
         return true;
     return shadow->location() == IntPoint() && !shadow->radius();
 }
