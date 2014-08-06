@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -55,15 +55,6 @@ inline JSCell* getJSFunction(JSValue value)
     if (value.isCell() && (value.asCell()->type() == JSFunctionType))
         return value.asCell();
     return 0;
-}
-
-JS_EXPORT_PRIVATE JSCell* getCallableObjectSlow(JSCell*);
-
-inline JSCell* getCallableObject(JSValue value)
-{
-    if (!value.isCell())
-        return 0;
-    return getCallableObjectSlow(value.asCell());
 }
 
 class GetterSetter;
@@ -493,8 +484,6 @@ public:
 
     JS_EXPORT_PRIVATE static JSValue toThis(JSCell*, ExecState*, ECMAMode);
 
-    bool getPropertySpecificValue(ExecState*, PropertyName, JSCell*& specificFunction) const;
-
     // This get function only looks at the property map.
     JSValue getDirect(VM& vm, PropertyName propertyName) const
     {
@@ -503,12 +492,11 @@ public:
         checkOffset(offset, structure->inlineCapacity());
         return offset != invalidOffset ? getDirect(offset) : JSValue();
     }
-
+    
     JSValue getDirect(VM& vm, PropertyName propertyName, unsigned& attributes) const
     {
-        JSCell* specific;
         Structure* structure = this->structure(vm);
-        PropertyOffset offset = structure->get(vm, propertyName, attributes, specific);
+        PropertyOffset offset = structure->get(vm, propertyName, attributes);
         checkOffset(offset, structure->inlineCapacity());
         return offset != invalidOffset ? getDirect(offset) : JSValue();
     }
@@ -523,9 +511,8 @@ public:
 
     PropertyOffset getDirectOffset(VM& vm, PropertyName propertyName, unsigned& attributes)
     {
-        JSCell* specific;
         Structure* structure = this->structure(vm);
-        PropertyOffset offset = structure->get(vm, propertyName, attributes, specific);
+        PropertyOffset offset = structure->get(vm, propertyName, attributes);
         checkOffset(offset, structure->inlineCapacity());
         return offset;
     }
@@ -602,6 +589,7 @@ public:
     bool isNameScopeObject() const;
     bool isActivationObject() const;
     bool isErrorInstance() const;
+    bool isWithScope() const;
 
     JS_EXPORT_PRIVATE void seal(VM&);
     JS_EXPORT_PRIVATE void freeze(VM&);
@@ -960,7 +948,7 @@ private:
     ArrayStorage* enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(VM&, ArrayStorage*);
         
     template<PutMode>
-    bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&, JSCell*);
+    bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
 
     bool inlineGetOwnPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
@@ -1158,6 +1146,11 @@ inline bool JSObject::isErrorInstance() const
     return type() == ErrorInstanceType;
 }
 
+inline bool JSObject::isWithScope() const
+{
+    return type() == WithScopeType;
+}
+
 inline void JSObject::setStructureAndButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
 {
     ASSERT(structure);
@@ -1218,8 +1211,7 @@ inline JSValue JSObject::prototype() const
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(VM& vm, Structure& structure, PropertyName propertyName, PropertySlot& slot)
 {
     unsigned attributes;
-    JSCell* specific;
-    PropertyOffset offset = structure.get(vm, propertyName, attributes, specific);
+    PropertyOffset offset = structure.get(vm, propertyName, attributes);
     if (!isValidOffset(offset))
         return false;
 
@@ -1323,7 +1315,7 @@ inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
 }
 
 template<JSObject::PutMode mode>
-inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot, JSCell* specificFunction)
+inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
 {
     ASSERT(value);
     ASSERT(value.isGetterSetter() == !!(attributes & Accessor));
@@ -1333,25 +1325,15 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     Structure* structure = this->structure(vm);
     if (structure->isDictionary()) {
         unsigned currentAttributes;
-        JSCell* currentSpecificFunction;
-        PropertyOffset offset = structure->get(vm, propertyName, currentAttributes, currentSpecificFunction);
+        PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
         if (offset != invalidOffset) {
-            // If there is currently a specific function, and there now either isn't,
-            // or the new value is different, then despecify.
-            if (currentSpecificFunction && (specificFunction != currentSpecificFunction))
-                structure->despecifyDictionaryFunction(vm, propertyName);
             if ((mode == PutModePut) && currentAttributes & ReadOnly)
                 return false;
 
             putDirect(vm, offset, value);
-            // At this point, the objects structure only has a specific value set if previously there
-            // had been one set, and if the new value being specified is the same (otherwise we would
-            // have despecified, above).  So, if currentSpecificFunction is not set, or if the new
-            // value is different (or there is no new value), then the slot now has no value - and
-            // as such it is cachable.
-            // If there was previously a value, and the new value is the same, then we cannot cache.
-            if (!currentSpecificFunction || (specificFunction != currentSpecificFunction))
-                slot.setExistingProperty(this, offset);
+            structure->didReplaceProperty(offset);
+            
+            slot.setExistingProperty(this, offset);
             return true;
         }
 
@@ -1362,15 +1344,13 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
         Butterfly* newButterfly = butterfly();
         if (this->structure()->putWillGrowOutOfLineStorage())
             newButterfly = growOutOfLineStorage(vm, this->structure()->outOfLineCapacity(), this->structure()->suggestedNewOutOfLineStorageCapacity());
-        offset = this->structure()->addPropertyWithoutTransition(vm, propertyName, attributes, specificFunction);
+        offset = this->structure()->addPropertyWithoutTransition(vm, propertyName, attributes);
         setStructureAndButterfly(vm, this->structure(), newButterfly);
 
         validateOffset(offset);
         ASSERT(this->structure()->isValidOffset(offset));
         putDirect(vm, offset, value);
-        // See comment on setNewProperty call below.
-        if (!specificFunction)
-            slot.setNewProperty(this, offset);
+        slot.setNewProperty(this, offset);
         if (attributes & ReadOnly)
             this->structure()->setContainsReadOnlyProperties();
         return true;
@@ -1378,7 +1358,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
 
     PropertyOffset offset;
     size_t currentCapacity = this->structure()->outOfLineCapacity();
-    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, specificFunction, offset)) {
+    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, offset)) {
         DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = butterfly();
         if (currentCapacity != structure->outOfLineCapacity()) {
@@ -1390,40 +1370,17 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
         ASSERT(structure->isValidOffset(offset));
         setStructureAndButterfly(vm, structure, newButterfly);
         putDirect(vm, offset, value);
-        // This is a new property; transitions with specific values are not currently cachable,
-        // so leave the slot in an uncachable state.
-        if (!specificFunction)
-            slot.setNewProperty(this, offset);
+        slot.setNewProperty(this, offset);
         return true;
     }
 
     unsigned currentAttributes;
-    JSCell* currentSpecificFunction;
-    offset = structure->get(vm, propertyName, currentAttributes, currentSpecificFunction);
+    offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
         if ((mode == PutModePut) && currentAttributes & ReadOnly)
             return false;
 
-        // There are three possibilities here:
-        //  (1) There is an existing specific value set, and we're overwriting with *the same value*.
-        //       * Do nothing - no need to despecify, but that means we can't cache (a cached
-        //         put could write a different value). Leave the slot in an uncachable state.
-        //  (2) There is a specific value currently set, but we're writing a different value.
-        //       * First, we have to despecify.  Having done so, this is now a regular slot
-        //         with no specific value, so go ahead & cache like normal.
-        //  (3) Normal case, there is no specific value set.
-        //       * Go ahead & cache like normal.
-        if (currentSpecificFunction) {
-            // case (1) Do the put, then return leaving the slot uncachable.
-            if (specificFunction == currentSpecificFunction) {
-                putDirect(vm, offset, value);
-                return true;
-            }
-            // case (2) Despecify, fall through to (3).
-            setStructure(vm, Structure::despecifyFunctionTransition(vm, structure, propertyName));
-        }
-
-        // case (3) set the slot, do the put, return.
+        structure->didReplaceProperty(offset);
         slot.setExistingProperty(this, offset);
         putDirect(vm, offset, value);
         return true;
@@ -1432,17 +1389,14 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     if ((mode == PutModePut) && !isExtensible())
         return false;
 
-    structure = Structure::addPropertyTransition(vm, structure, propertyName, attributes, specificFunction, offset, slot.context());
+    structure = Structure::addPropertyTransition(vm, structure, propertyName, attributes, offset, slot.context());
     
     validateOffset(offset);
     ASSERT(structure->isValidOffset(offset));
     setStructureAndReallocateStorageIfNecessary(vm, structure);
 
     putDirect(vm, offset, value);
-    // This is a new property; transitions with specific values are not currently cachable,
-    // so leave the slot in an uncachable state.
-    if (!specificFunction)
-        slot.setNewProperty(this, offset);
+    slot.setNewProperty(this, offset);
     if (attributes & ReadOnly)
         structure->setContainsReadOnlyProperties();
     return true;
@@ -1476,7 +1430,7 @@ inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSVa
     ASSERT(!structure()->hasGetterSetterProperties());
     ASSERT(!structure()->hasCustomGetterSetterProperties());
 
-    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot, getCallableObject(value));
+    return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
 }
 
 inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -1484,14 +1438,14 @@ inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     ASSERT(!value.isCustomGetterSetter());
     PutPropertySlot slot(this);
-    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
+    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 }
 
 inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
-    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot, getCallableObject(value));
+    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
 }
 
 inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -1502,7 +1456,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     Butterfly* newButterfly = m_butterfly.get();
     if (structure()->putWillGrowOutOfLineStorage())
         newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
-    PropertyOffset offset = structure()->addPropertyWithoutTransition(vm, propertyName, attributes, getCallableObject(value));
+    PropertyOffset offset = structure()->addPropertyWithoutTransition(vm, propertyName, attributes);
     setStructureAndButterfly(vm, structure(), newButterfly);
     putDirect(vm, offset, value);
 }

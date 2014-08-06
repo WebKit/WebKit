@@ -66,7 +66,7 @@ public:
     virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>& internalProperties) override final;
     virtual void releaseObjectGroup(ErrorString*, const String& objectGroup) override final;
     virtual void run(ErrorString*) override;
-    virtual void getRuntimeTypeForVariableInTextRange(ErrorString*, const String& in_variableName, const String& in_id, int in_startLine, int in_startColumn, int in_endLine, int in_endColumn, String* out_types) override;
+    virtual void getRuntimeTypeForVariableAtOffset(ErrorString*, const String& in_variableName, const String& in_id, int in_divot, String* out_types) override;
 
     void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
 

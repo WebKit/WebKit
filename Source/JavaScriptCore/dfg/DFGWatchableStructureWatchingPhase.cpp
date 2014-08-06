@@ -86,7 +86,6 @@ public:
                 case MultiGetByOffset:
                     for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
                         GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
-                        tryWatch(m_graph.freeze(variant.specificValue())->structure());
                         tryWatch(variant.structureSet());
                         // Don't need to watch anything in the structure chain because that would
                         // have been decomposed into CheckStructure's. Don't need to watch the

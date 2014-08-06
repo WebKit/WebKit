@@ -57,7 +57,13 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
     for (unsigned i = 0; i < m_references.size(); i++) {
         JSCell* target = m_references[i];
-        common->weakReferences.append(WriteBarrier<JSCell>(vm, m_codeBlock->ownerExecutable(), target));
+        if (Structure* structure = jsDynamicCast<Structure*>(target)) {
+            common->weakStructureReferences.append(
+                WriteBarrier<Structure>(vm, m_codeBlock->ownerExecutable(), structure));
+        } else {
+            common->weakReferences.append(
+                WriteBarrier<JSCell>(vm, m_codeBlock->ownerExecutable(), target));
+        }
     }
 }
 

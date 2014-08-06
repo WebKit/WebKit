@@ -30,6 +30,7 @@
 #include "ObjectConstructor.h"
 #include "JSCInlines.h"
 #include "ProfilerDatabase.h"
+#include "Watchpoint.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {
@@ -93,6 +94,18 @@ OSRExit* Compilation::addOSRExit(unsigned id, const OriginStack& originStack, Ex
     return &m_osrExits.last();
 }
 
+void Compilation::setJettisonReason(JettisonReason jettisonReason, const FireDetail* detail)
+{
+    if (m_jettisonReason != NotJettisoned)
+        return; // We only care about the original jettison reason.
+    
+    m_jettisonReason = jettisonReason;
+    if (detail)
+        m_additionalJettisonReason = toCString(*detail);
+    else
+        m_additionalJettisonReason = CString();
+}
+
 JSValue Compilation::toJS(ExecState* exec) const
 {
     JSObject* result = constructEmptyObject(exec);
@@ -133,6 +146,8 @@ JSValue Compilation::toJS(ExecState* exec) const
     result->putDirect(exec->vm(), exec->propertyNames().numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
     result->putDirect(exec->vm(), exec->propertyNames().numInlinedCalls, jsNumber(m_numInlinedCalls));
     result->putDirect(exec->vm(), exec->propertyNames().jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
+    if (!m_additionalJettisonReason.isNull())
+        result->putDirect(exec->vm(), exec->propertyNames().additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
     
     return result;
 }

@@ -240,7 +240,6 @@ namespace JSC {
 
         Strong<Structure> structureStructure;
         Strong<Structure> structureRareDataStructure;
-        Strong<Structure> debuggerScopeStructure;
         Strong<Structure> terminatedExecutionErrorStructure;
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;
@@ -494,7 +493,7 @@ namespace JSC {
         BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
         bool isProfilingTypesWithHighFidelity() { return !!m_highFidelityTypeProfiler; }
-        String getTypesForVariableInRange(unsigned startLine, unsigned startColumn, unsigned endLine, unsigned endColumn, const String& variableName, const String& sourceID);
+        String getTypesForVariableAtOffset(unsigned divot, const String& variableName, const String& sourceID);
         HighFidelityLog* highFidelityLog() { return m_highFidelityLog.get(); }
         HighFidelityTypeProfiler* highFidelityTypeProfiler() { return m_highFidelityTypeProfiler.get(); }
         void updateHighFidelityTypeProfileState();

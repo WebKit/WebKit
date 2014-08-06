@@ -331,7 +331,7 @@ end
 class Compilation
     attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex
     attr_accessor :osrExits, :profiledBytecodes, :numInlinedGetByIds, :numInlinedPutByIds
-    attr_accessor :numInlinedCalls, :jettisonReason
+    attr_accessor :numInlinedCalls, :jettisonReason, :additionalJettisonReason
     
     def initialize(json)
         @bytecode = $bytecodes[json["bytecodesID"].to_i]
@@ -385,6 +385,7 @@ class Compilation
         @numInlinedPutByIds = json["numInlinedPutByIds"]
         @numInlinedCalls = json["numInlinedCalls"]
         @jettisonReason = json["jettisonReason"]
+        @additionalJettisonReason = json["additionalJettisonReason"]
     end
     
     def codeHashSortKey
@@ -858,6 +859,9 @@ def executeCommand(*commandArray)
             }
             if compilation.jettisonReason != "NotJettisoned"
                 puts "    Jettisoned due to #{compilation.jettisonReason}"
+                if compilation.additionalJettisonReason
+                    puts "        #{compilation.additionalJettisonReason}"
+                end
             end
         }
     when "inlines"

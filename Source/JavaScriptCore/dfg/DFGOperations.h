@@ -31,9 +31,9 @@
 #include "JITOperations.h"
 #include "PutKind.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-namespace DFG {
+struct OSRExitBase;
 
 extern "C" {
 
@@ -136,7 +136,7 @@ size_t JIT_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue) WTF_IN
 
 void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;
 
-void JIT_OPERATION triggerReoptimizationNow(CodeBlock*) WTF_INTERNAL;
+void JIT_OPERATION triggerReoptimizationNow(CodeBlock*, OSRExitBase*) WTF_INTERNAL;
 
 #if ENABLE(FTL_JIT)
 void JIT_OPERATION triggerTierUpNow(ExecState*) WTF_INTERNAL;

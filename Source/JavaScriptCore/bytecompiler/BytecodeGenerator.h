@@ -155,6 +155,14 @@ namespace JSC {
         TryData* tryData;
     };
 
+    enum ProfileTypesWithHighFidelityBytecodeFlag { 
+        ProfileTypesBytecodeHasGlobalID,
+        ProfileTypesBytecodeDoesNotHaveGlobalID,
+        ProfileTypesBytecodeFunctionArgument,
+        ProfileTypesBytecodeFunctionThisObject,
+        ProfileTypesBytecodeFunctionReturnStatement  
+    };
+
     class BytecodeGenerator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -316,6 +324,14 @@ namespace JSC {
                 m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, line, column);
         }
 
+        void emitHighFidelityTypeProfilingExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot)
+        {
+            unsigned start = startDivot.offset + 1; // Ranges are inclusive of their endpoints, AND 1 indexed.
+            unsigned end = endDivot.offset; // End Ranges already go one past the inclusive range, so no need to do + 1 - 1.
+            unsigned instructionOffset = instructions().size() - 1;
+            m_codeBlock->addHighFidelityTypeProfileExpressionInfo(instructionOffset, start, end);
+        }
+
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {
             return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain() || rightHasAssignments) && !rightIsPure;
@@ -332,7 +348,7 @@ namespace JSC {
             return emitNode(n);
         }
 
-        void emitProfileTypesWithHighFidelity(RegisterID* dst, bool);
+        void emitProfileTypesWithHighFidelity(RegisterID* dst, ProfileTypesWithHighFidelityBytecodeFlag);
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
@@ -399,7 +415,9 @@ namespace JSC {
         ResolveType resolveType();
         RegisterID* emitResolveScope(RegisterID* dst, const Identifier&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode);
+        RegisterID* emitGetFromScopeWithProfile(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode);
         RegisterID* emitPutToScope(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode);
+        RegisterID* emitPutToScopeWithProfile(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode);
 
         PassRefPtr<Label> emitLabel(Label*);
         void emitLoopHint();

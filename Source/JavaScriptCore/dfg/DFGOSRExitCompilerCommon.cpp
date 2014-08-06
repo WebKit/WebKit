@@ -54,20 +54,55 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
         AssemblyHelpers::GreaterThanOrEqual,
         AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()),
         AssemblyHelpers::TrustedImm32(0));
+    
+    // We want to figure out if there's a possibility that we're in a loop. For the outermost
+    // code block in the inline stack, we handle this appropriately by having the loop OSR trigger
+    // check the exit count of the replacement of the CodeBlock from which we are OSRing. The
+    // problem is the inlined functions, which might also have loops, but whose baseline versions
+    // don't know where to look for the exit count. Figure out if those loops are severe enough
+    // that we had tried to OSR enter. If so, then we should use the loop reoptimization trigger.
+    // Otherwise, we should use the normal reoptimization trigger.
+    
+    AssemblyHelpers::JumpList loopThreshold;
+    
+    for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
+        loopThreshold.append(
+            jit.branchTest8(
+                AssemblyHelpers::NonZero,
+                AssemblyHelpers::AbsoluteAddress(
+                    inlineCallFrame->executable->addressOfDidTryToEnterInLoop())));
+    }
+    
+    jit.move(
+        AssemblyHelpers::TrustedImm32(jit.codeBlock()->exitCountThresholdForReoptimization()),
+        GPRInfo::regT1);
+    
+    if (!loopThreshold.empty()) {
+        AssemblyHelpers::Jump done = jit.jump();
+
+        loopThreshold.link(&jit);
+        jit.move(
+            AssemblyHelpers::TrustedImm32(
+                jit.codeBlock()->exitCountThresholdForReoptimizationFromLoop()),
+            GPRInfo::regT1);
         
-    tooFewFails = jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::TrustedImm32(jit.codeBlock()->exitCountThresholdForReoptimization()));
+        done.link(&jit);
+    }
+    
+    tooFewFails = jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1);
     
     reoptimizeNow.link(&jit);
     
     // Reoptimize as soon as possible.
 #if !NUMBER_OF_ARGUMENT_REGISTERS
     jit.poke(GPRInfo::regT0);
+    jit.poke(AssemblyHelpers::TrustedImmPtr(&exit), 1);
 #else
     jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-    ASSERT(GPRInfo::argumentGPR0 != GPRInfo::regT1);
+    jit.move(AssemblyHelpers::TrustedImmPtr(&exit), GPRInfo::argumentGPR1);
 #endif
-    jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(triggerReoptimizationNow)), GPRInfo::regT1);
-    jit.call(GPRInfo::regT1);
+    jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(triggerReoptimizationNow)), GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0);
     AssemblyHelpers::Jump doneAdjusting = jit.jump();
     
     tooFewFails.link(&jit);

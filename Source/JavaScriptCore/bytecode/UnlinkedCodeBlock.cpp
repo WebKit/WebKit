@@ -400,6 +400,32 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
     m_expressionInfo.append(info);
 }
 
+bool UnlinkedCodeBlock::highFidelityTypeProfileExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
+{
+    static const bool verbose = false;
+    auto iter = m_highFidelityTypeProfileInfoMap.find(bytecodeOffset);
+    if (iter == m_highFidelityTypeProfileInfoMap.end()) {
+        if (verbose)
+            dataLogF("Don't have assignment info for offset:%u\n", bytecodeOffset);
+        startDivot = UINT_MAX;
+        endDivot = UINT_MAX;
+        return false;
+    }
+    
+    HighFidelityTypeProfileExpressionRange& range = iter->value;
+    startDivot = range.m_startDivot;
+    endDivot = range.m_endDivot;
+    return true;
+}
+
+void UnlinkedCodeBlock::addHighFidelityTypeProfileExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot)
+{
+    HighFidelityTypeProfileExpressionRange range;
+    range.m_startDivot = startDivot;
+    range.m_endDivot = endDivot;
+    m_highFidelityTypeProfileInfoMap.set(instructionOffset, range);  
+}
+
 void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     UnlinkedProgramCodeBlock* thisObject = jsCast<UnlinkedProgramCodeBlock*>(cell);

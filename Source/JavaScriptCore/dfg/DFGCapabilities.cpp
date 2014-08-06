@@ -45,6 +45,12 @@ bool isSupported(CodeBlock* codeBlock)
         && FunctionWhitelist::ensureGlobalWhitelist().contains(codeBlock);
 }
 
+bool isSupportedForInlining(CodeBlock* codeBlock)
+{
+    return !codeBlock->ownerExecutable()->needsActivation()
+        && codeBlock->ownerExecutable()->isInliningCandidate();
+}
+
 bool mightCompileEval(CodeBlock* codeBlock)
 {
     return isSupported(codeBlock)
@@ -69,20 +75,17 @@ bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation()
-        && codeBlock->ownerExecutable()->isInliningCandidate();
+        && isSupportedForInlining(codeBlock);
 }
 bool mightInlineFunctionForClosureCall(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForClosureCallInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation()
-        && codeBlock->ownerExecutable()->isInliningCandidate();
+        && isSupportedForInlining(codeBlock);
 }
 bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation()
-        && codeBlock->ownerExecutable()->isInliningCandidate();
+        && isSupportedForInlining(codeBlock);
 }
 
 inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel result)

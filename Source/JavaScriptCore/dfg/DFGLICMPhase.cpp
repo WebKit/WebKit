@@ -151,7 +151,7 @@ public:
         // For maximum profit, we walk blocks in DFS order to ensure that we generally
         // tend to hoist dominators before dominatees.
         Vector<BasicBlock*> depthFirst;
-        m_graph.getBlocksInDepthFirstOrder(depthFirst);
+        m_graph.getBlocksInPreOrder(depthFirst);
         Vector<const NaturalLoop*> loopStack;
         bool changed = false;
         for (
@@ -245,7 +245,7 @@ private:
         }
         
         data.preHeader->insertBeforeLast(node);
-        node->misc.owner = data.preHeader;
+        node->owner = data.preHeader;
         NodeOrigin originalOrigin = node->origin;
         node->origin.forExit = data.preHeader->last()->origin.forExit;
         

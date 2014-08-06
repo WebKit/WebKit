@@ -32,43 +32,38 @@
 
 namespace JSC {
 
+class CallLinkStatus;
+
 class PutByIdVariant {
 public:
     enum Kind {
         NotSet,
         Replace,
-        Transition
+        Transition,
+        Setter
     };
     
     PutByIdVariant()
         : m_kind(NotSet)
         , m_newStructure(nullptr)
+        , m_alternateBase(nullptr)
         , m_offset(invalidOffset)
     {
     }
     
-    static PutByIdVariant replace(const StructureSet& structure, PropertyOffset offset)
-    {
-        PutByIdVariant result;
-        result.m_kind = Replace;
-        result.m_oldStructure = structure;
-        result.m_offset = offset;
-        return result;
-    }
+    PutByIdVariant(const PutByIdVariant&);
+    PutByIdVariant& operator=(const PutByIdVariant&);
+
+    static PutByIdVariant replace(
+        const StructureSet& structure, PropertyOffset offset);
     
     static PutByIdVariant transition(
         const StructureSet& oldStructure, Structure* newStructure,
-        PassRefPtr<IntendedStructureChain> structureChain, PropertyOffset offset)
-    {
-        PutByIdVariant result;
-        result.m_kind = Transition;
-        result.m_oldStructure = oldStructure;
-        result.m_newStructure = newStructure;
-        if (structureChain)
-            structureChain->gatherChecks(result.m_constantChecks);
-        result.m_offset = offset;
-        return result;
-    }
+        const IntendedStructureChain* structureChain, PropertyOffset offset);
+    
+    static PutByIdVariant setter(
+        const StructureSet& structure, PropertyOffset offset,
+        IntendedStructureChain* chain, std::unique_ptr<CallLinkStatus> callLinkStatus);
     
     Kind kind() const { return m_kind; }
     
@@ -77,19 +72,19 @@ public:
     
     const StructureSet& structure() const
     {
-        ASSERT(kind() == Replace);
+        ASSERT(kind() == Replace || kind() == Setter);
         return m_oldStructure;
     }
     
     const StructureSet& oldStructure() const
     {
-        ASSERT(kind() == Transition || kind() == Replace);
+        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter);
         return m_oldStructure;
     }
     
     StructureSet& oldStructure()
     {
-        ASSERT(kind() == Transition || kind() == Replace);
+        ASSERT(kind() == Transition || kind() == Replace || kind() == Setter);
         return m_oldStructure;
     }
     
@@ -103,6 +98,7 @@ public:
 
     bool writesStructures() const;
     bool reallocatesStorage() const;
+    bool makesCalls() const;
     
     const ConstantStructureCheckVector& constantChecks() const
     {
@@ -115,6 +111,20 @@ public:
         return m_offset;
     }
     
+    JSObject* alternateBase() const
+    {
+        ASSERT(kind() == Setter);
+        return m_alternateBase;
+    }
+    
+    StructureSet baseStructure() const;
+    
+    CallLinkStatus* callLinkStatus() const
+    {
+        ASSERT(kind() == Setter);
+        return m_callLinkStatus.get();
+    }
+
     bool attemptToMerge(const PutByIdVariant& other);
     
     void dump(PrintStream&) const;
@@ -127,7 +137,9 @@ private:
     StructureSet m_oldStructure;
     Structure* m_newStructure;
     ConstantStructureCheckVector m_constantChecks;
+    JSObject* m_alternateBase;
     PropertyOffset m_offset;
+    std::unique_ptr<CallLinkStatus> m_callLinkStatus;
 };
 
 } // namespace JSC

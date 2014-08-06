@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +34,25 @@ namespace JSC { namespace DFG {
 
 bool doesWrites(Graph& graph, Node* node)
 {
-    NoOpClobberize addRead;
+    NoOpClobberize noOp;
     CheckClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
+    clobberize(graph, node, noOp, addWrite, noOp);
     return addWrite.result();
+}
+
+bool accessesOverlap(Graph& graph, Node* node, AbstractHeap heap)
+{
+    NoOpClobberize noOp;
+    AbstractHeapOverlaps addAccess(heap);
+    clobberize(graph, node, addAccess, addAccess, noOp);
+    return addAccess.result();
 }
 
 bool writesOverlap(Graph& graph, Node* node, AbstractHeap heap)
 {
-    NoOpClobberize addRead;
+    NoOpClobberize noOp;
     AbstractHeapOverlaps addWrite(heap);
-    clobberize(graph, node, addRead, addWrite);
+    clobberize(graph, node, noOp, addWrite, noOp);
     return addWrite.result();
 }
 

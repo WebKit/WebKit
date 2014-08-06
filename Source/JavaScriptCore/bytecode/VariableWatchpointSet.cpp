@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProfiledCodeBlockJettisoningWatchpoint_h
-#define ProfiledCodeBlockJettisoningWatchpoint_h
+#include "config.h"
+#include "VariableWatchpointSet.h"
 
-#if ENABLE(DFG_JIT)
-
-#include "CodeOrigin.h"
-#include "ExitKind.h"
-#include "Watchpoint.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class CodeBlock;
+void VariableWriteFireDetail::dump(PrintStream& out) const
+{
+    out.print("Write to ", m_name, " in ", JSValue(m_object));
+}
 
-class ProfiledCodeBlockJettisoningWatchpoint : public Watchpoint {
-public:
-    ProfiledCodeBlockJettisoningWatchpoint()
-        : m_exitKind(ExitKindUnset)
-        , m_codeBlock(0)
-    {
-    }
-    
-    ProfiledCodeBlockJettisoningWatchpoint(
-        CodeOrigin codeOrigin, ExitKind exitKind, CodeBlock* codeBlock)
-        : m_codeOrigin(codeOrigin)
-        , m_exitKind(exitKind)
-        , m_codeBlock(codeBlock)
-    {
-    }
-    
-protected:
-    virtual void fireInternal() override;
+void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value, JSObject* baseObject, const PropertyName& propertyName)
+{
+    notifyWrite(vm, value, VariableWriteFireDetail(baseObject, propertyName));
+}
 
-private:
-    CodeOrigin m_codeOrigin;
-    ExitKind m_exitKind;
-    CodeBlock* m_codeBlock;
-};
+void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value, const char* reason)
+{
+    notifyWrite(vm, value, StringFireDetail(reason));
+}
 
 } // namespace JSC
-
-#endif // ENABLE(DFG_JIT)
-
-#endif // ProfiledCodeBlockJettisoningWatchpoint_h
 

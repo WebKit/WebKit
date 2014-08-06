@@ -52,6 +52,8 @@ public:
     bool mayInterceptStoreTo(VM&, StringImpl* uid);
     bool isNormalized();
     
+    bool takesSlowPathInDFGForImpureProperty();
+    
     JSValue prototype() const { return m_prototype; }
     
     size_t size() const { return m_vector.size(); }

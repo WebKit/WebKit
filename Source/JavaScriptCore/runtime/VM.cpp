@@ -40,7 +40,6 @@
 #include "CustomGetterSetter.h"
 #include "DFGLongLivedState.h"
 #include "DFGWorklist.h"
-#include "DebuggerScope.h"
 #include "ErrorInstance.h"
 #include "FTLThunks.h"
 #include "FunctionConstructor.h"
@@ -206,7 +205,6 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyNames = new CommonIdentifiers(this);
     structureStructure.set(*this, Structure::createStructure(*this));
     structureRareDataStructure.set(*this, StructureRareData::createStructure(*this, 0, jsNull()));
-    debuggerScopeStructure.set(*this, DebuggerScope::createStructure(*this, 0, jsNull()));
     terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
     notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, 0, jsNull()));
@@ -835,7 +833,7 @@ void VM::registerWatchpointForImpureProperty(const Identifier& propertyName, Wat
 void VM::addImpureProperty(const String& propertyName)
 {
     if (RefPtr<WatchpointSet> watchpointSet = m_impurePropertyWatchpointSets.take(propertyName))
-        watchpointSet->fireAll();
+        watchpointSet->fireAll("Impure property added");
 }
 
 class SetEnabledProfilerFunctor {
@@ -858,7 +856,7 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
     }
 }
 
-String VM::getTypesForVariableInRange(unsigned startLine, unsigned startColumn, unsigned endLine, unsigned endColumn, const String& variableName, const String& sourceIDAsString)
+String VM::getTypesForVariableAtOffset(unsigned offset, const String& variableName, const String& sourceIDAsString)
 {
     if (!isProfilingTypesWithHighFidelity())
         return "(Not Profiling)";
@@ -869,7 +867,7 @@ String VM::getTypesForVariableInRange(unsigned startLine, unsigned startColumn, 
         CRASH();
 
     updateHighFidelityTypeProfileState();
-    return m_highFidelityTypeProfiler->getTypesForVariableInRange(startLine, startColumn, endLine, endColumn, variableName, sourceID);
+    return m_highFidelityTypeProfiler->getTypesForVariableInAtOffset(offset, variableName, sourceID);
 }
 
 void VM::updateHighFidelityTypeProfileState()
@@ -889,11 +887,11 @@ void VM::dumpHighFidelityProfilingTypes()
     HighFidelityTypeProfiler* profiler = m_highFidelityTypeProfiler.get();
     for (Bag<TypeLocation>::iterator iter = m_locationInfo.begin(); !!iter; ++iter) {
         TypeLocation* location = *iter;
-        dataLogF("[Line, Column]::[%u, %u] ", location->m_line, location->m_column);
+        dataLogF("[Start, End]::[%u, %u] ", location->m_divotStart, location->m_divotEnd);
         dataLog("\n\t\t#Local#\n\t\t",
-                profiler->getLocalTypesForVariableInRange(location->m_line, location->m_column, location->m_line, location->m_column, "", location->m_sourceID).replace("\n", "\n\t\t"),
+                profiler->getLocalTypesForVariableAtOffset(location->m_divotStart, "", location->m_sourceID).replace("\n", "\n\t\t"),
                 "\n\t\t#Global#\n\t\t",
-                profiler->getGlobalTypesForVariableInRange(location->m_line, location->m_column, location->m_line, location->m_column, "", location->m_sourceID).replace("\n", "\n\t\t"),
+                profiler->getGlobalTypesForVariableAtOffset(location->m_divotStart, "", location->m_sourceID).replace("\n", "\n\t\t"),
                 "\n");
     }
 }

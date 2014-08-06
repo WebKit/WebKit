@@ -1296,22 +1296,24 @@ private:
         return true;
     }
     
-    bool isStringPrototypeMethodSane(Structure* stringPrototypeStructure, StringImpl* uid)
+    bool isStringPrototypeMethodSane(
+        JSObject* stringPrototype, Structure* stringPrototypeStructure, StringImpl* uid)
     {
         unsigned attributesUnused;
-        JSCell* specificValue;
-        PropertyOffset offset = stringPrototypeStructure->getConcurrently(
-            vm(), uid, attributesUnused, specificValue);
+        PropertyOffset offset =
+            stringPrototypeStructure->getConcurrently(vm(), uid, attributesUnused);
         if (!isValidOffset(offset))
             return false;
         
-        if (!specificValue)
+        JSValue value = m_graph.tryGetConstantProperty(
+            stringPrototype, stringPrototypeStructure, offset);
+        if (!value)
             return false;
         
-        if (!specificValue->inherits(JSFunction::info()))
+        JSFunction* function = jsDynamicCast<JSFunction*>(value);
+        if (!function)
             return false;
         
-        JSFunction* function = jsCast<JSFunction*>(specificValue);
         if (function->executable()->intrinsicFor(CodeForCall) != StringPrototypeValueOfIntrinsic)
             return false;
         
@@ -1340,9 +1342,9 @@ private:
         // (that would call toString()). We don't want the DFG to have to distinguish
         // between the two, just because that seems like it would get confusing. So we
         // just require both methods to be sane.
-        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->valueOf.impl()))
+        if (!isStringPrototypeMethodSane(stringPrototypeObject, stringPrototypeStructure, vm().propertyNames->valueOf.impl()))
             return false;
-        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->toString.impl()))
+        if (!isStringPrototypeMethodSane(stringPrototypeObject, stringPrototypeStructure, vm().propertyNames->toString.impl()))
             return false;
         
         return true;

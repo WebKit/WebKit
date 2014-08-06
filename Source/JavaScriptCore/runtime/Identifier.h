@@ -96,6 +96,8 @@ namespace JSC {
         // Only to be used with string literals.
         JS_EXPORT_PRIVATE static PassRef<StringImpl> add(VM*, const char*);
         JS_EXPORT_PRIVATE static PassRef<StringImpl> add(ExecState*, const char*);
+        
+        void dump(PrintStream&) const;
 
     private:
         String m_string;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -82,13 +82,11 @@ struct PropertyMapEntry {
     StringImpl* key;
     PropertyOffset offset;
     unsigned attributes;
-    WriteBarrier<JSCell> specificValue;
 
-    PropertyMapEntry(VM& vm, JSCell* owner, StringImpl* key, PropertyOffset offset, unsigned attributes, JSCell* specificValue)
+    PropertyMapEntry(StringImpl* key, PropertyOffset offset, unsigned attributes)
         : key(key)
         , offset(offset)
         , attributes(attributes)
-        , specificValue(vm, owner, specificValue, WriteBarrier<JSCell>::MayBeNull)
     {
     }
 };
@@ -146,8 +144,6 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
-
-    static void visitChildren(JSCell*, SlotVisitor&);
 
     typedef StringImpl* KeyType;
     typedef PropertyMapEntry ValueType;

@@ -73,6 +73,7 @@ public:
     unsigned capturedStackmapID;
     SegmentedVector<GetByIdDescriptor> getByIds;
     SegmentedVector<PutByIdDescriptor> putByIds;
+    SegmentedVector<CheckInDescriptor> checkIns;
     Vector<JSCall> jsCalls;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;

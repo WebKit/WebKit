@@ -45,10 +45,10 @@ public:
     
     void operator()(Node*, Edge edge)
     {
-        bool result = m_graph.m_dominators.dominates(edge.node()->misc.owner, m_block);
+        bool result = m_graph.m_dominators.dominates(edge.node()->owner, m_block);
         if (verbose) {
             dataLog(
-                "Checking if ", edge, " in ", *edge.node()->misc.owner,
+                "Checking if ", edge, " in ", *edge.node()->owner,
                 " dominates ", *m_block, ": ", result, "\n");
         }
         m_result &= result;

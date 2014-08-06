@@ -79,13 +79,13 @@ void SymbolTableEntry::addWatchpoint(Watchpoint* watchpoint)
     fatEntry()->m_watchpoints->add(watchpoint);
 }
 
-void SymbolTableEntry::notifyWriteSlow(VM& vm, JSValue value)
+void SymbolTableEntry::notifyWriteSlow(VM& vm, JSValue value, const FireDetail& detail)
 {
     VariableWatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
     if (!watchpoints)
         return;
     
-    watchpoints->notifyWrite(vm, value);
+    watchpoints->notifyWrite(vm, value, detail);
 }
 
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
@@ -132,11 +132,12 @@ SymbolTable::WatchpointCleanup::~WatchpointCleanup() { }
 
 void SymbolTable::WatchpointCleanup::finalizeUnconditionally()
 {
+    StringFireDetail detail("Symbol table clean-up during GC");
     Map::iterator iter = m_symbolTable->m_map.begin();
     Map::iterator end = m_symbolTable->m_map.end();
     for (; iter != end; ++iter) {
         if (VariableWatchpointSet* set = iter->value.watchpointSet())
-            set->finalizeUnconditionally();
+            set->finalizeUnconditionally(detail);
     }
 }
 

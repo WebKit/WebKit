@@ -43,12 +43,10 @@ namespace JSC {
 
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, CREATE_METHOD_TABLE(ExecutableBase) };
 
-#if ENABLE(JIT)
 void ExecutableBase::destroy(JSCell* cell)
 {
     static_cast<ExecutableBase*>(cell)->ExecutableBase::~ExecutableBase();
 }
-#endif
 
 void ExecutableBase::clearCode()
 {
@@ -80,12 +78,10 @@ Intrinsic ExecutableBase::intrinsic() const
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(NativeExecutable) };
 
-#if ENABLE(JIT)
 void NativeExecutable::destroy(JSCell* cell)
 {
     static_cast<NativeExecutable*>(cell)->NativeExecutable::~NativeExecutable();
 }
-#endif
 
 #if ENABLE(DFG_JIT)
 Intrinsic NativeExecutable::intrinsic() const
@@ -96,17 +92,32 @@ Intrinsic NativeExecutable::intrinsic() const
 
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
 
-#if ENABLE(JIT)
+ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext)
+    : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED)
+    , m_source(source)
+    , m_features(isInStrictContext ? StrictModeFeature : 0)
+    , m_hasCapturedVariables(false)
+    , m_neverInline(false)
+    , m_didTryToEnterInLoop(false)
+    , m_firstLine(-1)
+    , m_lastLine(-1)
+    , m_startColumn(UINT_MAX)
+    , m_endColumn(UINT_MAX)
+{
+}
+
 void ScriptExecutable::destroy(JSCell* cell)
 {
     static_cast<ScriptExecutable*>(cell)->ScriptExecutable::~ScriptExecutable();
 }
-#endif
 
 void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
 {
     RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
     RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
+    
+    if (Options::verboseOSR())
+        dataLog("Installing ", *genericCodeBlock, "\n");
     
     VM& vm = *genericCodeBlock->vm();
     
@@ -348,7 +359,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
 }
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
-    : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec, source, inStrictContext)
+    : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec->vm(), source, inStrictContext)
 {
 }
 
@@ -360,7 +371,7 @@ void EvalExecutable::destroy(JSCell* cell)
 const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(ProgramExecutable) };
 
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec->vm().programExecutableStructure.get(), exec, source, false)
+    : ScriptExecutable(exec->vm().programExecutableStructure.get(), exec->vm(), source, false)
 {
 }
 

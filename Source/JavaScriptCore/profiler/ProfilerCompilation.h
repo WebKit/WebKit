@@ -39,7 +39,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/SegmentedVector.h>
 
-namespace JSC { namespace Profiler {
+namespace JSC {
+
+class FireDetail;
+
+namespace Profiler {
 
 class Bytecodes;
 class Database;
@@ -69,10 +73,7 @@ public:
     void addOSRExitSite(const Vector<const void*>& codeAddresses);
     OSRExit* addOSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);
     
-    void setJettisonReason(JettisonReason jettisonReason)
-    {
-        m_jettisonReason = jettisonReason;
-    }
+    void setJettisonReason(JettisonReason, const FireDetail*);
     
     JSValue toJS(ExecState*) const;
     
@@ -80,6 +81,7 @@ private:
     Bytecodes* m_bytecodes;
     CompilationKind m_kind;
     JettisonReason m_jettisonReason;
+    CString m_additionalJettisonReason;
     Vector<ProfiledBytecodes> m_profiledBytecodes;
     Vector<CompiledBytecode> m_descriptions;
     HashMap<OriginStack, std::unique_ptr<ExecutionCounter>> m_counters;

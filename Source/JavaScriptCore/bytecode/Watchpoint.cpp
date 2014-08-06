@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,11 @@
 #include <wtf/PassRefPtr.h>
 
 namespace JSC {
+
+void StringFireDetail::dump(PrintStream& out) const
+{
+    out.print(m_string);
+}
 
 Watchpoint::~Watchpoint()
 {
@@ -64,25 +69,35 @@ void WatchpointSet::add(Watchpoint* watchpoint)
     m_state = IsWatched;
 }
 
-void WatchpointSet::fireAllSlow()
+void WatchpointSet::fireAllSlow(const FireDetail& detail)
 {
     ASSERT(state() == IsWatched);
     
     WTF::storeStoreFence();
-    fireAllWatchpoints();
+    fireAllWatchpoints(detail);
     m_state = IsInvalidated;
     WTF::storeStoreFence();
 }
 
-void WatchpointSet::fireAllWatchpoints()
+void WatchpointSet::fireAllSlow(const char* reason)
+{
+    fireAllSlow(StringFireDetail(reason));
+}
+
+void WatchpointSet::fireAllWatchpoints(const FireDetail& detail)
 {
     while (!m_set.isEmpty())
-        m_set.begin()->fire();
+        m_set.begin()->fire(detail);
 }
 
 void InlineWatchpointSet::add(Watchpoint* watchpoint)
 {
     inflate()->add(watchpoint);
+}
+
+void InlineWatchpointSet::fireAll(const char* reason)
+{
+    fireAll(StringFireDetail(reason));
 }
 
 WatchpointSet* InlineWatchpointSet::inflateSlow()

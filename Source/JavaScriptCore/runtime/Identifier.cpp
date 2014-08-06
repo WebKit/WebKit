@@ -97,6 +97,14 @@ Identifier Identifier::from(VM* vm, double value)
     return Identifier(vm, vm->numericStrings.add(value));
 }
 
+void Identifier::dump(PrintStream& out) const
+{
+    if (impl())
+        out.print(impl());
+    else
+        out.print("<null identifier>");
+}
+
 #ifndef NDEBUG
 
 void Identifier::checkCurrentAtomicStringTable(VM* vm)

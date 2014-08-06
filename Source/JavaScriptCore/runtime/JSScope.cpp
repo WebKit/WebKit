@@ -96,8 +96,19 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, 0, 0, 0, 0);
             return true;
         }
-
-        op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, globalObject->structure(), 0, 0, slot.cachedOffset());
+        
+        WatchpointState state = globalObject->structure()->ensurePropertyReplacementWatchpointSet(exec->vm(), slot.cachedOffset())->state();
+        if (state == IsWatched && getOrPut == Put) {
+            // The field exists, but because the replacement watchpoint is still intact. This is
+            // kind of dangerous. We have two options:
+            // 1) Invalidate the watchpoint set. That would work, but it's possible that this code
+            //    path never executes - in which case this would be unwise.
+            // 2) Have the invalidation happen at run-time. All we have to do is leave the code
+            //    uncached. The only downside is slightly more work when this does execute.
+            // We go with option (2) here because it seems less evil.
+            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, 0, 0, 0, 0);
+        } else
+            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, globalObject->structure(), 0, 0, slot.cachedOffset());
         return true;
     }
 

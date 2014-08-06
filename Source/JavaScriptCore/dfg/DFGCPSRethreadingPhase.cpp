@@ -201,12 +201,12 @@ private:
             
             if (otherNode->op() == GetLocal) {
                 // Replace all references to this GetLocal with otherNode.
-                node->misc.replacement = otherNode;
+                node->replacement = otherNode;
                 return;
             }
             
             ASSERT(otherNode->op() == SetLocal);
-            node->misc.replacement = otherNode->child1().node();
+            node->replacement = otherNode->child1().node();
             return;
         }
         

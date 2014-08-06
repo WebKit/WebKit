@@ -61,6 +61,16 @@ size_t sizeOfPutById()
 #endif
 }
 
+size_t sizeOfCheckIn()
+{
+#if CPU(ARM64)
+    return 4;
+#else
+    return 5; 
+#endif
+}
+
+
 size_t sizeOfCall()
 {
 #if CPU(ARM64)

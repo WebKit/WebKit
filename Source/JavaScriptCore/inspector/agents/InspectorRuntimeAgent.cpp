@@ -191,10 +191,10 @@ void InspectorRuntimeAgent::run(ErrorString*)
 {
 }
 
-void InspectorRuntimeAgent::getRuntimeTypeForVariableInTextRange(ErrorString*, const String& in_variableName, const String& in_id, int in_startLine, int in_startColumn, int in_endLine, int in_endColumn, String* out_types) 
+void InspectorRuntimeAgent::getRuntimeTypeForVariableAtOffset(ErrorString*, const String& in_variableName, const String& in_id, int in_divot, String* out_types) 
 {
     VM& vm = globalVM();
-    String types(vm.getTypesForVariableInRange(in_startLine, in_startColumn, in_endLine, in_endColumn, in_variableName, in_id));
+    String types(vm.getTypesForVariableAtOffset(in_divot, in_variableName, in_id));
     *out_types = types;
 }
 

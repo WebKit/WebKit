@@ -45,7 +45,7 @@ public:
         public:
         JSValue value;
         TypeLocation* location; 
-        Structure* structure;
+        StructureID structureID;
     };
 
     HighFidelityLog()
@@ -56,7 +56,22 @@ public:
 
     ~HighFidelityLog();
 
-    void recordTypeInformationForLocation(JSValue v, TypeLocation*);
+    ALWAYS_INLINE void recordTypeInformationForLocation(JSValue value, TypeLocation* location)
+    {
+        ASSERT(m_logStartPtr);
+        ASSERT(m_currentOffset < m_highFidelityLogSize);
+    
+        LogEntry* entry = m_logStartPtr + m_currentOffset;
+    
+        entry->location = location;
+        entry->value = value;
+        entry->structureID = (value.isCell() ? value.asCell()->structureID() : 0);
+    
+        m_currentOffset += 1;
+        if (m_currentOffset == m_highFidelityLogSize)
+            processHighFidelityLog(true, "Log Full");
+    }
+
     void processHighFidelityLog(bool asynchronously = false, String = "");
 
 private:

@@ -50,6 +50,8 @@ public:
     static Structure* createStructure(VM&);
     
     WatchpointSet* set() { return m_set.get(); }
+    
+    void fireAll();
 
 private:
     RefPtr<WatchpointSet> m_set;

@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "DebuggerScope.h"
 #include "Error.h"
 #include "JSCJSValue.h"
 #include "JSCellInlines.h"
@@ -95,29 +96,30 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
         return jsUndefined();
     int index = exec->argument(0).asInt32();
 
-    JSScope* scopeChain = impl().scopeChain();
-    ScopeChainIterator end = scopeChain->end();
-
-    // FIXME: We should be identifying and returning CATCH_SCOPE appropriately.
+    DebuggerScope* scopeChain = impl().scopeChain();
+    DebuggerScope::Iterator end = scopeChain->end();
 
     bool foundLocalScope = false;
-    for (ScopeChainIterator iter = scopeChain->begin(); iter != end; ++iter) {
-        JSObject* scope = iter.get();
-        if (scope->isActivationObject()) {
-            if (!foundLocalScope) {
-                // First activation object is local scope, each successive activation object is closure.
-                if (!index)
-                    return jsNumber(JSJavaScriptCallFrame::LOCAL_SCOPE);
-                foundLocalScope = true;
-            } else if (!index)
-                return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
+    for (DebuggerScope::Iterator iter = scopeChain->begin(); iter != end; ++iter) {
+        DebuggerScope* scope = iter.get();
+
+        if (!foundLocalScope && scope->isFunctionScope()) {
+            // First function scope is the local scope, each successive one is a closure.
+            if (!index)
+                return jsNumber(JSJavaScriptCallFrame::LOCAL_SCOPE);
+            foundLocalScope = true;
         }
 
         if (!index) {
-            // Last in the chain is global scope.
-            if (++iter == end)
+            if (scope->isWithScope())
+                return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
+            if (scope->isGlobalScope()) {
+                ASSERT(++iter == end);
                 return jsNumber(JSJavaScriptCallFrame::GLOBAL_SCOPE);
-            return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
+            }
+            // FIXME: We should be identifying and returning CATCH_SCOPE appropriately.
+            ASSERT(scope->isFunctionScope());
+            return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
         }
 
         --index;
@@ -157,9 +159,9 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     if (!impl().scopeChain())
         return jsNull();
 
-    JSScope* scopeChain = impl().scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
+    DebuggerScope* scopeChain = impl().scopeChain();
+    DebuggerScope::Iterator iter = scopeChain->begin();
+    DebuggerScope::Iterator end = scopeChain->end();
 
     // We must always have something in the scope chain.
     ASSERT(iter != end);

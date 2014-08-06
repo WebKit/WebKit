@@ -30,6 +30,7 @@
 
 #include "DFGAbstractInterpreter.h"
 #include "GetByIdStatus.h"
+#include "GetterSetter.h"
 #include "Operations.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"
@@ -1354,10 +1355,34 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case GetCallee:
-    case GetGetter:
-    case GetSetter:
         forNode(node).setType(SpecFunction);
         break;
+        
+    case GetGetter: {
+        JSValue base = forNode(node->child1()).m_value;
+        if (base) {
+            if (JSObject* getter = jsCast<GetterSetter*>(base)->getterConcurrently()) {
+                setConstant(node, *m_graph.freeze(getter));
+                break;
+            }
+        }
+        
+        forNode(node).setType(SpecObject);
+        break;
+    }
+        
+    case GetSetter: {
+        JSValue base = forNode(node->child1()).m_value;
+        if (base) {
+            if (JSObject* setter = jsCast<GetterSetter*>(base)->setterConcurrently()) {
+                setConstant(node, *m_graph.freeze(setter));
+                break;
+            }
+        }
+        
+        forNode(node).setType(SpecObject);
+        break;
+    }
         
     case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
     case GetMyScope:
@@ -1405,14 +1430,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 // something more subtle?
                 AbstractValue result;
                 for (unsigned i = status.numVariants(); i--;) {
-                    if (!status[i].specificValue()) {
+                    DFG_ASSERT(m_graph, node, !status[i].alternateBase());
+                    JSValue constantResult =
+                        m_graph.tryGetConstantProperty(value, status[i].offset());
+                    if (!constantResult) {
                         result.makeHeapTop();
                         break;
                     }
                     
                     AbstractValue thisResult;
                     thisResult.set(
-                        m_graph, *m_graph.freeze(status[i].specificValue()),
+                        m_graph, *m_graph.freeze(constantResult),
                         m_state.structureClobberState());
                     result.merge(thisResult);
                 }
@@ -1587,11 +1615,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetByOffset: {
+        StorageAccessData data = m_graph.m_storageAccessData[node->storageAccessDataIndex()];
+        JSValue result = m_graph.tryGetConstantProperty(forNode(node->child2()), data.offset);
+        if (result) {
+            setConstant(node, *m_graph.freeze(result));
+            break;
+        }
+        
         forNode(node).makeHeapTop();
         break;
     }
         
     case GetGetterSetterByOffset: {
+        StorageAccessData data = m_graph.m_storageAccessData[node->storageAccessDataIndex()];
+        JSValue result = m_graph.tryGetConstantProperty(forNode(node->child2()), data.offset);
+        if (result && jsDynamicCast<GetterSetter*>(result)) {
+            setConstant(node, *m_graph.freeze(result));
+            break;
+        }
+        
         forNode(node).set(m_graph, m_graph.m_vm.getterSetterStructure.get());
         break;
     }
@@ -1620,14 +1662,23 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (set.isEmpty())
                 continue;
             baseSet.merge(set);
-            if (!variant.specificValue()) {
+            
+            JSValue baseForLoad;
+            if (variant.alternateBase())
+                baseForLoad = variant.alternateBase();
+            else
+                baseForLoad = base.m_value;
+            JSValue constantResult =
+                m_graph.tryGetConstantProperty(
+                    baseForLoad, variant.baseStructure(), variant.offset());
+            if (!constantResult) {
                 result.makeHeapTop();
                 continue;
             }
             AbstractValue thisResult;
             thisResult.set(
                 m_graph,
-                *m_graph.freeze(variant.specificValue()),
+                *m_graph.freeze(constantResult),
                 m_state.structureClobberState());
             result.merge(thisResult);
         }

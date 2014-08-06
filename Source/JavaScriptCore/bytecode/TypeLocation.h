@@ -32,11 +32,11 @@ namespace JSC {
 
 enum HighFidelityGlobalIDFlags {
     HighFidelityNeedsUniqueIDGeneration = -1,
-    HighFidelityNoGlobalIDExists = -2
+    HighFidelityNoGlobalIDExists = -2,
+    HighFidelityReturnStatement = -3
 };
 
 class TypeLocation {
-                       
 public:
     TypeLocation() 
         : m_instructionTypeSet(TypeSet::create())
@@ -46,8 +46,9 @@ public:
 
     int64_t m_globalVariableID;
     intptr_t m_sourceID;
-    unsigned m_line;
-    unsigned m_column;
+    unsigned m_divotStart;
+    unsigned m_divotEnd;
+    unsigned m_divotForFunctionOffsetIfReturnStatement;
     RefPtr<TypeSet> m_instructionTypeSet;
     RefPtr<TypeSet> m_globalTypeSet;
 };

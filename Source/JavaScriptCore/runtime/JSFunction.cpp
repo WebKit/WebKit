@@ -405,7 +405,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         PropertySlot slot(thisObject);
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
-        thisObject->m_allocationProfileWatchpoint.fireAll();
+        thisObject->m_allocationProfileWatchpoint.fireAll("Store to prototype property of a function");
         // Don't allow this to be cached, since a [[Put]] must clear m_allocationProfile.
         PutPropertySlot dontCache(thisObject);
         Base::put(thisObject, exec, propertyName, value, dontCache);
@@ -452,7 +452,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         PropertySlot slot(thisObject);
         thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
-        thisObject->m_allocationProfileWatchpoint.fireAll();
+        thisObject->m_allocationProfileWatchpoint.fireAll("Store to prototype property of a function");
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 

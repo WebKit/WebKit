@@ -32,57 +32,67 @@ namespace JSC {
 
 static const bool verbose = false;
 
-String HighFidelityTypeProfiler::getTypesForVariableInRange(unsigned startLine, unsigned startColumn, unsigned endLine , unsigned endColumn, const String& variableName, intptr_t sourceID)
+String HighFidelityTypeProfiler::getTypesForVariableInAtOffset(unsigned divot, const String& variableName, intptr_t sourceID)
 {
-    String global = getGlobalTypesForVariableInRange(startLine, startColumn, endLine, endColumn, variableName, sourceID);
+    String global = getGlobalTypesForVariableAtOffset(divot, variableName, sourceID);
     if (!global.isEmpty())
         return global;
     
-    return getLocalTypesForVariableInRange(startLine, startColumn, endLine, endColumn, variableName, sourceID);
+    return getLocalTypesForVariableAtOffset(divot, variableName, sourceID);
 }
 
-WTF::String HighFidelityTypeProfiler::getGlobalTypesForVariableInRange(unsigned startLine, unsigned, unsigned, unsigned, const WTF::String&, intptr_t sourceID)
+String HighFidelityTypeProfiler::getGlobalTypesForVariableAtOffset(unsigned divot, const String& , intptr_t sourceID)
 {
-    auto iterLocationMap = m_globalLocationToGlobalIDMap.find(getLocationBasedHash(sourceID, startLine));
-    if (iterLocationMap == m_globalLocationToGlobalIDMap.end())
-        return "";
-
-    auto iterIDMap = m_globalIDMap.find(iterLocationMap->second);
-    if (iterIDMap == m_globalIDMap.end())
-        return "";
-
-    return iterIDMap->second->seenTypes();
-}
-
-WTF::String HighFidelityTypeProfiler::getLocalTypesForVariableInRange(unsigned startLine, unsigned , unsigned , unsigned , const WTF::String& , intptr_t sourceID)
-{
-    auto iter = m_globalLocationMap.find(getLocationBasedHash(sourceID, startLine));
-    auto end = m_globalLocationMap.end();
-    if (iter == end)
+    TypeLocation* location = findLocation(divot, sourceID);
+    if (!location)
         return  "";
 
-    return iter->second->seenTypes();
+    if (location->m_globalVariableID == HighFidelityNoGlobalIDExists)
+        return "";
+
+    return location->m_globalTypeSet->seenTypes();
+}
+
+String HighFidelityTypeProfiler::getLocalTypesForVariableAtOffset(unsigned divot, const String& , intptr_t sourceID)
+{
+    TypeLocation* location = findLocation(divot, sourceID);
+    if (!location)
+        return  "";
+
+    return location->m_instructionTypeSet->seenTypes();
 }
 
 void HighFidelityTypeProfiler::insertNewLocation(TypeLocation* location)
 {
     if (verbose)
-        dataLogF("Registering location:: line:%u, column:%u\n", location->m_line, location->m_column);
+        dataLogF("Registering location:: divotStart:%u, divotEnd:%u\n", location->m_divotStart, location->m_divotEnd);
 
-    LocationKey key(getLocationBasedHash(location->m_sourceID, location->m_line));
-
-    if (location->m_globalVariableID != HighFidelityNoGlobalIDExists) { 
-        // Build the mapping relationships Map1:key=>globalId, Map2:globalID=>TypeSet 
-        m_globalLocationToGlobalIDMap[key] = location->m_globalVariableID;
-        m_globalIDMap[location->m_globalVariableID] = location->m_globalTypeSet;
+    if (!m_bucketMap.contains(location->m_sourceID)) {
+        Vector<TypeLocation*> bucket;
+        m_bucketMap.set(location->m_sourceID, bucket);
     }
 
-    m_globalLocationMap[key] = location->m_instructionTypeSet;
+    Vector<TypeLocation*>& bucket = m_bucketMap.find(location->m_sourceID)->value;
+    bucket.append(location);
 }
 
-LocationKey HighFidelityTypeProfiler::getLocationBasedHash(intptr_t id, unsigned line)
+TypeLocation* HighFidelityTypeProfiler::findLocation(unsigned divot, intptr_t sourceID)
 {
-    return LocationKey(id, line, 1);
+    ASSERT(m_bucketMap.contains(sourceID)); 
+
+    Vector<TypeLocation*>& bucket = m_bucketMap.find(sourceID)->value;
+    unsigned distance = UINT_MAX; // Because assignments may be nested, make sure we find the closest enclosing assignment to this character offset.
+    TypeLocation* bestMatch = nullptr;
+    for (size_t i = 0, size = bucket.size(); i < size; i++) {
+        TypeLocation* location = bucket.at(i);
+        if (location->m_divotStart <= divot && divot <= location->m_divotEnd && location->m_divotEnd - location->m_divotStart <= distance) {
+            distance = location->m_divotEnd - location->m_divotStart;
+            bestMatch = location;
+        }
+    }
+
+    // FIXME: BestMatch should never be null. This doesn't hold currently because we ignore some Eval/With/VarInjection variable assignments.
+    return bestMatch;
 }
 
 } //namespace JSC

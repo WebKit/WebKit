@@ -230,11 +230,11 @@ struct SymbolTableEntry {
         return fatEntry()->m_watchpoints.get();
     }
     
-    ALWAYS_INLINE void notifyWrite(VM& vm, JSValue value)
+    ALWAYS_INLINE void notifyWrite(VM& vm, JSValue value, const FireDetail& detail)
     {
         if (LIKELY(!isFat()))
             return;
-        notifyWriteSlow(vm, value);
+        notifyWriteSlow(vm, value, detail);
     }
     
 private:
@@ -258,7 +258,7 @@ private:
     };
     
     SymbolTableEntry& copySlow(const SymbolTableEntry&);
-    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue);
+    JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const FireDetail&);
     
     bool isFat() const
     {

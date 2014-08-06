@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -55,15 +55,6 @@ namespace JSC {
 // This value is capped by the constant FIRST_VECTOR_GROW defined in
 // ArrayConventions.h.
 static unsigned lastArraySize = 0;
-
-JSCell* getCallableObjectSlow(JSCell* cell)
-{
-    if (cell->type() == JSFunctionType)
-        return cell;
-    if (cell->structure()->classInfo()->isSubClassOf(InternalFunction::info()))
-        return cell;
-    return 0;
-}
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSObject);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSFinalObject);
@@ -361,7 +352,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
             prototype = obj->prototype();
             if (prototype.isNull()) {
                 ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName));
-                if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot, getCallableObject(value))
+                if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot)
                     && slot.isStrictMode())
                     throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
                 return;
@@ -372,8 +363,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
     JSObject* obj;
     for (obj = thisObject; ; obj = asObject(prototype)) {
         unsigned attributes;
-        JSCell* specificValue;
-        PropertyOffset offset = obj->structure(vm)->get(vm, propertyName, attributes, specificValue);
+        PropertyOffset offset = obj->structure(vm)->get(vm, propertyName, attributes);
         if (isValidOffset(offset)) {
             if (attributes & ReadOnly) {
                 ASSERT(thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == thisObject);
@@ -413,7 +403,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
     }
     
     ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == thisObject);
-    if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot, getCallableObject(value)) && slot.isStrictMode())
+    if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot) && slot.isStrictMode())
         throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
     return;
 }
@@ -1235,7 +1225,7 @@ void JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     ASSERT(propertyName.asIndex() == PropertyName::NotAnIndex);
 
     PutPropertySlot slot(this);
-    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
+    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 
     ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
@@ -1248,7 +1238,7 @@ void JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
 void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot(this);
-    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
+    putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -1288,9 +1278,8 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
         thisObject->reifyStaticFunctionsForDelete(exec);
 
     unsigned attributes;
-    JSCell* specificValue;
     VM& vm = exec->vm();
-    if (isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes, specificValue))) {
+    if (isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes))) {
         if (attributes & DontDelete && !vm.isInDefineOwnProperty())
             return false;
         thisObject->removeDirect(vm, propertyName);
@@ -1404,6 +1393,10 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
 // ECMA 8.6.2.6
 JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
+    // Make sure that whatever default value methods there are on object's prototype chain are
+    // being watched.
+    object->structure()->startWatchingInternalPropertiesIfNecessaryForEntireChain(exec->vm());
+    
     // Must call toString first for Date objects.
     if ((hint == PreferString) || (hint != PreferNumber && object->prototype() == exec->lexicalGlobalObject()->datePrototype())) {
         JSValue value = callDefaultValueFunction(exec, object, exec->propertyNames().toString);
@@ -1464,20 +1457,6 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
         if (proto == object)
             return true;
     }
-    return false;
-}
-
-bool JSObject::getPropertySpecificValue(ExecState* exec, PropertyName propertyName, JSCell*& specificValue) const
-{
-    VM& vm = exec->vm();
-    unsigned attributes;
-    if (isValidOffset(structure(vm)->get(vm, propertyName, attributes, specificValue)))
-        return true;
-
-    // This could be a function within the static table? - should probably
-    // also look in the hash?  This currently should not be a problem, since
-    // we've currently always call 'get' first, which should have populated
-    // the normal storage.
     return false;
 }
 
@@ -2656,17 +2635,22 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     if (!accessor)
         return false;
     GetterSetter* getterSetter;
+    bool getterSetterChanged = false;
     if (accessor.isCustomGetterSetter())
         getterSetter = GetterSetter::create(exec->vm());
     else {
         ASSERT(accessor.isGetterSetter());
         getterSetter = asGetterSetter(accessor);
     }
-    if (descriptor.setterPresent())
-        getterSetter->setSetter(exec->vm(), descriptor.setterObject());
-    if (descriptor.getterPresent())
-        getterSetter->setGetter(exec->vm(), descriptor.getterObject());
-    if (current.attributesEqual(descriptor))
+    if (descriptor.setterPresent()) {
+        getterSetter = getterSetter->withSetter(exec->vm(), descriptor.setterObject());
+        getterSetterChanged = true;
+    }
+    if (descriptor.getterPresent()) {
+        getterSetter = getterSetter->withGetter(exec->vm(), descriptor.getterObject());
+        getterSetterChanged = true;
+    }
+    if (current.attributesEqual(descriptor) && !getterSetterChanged)
         return true;
     methodTable(exec->vm())->deleteProperty(this, exec, propertyName);
     unsigned attrs = descriptor.attributesOverridingCurrent(current);

@@ -49,6 +49,7 @@
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
+#include "DFGPhantomRemovalPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGResurrectionForValidationPhase.h"
@@ -250,18 +251,18 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         validate(dfg);
         
     performStrengthReduction(dfg);
-    performCSE(dfg);
+    performLocalCSE(dfg);
     performArgumentsSimplification(dfg);
     performCPSRethreading(dfg);
     performCFA(dfg);
     performConstantFolding(dfg);
     bool changed = false;
     changed |= performCFGSimplification(dfg);
-    changed |= performCSE(dfg);
+    changed |= performLocalCSE(dfg);
     
     if (validationEnabled())
         validate(dfg);
-
+    
     performCPSRethreading(dfg);
     if (changed) {
         performCFA(dfg);
@@ -282,6 +283,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performTierUpCheckInjection(dfg);
 
         performStoreBarrierElision(dfg);
+        performPhantomRemoval(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
         performStackLayout(dfg);
@@ -309,17 +311,13 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FailPath;
         }
         
+        performPhantomRemoval(dfg);
         performCriticalEdgeBreaking(dfg);
         performLoopPreHeaderCreation(dfg);
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
         performSSALowering(dfg);
-        performCSE(dfg);
-        
-        // At this point we're not allowed to do any further code motion because our reasoning
-        // about code motion assumes that it's OK to insert GC points in random places.
-        
-        performStoreBarrierElision(dfg);
+        performGlobalCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performConstantFolding(dfg);
@@ -330,14 +328,16 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             performCFA(dfg);
         }
         performLICM(dfg);
+        performPhantomRemoval(dfg);
         performIntegerCheckCombining(dfg);
-        performCSE(dfg);
+        performGlobalCSE(dfg);
         
         // At this point we're not allowed to do any further code motion because our reasoning
         // about code motion assumes that it's OK to insert GC points in random places.
         dfg.m_fixpointState = FixpointConverged;
         
         performStoreBarrierElision(dfg);
+        performPhantomRemoval(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         if (Options::validateFTLOSRExitLiveness())

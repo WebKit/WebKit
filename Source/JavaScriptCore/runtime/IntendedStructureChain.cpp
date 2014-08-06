@@ -107,8 +107,7 @@ bool IntendedStructureChain::mayInterceptStoreTo(VM& vm, StringImpl* uid)
 {
     for (unsigned i = 0; i < m_vector.size(); ++i) {
         unsigned attributes;
-        JSCell* specificValue;
-        PropertyOffset offset = m_vector[i]->getConcurrently(vm, uid, attributes, specificValue);
+        PropertyOffset offset = m_vector[i]->getConcurrently(vm, uid, attributes);
         if (!isValidOffset(offset))
             continue;
         if (attributes & (ReadOnly | Accessor))
@@ -128,6 +127,15 @@ bool IntendedStructureChain::isNormalized()
             return false;
     }
     return true;
+}
+
+bool IntendedStructureChain::takesSlowPathInDFGForImpureProperty()
+{
+    for (size_t i = 0; i < size(); ++i) {
+        if (at(i)->takesSlowPathInDFGForImpureProperty())
+            return true;
+    }
+    return false;
 }
 
 JSObject* IntendedStructureChain::terminalPrototype() const

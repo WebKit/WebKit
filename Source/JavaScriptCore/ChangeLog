@@ -1,3 +1,1201 @@
+2014-07-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r170564, r170571, r170604, r170628, r170672, r170680, r170724, r170728, r170729, r170819, r170821, r170836, r170855, r170860, r170890, r170907, r170929, r171052, r171106, r171152, r171153, r171214 from ftlopt.
+
+        This part of the merge delivers roughly a 2% across-the-board performance
+        improvement, mostly due to immutable property inference and DFG-side GCSE. It also
+        almost completely resolves accessor performance issues; in the common case the DFG
+        will compile a getter/setter access into code that is just as efficient as a normal
+        property access.
+        
+        Another major highlight of this part of the merge is the work to add a type profiler
+        to the inspector. This work is still on-going but this greatly increases coverage.
+
+        Note that this merge fixes a minor bug in the GetterSetter refactoring from
+        http://trac.webkit.org/changeset/170729 (https://bugs.webkit.org/show_bug.cgi?id=134518).
+        It also adds a new tests to tests/stress to cover that bug. That bug was previously only
+        covered by layout tests.
+
+    2014-07-17  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG Flush(SetLocal) store elimination is overzealous for captured variables in the presence of nodes that have no effects but may throw (merge trunk r171190)
+            https://bugs.webkit.org/show_bug.cgi?id=135019
+    
+            Reviewed by Oliver Hunt.
+            
+            Behaviorally, this is just a merge of trunk r171190, except that the relevant functionality
+            has moved to StrengthReductionPhase and is written in a different style. Same algorithm,
+            different code.
+    
+            * dfg/DFGNodeType.h:
+            * dfg/DFGStrengthReductionPhase.cpp:
+            (JSC::DFG::StrengthReductionPhase::handleNode):
+            * tests/stress/capture-escape-and-throw.js: Added.
+            (foo.f):
+            (foo):
+            * tests/stress/new-array-with-size-throw-exception-and-tear-off-arguments.js: Added.
+            (foo):
+            (bar):
+    
+    2014-07-15  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Constant fold GetGetter and GetSetter if the GetterSetter is a constant
+            https://bugs.webkit.org/show_bug.cgi?id=134962
+    
+            Reviewed by Oliver Hunt.
+            
+            This removes yet another steady-state-throughput implication of using getters and setters:
+            if your accessor call is monomorphic then you'll just get a structure check, nothing more.
+            No more loads to get to the GetterSetter object or the accessor function object.
+    
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * runtime/GetterSetter.h:
+            (JSC::GetterSetter::getterConcurrently):
+            (JSC::GetterSetter::setGetter):
+            (JSC::GetterSetter::setterConcurrently):
+            (JSC::GetterSetter::setSetter):
+    
+    2014-07-15  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Identity replacement in CSE shouldn't create a Phantom over the Identity's children
+            https://bugs.webkit.org/show_bug.cgi?id=134893
+    
+            Reviewed by Oliver Hunt.
+            
+            Replace Identity with Check instead of Phantom. Phantom means that the child of the
+            Identity should be unconditionally live. The liveness semantics of Identity are such that
+            if the parents of Identity are live then the child is live. Removing the Identity entirely
+            preserves such liveness semantics. So, the only thing that should be left behind is the
+            type check on the child, which is what Check means: do the check but don't keep the child
+            alive if the check isn't needed.
+    
+            * dfg/DFGCSEPhase.cpp:
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::convertToCheck):
+    
+    2014-07-13  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG should be able to do GCSE in SSA and this should be unified with the CSE in CPS, and both of these things should use abstract heaps for reasoning about effects
+            https://bugs.webkit.org/show_bug.cgi?id=134677
+    
+            Reviewed by Sam Weinig.
+            
+            This removes the old local CSE phase, which was based on manually written backward-search 
+            rules for all of the different kinds of things we cared about, and adds a new local/global
+            CSE (local for CPS and global for SSA) that leaves the node semantics almost entirely up to
+            clobberize(). Thus, the CSE phase itself just worries about the algorithms and data
+            structures used for storing sets of available values. This results in a large reduction in
+            code size in CSEPhase.cpp while greatly increasing the phase's power (since it now does
+            global CSE) and reducing compile time (since local CSE is now rewritten to use smarter data
+            structures). Even though LLVM was already running GVN, the extra GCSE at DFG IR level means
+            that this is a significant (~0.7%) throughput improvement.
+            
+            This work is based on the concept of "def" to clobberize(). If clobberize() calls def(), it
+            means that the node being analyzed makes available some value in some DFG node, and that
+            future attempts to compute that value can simply use that node. In other words, it
+            establishes an available value mapping of the form value=>node. There are two kinds of
+            values that can be passed to def():
+            
+            PureValue. This captures everything needed to determine whether two pure nodes - nodes that
+                neither read nor write, and produce a value that is a CSE candidate - are identical. It
+                carries the NodeType, an AdjacencyList, and one word of meta-data. The meta-data is
+                usually used for things like the arithmetic mode or constant pointer. Passing a
+                PureValue to def() means that the node produces a value that is valid anywhere that the
+                node dominates.
+            
+            HeapLocation. This describes a location in the heap that could be written to or read from.
+                Both stores and loads can def() a HeapLocation. HeapLocation carries around an abstract
+                heap that both serves as part of the "name" of the heap location (together with the
+                other fields of HeapLocation) and also tells us what write()'s to watch for. If someone
+                write()'s to an abstract heap that overlaps the heap associated with the HeapLocation,
+                then it means that the values for that location are no longer available.
+            
+            This approach is sufficiently clever that the CSEPhase itself can focus on the mechanism of
+            tracking the PureValue=>node and HeapLocation=>node maps, without having to worry about
+            interpreting the semantics of different DFG node types - that is now almost entirely in
+            clobberize(). The only things we special-case inside CSEPhase are the Identity node, which
+            CSE is traditionally responsible for eliminating even though it has nothing to do with CSE,
+            and the LocalCSE rule for turning PutByVal into PutByValAlias.
+            
+            This is a slight Octane, SunSpider, and Kraken speed-up - all somewhere arond 0.7% . It's
+            not a bigger win because LLVM was already giving us most of what we needed in its GVN.
+            Also, the SunSpider speed-up isn't from GCSE as much as it's a clean-up of local CSE - that
+            is no longer O(n^2). Basically this is purely good: it reduces the amount of LLVM IR we
+            generate, it removes the old CSE's heap modeling (which was a constant source of bugs), and
+            it improves both the quality of the code we generate and the speed with which we generate
+            it. Also, any future optimizations that depend on GCSE will now be easier to implement.
+            
+            During the development of this patch I also rationalized some other stuff, like Graph's
+            ordered traversals - we now have preorder and postorder rather than just "depth first".
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * dfg/DFGAbstractHeap.h:
+            * dfg/DFGAdjacencyList.h:
+            (JSC::DFG::AdjacencyList::hash):
+            (JSC::DFG::AdjacencyList::operator==):
+            * dfg/DFGBasicBlock.h:
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::performLocalCSE):
+            (JSC::DFG::performGlobalCSE):
+            (JSC::DFG::CSEPhase::CSEPhase): Deleted.
+            (JSC::DFG::CSEPhase::run): Deleted.
+            (JSC::DFG::CSEPhase::endIndexForPureCSE): Deleted.
+            (JSC::DFG::CSEPhase::pureCSE): Deleted.
+            (JSC::DFG::CSEPhase::constantCSE): Deleted.
+            (JSC::DFG::CSEPhase::constantStoragePointerCSE): Deleted.
+            (JSC::DFG::CSEPhase::getCalleeLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::getArrayLengthElimination): Deleted.
+            (JSC::DFG::CSEPhase::globalVarLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::scopedVarLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::varInjectionWatchpointElimination): Deleted.
+            (JSC::DFG::CSEPhase::getByValLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::checkFunctionElimination): Deleted.
+            (JSC::DFG::CSEPhase::checkExecutableElimination): Deleted.
+            (JSC::DFG::CSEPhase::checkStructureElimination): Deleted.
+            (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination): Deleted.
+            (JSC::DFG::CSEPhase::getByOffsetLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::getGetterSetterByOffsetLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::checkArrayElimination): Deleted.
+            (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::getInternalFieldLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::getMyScopeLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::getLocalLoadElimination): Deleted.
+            (JSC::DFG::CSEPhase::invalidationPointElimination): Deleted.
+            (JSC::DFG::CSEPhase::setReplacement): Deleted.
+            (JSC::DFG::CSEPhase::eliminate): Deleted.
+            (JSC::DFG::CSEPhase::performNodeCSE): Deleted.
+            (JSC::DFG::CSEPhase::performBlockCSE): Deleted.
+            (JSC::DFG::performCSE): Deleted.
+            * dfg/DFGCSEPhase.h:
+            * dfg/DFGClobberSet.cpp:
+            (JSC::DFG::addReads):
+            (JSC::DFG::addWrites):
+            (JSC::DFG::addReadsAndWrites):
+            (JSC::DFG::readsOverlap):
+            (JSC::DFG::writesOverlap):
+            * dfg/DFGClobberize.cpp:
+            (JSC::DFG::doesWrites):
+            (JSC::DFG::accessesOverlap):
+            (JSC::DFG::writesOverlap):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            (JSC::DFG::NoOpClobberize::operator()):
+            (JSC::DFG::CheckClobberize::operator()):
+            (JSC::DFG::ReadMethodClobberize::ReadMethodClobberize):
+            (JSC::DFG::ReadMethodClobberize::operator()):
+            (JSC::DFG::WriteMethodClobberize::WriteMethodClobberize):
+            (JSC::DFG::WriteMethodClobberize::operator()):
+            (JSC::DFG::DefMethodClobberize::DefMethodClobberize):
+            (JSC::DFG::DefMethodClobberize::operator()):
+            * dfg/DFGDCEPhase.cpp:
+            (JSC::DFG::DCEPhase::run):
+            (JSC::DFG::DCEPhase::fixupBlock):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::getBlocksInPreOrder):
+            (JSC::DFG::Graph::getBlocksInPostOrder):
+            (JSC::DFG::Graph::addForDepthFirstSort): Deleted.
+            (JSC::DFG::Graph::getBlocksInDepthFirstOrder): Deleted.
+            * dfg/DFGGraph.h:
+            * dfg/DFGHeapLocation.cpp: Added.
+            (JSC::DFG::HeapLocation::dump):
+            (WTF::printInternal):
+            * dfg/DFGHeapLocation.h: Added.
+            (JSC::DFG::HeapLocation::HeapLocation):
+            (JSC::DFG::HeapLocation::operator!):
+            (JSC::DFG::HeapLocation::kind):
+            (JSC::DFG::HeapLocation::heap):
+            (JSC::DFG::HeapLocation::base):
+            (JSC::DFG::HeapLocation::index):
+            (JSC::DFG::HeapLocation::hash):
+            (JSC::DFG::HeapLocation::operator==):
+            (JSC::DFG::HeapLocation::isHashTableDeletedValue):
+            (JSC::DFG::HeapLocationHash::hash):
+            (JSC::DFG::HeapLocationHash::equal):
+            * dfg/DFGLICMPhase.cpp:
+            (JSC::DFG::LICMPhase::run):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::replaceWith):
+            (JSC::DFG::Node::convertToPhantomUnchecked): Deleted.
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+            * dfg/DFGPureValue.cpp: Added.
+            (JSC::DFG::PureValue::dump):
+            * dfg/DFGPureValue.h: Added.
+            (JSC::DFG::PureValue::PureValue):
+            (JSC::DFG::PureValue::operator!):
+            (JSC::DFG::PureValue::op):
+            (JSC::DFG::PureValue::children):
+            (JSC::DFG::PureValue::info):
+            (JSC::DFG::PureValue::hash):
+            (JSC::DFG::PureValue::operator==):
+            (JSC::DFG::PureValue::isHashTableDeletedValue):
+            (JSC::DFG::PureValueHash::hash):
+            (JSC::DFG::PureValueHash::equal):
+            * dfg/DFGSSAConversionPhase.cpp:
+            (JSC::DFG::SSAConversionPhase::run):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::lower):
+    
+    2014-07-13  Filip Pizlo  <fpizlo@apple.com>
+    
+            Unreviewed, revert unintended change in r171051.
+    
+            * dfg/DFGCSEPhase.cpp:
+    
+    2014-07-08  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Move Flush(SetLocal) store elimination to StrengthReductionPhase
+            https://bugs.webkit.org/show_bug.cgi?id=134739
+    
+            Reviewed by Mark Hahnenberg.
+            
+            I'm going to streamline CSE around clobberize() as part of
+            https://bugs.webkit.org/show_bug.cgi?id=134677, and so Flush(SetLocal) store
+            elimination wouldn't belong in CSE anymore. It doesn't quite belong anywhere, which
+            means that it belongs in StrengthReductionPhase, since that's intended to be our
+            dumping ground.
+            
+            To do this I had to add some missing smarts to clobberize(). Previously clobberize()
+            could play a bit loose with reads of Variables because it wasn't used for store
+            elimination. The main client of read() was LICM, but it would only use it to
+            determine hoistability and anything that did a write() was not hoistable - so, we had
+            benign (but still wrong) missing read() calls in places that did write()s. This fixes
+            a bunch of those cases.
+    
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            (JSC::DFG::CSEPhase::setLocalStoreElimination): Deleted.
+            * dfg/DFGClobberize.cpp:
+            (JSC::DFG::accessesOverlap):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize): Make clobberize() smart enough for detecting when this store elimination would be sound.
+            * dfg/DFGStrengthReductionPhase.cpp:
+            (JSC::DFG::StrengthReductionPhase::handleNode): Implement the store elimination in terms of clobberize().
+    
+    2014-07-08  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Phantom simplification should be in its own phase
+            https://bugs.webkit.org/show_bug.cgi?id=134742
+    
+            Reviewed by Geoffrey Garen.
+            
+            This moves Phantom simplification out of CSE, which greatly simplifies CSE and gives it
+            more focus. Also this finally adds a phase that removes empty Phantoms. We sort of had
+            this in CPSRethreading, but that phase runs too infrequently and doesn't run at all for
+            SSA.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * dfg/DFGAdjacencyList.h:
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::run):
+            (JSC::DFG::CSEPhase::setReplacement):
+            (JSC::DFG::CSEPhase::eliminate):
+            (JSC::DFG::CSEPhase::performNodeCSE):
+            (JSC::DFG::CSEPhase::eliminateIrrelevantPhantomChildren): Deleted.
+            * dfg/DFGPhantomRemovalPhase.cpp: Added.
+            (JSC::DFG::PhantomRemovalPhase::PhantomRemovalPhase):
+            (JSC::DFG::PhantomRemovalPhase::run):
+            (JSC::DFG::performCleanUp):
+            * dfg/DFGPhantomRemovalPhase.h: Added.
+            * dfg/DFGPlan.cpp:
+            (JSC::DFG::Plan::compileInThreadImpl):
+    
+    2014-07-08  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Get rid of Node::misc by moving the fields out of the union so that you can use replacement and owner simultaneously
+            https://bugs.webkit.org/show_bug.cgi?id=134730
+    
+            Reviewed by Mark Lam.
+            
+            This will allow for a better GCSE implementation.
+    
+            * dfg/DFGCPSRethreadingPhase.cpp:
+            (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+            * dfg/DFGCSEPhase.cpp:
+            (JSC::DFG::CSEPhase::setReplacement):
+            * dfg/DFGEdgeDominates.h:
+            (JSC::DFG::EdgeDominates::operator()):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::clearReplacements):
+            (JSC::DFG::Graph::initializeNodeOwners):
+            * dfg/DFGGraph.h:
+            (JSC::DFG::Graph::performSubstitutionForEdge):
+            * dfg/DFGLICMPhase.cpp:
+            (JSC::DFG::LICMPhase::attemptHoist):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::Node):
+            * dfg/DFGSSAConversionPhase.cpp:
+            (JSC::DFG::SSAConversionPhase::run):
+    
+    2014-07-04  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Infer immutable object properties
+            https://bugs.webkit.org/show_bug.cgi?id=134567
+    
+            Reviewed by Mark Hahnenberg.
+            
+            This introduces a new way of inferring immutable object properties. A property is said to
+            be immutable if after its creation (i.e. the transition that creates it), we never
+            overwrite it (i.e. replace it) or delete it. Immutability is a property of an "own
+            property" - so if we say that "f" is immutable at "o" then we are implying that "o" has "f"
+            directly and not on a prototype. More specifically, the immutability inference will prove
+            that a property on some structure is immutable. This means that, for example, we may have a
+            structure S1 with property "f" where we claim that "f" at S1 is immutable, but S1 has a
+            transition to S2 that adds a new property "g" and we may claim that "f" at S2 is actually
+            mutable. This is mainly for convenience; it allows us to decouple immutability logic from
+            transition logic. Immutability can be used to constant-fold accesses to objects at
+            DFG-time. The DFG needs to prove the following to constant-fold the access:
+            
+            - The base of the access must be a constant object pointer. We prove that a property at a
+              structure is immutable, but that says nothing of its value; each actual instance of that
+              property may have a different value. So, a constant object pointer is needed to get an
+              actual constant instance of the immutable value.
+            
+            - A check (or watchpoint) must have been emitted proving that the object has a structure
+              that allows loading the property in question.
+            
+            - The replacement watchpoint set of the property in the structure that we've proven the
+              object to have is still valid and we add a watchpoint to it lazily. The replacement
+              watchpoint set is the key new mechanism that this change adds. It's possible that we have
+              proven that the object has one of many structures, in which case each of those structures
+              needs a valid replacement watchpoint set.
+            
+            The replacement watchpoint set is created the first time that any access to the property is
+            cached. A put replace cache will create, and immediately invalidate, the watchpoint set. A
+            get cache will create the watchpoint set and make it start watching. Any non-cached put
+            access will invalidate the watchpoint set if one had been created; the underlying algorithm
+            ensures that checking for the existence of a replacement watchpoint set is very fast in the
+            common case. This algorithm ensures that no cached access needs to ever do any work to
+            invalidate, or check the validity of, any replacement watchpoint sets. It also has some
+            other nice properties:
+            
+            - It's very robust in its definition of immutability. The strictest that it will ever be is
+              that for any instance of the object, the property must be written to only once,
+              specifically at the time that the property is created. But it's looser than this in
+              practice. For example, the property may be written to any number of times before we add
+              the final property that the object will have before anyone reads the property; this works
+              since for optimization purposes we only care if we detect immutability on the structure
+              that the object will have when it is most frequently read from, not any previous
+              structure that the object had. Also, we may write to the property any number of times
+              before anyone caches accesses to it.
+            
+            - It is mostly orthogonal to structure transitions. No new structures need to be created to
+              track the immutability of a property. Hence, there is no risk from this feature causing
+              more polymorphism. This is different from the previous "specificValue" constant
+              inference, which did cause additional structures to be created and sometimes those
+              structures led to fake polymorphism. This feature does leverage existing transitions to
+              do some of the watchpointing: property deletions don't fire the replacement watchpoint
+              set because that would cause a new structure and so the mandatory structure check would
+              fail. Also, this feature is guaranteed to never kick in for uncacheable dictionaries
+              because those wouldn't allow for cacheable accesses - and it takes a cacheable access for
+              this feature to be enabled.
+            
+            - No memory overhead is incurred except when accesses to the property are cached.
+              Dictionary properties will typically have no meta-data for immutability. The number of
+              replacement watchpoint sets we allocate is proportional to the number of inline caches in
+              the program, which is typically must smaller than the number of structures or even the
+              number of objects.
+            
+            This inference is far more powerful than the previous "specificValue" inference, so this
+            change also removes all of that code. It's interesting that the amount of code that is
+            changed to remove that feature is almost as big as the amount of code added to support the
+            new inference - and that's if you include the new tests in the tally. Without new tests,
+            it appears that the new feature actually touches less code!
+            
+            There is one corner case where the previous "specificValue" inference was more powerful.
+            You can imagine someone creating objects with functions as self properties on those
+            objects, such that each object instance had the same function pointers - essentially,
+            someone might be trying to create a vtable but failing at the whole "one vtable for many
+            instances" concept. The "specificValue" inference would do very well for such programs,
+            because a structure check would be sufficient to prove a constant value for all of the
+            function properties. This new inference will fail because it doesn't track the constant
+            values of constant properties; instead it detects the immutability of otherwise variable
+            properties (in the sense that each instance of the property may have a different value).
+            So, the new inference requires having a particular object instance to actually get the
+            constant value. I think it's OK to lose this antifeature. It took a lot of code to support
+            and was a constant source of grief in our transition logic, and there doesn't appear to be
+            any real evidence that programs benefited from that particular kind of inference since
+            usually it's the singleton prototype instance that has all of the functions.
+            
+            This change is a speed-up on everything. date-format-xparb and both SunSpider/raytrace and
+            V8/raytrace seem to be the biggest winners among the macrobenchmarks; they see >5%
+            speed-ups. Many of our microbenchmarks see very large performance improvements, even 80% in
+            one case.
+    
+            * bytecode/ComplexGetStatus.cpp:
+            (JSC::ComplexGetStatus::computeFor):
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::computeFromLLInt):
+            (JSC::GetByIdStatus::computeForStubInfo):
+            (JSC::GetByIdStatus::computeFor):
+            * bytecode/GetByIdVariant.cpp:
+            (JSC::GetByIdVariant::GetByIdVariant):
+            (JSC::GetByIdVariant::operator=):
+            (JSC::GetByIdVariant::attemptToMerge):
+            (JSC::GetByIdVariant::dumpInContext):
+            * bytecode/GetByIdVariant.h:
+            (JSC::GetByIdVariant::alternateBase):
+            (JSC::GetByIdVariant::specificValue): Deleted.
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeForStubInfo):
+            (JSC::PutByIdStatus::computeFor):
+            * bytecode/PutByIdVariant.cpp:
+            (JSC::PutByIdVariant::operator=):
+            (JSC::PutByIdVariant::setter):
+            (JSC::PutByIdVariant::dumpInContext):
+            * bytecode/PutByIdVariant.h:
+            (JSC::PutByIdVariant::specificValue): Deleted.
+            * bytecode/Watchpoint.cpp:
+            (JSC::WatchpointSet::fireAllSlow):
+            (JSC::WatchpointSet::fireAll): Deleted.
+            * bytecode/Watchpoint.h:
+            (JSC::WatchpointSet::fireAll):
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleGetByOffset):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::isStringPrototypeMethodSane):
+            (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::tryGetConstantProperty):
+            (JSC::DFG::Graph::visitChildren):
+            * dfg/DFGGraph.h:
+            * dfg/DFGWatchableStructureWatchingPhase.cpp:
+            (JSC::DFG::WatchableStructureWatchingPhase::run):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+            * jit/JITOperations.cpp:
+            * jit/Repatch.cpp:
+            (JSC::repatchByIdSelfAccess):
+            (JSC::generateByIdStub):
+            (JSC::tryCacheGetByID):
+            (JSC::tryCachePutByID):
+            (JSC::tryBuildPutByIdList):
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            (JSC::LLInt::putToScopeCommon):
+            * runtime/CommonSlowPaths.h:
+            (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+            * runtime/IntendedStructureChain.cpp:
+            (JSC::IntendedStructureChain::mayInterceptStoreTo):
+            * runtime/JSCJSValue.cpp:
+            (JSC::JSValue::putToPrimitive):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::reset):
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::put):
+            (JSC::JSObject::putDirectNonIndexAccessor):
+            (JSC::JSObject::deleteProperty):
+            (JSC::JSObject::defaultValue):
+            (JSC::getCallableObjectSlow): Deleted.
+            (JSC::JSObject::getPropertySpecificValue): Deleted.
+            * runtime/JSObject.h:
+            (JSC::JSObject::getDirect):
+            (JSC::JSObject::getDirectOffset):
+            (JSC::JSObject::inlineGetOwnPropertySlot):
+            (JSC::JSObject::putDirectInternal):
+            (JSC::JSObject::putOwnDataProperty):
+            (JSC::JSObject::putDirect):
+            (JSC::JSObject::putDirectWithoutTransition):
+            (JSC::getCallableObject): Deleted.
+            * runtime/JSScope.cpp:
+            (JSC::abstractAccess):
+            * runtime/PropertyMapHashTable.h:
+            (JSC::PropertyMapEntry::PropertyMapEntry):
+            (JSC::PropertyTable::copy):
+            * runtime/PropertyTable.cpp:
+            (JSC::PropertyTable::clone):
+            (JSC::PropertyTable::PropertyTable):
+            (JSC::PropertyTable::visitChildren): Deleted.
+            * runtime/Structure.cpp:
+            (JSC::Structure::Structure):
+            (JSC::Structure::materializePropertyMap):
+            (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+            (JSC::Structure::addPropertyTransitionToExistingStructure):
+            (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+            (JSC::Structure::addPropertyTransition):
+            (JSC::Structure::changePrototypeTransition):
+            (JSC::Structure::attributeChangeTransition):
+            (JSC::Structure::toDictionaryTransition):
+            (JSC::Structure::preventExtensionsTransition):
+            (JSC::Structure::takePropertyTableOrCloneIfPinned):
+            (JSC::Structure::nonPropertyTransition):
+            (JSC::Structure::addPropertyWithoutTransition):
+            (JSC::Structure::allocateRareData):
+            (JSC::Structure::ensurePropertyReplacementWatchpointSet):
+            (JSC::Structure::startWatchingPropertyForReplacements):
+            (JSC::Structure::didCachePropertyReplacement):
+            (JSC::Structure::startWatchingInternalProperties):
+            (JSC::Structure::copyPropertyTable):
+            (JSC::Structure::copyPropertyTableForPinning):
+            (JSC::Structure::getConcurrently):
+            (JSC::Structure::get):
+            (JSC::Structure::add):
+            (JSC::Structure::visitChildren):
+            (JSC::Structure::prototypeChainMayInterceptStoreTo):
+            (JSC::Structure::dump):
+            (JSC::Structure::despecifyDictionaryFunction): Deleted.
+            (JSC::Structure::despecifyFunctionTransition): Deleted.
+            (JSC::Structure::despecifyFunction): Deleted.
+            (JSC::Structure::despecifyAllFunctions): Deleted.
+            (JSC::Structure::putSpecificValue): Deleted.
+            * runtime/Structure.h:
+            (JSC::Structure::startWatchingPropertyForReplacements):
+            (JSC::Structure::startWatchingInternalPropertiesIfNecessary):
+            (JSC::Structure::startWatchingInternalPropertiesIfNecessaryForEntireChain):
+            (JSC::Structure::transitionDidInvolveSpecificValue): Deleted.
+            (JSC::Structure::disableSpecificFunctionTracking): Deleted.
+            * runtime/StructureInlines.h:
+            (JSC::Structure::getConcurrently):
+            (JSC::Structure::didReplaceProperty):
+            (JSC::Structure::propertyReplacementWatchpointSet):
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::destroy):
+            * runtime/StructureRareData.h:
+            * tests/stress/infer-constant-global-property.js: Added.
+            (foo.Math.sin):
+            (foo):
+            * tests/stress/infer-constant-property.js: Added.
+            (foo):
+            * tests/stress/jit-cache-poly-replace-then-cache-get-and-fold-then-invalidate.js: Added.
+            (foo):
+            (bar):
+            * tests/stress/jit-cache-replace-then-cache-get-and-fold-then-invalidate.js: Added.
+            (foo):
+            (bar):
+            * tests/stress/jit-put-to-scope-global-cache-watchpoint-invalidate.js: Added.
+            (foo):
+            (bar):
+            * tests/stress/llint-cache-replace-then-cache-get-and-fold-then-invalidate.js: Added.
+            (foo):
+            (bar):
+            * tests/stress/llint-put-to-scope-global-cache-watchpoint-invalidate.js: Added.
+            (foo):
+            (bar):
+            * tests/stress/repeat-put-to-scope-global-with-same-value-watchpoint-invalidate.js: Added.
+            (foo):
+            (bar):
+    
+    2014-07-03  Saam Barati  <sbarati@apple.com>
+    
+            Add more coverage for the profile_types_with_high_fidelity op code.
+            https://bugs.webkit.org/show_bug.cgi?id=134616
+    
+            Reviewed by Filip Pizlo.
+    
+            More operations are now being recorded by the profile_types_with_high_fidelity 
+            opcode. Specifically: function parameters, function return values,
+            function 'this' value, get_by_id, get_by_value, resolve nodes, function return 
+            values at the call site. Added more flags to the profile_types_with_high_fidelity
+            opcode so more focused tasks can take place when the instruction is
+            being linked in CodeBlock. Re-worked the type profiler to search 
+            through character offset ranges when asked for the type of an expression
+            at a given offset. Removed redundant calls to Structure::toStructureShape
+            in HighFidelityLog and TypeSet by caching calls based on StructureID.
+    
+            * bytecode/BytecodeList.json:
+            * bytecode/BytecodeUseDef.h:
+            (JSC::computeUsesForBytecodeOffset):
+            (JSC::computeDefsForBytecodeOffset):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::CodeBlock):
+            (JSC::CodeBlock::finalizeUnconditionally):
+            (JSC::CodeBlock::scopeDependentProfile):
+            * bytecode/CodeBlock.h:
+            (JSC::CodeBlock::returnStatementTypeSet):
+            * bytecode/TypeLocation.h:
+            * bytecode/UnlinkedCodeBlock.cpp:
+            (JSC::UnlinkedCodeBlock::highFidelityTypeProfileExpressionInfoForBytecodeOffset):
+            (JSC::UnlinkedCodeBlock::addHighFidelityTypeProfileExpressionInfo):
+            * bytecode/UnlinkedCodeBlock.h:
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::emitMove):
+            (JSC::BytecodeGenerator::emitProfileTypesWithHighFidelity):
+            (JSC::BytecodeGenerator::emitGetFromScopeWithProfile):
+            (JSC::BytecodeGenerator::emitPutToScope):
+            (JSC::BytecodeGenerator::emitPutToScopeWithProfile):
+            (JSC::BytecodeGenerator::emitPutById):
+            (JSC::BytecodeGenerator::emitPutByVal):
+            * bytecompiler/BytecodeGenerator.h:
+            (JSC::BytecodeGenerator::emitHighFidelityTypeProfilingExpressionInfo):
+            * bytecompiler/NodesCodegen.cpp:
+            (JSC::ResolveNode::emitBytecode):
+            (JSC::BracketAccessorNode::emitBytecode):
+            (JSC::DotAccessorNode::emitBytecode):
+            (JSC::FunctionCallValueNode::emitBytecode):
+            (JSC::FunctionCallResolveNode::emitBytecode):
+            (JSC::FunctionCallBracketNode::emitBytecode):
+            (JSC::FunctionCallDotNode::emitBytecode):
+            (JSC::CallFunctionCallDotNode::emitBytecode):
+            (JSC::ApplyFunctionCallDotNode::emitBytecode):
+            (JSC::PostfixNode::emitResolve):
+            (JSC::PostfixNode::emitBracket):
+            (JSC::PostfixNode::emitDot):
+            (JSC::PrefixNode::emitResolve):
+            (JSC::PrefixNode::emitBracket):
+            (JSC::PrefixNode::emitDot):
+            (JSC::ReadModifyResolveNode::emitBytecode):
+            (JSC::AssignResolveNode::emitBytecode):
+            (JSC::AssignDotNode::emitBytecode):
+            (JSC::ReadModifyDotNode::emitBytecode):
+            (JSC::AssignBracketNode::emitBytecode):
+            (JSC::ReadModifyBracketNode::emitBytecode):
+            (JSC::ReturnNode::emitBytecode):
+            (JSC::FunctionBodyNode::emitBytecode):
+            * inspector/agents/InspectorRuntimeAgent.cpp:
+            (Inspector::InspectorRuntimeAgent::getRuntimeTypeForVariableAtOffset):
+            (Inspector::InspectorRuntimeAgent::getRuntimeTypeForVariableInTextRange): Deleted.
+            * inspector/agents/InspectorRuntimeAgent.h:
+            * inspector/protocol/Runtime.json:
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::getFromScopeCommon):
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            * llint/LLIntSlowPaths.h:
+            * llint/LowLevelInterpreter.asm:
+            * runtime/HighFidelityLog.cpp:
+            (JSC::HighFidelityLog::processHighFidelityLog):
+            (JSC::HighFidelityLog::actuallyProcessLogThreadFunction):
+            (JSC::HighFidelityLog::recordTypeInformationForLocation): Deleted.
+            * runtime/HighFidelityLog.h:
+            (JSC::HighFidelityLog::recordTypeInformationForLocation):
+            * runtime/HighFidelityTypeProfiler.cpp:
+            (JSC::HighFidelityTypeProfiler::getTypesForVariableInAtOffset):
+            (JSC::HighFidelityTypeProfiler::getGlobalTypesForVariableAtOffset):
+            (JSC::HighFidelityTypeProfiler::getLocalTypesForVariableAtOffset):
+            (JSC::HighFidelityTypeProfiler::insertNewLocation):
+            (JSC::HighFidelityTypeProfiler::findLocation):
+            (JSC::HighFidelityTypeProfiler::getTypesForVariableInRange): Deleted.
+            (JSC::HighFidelityTypeProfiler::getGlobalTypesForVariableInRange): Deleted.
+            (JSC::HighFidelityTypeProfiler::getLocalTypesForVariableInRange): Deleted.
+            (JSC::HighFidelityTypeProfiler::getLocationBasedHash): Deleted.
+            * runtime/HighFidelityTypeProfiler.h:
+            (JSC::LocationKey::LocationKey): Deleted.
+            (JSC::LocationKey::hash): Deleted.
+            (JSC::LocationKey::operator==): Deleted.
+            * runtime/Structure.cpp:
+            (JSC::Structure::toStructureShape):
+            * runtime/Structure.h:
+            * runtime/TypeSet.cpp:
+            (JSC::TypeSet::TypeSet):
+            (JSC::TypeSet::addTypeForValue):
+            (JSC::TypeSet::seenTypes):
+            (JSC::TypeSet::removeDuplicatesInStructureHistory): Deleted.
+            * runtime/TypeSet.h:
+            (JSC::StructureShape::setConstructorName):
+            * runtime/VM.cpp:
+            (JSC::VM::getTypesForVariableAtOffset):
+            (JSC::VM::dumpHighFidelityProfilingTypes):
+            (JSC::VM::getTypesForVariableInRange): Deleted.
+            * runtime/VM.h:
+    
+    2014-07-04  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt][REGRESSION] debug tests fail because PutByIdDirect is now implemented in terms of In
+            https://bugs.webkit.org/show_bug.cgi?id=134642
+    
+            Rubber stamped by Andreas Kling.
+    
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compileNode):
+    
+    2014-07-01  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Allocate a new GetterSetter if we change the value of any of its entries other than when they were previously null, so that if we constant-infer an accessor slot then we immediately get the function constant for free
+            https://bugs.webkit.org/show_bug.cgi?id=134518
+    
+            Reviewed by Mark Hahnenberg.
+            
+            This has no real effect right now, particularly since almost all uses of
+            setSetter/setGetter were already allocating a branch new GetterSetter. But once we start
+            doing more aggressive constant property inference, this change will allow us to remove
+            all runtime checks from getter/setter calls.
+    
+            * runtime/GetterSetter.cpp:
+            (JSC::GetterSetter::withGetter):
+            (JSC::GetterSetter::withSetter):
+            * runtime/GetterSetter.h:
+            (JSC::GetterSetter::setGetter):
+            (JSC::GetterSetter::setSetter):
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::defineOwnNonIndexProperty):
+    
+    2014-07-02  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Rename notifyTransitionFromThisStructure to didTransitionFromThisStructure
+    
+            Rubber stamped by Mark Hahnenberg.
+    
+            * runtime/Structure.cpp:
+            (JSC::Structure::Structure):
+            (JSC::Structure::nonPropertyTransition):
+            (JSC::Structure::didTransitionFromThisStructure):
+            (JSC::Structure::notifyTransitionFromThisStructure): Deleted.
+            * runtime/Structure.h:
+    
+    2014-07-02  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Remove the functionality for cloning StructureRareData since we never do that anymore.
+    
+            Rubber stamped by Mark Hahnenberg.
+    
+            * runtime/Structure.cpp:
+            (JSC::Structure::Structure):
+            (JSC::Structure::cloneRareDataFrom): Deleted.
+            * runtime/Structure.h:
+            * runtime/StructureRareData.cpp:
+            (JSC::StructureRareData::clone): Deleted.
+            (JSC::StructureRareData::StructureRareData): Deleted.
+            * runtime/StructureRareData.h:
+            (JSC::StructureRareData::needsCloning): Deleted.
+    
+    2014-07-01  Mark Lam  <mark.lam@apple.com>
+    
+            [ftlopt] DebuggerCallFrame::scope() should return a DebuggerScope.
+            <https://webkit.org/b/134420>
+    
+            Reviewed by Geoffrey Garen.
+    
+            Previously, DebuggerCallFrame::scope() returns a JSActivation (and relevant
+            peers) which the WebInspector will use to introspect CallFrame variables.
+            Instead, we should be returning a DebuggerScope as an abstraction layer that
+            provides the introspection functionality that the WebInspector needs.  This
+            is the first step towards not forcing every frame to have a JSActivation
+            object just because the debugger is enabled.
+    
+            1. Instantiate the debuggerScopeStructure as a member of the JSGlobalObject
+               instead of the VM.  This allows JSObject::globalObject() to be able to
+               return the global object for the DebuggerScope.
+    
+            2. On the DebuggerScope's life-cycle management:
+    
+               The DebuggerCallFrame is designed to be "valid" only during a debugging session
+               (while the debugger is broken) through the use of a DebuggerCallFrameScope in
+               Debugger::pauseIfNeeded().  Once the debugger resumes from the break, the
+               DebuggerCallFrameScope destructs, and the DebuggerCallFrame will be invalidated.
+               We can't guarantee (from this code alone) that the Inspector code isn't still
+               holding a ref to the DebuggerCallFrame (though they shouldn't), but by contract,
+               the frame will be invalidated, and any attempt to query it will return null values.
+               This is pre-existing behavior.
+    
+               Now, we're adding the DebuggerScope into the picture.  While a single debugger
+               pause session is in progress, the Inspector may request the scope from the
+               DebuggerCallFrame.  While the DebuggerCallFrame is still valid, we want
+               DebuggerCallFrame::scope() to always return the same DebuggerScope object.
+               This is why we hold on to the DebuggerScope with a strong ref.
+    
+               If we use a weak ref instead, the following cooky behavior can manifest:
+               1. The Inspector calls Debugger::scope() to get the top scope.
+               2. The Inspector iterates down the scope chain and is now only holding a
+                  reference to a parent scope.  It is no longer referencing the top scope.
+               3. A GC occurs, and the DebuggerCallFrame's weak m_scope ref to the top scope
+                  gets cleared.
+               4. The Inspector calls DebuggerCallFrame::scope() to get the top scope again but gets
+                  a different DebuggerScope instance.
+               5. The Inspector iterates down the scope chain but never sees the parent scope
+                  instance that retained a ref to in step 2 above.  This is because when iterating
+                  this new DebuggerScope instance (which has no knowledge of the previous parent
+                  DebuggerScope instance), a new DebuggerScope instance will get created for the
+                  same parent scope. 
+    
+               Since the DebuggerScope is a JSObject, it's liveness is determined by its reachability.
+               However, it's "validity" is determined by the life-cycle of its owner DebuggerCallFrame.
+               When the owner DebuggerCallFrame gets invalidated, its debugger scope chain (if
+               instantiated) will also get invalidated.  This is why we need the
+               DebuggerScope::invalidateChain() method.  The Inspector should not be using the
+               DebuggerScope instance after its owner DebuggerCallFrame is invalidated.  If it does,
+               those methods will do nothing or returned a failed status.
+    
+            * debugger/Debugger.h:
+            * debugger/DebuggerCallFrame.cpp:
+            (JSC::DebuggerCallFrame::scope):
+            (JSC::DebuggerCallFrame::evaluate):
+            (JSC::DebuggerCallFrame::invalidate):
+            (JSC::DebuggerCallFrame::vm):
+            (JSC::DebuggerCallFrame::lexicalGlobalObject):
+            * debugger/DebuggerCallFrame.h:
+            * debugger/DebuggerScope.cpp:
+            (JSC::DebuggerScope::DebuggerScope):
+            (JSC::DebuggerScope::finishCreation):
+            (JSC::DebuggerScope::visitChildren):
+            (JSC::DebuggerScope::className):
+            (JSC::DebuggerScope::getOwnPropertySlot):
+            (JSC::DebuggerScope::put):
+            (JSC::DebuggerScope::deleteProperty):
+            (JSC::DebuggerScope::getOwnPropertyNames):
+            (JSC::DebuggerScope::defineOwnProperty):
+            (JSC::DebuggerScope::next):
+            (JSC::DebuggerScope::invalidateChain):
+            (JSC::DebuggerScope::isWithScope):
+            (JSC::DebuggerScope::isGlobalScope):
+            (JSC::DebuggerScope::isFunctionScope):
+            * debugger/DebuggerScope.h:
+            (JSC::DebuggerScope::create):
+            (JSC::DebuggerScope::Iterator::Iterator):
+            (JSC::DebuggerScope::Iterator::get):
+            (JSC::DebuggerScope::Iterator::operator++):
+            (JSC::DebuggerScope::Iterator::operator==):
+            (JSC::DebuggerScope::Iterator::operator!=):
+            (JSC::DebuggerScope::isValid):
+            (JSC::DebuggerScope::jsScope):
+            (JSC::DebuggerScope::begin):
+            (JSC::DebuggerScope::end):
+            * inspector/JSJavaScriptCallFrame.cpp:
+            (Inspector::JSJavaScriptCallFrame::scopeType):
+            (Inspector::JSJavaScriptCallFrame::scopeChain):
+            * inspector/JavaScriptCallFrame.h:
+            (Inspector::JavaScriptCallFrame::scopeChain):
+            * inspector/ScriptDebugServer.cpp:
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::reset):
+            (JSC::JSGlobalObject::visitChildren):
+            * runtime/JSGlobalObject.h:
+            (JSC::JSGlobalObject::debuggerScopeStructure):
+            * runtime/JSObject.h:
+            (JSC::JSObject::isWithScope):
+            * runtime/JSScope.h:
+            * runtime/VM.cpp:
+            (JSC::VM::VM):
+            * runtime/VM.h:
+    
+    2014-07-01  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG bytecode parser should turn PutById with nothing but a Setter stub as stuff+handleCall, and handleCall should be allowed to inline if it wants to
+            https://bugs.webkit.org/show_bug.cgi?id=130756
+    
+            Reviewed by Oliver Hunt.
+            
+            The enables exposing the call to setters in the DFG, and then inlining it. Previously we
+            already supproted inlined-cached calls to setters from within put_by_id inline caches,
+            and the DFG could certainly emit such IC's. Now, if an IC had a setter call, then the DFG
+            will either emit the GetGetterSetterByOffset/GetSetter/Call combo, or it will do one
+            better and inline the call.
+            
+            A lot of the core functionality was already available from the previous work to inline
+            getters. So, there are some refactorings in this patch that move preexisting
+            functionality around. For example, the work to figure out how the DFG should go about
+            getting to what we call the "loaded value" - i.e. the GetterSetter object reference in
+            the case of accessors - is now shared in ComplexGetStatus, and both GetByIdStatus and
+            PutByIdStatus use it. This means that we can keep the safety checks common.  This patch
+            also does additional refactorings in DFG::ByteCodeParser so that we can continue to reuse
+            handleCall() for all of the various kinds of calls we can now emit.
+            
+            83% speed-up on getter-richards, 2% speed-up on box2d.
+    
+            * CMakeLists.txt:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/ComplexGetStatus.cpp: Added.
+            (JSC::ComplexGetStatus::computeFor):
+            * bytecode/ComplexGetStatus.h: Added.
+            (JSC::ComplexGetStatus::ComplexGetStatus):
+            (JSC::ComplexGetStatus::skip):
+            (JSC::ComplexGetStatus::takesSlowPath):
+            (JSC::ComplexGetStatus::kind):
+            (JSC::ComplexGetStatus::attributes):
+            (JSC::ComplexGetStatus::specificValue):
+            (JSC::ComplexGetStatus::offset):
+            (JSC::ComplexGetStatus::chain):
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::computeForStubInfo):
+            * bytecode/GetByIdVariant.cpp:
+            (JSC::GetByIdVariant::GetByIdVariant):
+            * bytecode/PolymorphicPutByIdList.h:
+            (JSC::PutByIdAccess::PutByIdAccess):
+            (JSC::PutByIdAccess::setter):
+            (JSC::PutByIdAccess::structure):
+            (JSC::PutByIdAccess::chainCount):
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeFromLLInt):
+            (JSC::PutByIdStatus::computeFor):
+            (JSC::PutByIdStatus::computeForStubInfo):
+            (JSC::PutByIdStatus::makesCalls):
+            * bytecode/PutByIdStatus.h:
+            (JSC::PutByIdStatus::makesCalls): Deleted.
+            * bytecode/PutByIdVariant.cpp:
+            (JSC::PutByIdVariant::PutByIdVariant):
+            (JSC::PutByIdVariant::operator=):
+            (JSC::PutByIdVariant::replace):
+            (JSC::PutByIdVariant::transition):
+            (JSC::PutByIdVariant::setter):
+            (JSC::PutByIdVariant::writesStructures):
+            (JSC::PutByIdVariant::reallocatesStorage):
+            (JSC::PutByIdVariant::makesCalls):
+            (JSC::PutByIdVariant::dumpInContext):
+            * bytecode/PutByIdVariant.h:
+            (JSC::PutByIdVariant::PutByIdVariant):
+            (JSC::PutByIdVariant::structure):
+            (JSC::PutByIdVariant::oldStructure):
+            (JSC::PutByIdVariant::alternateBase):
+            (JSC::PutByIdVariant::specificValue):
+            (JSC::PutByIdVariant::callLinkStatus):
+            (JSC::PutByIdVariant::replace): Deleted.
+            (JSC::PutByIdVariant::transition): Deleted.
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+            (JSC::DFG::ByteCodeParser::addCall):
+            (JSC::DFG::ByteCodeParser::handleCall):
+            (JSC::DFG::ByteCodeParser::handleInlining):
+            (JSC::DFG::ByteCodeParser::handleGetById):
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * jit/Repatch.cpp:
+            (JSC::tryCachePutByID):
+            (JSC::tryBuildPutByIdList):
+            * runtime/IntendedStructureChain.cpp:
+            (JSC::IntendedStructureChain::takesSlowPathInDFGForImpureProperty):
+            * runtime/IntendedStructureChain.h:
+            * tests/stress/exit-from-setter.js: Added.
+            * tests/stress/poly-chain-setter.js: Added.
+            (Cons):
+            (foo):
+            (test):
+            * tests/stress/poly-chain-then-setter.js: Added.
+            (Cons1):
+            (Cons2):
+            (foo):
+            (test):
+            * tests/stress/poly-setter-combo.js: Added.
+            (Cons1):
+            (Cons2):
+            (foo):
+            (test):
+            (.test):
+            * tests/stress/poly-setter-then-self.js: Added.
+            (foo):
+            (test):
+            (.test):
+            * tests/stress/weird-setter-counter.js: Added.
+            (foo):
+            (test):
+            * tests/stress/weird-setter-counter-syntactic.js: Added.
+            (foo):
+            (test):
+    
+    2014-07-01  Matthew Mirman  <mmirman@apple.com>
+    
+            Added an implementation of the "in" check to FTL.
+            https://bugs.webkit.org/show_bug.cgi?id=134508
+    
+            Reviewed by Filip Pizlo.
+    
+            * ftl/FTLCapabilities.cpp: enabled compilation for "in"
+            (JSC::FTL::canCompile): ditto
+            * ftl/FTLCompile.cpp:
+            (JSC::FTL::generateCheckInICFastPath): added.
+            (JSC::FTL::fixFunctionBasedOnStackMaps): added case for CheckIn descriptors.
+            * ftl/FTLInlineCacheDescriptor.h:
+            (JSC::FTL::CheckInGenerator::CheckInGenerator): added.
+            (JSC::FTL::CheckInDescriptor::CheckInDescriptor): added.
+            * ftl/FTLInlineCacheSize.cpp: 
+            (JSC::FTL::sizeOfCheckIn): added. Currently larger than necessary.
+            * ftl/FTLInlineCacheSize.h: ditto
+            * ftl/FTLIntrinsicRepository.h: Added function type for operationInGeneric
+            * ftl/FTLLowerDFGToLLVM.cpp: 
+            (JSC::FTL::LowerDFGToLLVM::compileNode): added case for In.
+            (JSC::FTL::LowerDFGToLLVM::compileIn): added.
+            * ftl/FTLSlowPathCall.cpp: Added a callOperation for operationIn
+            (JSC::FTL::callOperation): ditto
+            * ftl/FTLSlowPathCall.h: ditto
+            * ftl/FTLState.h: Added a vector to hold CheckIn descriptors.
+            * jit/JITOperations.h: made operationIns internal.
+            * tests/stress/ftl-checkin.js: Added.
+            * tests/stress/ftl-checkin-variable.js: Added.
+    
+    2014-06-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            CodeBlock::stronglyVisitWeakReferences should mark DFG::CommonData::weakStructureReferences
+            https://bugs.webkit.org/show_bug.cgi?id=134455
+    
+            Reviewed by Geoffrey Garen.
+    
+            Otherwise we get hanging pointers which can cause us to die later.
+    
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::stronglyVisitWeakReferences):
+    
+    2014-06-27  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Reduce the GC's influence on optimization decisions
+            https://bugs.webkit.org/show_bug.cgi?id=134427
+    
+            Reviewed by Oliver Hunt.
+            
+            This is a slight speed-up on some platforms, that arises from a bunch of fixes that I made
+            while trying to make the GC keep more structures alive
+            (https://bugs.webkit.org/show_bug.cgi?id=128072).
+            
+            The fixes are, roughly:
+            
+            - If the GC clears an inline cache, then this no longer causes the IC to be forever
+              polymorphic.
+            
+            - If we exit in inlined code into a function that tries to OSR enter, then we jettison
+              sooner.
+            
+            - Some variables being uninitialized led to rage-recompilations.
+            
+            This is a pretty strong step in the direction of keeping more Structures alive and not
+            blowing away code just because a Structure died. But, it seems like there is still a slight
+            speed-up to be had from blowing away code that references dead Structures.
+    
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::dumpAssumingJITType):
+            (JSC::shouldMarkTransition):
+            (JSC::CodeBlock::propagateTransitions):
+            (JSC::CodeBlock::determineLiveness):
+            * bytecode/GetByIdStatus.cpp:
+            (JSC::GetByIdStatus::computeForStubInfo):
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeForStubInfo):
+            * dfg/DFGCapabilities.cpp:
+            (JSC::DFG::isSupportedForInlining):
+            (JSC::DFG::mightInlineFunctionForCall):
+            (JSC::DFG::mightInlineFunctionForClosureCall):
+            (JSC::DFG::mightInlineFunctionForConstruct):
+            * dfg/DFGCapabilities.h:
+            * dfg/DFGCommonData.h:
+            * dfg/DFGDesiredWeakReferences.cpp:
+            (JSC::DFG::DesiredWeakReferences::reallyAdd):
+            * dfg/DFGOSREntry.cpp:
+            (JSC::DFG::prepareOSREntry):
+            * dfg/DFGOSRExitCompilerCommon.cpp:
+            (JSC::DFG::handleExitCounts):
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGOperations.h:
+            * ftl/FTLForOSREntryJITCode.cpp:
+            (JSC::FTL::ForOSREntryJITCode::ForOSREntryJITCode): These variables being uninitialized is benign in terms of correctness but can sometimes cause rage-recompilations. For some reason it took this patch to reveal this.
+            * ftl/FTLOSREntry.cpp:
+            (JSC::FTL::prepareOSREntry):
+            * runtime/Executable.cpp:
+            (JSC::ExecutableBase::destroy):
+            (JSC::NativeExecutable::destroy):
+            (JSC::ScriptExecutable::ScriptExecutable):
+            (JSC::ScriptExecutable::destroy):
+            (JSC::ScriptExecutable::installCode):
+            (JSC::EvalExecutable::EvalExecutable):
+            (JSC::ProgramExecutable::ProgramExecutable):
+            * runtime/Executable.h:
+            (JSC::ScriptExecutable::setDidTryToEnterInLoop):
+            (JSC::ScriptExecutable::didTryToEnterInLoop):
+            (JSC::ScriptExecutable::addressOfDidTryToEnterInLoop):
+            (JSC::ScriptExecutable::ScriptExecutable): Deleted.
+            * runtime/StructureInlines.h:
+            (JSC::Structure::storedPrototypeObject):
+            (JSC::Structure::storedPrototypeStructure):
+    
+    2014-06-25  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] If a CodeBlock is jettisoned due to a watchpoint then it should be possible to figure out something about that watchpoint
+            https://bugs.webkit.org/show_bug.cgi?id=134333
+    
+            Reviewed by Geoffrey Garen.
+            
+            This is engineered to provide loads of information to the profiler without incurring any
+            costs when the profiler is disabled. It's the oldest trick in the book: the thing that
+            fires the watchpoint doesn't actually create anything to describe the reason why it was
+            fired; instead it creates a stack-allocated FireDetail subclass instance. Only if the
+            FireDetail::dump() virtual method is called does anything happen.
+            
+            Currently we use this to produce very fine-grained data for Structure watchpoints and
+            some cases of variable watchpoints. For all other situations, the given reason is just a
+            string constant, by using StringFireDetail. If we find a situation where that string
+            constant is insufficient to diagnose an issue then we can change it to provide more
+            fine-grained information.
+    
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::CodeBlock):
+            (JSC::CodeBlock::jettison):
+            * bytecode/CodeBlock.h:
+            * bytecode/CodeBlockJettisoningWatchpoint.cpp:
+            (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+            * bytecode/CodeBlockJettisoningWatchpoint.h:
+            * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp: Removed.
+            * bytecode/ProfiledCodeBlockJettisoningWatchpoint.h: Removed.
+            * bytecode/StructureStubClearingWatchpoint.cpp:
+            (JSC::StructureStubClearingWatchpoint::fireInternal):
+            * bytecode/StructureStubClearingWatchpoint.h:
+            * bytecode/VariableWatchpointSet.h:
+            (JSC::VariableWatchpointSet::invalidate):
+            (JSC::VariableWatchpointSet::finalizeUnconditionally):
+            * bytecode/VariableWatchpointSetInlines.h:
+            (JSC::VariableWatchpointSet::notifyWrite):
+            * bytecode/Watchpoint.cpp:
+            (JSC::StringFireDetail::dump):
+            (JSC::WatchpointSet::fireAll):
+            (JSC::WatchpointSet::fireAllSlow):
+            (JSC::WatchpointSet::fireAllWatchpoints):
+            (JSC::InlineWatchpointSet::fireAll):
+            * bytecode/Watchpoint.h:
+            (JSC::FireDetail::FireDetail):
+            (JSC::FireDetail::~FireDetail):
+            (JSC::StringFireDetail::StringFireDetail):
+            (JSC::Watchpoint::fire):
+            (JSC::WatchpointSet::fireAll):
+            (JSC::WatchpointSet::touch):
+            (JSC::WatchpointSet::invalidate):
+            (JSC::InlineWatchpointSet::fireAll):
+            (JSC::InlineWatchpointSet::touch):
+            * dfg/DFGCommonData.h:
+            * dfg/DFGOperations.cpp:
+            * interpreter/Interpreter.cpp:
+            (JSC::Interpreter::execute):
+            * jsc.cpp:
+            (WTF::Masquerader::create):
+            * profiler/ProfilerCompilation.cpp:
+            (JSC::Profiler::Compilation::setJettisonReason):
+            (JSC::Profiler::Compilation::toJS):
+            * profiler/ProfilerCompilation.h:
+            (JSC::Profiler::Compilation::setJettisonReason): Deleted.
+            * runtime/ArrayBuffer.cpp:
+            (JSC::ArrayBuffer::transfer):
+            * runtime/ArrayBufferNeuteringWatchpoint.cpp:
+            (JSC::ArrayBufferNeuteringWatchpoint::fireAll):
+            * runtime/ArrayBufferNeuteringWatchpoint.h:
+            * runtime/CommonIdentifiers.h:
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::SLOW_PATH_DECL):
+            * runtime/Identifier.cpp:
+            (JSC::Identifier::dump):
+            * runtime/Identifier.h:
+            * runtime/JSFunction.cpp:
+            (JSC::JSFunction::put):
+            (JSC::JSFunction::defineOwnProperty):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::addFunction):
+            (JSC::JSGlobalObject::haveABadTime):
+            * runtime/JSSymbolTableObject.cpp:
+            (JSC::VariableWriteFireDetail::dump):
+            * runtime/JSSymbolTableObject.h:
+            (JSC::VariableWriteFireDetail::VariableWriteFireDetail):
+            (JSC::symbolTablePut):
+            (JSC::symbolTablePutWithAttributes):
+            * runtime/PropertyName.h:
+            (JSC::PropertyName::dump):
+            * runtime/Structure.cpp:
+            (JSC::Structure::notifyTransitionFromThisStructure):
+            * runtime/Structure.h:
+            (JSC::Structure::notifyTransitionFromThisStructure): Deleted.
+            * runtime/SymbolTable.cpp:
+            (JSC::SymbolTableEntry::notifyWriteSlow):
+            (JSC::SymbolTable::WatchpointCleanup::finalizeUnconditionally):
+            * runtime/SymbolTable.h:
+            (JSC::SymbolTableEntry::notifyWrite):
+            * runtime/VM.cpp:
+            (JSC::VM::addImpureProperty):
+    
 2014-08-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172099.

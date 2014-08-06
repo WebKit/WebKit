@@ -28,6 +28,7 @@
 
 #include "AccessorCallJITStubRoutine.h"
 #include "CodeBlock.h"
+#include "ComplexGetStatus.h"
 #include "JSCInlines.h"
 #include "JSScope.h"
 #include "LLIntData.h"
@@ -83,15 +84,12 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         return GetByIdStatus(NoInformation, false);
 
     unsigned attributesIgnored;
-    JSCell* specificValue;
     PropertyOffset offset = structure->getConcurrently(
-        *profiledBlock->vm(), uid, attributesIgnored, specificValue);
-    if (structure->isDictionary())
-        specificValue = 0;
+        *profiledBlock->vm(), uid, attributesIgnored);
     if (!isValidOffset(offset))
         return GetByIdStatus(NoInformation, false);
     
-    return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset, specificValue));
+    return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
 }
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, StringImpl* uid)
@@ -138,9 +136,6 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         }
     }
     
-    if (stubInfo->resetByGC)
-        return GetByIdStatus(TakesSlowPath, true);
-
     // Finally figure out if we can derive an access strategy.
     GetByIdStatus result;
     result.m_state = Simple;
@@ -154,18 +149,13 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         if (structure->takesSlowPathInDFGForImpureProperty())
             return GetByIdStatus(slowPathState, true);
         unsigned attributesIgnored;
-        JSCell* specificValue;
         GetByIdVariant variant;
         variant.m_offset = structure->getConcurrently(
-            *profiledBlock->vm(), uid, attributesIgnored, specificValue);
+            *profiledBlock->vm(), uid, attributesIgnored);
         if (!isValidOffset(variant.m_offset))
             return GetByIdStatus(slowPathState, true);
         
-        if (structure->isDictionary())
-            specificValue = 0;
-        
         variant.m_structureSet.add(structure);
-        variant.m_specificValue = JSValue(specificValue);
         bool didAppend = result.appendVariant(variant);
         ASSERT_UNUSED(didAppend, didAppend);
         return result;
@@ -175,88 +165,49 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             Structure* structure = list->at(listIndex).structure();
             
-            // FIXME: We should assert that we never see a structure that
-            // hasImpureGetOwnPropertySlot() but for which we don't
-            // newImpurePropertyFiresWatchpoints(). We're not at a point where we can do
-            // that, yet.
-            // https://bugs.webkit.org/show_bug.cgi?id=131810
-            
-            if (structure->takesSlowPathInDFGForImpureProperty())
+            ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
+                profiledBlock, structure, list->at(listIndex).chain(),
+                list->at(listIndex).chainCount(), uid);
+             
+            switch (complexGetStatus.kind()) {
+            case ComplexGetStatus::ShouldSkip:
+                continue;
+                 
+            case ComplexGetStatus::TakesSlowPath:
                 return GetByIdStatus(slowPathState, true);
-            
-            unsigned attributesIgnored;
-            JSCell* specificValue;
-            PropertyOffset myOffset;
-            RefPtr<IntendedStructureChain> chain;
-
-            if (list->at(listIndex).chain()) {
-                chain = adoptRef(new IntendedStructureChain(
-                    profiledBlock, structure, list->at(listIndex).chain(),
-                    list->at(listIndex).chainCount()));
-                
-                if (!chain->isStillValid()) {
-                    // This won't ever run again so skip it.
-                    continue;
+                 
+            case ComplexGetStatus::Inlineable: {
+                std::unique_ptr<CallLinkStatus> callLinkStatus;
+                switch (list->at(listIndex).type()) {
+                case GetByIdAccess::SimpleInline:
+                case GetByIdAccess::SimpleStub: {
+                    break;
                 }
-                
-                if (structure->takesSlowPathInDFGForImpureProperty())
+                case GetByIdAccess::Getter: {
+                    AccessorCallJITStubRoutine* stub = static_cast<AccessorCallJITStubRoutine*>(
+                        list->at(listIndex).stubRoutine());
+                    callLinkStatus = std::make_unique<CallLinkStatus>(
+                        CallLinkStatus::computeFor(locker, *stub->m_callLinkInfo, callExitSiteData));
+                    break;
+                }
+                case GetByIdAccess::CustomGetter:
+                case GetByIdAccess::WatchedStub:{
+                    // FIXME: It would be totally sweet to support this at some point in the future.
+                    // https://bugs.webkit.org/show_bug.cgi?id=133052
                     return GetByIdStatus(slowPathState, true);
-                
-                size_t chainSize = chain->size();
-                for (size_t i = 0; i < chainSize; i++) {
-                    if (chain->at(i)->takesSlowPathInDFGForImpureProperty())
-                        return GetByIdStatus(slowPathState, true);
                 }
-                
-                JSObject* currentObject = chain->terminalPrototype();
-                Structure* currentStructure = chain->last();
-                
-                ASSERT_UNUSED(currentObject, currentObject);
-                
-                myOffset = currentStructure->getConcurrently(
-                    *profiledBlock->vm(), uid, attributesIgnored, specificValue);
-                if (currentStructure->isDictionary())
-                    specificValue = 0;
-            } else {
-                myOffset = structure->getConcurrently(
-                    *profiledBlock->vm(), uid, attributesIgnored, specificValue);
-                if (structure->isDictionary())
-                    specificValue = 0;
-            }
-            
-            if (!isValidOffset(myOffset))
-                return GetByIdStatus(slowPathState, true);
-            
-            std::unique_ptr<CallLinkStatus> callLinkStatus;
-            switch (list->at(listIndex).type()) {
-            case GetByIdAccess::SimpleInline:
-            case GetByIdAccess::SimpleStub: {
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                 
+                GetByIdVariant variant(
+                    StructureSet(structure), complexGetStatus.offset(), complexGetStatus.chain(),
+                    std::move(callLinkStatus));
+                 
+                if (!result.appendVariant(variant))
+                    return GetByIdStatus(slowPathState, true);
                 break;
-            }
-            case GetByIdAccess::Getter: {
-                AccessorCallJITStubRoutine* stub = static_cast<AccessorCallJITStubRoutine*>(
-                    list->at(listIndex).stubRoutine());
-                callLinkStatus = std::make_unique<CallLinkStatus>(
-                    CallLinkStatus::computeFor(locker, *stub->m_callLinkInfo, callExitSiteData));
-                break;
-            }
-            case GetByIdAccess::CustomGetter:
-            case GetByIdAccess::WatchedStub: {
-                // FIXME: It would be totally sweet to support these at some point in the future.
-                // https://bugs.webkit.org/show_bug.cgi?id=133052
-                // https://bugs.webkit.org/show_bug.cgi?id=135172
-                return GetByIdStatus(slowPathState, true);
-            }
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-            
-            GetByIdVariant variant(
-                StructureSet(structure), myOffset, specificValue, chain.get(),
-                WTF::move(callLinkStatus));
-            
-            if (!result.appendVariant(variant))
-                return GetByIdStatus(slowPathState, true);
+            } }
         }
         
         return result;
@@ -334,16 +285,13 @@ GetByIdStatus GetByIdStatus::computeFor(VM& vm, const StructureSet& set, StringI
             return GetByIdStatus(TakesSlowPath);
         
         unsigned attributes;
-        JSCell* specificValue;
-        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
+        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes);
         if (!isValidOffset(offset))
             return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
         if (attributes & Accessor)
             return GetByIdStatus(MakesCalls); // We could be smarter here, like strenght-reducing this to a Call.
-        if (structure->isDictionary())
-            specificValue = 0;
         
-        if (!result.appendVariant(GetByIdVariant(structure, offset, specificValue)))
+        if (!result.appendVariant(GetByIdVariant(structure, offset)))
             return GetByIdStatus(TakesSlowPath);
     }
     

@@ -60,5 +60,10 @@ Structure* ArrayBufferNeuteringWatchpoint::createStructure(VM& vm)
     return Structure::create(vm, 0, jsNull(), TypeInfo(CellType, StructureFlags), info());
 }
 
+void ArrayBufferNeuteringWatchpoint::fireAll()
+{
+    set()->fireAll("Array buffer was neutered");
+}
+
 } // namespace JSC
 

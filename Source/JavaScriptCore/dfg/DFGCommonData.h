@@ -32,7 +32,6 @@
 #include "DFGJumpReplacement.h"
 #include "InlineCallFrameSet.h"
 #include "JSCell.h"
-#include "ProfiledCodeBlockJettisoningWatchpoint.h"
 #include "ProfilerCompilation.h"
 #include "SymbolTable.h"
 #include <wtf/Bag.h>
@@ -95,8 +94,8 @@ public:
     Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell>> weakReferences;
+    Vector<WriteBarrier<Structure>> weakStructureReferences;
     SegmentedVector<CodeBlockJettisoningWatchpoint, 1, 0> watchpoints;
-    SegmentedVector<ProfiledCodeBlockJettisoningWatchpoint, 1, 0> profiledWatchpoints;
     Vector<JumpReplacement> jumpReplacements;
     
     RefPtr<Profiler::Compilation> compilation;

@@ -33,17 +33,15 @@
 namespace JSC {
 
 GetByIdVariant::GetByIdVariant(
-    const StructureSet& structureSet, PropertyOffset offset, JSValue specificValue,
+    const StructureSet& structureSet, PropertyOffset offset,
     const IntendedStructureChain* chain, std::unique_ptr<CallLinkStatus> callLinkStatus)
     : m_structureSet(structureSet)
     , m_alternateBase(nullptr)
-    , m_specificValue(specificValue)
     , m_offset(offset)
     , m_callLinkStatus(WTF::move(callLinkStatus))
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);
-        ASSERT(!specificValue);
         ASSERT(!chain);
     }
     
@@ -56,6 +54,7 @@ GetByIdVariant::GetByIdVariant(
 GetByIdVariant::~GetByIdVariant() { }
 
 GetByIdVariant::GetByIdVariant(const GetByIdVariant& other)
+    : GetByIdVariant()
 {
     *this = other;
 }
@@ -65,13 +64,22 @@ GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
     m_structureSet = other.m_structureSet;
     m_constantChecks = other.m_constantChecks;
     m_alternateBase = other.m_alternateBase;
-    m_specificValue = other.m_specificValue;
     m_offset = other.m_offset;
     if (other.m_callLinkStatus)
         m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
     else
         m_callLinkStatus = nullptr;
     return *this;
+}
+
+StructureSet GetByIdVariant::baseStructure() const
+{
+    if (!m_alternateBase)
+        return structureSet();
+    
+    Structure* structure = structureFor(m_constantChecks, m_alternateBase);
+    RELEASE_ASSERT(structure);
+    return structure;
 }
 
 bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
@@ -85,9 +93,6 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     if (!areCompatible(m_constantChecks, other.m_constantChecks))
         return false;
     
-    if (m_specificValue != other.m_specificValue)
-        m_specificValue = JSValue();
-
     mergeInto(other.m_constantChecks, m_constantChecks);
     m_structureSet.merge(other.m_structureSet);
     
@@ -111,8 +116,6 @@ void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         "[", listDumpInContext(m_constantChecks, context), "]");
     if (m_alternateBase)
         out.print(", alternateBase = ", inContext(JSValue(m_alternateBase), context));
-    if (specificValue())
-        out.print(", specificValue = ", inContext(specificValue(), context));
     out.print(", offset = ", offset());
     if (m_callLinkStatus)
         out.print(", call = ", *m_callLinkStatus);

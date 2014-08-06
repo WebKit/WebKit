@@ -108,6 +108,14 @@ public:
     {
         return m_impl ? toUInt32FromStringImpl(m_impl) : NotAnIndex;
     }
+    
+    void dump(PrintStream& out) const
+    {
+        if (m_impl)
+            out.print(m_impl);
+        else
+            out.print("<null property name>");
+    }
 
 private:
     AtomicStringImpl* m_impl;

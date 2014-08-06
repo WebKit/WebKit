@@ -58,6 +58,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 
     sanitizeStackForVM(vm);
     
+    if (bytecodeIndex)
+        codeBlock->ownerExecutable()->setDidTryToEnterInLoop(true);
+    
     if (codeBlock->jitType() != JITCode::DFGJIT) {
         RELEASE_ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
         

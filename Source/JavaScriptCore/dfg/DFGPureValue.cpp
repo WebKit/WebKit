@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,45 +24,29 @@
  */
 
 #include "config.h"
-#include "ProfiledCodeBlockJettisoningWatchpoint.h"
+#include "DFGPureValue.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGCommon.h"
-#include "DFGExitProfile.h"
-#include "JSCInlines.h"
+#include "DFGGraph.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
+void PureValue::dump(PrintStream& out) const
 {
-    if (DFG::shouldShowDisassembly()) {
-        dataLog(
-            "Firing profiled watchpoint ", RawPointer(this), " on ", *m_codeBlock, " due to ",
-            m_exitKind, " at ", m_codeOrigin, "\n");
+    out.print(Graph::opName(op()));
+    out.print("(");
+    CommaPrinter comma;
+    for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+        if (children().child(i))
+            out.print(comma, children().child(i));
     }
-    
-    // FIXME: Maybe this should call alternative().
-    // https://bugs.webkit.org/show_bug.cgi?id=123677
-    CodeBlock* machineBaselineCodeBlock = m_codeBlock->baselineAlternative();
-    CodeBlock* sourceBaselineCodeBlock =
-        baselineCodeBlockForOriginAndBaselineCodeBlock(
-            m_codeOrigin, machineBaselineCodeBlock);
-    
-    if (sourceBaselineCodeBlock) {
-        sourceBaselineCodeBlock->addFrequentExitSite(
-            DFG::FrequentExitSite(
-                m_codeOrigin.bytecodeIndex, m_exitKind,
-                exitingJITTypeFor(m_codeBlock->jitType())));
-    }
-    
-    m_codeBlock->jettison(Profiler::JettisonDueToProfiledWatchpoint, CountReoptimization);
-    
-    if (isOnList())
-        remove();
+    if (m_info)
+        out.print(comma, m_info);
+    out.print(")");
 }
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+

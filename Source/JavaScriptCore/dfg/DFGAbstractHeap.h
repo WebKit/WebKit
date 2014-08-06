@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,31 +42,22 @@ namespace JSC { namespace DFG {
 #define FOR_EACH_ABSTRACT_HEAP_KIND(macro) \
     macro(InvalidAbstractHeap) \
     macro(World) \
-    macro(Arguments_numArguments) \
-    macro(Arguments_overrideLength) \
     macro(Arguments_registers) \
-    macro(Arguments_slowArguments) \
-    macro(ArrayBuffer_data) \
-    macro(Butterfly_arrayBuffer) \
     macro(Butterfly_publicLength) \
     macro(Butterfly_vectorLength) \
     macro(GetterSetter_getter) \
     macro(GetterSetter_setter) \
-    macro(JSArrayBufferView_length) \
-    macro(JSArrayBufferView_mode) \
-    macro(JSArrayBufferView_vector) \
     macro(JSCell_structureID) \
     macro(JSCell_indexingType) \
     macro(JSCell_typeInfoFlags) \
     macro(JSCell_typeInfoType) \
-    macro(JSFunction_executable) \
-    macro(JSFunction_scopeChain) \
     macro(JSObject_butterfly) \
     macro(JSVariableObject_registers) \
     macro(NamedProperties) \
     macro(IndexedInt32Properties) \
     macro(IndexedDoubleProperties) \
     macro(IndexedContiguousProperties) \
+    macro(IndexedArrayStorageProperties) \
     macro(ArrayStorageProperties) \
     macro(Variables) \
     macro(TypedArrayProperties) \
@@ -76,7 +67,7 @@ namespace JSC { namespace DFG {
     macro(Absolute) \
     /* Use this for writes only, to indicate that this may fire watchpoints. Usually this is never directly written but instead we test to see if a node clobbers this; it just so happens that you have to write world to clobber it. */\
     macro(Watchpoint_fire) \
-    /* Use this for reads only, just to indicate that if the world got clobbered, then this operation will not work. */\
+    /* Use these for reads only, just to indicate that if the world got clobbered, then this operation will not work. */\
     macro(MiscFields) \
     /* Use this for writes only, just to indicate that hoisting the node is invalid. This works because we don't hoist anything that has any side effects at all. */\
     macro(SideState)
@@ -207,7 +198,7 @@ public:
         return payloadImpl();
     }
     
-    bool isDisjoint(const AbstractHeap& other)
+    bool isDisjoint(const AbstractHeap& other) const
     {
         ASSERT(kind() != InvalidAbstractHeap);
         ASSERT(other.kind() != InvalidAbstractHeap);
@@ -220,7 +211,7 @@ public:
         return payload().isDisjoint(other.payload());
     }
     
-    bool overlaps(const AbstractHeap& other)
+    bool overlaps(const AbstractHeap& other) const
     {
         return !isDisjoint(other);
     }

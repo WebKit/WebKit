@@ -171,8 +171,8 @@ struct BasicBlock : RefCounted<BasicBlock> {
         SSAData(BasicBlock*);
         ~SSAData();
     };
-    OwnPtr<SSAData> ssa;
-
+    std::unique_ptr<SSAData> ssa;
+    
 private:
     friend class InsertionSet;
     Vector<Node*, 8> m_nodes;

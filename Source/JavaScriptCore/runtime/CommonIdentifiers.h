@@ -62,6 +62,7 @@
     macro(__lookupGetter__) \
     macro(__lookupSetter__) \
     macro(add) \
+    macro(additionalJettisonReason) \
     macro(anonymous) \
     macro(arguments) \
     macro(assign) \

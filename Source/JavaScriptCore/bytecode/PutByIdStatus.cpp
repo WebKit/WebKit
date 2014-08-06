@@ -26,7 +26,9 @@
 #include "config.h"
 #include "PutByIdStatus.h"
 
+#include "AccessorCallJITStubRoutine.h"
 #include "CodeBlock.h"
+#include "ComplexGetStatus.h"
 #include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -96,10 +98,11 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation);
     
-    return PutByIdVariant::transition(
-        structure, newStructure,
-        chain ? adoptRef(new IntendedStructureChain(profiledBlock, structure, chain)) : 0,
-        offset);
+    RefPtr<IntendedStructureChain> intendedChain;
+    if (chain)
+        intendedChain = adoptRef(new IntendedStructureChain(profiledBlock, structure, chain));
+    
+    return PutByIdVariant::transition(structure, newStructure, intendedChain.get(), offset);
 }
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, StringImpl* uid)
@@ -115,7 +118,9 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
         return PutByIdStatus(TakesSlowPath);
     
     StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
-    PutByIdStatus result = computeForStubInfo(locker, profiledBlock, stubInfo, uid);
+    PutByIdStatus result = computeForStubInfo(
+        locker, profiledBlock, stubInfo, uid,
+        CallLinkStatus::computeExitSiteData(locker, profiledBlock, bytecodeIndex));
     if (!result)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
@@ -127,14 +132,13 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 }
 
 #if ENABLE(JIT)
-PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, StringImpl* uid)
+PutByIdStatus PutByIdStatus::computeForStubInfo(
+    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
+    StringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     if (!stubInfo || !stubInfo->seen)
         return PutByIdStatus();
     
-    if (stubInfo->resetByGC)
-        return PutByIdStatus(TakesSlowPath);
-
     switch (stubInfo->accessType) {
     case access_unset:
         // If the JIT saw it but didn't optimize it, then assume that this takes slow path.
@@ -158,13 +162,16 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
             stubInfo->u.putByIdTransition.structure->getConcurrently(
                 *profiledBlock->vm(), uid);
         if (isValidOffset(offset)) {
+            RefPtr<IntendedStructureChain> chain;
+            if (stubInfo->u.putByIdTransition.chain) {
+                chain = adoptRef(new IntendedStructureChain(
+                    profiledBlock, stubInfo->u.putByIdTransition.previousStructure.get(),
+                    stubInfo->u.putByIdTransition.chain.get()));
+            }
             return PutByIdVariant::transition(
                 stubInfo->u.putByIdTransition.previousStructure.get(),
                 stubInfo->u.putByIdTransition.structure.get(),
-                stubInfo->u.putByIdTransition.chain ? adoptRef(new IntendedStructureChain(
-                    profiledBlock, stubInfo->u.putByIdTransition.previousStructure.get(),
-                    stubInfo->u.putByIdTransition.chain.get())) : 0,
-                offset);
+                chain.get(), offset);
         }
         return PutByIdStatus(TakesSlowPath);
     }
@@ -175,17 +182,32 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
         PutByIdStatus result;
         result.m_state = Simple;
         
+        State slowPathState = TakesSlowPath;
         for (unsigned i = 0; i < list->size(); ++i) {
             const PutByIdAccess& access = list->at(i);
+            
+            switch (access.type()) {
+            case PutByIdAccess::Setter:
+            case PutByIdAccess::CustomSetter:
+                slowPathState = MakesCalls;
+                break;
+            default:
+                break;
+            }
+        }
+        
+        for (unsigned i = 0; i < list->size(); ++i) {
+            const PutByIdAccess& access = list->at(i);
+            
+            PutByIdVariant variant;
             
             switch (access.type()) {
             case PutByIdAccess::Replace: {
                 Structure* structure = access.structure();
                 PropertyOffset offset = structure->getConcurrently(*profiledBlock->vm(), uid);
                 if (!isValidOffset(offset))
-                    return PutByIdStatus(TakesSlowPath);
-                if (!result.appendVariant(PutByIdVariant::replace(structure, offset)))
-                    return PutByIdStatus(TakesSlowPath);
+                    return PutByIdStatus(slowPathState);
+                variant = PutByIdVariant::replace(structure, offset);
                 break;
             }
                 
@@ -193,7 +215,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                 PropertyOffset offset =
                     access.newStructure()->getConcurrently(*profiledBlock->vm(), uid);
                 if (!isValidOffset(offset))
-                    return PutByIdStatus(TakesSlowPath);
+                    return PutByIdStatus(slowPathState);
                 RefPtr<IntendedStructureChain> chain;
                 if (access.chain()) {
                     chain = adoptRef(new IntendedStructureChain(
@@ -201,19 +223,48 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJITLocker&, Code
                     if (!chain->isStillValid())
                         continue;
                 }
-                bool ok = result.appendVariant(PutByIdVariant::transition(
-                    access.oldStructure(), access.newStructure(), chain.get(), offset));
-                if (!ok)
-                    return PutByIdStatus(TakesSlowPath);
+                variant = PutByIdVariant::transition(
+                    access.oldStructure(), access.newStructure(), chain.get(), offset);
                 break;
             }
-            case PutByIdAccess::Setter:
+                
+            case PutByIdAccess::Setter: {
+                Structure* structure = access.structure();
+                
+                ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
+                    profiledBlock, structure, access.chain(), access.chainCount(), uid);
+                
+                switch (complexGetStatus.kind()) {
+                case ComplexGetStatus::ShouldSkip:
+                    continue;
+                    
+                case ComplexGetStatus::TakesSlowPath:
+                    return PutByIdStatus(slowPathState);
+                    
+                case ComplexGetStatus::Inlineable: {
+                    AccessorCallJITStubRoutine* stub = static_cast<AccessorCallJITStubRoutine*>(
+                        access.stubRoutine());
+                    std::unique_ptr<CallLinkStatus> callLinkStatus =
+                        std::make_unique<CallLinkStatus>(
+                            CallLinkStatus::computeFor(
+                                locker, *stub->m_callLinkInfo, callExitSiteData));
+                    
+                    variant = PutByIdVariant::setter(
+                        structure, complexGetStatus.offset(), complexGetStatus.chain(),
+                        std::move(callLinkStatus));
+                } }
+                break;
+            }
+                
             case PutByIdAccess::CustomSetter:
                 return PutByIdStatus(MakesCalls);
 
             default:
-                return PutByIdStatus(TakesSlowPath);
+                return PutByIdStatus(slowPathState);
             }
+            
+            if (!result.appendVariant(variant))
+                return PutByIdStatus(slowPathState);
         }
         
         return result;
@@ -229,16 +280,20 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
 {
 #if ENABLE(DFG_JIT)
     if (dfgBlock) {
+        CallLinkStatus::ExitSiteData exitSiteData;
         {
             ConcurrentJITLocker locker(baselineBlock->m_lock);
             if (hasExitSite(locker, baselineBlock, codeOrigin.bytecodeIndex, ExitFromFTL))
                 return PutByIdStatus(TakesSlowPath);
+            exitSiteData = CallLinkStatus::computeExitSiteData(
+                locker, baselineBlock, codeOrigin.bytecodeIndex, ExitFromFTL);
         }
             
         PutByIdStatus result;
         {
             ConcurrentJITLocker locker(dfgBlock->m_lock);
-            result = computeForStubInfo(locker, dfgBlock, dfgMap.get(codeOrigin), uid);
+            result = computeForStubInfo(
+                locker, dfgBlock, dfgMap.get(codeOrigin), uid, exitSiteData);
         }
         
         // We use TakesSlowPath in some cases where the stub was unset. That's weird and
@@ -275,19 +330,24 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, co
             return PutByIdStatus(TakesSlowPath);
     
         unsigned attributes;
-        JSCell* specificValue;
-        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
+        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes);
         if (isValidOffset(offset)) {
             if (attributes & CustomAccessor)
                 return PutByIdStatus(MakesCalls);
 
             if (attributes & (Accessor | ReadOnly))
                 return PutByIdStatus(TakesSlowPath);
-            if (specificValue) {
-                // We need the PutById slow path to verify that we're storing the right value into
-                // the specialized slot.
+            
+            WatchpointSet* replaceSet = structure->propertyReplacementWatchpointSet(offset);
+            if (!replaceSet || replaceSet->isStillValid()) {
+                // When this executes, it'll create, and fire, this replacement watchpoint set.
+                // That means that  this has probably never executed or that something fishy is
+                // going on. Also, we cannot create or fire the watchpoint set from the concurrent
+                // JIT thread, so even if we wanted to do this, we'd need to have a lazy thingy.
+                // So, better leave this alone and take slow path.
                 return PutByIdStatus(TakesSlowPath);
             }
+            
             if (!result.appendVariant(PutByIdVariant::replace(structure, offset)))
                 return PutByIdStatus(TakesSlowPath);
             continue;
@@ -325,31 +385,34 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, co
         }
     
         // We only optimize if there is already a structure that the transition is cached to.
-        // Among other things, this allows us to guard against a transition with a specific
-        // value.
-        //
-        // - If we're storing a value that could be specific: this would only be a problem if
-        //   the existing transition did have a specific value already, since if it didn't,
-        //   then we would behave "as if" we were not storing a specific value. If it did
-        //   have a specific value, then we'll know - the fact that we pass 0 for
-        //   specificValue will tell us.
-        //
-        // - If we're not storing a value that could be specific: again, this would only be a
-        //   problem if the existing transition did have a specific value, which we check for
-        //   by passing 0 for the specificValue.
-        Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, 0, offset);
+        Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, offset);
         if (!transition)
-            return PutByIdStatus(TakesSlowPath); // This occurs in bizarre cases only. See above.
-        ASSERT(!transition->transitionDidInvolveSpecificValue());
+            return PutByIdStatus(TakesSlowPath);
         ASSERT(isValidOffset(offset));
     
         bool didAppend = result.appendVariant(
-            PutByIdVariant::transition(structure, transition, chain.release(), offset));
+            PutByIdVariant::transition(structure, transition, chain.get(), offset));
         if (!didAppend)
             return PutByIdStatus(TakesSlowPath);
     }
     
     return result;
+}
+
+bool PutByIdStatus::makesCalls() const
+{
+    if (m_state == MakesCalls)
+        return true;
+    
+    if (m_state != Simple)
+        return false;
+    
+    for (unsigned i = m_variants.size(); i--;) {
+        if (m_variants[i].makesCalls())
+            return true;
+    }
+    
+    return false;
 }
 
 void PutByIdStatus::dump(PrintStream& out) const

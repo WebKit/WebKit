@@ -1,3 +1,34 @@
+2014-07-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r170564, r170571, r170604, r170628, r170672, r170680, r170724, r170728, r170729, r170819, r170821, r170836, r170855, r170860, r170890, r170907, r170929, r171052, r171106, r171152, r171153, r171214 from ftlopt.
+
+    2014-07-01  Mark Lam  <mark.lam@apple.com>
+    
+            [ftlopt] DebuggerCallFrame::scope() should return a DebuggerScope.
+            <https://webkit.org/b/134420>
+    
+            Reviewed by Geoffrey Garen.
+    
+            No new tests.
+    
+            * ForwardingHeaders/debugger/DebuggerCallFrame.h: Removed.
+            - This is not in use.  Hence, we can remove it.
+            * bindings/js/ScriptController.cpp:
+            (WebCore::ScriptController::attachDebugger):
+            - We should acquire the JSLock before modifying a JS global object.
+    
+    2014-06-25  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] If a CodeBlock is jettisoned due to a watchpoint then it should be possible to figure out something about that watchpoint
+            https://bugs.webkit.org/show_bug.cgi?id=134333
+    
+            Reviewed by Geoffrey Garen.
+    
+            No new tests because no change in behavior.
+    
+            * bindings/scripts/CodeGeneratorJS.pm:
+            (GenerateHeader):
+    
 2014-08-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Build break since r172093

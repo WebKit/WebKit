@@ -32,12 +32,12 @@
 
 namespace JSC {
 
-void CodeBlockJettisoningWatchpoint::fireInternal()
+void CodeBlockJettisoningWatchpoint::fireInternal(const FireDetail& detail)
 {
     if (DFG::shouldShowDisassembly())
         dataLog("Firing watchpoint ", RawPointer(this), " on ", *m_codeBlock, "\n");
 
-    m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization);
+    m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &detail);
 
     if (isOnList())
         remove();

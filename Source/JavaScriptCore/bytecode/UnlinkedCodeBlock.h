@@ -272,6 +272,8 @@ public:
     void addExpressionInfo(unsigned instructionOffset, int divot,
         int startOffset, int endOffset, unsigned line, unsigned column);
 
+    void addHighFidelityTypeProfileExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot);
+
     bool hasExpressionInfo() { return m_expressionInfo.size(); }
 
     // Special registers
@@ -464,6 +466,8 @@ public:
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
+    bool highFidelityTypeProfileExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
+
     void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned firstLine, unsigned lineCount, unsigned endColumn)
     {
         m_features = features;
@@ -575,6 +579,11 @@ public:
 private:
     OwnPtr<RareData> m_rareData;
     Vector<ExpressionRangeInfo> m_expressionInfo;
+    struct HighFidelityTypeProfileExpressionRange {
+        unsigned m_startDivot;
+        unsigned m_endDivot;
+    };
+    HashMap<unsigned, HighFidelityTypeProfileExpressionRange> m_highFidelityTypeProfileInfoMap;
 
 protected:
 

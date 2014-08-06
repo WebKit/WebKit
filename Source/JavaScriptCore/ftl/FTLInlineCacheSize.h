@@ -33,6 +33,7 @@ namespace JSC { namespace FTL {
 size_t sizeOfGetById();
 size_t sizeOfPutById();
 size_t sizeOfCall();
+size_t sizeOfCheckIn();
 
 } } // namespace JSC::FTL
 

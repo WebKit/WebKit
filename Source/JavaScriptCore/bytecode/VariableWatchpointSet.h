@@ -31,7 +31,23 @@
 
 namespace JSC {
 
+class JSObject;
 class SymbolTable;
+
+class VariableWriteFireDetail : public FireDetail {
+public:
+    VariableWriteFireDetail(JSObject* object, const PropertyName& name)
+        : m_object(object)
+        , m_name(name)
+    {
+    }
+    
+    virtual void dump(PrintStream&) const override;
+
+private:
+    JSObject* m_object;
+    const PropertyName& m_name;
+};
 
 class VariableWatchpointSet : public WatchpointSet {
     friend class LLIntOffsetsExtractor;
@@ -57,15 +73,17 @@ public:
     //        you will have been notified that the watchpoint was fired.
     JSValue inferredValue() const { return m_inferredValue.get(); }
     
-    inline void notifyWrite(VM&, JSValue);
+    void notifyWrite(VM&, JSValue, const FireDetail&);
+    JS_EXPORT_PRIVATE void notifyWrite(VM&, JSValue, JSObject* baseObject, const PropertyName&);
+    void notifyWrite(VM&, JSValue, const char* reason);
     
-    void invalidate()
+    void invalidate(const FireDetail& detail)
     {
         m_inferredValue.clear();
-        WatchpointSet::invalidate();
+        WatchpointSet::invalidate(detail);
     }
     
-    void finalizeUnconditionally()
+    void finalizeUnconditionally(const FireDetail& detail)
     {
         ASSERT(!!m_inferredValue == (state() == IsWatched));
         if (!m_inferredValue)
@@ -76,7 +94,7 @@ public:
         JSCell* cell = inferredValue.asCell();
         if (Heap::isMarked(cell))
             return;
-        invalidate();
+        invalidate(detail);
     }
 
     WriteBarrier<Unknown>* addressOfInferredValue() { return &m_inferredValue; }

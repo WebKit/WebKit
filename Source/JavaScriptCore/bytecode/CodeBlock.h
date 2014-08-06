@@ -64,6 +64,7 @@
 #include "ProfilerJettisonReason.h"
 #include "RegExpObject.h"
 #include "StructureStubInfo.h"
+#include "TypeSet.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
@@ -310,7 +311,7 @@ public:
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 
-    void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization);
+    void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization, const FireDetail* = nullptr);
     
     ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 
@@ -940,6 +941,13 @@ public:
     NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
 
     bool isKnownToBeLiveDuringGC(); // Will only return valid results when called during GC. Assumes that you've already established that the owner executable is live.
+    RefPtr<TypeSet> returnStatementTypeSet() 
+    {
+        if (!m_returnStatementTypeSet)
+            m_returnStatementTypeSet = TypeSet::create();
+
+        return m_returnStatementTypeSet;
+    }
 
 
 protected:
@@ -1010,6 +1018,8 @@ private:
         if (!m_rareData)
             m_rareData = adoptPtr(new RareData);
     }
+
+    void scopeDependentProfile(ResolveOp, const Identifier&, size_t, TypeLocation*);
     
 #if ENABLE(JIT)
     void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
@@ -1089,6 +1099,8 @@ private:
     mutable CodeBlockHash m_hash;
 
     std::unique_ptr<BytecodeLivenessAnalysis> m_livenessAnalysis;
+
+    RefPtr<TypeSet> m_returnStatementTypeSet;
 
     struct RareData {
         WTF_MAKE_FAST_ALLOCATED;

@@ -144,7 +144,7 @@ public:
         createPhiVariables();
 
         Vector<BasicBlock*> depthFirst;
-        m_graph.getBlocksInDepthFirstOrder(depthFirst);
+        m_graph.getBlocksInPreOrder(depthFirst);
 
         int maxNumberOfArguments = -1;
         for (unsigned blockIndex = depthFirst.size(); blockIndex--; ) {
@@ -479,8 +479,11 @@ private:
         case GetById:
             compileGetById();
             break;
-        case PutByIdDirect:
+        case In:
+            compileIn();
+            break;
         case PutById:
+        case PutByIdDirect:
             compilePutById();
             break;
         case GetButterfly:
@@ -3280,8 +3283,13 @@ private:
             
             GetByIdVariant variant = data.variants[i];
             LValue result;
-            if (variant.specificValue())
-                result = m_out.constInt64(JSValue::encode(variant.specificValue()));
+            JSValue constantResult;
+            if (variant.alternateBase()) {
+                constantResult = m_graph.tryGetConstantProperty(
+                    variant.alternateBase(), variant.baseStructure(), variant.offset());
+            }
+            if (constantResult)
+                result = m_out.constInt64(JSValue::encode(constantResult));
             else {
                 LValue propertyBase;
                 if (variant.alternateBase())
@@ -3974,6 +3982,33 @@ private:
         setBoolean(m_out.notNull(pointerResult));
     }
     
+    void compileIn()
+    {
+        Edge base = m_node->child2();
+        LValue cell = lowCell(base);
+        speculateObject(base, cell);
+        if (JSString* string = m_node->child1()->dynamicCastConstant<JSString*>()) {
+            if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
+
+                const StringImpl* str = string->tryGetValueImpl();
+                unsigned stackmapID = m_stackmapIDs++;
+            
+                LValue call = m_out.call(
+                    m_out.patchpointInt64Intrinsic(),
+                    m_out.constInt64(stackmapID), m_out.constInt32(sizeOfCheckIn()),
+                    constNull(m_out.ref8), m_out.constInt32(1), cell);
+
+                setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+
+                m_ftlState.checkIns.append(CheckInDescriptor(stackmapID, m_node->origin.semantic, str));
+                setJSValue(call);
+                return;
+            }
+        } 
+
+        setJSValue(vmCall(m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child1())));
+    }
+
     void compileCheckHasInstance()
     {
         speculate(
@@ -5115,7 +5150,7 @@ private:
     
     LValue lowCell(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || DFG::isCell(edge.useKind()));
+        DFG_ASSERT(m_graph, m_node, mode == ManualOperandSpeculation || DFG::isCell(edge.useKind()));
         
         if (edge->op() == JSConstant) {
             JSValue value = edge->asJSValue();

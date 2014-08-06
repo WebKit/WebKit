@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGAbstractHeap.h"
+#include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
@@ -213,6 +215,76 @@ private:
                 }
                 break;
             }
+            break;
+        }
+            
+        case Flush: {
+            ASSERT(m_graph.m_form != SSA);
+            
+            Node* setLocal = nullptr;
+            VirtualRegister local = m_node->local();
+            
+            if (m_node->variableAccessData()->isCaptured()) {
+                for (unsigned i = m_nodeIndex; i--;) {
+                    Node* node = m_block->at(i);
+                    bool done = false;
+                    switch (node->op()) {
+                    case GetLocal:
+                    case Flush:
+                        if (node->local() == local)
+                            done = true;
+                        break;
+                
+                    case GetLocalUnlinked:
+                        if (node->unlinkedLocal() == local)
+                            done = true;
+                        break;
+                
+                    case SetLocal: {
+                        if (node->local() != local)
+                            break;
+                        setLocal = node;
+                        done = true;
+                        break;
+                    }
+                
+                    case Phantom:
+                    case Check:
+                    case HardPhantom:
+                    case MovHint:
+                    case JSConstant:
+                    case DoubleConstant:
+                    case Int52Constant:
+                        break;
+                
+                    default:
+                        done = true;
+                        break;
+                    }
+                    if (done)
+                        break;
+                }
+            } else {
+                for (unsigned i = m_nodeIndex; i--;) {
+                    Node* node = m_block->at(i);
+                    if (node->op() == SetLocal && node->local() == local) {
+                        setLocal = node;
+                        break;
+                    }
+                    if (accessesOverlap(m_graph, node, AbstractHeap(Variables, local)))
+                        break;
+                }
+            }
+            
+            if (!setLocal)
+                break;
+            
+            m_node->convertToPhantom();
+            Node* dataNode = setLocal->child1().node();
+            DFG_ASSERT(m_graph, m_node, dataNode->hasResult());
+            m_node->child1() = dataNode->defaultEdge();
+            m_graph.dethread();
+            m_changed = true;
             break;
         }
             

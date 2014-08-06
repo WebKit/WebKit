@@ -71,6 +71,7 @@ set(JavaScriptCore_SOURCES
     bytecode/CodeBlockJettisoningWatchpoint.cpp
     bytecode/CodeOrigin.cpp
     bytecode/CodeType.cpp
+    bytecode/ComplerGetStatus.cpp
     bytecode/ConstantStructureCheck.cpp
     bytecode/DFGExitProfile.cpp
     bytecode/DeferredCompilationCallback.cpp
@@ -155,6 +156,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGFunctionWhitelist.cpp
     dfg/DFGGraph.cpp
     dfg/DFGGraphSafepoint.cpp
+    dfg/DFGHeapLocation.cpp
     dfg/DFGInPlaceAbstractState.cpp
     dfg/DFGIntegerCheckCombiningPhase.cpp
     dfg/DFGInvalidationPointInjectionPhase.cpp
@@ -184,10 +186,12 @@ set(JavaScriptCore_SOURCES
     dfg/DFGOSRExitJumpPlaceholder.cpp
     dfg/DFGOSRExitPreparation.cpp
     dfg/DFGOperations.cpp
+    dfg/DFGPhantomRemovalPhase.cpp
     dfg/DFGPhase.cpp
     dfg/DFGPlan.cpp
     dfg/DFGPredictionInjectionPhase.cpp
     dfg/DFGPredictionPropagationPhase.cpp
+    dfg/DFGPureValue.cpp
     dfg/DFGResurrectionForValidationPhase.cpp
     dfg/DFGSSAConversionPhase.cpp
     dfg/DFGSSALoweringPhase.cpp

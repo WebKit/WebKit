@@ -107,7 +107,7 @@ public:
         
         if (m_graph.m_form == SSA) {
             Vector<BasicBlock*> depthFirst;
-            m_graph.getBlocksInDepthFirstOrder(depthFirst);
+            m_graph.getBlocksInPreOrder(depthFirst);
             for (unsigned i = 0; i < depthFirst.size(); ++i)
                 fixupBlock(depthFirst[i]);
         } else {
@@ -193,9 +193,9 @@ private:
                 
             switch (node->op()) {
             case MovHint: {
-                // Check if the child is dead. MovHint's child would only be a Phantom
-                // if we had just killed it.
-                if (node->child1()->op() == Phantom) {
+                // Check if the child is dead. MovHint's child would only be a Phantom or
+                // Check if we had just killed it.
+                if (node->child1()->op() == Phantom || node->child1()->op() == Check) {
                     node->setOpAndDefaultFlags(ZombieHint);
                     node->child1() = Edge();
                     break;
@@ -220,7 +220,7 @@ private:
                         m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->origin, edge);
                     }
 
-                    node->convertToPhantomUnchecked();
+                    node->convertToPhantom();
                     node->children.reset();
                     node->setRefCount(1);
                     break;

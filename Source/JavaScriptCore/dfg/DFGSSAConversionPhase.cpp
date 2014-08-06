@@ -246,7 +246,7 @@ public:
                         block->variablesAtHead.operand(phi->local()), "\n");
                 }
                 ASSERT(phi != block->variablesAtHead.operand(phi->local()));
-                phi->misc.replacement = block->variablesAtHead.operand(phi->local());
+                phi->replacement = block->variablesAtHead.operand(phi->local());
             }
         }
         
@@ -261,9 +261,9 @@ public:
                 Node* node = block->variablesAtHead[i];
                 if (!node)
                     continue;
-                while (node->misc.replacement) {
-                    ASSERT(node != node->misc.replacement);
-                    node = node->misc.replacement;
+                while (node->replacement) {
+                    ASSERT(node != node->replacement);
+                    node = node->replacement;
                 }
                 block->variablesAtHead[i] = node;
             }
@@ -301,11 +301,11 @@ public:
                 continue;
             
             for (unsigned phiIndex = block->phis.size(); phiIndex--;) {
-                block->phis[phiIndex]->misc.replacement =
+                block->phis[phiIndex]->replacement =
                     block->variablesAtHead.operand(block->phis[phiIndex]->local());
             }
             for (unsigned nodeIndex = block->size(); nodeIndex--;)
-                ASSERT(!block->at(nodeIndex)->misc.replacement);
+                ASSERT(!block->at(nodeIndex)->replacement);
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
@@ -319,7 +319,7 @@ public:
                         node->mergeFlags(NodeMustGenerate);
                     else
                         node->setOpAndDefaultFlags(Check);
-                    node->misc.replacement = node->child1().node(); // Only for Upsilons.
+                    node->replacement = node->child1().node(); // Only for Upsilons.
                     break;
                 }
                     
@@ -333,7 +333,7 @@ public:
                     if (variable->isCaptured())
                         break;
                     node->convertToPhantom();
-                    node->misc.replacement = block->variablesAtHead.operand(variable->local());
+                    node->replacement = block->variablesAtHead.operand(variable->local());
                     break;
                 }
                     
@@ -342,7 +342,7 @@ public:
                     node->convertToPhantom();
                     // This is only for Upsilons. An Upsilon will only refer to a Flush if
                     // there were no SetLocals or GetLocals in the block.
-                    node->misc.replacement = block->variablesAtHead.operand(node->local());
+                    node->replacement = block->variablesAtHead.operand(node->local());
                     break;
                 }
                     
@@ -367,7 +367,7 @@ public:
                     node->convertToPhantom();
                     // This is only for Upsilons. An Upsilon will only refer to a
                     // PhantomLocal if there were no SetLocals or GetLocals in the block.
-                    node->misc.replacement = block->variablesAtHead.operand(variable->local());
+                    node->replacement = block->variablesAtHead.operand(variable->local());
                     break;
                 }
                     
@@ -398,7 +398,7 @@ public:
             block->variablesAtTail.clear();
             block->valuesAtHead.clear();
             block->valuesAtHead.clear();
-            block->ssa = adoptPtr(new BasicBlock::SSAData(block));
+            block->ssa = std::make_unique<BasicBlock::SSAData>(block);
         }
         
         m_graph.m_arguments.clear();

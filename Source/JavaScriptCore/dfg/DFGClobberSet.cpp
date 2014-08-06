@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,37 +122,38 @@ HashSet<AbstractHeap> ClobberSet::setOf(bool direct) const
 void addReads(Graph& graph, Node* node, ClobberSet& readSet)
 {
     ClobberSetAdd addRead(readSet);
-    NoOpClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
+    NoOpClobberize noOp;
+    clobberize(graph, node, addRead, noOp, noOp);
 }
 
 void addWrites(Graph& graph, Node* node, ClobberSet& writeSet)
 {
-    NoOpClobberize addRead;
+    NoOpClobberize noOp;
     ClobberSetAdd addWrite(writeSet);
-    clobberize(graph, node, addRead, addWrite);
+    clobberize(graph, node, noOp, addWrite, noOp);
 }
 
 void addReadsAndWrites(Graph& graph, Node* node, ClobberSet& readSet, ClobberSet& writeSet)
 {
     ClobberSetAdd addRead(readSet);
     ClobberSetAdd addWrite(writeSet);
-    clobberize(graph, node, addRead, addWrite);
+    NoOpClobberize noOp;
+    clobberize(graph, node, addRead, addWrite, noOp);
 }
 
 bool readsOverlap(Graph& graph, Node* node, ClobberSet& readSet)
 {
     ClobberSetOverlaps addRead(readSet);
-    NoOpClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
+    NoOpClobberize noOp;
+    clobberize(graph, node, addRead, noOp, noOp);
     return addRead.result();
 }
 
 bool writesOverlap(Graph& graph, Node* node, ClobberSet& writeSet)
 {
-    NoOpClobberize addRead;
+    NoOpClobberize noOp;
     ClobberSetOverlaps addWrite(writeSet);
-    clobberize(graph, node, addRead, addWrite);
+    clobberize(graph, node, noOp, addWrite, noOp);
     return addWrite.result();
 }
 

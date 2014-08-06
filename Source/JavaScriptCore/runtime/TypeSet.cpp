@@ -38,7 +38,6 @@ namespace JSC {
 TypeSet::TypeSet()
     : m_seenTypes(TypeNothing)
     , m_structureHistory(new Vector<RefPtr<StructureShape>>)
-    , m_mightHaveDuplicatesInStructureHistory(false)
 {
 }
 
@@ -69,43 +68,37 @@ RuntimeType TypeSet::getRuntimeTypeForValue(JSValue v)
     return ret;
 }
 
-void TypeSet::addTypeForValue(JSValue v, PassRefPtr<StructureShape> shape) 
+void TypeSet::addTypeForValue(JSValue v, PassRefPtr<StructureShape> shape, StructureID id) 
 {
     RuntimeType t = getRuntimeTypeForValue(v);
     m_seenTypes = m_seenTypes | t;
 
-    if (shape) {
-        m_structureHistory->append(shape);
-        m_mightHaveDuplicatesInStructureHistory = true;
-    }
-}
+    if (id && shape) {
+        ASSERT(m_structureIDHistory.isValidKey(id));
+        auto iter = m_structureIDHistory.find(id);
+        if (iter == m_structureIDHistory.end()) {
+            m_structureIDHistory.set(id, 1);
+            // Make one more pass making sure that we don't have the same shape. (Same shapes may have different StructureIDs).
+            bool found = false;
+            String hash = shape->propertyHash();
+            for (size_t i = 0; i < m_structureHistory->size(); i++) {
+                RefPtr<StructureShape> obj = m_structureHistory->at(i);
+                if (obj->propertyHash() == hash) {
+                    found = true;
+                    break;
+                }
+            }
 
-void TypeSet::removeDuplicatesInStructureHistory() 
-{
-    Vector<RefPtr<StructureShape>>* newHistory = new Vector<RefPtr<StructureShape>>;
-    HashMap<String, bool> container;
-    for (size_t i = 0; i < m_structureHistory->size(); i++) {
-        RefPtr<StructureShape> a = m_structureHistory->at(i);
-        String hash = a->propertyHash();
-        auto iter = container.find(hash);
-        if (iter == container.end()) {
-            container.add(hash, true);
-            newHistory->append(a);
+            if (!found)
+                m_structureHistory->append(shape);
         }
     }
-
-    delete m_structureHistory;
-    m_structureHistory = newHistory;
-    m_mightHaveDuplicatesInStructureHistory = false;
 }
 
 String TypeSet::seenTypes() 
 {
     if (m_seenTypes == TypeNothing)
         return "(Unreached Statement)";
-
-    if (m_mightHaveDuplicatesInStructureHistory)
-        removeDuplicatesInStructureHistory();
 
     StringBuilder seen;
 
@@ -127,6 +120,14 @@ String TypeSet::seenTypes()
          seen.append("Primitive ");
     if (m_seenTypes & TypeObject)
          seen.append("Object ");
+
+    for (size_t i = 0; i < m_structureHistory->size(); i++) {
+        RefPtr<StructureShape> shape = m_structureHistory->at(i);
+        if (!shape->m_constructorName.isEmpty()) {
+            seen.append(shape->m_constructorName);
+            seen.append(" ");
+        }
+    }
 
     if (m_structureHistory->size()) 
         seen.append("\nStructures:[ ");

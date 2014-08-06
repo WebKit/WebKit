@@ -701,6 +701,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     }
                 }
             } else {
+                structure->didCachePropertyReplacement(vm, slot.cachedOffset());
                 pc[4].u.structure.set(
                     vm, codeBlock->ownerExecutable(), structure);
                 if (isInlineOffset(slot.cachedOffset())) {
@@ -1417,9 +1418,8 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
     LLINT_RETURN(JSScope::resolve(exec, exec->scope(), ident));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
+static JSValue getFromScopeCommon(ExecState* exec, Instruction* pc, VM& vm)
 {
-    LLINT_BEGIN();
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(2).jsValue());
     ResolveModeAndType modeAndType(pc[4].u.operand);
@@ -1427,24 +1427,44 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
         if (modeAndType.mode() == ThrowIfNotFound)
-            LLINT_RETURN(exec->vm().throwException(exec, createUndefinedVariableError(exec, ident)));
-        LLINT_RETURN(jsUndefined());
+            return exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
+        return jsUndefined();
     }
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
     if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
         if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
             CodeBlock* codeBlock = exec->codeBlock();
-            ConcurrentJITLocker locker(codeBlock->m_lock);
-            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
-            pc[6].u.operand = slot.cachedOffset();
+            Structure* structure = scope->structure(vm);
+            {
+                ConcurrentJITLocker locker(codeBlock->m_lock);
+                pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), structure);
+                pc[6].u.operand = slot.cachedOffset();
+            }
+            structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
         }
     }
 
-    LLINT_RETURN(slot.getValue(exec, ident));
+    return slot.getValue(exec, ident);
 }
 
-static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc, VM&)
+LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
+{
+    LLINT_BEGIN();
+    JSValue value = getFromScopeCommon(exec, pc, vm);
+    LLINT_RETURN(value);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_get_from_scope_with_profile)
+{
+    LLINT_BEGIN();
+    JSValue value = getFromScopeCommon(exec, pc, vm);
+    TypeLocation* location = pc[8].u.location;
+    vm.highFidelityLog()->recordTypeInformationForLocation(value, location);
+    LLINT_RETURN(value);
+}
+
+static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc)
 {
     CodeBlock* codeBlock = exec->codeBlock();
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
@@ -1457,15 +1477,8 @@ static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc, VM&)
 
     PutPropertySlot slot(scope, codeBlock->isStrictMode());
     scope->methodTable()->put(scope, exec, ident, value, slot);
-
-    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
-    if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
-        if (slot.isCacheablePut() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
-            ConcurrentJITLocker locker(codeBlock->m_lock);
-            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
-            pc[6].u.operand = slot.cachedOffset();
-        }
-    }
+    
+    CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, modeAndType, slot);
 
     return nullptr;
 }
@@ -1473,7 +1486,7 @@ static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc, VM&)
 LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 {
     LLINT_BEGIN();
-    JSObject* error = putToScopeCommon(exec, pc, vm);
+    JSObject* error = putToScopeCommon(exec, pc);
     if (error)
         LLINT_THROW(error);
     LLINT_END();
@@ -1483,7 +1496,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope_with_profile)
 {
     // The format of this instruction is the same as put_to_scope with a TypeLocation appended: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
     LLINT_BEGIN();
-    JSObject* error = putToScopeCommon(exec, pc, vm);
+    JSObject* error = putToScopeCommon(exec, pc);
     if (error)
         LLINT_THROW(error);
     TypeLocation* location = pc[7].u.location;

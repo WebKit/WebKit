@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-inline void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value)
+inline void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value, const FireDetail& detail)
 {
     ASSERT(!!value);
     switch (state()) {
@@ -44,7 +44,7 @@ inline void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value)
         ASSERT(!!m_inferredValue);
         if (value == m_inferredValue.get())
             return;
-        invalidate();
+        invalidate(detail);
         return;
             
     case IsInvalidated:
@@ -54,7 +54,7 @@ inline void VariableWatchpointSet::notifyWrite(VM& vm, JSValue value)
         
     ASSERT_NOT_REACHED();
 }
-    
+
 } // namespace JSC
 
 #endif // VariableWatchpointSetInlines_h

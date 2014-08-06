@@ -1030,7 +1030,7 @@ void JIT_OPERATION operationNotifyWrite(ExecState* exec, VariableWatchpointSet* 
     NativeCallFrameTracer tracer(&vm, exec);
     JSValue value = JSValue::decode(encodedValue);
 
-    set->notifyWrite(vm, value);
+    set->notifyWrite(vm, value, "Executed NotifyWrite");
 }
 
 double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)
@@ -1105,7 +1105,7 @@ void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     dataLog("\n");
 }
 
-extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
+extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSRExitBase* exit)
 {
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
@@ -1129,13 +1129,21 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
     ASSERT(codeBlock->hasOptimizedReplacement());
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
     ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
+    
+    bool didTryToEnterIntoInlinedLoops = false;
+    for (InlineCallFrame* inlineCallFrame = exit->m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
+        if (inlineCallFrame->executable->didTryToEnterInLoop()) {
+            didTryToEnterIntoInlinedLoops = true;
+            break;
+        }
+    }
 
     // In order to trigger reoptimization, one of two things must have happened:
     // 1) We exited more than some number of times.
     // 2) We exited and got stuck in a loop, and now we're exiting again.
     bool didExitABunch = optimizedCodeBlock->shouldReoptimizeNow();
     bool didGetStuckInLoop =
-        codeBlock->checkIfOptimizationThresholdReached()
+        (codeBlock->checkIfOptimizationThresholdReached() || didTryToEnterIntoInlinedLoops)
         && optimizedCodeBlock->shouldReoptimizeFromLoopNow();
     
     if (!didExitABunch && !didGetStuckInLoop) {
@@ -1228,7 +1236,7 @@ char* JIT_OPERATION triggerOSREntryNow(
     
     if (Options::verboseOSR()) {
         dataLog(
-            *codeBlock, ": Entered triggerTierUpNow with executeCounter = ",
+            *codeBlock, ": Entered triggerOSREntryNow with executeCounter = ",
             jitCode->tierUpCounter, "\n");
     }
     

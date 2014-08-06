@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -42,6 +42,32 @@ void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     visitor.append(&thisObject->m_getter);
     visitor.append(&thisObject->m_setter);
+}
+
+GetterSetter* GetterSetter::withGetter(VM& vm, JSObject* newGetter)
+{
+    if (!getter()) {
+        setGetter(vm, newGetter);
+        return this;
+    }
+    
+    GetterSetter* result = GetterSetter::create(vm);
+    result->setGetter(vm, newGetter);
+    result->setSetter(vm, setter());
+    return result;
+}
+
+GetterSetter* GetterSetter::withSetter(VM& vm, JSObject* newSetter)
+{
+    if (!setter()) {
+        setSetter(vm, newSetter);
+        return this;
+    }
+    
+    GetterSetter* result = GetterSetter::create(vm);
+    result->setGetter(vm, getter());
+    result->setSetter(vm, newSetter);
+    return result;
 }
 
 JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)

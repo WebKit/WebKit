@@ -46,11 +46,9 @@ StructureRareData* StructureRareData::create(VM& vm, Structure* previous)
     return rareData;
 }
 
-StructureRareData* StructureRareData::clone(VM& vm, const StructureRareData* other)
+void StructureRareData::destroy(JSCell* cell)
 {
-    StructureRareData* newRareData = new (NotNull, allocateCell<StructureRareData>(vm.heap)) StructureRareData(vm, other);
-    newRareData->finishCreation(vm);
-    return newRareData;
+    static_cast<StructureRareData*>(cell)->StructureRareData::~StructureRareData();
 }
 
 StructureRareData::StructureRareData(VM& vm, Structure* previous)
@@ -58,15 +56,6 @@ StructureRareData::StructureRareData(VM& vm, Structure* previous)
 {
     if (previous)
         m_previous.set(vm, this, previous);
-}
-
-StructureRareData::StructureRareData(VM& vm, const StructureRareData* other)
-    : JSCell(vm, other->structure())
-{
-    if (other->previousID())
-        m_previous.set(vm, this, other->previousID());
-    if (other->objectToStringValue())
-        m_objectToStringValue.set(vm, this, other->objectToStringValue());
 }
 
 void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)

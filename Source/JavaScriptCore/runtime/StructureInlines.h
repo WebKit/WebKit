@@ -61,7 +61,7 @@ inline JSObject* Structure::storedPrototypeObject() const
 {
     JSValue value = m_prototype.get();
     if (value.isNull())
-        return 0;
+        return nullptr;
     return asObject(value);
 }
 
@@ -69,7 +69,7 @@ inline Structure* Structure::storedPrototypeStructure() const
 {
     JSObject* object = storedPrototypeObject();
     if (!object)
-        return 0;
+        return nullptr;
     return object->structure();
 }
 
@@ -99,7 +99,7 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, const WTF::String& name)
     return entry ? entry->offset : invalidOffset;
 }
     
-ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
@@ -114,16 +114,13 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
         return invalidOffset;
 
     attributes = entry->attributes;
-    specificValue = entry->specificValue.get();
     return entry->offset;
 }
 
 inline PropertyOffset Structure::getConcurrently(VM& vm, StringImpl* uid)
 {
     unsigned attributesIgnored;
-    JSCell* specificValueIgnored;
-    return getConcurrently(
-        vm, uid, attributesIgnored, specificValueIgnored);
+    return getConcurrently(vm, uid, attributesIgnored);
 }
 
 inline bool Structure::hasIndexingHeader(const JSCell* cell) const
@@ -240,6 +237,31 @@ ALWAYS_INLINE WriteBarrier<PropertyTable>& Structure::propertyTable()
 {
     ASSERT(!globalObject() || !globalObject()->vm().heap.isCollecting());
     return m_propertyTableUnsafe;
+}
+
+inline void Structure::didReplaceProperty(PropertyOffset offset)
+{
+    if (LIKELY(!hasRareData()))
+        return;
+    StructureRareData::PropertyWatchpointMap* map = rareData()->m_replacementWatchpointSets.get();
+    if (LIKELY(!map))
+        return;
+    WatchpointSet* set = map->get(offset);
+    if (LIKELY(!set))
+        return;
+    set->fireAll("Property did get replaced");
+}
+
+inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset offset)
+{
+    ConcurrentJITLocker locker(m_lock);
+    if (!hasRareData())
+        return nullptr;
+    WTF::loadLoadFence();
+    StructureRareData::PropertyWatchpointMap* map = rareData()->m_replacementWatchpointSets.get();
+    if (!map)
+        return nullptr;
+    return map->get(offset);
 }
 
 ALWAYS_INLINE bool Structure::checkOffsetConsistency() const

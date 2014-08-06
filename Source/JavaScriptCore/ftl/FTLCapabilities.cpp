@@ -166,6 +166,10 @@ inline CapabilityLevel canCompile(Node* node)
         // case because it would prevent us from catching bugs where the FTL backend
         // pipeline failed to optimize out an Identity.
         break;
+    case In:
+        if (node->child2().useKind() == CellUse)
+            break;
+        return CannotCompile;
     case PutByIdDirect:
     case PutById:
         if (node->child1().useKind() == CellUse)

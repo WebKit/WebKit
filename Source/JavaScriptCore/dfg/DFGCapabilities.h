@@ -39,6 +39,7 @@ namespace JSC { namespace DFG {
 // Fast check functions; if they return true it is still necessary to
 // check opcodes.
 bool isSupported(CodeBlock*);
+bool isSupportedForInlining(CodeBlock*);
 bool mightCompileEval(CodeBlock*);
 bool mightCompileProgram(CodeBlock*);
 bool mightCompileFunctionForCall(CodeBlock*);

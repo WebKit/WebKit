@@ -1005,7 +1005,7 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, CaptureMode captureMode
         instructions().append(watchableVariable(dst->index()));
 
     if (!dst->isTemporary() && isProfilingTypesWithHighFidelity())
-        emitProfileTypesWithHighFidelity(dst, true);
+        emitProfileTypesWithHighFidelity(dst, ProfileTypesBytecodeHasGlobalID);
 
     return dst;
 }
@@ -1116,16 +1116,12 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
     return dst;
 }
 
-void BytecodeGenerator::emitProfileTypesWithHighFidelity(RegisterID* registerToProfile, bool hasGlobalID)
+void BytecodeGenerator::emitProfileTypesWithHighFidelity(RegisterID* registerToProfile, ProfileTypesWithHighFidelityBytecodeFlag flag)
 {
     emitOpcode(op_profile_types_with_high_fidelity);
     instructions().append(registerToProfile->index());
-    instructions().append(0); // placeholder for TypeLocation
-    // This is a flag indicating whether we should track this value to its globalID or not.
-    if (hasGlobalID)
-        instructions().append(1);
-    else
-        instructions().append(0);
+    instructions().append(0); // This is a placeholder for the TypeLocation object pointer.
+    instructions().append(flag);
 }
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
@@ -1267,23 +1263,49 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitGetFromScopeWithProfile(RegisterID* dst, RegisterID* scope, const Identifier& identifier, ResolveMode resolveMode)
+{
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_get_from_scope_with_profile);
+    instructions().append(kill(dst));
+    instructions().append(scope->index());
+    instructions().append(addConstant(identifier));
+    instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(profile);
+    instructions().append(0); // This is a placeholder for a TypeLocation pointer.
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Identifier& identifier, RegisterID* value, ResolveMode resolveMode)
 {
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 
     // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
-    if (isProfilingTypesWithHighFidelity())
-        emitOpcode(op_put_to_scope_with_profile);
-    else
-        emitOpcode(op_put_to_scope);
+    emitOpcode(op_put_to_scope);
     instructions().append(scope->index());
     instructions().append(addConstant(identifier));
     instructions().append(value->index());
     instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
     instructions().append(0);
     instructions().append(0);
-    if (isProfilingTypesWithHighFidelity())
-        instructions().append(0);
+    return value;
+}
+
+RegisterID* BytecodeGenerator::emitPutToScopeWithProfile(RegisterID* scope, const Identifier& identifier, RegisterID* value, ResolveMode resolveMode)
+{
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+
+    emitOpcode(op_put_to_scope_with_profile);
+    instructions().append(scope->index());
+    instructions().append(addConstant(identifier));
+    instructions().append(value->index());
+    instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(0); // This is a placeholder for a TypeLocation pointer.
     return value;
 }
 
@@ -1350,9 +1372,6 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
-
-    if (isProfilingTypesWithHighFidelity())
-        emitProfileTypesWithHighFidelity(value, false);
 
     return value;
 }
@@ -1450,9 +1469,6 @@ RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* proper
     instructions().append(property->index());
     instructions().append(value->index());
     instructions().append(arrayProfile);
-
-    if (isProfilingTypesWithHighFidelity())
-        emitProfileTypesWithHighFidelity(value, false);
 
     return value;
 }

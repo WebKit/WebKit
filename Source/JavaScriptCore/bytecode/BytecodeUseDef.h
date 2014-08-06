@@ -121,6 +121,7 @@ void computeUsesForBytecodeOffset(
     case op_init_global_const_nop:
     case op_init_global_const:
     case op_push_name_scope:
+    case op_get_from_scope_with_profile:
     case op_get_from_scope:
     case op_to_primitive:
     case op_get_by_id:
@@ -313,6 +314,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_func_exp:
     case op_call_varargs:
     case op_construct_varargs:
+    case op_get_from_scope_with_profile:
     case op_get_from_scope:
     case op_call:
     case op_call_eval:

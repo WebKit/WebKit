@@ -91,6 +91,33 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
     return baseObj->hasProperty(exec, property);
 }
 
+inline void tryCachePutToScopeGlobal(
+    ExecState* exec, CodeBlock* codeBlock, Instruction* pc, JSObject* scope,
+    ResolveModeAndType modeAndType, PutPropertySlot& slot)
+{
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    
+    if (modeAndType.type() != GlobalProperty && modeAndType.type() != GlobalPropertyWithVarInjectionChecks)
+        return;
+    
+    if (!slot.isCacheablePut()
+        || slot.base() != scope
+        || !scope->structure()->propertyAccessesAreCacheable())
+        return;
+    
+    if (slot.type() == PutPropertySlot::NewProperty) {
+        // Don't cache if we've done a transition. We want to detect the first replace so that we
+        // can invalidate the watchpoint.
+        return;
+    }
+    
+    scope->structure()->didCachePropertyReplacement(exec->vm(), slot.cachedOffset());
+
+    ConcurrentJITLocker locker(codeBlock->m_lock);
+    pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+    pc[6].u.operand = slot.cachedOffset();
+}
+
 } // namespace CommonSlowPaths
 
 class ExecState;

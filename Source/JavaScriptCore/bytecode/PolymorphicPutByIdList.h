@@ -53,6 +53,7 @@ public:
     
     PutByIdAccess()
         : m_type(Invalid)
+        , m_chainCount(UINT_MAX)
     {
     }
     
@@ -95,6 +96,7 @@ public:
         AccessType accessType,
         Structure* structure,
         StructureChain* chain,
+        unsigned chainCount,
         PutPropertySlot::PutValueFunc customSetter,
         PassRefPtr<JITStubRoutine> stubRoutine)
     {
@@ -102,8 +104,10 @@ public:
         PutByIdAccess result;
         result.m_oldStructure.set(vm, owner, structure);
         result.m_type = accessType;
-        if (chain)
+        if (chain) {
             result.m_chain.set(vm, owner, chain);
+            result.m_chainCount = chainCount;
+        }
         result.m_customSetter = customSetter;
         result.m_stubRoutine = stubRoutine;
         return result;
@@ -132,7 +136,7 @@ public:
     
     Structure* structure() const
     {
-        ASSERT(isReplace());
+        ASSERT(isReplace() || isSetter() || isCustom());
         return m_oldStructure.get();
     }
     
@@ -146,6 +150,12 @@ public:
     {
         ASSERT(isTransition() || isSetter() || isCustom());
         return m_chain.get();
+    }
+    
+    unsigned chainCount() const
+    {
+        ASSERT(isSetter() || isCustom());
+        return m_chainCount;
     }
     
     JITStubRoutine* stubRoutine() const
@@ -169,6 +179,7 @@ private:
     WriteBarrier<Structure> m_oldStructure;
     WriteBarrier<Structure> m_newStructure;
     WriteBarrier<StructureChain> m_chain;
+    unsigned m_chainCount;
     PutPropertySlot::PutValueFunc m_customSetter;
     RefPtr<JITStubRoutine> m_stubRoutine;
 };

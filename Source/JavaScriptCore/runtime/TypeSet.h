@@ -26,6 +26,7 @@
 #ifndef TypeSet_h
 #define TypeSet_h
 
+#include "StructureIDTable.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -60,10 +61,12 @@ public:
     void addProperty(RefPtr<StringImpl>);
     static String leastUpperBound(Vector<RefPtr<StructureShape>>*);
     String stringRepresentation();
+    void setConstructorName(String name) { m_constructorName = name; }
 
 private:
     HashMap<RefPtr<StringImpl>, bool> m_fields;         
     std::unique_ptr<String> m_propertyHash;
+    String m_constructorName;
     bool m_final;
 };
 
@@ -72,7 +75,7 @@ class TypeSet : public RefCounted<TypeSet> {
 public:
     static PassRefPtr<TypeSet> create() { return adoptRef(new TypeSet); }
     TypeSet();
-    void addTypeForValue(JSValue v, PassRefPtr<StructureShape>);
+    void addTypeForValue(JSValue v, PassRefPtr<StructureShape>, StructureID);
     static RuntimeType getRuntimeTypeForValue(JSValue);
     JS_EXPORT_PRIVATE String seenTypes();
 
@@ -80,9 +83,7 @@ private:
     uint32_t m_seenTypes;
     void dumpSeenTypes();
     Vector<RefPtr<StructureShape>>* m_structureHistory;
-    bool m_mightHaveDuplicatesInStructureHistory;
-    void removeDuplicatesInStructureHistory();
-
+    HashMap<StructureID, uint8_t> m_structureIDHistory;
 };
 
 } //namespace JSC

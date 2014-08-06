@@ -45,6 +45,7 @@
 #include "DateConstructor.h"
 #include "DatePrototype.h"
 #include "Debugger.h"
+#include "DebuggerScope.h"
 #include "Error.h"
 #include "ErrorConstructor.h"
 #include "ErrorPrototype.h"
@@ -262,7 +263,7 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
     NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
     registerAt(var.registerNumber).set(exec->vm(), this, value);
     if (var.set)
-        var.set->notifyWrite(vm, value);
+        var.set->notifyWrite(vm, value, VariableWriteFireDetail(this, propertyName));
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)
@@ -281,7 +282,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_functionPrototype.set(vm, this, FunctionPrototype::create(vm, FunctionPrototype::createStructure(vm, this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
     m_functionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
     m_boundFunctionStructure.set(vm, this, JSBoundFunction::createStructure(vm, this, m_functionPrototype.get()));
-    m_namedFunctionStructure.set(vm, this, Structure::addPropertyTransition(vm, m_functionStructure.get(), vm.propertyNames->name, DontDelete | ReadOnly | DontEnum, 0, m_functionNameOffset));
+    m_namedFunctionStructure.set(vm, this, Structure::addPropertyTransition(vm, m_functionStructure.get(), vm.propertyNames->name, DontDelete | ReadOnly | DontEnum, m_functionNameOffset));
     m_internalFunctionStructure.set(vm, this, InternalFunction::createStructure(vm, this, m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
@@ -320,6 +321,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_nameScopeStructure.set(vm, this, JSNameScope::createStructure(vm, this, jsNull()));
     m_activationStructure.set(vm, this, JSActivation::createStructure(vm, this, jsNull()));
     m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
+    m_debuggerScopeStructure.set(m_vm, this, DebuggerScope::createStructure(m_vm, this, jsNull()));
     m_withScopeStructure.set(vm, this, JSWithScope::createStructure(vm, this, jsNull()));
 
     m_nullPrototypeObjectStructure.set(vm, this, JSFinalObject::createStructure(vm, this, jsNull(), JSFinalObject::defaultInlineCapacity()));
@@ -427,8 +429,8 @@ void JSGlobalObject::reset(JSValue prototype)
     PrototypeMap& prototypeMap = vm.prototypeMap;
     Structure* iteratorResultStructure = prototypeMap.emptyObjectStructureForPrototype(m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity());
     PropertyOffset offset;
-    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, 0, offset);
-    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->value, 0, 0, offset);
+    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, offset);
+    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->value, 0, offset);
     m_iteratorResultStructure.set(vm, this, iteratorResultStructure);
 
     m_evalFunction.set(vm, this, JSFunction::create(vm, this, 1, vm.propertyNames->eval.string(), globalFuncEval));
@@ -561,7 +563,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
     // Make sure that all allocations or indexed storage transitions that are inlining
     // the assumption that it's safe to transition to a non-SlowPut array storage don't
     // do so anymore.
-    m_havingABadTimeWatchpoint->fireAll();
+    m_havingABadTimeWatchpoint->fireAll("Having a bad time");
     ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
     
     // Make sure that all JSArray allocations that load the appropriate structure from
@@ -662,6 +664,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_promisePrototype);
 #endif
 
+    visitor.append(&thisObject->m_debuggerScopeStructure);
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);
     visitor.append(&thisObject->m_activationStructure);

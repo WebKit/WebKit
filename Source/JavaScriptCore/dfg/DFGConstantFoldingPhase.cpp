@@ -414,8 +414,13 @@ private:
 
         addBaseCheck(indexInBlock, node, baseValue, variant.structureSet());
         
-        if (variant.specificValue()) {
-            m_graph.convertToConstant(node, m_graph.freeze(variant.specificValue()));
+        JSValue baseForLoad;
+        if (variant.alternateBase())
+            baseForLoad = variant.alternateBase();
+        else
+            baseForLoad = baseValue.m_value;
+        if (JSValue value = m_graph.tryGetConstantProperty(baseForLoad, variant.baseStructure(), variant.offset())) {
+            m_graph.convertToConstant(node, m_graph.freeze(value));
             return;
         }
         

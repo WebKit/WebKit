@@ -26,6 +26,7 @@
 #ifndef PutByIdStatus_h
 #define PutByIdStatus_h
 
+#include "CallLinkStatus.h"
 #include "ExitingJITType.h"
 #include "PutByIdVariant.h"
 #include "StructureStubInfo.h"
@@ -80,7 +81,7 @@ public:
     bool operator!() const { return m_state == NoInformation; }
     bool isSimple() const { return m_state == Simple; }
     bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
-    bool makesCalls() const { return m_state == MakesCalls; }
+    bool makesCalls() const;
     
     size_t numVariants() const { return m_variants.size(); }
     const Vector<PutByIdVariant, 1>& variants() const { return m_variants; }
@@ -94,7 +95,9 @@ private:
     static bool hasExitSite(const ConcurrentJITLocker&, CodeBlock*, unsigned bytecodeIndex, ExitingJITType = ExitFromAnything);
 #endif
 #if ENABLE(JIT)
-    static PutByIdStatus computeForStubInfo(const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid);
+    static PutByIdStatus computeForStubInfo(
+        const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, StringImpl* uid,
+        CallLinkStatus::ExitSiteData);
 #endif
     static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     

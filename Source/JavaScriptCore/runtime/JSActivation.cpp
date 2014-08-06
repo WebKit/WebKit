@@ -103,7 +103,7 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
         if (isTornOff() && !isValid(iter->value))
             return false;
         if (VariableWatchpointSet* set = iter->value.watchpointSet())
-            set->invalidate(); // Don't mess around - if we had found this statically, we would have invcalidated it.
+            set->invalidate(VariableWriteFireDetail(this, propertyName)); // Don't mess around - if we had found this statically, we would have invcalidated it.
         reg = &registerAt(iter->value.getIndex());
     }
     reg->set(vm, this, value);

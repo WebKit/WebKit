@@ -53,22 +53,6 @@ HighFidelityLog::~HighFidelityLog()
     delete[] m_nextBuffer;
 }
 
-void HighFidelityLog::recordTypeInformationForLocation(JSValue v, TypeLocation* location)
-{
-    ASSERT(m_logStartPtr);
-    ASSERT(m_currentOffset < m_highFidelityLogSize);
-
-    LogEntry* entry = m_logStartPtr + m_currentOffset;
-
-    entry->location = location;
-    entry->value = v;
-    entry->structure = (v.isCell() ? v.asCell()->structure() : nullptr);
-
-    m_currentOffset += 1;
-    if (m_currentOffset == m_highFidelityLogSize)
-        processHighFidelityLog(true, "Log Full");
-}
-
 void HighFidelityLog::processHighFidelityLog(bool asynchronously, String reason)
 {
     // This should only be called from the main execution thread.
@@ -85,9 +69,7 @@ void HighFidelityLog::processHighFidelityLog(bool asynchronously, String reason)
     data->m_locker = locker;
 
     m_currentOffset = 0;
-    LogEntry* temp = m_logStartPtr;
-    m_logStartPtr = m_nextBuffer;
-    m_nextBuffer = temp;
+    std::swap(m_logStartPtr, m_nextBuffer);
     
     if (asynchronously)
         createThread(actuallyProcessLogThreadFunction, data, "ProcessHighFidelityLog");
@@ -97,19 +79,28 @@ void HighFidelityLog::processHighFidelityLog(bool asynchronously, String reason)
 
 void HighFidelityLog::actuallyProcessLogThreadFunction(void* arg)
 {
-    double before  = currentTimeMS();
+    double before = currentTimeMS();
     ThreadData* data = static_cast<ThreadData*>(arg);
     LogEntry* entry = data->m_processLogPtr;
+    HashMap<StructureID, RefPtr<StructureShape>> seenShapes;
     size_t processLogToOffset = data->m_proccessLogToOffset; 
     size_t i = 0;
     while (i < processLogToOffset) {
-        Structure* structure = entry->structure ? entry->structure : nullptr;
+        StructureID id = entry->structureID;
         RefPtr<StructureShape> shape; 
-        if (structure)
-            shape = structure->toStructureShape();
+        if (id) {
+            auto iter = seenShapes.find(id);
+            if (iter == seenShapes.end()) {
+                shape = entry->value.asCell()->structure()->toStructureShape();
+                seenShapes.set(id, shape);
+            } else 
+                shape = iter->value;
+        }
+
         if (entry->location->m_globalTypeSet)
-            entry->location->m_globalTypeSet->addTypeForValue(entry->value, shape);
-        entry->location->m_instructionTypeSet->addTypeForValue(entry->value, shape);
+            entry->location->m_globalTypeSet->addTypeForValue(entry->value, shape, id);
+        entry->location->m_instructionTypeSet->addTypeForValue(entry->value, shape, id);
+
         entry++;
         i++;
     }
@@ -118,7 +109,7 @@ void HighFidelityLog::actuallyProcessLogThreadFunction(void* arg)
     delete data;
     double after = currentTimeMS();
     if (verbose)
-        dataLogF("Processing the log took: '%f' ms\n", after - before);
+        dataLogF(" Processing the log took: '%f' ms\n", after - before);
 }
 
 } //namespace JSC

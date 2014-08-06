@@ -39,6 +39,7 @@
 #include "DFGJITCode.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
+#include "FunctionExecutableDump.h"
 #include "HighFidelityTypeProfiler.h"
 #include "Interpreter.h"
 #include "JIT.h"
@@ -150,9 +151,11 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
         out.print(specializationKind());
     out.print(", ", instructionCount());
     if (this->jitType() == JITCode::BaselineJIT && m_shouldAlwaysBeInlined)
-        out.print(" (SABI)");
+        out.print(" (ShouldAlwaysBeInlined)");
     if (ownerExecutable()->neverInline())
         out.print(" (NeverInline)");
+    if (ownerExecutable()->didTryToEnterInLoop())
+        out.print(" (DidTryToEnterInLoop)");
     if (ownerExecutable()->isStrictMode())
         out.print(" (StrictMode)");
     if (this->jitType() == JITCode::BaselineJIT && m_didFailFTLCompilation)
@@ -1541,6 +1544,28 @@ static size_t sizeInBytes(const Vector<T>& vector)
     return vector.capacity() * sizeof(T);
 }
 
+namespace {
+
+class PutToScopeFireDetail : public FireDetail {
+public:
+    PutToScopeFireDetail(CodeBlock* codeBlock, const Identifier& ident)
+        : m_codeBlock(codeBlock)
+        , m_ident(ident)
+    {
+    }
+    
+    virtual void dump(PrintStream& out) const override
+    {
+        out.print("Linking put_to_scope in ", FunctionExecutableDump(jsCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())), " for ", m_ident);
+    }
+    
+private:
+    CodeBlock* m_codeBlock;
+    const Identifier& m_ident;
+};
+
+} // anonymous namespace
+
 CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     : m_globalObject(other.m_globalObject)
     , m_heap(other.m_heap)
@@ -1630,6 +1655,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
+    , m_returnStatementTypeSet(nullptr)
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
@@ -1857,11 +1883,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
 
+        case op_get_from_scope_with_profile:
         case op_get_from_scope: {
-            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
+            int offset = (pc[0].u.opcode == op_get_from_scope_with_profile ? 2 : 1);
+            ValueProfile* profile = &m_valueProfiles[pc[opLength - offset].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
-            instructions[i + opLength - 1] = profile;
+            instructions[i + opLength - offset] = profile;
 
             // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[3].u.operand);
@@ -1874,6 +1902,14 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
+
+            if (pc[0].u.opcode == op_get_from_scope_with_profile) {
+                // The format of this instruction is: get_from_scope_with_profile dst, scope, id, ResolveModeAndType, Structure, Operand, ..., TypeLocation
+                size_t instructionOffset = i + opLength - 1;
+                TypeLocation* location = vm()->nextLocation();
+                scopeDependentProfile(op, ident, instructionOffset, location);
+                instructions[i + 8].u.location = location;
+            }
             break;
         }
 
@@ -1889,71 +1925,65 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
             else if (op.type == ClosureVar || op.type == ClosureVarWithVarInjectionChecks) {
                 if (op.watchpointSet)
-                    op.watchpointSet->invalidate();
+                    op.watchpointSet->invalidate(PutToScopeFireDetail(this, ident));
             } else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
 
             if (pc[0].u.opcode == op_put_to_scope_with_profile) {
                 // The format of this instruction is: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
-                TypeLocation* location = vm()->nextLocation();
                 size_t instructionOffset = i + opLength - 1;
-                int divot, startOffset, endOffset; 
-                unsigned line = 0, column = 0;
-                expressionRangeForBytecodeOffset(instructionOffset, divot, startOffset, endOffset, line, column);
-
-                location->m_line = line;
-                location->m_column = column;
-                location->m_sourceID = m_ownerExecutable->sourceID();
-
-                // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
-                SymbolTable* symbolTable = 0;
-                if (op.type == ClosureVar) 
-                    symbolTable = op.activation->symbolTable();
-                else if (op.type == GlobalVar)
-                    symbolTable = m_globalObject.get()->symbolTable();
-                
-                if (symbolTable) {
-                    ConcurrentJITLocker locker(symbolTable->m_lock);
-                    location->m_globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
-                    location->m_globalTypeSet =symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
-                } else
-                    location->m_globalVariableID = HighFidelityNoGlobalIDExists;
-
-                vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+                TypeLocation* location = vm()->nextLocation();
+                scopeDependentProfile(op, ident, instructionOffset, location);
                 instructions[i + 7].u.location = location;
             }
             break;
         }
 
         case op_profile_types_with_high_fidelity: {
-
+            size_t instructionOffset = i + opLength - 1;
+            unsigned divotStart, divotEnd;
+            bool shouldAnalyze = m_unlinkedCode->highFidelityTypeProfileExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
             VirtualRegister virtualRegister(pc[1].u.operand);
             SymbolTable* symbolTable = m_symbolTable.get();
             TypeLocation* location = vm()->nextLocation();
-            size_t instructionOffset = i + opLength - 1;
-            int divot, startOffset, endOffset; 
-            unsigned line = 0, column = 0;
-            expressionRangeForBytecodeOffset(instructionOffset, divot, startOffset, endOffset, line, column);
+            location->m_divotStart = divotStart;
+            location->m_divotEnd = divotEnd;
+            location->m_sourceID = m_ownerExecutable->sourceID();
 
-            int hasGlobalIDFlag = pc[3].u.operand;
-            if (hasGlobalIDFlag) {
+            ProfileTypesWithHighFidelityBytecodeFlag flag = static_cast<ProfileTypesWithHighFidelityBytecodeFlag>(pc[3].u.operand);
+            switch (flag) {
+            case ProfileTypesBytecodeHasGlobalID: {
                 ConcurrentJITLocker locker(symbolTable->m_lock);
                 location->m_globalVariableID = symbolTable->uniqueIDForRegister(locker, virtualRegister.offset(), *vm());
                 location->m_globalTypeSet = symbolTable->globalTypeSetForRegister(locker, virtualRegister.offset(), *vm());
-            } else
+                break;
+            }
+            case ProfileTypesBytecodeDoesNotHaveGlobalID: 
+            case ProfileTypesBytecodeFunctionArgument:
+            case ProfileTypesBytecodeFunctionThisObject: {
                 location->m_globalVariableID = HighFidelityNoGlobalIDExists;
-            
+                break;
+            }
+            case ProfileTypesBytecodeFunctionReturnStatement: {
+                location->m_globalTypeSet = returnStatementTypeSet();
+                location->m_globalVariableID = HighFidelityReturnStatement;
+                location->m_divotForFunctionOffsetIfReturnStatement = m_sourceOffset; 
+                if (!shouldAnalyze) {
+                    // Because some return statements are added implicitly (to return undefined at the end of a function), and these nodes don't emit expression ranges, give them some range.
+                    // Currently, this divot is on the open brace of the function. 
+                    location->m_divotStart = location->m_divotEnd = location->m_divotForFunctionOffsetIfReturnStatement;
+                    shouldAnalyze = true;
+                }
+                break;
+            }
+            }
 
-            location->m_line = line;
-            location->m_column = column;
-            location->m_sourceID = m_ownerExecutable->sourceID();
-
-            vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+            if (shouldAnalyze)
+                vm()->highFidelityTypeProfiler()->insertNewLocation(location);
             instructions[i + 2].u.location = location;
             break;
         }
-
 
         case op_captured_mov:
         case op_new_captured_func: {
@@ -2185,6 +2215,17 @@ bool CodeBlock::isKnownToBeLiveDuringGC()
 #endif
 }
 
+static bool shouldMarkTransition(DFG::WeakReferenceTransition& transition)
+{
+    if (transition.m_codeOrigin && !Heap::isMarked(transition.m_codeOrigin.get()))
+        return false;
+    
+    if (!Heap::isMarked(transition.m_from.get()))
+        return false;
+    
+    return true;
+}
+
 void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 {
     UNUSED_PARAM(visitor);
@@ -2261,21 +2302,28 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 #if ENABLE(DFG_JIT)
     if (JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+        
         for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
-            if ((!dfgCommon->transitions[i].m_codeOrigin
-                 || Heap::isMarked(dfgCommon->transitions[i].m_codeOrigin.get()))
-                && Heap::isMarked(dfgCommon->transitions[i].m_from.get())) {
+            if (shouldMarkTransition(dfgCommon->transitions[i])) {
                 // If the following three things are live, then the target of the
                 // transition is also live:
+                //
                 // - This code block. We know it's live already because otherwise
                 //   we wouldn't be scanning ourselves.
+                //
                 // - The code origin of the transition. Transitions may arise from
                 //   code that was inlined. They are not relevant if the user's
                 //   object that is required for the inlinee to run is no longer
                 //   live.
+                //
                 // - The source of the transition. The transition checks if some
                 //   heap location holds the source, and if so, stores the target.
                 //   Hence the source must be live for the transition to be live.
+                //
+                // We also short-circuit the liveness if the structure is harmless
+                // to mark (i.e. its global object and prototype are both already
+                // live).
+                
                 visitor.append(&dfgCommon->transitions[i].m_to);
             } else
                 allAreMarkedSoFar = false;
@@ -2308,6 +2356,14 @@ void CodeBlock::determineLiveness(SlotVisitor& visitor)
         if (!Heap::isMarked(dfgCommon->weakReferences[i].get())) {
             allAreLiveSoFar = false;
             break;
+        }
+    }
+    if (allAreLiveSoFar) {
+        for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i) {
+            if (!Heap::isMarked(dfgCommon->weakStructureReferences[i].get())) {
+                allAreLiveSoFar = false;
+                break;
+            }
         }
     }
     
@@ -2394,6 +2450,7 @@ void CodeBlock::finalizeUnconditionally()
                 activation.clear();
                 break;
             }
+            case op_get_from_scope_with_profile:
             case op_get_from_scope:
             case op_put_to_scope_with_profile:
             case op_put_to_scope: {
@@ -2625,6 +2682,9 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
     
     for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i)
         visitor.append(&dfgCommon->weakReferences[i]);
+
+    for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i)
+        visitor.append(&dfgCommon->weakStructureReferences[i]);
 #endif    
 }
 
@@ -2945,7 +3005,7 @@ DFG::CapabilityLevel FunctionCodeBlock::capabilityLevelInternal()
 }
 #endif
 
-void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mode)
+void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mode, const FireDetail* detail)
 {
     RELEASE_ASSERT(reason != Profiler::NotJettisoned);
     
@@ -2954,14 +3014,17 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         dataLog("Jettisoning ", *this);
         if (mode == CountReoptimization)
             dataLog(" and counting reoptimization");
-        dataLog(" due to ", reason, ".\n");
+        dataLog(" due to ", reason);
+        if (detail)
+            dataLog(", ", *detail);
+        dataLog(".\n");
     }
     
     DeferGCForAWhile deferGC(*m_heap);
     RELEASE_ASSERT(JITCode::isOptimizingJIT(jitType()));
     
     if (Profiler::Compilation* compilation = jitCode()->dfgCommon()->compilation.get())
-        compilation->setJettisonReason(reason);
+        compilation->setJettisonReason(reason, detail);
     
     // We want to accomplish two things here:
     // 1) Make sure that if this CodeBlock is on the stack right now, then if we return to it
@@ -3796,5 +3859,31 @@ DFG::CapabilityLevel CodeBlock::capabilityLevel()
     return result;
 }
 #endif
+
+void CodeBlock::scopeDependentProfile(ResolveOp op, const Identifier& ident, size_t instructionOffset, TypeLocation* location)
+{
+    unsigned divotStart, divotEnd;
+    bool shouldAnalyze = m_unlinkedCode->highFidelityTypeProfileExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
+    location->m_divotStart = divotStart;
+    location->m_divotEnd = divotEnd;
+    location->m_sourceID = m_ownerExecutable->sourceID();
+
+    // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
+    SymbolTable* symbolTable = nullptr;
+    if (op.type == ClosureVar) 
+        symbolTable = op.activation->symbolTable();
+    else if (op.type == GlobalVar)
+        symbolTable = m_globalObject.get()->symbolTable();
+    
+    if (symbolTable) {
+        ConcurrentJITLocker locker(symbolTable->m_lock);
+        location->m_globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
+        location->m_globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
+    } else
+        location->m_globalVariableID = HighFidelityNoGlobalIDExists;
+
+    if (shouldAnalyze)
+        vm()->highFidelityTypeProfiler()->insertNewLocation(location);
+}
 
 } // namespace JSC

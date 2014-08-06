@@ -176,6 +176,19 @@ void storeCodeOrigin(State& state, CCallHelpers& jit, CodeOrigin codeOrigin)
 MacroAssembler::Call callOperation(
     State& state, const RegisterSet& usedRegisters, CCallHelpers& jit,
     CodeOrigin codeOrigin, MacroAssembler::JumpList* exceptionTarget,
+    J_JITOperation_ESsiCI operation, GPRReg result, StructureStubInfo* stubInfo,
+    GPRReg object, const StringImpl* uid)
+{
+    storeCodeOrigin(state, jit, codeOrigin);
+    CallContext context(state, usedRegisters, jit, 4, result);
+    jit.setupArgumentsWithExecState(
+        CCallHelpers::TrustedImmPtr(stubInfo), object, CCallHelpers::TrustedImmPtr(uid));
+    return context.makeCall(bitwise_cast<void*>(operation), exceptionTarget);
+}
+
+MacroAssembler::Call callOperation(
+    State& state, const RegisterSet& usedRegisters, CCallHelpers& jit,
+    CodeOrigin codeOrigin, MacroAssembler::JumpList* exceptionTarget,
     J_JITOperation_ESsiJI operation, GPRReg result, StructureStubInfo* stubInfo,
     GPRReg object, StringImpl* uid)
 {

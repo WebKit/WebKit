@@ -1,3 +1,58 @@
+2014-07-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Merge r170564, r170571, r170604, r170628, r170672, r170680, r170724, r170728, r170729, r170819, r170821, r170836, r170855, r170860, r170890, r170907, r170929, r171052, r171106, r171152, r171153, r171214 from ftlopt.
+
+    2014-07-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+    
+            sputnik/Implementation_Diagnostics/S12.6.4_D1.html depends on undefined behavior
+            https://bugs.webkit.org/show_bug.cgi?id=135007
+    
+            Reviewed by Filip Pizlo.
+    
+            EcmaScript 5.1 specifies that during for-in enumeration newly added properties may or may not be 
+            visited during the current enumeration. Specifically, in section 12.6.4 the spec states:
+    
+            "If new properties are added to the object being enumerated during enumeration, the newly added properties 
+            are not guaranteed to be visited in the active enumeration."
+    
+            The sputnik/Implementation_Diagnostics/S12.6.4_D1.html layout test is from before sputnik was added 
+            to the test262 suite. I believe it has since been removed, so it would probably be okay to remove it 
+            from our layout test suite.
+    
+            * sputnik/Implementation_Diagnostics/S12.6.4_D1-expected.txt: Removed.
+            * sputnik/Implementation_Diagnostics/S12.6.4_D1.html: Removed.
+    
+    2014-07-13  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] DFG should be able to do GCSE in SSA and this should be unified with the CSE in CPS, and both of these things should use abstract heaps for reasoning about effects
+            https://bugs.webkit.org/show_bug.cgi?id=134677
+    
+            Reviewed by Sam Weinig.
+    
+            * js/regress/gcse-expected.txt: Added.
+            * js/regress/gcse-poly-get-expected.txt: Added.
+            * js/regress/gcse-poly-get-less-obvious-expected.txt: Added.
+            * js/regress/gcse-poly-get-less-obvious.html: Added.
+            * js/regress/gcse-poly-get.html: Added.
+            * js/regress/gcse.html: Added.
+            * js/regress/script-tests/gcse-poly-get-less-obvious.js: Added.
+            * js/regress/script-tests/gcse-poly-get.js: Added.
+            * js/regress/script-tests/gcse.js: Added.
+    
+    2014-07-04  Filip Pizlo  <fpizlo@apple.com>
+    
+            [ftlopt] Infer immutable object properties
+            https://bugs.webkit.org/show_bug.cgi?id=134567
+    
+            Reviewed by Mark Hahnenberg.
+    
+            * js/regress/infer-constant-global-property-expected.txt: Added.
+            * js/regress/infer-constant-global-property.html: Added.
+            * js/regress/infer-constant-property-expected.txt: Added.
+            * js/regress/infer-constant-property.html: Added.
+            * js/regress/script-tests/infer-constant-global-property.js: Added.
+            * js/regress/script-tests/infer-constant-property.js: Added.
+    
 2014-08-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172099.

@@ -198,14 +198,11 @@
             "description": "Disables reporting of execution contexts creation."
         },
         {
-            "name": "getRuntimeTypeForVariableInTextRange",
+            "name": "getRuntimeTypeForVariableAtOffset",
             "parameters": [
                 { "name": "variableName", "type": "string", "description": "Variable we want type infromation for." },
                 { "name": "sourceID", "type": "string", "description": "sourceID uniquely identifying a script" },
-                { "name": "startLine", "type": "integer", "description": "start line for variable name" },
-                { "name": "startColumn", "type": "integer", "description": "start column for variable name" },
-                { "name": "endLine", "type": "integer", "description": "end line for variable name" },
-                { "name": "endColumn", "type": "integer", "description": "end column for variable name" }
+                { "name": "divot", "type": "integer", "description": "character offset for assignment range" }
             ],
             "returns": [
                 { "name": "types", "type": "string", "description": "Types for requested variable." }

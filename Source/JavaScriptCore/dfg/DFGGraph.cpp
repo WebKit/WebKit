@@ -639,25 +639,75 @@ void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, Va
     }
 }
 
-void Graph::addForDepthFirstSort(Vector<BasicBlock*>& result, Vector<BasicBlock*, 16>& worklist, HashSet<BasicBlock*>& seen, BasicBlock* block)
+// Utilities for pre- and post-order traversals.
+namespace {
+
+inline void addForPreOrder(Vector<BasicBlock*>& result, Vector<BasicBlock*, 16>& worklist, BitVector& seen, BasicBlock* block)
 {
-    if (seen.contains(block))
+    if (seen.get(block->index))
         return;
     
     result.append(block);
     worklist.append(block);
-    seen.add(block);
+    seen.set(block->index);
 }
 
-void Graph::getBlocksInDepthFirstOrder(Vector<BasicBlock*>& result)
+enum PostOrderTaskKind {
+    PostOrderFirstVisit,
+    PostOrderAddToResult
+};
+
+struct PostOrderTask {
+    PostOrderTask(BasicBlock* block = nullptr, PostOrderTaskKind kind = PostOrderFirstVisit)
+        : m_block(block)
+        , m_kind(kind)
+    {
+    }
+    
+    BasicBlock* m_block;
+    PostOrderTaskKind m_kind;
+};
+
+inline void addForPostOrder(Vector<PostOrderTask, 16>& worklist, BitVector& seen, BasicBlock* block)
+{
+    if (seen.get(block->index))
+        return;
+    
+    worklist.append(PostOrderTask(block, PostOrderFirstVisit));
+    seen.set(block->index);
+}
+
+} // anonymous namespace
+
+void Graph::getBlocksInPreOrder(Vector<BasicBlock*>& result)
 {
     Vector<BasicBlock*, 16> worklist;
-    HashSet<BasicBlock*> seen;
-    addForDepthFirstSort(result, worklist, seen, block(0));
+    BitVector seen;
+    addForPreOrder(result, worklist, seen, block(0));
     while (!worklist.isEmpty()) {
         BasicBlock* block = worklist.takeLast();
         for (unsigned i = block->numSuccessors(); i--;)
-            addForDepthFirstSort(result, worklist, seen, block->successor(i));
+            addForPreOrder(result, worklist, seen, block->successor(i));
+    }
+}
+
+void Graph::getBlocksInPostOrder(Vector<BasicBlock*>& result)
+{
+    Vector<PostOrderTask, 16> worklist;
+    BitVector seen;
+    addForPostOrder(worklist, seen, block(0));
+    while (!worklist.isEmpty()) {
+        PostOrderTask task = worklist.takeLast();
+        switch (task.m_kind) {
+        case PostOrderFirstVisit:
+            worklist.append(PostOrderTask(task.m_block, PostOrderAddToResult));
+            for (unsigned i = task.m_block->numSuccessors(); i--;)
+                addForPostOrder(worklist, seen, task.m_block->successor(i));
+            break;
+        case PostOrderAddToResult:
+            result.append(task.m_block);
+            break;
+        }
     }
 }
 
@@ -668,9 +718,9 @@ void Graph::clearReplacements()
         if (!block)
             continue;
         for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-            block->phis[phiIndex]->misc.replacement = 0;
+            block->phis[phiIndex]->replacement = 0;
         for (unsigned nodeIndex = block->size(); nodeIndex--;)
-            block->at(nodeIndex)->misc.replacement = 0;
+            block->at(nodeIndex)->replacement = 0;
     }
 }
 
@@ -681,9 +731,9 @@ void Graph::initializeNodeOwners()
         if (!block)
             continue;
         for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-            block->phis[phiIndex]->misc.owner = block;
+            block->phis[phiIndex]->owner = block;
         for (unsigned nodeIndex = block->size(); nodeIndex--;)
-            block->at(nodeIndex)->misc.owner = block;
+            block->at(nodeIndex)->owner = block;
     }
 }
 
@@ -787,6 +837,71 @@ unsigned Graph::requiredRegisterCountForExit()
 unsigned Graph::requiredRegisterCountForExecutionAndExit()
 {
     return std::max(frameRegisterCount(), requiredRegisterCountForExit());
+}
+
+JSValue Graph::tryGetConstantProperty(
+    JSValue base, const StructureSet& structureSet, PropertyOffset offset)
+{
+    if (!base || !base.isObject())
+        return JSValue();
+    
+    JSObject* object = asObject(base);
+    
+    for (unsigned i = structureSet.size(); i--;) {
+        Structure* structure = structureSet[i];
+        WatchpointSet* set = structure->propertyReplacementWatchpointSet(offset);
+        if (!set || !set->isStillValid())
+            return JSValue();
+        
+        ASSERT(structure->isValidOffset(offset));
+        ASSERT(!structure->isUncacheableDictionary());
+        
+        watchpoints().addLazily(set);
+    }
+    
+    // What follows may require some extra thought. We need this load to load a valid JSValue. If
+    // our profiling makes sense and we're still on track to generate code that won't be
+    // invalidated, then we have nothing to worry about. We do, however, have to worry about
+    // loading - and then using - an invalid JSValue in the case that unbeknownst to us our code
+    // is doomed.
+    //
+    // One argument in favor of this code is that it should definitely work because the butterfly
+    // is always set before the structure. However, we don't currently have a fence between those
+    // stores. It's not clear if this matters, however. We don't ever shrink the property storage.
+    // So, for this to fail, you'd need an access on a constant object pointer such that the inline
+    // caches told us that the object had a structure that it did not *yet* have, and then later,
+    // the object transitioned to that structure that the inline caches had alraedy seen. And then
+    // the processor reordered the stores. Seems unlikely and difficult to test. I believe that
+    // this is worth revisiting but it isn't worth losing sleep over. Filed:
+    // https://bugs.webkit.org/show_bug.cgi?id=134641
+    //
+    // For now, we just do the minimal thing: defend against the structure right now being
+    // incompatible with the getDirect we're trying to do. The easiest way to do that is to
+    // determine if the structure belongs to the proven set.
+    
+    if (!structureSet.contains(object->structure()))
+        return JSValue();
+    
+    return object->getDirect(offset);
+}
+
+JSValue Graph::tryGetConstantProperty(JSValue base, Structure* structure, PropertyOffset offset)
+{
+    return tryGetConstantProperty(base, StructureSet(structure), offset);
+}
+
+JSValue Graph::tryGetConstantProperty(
+    JSValue base, const StructureAbstractValue& structure, PropertyOffset offset)
+{
+    if (structure.isTop() || structure.isClobbered())
+        return JSValue();
+    
+    return tryGetConstantProperty(base, structure.set(), offset);
+}
+
+JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset offset)
+{
+    return tryGetConstantProperty(base.m_value, base.m_structure, offset);
 }
 
 JSActivation* Graph::tryGetActivation(Node* node)
@@ -900,7 +1015,6 @@ void Graph::visitChildren(SlotVisitor& visitor)
             case MultiGetByOffset:
                 for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
                     GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
-                    visitor.appendUnbarrieredReadOnlyValue(variant.specificValue());
                     const StructureSet& set = variant.structureSet();
                     for (unsigned j = set.size(); j--;)
                         visitor.appendUnbarrieredReadOnlyPointer(set[j]);

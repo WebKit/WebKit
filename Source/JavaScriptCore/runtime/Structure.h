@@ -59,6 +59,7 @@ class PropertyNameArray;
 class PropertyNameArrayData;
 class PropertyTable;
 class StructureChain;
+class StructureShape;
 class SlotVisitor;
 class JSString;
 struct DumpContext;
@@ -111,12 +112,11 @@ public:
 
     static void dumpStatistics();
 
-    JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext);
-    static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset&);
-    JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
+    JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext);
+    static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, StringImpl* uid, unsigned attributes, PropertyOffset&);
+    JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
-    JS_EXPORT_PRIVATE static Structure* despecifyFunctionTransition(VM&, Structure*, PropertyName);
     static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes);
     JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*);
     static Structure* toUncacheableDictionaryTransition(VM&, Structure*);
@@ -138,7 +138,7 @@ public:
     static void destroy(JSCell*);
 
     // These should be used with caution.  
-    JS_EXPORT_PRIVATE PropertyOffset addPropertyWithoutTransition(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
+    JS_EXPORT_PRIVATE PropertyOffset addPropertyWithoutTransition(VM&, PropertyName, unsigned attributes);
     PropertyOffset removePropertyWithoutTransition(VM&, PropertyName);
     void setPrototypeWithoutTransition(VM& vm, JSValue prototype) { m_prototype.set(vm, this, prototype); }
         
@@ -187,8 +187,6 @@ public:
         
     // Will just the prototype chain intercept this property access?
     bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
-        
-    bool transitionDidInvolveSpecificValue() const { return !!m_specificValueInPrevious; }
         
     Structure* previousID() const
     {
@@ -263,10 +261,10 @@ public:
 
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, const WTF::String& name);
-    PropertyOffset get(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
+    PropertyOffset get(VM&, PropertyName, unsigned& attributes);
 
     PropertyOffset getConcurrently(VM&, StringImpl* uid);
-    PropertyOffset getConcurrently(VM&, StringImpl* uid, unsigned& attributes, JSCell*& specificValue);
+    PropertyOffset getConcurrently(VM&, StringImpl* uid, unsigned& attributes);
     
     void setHasGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {
@@ -289,9 +287,6 @@ public:
         ASSERT(checkOffsetConsistency());
         return !JSC::isValidOffset(m_offset);
     }
-
-    JS_EXPORT_PRIVATE void despecifyDictionaryFunction(VM&, PropertyName);
-    void disableSpecificFunctionTracking() { setSpecificFunctionThrashCount(maxSpecificFunctionThrashCount); }
 
     void setEnumerationCache(VM&, JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
     JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
@@ -371,15 +366,35 @@ public:
         ASSERT(transitionWatchpointSetIsStillValid());
         m_transitionWatchpointSet.add(watchpoint);
     }
-        
-    void notifyTransitionFromThisStructure() const
-    {
-        m_transitionWatchpointSet.fireAll();
-    }
+    
+    void didTransitionFromThisStructure() const;
     
     InlineWatchpointSet& transitionWatchpointSet() const
     {
         return m_transitionWatchpointSet;
+    }
+    
+    WatchpointSet* ensurePropertyReplacementWatchpointSet(VM&, PropertyOffset);
+    void startWatchingPropertyForReplacements(VM& vm, PropertyOffset offset)
+    {
+        ensurePropertyReplacementWatchpointSet(vm, offset);
+    }
+    void startWatchingPropertyForReplacements(VM&, PropertyName);
+    WatchpointSet* propertyReplacementWatchpointSet(PropertyOffset);
+    void didReplaceProperty(PropertyOffset);
+    void didCachePropertyReplacement(VM&, PropertyOffset);
+    
+    void startWatchingInternalPropertiesIfNecessary(VM& vm)
+    {
+        if (LIKELY(didWatchInternalProperties()))
+            return;
+        startWatchingInternalProperties(vm);
+    }
+    
+    void startWatchingInternalPropertiesIfNecessaryForEntireChain(VM& vm)
+    {
+        for (Structure* structure = this; structure; structure = structure->storedPrototypeStructure())
+            structure->startWatchingInternalPropertiesIfNecessary(vm);
     }
 
     PassRefPtr<StructureShape> toStructureShape();
@@ -416,13 +431,13 @@ public:
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 5);
     DEFINE_BITFIELD(unsigned, attributesInPrevious, AttributesInPrevious, 14, 6);
-    DEFINE_BITFIELD(unsigned, specificFunctionThrashCount, SpecificFunctionThrashCount, 2, 20);
-    DEFINE_BITFIELD(bool, preventExtensions, PreventExtensions, 1, 22);
-    DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 23);
-    DEFINE_BITFIELD(bool, staticFunctionsReified, StaticFunctionsReified, 1, 24);
-    DEFINE_BITFIELD(bool, hasRareData, HasRareData, 1, 25);
-    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 26);
-    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 27);
+    DEFINE_BITFIELD(bool, preventExtensions, PreventExtensions, 1, 20);
+    DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
+    DEFINE_BITFIELD(bool, staticFunctionsReified, StaticFunctionsReified, 1, 22);
+    DEFINE_BITFIELD(bool, hasRareData, HasRareData, 1, 23);
+    DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 24);
+    DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 25);
+    DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 26);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -433,7 +448,7 @@ private:
 
     static Structure* create(VM&, Structure*);
     
-    static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset&);
+    static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, StringImpl* uid, unsigned attributes, PropertyOffset&);
 
     // This will return the structure that has a usable property table, that property table,
     // and the list of structures that we visited before we got to it. If it returns a
@@ -443,14 +458,11 @@ private:
     
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind);
 
-    PropertyOffset putSpecificValue(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
+    PropertyOffset add(VM&, PropertyName, unsigned attributes);
     PropertyOffset remove(PropertyName);
 
     void createPropertyMap(const GCSafeConcurrentJITLocker&, VM&, unsigned keyCount = 0);
     void checkConsistency();
-
-    bool despecifyFunction(VM&, PropertyName);
-    void despecifyAllFunctions(VM&);
 
     WriteBarrier<PropertyTable>& propertyTable();
     PropertyTable* takePropertyTableOrCloneIfPinned(VM&);
@@ -527,13 +539,12 @@ private:
     bool checkOffsetConsistency() const;
 
     JS_EXPORT_PRIVATE void allocateRareData(VM&);
-    void cloneRareDataFrom(VM&, const Structure*);
+    
+    void startWatchingInternalProperties(VM&);
 
     static const int s_maxTransitionLength = 64;
     static const int s_maxTransitionLengthForNonEvalPutById = 512;
 
-    static const unsigned maxSpecificFunctionThrashCount = 3;
-    
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.
     StructureIDBlob m_blob;
@@ -546,7 +557,6 @@ private:
     WriteBarrier<JSCell> m_previousOrRareData;
 
     RefPtr<StringImpl> m_nameInPrevious;
-    WriteBarrier<JSCell> m_specificValueInPrevious;
 
     const ClassInfo* m_classInfo;
 

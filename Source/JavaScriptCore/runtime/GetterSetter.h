@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -33,7 +33,11 @@ namespace JSC {
     class JSObject;
 
     // This is an internal value object which stores getter and setter functions
-    // for a property.
+    // for a property. Instances of this class have the property that once a getter
+    // or setter is set to a non-null value, then they cannot be changed. This means
+    // that if a property holding a GetterSetter reference is constant-inferred and
+    // that constant is observed to have a non-null setter (or getter) then we can
+    // constant fold that setter (or getter).
     class GetterSetter : public JSCell {
         friend class JIT;
 
@@ -56,9 +60,44 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
         JSObject* getter() const { return m_getter.get(); }
-        void setGetter(VM& vm, JSObject* getter) { m_getter.setMayBeNull(vm, this, getter); }
+        
+        JSObject* getterConcurrently() const
+        {
+            JSObject* result = getter();
+            WTF::loadLoadFence();
+            return result;
+        }
+        
+        // Set the getter. It's only valid to call this if you've never set the getter on this
+        // object.
+        void setGetter(VM& vm, JSObject* getter)
+        {
+            RELEASE_ASSERT(!m_getter);
+            WTF::storeStoreFence();
+            m_getter.setMayBeNull(vm, this, getter);
+        }
+        
         JSObject* setter() const { return m_setter.get(); }
-        void setSetter(VM& vm, JSObject* setter) { m_setter.setMayBeNull(vm, this, setter); }
+        
+        JSObject* setterConcurrently() const
+        {
+            JSObject* result = setter();
+            WTF::loadLoadFence();
+            return result;
+        }
+        
+        // Set the setter. It's only valid to call this if you've never set the setter on this
+        // object.
+        void setSetter(VM& vm, JSObject* setter)
+        {
+            RELEASE_ASSERT(!m_setter);
+            WTF::storeStoreFence();
+            m_setter.setMayBeNull(vm, this, setter);
+        }
+        
+        GetterSetter* withGetter(VM&, JSObject* getter);
+        GetterSetter* withSetter(VM&, JSObject* setter);
+        
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
             return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType), info());

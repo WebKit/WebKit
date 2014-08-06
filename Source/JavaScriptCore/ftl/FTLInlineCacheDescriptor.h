@@ -94,6 +94,35 @@ private:
     PutKind m_putKind;
 };
 
+struct CheckInGenerator {
+    StructureStubInfo* m_stub;
+    MacroAssembler::Call m_slowCall;
+    MacroAssembler::Label m_beginLabel;
+
+    CheckInGenerator(StructureStubInfo* stub, MacroAssembler::Call slowCall, MacroAssembler::Label beginLabel)
+        : m_stub(stub) 
+        , m_slowCall(slowCall)
+        , m_beginLabel(beginLabel)
+    {
+    }
+};
+
+class CheckInDescriptor : public InlineCacheDescriptor {
+public:
+    CheckInDescriptor() { }
+    
+    CheckInDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const StringImpl* id)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, nullptr)
+        , m_id(id)
+    {
+    }
+
+    
+    const StringImpl* m_id;
+    Vector<CheckInGenerator> m_generators;
+};
+
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

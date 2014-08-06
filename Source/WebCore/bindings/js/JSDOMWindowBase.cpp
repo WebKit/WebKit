@@ -282,7 +282,7 @@ void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
         if (!wrapper)
             continue;
         JSDOMWindowBase* jsWindow = JSC::jsCast<JSDOMWindowBase*>(wrapper);
-        jsWindow->m_windowCloseWatchpoints.fireAll();
+        jsWindow->m_windowCloseWatchpoints.fireAll("Frame cleared");
     }
 }
 

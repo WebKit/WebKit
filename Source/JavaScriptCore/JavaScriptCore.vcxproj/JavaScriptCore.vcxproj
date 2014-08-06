@@ -321,6 +321,7 @@
     <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
     <ClCompile Include="..\bytecode\CodeType.cpp" />
+    <ClCompile Include="..\bytecode\ComplexGetStatus.cpp" />
     <ClCompile Include="..\bytecode\ConstantStructureCheck.cpp" />
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
     <ClCompile Include="..\bytecode\DFGExitProfile.cpp" />
@@ -402,6 +403,7 @@
     <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp" />
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
+    <ClCompile Include="..\dfg\DFGHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
@@ -431,10 +433,12 @@
     <ClCompile Include="..\dfg\DFGOSRExitCompilerCommon.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitJumpPlaceholder.cpp" />
     <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp" />
+    <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPlan.cpp" />
     <ClCompile Include="..\dfg\DFGPredictionInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPredictionPropagationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPureValue.cpp" />
     <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp" />
@@ -908,6 +912,7 @@
     <ClInclude Include="..\bytecode\CodeOrigin.h" />
     <ClInclude Include="..\bytecode\CodeType.h" />
     <ClInclude Include="..\bytecode\Comment.h" />
+    <ClInclude Include="..\bytecode\ComplexGetStatus.h" />
     <ClInclude Include="..\bytecode\ConstantStructureCheck.h" />
     <ClInclude Include="..\bytecode\DataFormat.h" />
     <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
@@ -1023,6 +1028,7 @@
     <ClInclude Include="..\dfg\DFGGPRInfo.h" />
     <ClInclude Include="..\dfg\DFGGraph.h" />
     <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
+    <ClInclude Include="..\dfg\DFGHeapLocation.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
@@ -1058,10 +1064,12 @@
     <ClInclude Include="..\dfg\DFGOSRExitCompilerCommon.h" />
     <ClInclude Include="..\dfg\DFGOSRExitJumpPlaceholder.h" />
     <ClInclude Include="..\dfg\DFGOSRExitPreparation.h" />
+    <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h" />
     <ClInclude Include="..\dfg\DFGPhase.h" />
     <ClInclude Include="..\dfg\DFGPlan.h" />
     <ClInclude Include="..\dfg\DFGPredictionInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGPredictionPropagationPhase.h" />
+    <ClInclude Include="..\dfg\DFGPureValue.h" />
     <ClInclude Include="..\dfg\DFGRegisterBank.h" />
     <ClInclude Include="..\dfg\DFGRegisterSet.h" />
     <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h" />

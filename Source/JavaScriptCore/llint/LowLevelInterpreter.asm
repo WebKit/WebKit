@@ -1250,3 +1250,8 @@ _llint_op_put_to_scope_with_profile:
     traceExecution()
     callSlowPath(_llint_slow_path_put_to_scope_with_profile)
     dispatch(8)
+
+_llint_op_get_from_scope_with_profile:
+    traceExecution()
+    callSlowPath(_llint_slow_path_get_from_scope_with_profile)
+    dispatch(9)

@@ -205,7 +205,7 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
 SLOW_PATH_DECL(slow_path_touch_entry)
 {
     BEGIN();
-    exec->codeBlock()->symbolTable()->m_functionEnteredOnce.touch();
+    exec->codeBlock()->symbolTable()->m_functionEnteredOnce.touch("Function (re)entered");
     END();
 }
 
@@ -266,7 +266,7 @@ SLOW_PATH_DECL(slow_path_captured_mov)
     BEGIN();
     JSValue value = OP_C(2).jsValue();
     if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
-        set->notifyWrite(vm, value);
+        set->notifyWrite(vm, value, "Executed op_captured_mov");
     RETURN(value);
 }
 
@@ -277,7 +277,7 @@ SLOW_PATH_DECL(slow_path_new_captured_func)
     ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
     JSValue value = JSFunction::create(vm, codeBlock->functionDecl(pc[2].u.operand), exec->scope());
     if (VariableWatchpointSet* set = pc[3].u.watchpointSet)
-        set->notifyWrite(vm, value);
+        set->notifyWrite(vm, value, "Executed op_new_captured_func");
     RETURN(value);
 }
 

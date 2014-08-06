@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+class CodeBlock;
 class ExecState;
 class JSGlobalObject;
 class SourceProvider;
