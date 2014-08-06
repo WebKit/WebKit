@@ -80,6 +80,7 @@ void InitWebCoreSystemInterface(void)
         INIT(GetPreferredExtensionForMIMEType);
 #endif
         INIT(GetUserToBaseCTM);
+        INIT(GetWebDefaultCFStringEncoding);
         INIT(CGContextIsPDFContext);
 #if !PLATFORM(IOS)
         INIT(GetWheelEventDeltas);

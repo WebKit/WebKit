@@ -48,6 +48,10 @@ namespace WebCore {
     bool isJapaneseEncoding(const char* canonicalEncodingName);
     bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);
 
+#if PLATFORM(COCOA)
+    String defaultTextEncodingNameForSystemLanguage();
+#endif
+
 #ifndef NDEBUG
     void dumpTextEncodingNameMap();
 #endif
