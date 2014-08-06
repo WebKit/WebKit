@@ -1,3 +1,14 @@
+2014-08-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unable to scroll to bottom of nested scrollable areas
+        https://bugs.webkit.org/show_bug.cgi?id=135637
+        <rdar://problem/17910241>
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac/fast/scrolling/scroll-latched-nested-div-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-latched-nested-div.html: Added.
+
 2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: protocol command invocations should return a promise if no callback is supplied
