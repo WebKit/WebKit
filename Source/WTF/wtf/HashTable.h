@@ -1233,26 +1233,8 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::operator=(HashTable&& other) -> HashTable&
     {
-        invalidateIterators();
-        other.invalidateIterators();
-
-        m_table = other.m_table;
-        m_tableSize = other.m_tableSize;
-        m_tableSizeMask = other.m_tableSizeMask;
-        m_keyCount = other.m_keyCount;
-        m_deletedCount = other.m_deletedCount;
-
-        other.m_table = nullptr;
-        other.m_tableSize = 0;
-        other.m_tableSizeMask = 0;
-        other.m_keyCount = 0;
-        other.m_deletedCount = 0;
-
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = WTF::move(other.m_stats);
-        other.m_stats = nullptr;
-#endif
-
+        HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> temp = WTF::move(other);
+        swap(temp);
         return *this;
     }
 
