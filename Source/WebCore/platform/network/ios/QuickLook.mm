@@ -394,7 +394,7 @@ const char* WebCore::QLPreviewProtocol()
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     UNUSED_PARAM(connection);
-    if (!_resourceLoader)
+    if (!_resourceLoader || _hasFailed)
         return;
 
     ASSERT(_hasSentDidReceiveResponse);
