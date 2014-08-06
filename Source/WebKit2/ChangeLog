@@ -1,3 +1,40 @@
+2014-08-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Add support for user scripts to WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=134738
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add support for user scripts, to complement the user style sheet
+        support already present in WebKitUserContentManager. Most of the
+        moving parts are already present, so this just adds a boxed type
+        for user scripts (WebKitUserScript) and the corresponding methods
+        to add and remove scripts from the WebKitUserContentManager.
+
+        * UIProcess/API/gtk/WebKitUserContent.cpp: Add a WebKitUserScript
+        boxed type and its corresponding methods and enums.
+        (toUserScriptInjectionTime): Needed to convert
+        WebKitUserScriptInjectionTime values into its WebCore counterparts.
+        (_WebKitUserScript::_WebKitUserScript): Added.
+        (_WebKitUserScript::referenceCount): Ditto.
+        (webkit_user_script_ref):
+        (webkit_user_script_unref):
+        (webkit_user_script_new):
+        (webkitUserScriptGetUserScript): Internal method to obtain the
+        boxed WebCore::UserScript value.
+        * UIProcess/API/gtk/WebKitUserContent.h: Add the new public API
+        methods.
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp: Implement the
+        methods for adding and removing user scripts.
+        (webkit_user_content_manager_add_script):
+        (webkit_user_content_manager_remove_all_scripts):
+        * UIProcess/API/gtk/WebKitUserContentManager.h: Add the new public
+        API methods.
+        * UIProcess/API/gtk/WebKitUserContentPrivate.h: Add the definition
+        for the new private function.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Include the
+        new public methods in the API documentation.
+
 2014-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Be able to disable gtk2 dependency

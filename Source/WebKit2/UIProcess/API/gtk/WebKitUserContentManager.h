@@ -71,6 +71,13 @@ webkit_user_content_manager_add_style_sheet         (WebKitUserContentManager *m
 WEBKIT_API void
 webkit_user_content_manager_remove_all_style_sheets (WebKitUserContentManager *manager);
 
+WEBKIT_API void
+webkit_user_content_manager_add_script              (WebKitUserContentManager *manager,
+                                                     WebKitUserScript         *script);
+
+WEBKIT_API void
+webkit_user_content_manager_remove_all_scripts      (WebKitUserContentManager *manager);
+
 G_END_DECLS
 
 #endif

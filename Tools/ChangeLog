@@ -1,3 +1,25 @@
+2014-08-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Add support for user scripts to WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=134738
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add support for user scripts, to complement the user style sheet
+        support already present in WebKitUserContentManager. Most of the
+        moving parts are already present, so this just adds a boxed type
+        for user scripts (WebKitUserScript) and the corresponding methods
+        to add and remove scripts from the WebKitUserContentManager.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        Add test case for injected user scripts.
+        (isScriptInjectedForURLAtPath):
+        (removeOldInjectedContentAndResetLists):
+        (testUserContentManagerInjectedStyleSheet):
+        (testUserContentManagerInjectedScript):
+        (beforeAll):
+        (removeOldInjectedStyleSheetsAndResetLists): Deleted.
+
 2014-08-06  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] run-launcher --gtk still fails

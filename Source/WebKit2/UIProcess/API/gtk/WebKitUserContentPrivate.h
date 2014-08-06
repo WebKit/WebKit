@@ -21,8 +21,10 @@
 #define WebKitUserContentPrivate_h
 
 #include "WebKitUserContent.h"
+#include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 
+const WebCore::UserScript& webkitUserScriptGetUserScript(WebKitUserScript*);
 const WebCore::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*);
 
 #endif // WebKitUserContentPrivate_h

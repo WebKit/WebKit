@@ -109,6 +109,38 @@ void webkit_user_content_manager_remove_all_style_sheets(WebKitUserContentManage
     manager->priv->userContentController->removeAllUserStyleSheets();
 }
 
+/**
+ * webkit_user_content_manager_add_script:
+ * @manager: A #WebKitUserContentManager
+ * @script: A #WebKitUserScript
+ *
+ * Adds a #WebKitUserScript to the given #WebKitUserContentManager.
+ * The same #WebKitUserScript can be reused with multiple
+ * #WebKitUserContentManager instances.
+ *
+ * Since: 2.6
+ */
+void webkit_user_content_manager_add_script(WebKitUserContentManager* manager, WebKitUserScript* script)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(script);
+    manager->priv->userContentController->addUserScript(webkitUserScriptGetUserScript(script));
+}
+
+/**
+ * webkit_user_content_manager_remove_all_scripts:
+ * @manager: A #WebKitUserContentManager
+ *
+ * Removes all user scripts from the given #WebKitUserContentManager
+ *
+ * Since: 2.6
+ */
+void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* manager)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    manager->priv->userContentController->removeAllUserScripts();
+}
+
 WebUserContentControllerProxy* webkitUserContentManagerGetUserContentControllerProxy(WebKitUserContentManager* manager)
 {
     return manager->priv->userContentController.get();

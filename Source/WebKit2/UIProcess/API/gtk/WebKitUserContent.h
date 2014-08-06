@@ -84,6 +84,42 @@ webkit_user_style_sheet_new      (const gchar                    *source,
                                   const gchar* const             *whitelist,
                                   const gchar* const             *blacklist);
 
+/**
+ * WebKitUserScriptInjectionTime:
+ * @WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START: Insert the code of the user
+ *   script at the beginning of loaded documents. This is the default.
+ * @WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END: Insert the code of the user
+ *   script at the end of the loaded documents.
+ *
+ * Specifies at which place of documents an user script will be inserted.
+ *
+ * Since: 2.6
+ */
+typedef enum {
+    WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START,
+    WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END,
+} WebKitUserScriptInjectionTime;
+
+#define WEBKIT_TYPE_USER_SCRIPT (webkit_user_script_get_type())
+
+typedef struct _WebKitUserScript WebKitUserScript;
+
+WEBKIT_API GType
+webkit_user_script_get_type      (void);
+
+WEBKIT_API WebKitUserScript *
+webkit_user_script_ref           (WebKitUserScript               *user_script);
+
+WEBKIT_API void
+webkit_user_script_unref         (WebKitUserScript               *user_script);
+
+WEBKIT_API WebKitUserScript *
+webkit_user_script_new           (const gchar                    *source,
+                                  WebKitUserContentInjectedFrames injected_frames,
+                                  WebKitUserScriptInjectionTime   injection_time,
+                                  const gchar* const             *whitelist,
+                                  const gchar* const             *blacklist);
+
 G_END_DECLS
 
 #endif

@@ -63,6 +63,19 @@ static inline UserStyleLevel toUserStyleLevel(WebKitUserStyleLevel styleLevel)
     }
 }
 
+static inline UserScriptInjectionTime toUserScriptInjectionTime(WebKitUserScriptInjectionTime injectionTime)
+{
+    switch (injectionTime) {
+    case WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START:
+        return InjectAtDocumentStart;
+    case WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END:
+        return InjectAtDocumentEnd;
+    default:
+        ASSERT_NOT_REACHED();
+        return InjectAtDocumentStart;
+    }
+}
+
 static inline Vector<String> toStringVector(const char* const* strv)
 {
     if (!strv)
@@ -158,4 +171,90 @@ WebKitUserStyleSheet* webkit_user_style_sheet_new(const gchar* source, WebKitUse
 const UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet* userStyleSheet)
 {
     return *userStyleSheet->userStyleSheet;
+}
+
+struct _WebKitUserScript {
+    _WebKitUserScript(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* whitelist, const gchar* const* blacklist)
+        : userScript(std::make_unique<UserScript>(
+            String::fromUTF8(source), URL { },
+            toStringVector(whitelist), toStringVector(blacklist),
+            toUserScriptInjectionTime(injectionTime),
+            toUserContentInjectedFrames(injectedFrames)))
+        , referenceCount(1)
+    {
+    }
+
+    std::unique_ptr<UserScript> userScript;
+    int referenceCount;
+};
+
+G_DEFINE_BOXED_TYPE(WebKitUserScript, webkit_user_script, webkit_user_script_ref, webkit_user_script_unref)
+
+/**
+ * webkit_user_script_ref:
+ * @user_script: a #WebKitUserScript
+ *
+ * Atomically increments the reference count of @user_script by one.
+ * This function is MT-safe and may be called from any thread.
+ *
+ * Returns: The passed #WebKitUserScript
+ *
+ * Since: 2.6
+ */
+WebKitUserScript* webkit_user_script_ref(WebKitUserScript* userScript)
+{
+    g_atomic_int_inc(&userScript->referenceCount);
+    return userScript;
+}
+
+/**
+ * webkit_user_script_unref:
+ * @user_script: a #WebKitUserScript
+ *
+ * Atomically decrements the reference count of @user_script by one.
+ * If the reference count drops to 0, all memory allocated by
+ * #WebKitUserScript is released. This function is MT-safe and may be called
+ * from any thread.
+ *
+ * Since: 2.6
+ */
+void webkit_user_script_unref(WebKitUserScript* userScript)
+{
+    if (g_atomic_int_dec_and_test(&userScript->referenceCount)) {
+        userScript->~WebKitUserScript();
+        g_slice_free(WebKitUserScript, userScript);
+    }
+}
+
+/**
+ * webkit_user_script_new:
+ * @source: Source code of the user script.
+ * @injected_frames: A #WebKitUserContentInjectedFrames value
+ * @injection_time: A #WebKitUserScriptInjectionTime value
+ * @whitelist: (array zero-terminated=1) (allow-none): A whitelist of URI patterns or %NULL
+ * @blacklist: (array zero-terminated=1) (allow-none): A blacklist of URI patterns or %NULL
+ *
+ * Creates a new user script. Scripts can be applied to some URIs
+ * only by passing non-null values for @whitelist or @blacklist. Passing a
+ * %NULL whitelist implies that all URIs are on the whitelist. The script
+ * is applied if an URI matches the whitelist and not the blacklist.
+ * URI patterns must be of the form `[protocol]://[host]/[path]`, where the
+ * *host* and *path* components can contain the wildcard character (`*`) to
+ * represent zero or more other characters.
+ *
+ * Returns: A new #WebKitScript
+ *
+ * Since: 2.6
+ */
+WebKitUserScript* webkit_user_script_new(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* whitelist, const gchar* const* blacklist)
+{
+    g_return_val_if_fail(source, nullptr);
+    WebKitUserScript* userScript = g_slice_new(WebKitUserScript);
+    new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, whitelist, blacklist);
+    return userScript;
+}
+
+const UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
+{
+    return *userScript->userScript;
 }
