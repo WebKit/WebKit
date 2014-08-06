@@ -2215,6 +2215,7 @@ bool CodeBlock::isKnownToBeLiveDuringGC()
 #endif
 }
 
+#if ENABLE(DFG_JIT)
 static bool shouldMarkTransition(DFG::WeakReferenceTransition& transition)
 {
     if (transition.m_codeOrigin && !Heap::isMarked(transition.m_codeOrigin.get()))
@@ -2225,6 +2226,7 @@ static bool shouldMarkTransition(DFG::WeakReferenceTransition& transition)
     
     return true;
 }
+#endif // ENABLE(DFG_JIT)
 
 void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 {
@@ -3065,6 +3067,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         dataLog("    Did install baseline version of ", *this, "\n");
 #else // ENABLE(DFG_JIT)
     UNUSED_PARAM(mode);
+    UNUSED_PARAM(detail);
     UNREACHABLE_FOR_PLATFORM();
 #endif // ENABLE(DFG_JIT)
 }
