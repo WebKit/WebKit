@@ -80,6 +80,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetHTTPRequestPriority);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSURLResponseLastModifiedDate);
+    INIT(GetWebDefaultCFStringEncoding);
 #if !PLATFORM(IOS)
     INIT(SignedPublicKeyAndChallengeString);
     INIT(GetPreferredExtensionForMIMEType);
