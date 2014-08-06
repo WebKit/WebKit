@@ -1,3 +1,16 @@
+2014-08-06  Andy Estes  <aestes@apple.com>
+
+        [iOS] QuickLook returns an invalid MIME type for some documents
+        https://bugs.webkit.org/show_bug.cgi?id=135651
+
+        Reviewed by David Kilzer.
+
+        r172151 ensured that we ignore QuickLook delegate messages after an error, but neglected to do so for
+        connectionDidFinishLoading:. Do not call ResourceLoader::didFinishLoading() if an error has occurred.
+
+        * platform/network/ios/QuickLook.mm:
+        (-[WebResourceLoaderQuickLookDelegate connectionDidFinishLoading:]):
+
 2014-08-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172155.
@@ -46,19 +59,6 @@
         * rendering/TextPainter.cpp:
         (WebCore::isEmptyShadow): Does a shadow match these criteria?
         (WebCore::paintTextWithShadows): If so, don't draw it.
-
-2014-08-06  Andy Estes  <aestes@apple.com>
-
-        [iOS] QuickLook returns an invalid MIME type for some documents
-        https://bugs.webkit.org/show_bug.cgi?id=135651
-
-        Reviewed by David Kilzer.
-
-        r172151 ensured that we ignore QuickLook delegate messages after an error, but neglected to do so for
-        connectionDidFinishLoading:. Do not call ResourceLoader::didFinishLoading() if an error has occurred.
-
-        * platform/network/ios/QuickLook.mm:
-        (-[WebResourceLoaderQuickLookDelegate connectionDidFinishLoading:]):
 
 2014-08-06  Andy Estes  <aestes@apple.com>
 
