@@ -1,3 +1,25 @@
+2014-08-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r172025. <rdar://problem/17715503>
+
+    2014-08-04  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Videos will report a stall when within 1 frame-duration before the end of a movie.
+            https://bugs.webkit.org/show_bug.cgi?id=135586
+
+            Reviewed by Eric Carlson.
+
+            Under certain circumstances, videos which are within 1/24 seconds before the end of a media stream when
+            monitorSourceBuffers() is called will fail the hasFutureTime() check. This is because hasFutureTime()
+            checks whether enough media is buffered to play back at least some time in the future, but when the
+            current time is close to the duration, not enough data is buffered to satisfy that check.
+
+            Add some logic which will break out early when the SourceBuffer has buffered up to and including the
+            media's duration, and return that the buffer indeed hasFutureTime() available.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::hasFutureTime):
+
 2014-08-05  Dana Burkart  <dburkart@apple.com>
 
         Merge r172114

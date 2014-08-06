@@ -1502,8 +1502,12 @@ bool SourceBuffer::hasFutureTime() const
     if (found == notFound)
         return false;
 
-    bool ignoredValid = false;
-    return ranges->end(found, ignoredValid) - currentTime > currentTimeFudgeFactor();
+    MediaTime localEnd = ranges->end(found);
+    MediaTime duration = MediaTime::createWithDouble(m_source->duration());
+    if (localEnd == duration)
+        return true;
+
+    return localEnd - currentTime > currentTimeFudgeFactor();
 }
 
 bool SourceBuffer::canPlayThrough()
