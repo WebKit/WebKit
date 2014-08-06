@@ -1,5 +1,22 @@
 2014-08-05  David Farler  <dfarler@apple.com>
 
+        [iOS] run-webkit-tests: defaults for --runtime and --device-type flags
+        https://bugs.webkit.org/show_bug.cgi?id=135441
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (_set_up_derived_options):
+        If using the ios-simulator platform and runtime or device-type
+        aren't defined, get the latest runtime from the active Xcode.app
+        and pick a default device type based on the desired architecture:
+        iPhone 5 for i386 and iPhone 5s for x86_64.
+        * Scripts/webkitpy/xcode/__init__.py: Added.
+        * Scripts/webkitpy/xcode/simulator.py: Added.
+
+2014-08-05  David Farler  <dfarler@apple.com>
+
         [iOS] simctl can hang if run quickly after shutting down CoreSimulator services
         https://bugs.webkit.org/show_bug.cgi?id=135626
 

@@ -285,8 +285,8 @@ def parse_args(args):
     ]))
 
     option_group_definitions.append(("iOS Simulator Options", [
-        optparse.make_option('--runtime', help='iOS Simulator runtime identifier'),
-        optparse.make_option('--device-type', help='iOS Simulator device type identifier'),
+        optparse.make_option('--runtime', help='iOS Simulator runtime identifier (default: latest runtime)'),
+        optparse.make_option('--device-type', help='iOS Simulator device type identifier (default: i386 -> iPhone 5, x86_64 -> iPhone 5s)'),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [
@@ -390,6 +390,14 @@ def _set_up_derived_options(port, options):
     # The GTK+ and EFL ports only support WebKit2 so they always use WKTR.
     if options.platform == "gtk" or options.platform == "efl":
         options.webkit_test_runner = True
+
+    if options.platform == 'ios-simulator':
+        from webkitpy import xcode
+        if options.runtime is None:
+            options.runtime = xcode.simulator.get_latest_runtime()['identifier']
+        if options.device_type is None:
+            device_types = xcode.simulator.get_device_types()
+            options.device_type = device_types['iPhone 5'] if options.architecture == 'x86' else device_types['iPhone 5s']
 
 
 def run(port, options, args, logging_stream):
