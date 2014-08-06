@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -677,7 +677,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
-        int pageStep = std::max(std::max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
+        int pageStep = Scrollbar::pageStep(clientWidth);
         IntRect oldRect(m_horizontalScrollbar->frameRect());
         IntRect hBarRect(0,
             height() - m_horizontalScrollbar->height(),
@@ -698,7 +698,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
     if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
-        int pageStep = std::max(std::max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
+        int pageStep = Scrollbar::pageStep(clientHeight);
         IntRect oldRect(m_verticalScrollbar->frameRect());
         IntRect vBarRect(width() - m_verticalScrollbar->width(), 
             topContentInset(),

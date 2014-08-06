@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Igalia S.L.
  *
@@ -258,7 +258,7 @@ static unsigned verticalScrollDistance(Frame& frame)
     if (!(style.overflowY() == OSCROLL || style.overflowY() == OAUTO || focusedElement->hasEditableStyle()))
         return 0;
     int height = std::min<int>(toRenderBox(renderer)->clientHeight(), frame.view()->visibleHeight());
-    return static_cast<unsigned>(std::max(std::max<int>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages()), 1));
+    return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 
 static RefPtr<Range> unionDOMRanges(Range* a, Range* b)

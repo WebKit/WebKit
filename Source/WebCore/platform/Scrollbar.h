@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,8 @@ public:
     static int pixelsPerLineStep() { return 40; }
     static float minFractionToStepWhenPaging() { return 0.875f; }
     static int maxOverlapBetweenPages();
+    static int pageStep(int widthOrHeight) { return std::max(std::max<int>(lroundf(widthOrHeight * Scrollbar::minFractionToStepWhenPaging()), lroundf(widthOrHeight - Scrollbar::maxOverlapBetweenPages())), 1); }
+    static float pageStepDelta(int widthOrHeight) { return std::max(std::max(static_cast<float>(widthOrHeight) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(widthOrHeight) - Scrollbar::maxOverlapBetweenPages()), 1.0f); }
 
     void disconnectFromScrollableArea() { m_scrollableArea = 0; }
     ScrollableArea* scrollableArea() const { return m_scrollableArea; }

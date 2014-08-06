@@ -3243,13 +3243,13 @@ void RenderLayer::updateScrollbarsAfterLayout()
     // Set up the range (and page step/line step).
     if (m_hBar) {
         int clientWidth = box->pixelSnappedClientWidth();
-        int pageStep = std::max(std::max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
+        int pageStep = Scrollbar::pageStep(clientWidth);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_hBar->setProportion(clientWidth, m_scrollSize.width().round());
     }
     if (m_vBar) {
         int clientHeight = box->pixelSnappedClientHeight();
-        int pageStep = std::max(std::max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
+        int pageStep = Scrollbar::pageStep(clientHeight);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollSize.height().round());
     }

@@ -1,3 +1,26 @@
+2014-08-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Consolidate logic for calculating scrollbar page step size
+        https://bugs.webkit.org/show_bug.cgi?id=135670
+
+        Reviewed by Simon Fraser.
+
+        Consolidate the calculation of the scroll step size into a single place.
+        Improve the handling of sub-pixel layout behavior by performing proper
+        rounding on the fractional scroll ranges.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance): Switch to Scrollbar::pageStep method.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent): Ditto.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Ditto.
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::pageStep): Added.
+        (WebCore::Scrollbar::pageStepDelta): Added.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout): Switch to Scrollbar method.
+
 2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: dispatch timing information should be stored out-of-line in a replay segment
