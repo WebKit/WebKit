@@ -1,3 +1,17 @@
+2014-08-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r172145.
+        https://bugs.webkit.org/show_bug.cgi?id=135657
+
+        caused 1 API test to fail (Requested by zalan on #webkit).
+
+        Reverted changeset:
+
+        "Cleanup InlineTextBox::paintSelection and
+        ::localSelectionRect."
+        https://bugs.webkit.org/show_bug.cgi?id=135631
+        http://trac.webkit.org/changeset/172145
+
 2014-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-shadow with (0, 0) offset and radius = 0 is ugly
