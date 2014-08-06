@@ -50,7 +50,7 @@ static bool isVFPPresent()
 {
 #if OS(LINUX)
     int fd = open("/proc/self/auxv", O_RDONLY);
-    if (fd > 0) {
+    if (fd != -1) {
         Elf32_auxv_t aux;
         while (read(fd, &aux, sizeof(Elf32_auxv_t))) {
             if (aux.a_type == AT_HWCAP) {
