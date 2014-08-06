@@ -1,3 +1,24 @@
+2014-08-06  Tim Horton  <timothy_horton@apple.com>
+
+        Document-relative overlays disappear after doing page-cache navigations
+        https://bugs.webkit.org/show_bug.cgi?id=135669
+        <rdar://problem/17929171>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        When navigating from one page to another, the document-relative overlay
+        layer is moved from the layer tree of the RenderLayerCompositor of the
+        first RenderView to the layer tree of the RenderLayerCompositor of the
+        new RenderView, upon layer tree construction.
+        When going "back" via a page cache navigation, we don't rebuild the
+        layer tree, and just assume that it is in a valid state.
+        However, the document-relative overlay layer was *moved*, and as such,
+        needs to be moved back. To do this, reattach the document-relative
+        overlay layer whenever the root layer attachment of a RenderLayerCompositor
+        changes, which will happen in the right order when going back to a cached page.
+
 2014-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r171389, r171495, r171508, r171510, r171605, r171606, r171611, r171614, r171763 from ftlopt.
