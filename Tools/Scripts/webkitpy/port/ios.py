@@ -31,7 +31,7 @@ import subprocess
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.port import driver
+from webkitpy.port import driver, image_diff
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector import LeakDetector
 from webkitpy.port import config as port_config
@@ -337,6 +337,18 @@ class IOSSimulatorPort(Port):
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'
         return self._build_path(binary_name)
+
+    def diff_image(self, expected_contents, actual_contents, tolerance=None):
+        if not actual_contents and not expected_contents:
+            return (None, 0, None)
+        if not actual_contents or not expected_contents:
+            return (True, 0, None)
+        if not self._image_differ:
+            self._image_differ = image_diff.IOSSimulatorImageDiffer(self)
+        self.set_option_default('tolerance', 0.1)
+        if tolerance is None:
+            tolerance = self.get_option('tolerance')
+        return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def reset_preferences(self):
         simulator_path = self.simulator_path(self.simulator_udid())
