@@ -225,7 +225,7 @@ void ReplayController::createSegment()
     LOG(WebReplay, "%-20s Created segment: %p.\n", "ReplayController", m_loadedSegment.get());
     InspectorInstrumentation::segmentCreated(&m_page, m_loadedSegment);
 
-    m_activeCursor = m_loadedSegment->createCapturingCursor(m_page);
+    m_activeCursor = CapturingInputCursor::create(m_loadedSegment);
     m_activeCursor->appendInput<BeginSegmentSentinel>();
 
     std::unique_ptr<InitialNavigation> navigationInput = InitialNavigation::createFromPage(m_page);
@@ -269,7 +269,7 @@ void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
     m_currentPosition.segmentOffset = segmentIndex;
     m_currentPosition.inputOffset = 0;
 
-    m_activeCursor = m_loadedSegment->createReplayingCursor(m_page, this);
+    m_activeCursor = ReplayingInputCursor::create(m_loadedSegment, m_page, this);
 
     LOG(WebReplay, "%-20sLoading segment: %p.\n", "ReplayController", segment.get());
     InspectorInstrumentation::segmentLoaded(&m_page, segment);

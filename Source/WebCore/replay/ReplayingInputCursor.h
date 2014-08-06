@@ -36,15 +36,21 @@
 
 namespace WebCore {
 
+class EventLoopInputBase;
 class EventLoopInputDispatcher;
 class EventLoopInputDispatcherClient;
 class Page;
-class SegmentedInputStorage;
+class ReplaySessionSegment;
+
+struct EventLoopInputData {
+    EventLoopInputBase* input;
+    double timestamp;
+};
 
 class ReplayingInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(ReplayingInputCursor);
 public:
-    static PassRefPtr<ReplayingInputCursor> create(SegmentedInputStorage&, Page&, EventLoopInputDispatcherClient*);
+    static PassRefPtr<ReplayingInputCursor> create(PassRefPtr<ReplaySessionSegment>, Page&, EventLoopInputDispatcherClient*);
     virtual ~ReplayingInputCursor();
 
     virtual bool isCapturing() const override { return false; }
@@ -52,14 +58,16 @@ public:
 
     EventLoopInputDispatcher& dispatcher() const { return *m_dispatcher; }
 
-    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
-    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+    EventLoopInputData loadEventLoopInput();
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
 private:
-    ReplayingInputCursor(SegmentedInputStorage&, Page&, EventLoopInputDispatcherClient*);
+    ReplayingInputCursor(PassRefPtr<ReplaySessionSegment>, Page&, EventLoopInputDispatcherClient*);
 
-    SegmentedInputStorage& m_storage;
+    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
+    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+
+    RefPtr<ReplaySessionSegment> m_segment;
     std::unique_ptr<EventLoopInputDispatcher> m_dispatcher;
     Vector<size_t> m_positions;
 };

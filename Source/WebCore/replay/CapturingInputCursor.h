@@ -36,12 +36,13 @@
 namespace WebCore {
 
 class EventLoopInputExtent;
-class SegmentedInputStorage;
+class Page;
+class ReplaySessionSegment;
 
 class CapturingInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(CapturingInputCursor);
 public:
-    static PassRefPtr<CapturingInputCursor> create(SegmentedInputStorage&);
+    static PassRefPtr<CapturingInputCursor> create(PassRefPtr<ReplaySessionSegment>);
     virtual ~CapturingInputCursor();
 
     virtual bool isCapturing() const override { return true; }
@@ -50,15 +51,16 @@ public:
     void setWithinEventLoopInputExtent(bool);
     bool withinEventLoopInputExtent() const { return m_withinEventLoopInputExtent; }
 
-    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
-    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
 
 private:
-    explicit CapturingInputCursor(SegmentedInputStorage&);
+    CapturingInputCursor(PassRefPtr<ReplaySessionSegment>);
 
-    SegmentedInputStorage& m_storage;
+    virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;
+    virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
+
+    RefPtr<ReplaySessionSegment> m_segment;
     bool m_withinEventLoopInputExtent;
 };
 

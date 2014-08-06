@@ -55,20 +55,10 @@ private:
 
 class EventLoopInputBase : public NondeterministicInputBase {
 public:
-    EventLoopInputBase()
-        : m_timestamp(monotonicallyIncreasingTime())
-    {
-    }
-
     virtual ~EventLoopInputBase() { }
     virtual InputQueue queue() const override final { return InputQueue::EventLoopInput; }
 
     virtual void dispatch(ReplayController&) = 0;
-
-    double timestamp() const { return m_timestamp; }
-    void setTimestamp(double timestamp) { m_timestamp = timestamp; }
-protected:
-    double m_timestamp;
 };
 
 template <typename InputType>

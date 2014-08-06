@@ -30,8 +30,9 @@
 
 #if ENABLE(WEB_REPLAY)
 
-#include <replay/NondeterministicInput.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -43,20 +44,25 @@ class ReplayingInputCursor;
 class SegmentedInputStorage;
 
 class ReplaySessionSegment : public RefCounted<ReplaySessionSegment> {
+friend class CapturingInputCursor;
+friend class FunctorInputCursor;
+friend class ReplayingInputCursor;
 public:
     static PassRefPtr<ReplaySessionSegment> create();
     ~ReplaySessionSegment();
 
     unsigned identifier() const { return m_identifier; }
     double timestamp() const { return m_timestamp; }
+protected:
+    SegmentedInputStorage& storage() { return *m_storage; }
+    Vector<double, 0>& eventLoopTimings() { return m_eventLoopTimings; }
 
-    PassRefPtr<CapturingInputCursor> createCapturingCursor(Page&);
-    PassRefPtr<ReplayingInputCursor> createReplayingCursor(Page&, EventLoopInputDispatcherClient*);
-    PassRefPtr<FunctorInputCursor> createFunctorCursor();
 private:
     ReplaySessionSegment();
 
     std::unique_ptr<SegmentedInputStorage> m_storage;
+    Vector<double, 0> m_eventLoopTimings;
+
     unsigned m_identifier;
     bool m_canCapture;
     double m_timestamp;

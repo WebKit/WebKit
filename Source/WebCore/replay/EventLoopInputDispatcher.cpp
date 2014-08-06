@@ -49,13 +49,14 @@ EventLoopInputDispatcher::EventLoopInputDispatcher(Page& page, ReplayingInputCur
     , m_client(client)
     , m_cursor(cursor)
     , m_timer(this, &EventLoopInputDispatcher::timerFired)
-    , m_runningInput(nullptr)
     , m_dispatching(false)
     , m_running(false)
     , m_speed(DispatchSpeed::FastForward)
     , m_previousDispatchStartTime(0.0)
     , m_previousInputTimestamp(0.0)
 {
+    m_currentWork.input = nullptr;
+    m_currentWork.timestamp = 0.0;
 }
 
 void EventLoopInputDispatcher::run()
@@ -88,8 +89,8 @@ void EventLoopInputDispatcher::dispatchInputSoon()
     ASSERT(m_running);
 
     // We may already have an input if replay was paused just before dispatching.
-    if (!m_runningInput)
-        m_runningInput = static_cast<EventLoopInputBase*>(m_cursor.uncheckedLoadInput(InputQueue::EventLoopInput));
+    if (!m_currentWork.input)
+        m_currentWork = m_cursor.loadEventLoopInput();
 
     if (m_timer.isActive())
         m_timer.stop();
@@ -103,9 +104,9 @@ void EventLoopInputDispatcher::dispatchInputSoon()
         // observed delay between the previous and current input.
 
         if (!m_previousInputTimestamp)
-            m_previousInputTimestamp = m_runningInput->timestamp();
+            m_previousInputTimestamp = m_currentWork.timestamp;
 
-        double targetInterval = m_runningInput->timestamp() - m_previousInputTimestamp;
+        double targetInterval = m_currentWork.timestamp - m_previousInputTimestamp;
         double elapsed = monotonicallyIncreasingTime() - m_previousDispatchStartTime;
         waitInterval = targetInterval - elapsed;
     }
@@ -126,34 +127,34 @@ void EventLoopInputDispatcher::dispatchInputSoon()
 
 void EventLoopInputDispatcher::dispatchInput()
 {
-    ASSERT(m_runningInput);
+    ASSERT(m_currentWork.input);
     ASSERT(!m_dispatching);
 
     if (m_speed == DispatchSpeed::RealTime) {
         m_previousDispatchStartTime = monotonicallyIncreasingTime();
-        m_previousInputTimestamp = m_runningInput->timestamp();
+        m_previousInputTimestamp = m_currentWork.timestamp;
     }
 
 #if !LOG_DISABLED
-    EncodedValue encodedInput = EncodingTraits<NondeterministicInputBase>::encodeValue(*m_runningInput);
+    EncodedValue encodedInput = EncodingTraits<NondeterministicInputBase>::encodeValue(*m_currentWork.input);
     String jsonString = encodedInput.asObject()->toJSONString();
 
     LOG(WebReplay, "%-20s ----------------------------------------------", "ReplayEvents");
-    LOG(WebReplay, "%-20s >DISPATCH: %s %s\n", "ReplayEvents", m_runningInput->type().string().utf8().data(), jsonString.utf8().data());
+    LOG(WebReplay, "%-20s >DISPATCH: %s %s\n", "ReplayEvents", m_currentWork.input->type().string().utf8().data(), jsonString.utf8().data());
 #endif
 
-    m_client->willDispatchInput(*m_runningInput);
+    m_client->willDispatchInput(*m_currentWork.input);
     // Client could stop replay in the previous callback, so check again.
     if (!m_running)
         return;
 
     {
         TemporaryChange<bool> change(m_dispatching, true);
-        m_runningInput->dispatch(m_page.replayController());
+        m_currentWork.input->dispatch(m_page.replayController());
     }
 
-    EventLoopInputBase* dispatchedInput = m_runningInput;
-    m_runningInput = nullptr;
+    EventLoopInputBase* dispatchedInput = m_currentWork.input;
+    m_currentWork.input = nullptr;
 
     // Notify clients that the event was dispatched.
     m_client->didDispatchInput(*dispatchedInput);

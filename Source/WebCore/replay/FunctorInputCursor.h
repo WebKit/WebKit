@@ -30,6 +30,7 @@
 
 #if ENABLE(WEB_REPLAY)
 
+#include "ReplaySessionSegment.h"
 #include "SegmentedInputStorage.h"
 #include <replay/InputCursor.h>
 #include <replay/NondeterministicInput.h>
@@ -42,9 +43,9 @@ namespace WebCore {
 class FunctorInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(FunctorInputCursor);
 public:
-    static PassRefPtr<FunctorInputCursor> create(SegmentedInputStorage& storage)
+    static PassRefPtr<FunctorInputCursor> create(PassRefPtr<ReplaySessionSegment> segment)
     {
-        return adoptRef(new FunctorInputCursor(storage));
+        return adoptRef(new FunctorInputCursor(segment));
     }
 
     // InputCursor
@@ -59,22 +60,22 @@ public:
 protected:
     virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString&) override;
 private:
-    FunctorInputCursor(SegmentedInputStorage&);
+    FunctorInputCursor(PassRefPtr<ReplaySessionSegment>);
 
-    SegmentedInputStorage& m_storage;
+    RefPtr<ReplaySessionSegment> m_segment;
 };
 
 template<typename Functor> inline
 typename Functor::ReturnType FunctorInputCursor::forEachInputInQueue(InputQueue queue, Functor& functor)
 {
-    for (size_t i = 0; i < m_storage.queueSize(queue); i++)
-        functor(i, m_storage.queue(queue).at(i).get());
+    for (size_t i = 0; i < m_segment->storage().queueSize(queue); i++)
+        functor(i, m_segment->storage().queue(queue).at(i).get());
 
     return functor.returnValue();
 }
 
-inline FunctorInputCursor::FunctorInputCursor(SegmentedInputStorage& storage)
-    : m_storage(storage)
+inline FunctorInputCursor::FunctorInputCursor(PassRefPtr<ReplaySessionSegment> segment)
+    : m_segment(segment)
 {
 }
 

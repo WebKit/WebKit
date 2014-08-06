@@ -71,9 +71,6 @@ static PassRefPtr<TypeBuilder::Replay::ReplayInput> buildInspectorObjectForInput
         .setOffset(offset)
         .setData(encodedInput.asObject());
 
-    if (input.queue() == InputQueue::EventLoopInput)
-        inputObject->setTimestamp(static_cast<const EventLoopInputBase&>(input).timestamp());
-
     return inputObject.release();
 }
 
@@ -141,7 +138,7 @@ static PassRefPtr<TypeBuilder::Replay::SessionSegment> buildInspectorObjectForSe
     for (size_t i = 0; i < static_cast<size_t>(InputQueue::Count); i++) {
         SerializeInputToJSONFunctor collector;
         InputQueue queue = static_cast<InputQueue>(i);
-        RefPtr<FunctorInputCursor> functorCursor = segment->createFunctorCursor();
+        RefPtr<FunctorInputCursor> functorCursor = FunctorInputCursor::create(segment);
         RefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> queueInputs = functorCursor->forEachInputInQueue(queue, collector);
 
         RefPtr<TypeBuilder::Replay::ReplayInputQueue> queueObject = TypeBuilder::Replay::ReplayInputQueue::create()

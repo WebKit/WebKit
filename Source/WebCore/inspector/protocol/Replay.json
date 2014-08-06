@@ -34,7 +34,6 @@
             "properties": [
                 { "name": "type", "type": "string", "description": "Input type." },
                 { "name": "offset", "type": "integer", "description": "Offset of this input in its respective queue."},
-                { "name": "timestamp", "type": "number", "optional": true, "description": "The timestamp of this input." },
                 { "name": "data", "type": "object", "description": "Per-input payload." }
             ]
         },

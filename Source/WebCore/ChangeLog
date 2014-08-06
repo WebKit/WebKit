@@ -1,3 +1,65 @@
+2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: dispatch timing information should be stored out-of-line in a replay segment
+        https://bugs.webkit.org/show_bug.cgi?id=135295
+
+        Reviewed by Timothy Hatcher.
+
+        We need to save a timestamp for each event loop input so that replay can
+        simulate the original user and network delays. Currently that timestamp
+        is stored on each EventLoopInput instance.
+
+        This patch stores timestamp data in a separate vector attached to the segment.
+        The event loop input class is now immutable, and new auxiliary data can be added
+        without adding members to the EventLoopInput class.
+
+        As part of the refactoring, InputCursors now keep a reference to the relevant
+        session segment instead of a reference to their input storage. InputCursors can
+        be created directly, instead of through ReplaySessionSegment.
+
+        No new tests. No behavior was changed.
+
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::buildInspectorObjectForInput): Don't send the timestamp with the input.
+        (WebCore::buildInspectorObjectForSegment):
+        * inspector/protocol/Replay.json: Remove optional timestamp field for ReplayInput.
+        * replay/CapturingInputCursor.cpp:
+        (WebCore::CapturingInputCursor::CapturingInputCursor):
+        (WebCore::CapturingInputCursor::create):
+        (WebCore::CapturingInputCursor::storeInput): Save event loop input timings here.
+        * replay/CapturingInputCursor.h:
+        * replay/EventLoopInput.h:
+        (WebCore::EventLoopInputBase::EventLoopInputBase): Deleted.
+        (WebCore::EventLoopInputBase::timestamp): Deleted.
+        (WebCore::EventLoopInputBase::setTimestamp): Deleted.
+        * replay/EventLoopInputDispatcher.cpp: Use a struct for dispatch information.
+        (WebCore::EventLoopInputDispatcher::EventLoopInputDispatcher):
+        (WebCore::EventLoopInputDispatcher::dispatchInputSoon):
+        (WebCore::EventLoopInputDispatcher::dispatchInput):
+        * replay/EventLoopInputDispatcher.h:
+        * replay/FunctorInputCursor.h:
+        (WebCore::FunctorInputCursor::forEachInputInQueue):
+        (WebCore::FunctorInputCursor::FunctorInputCursor):
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::createSegment):
+        (WebCore::ReplayController::loadSegmentAtIndex):
+        (WebCore::ReplayController::unloadSegment): Deleted.
+        (WebCore::ReplayController::startPlayback): Deleted.
+        * replay/ReplaySessionSegment.cpp:
+        (WebCore::ReplaySessionSegment::createCapturingCursor): Deleted.
+        (WebCore::ReplaySessionSegment::createReplayingCursor): Deleted.
+        (WebCore::ReplaySessionSegment::createFunctorCursor): Deleted.
+        * replay/ReplaySessionSegment.h:
+        (WebCore::ReplaySessionSegment::storage):
+        (WebCore::ReplaySessionSegment::eventLoopTimings):
+        * replay/ReplayingInputCursor.cpp:
+        (WebCore::ReplayingInputCursor::ReplayingInputCursor):
+        (WebCore::ReplayingInputCursor::create):
+        (WebCore::ReplayingInputCursor::uncheckedLoadInput):
+        (WebCore::ReplayingInputCursor::loadEventLoopInput): Added. This method collates
+        and returns the next event loop input with its associated dispatch information.
+        * replay/ReplayingInputCursor.h:
+
 2014-08-06  Tim Horton  <timothy_horton@apple.com>
 
         Document-relative overlays disappear after doing page-cache navigations

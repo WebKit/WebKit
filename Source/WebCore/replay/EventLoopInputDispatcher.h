@@ -31,6 +31,7 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "EventLoopInput.h"
+#include "ReplayingInputCursor.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -39,7 +40,6 @@
 namespace WebCore {
 
 class Page;
-class ReplayingInputCursor;
 
 enum class DispatchSpeed {
     RealTime,
@@ -79,8 +79,8 @@ private:
     ReplayingInputCursor& m_cursor;
     Timer<EventLoopInputDispatcher> m_timer;
 
-    // This pointer is valid when an event loop input is presently dispatching.
-    EventLoopInputBase* m_runningInput;
+    // This data is valid when an event loop input is presently dispatching.
+    EventLoopInputData m_currentWork;
     // Whether the dispatcher is currently calling out to an inputs' dispatch() method.
     bool m_dispatching;
     // Whether the dispatcher is waiting to dispatch or actively dispatching inputs.
