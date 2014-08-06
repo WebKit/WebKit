@@ -1,3 +1,15 @@
+2014-08-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Move auto-height tests into fast/regions/auto-size
+        https://bugs.webkit.org/show_bug.cgi?id=135645
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/auto-size/region-height-auto-to-defined-expected.txt: Renamed from LayoutTests/fast/regions/region-height-auto-to-defined-expected.txt.
+        * fast/regions/auto-size/region-height-auto-to-defined.html: Renamed from LayoutTests/fast/regions/region-height-auto-to-defined.html.
+        * fast/regions/auto-size/region-height-defined-to-auto-expected.txt: Renamed from LayoutTests/fast/regions/region-height-defined-to-auto-expected.txt.
+        * fast/regions/auto-size/region-height-defined-to-auto.html: Renamed from LayoutTests/fast/regions/region-height-defined-to-auto.html.
+
 2014-08-05  James Craig  <jcraig@apple.com>
 
         Web Inspector: AXI: Add label string once AccessibilityObject::computedLabel() is available
