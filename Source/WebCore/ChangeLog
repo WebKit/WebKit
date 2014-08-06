@@ -1,3 +1,20 @@
+2014-08-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [CG] strokeRect does not honor lineJoin
+        https://bugs.webkit.org/show_bug.cgi?id=132948
+
+        Reviewed by Darin Adler.
+
+        Replaced use of CGContextStrokeRectWithWidth convenience function with explicit 
+        call to CGContextAddRect and CGContextStrokePath.  The convenience functions
+        CGContextStrokeRect and CGContextStrokeRectWithWidth fail to apply some attributes
+        (e.g. stroke join) of the graphics state in certain cases.
+
+        Test: fast/canvas/canvas-strokeRect-lineJoin.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::strokeRect):
+
 2014-08-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build attempts to use ANGLE when not building WebGL.

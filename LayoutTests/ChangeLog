@@ -1,3 +1,18 @@
+2014-08-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [CG] strokeRect does not honor lineJoin
+        https://bugs.webkit.org/show_bug.cgi?id=132948
+
+        Reviewed by Darin Adler.
+
+        Test behavior of canvas with stroke rect with line join
+
+        * fast/canvas/canvas-strokeRect-lineJoin-expected.txt: Added.
+        * fast/canvas/canvas-strokeRect-lineJoin.html: Added.
+        * fast/canvas/script-tests/canvas-strokeRect-lineJoin.js: Added.
+        * platform/mac-mountainlion/canvas/philip/tests/2d.strokeRect.zero.5-expected.txt: Added.
+        * platform/mac/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt: Removed.
+
 2014-08-05  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [GTK] [CSS Shapes] Layout test fast/shapes/shape-outside-floats/shape-outside-image-shape-margin.html fails

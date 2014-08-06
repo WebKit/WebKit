@@ -1161,7 +1161,19 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 
     if (m_state.strokePattern)
         applyStrokePattern();
-    CGContextStrokeRectWithWidth(context, rect, lineWidth);
+
+    // Using CGContextAddRect and CGContextStrokePath to stroke rect rather than
+    // convenience functions (CGContextStrokeRect/CGContextStrokeRectWithWidth).
+    // The convenience functions currently (in at least OSX 10.9.4) fail to
+    // apply some attributes of the graphics state in certain cases
+    // (as identified in https://bugs.webkit.org/show_bug.cgi?id=132948)
+    CGContextSaveGState(context);
+    setStrokeThickness(lineWidth);
+
+    CGContextAddRect(context, rect);
+    CGContextStrokePath(context);
+
+    CGContextRestoreGState(context);
 }
 
 void GraphicsContext::setLineCap(LineCap cap)
