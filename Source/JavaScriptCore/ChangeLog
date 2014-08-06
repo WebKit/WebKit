@@ -1,3 +1,13 @@
+2014-08-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: adding missing build file changes from r170490.
+        <https://webkit.org/b/133395>
+
+        Not reviewed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2014-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Silence a debug assertion.

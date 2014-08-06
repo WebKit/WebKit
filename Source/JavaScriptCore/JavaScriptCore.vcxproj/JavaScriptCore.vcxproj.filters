@@ -597,6 +597,12 @@
     <ClCompile Include="..\runtime\GetterSetter.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\HighFidelityLog.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\HighFidelityTypeProfiler.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\Identifier.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -826,6 +832,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SymbolTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\TypeSet.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\Watchdog.cpp">
@@ -1844,6 +1853,9 @@
     <ClInclude Include="..\bytecode\StructureStubInfo.h">
       <Filter>bytecode</Filter>
     </ClInclude>
+    <ClInclude Include="..\bytecode\TypeLocation.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h">
       <Filter>bytecode</Filter>
     </ClInclude>
@@ -2471,6 +2483,12 @@
     <ClInclude Include="..\runtime\GetterSetter.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\HighFidelityLog.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\HighFidelityTypeProfiler.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\Identifier.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2733,6 +2751,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Tracing.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TypeSet.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Uint16WithFraction.h">
