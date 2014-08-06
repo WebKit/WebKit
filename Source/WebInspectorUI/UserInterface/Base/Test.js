@@ -57,9 +57,15 @@ WebInspector.loaded = function()
     InspectorFrontendHost.loaded();
 }
 
-WebInspector.contentLoaded = function() {
+WebInspector.contentLoaded = function()
+{
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();
+}
+
+WebInspector.UIString = function(string)
+{
+    return string;
 }
 
 // Add stubs that are called by the frontend API.
