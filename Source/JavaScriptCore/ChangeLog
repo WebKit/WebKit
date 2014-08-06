@@ -1,5 +1,18 @@
 2014-08-06  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
+        [ARM] Incorrect handling of Unicode characters
+        https://bugs.webkit.org/show_bug.cgi?id=135380
+
+        Reviewed by Darin Adler.
+
+        Removed erroneous fast case from stringFromUTF(), since it assumed that 
+        char is always implemented as signed.
+
+        * jsc.cpp:
+        (stringFromUTF):
+
+2014-08-06  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
         [JSC] Build fix for FTL on EFL after ftlopt merge
         https://bugs.webkit.org/show_bug.cgi?id=135565
 

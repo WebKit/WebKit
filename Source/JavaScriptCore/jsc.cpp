@@ -661,20 +661,7 @@ GlobalObject::GlobalObject(VM& vm, Structure* structure)
 
 static inline String stringFromUTF(const char* utf8)
 {
-    // Find the the first non-ascii character, or nul.
-    const char* pos = utf8;
-    while (*pos > 0)
-        pos++;
-    size_t asciiLength = pos - utf8;
-    
-    // Fast case - string is all ascii.
-    if (!*pos)
-        return String(utf8, asciiLength);
-    
-    // Slow case - contains non-ascii characters, use fromUTF8WithLatin1Fallback.
-    ASSERT(*pos < 0);
-    ASSERT(strlen(utf8) == asciiLength + strlen(pos));
-    return String::fromUTF8WithLatin1Fallback(utf8, asciiLength + strlen(pos));
+    return String::fromUTF8WithLatin1Fallback(utf8, strlen(utf8));
 }
 
 static inline SourceCode jscSource(const char* utf8, const String& filename)
