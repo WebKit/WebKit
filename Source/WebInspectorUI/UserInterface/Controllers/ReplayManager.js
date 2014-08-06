@@ -52,7 +52,7 @@ WebInspector.ReplayManager = function()
 
     var instance = this;
 
-    this._initializationPromise = ReplayAgent.currentReplayState.promise()
+    this._initializationPromise = ReplayAgent.currentReplayState()
         .then(function(payload) {
             console.assert(payload.sessionState in WebInspector.ReplayManager.SessionState, "Unknown session state: " + payload.sessionState);
             console.assert(payload.segmentState in WebInspector.ReplayManager.SegmentState, "Unknown segment state: " + payload.segmentState);
@@ -65,7 +65,7 @@ WebInspector.ReplayManager = function()
 
             instance._initialized = true;
         }).then(function() {
-            return ReplayAgent.getAvailableSessions.promise();
+            return ReplayAgent.getAvailableSessions();
         }).then(function(payload) {
             for (var sessionId of payload.ids)
                 instance.sessionCreated(sessionId);

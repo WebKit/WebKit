@@ -86,7 +86,7 @@ WebInspector.TimelineManager.prototype = {
         if (!this._activeRecording || shouldCreateRecording)
             this._loadNewRecording();
 
-        var result = TimelineAgent.start.promise();
+        var result = TimelineAgent.start();
 
         // COMPATIBILITY (iOS 7): recordingStarted event did not exist yet. Start explicitly.
         if (!TimelineAgent.hasEvent("recordingStarted")) {

@@ -1,3 +1,16 @@
+2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: protocol command invocations should return a promise if no callback is supplied
+        https://bugs.webkit.org/show_bug.cgi?id=130702
+
+        Reviewed by Timothy Hatcher.
+
+        Addd a test for recieving protocol command results through an explicit callback,
+        via the .promise() entry point, and via an implicitly created promise.
+
+        * inspector/protocol-promise-result-expected.txt: Added.
+        * inspector/protocol-promise-result.html: Added.
+
 2014-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text-shadow with (0, 0) offset and radius = 0 is ugly
