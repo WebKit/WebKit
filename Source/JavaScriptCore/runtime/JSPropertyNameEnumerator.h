@@ -68,7 +68,12 @@ public:
     StructureChain* cachedPrototypeChain() const { return m_prototypeChain.get(); }
     void setCachedPrototypeChain(VM& vm, StructureChain* prototypeChain) { return m_prototypeChain.set(vm, this, prototypeChain); }
 
-    Structure* cachedStructure(VM& vm) const { return vm.heap.structureIDTable().get(m_cachedStructureID); }
+    Structure* cachedStructure(VM& vm) const
+    {
+        if (!m_cachedStructureID)
+            return nullptr;
+        return vm.heap.structureIDTable().get(m_cachedStructureID);
+    }
     StructureID cachedStructureID() const { return m_cachedStructureID; }
     uint32_t cachedInlineCapacity() const { return m_cachedInlineCapacity; }
     static ptrdiff_t cachedStructureIDOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureID); }

@@ -1,5 +1,14 @@
 2014-08-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Silence a debug assertion.
+
+        Reviewed by Mark Hahnenberg.
+
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::JSPropertyNameEnumerator::cachedStructure):
+
+2014-08-06  Filip Pizlo  <fpizlo@apple.com>
+
         Fix 32-bit build.
 
         * jit/JITOpcodes32_64.cpp:
