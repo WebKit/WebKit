@@ -1,3 +1,15 @@
+2014-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r168119): Album flipping animation doesn’t work
+        https://bugs.webkit.org/show_bug.cgi?id=132801
+
+        Reviewed by Dean Jackson.
+        
+        Test that starts a transform animation and dumps layers.
+
+        * compositing/backing/backface-visibility-flip-expected.txt: Added.
+        * compositing/backing/backface-visibility-flip.html: Added.
+
 2014-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unable to scroll to bottom of nested scrollable areas
