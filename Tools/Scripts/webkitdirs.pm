@@ -826,7 +826,8 @@ sub builtDylibPathForName
     determineConfigurationProductDir();
 
     if (isGtk()) {
-        return "$configurationProductDir/lib/libwebkit2gtk-4.0" . isDarwin() ? ".dylib" : ".so";
+        my $extension = isDarwin() ? ".dylib" : ".so";
+        return "$configurationProductDir/lib/libwebkit2gtk-4.0" . $extension;
     }
     if (isEfl()) {
         return "$configurationProductDir/lib/libewebkit2.so";

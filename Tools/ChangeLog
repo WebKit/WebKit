@@ -1,3 +1,18 @@
+2014-08-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] run-launcher --gtk still fails
+        https://bugs.webkit.org/show_bug.cgi?id=135642
+
+        Reviewed by Carlos Garcia Campos.
+
+        The perl interpreter is confused by the combination of string
+        concatenation and a ternary in the same line. Using a separate
+        variable to determine the library file extension fixes this issue.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName): Use an intermediate variable, it's more
+        readable and unambiguous.
+
 2014-07-29  Filip Pizlo  <fpizlo@apple.com>
 
         Merge r170564, r170571, r170604, r170628, r170672, r170680, r170724, r170728, r170729, r170819, r170821, r170836, r170855, r170860, r170890, r170907, r170929, r171052, r171106, r171152, r171153, r171214 from ftlopt.
