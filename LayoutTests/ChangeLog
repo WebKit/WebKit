@@ -1,5 +1,19 @@
 2014-08-06  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions] Move full screen tests into fast/regions/fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=135650
+
+        Reviewed by Andrei Bucur.
+
+        Move files and adjust paths accordingly.
+
+        * fast/regions/fullscreen/full-screen-video-from-region-expected.txt: Renamed from LayoutTests/fast/regions/full-screen-video-from-region-expected.txt.
+        * fast/regions/fullscreen/full-screen-video-from-region.html: Renamed from LayoutTests/fast/regions/full-screen-video-from-region.html.
+        * fast/regions/fullscreen/full-screen-video-in-region-crash-expected.txt: Renamed from LayoutTests/fast/regions/full-screen-video-in-region-crash-expected.txt.
+        * fast/regions/fullscreen/full-screen-video-in-region-crash.html: Renamed from LayoutTests/fast/regions/full-screen-video-in-region-crash.html.
+
+2014-08-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSSRegions] Move parsing tests into fast/regions/parsing
         https://bugs.webkit.org/show_bug.cgi?id=135649
 
