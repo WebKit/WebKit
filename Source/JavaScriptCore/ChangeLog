@@ -1,5 +1,11 @@
 2014-08-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Attempt to fix CMake-based builds, part 3.
+
+        * CMakeLists.txt:
+
+2014-08-05  Filip Pizlo  <fpizlo@apple.com>
+
         Attempt to fix CMake-based builds, part 2.
 
         * CMakeLists.txt:
