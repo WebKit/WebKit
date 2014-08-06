@@ -1,3 +1,12 @@
+2014-08-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r172129. (ftlopt branch merge)
+
+        Remove the duplicated friend declaration to fix this build failure:
+        "error: ‘JSC::Structure’ is already a friend of ‘JSC::StructureRareData’ [-Werror]"
+
+        * runtime/StructureRareData.h:
+
 2014-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         Attempt to fix CMake-based builds, part 3.

@@ -37,7 +37,6 @@ class JSPropertyNameIterator;
 class Structure;
 
 class StructureRareData : public JSCell {
-    friend class Structure;
 public:
     static StructureRareData* create(VM&, Structure*);
 
