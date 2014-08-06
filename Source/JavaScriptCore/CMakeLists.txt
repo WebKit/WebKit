@@ -71,7 +71,7 @@ set(JavaScriptCore_SOURCES
     bytecode/CodeBlockJettisoningWatchpoint.cpp
     bytecode/CodeOrigin.cpp
     bytecode/CodeType.cpp
-    bytecode/ComplerGetStatus.cpp
+    bytecode/ComplexGetStatus.cpp
     bytecode/ConstantStructureCheck.cpp
     bytecode/DFGExitProfile.cpp
     bytecode/DeferredCompilationCallback.cpp

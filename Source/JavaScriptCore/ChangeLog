@@ -1,5 +1,11 @@
 2014-08-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Attempt to fix CMake-based builds.
+
+        * CMakeLists.txt:
+
+2014-08-05  Filip Pizlo  <fpizlo@apple.com>
+
         Attempt to fix Windows build.
 
         * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
