@@ -454,6 +454,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSPromiseReaction.cpp
     runtime/JSPromisePrototype.cpp
     runtime/JSProxy.cpp
+    runtime/JSPropertyNameEnumerator.cpp
     runtime/JSScope.cpp
     runtime/JSSegmentedVariableObject.cpp
     runtime/JSSet.cpp

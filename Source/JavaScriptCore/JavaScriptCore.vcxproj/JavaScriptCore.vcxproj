@@ -728,6 +728,7 @@
     <ClCompile Include="..\runtime\JSPromiseFunctions.cpp" />
     <ClCompile Include="..\runtime\JSPromiseReaction.cpp" />
     <ClCompile Include="..\runtime\JSPromisePrototype.cpp" />
+    <ClCompile Include="..\runtime\JSPropertyNameEnumerator.cpp" />
     <ClCompile Include="..\runtime\JSProxy.cpp" />
     <ClCompile Include="..\runtime\JSScope.cpp" />
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp" />
@@ -1405,6 +1406,7 @@
     <ClInclude Include="..\runtime\DateInstanceCache.h" />
     <ClInclude Include="..\runtime\DatePrototype.h" />
     <ClInclude Include="..\runtime\DumpContext.h" />
+    <ClInclude Include="..\runtime\EnumerationMode.h" />
     <ClInclude Include="..\runtime\Error.h" />
     <ClInclude Include="..\runtime\ErrorConstructor.h" />
     <ClInclude Include="..\runtime\ErrorHandlingScope.h" />
@@ -1483,6 +1485,7 @@
     <ClInclude Include="..\runtime\JSPromiseFunctions.h" />
     <ClInclude Include="..\runtime\JSPromiseReaction.h" />
     <ClInclude Include="..\runtime\JSPromisePrototype.h" />
+    <ClInclude Include="..\runtime\JSPropertyNameEnumerator.h" />
     <ClInclude Include="..\runtime\JSProxy.h" />
     <ClInclude Include="..\runtime\JSScope.h" />
     <ClInclude Include="..\runtime\JSSegmentedVariableObject.h" />
