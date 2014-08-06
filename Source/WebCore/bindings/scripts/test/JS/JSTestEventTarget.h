@@ -31,7 +31,7 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestEventTarget* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestEventTarget> impl)
     {
-        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll();
+        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll("Allocated masquerading object");
         JSTestEventTarget* ptr = new (NotNull, JSC::allocateCell<JSTestEventTarget>(globalObject->vm().heap)) JSTestEventTarget(structure, globalObject, impl);
         ptr->finishCreation(globalObject->vm());
         return ptr;

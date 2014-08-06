@@ -1,3 +1,15 @@
+2014-08-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix bindings test breakage for for r170564 merged in r172129.
+        <https://webkit.org/b/134333>
+
+        Not reviewed.
+
+        No new tests.
+
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::JSTestEventTarget::create):
+
 2014-08-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed typo correction.
