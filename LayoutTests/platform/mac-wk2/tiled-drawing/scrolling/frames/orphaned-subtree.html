@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+            window.internals.settings.setScrollingTreeIncludesFrames(true);
+        }
+
+        function childFrameTestDone()
+        {
+            // Avoid infinite reload in the non-DRT case.
+            if (window.location.search)
+                return;
+
+            window.location += '?done=true';
+        }
+        
+        function checkForDoneTest()
+        {
+            if (window.location.search) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+        
+        window.addEventListener('load', checkForDoneTest, false);
+    </script>
+</head>
+<body>
+    <p>This test passes if it does not crash on the reload.</p>
+    <iframe id="iframe" src="resources/subframe-inside-fixed.html" scrolling="no" width="500" height="300"></iframe>
+</body>
+</html>
