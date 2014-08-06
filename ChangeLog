@@ -1,3 +1,15 @@
+2014-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Be able to disable gtk2 dependency
+        https://bugs.webkit.org/show_bug.cgi?id=135505
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add ENABLE_PLUGIN_PROCESS_GTK2 compile option. GTK+2 is only
+        required when it's enabled. It's enabled by default.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-08-05  Alex Christensen  <achristensen@webkit.org>
 
         More work on CMake.

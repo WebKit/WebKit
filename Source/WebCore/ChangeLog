@@ -1,3 +1,15 @@
+2014-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Be able to disable gtk2 dependency
+        https://bugs.webkit.org/show_bug.cgi?id=135505
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Do not build WebCorePlatformGTK2 when ENABLE_PLUGIN_PROCESS_GTK2
+        is OFF.
+
+        * PlatformGTK.cmake:
+
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix bindings test breakage for for r170564 merged in r172129.

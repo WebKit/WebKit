@@ -382,8 +382,8 @@ if (WTF_USE_EGL)
     )
 endif ()
 
-if (ENABLE_WEBKIT2)
-    # WebKit2 needs a version of WebCore compiled against GTK+2, so we've isolated all the GTK+
+if (ENABLE_PLUGIN_PROCESS_GTK2)
+    # WebKitPluginProcess2 needs a version of WebCore compiled against GTK+2, so we've isolated all the GTK+
     # dependent files into a separate library which can be used to construct a GTK+2 WebCore
     # for the plugin process.
     add_library(WebCorePlatformGTK2 ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})

@@ -1,3 +1,16 @@
+2014-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Be able to disable gtk2 dependency
+        https://bugs.webkit.org/show_bug.cgi?id=135505
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Only build WebKitPluginProcess2 when
+        ENABLE_PLUGIN_PROCESS_GTK2 is ON.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Do not try to launch
+        WebKitPluginProcess2 executable when ENABLE_PLUGIN_PROCESS_GTK2 is OFF.
+
 2014-08-05  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r164337): Pages are sometimes cut off/oriented incorrectly after using WKThumbnailView
