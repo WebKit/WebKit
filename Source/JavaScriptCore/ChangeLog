@@ -1,3 +1,9 @@
+2014-08-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt since r172184
+
+        * CMakeLists.txt: Removed TypeLocation.cpp
+
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: adding missing build file changes from r171510.
