@@ -591,6 +591,9 @@
     <ClCompile Include="..\runtime\FunctionConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\FunctionHasExecutedCache.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\FunctionPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -832,6 +835,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SymbolTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\TypeLocationCache.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\TypeSet.cpp">
@@ -2477,6 +2483,9 @@
     <ClInclude Include="..\runtime\FunctionConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\FunctionHasExecutedCache.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\FunctionPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2751,6 +2760,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Tracing.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TypeLocationCache.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\TypeSet.h">

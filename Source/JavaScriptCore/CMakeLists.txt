@@ -411,6 +411,7 @@ set(JavaScriptCore_SOURCES
     runtime/Executable.cpp
     runtime/FunctionConstructor.cpp
     runtime/FunctionExecutableDump.cpp
+    runtime/FunctionHasExecutedCache.cpp
     runtime/FunctionPrototype.cpp
     runtime/GetterSetter.cpp
     runtime/HighFidelityLog.cpp
@@ -520,6 +521,7 @@ set(JavaScriptCore_SOURCES
     runtime/StructureRareData.cpp
     runtime/SymbolTable.cpp
     runtime/TestRunnerUtils.cpp
+    runtime/TypeLocationCache.cpp
     runtime/TypeSet.cpp
     runtime/TypedArrayController.cpp
     runtime/TypedArrayType.cpp
