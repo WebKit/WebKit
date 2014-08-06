@@ -1,3 +1,18 @@
+2014-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text-shadow with (0, 0) offset and radius = 0 is ugly
+        https://bugs.webkit.org/show_bug.cgi?id=135357
+
+        Reviewed by Darin Adler.
+
+        Instead, check for this kind of shadow and don't draw it.
+
+        Test: fast/text/empty-shadow.html
+
+        * rendering/TextPainter.cpp:
+        (WebCore::isEmptyShadow): Does a shadow match these criteria?
+        (WebCore::paintTextWithShadows): If so, don't draw it.
+
 2014-08-06  Andy Estes  <aestes@apple.com>
 
         [iOS] QuickLook returns an invalid MIME type for some documents
