@@ -1,5 +1,28 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172195
+
+    2014-08-06  Enrica Casucci  <enrica@apple.com>
+
+            Services menu doesn't show up after you defocus/refocus the Safari window.
+            https://bugs.webkit.org/show_bug.cgi?id=135678
+            <rdar://problem/17929247>
+
+            Reviewed by Tim Horton.
+
+            In setSelection we create a SelectionRectGatherer::Notifier object that will notify
+            SelectionOverlayController about changes to the selection rects.
+            Upon creation, the list of selections rects is cleared, since it is populated by
+            the code that collects the selection rects. That code is never called
+            when setSelection won't change the selection, which the case when the window is
+            activated. The fix consists in postponing the SelectionRectGatherer::Notifier object
+            creation until we know for sure that the selection is indeed going to change.
+            
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::setSelection):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172193
 
     2014-08-06  Brady Eidson  <beidson@apple.com>

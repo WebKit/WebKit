@@ -831,12 +831,6 @@ void RenderView::setMaximalOutlineSize(int o)
 
 void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode)
 {
-#if ENABLE(SERVICE_CONTROLS)
-    // Clear the current rects and create a notifier for the new rects we are about to gather.
-    // The Notifier updates the Editor when it goes out of scope and is destroyed.
-    std::unique_ptr<SelectionRectGatherer::Notifier> rectNotifier = m_selectionRectGatherer.clearAndCreateNotifier();
-#endif // ENABLE(SERVICE_CONTROLS)
-
     // Make sure both our start and end objects are defined.
     // Check www.msnbc.com and try clicking around to find the case where this happened.
     if ((start && !end) || (end && !start))
@@ -849,6 +843,11 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         m_selectionEnd == end && m_selectionEndPos == endPos && !caretChanged)
         return;
 
+#if ENABLE(SERVICE_CONTROLS)
+    // Clear the current rects and create a notifier for the new rects we are about to gather.
+    // The Notifier updates the Editor when it goes out of scope and is destroyed.
+    std::unique_ptr<SelectionRectGatherer::Notifier> rectNotifier = m_selectionRectGatherer.clearAndCreateNotifier();
+#endif // ENABLE(SERVICE_CONTROLS)
     // Set global positions for new selection.
     m_selectionStart = start;
     m_selectionStartPos = startPos;
