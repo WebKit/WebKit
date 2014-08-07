@@ -932,6 +932,8 @@ WebInspector.TextEditor.prototype = {
                 allAutoContinue = false;
         }
 
+        allResolved = allResolved && WebInspector.debuggerManager.breakpointsEnabled;
+
         function updateStyles()
         {
             // We might not have a line if the content isn't fully populated yet.

@@ -42,11 +42,12 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     this.element.classList.add(WebInspector.SourceCodeTextEditor.StyleClassName);
 
     if (this._supportsDebugging) {
-        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateBreakpointStatus, this);
-        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateBreakpointStatus, this);
-        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateBreakpointStatus, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointStatusDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointStatusDidChange, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._breakpointStatusDidChange, this);
         WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.LocationDidChange, this._updateBreakpointLocation, this);
 
+        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._activeCallFrameDidChange, this);
@@ -114,11 +115,12 @@ WebInspector.SourceCodeTextEditor.prototype = {
     close: function()
     {
         if (this._supportsDebugging) {
-            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateBreakpointStatus, this);
-            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateBreakpointStatus, this);
-            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateBreakpointStatus, this);
+            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointStatusDidChange, this);
+            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointStatusDidChange, this);
+            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._breakpointStatusDidChange, this);
             WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.LocationDidChange, this._updateBreakpointLocation, this);
 
+            WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
             WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
             WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
             WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, this._activeCallFrameDidChange, this);
@@ -374,14 +376,27 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this._populateWithContent(content);
     },
 
-    _updateBreakpointStatus: function(event)
+    _breakpointStatusDidChange: function(event)
+    {
+        this._updateBreakpointStatus(event.target);
+    },
+
+    _breakpointsEnabledDidChange: function()
+    {
+        console.assert(this._supportsDebugging);
+
+        var breakpoints = WebInspector.debuggerManager.breakpointsForSourceCode(this._sourceCode);
+        for (var breakpoint of breakpoints)
+            this._updateBreakpointStatus(breakpoint);
+    },
+
+    _updateBreakpointStatus: function(breakpoint)
     {
         console.assert(this._supportsDebugging);
 
         if (!this._contentPopulated)
             return;
 
-        var breakpoint = event.target;
         if (!this._matchesBreakpoint(breakpoint))
             return;
 

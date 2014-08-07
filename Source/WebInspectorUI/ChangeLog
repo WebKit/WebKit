@@ -1,5 +1,52 @@
 2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: breakpoint resolved state should not depend on all breakpoints being enabled
+        https://bugs.webkit.org/show_bug.cgi?id=135517
+
+        Reviewed by Joseph Pecoraro.
+
+        Previously, Breakpoint.resolved returned false if all breakpoints were disabled, even if
+        the breakpoint had an associated SourceCode. This was a weird hack to make it easier to
+        style breakpoint widgets. This made it hard for other code to deal with resolved
+        breakpoints that were also disabled, or SourceCodeLocations that resolve and unresolve.
+        This patch removes that consideration and fixes style update code to manually check if all
+        breakpoints are being suppressed.
+
+        The code now enforces that a Breakpoint must have a SourceCode before it can be resolved.
+        (As a performance optimization when loading the initial frame tree, we sometimes we give
+        Breakpoints a SourceCode before the debugger officially says that the breakpoint has been
+        resolved. Thus, it's possible to be unresolved with a SourceCode, but not vice-versa.)
+
+        This patch also adds a few guards where we assumed a SourceCodeLocation had a SourceCode.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.set breakpointsEnabled): Remove spurious
+        ResolvedStateDidChange events.
+
+        (WebInspector.DebuggerManager.prototype.breakpointResolved): Set the breakpoint's SourceCode
+        if it has not been set already by DebuggerManager.associateBreakpointsWithSourceCode.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.get resolved):
+        (WebInspector.Breakpoint.prototype.set resolved.isSpecialBreakpoint):
+        (WebInspector.Breakpoint.prototype.set resolved): Add an assertion.
+        * UserInterface/Models/SourceCodeLocation.js: Add guards for !SourceCode.
+        (WebInspector.SourceCodeLocation.prototype.populateLiveDisplayLocationTooltip):
+        * UserInterface/Views/BreakpointTreeElement.js: Account for DebuggerManager.breakpointsEnabled.
+        (WebInspector.BreakpointTreeElement):
+        (WebInspector.BreakpointTreeElement.prototype._updateStatus):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection.prototype._updateLinkElement): Loosen the assertion.
+        * UserInterface/Views/SourceCodeTextEditor.js: Account for DebuggerManager.breakpointsEnabled.
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        (WebInspector.SourceCodeTextEditor.prototype._breakpointStatusDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype._breakpointsEnabledDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype._updateBreakpointStatus):
+        * UserInterface/Views/TextEditor.js: Account for DebuggerManager.breakpointsEnabled.
+
+2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: ReplayManager should unpause and suppress breakpoints before capturing/replaying
         https://bugs.webkit.org/show_bug.cgi?id=135608
 
