@@ -160,7 +160,7 @@ inline static bool hasScrollbarPseudoElement(const SelectorChecker::SelectorChec
         || dynamicPseudo == SCROLLBAR_TRACK
         || dynamicPseudo == SCROLLBAR_TRACK_PIECE
         || dynamicPseudo == SCROLLBAR_CORNER) {
-        ASSERT(context.scrollbar);
+        ASSERT_UNUSED(context, context.scrollbar);
         return true;
     }
     
