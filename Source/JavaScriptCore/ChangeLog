@@ -1,5 +1,14 @@
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: fix for build failure on GTK bots.
+
+        Not reviewed.
+
+        * runtime/FunctionHasExecutedCache.cpp:
+        - #include <limits.h> for UINT_MAX's definition.
+
+2014-08-06  Mark Lam  <mark.lam@apple.com>
+
         Gardening: fix for build failure on EFL bots.
 
         Not reviewed.

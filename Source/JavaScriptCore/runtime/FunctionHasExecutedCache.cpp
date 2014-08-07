@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FunctionHasExecutedCache.h"
 
+#include <limits.h>
+
 namespace JSC {
 
 bool FunctionHasExecutedCache::hasExecutedAtOffset(intptr_t id, unsigned offset)
