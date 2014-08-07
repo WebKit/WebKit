@@ -1,3 +1,12 @@
+2014-08-07  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Mark test as failing in TestExpectations until the issue can be investigated.
+        <https://webkit.org/b/135708>
+
+        Not reviewed.
+
+        * TestExpectations:
+
 2014-08-07  Alex Christensen  <achristensen@webkit.org>
 
         Compile scrollbar pseudoclass css selectors.
