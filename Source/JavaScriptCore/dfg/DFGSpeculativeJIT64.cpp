@@ -4721,7 +4721,7 @@ void SpeculativeJIT::compile(Node* node)
     }
     case HasIndexedProperty: {
         SpeculateCellOperand base(this, node->child1());
-        SpeculateInt32Operand index(this, node->child2());
+        SpeculateStrictInt32Operand index(this, node->child2());
         GPRResult result(this);
 
         GPRReg baseGPR = base.gpr();
@@ -4806,7 +4806,7 @@ void SpeculativeJIT::compile(Node* node)
 
         SpeculateCellOperand base(this, baseEdge);
         SpeculateCellOperand property(this, propertyEdge);
-        SpeculateInt32Operand index(this, indexEdge);
+        SpeculateStrictInt32Operand index(this, indexEdge);
         SpeculateCellOperand enumerator(this, enumeratorEdge);
         GPRResult result(this);
         GPRTemporary scratch1(this);
@@ -4876,15 +4876,13 @@ void SpeculativeJIT::compile(Node* node)
     }
     case GetEnumeratorPname: {
         SpeculateCellOperand enumerator(this, node->child1());
-        SpeculateInt32Operand index(this, node->child2());
+        SpeculateStrictInt32Operand index(this, node->child2());
         GPRTemporary scratch1(this);
-        GPRTemporary scratch2(this);
         GPRResult result(this);
 
         GPRReg enumeratorGPR = enumerator.gpr();
         GPRReg indexGPR = index.gpr();
         GPRReg scratch1GPR = scratch1.gpr();
-        GPRReg scratch2GPR = scratch2.gpr();
         GPRReg resultGPR = result.gpr();
 
         MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, 
@@ -4896,9 +4894,7 @@ void SpeculativeJIT::compile(Node* node)
         inBounds.link(&m_jit);
 
         m_jit.loadPtr(MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), scratch1GPR);
-        m_jit.move(indexGPR, scratch2GPR);
-        m_jit.signExtend32ToPtr(scratch2GPR, scratch2GPR);
-        m_jit.load64(MacroAssembler::BaseIndex(scratch1GPR, scratch2GPR, MacroAssembler::TimesEight), resultGPR);
+        m_jit.load64(MacroAssembler::BaseIndex(scratch1GPR, indexGPR, MacroAssembler::TimesEight), resultGPR);
 
         done.link(&m_jit);
         jsValueResult(resultGPR, node);

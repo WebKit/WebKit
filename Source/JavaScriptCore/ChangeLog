@@ -1,3 +1,15 @@
+2014-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        SpeculateInt32Operand is sometimes used in a 64-bit context, which has undefined behavior
+        https://bugs.webkit.org/show_bug.cgi?id=135722
+
+        Reviewed by Filip Pizlo.
+
+        We should be using SpeculateStrictInt32Operand instead.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of INPUT_SPEECH
