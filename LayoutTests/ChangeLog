@@ -1,3 +1,15 @@
+2014-08-07  Zalan Bujtas  <zalan@apple.com>
+
+        border-radius on html does not render properly.
+        https://bugs.webkit.org/show_bug.cgi?id=135706
+
+        Reviewed by Simon Fraser.
+
+        Ensure that background is initialized when border-radius is present.
+
+        * fast/borders/border-radius-on-html-expected.html: Added.
+        * fast/borders/border-radius-on-html.html: Added.
+
 2014-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         for-in is failing fast/dom/dataset-xhtml.xhtml and dataset.html tests

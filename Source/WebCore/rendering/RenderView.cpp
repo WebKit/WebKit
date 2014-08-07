@@ -523,6 +523,9 @@ static inline bool rendererObscuresBackground(RenderElement* rootObject)
     if (rootObject->rendererForRootBackground().style().backgroundClip() == TextFillBox)
         return false;
 
+    if (style.hasBorderRadius())
+        return false;
+
     return true;
 }
 

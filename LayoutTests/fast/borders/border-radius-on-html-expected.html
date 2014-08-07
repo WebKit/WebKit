@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that border-radius on html renders correctly.</title>
+<style>
+  body { 
+    margin: 0px;
+  }
+  div {
+    border-radius: 100%;
+    background-color: green;
+  }
+</style>
+</head>
+<body>
+<div id=foo></div>
+<script>
+var container = document.getElementById("foo");
+container.style.width = window.innerWidth  + "px";
+container.style.height = window.innerHeight + "px";
+</script>
+</body>
+</html>
