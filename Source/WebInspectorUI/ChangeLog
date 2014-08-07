@@ -1,3 +1,12 @@
+2014-08-07  Timothy Hatcher  <timothy@apple.com>
+
+        Fix reference to missing CloseTimeline.svg image.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.createTimelineTreeElement): Use CloseLarge.svg instead.
+
 2014-08-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
