@@ -42,6 +42,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 
+#if PLATFORM(COCOA)
+#include "WebCoreSystemInterface.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "TextCodecMac.h"
 #endif
@@ -349,6 +353,21 @@ bool noExtendedTextEncodingNameUsed()
     // If the calling thread did not use extended encoding names, it is fine for it to use a stale false value.
     return !didExtendTextCodecMaps;
 }
+
+#if PLATFORM(COCOA)
+String defaultTextEncodingNameForSystemLanguage()
+{
+    String systemEncodingName = CFStringConvertEncodingToIANACharSetName(wkGetWebDefaultCFStringEncoding());
+
+    // CFStringConvertEncodingToIANACharSetName() returns cp949 for kTextEncodingDOSKorean AKA "extended EUC-KR" AKA windows-949.
+    // ICU uses this name for a different encoding, so we need to change the name to a value that actually gives us windows-949.
+    // In addition, this value must match what is used in Safari, see <rdar://problem/5579292>.
+    // On some OS versions, the result is CP949 (uppercase).
+    if (equalIgnoringCase(systemEncodingName, "cp949"))
+        systemEncodingName = "ks_c_5601-1987";
+    return systemEncodingName;
+}
+#endif
 
 #ifndef NDEBUG
 void dumpTextEncodingNameMap()
