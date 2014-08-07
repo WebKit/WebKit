@@ -2392,7 +2392,18 @@ bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayer
     if (!(m_compositingTriggers & ChromeClient::ThreeDTransformTrigger))
         return false;
 
-    return renderer.style().backfaceVisibility() == BackfaceVisibilityHidden && renderer.layer()->has3DTransformedAncestor();
+    if (renderer.style().backfaceVisibility() != BackfaceVisibilityHidden)
+        return false;
+        
+    if (renderer.layer()->has3DTransformedAncestor())
+        return true;
+    
+    // FIXME: workaround for webkit.org/b/132801
+    RenderLayer* stackingContext = renderer.layer()->stackingContainer();
+    if (stackingContext && stackingContext->renderer().style().transformStyle3D() == TransformStyle3DPreserve3D)
+        return true;
+
+    return false;
 }
 
 bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& renderer) const
