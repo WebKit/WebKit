@@ -170,7 +170,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // the 'left' property must be set to left
     setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first), CSSPrimitiveValue::CSS_PERCENTAGE);
 
-    float multiplier = std::max(1.0f, m_fontSizeFromCaptionUserPrefs / VTTCueBox::DEFAULTCAPTIONFONTSIZE);
+    float multiplier = std::max(1.0f, m_fontSizeFromCaptionUserPrefs / DEFAULTCAPTIONFONTSIZE);
     // the 'width' property must be set to width, and the 'height' property  must be set to height
     if (m_cue.vertical() == horizontalKeyword()) {
         setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue.getCSSSize() * multiplier), CSSPrimitiveValue::CSS_PERCENTAGE);
