@@ -1,3 +1,23 @@
+2014-08-07  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Taking a paused video full screen flashes black at beginning of animation.
+        https://bugs.webkit.org/show_bug.cgi?id=135668
+
+        Reviewed by Eric Carlson.
+
+        When entering fullscreen, the full screen window will momentarily occlude the browser
+        window, causing a visiblity change notification. To avoid flickering when client buffering
+        is disabled, throttle calls to updateClientDataBuffering by delaying those calls for a
+        short period.
+
+        * platform/audio/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession):
+        (WebCore::MediaSession::clientWillPausePlayback):
+        (WebCore::MediaSession::visibilityChanged):
+        (WebCore::MediaSession::clientDataBufferingTimerFired):
+        (WebCore::MediaSession::updateClientDataBuffering):
+        * platform/audio/MediaSession.h:
+
 2014-08-07  Zan Dobersek  <zdobersek@igalia.com>
 
         ASSERT in Document::unregisterCollection reloading apple.com
