@@ -1,3 +1,18 @@
+2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Dragging selection window when mouse goes out of window bounds does not behave as expected
+        https://bugs.webkit.org/show_bug.cgi?id=135372
+
+        Reviewed by Timothy Hatcher.
+
+        Constrain move selection window dragging to the ruler bounds
+        based on the mouse down position on the drag window.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._handleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+
 2014-08-07  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Update glyphs to be more like Xcode 6

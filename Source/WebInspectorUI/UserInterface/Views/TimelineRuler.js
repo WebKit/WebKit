@@ -604,11 +604,15 @@ WebInspector.TimelineRuler.prototype = {
 
         this._selectionIsMove = event.target === this._selectionDragElement;
         this._suppressTimeRangeSelectionChangedEvent = !this._selectionIsMove;
+        this._rulerBoundingClientRect = this._element.getBoundingClientRect();
 
-        if (this._selectionIsMove)
+        if (this._selectionIsMove) {
             this._lastMousePosition = event.pageX;
-        else
-            this._mouseDownPosition = event.pageX - this._element.totalOffsetLeft;
+            var selectionDragElementRect = this._selectionDragElement.getBoundingClientRect();
+            this._moveSelectionMaximumLeftOffset = this._rulerBoundingClientRect.left + (event.pageX - selectionDragElementRect.left);
+            this._moveSelectionMaximumRightOffset = this._rulerBoundingClientRect.right - (selectionDragElementRect.right - event.pageX);
+        } else
+            this._mouseDownPosition = event.pageX - this._rulerBoundingClientRect.left;
 
         this._mouseMoveEventListener = this._handleMouseMove.bind(this);
         this._mouseUpEventListener = this._handleMouseUp.bind(this);
@@ -626,7 +630,7 @@ WebInspector.TimelineRuler.prototype = {
         console.assert(event.button === 0);
 
         if (this._selectionIsMove) {
-            var currentMousePosition = event.pageX;
+            var currentMousePosition = Math.max(this._moveSelectionMaximumLeftOffset, Math.min(this._moveSelectionMaximumRightOffset, event.pageX));
 
             var offsetTime = (currentMousePosition - this._lastMousePosition) * this.secondsPerPixel;
             var selectionDuration = this.selectionEndTime - this.selectionStartTime;
@@ -636,7 +640,7 @@ WebInspector.TimelineRuler.prototype = {
 
             this._lastMousePosition = currentMousePosition;
         } else {
-            var currentMousePosition = event.pageX - this._element.totalOffsetLeft;
+            var currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
 
             this.selectionStartTime = Math.max(this.startTime, this.startTime + (Math.min(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel));
             this.selectionEndTime = Math.min(this.startTime + (Math.max(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel), this.endTime);
@@ -654,7 +658,7 @@ WebInspector.TimelineRuler.prototype = {
 
         if (!this._selectionIsMove && this.selectionEndTime - this.selectionStartTime < WebInspector.TimelineRuler.MinimumSelectionTimeRange) {
             // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
-            var currentMousePosition = event.pageX - this._element.totalOffsetLeft;
+            var currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
             if (currentMousePosition > this._mouseDownPosition) {
                 this.selectionEndTime = Math.min(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, this.endTime);
                 this.selectionStartTime = this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange;
@@ -676,6 +680,9 @@ WebInspector.TimelineRuler.prototype = {
         delete this._mouseDownPosition;
         delete this._lastMousePosition;
         delete this._selectionIsMove;
+        delete this._rulerBoundingClientRect;
+        delete this._moveSelectionMaximumLeftOffset;
+        delete this._moveSelectionMaximumRightOffset;
 
         event.preventDefault();
         event.stopPropagation();
