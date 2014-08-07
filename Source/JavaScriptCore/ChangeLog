@@ -1,3 +1,15 @@
+2014-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        for-in is failing fast/dom/dataset-xhtml.xhtml and dataset.html tests
+        https://bugs.webkit.org/show_bug.cgi?id=135681
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::canCacheGenericPropertyNameEnumerator): We were checking the entire 
+        prototype chain for overridesGetPropertyNames, but we were neglecting to check the 
+        base object's Structure. D'oh!
+
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix for build failure on EFL bots.

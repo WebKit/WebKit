@@ -1291,6 +1291,9 @@ bool Structure::canCacheGenericPropertyNameEnumerator() const
     if (hasIndexedProperties(indexingType()))
         return false;
 
+    if (typeInfo().overridesGetPropertyNames())
+        return false;
+
     StructureChain* structureChain = m_cachedPrototypeChain.get();
     ASSERT(structureChain);
     WriteBarrier<Structure>* structure = structureChain->head();

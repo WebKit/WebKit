@@ -1,3 +1,14 @@
+2014-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        for-in is failing fast/dom/dataset-xhtml.xhtml and dataset.html tests
+        https://bugs.webkit.org/show_bug.cgi?id=135681
+
+        Reviewed by Filip Pizlo.
+
+        Removed the two failing tests from the TestExpectations list since they pass now!
+
+        * TestExpectations:
+
 2014-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac, iOS] Captions are appearing multiple times during repeated video play through
