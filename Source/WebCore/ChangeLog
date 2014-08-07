@@ -1,3 +1,21 @@
+2014-08-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        ASSERT in Document::unregisterCollection reloading apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=135168
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::unregisterCollection): This assertion was failing
+        because the passed-in HTMLCollection was not invalidated for a non-related
+        attribute, but was instead unregistered during destruction, at which point
+        the m_collectionsInvalidatedAtDocument HashSet was empty.
+        The assertion could be trivially reduced into checking that the HashSet is
+        empty when it was moved out of in Document::invalidateNodeListAndCollectionCaches(),
+        but that just checks that the move semantics on HashSet work properly. Removing
+        a non-existent element from a HashSet is harmless, so the assertion can be removed
+        completely.
+
 2014-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct build errors when WebGL Disabled

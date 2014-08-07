@@ -3520,9 +3520,6 @@ void Document::unregisterCollection(HTMLCollection& collection)
     if (!collection.isRootedAtDocument())
         return;
 
-    ASSERT(m_inInvalidateNodeListAndCollectionCaches
-        ? m_collectionsInvalidatedAtDocument.isEmpty()
-        : m_collectionsInvalidatedAtDocument.contains(&collection));
     m_collectionsInvalidatedAtDocument.remove(&collection);
 }
 
