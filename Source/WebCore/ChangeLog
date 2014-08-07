@@ -1,5 +1,32 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172183
+
+    2014-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r168119): Album flipping animation doesn’t work
+            https://bugs.webkit.org/show_bug.cgi?id=132801
+            <rdar://problem/16878497>, <rdar://problem/17908085>
+
+            Reviewed by Dean Jackson.
+            
+            In r168119 I avoided creating backing store for backface-visibility:hidden unless
+            some ancestor was 3d-transformed. However, when starting transitions or animations
+            that apply transforms, we don't do a layout, and therefore don't update the RenderLayer
+            flags that mark an ancestor as having a transform. This broke various content which
+            used backface-visibility:hidden for "flip" animations.
+            
+            Make a low-risk fix that looks for the pattern of CSS properties used for flipping,
+            making a compositing layer for backface-visibility:hidden if the stacking context element
+            has transform-style: preserve-3d.
+
+            Test: compositing/backing/backface-visibility-flip.html
+
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::requiresCompositingForBackfaceVisibility):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172027
 
     2014-08-04  Chris Fleizach  <cfleizach@apple.com>
