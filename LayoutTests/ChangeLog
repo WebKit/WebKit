@@ -1,3 +1,12 @@
+2014-08-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: adding failed tests to TestExpectations.
+        <https://webkit.org/b/135681>
+
+        Not reviewed.
+
+        * TestExpectations:
+
 2014-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement parsing for CSS scroll snap points
