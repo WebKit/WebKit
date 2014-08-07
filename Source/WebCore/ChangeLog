@@ -1,5 +1,16 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172231
+
+    2014-08-07  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed build fix attempt #2 following r172224.
+
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCueBox::applyCSSProperties):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172228
 
     2014-08-07  Roger Fong  <roger_fong@apple.com>
