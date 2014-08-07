@@ -29,22 +29,34 @@
     display: inline-block;
 }
 
-.item > .status > .status-button > svg * {
-    fill: rgb(112, 126, 139);
+.item > .status > .status-button > svg path.filled {
+    fill: rgb(128, 128, 128);
 }
 
-.item.selected > .status > .status-button > svg * {
-    fill: white;
+body.mac-platform.legacy .item > .status > .status-button > svg path.filled {
+    fill: rgb(64, 64, 64);
 }
 
-.item.selected > .status > .status-button:active > svg * {
-    fill: rgba(255, 255, 255, 0.75);
+:focus .item.selected > .status > .status-button > svg path.filled {
+    fill: white !important;
 }
 
-.item > .status > .status-button.disabled > svg * {
-    fill: rgba(112, 126, 139, 0.5) !important;
+.item > .status > .status-button > svg path.stroked {
+    stroke: rgb(128, 128, 128);
 }
 
-.item.selected > .status > .status-button.disabled > svg * {
-    fill: rgba(255, 255, 255, 0.5) !important;
+body.mac-platform.legacy .item > .status > .status-button > svg path.stroked {
+    stroke: rgb(64, 64, 64);
+}
+
+:focus .item.selected > .status > .status-button > svg path.stroked {
+    stroke: white !important;
+}
+
+.item.selected > .status > .status-button:active {
+    opacity: 0.75;
+}
+
+.item > .status > .status-button.disabled {
+    opacity: 0.4 !important;
 }

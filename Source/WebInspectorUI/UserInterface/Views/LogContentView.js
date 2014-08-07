@@ -64,7 +64,13 @@ WebInspector.LogContentView = function(representedObject)
     this._scopeBar = new WebInspector.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
     this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
-    this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(this._logViewController.messagesClearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 16, 16);
+    var trashImage;
+    if (WebInspector.Platform.isLegacyMacOS)
+        trashImage = {src: "Images/Legacy/NavigationItemTrash.svg", width: 16, height: 16};
+    else
+        trashImage = {src: "Images/NavigationItemTrash.svg", width: 15, height: 15};
+
+    this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(this._logViewController.messagesClearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), trashImage.src, trashImage.width, trashImage.height);
     this._clearLogNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearLog, this);
 
     var toolTip = WebInspector.UIString("Show split console");

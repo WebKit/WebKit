@@ -44,7 +44,13 @@ WebInspector.TimelineContentView = function(recording)
     this._viewContainer.classList.add(WebInspector.TimelineContentView.ViewContainerStyleClassName);
     this.element.appendChild(this._viewContainer);
 
-    this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), "Images/NavigationItemTrash.svg", 16, 16);
+    var trashImage;
+    if (WebInspector.Platform.isLegacyMacOS)
+        trashImage = {src: "Images/Legacy/NavigationItemTrash.svg", width: 16, height: 16};
+    else
+        trashImage = {src: "Images/NavigationItemTrash.svg", width: 15, height: 15};
+
+    this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), trashImage.src, trashImage.width, trashImage.height);
     this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
 
     this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording);

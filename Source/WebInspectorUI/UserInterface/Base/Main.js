@@ -244,10 +244,10 @@ WebInspector.contentLoaded = function()
     this._redoKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "Z", this._redoKeyboardShortcut.bind(this));
     this._undoKeyboardShortcut.implicitlyPreventsDefault = this._redoKeyboardShortcut.implicitlyPreventsDefault = false;
 
-    this.undockButtonNavigationItem = new WebInspector.ToggleControlToolbarItem("undock", WebInspector.UIString("Detach into separate window"), "", "Images/Undock.svg", "", 16, 14);
+    this.undockButtonNavigationItem = new WebInspector.ToggleControlToolbarItem("undock", WebInspector.UIString("Detach into separate window"), "", platformImagePath("Undock.svg"), "", 16, 14);
     this.undockButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._undock, this);
 
-    this.closeButtonNavigationItem = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), "Images/Close.svg", 16, 14);
+    this.closeButtonNavigationItem = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), platformImagePath("Close.svg"), 16, 14);
     this.closeButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.close, this);
 
     this.toolbar.addToolbarItem(this.closeButtonNavigationItem, WebInspector.Toolbar.Section.Control);
@@ -867,7 +867,7 @@ WebInspector._updateDockNavigationItems = function()
     this.undockButtonNavigationItem.hidden = !docked;
 
     if (docked) {
-        this.undockButtonNavigationItem.alternateImage = this._dockSide === "bottom" ? "Images/DockRight.svg" : "Images/DockBottom.svg";
+        this.undockButtonNavigationItem.alternateImage = this._dockSide === "bottom" ? platformImagePath("DockRight.svg") : platformImagePath("DockBottom.svg");
         this.undockButtonNavigationItem.alternateToolTip = this._dockSide === "bottom" ? WebInspector.UIString("Dock to right of window") : WebInspector.UIString("Dock to bottom of window");
     }
 
@@ -1436,13 +1436,13 @@ WebInspector._copy = function(event)
 WebInspector._generateDisclosureTriangleImages = function()
 {
     var specifications = {};
-    specifications["normal"] = {fillColor: [0, 0, 0, 0.5]};
-    specifications["normal-active"] = {fillColor: [0, 0, 0, 0.7]};
+    specifications["normal"] = {fillColor: [140, 140, 140, 1]};
+    specifications["normal-active"] = {fillColor: [128, 128, 128, 1]};
 
     generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.svg", specifications, 13, 13, "disclosure-triangle-small-open-");
     generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.svg", specifications, 13, 13, "disclosure-triangle-small-closed-");
 
-    specifications["selected"] = {fillColor: [255, 255, 255, 0.8]};
+    specifications["selected"] = {fillColor: [255, 255, 255, 1]};
 
     generateColoredImagesForCSS("Images/DisclosureTriangleTinyOpen.svg", specifications, 8, 8, "disclosure-triangle-tiny-open-");
     generateColoredImagesForCSS("Images/DisclosureTriangleTinyClosed.svg", specifications, 8, 8, "disclosure-triangle-tiny-closed-");

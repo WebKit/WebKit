@@ -94,10 +94,14 @@ WebInspector.TimelineSidebarPanel = function()
     function createTimelineTreeElement(label, iconClass, identifier)
     {
         var treeElement = new WebInspector.GeneralTreeElement([iconClass, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], label, null, identifier);
-        var closeButton = document.createElement("img");
-        closeButton.classList.add(WebInspector.TimelineSidebarPanel.CloseButtonStyleClass);
-        closeButton.addEventListener("click", this.showTimelineOverview.bind(this));
-        treeElement.status = closeButton;
+
+        const tooltip = WebInspector.UIString("Close %s timeline view").format(label);
+        wrappedSVGDocument(platformImagePath("CloseTimeline.svg"), WebInspector.TimelineSidebarPanel.CloseButtonStyleClass, tooltip, function(element) {
+            var button = new WebInspector.TreeElementStatusButton(element);
+            button.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this.showTimelineOverview, this);
+            treeElement.status = button.element;
+        }.bind(this));
+
         return treeElement;
     }
 

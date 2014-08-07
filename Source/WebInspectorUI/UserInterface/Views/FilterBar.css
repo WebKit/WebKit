@@ -68,7 +68,6 @@ body.mac-platform.legacy .filter-bar > input[type="search"] {
 }
 
 .filter-bar > input[type="search"]:focus { background-color: white; }
-.filter-bar > input[type="search"]:not(:placeholder-shown) { background-color: white; } /* Needs to be a separate rule. See http://webkit.org/b/118162 */
 
 .filter-bar > input[type="search"]::-webkit-search-decoration {
     width: 13px;
@@ -82,4 +81,8 @@ body.mac-platform.legacy .filter-bar > input[type="search"] {
     background-image: url(../Images/FilterFieldGlyph.svg);
 
     -webkit-appearance: none;
+}
+
+body.mac-platform.legacy .filter-bar > input[type="search"]::-webkit-search-decoration {
+    background-image: url(../Images/Legacy/FilterFieldGlyph.svg);
 }

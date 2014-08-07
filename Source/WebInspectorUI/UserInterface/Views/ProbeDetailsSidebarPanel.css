@@ -49,15 +49,31 @@
 
 .details-section.probe-set .options > .probe-clear-samples {
     content: url(../Images/NavigationItemTrash.svg);
-    height: 13px;
+    height: 14px;
+    margin-top: -1px;
 }
 
 .details-section.probe-set .options > .probe-remove {
-    content: url(../Images/Close.svg);
+    content: url(../Images/CloseLarge.svg);
 }
 
 .details-section.probe-set .options > .probe-add {
     content: url(../Images/Plus.svg);
+    height: 13px;
+}
+
+body.mac-platform.legacy .details-section.probe-set .options > .probe-clear-samples {
+    content: url(../Images/Legacy/NavigationItemTrash.svg);
+    height: 16px;
+}
+
+body.mac-platform.legacy .details-section.probe-set .options > .probe-remove {
+    content: url(../Images/Legacy/CloseLarge.svg);
+}
+
+body.mac-platform.legacy .details-section.probe-set .options > .probe-add {
+    content: url(../Images/Legacy/Plus.svg);
+    height: 11px;
 }
 
 .details-section.probe-set .options > input {

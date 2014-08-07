@@ -36,7 +36,7 @@
 
 .sidebar > .panel.details.css-style .rules .label + .style-declaration-section {
     margin-top: 5px;
-    border-top: 1px solid rgb(210, 210, 210);
+    border-top: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .label + .style-declaration-section {
@@ -45,7 +45,6 @@ body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .label + .st
 
 .sidebar > .panel.details.css-style .rules .new-rule {
     font-size: 12px;
-    font-weight: bold;
 
     color: black;
 
@@ -60,10 +59,11 @@ body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .label + .st
 body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule {
     text-shadow: white 0 1px 0;
     border-bottom: none;
+    font-weight: bold;
 }
 
 .sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section {
-    border-top: 1px solid rgb(210, 210, 210);
+    border-top: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section {
@@ -79,6 +79,10 @@ body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule + 
     vertical-align: -2px;
 
     margin-right: 6px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule img {
+    content: url(../Images/Legacy/Plus.svg);
 }
 
 .sidebar > .panel.details.css-style .rules .new-rule:hover {

@@ -1,5 +1,222 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172241
+
+      2014-08-07  Timothy Hatcher  <timothy@apple.com>
+
+              Web Inspector: Update glyphs to be more like Xcode 6
+              https://bugs.webkit.org/show_bug.cgi?id=135705
+
+              Reviewed by Joseph Pecoraro.
+
+              * Localizations/en.lproj/localizedStrings.js: Updated.
+
+              * UserInterface/Base/ImageUtilities.js:
+              (platformImagePath): Added.
+              (generateEmbossedImages.generateImage):
+              Bump the base image version. Helper function. Use isLegacyMacOS.
+
+              * UserInterface/Base/Main.js:
+              (WebInspector.contentLoaded):
+              (WebInspector._updateDockNavigationItems):
+              (WebInspector._generateDisclosureTriangleImages):
+              Use new images and add legacy path. Remove the shadow.
+
+              * UserInterface/Images: Updated images.
+              * UserInterface/Images/Legacy: Added. Moved legacy images here.
+
+              * UserInterface/Views/CSSStyleDeclarationSection.css:
+              (.style-declaration-section):
+              (body.mac-platform.legacy .style-declaration-section + .style-declaration-section):
+              (.style-declaration-section.last-in-group):
+              (.style-declaration-section.last-in-group + .style-declaration-section):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+              (.sidebar > .panel.details.css-style > .content > .pseudo-classes):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/ContentBrowser.js:
+              (WebInspector.ContentBrowser):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/ControlToolbarItem.css:
+              (.toolbar .item.control):
+              (body.mac-platform.legacy .toolbar .item.control):
+              (.toolbar .item.control:hover):
+              (body.mac-platform.legacy .toolbar .item.control:hover):
+              Adjust the opacity for controls.
+
+              * UserInterface/Views/DOMTreeContentView.js:
+              (WebInspector.DOMTreeContentView):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/DataGrid.css:
+              (.data-grid tr.selected):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/DataGrid.js:
+              (WebInspector.DataGrid.prototype.get _generateSortIndicatorImagesIfNeeded):
+              Use new images and add legacy path. Remove the shadow.
+
+              * UserInterface/Views/DebuggerSidebarPanel.js:
+              (WebInspector.DebuggerSidebarPanel):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/DefaultDashboardView.css:
+              (.toolbar .dashboard.default > .item):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .item):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .resourcesCount > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .time > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .logs > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .resourcesSize > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .errors > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .errors.enabled > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .issues > img):
+              (body.mac-platform.legacy .toolbar .dashboard.default > .issues.enabled > img):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/DetailsSection.css:
+              (.details-section):
+              (.details-section .details-section:first-child):
+              (body.mac-platform.legacy .details-section > .header):
+              (.details-section > .content > .group):
+              (.details-section > .content > .group:nth-child(even) > .row.simple:first-child > *):
+              (body.mac-platform.legacy .details-section > .content > .group:last-child > .row.simple:last-child > *):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/FilterBar.css:
+              (body.mac-platform.legacy .filter-bar > input[type="search"]::-webkit-search-decoration):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/FindBanner.css:
+              (.find-banner):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/FindBanner.js:
+              (WebInspector.FindBanner.prototype._generateButtonsGlyphsIfNeeded):
+              Add legacy path.
+
+              * UserInterface/Views/FrameTreeElement.js:
+              (WebInspector.FrameTreeElement.prototype.updateStatusForMainFrame):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/LogContentView.js:
+              (WebInspector.LogContentView):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/Main.css:
+              (#split-content-browser):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/NavigationSidebarPanel.css:
+              (.sidebar > .panel.navigation > .overflow-shadow):
+              (body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow):
+              (.sidebar > .panel.navigation > .overflow-shadow.top):
+              (body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow.top):
+              (.sidebar > .panel.navigation > .empty-content-placeholder):
+              (body.mac-platform.legacy .sidebar > .panel.navigation > .empty-content-placeholder):
+              (.navigation-sidebar-panel-content-tree-outline:focus .item.selected .disclosure-button):
+              (.navigation-sidebar-panel-content-tree-outline:focus .item.selected.expanded .disclosure-button):
+              (.navigation-sidebar-panel-content-tree-outline .item.selected):
+              (.navigation-sidebar-panel-content-tree-outline:focus .item.selected):
+              Adjust the styles to make the selected item use white text and icons only when focused.
+
+              * UserInterface/Views/NavigationSidebarPanel.js:
+              (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+              (WebInspector.NavigationSidebarPanel.prototype._generateDisclosureTrianglesIfNeeded):
+              Remove the shadow from the disclosure triangles. Make the overflow shadow not fade.
+
+              * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+              (.details-section.probe-set .options > .probe-clear-samples):
+              (.details-section.probe-set .options > .probe-remove):
+              (.details-section.probe-set .options > .probe-add):
+              (body.mac-platform.legacy .details-section.probe-set .options > .probe-clear-samples):
+              (body.mac-platform.legacy .details-section.probe-set .options > .probe-remove):
+              (body.mac-platform.legacy .details-section.probe-set .options > .probe-add):
+              Tweak size and position of icons and use legacy paths.
+
+              * UserInterface/Views/QuickConsole.css:
+              (.quick-console):
+              Adjust padding to match filter bar height.
+
+              * UserInterface/Views/ResourceSidebarPanel.css:
+              (.sidebar > .panel.navigation.resource > .search-bar):
+              Adjust height.
+
+              * UserInterface/Views/RulesStyleDetailsPanel.css:
+              (.sidebar > .panel.details.css-style .rules .label + .style-declaration-section):
+              (.sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section):
+              (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule img):
+              Use a consistent gray for borders. Don't bold the New Rule label.
+
+              * UserInterface/Views/ScriptContentView.js:
+              (WebInspector.ScriptContentView):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/Sidebar.css:
+              (.sidebar.left):
+              (.sidebar.right):
+              Use a consistent gray for borders.
+
+              * UserInterface/Views/TextContentView.js:
+              (WebInspector.TextContentView):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/TextResourceContentView.js:
+              (WebInspector.TextResourceContentView):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/TimelineContentView.js:
+              (WebInspector.TimelineContentView):
+              Use new images and add legacy path.
+
+              * UserInterface/Views/TimelineDataGrid.css:
+              (.data-grid.timeline th):
+              (.data-grid.timeline th.sortable:active):
+              (.data-grid.timeline th.sort-descending):
+              Fix a regression with the gradient background showing in legacy mode.
+
+              * UserInterface/Views/TimelineIcons.css:
+              (body.mac-platform.legacy .network-icon .icon):
+              (body.mac-platform.legacy .network-icon.large .icon):
+              (body.mac-platform.legacy .colors-icon .icon):
+              (body.mac-platform.legacy .colors-icon.large .icon):
+              Added legacy versions of these icons.
+
+              * UserInterface/Views/TimelineSidebarPanel.css:
+              (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+              (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover):
+              (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active):
+              (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced):
+              (.sidebar > .panel.navigation.timeline > .timelines-content .close-button):
+              (.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item):
+              (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item):
+              Update the styles for the recording button and close button.
+
+              * UserInterface/Views/TimelineSidebarPanel.js:
+              (WebInspector.TimelineSidebarPanel.createTimelineTreeElement):
+              Use TreeElementStatusButton instead of a styled image.
+
+              * UserInterface/Views/TreeElementStatusButton.css:
+              (.item > .status > .status-button > svg path.filled):
+              (body.mac-platform.legacy .item > .status > .status-button > svg path.filled):
+              (:focus .item.selected > .status > .status-button > svg path.filled):
+              (.item > .status > .status-button > svg path.stroked):
+              (body.mac-platform.legacy .item > .status > .status-button > svg path.stroked):
+              (:focus .item.selected > .status > .status-button > svg path.stroked):
+              (.item.selected > .status > .status-button:active):
+              (.item > .status > .status-button.disabled):
+              Updated selectors and styles to work with stroke or fill.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172217
 
     2014-08-07  Brian J. Burg  <burg@cs.washington.edu>

@@ -30,7 +30,7 @@
     padding: 5px;
 
     background-color: white;
-    border-bottom: 1px solid rgb(210, 210, 210);
+    border-bottom: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .style-declaration-section {
@@ -38,13 +38,13 @@ body.mac-platform.legacy .style-declaration-section {
 }
 
 body.mac-platform.legacy .style-declaration-section + .style-declaration-section {
-    border-top: 1px solid rgb(210, 210, 210);
+    border-top: 1px solid rgb(179, 179, 179);
 }
 
 .style-declaration-section.last-in-group {
     margin-bottom: 15px;
 
-    border-bottom: 1px solid rgb(210, 210, 210);
+    border-bottom: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .style-declaration-section.last-in-group {
@@ -54,7 +54,7 @@ body.mac-platform.legacy .style-declaration-section.last-in-group {
 .style-declaration-section.last-in-group + .style-declaration-section {
     margin-top: 15px;
 
-    border-top: 1px solid rgb(210, 210, 210);
+    border-top: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section {

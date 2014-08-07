@@ -138,13 +138,13 @@ WebInspector.FrameTreeElement.prototype = {
             this._loadingMainFrameButtons = true;
 
             var tooltip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName, WebInspector._reloadPageIgnoringCacheKeyboardShortcut.displayName);
-            wrappedSVGDocument("Images/Reload.svg", null, tooltip, function(element) {
+            wrappedSVGDocument(platformImagePath("Reload.svg"), null, tooltip, function(element) {
                 this._reloadButton = new WebInspector.TreeElementStatusButton(element);
                 this._reloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._reloadPageClicked, this);
                 loadedImages.call(this);
             }.bind(this));
 
-            wrappedSVGDocument("Images/DownloadArrow.svg", null, WebInspector.UIString("Download Web Archive"), function(element) {
+            wrappedSVGDocument(platformImagePath("DownloadArrow.svg"), null, WebInspector.UIString("Download Web Archive"), function(element) {
                 this._downloadButton = new WebInspector.TreeElementStatusButton(element);
                 this._downloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._downloadButtonClicked, this);
                 this._updateDownloadButton();

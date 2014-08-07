@@ -47,25 +47,38 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .content {
 
 .sidebar > .panel.navigation > .overflow-shadow {
     position: absolute;
-    bottom: 21px;
+    bottom: 28px;
     left: 0;
     right: 0;
-    height: 5px;
+    height: 1px;
 
     pointer-events: none;
 
-    background-image: radial-gradient(center, ellipse closest-side, rgba(0, 0, 0, 0.2) 25%, transparent),
+    opacity: 0;
+
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow {
+    border-bottom: none;
+
+    background-image: -webkit-radial-gradient(center, ellipse closest-side, rgba(0, 0, 0, 0.2) 25%, transparent),
         linear-gradient(to right, rgba(0, 0, 0, 0.0125), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.0125));
     background-size: 125% 15px, 100% 1px;
     background-position: top center, bottom center;
     background-repeat: no-repeat;
 
-    opacity: 0;
+    height: 5px;
+    bottom: 22px;
 }
 
 .sidebar > .panel.navigation > .overflow-shadow.top {
-    top: 21px;
+    top: 28px;
     bottom: initial;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow.top {
+    top: 21px;
     background-position: bottom center, top center;
 }
 
@@ -74,12 +87,16 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .content {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 21px;
+    bottom: 28px;
 
     display: -webkit-flex;
 
     -webkit-justify-content: center;
     -webkit-align-items: center;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation > .empty-content-placeholder {
+    bottom: 21px;
 }
 
 .sidebar > .panel.navigation > .empty-content-placeholder > .message {
@@ -176,7 +193,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .content {
     display: block;
 }
 
-.navigation-sidebar-panel-content-tree-outline .item.selected .disclosure-button {
+.navigation-sidebar-panel-content-tree-outline:focus .item.selected .disclosure-button {
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-selected) !important;
 }
 
@@ -184,7 +201,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .content {
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
-.navigation-sidebar-panel-content-tree-outline .item.selected.expanded .disclosure-button {
+.navigation-sidebar-panel-content-tree-outline:focus .item.selected.expanded .disclosure-button {
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-selected) !important;
 }
 
@@ -215,9 +232,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .content {
 }
 
 .navigation-sidebar-panel-content-tree-outline .item.selected {
-    color: white;
-
-    background-color: rgb(185, 184, 185);
+    background-color: rgb(212, 212, 212);
 }
 
 body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline .item.selected {
@@ -230,6 +245,7 @@ body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline .item.se
 }
 
 .navigation-sidebar-panel-content-tree-outline:focus .item.selected {
+    color: white;
     background-color: rgb(0, 128, 252);
 }
 
