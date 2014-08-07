@@ -1,3 +1,13 @@
+2014-08-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix following r172224.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        * html/track/VTTCue.h:
+
 2014-08-07  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r172219.

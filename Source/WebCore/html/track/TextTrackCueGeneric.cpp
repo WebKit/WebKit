@@ -78,7 +78,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(cue->position()), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyTop, static_cast<float>(cue->line()), CSSPrimitiveValue::CSS_PERCENTAGE);
 
-        float authorFontSize = std::max(VTTCueBox::DEFAULTFONTSIZE, static_cast<float>(videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100));
+        float authorFontSize = std::max(DEFAULTCAPTIONFONTSIZE, static_cast<float>(videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100));
         if (cue->fontSizeMultiplier())
             authorFontSize *= cue->fontSizeMultiplier() / 100;
 
