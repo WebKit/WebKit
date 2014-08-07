@@ -1,5 +1,22 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172291
+
+    2014-08-07  Beth Dakin  <bdakin@apple.com>
+
+            Fixed backgrounds don't paint in blurred inset areas
+            https://bugs.webkit.org/show_bug.cgi?id=135712
+
+            Reviewed by Simon Fraser.
+
+            Background geometry calculations for fixed background need to use the larger 
+            visible rect. 
+
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172275
 
     2014-08-07  Daniel Bates  <dabates@apple.com>
