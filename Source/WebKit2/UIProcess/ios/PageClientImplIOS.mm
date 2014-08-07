@@ -476,11 +476,6 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     notImplemented();
 }
 
-void PageClientImpl::clearCustomSwipeViews()
-{
-    notImplemented();
-}
-
 void PageClientImpl::commitPotentialTapFailed()
 {
     [m_contentView _commitPotentialTapFailed];

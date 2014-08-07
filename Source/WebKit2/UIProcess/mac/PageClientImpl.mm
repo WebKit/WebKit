@@ -612,11 +612,6 @@ bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
     return [m_wkView _executeSavedCommandBySelector:NSSelectorFromString(selectorString)];
 }
 
-void PageClientImpl::clearCustomSwipeViews()
-{
-    return [m_wkView _setCustomSwipeViews:@[]];
-}
-
 #if USE(DICTATION_ALTERNATIVES)
 uint64_t PageClientImpl::addDictationAlternatives(const RetainPtr<NSTextAlternatives>& alternatives)
 {
