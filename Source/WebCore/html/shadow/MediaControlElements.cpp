@@ -1096,6 +1096,11 @@ RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRen
     return createRenderer<RenderTextTrackContainerElement>(*this, WTF::move(style));
 }
 
+static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterval& two)
+{
+    return one.data()->isPositionedAbove(two.data());
+};
+
 void MediaControlTextTrackContainerElement::updateDisplay()
 {
     if (!mediaController()->closedCaptionsVisible())
@@ -1149,7 +1154,12 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // them so that the new cue is at the bottom.
     if (childNodeCount() < activeCues.size())
         removeChildren();
-    
+
+    // Sort the active cues for the appropriate display order. For example, for roll-up
+    // or paint-on captions, we need to add the cues in reverse chronological order,
+    // so that the newest captions appear at the bottom.
+    std::sort(activeCues.begin(), activeCues.end(), &compareCueIntervalForDisplay);
+
     // 10. For each text track cue cue in cues that has not yet had
     // corresponding CSS boxes added to output, in text track cue order, run the
     // following substeps:

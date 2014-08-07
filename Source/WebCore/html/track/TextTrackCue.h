@@ -82,6 +82,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return &m_scriptExecutionContext; }
 
     virtual bool isOrderedBefore(const TextTrackCue*) const;
+    virtual bool isPositionedAbove(const TextTrackCue* cue) const { return isOrderedBefore(cue); }
 
     bool hasEquivalentStartTime(const TextTrackCue&) const;
 
