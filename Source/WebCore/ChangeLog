@@ -1,5 +1,31 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172293
+
+    2014-08-07  Andy Estes  <aestes@apple.com>
+
+            [Mac] Parental Controls content filter is mistakenly enabled for HTTP responses
+            https://bugs.webkit.org/show_bug.cgi?id=135730
+
+            Reviewed by Brady Eidson.
+
+            On the Mac, the WebFilterEvaluator (Parental Controls) content filter should only be enabled for HTTPS
+            responses. During iOS upstreaming we mistakenly enabled it for HTTP responses as well, and this causes HTTP
+            responses to be filtered twice -- once by the Parental Controls HTTP proxy and once by WebCore. Revert to the
+            pre-upstreaming behavior and only enable the content filter for HTTPS responses.
+
+            No new tests. Content filtering is not testable from WebKit.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::responseReceived): Passed the response to ContentFilter::canHandleResponse().
+            * platform/ContentFilter.h:
+            * platform/mac/ContentFilterMac.mm:
+            (WebCore::ContentFilter::canHandleResponse): Renamed from isEnabled(). Checks the response's scheme on Mac to
+            determine whether WebFilterEvaluator should be used.
+            (WebCore::ContentFilter::isEnabled): Deleted.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172291
 
     2014-08-07  Beth Dakin  <bdakin@apple.com>

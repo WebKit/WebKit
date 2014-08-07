@@ -663,7 +663,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 #endif
 
 #if USE(CONTENT_FILTERING)
-    if (response.url().protocolIsInHTTPFamily() && ContentFilter::isEnabled())
+    if (ContentFilter::canHandleResponse(response))
         m_contentFilter = std::make_unique<ContentFilter>(response);
 #endif
 
