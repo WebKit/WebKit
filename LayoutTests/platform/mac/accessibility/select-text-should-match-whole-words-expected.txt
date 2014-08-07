@@ -1,4 +1,4 @@
-The man jumped high.
+The man jumped higher.
 
 This tests that selection matches whole words, rather than partial matches.
 
@@ -11,6 +11,12 @@ PASS windowSelection.getRangeAt(0).endOffset is 0
 PASS result is 'jumped'
 PASS windowSelection.getRangeAt(0).startOffset is 8
 PASS windowSelection.getRangeAt(0).endOffset is 14
+PASS result is 'jumped higher'
+PASS windowSelection.getRangeAt(0).startOffset is 8
+PASS windowSelection.getRangeAt(0).endOffset is 21
+PASS result is ''
+PASS windowSelection.getRangeAt(0).startOffset is 0
+PASS windowSelection.getRangeAt(0).endOffset is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

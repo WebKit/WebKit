@@ -2121,10 +2121,12 @@ inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) con
     
 inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
 {
+    ASSERT(length);
     ASSERT(m_options & AtWordEnds);
 
     int endWord;
-    findEndWordBoundary(StringView(m_buffer.data(), m_buffer.size()), start, &endWord);
+    // Start searching at the end of matched search, so that multiple word matches succeed.
+    findEndWordBoundary(StringView(m_buffer.data(), m_buffer.size()), start + length - 1, &endWord);
     return static_cast<size_t>(endWord) == (start + length);
 }
 

@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<p contenteditable="true" id="text">The man jumped high.</p>
+<p contenteditable="true" id="text">The man jumped higher.</p>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -17,7 +17,6 @@
     if (window.accessibilityController) {
         var text = accessibilityController.accessibleElementById("text");
         var windowSelection = window.getSelection();
-        windowSelection.removeAllRanges();
 
         // A matching range before the selection should be selected when searching for closest match.
         document.getElementById("text").focus();
@@ -26,6 +25,7 @@
         var range = document.createRange();
         range.setStart(document.getElementById("text").firstChild, 0);
         range.setEnd(document.getElementById("text").firstChild, 0);
+        windowSelection.removeAllRanges();
         windowSelection.addRange(range);
       
         // Try to select a partial word, it should fail.
@@ -39,7 +39,22 @@
         shouldBe("result", "'jumped'");
         shouldBe("windowSelection.getRangeAt(0).startOffset", "8");
         shouldBe("windowSelection.getRangeAt(0).endOffset", "14");
+        windowSelection.removeAllRanges();
+        windowSelection.addRange(range);
 
+        // Select multiple whole word, it should succeed.
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped higher");
+        shouldBe("result", "'jumped higher'");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "8");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "21");
+        windowSelection.removeAllRanges();
+        windowSelection.addRange(range);
+
+        // Select multiple words, where one is not a whole word, it should fail.
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped high");
+        shouldBe("result", "''");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "0");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "0");
     }
 </script>
 

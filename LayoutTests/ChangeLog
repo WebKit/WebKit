@@ -1,5 +1,19 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172005
+
+    2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: isWordEndMatch should allow for multiple word selections
+            https://bugs.webkit.org/show_bug.cgi?id=135573
+
+            Reviewed by Mario Sanchez Prada.
+
+            * platform/mac/accessibility/select-text-should-match-whole-words-expected.txt:
+            * platform/mac/accessibility/select-text-should-match-whole-words.html:
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r171997
 
     2014-08-04  Chris Fleizach  <cfleizach@apple.com>
