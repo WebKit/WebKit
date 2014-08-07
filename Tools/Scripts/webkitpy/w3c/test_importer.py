@@ -93,22 +93,13 @@ _log = logging.getLogger(__name__)
 def main(_argv, _stdout, _stderr):
     options, args = parse_args()
     import_dir = args[0]
-    if len(args) == 1:
-        repo_dir = import_dir
-    else:
-        repo_dir = args[1]
 
     if not os.path.exists(import_dir):
         sys.exit('Source directory %s not found!' % import_dir)
 
-    if not os.path.exists(repo_dir):
-        sys.exit('Repository directory %s not found!' % repo_dir)
-    if not repo_dir in import_dir:
-        sys.exit('Repository directory %s must be a parent of %s' % (repo_dir, import_dir))
-
     configure_logging()
 
-    test_importer = TestImporter(Host(), import_dir, repo_dir, options)
+    test_importer = TestImporter(Host(), import_dir, options)
     test_importer.do_import()
 
 
@@ -129,23 +120,25 @@ def configure_logging():
 
 
 def parse_args():
-    parser = optparse.OptionParser(usage='usage: %prog [options] w3c_test_directory [repo_directory]')
+    parser = optparse.OptionParser(usage='usage: %prog [options] w3c_test_directory')
     parser.add_option('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
     parser.add_option('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
     parser.add_option('-d', '--dest-dir', dest='destination', default='w3c',
         help='Import into a specified directory relative to the LayoutTests root. By default, imports into w3c')
+    parser.add_option('-t', '--test-path', action='append', dest='test_paths', default=[],
+        help='Import only tests in the supplied subdirectory of the w3c_test_directory. Can be supplied multiple times to give multiple paths')
 
     options, args = parser.parse_args()
-    if len(args) not in (1, 2):
+    if len(args) != 1:
         parser.error('Incorrect number of arguments')
     return options, args
 
 
 class TestImporter(object):
 
-    def __init__(self, host, source_directory, repo_dir, options):
+    def __init__(self, host, source_directory, options):
         self.host = host
         self.source_directory = source_directory
         self.options = options
@@ -154,7 +147,6 @@ class TestImporter(object):
 
         webkit_finder = WebKitFinder(self.filesystem)
         self._webkit_root = webkit_finder.webkit_base()
-        self.repo_dir = repo_dir
 
         self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
 
@@ -163,7 +155,11 @@ class TestImporter(object):
         self.import_list = []
 
     def do_import(self):
-        self.find_importable_tests(self.source_directory)
+        if len(self.options.test_paths) == 0:
+            self.find_importable_tests(self.source_directory)
+        else:
+            for test_path in self.options.test_paths:
+                self.find_importable_tests(os.path.join(self.source_directory, test_path))
         self.load_changeset()
         self.import_tests()
 
@@ -174,6 +170,11 @@ class TestImporter(object):
         except (OSError, ScriptError):
             self.changeset = CHANGESET_NOT_AVAILABLE
 
+    def should_keep_subdir(self, root, subdir):
+        DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
+        should_skip = subdir.startswith('.') or (root == self.source_directory and subdir in DIRS_TO_SKIP)
+        return not should_skip
+
     def find_importable_tests(self, directory):
         # FIXME: use filesystem
         for root, dirs, files in os.walk(directory):
@@ -182,10 +183,7 @@ class TestImporter(object):
             reftests = 0
             jstests = 0
 
-            DIRS_TO_SKIP = ('.git', '.hg', 'work-in-progress', 'tools', 'support')
-            for d in DIRS_TO_SKIP:
-                if d in dirs:
-                    dirs.remove(d)
+            dirs[:] = [subdir for subdir in dirs if self.should_keep_subdir(root, subdir)]
 
             copy_list = []
 
@@ -273,7 +271,7 @@ class TestImporter(object):
 
             orig_path = dir_to_copy['dirname']
 
-            subpath = os.path.relpath(orig_path, self.repo_dir)
+            subpath = os.path.relpath(orig_path, self.source_directory)
             new_path = os.path.join(self.destination_directory, subpath)
 
             if not(os.path.exists(new_path)):
@@ -350,18 +348,6 @@ class TestImporter(object):
 
         for prefixed_property in sorted(total_prefixed_properties, key=lambda p: total_prefixed_properties[p]):
             _log.info('  %s: %s', prefixed_property, total_prefixed_properties[prefixed_property])
-
-    def setup_destination_directory(self):
-        """ Creates a destination directory that mirrors that of the source directory """
-
-        new_subpath = self.source_directory[len(self.repo_dir):]
-
-        destination_directory = os.path.join(self.destination_directory, new_subpath)
-
-        if not os.path.exists(destination_directory):
-            os.makedirs(destination_directory)
-
-        _log.info('Tests will be imported into: %s', destination_directory)
 
     def remove_deleted_files(self, import_directory, new_file_list):
         """ Reads an import log in |import_directory|, compares it to the |new_file_list|, and removes files not in the new list."""

@@ -1,3 +1,37 @@
+2014-08-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        The support directory shouldn't be skipped unconditionally in test import
+        https://bugs.webkit.org/show_bug.cgi?id=135660
+
+        Reviewed by Ryosuke Niwa.
+
+        The 'DIRS_TO_SKIP' should only be skipped when in the root directory
+        of the test repo, as that's the only time they are special. In
+        addition, instead of hardcoding .hg and .git as special, skip all
+        directories that begin with '.', just like with files that begin with '.'.
+        
+        In order to make this work, the root directory must always be
+        passed in, so the interface to the script has been changed to take the
+        root directory, and if one wants to only import a subset of the tests,
+        a new -t option can be used to limit the tests imported.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main): Remove repo_dir command line argument.
+        (parse_args): Add -t option and set expected non-option args to 1.
+        (TestImporter.__init__): Remove repo_dir.
+        (TestImporter.do_import): Handle the varying number of import
+            directories.
+        (TestImporter.should_keep_subdir): Helper for find_importable_tests to
+            determine if a subdirectory should be skipped.
+        (TestImporter.find_importable_tests): Filter directories using new
+            helper.
+        (TestImporter.import_tests): Remove use of repo_dir.
+        (TestImporter.setup_destination_directory): Unused, Deleted. 
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_import_dir_with_no_tests_and_no_hg): Update for
+            new API.
+        (TestImporterTest.test_import_dir_with_no_tests): Ditto.
+
 2014-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use WebKitNavigationAction also for WebKitNavigationPolicyDecision
