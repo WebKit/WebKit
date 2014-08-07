@@ -1,5 +1,14 @@
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: fix for build failure on EFL bots.
+
+        Not reviewed.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadForArrayMode):
+
+2014-08-06  Mark Lam  <mark.lam@apple.com>
+
         Gardening: adding missing build file changes from the FTLOPT merge at r172176.
 
         Not reviewed.

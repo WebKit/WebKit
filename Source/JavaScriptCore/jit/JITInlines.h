@@ -61,9 +61,10 @@ ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(Instruction* cu
     case JITArrayStorage:
         return emitArrayStorageLoad(currentInstruction, badType);
     default:
-        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return MacroAssembler::JumpList();
 }
 
 inline MacroAssembler::JumpList JIT::emitContiguousGetByVal(Instruction* instruction, PatchableJump& badType, IndexingType expectedShape)
