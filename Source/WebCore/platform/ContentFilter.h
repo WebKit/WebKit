@@ -57,7 +57,7 @@ class ResourceResponse;
 
 class ContentFilter {
 public:
-    static bool isEnabled();
+    static bool canHandleResponse(const ResourceResponse&);
 
     explicit ContentFilter(const ResourceResponse&);
     ~ContentFilter();
