@@ -76,6 +76,7 @@ static IntRect textQuadsToBoundingRectForRange(Range& range)
 ServicesOverlayController::ServicesOverlayController(WebPage& webPage)
     : m_webPage(&webPage)
     , m_servicesOverlay(nullptr)
+    , m_repaintHighlightTimer(this, &ServicesOverlayController::repaintHighlightTimerFired)
 {
 }
 
@@ -216,6 +217,8 @@ void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>
     clearSelectionHighlight();
     m_currentSelectionRects = rects;
 
+    m_lastSelectionChangeTime = std::chrono::steady_clock::now();
+
     compactRectsWithGapRects(m_currentSelectionRects, gapRects);
 
     // DataDetectors needs these reversed in order to place the arrow in the right location.
@@ -306,8 +309,8 @@ bool ServicesOverlayController::drawTelephoneNumberHighlightIfVisible(WebCore::G
 
     // Found out which - if any - telephone number is hovered.
     if (!m_hoveredTelephoneNumberData) {
-        Boolean onButton;
-        establishHoveredTelephoneHighlight(onButton);
+        bool mouseIsOverButton;
+        establishHoveredTelephoneHighlight(mouseIsOverButton);
     }
 
     // If a telephone number is actually hovered, draw it.
@@ -319,15 +322,49 @@ bool ServicesOverlayController::drawTelephoneNumberHighlightIfVisible(WebCore::G
     return false;
 }
 
+bool ServicesOverlayController::mouseIsOverHighlight(DDHighlightRef highlight, bool& mouseIsOverButton) const
+{
+    Boolean onButton;
+    bool hovered = DDHighlightPointIsOnHighlight(highlight, (CGPoint)m_mousePosition, &onButton);
+    mouseIsOverButton = onButton;
+    return hovered;
+}
+
+std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown() const
+{
+    // Highlight hysteresis is only for selection services, because telephone number highlights are already much more stable
+    // by virtue of being expanded to include the entire telephone number.
+    if (m_hoveredTelephoneNumberData)
+        return std::chrono::milliseconds::zero();
+
+    std::chrono::steady_clock::duration minimumTimeUntilHighlightShouldBeShown = 200_ms;
+
+    auto now = std::chrono::steady_clock::now();
+    auto timeSinceLastSelectionChange = now - m_lastSelectionChangeTime;
+    auto timeSinceMouseOverSelection = now - m_lastHoveredHighlightChangeTime;
+
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::max(minimumTimeUntilHighlightShouldBeShown - timeSinceLastSelectionChange, minimumTimeUntilHighlightShouldBeShown - timeSinceMouseOverSelection));
+}
+
+void ServicesOverlayController::repaintHighlightTimerFired(WebCore::Timer<ServicesOverlayController>&)
+{
+    if (m_servicesOverlay)
+        m_servicesOverlay->setNeedsDisplay();
+}
+
 void ServicesOverlayController::drawHighlight(DDHighlightRef highlight, WebCore::GraphicsContext& graphicsContext)
 {
     ASSERT(highlight);
 
-    Boolean onButton;
-    bool mouseIsOverHighlight = DDHighlightPointIsOnHighlight(highlight, (CGPoint)m_mousePosition, &onButton);
-
-    if (!mouseIsOverHighlight) {
+    bool mouseIsOverButton;
+    if (!mouseIsOverHighlight(highlight, mouseIsOverButton)) {
         LOG(Services, "ServicesOverlayController::drawHighlight - Mouse is not over highlight, so drawing nothing");
+        return;
+    }
+
+    auto remainingTimeUntilHighlightShouldBeShown = this->remainingTimeUntilHighlightShouldBeShown();
+    if (remainingTimeUntilHighlightShouldBeShown > std::chrono::steady_clock::duration::zero()) {
+        m_repaintHighlightTimer.startOneShot(remainingTimeUntilHighlightShouldBeShown);
         return;
     }
 
@@ -371,7 +408,7 @@ void ServicesOverlayController::clearHoveredTelephoneNumberHighlight()
     m_hoveredTelephoneNumberData = nullptr;
 }
 
-void ServicesOverlayController::establishHoveredTelephoneHighlight(Boolean& onButton)
+void ServicesOverlayController::establishHoveredTelephoneHighlight(bool& mouseIsOverButton)
 {
     ASSERT(m_currentTelephoneNumberRanges.size() == m_telephoneNumberHighlights.size());
 
@@ -395,7 +432,7 @@ void ServicesOverlayController::establishHoveredTelephoneHighlight(Boolean& onBu
             m_telephoneNumberHighlights[i] = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, viewForRange->boundsRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
         }
 
-        if (!DDHighlightPointIsOnHighlight(m_telephoneNumberHighlights[i].get(), (CGPoint)m_mousePosition, &onButton))
+        if (!mouseIsOverHighlight(m_telephoneNumberHighlights[i].get(), mouseIsOverButton))
             continue;
 
         if (!m_hoveredTelephoneNumberData || m_hoveredTelephoneNumberData->highlight != m_telephoneNumberHighlights[i])
@@ -406,7 +443,7 @@ void ServicesOverlayController::establishHoveredTelephoneHighlight(Boolean& onBu
     }
 
     clearHoveredTelephoneNumberHighlight();
-    onButton = false;
+    mouseIsOverButton = false;
 }
 
 void ServicesOverlayController::maybeCreateSelectionHighlight()
@@ -434,8 +471,8 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
 
     DDHighlightRef oldHoveredHighlight = m_currentHoveredHighlight.get();
 
-    Boolean onButton = false;
-    establishHoveredTelephoneHighlight(onButton);
+    bool mouseIsOverButton = false;
+    establishHoveredTelephoneHighlight(mouseIsOverButton);
     if (m_hoveredTelephoneNumberData) {
         ASSERT(m_hoveredTelephoneNumberData->highlight);
         m_currentHoveredHighlight = m_hoveredTelephoneNumberData->highlight;
@@ -443,14 +480,16 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
         if (!m_selectionHighlight)
             maybeCreateSelectionHighlight();
 
-        if (m_selectionHighlight && DDHighlightPointIsOnHighlight(m_selectionHighlight.get(), (CGPoint)m_mousePosition, &onButton))
+        if (m_selectionHighlight && mouseIsOverHighlight(m_selectionHighlight.get(), mouseIsOverButton))
             m_currentHoveredHighlight = m_selectionHighlight;
         else
             m_currentHoveredHighlight = nullptr;
     }
 
-    if (oldHoveredHighlight != m_currentHoveredHighlight)
+    if (oldHoveredHighlight != m_currentHoveredHighlight) {
+        m_lastHoveredHighlightChangeTime = std::chrono::steady_clock::now();
         m_servicesOverlay->setNeedsDisplay();
+    }
 
     // If this event has nothing to do with the left button, it clears the current mouse down tracking and we're done processing it.
     if (event.button() != WebMouseEvent::LeftButton) {
@@ -463,7 +502,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
         RetainPtr<DDHighlightRef> mouseDownHighlight = std::move(m_currentMouseDownOnButtonHighlight);
 
         // If the mouse lifted while still over the highlight button that it went down on, then that is a click.
-        if (onButton && mouseDownHighlight) {
+        if (mouseIsOverButton && mouseDownHighlight && remainingTimeUntilHighlightShouldBeShown() <= std::chrono::steady_clock::duration::zero()) {
             handleClick(m_mousePosition, mouseDownHighlight.get());
             return true;
         }
@@ -474,7 +513,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
     // Check and see if the mouse moved within the confines of the DD highlight button.
     if (event.type() == WebEvent::MouseMove) {
         // Moving with the mouse button down is okay as long as the mouse never leaves the highlight button.
-        if (m_currentMouseDownOnButtonHighlight && onButton)
+        if (m_currentMouseDownOnButtonHighlight && mouseIsOverButton)
             return true;
 
         m_currentMouseDownOnButtonHighlight = nullptr;
@@ -483,7 +522,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay*, const WebMouseEvent& ev
 
     // Check and see if the mouse went down over a DD highlight button.
     if (event.type() == WebEvent::MouseDown) {
-        if (m_currentHoveredHighlight && onButton) {
+        if (m_currentHoveredHighlight && mouseIsOverButton) {
             m_currentMouseDownOnButtonHighlight = m_currentHoveredHighlight;
             m_servicesOverlay->setNeedsDisplay();
             return true;

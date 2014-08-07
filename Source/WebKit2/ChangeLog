@@ -1,5 +1,49 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172200
+
+    2014-08-06  Tim Horton  <timothy_horton@apple.com>
+
+            Services overlay flashes a lot; should have some hysteresis before showing overlay
+            https://bugs.webkit.org/show_bug.cgi?id=135683
+            <rdar://problem/16878039>
+
+            Reviewed by Simon Fraser.
+
+            Don't show the highlight until it's been 200ms since the last change
+            in selection or change in which highlight is hovered, whichever was more recent.
+
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::ServicesOverlayController):
+            (WebKit::ServicesOverlayController::selectionRectsDidChange):
+            Keep track of when the selection last changed.
+
+            (WebKit::ServicesOverlayController::drawTelephoneNumberHighlightIfVisible):
+            Make establishHoveredTelephoneHighlight take a bool instead of Boolean.
+
+            (WebKit::ServicesOverlayController::mouseIsOverHighlight):
+            Factor mouseIsOverHighlight out of establishHoveredTelephoneHighlight and drawHighlight.
+
+            (WebKit::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown):
+            Return the amount of time until the highlight should be shown; this is
+            the maximum of (the difference between the last selection change and the timeout)
+            and (the difference between the last change in which highlight is hovered and the timeout).
+
+            Telephone number highlights are shown immediately, because they are already stable
+            by virtue of being expanded to include the entire telephone number.
+
+            (WebKit::ServicesOverlayController::repaintHighlightTimerFired):
+            (WebKit::ServicesOverlayController::drawHighlight):
+            If the highlight shouldn't be shown yet (because we haven't hit the two timeouts),
+            schedule a timer to repaint us around when we will hit the timeouts.
+
+            (WebKit::ServicesOverlayController::establishHoveredTelephoneHighlight):
+            (WebKit::ServicesOverlayController::mouseEvent):
+            Don't allow mouseUp to trigger the menu if we shouldn't be showing the overlay yet.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172193
 
     2014-08-06  Brady Eidson and Jeffrey Pfau <beidson@apple.com>
