@@ -71,6 +71,10 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << openGLCacheDirectoryExtensionHandle;
     encoder << containerTemporaryDirectory;
     encoder << containerTemporaryDirectoryExtensionHandle;
+#if PLATFORM(IOS)
+    encoder << hstsDatabasePath;
+    encoder << hstsDatabasePathExtensionHandle;
+#endif
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegistererdAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
@@ -172,6 +176,12 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.containerTemporaryDirectoryExtensionHandle))
         return false;
+#if PLATFORM(IOS)
+    if (!decoder.decode(parameters.hstsDatabasePath))
+        return false;
+    if (!decoder.decode(parameters.hstsDatabasePathExtensionHandle))
+        return false;
+#endif
     if (!decoder.decode(parameters.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegistererdAsEmptyDocument))

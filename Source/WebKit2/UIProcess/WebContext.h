@@ -433,6 +433,7 @@ private:
 
 #if PLATFORM(IOS)
     String parentBundleDirectory() const;
+    String webContentHSTSDatabasePath() const;
 #endif
 
     String containerTemporaryDirectory() const;
