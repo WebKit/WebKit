@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitPolicyClient.h"
 
+#include "APIPolicyClient.h"
 #include "WebKitNavigationPolicyDecisionPrivate.h"
 #include "WebKitResponsePolicyDecisionPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -29,77 +30,37 @@
 
 using namespace WebKit;
 
-static inline WebKitNavigationType toWebKitNavigationType(WKFrameNavigationType type)
-{
-    switch (type) {
-    case kWKFrameNavigationTypeLinkClicked:
-        return WEBKIT_NAVIGATION_TYPE_LINK_CLICKED;
-    case kWKFrameNavigationTypeFormSubmitted:
-        return WEBKIT_NAVIGATION_TYPE_FORM_SUBMITTED;
-    case kWKFrameNavigationTypeBackForward:
-        return WEBKIT_NAVIGATION_TYPE_BACK_FORWARD;
-    case kWKFrameNavigationTypeReload:
-        return WEBKIT_NAVIGATION_TYPE_RELOAD;
-    case kWKFrameNavigationTypeFormResubmitted:
-        return WEBKIT_NAVIGATION_TYPE_FORM_RESUBMITTED;
-    case kWKFrameNavigationTypeOther:
-        return WEBKIT_NAVIGATION_TYPE_OTHER;
-    default:
-        ASSERT_NOT_REACHED();
-        return WEBKIT_NAVIGATION_TYPE_LINK_CLICKED;
+class PolicyClient: public API::PolicyClient {
+public:
+    explicit PolicyClient(WebKitWebView* webView)
+        : m_webView(webView)
+    {
     }
-}
 
-static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /* userData */, const void* clientInfo)
-{
-    GRefPtr<WebKitNavigationPolicyDecision> decision =
-        adoptGRef(webkitNavigationPolicyDecisionCreate(toWebKitNavigationType(navigationType),
-                                                       wkEventMouseButtonToWebKitMouseButton(mouseButton),
-                                                       wkEventModifiersToGdkModifiers(modifiers),
-                                                       toImpl(request),
-                                                       0, /* frame name */
-                                                       toImpl(listener)));
-    webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
-                                    WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION,
-                                    WEBKIT_POLICY_DECISION(decision.get()));
-}
+private:
+    virtual void decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, const NavigationActionData& navigationActionData, WebFrameProxy* /*originatingFrame*/, const WebCore::ResourceRequest& /*originalRequest*/, const WebCore::ResourceRequest& request, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* /*userData*/) override
+    {
+        GRefPtr<WebKitPolicyDecision> decision = adoptGRef(webkitNavigationPolicyDecisionCreate(navigationActionData, request, listener.get()));
+        webkitWebViewMakePolicyDecision(m_webView, WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION, decision.get());
+    }
 
-static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /* userData */, const void* clientInfo)
-{
-    GRefPtr<WebKitNavigationPolicyDecision> decision =
-        adoptGRef(webkitNavigationPolicyDecisionCreate(toWebKitNavigationType(navigationType),
-                                                       wkEventMouseButtonToWebKitMouseButton(mouseButton),
-                                                       wkEventModifiersToGdkModifiers(modifiers),
-                                                       toImpl(request),
-                                                       toImpl(frameName)->string().utf8().data(),
-                                                       toImpl(listener)));
-    webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
-                                    WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION,
-                                    WEBKIT_POLICY_DECISION(decision.get()));
-}
+    virtual void decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, const NavigationActionData& navigationActionData, const WebCore::ResourceRequest& request, const String& frameName, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* /*userData*/) override
+    {
+        GRefPtr<WebKitPolicyDecision> decision = adoptGRef(webkitNewWindowPolicyDecisionCreate(navigationActionData, request, frameName, listener.get()));
+        webkitWebViewMakePolicyDecision(m_webView, WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION, decision.get());
+    }
 
-static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef /* userData */, const void* clientInfo)
-{
-    GRefPtr<WebKitResponsePolicyDecision> decision =
-        adoptGRef(webkitResponsePolicyDecisionCreate(toImpl(request), toImpl(response), canShowMIMEType, toImpl(listener)));
-    webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
-                                    WEBKIT_POLICY_DECISION_TYPE_RESPONSE,
-                                    WEBKIT_POLICY_DECISION(decision.get()));
-}
+    virtual void decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* /*userData*/) override
+    {
+        GRefPtr<WebKitPolicyDecision> decision = adoptGRef(webkitResponsePolicyDecisionCreate(request, response, canShowMIMEType, listener.get()));
+        webkitWebViewMakePolicyDecision(m_webView, WEBKIT_POLICY_DECISION_TYPE_RESPONSE, decision.get());
+    }
+
+    WebKitWebView* m_webView;
+};
 
 void attachPolicyClientToView(WebKitWebView* webView)
 {
-    WKPagePolicyClientV1 policyClient = {
-        {
-            1, // version
-            webView, // clientInfo
-        },
-        0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
-        decidePolicyForNewWindowAction,
-        0, // decidePolicyForResponse_deprecatedForUseWithV0
-        0, // unableToImplementPolicy
-        decidePolicyForNavigationAction,
-        decidePolicyForResponse
-    };
-    WKPageSetPagePolicyClient(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))), &policyClient.base);
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    page->setPolicyClient(std::make_unique<PolicyClient>(webView));
 }

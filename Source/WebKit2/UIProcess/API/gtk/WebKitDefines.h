@@ -38,10 +38,11 @@
 #    else
 #        define WEBKIT_API __declspec(dllimport)
 #    endif
-#    define WEBKIT_OBSOLETE_API WEBKIT_API
 #else
 #    define WEBKIT_API __attribute__((visibility("default")))
-#    define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))
 #endif
+
+#define WEBKIT_DEPRECATED WEBKIT_API G_DEPRECATED
+#define WEBKIT_DEPRECATED_FOR(f) WEBKIT_API G_DEPRECATED_FOR(f)
 
 #endif // WebKitDefines_h

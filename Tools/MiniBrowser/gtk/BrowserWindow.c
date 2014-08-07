@@ -370,15 +370,15 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
 {
     switch (decisionType) {
     case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION: {
-        WebKitNavigationPolicyDecision *navigationDecision = WEBKIT_NAVIGATION_POLICY_DECISION(decision);
-        if (webkit_navigation_policy_decision_get_navigation_type(navigationDecision) != WEBKIT_NAVIGATION_TYPE_LINK_CLICKED
-            || webkit_navigation_policy_decision_get_mouse_button(navigationDecision) != GDK_BUTTON_MIDDLE)
+        WebKitNavigationAction *navigationAction = webkit_navigation_policy_decision_get_navigation_action(WEBKIT_NAVIGATION_POLICY_DECISION(decision));
+        if (webkit_navigation_action_get_navigation_type(navigationAction) != WEBKIT_NAVIGATION_TYPE_LINK_CLICKED
+            || webkit_navigation_action_get_mouse_button(navigationAction) != GDK_BUTTON_MIDDLE)
             return FALSE;
 
         // Opening a new window if link clicked with the middle button.
         WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(webkit_web_view_get_context(webView)));
         GtkWidget *newWindow = browser_window_new(newWebView, GTK_WINDOW(window));
-        webkit_web_view_load_request(newWebView, webkit_navigation_policy_decision_get_request(navigationDecision));
+        webkit_web_view_load_request(newWebView, webkit_navigation_action_get_request(navigationAction));
         gtk_widget_show(newWindow);
 
         webkit_policy_decision_ignore(decision);

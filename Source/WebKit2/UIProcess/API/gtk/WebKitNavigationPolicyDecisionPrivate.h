@@ -20,9 +20,11 @@
 #ifndef WebKitNavigationPolicyDecisionPrivate_h
 #define WebKitNavigationPolicyDecisionPrivate_h
 
+#include "NavigationActionData.h"
 #include "WebKitNavigationPolicyDecision.h"
 #include "WebKitPrivate.h"
 
-WebKitNavigationPolicyDecision* webkitNavigationPolicyDecisionCreate(WebKitNavigationType, unsigned mouseButton, unsigned modifiers, API::URLRequest*, const char* frameName, WebKit::WebFramePolicyListenerProxy*);
+WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, WebKit::WebFramePolicyListenerProxy*);
+WebKitPolicyDecision* webkitNewWindowPolicyDecisionCreate(const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const String& frameName, WebKit::WebFramePolicyListenerProxy*);
 
 #endif // WebKitNavigationPolicyDecisionPrivate_h

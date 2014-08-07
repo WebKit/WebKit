@@ -20,8 +20,6 @@
 #include "config.h"
 #include "WebKitResponsePolicyDecision.h"
 
-#include "APIURLRequest.h"
-#include "APIURLResponse.h"
 #include "WebKitPolicyDecisionPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -31,6 +29,7 @@
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
+using namespace WebCore;
 
 /**
  * SECTION: WebKitResponsePolicyDecision
@@ -155,12 +154,13 @@ gboolean webkit_response_policy_decision_is_mime_type_supported(WebKitResponsePo
     return decision->priv->canShowMIMEType;
 }
 
-WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(API::URLRequest* request, API::URLResponse* response, bool canShowMIMEType, WebFramePolicyListenerProxy* listener)
+WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(const ResourceRequest& request, const ResourceResponse& response, bool canShowMIMEType, WebFramePolicyListenerProxy* listener)
 {
-    WebKitResponsePolicyDecision* decision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, NULL));
-    decision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(request->resourceRequest()));
-    decision->priv->response = adoptGRef(webkitURIResponseCreateForResourceResponse(response->resourceResponse()));
-    decision->priv->canShowMIMEType = canShowMIMEType;
-    webkitPolicyDecisionSetListener(WEBKIT_POLICY_DECISION(decision), listener);
+    WebKitResponsePolicyDecision* responseDecision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, nullptr));
+    responseDecision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
+    responseDecision->priv->response = adoptGRef(webkitURIResponseCreateForResourceResponse(response));
+    responseDecision->priv->canShowMIMEType = canShowMIMEType;
+    WebKitPolicyDecision* decision = WEBKIT_POLICY_DECISION(responseDecision);
+    webkitPolicyDecisionSetListener(decision, listener);
     return decision;
 }

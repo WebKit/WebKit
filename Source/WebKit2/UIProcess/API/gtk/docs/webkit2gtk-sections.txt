@@ -16,7 +16,8 @@ WEBKIT_WEB_VIEW_BASE_GET_CLASS
 webkit_web_view_base_get_type
 WebKitWebViewBasePrivate
 WEBKIT_API
-WEBKIT_OBSOLETE_API
+WEBKIT_DEPRECATED
+WEBKIT_DEPRECATED_FOR
 </SECTION>
 
 <SECTION>
@@ -613,6 +614,7 @@ webkit_policy_decision_get_type
 <FILE>WebKitNavigationPolicyDecision</FILE>
 WebKitNavigationPolicyDecision
 WebKitNavigationType
+webkit_navigation_policy_decision_get_navigation_action
 webkit_navigation_policy_decision_get_frame_name
 webkit_navigation_policy_decision_get_modifiers
 webkit_navigation_policy_decision_get_mouse_button

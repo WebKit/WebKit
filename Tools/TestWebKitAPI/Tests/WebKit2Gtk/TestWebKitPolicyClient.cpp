@@ -117,11 +117,12 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     // Ideally we'd like to have a more intensive test here, but it's still pretty tricky
     // to trigger different types of navigations with the GTK+ WebKit2 API.
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
-    g_assert_cmpint(webkit_navigation_policy_decision_get_navigation_type(decision), ==, WEBKIT_NAVIGATION_TYPE_OTHER);
-    g_assert_cmpint(webkit_navigation_policy_decision_get_mouse_button(decision), ==, 0);
-    g_assert_cmpint(webkit_navigation_policy_decision_get_modifiers(decision), ==, 0);
-    g_assert_cmpstr(webkit_navigation_policy_decision_get_frame_name(decision), ==, 0);
-    WebKitURIRequest* request = webkit_navigation_policy_decision_get_request(decision);
+    WebKitNavigationAction* navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
+    g_assert_cmpint(webkit_navigation_action_get_navigation_type(navigationAction), ==, WEBKIT_NAVIGATION_TYPE_OTHER);
+    g_assert_cmpint(webkit_navigation_action_get_mouse_button(navigationAction), ==, 0);
+    g_assert_cmpint(webkit_navigation_action_get_modifiers(navigationAction), ==, 0);
+    g_assert(!webkit_navigation_policy_decision_get_frame_name(decision));
+    WebKitURIRequest* request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, "http://webkitgtk.org/");
 
     test->m_policyDecisionResponse = PolicyClientTest::Use;

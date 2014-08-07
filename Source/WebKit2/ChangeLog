@@ -1,3 +1,48 @@
+2014-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use WebKitNavigationAction also for WebKitNavigationPolicyDecision
+        https://bugs.webkit.org/show_bug.cgi?id=135695
+
+        Reviewed by Gustavo Noronha Silva.
+
+        WebKitNavigationAction was introduced to extend WebKitWebView::create signal
+        and its API is mostly duplicated in WebKitNavigationPolicyDecision.
+        Use WebKitNavigationAction insternally in WebKitNavigationPolicyDecision and
+        deprecated all the duplicated API in favor of a single property navigation-action.
+
+        * UIProcess/API/gtk/WebKitDefines.h: Remove unused macro
+        WEBKIT_OBSOLETE and add WEBKIT_DEPRECATED and WEBKIT_DEPRECATED_FOR.
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        (_WebKitNavigationPolicyDecisionPrivate::~_WebKitNavigationPolicyDecisionPrivate):
+        Free the WebKitNavigationAction.
+        (webkitNavigationPolicyDecisionGetProperty): Add getter for
+        navigation-action and use WebKitNavigationAction in all other getters.
+        (webkit_navigation_policy_decision_class_init): Add navigation-action
+        property and deprecated all others except frame-name.
+        (webkit_navigation_policy_decision_get_navigation_action): Return the WebKitNavigationAction.
+        (webkit_navigation_policy_decision_get_navigation_type): Use WebKitNavigationAction.
+        (webkit_navigation_policy_decision_get_mouse_button): Ditto.
+        (webkit_navigation_policy_decision_get_modifiers): Ditto.
+        (webkit_navigation_policy_decision_get_request): Ditto.
+        (webkitNavigationPolicyDecisionCreate):
+        (webkitNewWindowPolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.h:
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp: Use a custom
+        PolicyClient class so that we receive a NavigationActionData in
+        the callbacks.
+        (attachPolicyClientToView):
+        (toWebKitNavigationType): Deleted.
+        (decidePolicyForNavigationAction): Deleted.
+        (decidePolicyForNewWindowAction): Deleted.
+        (decidePolicyForResponse): Deleted.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkitResponsePolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        deprecated symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+
 2014-08-06  Antti Koivisto  <antti@apple.com>
 
         Move Soup specific code out of WebCoreArgumentCoders.cpp
