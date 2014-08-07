@@ -1,3 +1,10 @@
+2014-08-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Add $(DebugSuffix) to libraries so
+        that the DebugSuffix target works properly.
+
 2014-08-07  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Update glyphs to be more like Xcode 6
