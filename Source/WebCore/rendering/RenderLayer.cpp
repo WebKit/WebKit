@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2014 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -3245,13 +3245,13 @@ void RenderLayer::updateScrollbarsAfterLayout()
         int clientWidth = box->pixelSnappedClientWidth();
         int pageStep = std::max(std::max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_hBar->setProportion(clientWidth, m_scrollSize.width());
+        m_hBar->setProportion(clientWidth, m_scrollSize.width().round());
     }
     if (m_vBar) {
         int clientHeight = box->pixelSnappedClientHeight();
         int pageStep = std::max(std::max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_vBar->setProportion(clientHeight, m_scrollSize.height());
+        m_vBar->setProportion(clientHeight, m_scrollSize.height().round());
     }
 
     updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
