@@ -51,6 +51,10 @@
 #include <wtf/RunLoopTimer.h>
 #endif
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
 
     class ApplicationCacheHost;
@@ -259,6 +263,11 @@ namespace WebCore {
         // The URL of the document resulting from this DocumentLoader.
         URL documentURL() const;
 
+#if USE(QUICK_LOOK)
+        void setQuickLookHandle(std::unique_ptr<QuickLookHandle> quickLookHandle) { m_quickLookHandle = WTF::move(quickLookHandle); }
+        QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
+#endif
+
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -411,6 +420,10 @@ namespace WebCore {
 
 #if USE(CONTENT_FILTERING)
         std::unique_ptr<ContentFilter> m_contentFilter;
+#endif
+
+#if USE(QUICK_LOOK)
+        std::unique_ptr<QuickLookHandle> m_quickLookHandle;
 #endif
     };
 

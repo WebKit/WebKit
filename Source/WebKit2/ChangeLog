@@ -1,3 +1,27 @@
+2014-08-07  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r172191. <rdar://problem/17895138>
+
+    2014-08-06  Andy Estes  <aestes@apple.com>
+    
+            [iOS] Subresources referenced in converted QuickLook documents sometimes fail to load
+            https://bugs.webkit.org/show_bug.cgi?id=135676
+    
+            Reviewed by David Kilzer.
+    
+            QuickLookHandle needs to stay alive in order for its NSURLProtocol to service subresource loads originating
+            from the converted HTML document. Some of these loads happen dynamically after the main resource finishes
+            loading, so we cannot tie the lifetime of the QuickLookHandle to that of the main resource's ResourceLoader.
+            Instead, give ownership of the QuickLookHandle to DocumentLoader.
+    
+            * WebProcess/Network/WebResourceLoader.cpp:
+            (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo): Stored the created QuickLookHandle in DocumentLoader.
+            (WebKit::WebResourceLoader::didReceiveData): Accessed DocumentLoader's QuickLookHandle.
+            (WebKit::WebResourceLoader::didFinishResourceLoad): Ditto.
+            (WebKit::WebResourceLoader::didFailResourceLoad): Ditto.
+            (WebKit::WebResourceLoader::didReceiveResource): Ditto.
+            * WebProcess/Network/WebResourceLoader.h: Removed m_quickLookHandle.
+    
 2014-08-06  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172172. <rdar://problem/17862892>
