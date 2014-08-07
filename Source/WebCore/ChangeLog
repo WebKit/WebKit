@@ -1,5 +1,38 @@
 2014-08-07  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172275. <rdar://problem/17886686>
+
+    2014-08-07  Daniel Bates  <dabates@apple.com>
+    
+            Sometimes Gmail cannot load messages, particularly on refresh ("...the application ran into an unexpected error...")
+            https://bugs.webkit.org/show_bug.cgi?id=135688
+            <rdar://problem/17886686>
+    
+            Reviewed by Alexey Proskuryakov.
+    
+            Fixes an issue where gmail.com may fail to load the list of messages. In particular, a SQLTransactionCallback
+            function may not be executed and hence Gmail will not display the list of messages and
+            will subsequently display an error message.
+    
+            When a WebKit client defers loading of a page (e.g. -[WebView setDefersCallbacks:YES]), WebCore
+            may still load the main resource, say if substitute data is available for it, and defer executing
+            tasks, such as a SQLTransactionCallback function, by appending such tasks to the end of the list
+            of pending tasks for the associated Document. This list of pending tasks is never processed when
+            a client subsequently allows loading (e.g. -[WebView setDefersCallbacks:NO])). Therefore, we never
+            execute a SQLTransactionCallback function that was deferred.
+    
+            Ideally WebCore would defer loading of substitute data when a WebKit client requests that loading
+            be deferred and hence a SQLTransactionCallback function would be deferred as a consequence of the
+            lack of JavaScript script execution (since substitute data wasn't loaded and hence any JavaScript
+            script contained in the substitute data that initiates a SQL transaction isn't executed). For now,
+            it's sufficient to only defer executing tasks when either there are existing pending tasks or the
+            page defers loading and active DOM objects in the document are suspended (e.g. Document::suspendActiveDOMObjects() was called).
+    
+            * dom/Document.cpp:
+            (WebCore::Document::postTask):
+    
+2014-08-07  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172244. <rdar://problem/17939895>
 
     2014-08-06  Jeremy Jones  <jeremyj@apple.com>
