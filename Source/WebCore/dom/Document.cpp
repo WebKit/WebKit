@@ -4915,8 +4915,10 @@ void Document::postTask(Task task)
         if (!document)
             return;
 
-        Page* page = document->page();
-        if ((page && page->defersLoading()) || !document->m_pendingTasks.isEmpty())
+        if (document->activeDOMObjectsAreStopped())
+            return;
+
+        if (document->activeDOMObjectsAreSuspended() || !document->m_pendingTasks.isEmpty())
             document->m_pendingTasks.append(WTF::move(*task.release()));
         else
             task->performTask(*document);
