@@ -206,7 +206,7 @@ protected:
     static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-    static NO_RETURN_DUE_TO_CRASH uint32_t getEnumerableLength(ExecState*, JSObject*);
+    static uint32_t getEnumerableLength(ExecState*, JSObject*);
     static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 

@@ -67,6 +67,8 @@ inline bool shouldIncludeJSObjectPropertyNames(EnumerationMode mode)
     case IncludeDontEnumPropertiesAndSkipJSObject:
         return false;
     }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 inline EnumerationMode modeThatSkipsJSObject(EnumerationMode mode)
@@ -80,6 +82,8 @@ inline EnumerationMode modeThatSkipsJSObject(EnumerationMode mode)
     case IncludeDontEnumPropertiesAndSkipJSObject:
         return mode;
     }
+    ASSERT_NOT_REACHED();
+    return mode;
 }
 
 } // namespace JSC

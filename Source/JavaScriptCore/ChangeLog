@@ -1,3 +1,16 @@
+2014-08-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix for build failure on EFL bots.
+
+        Not reviewed.
+
+        * runtime/EnumerationMode.h:
+        (JSC::shouldIncludeJSObjectPropertyNames):
+        (JSC::modeThatSkipsJSObject):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getEnumerableLength):
+        * runtime/JSCell.h:
+
 2014-08-06  Dean Jackson  <dino@apple.com>
 
         ENABLE_CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED is not used anywhere. Remove it.
