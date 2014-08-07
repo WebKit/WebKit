@@ -1,3 +1,16 @@
+2014-08-07  Iulia Tamas  <tamas@adobe.com>
+
+        Move multicol tests into fast/regions/multicol.
+        https://bugs.webkit.org/show_bug.cgi?id=135693
+
+        Reviewed by Andrei Bucur.
+
+        File Move Patch. Created the fast/regions/multicol folder. Moved the region tests testing multicol 
+        in the fast/regions/multicol folder.
+
+        * fast/regions/multicol/multicol-as-region-prevented-expected.html: Renamed from LayoutTests/fast/regions/multicol-as-region-prevented-expected.html.
+        * fast/regions/multicol/multicol-as-region-prevented.html: Renamed from LayoutTests/fast/regions/multicol-as-region-prevented.html.
+
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: adding failed tests to TestExpectations.
