@@ -1,3 +1,12 @@
+2014-08-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Rebaseline after r172136.
+
 2014-08-07  Iulia Tamas  <tamas@adobe.com>
 
         Move multicol tests into fast/regions/multicol.
