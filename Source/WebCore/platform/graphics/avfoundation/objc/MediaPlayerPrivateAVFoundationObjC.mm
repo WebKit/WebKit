@@ -54,6 +54,7 @@
 #import "UUID.h"
 #import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
+#import "WebCoreCALayerExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <runtime/DataView.h>
@@ -597,6 +598,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
 #if PLATFORM(IOS)
+    [m_videoLayer web_disableAllActions];
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:[m_videoFullscreenLayer bounds]];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
@@ -998,10 +1000,11 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame
         return;
 
     if (m_videoLayer) {
+        [m_videoLayer setStyle:nil]; // This enables actions, i.e. implicit animations.
         [CATransaction begin];
-        [CATransaction setDisableActions:YES];
         [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
         [CATransaction commit];
+        [m_videoLayer web_disableAllActions];
     }
     syncTextTrackBounds();
 }

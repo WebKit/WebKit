@@ -1,5 +1,23 @@
 2014-08-07  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172244. <rdar://problem/17939895>
+
+    2014-08-06  Jeremy Jones  <jeremyj@apple.com>
+    
+            Disable implicit animations on video layer.
+            https://bugs.webkit.org/show_bug.cgi?id=135679
+    
+            Reviewed by Eric Carlson.
+    
+            Disable implicit animations on AVPlayerLayer except when setting fullscreen frame.
+            This prevents unwanted animations.
+    
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): disable implicit animations
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame): allow implicit animations while changing fullscreen frame.
+    
+2014-08-07  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172197. <rdar://problem/17855327>
 
     2014-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
