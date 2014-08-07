@@ -186,6 +186,24 @@ void DatabaseProcessIDBConnection::rollbackTransaction(uint64_t requestID, int64
     });
 }
 
+void DatabaseProcessIDBConnection::resetTransactionSync(int64_t transactionID, PassRefPtr<Messages::DatabaseProcessIDBConnection::ResetTransactionSync::DelayedReply> prpReply)
+{
+    RefPtr<Messages::DatabaseProcessIDBConnection::ResetTransactionSync::DelayedReply> reply(prpReply);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->resetTransaction(IDBIdentifier(*this, transactionID), [connection, reply](bool success) {
+        reply->send(success);
+    });
+}
+
+void DatabaseProcessIDBConnection::rollbackTransactionSync(int64_t transactionID, PassRefPtr<Messages::DatabaseProcessIDBConnection::RollbackTransactionSync::DelayedReply> prpReply)
+{
+    RefPtr<Messages::DatabaseProcessIDBConnection::RollbackTransactionSync::DelayedReply> reply(prpReply);
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->rollbackTransaction(IDBIdentifier(*this, transactionID), [connection, reply](bool success) {
+        reply->send(success);
+    });
+}
+
 void DatabaseProcessIDBConnection::changeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
 {
     ASSERT(m_uniqueIDBDatabase);

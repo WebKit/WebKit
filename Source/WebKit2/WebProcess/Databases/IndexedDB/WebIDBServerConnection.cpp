@@ -266,6 +266,13 @@ void WebIDBServerConnection::didResetTransaction(uint64_t requestID, bool)
     serverRequest->completeRequest();
 }
 
+bool WebIDBServerConnection::resetTransactionSync(int64_t transactionID)
+{
+    bool success;
+    sendSync(Messages::DatabaseProcessIDBConnection::ResetTransactionSync(transactionID), Messages::DatabaseProcessIDBConnection::ResetTransactionSync::Reply(success));
+    return success;
+}
+
 void WebIDBServerConnection::rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback)
 {
     RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<>::create(completionCallback, completionCallback);
@@ -289,6 +296,13 @@ void WebIDBServerConnection::didRollbackTransaction(uint64_t requestID, bool)
         return;
 
     serverRequest->completeRequest();
+}
+
+bool WebIDBServerConnection::rollbackTransactionSync(int64_t transactionID)
+{
+    bool success;
+    sendSync(Messages::DatabaseProcessIDBConnection::RollbackTransactionSync(transactionID), Messages::DatabaseProcessIDBConnection::RollbackTransactionSync::Reply(success));
+    return success;
 }
 
 void WebIDBServerConnection::setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

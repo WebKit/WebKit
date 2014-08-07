@@ -64,7 +64,9 @@ public:
     virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
     virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) override;
     virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual bool resetTransactionSync(int64_t transactionID) override;
     virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) override;
+    virtual bool rollbackTransactionSync(int64_t transactionID) override;
 
     virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const WebCore::IDBObjectStoreMetadata&, WebCore::IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<WebCore::IDBKey>>>& indexKeys, std::function<void(PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 

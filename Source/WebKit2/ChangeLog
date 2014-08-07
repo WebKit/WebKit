@@ -1,5 +1,52 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172193
+
+    2014-08-06  Brady Eidson and Jeffrey Pfau <beidson@apple.com>
+
+            IDB transactions never reset if the Web Process ends before cleaning up
+            https://bugs.webkit.org/show_bug.cgi?id=135218
+
+            Reviewed by Darin Adler and David Kilzer.
+
+            * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+            (WebKit::DatabaseToWebProcessConnection::didReceiveMessage):
+            (WebKit::DatabaseToWebProcessConnection::didReceiveSyncMessage): Added.
+            (WebKit::DatabaseToWebProcessConnection::didClose):
+            * DatabaseProcess/DatabaseToWebProcessConnection.h:
+
+            * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+            (WebKit::DatabaseProcessIDBConnection::resetTransactionSync): Added
+                Wait until the reset is complete before sending the sync reply.
+            (WebKit::DatabaseProcessIDBConnection::rollbackTransactionSync): Added.
+                Ditto.
+            * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+            * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+            Keep track of all in progress transactions and make sure they’re cleaned up
+            whenever a connection to a WebProcess is broken:
+            * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+            (WebKit::UniqueIDBDatabase::unregisterConnection):
+            (WebKit::UniqueIDBDatabase::didCompleteTransactionOperation):
+            (WebKit::UniqueIDBDatabase::openBackingStoreTransaction):
+            (WebKit::UniqueIDBDatabase::resetBackingStoreTransaction):
+            (WebKit::UniqueIDBDatabase::didEstablishTransaction):
+            (WebKit::UniqueIDBDatabase::didResetTransaction):
+            (WebKit::UniqueIDBDatabase::resetAllTransactions):
+            (WebKit::UniqueIDBDatabase::finalizeRollback):
+            * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+            * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+            (WebKit::UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction):
+
+            Add sync versions of reset/rollback:
+            * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+            (WebKit::WebIDBServerConnection::resetTransactionSync):
+            (WebKit::WebIDBServerConnection::rollbackTransactionSync):
+            * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172172
 
     2014-08-06  Alexey Proskuryakov  <ap@apple.com>

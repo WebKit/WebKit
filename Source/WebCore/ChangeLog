@@ -1,5 +1,23 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172193
+
+    2014-08-06  Brady Eidson  <beidson@apple.com>
+
+            IDB transactions never reset if the Web Process ends before cleaning up
+            https://bugs.webkit.org/show_bug.cgi?id=135218
+
+            Reviewed by David Kilzer.
+
+            No new tests (Covered by existing tests).
+
+            * Modules/indexeddb/IDBServerConnection.h: Add sync versions of reset/rollback.
+
+            * Modules/indexeddb/IDBTransactionBackend.cpp:
+            (WebCore::IDBTransactionBackend::abort): Call the sync versions.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172183
 
     2014-08-06  Simon Fraser  <simon.fraser@apple.com>
