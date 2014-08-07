@@ -126,7 +126,6 @@ private:
 
     virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
-    virtual void clearCustomSwipeViews() override;
 
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&);
 

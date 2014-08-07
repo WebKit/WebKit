@@ -962,10 +962,6 @@ void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vecto
 
     m_pageLoadState.setCanGoBack(transaction, m_backForwardList->backItem());
     m_pageLoadState.setCanGoForward(transaction, m_backForwardList->forwardItem());
-
-#if PLATFORM(MAC)
-    m_pageClient.clearCustomSwipeViews();
-#endif
 }
 
 void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder& decoder)

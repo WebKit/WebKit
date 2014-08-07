@@ -182,7 +182,6 @@ public:
     virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
     virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
-    virtual void clearCustomSwipeViews() = 0;
 #endif
 
 #if USE(APPKIT)

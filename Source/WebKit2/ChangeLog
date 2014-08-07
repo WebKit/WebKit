@@ -1,5 +1,33 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172307
+
+    2014-08-07  Timothy Horton  <timothy_horton@apple.com>
+
+            setCustomSwipeViews inside didChangeBackForwardList client callback is ignored
+            https://bugs.webkit.org/show_bug.cgi?id=135633
+            <rdar://problem/17926507>
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didChangeBackForwardList):
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::clearCustomSwipeViews): Deleted.
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::clearCustomSwipeViews): Deleted.
+            WebKit clears the set of custom swipe views at the end of WebPageProxy::didChangeBackForwardList,
+            *after* calling into the client. This means that if the client wants to setCustomSwipeViews in
+            didChangeBackForwardList, it won't be respected.
+
+            Since there's only one client of this SPI, let's just stop clearing the list of custom swipe
+            views in WebKit and leave that totally up to the client.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172301
 
     2014-08-07  Enrica Casucci  <enrica@apple.com>
