@@ -629,6 +629,12 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.containerTemporaryDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.containerTemporaryDirectory, parameters.containerTemporaryDirectoryExtensionHandle);
 
+#if PLATFORM(IOS)
+    parameters.hstsDatabasePath = webContentHSTSDatabasePath();
+    if (!parameters.hstsDatabasePath.isEmpty())
+        SandboxExtension::createHandle(parameters.hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
+#endif
+
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
     parameters.cacheModel = m_cacheModel;
