@@ -9,7 +9,7 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>../src/libGLESv2/libGLESv2.def</ModuleDefinitionFile>
-      <AdditionalDependencies>d3d9.lib;dxguid.lib;translator_common.lib;translator_hlsl.lib;translator_glsl.lib;preprocessor.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;dxguid.lib;translator_common$(DebugSuffix).lib;translator_hlsl$(DebugSuffix).lib;translator_glsl$(DebugSuffix).lib;preprocessor$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>

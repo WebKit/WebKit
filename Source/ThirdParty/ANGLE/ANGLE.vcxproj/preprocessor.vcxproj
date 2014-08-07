@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugSuffix|Win32">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugSuffix|x64">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug_WinCairo|Win32">
       <Configuration>Debug_WinCairo</Configuration>
       <Platform>Win32</Platform>
@@ -56,11 +64,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
@@ -92,48 +108,58 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
     <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="translatorCommon.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
     <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" Label="PropertySheets">
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="translatorCommon.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
     <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
     <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
     <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
-    <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
     <Import Project="ANGLERelease.props" />
   </ImportGroup>

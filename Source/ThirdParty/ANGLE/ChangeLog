@@ -1,3 +1,25 @@
+2014-08-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        DebugSuffix targets should use our debugsuffix property sheet, and
+        will therefore build to the proper output location with the proper
+        suffix tags.
+
+        Also, we must use the WebKit_Libraries environment variable, not a set
+        of relative paths to the property sheets.
+
+        * ANGLE.vcxproj/libEGL.vcxproj: Use 'debugsuffix.props' sheet.
+        * ANGLE.vcxproj/libGLESv2.vcxproj: Ditto.
+        * ANGLE.vcxproj/preprocessor.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_common.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_glsl.vcxproj: Ditto.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj: Ditto.
+        * ANGLE.vcxproj/libEGLCommon.props: Use $(DebugSuffix) endings.
+        * ANGLE.vcxproj/libGLESv2Common.props: Ditto.
+        * ANGLE.vcxproj/translatorCommon.props: Output to 'lib' folder,
+        not 'bin' folder. These are libraries!
+
 2014-08-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
