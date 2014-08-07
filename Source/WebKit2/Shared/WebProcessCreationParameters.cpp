@@ -51,6 +51,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
 #if ENABLE(SERVICE_CONTROLS)
     , hasImageServices(false)
     , hasSelectionServices(false)
+    , hasRichContentServices(false)
 #endif
 {
 }

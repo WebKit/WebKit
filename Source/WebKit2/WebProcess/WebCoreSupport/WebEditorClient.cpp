@@ -538,11 +538,11 @@ void WebEditorClient::selectedTelephoneNumberRangesChanged(const Vector<RefPtr<R
     m_page->servicesOverlayController().selectedTelephoneNumberRangesChanged(ranges);
 #endif
 }
-void WebEditorClient::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects)
+void WebEditorClient::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects, bool isTextOnly)
 {
 #if PLATFORM(MAC)
     if (m_page->serviceControlsEnabled())
-        m_page->servicesOverlayController().selectionRectsDidChange(rects, gapRects);
+        m_page->servicesOverlayController().selectionRectsDidChange(rects, gapRects, isTextOnly);
 #endif
 }
 #endif // ENABLE(SERVICE_CONTROLS) && ENABLE(TELEPHONE_NUMBER_DETECTION)
