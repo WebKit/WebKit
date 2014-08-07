@@ -30,6 +30,7 @@
 
 #include "PageOverlay.h"
 #include <WebCore/Range.h>
+#include <WebCore/Timer.h>
 
 typedef void* DDHighlightRef;
 
@@ -79,17 +80,23 @@ private:
     void drawSelectionHighlight(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
     void drawHighlight(DDHighlightRef, WebCore::GraphicsContext&);
 
-    void establishHoveredTelephoneHighlight(Boolean& onButton);
+    void establishHoveredTelephoneHighlight(bool& mouseIsOverButton);
     void maybeCreateSelectionHighlight();
 
     void clearSelectionHighlight();
     void clearHoveredTelephoneNumberHighlight();
+
+    bool mouseIsOverHighlight(DDHighlightRef, bool& mouseIsOverButton) const;
+    std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown() const;
+    void repaintHighlightTimerFired(WebCore::Timer<ServicesOverlayController>&);
 
     WebPage* m_webPage;
     PageOverlay* m_servicesOverlay;
     
     Vector<WebCore::LayoutRect> m_currentSelectionRects;
     RetainPtr<DDHighlightRef> m_selectionHighlight;
+    std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
+    std::chrono::steady_clock::time_point m_lastHoveredHighlightChangeTime;
 
     Vector<RefPtr<WebCore::Range>> m_currentTelephoneNumberRanges;
     Vector<RetainPtr<DDHighlightRef>> m_telephoneNumberHighlights;
@@ -97,6 +104,8 @@ private:
 
     RetainPtr<DDHighlightRef> m_currentHoveredHighlight;
     RetainPtr<DDHighlightRef> m_currentMouseDownOnButtonHighlight;
+
+    WebCore::Timer<ServicesOverlayController> m_repaintHighlightTimer;
 
     WebCore::IntPoint m_mousePosition;
 };
