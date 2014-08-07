@@ -617,6 +617,8 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     Vector<String>& searchStrings = criteria->searchStrings;
     
     RefPtr<Range> selectedStringRange = selectionRange();
+    // When starting our search again, make this a zero length range so that search forwards will find this selected range if its appropriate.
+    selectedStringRange->setEnd(selectedStringRange->startContainer(), selectedStringRange->startOffset());
     
     RefPtr<Range> closestAfterStringRange = nullptr;
     RefPtr<Range> closestBeforeStringRange = nullptr;
