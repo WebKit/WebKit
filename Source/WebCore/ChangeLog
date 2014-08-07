@@ -1,5 +1,24 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r171997
+
+    2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: SelectText functionality always selects text after current selection even if closer selection is behind it
+            https://bugs.webkit.org/show_bug.cgi?id=135546
+
+            Reviewed by Mario Sanchez Prada.
+
+            Logic was incorrect for comparing ranges found before the current selection.
+            ASSERT was incorrect for allowed ranges. We need to allow ranges that are right at the boundaries of our found ranges.
+
+            Extended existing test: platform/mac/accessibility/select-text.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::rangeClosestToRange):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r171996
 
     2014-08-04  Chris Fleizach  <cfleizach@apple.com>
