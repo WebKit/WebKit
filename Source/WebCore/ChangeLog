@@ -1,3 +1,13 @@
+2014-08-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Don't build the JSFileException and JSFileReaderSync files in 64-bit; they are already part
+        of DerivedObjects.cpp.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Exclude JSFileException and JSFileReaderSync to avoid
+        multiple definitions of symbols.
+
 2014-08-07  Enrica Casucci  <enrica@apple.com>
 
         [Services with UI] Action menu does not appear if selection includes both text and an image.
