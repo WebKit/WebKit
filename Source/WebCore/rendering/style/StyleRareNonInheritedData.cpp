@@ -53,6 +53,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_grid(StyleGridData::create())
     , m_gridItem(StyleGridItemData::create())
 #endif
+#if ENABLE(CSS_SCROLL_SNAP)
+    , m_scrollSnapPoints(StyleScrollSnapPoints::create())
+#endif
     , m_mask(FillLayer(MaskFillLayer))
     , m_pageSize()
 #if ENABLE(CSS_SHAPES)
@@ -65,6 +68,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_order(RenderStyle::initialOrder())
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
+#if ENABLE(CSS_SCROLL_SNAP)
+    , m_scrollSnapType(RenderStyle::initialScrollSnapType())
+#endif
     , m_regionFragment(RenderStyle::initialRegionFragment())
     , m_regionBreakAfter(RenderStyle::NonInheritedFlags::initialPageBreak())
     , m_regionBreakBefore(RenderStyle::NonInheritedFlags::initialPageBreak())
@@ -118,6 +124,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_grid(o.m_grid)
     , m_gridItem(o.m_gridItem)
 #endif
+#if ENABLE(CSS_SCROLL_SNAP)
+    , m_scrollSnapPoints(o.m_scrollSnapPoints)
+#endif
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
     , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
     , m_boxShadow(o.m_boxShadow ? std::make_unique<ShadowData>(*o.m_boxShadow) : nullptr)
@@ -144,6 +153,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_order(o.m_order)
     , m_flowThread(o.m_flowThread)
     , m_regionThread(o.m_regionThread)
+#if ENABLE(CSS_SCROLL_SNAP)
+    , m_scrollSnapType(o.m_scrollSnapType)
+#endif
     , m_regionFragment(o.m_regionFragment)
     , m_regionBreakAfter(o.m_regionBreakAfter)
     , m_regionBreakBefore(o.m_regionBreakBefore)
@@ -208,6 +220,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_grid == o.m_grid
         && m_gridItem == o.m_gridItem
 #endif
+#if ENABLE(CSS_SCROLL_SNAP)
+        && m_scrollSnapPoints == o.m_scrollSnapPoints
+#endif
         && contentDataEquivalent(o)
         && counterDataEquivalent(o)
         && shadowDataEquivalent(o)
@@ -253,6 +268,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_borderFit == o.m_borderFit
         && m_textCombine == o.m_textCombine
         && m_textDecorationStyle == o.m_textDecorationStyle
+#if ENABLE(CSS_SCROLL_SNAP)
+        && m_scrollSnapType == o.m_scrollSnapType
+#endif
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode

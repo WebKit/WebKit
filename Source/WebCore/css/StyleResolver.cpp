@@ -161,6 +161,10 @@
 #include "WebVTTElement.h"
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "LengthRepeat.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2843,6 +2847,88 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             state.style()->setJustifySelf(*primitiveValue);
         return;
     }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType: {
+        state.style()->setScrollSnapType(*primitiveValue);
+        return;
+    }
+    case CSSPropertyWebkitScrollSnapPointsX:
+    case CSSPropertyWebkitScrollSnapPointsY: {
+        RenderStyle* renderStyle = state.style();
+        if (id == CSSPropertyWebkitScrollSnapPointsX)
+            renderStyle->setScrollSnapHasRepeatX(false);
+        else
+            renderStyle->setScrollSnapHasRepeatY(false);
+
+        if (primitiveValue && primitiveValue->getValueID() == CSSValueElements) {
+            if (id == CSSPropertyWebkitScrollSnapPointsX)
+                renderStyle->setScrollSnapUsesElementsX(true);
+            else
+                renderStyle->setScrollSnapUsesElementsY(true);
+            return;
+        }
+        if (id == CSSPropertyWebkitScrollSnapPointsX)
+            renderStyle->setScrollSnapUsesElementsX(false);
+        else
+            renderStyle->setScrollSnapUsesElementsY(false);
+
+        Vector<Length> offsets;
+        for (CSSValueListIterator it(value); it.hasMore(); it.advance()) {
+            RefPtr<CSSValue> rawItemValue = it.value();
+            CSSPrimitiveValue* primitiveItemValue = toCSSPrimitiveValue(rawItemValue.get());
+            if (primitiveItemValue->isLengthRepeat()) {
+                LengthRepeat* lengthRepeat = primitiveItemValue->getLengthRepeatValue();
+                if (lengthRepeat && lengthRepeat->interval()) {
+                    if (id == CSSPropertyWebkitScrollSnapPointsX) {
+                        renderStyle->setScrollSnapRepeatOffsetX(lengthRepeat->interval()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData()));
+                        renderStyle->setScrollSnapHasRepeatX(true);
+                    } else {
+                        renderStyle->setScrollSnapRepeatOffsetY(lengthRepeat->interval()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData()));
+                        renderStyle->setScrollSnapHasRepeatY(true);
+                    }
+                    break;
+                }
+            } else
+                offsets.append(primitiveItemValue->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData()));
+        }
+        if (id == CSSPropertyWebkitScrollSnapPointsX)
+            renderStyle->setScrollSnapOffsetsX(offsets);
+        else
+            renderStyle->setScrollSnapOffsetsY(offsets);
+        return;
+    }
+    case CSSPropertyWebkitScrollSnapDestination: {
+        CSSValueList& position = toCSSValueList(*value);
+        RefPtr<CSSValue> xCoordinate = position.item(0);
+        RefPtr<CSSPrimitiveValue> xCoordinateValue = toCSSPrimitiveValue(xCoordinate.get());
+        state.style()->setScrollSnapDestinationX(xCoordinateValue->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData()));
+
+        RefPtr<CSSValue> yCoordinate = position.item(1);
+        RefPtr<CSSPrimitiveValue> yCoordinateValue = toCSSPrimitiveValue(yCoordinate.get());
+        state.style()->setScrollSnapDestinationY(yCoordinateValue->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData()));
+        return;
+    }
+    case CSSPropertyWebkitScrollSnapCoordinate: {
+        Vector<SnapCoordinate> coordinates;
+        CSSValueList& valueList = toCSSValueList(*value);
+        size_t pointCount = valueList.length();
+        // Every x must be followed by a y.
+        if (pointCount % 2)
+            return;
+        pointCount /= 2;
+        coordinates.reserveCapacity(pointCount);
+        for (size_t i = 0; i < pointCount; i++) {
+            RefPtr<CSSValue> xCoordinate = valueList.item(i * 2);
+            RefPtr<CSSValue> yCoordinate = valueList.item((i * 2) + 1);
+            RefPtr<CSSPrimitiveValue> xCoordinateValue = toCSSPrimitiveValue(xCoordinate.get());
+            RefPtr<CSSPrimitiveValue> yCoordinateValue = toCSSPrimitiveValue(yCoordinate.get());
+            coordinates.append(SnapCoordinate(xCoordinateValue->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData()), yCoordinateValue->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(state.cssToLengthConversionData())));
+        }
+        state.style()->setScrollSnapCoordinates(coordinates);
+        return;
+    }
+#endif
     // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:

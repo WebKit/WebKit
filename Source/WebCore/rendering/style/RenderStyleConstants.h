@@ -575,6 +575,14 @@ enum Isolation { IsolationAuto, IsolationIsolate };
 // Fill, Stroke, ViewBox are just used for SVG.
 enum CSSBoxType { BoxMissing = 0, MarginBox, BorderBox, PaddingBox, ContentBox, Fill, Stroke, ViewBox };
 
+#if ENABLE(CSS_SCROLL_SNAP)
+enum class ScrollSnapType {
+    None,
+    Proximity,
+    Mandatory
+};
+#endif
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

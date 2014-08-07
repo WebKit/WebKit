@@ -387,6 +387,13 @@ isolation
 -webkit-print-color-adjust [Inherited]
 -webkit-rtl-ordering [Inherited]
 -webkit-ruby-position [Inherited]
+#if defined(ENABLE_CSS_SCROLL_SNAP)
+-webkit-scroll-snap-points-x
+-webkit-scroll-snap-points-y
+-webkit-scroll-snap-type
+-webkit-scroll-snap-destination
+-webkit-scroll-snap-coordinate
+#endif
 -webkit-text-combine [Inherited]
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT

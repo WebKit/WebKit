@@ -56,6 +56,9 @@ class StyleMultiColData;
 class StyleReflection;
 class StyleResolver;
 class StyleTransformData;
+#if ENABLE(CSS_SCROLL_SNAP)
+class StyleScrollSnapPoints;
+#endif
 
 class ContentData;
 struct LengthSize;
@@ -124,6 +127,10 @@ public:
     DataRef<StyleGridItemData> m_gridItem;
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    DataRef<StyleScrollSnapPoints> m_scrollSnapPoints;
+#endif
+
     std::unique_ptr<ContentData> m_content;
     std::unique_ptr<CounterDirectiveMap> m_counterDirectives;
     String m_altText;
@@ -161,6 +168,11 @@ public:
 
     AtomicString m_flowThread;
     AtomicString m_regionThread;
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    ScrollSnapType m_scrollSnapType; // ScrollSnapType
+#endif
+
     unsigned m_regionFragment : 1; // RegionFragment
 
     unsigned m_regionBreakAfter : 2; // EPageBreak

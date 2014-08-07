@@ -85,6 +85,11 @@
 #include "DashboardRegion.h"
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "LengthRepeat.h"
+#include "StyleScrollSnapPoints.h"
+#endif
+
 namespace WebCore {
 
 // List of all properties we know how to compute, omitting shorthands.
@@ -212,6 +217,13 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWordBreak,
     CSSPropertyWordSpacing,
     CSSPropertyWordWrap,
+#if ENABLE(CSS_SCROLL_SNAP)
+    CSSPropertyWebkitScrollSnapType,
+    CSSPropertyWebkitScrollSnapPointsX,
+    CSSPropertyWebkitScrollSnapPointsY,
+    CSSPropertyWebkitScrollSnapDestination,
+    CSSPropertyWebkitScrollSnapCoordinate,
+#endif
     CSSPropertyZIndex,
     CSSPropertyZoom,
 
@@ -1071,6 +1083,64 @@ static PassRef<CSSValueList> getTransitionPropertyValue(const AnimationList* ani
         list.get().append(cssValuePool().createIdentifierValue(CSSValueAll));
     return list;
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+static PassRef<CSSValueList> scrollSnapDestination(RenderStyle* style, Length x, Length y)
+{
+    RefPtr<CSSValueList> snapDestinationValue = CSSValueList::createSpaceSeparated();
+    if (x.isPercentNotCalculated())
+        snapDestinationValue->append(cssValuePool().createValue(x.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+    else
+        snapDestinationValue->append(zoomAdjustedPixelValue(valueForLength(x, 0), style));
+
+    if (y.isPercentNotCalculated())
+        snapDestinationValue->append(cssValuePool().createValue(y.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+    else
+        snapDestinationValue->append(zoomAdjustedPixelValue(valueForLength(y, 0), style));
+
+    return snapDestinationValue.releaseNonNull();
+}
+
+static PassRef<CSSValueList> scrollSnapPoints(RenderStyle* style, const Vector<Length>& points, Length repeatPoint, bool hasRepeat)
+{
+    RefPtr<CSSValueList> snapPointsValue = CSSValueList::createSpaceSeparated();
+    for (auto& point : points) {
+        if (point.isPercentNotCalculated())
+            snapPointsValue->append(cssValuePool().createValue(point.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        else
+            snapPointsValue->append(zoomAdjustedPixelValue(valueForLength(point, 0), style));
+    }
+    if (hasRepeat) {
+        if (repeatPoint.isPercentNotCalculated())
+            snapPointsValue->append(cssValuePool().createValue(LengthRepeat::create(cssValuePool().createValue(repeatPoint.percent(), CSSPrimitiveValue::CSS_PERCENTAGE))));
+        else
+            snapPointsValue->append(cssValuePool().createValue(LengthRepeat::create(zoomAdjustedPixelValue(valueForLength(repeatPoint, 0), style))));
+    }
+    return snapPointsValue.releaseNonNull();
+}
+
+static PassRef<CSSValueList> scrollSnapCoordinates(RenderStyle* style, const Vector<SnapCoordinate>& coordinates)
+{
+    RefPtr<CSSValueList> snapCoordinatesValue = CSSValueList::createCommaSeparated();
+    for (const auto& coordinate : coordinates) {
+        RefPtr<CSSValueList> currentCoordinate = CSSValueList::createSpaceSeparated();
+        Length point = coordinate.first;
+        if (point.isPercentNotCalculated())
+            currentCoordinate->append(cssValuePool().createValue(point.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        else
+            currentCoordinate->append(zoomAdjustedPixelValue(valueForLength(point, 0), style));
+
+        point = coordinate.second;
+        if (point.isPercentNotCalculated())
+            currentCoordinate->append(cssValuePool().createValue(point.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        else
+            currentCoordinate->append(zoomAdjustedPixelValue(valueForLength(point, 0), style));
+
+        snapCoordinatesValue->append(PassRefPtr<CSSValueList>(WTF::move(currentCoordinate)));
+    }
+    return snapCoordinatesValue.releaseNonNull();
+}
+#endif
 
 static PassRef<CSSValueList> getDelayValue(const AnimationList* animList)
 {
@@ -3039,6 +3109,26 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWritingMode:
         case CSSPropertyWebkitSvgShadow:
             return svgPropertyValue(propertyID, DoNotUpdateLayout);
+
+#if ENABLE(CSS_SCROLL_SNAP)
+        case CSSPropertyWebkitScrollSnapType:
+            return cssValuePool().createValue(style->scrollSnapType());
+        case CSSPropertyWebkitScrollSnapDestination:
+            return scrollSnapDestination(style.get(), style->scrollSnapDestinationX(), style->scrollSnapDestinationY());
+        case CSSPropertyWebkitScrollSnapPointsX:
+            if (style->scrollSnapUsesElementsX())
+                return cssValuePool().createValue("elements", CSSPrimitiveValue::CSS_STRING);
+            return scrollSnapPoints(style.get(), style->scrollSnapOffsetsX(), style->scrollSnapRepeatOffsetX(), style->scrollSnapHasRepeatX());
+        case CSSPropertyWebkitScrollSnapPointsY:
+            if (style->scrollSnapUsesElementsY())
+                return cssValuePool().createValue("elements", CSSPrimitiveValue::CSS_STRING);
+            return scrollSnapPoints(style.get(), style->scrollSnapOffsetsY(), style->scrollSnapRepeatOffsetY(), style->scrollSnapHasRepeatY());
+        case CSSPropertyWebkitScrollSnapCoordinate:
+            Vector<SnapCoordinate> coords = style->scrollSnapCoordinates();
+            if (!coords.size())
+                return cssValuePool().createValue("none", CSSPrimitiveValue::CSS_STRING);
+            return scrollSnapCoordinates(style.get(), coords);
+#endif
     }
 
     logUnimplementedPropertyID(propertyID);

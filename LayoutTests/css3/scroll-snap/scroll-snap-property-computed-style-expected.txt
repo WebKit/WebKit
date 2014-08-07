@@ -1,0 +1,147 @@
+Test the computed style of the -webkit-scroll-snap-* properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+invalid snapping type : potato
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+
+invalid points along x axis : hello world
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+
+invalid points along y axis : hello world
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+
+typo in point definition : repaet(50px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+
+another invalid point definition : ??px repeat(50px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+
+invalid destination : foo bar
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+
+short one destination value : 50%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+
+extra destination value : 50px 100% 75px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+
+invalid coordinates : ben bitdiddle
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+
+mismatched x coordinate : 50% 100px 75%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+
+mandatory type : mandatory
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'mandatory'
+
+proximity type : proximity
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'proximity'
+
+element points along x axis : elements
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'elements'
+
+percentage points along x axis : 100% 50%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100% 50%'
+
+pixel points along x axis : 100px 50px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px 50px'
+
+percentage points repeat along x axis : repeat(100%)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+
+pixel points repeat along x axis : repeat(25px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(25px)'
+
+percentage points along x axis with percentage repeat : 100% repeat(100%)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100% repeat(100%)'
+
+pixel points along x axis with percentage repeat : 100px 50px repeat(25%)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px 50px repeat(25%)'
+
+percentage points along x axis with pixel repeat : 100% 50% repeat(40px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100% 50% repeat(40px)'
+
+pixel points along x axis with pixel repeat : 100px repeat(42px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px repeat(42px)'
+
+element points along y axis : elements
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'elements'
+
+percentage points along y axis : 100% 50%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100% 50%'
+
+pixel points along y axis : 100px 50px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px 50px'
+
+percentage points repeat along y axis : repeat(100%)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+
+pixel points repeat along y axis : repeat(25px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(25px)'
+
+percentage points along y axis with percentage repeat : 100% repeat(100%)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100% repeat(100%)'
+
+pixel points along y axis with percentage repeat : 100px 50px repeat(25%)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px 50px repeat(25%)'
+
+percentage points along y axis with pixel repeat : 100% 50% repeat(40px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100% 50% repeat(40px)'
+
+pixel points along y axis with pixel repeat : 100px repeat(42px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px repeat(42px)'
+
+pixel/pixel destination : 10px 50px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '10px 50px'
+
+pixel/percentage destination : 20px 40%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '20px 40%'
+
+percentage/pixel destination : 0% 0px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0% 0px'
+
+percentage/percentage destination : 5% 100%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '5% 100%'
+
+single pixel coordinate : 50px 100px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px'
+
+single percentage coordinate : 50% 100%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100%'
+
+multiple pixel coordinates : 50px 100px 150px 100px 200px 100px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px, 150px 100px, 200px 100px'
+
+multiple percentage coordinates : 50% 100% 150% 100% 200% 100%
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100%, 150% 100%, 200% 100%'
+
+mm along x axis with pixel repeat : 10mm repeat(42mm)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '37.78125px repeat(158.734375px)'
+
+in along x axis with pixel repeat : 10in repeat(4in)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '960px repeat(384px)'
+
+pt along x axis with pixel repeat : 10pt repeat(42pt)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '13.328125px repeat(56px)'
+
+in/cm destination : 2in 5cm
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '192px 188.96875px'
+
+in/cm coordinate : 2in 5cm 5in 2cm
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '192px 188.96875px, 480px 75.578125px'
+
+subpixel along x axis with pixel repeat : 100.5px repeat(50.25px)
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100.5px repeat(50.25px)'
+
+subpixel destination : 0.125px 2.4375px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0.125px 2.4375px'
+
+subpixel cordinate : 110.125px 25.4375px
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '110.125px 25.4375px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

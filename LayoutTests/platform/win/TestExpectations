@@ -1436,6 +1436,9 @@ webkit.org/b/60731 fast/css-grid-layout
 # <style scoped> is not yet enabled. http://webkit.org/b/49142
 webkit.org/b/49142 fast/css/style-scoped
 
+# ENABLE(CSS_SCROLL_SNAP) is disabled.
+css3/scroll-snap
+
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
 fast/dom/shadow

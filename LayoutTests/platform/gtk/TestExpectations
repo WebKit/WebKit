@@ -364,6 +364,9 @@ Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 # Style scoped support unimplemented
 Bug(GTK) fast/css/style-scoped [ Skip ]
 
+# ENABLE(CSS_SCROLL_SNAP) is disabled.
+css3/scroll-snap
+
 # ENABLE(SHADOW_DOM) is disabled.
 Bug(GTK) fast/dom/shadow [ Skip ]
 Bug(GTK) fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ Skip ]

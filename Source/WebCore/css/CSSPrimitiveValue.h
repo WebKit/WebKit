@@ -43,6 +43,10 @@ class Rect;
 class RenderStyle;
 class CSSBasicShape;
 
+#if ENABLE(CSS_SCROLL_SNAP)
+class LengthRepeat;
+#endif
+
 struct Length;
 struct LengthSize;
 
@@ -104,6 +108,9 @@ public:
         CSS_DPI = 31,
         CSS_DPCM = 32,
         CSS_FR = 33,
+#if ENABLE(CSS_SCROLL_SNAP)
+        CSS_LENGTH_REPEAT = 34,
+#endif
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
 #if ENABLE(DASHBOARD_SUPPORT)
         CSS_DASHBOARD_REGION = 101, // FIXME: Dashboard region should not be a primitive value.
@@ -181,6 +188,9 @@ public:
     bool isPercentage() const { return primitiveType() == CSS_PERCENTAGE; }
     bool isPx() const { return primitiveType() == CSS_PX; }
     bool isRect() const { return m_primitiveUnitType == CSS_RECT; }
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool isLengthRepeat() const { return m_primitiveUnitType == CSS_LENGTH_REPEAT; }
+#endif
     bool isRGBColor() const { return m_primitiveUnitType == CSS_RGBCOLOR; }
     bool isShape() const { return m_primitiveUnitType == CSS_SHAPE; }
     bool isString() const { return m_primitiveUnitType == CSS_STRING; }
@@ -303,6 +313,11 @@ public:
     Quad* getQuadValue(ExceptionCode&) const;
     Quad* getQuadValue() const { return m_primitiveUnitType != CSS_QUAD ? 0 : m_value.quad; }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    LengthRepeat* getLengthRepeatValue(ExceptionCode&) const;
+    LengthRepeat* getLengthRepeatValue() const { return m_primitiveUnitType != CSS_LENGTH_REPEAT ? 0 : m_value.lengthRepeat; }
+#endif
+
     PassRefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
     RGBA32 getRGBA32Value() const { return m_primitiveUnitType != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
@@ -371,6 +386,9 @@ private:
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);
     void init(PassRefPtr<Quad>);
+#if ENABLE(CSS_SCROLL_SNAP)
+    void init(PassRefPtr<LengthRepeat>);
+#endif
     void init(PassRefPtr<DashboardRegion>); // FIXME: Dashboard region should not be a primitive value.
     void init(PassRefPtr<CSSBasicShape>);
     void init(PassRefPtr<CSSCalcValue>);
@@ -392,6 +410,9 @@ private:
         Counter* counter;
         Rect* rect;
         Quad* quad;
+#if ENABLE(CSS_SCROLL_SNAP)
+        LengthRepeat* lengthRepeat;
+#endif
         unsigned rgbcolor;
         Pair* pair;
         DashboardRegion* region;

@@ -104,6 +104,10 @@
 #include "WebKitCSSFilterValue.h"
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "LengthRepeat.h"
+#endif
+
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
@@ -720,6 +724,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueBreakWord)
             return true;
         break;
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType: // none | mandatory | proximity
+        if (valueID == CSSValueNone || valueID == CSSValueMandatory || valueID == CSSValueProximity)
+            return true;
+        break;
+#endif
     case CSSPropertyOverflowX: // visible | hidden | scroll | auto | marquee | overlay | inherit
         if (valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueScroll || valueID == CSSValueAuto || valueID == CSSValueOverlay || valueID == CSSValueWebkitMarquee)
             return true;
@@ -1138,6 +1148,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordWrap:
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType:
+#endif
         return true;
     default:
         return false;
@@ -3032,6 +3045,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordWrap:
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType:
+#endif
         // These properties should be handled before in isValidKeywordPropertyAndValue().
         ASSERT_NOT_REACHED();
         return false;
@@ -3045,6 +3061,19 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyUserZoom:
         validPrimitive = false;
         break;
+#endif
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapPointsX:
+    case CSSPropertyWebkitScrollSnapPointsY:
+        if (id == CSSValueElements) {
+            validPrimitive = true;
+            break;
+        }
+        return parseNonElementSnapPoints(propId, important);
+    case CSSPropertyWebkitScrollSnapDestination: // <length>{2}
+        return parseScrollSnapDestination(propId, important);
+    case CSSPropertyWebkitScrollSnapCoordinate:
+        return parseScrollSnapCoordinate(propId, important);
 #endif
     default:
         return parseSVGValue(propId, important);
@@ -3152,6 +3181,83 @@ bool CSSParser::useLegacyBackgroundSizeShorthandBehavior() const
 {
     return m_context.useLegacyBackgroundSizeShorthandBehavior;
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+bool CSSParser::parseNonElementSnapPoints(CSSPropertyID propId, bool important)
+{
+    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    while (CSSParserValue* val = m_valueList->current()) {
+        RefPtr<CSSValue> parsedValue;
+        if (validUnit(val, FPercent | FLength)) {
+            parsedValue = createPrimitiveNumericValue(val);
+            values->append(parsedValue.release());
+        } else if (val->unit == CSSParserValue::Function
+            && val->function->args != 0
+            && val->function->args->size() == 1
+            && equalIgnoringCase(val->function->name, "repeat(")) {
+            CSSParserValue* parserVal = val->function->args.get()->current();
+            if (validUnit(parserVal, FLength | FPercent)) {
+                values->append(cssValuePool().createValue(LengthRepeat::create(createPrimitiveNumericValue(parserVal))));
+                m_valueList->next();
+                if (m_valueList->current())
+                    return false;
+                break;
+            }
+        } else
+            return false;
+        m_valueList->next();
+    }
+    if (values->length()) {
+        addProperty(propId, values.release(), important);
+        m_valueList->next();
+        return true;
+    }
+    return false;
+}
+
+bool CSSParser::parseScrollSnapDestination(CSSPropertyID propId, bool important)
+{
+    RefPtr<CSSValueList> position = CSSValueList::createSpaceSeparated();
+    if (m_valueList->size() != 2)
+        return false;
+    CSSParserValue* curParserVal = m_valueList->current();
+    if (!validUnit(curParserVal, FPercent | FLength))
+        return false;
+    RefPtr<CSSValue> cssValueX = createPrimitiveNumericValue(curParserVal);
+    m_valueList->next();
+    curParserVal = m_valueList->current();
+    if (!validUnit(curParserVal, FPercent | FLength))
+        return false;
+    RefPtr<CSSValue> cssValueY = createPrimitiveNumericValue(curParserVal);
+    position->append(cssValueX.release());
+    position->append(cssValueY.release());
+    addProperty(propId, position, important);
+    m_valueList->next();
+    return true;
+}
+
+bool CSSParser::parseScrollSnapCoordinate(CSSPropertyID propId, bool important)
+{
+    RefPtr<CSSValueList> positions = CSSValueList::createSpaceSeparated();
+    while (m_valueList->current()) {
+        CSSParserValue* parsedValueX = m_valueList->current();
+        // Don't accept odd-length lists of coordinates.
+        if (!m_valueList->next())
+            return false;
+        CSSParserValue* parsedValueY = m_valueList->current();
+        if (!validUnit(parsedValueX, FPercent | FLength) || !validUnit(parsedValueY, FPercent | FLength))
+            return false;
+        positions->append(createPrimitiveNumericValue(parsedValueX));
+        positions->append(createPrimitiveNumericValue(parsedValueY));
+        m_valueList->next();
+    }
+    if (positions->length()) {
+        addProperty(propId, positions.release(), important);
+        return true;
+    }
+    return false;
+}
+#endif
 
 const int cMaxFillProperties = 9;
 

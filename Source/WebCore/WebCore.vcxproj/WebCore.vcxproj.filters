@@ -2853,6 +2853,9 @@
     <ClCompile Include="..\rendering\style\StyleRareNonInheritedData.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\style\StyleScrollSnapPoints.cpp">
+      <Filter>rendering\style</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\style\StyleSurroundData.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
@@ -9261,6 +9264,9 @@
     <ClInclude Include="..\css\LengthFunctions.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\LengthRepeat.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\MediaFeatureNames.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -9907,6 +9913,9 @@
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleReflection.h">
+      <Filter>rendering\style</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\style\StyleScrollSnapPoints.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleSurroundData.h">

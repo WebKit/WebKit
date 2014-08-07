@@ -56,3 +56,7 @@
 #include "StyleGridData.cpp"
 #include "StyleGridItemData.cpp"
 #endif
+
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "StyleScrollSnapPoints.cpp"
+#endif

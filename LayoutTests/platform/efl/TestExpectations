@@ -251,6 +251,9 @@ fast/frames/transparent-scrollbar.html
 fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-dataTransferItemList-file-handling.html
 
+# ENABLE(CSS_SCROLL_SNAP) is disabled.
+css3/scroll-snap
+
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 

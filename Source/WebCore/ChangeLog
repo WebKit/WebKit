@@ -1,3 +1,81 @@
+2014-08-06  Wenson Hsieh <wenson_hsieh@apple.com>
+
+        Implement parsing for CSS scroll snap points
+        https://bugs.webkit.org/show_bug.cgi?id=134301
+
+        Provided support for parsing -webkit-scroll-snap-* properties, i.e.  type, points-x, points-y, destination, and coordinates.
+        The exact syntax of the scroll snap CSS properties follow the W3C spec at http://dev.w3.org/csswg/css-snappoints/
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/scroll-snap/scroll-snap-property-parsing.html,
+            css3/scroll-snap/scroll-snap-property-computed-style.html
+
+        * CMakeLists.txt: Added StyleScrollSnapPoints.h, StyleScrollSnapPoints.cpp
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_CSS_SCROLL_SNAP
+        * WebCore.vcxproj/WebCore.vcxproj: Added StyleScrollSnapPoints.h, StyleScrollSnapPoints.cpp
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added StyleScrollSnapPoints.h, StyleScrollSnapPoints.cpp
+        * WebCore.xcodeproj/project.pbxproj: Added StyleScrollSnapPoints.h, StyleScrollSnapPoints.cpp, LengthRepeat.h
+        * css/CSSCalculationValue.cpp: Support for LengthRepeat
+        (WebCore::hasDoubleValue):
+        * css/CSSComputedStyleDeclaration.cpp: Support for showing computed style for snap point properties.
+        (WebCore::scrollSnapDestination):
+        (WebCore::scrollSnapPoints):
+        (WebCore::scrollSnapCoordinates):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp: Support for parsing snap point properties.
+        (WebCore::isValidKeywordPropertyAndValue): handle snap point type
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue): Added support for parsing snap points.
+        (WebCore::CSSParser::parseNonElementSnapPoints): Helper for parsing snap points-x/y.
+        (WebCore::CSSParser::parseScrollSnapDestination): Helper for parsing snap point destinations.
+        (WebCore::CSSParser::parseScrollSnapCoordinate): Helper for parsing snap point coordinates.
+        * css/CSSParser.h: Support for parsing snap point properties.
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getLengthRepeatValue):
+        (WebCore::CSSPrimitiveValue::formatNumberForcustomCSSText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isLengthRepeat):
+        (WebCore::CSSPrimitiveValue::getLengthRepeatValue):
+        * css/CSSPrimitiveValueMappings.h: Added converters for snap point type properties.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ScrollSnapType):
+        * css/CSSPropertyNames.in: Added relevant snap point property names.
+        * css/CSSValueKeywords.in: Added "proximity", "mandatory" and "elements".
+        * css/LengthRepeat.h: Added to represent values of repeat(<length>)
+        (WebCore::LengthRepeat::create):
+        (WebCore::LengthRepeat::cloneForCSSOM):
+        (WebCore::LengthRepeat::interval):
+        (WebCore::LengthRepeat::setInterval):
+        (WebCore::LengthRepeat::equals):
+        (WebCore::LengthRepeat::cssText):
+        (WebCore::LengthRepeat::LengthRepeat):
+        * css/StyleResolver.cpp: Support for handling snap point properties
+        (WebCore::StyleResolver::applyProperty):Updated switch case to build snap-point-related style data
+        * rendering/style/RenderStyle.h: Added methods to access and modify snap point data
+        * rendering/style/RenderStyleConstants.h: Added scroll snap type flags.
+        * rendering/style/StyleAllInOne.cpp: Added StyleScrollSnapPoints.cpp
+        * rendering/style/StyleRareNonInheritedData.cpp: Added initiazing for m_scrollSnapPoints, updated equality check
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h: Added field for StyleScrollSnapPoints
+        * rendering/style/StyleScrollSnapPoints.cpp: Added. Wrapper for basic snap point data structures.
+        (WebCore::StyleScrollSnapPoints::StyleScrollSnapPoints):
+        (WebCore::StyleScrollSnapPoints::copy):
+        (WebCore::StyleScrollSnapPoints::operator==):
+        * rendering/style/StyleScrollSnapPoints.h: Added.
+        (WebCore::StyleScrollSnapPoints::create):
+        (WebCore::StyleScrollSnapPoints::defaultRepeatOffset): Creates a new Length representing the default repeat value of repeat(100%)
+        (WebCore::StyleScrollSnapPoints::defaultDestinationOffset): Creates a new Length representing a default destination value (0px)
+        (WebCore::StyleScrollSnapPoints::operator!=):
+
 2014-08-06  Andy Estes  <aestes@apple.com>
 
         [iOS] Subresources referenced in converted QuickLook documents sometimes fail to load

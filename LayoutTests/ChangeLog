@@ -1,3 +1,21 @@
+2014-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement parsing for CSS scroll snap points
+        https://bugs.webkit.org/show_bug.cgi?id=134301
+
+        Reviewed by Dean Jackson.
+
+        Tests that parsing -webkit-scroll-snap-* properties behaves as expected.
+
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt: Expected text output of below test.
+        * css3/scroll-snap/scroll-snap-property-computed-style.html: Tests that scroll snap properties are correctly displayed via getComputedStyle.
+        * css3/scroll-snap/scroll-snap-property-computed-style.js: Script for above test.
+        (testComputedScrollSnapRule):
+        * css3/scroll-snap/scroll-snap-property-parsing-expected.txt: Expected text output of below test.
+        * css3/scroll-snap/scroll-snap-property-parsing.html: Tests that scroll snap properties are correctly parsed.
+        * css3/scroll-snap/scroll-snap-property-parsing.js: Script for above test.
+        (testScrollSnapRule):
+
 2014-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168119): Album flipping animation doesn’t work

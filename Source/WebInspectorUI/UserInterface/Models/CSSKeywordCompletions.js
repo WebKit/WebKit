@@ -904,6 +904,18 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "checkbox", "radio", "push-button", "square-button", "button", "button-bevel", "default-button", "inner-spin-button", "-webkit-input-speech-button", "listbox", "listitem", "media-enter-fullscreen-button", "media-exit-fullscreen-button", "media-fullscreen-volume-slider", "media-fullscreen-volume-slider-thumb", "media-mute-button", "media-play-button", "media-overlay-play-button", "media-seek-back-button", "media-seek-forward-button", "media-rewind-button", "media-return-to-realtime-button", "media-toggle-closed-captions-button", "media-slider", "media-sliderthumb", "media-volume-slider-container", "media-volume-slider", "media-volume-sliderthumb", "media-volume-slider-mute-button", "media-controls-background", "media-controls-fullscreen-background", "media-current-time-display", "media-time-remaining-display", "menulist", "menulist-button", "menulist-text", "menulist-textfield", "meter", "progress-bar", "progress-bar-value", "slider-horizontal", "slider-vertical", "sliderthumb-horizontal", "sliderthumb-vertical", "caret", "searchfield", "searchfield-decoration", "searchfield-results-decoration", "searchfield-results-button", "searchfield-cancel-button", "snapshotted-plugin-overlay", "textfield", "relevancy-level-indicator", "continuous-capacity-level-indicator", "discrete-capacity-level-indicator", "rating-level-indicator", "textarea"
     ],
     */
+    "-webkit-scroll-snap-type": [
+        "mandatory", "proximity", "none"
+    ],
+    "-webkit-scroll-snap-points-x": [
+        "elements", "repeat"
+    ],
+    "-webkit-scroll-snap-points-y": [
+        "elements", "repeat"
+    ],
+    "-webkit-scroll-snap-coordinate": [
+        "none"
+    ],
 
     // iOS Properties
     "-webkit-text-size-adjust": [

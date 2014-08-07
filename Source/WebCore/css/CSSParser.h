@@ -534,6 +534,12 @@ private:
     bool parseSize(CSSPropertyID propId, bool important);
     SizeParameterType parseSizeParameter(CSSValueList* parsedValues, CSSParserValue* value, SizeParameterType prevParamType);
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool parseNonElementSnapPoints(CSSPropertyID propId, bool important);
+    bool parseScrollSnapDestination(CSSPropertyID propId, bool important);
+    bool parseScrollSnapCoordinate(CSSPropertyID propId, bool important);
+#endif
+
     bool parseFontFaceSrcURI(CSSValueList*);
     bool parseFontFaceSrcLocal(CSSValueList*);
 

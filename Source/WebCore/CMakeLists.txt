@@ -2442,6 +2442,7 @@ set(WebCore_SOURCES
     rendering/style/StyleMultiColData.cpp
     rendering/style/StyleRareInheritedData.cpp
     rendering/style/StyleRareNonInheritedData.cpp
+    rendering/style/StyleScrollSnapPoints.cpp
     rendering/style/StyleSurroundData.cpp
     rendering/style/StyleTransformData.cpp
     rendering/style/StyleVisualData.cpp

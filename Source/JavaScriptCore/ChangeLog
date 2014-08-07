@@ -1,3 +1,12 @@
+2014-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement parsing for CSS scroll snap points
+        https://bugs.webkit.org/show_bug.cgi?id=134301
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig: Added ENABLE_CSS_SCROLL_SNAP
+
 2014-08-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix for build failure on GTK bots.

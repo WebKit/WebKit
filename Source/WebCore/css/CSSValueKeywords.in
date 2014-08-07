@@ -989,6 +989,16 @@ at
 // closest-side
 // farthest-side
 
+#if defined(ENABLE_CSS_SCROLL_SNAP)
+// -webkit-scroll-snap-points-x
+// -webkit-scroll-snap-points-y
+elements
+
+// -webkit-scroll-snap-type
+mandatory
+proximity
+#endif
+
 // -webkit-region-fragment
 // auto
 break
