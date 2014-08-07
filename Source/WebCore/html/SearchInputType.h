@@ -50,7 +50,6 @@ private:
     virtual void maxResultsAttributeChanged() override;
     virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) override;
     virtual const AtomicString& formControlType() const override;
-    virtual bool shouldRespectSpeechAttribute() override;
     virtual bool isSearchField() const override;
     virtual bool needsContainer() const override;
     virtual void createShadowSubtree() override;

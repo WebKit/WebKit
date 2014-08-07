@@ -1104,38 +1104,6 @@ static JSValueRef setMockGeolocationPositionUnavailableErrorCallback(JSContextRe
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef addMockSpeechInputResultCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 3)
-        return JSValueMakeUndefined(context);
-
-    JSRetainPtr<JSStringRef> result(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-    ASSERT(!*exception);
-
-    double confidence = JSValueToNumber(context, arguments[1], exception);
-
-    JSRetainPtr<JSStringRef> language(Adopt, JSValueToStringCopy(context, arguments[2], exception));
-    ASSERT(!*exception);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->addMockSpeechInputResult(result.get(), confidence, language.get());
-
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef setMockSpeechInputDumpRectCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    bool dumpRect = JSValueToBoolean(context, arguments[0]);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setMockSpeechInputDumpRect(dumpRect);
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef setNewWindowsCopyBackForwardListCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
@@ -2176,8 +2144,6 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setMockDeviceOrientation", setMockDeviceOrientationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMockGeolocationPositionUnavailableError", setMockGeolocationPositionUnavailableErrorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setMockGeolocationPosition", setMockGeolocationPositionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "addMockSpeechInputResult", addMockSpeechInputResultCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setMockSpeechInputDumpRect", setMockSpeechInputDumpRectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setNewWindowsCopyBackForwardList", setNewWindowsCopyBackForwardListCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPageVisibility", setPageVisibilityCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPOSIXLocale", setPOSIXLocaleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

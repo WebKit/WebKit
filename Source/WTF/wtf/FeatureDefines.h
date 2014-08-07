@@ -496,10 +496,6 @@
 #define ENABLE_INDEXED_DATABASE_IN_WORKERS 0
 #endif
 
-#if !defined(ENABLE_INPUT_SPEECH)
-#define ENABLE_INPUT_SPEECH 0
-#endif
-
 #if !defined(ENABLE_INPUT_TYPE_COLOR)
 #define ENABLE_INPUT_TYPE_COLOR 0
 #endif

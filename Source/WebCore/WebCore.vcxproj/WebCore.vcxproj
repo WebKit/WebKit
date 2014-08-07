@@ -7186,7 +7186,6 @@
     <ClCompile Include="..\page\SecurityPolicy.cpp" />
     <ClCompile Include="..\page\Settings.cpp" />
     <ClCompile Include="..\page\SpatialNavigation.cpp" />
-    <ClCompile Include="..\page\SpeechInput.cpp" />
     <ClCompile Include="..\page\SuspendableTimer.cpp" />
     <ClCompile Include="..\page\UserContentController.cpp" />
     <ClCompile Include="..\page\UserContentURLPattern.cpp" />
@@ -19203,9 +19202,6 @@
     <ClInclude Include="..\page\SecurityPolicy.h" />
     <ClInclude Include="..\page\Settings.h" />
     <ClInclude Include="..\page\SpatialNavigation.h" />
-    <ClInclude Include="..\page\SpeechInput.h" />
-    <ClInclude Include="..\page\SpeechInputClient.h" />
-    <ClInclude Include="..\page\SpeechInputListener.h" />
     <ClInclude Include="..\page\SuspendableTimer.h" />
     <ClInclude Include="..\page\UserContentController.h" />
     <ClInclude Include="..\page\UserContentURLPattern.h" />

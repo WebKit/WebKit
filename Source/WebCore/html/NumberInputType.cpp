@@ -273,11 +273,6 @@ String NumberInputType::badInputText() const
     return validationMessageBadInputForNumberText();
 }
 
-bool NumberInputType::shouldRespectSpeechAttribute()
-{
-    return true;
-}
-
 bool NumberInputType::supportsPlaceholder() const
 {
     return true;

@@ -1,3 +1,49 @@
+2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of INPUT_SPEECH
+        https://bugs.webkit.org/show_bug.cgi?id=135672
+
+        Reviewed by Andreas Kling.
+
+        * fast/forms/input-user-modify.html:
+        * fast/speech/bubble-position-expected.txt: Removed.
+        * fast/speech/bubble-position-scrolled-expected.txt: Removed.
+        * fast/speech/bubble-position-scrolled.html: Removed.
+        * fast/speech/bubble-position.html: Removed.
+        * fast/speech/change-focus-expected.txt: Removed.
+        * fast/speech/change-focus.html: Removed.
+        * fast/speech/input-appearance-numberandspeech.html: Removed.
+        * fast/speech/input-appearance-searchandspeech.html: Removed.
+        * fast/speech/input-appearance-speechbutton.html: Removed.
+        * fast/speech/input-onspeechchange-event-expected.txt: Removed.
+        * fast/speech/input-onspeechchange-event.html: Removed.
+        * fast/speech/input-ontextinput-event-expected.txt: Removed.
+        * fast/speech/input-ontextinput-event.html: Removed.
+        * fast/speech/input-readonly-and-disabled-expected.txt: Removed.
+        * fast/speech/input-readonly-and-disabled.html: Removed.
+        * fast/speech/input-text-language-tag-expected.txt: Removed.
+        * fast/speech/input-text-language-tag.html: Removed.
+        * fast/speech/input-text-speechbutton-expected.txt: Removed.
+        * fast/speech/input-text-speechbutton.html: Removed.
+        * fast/speech/input-text-speechstart-expected.txt: Removed.
+        * fast/speech/input-text-speechstart.html: Removed.
+        * fast/speech/intrinsic-input-width-with-speech-border-padding-expected.txt: Removed.
+        * fast/speech/intrinsic-input-width-with-speech-border-padding.html: Removed.
+        * fast/speech/speech-bidi-rendering.html: Removed.
+        * fast/speech/speech-button-ignore-generated-events-expected.txt: Removed.
+        * fast/speech/speech-button-ignore-generated-events.html: Removed.
+        * fast/speech/speech-input-result-list-not-enough-arguments-expected.txt: Removed.
+        * fast/speech/speech-input-result-list-not-enough-arguments.html: Removed.
+        * fast/speech/speech-input-scripting-expected.txt: Removed.
+        * fast/speech/speech-input-scripting.html: Removed.
+        * fast/speech/speech-style-on-non-speech-elements-expected.txt: Removed.
+        * fast/speech/speech-style-on-non-speech-elements.html: Removed.
+        * platform/gtk/fast/speech/input-appearance-searchandspeech-expected.txt: Removed.
+        * platform/gtk/fast/speech/input-appearance-speechbutton-expected.txt: Removed.
+        * platform/ios-sim/fast/speech/input-appearance-numberandspeech-expected.txt: Removed.
+        * platform/ios-sim/fast/speech/input-appearance-searchandspeech-expected.txt: Removed.
+        * platform/ios-sim/fast/speech/input-appearance-speechbutton-expected.txt: Removed.
+
 2014-08-07  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Mark some tests as failing to green the bots.

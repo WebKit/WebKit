@@ -314,11 +314,6 @@ protected:
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-#if ENABLE(INPUT_SPEECH)
-    virtual void adjustInputFieldSpeechButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
-    virtual bool paintInputFieldSpeechButton(const RenderObject&, const PaintInfo&, const IntRect&);
-#endif
-
     virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element&) const;
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 

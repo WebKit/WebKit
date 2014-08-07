@@ -469,10 +469,6 @@ public:
     virtual bool isMediaElement() const { return false; }
 #endif
 
-#if ENABLE(INPUT_SPEECH)
-    virtual bool isInputFieldSpeechButtonElement() const { return false; }
-#endif
-
     virtual bool isFormControlElement() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }
     virtual bool isTextFormControl() const { return false; }

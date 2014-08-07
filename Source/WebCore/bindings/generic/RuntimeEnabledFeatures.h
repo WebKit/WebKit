@@ -127,11 +127,6 @@ public:
     bool deviceOrientationEventEnabled() const { return m_isDeviceOrientationEnabled; }
     bool ondeviceorientationEnabled() const { return m_isDeviceOrientationEnabled; }
 
-    void setSpeechInputEnabled(bool isEnabled) { m_isSpeechInputEnabled = isEnabled; }
-    bool speechInputEnabled() const { return m_isSpeechInputEnabled; }
-    bool webkitSpeechEnabled() const { return m_isSpeechInputEnabled; }
-    bool webkitGrammarEnabled() const { return m_isSpeechInputEnabled; }
-
 #if ENABLE(SCRIPTED_SPEECH)
     void setScriptedSpeechEnabled(bool isEnabled) { m_isScriptedSpeechEnabled = isEnabled; }
     bool scriptedSpeechEnabled() const { return m_isScriptedSpeechEnabled; }
@@ -231,7 +226,6 @@ private:
     bool m_isTouchEnabled;
     bool m_isDeviceMotionEnabled;
     bool m_isDeviceOrientationEnabled;
-    bool m_isSpeechInputEnabled;
     bool m_isCSSShapesEnabled;
     bool m_isCSSRegionsEnabled;
     bool m_isCSSCompositingEnabled;

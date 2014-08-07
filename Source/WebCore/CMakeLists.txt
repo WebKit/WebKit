@@ -578,9 +578,6 @@ set(WebCore_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceTiming.idl
     page/Screen.idl
-    page/SpeechInputEvent.idl
-    page/SpeechInputResult.idl
-    page/SpeechInputResultList.idl
     page/WebKitPoint.idl
     page/WebKitNamespace.idl
     page/UserMessageHandlersNamespace.idl
@@ -1937,10 +1934,6 @@ set(WebCore_SOURCES
     page/SecurityPolicy.cpp
     page/Settings.cpp
     page/SpatialNavigation.cpp
-    page/SpeechInput.cpp
-    page/SpeechInputEvent.cpp
-    page/SpeechInputResult.cpp
-    page/SpeechInputResultList.cpp
     page/SuspendableTimer.cpp
     page/UserContentController.cpp
     page/UserContentURLPattern.cpp
@@ -2319,7 +2312,6 @@ set(WebCore_SOURCES
     rendering/RenderImageResource.cpp
     rendering/RenderImageResourceStyleImage.cpp
     rendering/RenderInline.cpp
-    rendering/RenderInputSpeech.cpp
     rendering/RenderLayer.cpp
     rendering/RenderLayerBacking.cpp
     rendering/RenderLayerCompositor.cpp

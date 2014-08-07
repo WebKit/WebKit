@@ -86,11 +86,6 @@ const AtomicString& SearchInputType::formControlType() const
     return InputTypeNames::search();
 }
 
-bool SearchInputType::shouldRespectSpeechAttribute()
-{
-    return true;
-}
-
 bool SearchInputType::isSearchField() const
 {
     return true;

@@ -41,11 +41,6 @@ const AtomicString& TelephoneInputType::formControlType() const
     return InputTypeNames::telephone();
 }
 
-bool TelephoneInputType::shouldRespectSpeechAttribute()
-{
-    return true;
-}
-
 bool TelephoneInputType::isTelephoneField() const
 {
     return true;

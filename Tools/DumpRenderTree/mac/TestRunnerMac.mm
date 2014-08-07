@@ -476,24 +476,6 @@ void TestRunner::setGeolocationPermission(bool allow)
     [[[mainFrame webView] UIDelegate] didSetMockGeolocationPermission];
 }
 
-void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
-{
-    // FIXME: Implement for speech input layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
-void TestRunner::setMockSpeechInputDumpRect(bool flag)
-{
-    // FIXME: Implement for speech input layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
-void TestRunner::startSpeechInput(JSContextRef inputElement)
-{
-    // FIXME: Implement for speech input layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
 void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
 #if ENABLE(ICONDATABASE)

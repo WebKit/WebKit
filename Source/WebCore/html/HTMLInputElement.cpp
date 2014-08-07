@@ -205,13 +205,6 @@ HTMLElement* HTMLInputElement::cancelButtonElement() const
     return m_inputType->cancelButtonElement();
 }
 
-#if ENABLE(INPUT_SPEECH)
-HTMLElement* HTMLInputElement::speechButtonElement() const
-{
-    return m_inputType->speechButtonElement();
-}
-#endif
-
 HTMLElement* HTMLInputElement::sliderThumbElement() const
 {
     return m_inputType->sliderThumbElement();
@@ -714,21 +707,6 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             listAttributeTargetChanged();
         }
     }
-#endif
-#if ENABLE(INPUT_SPEECH)
-    else if (name == webkitspeechAttr) {
-        m_inputType->destroyShadowSubtree();
-        m_inputType->createShadowSubtree();
-        updateInnerTextElementEditability();
-
-        // This renderer and its children have quite different layouts and styles depending on
-        // whether the speech button is visible or not. So we reset the whole thing and recreate
-        // to get the right styles and layout.
-        setNeedsStyleRecalc(ReconstructRenderTree);
-
-        setFormControlValueMatchesRenderer(false);
-    } else if (name == onwebkitspeechchangeAttr)
-        setAttributeEventListener(eventNames().webkitspeechchangeEvent, name, value);
 #endif
     else
         HTMLTextFormControlElement::parseAttribute(name, value);
@@ -1592,16 +1570,6 @@ bool HTMLInputElement::isSteppable() const
 {
     return m_inputType->isSteppable();
 }
-
-#if ENABLE(INPUT_SPEECH)
-
-bool HTMLInputElement::isSpeechEnabled() const
-{
-    // FIXME: Add support for RANGE, EMAIL, URL, COLOR and DATE/TIME input types.
-    return m_inputType->shouldRespectSpeechAttribute() && RuntimeEnabledFeatures::sharedFeatures().speechInputEnabled() && hasAttribute(webkitspeechAttr);
-}
-
-#endif
 
 #if PLATFORM(IOS)
 DateComponents::Type HTMLInputElement::dateType() const

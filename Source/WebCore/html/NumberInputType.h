@@ -60,7 +60,6 @@ private:
     virtual String sanitizeValue(const String&) const override;
     virtual bool hasBadInput() const override;
     virtual String badInputText() const override;
-    virtual bool shouldRespectSpeechAttribute() override;
     virtual bool supportsPlaceholder() const override;
     virtual bool isNumberField() const override;
     virtual void minOrMaxAttributeChanged() override;

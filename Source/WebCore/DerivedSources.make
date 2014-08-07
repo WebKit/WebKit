@@ -482,9 +482,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/page/PerformanceNavigation.idl \
     $(WebCore)/page/PerformanceTiming.idl \
     $(WebCore)/page/Screen.idl \
-    $(WebCore)/page/SpeechInputEvent.idl \
-    $(WebCore)/page/SpeechInputResult.idl \
-    $(WebCore)/page/SpeechInputResultList.idl \
     $(WebCore)/page/WebKitPoint.idl \
     $(WebCore)/page/WebKitNamespace.idl \
     $(WebCore)/page/UserMessageHandlersNamespace.idl \

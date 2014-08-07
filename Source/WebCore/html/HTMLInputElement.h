@@ -139,10 +139,6 @@ public:
     bool isTimeField() const;
     bool isWeekField() const;
 
-#if ENABLE(INPUT_SPEECH)
-    bool isSpeechEnabled() const;
-#endif
-
 #if PLATFORM(IOS)
     DateComponents::Type dateType() const;
 #endif
@@ -153,9 +149,6 @@ public:
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* speechButtonElement() const;
-#endif
     HTMLElement* sliderThumbElement() const;
     HTMLElement* sliderTrackElement() const;
     virtual HTMLElement* placeholderElement() const override;

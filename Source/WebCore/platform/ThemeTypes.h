@@ -31,7 +31,7 @@ namespace WebCore {
 // Must follow CSSValueKeywords.in order
 enum ControlPart {
     NoControlPart, CheckboxPart, RadioPart, PushButtonPart, SquareButtonPart, ButtonPart,
-    ButtonBevelPart, DefaultButtonPart, InnerSpinButtonPart, InputSpeechButtonPart, ListboxPart, ListItemPart,
+    ButtonBevelPart, DefaultButtonPart, InnerSpinButtonPart, ListboxPart, ListItemPart,
     MediaEnterFullscreenButtonPart, MediaExitFullscreenButtonPart, MediaFullScreenVolumeSliderPart, MediaFullScreenVolumeSliderThumbPart, MediaMuteButtonPart, MediaPlayButtonPart,
     MediaOverlayPlayButtonPart, MediaSeekBackButtonPart, MediaSeekForwardButtonPart, MediaRewindButtonPart, MediaReturnToRealtimeButtonPart, MediaToggleClosedCaptionsButtonPart,
     MediaSliderPart, MediaSliderThumbPart, MediaVolumeSliderContainerPart, MediaVolumeSliderPart, MediaVolumeSliderThumbPart,

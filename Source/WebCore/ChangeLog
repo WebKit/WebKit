@@ -1,3 +1,108 @@
+2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of INPUT_SPEECH
+        https://bugs.webkit.org/show_bug.cgi?id=135672
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * Modules/speech/SpeechSynthesis.cpp:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setSpeechInputEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::speechInputEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitGrammarEnabled): Deleted.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (input::-webkit-input-speech-button): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::isInputFieldSpeechButtonElement): Deleted.
+        * dom/EventNames.in:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::speechButtonElement): Deleted.
+        (WebCore::HTMLInputElement::isSpeechEnabled): Deleted.
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/InputType.cpp:
+        (WebCore::InputType::shouldRespectListAttribute):
+        (WebCore::InputType::shouldRespectSpeechAttribute): Deleted.
+        * html/InputType.h:
+        (WebCore::InputType::speechButtonElement): Deleted.
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::shouldRespectSpeechAttribute): Deleted.
+        * html/NumberInputType.h:
+        * html/PasswordInputType.cpp:
+        (WebCore::PasswordInputType::shouldRespectSpeechAttribute): Deleted.
+        * html/PasswordInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::shouldRespectSpeechAttribute): Deleted.
+        * html/SearchInputType.h:
+        * html/TelephoneInputType.cpp:
+        (WebCore::TelephoneInputType::shouldRespectSpeechAttribute): Deleted.
+        * html/TelephoneInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::needsContainer):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+        (WebCore::TextFieldInputType::speechButtonElement): Deleted.
+        * html/TextFieldInputType.h:
+        * html/TextInputType.cpp:
+        (WebCore::TextInputType::shouldRespectSpeechAttribute): Deleted.
+        * html/TextInputType.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::~InputFieldSpeechButtonElement): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::create): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::willRespondToMouseClickEvents): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::setState): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::speechInput): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecording): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::didCompleteRecognition): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::willAttachRenderers): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::willDetachRenderers): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput): Deleted.
+        (WebCore::InputFieldSpeechButtonElement::stopSpeechInput): Deleted.
+        * html/shadow/TextControlInnerElements.h:
+        (WebCore::toInputFieldSpeechButtonElement): Deleted.
+        * page/SpeechInput.cpp: Removed.
+        * page/SpeechInput.h: Removed.
+        * page/SpeechInputClient.h: Removed.
+        * page/SpeechInputEvent.cpp: Removed.
+        * page/SpeechInputEvent.h: Removed.
+        * page/SpeechInputEvent.idl: Removed.
+        * page/SpeechInputListener.h: Removed.
+        * page/SpeechInputResult.cpp: Removed.
+        * page/SpeechInputResult.h: Removed.
+        * page/SpeechInputResult.idl: Removed.
+        * page/SpeechInputResultList.cpp: Removed.
+        * page/SpeechInputResultList.h: Removed.
+        * page/SpeechInputResultList.idl: Removed.
+        * platform/ThemeTypes.h:
+        * rendering/RenderInputSpeech.cpp: Removed.
+        * rendering/RenderInputSpeech.h: Removed.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::adjustInputFieldSpeechButtonStyle): Deleted.
+        (WebCore::RenderTheme::paintInputFieldSpeechButton): Deleted.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+
 2014-08-07  Eric Carlson  <eric.carlson@apple.com>
 
         Create UTF-8 string from in-band VTT cues

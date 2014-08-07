@@ -810,9 +810,6 @@
     <ClCompile Include="..\page\SpatialNavigation.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\SpeechInput.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\SuspendableTimer.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7813,15 +7810,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\SpatialNavigation.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\SpeechInput.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\SpeechInputClient.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\SpeechInputListener.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\SuspendableTimer.h">

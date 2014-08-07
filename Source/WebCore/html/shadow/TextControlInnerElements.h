@@ -28,13 +28,11 @@
 #define TextControlInnerElements_h
 
 #include "HTMLDivElement.h"
-#include "SpeechInputListener.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class RenderTextControlInnerBlock;
-class SpeechInput;
 
 class TextControlInnerContainer final : public HTMLDivElement {
 public:
@@ -107,58 +105,6 @@ private:
 
     bool m_capturing;
 };
-
-#if ENABLE(INPUT_SPEECH)
-
-class InputFieldSpeechButtonElement final
-    : public HTMLDivElement,
-      public SpeechInputListener {
-public:
-    enum SpeechInputState {
-        Idle,
-        Recording,
-        Recognizing,
-    };
-
-    static PassRefPtr<InputFieldSpeechButtonElement> create(Document&);
-    virtual ~InputFieldSpeechButtonElement();
-
-    virtual void defaultEventHandler(Event*);
-#if !PLATFORM(IOS)
-    virtual bool willRespondToMouseClickEvents();
-#endif
-    virtual bool isInputFieldSpeechButtonElement() const { return true; }
-    SpeechInputState state() const { return m_state; }
-    void startSpeechInput();
-    void stopSpeechInput();
-
-    // SpeechInputListener methods.
-    void didCompleteRecording(int);
-    void didCompleteRecognition(int);
-    void setRecognitionResult(int, const SpeechInputResultArray&);
-
-private:
-    InputFieldSpeechButtonElement(Document&);
-    SpeechInput* speechInput();
-    void setState(SpeechInputState state);
-    virtual bool isMouseFocusable() const override { return false; }
-    virtual void willAttachRenderers() override;
-    virtual void willDetachRenderers() override;
-
-
-    bool m_capturing;
-    SpeechInputState m_state;
-    int m_listenerId;
-    SpeechInputResultArray m_results;
-};
-
-inline InputFieldSpeechButtonElement* toInputFieldSpeechButtonElement(Element* element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isInputFieldSpeechButtonElement());
-    return static_cast<InputFieldSpeechButtonElement*>(element);
-}
-
-#endif // ENABLE(INPUT_SPEECH)
 
 } // namespace
 

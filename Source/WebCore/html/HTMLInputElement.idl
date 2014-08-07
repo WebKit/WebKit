@@ -100,9 +100,6 @@ interface HTMLInputElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute boolean incremental;
-    [Conditional=INPUT_SPEECH, Reflect] attribute boolean webkitSpeech;
-    [Conditional=INPUT_SPEECH, Reflect] attribute boolean webkitGrammar;
-    [Conditional=INPUT_SPEECH, NotEnumerable] attribute EventListener onwebkitspeechchange;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Reflect] attribute DOMString accessKey;

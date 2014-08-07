@@ -41,7 +41,6 @@ public:
 
 private:
     virtual const AtomicString& formControlType() const override;
-    virtual bool shouldRespectSpeechAttribute() override;
 };
 
 } // namespace WebCore

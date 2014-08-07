@@ -581,17 +581,6 @@ input::-webkit-inner-spin-button {
     -webkit-user-select: none;
 }
 
-#if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
-input::-webkit-input-speech-button {
-    -webkit-appearance: -webkit-input-speech-button;
-    display: block;
-    vertical-align: top;
-    -webkit-flex: none;
-    -webkit-align-self: flex-start;
-    margin: auto 0;
-}
-#endif
-
 keygen, select {
     border-radius: 5px;
 }

@@ -531,12 +531,6 @@ if (ENABLE_ICONDATABASE)
     )
 endif ()
 
-if (ENABLE_INPUT_SPEECH)
-    list(APPEND WebKit2Resources
-        "        <file alias=\"images/inputSpeech\">inputSpeech.png</file>\n"
-    )
-endif ()
-
 if (ENABLE_WEB_AUDIO)
     list(APPEND WebKit2Resources
         "        <file alias=\"audio/Composite\">Composite.wav</file>\n"

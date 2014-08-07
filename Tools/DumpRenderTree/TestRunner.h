@@ -102,8 +102,6 @@ public:
     void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
     void setMockGeolocationPositionUnavailableError(JSStringRef message);
-    void addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language);
-    void setMockSpeechInputDumpRect(bool flag);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
     void setPluginsEnabled(bool);
     void setPopupBlockingEnabled(bool);
@@ -117,7 +115,6 @@ public:
     void setXSSAuditorEnabled(bool flag);
     void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
-    void startSpeechInput(JSContextRef inputElement);
 #if PLATFORM(IOS)
     void setTelephoneNumberParsingEnabled(bool enable);
     void setPagePaused(bool paused);

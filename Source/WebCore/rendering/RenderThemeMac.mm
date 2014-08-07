@@ -1684,16 +1684,6 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const P
     float zoomLevel = o.style().effectiveZoom();
 
     FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(input->renderBox()->pixelSnappedBorderBoxRect())];
-
-#if ENABLE(INPUT_SPEECH)
-    // Take care of cases where the cancel button was not aligned with the right border of the input element (for e.g.
-    // when speech input is enabled for the input element.
-    IntRect absBoundingBox = input->renderer()->absoluteBoundingBoxRect();
-    int absRight = absBoundingBox.x() + absBoundingBox.width() - input->renderBox()->paddingRight() - input->renderBox()->borderRight();
-    int spaceToRightOfCancelButton = absRight - (r.x() + r.width());
-    localBounds.setX(localBounds.x() - spaceToRightOfCancelButton);
-#endif
-
     localBounds = convertToPaintingRect(*input->renderer(), o, localBounds, r);
 
     FloatRect unzoomedRect(localBounds);
