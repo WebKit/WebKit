@@ -632,22 +632,6 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder& decoder, Cursor& cursor)
 
 void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
-    if (kShouldSerializeWebCoreData) {
-        encoder << resourceRequest.url().string();
-        encoder << resourceRequest.httpMethod();
-        encoder << resourceRequest.httpHeaderFields();
-
-        // FIXME: Do not encode HTTP message body.
-        // 1. It can be large and thus costly to send across.
-        // 2. It is misleading to provide a body with some requests, while others use body streams, which cannot be serialized at all.
-        FormData* httpBody = resourceRequest.httpBody();
-        encoder << static_cast<bool>(httpBody);
-        if (httpBody)
-            encoder << httpBody->flattenToString();
-
-        encoder << resourceRequest.firstPartyForCookies().string();
-    }
-
 #if ENABLE(CACHE_PARTITIONING)
     encoder << resourceRequest.cachePartition();
 #endif
@@ -667,42 +651,6 @@ void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const Reso
 
 bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRequest& resourceRequest)
 {
-    if (kShouldSerializeWebCoreData) {
-        ResourceRequest request;
-
-        String url;
-        if (!decoder.decode(url))
-            return false;
-        request.setURL(URL(URL(), url));
-
-        String httpMethod;
-        if (!decoder.decode(httpMethod))
-            return false;
-        request.setHTTPMethod(httpMethod);
-
-        HTTPHeaderMap headers;
-        if (!decoder.decode(headers))
-            return false;
-        request.setHTTPHeaderFields(WTF::move(headers));
-
-        bool hasHTTPBody;
-        if (!decoder.decode(hasHTTPBody))
-            return false;
-        if (hasHTTPBody) {
-            String httpBody;
-            if (!decoder.decode(httpBody))
-                return false;
-            request.setHTTPBody(FormData::create(httpBody.utf8()));
-        }
-
-        String firstPartyForCookies;
-        if (!decoder.decode(firstPartyForCookies))
-            return false;
-        request.setFirstPartyForCookies(URL(URL(), firstPartyForCookies));
-
-        resourceRequest = request;
-    }
-
 #if ENABLE(CACHE_PARTITIONING)
     String cachePartition;
     if (!decoder.decode(cachePartition))
@@ -851,63 +799,11 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
 
 void ArgumentCoder<ResourceError>::encode(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
-    if (kShouldSerializeWebCoreData) {
-        bool errorIsNull = resourceError.isNull();
-        encoder << errorIsNull;
-        if (errorIsNull)
-            return;
-
-        encoder << resourceError.domain();
-        encoder << resourceError.errorCode();
-        encoder << resourceError.failingURL();
-        encoder << resourceError.localizedDescription();
-        encoder << resourceError.isCancellation();
-        encoder << resourceError.isTimeout();
-    }
-
     encodePlatformData(encoder, resourceError);
 }
 
 bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder& decoder, ResourceError& resourceError)
 {
-    if (kShouldSerializeWebCoreData) {
-        bool errorIsNull;
-        if (!decoder.decode(errorIsNull))
-            return false;
-        if (errorIsNull) {
-            resourceError = ResourceError();
-            return true;
-        }
-
-        String domain;
-        if (!decoder.decode(domain))
-            return false;
-
-        int errorCode;
-        if (!decoder.decode(errorCode))
-            return false;
-
-        String failingURL;
-        if (!decoder.decode(failingURL))
-            return false;
-
-        String localizedDescription;
-        if (!decoder.decode(localizedDescription))
-            return false;
-
-        bool isCancellation;
-        if (!decoder.decode(isCancellation))
-            return false;
-
-        bool isTimeout;
-        if (!decoder.decode(isTimeout))
-            return false;
-
-        resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
-        resourceError.setIsCancellation(isCancellation);
-        resourceError.setIsTimeout(isTimeout);
-    }
-
     return decodePlatformData(decoder, resourceError);
 }
 

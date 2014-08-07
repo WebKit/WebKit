@@ -1,3 +1,25 @@
+2014-08-06  Antti Koivisto  <antti@apple.com>
+
+        Move Soup specific code out of WebCoreArgumentCoders.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=135665
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+        (IPC::ArgumentCoder<ResourceError>::encode):
+        (IPC::ArgumentCoder<ResourceError>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        
+            Soup is the only client for this code. Move it to *Soup.cpp
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+
 2014-08-06  Tim Horton  <timothy_horton@apple.com>
 
         Services overlay flashes a lot; should have some hysteresis before showing overlay

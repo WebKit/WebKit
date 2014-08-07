@@ -245,12 +245,6 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {
-#if PLATFORM(COCOA)
-    static const bool kShouldSerializeWebCoreData = false;
-#else
-    static const bool kShouldSerializeWebCoreData = true;
-#endif
-
     static void encode(ArgumentEncoder&, const WebCore::ResourceRequest&);
     static bool decode(ArgumentDecoder&, WebCore::ResourceRequest&);
     static void encodePlatformData(ArgumentEncoder&, const WebCore::ResourceRequest&);
@@ -265,12 +259,6 @@ template<> struct ArgumentCoder<WebCore::ResourceResponse> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {
-#if PLATFORM(COCOA)
-    static const bool kShouldSerializeWebCoreData = false;
-#else
-    static const bool kShouldSerializeWebCoreData = true;
-#endif
-
     static void encode(ArgumentEncoder&, const WebCore::ResourceError&);
     static bool decode(ArgumentDecoder&, WebCore::ResourceError&);
     static void encodePlatformData(ArgumentEncoder&, const WebCore::ResourceError&);
