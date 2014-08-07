@@ -59,7 +59,7 @@
 #endif
 #include <AVFoundationCF/AVFoundationCF.h>
 #include <CoreMedia/CoreMedia.h>
-#include <d3d9.h>
+#include "WebKitQuartzCoreAdditions/WKCACFTypes.h"
 #include <delayimp.h>
 #include <dispatch/dispatch.h>
 #if ENABLE(ENCRYPTED_MEDIA_V2)

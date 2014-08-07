@@ -1,5 +1,16 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge patch from <rdar://problem/17952779>.
+
+    2014-08-07  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Branch-only build workaround.
+
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Use custom
+            DirectX header for branch build.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172301
 
     2014-08-07  Enrica Casucci  <enrica@apple.com>
