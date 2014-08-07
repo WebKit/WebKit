@@ -1195,8 +1195,6 @@ webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-opti
 
 webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Failure ]
 
-webkit.org/b/123498 [ Mavericks ] media/track/track-in-band-cues-added-once.html [ Failure ]
-
 webkit.org/b/123522 [ Mavericks ] media/track/track-in-band-legacy-api.html [ Pass Failure ]
 
 # Audio and video tracks aren't supported on mac

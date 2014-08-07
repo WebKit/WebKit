@@ -80,6 +80,7 @@ public:
 
 private:
     virtual bool isOrderedBefore(const TextTrackCue*) const override;
+    virtual bool isPositionedAbove(const TextTrackCue*) const override;
 
     TextTrackCueGeneric(ScriptExecutionContext&, double start, double end, const String&);
     
