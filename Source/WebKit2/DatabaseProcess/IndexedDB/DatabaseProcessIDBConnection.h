@@ -30,6 +30,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "DatabaseProcessIDBConnectionMessages.h"
 #include "SecurityOriginData.h"
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <wtf/text/WTFString.h>
@@ -55,6 +56,7 @@ public:
 
     // Message handlers.
     void didReceiveDatabaseProcessIDBConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveSyncDatabaseProcessIDBConnectionMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     void disconnectedFromWebProcess();
 
@@ -74,6 +76,8 @@ private:
     void commitTransaction(uint64_t requestID, int64_t transactionID);
     void resetTransaction(uint64_t requestID, int64_t transactionID);
     void rollbackTransaction(uint64_t requestID, int64_t transactionID);
+    void resetTransactionSync(int64_t transactionID, PassRefPtr<Messages::DatabaseProcessIDBConnection::ResetTransactionSync::DelayedReply>);
+    void rollbackTransactionSync(int64_t transactionID, PassRefPtr<Messages::DatabaseProcessIDBConnection::RollbackTransactionSync::DelayedReply>);
     void changeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion);
     void createObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata);
     void deleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID);

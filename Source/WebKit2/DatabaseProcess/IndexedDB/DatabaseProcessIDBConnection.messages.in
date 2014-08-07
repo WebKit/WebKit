@@ -32,6 +32,9 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     CommitTransaction(uint64_t requestID, int64_t transactionID)
     ResetTransaction(uint64_t requestID, int64_t transactionID)
     RollbackTransaction(uint64_t requestID, int64_t transactionID)
+
+    ResetTransactionSync(int64_t transactionID) -> (bool success) Delayed
+    RollbackTransactionSync(int64_t transactionID) -> (bool success) Delayed
     
     ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
     CreateObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata objectStoreMetadata)

@@ -391,6 +391,11 @@ bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBIdentifie
         return false;
     }
 
+    if (!transaction->inProgress()) {
+        LOG_ERROR("Attempt to rollback a transaction that hasn't begun");
+        return false;
+    }
+
     return transaction->rollback();
 }
 

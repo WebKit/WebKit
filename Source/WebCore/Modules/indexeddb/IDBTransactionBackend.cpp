@@ -137,7 +137,7 @@ void IDBTransactionBackend::abort(PassRefPtr<IDBDatabaseError> error)
     m_taskTimer.stop();
 
     if (wasRunning)
-        m_database->serverConnection().rollbackTransaction(m_id, []() { });
+        m_database->serverConnection().rollbackTransactionSync(m_id);
 
     // Run the abort tasks, if any.
     while (!m_abortTaskQueue.isEmpty()) {
@@ -150,7 +150,7 @@ void IDBTransactionBackend::abort(PassRefPtr<IDBDatabaseError> error)
     // itself to be released, and order is critical.
     closeOpenCursors();
 
-    m_database->serverConnection().resetTransaction(m_id, []() { });
+    m_database->serverConnection().resetTransactionSync(m_id);
 
     // Transactions must also be marked as completed before the front-end is notified, as
     // the transaction completion unblocks operations like closing connections.
