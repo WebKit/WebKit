@@ -138,7 +138,7 @@ VTTCue* VTTCueBox::getCue() const
     return &m_cue;
 }
 
-void VTTCueBox::applyCSSProperties(const IntSize&)
+void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 {
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
 #if ENABLE(WEBVTT_REGIONS)
@@ -170,15 +170,20 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
     // the 'left' property must be set to left
     setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first), CSSPrimitiveValue::CSS_PERCENTAGE);
 
+    float multiplier = std::max(1.0f, m_fontSizeFromCaptionUserPrefs / VTTCueBox::DEFAULTFONTSIZE);
     // the 'width' property must be set to width, and the 'height' property  must be set to height
     if (m_cue.vertical() == horizontalKeyword()) {
-        setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue.getCSSSize()), CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue.getCSSSize() * multiplier), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
+        double maxWidth = videoSize.width() * (100.0 - position.first) / 100.0;
+        setInlineStyleProperty(CSSPropertyMaxWidth, maxWidth, CSSPrimitiveValue::CSS_PX);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyHeight, static_cast<double>(m_cue.getCSSSize()),  CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyHeight, static_cast<double>(m_cue.getCSSSize() * multiplier),  CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
+        double maxHeight = videoSize.height() * (100.0 - position.second) / 100.0;
+        setInlineStyleProperty(CSSPropertyMaxHeight, maxHeight, CSSPrimitiveValue::CSS_PX);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
@@ -186,7 +191,7 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
     // whose first cell is the value of the corresponding cue's text track cue
     // alignment:
     setInlineStyleProperty(CSSPropertyTextAlign, m_cue.getCSSAlignment());
-
+    
     if (!m_cue.snapToLines()) {
         // 10.13.1 Set up x and y:
         // Note: x and y are set through the CSS left and top above.
@@ -777,7 +782,7 @@ void VTTCue::updateDisplayTree(double movieTime)
     m_cueHighlightBox->appendChild(referenceTree);
 }
 
-VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize)
+VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
 {
     RefPtr<VTTCueBox> displayTree = displayTreeInternal();
     if (!m_displayTreeShouldChange || !track()->isRendered())
@@ -808,13 +813,7 @@ VTTCueBox* VTTCue::getDisplayTree(const IntSize& videoSize)
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose
     // 'display' property has the value 'ruby-base'.
 
-    // FIXME(BUG 79916): Text runs must be wrapped according to the CSS
-    // line-wrapping rules, except that additionally, regardless of the value of
-    // the 'white-space' property, lines must be wrapped at the edge of their
-    // containing blocks, even if doing so requires splitting a word where there
-    // is no line breaking opportunity. (Thus, normally text wraps as needed,
-    // but if there is a particularly long word, it does not overflow as it
-    // normally would in CSS, it is instead forcibly wrapped at the box's edge.)
+    displayTree->setFontSizeFromCaptionUserPrefs(fontSize);
     displayTree->applyCSSProperties(videoSize);
 
     m_displayTreeShouldChange = false;
@@ -1143,6 +1142,9 @@ void VTTCue::setFontSize(int fontSize, const IntSize&, bool important)
     
     LOG(Media, "TextTrackCue::setFontSize - setting cue font size to %i", fontSize);
 
+    if (important)
+        displayTreeInternal()->setFontSizeFromCaptionUserPrefs(0);
+    
     displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSPrimitiveValue::CSS_PX, important);
 }
 

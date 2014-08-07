@@ -1,5 +1,33 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172224
+
+    2014-08-06  Roger Fong  <roger_fong@apple.com>
+
+            Increase width of caption container if a larger font size is selected from user prefs.
+            https://bugs.webkit.org/show_bug.cgi?id=135677.
+
+            Reviewed by Brent Fulgham.
+
+            * html/shadow/MediaControlElements.cpp:
+            (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+            Upon creation of a VTTCueBox make sure to supply the font size set by the user prefs.
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+            Increase the width of the cue box based on user prefs font size selection.
+
+            * html/track/VTTCue.h:
+            Keep track of the font size set in the user prefs for use when the cue boxes are created.
+            (WebCore::VTTCueBox::setFontSizeFromCaptionUserPrefs):
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCueBox::applyCSSProperties):
+            Increase the width of the cue box based on user prefs font size selection.
+            (WebCore::VTTCue::getDisplayTree):
+            (WebCore::VTTCue::setFontSize):
+            If the font size set is important then we don't want to use the font size set by user prefs, set it to 0.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172257
 
     2014-08-07  Eric Carlson  <eric.carlson@apple.com>
