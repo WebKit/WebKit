@@ -1,3 +1,17 @@
+2014-08-07  Daniel Bates  <dabates@apple.com>
+
+        Unreviewed, rolling out r172219.
+
+        Caused some /fast/workers tests to fail; will investigate
+        offline.
+
+        Reverted changeset:
+
+        "Sometimes Gmail cannot load messages, particularly on refresh
+        ("...the application ran into an unexpected error...")"
+        https://bugs.webkit.org/show_bug.cgi?id=135688
+        http://trac.webkit.org/changeset/172219
+
 2014-08-06  Roger Fong  <roger_fong@apple.com>
 
         Increase width of caption container if a larger font size is selected from user prefs.
