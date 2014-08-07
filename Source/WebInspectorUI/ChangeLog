@@ -1,5 +1,19 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172289
+
+    2014-08-07  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Dashboard error and warning icons should be filled when enabled
+            https://bugs.webkit.org/show_bug.cgi?id=135725
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Images/ErrorsEnabled.svg:
+            * UserInterface/Images/IssuesEnabled.svg:
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172285
 
     2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
