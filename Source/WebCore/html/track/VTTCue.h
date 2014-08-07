@@ -59,6 +59,7 @@ public:
     virtual void applyCSSProperties(const IntSize& videoSize);
 
     static const AtomicString& vttCueBoxShadowPseudoId();
+    virtual void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
 
 protected:
     VTTCueBox(Document&, VTTCue&);
@@ -66,7 +67,13 @@ protected:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
 
     VTTCue& m_cue;
+    int m_fontSizeFromCaptionUserPrefs;
+
+    static const float DEFAULTFONTSIZE;
 };
+
+// This default value must be the same as the one specified in mediaControlsApple.css for -webkit-media-controls-closed-captions-container
+const float VTTCueBox::DEFAULTFONTSIZE = 10;
 
 // ----------------------------
 
@@ -115,7 +122,7 @@ public:
     virtual void setIsActive(bool);
 
     bool hasDisplayTree() const { return m_displayTree; }
-    VTTCueBox* getDisplayTree(const IntSize& videoSize);
+    VTTCueBox* getDisplayTree(const IntSize& videoSize, int fontSize);
     HTMLSpanElement* element() const { return m_cueHighlightBox.get(); }
 
     void updateDisplayTree(double);
