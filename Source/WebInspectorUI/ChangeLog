@@ -1,5 +1,22 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172285
+
+    2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Dashboard contents shift when window changes active state
+            https://bugs.webkit.org/show_bug.cgi?id=135724
+
+            Reviewed by Timothy Hatcher.
+
+            The container was getting a 1px border when inactive and none when active.
+            Give it a transparent border when active so contents don't change size.
+
+            * UserInterface/Views/DashboardContainerView.css:
+            (.toolbar .dashboard-container):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172263
 
     2014-08-07  Timothy Hatcher  <timothy@apple.com>

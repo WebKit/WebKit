@@ -31,6 +31,7 @@
     border-radius: 4px;
     background-color: rgb(252, 252, 252);
 
+    border: 1px solid transparent;
     box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0, inset white 0 1px 0;
 
     margin: 4px 10px;
