@@ -296,11 +296,6 @@ if (OPENGL_FOUND AND (GLX_FOUND OR EGL_FOUND))
     endif ()
 endif ()
 
-if (ENABLE_INDEXED_DATABASE)
-    set(WTF_USE_LEVELDB 1)
-    add_definitions(-DWTF_USE_LEVELDB=1)
-endif ()
-
 if (ENABLE_GAMEPAD_DEPRECATED)
     find_package(GUdev)
 endif ()
