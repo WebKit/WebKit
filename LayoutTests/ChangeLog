@@ -1,5 +1,19 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r171994
+
+    2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: The Dictation command "Replace <phrase> with <phrase>" always capitalizes the replacement string
+            https://bugs.webkit.org/show_bug.cgi?id=135557
+
+            Reviewed by Mario Sanchez Prada.
+
+            * platform/mac/accessibility/find-and-replace-match-capitalization-expected.txt: Added.
+            * platform/mac/accessibility/find-and-replace-match-capitalization.html: Added.
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172213
 
     2014-08-06  Brent Fulgham  <bfulgham@apple.com>
