@@ -92,10 +92,6 @@ private:
     void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
 #endif
 
-#if USE(QUICK_LOOK)
-    std::unique_ptr<WebCore::QuickLookHandle> m_quickLookHandle;
-#endif
-
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
 };
 

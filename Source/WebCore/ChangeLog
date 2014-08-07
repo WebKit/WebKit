@@ -1,3 +1,14 @@
+2014-08-06  Andy Estes  <aestes@apple.com>
+
+        [iOS] Subresources referenced in converted QuickLook documents sometimes fail to load
+        https://bugs.webkit.org/show_bug.cgi?id=135676
+
+        Reviewed by David Kilzer.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setQuickLookHandle):
+        (WebCore::DocumentLoader::quickLookHandle):
+
 2014-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168119): Album flipping animation doesn’t work
