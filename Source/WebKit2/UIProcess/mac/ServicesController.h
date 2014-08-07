@@ -45,6 +45,7 @@ public:
 
     bool hasImageServices() const { return m_hasImageServices; }
     bool hasSelectionServices() const { return m_hasSelectionServices; }
+    bool hasRichContentServices() const { return m_hasRichContentServices; }
 
     void refreshExistingServices(WebContext*);
 
@@ -58,6 +59,7 @@ private:
 
     bool m_hasImageServices;
     bool m_hasSelectionServices;
+    bool m_hasRichContentServices;
 
     HashSet<RefPtr<WebContext>> m_contextsToNotify;
 };

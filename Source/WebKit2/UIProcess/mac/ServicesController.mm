@@ -61,6 +61,7 @@ ServicesController::ServicesController()
     , m_isRefreshing(false)
     , m_hasImageServices(false)
     , m_hasSelectionServices(false)
+    , m_hasRichContentServices(false)
 {
     refreshExistingServices();
 }
@@ -93,14 +94,30 @@ void ServicesController::refreshExistingServices()
 
         bool hasSelectionServices = picker.get().menu;
 
+        static NSAttributedString *attributedStringWithRichContent;
+        if (!attributedStringWithRichContent) {
+            NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+            NSTextAttachmentCell *cell = [[NSTextAttachmentCell alloc] initImageCell:image.get()];
+            [attachment setAttachmentCell:cell];
+            NSMutableAttributedString *richString = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment];
+            [richString appendAttributedString: attributedString];
+            attributedStringWithRichContent = [richString retain];
+        }
+
+        picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ attributedStringWithRichContent ]]);
+        [picker setStyle:NSSharingServicePickerStyleTextSelection];
+
+        bool hasRichContentServices = picker.get().menu;
+        
         dispatch_async(dispatch_get_main_queue(), ^{
-            bool notifyContexts = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices);
+            bool notifyContexts = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices) || (hasRichContentServices != m_hasRichContentServices);
             m_hasSelectionServices = hasSelectionServices;
             m_hasImageServices = hasImageServices;
+            m_hasRichContentServices = hasRichContentServices;
 
             if (notifyContexts) {
                 for (const RefPtr<WebContext>& context : m_contextsToNotify)
-                    context->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices));
+                    context->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices, m_hasRichContentServices));
             }
 
             m_contextsToNotify.clear();

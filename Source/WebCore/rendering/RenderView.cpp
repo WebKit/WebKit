@@ -996,6 +996,8 @@ void RenderView::setSubtreeSelection(SelectionSubtreeRoot& root, RenderObject* s
 #if ENABLE(SERVICE_CONTROLS)
             for (auto& rect : selectionInfo->rects())
                 m_selectionRectGatherer.addRect(selectionInfo->repaintContainer(), rect);
+            if (!o->isTextOrLineBreak())
+                m_selectionRectGatherer.setTextOnly(false);
 #endif
 
             newSelectedObjects.set(o, WTF::move(selectionInfo));

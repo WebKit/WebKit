@@ -168,6 +168,7 @@ struct WebProcessCreationParameters {
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices;
     bool hasSelectionServices;
+    bool hasRichContentServices;
 #endif
 };
 

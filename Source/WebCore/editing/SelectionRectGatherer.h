@@ -47,6 +47,8 @@ public:
 
     void addRect(RenderLayerModelObject *repaintContainer, const LayoutRect&);
     void addGapRects(RenderLayerModelObject *repaintContainer, const GapRects&);
+    void setTextOnly(bool isTextOnly) { m_isTextOnly = isTextOnly; }
+    bool isTextOnly() const { return m_isTextOnly; }
 
     class Notifier {
         WTF_MAKE_NONCOPYABLE(Notifier);
@@ -66,6 +68,7 @@ private:
     // All rects are in RenderView coordinates.
     Vector<LayoutRect> m_rects;
     Vector<GapRects> m_gapRects;
+    bool m_isTextOnly;
 };
 
 } // namespace WebCore

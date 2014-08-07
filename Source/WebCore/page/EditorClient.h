@@ -183,7 +183,7 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     virtual void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>&) { }
-    virtual void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&) { }
+    virtual void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool) { }
 #endif
 
     // Support for global selections, used on platforms like the X Window System that treat

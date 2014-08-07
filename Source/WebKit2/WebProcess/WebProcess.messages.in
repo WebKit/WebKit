@@ -90,7 +90,7 @@ messages -> WebProcess LegacyReceiver {
     SetMemoryCacheDisabled(bool disabled);
 
 #if ENABLE(SERVICE_CONTROLS)
-    SetEnabledServices(bool hasImageServices, bool hasSelectionServices)
+    SetEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices)
 #endif
 
     ProcessWillSuspend()

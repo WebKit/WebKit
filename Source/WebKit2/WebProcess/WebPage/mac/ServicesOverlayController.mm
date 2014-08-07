@@ -76,6 +76,7 @@ static IntRect textQuadsToBoundingRectForRange(Range& range)
 ServicesOverlayController::ServicesOverlayController(WebPage& webPage)
     : m_webPage(&webPage)
     , m_servicesOverlay(nullptr)
+    , m_isTextOnly(false)
     , m_repaintHighlightTimer(this, &ServicesOverlayController::repaintHighlightTimerFired)
 {
 }
@@ -211,11 +212,12 @@ static void compactRectsWithGapRects(Vector<LayoutRect>& rects, const Vector<Gap
     }
 }
 
-void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects)
+void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects, bool isTextOnly)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
     clearSelectionHighlight();
     m_currentSelectionRects = rects;
+    m_isTextOnly = isTextOnly;
 
     m_lastSelectionChangeTime = std::chrono::steady_clock::now();
 
@@ -271,7 +273,7 @@ void ServicesOverlayController::drawSelectionHighlight(WebCore::GraphicsContext&
 {
     // It's possible to end up drawing the selection highlight before we've actually received the selection rects.
     // If that happens we'll end up here again once we have the rects.
-    if (m_currentSelectionRects.isEmpty())
+    if (m_currentSelectionRects.isEmpty() || (!WebProcess::shared().hasRichContentServices() && !m_isTextOnly))
         return;
 
     // If there are no installed selection services and we have no phone numbers detected, then we have nothing to draw.

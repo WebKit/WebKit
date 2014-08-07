@@ -1,5 +1,33 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172301
+
+    2014-08-07  Enrica Casucci  <enrica@apple.com>
+
+            [Services with UI] Action menu does not appear if selection includes both text and an image.
+            https://bugs.webkit.org/show_bug.cgi?id=135731
+            <rdar://problem/17837491>
+
+            Reviewed by Brady Eidson.
+
+            When collecting selection rects via SelectionRectGatherer we should also note if the selection
+            contains non text elements. This way the Notifier class can send that information to ServicesOverlayController
+            to properly handle the highlight for the service.
+
+            * editing/SelectionRectGatherer.cpp:
+            (WebCore::SelectionRectGatherer::SelectionRectGatherer):
+            (WebCore::SelectionRectGatherer::Notifier::~Notifier):
+            (WebCore::SelectionRectGatherer::clearAndCreateNotifier):
+            * editing/SelectionRectGatherer.h:
+            (WebCore::SelectionRectGatherer::setTextOnly):
+            (WebCore::SelectionRectGatherer::isTextOnly):
+            * page/EditorClient.h:
+            (WebCore::EditorClient::selectionRectsDidChange):
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::applySubtreeSelection):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172293
 
     2014-08-07  Andy Estes  <aestes@apple.com>

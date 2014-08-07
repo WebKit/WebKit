@@ -189,6 +189,7 @@ public:
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices() const { return m_hasImageServices; }
     bool hasSelectionServices() const { return m_hasSelectionServices; }
+    bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
 
 private:
@@ -252,7 +253,7 @@ private:
     void setMemoryCacheDisabled(bool);
 
 #if ENABLE(SERVICE_CONTROLS)
-    void setEnabledServices(bool hasImageServices, bool hasSelectionServices);
+    void setEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices);
 #endif
 
     void postInjectedBundleMessage(const IPC::DataReference& messageData);
@@ -339,6 +340,7 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     bool m_hasImageServices;
     bool m_hasSelectionServices;
+    bool m_hasRichContentServices;
 #endif
 
     HashSet<uint64_t> m_pagesInWindows;

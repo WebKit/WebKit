@@ -63,7 +63,7 @@ public:
     ~ServicesOverlayController();
 
     void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&);
-    void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&);
+    void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&, bool isTextOnly);
 
 private:
     void createOverlayIfNeeded();
@@ -95,6 +95,7 @@ private:
     
     Vector<WebCore::LayoutRect> m_currentSelectionRects;
     RetainPtr<DDHighlightRef> m_selectionHighlight;
+    bool m_isTextOnly;
     std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
     std::chrono::steady_clock::time_point m_lastHoveredHighlightChangeTime;
 

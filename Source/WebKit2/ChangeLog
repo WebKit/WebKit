@@ -1,5 +1,48 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172301
+
+    2014-08-07  Enrica Casucci  <enrica@apple.com>
+
+            [Services with UI] Action menu does not appear if selection includes both text and an image.
+            https://bugs.webkit.org/show_bug.cgi?id=135731
+            <rdar://problem/17837491>
+
+            Reviewed by Brady Eidson.
+
+            Adding a new setting to ServicesController to communicate to the WebProcess if
+            there are services installed that can handle a combination of text and images.
+            This way ServicesOverlayController can decide if it appropriate to show the hightlight
+            based on the type of selection (text only or non text only). This information is retrieved
+            when the selection rects are collected by SelectionGatherer and used by
+            SelectionGatherer::Notifier to communicate the selection change.
+
+            * Shared/WebProcessCreationParameters.cpp:
+            (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+            * Shared/WebProcessCreationParameters.h:
+            * UIProcess/mac/ServicesController.h:
+            (WebKit::ServicesController::hasRichContentServices):
+            * UIProcess/mac/ServicesController.mm:
+            (WebKit::ServicesController::ServicesController):
+            (WebKit::ServicesController::refreshExistingServices):
+            * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+            (WebKit::WebEditorClient::selectionRectsDidChange):
+            * WebProcess/WebCoreSupport/WebEditorClient.h:
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::ServicesOverlayController):
+            (WebKit::ServicesOverlayController::selectionRectsDidChange):
+            (WebKit::ServicesOverlayController::drawSelectionHighlight):
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::WebProcess):
+            (WebKit::WebProcess::initializeWebProcess):
+            (WebKit::WebProcess::setEnabledServices):
+            * WebProcess/WebProcess.h:
+            (WebKit::WebProcess::hasRichContentServices):
+            * WebProcess/WebProcess.messages.in:
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172241
 
     2014-08-07  Timothy Hatcher  <timothy@apple.com>
