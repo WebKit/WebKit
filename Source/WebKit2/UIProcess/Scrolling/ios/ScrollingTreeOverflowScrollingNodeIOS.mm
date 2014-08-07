@@ -111,7 +111,9 @@ ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate]) {
         ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
-        scrollView.delegate = nil;
+        // The scrollView may have been adopted by another node, so only clear the delegate if it's ours.
+        if (scrollView.delegate == m_scrollViewDelegate.get())
+            scrollView.delegate = nil;
     }
     END_BLOCK_OBJC_EXCEPTIONS
 }
