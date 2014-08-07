@@ -150,7 +150,7 @@ void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLay
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, [error code]);
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, abs([error code]));
 }
 
 void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error)
@@ -158,7 +158,7 @@ void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRe
     if (!m_client)
         return;
 
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, [error code]);
+    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, abs([error code]));
 }
 
 }
