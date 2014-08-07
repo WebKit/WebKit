@@ -248,6 +248,8 @@ WebInspector.ReplayManager.prototype = {
             });
         }
 
+        result = result.then(this._suppressBreakpointsAndResumeIfNeeded());
+
         result = result.then(function() {
                 console.assert(manager.sessionState === WebInspector.ReplayManager.SessionState.Inactive);
                 console.assert(manager.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
@@ -343,6 +345,8 @@ WebInspector.ReplayManager.prototype = {
             });
         }
 
+        result = result.then(this._suppressBreakpointsAndResumeIfNeeded());
+
         result = result.then(function() {
                 console.assert(manager.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
                 console.assert(manager.segmentState !== WebInspector.ReplayManager.SegmentState.Appending);
@@ -371,6 +375,8 @@ WebInspector.ReplayManager.prototype = {
                 return WebInspector.replayManager.stopCapturing();
             });
         }
+
+        result = result.then(this._suppressBreakpointsAndResumeIfNeeded());
 
         result = result.then(function() {
                 console.assert(manager.sessionState !== WebInspector.ReplayManager.SessionState.Capturing);
@@ -409,6 +415,11 @@ WebInspector.ReplayManager.prototype = {
         this._changeSessionState(WebInspector.ReplayManager.SessionState.Inactive);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Unloaded);
 
+        if (this._breakpointsWereSuppressed) {
+            delete this._breakpointsWereSuppressed;
+            WebInspector.debuggerManager.breakpointsEnabled = true;
+        }
+
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.CaptureStopped);
     },
 
@@ -446,6 +457,11 @@ WebInspector.ReplayManager.prototype = {
         console.assert(this.sessionState === WebInspector.ReplayManager.SessionState.Replaying);
         this._changeSegmentState(WebInspector.ReplayManager.SegmentState.Loaded);
 
+        if (this._breakpointsWereSuppressed) {
+            delete this._breakpointsWereSuppressed;
+            WebInspector.debuggerManager.breakpointsEnabled = true;
+        }
+
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackPaused);
     },
 
@@ -456,6 +472,11 @@ WebInspector.ReplayManager.prototype = {
 
         this._changeSessionState(WebInspector.ReplayManager.SessionState.Inactive);
         console.assert(this.segmentState === WebInspector.ReplayManager.SegmentState.Unloaded);
+
+        if (this._breakpointsWereSuppressed) {
+            delete this._breakpointsWereSuppressed;
+            WebInspector.debuggerManager.breakpointsEnabled = true;
+        }
 
         this.dispatchEventToListeners(WebInspector.ReplayManager.Event.PlaybackFinished);
     },
@@ -645,6 +666,21 @@ WebInspector.ReplayManager.prototype = {
         console.assert(isAllowed, "Invalid segment state change: ", this._segmentState, " to ", newState);
         if (isAllowed)
             this._segmentState = newState;
+    },
+
+    _suppressBreakpointsAndResumeIfNeeded: function()
+    {
+        var manager = this;
+
+        return new Promise(function(resolve, reject) {
+            manager._breakpointsWereSuppressed = WebInspector.debuggerManager.breakpointsEnabled;
+            WebInspector.debuggerManager.breakpointsEnabled = false;
+            if (!WebInspector.debuggerManager.paused)
+                return resolve();
+
+            WebInspector.debuggerManager.resume();
+            WebInspector.debuggerManager.addSingleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, resolve);
+        });
     }
 };
 

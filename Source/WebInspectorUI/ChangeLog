@@ -1,3 +1,27 @@
+2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: ReplayManager should unpause and suppress breakpoints before capturing/replaying
+        https://bugs.webkit.org/show_bug.cgi?id=135608
+
+        Reviewed by Timothy Hatcher.
+
+        It is jarring when the debugger pauses during capturing or replaying. For now, we should suppress
+        all breakpoints during capturing or replaying, and restore breakpoint enabled state when
+        capturing finishes, when replaying finishes, or during temporary replay pauses.
+
+        In the future, the debugger will be selectively enabled during playback to seek to specific
+        breakpoint hits. This is tracked in https://bugs.webkit.org/show_bug.cgi?id=135663.
+
+        * UserInterface/Controllers/ReplayManager.js:
+        (WebInspector.ReplayManager.prototype.startCapturing.result):
+        (WebInspector.ReplayManager.prototype.replayToPosition.result):
+        (WebInspector.ReplayManager.prototype.replayToCompletion.result):
+        (WebInspector.ReplayManager.prototype.captureStopped):
+        (WebInspector.ReplayManager.prototype.playbackPaused):
+        (WebInspector.ReplayManager.prototype.playbackFinished):
+        (WebInspector.ReplayManager.prototype._changeSegmentState):
+        (WebInspector.ReplayManager.prototype._suppressBreakpointsAndResumeIfNeeded):
+
 2014-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix.
