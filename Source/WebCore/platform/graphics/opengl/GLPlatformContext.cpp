@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#if USE(3D_GRAPHICS)
 #include "GLPlatformContext.h"
 
 #if USE(GLX)
@@ -279,3 +281,5 @@ void GLPlatformContext::destroy()
 }
 
 } // namespace WebCore
+
+#endif

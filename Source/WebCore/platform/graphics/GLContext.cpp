@@ -17,9 +17,9 @@
  */
 
 #include "config.h"
-#include "GLContext.h"
 
 #if USE(OPENGL)
+#include "GLContext.h"
 
 #if USE(EGL)
 #include "GLContextEGL.h"

@@ -18,9 +18,9 @@
  */
 
 #include "config.h"
-#include "GraphicsContext3DPrivate.h"
 
 #if USE(3D_GRAPHICS)
+#include "GraphicsContext3DPrivate.h"
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
