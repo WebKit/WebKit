@@ -319,12 +319,8 @@ body.window-inactive .data-grid th.sort-descending {
 }
 
 .data-grid tr.selected {
-    background-color: rgb(185, 184, 185) !important;
-    color: inherit !important;
-}
-
-body.mac-platform.legacy .data-grid tr.selected {
     background-color: rgb(212, 212, 212) !important;
+    color: inherit !important;
 }
 
 .data-grid:focus tr.selected {

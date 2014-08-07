@@ -48,7 +48,7 @@ body.mac-platform.legacy .sidebar > .panel.details.css-style > .content {
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
     padding: 10px;
-    border-bottom: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(179, 179, 179);
 
     display: -webkit-flex;
     -webkit-flex-flow: row wrap;

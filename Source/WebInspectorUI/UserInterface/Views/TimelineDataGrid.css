@@ -34,8 +34,8 @@
 .data-grid.timeline th {
     height: 22px;
 
-    background-image: none;
-    background-color: white;
+    background-image: none !important;
+    background-color: white !important;
 
     border-top: 1px solid rgb(179, 179, 179) !important;
     border-bottom: 1px solid rgb(179, 179, 179) !important;
@@ -47,13 +47,13 @@
 
 .data-grid.timeline th.sortable:active {
     background-image: none !important;
-    background-color: rgb(210, 210, 210);
+    background-color: rgb(179, 179, 179) !important;
 }
 
 .data-grid.timeline th.sort-ascending,
 .data-grid.timeline th.sort-descending {
     background-image: none !important;
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(230, 230, 230) !important;
 }
 
 .data-grid.timeline .data-container {

@@ -26,7 +26,7 @@
 .details-section {
     font-size: 10px;
     background-color: rgb(242, 242, 242);
-    border-bottom: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .details-section {
@@ -50,7 +50,7 @@ body.mac-platform.legacy .details-section .details-section {
 }
 
 .details-section .details-section:first-child {
-    border-top: 1px solid rgb(153, 153, 153);
+    border-top: 1px solid rgb(179, 179, 179);
 }
 
 .details-section > .header {
@@ -75,12 +75,12 @@ body.mac-platform.legacy .details-section .details-section {
 }
 
 body.mac-platform.legacy .details-section > .header {
-    border-bottom: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(179, 179, 179);
     box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
     background-color: transparent;
     background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
 
-    border-top: 1px solid rgb(153, 153, 153);
+    border-top: 1px solid rgb(179, 179, 179);
 
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 }
@@ -182,7 +182,7 @@ body.mac-platform.legacy .details-section.computed-style-properties:not(.collaps
 
 .details-section > .content > .group {
     display: table-row-group;
-    border-bottom: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .details-section > .content > .group {
@@ -203,14 +203,14 @@ body.mac-platform.legacy .details-section > .content > .group:nth-child(even) {
 
 .details-section > .content > .group:nth-child(even) > .row:not(.simple):first-child,
 .details-section > .content > .group:nth-child(even) > .row.simple:first-child > * {
-    border-top: 1px solid rgb(153, 153, 153);
+    border-top: 1px solid rgb(179, 179, 179);
 }
 
 body.mac-platform.legacy .details-section > .content > .group:nth-child(even) > .row:not(.simple):last-child,
 body.mac-platform.legacy .details-section > .content > .group:last-child > .row:not(.simple):last-child,
 body.mac-platform.legacy .details-section > .content > .group:nth-child(even) > .row.simple:last-child > *,
 body.mac-platform.legacy .details-section > .content > .group:last-child > .row.simple:last-child > * {
-    border-bottom: 1px solid rgb(153, 153, 153);
+    border-bottom: 1px solid rgb(179, 179, 179);
 }
 
 .details-section > .content > .group > .row.simple {

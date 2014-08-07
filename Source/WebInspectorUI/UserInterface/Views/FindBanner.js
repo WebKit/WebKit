@@ -327,9 +327,9 @@ WebInspector.FindBanner.prototype = {
         specifications["normal-active"] = {fillColor: [37, 37, 37]};
 
         var forwardArrow, backArrow;
-        if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10) {
-            forwardArrow = {src: "Images/ForwardArrowLegacy.svg", width: 7, height: 7};
-            backArrow = {src: "Images/BackArrowLegacy.svg", width: 7, height: 7};
+        if (WebInspector.Platform.isLegacyMacOS) {
+            forwardArrow = {src: "Images/Legacy/ForwardArrow.svg", width: 7, height: 7};
+            backArrow = {src: "Images/Legacy/BackArrow.svg", width: 7, height: 7};
         } else {
             forwardArrow = {src: "Images/ForwardArrow.svg", width: 7, height: 11};
             backArrow = {src: "Images/BackArrow.svg", width: 7, height: 11};

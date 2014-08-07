@@ -51,33 +51,50 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar {
     -webkit-appearance: none;
 
     background-color: transparent;
-    background-image: -webkit-image-set(url(../Images/RecordingStopped.png) 1x, url(../Images/RecordingStopped@2x.png) 2x);
     background-repeat: no-repeat;
-    background-size: 21px 21px;
+    background-image: url(../Images/Record.svg);
+    background-size: 13px 13px;
+    background-position: center;
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
+    -webkit-filter: brightness(95%);
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active {
+    -webkit-filter: brightness(80%);
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
+    background-image: url(../Images/Stop.svg);
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
     top: 0;
+
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingStopped.png) 1x, url(../Images/Legacy/RecordingStopped@2x.png) 2x);
+    background-size: 21px 21px;
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
-    background-image: -webkit-image-set(url(../Images/Recording.png) 1x, url(../Images/Recording@2x.png) 2x);
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
+    background-image: -webkit-image-set(url(../Images/Legacy/Recording.png) 1x, url(../Images/Legacy/Recording@2x.png) 2x);
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
-    background-image: -webkit-image-set(url(../Images/RecordingHovered.png) 1x, url(../Images/RecordingHovered@2x.png) 2x);
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingHovered.png) 1x, url(../Images/Legacy/RecordingHovered@2x.png) 2x);
+    -webkit-filter: none;
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover {
-    background-image: -webkit-image-set(url(../Images/RecordingStopped.png) 1x, url(../Images/RecordingStopped@2x.png) 2x);
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover {
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingStopped.png) 1x, url(../Images/Legacy/RecordingStopped@2x.png) 2x);
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced {
-    background-image: -webkit-image-set(url(../Images/RecordingStopped.png) 1x, url(../Images/RecordingStopped@2x.png) 2x) !important;
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced {
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingStopped.png) 1x, url(../Images/Legacy/RecordingStopped@2x.png) 2x) !important;
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced {
-    background-image: -webkit-image-set(url(../Images/Recording.png) 1x, url(../Images/Recording@2x.png) 2x) !important;
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced {
+    background-image: -webkit-image-set(url(../Images/Legacy/Recording.png) 1x, url(../Images/Legacy/Recording@2x.png) 2x) !important;
 }
 
 .sidebar > .panel.navigation.timeline > .status-bar > .record-status {
@@ -165,8 +182,6 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-cont
     width: 12px;
     height: 12px;
 
-    content: -webkit-image-set(url(../Images/CloseTimeline.png) 1x, url(../Images/CloseTimeline@2x.png) 2x);
-
     visibility: hidden;
 }
 
@@ -190,7 +205,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-cont
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
-    border-top-color: rgb(185, 184, 185);
+    border-top-color: rgb(212, 212, 212);
 }
 
 body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
@@ -207,10 +222,6 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-cont
 
 body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item {
     border-top-color: rgb(107, 130, 164);
-}
-
-.sidebar > .panel.navigation.timeline > .timelines-content .close-button:active {
-    opacity: 0.8;
 }
 
 .sidebar > .panel.navigation.timeline > .content,

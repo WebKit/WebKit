@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2013 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+    <path fill-opacity="0.45" stroke="black" stroke-width="1" d="M 9 0 L 3 0 L 0 3 L 12 3 Z" transform="matrix(1, 0, 0, 1, 2, 3.5)"/>
+    <path d="M 3.5 8 L 2 10 L 14 10 L 12.5 8 Z"/>
+    <path d="M 4.25 11 L 3 13 L 13 13 L 11.75 11 Z"/>
+</svg>

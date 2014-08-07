@@ -53,10 +53,27 @@ WebInspector.DebuggerSidebarPanel = function()
     this._navigationBar = new WebInspector.NavigationBar;
     this.element.appendChild(this._navigationBar.element);
 
+    var breakpointsImage, pauseImage, resumeImage, stepOverImage, stepIntoImage, stepOutImage;
+    if (WebInspector.Platform.isLegacyMacOS) {
+        breakpointsImage = {src: "Images/Legacy/Breakpoints.svg", width: 16, height: 16};
+        pauseImage = {src: "Images/Legacy/Pause.svg", width: 16, height: 16};
+        resumeImage = {src: "Images/Legacy/Resume.svg", width: 16, height: 16};
+        stepOverImage = {src: "Images/Legacy/StepOver.svg", width: 16, height: 16};
+        stepIntoImage = {src: "Images/Legacy/StepInto.svg", width: 16, height: 16};
+        stepOutImage = {src: "Images/Legacy/StepOut.svg", width: 16, height: 16};
+    } else {
+        breakpointsImage = {src: "Images/Breakpoints.svg", width: 15, height: 15};
+        pauseImage = {src: "Images/Pause.svg", width: 15, height: 15};
+        resumeImage = {src: "Images/Resume.svg", width: 15, height: 15};
+        stepOverImage = {src: "Images/StepOver.svg", width: 15, height: 15};
+        stepIntoImage = {src: "Images/StepInto.svg", width: 15, height: 15};
+        stepOutImage = {src: "Images/StepOut.svg", width: 15, height: 15};
+    }
+
     var toolTip = WebInspector.UIString("Enable all breakpoints");
     var altToolTip = WebInspector.UIString("Disable all breakpoints");
 
-    this._debuggerBreakpointsButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-breakpoints", toolTip, altToolTip, "Images/Breakpoints.svg", 16, 16);
+    this._debuggerBreakpointsButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-breakpoints", toolTip, altToolTip, breakpointsImage.src, breakpointsImage.width, breakpointsImage.height);
     this._debuggerBreakpointsButtonItem.activated = WebInspector.debuggerManager.breakpointsEnabled;
     this._debuggerBreakpointsButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._breakpointsToggleButtonClicked, this);
     this._navigationBar.addNavigationItem(this._debuggerBreakpointsButtonItem);
@@ -64,21 +81,21 @@ WebInspector.DebuggerSidebarPanel = function()
     toolTip = WebInspector.UIString("Pause script execution (%s or %s)").format(this.pauseOrResumeKeyboardShortcut.displayName, this.pauseOrResumeAlternateKeyboardShortcut.displayName);
     altToolTip = WebInspector.UIString("Continue script execution (%s or %s)").format(this.pauseOrResumeKeyboardShortcut.displayName, this.pauseOrResumeAlternateKeyboardShortcut.displayName);
 
-    this._debuggerPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("debugger-pause-resume", toolTip, altToolTip, "Images/Pause.svg", "Images/Resume.svg", 16, 16);
+    this._debuggerPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("debugger-pause-resume", toolTip, altToolTip, pauseImage.src, resumeImage.src, pauseImage.width, pauseImage.height);
     this._debuggerPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._debuggerPauseResumeButtonClicked, this);
     this._navigationBar.addNavigationItem(this._debuggerPauseResumeButtonItem);
 
-    this._debuggerStepOverButtonItem = new WebInspector.ButtonNavigationItem("debugger-step-over", WebInspector.UIString("Step over (%s or %s)").format(this._stepOverKeyboardShortcut.displayName, this._stepOverAlternateKeyboardShortcut.displayName), "Images/StepOver.svg", 16, 16);
+    this._debuggerStepOverButtonItem = new WebInspector.ButtonNavigationItem("debugger-step-over", WebInspector.UIString("Step over (%s or %s)").format(this._stepOverKeyboardShortcut.displayName, this._stepOverAlternateKeyboardShortcut.displayName), stepOverImage.src, stepOverImage.width, stepOverImage.height);
     this._debuggerStepOverButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._debuggerStepOverButtonClicked, this);
     this._debuggerStepOverButtonItem.enabled = false;
     this._navigationBar.addNavigationItem(this._debuggerStepOverButtonItem);
 
-    this._debuggerStepIntoButtonItem = new WebInspector.ButtonNavigationItem("debugger-step-into", WebInspector.UIString("Step into (%s or %s)").format(this._stepIntoKeyboardShortcut.displayName, this._stepIntoAlternateKeyboardShortcut.displayName), "Images/StepInto.svg", 16, 16);
+    this._debuggerStepIntoButtonItem = new WebInspector.ButtonNavigationItem("debugger-step-into", WebInspector.UIString("Step into (%s or %s)").format(this._stepIntoKeyboardShortcut.displayName, this._stepIntoAlternateKeyboardShortcut.displayName), stepIntoImage.src, stepIntoImage.width, stepIntoImage.height);
     this._debuggerStepIntoButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._debuggerStepIntoButtonClicked, this);
     this._debuggerStepIntoButtonItem.enabled = false;
     this._navigationBar.addNavigationItem(this._debuggerStepIntoButtonItem);
 
-    this._debuggerStepOutButtonItem = new WebInspector.ButtonNavigationItem("debugger-step-out", WebInspector.UIString("Step out (%s or %s)").format(this._stepOutKeyboardShortcut.displayName, this._stepOutAlternateKeyboardShortcut.displayName), "Images/StepOut.svg", 16, 16);
+    this._debuggerStepOutButtonItem = new WebInspector.ButtonNavigationItem("debugger-step-out", WebInspector.UIString("Step out (%s or %s)").format(this._stepOutKeyboardShortcut.displayName, this._stepOutAlternateKeyboardShortcut.displayName), stepOutImage.src, stepOutImage.width, stepOutImage.height);
     this._debuggerStepOutButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._debuggerStepOutButtonClicked, this);
     this._debuggerStepOutButtonItem.enabled = false;
     this._navigationBar.addNavigationItem(this._debuggerStepOutButtonItem);

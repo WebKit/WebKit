@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright © 2013 Apple Inc. All rights reserved. -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15">
-    <path fill="none" stroke="black" stroke-width="2" d="M 59.308594 258.066406 C 61.0625 259.824219 61.0625 262.675781 59.308594 264.433594 C 57.550781 266.1875 54.699219 266.1875 52.941406 264.433594 C 51.1875 262.675781 51.1875 259.824219 52.941406 258.066406 C 54.699219 256.3125 57.550781 256.3125 59.308594 258.066406" transform="matrix(1, 0, 0, 1, -49.5, -254.5)"/>
-    <path fill="none" stroke="black" stroke-width="2" stroke-linecap="round" d="M 59.875 265 L 62.875 268" transform="matrix(1, 0, 0, 1, -49.5, -254.5)"/>
-</svg>

@@ -485,7 +485,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [window setMinSize:NSMakeSize(400.0, 400.0)];
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
-    WKNSWindowMakeBottomCornersSquare(window);
 
     // Create a full screen button so we can turn it into a dock button.
     _dockButton = [NSWindow standardWindowButton:NSWindowFullScreenButton forStyleMask:styleMask];
@@ -496,7 +495,14 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     window->_dockButton = _dockButton;
 
     // Get the dock image and make it a template so the button cell effects will apply.
-    NSImage *dockImage = [[NSBundle bundleForClass:[self class]] imageForResource:@"Dock"];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    NSString *dockImageName = @"Dock";
+    _dockButton.get().alphaValue = 0.55;
+#else
+    NSString *dockImageName = @"DockLegacy";
+#endif
+
+    NSImage *dockImage = [[NSBundle bundleForClass:[self class]] imageForResource:dockImageName];
     [dockImage setTemplate:YES];
 
     // Set the dock image on the button cell.

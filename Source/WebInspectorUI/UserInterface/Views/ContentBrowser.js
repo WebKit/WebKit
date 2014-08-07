@@ -50,9 +50,9 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
         this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this));
 
         var forwardArrow, backArrow;
-        if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10) {
-            forwardArrow = {src: "Images/ForwardArrowLegacy.svg", width: 9, height: 9};
-            backArrow = {src: "Images/BackArrowLegacy.svg", width: 9, height: 9};
+        if (WebInspector.Platform.isLegacyMacOS) {
+            forwardArrow = {src: "Images/Legacy/ForwardArrow.svg", width: 9, height: 9};
+            backArrow = {src: "Images/Legacy/BackArrow.svg", width: 9, height: 9};
         } else {
             forwardArrow = {src: "Images/ForwardArrow.svg", width: 8, height: 13};
             backArrow = {src: "Images/BackArrow.svg", width: 8, height: 13};

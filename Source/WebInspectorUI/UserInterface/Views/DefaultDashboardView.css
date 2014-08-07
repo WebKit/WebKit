@@ -42,10 +42,7 @@ body.javascript .toolbar .dashboard.default > .resourcesCount {
 }
 
 .toolbar .dashboard.default > .item {
-    font-family: Helvetica, sans-serif;
-    font-weight: bold;
-    font-size: 11px;
-    line-height: 12px;
+    line-height: 13px;
 
     padding: 0 5px;
 
@@ -58,6 +55,10 @@ body.javascript .toolbar .dashboard.default > .resourcesCount {
 
     border-radius: 4px;
     border: 1px solid transparent;
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .item {
+    font-weight: bold;
 }
 
 .toolbar .dashboard.default > .time,
@@ -134,6 +135,30 @@ body.javascript .toolbar .dashboard.default > .resourcesCount {
     opacity: 0.9;
 }
 
+body.mac-platform.legacy .toolbar .dashboard.default > .resourcesCount > img {
+    content: url(../Images/Legacy/Resources.svg);
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .time > img {
+    content: url(../Images/Legacy/Time.svg);
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .logs > img {
+    content: url(../Images/Legacy/Logs.svg);
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .resourcesSize > img {
+    content: url(../Images/Legacy/Weight.svg);
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .errors > img {
+    content: url(../Images/Legacy/Errors.svg);
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .errors.enabled > img {
+    content: url(../Images/Legacy/ErrorsEnabled.svg);
+}
+
 .toolbar .dashboard.default > .errors.enabled:hover > img {
     opacity: 1;
 }
@@ -153,6 +178,14 @@ body.javascript .toolbar .dashboard.default > .resourcesCount {
 .toolbar .dashboard.default > .issues.enabled > img {
     content: url(../Images/IssuesEnabled.svg);
     opacity: 0.9;
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .issues > img {
+    content: url(../Images/Legacy/Issues.svg);
+}
+
+body.mac-platform.legacy .toolbar .dashboard.default > .issues.enabled > img {
+    content: url(../Images/Legacy/IssuesEnabled.svg);
 }
 
 .toolbar .dashboard.default > .issues.enabled:hover > img {

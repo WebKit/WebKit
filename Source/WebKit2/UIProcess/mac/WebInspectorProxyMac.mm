@@ -63,7 +63,11 @@ static const CGFloat windowContentBorderThickness = 55;
 static const CGFloat dockButtonMargin = 3;
 
 // The spacing between the dock buttons.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+static const CGFloat dockButtonSpacing = 1;
+#else
 static const CGFloat dockButtonSpacing = dockButtonMargin * 2;
+#endif
 
 static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
 
@@ -300,7 +304,6 @@ void WebInspectorProxy::createInspectorWindow()
     [window setReleasedWhenClosed:NO];
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:windowContentBorderThickness forEdge:NSMaxYEdge];
-    WKNSWindowMakeBottomCornersSquare(window);
 
     m_inspectorWindow = adoptNS(window);
 
@@ -309,8 +312,18 @@ void WebInspectorProxy::createInspectorWindow()
     static const int32_t firstVersionOfSafariWithDockToRightSupport = 0x02181d0d; // 536.29.13
     static bool supportsDockToRight = NSVersionOfLinkTimeLibrary("Safari") >= firstVersionOfSafariWithDockToRightSupport;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     m_dockBottomButton = adoptNS(createDockButton(@"DockBottom"));
     m_dockRightButton = adoptNS(createDockButton(@"DockRight"));
+
+    m_dockBottomButton.get().alphaValue = 0.55;
+    m_dockRightButton.get().alphaValue = supportsDockToRight ? 0.55 : 0.25;
+#else
+    m_dockBottomButton = adoptNS(createDockButton(@"DockBottomLegacy"));
+    m_dockRightButton = adoptNS(createDockButton(@"DockRightLegacy"));
+
+    m_dockRightButton.get().alphaValue = supportsDockToRight ? 1 : 0.5;
+#endif
 
     m_dockBottomButton.get().target = m_inspectorProxyObjCAdapter.get();
     m_dockBottomButton.get().action = @selector(attachBottom:);
@@ -318,7 +331,6 @@ void WebInspectorProxy::createInspectorWindow()
     m_dockRightButton.get().target = m_inspectorProxyObjCAdapter.get();
     m_dockRightButton.get().action = @selector(attachRight:);
     m_dockRightButton.get().enabled = supportsDockToRight;
-    m_dockRightButton.get().alphaValue = supportsDockToRight ? 1 : 0.5;
 
     // Store the dock buttons on the window too so it can check its visibility.
     window->_dockBottomButton = m_dockBottomButton;
