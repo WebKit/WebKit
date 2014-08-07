@@ -1,5 +1,19 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r172228
+
+    2014-08-07  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed build fix following r172224.
+
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCueBox::applyCSSProperties):
+            * html/track/VTTCue.h:
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r172224
 
     2014-08-06  Roger Fong  <roger_fong@apple.com>

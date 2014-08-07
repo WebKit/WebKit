@@ -49,6 +49,9 @@ class VTTCue;
 class VTTScanner;
 class WebVTTCueData;
 
+// This default value must be the same as the one specified in mediaControlsApple.css for -webkit-media-controls-closed-captions-container
+const static float DEFAULTCAPTIONFONTSIZE = 10;
+
 // ----------------------------
 
 class VTTCueBox : public HTMLElement {
@@ -68,12 +71,7 @@ protected:
 
     VTTCue& m_cue;
     int m_fontSizeFromCaptionUserPrefs;
-
-    static const float DEFAULTFONTSIZE;
 };
-
-// This default value must be the same as the one specified in mediaControlsApple.css for -webkit-media-controls-closed-captions-container
-const float VTTCueBox::DEFAULTFONTSIZE = 10;
 
 // ----------------------------
 
