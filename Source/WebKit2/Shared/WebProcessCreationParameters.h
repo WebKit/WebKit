@@ -77,6 +77,12 @@ struct WebProcessCreationParameters {
     String containerTemporaryDirectory;
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
 
+#if PLATFORM(IOS)
+    // FIXME: Remove this once <rdar://problem/17726660> is fixed.
+    String hstsDatabasePath;
+    SandboxExtension::Handle hstsDatabasePathExtensionHandle;
+#endif
+
     bool shouldUseTestingNetworkSession;
 
     Vector<String> urlSchemesRegistererdAsEmptyDocument;

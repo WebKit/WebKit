@@ -1,3 +1,27 @@
+2014-08-07  Oliver Hunt  <oliver@apple.com>
+
+        WebContent needs access to HSTS database due to some networking still being performed in process
+        https://bugs.webkit.org/show_bug.cgi?id=135711
+        <rdar://17940220>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Simple patch in the same theme as the equivalent network process
+        extension.  Provide an extension that covers the WebContent specific
+        HSTS file and consume it on launch.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::webContentHSTSDatabasePath):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2014-08-07  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         Clear the m_previousItem member of HistoryControllers when it matches the HistoryItem being removed.
