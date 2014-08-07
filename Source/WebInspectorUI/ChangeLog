@@ -1,3 +1,13 @@
+2014-08-07  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: DebuggerManager sends spurious setBreakpointsActive commands when setting a breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=135674
+
+        Reviewed by David Kilzer.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.set breakpointsEnabled): Fix a typo.
+
 2014-08-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: breakpoint resolved state should not depend on all breakpoints being enabled

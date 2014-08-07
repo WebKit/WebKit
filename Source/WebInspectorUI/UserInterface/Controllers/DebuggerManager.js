@@ -101,7 +101,7 @@ WebInspector.DebuggerManager.prototype = {
 
     set breakpointsEnabled(enabled)
     {
-        if (this._breakpointsEnabled === enabled)
+        if (this._breakpointsEnabledSetting.value === enabled)
             return;
 
         this._breakpointsEnabledSetting.value = enabled;
