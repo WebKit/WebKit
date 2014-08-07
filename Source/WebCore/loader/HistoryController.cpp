@@ -597,6 +597,13 @@ bool HistoryController::currentItemShouldBeReplaced() const
     return m_currentItem && !m_previousItem && equalIgnoringCase(m_currentItem->urlString(), blankURL());
 }
 
+void HistoryController::clearPreviousItem()
+{
+    m_previousItem = nullptr;
+    for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
+        child->loader().history().clearPreviousItem();
+}
+
 void HistoryController::setProvisionalItem(HistoryItem* item)
 {
     m_provisionalItem = item;

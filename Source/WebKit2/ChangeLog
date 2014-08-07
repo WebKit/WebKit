@@ -1,3 +1,16 @@
+2014-08-07  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Clear the m_previousItem member of HistoryControllers when it matches the HistoryItem being removed.
+        https://bugs.webkit.org/show_bug.cgi?id=135634
+        <rdar://problem/17388461>
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::removeItem):
+        Call WebCore::Page::clearPreviousItemFromAllPages() for each item removed from
+        the back/forward list to ensure the page URL is released from IconDatabase.
+
 2014-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use WebKitNavigationAction also for WebKitNavigationPolicyDecision
