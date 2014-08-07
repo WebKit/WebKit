@@ -1,3 +1,11 @@
+2014-08-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on non Cocoa port since r172172
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::defaultTextEncodingNameForSystemLanguage):
+        * platform/text/TextEncodingRegistry.h:
+
 2014-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Make document marker assets not specific to particular scale factors
