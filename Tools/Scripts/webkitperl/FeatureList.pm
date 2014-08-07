@@ -63,7 +63,6 @@ my (
     $cssRegionsSupport,
     $cssShapesSupport,
     $cssCompositingSupport,
-    $cssAnimationsTransformsUnprefixedSupport,
     $customSchemeHandlerSupport,
     $dataTransferItemsSupport,
     $datalistElementSupport,
@@ -210,9 +209,6 @@ my @features = (
 
     { option => "css-compositing", desc => "Toggle CSS Compositing support",
       define => "ENABLE_CSS_COMPOSITING", default => isAppleWebKit(), value => \$cssCompositingSupport },
-
-    { option => "css-transforms-animations-unprefixed", desc => "Toggle support for unprefixed CSS animations and transforms",
-      define => "ENABLE_CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED", default => 1, value => \$cssAnimationsTransformsUnprefixedSupport },
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => isEfl(), value => \$customSchemeHandlerSupport },

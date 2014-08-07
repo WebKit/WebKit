@@ -1,3 +1,15 @@
+2014-08-06  Dean Jackson  <dino@apple.com>
+
+        ENABLE_CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED is not used anywhere. Remove it.
+        https://bugs.webkit.org/show_bug.cgi?id=135675
+
+        Reviewed by Sam Weinig.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-08-06  David Farler  <dfarler@apple.com>
 
         Unreviewed build fix: Make includes semicolon in assignment.

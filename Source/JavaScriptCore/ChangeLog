@@ -1,3 +1,12 @@
+2014-08-06  Dean Jackson  <dino@apple.com>
+
+        ENABLE_CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED is not used anywhere. Remove it.
+        https://bugs.webkit.org/show_bug.cgi?id=135675
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement parsing for CSS scroll snap points
