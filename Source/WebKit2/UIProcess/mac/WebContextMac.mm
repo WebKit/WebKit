@@ -328,6 +328,26 @@ String WebContext::parentBundleDirectory() const
 {
     return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
 }
+
+String WebContext::webContentHSTSDatabasePath() const
+{
+    String path = pathForProcessContainer();
+    if (path.isEmpty())
+        path = NSHomeDirectory();
+
+    path = path + "/Library/Caches/com.apple.WebKit.WebContent/";
+    path = stringByResolvingSymlinksInPath(path);
+
+    NSError *error = nil;
+    NSString* nsPath = path;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        return String();
+    }
+
+    return path + "/HSTS.plist";
+}
+
 #endif
 
 String WebContext::containerTemporaryDirectory() const
