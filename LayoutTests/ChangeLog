@@ -1,3 +1,14 @@
+2014-08-07  Mark Lam  <mark.lam@apple.com>
+
+        http/tests/security/cross-frame-access-enumeration.html fails after FTLOPT merge.
+        <https://webkit.org/b/135708>
+
+        Reviewed by Mark Hahnenberg.
+
+        * TestExpectations:
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        - re-baselined the test results.
+
 2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of INPUT_SPEECH

@@ -142,9 +142,6 @@ webkit.org/b/135390 fast/css/fontloader-multiple-faces.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-multiple-families.html [ Skip ]
 webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Skip ]
 
-# Test failed after FTLOPT merge.
-webkit.org/b/135708 http/tests/security/cross-frame-access-enumeration.html [ Failure ]
-
 # Tests failed after http://trac.webkit.org/r172224 landed:
 webkit.org/b/135720 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/135720 media/track/track-cue-rendering-rtl.html [ Failure ]
