@@ -1,5 +1,28 @@
 2014-08-07  Dana Burkart <dburkart@apple.com>
 
+        Merge r171996
+
+    2014-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: AXSelectTextWithCriteriaParameterizedAttribute incorrectly selects the beginning letters of a word
+            https://bugs.webkit.org/show_bug.cgi?id=135547
+
+            Reviewed by Mario Sanchez Prada.
+
+            Allow text search to specify that it wants to match end of words as well as start of words.
+            This allows select text criteria to match on whole words only.
+
+            Test: platform/mac/accessibility/select-text-should-match-whole-words.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection):
+            * editing/FindOptions.h:
+            * editing/TextIterator.cpp:
+            (WebCore::SearchBuffer::isWordEndMatch):
+            (WebCore::SearchBuffer::search):
+
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
         Merge r171994
 
     2014-08-04  Chris Fleizach  <cfleizach@apple.com>

@@ -37,7 +37,8 @@ enum FindOptionFlag {
     Backwards = 1 << 3,
     WrapAround = 1 << 4,
     StartInSelection = 1 << 5,
-    DoNotRevealSelection = 1 << 6
+    DoNotRevealSelection = 1 << 6,
+    AtWordEnds = 1 << 7
 };
 
 typedef unsigned char FindOptions;

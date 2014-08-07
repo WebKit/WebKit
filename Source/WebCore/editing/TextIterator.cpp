@@ -92,6 +92,7 @@ public:
 private:
     bool isBadMatch(const UChar*, size_t length) const;
     bool isWordStartMatch(size_t start, size_t length) const;
+    bool isWordEndMatch(size_t start, size_t length) const;
 
     const String m_target;
     const StringView::UpconvertedCharacters m_targetCharacters;
@@ -2117,6 +2118,15 @@ inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) con
         }
     }
 }
+    
+inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
+{
+    ASSERT(m_options & AtWordEnds);
+
+    int endWord;
+    findEndWordBoundary(StringView(m_buffer.data(), m_buffer.size()), start, &endWord);
+    return static_cast<size_t>(endWord) == (start + length);
+}
 
 inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 {
@@ -2225,7 +2235,9 @@ nextMatch:
     ASSERT_WITH_SECURITY_IMPLICATION(matchStart + matchedLength <= size);
 
     // If this match is "bad", move on to the next match.
-    if (isBadMatch(m_buffer.data() + matchStart, matchedLength) || ((m_options & AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))) {
+    if (isBadMatch(m_buffer.data() + matchStart, matchedLength)
+        || ((m_options & AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
+        || ((m_options & AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
         matchStart = usearch_next(searcher, &status);
         ASSERT(status == U_ZERO_ERROR);
         goto nextMatch;
