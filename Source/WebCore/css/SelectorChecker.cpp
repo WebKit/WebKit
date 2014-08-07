@@ -48,10 +48,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderElement.h"
-#include "RenderScrollbar.h"
 #include "RenderStyle.h"
-#include "ScrollableArea.h"
-#include "ScrollbarTheme.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
 #include "StyledElement.h"
@@ -155,6 +152,23 @@ bool SelectorChecker::match(const SelectorCheckingContext& context) const
     return true;
 }
 
+inline static bool hasScrollbarPseudoElement(const SelectorChecker::SelectorCheckingContext& context, PseudoId& dynamicPseudo)
+{
+    if (dynamicPseudo == SCROLLBAR
+        || dynamicPseudo == SCROLLBAR_THUMB
+        || dynamicPseudo == SCROLLBAR_BUTTON
+        || dynamicPseudo == SCROLLBAR_TRACK
+        || dynamicPseudo == SCROLLBAR_TRACK_PIECE
+        || dynamicPseudo == SCROLLBAR_CORNER) {
+        ASSERT(context.scrollbar);
+        return true;
+    }
+    
+    // RESIZER does not always have a scrollbar but it is a scrollbar-like pseudo element
+    // because it can have more than one pseudo element.
+    return dynamicPseudo == RESIZER;
+}
+    
 // Recursive check of selectors and combinators
 // It can return 4 different values:
 // * SelectorMatches          - the selector matches the element e
@@ -272,7 +286,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        nextContext.hasScrollbarPseudo = dynamicPseudo != NOPSEUDO && (context.scrollbar || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER);
+        nextContext.hasScrollbarPseudo = hasScrollbarPseudoElement(context, dynamicPseudo);
         nextContext.hasSelectionPseudo = dynamicPseudo == SELECTION;
         if ((context.elementStyle || m_mode == Mode::CollectingRules) && dynamicPseudo != NOPSEUDO
             && !nextContext.hasSelectionPseudo
@@ -482,8 +496,8 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
         } else if (context.hasScrollbarPseudo) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
-            // (since there are no elements involved).
-            return checkScrollbarPseudoClass(context, &element->document(), selector);
+            // (since there are no elements involved except with window-inactive).
+            return checkScrollbarPseudoClass(context, selector);
         }
 
         // Normal element pseudo class checking.
@@ -810,83 +824,41 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
     return true;
 }
 
-bool SelectorChecker::checkScrollbarPseudoClass(const SelectorCheckingContext& context, Document* document, const CSSSelector* selector) const
+bool SelectorChecker::checkScrollbarPseudoClass(const SelectorCheckingContext& context, const CSSSelector* selector) const
 {
     ASSERT(selector->m_match == CSSSelector::PseudoClass);
 
-    RenderScrollbar* scrollbar = context.scrollbar;
-    ScrollbarPart part = context.scrollbarPart;
-
-    // FIXME: This is a temporary hack for resizers and scrollbar corners. Eventually :window-inactive should become a real
-    // pseudo class and just apply to everything.
-    if (selector->pseudoClassType() == CSSSelector::PseudoClassWindowInactive)
-        return !document->page()->focusController().isActive();
-
-    if (!scrollbar)
-        return false;
-
     switch (selector->pseudoClassType()) {
+    case CSSSelector::PseudoClassWindowInactive:
+        return isWindowInactive(context.element);
     case CSSSelector::PseudoClassEnabled:
-        return scrollbar->enabled();
+        return scrollbarMatchesEnabledPseudoClass(context);
     case CSSSelector::PseudoClassDisabled:
-        return !scrollbar->enabled();
+        return scrollbarMatchesDisabledPseudoClass(context);
     case CSSSelector::PseudoClassHover:
-        {
-            ScrollbarPart hoveredPart = scrollbar->hoveredPart();
-            if (part == ScrollbarBGPart)
-                return hoveredPart != NoPart;
-            if (part == TrackBGPart)
-                return hoveredPart == BackTrackPart || hoveredPart == ForwardTrackPart || hoveredPart == ThumbPart;
-            return part == hoveredPart;
-        }
+        return scrollbarMatchesHoverPseudoClass(context);
     case CSSSelector::PseudoClassActive:
-        {
-            ScrollbarPart pressedPart = scrollbar->pressedPart();
-            if (part == ScrollbarBGPart)
-                return pressedPart != NoPart;
-            if (part == TrackBGPart)
-                return pressedPart == BackTrackPart || pressedPart == ForwardTrackPart || pressedPart == ThumbPart;
-            return part == pressedPart;
-        }
+        return scrollbarMatchesActivePseudoClass(context);
     case CSSSelector::PseudoClassHorizontal:
-        return scrollbar->orientation() == HorizontalScrollbar;
+        return scrollbarMatchesHorizontalPseudoClass(context);
     case CSSSelector::PseudoClassVertical:
-        return scrollbar->orientation() == VerticalScrollbar;
+        return scrollbarMatchesVerticalPseudoClass(context);
     case CSSSelector::PseudoClassDecrement:
-        return part == BackButtonStartPart || part == BackButtonEndPart || part == BackTrackPart;
+        return scrollbarMatchesDecrementPseudoClass(context);
     case CSSSelector::PseudoClassIncrement:
-        return part == ForwardButtonStartPart || part == ForwardButtonEndPart || part == ForwardTrackPart;
+        return scrollbarMatchesIncrementPseudoClass(context);
     case CSSSelector::PseudoClassStart:
-        return part == BackButtonStartPart || part == ForwardButtonStartPart || part == BackTrackPart;
+        return scrollbarMatchesStartPseudoClass(context);
     case CSSSelector::PseudoClassEnd:
-        return part == BackButtonEndPart || part == ForwardButtonEndPart || part == ForwardTrackPart;
+        return scrollbarMatchesEndPseudoClass(context);
     case CSSSelector::PseudoClassDoubleButton:
-        {
-            ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
-            if (part == BackButtonStartPart || part == ForwardButtonStartPart || part == BackTrackPart)
-                return buttonsPlacement == ScrollbarButtonsDoubleStart || buttonsPlacement == ScrollbarButtonsDoubleBoth;
-            if (part == BackButtonEndPart || part == ForwardButtonEndPart || part == ForwardTrackPart)
-                return buttonsPlacement == ScrollbarButtonsDoubleEnd || buttonsPlacement == ScrollbarButtonsDoubleBoth;
-            return false;
-        }
+        return scrollbarMatchesDoubleButtonPseudoClass(context);
     case CSSSelector::PseudoClassSingleButton:
-        {
-            ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
-            if (part == BackButtonStartPart || part == ForwardButtonEndPart || part == BackTrackPart || part == ForwardTrackPart)
-                return buttonsPlacement == ScrollbarButtonsSingle;
-            return false;
-        }
+        return scrollbarMatchesSingleButtonPseudoClass(context);
     case CSSSelector::PseudoClassNoButton:
-        {
-            ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
-            if (part == BackTrackPart)
-                return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleEnd;
-            if (part == ForwardTrackPart)
-                return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleStart;
-            return false;
-        }
+        return scrollbarMatchesNoButtonPseudoClass(context);
     case CSSSelector::PseudoClassCornerPresent:
-        return scrollbar->scrollableArea()->isScrollCornerVisible();
+        return scrollbarMatchesCornerPresentPseudoClass(context);
     default:
         return false;
     }

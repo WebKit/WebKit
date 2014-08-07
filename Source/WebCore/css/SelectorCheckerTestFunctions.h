@@ -31,6 +31,9 @@
 #include "HTMLAreaElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
+#include "RenderScrollbar.h"
+#include "ScrollableArea.h"
+#include "ScrollbarTheme.h"
 #include <wtf/Compiler.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -159,6 +162,123 @@ ALWAYS_INLINE bool matchesReadWritePseudoClass(const Element* element)
 ALWAYS_INLINE bool shouldAppearIndeterminate(const Element* element)
 {
     return element->shouldAppearIndeterminate();
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesEnabledPseudoClass(const ContextType& context)
+{
+    return context.scrollbar && context.scrollbar->enabled();
+}
+
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesDisabledPseudoClass(const ContextType& context)
+{
+    return context.scrollbar && !context.scrollbar->enabled();
+}
+
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesHoverPseudoClass(const ContextType& context)
+{
+    if (!context.scrollbar)
+        return false;
+    ScrollbarPart hoveredPart = context.scrollbar->hoveredPart();
+    if (context.scrollbarPart == ScrollbarBGPart)
+        return hoveredPart != NoPart;
+    if (context.scrollbarPart == TrackBGPart)
+        return hoveredPart == BackTrackPart || hoveredPart == ForwardTrackPart || hoveredPart == ThumbPart;
+    return context.scrollbarPart == hoveredPart;
+}
+
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesActivePseudoClass(const ContextType& context)
+{
+    if (!context.scrollbar)
+        return false;
+    ScrollbarPart pressedPart = context.scrollbar->pressedPart();
+    if (context.scrollbarPart == ScrollbarBGPart)
+        return pressedPart != NoPart;
+    if (context.scrollbarPart == TrackBGPart)
+        return pressedPart == BackTrackPart || pressedPart == ForwardTrackPart || pressedPart == ThumbPart;
+    return context.scrollbarPart == pressedPart;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesHorizontalPseudoClass(const ContextType& context)
+{
+    return context.scrollbar && context.scrollbar->orientation() == HorizontalScrollbar;
+}
+
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesVerticalPseudoClass(const ContextType& context)
+{
+    return context.scrollbar && context.scrollbar->orientation() == VerticalScrollbar;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesDecrementPseudoClass(const ContextType& context)
+{
+    return context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == BackButtonEndPart || context.scrollbarPart == BackTrackPart;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesIncrementPseudoClass(const ContextType& context)
+{
+    return context.scrollbarPart == ForwardButtonStartPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == ForwardTrackPart;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesStartPseudoClass(const ContextType& context)
+{
+    return context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == ForwardButtonStartPart || context.scrollbarPart == BackTrackPart;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesEndPseudoClass(const ContextType& context)
+{
+    return context.scrollbarPart == BackButtonEndPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == ForwardTrackPart;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesDoubleButtonPseudoClass(const ContextType& context)
+{
+    if (!context.scrollbar)
+        return false;
+    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme()->buttonsPlacement();
+    if (context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == ForwardButtonStartPart || context.scrollbarPart == BackTrackPart)
+        return buttonsPlacement == ScrollbarButtonsDoubleStart || buttonsPlacement == ScrollbarButtonsDoubleBoth;
+    if (context.scrollbarPart == BackButtonEndPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == ForwardTrackPart)
+        return buttonsPlacement == ScrollbarButtonsDoubleEnd || buttonsPlacement == ScrollbarButtonsDoubleBoth;
+    return false;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesSingleButtonPseudoClass(const ContextType& context)
+{
+    if (!context.scrollbar)
+        return false;
+    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme()->buttonsPlacement();
+    if (context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == BackTrackPart || context.scrollbarPart == ForwardTrackPart)
+        return buttonsPlacement == ScrollbarButtonsSingle;
+    return false;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesNoButtonPseudoClass(const ContextType& context)
+{
+    if (!context.scrollbar)
+        return false;
+    ScrollbarButtonsPlacement buttonsPlacement = context.scrollbar->theme()->buttonsPlacement();
+    if (context.scrollbarPart == BackTrackPart)
+        return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleEnd;
+    if (context.scrollbarPart == ForwardTrackPart)
+        return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleStart;
+    return false;
+}
+    
+template <typename ContextType>
+ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const ContextType& context)
+{
+    return context.scrollbar && context.scrollbar->scrollableArea()->isScrollCornerVisible();
 }
 
 #if ENABLE(FULLSCREEN_API)

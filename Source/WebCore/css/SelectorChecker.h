@@ -58,11 +58,11 @@ public:
         SelectorCheckingContext(const CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType)
             : selector(selector)
             , element(element)
-            , scope(0)
+            , scope(nullptr)
             , visitedMatchType(visitedMatchType)
             , pseudoId(NOPSEUDO)
-            , elementStyle(0)
-            , scrollbar(0)
+            , elementStyle(nullptr)
+            , scrollbar(nullptr)
             , firstSelectorOfTheFragment(selector)
             , scrollbarPart(NoPart)
             , inFunctionalPseudoClass(false)
@@ -98,7 +98,7 @@ private:
     Match matchRecursively(const SelectorCheckingContext&, PseudoId&) const;
     bool checkOne(const SelectorCheckingContext&) const;
 
-    bool checkScrollbarPseudoClass(const SelectorCheckingContext&, Document*, const CSSSelector*) const;
+    bool checkScrollbarPseudoClass(const SelectorCheckingContext&, const CSSSelector*) const;
 
     bool m_strictParsing;
     bool m_documentIsHTML;

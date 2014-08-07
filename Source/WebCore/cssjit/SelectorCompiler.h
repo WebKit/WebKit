@@ -73,6 +73,8 @@ struct CheckingContext {
     SelectorChecker::Mode resolvingMode;
     RenderStyle* elementStyle;
     PseudoId pseudoId;
+    RenderScrollbar* scrollbar;
+    ScrollbarPart scrollbarPart;
 };
 
 enum class SelectorContext {

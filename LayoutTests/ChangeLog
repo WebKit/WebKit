@@ -1,3 +1,17 @@
+2014-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Compile scrollbar pseudoclass css selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=135242
+
+        Reviewed by Benjamin Poulain.
+
+        * platform/wk2/TestExpectations:
+        Don't run corner-resizer-window-inactive-expected in WK2 because testRunner.setWindowIsKey doesn't work with WK2.
+        * scrollbars/corner-resizer-window-inactive-expected.html: Added.
+        * scrollbars/corner-resizer-window-inactive.html: Added.
+        * scrollbars/scrollbar-selectors-expected.txt: Added.
+        * scrollbars/scrollbar-selectors.html: Added.
+
 2014-08-07  Zalan Bujtas  <zalan@apple.com>
 
         border-radius on html does not render properly.

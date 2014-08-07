@@ -213,6 +213,7 @@ fast/events/blur-focus-window-should-blur-focus-element.html
 fast/selectors/querySelector-window-inactive.html
 fast/selectors/selection-window-inactive.html
 fast/dom/Window/window-focus-self.html
+scrollbars/corner-resizer-window-inactive.html
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html

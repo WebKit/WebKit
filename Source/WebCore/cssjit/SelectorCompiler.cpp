@@ -157,12 +157,15 @@ struct SelectorFragment {
     unsigned tagNameNotMatchedBacktrackingStartWidthFromIndirectAdjacent;
     unsigned widthFromIndirectAdjacent;
 
+    FunctionType appendUnoptimizedPseudoClassWithContext(bool (*matcher)(const CheckingContext&));
+    
     const QualifiedName* tagName;
     const AtomicString* id;
     const AtomicString* langFilter;
     Vector<const AtomicStringImpl*, 32> classNames;
     HashSet<unsigned> pseudoClasses;
     Vector<JSC::FunctionPtr, 32> unoptimizedPseudoClasses;
+    Vector<JSC::FunctionPtr, 32> unoptimizedPseudoClassesWithContext;
     Vector<AttributeMatchingInfo, 32> attributes;
     Vector<std::pair<int, int>, 32> nthChildFilters;
     Vector<SelectorFragment> notFilters;
@@ -233,6 +236,7 @@ private:
     void generateElementMatching(Assembler::JumpList& matchingTagNameFailureCases, Assembler::JumpList& matchingPostTagNameFailureCases, const SelectorFragment&);
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
+    void generateContextFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -354,6 +358,52 @@ static inline bool shouldUseRenderStyleFromCheckingContext(const SelectorFragmen
     return fragment.relationToRightFragment == FragmentRelation::Rightmost && fragment.positionInRootFragments == FragmentPositionInRootFragments::Rightmost;
 }
 
+FunctionType SelectorFragment::appendUnoptimizedPseudoClassWithContext(bool (*matcher)(const CheckingContext&))
+{
+    unoptimizedPseudoClassesWithContext.append(JSC::FunctionPtr(matcher));
+    return FunctionType::SelectorCheckerWithCheckingContext;
+}
+
+static inline FunctionType addScrollbarPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment)
+{
+    switch (selector.pseudoClassType()) {
+    case CSSSelector::PseudoClassWindowInactive:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isWindowInactive));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassDisabled:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesDisabledPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassEnabled:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesEnabledPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassHorizontal:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesHorizontalPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassVertical:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesVerticalPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassDecrement:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesDecrementPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassIncrement:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesIncrementPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassStart:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesStartPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassEnd:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesEndPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassDoubleButton:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesDoubleButtonPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassSingleButton:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesSingleButtonPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassNoButton:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesNoButtonPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassCornerPresent:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesCornerPresentPseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassActive:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesActivePseudoClass<CheckingContext>);
+    case CSSSelector::PseudoClassHover:
+        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesHoverPseudoClass<CheckingContext>);
+    default:
+        return FunctionType::CannotMatchAnything;
+    }
+    return FunctionType::CannotMatchAnything;
+}
+
 static inline FunctionType addPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment, SelectorContext selectorContext, FragmentPositionInRootFragments positionInRootFragments)
 {
     CSSSelector::PseudoClassType type = selector.pseudoClassType();
@@ -431,6 +481,19 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 #endif
 
+    // These pseudo-classes only have meaning with scrollbars.
+    case CSSSelector::PseudoClassHorizontal:
+    case CSSSelector::PseudoClassVertical:
+    case CSSSelector::PseudoClassDecrement:
+    case CSSSelector::PseudoClassIncrement:
+    case CSSSelector::PseudoClassStart:
+    case CSSSelector::PseudoClassEnd:
+    case CSSSelector::PseudoClassDoubleButton:
+    case CSSSelector::PseudoClassSingleButton:
+    case CSSSelector::PseudoClassNoButton:
+    case CSSSelector::PseudoClassCornerPresent:
+        return FunctionType::CannotMatchAnything;
+
     // FIXME: Compile these pseudoclasses, too!
     case CSSSelector::PseudoClassEmpty:
     case CSSSelector::PseudoClassFirstOfType:
@@ -443,16 +506,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassDrag:
     case CSSSelector::PseudoClassFullPageMedia:
     case CSSSelector::PseudoClassScope:
-    case CSSSelector::PseudoClassCornerPresent:
-    case CSSSelector::PseudoClassDecrement:
-    case CSSSelector::PseudoClassIncrement:
-    case CSSSelector::PseudoClassHorizontal:
-    case CSSSelector::PseudoClassVertical:
-    case CSSSelector::PseudoClassStart:
-    case CSSSelector::PseudoClassEnd:
-    case CSSSelector::PseudoClassDoubleButton:
-    case CSSSelector::PseudoClassSingleButton:
-    case CSSSelector::PseudoClassNoButton:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
@@ -612,6 +665,11 @@ static bool pseudoClassOnlyMatchesLinksInQuirksMode(const CSSSelector& selector)
     return pseudoClassType == CSSSelector::PseudoClassHover || pseudoClassType == CSSSelector::PseudoClassActive;
 }
 
+static bool isScrollbarPseudoElement(CSSSelector::PseudoElementType type)
+{
+    return type >= CSSSelector::PseudoElementScrollbar && type <= CSSSelector::PseudoElementScrollbarTrackPiece;
+}
+
 static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments)
 {
     SelectorFragment fragment;
@@ -623,10 +681,11 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
         // A selector is invalid if something follows a pseudo-element.
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        // FIXME: Currently, CSS JIT doesn't support scrollbar and selection's exceptional cases.
-        // So all selectors following a pseudo-element is treated as invalid.
-        if (relation == CSSSelector::SubSelector && fragment.pseudoElementSelector)
-            return FunctionType::CannotCompile;
+        if (relation == CSSSelector::SubSelector
+            && fragment.pseudoElementSelector
+            && !isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType())) {
+            return FunctionType::CannotMatchAnything;
+        }
 
         switch (selector->m_match) {
         case CSSSelector::Tag:
@@ -653,8 +712,10 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)
                 subPosition = FragmentPositionInRootFragments::NotRightmost;
-
-            functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, selectorContext, subPosition));
+            if (fragment.pseudoElementSelector && isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType()))
+                functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, fragment));
+            else
+                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, selectorContext, subPosition));
             if (!pseudoClassOnlyMatchesLinksInQuirksMode(*selector))
                 fragment.onlyMatchesLinksInQuirksMode = false;
             if (functionType == FunctionType::CannotCompile || functionType == FunctionType::CannotMatchAnything)
@@ -678,9 +739,18 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             case CSSSelector::PseudoElementBefore:
             case CSSSelector::PseudoElementFirstLetter:
             case CSSSelector::PseudoElementFirstLine:
+            case CSSSelector::PseudoElementScrollbar:
+            case CSSSelector::PseudoElementScrollbarButton:
+            case CSSSelector::PseudoElementScrollbarCorner:
+            case CSSSelector::PseudoElementScrollbarThumb:
+            case CSSSelector::PseudoElementScrollbarTrack:
+            case CSSSelector::PseudoElementScrollbarTrackPiece:
                 fragment.pseudoElementSelector = selector;
                 break;
-            // FIXME: Support SCROLLBAR, RESIZER, SELECTION etc.
+            case CSSSelector::PseudoElementUnknown:
+                ASSERT_NOT_REACHED();
+                return FunctionType::CannotMatchAnything;
+            // FIXME: Support RESIZER, SELECTION etc.
             default:
                 return FunctionType::CannotCompile;
             }
@@ -1872,6 +1942,9 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
     for (unsigned i = 0; i < fragment.unoptimizedPseudoClasses.size(); ++i)
         generateElementFunctionCallTest(matchingPostTagNameFailureCases, fragment.unoptimizedPseudoClasses[i]);
 
+    for (unsigned i = 0; i < fragment.unoptimizedPseudoClassesWithContext.size(); ++i)
+        generateContextFunctionCallTest(matchingPostTagNameFailureCases, fragment.unoptimizedPseudoClassesWithContext[i]);
+
     generateElementDataMatching(matchingPostTagNameFailureCases, fragment);
 
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassActive))
@@ -2306,6 +2379,18 @@ void SelectorCodeGenerator::generateElementFunctionCallTest(Assembler::JumpList&
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(testFunction);
     functionCall.setOneArgument(elementAddress);
+    failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
+}
+    
+void SelectorCodeGenerator::generateContextFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr testFunction)
+{
+    Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegister();
+    loadCheckingContext(checkingContext);
+    m_registerAllocator.deallocateRegister(checkingContext);
+
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(testFunction);
+    functionCall.setOneArgument(checkingContext);
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 

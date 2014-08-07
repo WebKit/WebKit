@@ -297,8 +297,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 
     if (compiledSelectorChecker) {
         if (ruleData.compilationStatus() == SelectorCompilationStatus::SimpleSelectorChecker) {
-            ASSERT_WITH_MESSAGE(m_pseudoStyleRequest.pseudoId == NOPSEUDO, "When matching pseudo elements, we should never compile a selector checker without context. ElementRuleCollector::collectMatchingRulesForList() should filter out useless rules for pseudo elements.");
             SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
+            ASSERT_WITH_MESSAGE(!selectorChecker(&m_element) || m_pseudoStyleRequest.pseudoId == NOPSEUDO, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #if CSS_SELECTOR_JIT_PROFILING
             ruleData.compiledSelectorUsed();
 #endif
@@ -306,18 +306,17 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
         }
         ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
 
-        // FIXME: Currently a compiled selector doesn't support scrollbar / selection's exceptional case.
-        if (!m_pseudoStyleRequest.scrollbar) {
-            SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
-            SelectorCompiler::CheckingContext context;
-            context.elementStyle = m_style;
-            context.resolvingMode = m_mode;
-            context.pseudoId = m_pseudoStyleRequest.pseudoId;
+        SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
+        SelectorCompiler::CheckingContext context;
+        context.elementStyle = m_style;
+        context.resolvingMode = m_mode;
+        context.pseudoId = m_pseudoStyleRequest.pseudoId;
+        context.scrollbar = m_pseudoStyleRequest.scrollbar;
+        context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
 #if CSS_SELECTOR_JIT_PROFILING
-            ruleData.compiledSelectorUsed();
+        ruleData.compiledSelectorUsed();
 #endif
-            return selectorChecker(&m_element, &context);
-        }
+        return selectorChecker(&m_element, &context);
     }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 

@@ -1,3 +1,63 @@
+2014-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        Compile scrollbar pseudoclass css selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=135242
+
+        Reviewed by Benjamin Poulain.
+
+        Tests: scrollbars/corner-resizer-window-inactive.html
+               scrollbars/scrollbar-selectors.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        Changed assertion because there are pseudo-elements selectors that return CannotCompileAnything now, which
+        make SimpleSelectorCheckers.
+        Add scrollbar, scrollbarPart, and document to the CheckingContext and compile scrollbar pseudo-element selectors.
+        * css/SelectorChecker.cpp:
+        (WebCore::hasScrollbarPseudoElement):
+        Added.  Logic moved from matchRecursively to be easier to read and to add assertions.
+        context.scrollbar is always non-null when dynamicPseudo is SCROLLBAR_CORNER.
+        (WebCore::SelectorChecker::matchRecursively):
+        Moved logic to hasScrollbarPseudoElement.
+        (WebCore::SelectorChecker::checkOne):
+        checkScrollbarPseudoClass accesses the document through the element now.
+        (WebCore::SelectorChecker::checkScrollbarPseudoClass):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::scrollbarMatchesEnabledPseudoClass):
+        (WebCore::scrollbarMatchesDisabledPseudoClass):
+        (WebCore::scrollbarMatchesHoverPseudoClass):
+        (WebCore::scrollbarMatchesActivePseudoClass):
+        (WebCore::scrollbarMatchesHorizontalPseudoClass):
+        (WebCore::scrollbarMatchesVerticalPseudoClass):
+        (WebCore::scrollbarMatchesDecrementPseudoClass):
+        (WebCore::scrollbarMatchesIncrementPseudoClass):
+        (WebCore::scrollbarMatchesStartPseudoClass):
+        (WebCore::scrollbarMatchesEndPseudoClass):
+        (WebCore::scrollbarMatchesDoubleButtonPseudoClass):
+        (WebCore::scrollbarMatchesSingleButtonPseudoClass):
+        (WebCore::scrollbarMatchesNoButtonPseudoClass):
+        (WebCore::scrollbarMatchesCornerPresentPseudoClass):
+        Move scrollbar selector logic from SelectorChecker.cpp to SelectorCheckerTestFunctions.h
+        For window-inactive pseudo classes, we now access the document through the element instead of as a separate parameter.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::appendUnoptimizedPseudoClassWithContext):
+        (WebCore::SelectorCompiler::addScrollbarPseudoClassType):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::isScrollbarPseudoElement):
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        Call functions for unoptimized pseudo classes that require a context.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateContextFunctionCallTest):
+        Added.  Similar to generateElementFunctionCallTest, but the CheckingContext pointer is stored on the stack instead of a dedicated register.
+        * cssjit/SelectorCompiler.h:
+        Added scrollbar, scrollbarPart, and document to the CheckingContext.
+        (WebCore::SelectorCompiler::CheckingContext::document):
+        Added method to access the document in a way that is syntactically equal to SelectorCheckingContext.
+        This way, the template functions in SelectorCheckerTestFunctions.h can be compiled with both context types,
+        but the context types store the document differently.
+
 2014-08-07  Daniel Bates  <dabates@apple.com>
 
         Sometimes Gmail cannot load messages, particularly on refresh ("...the application ran into an unexpected error...")
