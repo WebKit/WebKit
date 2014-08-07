@@ -50,7 +50,6 @@ typedef struct EwkContextMenuItem Ewk_Context_Menu_Item;
 /**
  * \enum    Ewk_Context_Menu_Item_Type
  * @brief   Defines the types of the items for the context menu.
- * @info    Keep this in sync with WKContextMenuItemTypes.h
  */
 typedef enum {
     EWK_ACTION_TYPE,

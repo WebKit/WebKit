@@ -152,7 +152,7 @@ EAPI Eina_List *ewk_text_checker_spell_checking_available_languages_get(void);
  * Sets @a languages as the list of languages to use by default WebKit
  * implementation of spellchecker feature with Enchant library support.
  *
- * If @languages is @c NULL, the default language is used.
+ * If @a languages is @c NULL, the default language is used.
  * If the default language can not be determined then any available dictionary will be used.
  *
  * @note This function invalidates the previously set languages.

@@ -1,3 +1,20 @@
+2014-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Fix several warnings of doxygen
+        https://bugs.webkit.org/show_bug.cgi?id=135643
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_context_menu_item.h: Removed /info which is not doxygen keyword and unnecessary to the user.
+        * UIProcess/API/efl/ewk_cookie_manager.h: Fixed parameter name.
+        * UIProcess/API/efl/ewk_form_submission_request.h: Removed # from Eina_List because doxygen may not know the EFL structures.
+        * UIProcess/API/efl/ewk_page_group.h: Fixed to match with parameter name.
+        * UIProcess/API/efl/ewk_settings.h: Fixed wrong keyword and parameter name.
+        * UIProcess/API/efl/ewk_text_checker.h: Ditto.
+        * UIProcess/API/efl/ewk_view.h:
+        - Used escape string for the tag.
+        - Used @code, @endcode for media query example.
+
 2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of INPUT_SPEECH

@@ -97,13 +97,13 @@ typedef void (*Ewk_Cookie_Manager_Changes_Watch_Cb)(void *event_info);
 /**
  * Set the @a filename where non-session cookies are stored persistently using @a storage as the format to read/write the cookies.
  *
- * Cookies are initially read from @filename to create an initial set of cookies.
- * Then, non-session cookies will be written to @filename.
+ * Cookies are initially read from @a filename to create an initial set of cookies.
+ * Then, non-session cookies will be written to @a filename.
  *
  * By default, @a manager doesn't store the cookies persistenly, so you need to call this
  * method to keep cookies saved across sessions.
  *
- * @param cookie_manager The cookie manager to update.
+ * @param manager Ewk_Cookie_Manager object to update.
  * @param filename the filename to read to/write from.
  * @param storage the type of storage.
  */
@@ -114,7 +114,7 @@ EAPI void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager *manager,
  *
  * By default, only cookies set by the main document loaded are accepted.
  *
- * @param manager The cookie manager to update.
+ * @param manager Ewk_Cookie_Manager object to update.
  * @param policy a #Ewk_Cookie_Accept_Policy
  */
 
@@ -125,7 +125,7 @@ EAPI void ewk_cookie_manager_accept_policy_set(Ewk_Cookie_Manager *manager, Ewk_
  *
  * By default, only cookies set by the main document loaded are accepted.
  *
- * @param manager The cookie manager to query.
+ * @param manager Ewk_Cookie_Manager object to query.
  * @param callback The function to call when the policy is received.
  * @param data User data (may be @c NULL).
  */
@@ -134,7 +134,7 @@ EAPI void ewk_cookie_manager_accept_policy_async_get(const Ewk_Cookie_Manager *m
 /**
  * Asynchronously get the list of host names for which @a manager contains cookies.
  *
- * @param manager The cookie manager to query.
+ * @param manager Ewk_Cookie_Manager object to query.
  * @param callback The function to call when the host names have been received.
  * @param data User data (may be @c NULL).
  */
@@ -143,7 +143,7 @@ EAPI void ewk_cookie_manager_hostnames_with_cookies_async_get(const Ewk_Cookie_M
 /**
  * Remove all cookies of @a manager for the given @a hostname.
  *
- * @param manager The cookie manager to update.
+ * @param manager Ewk_Cookie_Manager object to update.
  * @param hostname A host name.
  */
 EAPI void ewk_cookie_manager_hostname_cookies_clear(Ewk_Cookie_Manager *manager, const char *hostname);
@@ -153,7 +153,7 @@ EAPI void ewk_cookie_manager_hostname_cookies_clear(Ewk_Cookie_Manager *manager,
  *
  * Pass @c NULL as value for @a callback to stop watching for changes.
  *
- * @param manager The cookie manager to watch.
+ * @param manager Ewk_Cookie_Manager object to watch.
  * @param callback function that will be called every time cookies are added, removed or modified.
  * @param data User data (may be @c NULL).
  */
@@ -162,7 +162,7 @@ EAPI void ewk_cookie_manager_changes_watch(Ewk_Cookie_Manager *manager, Ewk_Cook
 /**
  * Delete all cookies of @a manager.
  *
- * @param manager The cookie manager to update.
+ * @param manager Ewk_Cookie_Manager object to update.
  */
 EAPI void ewk_cookie_manager_cookies_clear(Ewk_Cookie_Manager *manager);
 

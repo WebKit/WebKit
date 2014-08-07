@@ -124,7 +124,7 @@ EAPI Eina_Bool ewk_settings_loads_images_automatically_get(const Ewk_Settings *s
  * @param enable @c EINA_TRUE to enable developer extensions
  *               @c EINA_FALSE to disable
  *
- * @return @c EINA_TRUE on success or @EINA_FALSE on failure
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_settings_developer_extras_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
 
@@ -149,7 +149,7 @@ EAPI Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings *set
  * @param enable @c EINA_TRUE to enable file access permission
  *               @c EINA_FALSE to disable
  *
- * @return @c EINA_TRUE on success or @EINA_FALSE on failure
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings *settings, Eina_Bool enable);
 
@@ -271,8 +271,7 @@ EAPI const char *ewk_settings_default_text_encoding_name_get(const Ewk_Settings 
  * By default, preferred minimum contents width is equal to @c 980.
  *
  * @param settings settings object to set the encoding detector
- * @param enable @c EINA_TRUE to enable the encoding detector,
- *        @c EINA_FALSE to disable
+ * @param width the preferred minimum contents width
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
@@ -494,7 +493,7 @@ EAPI Eina_Bool ewk_settings_web_security_enabled_get(const Ewk_Settings *setting
  * Changes spatial navigation state.
  *
  * @param settings settings object to enable/disable spatial navigation
- * @param enabled @c EINA_TRUE to enable spatial navigation
+ * @param enable @c EINA_TRUE to enable spatial navigation
  *                @c EINA_FALSE to disable spatial navigation
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure

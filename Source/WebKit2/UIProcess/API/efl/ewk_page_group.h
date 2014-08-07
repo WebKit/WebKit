@@ -70,7 +70,7 @@ EAPI Ewk_Settings *ewk_page_group_settings_get(const Ewk_Page_Group *page_group)
  *
  * @param page_group ewk_page_gorup object to add the user style sheet
  * @param source the user style sheet
- * @param url baseURL
+ * @param base_url base url
  * @param white_list url list to allow adding the user style sheet
  * @param black_list url list to disallow adding the user style sheet
  * @param main_frame_only a state to apply the user style sheet only to the mainframe

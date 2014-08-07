@@ -118,7 +118,7 @@ struct Ewk_View_Smart_Class {
     Eina_Bool (*context_menu_hide)(Ewk_View_Smart_Data *sd);
 
     /**
-     * @brief smart method to notify that <select> tag is pressed.
+     * @brief smart method to notify that \<select\> tag is pressed.
      *
      * Application should implement this method to support select tag.
      *
@@ -268,7 +268,6 @@ struct Ewk_CSS_Size {
 /**
  * Enum values used to specify search options.
  * @brief   Provides option to find text
- * @info    Keep this in sync with WKFindOptions.h
  */
 enum Ewk_Find_Options {
     EWK_FIND_OPTIONS_NONE, /**< no search flags, this means a case sensitive, no wrap, forward only search. */
@@ -564,7 +563,7 @@ EAPI Eina_Bool ewk_view_html_string_load(Evas_Object *o, const char *html, const
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool ewk_view_scale_set(Evas_Object *o, double scaleFactor, int x, int y);
+EAPI Eina_Bool ewk_view_scale_set(Evas_Object *o, double scale_factor, int cx, int cy);
 
 /**
  * Queries the current scale factor of the page.
@@ -620,6 +619,8 @@ EAPI double ewk_view_page_zoom_get(const Evas_Object *o);
  * using a device pixel ratio of 2.0 it can be done by loading an image of say 100x100
  * pixels but showing it at half the size.
  *
+ * @code
+ *
  * @media (-webkit-min-device-pixel-ratio: 1.5) {
  *     .icon {
  *         width: 50px;
@@ -627,6 +628,8 @@ EAPI double ewk_view_page_zoom_get(const Evas_Object *o);
  *         url: "/images/icon@2x.png"; // This is actually a 100x100 image
  *     }
  * }
+ *
+ * @endcode
  *
  * If the above is used on a device with device pixel ratio of 1.5, it will be scaled
  * down but still provide a better looking image.
