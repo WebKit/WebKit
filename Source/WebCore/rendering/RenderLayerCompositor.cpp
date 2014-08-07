@@ -3424,6 +3424,20 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     RenderLayer* layer = m_renderView.layer();
     if (RenderLayerBacking* backing = layer ? layer->backing() : 0)
         backing->updateDrawsContent();
+
+    // The document-relative page overlay layer (which is pinned to the main frame's layer tree)
+    // is moved between different RenderLayerCompositors' layer trees, and needs to be
+    // reattached whenever we swap in a new RenderLayerCompositor.
+    if (m_rootLayerAttachment == RootLayerUnattached)
+        return;
+
+    Frame& frame = m_renderView.frameView().frame();
+    Page* page = frame.page();
+    if (!page)
+        return;
+
+    if (GraphicsLayer* overlayLayer = page->chrome().client().documentOverlayLayerForFrame(frame))
+        m_rootContentLayer->addChild(overlayLayer);
 }
 
 // IFrames are special, because we hook compositing layers together across iframe boundaries
