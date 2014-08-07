@@ -151,14 +151,19 @@ void ScrollingStateTree::clear()
     if (rootStateNode())
         removeNodeAndAllDescendants(rootStateNode());
 
-    ASSERT(m_stateNodeMap.isEmpty());
     m_stateNodeMap.clear();
     m_orphanedSubframeNodes.clear();
 }
 
 PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
-    m_orphanedSubframeNodes.clear();
+    if (!m_orphanedSubframeNodes.isEmpty()) {
+        // If we still have orphaned subtrees, remove them from m_stateNodeMap since they will be deleted 
+        // when clearing m_orphanedSubframeNodes.
+        for (auto& orphanNode : m_orphanedSubframeNodes.values())
+            recursiveNodeWillBeRemoved(orphanNode.get(), SubframeNodeRemoval::Delete);
+        m_orphanedSubframeNodes.clear();
+    }
 
     // This function clones and resets the current state tree, but leaves the tree structure intact.
     OwnPtr<ScrollingStateTree> treeStateClone = ScrollingStateTree::create();

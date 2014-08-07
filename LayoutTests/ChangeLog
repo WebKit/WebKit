@@ -1,3 +1,23 @@
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
+        Merge r172112
+
+    2014-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Crash going back on a specific tumblr blog (under ScrollingStateTree::removeNodeAndAllDescendants)
+            https://bugs.webkit.org/show_bug.cgi?id=135629
+            <rdar://problem/17802174>
+
+            Reviewed by Tim Horton.
+            
+            Testcase with nesting of frames inside fixed inside frames, where a subframe disconnects
+            part of the scrolling tree.
+
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/orphaned-subtree-expected.txt: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/orphaned-subtree.html: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/leaf-frame.html: Added.
+            * platform/mac-wk2/tiled-drawing/scrolling/frames/resources/subframe-inside-fixed.html: Added.
+
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172028

@@ -1,3 +1,34 @@
+2014-08-07  Dana Burkart <dburkart@apple.com>
+
+        Merge r172112
+
+    2014-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Crash going back on a specific tumblr blog (under ScrollingStateTree::removeNodeAndAllDescendants)
+            https://bugs.webkit.org/show_bug.cgi?id=135629
+            <rdar://problem/17802174>
+
+            Reviewed by Tim Horton.
+            
+            In r170198 I added an "orphan scrolling nodes" code path that sets aside subtrees
+            of scrolling nodes into an m_orphanedSubframeNodes map, which keeps them alive until
+            they get reparented or destroyed. The nodes in that subtree remain in m_stateNodeMap,
+            which holds raw pointers to them.
+            
+            However, ScrollingStateTree::commit() can clear m_orphanedSubframeNodes, which is
+            sometimes non-empty at this point. When that happened, we would destroy nodes which
+            were still referenced by m_stateNodeMap, with the result that a later query for the
+            same nodeID would hand back a pointer to a deleted object.
+            
+            Fix by calling recursiveNodeWillBeRemoved() on nodes in the m_orphanedSubframeNodes
+            before clearing it, which removes them and all their descendants from the state node map.
+
+            Test: platform/mac-wk2/tiled-drawing/scrolling/frames/orphaned-subtree.html
+
+            * page/scrolling/ScrollingStateTree.cpp:
+            (WebCore::ScrollingStateTree::clear):
+            (WebCore::ScrollingStateTree::commit):
+
 2014-08-07  Dana Burkart  <dburkart@apple.com>
 
         Merge r172035. <rdar://problem/17869353>
