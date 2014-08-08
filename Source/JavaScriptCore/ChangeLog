@@ -1,3 +1,12 @@
+2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of SCRIPTED_SPEECH
+        https://bugs.webkit.org/show_bug.cgi?id=135729
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         SpeculateInt32Operand is sometimes used in a 64-bit context, which has undefined behavior

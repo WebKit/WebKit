@@ -1,3 +1,54 @@
+2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of SCRIPTED_SPEECH
+        https://bugs.webkit.org/show_bug.cgi?id=135729
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/speech/SpeechGrammar.cpp: Removed.
+        * Modules/speech/SpeechGrammar.h: Removed.
+        * Modules/speech/SpeechGrammar.idl: Removed.
+        * Modules/speech/SpeechGrammarList.cpp: Removed.
+        * Modules/speech/SpeechGrammarList.h: Removed.
+        * Modules/speech/SpeechGrammarList.idl: Removed.
+        * Modules/speech/SpeechRecognition.cpp: Removed.
+        * Modules/speech/SpeechRecognition.h: Removed.
+        * Modules/speech/SpeechRecognition.idl: Removed.
+        * Modules/speech/SpeechRecognitionAlternative.cpp: Removed.
+        * Modules/speech/SpeechRecognitionAlternative.h: Removed.
+        * Modules/speech/SpeechRecognitionAlternative.idl: Removed.
+        * Modules/speech/SpeechRecognitionClient.h: Removed.
+        * Modules/speech/SpeechRecognitionController.cpp: Removed.
+        * Modules/speech/SpeechRecognitionController.h: Removed.
+        * Modules/speech/SpeechRecognitionError.cpp: Removed.
+        * Modules/speech/SpeechRecognitionError.h: Removed.
+        * Modules/speech/SpeechRecognitionError.idl: Removed.
+        * Modules/speech/SpeechRecognitionEvent.cpp: Removed.
+        * Modules/speech/SpeechRecognitionEvent.h: Removed.
+        * Modules/speech/SpeechRecognitionEvent.idl: Removed.
+        * Modules/speech/SpeechRecognitionResult.cpp: Removed.
+        * Modules/speech/SpeechRecognitionResult.h: Removed.
+        * Modules/speech/SpeechRecognitionResult.idl: Removed.
+        * Modules/speech/SpeechRecognitionResultList.cpp: Removed.
+        * Modules/speech/SpeechRecognitionResultList.h: Removed.
+        * Modules/speech/SpeechRecognitionResultList.idl: Removed.
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setScriptedSpeechEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::scriptedSpeechEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechRecognitionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechRecognitionErrorEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechRecognitionEventEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechGrammarEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechGrammarListEnabled): Deleted.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Deleted.
+        * bindings/js/JSDictionary.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+
 2014-08-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

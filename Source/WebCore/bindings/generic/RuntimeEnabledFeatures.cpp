@@ -60,9 +60,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #else
     , m_isPluginReplacementEnabled(false)
 #endif
-#if ENABLE(SCRIPTED_SPEECH)
-    , m_isScriptedSpeechEnabled(false)
-#endif
 #if ENABLE(MEDIA_STREAM)
     , m_isMediaStreamEnabled(true)
     , m_isPeerConnectionEnabled(true)

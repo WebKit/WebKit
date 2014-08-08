@@ -1,5 +1,14 @@
 2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
 
+        Get rid of SCRIPTED_SPEECH
+        https://bugs.webkit.org/show_bug.cgi?id=135729
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/FeatureDefines.h:
+
+2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
+
         Get rid of INPUT_SPEECH
         https://bugs.webkit.org/show_bug.cgi?id=135672
 
