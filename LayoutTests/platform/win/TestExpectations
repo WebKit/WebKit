@@ -1149,12 +1149,6 @@ webkit.org/b/29359 fast/forms/week [ Pass Failure ]
 # ENABLE_GAMEPAD not enabled.
 gamepad/
 
-# Speech input is not yet enabled.
-fast/speech
-
-# Speech JavaScript API is not yet enabled.
-fast/events/constructors/speech-recognition-event-constructor.html
-
 # Media Stream API is not yet enabled.
 fast/mediastream
 fast/events/constructors/media-stream-event-constructor.html

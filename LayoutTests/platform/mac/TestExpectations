@@ -173,12 +173,6 @@ gamepad/
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 http/tests/security/contentTypeOptions
 
-# Speech input is not yet enabled.
-fast/speech
-
-# Speech JavaScript API is not yet enabled.
-fast/events/constructors/speech-recognition-event-constructor.html
-
 # Media Stream API is not yet enabled.
 fast/mediastream
 fast/events/constructors/media-stream-event-constructor.html

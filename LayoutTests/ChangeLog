@@ -1,3 +1,39 @@
+2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Get rid of SCRIPTED_SPEECH
+        https://bugs.webkit.org/show_bug.cgi?id=135729
+
+        Reviewed by Brent Fulgham.
+
+        * fast/events/constructors/speech-recognition-error-constructor-expected.txt: Removed.
+        * fast/events/constructors/speech-recognition-error-constructor.html: Removed.
+        * fast/events/constructors/speech-recognition-event-constructor-expected.txt: Removed.
+        * fast/events/constructors/speech-recognition-event-constructor.html: Removed.
+        * fast/speech/scripted/basics-expected.txt: Removed.
+        * fast/speech/scripted/basics.html: Removed.
+        * fast/speech/scripted/navigate-away-expected.txt: Removed.
+        * fast/speech/scripted/navigate-away-iframe-expected.txt: Removed.
+        * fast/speech/scripted/navigate-away-iframe.html: Removed.
+        * fast/speech/scripted/navigate-away.html: Removed.
+        * fast/speech/scripted/speechgrammar-basics-expected.txt: Removed.
+        * fast/speech/scripted/speechgrammar-basics.html: Removed.
+        * fast/speech/scripted/speechrecognition-basics-expected.txt: Removed.
+        * fast/speech/scripted/speechrecognition-basics.html: Removed.
+        * fast/speech/scripted/speechrecognition-errors-expected.txt: Removed.
+        * fast/speech/scripted/speechrecognition-errors.html: Removed.
+        * fast/speech/scripted/speechrecognitionerror-basics-expected.txt: Removed.
+        * fast/speech/scripted/speechrecognitionerror-basics.html: Removed.
+        * fast/speech/scripted/start-exception-expected.txt: Removed.
+        * fast/speech/scripted/start-exception.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/speech/speech-bidi-rendering-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/speech/speech-bidi-rendering-expected.png: Removed.
+        * platform/mac/fast/speech/speech-bidi-rendering-expected.txt: Removed.
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2014-08-07  Beth Dakin  <bdakin@apple.com>
 
         Fixed backgrounds don't paint in blurred inset areas

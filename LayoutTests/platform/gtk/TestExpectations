@@ -169,10 +169,6 @@ webkit.org/b/98936 fast/forms/week [ Skip ]
 # ENABLE_GAMEPAD not enabled.
 webkit.org/b/98937 gamepad [ Skip ]
 
-# Speech input is not yet enabled.
-webkit.org/b/98938 fast/speech [ Skip ]
-webkit.org/b/98938 fast/events/constructors/speech-recognition-event-constructor.html [ Skip ]
-
 # Requires INDIE_UI support
 webkit.org/b/111446 indieui [ Skip ]
 
@@ -1190,16 +1186,6 @@ webkit.org/b/63706 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drag-list-item.html [ Failure ]
-
-# WebKit2 needs layoutTestController.addMockSpeechInputResult
-webkit.org/b/39485 fast/speech/input-onspeechchange-event.html [ Skip ]
-webkit.org/b/39485 fast/speech/input-ontextinput-event.html [ Skip ]
-webkit.org/b/39485 fast/speech/input-readonly-and-disabled.html [ Skip ]
-webkit.org/b/39485 fast/speech/input-text-language-tag.html [ Skip ]
-webkit.org/b/39485 fast/speech/input-text-speechbutton.html [ Skip ]
-webkit.org/b/39485 fast/speech/speech-button-ignore-generated-events.html [ Skip ]
-webkit.org/b/39485 fast/speech/speech-input-result-list-not-enough-arguments.html [ Skip ]
-webkit.org/b/39485 fast/speech/speech-input-scripting.html [ Skip ]
 
 # WebKit2 needs layoutTestController.setEditingBehaviour and other issues.
 webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
