@@ -33,6 +33,7 @@ use webkitdirs;
 my $showHelp = 0;
 my $llvm = 0;
 my $wksi = 0;
+my $clean = 0;
 my $llvmIncludePackage = "";
 my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
@@ -49,6 +50,7 @@ Usage: $programName [options]
   --help                        Show this help message
   --[no-]llvm                   Toggle copying LLVM drops (default: $llvm)
   --[no-]wksi                   Toggle copying WebKitSystemInterface drops (default: $wksi)
+  --clean                       Clean the libraries (default: $clean)
   --use-llvm-includes=<path>    Get the LLVM inludes package from <path>
   --use-llvm-libraries=<path>   Get the LLVM libraries package from <path>
   --[no-]use-full-lib-paths     Toggle using full library paths
@@ -64,6 +66,7 @@ GetOptions(
     'help' => \$showHelp,
     'llvm!' => \$llvm,
     'wksi!' => \$wksi,
+    'clean' => \$clean,
     'use-llvm-includes=s' => \$llvmIncludePackage,
     'use-llvm-libraries=s' => \$llvmLibraryPackage,
     'use-full-lib-paths!' => \$useFullLibPaths,
@@ -302,3 +305,12 @@ if ($llvm) {
     }
 }
 
+if ($clean) {
+    print "Cleaning.\n";    
+    (system("rm", "-rf", "$productDir/usr/local/include/WebKitSystemInterface.h") == 0) or die;
+    (system("rm", "-rf", "$productDir$llvmPrefix") == 0) or die;
+    unlink glob "$productDir/libWebKitSystemInterface*" or die if glob "$productDir/libWebKitSystemInterface*";
+    unlink glob "$productDir/usr/local/lib/libWebKitSystemInterface*" or die if glob "$productDir/usr/local/lib/libWebKitSystemInterface*";
+    unlink glob "$productDir/libLLVM*" or die if glob "$productDir/libLLVM*";
+    unlink glob "$productDir/libLTO*" or die if glob "$productDir/libLTO*";
+}

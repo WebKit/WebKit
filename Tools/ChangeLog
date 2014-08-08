@@ -1,5 +1,17 @@
 2014-08-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        make clean does not work in OpenSource, fails in WebKitLibraries
+        https://bugs.webkit.org/show_bug.cgi?id=135734
+
+        Reviewed by David Kilzer.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        Add a --clean switch that removes possible WebKitSystemInterface
+        and LLVM libraries and headers that may have been copied to the
+        product directory.
+
+2014-08-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         commit-log-message has extra blank line at the top of pre-populated message
         https://bugs.webkit.org/show_bug.cgi?id=135744
 

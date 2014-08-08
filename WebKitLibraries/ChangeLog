@@ -1,3 +1,14 @@
+2014-08-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        make clean does not work in OpenSource, fails in WebKitLibraries
+        https://bugs.webkit.org/show_bug.cgi?id=135734
+
+        Reviewed by David Kilzer.
+
+        * Makefile:
+        Add a "clean" target that runs copy-webkitlibraries-to-product-dir
+        with the new --clean switch.
+
 2014-08-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a flag for the CSS Selectors level 4 implementation
