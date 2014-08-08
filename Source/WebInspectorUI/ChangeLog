@@ -1,3 +1,33 @@
+2014-08-07  Brian J. Burg  <burg@cs.washington.edu>
+
+        REGRESSION(r172094): timeline views are blank after reloading in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=135742
+
+        Reviewed by Timothy Hatcher.
+
+        Address various bugs that cause the wrong timeline content views to appear when
+        starting a recording by reloading the inspected page. Fix other small oversights
+        that were encountered in the sidebar-based view state restoration code.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.saveIdentityToCookie): Add a dummy implementation.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementMatchesCookie):
+        This code erroneously matches any tree element whose represented object's
+        saveIdentityToCookie function produces an empty cookie.
+
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._showTimelineView): Add an assertion
+        that will find mismatches between represented objects of the TimelineContentView
+        and TimelineViews.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.restoreStateFromCookie): Don't call
+        the superclass's implementation, since we do not want to perform a relaxed match
+        against any of our tree elements. The only thing that can be restored across reopen
+        is a selected timeline tree element, which is already handled by this override.
+
 2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix accidental always true comparison

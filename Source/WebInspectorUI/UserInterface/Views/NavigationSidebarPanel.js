@@ -698,7 +698,8 @@ WebInspector.NavigationSidebarPanel.prototype = {
             if (representedObject.saveIdentityToCookie)
                 representedObject.saveIdentityToCookie(candidateObjectCookie);
 
-            return Object.keys(candidateObjectCookie).every(function valuesMatchForKey(key) {
+            var candidateCookieKeys = Object.keys(candidateObjectCookie);
+            return candidateCookieKeys.length && candidateObjectCookie.every(function valuesMatchForKey(key) {
                 return candidateObjectCookie[key] === cookie[key];
             });
         }

@@ -275,6 +275,7 @@ WebInspector.TimelineContentView.prototype = {
     _showTimelineView: function(timelineView)
     {
         console.assert(timelineView instanceof WebInspector.TimelineView);
+        console.assert(timelineView.representedObject === this._recording || this._recording.timelines.has(timelineView.representedObject.type));
 
         // If the content view is shown and then hidden, we must reattach the content tree outline and timeline view.
         if (timelineView.visible && timelineView === this._currentTimelineView)

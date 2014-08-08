@@ -337,12 +337,13 @@ WebInspector.TimelineSidebarPanel.prototype = {
         this._restoredShowingTimelineContentView = cookie[WebInspector.TimelineSidebarPanel.ShowingTimelineContentViewCookieKey];
 
         var selectedTimelineViewIdentifier = cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey];
-        if (selectedTimelineViewIdentifier === WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue)
+        if (!selectedTimelineViewIdentifier || selectedTimelineViewIdentifier === WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue)
             this.showTimelineOverview();
         else
             this.showTimelineViewForType(selectedTimelineViewIdentifier);
 
-        WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie.call(this, cookie, relaxedMatchDelay);
+        // Don't call NavigationSidebarPanel.restoreStateFromCookie, because it tries to match based
+        // on type only as a last resort. This would cause the first recording to be reselected on reload.
     },
 
     // Private
