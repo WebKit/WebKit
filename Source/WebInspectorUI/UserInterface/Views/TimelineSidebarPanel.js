@@ -363,6 +363,8 @@ WebInspector.TimelineSidebarPanel.prototype = {
             this._timelineTreeElementMap.get(currentTimelineView.representedObject.type).select(true, wasSelectedByUser, shouldSuppressOnSelect, true);
         } else if (this._timelinesTreeOutline.selectedTreeElement)
             this._timelinesTreeOutline.selectedTreeElement.deselect();
+
+        this.updateFilter();
     },
 
     _timelinesTreeElementSelected: function(treeElement, selectedByUser)
