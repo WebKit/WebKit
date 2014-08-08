@@ -41,6 +41,7 @@ body.mac-platform.legacy .filter-bar {
     -webkit-flex: 1;
 
     margin: 1px 6px;
+    padding-top: 0;
 
     outline: none;
 
@@ -73,8 +74,8 @@ body.mac-platform.legacy .filter-bar > input[type="search"] {
     width: 13px;
     height: 13px;
 
-    margin-left: 1px;
-    margin-right: 3px;
+    margin-left: 6px;
+    margin-right: 6px;
 
     vertical-align: bottom;
 
