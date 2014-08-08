@@ -302,6 +302,12 @@ bool InspectorFrontendHost::isUnderTest()
     return m_client && m_client->isUnderTest();
 }
 
+void InspectorFrontendHost::unbufferedLog(const String& message)
+{
+    // This is used only for debugging inspector tests.
+    WTFLogAlways("InspectorTest: %s", message.utf8().data());
+}
+
 void InspectorFrontendHost::beep()
 {
     systemBeep();

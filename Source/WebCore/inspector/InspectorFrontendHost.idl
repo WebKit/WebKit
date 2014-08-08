@@ -64,6 +64,7 @@
     [Custom] void showContextMenu(MouseEvent event, any items);
     void dispatchEventAsContextMenuEvent(Event event);
     void sendMessageToBackend(DOMString message);
+    void unbufferedLog(DOMString message);
 
     [Custom] void recordActionTaken(unsigned long actionCode);
     [Custom] void recordPanelShown(unsigned long panelCode);
