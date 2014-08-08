@@ -1,3 +1,14 @@
+2014-08-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception opening Web Inspector - TypeError: undefined is not a function - candidateObjectCookie.every
+        https://bugs.webkit.org/show_bug.cgi?id=135762
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementMatchesCookie):
+        Fix a typo, the wrong object was being used.
+
 2014-08-07  Brian J. Burg  <burg@cs.washington.edu>
 
         REGRESSION(r172094): timeline views are blank after reloading in some situations
