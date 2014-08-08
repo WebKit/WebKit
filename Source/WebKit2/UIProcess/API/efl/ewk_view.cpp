@@ -26,7 +26,6 @@
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context_private.h"
 #include "ewk_page_group_private.h"
-#include "ewk_private.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKAPICast.h>
 #include <WebKit/WKData.h>

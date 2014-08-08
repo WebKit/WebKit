@@ -1,3 +1,19 @@
+2014-08-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Remove unnecessary ewk_private.h includes
+        https://bugs.webkit.org/show_bug.cgi?id=135753
+
+        Reviewed by Gyuyoung Kim.
+
+        Neither the below file uses the functionality from ewk_private.h.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        * UIProcess/API/efl/ewk_view.cpp:
+
 2014-08-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not use GtkWindow:resize-grip-visible with recent GTK+ versions

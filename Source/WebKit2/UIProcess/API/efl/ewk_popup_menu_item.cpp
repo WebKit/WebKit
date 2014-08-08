@@ -28,7 +28,6 @@
 
 #include "WKPopupItem.h"
 #include "ewk_popup_menu_item_private.h"
-#include "ewk_private.h"
 
 EwkPopupMenuItem::EwkPopupMenuItem(WKPopupItemRef item)
     : m_wkItem(item)

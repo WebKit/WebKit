@@ -28,7 +28,6 @@
 
 #include "ewk_context_menu_item_private.h"
 #include "ewk_context_menu_private.h"
-#include "ewk_private.h"
 #include <WebKit/WKContextMenuItemTypes.h>
 #include <wtf/text/CString.h>
 

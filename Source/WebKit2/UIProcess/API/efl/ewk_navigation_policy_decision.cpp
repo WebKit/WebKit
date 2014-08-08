@@ -27,7 +27,6 @@
 #include "ewk_navigation_policy_decision.h"
 
 #include "ewk_navigation_policy_decision_private.h"
-#include "ewk_private.h"
 #include "ewk_url_request_private.h"
 
 using namespace WebKit;
