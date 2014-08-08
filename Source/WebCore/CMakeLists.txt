@@ -1,5 +1,6 @@
 set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/gamepad"
@@ -30,6 +31,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/crypto"
     "${WEBCORE_DIR}/crypto/keys"
+    "${WEBCORE_DIR}/crypto/parameters"
     "${WEBCORE_DIR}/css"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"
@@ -127,6 +129,7 @@ set(WebCore_INCLUDE_DIRECTORIES
 )
 
 set(WebCore_IDL_INCLUDES
+    Modules/airplay
     Modules/battery
     Modules/encryptedmedia
     Modules/gamepad
@@ -163,6 +166,8 @@ set(WebCore_IDL_INCLUDES
 )
 
 set(WebCore_IDL_FILES
+    Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
+
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
 
@@ -197,6 +202,8 @@ set(WebCore_IDL_FILES
     Modules/indexeddb/IDBTransaction.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
+
+    Modules/indieui/UIRequestEvent.idl
 
     Modules/mediacontrols/MediaControlsHost.idl
 
@@ -783,6 +790,8 @@ set(WebCore_INSPECTOR_DOMAINS
 )
 
 set(WebCore_SOURCES
+    Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
+
     Modules/battery/BatteryController.cpp
     Modules/battery/BatteryManager.cpp
     Modules/battery/BatteryStatus.cpp
@@ -2084,7 +2093,6 @@ set(WebCore_SOURCES
     platform/graphics/Image.cpp
     platform/graphics/ImageBuffer.cpp
     platform/graphics/ImageOrientation.cpp
-    platform/graphics/ImageSource.cpp
     platform/graphics/IntPoint.cpp
     platform/graphics/IntRect.cpp
     platform/graphics/IntSize.cpp
@@ -2158,22 +2166,6 @@ set(WebCore_SOURCES
     platform/graphics/transforms/TransformState.cpp
     platform/graphics/transforms/TransformationMatrix.cpp
     platform/graphics/transforms/TranslateTransformOperation.cpp
-
-    platform/image-decoders/ImageDecoder.cpp
-
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageReader.cpp
-
-    platform/image-decoders/gif/GIFImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageReader.cpp
-
-    platform/image-decoders/ico/ICOImageDecoder.cpp
-
-    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-
-    platform/image-decoders/png/PNGImageDecoder.cpp
-
-    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/leveldb/LevelDBDatabase.cpp
     platform/leveldb/LevelDBTransaction.cpp

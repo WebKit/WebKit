@@ -1,3 +1,22 @@
+2014-08-08  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards using CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=135662
+
+        Reviewed by Laszlo Gombos.
+
+        * CMakeLists.txt:
+        Mavericks has a flex version of "flex 2.5.35 Apple(flex-31)" which CMake doesn't like on Mac.
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+        Added features that are needed by the Mac port.
+        * Source/cmake/OptionsMac.cmake:
+        Enable CSS_IMAGE_SET based on FeatureDefines.h.
+        Disable the FTL with CMake for now.
+        * Source/cmake/OptionsEFL.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        Enable subpixel layout to not conflict with FeatureDefines.h
+
 2014-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Undo some erroneous changes to the Xcode scheme files from r172259.

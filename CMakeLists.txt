@@ -55,7 +55,9 @@ string(TOLOWER ${PORT} WEBKIT_PORT_DIR)
 # Find common packages (used by all ports)
 # -----------------------------------------------------------------------------
 find_package(BISON 2.3 REQUIRED)
-find_package(FLEX 2.5.34 REQUIRED)
+if (!APPLE)
+    find_package(FLEX 2.5.34 REQUIRED)
+endif ()
 
 # TODO Enforce version requirement for gperf
 find_package(Gperf 3.0.1 REQUIRED)

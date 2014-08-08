@@ -1,7 +1,11 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/mac"
+    "${WEBCORE_DIR}/bridge/objc"
+    "${WEBCORE_DIR}/loader/archive/cf"
+    "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/page/cocoa"
     "${WEBCORE_DIR}/page/mac"
+    "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/cocoa"
     "${WEBCORE_DIR}/platform/graphics/avfoundation"
     "${WEBCORE_DIR}/platform/graphics/avfoundation/cf"
@@ -15,6 +19,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/cocoa"
     "${WEBCORE_DIR}/platform/network/cf"
     "${WEBCORE_DIR}/platform/network/mac"
+    "${WEBCORE_DIR}/platform/text/cf"
+    "${WEBCORE_DIR}/platform/text/mac"
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/plugins/mac"
 
@@ -27,6 +33,12 @@ list(APPEND WebCore_SOURCES
     accessibility/mac/AccessibilityObjectMac.mm
     accessibility/mac/WebAccessibilityObjectWrapperBase.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+
+    loader/archive/cf/LegacyWebArchive.cpp
+    loader/archive/cf/LegacyWebArchiveMac.mm
+
+    loader/cf/ResourceLoaderCFNet.cpp
+    loader/cf/SubresourceLoaderCF.cpp
 
     page/cocoa/UserAgent.mm
 
@@ -47,11 +59,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
-
-    platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp
-    platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp
-    platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.cpp
-    platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp
 
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
@@ -83,16 +90,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/mac/WebTiledBackingLayer.mm
 
     platform/graphics/opentype/OpenTypeMathData.cpp
-    platform/graphics/opentype/OpenTypeUtilities.cpp
-    platform/graphics/opentype/OpenTypeVerticalData.cpp
-
-    platform/graphics/win/DIBPixelData.cpp
-    platform/graphics/win/GDIExtras.cpp
-    platform/graphics/win/IconWin.cpp
-    platform/graphics/win/ImageWin.cpp
-    platform/graphics/win/IntPointWin.cpp
-    platform/graphics/win/IntRectWin.cpp
-    platform/graphics/win/IntSizeWin.cpp
 
     platform/mac/BlockExceptions.mm
     platform/mac/ContentFilterMac.mm
@@ -195,6 +192,13 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/WebCoreResourceHandleAsDelegate.mm
     platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
     platform/network/mac/WebCoreURLResponse.mm
+
+    platform/text/cf/HyphenationCF.cpp
+
+    platform/text/mac/LocaleMac.mm
+    platform/text/mac/TextBoundaries.mm
+    platform/text/mac/TextBreakIteratorInternalICUMac.mm
+    platform/text/mac/TextCodecMac.cpp
 
     plugins/mac/PluginPackageMac.cpp
     plugins/mac/PluginViewMac.mm

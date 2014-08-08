@@ -1,3 +1,25 @@
+2014-08-08  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards using CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=135662
+
+        Reviewed by Laszlo Gombos.
+
+        * CMakeLists.txt:
+        Added necessary include directories and idls.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        Moved ImageSource.cpp and image-decoders to platform CMake files because they are not used on mac.
+        * PlatformMac.cmake:
+        Corrected some sources.
+        * config.h:
+        Added workaround for not using prefix headers with CMake.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        Compile fix to find ANGLE headers while using CMake.
+        * platform/graphics/FormatConverter.h:
+        * platform/mac/NSScrollerImpDetails.h:
+        Removed unnecessary config.h includes.
+
 2014-08-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Drop the required version of CMake down to 2.8.8

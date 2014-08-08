@@ -61,6 +61,11 @@
 
 #endif /* OS(WINDOWS) */
 
+// Using CMake with Unix makefiles does not use prefix headers.
+#if PLATFORM(MAC) && defined(BUILDING_WITH_CMAKE)
+#include "WebCorePrefix.h"
+#endif
+
 #ifdef __cplusplus
 
 // These undefs match up with defines in WebCorePrefix.h for Mac OS X.

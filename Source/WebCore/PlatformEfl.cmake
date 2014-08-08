@@ -101,6 +101,7 @@ list(APPEND WebCore_SOURCES
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp
 
+    platform/graphics/ImageSource.cpp
     platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/cairo/BitmapImageCairo.cpp
@@ -165,7 +166,23 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/coordinated/CoordinatedTile.cpp
     platform/graphics/texmap/coordinated/UpdateAtlas.cpp
 
+    platform/image-decoders/ImageDecoder.cpp
+
+    platform/image-decoders/bmp/BMPImageDecoder.cpp
+    platform/image-decoders/bmp/BMPImageReader.cpp
+
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
+
+    platform/image-decoders/gif/GIFImageDecoder.cpp
+    platform/image-decoders/gif/GIFImageReader.cpp
+
+    platform/image-decoders/ico/ICOImageDecoder.cpp
+
+    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
+
+    platform/image-decoders/png/PNGImageDecoder.cpp
+
+    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/linux/GamepadDeviceLinux.cpp
 
