@@ -138,7 +138,7 @@ VTTCue* VTTCueBox::getCue() const
     return &m_cue;
 }
 
-void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
+void VTTCueBox::applyCSSProperties(const IntSize&)
 {
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
 #if ENABLE(WEBVTT_REGIONS)
@@ -170,20 +170,18 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // the 'left' property must be set to left
     setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first), CSSPrimitiveValue::CSS_PERCENTAGE);
 
-    float multiplier = std::max(1.0f, m_fontSizeFromCaptionUserPrefs / DEFAULTCAPTIONFONTSIZE);
+    double multiplier = std::max(1.0, m_fontSizeFromCaptionUserPrefs / DEFAULTCAPTIONFONTSIZE);
     // the 'width' property must be set to width, and the 'height' property  must be set to height
     if (m_cue.vertical() == horizontalKeyword()) {
-        setInlineStyleProperty(CSSPropertyWidth, static_cast<double>(m_cue.getCSSSize() * multiplier), CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyWidth, std::min(m_cue.getCSSSize() * multiplier, 100.0), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
-        double maxWidth = videoSize.width() * (100.0 - position.first) / 100.0;
-        setInlineStyleProperty(CSSPropertyMaxWidth, maxWidth, CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMaxWidth, 100.0 - position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyHeight, static_cast<double>(m_cue.getCSSSize() * multiplier),  CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyHeight, std::min(m_cue.getCSSSize() * multiplier, 100.0), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
-        double maxHeight = videoSize.height() * (100.0 - position.second) / 100.0;
-        setInlineStyleProperty(CSSPropertyMaxHeight, maxHeight, CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMaxHeight, 100.0 - position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
@@ -1142,9 +1140,7 @@ void VTTCue::setFontSize(int fontSize, const IntSize&, bool important)
     
     LOG(Media, "TextTrackCue::setFontSize - setting cue font size to %i", fontSize);
 
-    if (important)
-        displayTreeInternal()->setFontSizeFromCaptionUserPrefs(0);
-    
+    m_displayTreeShouldChange = true;
     displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSPrimitiveValue::CSS_PX, important);
 }
 
