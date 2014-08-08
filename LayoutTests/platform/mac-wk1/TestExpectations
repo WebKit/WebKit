@@ -52,7 +52,6 @@ plugins/snapshotting
 # Mavericks and prior do not support contentInset
 [ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing.html [ Skip ]
 [ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing-in-frame.html [ Skip ]
-[ MountainLion Mavericks ] platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment.html [ Skip ]
 
 ### END OF (2) Failures without bug reports
 ########################################
