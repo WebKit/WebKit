@@ -67,8 +67,10 @@ WebInspector.DebuggerManager = function()
     this._updateBreakOnExceptionsState();
 
     function restoreBreakpointsSoon() {
+        this._restoringBreakpoints = true;
         for (var cookie of this._breakpointsSetting.value)
             this.addBreakpoint(new WebInspector.Breakpoint(cookie));
+        delete this._restoringBreakpoints;
     }
 
     // Ensure that all managers learn about restored breakpoints,
@@ -523,9 +525,11 @@ WebInspector.DebuggerManager.prototype = {
         if (breakpoint.identifier || breakpoint.disabled)
             return;
 
-        // Enable breakpoints since a breakpoint is being set. This eliminates
-        // a multi-step process for the user that can be confusing.
-        this.breakpointsEnabled = true;
+        if (!this._restoringBreakpoints) {
+            // Enable breakpoints since a breakpoint is being set. This eliminates
+            // a multi-step process for the user that can be confusing.
+            this.breakpointsEnabled = true;
+        }
 
         function didSetBreakpoint(error, breakpointIdentifier, locations)
         {
