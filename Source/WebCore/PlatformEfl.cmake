@@ -322,6 +322,16 @@ if (ENABLE_VIDEO)
         ${GSTREAMER_TAG_LIBRARIES}
         ${GSTREAMER_VIDEO_LIBRARIES}
     )
+
+    if (USE_GSTREAMER_MPEGTS)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${GSTREAMER_MPEGTS_INCLUDE_DIRS}
+        )
+
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_MPEGTS_LIBRARIES}
+        )
+    endif ()
 endif ()
 
 if (WTF_USE_3D_GRAPHICS)
