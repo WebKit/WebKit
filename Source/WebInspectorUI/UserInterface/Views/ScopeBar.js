@@ -62,6 +62,13 @@ WebInspector.ScopeBar.prototype = {
         });
     },
 
+    hasNonDefaultItemSelected: function()
+    {
+        return this._items.some(function(item) {
+            return item.selected && item !== this._defaultItem;
+        }, this);
+    },
+
     updateLayout: function(expandOnly)
     {
         if (expandOnly)

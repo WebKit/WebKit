@@ -35,11 +35,11 @@ WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCal
 
     // Check if any of the cells can be filtered.
     for (var [identifier, column] of this.columns) {
-        var scopeBar = columns["scopeBar"];
+        var scopeBar = column.scopeBar;
         if (!scopeBar)
             continue;
         this._filterableColumns.push(identifier);
-        scopeBar.columnIdenfifier = identifier;
+        scopeBar.columnIdentifier = identifier;
         scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectedItemsDidChange, this);
     }
 
@@ -49,11 +49,13 @@ WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCal
     }
 
     if (this._filterableColumns.length) {
-        var items = [new WebInspector.FlexibleSpaceNavigationItem, this.columns.get(this._filterableColumns[0])["scopeBar"], new WebInspector.FlexibleSpaceNavigationItem];
+        var items = [new WebInspector.FlexibleSpaceNavigationItem, this.columns.get(this._filterableColumns[0]).scopeBar, new WebInspector.FlexibleSpaceNavigationItem];
         this._navigationBar = new WebInspector.NavigationBar(null, items);
         var container = this.element.appendChild(document.createElement("div"));
         container.className = "navigation-bar-container";
         container.appendChild(this._navigationBar.element);
+
+        this._updateScopeBarForcedVisibility();
     }
 
     this.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridSelectedNodeChanged, this);
@@ -63,6 +65,7 @@ WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCal
 }
 
 WebInspector.TimelineDataGrid.StyleClassName = "timeline";
+WebInspector.TimelineDataGrid.HasNonDefaultFilterStyleClassName = "has-non-default-filter";
 WebInspector.TimelineDataGrid.DelayedPopoverShowTimeout = 250;
 WebInspector.TimelineDataGrid.DelayedPopoverHideContentClearTimeout = 500;
 
@@ -149,7 +152,7 @@ WebInspector.TimelineDataGrid.prototype = {
         console.assert(dataGridNode);
 
         for (var identifier of this._filterableColumns) {
-            var scopeBar = this.columns.get(identifier)["scopeBar"];
+            var scopeBar = this.columns.get(identifier).scopeBar;
             if (!scopeBar || scopeBar.defaultItem.selected)
                 continue;
 
@@ -353,9 +356,22 @@ WebInspector.TimelineDataGrid.prototype = {
         return (value1 < value2 ? -1 : (value1 > value2 ? 1 : 0)) * sortDirection;
     },
 
+    _updateScopeBarForcedVisibility: function()
+    {
+        for (var identifier of this._filterableColumns) {
+            var scopeBar = this.columns.get(identifier).scopeBar;
+            if (scopeBar) {
+                this.element.classList.toggle(WebInspector.TimelineDataGrid.HasNonDefaultFilterStyleClassName, scopeBar.hasNonDefaultItemSelected());
+                break;
+            }
+        }
+    },
+
     _scopeBarSelectedItemsDidChange: function(event)
     {
-        var columnIdentifier = event.target.columnIdenfifier;
+        this._updateScopeBarForcedVisibility();
+
+        var columnIdentifier = event.target.columnIdentifier;
         this.dispatchEventToListeners(WebInspector.TimelineDataGrid.Event.FiltersDidChange, {columnIdentifier: columnIdentifier});
     },
 

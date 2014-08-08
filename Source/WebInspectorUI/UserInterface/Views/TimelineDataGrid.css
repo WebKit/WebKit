@@ -148,6 +148,10 @@
     visibility: hidden;
 }
 
+.data-grid.timeline.has-non-default-filter > .navigation-bar-container {
+    visibility: visible;
+}
+
 .data-grid.timeline:hover > .navigation-bar-container {
     pointer-events: all;
     visibility: visible;
@@ -155,16 +159,21 @@
 
 .data-grid.timeline > .navigation-bar-container > .navigation-bar {
     position: absolute;
-    top: 10px;
+    top: 4px;
     left: 0;
     right: 0;
-    height: 22px;
+    height: 28px;
 
     border-bottom: none;
     border-top: 1px solid rgb(200, 200, 200);
     box-shadow: none;
 
     background-color: white;
+}
+
+body.mac-platform.legacy .data-grid.timeline > .navigation-bar-container > .navigation-bar {
+    top: 10px;
+    height: 22px;
 }
 
 .timeline-data-grid-tree-outline {
