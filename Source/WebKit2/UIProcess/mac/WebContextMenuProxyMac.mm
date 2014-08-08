@@ -370,7 +370,6 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
 
 void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& context)
 {
-    RetainPtr<NSSharingServicePicker> picker;
     bool includeEditorServices = context.controlledDataIsEditable();
     bool hasControlledImage = !context.controlledImageHandle().isNull();
     NSArray *items = nil;
@@ -392,13 +391,13 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
         return;
     }
 
-    picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
+    RetainPtr<NSSharingServicePicker> picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
     [picker setStyle:hasControlledImage ? NSSharingServicePickerStyleRollover : NSSharingServicePickerStyleTextSelection];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setIncludeEditorServices:includeEditorServices];
 
-    m_servicesMenu = [picker menu];
+    m_servicesMenu = adoptNS([[picker menu] copy]);
 
     if (!hasControlledImage)
         [m_servicesMenu setShowsStateColumn:YES];
