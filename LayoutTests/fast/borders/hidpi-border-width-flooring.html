@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't paint border's smaller than 0.5px on retina displays. (border width is floored)</title>
+<style>
+  div {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: solid 0px green;
+  }
+
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0;
+  for (i = 0; i < 49; ++i) {
+    adjustment += 0.01;
+    var e = document.createElement("div");
+    e.style.borderWidth = adjustment + "px"; 
+    container.appendChild(e);
+  }
+</script>
+</body>
+</html>
