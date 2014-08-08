@@ -431,7 +431,7 @@ void ServicesOverlayController::establishHoveredTelephoneHighlight(bool& mouseIs
             rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
             CGRect cgRect = rect;
-            m_telephoneNumberHighlights[i] = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, viewForRange->boundsRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+            m_telephoneNumberHighlights[i] = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
         }
 
         if (!mouseIsOverHighlight(m_telephoneNumberHighlights[i].get(), mouseIsOverButton))
@@ -460,8 +460,8 @@ void ServicesOverlayController::maybeCreateSelectionHighlight()
         cgRects.append((CGRect)pixelSnappedIntRect(rect));
 
     if (!cgRects.isEmpty()) {
-        CGRect bounds = m_webPage->corePage()->mainFrame().view()->boundsRect();
-        m_selectionHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), bounds, DDHighlightNoOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+        CGRect visibleRect = m_webPage->corePage()->mainFrame().view()->visibleContentRect();
+        m_selectionHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightNoOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
 
         m_servicesOverlay->setNeedsDisplay();
     }
