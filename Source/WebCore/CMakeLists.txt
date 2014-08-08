@@ -3602,7 +3602,12 @@ endif ()
 if (WTF_USE_3D_GRAPHICS)
     add_library(ANGLESupport STATIC ${ANGLESupport_SOURCES})
     set_target_properties(ANGLESupport PROPERTIES FOLDER "WebCore")
-    target_include_directories(ANGLESupport PRIVATE "${THIRDPARTY_DIR}/ANGLE/include")
+    set_property(
+        TARGET ANGLESupport
+        APPEND
+        PROPERTY INCLUDE_DIRECTORIES
+            "${THIRDPARTY_DIR}/ANGLE/include"
+    )
     list(APPEND WebCore_LIBRARIES ANGLESupport)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(ANGLESupport IGNORECXX_WARNINGS)
 endif ()

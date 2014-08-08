@@ -1,3 +1,14 @@
+2014-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Drop the required version of CMake down to 2.8.8
+        https://bugs.webkit.org/show_bug.cgi?id=135713
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Use set_property() to set INCLUDE_DIRECTORIES for
+        the ANGLESupport library. This avoids using target_include_directories()
+        which requires CMake 2.8.11.
+
 2014-08-05  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][1.4] Caps negotiation failure in playback pipeline

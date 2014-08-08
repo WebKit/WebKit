@@ -1,3 +1,12 @@
+2014-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Drop the required version of CMake down to 2.8.8
+        https://bugs.webkit.org/show_bug.cgi?id=135713
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Require CMake 2.8.8.
+
 2014-08-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Get rid of INPUT_SPEECH
