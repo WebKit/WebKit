@@ -30,6 +30,7 @@
 
 #import "WebContext.h"
 #import "WebProcessMessages.h"
+#import <AppKit/NSSharingService.h>
 #import <wtf/NeverDestroyed.h>
 
 #if __has_include(<AppKit/NSSharingService_Private.h>)
@@ -41,12 +42,23 @@ typedef enum {
     NSSharingServicePickerStyleTextSelection = 2,
     NSSharingServicePickerStyleDataDetector = 3
 } NSSharingServicePickerStyle;
+#endif
 
 @interface NSSharingServicePicker (Details)
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
 @end
+
+#if __has_include(<Foundation/NSExtension.h>)
+#import <Foundation/NSExtension.h>
+#else
+@interface NSExtension
+@end
 #endif
+
+@interface NSExtension (Details)
++ (id)beginMatchingExtensionsWithAttributes:(NSDictionary *)attributes completion:(void (^)(NSArray *matchingExtensions, NSError *error))handler;
+@end
 
 namespace WebKit {
 
@@ -58,30 +70,33 @@ ServicesController& ServicesController::shared()
 
 ServicesController::ServicesController()
     : m_refreshQueue(dispatch_queue_create("com.apple.WebKit.ServicesController", DISPATCH_QUEUE_SERIAL))
-    , m_isRefreshing(false)
+    , m_hasPendingRefresh(false)
     , m_hasImageServices(false)
     , m_hasSelectionServices(false)
     , m_hasRichContentServices(false)
 {
     refreshExistingServices();
+
+    auto refreshCallback = [](NSArray *, NSError *) {
+        // We coalese refreshes from the notification callbacks because they can come in small batches.
+        ServicesController::shared().refreshExistingServices(false);
+    };
+
+    auto extensionAttributes = @{ @"NSExtensionPointName" : @"com.apple.services" };
+    m_extensionWatcher = [NSExtension beginMatchingExtensionsWithAttributes:extensionAttributes completion:refreshCallback];
+    auto uiExtensionAttributes = @{ @"NSExtensionPointName" : @"com.apple.ui-services" };
+    m_uiExtensionWatcher = [NSExtension beginMatchingExtensionsWithAttributes:uiExtensionAttributes completion:refreshCallback];
 }
 
-void ServicesController::refreshExistingServices(WebContext* context)
+void ServicesController::refreshExistingServices(bool refreshImmediately)
 {
-    ASSERT_ARG(context, context);
-    ASSERT([NSThread isMainThread]);
-
-    m_contextsToNotify.add(context);
-    refreshExistingServices();
-}
-
-void ServicesController::refreshExistingServices()
-{
-    if (m_isRefreshing)
+    if (m_hasPendingRefresh)
         return;
 
-    m_isRefreshing = true;
-    dispatch_async(m_refreshQueue, ^{
+    m_hasPendingRefresh = true;
+
+    auto refreshTime = dispatch_time(DISPATCH_TIME_NOW, refreshImmediately ? 0 : (int64_t)(1 * NSEC_PER_SEC));
+    dispatch_after(refreshTime, m_refreshQueue, ^{
         static NeverDestroyed<NSImage *> image([[NSImage alloc] init]);
         RetainPtr<NSSharingServicePicker>  picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ image ]]);
         [picker setStyle:NSSharingServicePickerStyleRollover];
@@ -110,19 +125,18 @@ void ServicesController::refreshExistingServices()
         bool hasRichContentServices = picker.get().menu;
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            bool notifyContexts = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices) || (hasRichContentServices != m_hasRichContentServices);
+            bool availableServicesChanged = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices) || (hasRichContentServices != m_hasRichContentServices);
+
             m_hasSelectionServices = hasSelectionServices;
             m_hasImageServices = hasImageServices;
             m_hasRichContentServices = hasRichContentServices;
 
-            if (notifyContexts) {
-                for (const RefPtr<WebContext>& context : m_contextsToNotify)
+            if (availableServicesChanged) {
+                for (auto& context : WebContext::allContexts())
                     context->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices, m_hasRichContentServices));
             }
 
-            m_contextsToNotify.clear();
-
-            m_isRefreshing = false;
+            m_hasPendingRefresh = false;
         });
     });
 }
