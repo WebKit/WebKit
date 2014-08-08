@@ -12,7 +12,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -37,22 +37,28 @@
 namespace WebCore {
 
 struct LineSegment {
+    LineSegment()
+        : logicalLeft(0)
+        , logicalRight(0)
+        , isValid(false)
+    {
+    }
+
     LineSegment(float logicalLeft, float logicalRight)
         : logicalLeft(logicalLeft)
         , logicalRight(logicalRight)
+        , isValid(true)
     {
     }
 
     float logicalLeft;
     float logicalRight;
+    bool isValid;
 };
 
 class BasicShape;
 class Image;
 class RoundedRect;
-
-typedef Vector<LineSegment> SegmentList;
-
 
 // A representation of a BasicShape that enables layout code to determine how to break a line up into segments
 // that will fit within or around a shape. The line is defined by a pair of logical Y coordinates and the
@@ -74,7 +80,7 @@ public:
 
     virtual LayoutRect shapeMarginLogicalBoundingBox() const = 0;
     virtual bool isEmpty() const = 0;
-    virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
+    virtual LineSegment getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const = 0;
 
     bool lineOverlapsShapeMarginBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapeMarginLogicalBoundingBox()); }
 

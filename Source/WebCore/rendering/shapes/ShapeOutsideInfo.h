@@ -96,8 +96,6 @@ public:
 private:
     std::unique_ptr<Shape> createShapeForImage(StyleImage*, float shapeImageThreshold, WritingMode, float margin) const;
 
-    SegmentList computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) const;
-
     LayoutUnit logicalTopOffset() const;
     LayoutUnit logicalLeftOffset() const;
 

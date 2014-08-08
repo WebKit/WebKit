@@ -1,3 +1,41 @@
+2014-08-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Refactor getExcludedIntervals since only one LineSegment is ever returned
+        https://bugs.webkit.org/show_bug.cgi?id=135757
+
+        Reviewed by Zoltan Horvath.
+
+        The interface for getExcludedIntervals was designed when shape-inside
+        was still a thing, and it was possible for a line in a shape to have
+        multiple segments. shape-outside can only have one segment per line,
+        so this refactors the code to simplify and reflect that reality.
+
+        No new test, no behavior change.
+
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::getExcludedInterval): 
+        (WebCore::BoxShape::getExcludedIntervals): Deleted.
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::PolygonShape::getExcludedInterval):
+        (WebCore::PolygonShape::getExcludedIntervals): Deleted.
+        * rendering/shapes/PolygonShape.h:
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShape::getExcludedInterval):
+        (WebCore::RasterShape::getExcludedIntervals): Deleted.
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::getExcludedInterval):
+        (WebCore::RectangleShape::getExcludedIntervals): Deleted.
+        * rendering/shapes/RectangleShape.h:
+        * rendering/shapes/Shape.h:
+        (WebCore::LineSegment::LineSegment):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::logicalLeftOffset):
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+        (WebCore::ShapeOutsideInfo::computeSegmentsForLine): Deleted.
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-08-08  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: add debugging flag to InspectorTest for unbuffered logging to stderr
