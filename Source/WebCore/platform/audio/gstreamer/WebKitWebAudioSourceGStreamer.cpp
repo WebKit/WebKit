@@ -92,7 +92,7 @@ static GstCaps* getGStreamerMonoAudioCaps(float sampleRate)
     return gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, static_cast<int>(sampleRate),
         "channels", G_TYPE_INT, 1,
         "format", G_TYPE_STRING, gst_audio_format_to_string(GST_AUDIO_FORMAT_F32),
-        "layout", G_TYPE_STRING, "non-interleaved", NULL);
+        "layout", G_TYPE_STRING, "interleaved", nullptr);
 }
 
 static GstAudioChannelPosition webKitWebAudioGStreamerChannelPosition(int channelIndex)
