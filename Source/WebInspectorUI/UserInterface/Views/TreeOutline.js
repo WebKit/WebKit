@@ -916,7 +916,7 @@ TreeElement.prototype.revealed = function()
     while (currentAncestor && !currentAncestor.root) {
         if (!currentAncestor.expanded)
             return false;
-        if (!currentAncestor.hidden)
+        if (currentAncestor.hidden)
             return false;
         currentAncestor = currentAncestor.parent;
     }
