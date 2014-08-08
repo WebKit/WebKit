@@ -681,6 +681,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
 #if ENABLE(SERVICE_CONTROLS)
     parameters.hasImageServices = ServicesController::shared().hasImageServices();
     parameters.hasSelectionServices = ServicesController::shared().hasSelectionServices();
+    parameters.hasRichContentServices = ServicesController::shared().hasRichContentServices();
     ServicesController::shared().refreshExistingServices(this);
 #endif
 
