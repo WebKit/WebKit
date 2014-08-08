@@ -1,3 +1,14 @@
+2014-08-08  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix Windows build after r172259.
+
+        Not reviewed.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::addMockSpeechInputResult): Deleted.
+        (TestRunner::setMockSpeechInputDumpRect): Deleted.
+        (TestRunner::startSpeechInput): Deleted.
+
 2014-08-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         make clean does not work in OpenSource, fails in WebKitLibraries
