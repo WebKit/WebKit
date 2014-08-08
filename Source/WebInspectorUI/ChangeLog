@@ -1,5 +1,16 @@
 2014-08-07  Timothy Hatcher  <timothy@apple.com>
 
+        Fix regression where tree outline keyboard navigation is broken.
+
+        https://bugs.webkit.org/show_bug.cgi?id=135718
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TreeOutline.js:
+        (TreeElement.prototype.revealed): Fix the check for currentAncestor.hidden.
+
+2014-08-07  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Filter bar text and icon are positioned too low and tight
         https://bugs.webkit.org/show_bug.cgi?id=135723
 
