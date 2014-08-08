@@ -105,7 +105,7 @@ WebInspector.OverviewTimelineView.prototype = {
             }
         }
 
-        if (!this.currentTime !== oldCurrentTime) {
+        if (this.currentTime !== oldCurrentTime) {
             var selectedTreeElement = this.navigationSidebarTreeOutline.selectedTreeElement;
             var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
 
