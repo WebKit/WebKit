@@ -289,16 +289,7 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     }
 #else
     if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
-#if !PLATFORM(IOS)
         imageSize = LayoutSize(toBitmapImage(m_image.get())->sizeRespectingOrientation());
-#else
-    {
-        // On iOS, the image may have been subsampled to accommodate our size restrictions. However
-        // we should tell the renderer what the original size was.
-        imageSize = LayoutSize(toBitmapImage(m_image.get())->originalSizeRespectingOrientation());
-    } else if (m_image->isBitmapImage())
-        imageSize = LayoutSize(toBitmapImage(m_image.get())->originalSize());
-#endif // !PLATFORM(IOS)
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
     else if (m_image->isSVGImage() && sizeType == UsedSize) {
@@ -352,6 +343,7 @@ inline void CachedImage::createImage()
     // Create the image if it doesn't yet exist.
     if (m_image)
         return;
+
 #if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
     else if (m_response.mimeType() == "application/pdf")
         m_image = PDFDocumentImage::create(this);
@@ -360,8 +352,10 @@ inline void CachedImage::createImage()
         RefPtr<SVGImage> svgImage = SVGImage::create(this);
         m_svgImageCache = std::make_unique<SVGImageCache>(svgImage.get());
         m_image = svgImage.release();
-    } else
+    } else {
         m_image = BitmapImage::create(this);
+        toBitmapImage(m_image.get())->setAllowSubsampling(m_loader && m_loader->frameLoader()->frame().settings().imageSubsamplingEnabled());
+    }
 
     if (m_image) {
         // Send queued container size requests.
@@ -518,8 +512,6 @@ void CachedImage::changedInRect(const Image* image, const IntRect& rect)
 bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
 {
     Image* image = imageForRenderer(renderer);
-    if (image->isBitmapImage())
-        image->nativeImageForCurrentFrame(); // force decode
     return image->currentFrameKnownToBeOpaque();
 }
 

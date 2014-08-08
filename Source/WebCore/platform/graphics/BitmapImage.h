@@ -70,10 +70,7 @@ public:
     FrameData()
         : m_frame(0)
         , m_orientation(DefaultImageOrientation)
-#if PLATFORM(IOS)
-        , m_subsamplingScale(0)
-        , m_haveInfo(false)
-#endif
+        , m_subsamplingLevel(0)
         , m_duration(0)
         , m_haveMetadata(false)
         , m_isComplete(false)
@@ -93,10 +90,7 @@ public:
 
     NativeImagePtr m_frame;
     ImageOrientation m_orientation;
-#if PLATFORM(IOS)
-    float m_subsamplingScale;
-    bool m_haveInfo;
-#endif
+    SubsamplingLevel m_subsamplingLevel;
     float m_duration;
     bool m_haveMetadata : 1;
     bool m_isComplete : 1;
@@ -107,9 +101,6 @@ public:
 // =================================================
 // BitmapImage Class
 // =================================================
-
-// FIXME: We should better integrate the iOS and non-iOS code in this class. Unlike other ports, the
-// iOS port caches the metadata for a frame without decoding the image.
 
 class BitmapImage final : public Image {
     friend class GeneratedImage;
@@ -137,11 +128,7 @@ public:
     // FloatSize due to override.
     virtual FloatSize size() const override;
     IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
-#if PLATFORM(IOS)
-    virtual FloatSize originalSize() const override;
-    IntSize originalSizeRespectingOrientation() const;
-#endif
-    IntSize currentFrameSize() const;
+
     virtual bool getHotSpot(IntPoint&) const override;
 
     unsigned decodedSize() const { return m_decodedSize; }
@@ -194,8 +181,12 @@ public:
     
     bool canAnimate();
 
+    bool allowSubsampling() const { return m_allowSubsampling; }
+    void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
+    
 private:
     void updateSize(ImageOrientationDescription = ImageOrientationDescription()) const;
+    void determineMinimumSubsamplingLevel() const;
 
 protected:
     enum RepetitionCountStatus {
@@ -218,30 +209,24 @@ protected:
 #endif
 
     size_t currentFrame() const { return m_currentFrame; }
-#if PLATFORM(IOS)
-    PassNativeImagePtr frameAtIndex(size_t, float scaleHint);
-    PassNativeImagePtr copyUnscaledFrameAtIndex(size_t);
-#endif
     size_t frameCount();
-    PassNativeImagePtr frameAtIndex(size_t);
+
+    PassNativeImagePtr frameAtIndex(size_t, float presentationScaleHint = 1);
+    PassNativeImagePtr copyUnscaledFrameAtIndex(size_t);
+
+    bool haveFrameAtIndex(size_t);
+
     bool frameIsCompleteAtIndex(size_t);
     float frameDurationAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
 
     // Decodes and caches a frame. Never accessed except internally.
-#if PLATFORM(IOS)
-    void cacheFrame(size_t index, float scaleHint);
+    enum ImageFrameCaching { CacheMetadataOnly, CacheMetadataAndFrame };
+    void cacheFrame(size_t index, SubsamplingLevel, ImageFrameCaching = CacheMetadataAndFrame);
 
-    // Cache frame metadata without decoding image.
-    void cacheFrameInfo(size_t index);
     // Called before accessing m_frames[index] for info without decoding. Returns false on index out of bounds.
-    bool ensureFrameInfoIsCached(size_t index);
-#else
-    void cacheFrame(size_t index);
-    // Called before accessing m_frames[index]. Returns false on index out of bounds.
-    bool ensureFrameIsCached(size_t index);
-#endif
+    bool ensureFrameIsCached(size_t index, ImageFrameCaching = CacheMetadataAndFrame);
 
     // Called to invalidate cached data.  When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy
@@ -301,13 +286,12 @@ private:
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     mutable IntSize m_sizeRespectingOrientation;
+
+    mutable SubsamplingLevel m_minimumSubsamplingLevel;
+
     mutable unsigned m_imageOrientation : 4; // ImageOrientationEnum
     mutable unsigned m_shouldRespectImageOrientation : 1; // RespectImageOrientationEnum
 
-#if PLATFORM(IOS)
-    mutable IntSize m_originalSize; // The size of the unsubsampled image.
-    mutable IntSize m_originalSizeRespectingOrientation;
-#endif
     size_t m_currentFrame; // The index of the current frame of animation.
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 
@@ -336,6 +320,7 @@ private:
     uint16_t m_progressiveLoadChunkCount;
 #endif
 
+    bool m_allowSubsampling : 1; // Whether we should attempt subsampling if this image is very large.
     bool m_isSolidColor : 1; // Whether or not we are a 1x1 solid image.
     bool m_checkedForSolidColor : 1; // Whether we've checked the frame for solid color.
 

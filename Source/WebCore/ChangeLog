@@ -1,3 +1,126 @@
+2014-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up image subsampling code, make it less iOS-specific
+        https://bugs.webkit.org/show_bug.cgi?id=134916
+
+        Reviewed by Dean Jackson.
+
+        Compile the image subsampling code on both Mac and iOS, and make it more platform
+        neutral in general. Add a setting to allow it to be enabled on Mac for testing.
+        
+        The most significant changes are in ImageSourceCG and BitmapImageCG. CG's ImageSource
+        is no longer stateful with respect to subsampling; its functions take a SubsamplingLevel
+        when appropriate. CG's BitmapImage now determines which level of subsampling to use
+        for a given frame, storing the subsampling level in the frame data. It can replace
+        an aggressively subsampled frame with a less subsampled frame if necessary.
+        
+        To reduce the chances of subsampling affecting rendering, BitmapImage::size() now
+        always returns the non-subsampled size; subsampling is strictly internal to BitmapImage.
+        BitmapImage::draw() takes care of scaling the srcRect for subsampled images.
+        
+        iOS had a code path that enabled caching of frame metadata in BitmapImage without
+        actually decoding the frame; make this cross-platform.
+        
+        Fix a couple of issues in the original pathc: remove a log, and ImageSource::allowSubsamplingOfFrameAtIndex()
+        return false.
+
+        * WebCore.exp.in: Changed signature for GraphicsContext::drawNativeImage().
+        * WebCore.xcodeproj/project.pbxproj: Added ImageSource.cpp, which is not built
+        for Cocoa but useful for reference.
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer): Remove iOS-specific subsampling code.
+        (WebCore::CachedImage::createImage): Call setAllowSubsampling() on the image if we
+        can get to Settings (m_loader is null for image documents).
+        (WebCore::CachedImage::currentFrameKnownToBeOpaque): This forced decode always
+        caused creation of the non-subsampled image, so remove it. There's no reason to
+        eagerly decode the frame here.
+        * loader/cache/CachedImage.h: Fix comment.
+        * page/Settings.cpp: Add defaultImageSubsamplingEnabled, true for iOS and false for Mac.
+        * page/Settings.in: Added imageSubsamplingEnabled.
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage): Init some more things. Default m_allowSubsampling to
+        true for iOS to catch images created in code paths where we can't get to Settings.
+        (WebCore::BitmapImage::haveFrameAtIndex): Handy helper.
+        (WebCore::BitmapImage::cacheFrame): Now takes the subsampling level and whether to cache
+        just metadata, or also the frame.
+        (WebCore::BitmapImage::didDecodeProperties): No need to store originalSize.
+        (WebCore::BitmapImage::updateSize): When we get the size for the first time, call
+        determineMinimumSubsamplingLevel() to choose a reasonable subsampling level which takes
+        platform-specific limits into account.
+        (WebCore::BitmapImage::dataChanged): Comment.
+        (WebCore::BitmapImage::ensureFrameIsCached): Take ImageFrameCaching into account.
+        (WebCore::BitmapImage::frameAtIndex): Choose a subsampling level given the scale,
+        then determine if we can use the currently cached frame, or whether we should resample.
+        (WebCore::BitmapImage::frameIsCompleteAtIndex): Caching m_isComplete is now done when caching
+        frame metadata.
+        (WebCore::BitmapImage::frameDurationAtIndex):
+        (WebCore::BitmapImage::frameHasAlphaAtIndex): The 'true' return is the safe return value.
+        (WebCore::BitmapImage::frameOrientationAtIndex): Caching m_orientation is now done when caching
+        frame metadata.
+        (WebCore::BitmapImage::cacheFrameInfo): Deleted.
+        (WebCore::BitmapImage::originalSize): Deleted.
+        (WebCore::BitmapImage::originalSizeRespectingOrientation): Deleted.
+        (WebCore::BitmapImage::currentFrameSize): Deleted.
+        (WebCore::BitmapImage::ensureFrameInfoIsCached): Deleted.
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        * platform/graphics/GraphicsContext.h: No need to pass a scale param now.
+        * platform/graphics/ImageSource.cpp: Non-Cocoa changes.
+        (WebCore::ImageSource::subsamplingLevelForScale):
+        (WebCore::ImageSource::allowSubsamplingOfFrameAtIndex):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        * platform/graphics/ImageSource.h: No longer stores subsampling state.
+        (WebCore::ImageSource::isSubsampled): Deleted.
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::determineMinimumSubsamplingLevel):
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::BitmapImage): Init more members.
+        (WebCore::BitmapImage::determineMinimumSubsamplingLevel): Choose a minimum subsampling
+        level for the platform (subsample until the image area falls under a threshold).
+        (WebCore::BitmapImage::checkForSolidColor): Don't bother decoding frames if the image
+        is not 1x1. Also take care not to decode a non-subsampled image.
+        (WebCore::BitmapImage::draw): The actual bug fix is here; remove logic that
+        computed srcRectForCurrentFrame from m_size and m_originalSize; for some callers
+        srcRect was computed using the pre-subsampled size, and for others it was the subsampled size.
+        Instead, scale srcRect by mapping between the non-subsampled size, and the size of the CGImageRef
+        which is affected by subsampling.
+        (WebCore::BitmapImage::copyUnscaledFrameAtIndex):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage): Remove #ifdeffed code.
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage): No more weird scaling!
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::createImageSourceOptions): Helper that always returns a new CFDictionaryRef.
+        (WebCore::imageSourceOptions): If not subsampling, return the cached CFDictionaryRef, otherwise
+        make a new options dict and return it.
+        (WebCore::ImageSource::subsamplingLevelForScale): Helper that returns a subsampling level
+        between 0 and 3 given a scale.
+        (WebCore::ImageSource::isSizeAvailable): SkipMetadata is a default value for the param now.
+        (WebCore::ImageSource::allowSubsamplingOfFrameAtIndex): We turn off subsampling for progressive
+        JPEGs because of a bug, so need this to know if a frame should be subsampled.
+        (WebCore::ImageSource::frameSizeAtIndex): The looping to find a subsampling level is now in BitmapImageCG.
+        (WebCore::ImageSource::orientationAtIndex):
+        (WebCore::ImageSource::size): Always use a subsampling level of 0 for size().
+        (WebCore::ImageSource::getHotSpot):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::createFrameAtIndex): The caller mapped a scale to a level.
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        (WebCore::ImageSource::imageSourceOptions): Deleted.
+        (WebCore::ImageSource::originalSize): Deleted.
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::invalidatePlatformData): 0 -> nullptr
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::BitmapImage::determineMinimumSubsamplingLevel):
+
 2014-08-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards using CMake on Mac.

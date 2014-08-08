@@ -29,6 +29,7 @@
 #if USE(CG)
 
 #include "FloatConversion.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
 #include "SubimageCacheWithTimer.h"
@@ -58,12 +59,7 @@ bool FrameData::clear(bool clearMetadata)
         m_haveMetadata = false;
 
     m_orientation = DefaultImageOrientation;
-
-#if PLATFORM(IOS)
-    m_frameBytes = 0;
-    m_subsamplingScale = 1;
-    m_haveInfo = false;
-#endif
+    m_subsamplingLevel = 0;
 
     if (m_frame) {
 #if CACHE_SUBIMAGES
@@ -78,8 +74,10 @@ bool FrameData::clear(bool clearMetadata)
 
 BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     : Image(observer)
+    , m_minimumSubsamplingLevel(0)
+    , m_imageOrientation(OriginTopLeft)
+    , m_shouldRespectImageOrientation(false)
     , m_currentFrame(0)
-    , m_frames(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
@@ -103,50 +101,62 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
     m_sizeRespectingOrientation = m_size;
 
-#if PLATFORM(IOS)
-    m_originalSize = m_size;
-    m_originalSizeRespectingOrientation = m_size;
-#endif
-
     m_frames.grow(1);
     m_frames[0].m_frame = CGImageRetain(cgImage);
     m_frames[0].m_hasAlpha = true;
     m_frames[0].m_haveMetadata = true;
 
-#if PLATFORM(IOS)
-    m_frames[0].m_subsamplingScale = 1;
-#endif
-
     checkForSolidColor();
 }
 
-// Drawing Routines
+void BitmapImage::determineMinimumSubsamplingLevel() const
+{
+    if (!m_allowSubsampling)
+        return;
+
+    if (!m_source.allowSubsamplingOfFrameAtIndex(0))
+        return;
+
+    // Values chosen to be appropriate for iOS.
+    const int cMaximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
+    const SubsamplingLevel maxSubsamplingLevel = 3;
+
+    SubsamplingLevel currentLevel = 0;
+    for ( ; currentLevel <= maxSubsamplingLevel; ++currentLevel) {
+        IntSize frameSize = m_source.frameSizeAtIndex(0, currentLevel);
+        if (frameSize.area() < cMaximumImageAreaBeforeSubsampling)
+            break;
+    }
+
+    m_minimumSubsamplingLevel = currentLevel;
+}
 
 void BitmapImage::checkForSolidColor()
 {
     m_checkedForSolidColor = true;
-    if (frameCount() > 1) {
-        m_isSolidColor = false;
+    m_isSolidColor = false;
+
+    if (frameCount() > 1)
         return;
+
+    if (!haveFrameAtIndex(0)) {
+        IntSize size = m_source.frameSizeAtIndex(0, 0);
+        if (size.width() != 1 || size.height() != 1)
+            return;
+
+        if (!ensureFrameIsCached(0))
+            return;
     }
 
-#if !PLATFORM(IOS)
-    CGImageRef image = frameAtIndex(0);
-#else
-    // Note, checkForSolidColor() may be called from frameAtIndex(). On iOS frameAtIndex() gets passed a scaleHint
-    // argument which it uses to tell CG to create a scaled down image. Since we don't know the scaleHint here, if
-    // we call frameAtIndex() again, we would pass it the default scale of 1 and would end up recreating the image.
-    // So we do a quick check and call frameAtIndex(0) only if we haven't yet created an image.
     CGImageRef image = nullptr;
     if (m_frames.size())
         image = m_frames[0].m_frame;
 
     if (!image)
-        image = frameAtIndex(0);
-#endif
+        return;
 
     // Currently we only check for solid color in the important special case of a 1x1 image.
-    if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
+    if (CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
         unsigned char pixel[4]; // RGBA
         RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
             kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
@@ -198,29 +208,22 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
-    CGImageRef image;
-    FloatRect srcRectForCurrentFrame = srcRect;
-
 #if PLATFORM(IOS)
-    if (m_originalSize != m_size && !m_originalSize.isEmpty())
-        srcRectForCurrentFrame.scale(m_size.width() / static_cast<float>(m_originalSize.width()), m_size.height() / static_cast<float>(m_originalSize.height()));
-
     startAnimation(DoNotCatchUp);
-
-    CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
-    RetainPtr<CGImageRef> imagePossiblyCopied;
-    // Never use subsampled images for drawing into PDF contexts.
-    if (CGContextGetType(ctxt->platformContext()) == kCGContextTypePDF)
-        imagePossiblyCopied = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
-    else
-        imagePossiblyCopied = frameAtIndex(m_currentFrame, std::min<float>(1.0f, std::max(transformedDestinationRect.size.width  / srcRectForCurrentFrame.width(), transformedDestinationRect.size.height / srcRectForCurrentFrame.height())));
-
-    image = imagePossiblyCopied.get();
 #else
     startAnimation();
-
-    image = frameAtIndex(m_currentFrame);
 #endif
+
+    RetainPtr<CGImageRef> image;
+    // Never use subsampled images for drawing into PDF contexts.
+    if (wkCGContextIsPDFContext(ctxt->platformContext()))
+        image = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
+    else {
+        CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
+        float subsamplingScale = std::min<float>(1, std::max(transformedDestinationRect.size.width / srcRect.width(), transformedDestinationRect.size.height / srcRect.height()));
+
+        image = frameAtIndex(m_currentFrame, subsamplingScale);
+    }
 
     if (!image) // If it's too early we won't have an image yet.
         return;
@@ -230,37 +233,40 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         return;
     }
 
-    float scale = 1;
-#if PLATFORM(IOS)
-    scale = m_frames[m_currentFrame].m_subsamplingScale;
-#endif
-    FloatSize selfSize = currentFrameSize();
+    // Subsampling may have given us an image that is smaller than size().
+    IntSize imageSize(CGImageGetWidth(image.get()), CGImageGetHeight(image.get()));
+    
+    // srcRect is in the coordinates of the unsubsampled image, so we have to map it to the subsampled image.
+    FloatRect scaledSrcRect = srcRect;
+    if (imageSize != m_size) {
+        FloatRect originalImageBounds(FloatPoint(), m_size);
+        FloatRect subsampledImageBounds(FloatPoint(), imageSize);
+        scaledSrcRect = mapRect(srcRect, originalImageBounds, subsampledImageBounds);
+    }
+    
     ImageOrientation orientation;
-
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
-    ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRectForCurrentFrame, scale, compositeOp, blendMode, orientation);
+    ctxt->drawNativeImage(image.get(), imageSize, styleColorSpace, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
 
     if (imageObserver())
         imageObserver()->didDraw(this);
 }
 
-#if PLATFORM(IOS)
 PassNativeImagePtr BitmapImage::copyUnscaledFrameAtIndex(size_t index)
 {
     if (index >= frameCount())
         return nullptr;
 
     if (index >= m_frames.size() || !m_frames[index].m_frame)
-        cacheFrame(index, 1);
+        cacheFrame(index, 0);
 
-    if (m_frames[index].m_subsamplingScale == 1 && !m_source.isSubsampled())
+    if (!m_frames[index].m_subsamplingLevel)
         return CGImageRetain(m_frames[index].m_frame);
 
     return m_source.createFrameAtIndex(index);
 }
-#endif
 
 }
 
