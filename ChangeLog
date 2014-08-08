@@ -1,3 +1,10 @@
+2014-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Undo some erroneous changes to the Xcode scheme files from r172259.
+        
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme:
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2014-08-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Drop the required version of CMake down to 2.8.8
