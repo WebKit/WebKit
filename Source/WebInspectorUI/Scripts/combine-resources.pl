@@ -21,8 +21,8 @@ GetOptions('output-dir=s' => \$outputDirectory,
            'input-html-dir=s' => \$htmlDirectory,
            'input-html=s' => \$htmlFile);
 
-unless (defined $htmlFile and defined $derivedSourcesDirectory and defined $outputDirectory and defined $outputScriptName and defined $outputStylesheetName) {
-    print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> --output-script-name <name> --output-style-name <name>\n";
+unless (defined $htmlFile and defined $derivedSourcesDirectory and defined $outputDirectory and (defined $outputScriptName or defined $outputStylesheetName)) {
+    print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> [--output-script-name <name>] [--output-style-name <name>]\n";
     exit;
 }
 
@@ -76,8 +76,8 @@ sub concatinateFiles($$$)
 my $inputDirectoryPattern = "(?!External\/)[^\"]*";
 $inputDirectoryPattern = $inputDirectory . "\/[^\"]*" if $inputDirectory;
 
-concatinateFiles($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">");
-concatinateFiles($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>");
+concatinateFiles($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
+concatinateFiles($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
 
 $htmlContents =~ s/<head>.*<\/head>/<head>$headContents<\/head>/si;
 

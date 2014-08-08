@@ -1,5 +1,16 @@
 2014-08-07  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Combine and minify Esprima
+        https://bugs.webkit.org/show_bug.cgi?id=135728
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/combine-resources.pl:
+        * Scripts/copy-user-interface-resources.pl:
+        * UserInterface/External/Esprima/LICENSE: Added.
+
+2014-08-07  Timothy Hatcher  <timothy@apple.com>
+
         Fix regression where tree outline keyboard navigation is broken.
 
         https://bugs.webkit.org/show_bug.cgi?id=135718

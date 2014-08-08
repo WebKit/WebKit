@@ -38,13 +38,28 @@ sub seedFile($$)
     }
 }
 
-my $LICENSE = <<'EOF';
+sub readLicenseFile($)
+{
+    my ($licenseFilePath) = @_;
+
+    open(LICENSE_FILE, '<', $licenseFilePath) or die "Unable to open $licenseFilePath: $!";
+
+    my $license = "/*\n";
+    $license .= ' * ' . $_ while <LICENSE_FILE>;
+    $license .= " */\n";
+
+    close(LICENSE_FILE);
+
+    return $license;
+}
+
+my $inspectorLicense = <<'EOF';
 /*
  * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
- * Copyright (C) 2009-2011 Google Inc. All rights reserved.
- * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
  * Copyright (C) 2008 Matt Lilek. All rights reserved.
  * Copyright (C) 2008-2009 Anthony Ricaud <rik@webkit.org>
+ * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
+ * Copyright (C) 2009-2011 Google Inc. All rights reserved.
  * Copyright (C) 2009 280 North Inc. All Rights Reserved.
  * Copyright (C) 2010 Nikita Vasilyev. All rights reserved.
  * Copyright (C) 2011 Brian Grinstead All rights reserved.
@@ -52,7 +67,7 @@ my $LICENSE = <<'EOF';
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  * Copyright (C) 2013 Seokju Kwon (seokju.kwon@gmail.com)
  * Copyright (C) 2013 Adobe Systems Inc. All rights reserved.
- * Copyright (C) 2013 University of Washington. All rights reserved.
+ * Copyright (C) 2013-2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,15 +99,10 @@ my $uiRoot = File::Spec->catdir($ENV{'SRCROOT'}, 'UserInterface');
 my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'});
 my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');
 my $codeMirrorPath = File::Spec->catdir($uiRoot, 'External', 'CodeMirror');
+my $esprimaPath = File::Spec->catdir($uiRoot, 'External', 'Esprima');
 
-my $codeMirrorLicenseFile = File::Spec->catfile($codeMirrorPath, 'LICENSE');
-open(CMLFILE, '<', $codeMirrorLicenseFile) or die "Unable to open $codeMirrorLicenseFile: $!";
-my $CODE_MIRROR_LICENSE = "/*\n";
-while (<CMLFILE>) {
-    $CODE_MIRROR_LICENSE .= ' * ' . $_;
-}
-close(CMLFILE);
-$CODE_MIRROR_LICENSE .= " */\n";
+my $codeMirrorLicense = readLicenseFile(File::Spec->catfile($codeMirrorPath, 'LICENSE'));
+my $esprimaMirrorLicense = readLicenseFile(File::Spec->catfile($esprimaPath, 'LICENSE'));
 
 make_path($protocolDir, $targetResourcePath);
 
@@ -109,6 +119,9 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
     # Combine the CodeMirror JavaScript and CSS files in Production builds into single files (CodeMirror.js and CodeMirror.css).
     my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
     system($combineResourcesCmd, '--input-dir', 'External/CodeMirror', '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'CodeMirror.js', '--output-style-name', 'CodeMirror.css');
+
+    # Combine the Esprima JavaScript files in Production builds into a single file (Esprima.js).
+    system($combineResourcesCmd, '--input-dir', 'External/Esprima', '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Esprima.js');
 
     # Remove console.assert calls from the Main.js file.
     my $derivedSourcesMainJS = File::Spec->catfile($derivedSourcesDir, 'Main.js');
@@ -128,17 +141,21 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
 
     # Export the license into Main.js.
     my $targetMainJS = File::Spec->catfile($targetResourcePath, 'Main.js');
-    seedFile($targetMainJS, $LICENSE);
+    seedFile($targetMainJS, $inspectorLicense);
 
     my $targetMainCSS = File::Spec->catfile($targetResourcePath, 'Main.css');
-    seedFile($targetMainCSS, $LICENSE);
+    seedFile($targetMainCSS, $inspectorLicense);
 
     # Export the license into CodeMirror.js and CodeMirror.css.
     my $targetCodeMirrorJS = File::Spec->catfile($targetResourcePath, 'CodeMirror.js');
-    seedFile($targetCodeMirrorJS, $CODE_MIRROR_LICENSE);
+    seedFile($targetCodeMirrorJS, $codeMirrorLicense);
 
     my $targetCodeMirrorCSS = File::Spec->catfile($targetResourcePath, 'CodeMirror.css');
-    seedFile($targetCodeMirrorCSS, $CODE_MIRROR_LICENSE);
+    seedFile($targetCodeMirrorCSS, $codeMirrorLicense);
+
+    # Export the license into Esprima.js.
+    my $targetEsprimaJS = File::Spec->catfile($targetResourcePath, 'Esprima.js');
+    seedFile($targetEsprimaJS, $esprimaMirrorLicense);
 
     # Minify the Main.js and Main.css files, with Main.js appending to the license that was exported above.
     my $jsMinScript = File::Spec->catfile($scriptsRoot, 'jsmin.py');
@@ -151,6 +168,10 @@ if (defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESO
     my $derivedSourcesCodeMirrorCSS = File::Spec->catfile($derivedSourcesDir, 'CodeMirror.css');
     system(qq("$python" "$jsMinScript" < "$derivedSouressCodeMirrorJS" >> "$targetCodeMirrorJS")) and die "Failed to minify $derivedSouressCodeMirrorJS: $!";
     system(qq("$python" "$cssMinScript" < "$derivedSourcesCodeMirrorCSS" >> "$targetCodeMirrorCSS")) and die "Failed to minify $derivedSourcesCodeMirrorCSS: $!";
+
+    # Minify the Esprima.js file, appending to the license that was exported above.
+    my $derivedSouressEsprimaJS = File::Spec->catfile($derivedSourcesDir, 'Esprima.js');
+    system(qq("$python" "$jsMinScript" < "$derivedSouressEsprimaJS" >> "$targetEsprimaJS")) and die "Failed to minify $derivedSouressEsprimaJS: $!";
 
     # Copy over Main.html and the Images directory.
     copy($derivedSourcesMainHTML, File::Spec->catfile($targetResourcePath, 'Main.html'));
