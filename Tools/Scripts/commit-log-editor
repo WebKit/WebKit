@@ -346,9 +346,6 @@ sub createCommitMessage(@)
             push @result, normalizeLineEndings("\n", $endl);
             push @result, normalizeLineEndings("$label:\n", $endl);
         }
-        if (!$commonPrefix) {
-            push @result, normalizeLineEndings("\n", $endl);
-        }
         push @result, normalizeLineEndings($changeLogContents{$label}, $endl);
     }
 

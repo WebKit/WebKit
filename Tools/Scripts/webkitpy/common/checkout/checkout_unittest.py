@@ -205,8 +205,7 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
         self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
     def test_commit_message_for_one_reviewed_changelog(self):
-        expected_commit_message = u"""
-SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+        expected_commit_message = u"""SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
 <http://webkit.org/b/135006>
 
 Patch by David Kilzer <ddkilzer@apple.com> on 2014-07-17
@@ -280,8 +279,7 @@ Filler change.
         self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
     def test_commit_message_for_one_rollout_changelog(self):
-        expected_commit_message = u"""
-Rolling out r170340 and r170339.
+        expected_commit_message = u"""Rolling out r170340 and r170339.
 
 Changeset r170339 broke the Apple Windows Debug and Release builds.
 
