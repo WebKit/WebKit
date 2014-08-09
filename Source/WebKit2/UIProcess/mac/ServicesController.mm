@@ -49,6 +49,7 @@ typedef enum {
 - (NSMenu *)menu;
 @end
 
+#ifdef __LP64__
 #if __has_include(<Foundation/NSExtension.h>)
 #import <Foundation/NSExtension.h>
 #else
@@ -59,6 +60,7 @@ typedef enum {
 @interface NSExtension (Details)
 + (id)beginMatchingExtensionsWithAttributes:(NSDictionary *)attributes completion:(void (^)(NSArray *matchingExtensions, NSError *error))handler;
 @end
+#endif // __LP64__
 
 namespace WebKit {
 
@@ -77,6 +79,7 @@ ServicesController::ServicesController()
 {
     refreshExistingServices();
 
+#ifdef __LP64__
     auto refreshCallback = [](NSArray *, NSError *) {
         // We coalese refreshes from the notification callbacks because they can come in small batches.
         ServicesController::shared().refreshExistingServices(false);
@@ -86,6 +89,7 @@ ServicesController::ServicesController()
     m_extensionWatcher = [NSExtension beginMatchingExtensionsWithAttributes:extensionAttributes completion:refreshCallback];
     auto uiExtensionAttributes = @{ @"NSExtensionPointName" : @"com.apple.ui-services" };
     m_uiExtensionWatcher = [NSExtension beginMatchingExtensionsWithAttributes:uiExtensionAttributes completion:refreshCallback];
+#endif // __LP64__
 }
 
 void ServicesController::refreshExistingServices(bool refreshImmediately)
