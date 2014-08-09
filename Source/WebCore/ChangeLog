@@ -1,3 +1,37 @@
+2014-08-08  Peyton Randolph  <prandolph@apple.com>
+
+        Implement long mouse press over links. Part of 135257 - Add long mouse press gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=135476
+
+        Reviewed by Tim Horton.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): 
+        (WebCore::EventHandler::clear): Clear long press state.
+        (WebCore::EventHandler::handleMousePressEvent): Start the long-press if the mouse press is a left
+        mouse press over a link.
+        (WebCore::EventHandler::eventMayStartDrag): We cannot start a drag if we've recognized a long press.
+        (WebCore::EventHandler::handleMouseReleaseEvent): 
+        If we didn't recognize a long press, cancel the long press.
+        (WebCore::EventHandler::beginTrackingPotentialLongMousePress): 
+        Begin the long mouse press by kicking off a timer. If the timer fires before the long press is
+        cancelled, the long press is recognized.
+        (WebCore::EventHandler::recognizeLongMousePress): Added. Trigger the long-press and disable other
+        actions like dragging.
+        (WebCore::EventHandler::cancelTrackingPotentialLongMousePress): Added. Cancel the long press by 
+        clearing related state.
+        (WebCore::EventHandler::clearLongMousePressState): Added. Clear long press state.
+        (WebCore::EventHandler::handleLongMousePressMouseMovedEvent): Added. Cancel the long press if
+        the mouse moves outside a specified hysteresis interval.
+        (WebCore::EventHandler::handleMouseMoveEvent): Ask handleLongMousePressMouseMovedEvent whether to
+        return early and not update hovers, cursors, drags, etc.
+        (WebCore::EventHandler::dragHysteresisExceeded): Factor out the hysteresis bounds check into
+        mouseHysteresisExceeded().
+        (WebCore::EventHandler::handleDrag): Cancel long press upon starting drag.
+        (WebCore::EventHandler::mouseHysteresisExceeded): Added. General hysteresis function that takes an
+        arbitrary mouse movement threshold. Factored out from dragHysteresisExceeded.
+        * page/EventHandler.h:
+
 2014-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2] Scrolling does not work inside nested frames
