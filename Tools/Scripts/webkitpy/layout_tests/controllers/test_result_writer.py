@@ -169,7 +169,11 @@ class TestResultWriter(object):
         self._write_binary_file(diff_filename, image_diff)
 
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
-        image_diff_file = self._filesystem.read_text_file(self._filesystem.join(base_dir, 'image-diff-template.html'))
+        
+        image_diff_template = self._filesystem.join(base_dir, 'image-diff-template.html');
+        image_diff_file = ""
+        if self._filesystem.exists(image_diff_template):
+            image_diff_file = self._filesystem.read_text_file(image_diff_template)
 
         # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
         # FIXME: old-run-webkit-tests include a link to the test file.
