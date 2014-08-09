@@ -168,60 +168,18 @@ class TestResultWriter(object):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
         self._write_binary_file(diff_filename, image_diff)
 
-        diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
+        base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
+        image_diff_file = self._filesystem.read_text_file(self._filesystem.join(base_dir, 'image-diff-template.html'))
+
         # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
         # FIXME: old-run-webkit-tests include a link to the test file.
-        html = """<!DOCTYPE HTML>
-<html>
-<head>
-<title>%(title)s</title>
-<style>.label{font-weight:bold}</style>
-</head>
-<body>
-Difference between images: <a href="%(diff_filename)s">diff</a><br>
-<div class=imageText></div>
-<div class=imageContainer data-prefix="%(prefix)s">Loading...</div>
-<script>
-(function() {
-    var preloadedImageCount = 0;
-    function preloadComplete() {
-        ++preloadedImageCount;
-        if (preloadedImageCount < 2)
-            return;
-        toggleImages();
-        setInterval(toggleImages, 2000)
-    }
-
-    function preloadImage(url) {
-        image = new Image();
-        image.addEventListener('load', preloadComplete);
-        image.src = url;
-        return image;
-    }
-
-    function toggleImages() {
-        if (text.textContent == 'Expected Image') {
-            text.textContent = 'Actual Image';
-            container.replaceChild(actualImage, container.firstChild);
-        } else {
-            text.textContent = 'Expected Image';
-            container.replaceChild(expectedImage, container.firstChild);
-        }
-    }
-
-    var text = document.querySelector('.imageText');
-    var container = document.querySelector('.imageContainer');
-    var actualImage = preloadImage(container.getAttribute('data-prefix') + '-actual.png');
-    var expectedImage = preloadImage(container.getAttribute('data-prefix') + '-expected.png');
-})();
-</script>
-</body>
-</html>
-""" % {
+        html = image_diff_file % {
             'title': self._test_name,
             'diff_filename': self._output_testname(self.FILENAME_SUFFIX_IMAGE_DIFF),
             'prefix': self._output_testname(''),
         }
+
+        diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         self._filesystem.write_text_file(diffs_html_filename, html)
 
     def write_reftest(self, src_filepath):
