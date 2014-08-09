@@ -30,14 +30,12 @@
 #include "DebuggerCallFrame.h"
 
 #include "CodeBlock.h"
-#include "DebuggerScope.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"
 #include "Parser.h"
 #include "StackVisitor.h"
-#include "StrongInlines.h"
 
 namespace JSC {
 
@@ -108,25 +106,20 @@ String DebuggerCallFrame::functionName() const
     return getCalculatedDisplayName(m_callFrame, function);
 }
 
-DebuggerScope* DebuggerCallFrame::scope()
+JSScope* DebuggerCallFrame::scope() const
 {
     ASSERT(isValid());
     if (!isValid())
         return 0;
 
-    if (!m_scope) {
-        VM& vm = m_callFrame->vm();
-        CodeBlock* codeBlock = m_callFrame->codeBlock();
-        if (codeBlock && codeBlock->needsActivation() && !m_callFrame->hasActivation()) {
-            ASSERT(!m_callFrame->scope()->isWithScope());
-            JSActivation* activation = JSActivation::create(vm, m_callFrame, codeBlock);
-            m_callFrame->setActivation(activation);
-            m_callFrame->setScope(activation);
-        }
-
-        m_scope.set(vm, DebuggerScope::create(vm, m_callFrame->scope()));
+    CodeBlock* codeBlock = m_callFrame->codeBlock();
+    if (codeBlock && codeBlock->needsActivation() && !m_callFrame->hasActivation()) {
+        JSActivation* activation = JSActivation::create(*codeBlock->vm(), m_callFrame, codeBlock);
+        m_callFrame->setActivation(activation);
+        m_callFrame->setScope(activation);
     }
-    return m_scope.get();
+
+    return m_callFrame->scope();
 }
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const
@@ -169,7 +162,7 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception)
     }
 
     JSValue thisValue = thisValueForCallFrame(callFrame);
-    JSValue result = vm.interpreter->execute(eval, callFrame, thisValue, scope()->jsScope());
+    JSValue result = vm.interpreter->execute(eval, callFrame, thisValue, scope());
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();
@@ -181,10 +174,6 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception)
 void DebuggerCallFrame::invalidate()
 {
     m_callFrame = nullptr;
-    if (m_scope) {
-        m_scope->invalidateChain();
-        m_scope.clear();
-    }
     RefPtr<DebuggerCallFrame> frame = m_caller.release();
     while (frame) {
         frame->m_callFrame = nullptr;

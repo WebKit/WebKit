@@ -1,3 +1,62 @@
+2014-08-08  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION: Inspector crashes when debugger is paused and injected scripts access window.screen().
+        <https://webkit.org/b/135656>
+
+        Not reviewed.
+
+        Rolling out r170680 which was merged to ToT in r172129.
+
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::evaluate):
+        (JSC::DebuggerCallFrame::invalidate):
+        * debugger/DebuggerCallFrame.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::DebuggerScope):
+        (JSC::DebuggerScope::finishCreation):
+        (JSC::DebuggerScope::visitChildren):
+        (JSC::DebuggerScope::className):
+        (JSC::DebuggerScope::getOwnPropertySlot):
+        (JSC::DebuggerScope::put):
+        (JSC::DebuggerScope::deleteProperty):
+        (JSC::DebuggerScope::getOwnPropertyNames):
+        (JSC::DebuggerScope::defineOwnProperty):
+        (JSC::DebuggerScope::next): Deleted.
+        (JSC::DebuggerScope::invalidateChain): Deleted.
+        (JSC::DebuggerScope::isWithScope): Deleted.
+        (JSC::DebuggerScope::isGlobalScope): Deleted.
+        (JSC::DebuggerScope::isFunctionScope): Deleted.
+        * debugger/DebuggerScope.h:
+        (JSC::DebuggerScope::create):
+        (JSC::DebuggerScope::Iterator::Iterator): Deleted.
+        (JSC::DebuggerScope::Iterator::get): Deleted.
+        (JSC::DebuggerScope::Iterator::operator++): Deleted.
+        (JSC::DebuggerScope::Iterator::operator==): Deleted.
+        (JSC::DebuggerScope::Iterator::operator!=): Deleted.
+        (JSC::DebuggerScope::isValid): Deleted.
+        (JSC::DebuggerScope::jsScope): Deleted.
+        (JSC::DebuggerScope::begin): Deleted.
+        (JSC::DebuggerScope::end): Deleted.
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        (Inspector::JSJavaScriptCallFrame::scopeChain):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::scopeChain):
+        * inspector/ScriptDebugServer.cpp:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::debuggerScopeStructure): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::isWithScope): Deleted.
+        * runtime/JSScope.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2014-08-07  Saam Barati  <sbarati@apple.com>
 
         Create a more generic way for VMEntryScope to notify those interested that it will be destroyed

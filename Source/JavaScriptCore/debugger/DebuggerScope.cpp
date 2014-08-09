@@ -28,7 +28,6 @@
 
 #include "JSActivation.h"
 #include "JSCInlines.h"
-#include "JSWithScope.h"
 
 namespace JSC {
 
@@ -36,16 +35,17 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerScope);
 
 const ClassInfo DebuggerScope::s_info = { "DebuggerScope", &Base::s_info, 0, CREATE_METHOD_TABLE(DebuggerScope) };
 
-DebuggerScope::DebuggerScope(VM& vm, JSScope* scope)
-    : JSNonFinalObject(vm, scope->globalObject()->debuggerScopeStructure())
+DebuggerScope::DebuggerScope(VM& vm)
+    : JSNonFinalObject(vm, vm.debuggerScopeStructure.get())
 {
-    ASSERT(scope);
-    m_scope.set(vm, this, scope);
 }
 
-void DebuggerScope::finishCreation(VM& vm)
+void DebuggerScope::finishCreation(VM& vm, JSObject* activation)
 {
     Base::finishCreation(vm);
+    ASSERT(activation);
+    ASSERT(activation->isActivationObject());
+    m_activation.set(vm, this, jsCast<JSActivation*>(activation));
 }
 
 void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -53,108 +53,43 @@ void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     JSObject::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_scope);
-    visitor.append(&thisObject->m_next);
+    visitor.append(&thisObject->m_activation);
 }
 
 String DebuggerScope::className(const JSObject* object)
 {
-    const DebuggerScope* scope = jsCast<const DebuggerScope*>(object);
-    ASSERT(scope->isValid());
-    if (!scope->isValid())
-        return String();
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable()->className(thisObject);
+    const DebuggerScope* thisObject = jsCast<const DebuggerScope*>(object);
+    return thisObject->m_activation->methodTable()->className(thisObject->m_activation.get());
 }
 
 bool DebuggerScope::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    DebuggerScope* scope = jsCast<DebuggerScope*>(object);
-    ASSERT(scope->isValid());
-    if (!scope->isValid())
-        return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    DebuggerScope* thisObject = jsCast<DebuggerScope*>(object);
+    return thisObject->m_activation->methodTable()->getOwnPropertySlot(thisObject->m_activation.get(), exec, propertyName, slot);
 }
 
 void DebuggerScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    DebuggerScope* scope = jsCast<DebuggerScope*>(cell);
-    ASSERT(scope->isValid());
-    if (!scope->isValid())
-        return;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    thisObject->methodTable()->put(thisObject, exec, propertyName, value, slot);
+    DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
+    thisObject->m_activation->methodTable()->put(thisObject->m_activation.get(), exec, propertyName, value, slot);
 }
 
 bool DebuggerScope::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
-    DebuggerScope* scope = jsCast<DebuggerScope*>(cell);
-    ASSERT(scope->isValid());
-    if (!scope->isValid())
-        return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable()->deleteProperty(thisObject, exec, propertyName);
+    DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
+    return thisObject->m_activation->methodTable()->deleteProperty(thisObject->m_activation.get(), exec, propertyName);
 }
 
 void DebuggerScope::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    DebuggerScope* scope = jsCast<DebuggerScope*>(object);
-    ASSERT(scope->isValid());
-    if (!scope->isValid())
-        return;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    thisObject->methodTable()->getPropertyNames(thisObject, exec, propertyNames, mode);
+    DebuggerScope* thisObject = jsCast<DebuggerScope*>(object);
+    thisObject->m_activation->methodTable()->getPropertyNames(thisObject->m_activation.get(), exec, propertyNames, mode);
 }
 
 bool DebuggerScope::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    DebuggerScope* scope = jsCast<DebuggerScope*>(object);
-    ASSERT(scope->isValid());
-    if (!scope->isValid())
-        return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable()->defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
-}
-
-DebuggerScope* DebuggerScope::next()
-{
-    ASSERT(isValid());
-    if (!m_next && m_scope->next()) {
-        VM& vm = *m_scope->vm();
-        DebuggerScope* nextScope = create(vm, m_scope->next());
-        m_next.set(vm, this, nextScope);
-    }
-    return m_next.get();
-}
-
-void DebuggerScope::invalidateChain()
-{
-    DebuggerScope* scope = this;
-    while (scope) {
-        ASSERT(scope->isValid());
-        DebuggerScope* nextScope = scope->m_next.get();
-        scope->m_next.clear();
-        scope->m_scope.clear();
-        scope = nextScope;
-    }
-}
-
-bool DebuggerScope::isWithScope() const
-{
-    return m_scope->isWithScope();
-}
-
-bool DebuggerScope::isGlobalScope() const
-{
-    return m_scope->isGlobalObject();
-}
-
-bool DebuggerScope::isFunctionScope() const
-{
-    // In the current debugger implementation, every function will create an
-    // activation object. Hence, an activation object implies a function scope.
-    return m_scope->isActivationObject();
+    DebuggerScope* thisObject = jsCast<DebuggerScope*>(object);
+    return thisObject->m_activation->methodTable()->defineOwnProperty(thisObject->m_activation.get(), exec, propertyName, descriptor, shouldThrow);
 }
 
 } // namespace JSC

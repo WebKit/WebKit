@@ -240,6 +240,7 @@ namespace JSC {
 
         Strong<Structure> structureStructure;
         Strong<Structure> structureRareDataStructure;
+        Strong<Structure> debuggerScopeStructure;
         Strong<Structure> terminatedExecutionErrorStructure;
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;

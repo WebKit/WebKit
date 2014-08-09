@@ -34,7 +34,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "DebuggerCallFrame.h"
-#include "DebuggerScope.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JSLock.h"
 #include "JavaScriptCallFrame.h"

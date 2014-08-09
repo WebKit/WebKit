@@ -594,7 +594,6 @@ public:
     bool isNameScopeObject() const;
     bool isActivationObject() const;
     bool isErrorInstance() const;
-    bool isWithScope() const;
 
     JS_EXPORT_PRIVATE void seal(VM&);
     JS_EXPORT_PRIVATE void freeze(VM&);
@@ -1149,11 +1148,6 @@ inline bool JSObject::isActivationObject() const
 inline bool JSObject::isErrorInstance() const
 {
     return type() == ErrorInstanceType;
-}
-
-inline bool JSObject::isWithScope() const
-{
-    return type() == WithScopeType;
 }
 
 inline void JSObject::setStructureAndButterfly(VM& vm, Structure* structure, Butterfly* butterfly)

@@ -1,3 +1,15 @@
+2014-08-08  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION: Inspector crashes when debugger is paused and injected scripts access window.screen().
+        <https://webkit.org/b/135656>
+
+        Not reviewed.
+
+        Rolling out r170680 which was merged to ToT in r172129.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::attachDebugger):
+
 2014-08-08  Peyton Randolph  <prandolph@apple.com>
 
         Implement long mouse press over links. Part of 135257 - Add long mouse press gesture.

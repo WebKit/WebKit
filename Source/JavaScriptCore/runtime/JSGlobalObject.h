@@ -186,7 +186,6 @@ protected:
     WriteBarrier<JSPromisePrototype> m_promisePrototype;
 #endif
 
-    WriteBarrier<Structure> m_debuggerScopeStructure;
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
     WriteBarrier<Structure> m_activationStructure;
@@ -392,7 +391,6 @@ public:
     JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
 #endif
 
-    Structure* debuggerScopeStructure() const { return m_debuggerScopeStructure.get(); }
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
     Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
     Structure* activationStructure() const { return m_activationStructure.get(); }

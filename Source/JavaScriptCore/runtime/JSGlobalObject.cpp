@@ -45,7 +45,6 @@
 #include "DateConstructor.h"
 #include "DatePrototype.h"
 #include "Debugger.h"
-#include "DebuggerScope.h"
 #include "Error.h"
 #include "ErrorConstructor.h"
 #include "ErrorPrototype.h"
@@ -321,7 +320,6 @@ void JSGlobalObject::reset(JSValue prototype)
     m_nameScopeStructure.set(vm, this, JSNameScope::createStructure(vm, this, jsNull()));
     m_activationStructure.set(vm, this, JSActivation::createStructure(vm, this, jsNull()));
     m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
-    m_debuggerScopeStructure.set(m_vm, this, DebuggerScope::createStructure(m_vm, this, jsNull()));
     m_withScopeStructure.set(vm, this, JSWithScope::createStructure(vm, this, jsNull()));
 
     m_nullPrototypeObjectStructure.set(vm, this, JSFinalObject::createStructure(vm, this, jsNull(), JSFinalObject::defaultInlineCapacity()));
@@ -664,7 +662,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_promisePrototype);
 #endif
 
-    visitor.append(&thisObject->m_debuggerScopeStructure);
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);
     visitor.append(&thisObject->m_activationStructure);

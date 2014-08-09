@@ -29,17 +29,13 @@
 #ifndef DebuggerCallFrame_h
 #define DebuggerCallFrame_h
 
+#include "CallFrame.h"
 #include "DebuggerPrimitives.h"
-#include "Strong.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
-
-class DebuggerScope;
-class ExecState;
-typedef ExecState CallFrame;
 
 class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
@@ -62,7 +58,7 @@ public:
     JS_EXPORT_PRIVATE const TextPosition& position() const { return m_position; }
 
     JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject() const;
-    JS_EXPORT_PRIVATE DebuggerScope* scope();
+    JS_EXPORT_PRIVATE JSScope* scope() const;
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;
     JS_EXPORT_PRIVATE JSValue thisValue() const;
@@ -82,9 +78,6 @@ private:
     CallFrame* m_callFrame;
     RefPtr<DebuggerCallFrame> m_caller;
     TextPosition m_position;
-    // The DebuggerCallFrameScope is responsible for calling invalidate() which,
-    // in turn, will clear this strong ref.
-    Strong<DebuggerScope> m_scope;
 };
 
 } // namespace JSC
