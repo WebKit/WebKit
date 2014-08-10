@@ -1233,7 +1233,7 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::operator=(HashTable&& other) -> HashTable&
     {
-        HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> temp = WTF::move(other);
+        HashTable temp = WTF::move(other);
         swap(temp);
         return *this;
     }
