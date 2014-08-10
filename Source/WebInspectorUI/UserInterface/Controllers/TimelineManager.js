@@ -398,6 +398,9 @@ WebInspector.TimelineManager.prototype = {
 
     _loadNewRecording: function()
     {
+        if (this._activeRecording && this._activeRecording.isEmpty())
+            return;
+
         var identifier = this._nextRecordingIdentifier++;
         var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
         this._recordings.push(newRecording);

@@ -90,8 +90,20 @@ WebInspector.TimelineRecording.prototype = {
         return this._isWritable;
     },
 
+    isEmpty: function()
+    {
+        for (var timeline of this._timelines.values()) {
+            if (timeline.records.length)
+                return false;
+        }
+
+        return true;
+    },
+
     unloaded: function()
     {
+        console.assert(!this.isEmpty(), "Shouldn't unload an empty recording; it should be reused instead.");
+
         this._isWritable = false;
     },
 

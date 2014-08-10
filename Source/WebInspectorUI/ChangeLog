@@ -1,3 +1,18 @@
+2014-08-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: TimelineManager should reuse empty recordings
+        https://bugs.webkit.org/show_bug.cgi?id=135749
+
+        Reviewed by Timothy Hatcher.
+
+        Check whether the recording is empty before creating a new one.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.isEmpty):
+        (WebInspector.TimelineRecording.prototype.unloaded):
+
 2014-08-08  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: add debugging flag to InspectorTest for unbuffered logging to stderr
