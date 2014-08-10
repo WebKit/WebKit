@@ -1,3 +1,12 @@
+2014-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] REGRESSION(r166239): The ld version script is not being used
+        https://bugs.webkit.org/show_bug.cgi?id=135694
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: Add VERSION_SCRIPT to WebKit2 link flags if present.
+
 2014-08-09  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r172301): Combined phone number highlight doesn't appear if rich content is selected and we have no rich content services

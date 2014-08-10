@@ -1,8 +1,9 @@
 {
 global:
   webkit_*;
-  WebProcessMainGtk;
-  NetworkProcessMain;
+  WebProcessMainUnix;
+  NetworkProcessMainUnix;
+  PluginProcessMainUnix;
   _ZN6WebKit22WebGtkExtensionManager10initializeEPK14OpaqueWKBundlePKv;
   _ZN6WebKit22WebGtkExtensionManager6sharedEv;
 local:

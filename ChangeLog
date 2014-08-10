@@ -1,5 +1,19 @@
 2014-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] REGRESSION(r166239): The ld version script is not being used
+        https://bugs.webkit.org/show_bug.cgi?id=135694
+
+        Reviewed by Martin Robinson.
+
+        Move the symbols filter file from Tools/gtk to Source/cmake and rename
+        it as gtksymbols.filter. Also updated it, since some of the symbols
+        exported were renamed.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/gtksymbols.filter: Renamed from Tools/gtk/symbols.filter.
+
+2014-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Child processes should be installed in a versioned directory
         https://bugs.webkit.org/show_bug.cgi?id=135754
 

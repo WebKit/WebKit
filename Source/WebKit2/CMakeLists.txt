@@ -704,6 +704,10 @@ target_link_libraries(WebKit2 ${WebKit2_LIBRARIES})
 set_target_properties(WebKit2 PROPERTIES FOLDER "WebKit")
 set_target_properties(WebKit2 PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
+if (WebKit2_VERSION_SCRIPT)
+    ADD_TARGET_PROPERTIES(WebKit2 LINK_FLAGS "${WebKit2_VERSION_SCRIPT}")
+endif ()
+
 if (WebKit2_OUTPUT_NAME)
     set_target_properties(WebKit2 PROPERTIES OUTPUT_NAME ${WebKit2_OUTPUT_NAME})
 endif ()

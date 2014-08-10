@@ -91,7 +91,7 @@ if (DEVELOPER_MODE)
 else ()
     set(ENABLE_TOOLS OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS OFF)
-    set(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_SOURCE_DIR}/Source/autotools/symbols.filter")
+    set(WebKit2_VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/gtksymbols.filter")
 endif ()
 
 # FIXME: We want to expose fewer options to downstream, but for now everything is public.
