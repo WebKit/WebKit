@@ -2116,7 +2116,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
         LayoutState* layoutState = view().layoutState();
 
         if (layer() && layer()->transform())
-            rect = LayoutRect(layer()->transform()->mapRect(pixelSnappedForPainting(rect, document().deviceScaleFactor())));
+            rect = LayoutRect(enclosingRectForPainting(layer()->transform()->mapRect(rect), document().deviceScaleFactor()));
 
         // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
         if (styleToUse.hasInFlowPosition() && layer())
@@ -2169,7 +2169,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     // in the parent's coordinate space that encloses us.
     if (hasLayer() && layer()->transform()) {
         fixed = position == FixedPosition;
-        rect = LayoutRect(layer()->transform()->mapRect(pixelSnappedForPainting(rect, document().deviceScaleFactor())));
+        rect = LayoutRect(enclosingRectForPainting(layer()->transform()->mapRect(rect), document().deviceScaleFactor()));
         topLeft = rect.location();
         topLeft.move(locationOffset());
     } else if (position == FixedPosition)
