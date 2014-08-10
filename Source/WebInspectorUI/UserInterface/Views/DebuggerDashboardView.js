@@ -32,8 +32,14 @@ WebInspector.DebuggerDashboardView = function(representedObject)
     this._navigationBar = new WebInspector.NavigationBar;
     this.element.appendChild(this._navigationBar.element);
 
+    var resumeImage;
+    if (WebInspector.Platform.isLegacyMacOS)
+        resumeImage = {src: "Images/Legacy/Resume.svg", width: 16, height: 16};
+    else
+        resumeImage = {src: "Images/Resume.svg", width: 15, height: 15};
+
     var tooltip = WebInspector.UIString("Continue script execution (%s or %s)").format(WebInspector.debuggerSidebarPanel.pauseOrResumeKeyboardShortcut.displayName, WebInspector.debuggerSidebarPanel.pauseOrResumeAlternateKeyboardShortcut.displayName);
-    this._debuggerResumeButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-dashboard-pause", tooltip, tooltip, "Images/Resume.svg", 16, 16, true);
+    this._debuggerResumeButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-dashboard-pause", tooltip, tooltip, resumeImage.src, resumeImage.width, resumeImage.height, true);
     this._debuggerResumeButtonItem.activated = true;
     this._debuggerResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._resumeButtonClicked, this);
     this._navigationBar.addNavigationItem(this._debuggerResumeButtonItem);

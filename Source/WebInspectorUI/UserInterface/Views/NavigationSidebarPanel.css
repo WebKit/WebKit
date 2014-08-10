@@ -297,7 +297,7 @@ body.mac-platform.legacy.window-inactive .navigation-sidebar-panel-content-tree-
     color: rgba(0, 0, 0, 0.7);
 }
 
-.navigation-sidebar-panel-content-tree-outline .item.selected .subtitle {
+.navigation-sidebar-panel-content-tree-outline:focus .item.selected .subtitle {
     color: rgba(255, 255, 255, 0.9);
 }
 

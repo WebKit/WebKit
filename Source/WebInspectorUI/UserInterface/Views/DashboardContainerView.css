@@ -178,6 +178,10 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard {
     transition-duration: 0.2s;
 }
 
+body.mac-platform.legacy .dashboard-container .advance-arrow {
+    background-image: url(../Images/Legacy/UpDownArrows.svg);
+}
+
 .dashboard-container .advance-arrow:hover {
     opacity: 0.8;
 }

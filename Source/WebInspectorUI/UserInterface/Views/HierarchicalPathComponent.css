@@ -66,6 +66,10 @@
     content: url(../Images/UpDownArrows.svg);
 }
 
+body.mac-platform.legacy .hierarchical-path-component > .selector-arrows {
+    content: url(../Images/Legacy/UpDownArrows.svg);
+}
+
 .hierarchical-path-component > .title {
     display: -webkit-flex;
     -webkit-flex: 1;

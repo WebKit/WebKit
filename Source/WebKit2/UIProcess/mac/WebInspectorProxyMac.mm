@@ -63,7 +63,7 @@ static const CGFloat windowContentBorderThickness = 55;
 static const CGFloat dockButtonMargin = 3;
 
 // The spacing between the dock buttons.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 static const CGFloat dockButtonSpacing = 1;
 #else
 static const CGFloat dockButtonSpacing = dockButtonMargin * 2;
@@ -312,7 +312,7 @@ void WebInspectorProxy::createInspectorWindow()
     static const int32_t firstVersionOfSafariWithDockToRightSupport = 0x02181d0d; // 536.29.13
     static bool supportsDockToRight = NSVersionOfLinkTimeLibrary("Safari") >= firstVersionOfSafariWithDockToRightSupport;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     m_dockBottomButton = adoptNS(createDockButton(@"DockBottom"));
     m_dockRightButton = adoptNS(createDockButton(@"DockRight"));
 
