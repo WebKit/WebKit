@@ -1,3 +1,17 @@
+2014-08-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        JSC Lexer is allowing octals 08 and 09 in strict mode functions
+        https://bugs.webkit.org/show_bug.cgi?id=135704
+
+        Reviewed by Oliver Hunt.
+
+        Return syntax error ("Decimal integer literals with a leading zero are
+        forbidden in strict mode") if a number starts with 0 and is followed 
+        by a digit.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+
 2014-08-08  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION: Inspector crashes when debugger is paused and injected scripts access window.screen().

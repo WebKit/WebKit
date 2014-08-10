@@ -88,6 +88,17 @@ invalid(".l");
 invalid("1.l");
 valid  ("1 .l");
 
+debug ("Octal numbers");
+
+valid  ("'use strict'; 0");
+valid  ("0");
+invalid("'use strict'; 00");
+valid  ("00");
+invalid("'use strict'; 08");
+valid  ("08");
+invalid("'use strict'; 09");
+valid  ("09");
+
 debug  ("Binary and conditional operators");
 
 valid  ("a + + typeof this");

@@ -92,8 +92,8 @@ PASS 'use strict'; for(;;)break missingLabel threw exception SyntaxError: Cannot
 PASS (function(){'use strict'; for(;;)break missingLabel}) threw exception SyntaxError: Cannot use the undeclared label 'missingLabel'..
 PASS 'use strict'; for(;;)continue missingLabel threw exception SyntaxError: Cannot use the undeclared label 'missingLabel'..
 PASS (function(){'use strict'; for(;;)continue missingLabel}) threw exception SyntaxError: Cannot use the undeclared label 'missingLabel'..
-PASS 'use strict'; 007; threw exception SyntaxError: Octal escapes are forbidden in strict mode.
-PASS (function(){'use strict'; 007;}) threw exception SyntaxError: Octal escapes are forbidden in strict mode.
+PASS 'use strict'; 007; threw exception SyntaxError: Decimal integer literals with a leading zero are forbidden in strict mode.
+PASS (function(){'use strict'; 007;}) threw exception SyntaxError: Decimal integer literals with a leading zero are forbidden in strict mode.
 PASS 'use strict'; '\007'; threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.
 PASS (function(){'use strict'; '\007';}) threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.
 PASS '\007'; 'use strict'; threw exception SyntaxError: The only valid numeric escape in strict mode is '\0'.

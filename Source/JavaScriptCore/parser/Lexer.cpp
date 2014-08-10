@@ -1664,13 +1664,13 @@ start:
         }
 
         record8('0');
+        if (strictMode && isASCIIDigit(m_current)) {
+            m_lexErrorMessage = "Decimal integer literals with a leading zero are forbidden in strict mode";
+            token = INVALID_OCTAL_NUMBER_ERRORTOK;
+            goto returnError;
+        }
         if (isASCIIOctalDigit(m_current)) {
             if (parseOctal(tokenData->doubleValue)) {
-                if (strictMode) {
-                    m_lexErrorMessage = "Octal escapes are forbidden in strict mode";
-                    token = INVALID_OCTAL_NUMBER_ERRORTOK;
-                    goto returnError;
-                }
                 token = NUMBER;
             }
         }
