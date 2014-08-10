@@ -1,3 +1,17 @@
+2014-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Child processes should be installed in a versioned directory
+        https://bugs.webkit.org/show_bug.cgi?id=135754
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Define LIBEXEC_INSTALL_DIR as
+        ${CMAKE_INSTALL_FULL_LIBEXECDIR}/webkitgtk-${WEBKITGTK_API_VERSION}
+        so that the child processes are installed in $libexec/webkitgtk-4.0.
+        This makes it possible to install 2.6 in parallel to older versions.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-08-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards using CMake on Mac.
