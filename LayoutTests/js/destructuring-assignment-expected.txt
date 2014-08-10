@@ -81,6 +81,10 @@ PASS a+b is '2211'
 PASS testDeconstructArgs('1', '2') is '12'
 PASS testDeconstructArgLength('1', '2') is 2
 PASS testDeconstructArgs('2') is '23'
+PASS a is 1
+PASS b is 2
+PASS c is 3
+PASS d is 4
 PASS successfullyParsed is true
 
 TEST COMPLETE

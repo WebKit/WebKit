@@ -50,6 +50,11 @@ var text = '3';
 Object.prototype.__defineGetter__(1, function(){ var r = text; text = "fail"; return r; })
 shouldBe("testDeconstructArgs('2')", "'23'");
 
+var [a,b] = [1,2], [c,d] = [3,4]
 
+shouldBe("a", "1")
+shouldBe("b", "2")
+shouldBe("c", "3")
+shouldBe("d", "4")
 
 

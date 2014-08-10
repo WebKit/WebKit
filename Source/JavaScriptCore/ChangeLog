@@ -1,3 +1,16 @@
+2014-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Destructuring assignment in a var declaration list incorrectly consumes subsequent variable initialisers
+        https://bugs.webkit.org/show_bug.cgi?id=135773
+
+        Reviewed by Michael Saboff.
+
+        We should be using parseAssignment expression in order to get the correct
+        precedence.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+
 2014-08-10  Diego Pino Garcia  <dpino@igalia.com>
 
         JSC Lexer is allowing octals 08 and 09 in strict mode functions

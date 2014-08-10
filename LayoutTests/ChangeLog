@@ -1,3 +1,15 @@
+2014-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Destructuring assignment in a var declaration list incorrectly consumes subsequent variable initialisers
+        https://bugs.webkit.org/show_bug.cgi?id=135773
+
+        Reviewed by Michael Saboff.
+
+        Add new tests.
+
+        * js/destructuring-assignment-expected.txt:
+        * js/script-tests/destructuring-assignment.js:
+
 2014-08-09  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Transforms on non-compositing layers leave bits behind when the box boundaries changes.

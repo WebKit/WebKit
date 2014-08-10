@@ -484,7 +484,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             lastPattern = pattern;
             if (hasInitializer) {
                 next(TreeBuilder::DontBuildStrings); // consume '='
-                TreeExpression rhs = parseExpression(context);
+                TreeExpression rhs = parseAssignmentExpression(context);
                 node = context.createDeconstructingAssignment(location, pattern, rhs);
                 lastInitializer = rhs;
             }
