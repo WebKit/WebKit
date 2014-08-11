@@ -4888,7 +4888,7 @@ void SpeculativeJIT::compile(Node* node)
         MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, 
             indexGPR, MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset()));
 
-        m_jit.move(MacroAssembler::TrustedImm32(ValueNull), resultGPR);
+        m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsNull())), resultGPR);
 
         MacroAssembler::Jump done = m_jit.jump();
         inBounds.link(&m_jit);

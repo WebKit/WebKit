@@ -1,3 +1,18 @@
+2014-08-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JIT should use full 64-bit stores for jsBoolean and jsNull
+        https://bugs.webkit.org/show_bug.cgi?id=135784
+
+        Reviewed by Michael Saboff.
+
+        This guarantees that we set the high bits of the register with the correct tag.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_structure_property):
+        (JSC::JIT::emit_op_next_enumerator_pname):
+
 2014-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Adjust build script for Windows production build.

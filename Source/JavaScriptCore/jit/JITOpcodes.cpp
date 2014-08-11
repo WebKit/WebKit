@@ -1131,7 +1131,7 @@ void JIT::emit_op_has_structure_property(Instruction* currentInstruction)
     load32(Address(regT0, JSCell::structureIDOffset()), regT0);
     addSlowCase(branch32(NotEqual, regT0, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
     
-    move(TrustedImm32(ValueTrue), regT0);
+    move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
     emitPutVirtualRegister(dst);
 }
 
@@ -1320,7 +1320,7 @@ void JIT::emit_op_next_enumerator_pname(Instruction* currentInstruction)
     emitGetVirtualRegister(enumerator, regT1);
     Jump inBounds = branch32(Below, regT0, Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesLengthOffset()));
 
-    move(TrustedImm32(ValueNull), regT0);
+    move(TrustedImm64(JSValue::encode(jsNull())), regT0);
 
     Jump done = jump();
     inBounds.link(this);
