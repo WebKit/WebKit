@@ -99,6 +99,20 @@ void InspectorTimelineAgent::willDestroyFrontendAndBackend(InspectorDisconnectRe
 
 void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
 {
+    m_enabledFromFrontend = true;
+
+    internalStart(maxCallStackDepth);
+}
+
+void InspectorTimelineAgent::stop(ErrorString*)
+{
+    internalStop();
+
+    m_enabledFromFrontend = false;
+}
+
+void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
+{
     if (maxCallStackDepth && *maxCallStackDepth > 0)
         m_maxCallStackDepth = *maxCallStackDepth;
     else
@@ -117,7 +131,7 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
         m_frontendDispatcher->recordingStarted();
 }
 
-void InspectorTimelineAgent::stop(ErrorString*)
+void InspectorTimelineAgent::internalStop()
 {
     if (!m_enabled)
         return;
@@ -176,8 +190,8 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
         }
     }
 
-    if (m_pendingConsoleProfileRecords.isEmpty())
-        start();
+    if (!m_enabled && m_pendingConsoleProfileRecords.isEmpty())
+        internalStart();
 
     startProfiling(exec, title);
 
@@ -203,8 +217,8 @@ PassRefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState*
 
             m_pendingConsoleProfileRecords.remove(i);
 
-            if (m_pendingConsoleProfileRecords.isEmpty())
-                stop();
+            if (!m_enabledFromFrontend && m_pendingConsoleProfileRecords.isEmpty())
+                internalStop();
 
             return profile.release();
         }
@@ -682,6 +696,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_client(client)
     , m_recordingProfileDepth(0)
     , m_enabled(false)
+    , m_enabledFromFrontend(false)
 {
 }
 
