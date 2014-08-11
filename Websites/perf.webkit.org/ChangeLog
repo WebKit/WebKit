@@ -1,3 +1,19 @@
+2014-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merging platforms mixes baselines and targets into reported data
+        https://bugs.webkit.org/show_bug.cgi?id=135260
+
+        Reviewed by Andreas Kling.
+
+        When merging two platforms, move test configurations of a different type (baseline, target)
+        as well as of different metric (Time, Runs).
+
+        Also avoid fetching the entire table of runs just to see if there are no remaining runs.
+        It's sufficient to detect one such test_runs object.
+
+        * public/admin/platforms.php:
+        (merge_platforms):
+
 2014-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merging platforms mixes baselines and targets into reported data
