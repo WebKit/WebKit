@@ -35,8 +35,7 @@ function fetch_runs_for_config($db, $config) {
         WHERE run_build = build_id AND run_config = $1
         GROUP BY build_id, build_builder, build_number, build_time, build_latest_revision,
             run_id, run_config, run_build, run_iteration_count_cache,
-            run_mean_cache, run_sum_cache, run_square_sum_cache
-        ORDER BY build_latest_revision, build_time', array($config['config_id']));
+            run_mean_cache, run_sum_cache, run_square_sum_cache', array($config['config_id']));
 
     $formatted_runs = array();
     if (!$raw_runs)
@@ -67,6 +66,7 @@ function parse_revisions_array($postgres_array) {
 
 function format_run($run) {
     return array(
+        'id' => intval($run['run_id']),
         'mean' => floatval($run['run_mean_cache']),
         'iterationCount' => intval($run['run_iteration_count_cache']),
         'sum' => floatval($run['run_sum_cache']),

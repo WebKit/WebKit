@@ -1,5 +1,18 @@
 2014-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Report run id's in api/runs.php for the new dashboard UI
+        https://bugs.webkit.org/show_bug.cgi?id=135813
+
+        Reviewed by Andreas Kling.
+
+        Include run_id in the generated JSON.
+
+        * public/api/runs.php:
+        (fetch_runs_for_config): Don't sort results by time since that has been done in the front end for ages now.
+        (format_run):
+
+2014-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merging platforms mixes baselines and targets into reported data
         https://bugs.webkit.org/show_bug.cgi?id=135260
 
