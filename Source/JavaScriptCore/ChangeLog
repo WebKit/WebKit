@@ -1,3 +1,10 @@
+2014-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Display files in
+        proper folder categories..
+
 2014-08-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JIT should use full 64-bit stores for jsBoolean and jsNull

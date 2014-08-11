@@ -1071,9 +1071,6 @@
     <ClCompile Include="..\dfg\DFGDesiredIdentifiers.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGDesiredStructureChains.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGDesiredTransitions.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1356,9 +1353,6 @@
     <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
-    <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp">
-      <Filter>bytecode</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\ScriptValue.cpp">
       <Filter>bindings</Filter>
     </ClCompile>
@@ -1625,6 +1619,54 @@
     </ClCompile>
     <ClCompile Include="..\runtime\MemoryStatistics.cpp">
       <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\ComplexGetStatus.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\ConstantStructureCheck.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDoesGC.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFrozenValue.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGHeapLocation.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGMayExit.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPureValue.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGStructureAbstractValue.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGTransition.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGValueStrength.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGWatchableStructureWatchingPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\ExceptionFuzz.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\StructureSet.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\ToThisStatus.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\VariableWatchpointSet.cpp">
+      <Filter>bytecode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3264,9 +3306,6 @@
     <ClInclude Include="..\dfg\DFGDesiredIdentifiers.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGDesiredStructureChains.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGDesiredTransitions.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3630,9 +3669,6 @@
     <ClInclude Include="..\bytecode\CodeBlockJettisoningWatchpoint.h">
       <Filter>bytecode</Filter>
     </ClInclude>
-    <ClInclude Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.h">
-      <Filter>bytecode</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\StackAlignment.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -3954,6 +3990,48 @@
     </ClInclude>
     <ClInclude Include="..\runtime\MemoryStatistics.h">
       <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\ComplexGetStatus.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\ConstantStructureCheck.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDoesGC.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFrozenValue.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGHeapLocation.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGMayExit.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPureValue.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGStructureClobberState.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGTransition.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGValueStrength.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGWatchableStructureWatchingPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ExceptionFuzz.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\ToThisStatus.h">
+      <Filter>bytecode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
