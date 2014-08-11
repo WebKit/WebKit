@@ -1445,9 +1445,6 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 {
     for (size_t i = m_forInContextStack.size(); i > 0; i--) {
         ForInContext* context = m_forInContextStack[i - 1].get();
-        if (context->base() != base)
-            continue;
-
         if (context->local() != property)
             continue;
 
@@ -2623,11 +2620,11 @@ RegisterID* BytecodeGenerator::emitToIndexString(RegisterID* dst, RegisterID* in
     return dst;
 }
 
-void BytecodeGenerator::pushIndexedForInScope(RegisterID* baseRegister, RegisterID* localRegister, RegisterID* indexRegister)
+void BytecodeGenerator::pushIndexedForInScope(RegisterID* localRegister, RegisterID* indexRegister)
 {
     if (!localRegister)
         return;
-    m_forInContextStack.append(std::make_unique<IndexedForInContext>(baseRegister, localRegister, indexRegister));
+    m_forInContextStack.append(std::make_unique<IndexedForInContext>(localRegister, indexRegister));
 }
 
 void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
@@ -2637,11 +2634,11 @@ void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
     m_forInContextStack.removeLast();
 }
 
-void BytecodeGenerator::pushStructureForInScope(RegisterID* baseRegister, RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
+void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
 {
     if (!localRegister)
         return;
-    m_forInContextStack.append(std::make_unique<StructureForInContext>(baseRegister, localRegister, indexRegister, propertyRegister, enumeratorRegister));
+    m_forInContextStack.append(std::make_unique<StructureForInContext>(localRegister, indexRegister, propertyRegister, enumeratorRegister));
 }
 
 void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)

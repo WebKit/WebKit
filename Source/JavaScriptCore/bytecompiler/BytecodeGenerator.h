@@ -99,9 +99,8 @@ namespace JSC {
 
     class ForInContext {
     public:
-        ForInContext(RegisterID* baseRegister, RegisterID* localRegister)
-            : m_baseRegister(baseRegister)
-            , m_localRegister(localRegister)
+        ForInContext(RegisterID* localRegister)
+            : m_localRegister(localRegister)
             , m_isValid(true)
         {
         }
@@ -119,19 +118,17 @@ namespace JSC {
         };
         virtual ForInContextType type() const = 0;
 
-        RegisterID* base() const { return m_baseRegister.get(); }
         RegisterID* local() const { return m_localRegister.get(); }
 
     private:
-        RefPtr<RegisterID> m_baseRegister;
         RefPtr<RegisterID> m_localRegister;
         bool m_isValid;
     };
 
     class StructureForInContext : public ForInContext {
     public:
-        StructureForInContext(RegisterID* baseRegister, RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
-            : ForInContext(baseRegister, localRegister)
+        StructureForInContext(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister)
+            : ForInContext(localRegister)
             , m_indexRegister(indexRegister)
             , m_propertyRegister(propertyRegister)
             , m_enumeratorRegister(enumeratorRegister)
@@ -155,8 +152,8 @@ namespace JSC {
 
     class IndexedForInContext : public ForInContext {
     public:
-        IndexedForInContext(RegisterID* baseRegister, RegisterID* localRegister, RegisterID* indexRegister)
-            : ForInContext(baseRegister, localRegister)
+        IndexedForInContext(RegisterID* localRegister, RegisterID* indexRegister)
+            : ForInContext(localRegister)
             , m_indexRegister(indexRegister)
         {
         }
@@ -528,9 +525,9 @@ namespace JSC {
         void pushFinallyContext(StatementNode* finallyBlock);
         void popFinallyContext();
 
-        void pushIndexedForInScope(RegisterID* base, RegisterID* local, RegisterID* index);
+        void pushIndexedForInScope(RegisterID* local, RegisterID* index);
         void popIndexedForInScope(RegisterID* local);
-        void pushStructureForInScope(RegisterID* base, RegisterID* local, RegisterID* index, RegisterID* property, RegisterID* enumerator);
+        void pushStructureForInScope(RegisterID* local, RegisterID* index, RegisterID* property, RegisterID* enumerator);
         void popStructureForInScope(RegisterID* local);
         void invalidateForInContextForLocal(RegisterID* local);
 
