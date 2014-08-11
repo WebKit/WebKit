@@ -1,3 +1,19 @@
+2014-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Adjust build script for Windows production build.
+        https://bugs.webkit.org/show_bug.cgi?id=135806
+        <rdar://problem/17978299>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.make: Make sure target for
+        xcopy operation exists.
+        * WebInspectorUI.vcxproj/WebInspectorUI.proj: Don't create directories
+        we don't need, make sure the target location exists before we build.
+        * WebInspectorUI.vcxproj/build-webinspectorui.pl: Make sure that
+        production builds get the intermediary command files from the
+        right place.
+
 2014-08-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Add a helper to avoid leaking single-fire event listeners in Promise chains

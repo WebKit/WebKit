@@ -45,9 +45,19 @@ $ENV{'XDSTROOT'} = $XDSTROOT;
 
 my $TARGET_BUILD_DIR = File::Spec->catdir($XDSTROOT, "bin$ARGV[3]", 'WebKit.resources');
 $ENV{'TARGET_BUILD_DIR'} = $TARGET_BUILD_DIR;
-my $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'JavaScriptCore', 'DerivedSources');
+my ($JAVASCRIPTCORE_PRIVATE_HEADERS_DIR, $WEBCORE_PRIVATE_HEADERS_DIR);
+if ($ENV{'OFFICIAL_BUILD'} eq '1') {
+    $ARGV[1] =~ s/^\"//;
+    $ARGV[1] =~ s/\"$//;
+    my $Internal = Cwd::realpath($ARGV[1]);;
+    $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($Internal, 'include', 'private', 'JavaScriptCore');
+    $WEBCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($Internal, 'include', 'private', 'WebCore');
+} else {
+    $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'JavaScriptCore', 'DerivedSources');
+    $WEBCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'WebCore', 'DerivedSources');
+}
+
 $ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'} = $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR;
-my $WEBCORE_PRIVATE_HEADERS_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'WebCore', 'DerivedSources');
 $ENV{'WEBCORE_PRIVATE_HEADERS_DIR'} = $WEBCORE_PRIVATE_HEADERS_DIR;
 my $DERIVED_SOURCES_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'WebInspectorUI', 'DerivedSources');
 $ENV{'DERIVED_SOURCES_DIR'} = $DERIVED_SOURCES_DIR;

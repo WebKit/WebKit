@@ -104,4 +104,7 @@ xcopy /y /d "%ProjectDir%..\ForwardingHeaders\yarr\*.h" "%CONFIGURATIONBUILDDIR%
 
 xcopy /y /d "%ProjectDir%..\testing\js\WebCoreTestSupport.h" "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
 
+set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\WebCore
+xcopy /y "%DerivedSourcesDirectory%\InspectorWebBackendCommands.js" "%PrivateHeadersDirectory%" >NUL
+
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
