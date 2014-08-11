@@ -1,3 +1,13 @@
+2014-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove inputSpeech.png
+        https://bugs.webkit.org/show_bug.cgi?id=135771
+
+        Reviewed by Andreas Kling.
+
+        * Resources/inputSpeech.png: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-08-10  Tim Horton  <timothy_horton@apple.com>
 
         Yelp phone number highlights often disappear
