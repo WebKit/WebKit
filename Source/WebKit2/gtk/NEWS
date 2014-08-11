@@ -1,4 +1,21 @@
 =================
+WebKitGTK+  2.5.2
+=================
+
+What's new in WebKitGTK+ 2.5.2?
+
+  - Make GTK+2 dependency optional.
+  - Use the ld version script for non developer builds.
+  - Add webkit_navigation_policy_decision_get_navigation_action() API
+    and deprecated the methods and properties in WebKitNavigationPolicyDecision
+    that are now redundant.
+  - Add support for user scripts to WebKitUserContentManager.
+  - Do not use GtkWindow:resize-grip-visible with recent GTK+ versions.
+  - Fix caps negotiation failure in playback pipeline in GSTreamer media backend.
+  - Rename translation domain to WebKit2GTK-4.0.
+  - Install the processes in a versioned directory.
+
+=================
 WebKitGTK+  2.5.1
 =================
 
