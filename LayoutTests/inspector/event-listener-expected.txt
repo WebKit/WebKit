@@ -1,0 +1,16 @@
+Testing basic functionality of WebInspector.EventListener.
+
+Connecting the listener.
+Invoked callback for kaboom event.
+Invoked callback for kaboom event.
+Disconnecting the listener.
+Connecting the listener.
+Invoked callback for kaboom event.
+Disconnecting the listener.
+Connecting the listener.
+Disconnecting the listener.
+Connecting the single-fire listener.
+Invoked callback for kaboom event.
+Disconnecting the single-fire listener.
+Invoked callback for kaboom event.
+

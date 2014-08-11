@@ -24,64 +24,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This class supports adding and removing many listeners at once.
-// Add DOM or Inspector event listeners to the set using `register()`.
-// Use `install()` and `uninstall()` to enable or disable all listeners
-// in the set at once.
-WebInspector.EventListenerSet = function(defaultThisObject, name)
+WebInspector.EventListener = function(thisObject, fireOnce)
 {
-    this.name = name;
-    this._defaultThisObject = defaultThisObject;
-
-    this._listeners = [];
-    this._installed = false;
+    this._thisObject = thisObject;
+    this._emitter = null;
+    this._callback = null;
+    this._fireOnce = fireOnce;
 }
 
-WebInspector.EventListenerSet.prototype = {
-    register: function(emitter, type, callback, thisObject, usesCapture)
+WebInspector.EventListener.prototype = {
+    connect: function(emitter, type, callback, usesCapture)
     {
+        console.assert(!this._emitter && !this._callback, "EventListener already bound to a callback.", this);
         console.assert(callback, "Missing callback for event: " + type);
-        console.assert(type, "Tried to register listener for unknown event: " + type);
+        console.assert(emitter, "Missing event emitter for event: " + type);
         var emitterIsValid = emitter && (emitter instanceof WebInspector.Object || emitter instanceof Node || (typeof emitter.addEventListener === "function"));
         console.assert(emitterIsValid,  "Event emitter ", emitter, " (type:" + type + ") is null or does not implement Node or WebInspector.Object!");
 
         if (!emitterIsValid || !type || !callback)
             return;
 
-        this._listeners.push({listener: new WebInspector.EventListener(thisObject || this._defaultThisObject), emitter: emitter, type: type, callback: callback, usesCapture: usesCapture});
+        this._emitter = emitter;
+        this._type = type;
+        this._usesCapture = !!usesCapture;
+
+        if (emitter instanceof Node)
+            callback = callback.bind(this._thisObject);
+
+        if (this._fireOnce) {
+            var listener = this;
+            this._callback = function() {
+                listener.disconnect();
+                callback.apply(this, arguments);
+            }
+        } else
+            this._callback = callback;
+
+        if (this._emitter instanceof Node)
+            this._emitter.addEventListener(this._type, this._callback, this._usesCapture);
+        else
+            this._emitter.addEventListener(this._type, this._callback, this._thisObject);
     },
 
-    unregister: function()
+    disconnect: function()
     {
-        if (this._installed)
-            this.uninstall();
-        this._listeners = [];
-    },
+        console.assert(this._emitter && this._callback, "EventListener is not bound to a callback.", this);
 
-    install: function()
-    {
-        console.assert(!this._installed, "Already installed listener group: " + this.name);
-        if (this._installed)
+        if (!this._emitter || !this._callback)
             return;
 
-        this._installed = true;
+        if (this._emitter instanceof Node)
+            this._emitter.removeEventListener(this._type, this._callback, this._usesCapture);
+        else
+            this._emitter.removeEventListener(this._type, this._callback, this._thisObject);
 
-        for (var data of this._listeners)
-            data.listener.connect(data.emitter, data.type, data.callback, data.usesCapture);
-    },
-
-    uninstall: function(unregisterListeners)
-    {
-        console.assert(this._installed, "Trying to uninstall listener group " + this.name + ", but it isn't installed.");
-        if (!this._installed)
-            return;
-
-        this._installed = false;
-
-        for (var data of this._listeners)
-            data.listener.disconnect();
-
-        if (unregisterListeners)
-            this._listeners = [];
-    },
-}
+        if (this._fireOnce)
+            delete this._thisObject;
+        delete this._emitter;
+        delete this._type;
+        delete this._callback;
+    }
+};
