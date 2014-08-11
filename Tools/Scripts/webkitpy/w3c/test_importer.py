@@ -61,9 +61,8 @@
      - Upon completion, script outputs the total number tests imported, broken down by test type
 
      - Also upon completion, each directory where files are imported will have w3c-import.log written
-       with a timestamp, the W3C Mercurial changeset if available, the list of CSS properties used that
-       require prefixes, the list of imported files, and guidance for future test modification and
-       maintenance.
+       with a timestamp, the list of CSS properties used that require prefixes, the list of imported files,
+       and guidance for future test modification and maintenance.
 
      - On subsequent imports, this file is read to determine if files have been removed in the newer changesets.
        The script removes these files accordingly.
@@ -150,8 +149,6 @@ class TestImporter(object):
 
         self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
 
-        self.changeset = CHANGESET_NOT_AVAILABLE
-
         self.import_list = []
 
     def do_import(self):
@@ -160,15 +157,7 @@ class TestImporter(object):
         else:
             for test_path in self.options.test_paths:
                 self.find_importable_tests(os.path.join(self.source_directory, test_path))
-        self.load_changeset()
         self.import_tests()
-
-    def load_changeset(self):
-        """Returns the current changeset from mercurial or "Not Available"."""
-        try:
-            self.changeset = self.host.executive.run_command(['hg', 'tip']).split('changeset:')[1]
-        except (OSError, ScriptError):
-            self.changeset = CHANGESET_NOT_AVAILABLE
 
     def should_keep_subdir(self, root, subdir):
         DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
@@ -380,13 +369,15 @@ class TestImporter(object):
 
         import_log = open(os.path.join(import_directory, 'w3c-import.log'), 'w')
         import_log.write('The tests in this directory were imported from the W3C repository.\n')
-        import_log.write('Do NOT modify these tests directly in Webkit. Instead, push changes to the W3C CSS repo:\n\n')
-        import_log.write('http://hg.csswg.org/test\n\n')
+        import_log.write('Do NOT modify these tests directly in Webkit.\n')
+        import_log.write('Instead, push changes to the W3C CSS repo:\n')
+        import_log.write('\thttp://hg.csswg.org/test\n')
+        import_log.write('Or create a pull request on the W3C CSS github:\n')
+        import_log.write('\thttps://github.com/w3c/csswg-test\n\n')
         import_log.write('Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport\n\n')
         import_log.write('Do NOT modify or remove this file\n\n')
         import_log.write('------------------------------------------------------------------------\n')
         import_log.write('Last Import: ' + now.strftime('%Y-%m-%d %H:%M') + '\n')
-        import_log.write('W3C Mercurial changeset: ' + self.changeset + '\n')
         import_log.write('------------------------------------------------------------------------\n')
         import_log.write('Properties requiring vendor prefixes:\n')
         if prop_list:
