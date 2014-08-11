@@ -1,3 +1,26 @@
+2014-08-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: use type builders to construct high fidelity type information payloads
+        https://bugs.webkit.org/show_bug.cgi?id=135803
+
+        Reviewed by Timothy Hatcher.
+
+        Due to some typos in the protocol file, the code had worked with raw objects
+        rather than with type builders. Convert to using builders.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Runtime.json: Fix 'item' for 'items'; true for 'true'.
+        * runtime/HighFidelityTypeProfiler.cpp:
+        (JSC::HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector):
+        * runtime/HighFidelityTypeProfiler.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::allStructureRepresentations):
+        (JSC::StructureShape::stringRepresentation):
+        (JSC::StructureShape::inspectorRepresentation):
+        * runtime/TypeSet.h:
+
 2014-08-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         for-in optimization should also make sure the base matches the object being iterated

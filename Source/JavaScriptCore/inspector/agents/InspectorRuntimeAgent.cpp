@@ -194,19 +194,19 @@ void InspectorRuntimeAgent::run(ErrorString*)
 {
 }
 
-void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* errorString, const RefPtr<Inspector::InspectorArray>& in_locations, RefPtr<Inspector::InspectorArray>& out_types)
+void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* errorString, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::TypeDescription>>& typeDescriptions)
 {
     static const bool verbose = false;
     VM& vm = globalVM();
-    out_types = Inspector::InspectorArray::create();
+    typeDescriptions = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::TypeDescription>::create();
     if (!vm.isProfilingTypesWithHighFidelity())
         return;
 
     double start = currentTimeMS();
     vm.highFidelityLog()->processHighFidelityLog("User Query");
 
-    for (size_t i = 0; i < in_locations->length(); i++) {
-        RefPtr<Inspector::InspectorValue> value = in_locations->get(i);
+    for (size_t i = 0; i < locations->length(); i++) {
+        RefPtr<Inspector::InspectorValue> value = locations->get(i);
         RefPtr<InspectorObject> location;
         if (!value->asObject(&location)) {
             *errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
@@ -219,11 +219,11 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
         location->getNumber(ASCIILiteral("typeInformationDescriptor"), &descriptor);
         location->getString(ASCIILiteral("sourceID"), &sourceIDAsString);
         location->getNumber(ASCIILiteral("divot"), &divot);
-        
-        RefPtr<Inspector::InspectorObject> typeDescription = Inspector::InspectorObject::create();
+
+        RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription> typeDescription = Inspector::TypeBuilder::Runtime::TypeDescription::create();
         bool okay;
         vm.highFidelityTypeProfiler()->getTypesForVariableAtOffsetForInspector(static_cast<TypeProfilerSearchDescriptor>(descriptor), divot, sourceIDAsString.toIntPtrStrict(&okay), typeDescription);
-        out_types->pushObject(typeDescription);
+        typeDescriptions->addItem(typeDescription);
     }
 
     double end = currentTimeMS();

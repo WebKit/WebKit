@@ -36,9 +36,6 @@
 namespace Inspector { namespace TypeBuilder  { namespace Runtime {
 class TypeDescription;
 }}}
-namespace Inspector {
-class InspectorObject;
-}
 
 namespace JSC {
 
@@ -99,7 +96,7 @@ enum TypeProfilerSearchDescriptor {
 class HighFidelityTypeProfiler {
 public:
     void logTypesForTypeLocation(TypeLocation*);
-    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::InspectorObject>&);
+    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>&);
     void insertNewLocation(TypeLocation*);
     FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }

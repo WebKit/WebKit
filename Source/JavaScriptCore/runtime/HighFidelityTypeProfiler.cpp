@@ -69,21 +69,21 @@ void HighFidelityTypeProfiler::insertNewLocation(TypeLocation* location)
     bucket.append(location);
 }
 
-void HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::InspectorObject>& ret)
+void HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>& description)
 {
     TypeLocation* location = findLocation(divot, sourceID, descriptor);
     if (!location)
         return;
 
     if (location->m_globalTypeSet && location->m_globalVariableID != HighFidelityNoGlobalIDExists) {
-        ret->setString(ASCIILiteral("displayTypeName"), location->m_globalTypeSet->displayName());
-        ret->setArray(ASCIILiteral("globalPrimitiveTypeNames"), location->m_globalTypeSet->allPrimitiveTypeNames()->asArray());
-        ret->setArray(ASCIILiteral("globalStructures"), location->m_globalTypeSet->allStructureRepresentations()->asArray());
+        description->setDisplayTypeName(location->m_globalTypeSet->displayName());
+        description->setGlobalPrimitiveTypeNames(location->m_globalTypeSet->allPrimitiveTypeNames());
+        description->setGlobalStructures(location->m_globalTypeSet->allStructureRepresentations());
     } else
-        ret->setString(ASCIILiteral("displayTypeName"), location->m_instructionTypeSet->displayName());
+        description->setDisplayTypeName(location->m_instructionTypeSet->displayName());
 
-    ret->setArray(ASCIILiteral("localPrimitiveTypeNames"), location->m_instructionTypeSet->allPrimitiveTypeNames()->asArray());
-    ret->setArray(ASCIILiteral("localStructures"), location->m_instructionTypeSet->allStructureRepresentations()->asArray());
+    description->setLocalPrimitiveTypeNames(location->m_instructionTypeSet->allPrimitiveTypeNames());
+    description->setLocalStructures(location->m_instructionTypeSet->allStructureRepresentations());
 }
 
 static bool descriptorMatchesTypeLocation(TypeProfilerSearchDescriptor descriptor, TypeLocation* location)

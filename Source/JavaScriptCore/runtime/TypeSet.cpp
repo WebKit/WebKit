@@ -236,14 +236,14 @@ PassRefPtr<Inspector::TypeBuilder::Array<String>> TypeSet::allPrimitiveTypeNames
     return seen.release();
 }
 
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::InspectorObject>> TypeSet::allStructureRepresentations() const
+PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
 {
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::InspectorObject>> ret = Inspector::TypeBuilder::Array<Inspector::InspectorObject>::create();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> description = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>::create();
 
     for (size_t i = 0; i < m_structureHistory->size(); i++)
-        ret->addItem(m_structureHistory->at(i)->inspectorRepresentation());
+        description->addItem(m_structureHistory->at(i)->inspectorRepresentation());
 
-    return ret.release();
+    return description.release();
 }
 
 String TypeSet::leastCommonAncestor() const
@@ -341,8 +341,8 @@ String StructureShape::stringRepresentation()
 
     representation.append("{");
     while (curShape) {
-        for (auto iter = curShape->m_fields.begin(), end = curShape->m_fields.end(); iter != end; ++iter) {
-            String prop((*iter).get());
+        for (auto it = curShape->m_fields.begin(), end = curShape->m_fields.end(); it != end; ++it) {
+            String prop((*it).get());
             representation.append(prop);
             representation.append(", ");
         }
@@ -364,23 +364,23 @@ String StructureShape::stringRepresentation()
     return representation.toString();
 }
 
-PassRefPtr<Inspector::InspectorObject> StructureShape::inspectorRepresentation()
+PassRefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
 {
-    RefPtr<Inspector::InspectorObject> base = Inspector::InspectorObject::create();
-    RefPtr<Inspector::InspectorObject> currentObject = base;
+    RefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> base = Inspector::TypeBuilder::Runtime::StructureDescription::create();
+    RefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> currentObject = base;
     RefPtr<StructureShape> currentShape = this;
 
     while (currentShape) {
-        RefPtr<Inspector::TypeBuilder::Array<String>> fields = Inspector::TypeBuilder::Array<String>::create();
-        for (auto iter = currentShape->m_fields.begin(), end = currentShape->m_fields.end(); iter != end; ++iter)
-            fields->addItem((*iter).get());
+        auto fields = Inspector::TypeBuilder::Array<String>::create();
+        for (auto it = currentShape->m_fields.begin(), end = currentShape->m_fields.end(); it != end; ++it)
+            fields->addItem((*it).get());
 
-        currentObject->setArray(ASCIILiteral("fields"), fields->asArray());
-        currentObject->setString(ASCIILiteral("constructorName"), currentShape->m_constructorName);
+        currentObject->setFields(fields);
+        currentObject->setConstructorName(currentShape->m_constructorName);
 
         if (currentShape->m_proto) {
-            RefPtr<Inspector::InspectorObject> nextObject = Inspector::InspectorObject::create();
-            currentObject->setObject(ASCIILiteral("prototypeStructure"), nextObject);
+            RefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> nextObject = Inspector::TypeBuilder::Runtime::StructureDescription::create();
+            currentObject->setPrototypeStructure(nextObject);
             currentObject = nextObject;
         }
 

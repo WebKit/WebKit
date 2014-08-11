@@ -32,13 +32,15 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
 
-namespace Inspector { namespace TypeBuilder  { 
-template<typename T>
-class Array;
-}}
+namespace Inspector {
+namespace TypeBuilder  {
+template<typename T> class Array;
 
-namespace Inspector { 
-class InspectorObject;
+namespace Runtime {
+class StructureDescription;
+}
+
+}
 }
 
 namespace JSC {
@@ -68,7 +70,7 @@ public:
     void markAsFinal();
     void addProperty(RefPtr<StringImpl>);
     String stringRepresentation();
-    PassRefPtr<Inspector::InspectorObject> inspectorRepresentation();
+    PassRefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> inspectorRepresentation();
     void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object" : name); }
     String constructorName() { return m_constructorName; }
     void setProto(PassRefPtr<StructureShape> shape) { m_proto = shape; }
@@ -93,7 +95,7 @@ public:
     JS_EXPORT_PRIVATE String seenTypes() const;
     String displayName() const;
     PassRefPtr<Inspector::TypeBuilder::Array<String>> allPrimitiveTypeNames() const;
-    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::InspectorObject>> allStructureRepresentations() const;
+    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> allStructureRepresentations() const;
 
 private:
     String leastCommonAncestor() const;
