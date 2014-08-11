@@ -1,3 +1,14 @@
+2014-08-11  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Adds stubs for all subtle crypto algorithm implemntations
+        https://bugs.webkit.org/show_bug.cgi?id=133316
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake: Add ENABLE_SUBTLE_CRYPTO option
+        * Source/cmake/WebKitFeatures.cmake: Add ENABLE_SUBTLE_CRYPTO option
+        * Source/cmakeconfig.h.cmake: Define ENABLE_SUBTLE_CRYPTO
+
 2014-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.2 release.
