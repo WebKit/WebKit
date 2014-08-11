@@ -1,3 +1,13 @@
+2014-08-11  Dan Bernstein  <mitz@apple.com>
+
+        Added an update-webkit option to update the auxiliary libraries or not.
+        Part of https://bugs.webkit.org/show_bug.cgi?id=135815
+
+        Reviewed by Tim Horton.
+
+        * Scripts/update-webkit: Added --[no-]auxiliary-libs option, which defaults to yes unless
+        an Internal directory exists alongside the WebKit root directory.
+
 2014-08-11  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Remove hg changeset from w3c-import.log

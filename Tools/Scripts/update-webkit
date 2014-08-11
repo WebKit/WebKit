@@ -50,17 +50,22 @@ determineIsWinCairo();
 
 chdirWebKit();
 
+# FIXME: Remove the check for ../Internal once Apple-internal users of this script pass --no-auxiliary-libs
+my $auxiliaryLibs = ! -d "../Internal";
+
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
     'q|quiet' => \$quiet,
+    'auxiliary-libs!' => \$auxiliaryLibs,
 ); 
 
 if (!$getOptionsResult || $showHelp) {
     print STDERR <<__END__;
 Usage: @{[ basename($0) ]} [options]
-  -h|--help           show the help message
-  -q|--quiet          pass -q to svn update for quiet updates
-  --wincairo          also update dependencies of the WinCairo port
+  -h|--help                 show the help message
+  -q|--quiet                pass -q to svn update for quiet updates
+  --[no-]auxiliary-libs     [don\'t] update the auxiliary libraries for Windows (default: update)
+  --wincairo                also update dependencies of the WinCairo port
 __END__
     exit 1;
 }
@@ -80,7 +85,9 @@ if (-d "../Internal") {
     print "Updating Internal\n" unless $quiet;
     runSvnUpdate() if isSVNDirectory(".");
     runGitUpdate() if isGitDirectory(".");
-} elsif (isAppleWinWebKit()) {
+}
+
+if (isAppleWinWebKit() && $auxiliaryLibs) {
     system("perl", "Tools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
     if (isWinCairo()) {
         # WinCairo shares the auxiliary libs from the Apple port.
