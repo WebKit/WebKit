@@ -93,7 +93,6 @@ void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
 std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
 {
     ASSERT(extractable());
-    ASSERT(m_platformKey->pubKey);
 
     notImplemented();
     return nullptr;

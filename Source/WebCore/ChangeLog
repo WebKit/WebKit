@@ -1,3 +1,14 @@
+2014-08-11  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Fix debug build after r172389.
+
+        Rubber-stamped by Philippe Normand.
+
+        * crypto/gtk/CryptoKeyRSAGtk.cpp:
+        (WebCore::CryptoKeyRSA::exportData): Remove spurious ASSERT from
+        stub. It will be added back along with the real implementation of
+        the method.
+
 2014-08-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed fix after r172348.
