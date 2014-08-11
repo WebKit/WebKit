@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 University of Washington. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DashboardManager = function() {
+WebInspector.ReplayDashboard = function() {
     WebInspector.Object.call(this);
-
-    this._dashboards = {};
-    this._dashboards.default = new WebInspector.DefaultDashboard;
-    this._dashboards.debugger = new WebInspector.DebuggerDashboard;
-    this._dashboards.replay = new WebInspector.ReplayDashboard;
 };
 
-WebInspector.DashboardManager.prototype = {
-    constructor: WebInspector.DashboardManager,
+WebInspector.ReplayDashboard.prototype = {
+    constructor: WebInspector.ReplayDashboard,
     __proto__: WebInspector.Object.prototype,
-
-    get dashboards()
-    {
-        return this._dashboards;
-    }
 };

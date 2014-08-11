@@ -124,6 +124,7 @@ WebInspector.loaded = function()
         ConsoleAgent.enable();
 
     // Register for events.
+    this.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureDidStart, this);
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
@@ -740,6 +741,11 @@ WebInspector._dragOver = function(event)
     // Prevent the drop from being accepted.
     event.dataTransfer.dropEffect = "none";
     event.preventDefault();
+}
+
+WebInspector._captureDidStart = function(event)
+{
+    this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.replay);
 }
 
 WebInspector._debuggerDidPause = function(event)

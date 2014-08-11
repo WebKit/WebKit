@@ -1,3 +1,42 @@
+2014-08-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: show a replay dashboard when capturing or replaying
+        https://bugs.webkit.org/show_bug.cgi?id=135170
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a replay dashboard with record/play/pause buttons. It
+        is shown automatically when the user starts capturing an execution from
+        the replay menu in the Timelines sidebar panel.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector._captureDidStart):
+        * UserInterface/Controllers/DashboardManager.js:
+        (WebInspector.DashboardManager):
+        * UserInterface/Images/ReplayPauseButton.svg: Added.
+        * UserInterface/Images/ReplayPlayButton.svg: Added.
+        * UserInterface/Images/ReplayRecordingButton.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Models/ReplayDashboard.js: Copied from Source/WebInspectorUI/UserInterface/Controllers/DashboardManager.js.
+        (WebInspector.ReplayDashboard):
+        * UserInterface/Views/DashboardView.js:
+        (WebInspector.DashboardView):
+        * UserInterface/Views/ReplayDashboardView.css: Copied from Source/WebInspectorUI/UserInterface/Controllers/DashboardManager.js.
+        (.toolbar .dashboard.replay):
+        (.toolbar .dashboard.replay div.navigation-bar):
+        (.toolbar .dashboard.replay .item.button > .glyph):
+        (.toolbar.label-only .dashboard.replay .item.button > .glyph):
+        * UserInterface/Views/ReplayDashboardView.js: Added.
+        (WebInspector.ReplayDashboardView):
+        (WebInspector.ReplayDashboardView.prototype._captureButtonItemClicked):
+        (WebInspector.ReplayDashboardView.prototype._replayButtonItemClicked):
+        (WebInspector.ReplayDashboardView.prototype._captureStarted):
+        (WebInspector.ReplayDashboardView.prototype._captureStopped):
+        (WebInspector.ReplayDashboardView.prototype._playbackStarted):
+        (WebInspector.ReplayDashboardView.prototype._playbackPaused):
+        (WebInspector.ReplayDashboardView.prototype._playbackFinished):
+
 2014-08-08  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: DebuggerManager commands should return promises
