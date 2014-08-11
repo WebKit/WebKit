@@ -1,3 +1,23 @@
+2014-08-11  Mark Lam  <mark.lam@apple.com>
+
+        Re-landing r172401 with fixed test.
+        <https://webkit.org/b/135782>
+
+        Not reviewed.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::pushIndexedForInScope):
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ForInContext::ForInContext):
+        (JSC::ForInContext::base):
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::IndexedForInContext::IndexedForInContext):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        * tests/stress/for-in-tests.js:
+
 2014-08-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172401.
