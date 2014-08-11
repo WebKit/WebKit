@@ -31,6 +31,7 @@
 #include "PageOverlay.h"
 #include <WebCore/Range.h>
 #include <WebCore/Timer.h>
+#include <wtf/RefCounted.h>
 
 typedef void* DDHighlightRef;
 
@@ -44,19 +45,6 @@ namespace WebKit {
 
 class WebPage;
 
-typedef void* DDHighlightRef;
-
-struct TelephoneNumberData {
-    TelephoneNumberData(RetainPtr<DDHighlightRef> highlight, PassRefPtr<WebCore::Range> range)
-        : highlight(highlight)
-        , range(range)
-    {
-    }
-
-    RetainPtr<DDHighlightRef> highlight;
-    RefPtr<WebCore::Range> range;
-};
-
 class ServicesOverlayController : private PageOverlay::Client {
 public:
     ServicesOverlayController(WebPage&);
@@ -66,49 +54,81 @@ public:
     void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&, bool isTextOnly);
 
 private:
-    void createOverlayIfNeeded();
-    void handleClick(const WebCore::IntPoint&, DDHighlightRef);
-    void clearHighlightState();
+    class Highlight : public RefCounted<Highlight> {
+        WTF_MAKE_NONCOPYABLE(Highlight);
+    public:
+        static PassRefPtr<Highlight> createForSelection(RetainPtr<DDHighlightRef>);
+        static PassRefPtr<Highlight> createForTelephoneNumber(RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
 
+        DDHighlightRef ddHighlight() const { return m_ddHighlight.get(); }
+        WebCore::Range* range() const { return m_range.get(); }
+
+        enum class Type {
+            TelephoneNumber,
+            Selection
+        };
+        Type type() const { return m_type; }
+
+    private:
+        explicit Highlight(Type type, RetainPtr<DDHighlightRef> ddHighlight, PassRefPtr<WebCore::Range> range)
+            : m_ddHighlight(ddHighlight)
+            , m_range(range)
+            , m_type(type)
+        {
+            ASSERT(m_ddHighlight);
+            ASSERT(type != Type::TelephoneNumber || m_range);
+        }
+
+        RetainPtr<DDHighlightRef> m_ddHighlight;
+        RefPtr<WebCore::Range> m_range;
+        Type m_type;
+    };
+
+    // PageOverlay::Client
     virtual void pageOverlayDestroyed(PageOverlay*) override;
     virtual void willMoveToWebPage(PageOverlay*, WebPage*) override;
     virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
 
-    bool drawTelephoneNumberHighlightIfVisible(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
-    void drawSelectionHighlight(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
-    void drawHighlight(DDHighlightRef, WebCore::GraphicsContext&);
+    void createOverlayIfNeeded();
+    void handleClick(const WebCore::IntPoint&, Highlight&);
 
-    void establishHoveredTelephoneHighlight(bool& mouseIsOverButton);
-    void maybeCreateSelectionHighlight();
+    void drawHighlight(Highlight&, WebCore::GraphicsContext&);
 
-    void clearSelectionHighlight();
-    void clearHoveredTelephoneNumberHighlight();
+    void removeAllPotentialHighlightsOfType(Highlight::Type);
+    void buildPhoneNumberHighlights();
+    void buildSelectionHighlight();
+    void didRebuildPotentialHighlights();
 
-    bool mouseIsOverHighlight(DDHighlightRef, bool& mouseIsOverButton) const;
+    void determineActiveHighlight(bool& mouseIsOverButton);
+    void clearActiveHighlight();
+
+    bool hasRelevantSelectionServices();
+
+    bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
     std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown() const;
     void repaintHighlightTimerFired(WebCore::Timer<ServicesOverlayController>&);
 
-    WebPage* m_webPage;
+    static bool highlightsAreEquivalent(const Highlight* a, const Highlight* b);
+
+    WebPage& m_webPage;
     PageOverlay* m_servicesOverlay;
-    
-    Vector<WebCore::LayoutRect> m_currentSelectionRects;
-    RetainPtr<DDHighlightRef> m_selectionHighlight;
-    bool m_isTextOnly;
-    std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
-    std::chrono::steady_clock::time_point m_lastHoveredHighlightChangeTime;
+
+    RefPtr<Highlight> m_activeHighlight;
+    HashSet<RefPtr<Highlight>> m_potentialHighlights;
 
     Vector<RefPtr<WebCore::Range>> m_currentTelephoneNumberRanges;
-    Vector<RetainPtr<DDHighlightRef>> m_telephoneNumberHighlights;
-    std::unique_ptr<TelephoneNumberData> m_hoveredTelephoneNumberData;
+    Vector<WebCore::LayoutRect> m_currentSelectionRects;
+    bool m_isTextOnly;
 
-    RetainPtr<DDHighlightRef> m_currentHoveredHighlight;
-    RetainPtr<DDHighlightRef> m_currentMouseDownOnButtonHighlight;
+    std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
+    std::chrono::steady_clock::time_point m_lastActiveHighlightChangeTime;
+
+    RefPtr<Highlight> m_currentMouseDownOnButtonHighlight;
+    WebCore::IntPoint m_mousePosition;
 
     WebCore::Timer<ServicesOverlayController> m_repaintHighlightTimer;
-
-    WebCore::IntPoint m_mousePosition;
 };
 
 } // namespace WebKit
