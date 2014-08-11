@@ -75,3 +75,26 @@
     }
     foo(null);
 })();
+(function() {
+    var foo = function(a, b) {
+        for (var p in a) {
+            var f1 = a[p];
+            var f2 = b[p];
+            if (f1 === f2)
+                continue;
+            a[p] = b[p];
+        }
+    };
+    noInline(foo);
+    for (var i = 0; i < 10000; ++i) {
+        var o1 = {};
+        var o2 = {};
+        o2.x = 42;
+        o2.y = 53;
+        foo(o1, o2);
+        if (o1.x !== o2.x)
+            throw new Error("bad result: " + o1.x + "!==" + o2.x);
+        if (o1.y !== o2.y)
+            throw new Error("bad result: " + o1.y + "!==" + o2.y);
+    }
+})();

@@ -1,3 +1,26 @@
+2014-08-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        for-in optimization should also make sure the base matches the object being iterated
+        https://bugs.webkit.org/show_bug.cgi?id=135782
+
+        Reviewed by Geoffrey Garen.
+
+        If we access a different base object with the same index, we shouldn't try to randomly 
+        load from that object's backing store.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::pushIndexedForInScope):
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ForInContext::ForInContext):
+        (JSC::ForInContext::base):
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::IndexedForInContext::IndexedForInContext):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        * tests/stress/for-in-tests.js:
+
 2014-08-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.
