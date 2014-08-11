@@ -37,7 +37,6 @@
     overflow: hidden;
 
     font-family: Menlo, monospace;
-    font-size: 11px;
 }
 
 body.mac-platform.legacy .quick-console {

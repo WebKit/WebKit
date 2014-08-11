@@ -292,7 +292,9 @@ body.mac-platform.legacy .details-section > .content > .group:last-child > .row.
 }
 
 .details-section > .content .data-grid {
-    border: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
 }
 
 .details-section > .content .data-grid table.data {

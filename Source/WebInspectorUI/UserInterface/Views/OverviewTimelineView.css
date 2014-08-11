@@ -32,7 +32,7 @@
 }
 
 .timeline-view.overview > .timeline-ruler > .header {
-    border-top: 1px solid rgb(200, 200, 200);
+    border-top: 1px solid rgb(179, 179, 179);
     height: 23px;
 }
 
@@ -46,15 +46,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    border: none;
-}
-
-.timeline-view.overview > .data-grid table.header {
-    display: none;
-}
-
-.timeline-view.overview > .data-grid .data-container {
-    top: 0;
 }
 
 .timeline-view.overview > .data-grid td.graph-column {

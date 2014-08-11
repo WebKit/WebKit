@@ -23,79 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- .dom-tree-data-grid .data-grid {
-    position: relative;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    /* Turn off the default borders, we want to snap to edges. */
-    border: none;
+.dom-tree-data-grid .data-grid {
+    border-right: none;
+    border-left: none;
+    border-bottom: none;
 }
 
-.dom-tree-data-grid .data-grid table.data {
-    background-size: 100% 44px;
-}
-
-.dom-tree-data-grid .data-container {
-    position: absolute;
-    /* Leave room for the data grid header. */
-    top: 16px;
-    /* Use all remaining vertical space in the container. */
-    bottom: 0;
-    /* Let the inline table content scroll, independently of the header. */
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.dom-tree-data-grid .data-container tr {
-    height: 22px;
-}
-
-.dom-tree-data-grid .data-container td > div {
-    display: -webkit-flex;
-    width: 100%;
-    height: 100%;
-    -webkit-align-items: center;
-    -webkit-justify-content: flex-end;
-}
-
-.dom-tree-data-grid .data-container .name-column {
-    padding-right: 0;
-}
-
-.dom-tree-data-grid .data-container .name-column .icon {
-    vertical-align: top;
-    width: 16px;
-    height: 16px;
+.dom-tree-data-grid .name-column .icon {
     /* FIXME: There can be multiple types of DOM nodes that we might need to support in the future. */
     content: url(../Images/DOMElement.svg);
-}
-
-.dom-tree-data-grid .data-container .name-column .label {
-    -webkit-flex: 1;
-    padding: 0 4px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dom-tree-data-grid .data-container tr:hover .name-column .label {
-    padding-right: 0;
-}
-
-.dom-tree-data-grid .data-container .go-to-arrow {
-    display: none;
-}
-
-.dom-tree-data-grid .data-container tr:hover .go-to-arrow {
-    display: block;
-}
-
-.dom-tree-data-grid .data-container tbody > tr:nth-child(2n) {
-    background-color: white;
-}
-
-.dom-tree-data-grid .data-container tbody > tr:nth-child(2n+1) {
-    background-color: rgb(243, 246, 250);
 }

@@ -101,7 +101,10 @@ WebInspector.LayerTreeDataGridNode.prototype = {
 
         fragment.appendChild(document.createElement("img")).className = "icon";
 
-        var label = this._makeOutlet("label", fragment.appendChild(document.createElement("div")));
+        var goToButton = this._makeOutlet("goToButton", fragment.appendChild(WebInspector.createGoToArrowButton()));
+        goToButton.addEventListener("click", this._goToArrowWasClicked.bind(this), false);
+
+        var label = this._makeOutlet("label", fragment.appendChild(document.createElement("span")));
         label.className = "label";
     
         var nameLabel = this._makeOutlet("nameLabel", label.appendChild(document.createElement("span")));
@@ -114,9 +117,6 @@ WebInspector.LayerTreeDataGridNode.prototype = {
         reflectionLabel.className = "reflection";
         reflectionLabel.textContent = " \u2014 " + WebInspector.UIString("Reflection");
 
-        var goToButton = this._makeOutlet("goToButton", fragment.appendChild(WebInspector.createGoToArrowButton()));
-        goToButton.addEventListener("click", this._goToArrowWasClicked.bind(this), false);
-        
         return fragment;
     },
 
@@ -136,6 +136,11 @@ WebInspector.LayerTreeDataGridNode.prototype = {
 
         this._outlets.nameLabel.textContent = data;
 
+        if (WebInspector.domTreeManager.nodeForId(layer.nodeId))
+            label.parentNode.insertBefore(this._outlets.goToButton, label.parentNode.firstChild);
+        else if (this._outlets.goToButton.parentNode)
+            label.parentNode.removeChild(this._outlets.goToButton);
+
         if (layer.pseudoElement)
             label.appendChild(this._outlets.pseudoLabel).textContent = "::" + layer.pseudoElement;
         else if (this._outlets.pseudoLabel.parentNode)
@@ -145,11 +150,6 @@ WebInspector.LayerTreeDataGridNode.prototype = {
             label.appendChild(this._outlets.reflectionLabel);
         else if (this._outlets.reflectionLabel.parentNode)
             label.removeChild(this._outlets.reflectionLabel);
-
-        if (WebInspector.domTreeManager.nodeForId(layer.nodeId))
-            label.parentNode.appendChild(this._outlets.goToButton);
-        else if (this._outlets.goToButton.parentNode)
-            label.parentNode.removeChild(this._outlets.goToButton);
 
         var element = this.element;
         if (layer.isReflection)
