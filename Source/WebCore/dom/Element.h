@@ -488,7 +488,7 @@ public:
     // to event listeners, and prevents DOMActivate events from being sent at all.
     virtual bool isDisabledFormControl() const { return false; }
 
-    virtual bool childShouldCreateRenderer(const Node&) const override;
+    virtual bool childShouldCreateRenderer(const Node&) const;
 
     bool hasPendingResources() const;
     void setHasPendingResources();

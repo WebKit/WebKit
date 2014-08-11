@@ -2458,7 +2458,7 @@ bool Element::childShouldCreateRenderer(const Node& child) const
         ASSERT(!isSVGElement());
         return child.hasTagName(SVGNames::svgTag) && toSVGElement(child).isValid();
     }
-    return ContainerNode::childShouldCreateRenderer(child);
+    return true;
 }
 
 #if ENABLE(FULLSCREEN_API)

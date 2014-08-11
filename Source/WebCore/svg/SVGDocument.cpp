@@ -76,13 +76,6 @@ void SVGDocument::updatePan(const FloatPoint& pos) const
     }
 }
 
-bool SVGDocument::childShouldCreateRenderer(const Node& child) const
-{
-    if (isSVGSVGElement(child))
-        return toSVGSVGElement(child).isValid();
-    return true;
-}
-
 PassRefPtr<Document> SVGDocument::cloneDocumentWithoutChildren() const
 {
     return create(nullptr, url());

@@ -459,6 +459,8 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
 
 bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 {
+    if (!isValid())
+        return false;
     // FIXME: We should respect display: none on the documentElement svg element
     // but many things in FrameView and SVGImage depend on the RenderSVGRoot when
     // they should instead depend on the RenderView.

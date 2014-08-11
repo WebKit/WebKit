@@ -1,3 +1,48 @@
+2014-08-11  Antti Koivisto  <antti@apple.com>
+
+        Pass inherited style only when resolving tree style
+        https://bugs.webkit.org/show_bug.cgi?id=135799
+
+        Reviewed by Andreas Kling.
+
+        No need to pass around the style parent element.
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::childShouldCreateRenderer): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::RenderTreePosition::parent):
+        (WebCore::Style::nextSiblingRenderer):
+        (WebCore::Style::RenderTreePosition::RenderTreePosition):
+        (WebCore::Style::RenderTreePosition::computeNextSibling):
+        (WebCore::Style::shouldCreateRenderer):
+        (WebCore::Style::styleForElement):
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::textRendererIsNeeded):
+        (WebCore::Style::createTextRendererIfNeeded):
+        (WebCore::Style::attachTextRenderer):
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachDistributedChildren):
+        (WebCore::Style::attachShadowRoot):
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::resolveTextNode):
+        (WebCore::Style::resolveShadowTree):
+        (WebCore::Style::updateBeforeOrAfterPseudoElement):
+        (WebCore::Style::resolveTree):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::childShouldCreateRenderer): Deleted.
+        
+            Implement this in SVGSVGElement::rendererIsNeeded instead.
+
+        * svg/SVGDocument.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::rendererIsNeeded):
+
 2014-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: support :scope

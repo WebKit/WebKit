@@ -64,16 +64,18 @@ enum DetachType { NormalDetach, ReattachDetach };
 
 class RenderTreePosition {
 public:
-    RenderTreePosition(RenderElement* parent);
+    explicit RenderTreePosition(RenderView&);
+    explicit RenderTreePosition(RenderElement* parent);
     RenderTreePosition(RenderElement* parent, RenderObject* nextSibling);
 
     RenderElement* parent() { return m_parent; }
+    const RenderElement* parent() const { return m_parent; }
 
     void insert(RenderObject&);
     bool canInsert(RenderElement&) const;
     bool canInsert(RenderText&) const;
 
-    void computeNextSibling(const Node&, ContainerNode& renderingParentNode);
+    void computeNextSibling(const Node&);
     void invalidateNextSibling(const RenderObject&);
 
 private:
@@ -85,11 +87,11 @@ private:
 #endif
 };
 
-static void attachRenderTree(Element&, ContainerNode& renderingParentNode, RenderTreePosition&, PassRefPtr<RenderStyle>);
-static void attachTextRenderer(Text&, ContainerNode& renderingParentNode, RenderTreePosition&);
+static void attachRenderTree(Element&, RenderStyle* inheritedStyle, RenderTreePosition&, PassRefPtr<RenderStyle>);
+static void attachTextRenderer(Text&, RenderTreePosition&);
 static void detachRenderTree(Element&, DetachType);
-static void resolveTextNode(Text&, ContainerNode& renderingParentNode, RenderTreePosition&);
-static void resolveTree(Element&, ContainerNode& renderingParentNode, RenderTreePosition&, Change);
+static void resolveTextNode(Text&, RenderTreePosition&);
+static void resolveTree(Element&, RenderStyle* inheritedStyle, RenderTreePosition&, Change);
 
 Change determineChange(const RenderStyle* s1, const RenderStyle* s2)
 {
@@ -152,27 +154,31 @@ static bool isRendererReparented(const RenderObject* renderer)
     return false;
 }
 
-static RenderObject* nextSiblingRenderer(const Node& node, const ContainerNode& renderingParentNode)
+static RenderObject* nextSiblingRenderer(const Node& node, const RenderElement& parentRenderer)
 {
-    if (!renderingParentNode.isElementNode())
-        return nullptr;
-    const Element& renderingParentElement = toElement(renderingParentNode);
-    // Avoid an O(N^2) problem with this function by not checking for
-    // nextRenderer() when the parent element hasn't attached yet.
-    // FIXME: Why would we get here anyway if parent is not attached?
-    if (!renderingParentElement.renderer())
+    if (!parentRenderer.element())
         return nullptr;
     if (node.isAfterPseudoElement())
         return nullptr;
-    Node* sibling = node.isBeforePseudoElement() ? NodeRenderingTraversal::firstChild(&renderingParentNode) : NodeRenderingTraversal::nextSibling(&node);
+    Node* sibling = node.isBeforePseudoElement() ? NodeRenderingTraversal::firstChild(parentRenderer.element()) : NodeRenderingTraversal::nextSibling(&node);
     for (; sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
         RenderObject* renderer = sibling->renderer();
         if (renderer && !isRendererReparented(renderer))
             return renderer;
     }
-    if (PseudoElement* after = renderingParentElement.afterPseudoElement())
+    if (PseudoElement* after = parentRenderer.element()->afterPseudoElement())
         return after->renderer();
     return nullptr;
+}
+
+RenderTreePosition::RenderTreePosition(RenderView& root)
+    : m_parent(&root)
+    , m_nextSibling(nullptr)
+    , m_hasValidNextSibling(true)
+#if !ASSERT_DISABLED
+    , m_assertionLimitCounter(0)
+#endif
+{
 }
 
 RenderTreePosition::RenderTreePosition(RenderElement* parent)
@@ -216,15 +222,16 @@ void RenderTreePosition::insert(RenderObject& renderer)
     m_parent->addChild(&renderer, m_nextSibling);
 }
 
-void RenderTreePosition::computeNextSibling(const Node& node, ContainerNode& renderingParentNode)
+void RenderTreePosition::computeNextSibling(const Node& node)
 {
+    ASSERT(m_parent);
     ASSERT(!node.renderer());
     if (m_hasValidNextSibling) {
         // Stop validating at some point so the assert doesn't make us O(N^2) on debug builds.
-        ASSERT(++m_assertionLimitCounter > 20 || nextSiblingRenderer(node, renderingParentNode) == m_nextSibling);
+        ASSERT(m_parent->isRenderView() || ++m_assertionLimitCounter > 20 || nextSiblingRenderer(node, *m_parent) == m_nextSibling);
         return;
     }
-    m_nextSibling = nextSiblingRenderer(node, renderingParentNode);
+    m_nextSibling = nextSiblingRenderer(node, *m_parent);
     m_hasValidNextSibling = true;
 }
 
@@ -236,28 +243,26 @@ void RenderTreePosition::invalidateNextSibling(const RenderObject& siblingRender
         m_hasValidNextSibling = false;
 }
 
-static bool shouldCreateRenderer(const Element& element, const ContainerNode& renderingParent)
+static bool shouldCreateRenderer(const Element& element, const RenderElement* parentRenderer)
 {
     if (!element.document().shouldCreateRenderers())
         return false;
-    RenderObject* parentRenderer = renderingParent.renderer();
     if (!parentRenderer)
         return false;
     if (!parentRenderer->canHaveChildren() && !(element.isPseudoElement() && parentRenderer->canHaveGeneratedChildren()))
         return false;
-    if (!renderingParent.childShouldCreateRenderer(element))
+    if (parentRenderer->element() && !parentRenderer->element()->childShouldCreateRenderer(element))
         return false;
     return true;
 }
 
-static PassRef<RenderStyle> styleForElement(Element& element, ContainerNode& renderingParentNode)
+static PassRef<RenderStyle> styleForElement(Element& element, RenderStyle* inheritedStyle)
 {
-    RenderStyle* parentStyle = renderingParentNode.renderStyle();
-    if (element.hasCustomStyleResolveCallbacks() && parentStyle) {
-        if (RefPtr<RenderStyle> style = element.customStyleForRenderer(*parentStyle))
+    if (element.hasCustomStyleResolveCallbacks() && inheritedStyle) {
+        if (RefPtr<RenderStyle> style = element.customStyleForRenderer(*inheritedStyle))
             return style.releaseNonNull();
     }
-    return element.document().ensureStyleResolver().styleForElement(&element, parentStyle);
+    return element.document().ensureStyleResolver().styleForElement(&element, inheritedStyle);
 }
 
 #if ENABLE(CSS_REGIONS)
@@ -273,17 +278,17 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 }
 #endif
 
-static void createRendererIfNeeded(Element& element, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition, PassRefPtr<RenderStyle> resolvedStyle)
+static void createRendererIfNeeded(Element& element, RenderStyle* inheritedStyle, RenderTreePosition& renderTreePosition, PassRefPtr<RenderStyle> resolvedStyle)
 {
     ASSERT(!element.renderer());
 
     RefPtr<RenderStyle> style = resolvedStyle;
 
-    if (!shouldCreateRenderer(element, renderingParentNode))
+    if (!shouldCreateRenderer(element, renderTreePosition.parent()))
         return;
 
     if (!style)
-        style = styleForElement(element, renderingParentNode);
+        style = styleForElement(element, inheritedStyle);
 
     RenderNamedFlowThread* parentFlowRenderer = 0;
 #if ENABLE(CSS_REGIONS)
@@ -293,7 +298,7 @@ static void createRendererIfNeeded(Element& element, ContainerNode& renderingPar
     if (!element.rendererIsNeeded(*style))
         return;
 
-    renderTreePosition.computeNextSibling(element, renderingParentNode);
+    renderTreePosition.computeNextSibling(element);
 
     RenderTreePosition insertionPosition = parentFlowRenderer
         ? RenderTreePosition(parentFlowRenderer, parentFlowRenderer->nextRendererForElement(element))
@@ -370,21 +375,18 @@ static void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node& curren
     }
 }
 
-static bool textRendererIsNeeded(const Text& textNode, ContainerNode& renderingParentNode)
+static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition& renderTreePosition)
 {
-    if (!renderingParentNode.renderer())
+    if (!renderTreePosition.parent())
         return false;
-    RenderElement& parentRenderer = *renderingParentNode.renderer();
+    const RenderElement& parentRenderer = *renderTreePosition.parent();
     if (!parentRenderer.canHaveChildren())
         return false;
-    if (!renderingParentNode.childShouldCreateRenderer(textNode))
+    if (parentRenderer.element() && !parentRenderer.element()->childShouldCreateRenderer(textNode))
         return false;
-
     if (textNode.isEditingText())
         return true;
     if (!textNode.length())
-        return false;
-    if (parentRenderer.style().display() == NONE)
         return false;
     if (!textNode.containsOnlyWhitespace())
         return true;
@@ -409,7 +411,7 @@ static bool textRendererIsNeeded(const Text& textNode, ContainerNode& renderingP
         RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
-        RenderObject* nextRenderer = nextSiblingRenderer(textNode, *textNode.parentNode());
+        RenderObject* nextRenderer = nextSiblingRenderer(textNode, parentRenderer);
         if (!first || nextRenderer == first) {
             // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
             return false;
@@ -418,17 +420,17 @@ static bool textRendererIsNeeded(const Text& textNode, ContainerNode& renderingP
     return true;
 }
 
-static void createTextRendererIfNeeded(Text& textNode, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition)
+static void createTextRendererIfNeeded(Text& textNode, RenderTreePosition& renderTreePosition)
 {
     ASSERT(!textNode.renderer());
 
-    if (!textRendererIsNeeded(textNode, renderingParentNode))
+    if (!textRendererIsNeeded(textNode, renderTreePosition))
         return;
 
-    auto newRenderer = textNode.createTextRenderer(*renderingParentNode.renderStyle());
+    auto newRenderer = textNode.createTextRenderer(renderTreePosition.parent()->style());
     ASSERT(newRenderer);
 
-    renderTreePosition.computeNextSibling(textNode, renderingParentNode);
+    renderTreePosition.computeNextSibling(textNode);
 
     if (!renderTreePosition.canInsert(*newRenderer))
         return;
@@ -442,9 +444,9 @@ static void createTextRendererIfNeeded(Text& textNode, ContainerNode& renderingP
     renderTreePosition.insert(*newRenderer.leakPtr());
 }
 
-void attachTextRenderer(Text& textNode, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition)
+void attachTextRenderer(Text& textNode, RenderTreePosition& renderTreePosition)
 {
-    createTextRendererIfNeeded(textNode, renderingParentNode, renderTreePosition);
+    createTextRendererIfNeeded(textNode, renderTreePosition);
 
     textNode.clearNeedsStyleRecalc();
 }
@@ -459,19 +461,19 @@ void detachTextRenderer(Text& textNode)
 void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
     ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&textNode);
-    if (!renderingParentNode)
+    if (!renderingParentNode || !renderingParentNode->renderer())
         return;
 
     bool hadRenderer = textNode.renderer();
 
     RenderTreePosition renderTreePosition(renderingParentNode->renderer());
-    resolveTextNode(textNode, *renderingParentNode, renderTreePosition);
+    resolveTextNode(textNode, renderTreePosition);
 
     if (hadRenderer && textNode.renderer())
         textNode.renderer()->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
-static void attachChildren(ContainerNode& current, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition)
+static void attachChildren(ContainerNode& current, RenderStyle* inheritedStyle, RenderTreePosition& renderTreePosition)
 {
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
         ASSERT((!child->renderer() || child->isNamedFlowContentNode()) || current.shadowRoot());
@@ -480,15 +482,15 @@ static void attachChildren(ContainerNode& current, ContainerNode& renderingParen
             continue;
         }
         if (child->isTextNode()) {
-            attachTextRenderer(*toText(child), renderingParentNode, renderTreePosition);
+            attachTextRenderer(*toText(child), renderTreePosition);
             continue;
         }
         if (child->isElementNode())
-            attachRenderTree(*toElement(child), renderingParentNode, renderTreePosition, nullptr);
+            attachRenderTree(*toElement(child), inheritedStyle, renderTreePosition, nullptr);
     }
 }
 
-static void attachDistributedChildren(InsertionPoint& insertionPoint, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition)
+static void attachDistributedChildren(InsertionPoint& insertionPoint, RenderStyle* inheritedStyle, RenderTreePosition& renderTreePosition)
 {
     if (ShadowRoot* shadowRoot = insertionPoint.containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
@@ -499,19 +501,19 @@ static void attachDistributedChildren(InsertionPoint& insertionPoint, ContainerN
         if (current->isTextNode()) {
             if (current->renderer())
                 continue;
-            attachTextRenderer(*toText(current), renderingParentNode, renderTreePosition);
+            attachTextRenderer(*toText(current), renderTreePosition);
             continue;
         }
         if (current->isElementNode()) {
             Element& currentElement = toElement(*current);
             if (currentElement.renderer())
                 detachRenderTree(currentElement);
-            attachRenderTree(currentElement, renderingParentNode, renderTreePosition, nullptr);
+            attachRenderTree(currentElement, inheritedStyle, renderTreePosition, nullptr);
         }
     }
     // Use actual children as fallback content.
     if (!insertionPoint.hasDistribution())
-        attachChildren(insertionPoint, renderingParentNode, renderTreePosition);
+        attachChildren(insertionPoint, inheritedStyle, renderTreePosition);
 }
 
 static void attachShadowRoot(ShadowRoot& shadowRoot)
@@ -519,7 +521,7 @@ static void attachShadowRoot(ShadowRoot& shadowRoot)
     ASSERT(shadowRoot.hostElement());
 
     RenderTreePosition renderTreePosition(shadowRoot.hostElement()->renderer());
-    attachChildren(shadowRoot, *shadowRoot.hostElement(), renderTreePosition);
+    attachChildren(shadowRoot, shadowRoot.hostElement()->renderStyle(), renderTreePosition);
 
     shadowRoot.clearNeedsStyleRecalc();
     shadowRoot.clearChildNeedsStyleRecalc();
@@ -572,10 +574,10 @@ static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId 
         return;
     RefPtr<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
     setBeforeOrAfterPseudoElement(current, pseudoElement, pseudoId);
-    attachRenderTree(*pseudoElement, current, renderTreePosition, nullptr);
+    attachRenderTree(*pseudoElement, current.renderStyle(), renderTreePosition, nullptr);
 }
 
-static void attachRenderTree(Element& current, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition, PassRefPtr<RenderStyle> resolvedStyle)
+static void attachRenderTree(Element& current, RenderStyle* inheritedStyle, RenderTreePosition& renderTreePosition, PassRefPtr<RenderStyle> resolvedStyle)
 {
     PostResolutionCallbackDisabler callbackDisabler(current.document());
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -583,7 +585,7 @@ static void attachRenderTree(Element& current, ContainerNode& renderingParentNod
     if (current.hasCustomStyleResolveCallbacks())
         current.willAttachRenderers();
 
-    createRendererIfNeeded(current, renderingParentNode, renderTreePosition, resolvedStyle);
+    createRendererIfNeeded(current, inheritedStyle, renderTreePosition, resolvedStyle);
 
     if (current.parentElement() && current.parentElement()->isInCanvasSubtree())
         current.setIsInCanvasSubtree(true);
@@ -600,9 +602,9 @@ static void attachRenderTree(Element& current, ContainerNode& renderingParentNod
         parentPusher.push();
 
     if (isInsertionPoint(current))
-        attachDistributedChildren(toInsertionPoint(current), renderingParentNode, renderTreePosition);
+        attachDistributedChildren(toInsertionPoint(current), inheritedStyle, renderTreePosition);
     else
-        attachChildren(current, current, childRenderTreePosition);
+        attachChildren(current, current.renderStyle(), childRenderTreePosition);
 
     current.clearNeedsStyleRecalc();
     current.clearChildNeedsStyleRecalc();
@@ -613,7 +615,7 @@ static void attachRenderTree(Element& current, ContainerNode& renderingParentNod
     attachBeforeOrAfterPseudoElementIfNeeded(current, AFTER, childRenderTreePosition);
 
     current.updateFocusAppearanceAfterAttachIfNeeded();
-    
+
     if (current.hasCustomStyleResolveCallbacks())
         current.didAttachRenderers();
 }
@@ -712,7 +714,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
     return false;
 }
 
-static Change resolveLocal(Element& current, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition, Change inheritedChange)
+static Change resolveLocal(Element& current, RenderStyle* inheritedStyle, RenderTreePosition& renderTreePosition, Change inheritedChange)
 {
     Change localChange = Detach;
     RefPtr<RenderStyle> newStyle;
@@ -720,13 +722,13 @@ static Change resolveLocal(Element& current, ContainerNode& renderingParentNode,
 
     Document& document = current.document();
     if (currentStyle && current.styleChangeType() != ReconstructRenderTree) {
-        newStyle = styleForElement(current, renderingParentNode);
+        newStyle = styleForElement(current, inheritedStyle);
         localChange = determineChange(currentStyle.get(), newStyle.get());
     }
     if (localChange == Detach) {
         if (current.renderer() || current.isNamedFlowContentNode())
             detachRenderTree(current, ReattachDetach);
-        attachRenderTree(current, renderingParentNode, renderTreePosition, newStyle.release());
+        attachRenderTree(current, inheritedStyle, renderTreePosition, newStyle.release());
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(current);
 
         return Detach;
@@ -758,12 +760,12 @@ static Change resolveLocal(Element& current, ContainerNode& renderingParentNode,
     return localChange;
 }
 
-void resolveTextNode(Text& text, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition)
+void resolveTextNode(Text& text, RenderTreePosition& renderTreePosition)
 {
     text.clearNeedsStyleRecalc();
 
     bool hasRenderer = text.renderer();
-    bool needsRenderer = textRendererIsNeeded(text, renderingParentNode);
+    bool needsRenderer = textRendererIsNeeded(text, renderTreePosition);
     if (hasRenderer) {
         if (needsRenderer)
             return;
@@ -773,7 +775,7 @@ void resolveTextNode(Text& text, ContainerNode& renderingParentNode, RenderTreeP
     }
     if (!needsRenderer)
         return;
-    attachTextRenderer(text, renderingParentNode, renderTreePosition);
+    attachTextRenderer(text, renderTreePosition);
     invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
 }
 
@@ -785,11 +787,11 @@ static void resolveShadowTree(ShadowRoot& shadowRoot, Element& host, Style::Chan
         if (child->renderer())
             renderTreePosition.invalidateNextSibling(*child->renderer());
         if (child->isTextNode() && child->needsStyleRecalc()) {
-            resolveTextNode(*toText(child), host, renderTreePosition);
+            resolveTextNode(*toText(child), renderTreePosition);
             continue;
         }
         if (child->isElementNode())
-            resolveTree(*toElement(child), host, renderTreePosition, change);
+            resolveTree(*toElement(child), host.renderStyle(), renderTreePosition, change);
     }
 
     shadowRoot.clearNeedsStyleRecalc();
@@ -803,7 +805,7 @@ static void updateBeforeOrAfterPseudoElement(Element& current, Change change, Ps
             renderTreePosition.invalidateNextSibling(*existingPseudoElement->renderer());
 
         if (needsPseudoElement(current, pseudoId))
-            resolveTree(*existingPseudoElement, current, renderTreePosition, current.needsStyleRecalc() ? Force : change);
+            resolveTree(*existingPseudoElement, current.renderStyle(), renderTreePosition, current.needsStyleRecalc() ? Force : change);
         else
             clearBeforeOrAfterPseudoElement(current, pseudoId);
         return;
@@ -863,7 +865,7 @@ private:
 };
 #endif // PLATFORM(IOS)
 
-void resolveTree(Element& current, ContainerNode& renderingParentNode, RenderTreePosition& renderTreePosition, Change change)
+void resolveTree(Element& current, RenderStyle* inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
 {
     ASSERT(change != Detach);
 
@@ -872,7 +874,6 @@ void resolveTree(Element& current, ContainerNode& renderingParentNode, RenderTre
             return;
     }
 
-    bool hasParentStyle = renderingParentNode.renderStyle();
     bool hasDirectAdjacentRules = current.childrenAffectedByDirectAdjacentRules();
     bool hasIndirectAdjacentRules = current.childrenAffectedByForwardPositionalRules();
 
@@ -883,8 +884,8 @@ void resolveTree(Element& current, ContainerNode& renderingParentNode, RenderTre
     if (change > NoChange || current.needsStyleRecalc())
         current.resetComputedStyle();
 
-    if (hasParentStyle && (change >= Inherit || current.needsStyleRecalc()))
-        change = resolveLocal(current, renderingParentNode, renderTreePosition, change);
+    if (inheritedStyle && (change >= Inherit || current.needsStyleRecalc()))
+        change = resolveLocal(current, inheritedStyle, renderTreePosition, change);
 
     if (change != Detach) {
         StyleResolverParentPusher parentPusher(&current);
@@ -908,7 +909,7 @@ void resolveTree(Element& current, ContainerNode& renderingParentNode, RenderTre
             if (child->renderer())
                 childRenderTreePosition.invalidateNextSibling(*child->renderer());
             if (child->isTextNode() && child->needsStyleRecalc()) {
-                resolveTextNode(*toText(child), current, childRenderTreePosition);
+                resolveTextNode(*toText(child), childRenderTreePosition);
                 continue;
             }
             if (!child->isElementNode())
@@ -919,7 +920,7 @@ void resolveTree(Element& current, ContainerNode& renderingParentNode, RenderTre
                 childElement->setNeedsStyleRecalc();
             if (change >= Inherit || childElement->childNeedsStyleRecalc() || childElement->needsStyleRecalc()) {
                 parentPusher.push();
-                resolveTree(*childElement, current, childRenderTreePosition, change);
+                resolveTree(*childElement, current.renderStyle(), childRenderTreePosition, change);
             }
             forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
             forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
@@ -960,8 +961,8 @@ void resolveTree(Document& document, Change change)
         return;
     if (change < Inherit && !documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return;
-    RenderTreePosition renderTreePosition(document.renderView());
-    resolveTree(*documentElement, document, renderTreePosition, change);
+    RenderTreePosition renderTreePosition(*document.renderView());
+    resolveTree(*documentElement, document.renderStyle(), renderTreePosition, change);
 }
 
 void detachRenderTree(Element& element)
