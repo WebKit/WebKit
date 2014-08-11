@@ -203,6 +203,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setTiledScrollingIndicatorVisible(tiledScrollingIndicatorVisible);
 }
 
+- (BOOL)_developerExtrasEnabled
+{
+    return _preferences->developerExtrasEnabled();
+}
+
+- (void)_setDeveloperExtrasEnabled:(BOOL)developerExtrasEnabled
+{
+    _preferences->setDeveloperExtrasEnabled(developerExtrasEnabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED
