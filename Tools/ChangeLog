@@ -1,3 +1,9 @@
+2014-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ make distcheck.
+
+        * gtk/manifest.txt: Remove Source/WebCore/Resources/inputSpeech.png.
+
 2014-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Unbreak webkitpy unit tests by checking for the existence of the image diff template
