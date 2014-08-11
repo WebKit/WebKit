@@ -1,3 +1,9 @@
+2014-08-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r172385.
+
+        * PlatformEfl.cmake:
+
 2014-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.2 release.
