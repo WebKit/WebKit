@@ -664,7 +664,6 @@ set(NetworkProcess_LIBRARIES
 
 set(WebKit2_LIBRARIES
     JavaScriptCore
-    WTF
     WebCore
 )
 

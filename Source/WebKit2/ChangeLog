@@ -1,3 +1,23 @@
+2014-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] No IPC messages are sent when building WebKitGTK+ with VERSION_SCRIPT
+        https://bugs.webkit.org/show_bug.cgi?id=135760
+
+        Reviewed by Philippe Normand.
+
+        The problem is that the threading initialization is failing
+        because there are two copies of WTF, one in libjavascriptcoregtk
+        and the other in libwebkit2gtk. When WebKit2 is initialized in the
+        UI process, JSC::initializeThreading() is called first and then
+        WTF::initializeMainThread(). The former is calling
+        ThreadIdentifierData::initializeOnce() initializing the
+        ThreadIdentifierData::m_key symbol in libjavascriptcoregtk, while
+        the latter is using the ThreadIdentifierData API from libwebkit2gtk
+        that hasn't been initialized.
+
+        * CMakeLists.txt: Do not add WTF to the list of WebKit2 libraries,
+        WebKit2 already depends on JavaScriptCore that already links to WTF.
+
 2014-08-10  Tim Horton  <timothy_horton@apple.com>
 
         Yelp phone number highlights often disappear
