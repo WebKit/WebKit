@@ -3362,11 +3362,13 @@ void Editor::scanSelectionForTelephoneNumbers()
     if (!shouldDetectTelephoneNumbers() || !client())
         return;
 
+    m_detectedTelephoneNumberRanges.clear();
+
     Vector<RefPtr<Range>> markedRanges;
 
     FrameSelection& frameSelection = m_frame.selection();
     if (!frameSelection.isRange()) {
-        client()->selectedTelephoneNumberRangesChanged(markedRanges);
+        client()->selectedTelephoneNumberRangesChanged();
         return;
     }
     RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
@@ -3394,20 +3396,19 @@ void Editor::scanSelectionForTelephoneNumbers()
     RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
 
     if (!extendedRange) {
-        client()->selectedTelephoneNumberRangesChanged(markedRanges);
+        client()->selectedTelephoneNumberRangesChanged();
         return;
     }
 
     scanRangeForTelephoneNumbers(*extendedRange, extendedRange->text(), markedRanges);
 
     // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
-    Vector<RefPtr<Range>> markedRangesIntersectingSelection;
     for (auto& range : markedRanges) {
         if (rangesOverlap(range.get(), selectedRange.get()))
-            markedRangesIntersectingSelection.append(range);
+            m_detectedTelephoneNumberRanges.append(range);
     }
 
-    client()->selectedTelephoneNumberRangesChanged(markedRangesIntersectingSelection);
+    client()->selectedTelephoneNumberRangesChanged();
 }
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)
@@ -3446,13 +3447,6 @@ void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& string
 
         scannerPosition += relativeEndPosition + 1;
     }
-}
-
-void Editor::clearDataDetectedTelephoneNumbers()
-{
-    document().markers().removeMarkers(DocumentMarker::TelephoneNumber);
-
-    // FIXME: Do other UI cleanup here once we have other UI.
 }
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)

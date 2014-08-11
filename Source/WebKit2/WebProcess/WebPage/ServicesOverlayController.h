@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 #include "PageOverlay.h"
+#include "WebFrame.h"
 #include <WebCore/Range.h>
 #include <WebCore/Timer.h>
 #include <wtf/RefCounted.h>
@@ -50,7 +51,7 @@ public:
     ServicesOverlayController(WebPage&);
     ~ServicesOverlayController();
 
-    void selectedTelephoneNumberRangesChanged(const Vector<RefPtr<WebCore::Range>>&);
+    void selectedTelephoneNumberRangesChanged();
     void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&, bool isTextOnly);
 
 private:
@@ -112,13 +113,14 @@ private:
 
     static bool highlightsAreEquivalent(const Highlight* a, const Highlight* b);
 
+    Vector<RefPtr<WebCore::Range>> telephoneNumberRangesForFocusedFrame();
+
     WebPage& m_webPage;
     PageOverlay* m_servicesOverlay;
 
     RefPtr<Highlight> m_activeHighlight;
     HashSet<RefPtr<Highlight>> m_potentialHighlights;
 
-    Vector<RefPtr<WebCore::Range>> m_currentTelephoneNumberRanges;
     Vector<WebCore::LayoutRect> m_currentSelectionRects;
     bool m_isTextOnly;
 
