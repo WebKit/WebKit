@@ -1,3 +1,25 @@
+2014-08-08  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: DebuggerManager commands should return promises
+        https://bugs.webkit.org/show_bug.cgi?id=135690
+
+        Reviewed by Timothy Hatcher.
+
+        Convert the existing debugger commands to return promises. This
+        requires separately waiting for protocol command's promise to be
+        fulfilled, as well as waiting for the appropriate DebuggerManager
+        event. If the protocol command promise is rejected, tear down the
+        single-fire event listener.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.pause):
+        (WebInspector.DebuggerManager.prototype.resume):
+        (WebInspector.DebuggerManager.prototype.stepOver):
+        (WebInspector.DebuggerManager.prototype.stepInto):
+        (WebInspector.DebuggerManager.prototype.stepOut):
+        * UserInterface/Controllers/ReplayManager.js: Use the promise-based API.
+        (WebInspector.ReplayManager.prototype._suppressBreakpointsAndResumeIfNeeded):
+
 2014-08-11  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Update folder icons

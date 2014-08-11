@@ -675,11 +675,8 @@ WebInspector.ReplayManager.prototype = {
         return new Promise(function(resolve, reject) {
             manager._breakpointsWereSuppressed = WebInspector.debuggerManager.breakpointsEnabled;
             WebInspector.debuggerManager.breakpointsEnabled = false;
-            if (!WebInspector.debuggerManager.paused)
-                return resolve();
 
-            WebInspector.debuggerManager.resume();
-            WebInspector.debuggerManager.addSingleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, resolve);
+            return WebInspector.debuggerManager.resume();
         });
     }
 };
