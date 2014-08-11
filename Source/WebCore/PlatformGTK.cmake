@@ -822,4 +822,11 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/gtk/CryptoKeyRSAGtk.cpp
         crypto/gtk/SerializedCryptoKeyWrapGtk.cpp
     )
+
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${GNUTLS_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${GNUTLS_LIBRARIES}
+    )
 endif ()

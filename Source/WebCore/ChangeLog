@@ -1,4 +1,14 @@
 2014-08-11  Eduardo Lima Mitev  <elima@igalia.com>
+        [GTK] Adds dependency on GnuTLS 3.0+ for the implementation of subtle crypto algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=133317
+
+        Reviewed by Philippe Normand.
+
+        No new tests since no new functionality has been added.
+
+        * PlatformGTK.cmake: Adds GnuTLS libs and included dirs to WebCore targets
+
+2014-08-11  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Fix debug build after r172389.
 
