@@ -1,3 +1,10 @@
+2014-08-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed fix after r172348.
+
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage): Initialize m_minimumSubsamplingLevel to 0.
+
 2014-08-11  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Adds stubs for all subtle crypto algorithm implemntations

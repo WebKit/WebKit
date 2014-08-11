@@ -39,6 +39,7 @@ namespace WebCore {
 BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver* observer)
     : Image(observer)
     , m_size(cairoSurfaceSize(nativeImage.get()))
+    , m_minimumSubsamplingLevel(0)
     , m_currentFrame(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
