@@ -307,9 +307,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
         ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
 
         SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
-        SelectorCompiler::CheckingContext context;
+        SelectorCompiler::CheckingContext context(m_mode);
         context.elementStyle = m_style;
-        context.resolvingMode = m_mode;
         context.pseudoId = m_pseudoStyleRequest.pseudoId;
         context.scrollbar = m_pseudoStyleRequest.scrollbar;
         context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;

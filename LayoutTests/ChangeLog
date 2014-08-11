@@ -1,3 +1,21 @@
+2014-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: support :scope
+        https://bugs.webkit.org/show_bug.cgi?id=135733
+
+        Reviewed by Benjamin Poulain.
+
+        Implement :scope for CSS JIT. It introduces scope field to CheckingContext
+        and it makes CheckingContext more similar to SelectorChecker::SelectorCheckingContext.
+        And since :scope requires CheckingContext, QueryingRules can accept SelectorCheckerWithCheckingContext.
+
+        * fast/selectors/querySelector-scope-filtered-root-expected.txt: Added.
+        * fast/selectors/querySelector-scope-filtered-root.html: Added.
+        Searching root node of querySelectorAll is filtered to id node, but :scope root node should not be changed.
+        * fast/selectors/scope-works-as-root-expected.html: Added.
+        * fast/selectors/scope-works-as-root.html: Added.
+        :scope in stylesheet works as :root.
+
 2014-08-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Add a helper to avoid leaking single-fire event listeners in Promise chains

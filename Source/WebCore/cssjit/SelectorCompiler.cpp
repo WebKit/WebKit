@@ -259,6 +259,7 @@ private:
     void generateElementMatchesAnyPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementHasPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsRoot(Assembler::JumpList& failureCases);
+    void generateElementIsScopeRoot(Assembler::JumpList& failureCases);
     void generateElementIsTarget(Assembler::JumpList& failureCases);
 
     // Helpers.
@@ -351,10 +352,11 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
     return std::max(a, b);
 }
 
-static inline bool shouldUseRenderStyleFromCheckingContext(const SelectorFragment& fragment)
+static inline bool shouldUseRenderStyleFromCheckingContext(SelectorContext selectorContext, const SelectorFragment& fragment)
 {
     // Return true if the position of this fragment is Rightmost in the root fragments.
     // In this case, we should use the RenderStyle stored in the CheckingContext.
+    ASSERT_UNUSED(selectorContext, selectorContext != SelectorContext::QuerySelector);
     return fragment.relationToRightFragment == FragmentRelation::Rightmost && fragment.positionInRootFragments == FragmentPositionInRootFragments::Rightmost;
 }
 
@@ -505,7 +507,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassVisited:
     case CSSSelector::PseudoClassDrag:
     case CSSSelector::PseudoClassFullPageMedia:
-    case CSSSelector::PseudoClassScope:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
@@ -518,6 +519,14 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassTarget:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClassScope:
+        if (selectorContext != SelectorContext::QuerySelector) {
+            fragment.pseudoClasses.add(CSSSelector::PseudoClassRoot);
+            return FunctionType::SimpleSelectorChecker;
+        }
+        fragment.pseudoClasses.add(CSSSelector::PseudoClassScope);
+        return FunctionType::SelectorCheckerWithCheckingContext;
 
     case CSSSelector::PseudoClassActive:
     case CSSSelector::PseudoClassFirstChild:
@@ -612,6 +621,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
             return functionType;
         }
+
     case CSSSelector::PseudoClassLang:
         {
             const AtomicString& argument = selector.argument();
@@ -631,7 +641,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             }
             return FunctionType::SimpleSelectorChecker;
         }
-            
+
     case CSSSelector::PseudoClassUnknown:
         ASSERT_NOT_REACHED();
         return FunctionType::CannotMatchAnything;
@@ -1332,8 +1342,8 @@ void SelectorCodeGenerator::generateSelectorChecker()
 
     Assembler::JumpList failureOnFunctionEntry;
     // Test selector's pseudo element equals to requested PseudoId.
-    if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
-        ASSERT_WITH_MESSAGE(shouldUseRenderStyleFromCheckingContext(m_selectorFragments.first()), "Matching pseudo elements only make sense for the rightmost fragment.");
+    if (m_selectorContext != SelectorContext::QuerySelector && m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
+        ASSERT_WITH_MESSAGE(shouldUseRenderStyleFromCheckingContext(m_selectorContext, m_selectorFragments.first()), "Matching pseudo elements only make sense for the rightmost fragment.");
         generateRequestedPseudoElementEqualsToSelectorPseudoElement(failureOnFunctionEntry, m_selectorFragments.first(), checkingContextRegister);
     }
 
@@ -1385,7 +1395,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
         generateBacktrackingTailsIfNeeded(failureCases, fragment);
     }
 
-    if (m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
+    if (m_selectorContext != SelectorContext::QuerySelector && m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
         ASSERT(!m_selectorFragments.isEmpty());
         generateMarkPseudoStyleForPseudoElement(failureCases, m_selectorFragments.first());
     }
@@ -1579,6 +1589,8 @@ void SelectorCodeGenerator::generateIndirectAdjacentTreeWalker(Assembler::JumpLi
 
 void SelectorCodeGenerator::addFlagsToElementStyleFromContext(Assembler::RegisterID checkingContext, int64_t newFlag)
 {
+    ASSERT(m_selectorContext != SelectorContext::QuerySelector);
+
     LocalRegister childStyle(m_registerAllocator);
     m_assembler.loadPtr(Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, elementStyle)), childStyle);
 
@@ -1626,9 +1638,8 @@ Assembler::JumpList SelectorCodeGenerator::jumpIfNoNextAdjacentElement()
 
 void SelectorCodeGenerator::loadCheckingContext(Assembler::RegisterID checkingContext)
 {
-    RELEASE_ASSERT(m_selectorContext == SelectorContext::RuleCollector);
-
     // Get the checking context.
+    RELEASE_ASSERT(m_functionType == FunctionType::SelectorCheckerWithCheckingContext);
     unsigned offsetToCheckingContext = m_stackAllocator.offsetToStackReference(m_checkingContextStackReference);
     m_assembler.loadPtr(Assembler::Address(Assembler::stackPointerRegister, offsetToCheckingContext), checkingContext);
 }
@@ -1935,6 +1946,9 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
 
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassRoot))
         generateElementIsRoot(matchingPostTagNameFailureCases);
+
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassScope))
+        generateElementIsScopeRoot(matchingPostTagNameFailureCases);
 
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassTarget))
         generateElementIsTarget(matchingPostTagNameFailureCases);
@@ -2420,27 +2434,28 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
         functionCall.setFunctionAddress(elementIsActive);
         functionCall.setOneArgument(elementAddressRegister);
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
+        return;
+    }
+
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment)) {
+        LocalRegister checkingContext(m_registerAllocator);
+        Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+        addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByActive());
+        notResolvingStyle.link(&m_assembler);
+
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(elementIsActive);
+        functionCall.setOneArgument(elementAddressRegister);
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     } else {
-        if (shouldUseRenderStyleFromCheckingContext(fragment)) {
-            LocalRegister checkingContext(m_registerAllocator);
-            Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
-            addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByActive());
-            notResolvingStyle.link(&m_assembler);
+        Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
+        loadCheckingContext(checkingContext);
+        m_registerAllocator.deallocateRegister(checkingContext);
 
-            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-            functionCall.setFunctionAddress(elementIsActive);
-            functionCall.setOneArgument(elementAddressRegister);
-            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-        } else {
-            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
-            loadCheckingContext(checkingContext);
-            m_registerAllocator.deallocateRegister(checkingContext);
-
-            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-            functionCall.setFunctionAddress(elementIsActiveForStyleResolution);
-            functionCall.setTwoArguments(elementAddressRegister, checkingContext);
-            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-        }
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(elementIsActiveForStyleResolution);
+        functionCall.setTwoArguments(elementAddressRegister, checkingContext);
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     }
 }
 
@@ -2481,7 +2496,7 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     // Otherwise we need to apply setFirstChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
 
-    if (shouldUseRenderStyleFromCheckingContext(fragment))
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment))
         addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::setFirstChildStateFlags());
     else {
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
@@ -2515,27 +2530,28 @@ void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failur
         functionCall.setFunctionAddress(elementIsHovered);
         functionCall.setOneArgument(elementAddressRegister);
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
+        return;
+    }
+
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment)) {
+        LocalRegisterWithPreference checkingContext(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
+        Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
+        addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByHover());
+        notResolvingStyle.link(&m_assembler);
+
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(elementIsHovered);
+        functionCall.setOneArgument(elementAddressRegister);
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     } else {
-        if (shouldUseRenderStyleFromCheckingContext(fragment)) {
-            LocalRegisterWithPreference checkingContext(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
-            Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
-            addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsaffectedByHover());
-            notResolvingStyle.link(&m_assembler);
+        Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
+        loadCheckingContext(checkingContext);
+        m_registerAllocator.deallocateRegister(checkingContext);
 
-            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-            functionCall.setFunctionAddress(elementIsHovered);
-            functionCall.setOneArgument(elementAddressRegister);
-            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-        } else {
-            Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
-            loadCheckingContext(checkingContext);
-            m_registerAllocator.deallocateRegister(checkingContext);
-
-            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-            functionCall.setFunctionAddress(elementIsHoveredForStyleResolution);
-            functionCall.setTwoArguments(elementAddressRegister, checkingContext);
-            failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-        }
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(elementIsHoveredForStyleResolution);
+        functionCall.setTwoArguments(elementAddressRegister, checkingContext);
+        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     }
 }
 
@@ -2600,7 +2616,7 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
     // Otherwise we need to apply setLastChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isLastChildRegister));
 
-    if (shouldUseRenderStyleFromCheckingContext(fragment))
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment))
         addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::setLastChildStateFlags());
     else {
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
@@ -2675,7 +2691,7 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     // Otherwise we need to apply setLastChildState() on the RenderStyle.
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isOnlyChildRegister));
 
-    if (shouldUseRenderStyleFromCheckingContext(fragment))
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment))
         addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::setFirstChildStateFlags() | RenderStyle::NonInheritedFlags::setLastChildStateFlags());
     else {
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
@@ -2845,7 +2861,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
         functionCall.setOneArgument(parentElement);
         functionCall.call();
 
-        if (shouldUseRenderStyleFromCheckingContext(fragment)) {
+        if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment)) {
             addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsUnique());
 
             Assembler::RegisterID elementAddress = elementAddressRegister;
@@ -2923,7 +2939,10 @@ void SelectorCodeGenerator::generateElementMatchesAnyPseudoClass(Assembler::Jump
 
 void SelectorCodeGenerator::generateElementHasPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    if (!shouldUseRenderStyleFromCheckingContext(fragment)) {
+    ASSERT(fragment.pseudoElementSelector);
+    ASSERT_WITH_MESSAGE(m_selectorContext != SelectorContext::QuerySelector, "When the fragment has pseudo element, the selector becomes CannotMatchAnything for QuerySelector and this test function is not called.");
+
+    if (!shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment)) {
         LocalRegister checkingContext(m_registerAllocator);
         loadCheckingContext(checkingContext);
         failureCases.append(branchOnResolvingModeWithCheckingContext(Assembler::Equal, SelectorChecker::Mode::ResolvingStyle, checkingContext));
@@ -2932,10 +2951,12 @@ void SelectorCodeGenerator::generateElementHasPseudoElement(Assembler::JumpList&
 
 void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment& fragment, Assembler::RegisterID checkingContext)
 {
+    ASSERT(m_selectorContext != SelectorContext::QuerySelector);
+
     // Make sure that the requested pseudoId equals to the pseudo element of the rightmost fragment.
     // If the rightmost fragment doesn't have a pseudo element, the requested pseudoId need to be NOPSEUDO to succeed the matching.
     // Otherwise, if the requested pseudoId is not NOPSEUDO, the requested pseudoId need to equal to the pseudo element of the rightmost fragment.
-    if (shouldUseRenderStyleFromCheckingContext(fragment)) {
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment)) {
         if (!fragment.pseudoElementSelector)
             failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(CheckingContext, pseudoId)), Assembler::TrustedImm32(NOPSEUDO)));
         else {
@@ -2953,6 +2974,23 @@ void SelectorCodeGenerator::generateElementIsRoot(Assembler::JumpList& failureCa
     failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(document, Document::documentElementMemoryOffset()), elementAddressRegister));
 }
 
+void SelectorCodeGenerator::generateElementIsScopeRoot(Assembler::JumpList& failureCases)
+{
+    ASSERT(m_selectorContext == SelectorContext::QuerySelector);
+
+    LocalRegister scope(m_registerAllocator);
+    loadCheckingContext(scope);
+    m_assembler.loadPtr(Assembler::Address(scope, OBJECT_OFFSETOF(CheckingContext, scope)), scope);
+
+    Assembler::Jump scopeIsNotNull = m_assembler.branchTestPtr(Assembler::NonZero, scope);
+
+    getDocument(m_assembler, elementAddressRegister, scope);
+    m_assembler.loadPtr(Assembler::Address(scope, Document::documentElementMemoryOffset()), scope);
+
+    scopeIsNotNull.link(&m_assembler);
+    failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, scope, elementAddressRegister));
+}
+
 void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failureCases)
 {
     LocalRegister document(m_registerAllocator);
@@ -2962,12 +3000,14 @@ void SelectorCodeGenerator::generateElementIsTarget(Assembler::JumpList& failure
 
 void SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    LocalRegister checkingContext(m_registerAllocator);
-    loadCheckingContext(checkingContext);
+    ASSERT(m_selectorContext != SelectorContext::QuerySelector);
 
     // When fragment doesn't have a pseudo element, there's no need to mark the pseudo element style.
     if (!fragment.pseudoElementSelector)
         return;
+
+    LocalRegister checkingContext(m_registerAllocator);
+    loadCheckingContext(checkingContext);
 
     Assembler::JumpList successCases;
 

@@ -70,11 +70,21 @@ private:
 namespace SelectorCompiler {
 
 struct CheckingContext {
+    CheckingContext(SelectorChecker::Mode resolvingMode)
+        : resolvingMode(resolvingMode)
+        , elementStyle(nullptr)
+        , pseudoId(NOPSEUDO)
+        , scrollbar(nullptr)
+        , scrollbarPart(NoPart)
+        , scope(nullptr)
+    { }
+
     SelectorChecker::Mode resolvingMode;
     RenderStyle* elementStyle;
     PseudoId pseudoId;
     RenderScrollbar* scrollbar;
     ScrollbarPart scrollbarPart;
+    const ContainerNode* scope;
 };
 
 enum class SelectorContext {
