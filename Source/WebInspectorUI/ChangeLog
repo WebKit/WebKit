@@ -1,5 +1,15 @@
 2014-08-11  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Update folder icons
+        https://bugs.webkit.org/show_bug.cgi?id=135808
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/FolderGeneric.png: Updated.
+        * UserInterface/Images/FolderGeneric@2x.png: Updated.
+
+2014-08-11  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: DataGrid and its clients are a cluster-cuss of styles
         https://bugs.webkit.org/show_bug.cgi?id=135788
 
