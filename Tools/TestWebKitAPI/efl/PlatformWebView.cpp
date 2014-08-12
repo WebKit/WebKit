@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012, 2014 Samsung Electronics
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,9 +25,10 @@
  */
 
 #include "config.h"
+
+#include "ewk_main.h"
 #include "ewk_view_private.h"
 #include "PlatformWebView.h"
-
 #include "EWebKit2.h"
 #include <WebKit/WKAPICast.h>
 #include <WebKit/WKRetainPtr.h>
@@ -40,11 +41,8 @@ using namespace WebKit;
 
 namespace TestWebKitAPI {
 
-static Ecore_Evas* initEcoreEvas()
+static Ecore_Evas* createEcoreEvas()
 {
-    if (!ecore_evas_init())
-        return 0;
-
     Ecore_Evas* ecoreEvas;
 #if defined(HAVE_ECORE_X)
     ecoreEvas = ecore_evas_new("opengl_x11", 0, 0, 800, 600, 0);
@@ -68,7 +66,8 @@ static void onWebProcessCrashed(void*, Evas_Object*, void* eventInfo)
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    m_window = initEcoreEvas();
+    ewk_init();
+    m_window = createEcoreEvas();
 
     m_view = EWKViewCreate(contextRef, pageGroupRef, ecore_evas_get(m_window), /* smart */ 0);
 
@@ -84,7 +83,7 @@ PlatformWebView::~PlatformWebView()
     evas_object_del(m_view);
 
     ecore_evas_free(m_window);
-    ecore_evas_shutdown();
+    ewk_shutdown();
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)

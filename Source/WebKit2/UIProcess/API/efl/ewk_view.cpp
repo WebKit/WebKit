@@ -25,6 +25,7 @@
 #include "EwkView.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context_private.h"
+#include "ewk_main_private.h"
 #include "ewk_page_group_private.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKAPICast.h>
@@ -78,11 +79,16 @@ Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
 
 Evas_Object* EWKViewCreate(WKContextRef context, WKPageGroupRef pageGroup, Evas* canvas, Evas_Smart* smart)
 {
+    if (!EwkMain::shared().isInitialized()) {
+        EINA_LOG_CRIT("EWebKit has not been initialized. You must call ewk_init() before creating view.");
+        return nullptr;
+    }
+
     WKRetainPtr<WKViewRef> wkView = adoptWK(WKViewCreate(context, pageGroup));
     if (EwkView* ewkView = EwkView::create(wkView.get(), canvas, smart))
         return ewkView->evasObject();
 
-    return 0;
+    return nullptr;
 }
 
 WKViewRef EWKViewGetWKView(Evas_Object* ewkView)

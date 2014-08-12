@@ -26,12 +26,12 @@
 #ifndef ewk_private_h
 #define ewk_private_h
 
-extern int _ewk_log_dom;
+#include "ewk_main_private.h"
 
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_ewk_log_dom, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_ewk_log_dom, __VA_ARGS__)
-#define WARN(...) EINA_LOG_DOM_WARN(_ewk_log_dom, __VA_ARGS__)
-#define INFO(...) EINA_LOG_DOM_INFO(_ewk_log_dom, __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(_ewk_log_dom, __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(EwkMain::shared().logDomainId(), __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(EwkMain::shared().logDomainId(), __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(EwkMain::shared().logDomainId(), __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(EwkMain::shared().logDomainId(), __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(EwkMain::shared().logDomainId(), __VA_ARGS__)
 
 #endif // ewk_private_h

@@ -1,3 +1,26 @@
+2014-08-11  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Prevent the client from creating ewk_view when EWebkit is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=135606
+
+        Reviewed by Gyuyoung Kim.
+
+        TestWebKitAPI does not initialize EWebkit using ewk_init()
+        which is not recommended.
+
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::createEcoreEvas):
+        Renamed from initEcoreEvas() since it doesn't not initialize
+        ecore evas.
+
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        Call ewk_init() that initalizes all EFL modules needed by EWebKit
+        instead of ecore_evas_init() only.
+
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        Call ewk_shutdown() to finalize EWebkit.
+        (TestWebKitAPI::initEcoreEvas): Deleted.
+
 2014-08-11  Dan Bernstein  <mitz@apple.com>
 
         Added an update-webkit option to update the auxiliary libraries or not.
