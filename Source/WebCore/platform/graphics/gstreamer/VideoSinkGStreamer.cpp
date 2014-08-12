@@ -74,9 +74,19 @@ enum {
 static guint webkitVideoSinkSignals[LAST_SIGNAL] = { 0, };
 
 struct _WebKitVideoSinkPrivate {
+    _WebKitVideoSinkPrivate()
+    {
+        g_mutex_init(&bufferMutex);
+    }
+
+    ~_WebKitVideoSinkPrivate()
+    {
+        g_mutex_clear(&bufferMutex);
+    }
+
     GstBuffer* buffer;
     GMainLoopSource timeoutSource;
-    GMutex* bufferMutex;
+    GMutex bufferMutex;
     GCond* dataCondition;
 
     GstVideoInfo info;
@@ -104,8 +114,6 @@ static void webkit_video_sink_init(WebKitVideoSink* sink)
     new (sink->priv) WebKitVideoSinkPrivate();
     sink->priv->dataCondition = new GCond;
     g_cond_init(sink->priv->dataCondition);
-    sink->priv->bufferMutex = new GMutex;
-    g_mutex_init(sink->priv->bufferMutex);
 
     gst_video_info_init(&sink->priv->info);
 }
@@ -220,7 +228,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     priv->timeoutSource.schedule("[WebKit] webkitVideoSinkTimeoutCallback", std::function<void()>(std::bind(webkitVideoSinkTimeoutCallback, sink)), G_PRIORITY_DEFAULT,
         [sink] { gst_object_unref(sink); });
 
-    g_cond_wait(priv->dataCondition, priv->bufferMutex);
+    g_cond_wait(priv->dataCondition, &priv->bufferMutex);
     return GST_FLOW_OK;
 }
 
@@ -233,12 +241,6 @@ static void webkitVideoSinkDispose(GObject* object)
         g_cond_clear(priv->dataCondition);
         delete priv->dataCondition;
         priv->dataCondition = 0;
-    }
-
-    if (priv->bufferMutex) {
-        g_mutex_clear(priv->bufferMutex);
-        delete priv->bufferMutex;
-        priv->bufferMutex = 0;
     }
 
     G_OBJECT_CLASS(parent_class)->dispose(object);

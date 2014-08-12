@@ -1,3 +1,44 @@
+2014-08-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up GMutexLocker
+        https://bugs.webkit.org/show_bug.cgi?id=135833
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't dynamically allocate GMutex objects. Update GMutexLocker
+        initializations to pass in a GMutex reference, not a pointer.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (_WebKitVideoSinkPrivate::_WebKitVideoSinkPrivate): Initialize the GMutex.
+        (_WebKitVideoSinkPrivate::~_WebKitVideoSinkPrivate): Clear the GMutex.
+        (webkit_video_sink_init):
+        (webkitVideoSinkRender):
+        (webkitVideoSinkDispose):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcNeedDataCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcEnoughDataCb):
+        (webKitWebSrcSeekDataCb):
+        (webKitWebSrcSetMediaPlayer):
+        (StreamingClient::createReadBuffer):
+        (StreamingClient::handleResponseReceived):
+        (StreamingClient::handleDataReceived):
+        (StreamingClient::handleNotifyFinished):
+        (ResourceHandleStreamingClient::wasBlocked):
+        (ResourceHandleStreamingClient::cannotShowURL):
+
 2014-08-12  Eduardo Lima Mitev  <elima@igalia.com>
         [GTK] Adds dependency on GnuTLS 3.0+ for the implementation of subtle crypto algorithms
         https://bugs.webkit.org/show_bug.cgi?id=133317
