@@ -1,5 +1,44 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172425
+
+    2014-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac, iOS] Some media content never reaches full 'loaded' state
+            https://bugs.webkit.org/show_bug.cgi?id=135814
+            <rdar://problem/17476923>
+
+            Reviewed by Jer Noble.
+
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::duration): Change to a wrapper that just calls
+            the durationDouble method and narrows to a float.
+            (WebCore::MediaPlayerPrivateAVFoundation::durationDouble): Revised version of duration
+            that works with doubles.
+            (WebCore::MediaPlayerPrivateAVFoundation::currentTime): Wrapper that calls the
+            currentTimeDouble method and narrows to a float.
+            (WebCore::MediaPlayerPrivateAVFoundation::seekWithTolerance): Use durationDouble for
+            comparison with passed 'time' argument (which is a double).
+            (WebCore::MediaPlayerPrivateAVFoundation::didEnd): Use 'currentTimeDouble' so we can
+            cache the double precision version of this value.
+            (WebCore::MediaPlayerPrivateAVFoundation::extraMemoryCost): Use 'durationDouble' since
+            the rest of the calculation is in terms of doubles.
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformDuration): Convert to 'double'. All
+            uses of this method are internal to the MediaPlayerPrivateAVFoundation* files.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::currentTimeDouble): Switch from float implementation.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::currentTime): Deleted. (Moved to parent class)
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration): Convert to 'double'. All
+            uses of this method are internal to the MediaPlayerPrivateAVFoundation* files.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTimeDouble): Switch from floating implementation.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTime): Deleted. (Moved to parent class)
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172424
 
     2014-08-11  Enrica Casucci  <enrica@apple.com>

@@ -30,6 +30,7 @@
 #include "MediaPlayerPrivateAVFoundation.h"
 
 #include "DocumentLoader.h"
+#include "FloatConversion.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -246,16 +247,26 @@ void MediaPlayerPrivateAVFoundation::pause()
 
 float MediaPlayerPrivateAVFoundation::duration() const
 {
+    return narrowPrecisionToFloat(durationDouble());
+}
+
+double MediaPlayerPrivateAVFoundation::durationDouble() const
+{
     if (m_cachedDuration != MediaPlayer::invalidTime())
         return m_cachedDuration;
 
-    float duration = platformDuration();
+    double duration = platformDuration();
     if (!duration || duration == MediaPlayer::invalidTime())
         return 0;
 
     m_cachedDuration = duration;
-    LOG(Media, "MediaPlayerPrivateAVFoundation::duration(%p) - caching %f", this, m_cachedDuration);
+    LOG(Media, "MediaPlayerPrivateAVFoundation::duration(%p) - caching %g", this, m_cachedDuration);
     return m_cachedDuration;
+}
+
+float MediaPlayerPrivateAVFoundation::currentTime() const
+{
+    return narrowPrecisionToFloat(currentTimeDouble());
 }
 
 void MediaPlayerPrivateAVFoundation::seek(float time)
@@ -277,10 +288,10 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(double time, double negat
     if (!metaDataAvailable())
         return;
 
-    if (time > duration())
-        time = duration();
+    if (time > durationDouble())
+        time = durationDouble();
 
-    if (currentTime() == time)
+    if (currentTimeDouble() == time)
         return;
 
     if (currentTextTrack())
@@ -672,7 +683,7 @@ void MediaPlayerPrivateAVFoundation::didEnd()
 {
     // Hang onto the current time and use it as duration from now on since we are definitely at
     // the end of the movie. Do this because the initial duration is sometimes an estimate.
-    float now = currentTime();
+    double now = currentTimeDouble();
     if (now > 0)
         m_cachedDuration = now;
 
@@ -948,7 +959,7 @@ void MediaPlayerPrivateAVFoundation::trackModeChanged()
 
 size_t MediaPlayerPrivateAVFoundation::extraMemoryCost() const
 {
-    double duration = this->duration();
+    double duration = durationDouble();
     if (!duration)
         return 0;
 

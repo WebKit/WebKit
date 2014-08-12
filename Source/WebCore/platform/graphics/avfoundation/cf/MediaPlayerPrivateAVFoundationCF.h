@@ -73,7 +73,8 @@ private:
     virtual void platformSetVisible(bool);
     virtual void platformPlay();
     virtual void platformPause();
-    virtual float currentTime() const;
+    virtual float currentTime() const override;
+    virtual double currentTimeDouble() const override;
     virtual void setVolume(float);
     virtual void setClosedCaptionsVisible(bool);
     virtual void paint(GraphicsContext*, const IntRect&);
@@ -96,7 +97,7 @@ private:
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const;
     virtual double platformMinTimeSeekable() const;
     virtual double platformMaxTimeSeekable() const;
-    virtual float platformDuration() const;
+    virtual double platformDuration() const;
     virtual float platformMaxTimeLoaded() const;
     virtual void beginLoadingMetadata();
     virtual void sizeChanged();

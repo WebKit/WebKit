@@ -1130,12 +1130,12 @@ void MediaPlayerPrivateAVFoundationObjC::platformPause()
     setDelayCallbacks(false);
 }
 
-float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
+double MediaPlayerPrivateAVFoundationObjC::platformDuration() const
 {
     // Do not ask the asset for duration before it has been loaded or it will fetch the
     // answer synchronously.
     if (!m_avAsset || assetStatus() < MediaPlayerAVAssetStatusLoaded)
-         return MediaPlayer::invalidTime();
+        return MediaPlayer::invalidTime();
     
     CMTime cmDuration;
     
@@ -1146,24 +1146,24 @@ float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
         cmDuration= [m_avAsset.get() duration];
 
     if (CMTIME_IS_NUMERIC(cmDuration))
-        return narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
+        return CMTimeGetSeconds(cmDuration);
 
     if (CMTIME_IS_INDEFINITE(cmDuration)) {
-        return std::numeric_limits<float>::infinity();
+        return std::numeric_limits<double>::infinity();
     }
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, MediaPlayer::invalidTime());
     return MediaPlayer::invalidTime();
 }
 
-float MediaPlayerPrivateAVFoundationObjC::currentTime() const
+double MediaPlayerPrivateAVFoundationObjC::currentTimeDouble() const
 {
     if (!metaDataAvailable() || !m_avPlayerItem)
         return 0;
 
     CMTime itemTime = [m_avPlayerItem.get() currentTime];
     if (CMTIME_IS_NUMERIC(itemTime))
-        return std::max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
+        return std::max(CMTimeGetSeconds(itemTime), 0.0);
 
     return 0;
 }
