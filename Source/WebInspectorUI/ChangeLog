@@ -1,5 +1,17 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172262
+
+    2014-08-07  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Unreviewed build fix.
+
+            Add a WebInspectorUI.proj file for use with MSBuild utility.
+
+            * WebInspectorUI.vcxproj/WebInspectorUI.proj: Added.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172336
 
     2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
