@@ -589,8 +589,8 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
             if (newActiveHighlight && newActiveHighlight->type() == Highlight::Type::TelephoneNumber)
                 continue;
 
-            // If this highlight has no compatible services, it can't be active, unless we have telephone number highlights to show in the combined menu.
-            if (telephoneNumberRangesForFocusedFrame().isEmpty() && !hasRelevantSelectionServices())
+            // If this highlight has no compatible services, it can't be active.
+            if (!hasRelevantSelectionServices())
                 continue;
         }
 
