@@ -55,12 +55,7 @@ public:
     void allocate(Checked<size_t> n)
     {
         Checked<unsigned> initialSize = sizeof(T) * n;
-
-#if USE(WEBAUDIO_FFMPEG) || USE(WEBAUDIO_OPENMAX_DL_FFT)
-        const size_t alignment = 32;
-#else
         const size_t alignment = 16;
-#endif
 
         if (m_allocation)
             fastFree(m_allocation);

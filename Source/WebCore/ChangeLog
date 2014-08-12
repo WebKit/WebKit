@@ -1,3 +1,34 @@
+2014-08-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WebAudio] FFTFrame is cluttered with dead code
+        https://bugs.webkit.org/show_bug.cgi?id=135751
+
+        Reviewed by Eric Carlson.
+
+        Cleaned up unused FFTFrame implementations from the tree. If the
+        FFMPEG or IPP versions are needed later on again this patch can be
+        rolled out.
+
+        No new tests, the code removed was disabled on all ports.
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::Biquad):
+        (WebCore::Biquad::~Biquad):
+        (WebCore::Biquad::process):
+        (WebCore::Biquad::reset):
+        (WebCore::Biquad::setNormalizedCoefficients):
+        * platform/audio/Biquad.h:
+        * platform/audio/DirectConvolver.cpp:
+        (WebCore::DirectConvolver::DirectConvolver):
+        (WebCore::DirectConvolver::process):
+        (WebCore::DirectConvolver::reset):
+        * platform/audio/DirectConvolver.h:
+        * platform/audio/FFTFrame.h:
+        * platform/audio/FFTFrameStub.cpp:
+        * platform/audio/ffmpeg/FFTFrameFFMPEG.cpp: Removed.
+        * platform/audio/ipp/FFTFrameIPP.cpp: Removed.
+        * platform/audio/mac/FFTFrameMac.cpp:
+
 2014-08-11  Mark Rowe  <mrowe@apple.com>
 
         Fix the Mac build.

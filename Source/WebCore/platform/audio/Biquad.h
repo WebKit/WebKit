@@ -32,10 +32,6 @@
 #include "AudioArray.h"
 #include <complex>
 #include <sys/types.h>
- 
-#if USE(WEBAUDIO_IPP)
-#include <ipps.h>
-#endif // USE(WEBAUDIO_IPP)
 
 namespace WebCore {
 
@@ -98,10 +94,6 @@ private:
 
     AudioDoubleArray m_inputBuffer;
     AudioDoubleArray m_outputBuffer;
-
-#elif USE(WEBAUDIO_IPP)
-    IppsIIRState64f_32f* m_biquadState;
-    Ipp8u* m_ippInternalBuffer;
 
 #else
     // Filter memory
