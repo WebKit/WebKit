@@ -406,7 +406,10 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     // Explicitly add a menu item for each telephone number that is in the selection.
     const Vector<String>& selectedTelephoneNumbers = context.selectedTelephoneNumbers();
     if (!selectedTelephoneNumbers.isEmpty()) {
-        [m_servicesMenu.get() addItem:[NSMenuItem separatorItem]];
+        if (m_servicesMenu)
+            [m_servicesMenu addItem:[NSMenuItem separatorItem]];
+        else
+            m_servicesMenu = adoptNS([[NSMenu alloc] init]);
         for (auto& telephoneNumber : selectedTelephoneNumbers) {
             if (NSMenuItem *item = menuItemForTelephoneNumber(telephoneNumber))
                 [m_servicesMenu addItem:item];

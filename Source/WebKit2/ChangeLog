@@ -1,5 +1,27 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172374
+
+    2014-08-09  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r172301): Combined phone number highlight doesn't appear if rich content is selected and we have no rich content services
+            https://bugs.webkit.org/show_bug.cgi?id=135785
+            <rdar://problem/17969843>
+
+            Reviewed by Brady Eidson.
+
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::drawSelectionHighlight):
+            We can't early return in the rich-content-but-no-rich-services case
+            if we have telephone numbers in the selection, because we want to offer
+            them up in the combined menu.
+
+            * UIProcess/mac/WebContextMenuProxyMac.mm:
+            If we end up with no menu, because there were no services available,
+            make a fresh one that we can fill with combined telephone number items.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172369
 
     2014-08-08  Tim Horton  <timothy_horton@apple.com>

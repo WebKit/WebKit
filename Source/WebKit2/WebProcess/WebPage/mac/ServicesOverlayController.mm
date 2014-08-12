@@ -273,11 +273,11 @@ void ServicesOverlayController::drawSelectionHighlight(WebCore::GraphicsContext&
 {
     // It's possible to end up drawing the selection highlight before we've actually received the selection rects.
     // If that happens we'll end up here again once we have the rects.
-    if (m_currentSelectionRects.isEmpty() || (!WebProcess::shared().hasRichContentServices() && !m_isTextOnly))
+    if (m_currentSelectionRects.isEmpty())
         return;
 
-    // If there are no installed selection services and we have no phone numbers detected, then we have nothing to draw.
-    if (!WebProcess::shared().hasSelectionServices() && m_currentTelephoneNumberRanges.isEmpty())
+    // If there are no appropriate installed selection services and we have no phone numbers detected, then we have nothing to draw.
+    if ((!WebProcess::shared().hasSelectionServices() || (!WebProcess::shared().hasRichContentServices() && !m_isTextOnly)) && m_currentTelephoneNumberRanges.isEmpty())
         return;
 
     if (!m_selectionHighlight)
