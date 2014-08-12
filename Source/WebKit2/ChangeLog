@@ -1,5 +1,18 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172369
+
+    2014-08-08  Tim Horton  <timothy_horton@apple.com>
+
+            Build fix for 32-bit.
+
+            * UIProcess/mac/ServicesController.mm:
+            (WebKit::ServicesController::ServicesController):
+            Don't dynamically refresh services in 32-bit apps. It's not possible
+            to write a 32-bit app with the Modern API, so this doesn't matter.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172366
 
     2014-08-08  Tim Horton  <timothy_horton@apple.com>
