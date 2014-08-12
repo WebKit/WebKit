@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start() {
+                findMediaElement();
+                waitForEventAndEnd('ended');
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough',
+                    function ()
+                    {
+                        video.currentTime = 5;
+                        video.playbackRate = 0.5;
+                        video.play();
+                        failTestIn(2500);
+                    });
+                }
+        </script>
+    </head>
+    <body onload="start()">
+        <video />
+    </body>
+</html>
