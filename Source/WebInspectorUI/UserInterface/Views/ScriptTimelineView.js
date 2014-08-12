@@ -204,12 +204,6 @@ WebInspector.ScriptTimelineView.prototype = {
             if (scriptTimelineRecord.profile) {
                 // FIXME: Support using the bottom-up tree once it is implemented.
                 rootNodes = scriptTimelineRecord.profile.topDownRootNodes;
-
-                // If there is only one node, promote its children. The TimelineRecordTreeElement already reflects the root
-                // node in this case (e.g. a "Load Event Dispatched" record with an "onload" root profile node).
-                // FIXME: Only do this for the top-down mode. Doing this for bottom-up would be incorrect.
-                if (rootNodes.length === 1)
-                    rootNodes = rootNodes[0].childNodes;
             }
 
             var zeroTime = this.zeroTime;
