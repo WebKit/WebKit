@@ -1,5 +1,34 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172351
+
+    2014-08-08  Roger Fong  <roger_fong@apple.com>
+
+            Adjustments to CueBox CSS Width calculations.
+            https://bugs.webkit.org/show_bug.cgi?id=135759
+            <rdar://problem/17954473>.
+
+            Reviewed by Eric Carlson.
+
+            This is a followup patch that addresses some of the test failures caused by r172224.
+            These tests were skipped in r172253.
+            * html/shadow/MediaControlElements.cpp:
+            (WebCore::MediaControlTextTrackContainerElement::updateActiveCuesFontSize):
+            Tell the cue boxes that they need to be updated when the font size specified in the user prefs changes.
+
+            Cap width to 100%, calculate max-width in percentages instead of pixels.
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCueBox::applyCSSProperties):
+
+            (WebCore::VTTCue::setFontSize):
+            Remove some unnecessary code that doesn't actually work.
+            Make sure to tell cuebox that it needs to be updated.
+            * html/track/VTTCue.h: Change float constant to double.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172235
 
     2014-08-07  Gordon Sheridan  <gordon_sheridan@apple.com>

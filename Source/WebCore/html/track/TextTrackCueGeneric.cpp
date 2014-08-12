@@ -78,26 +78,24 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(cue->position()), CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyTop, static_cast<float>(cue->line()), CSSPrimitiveValue::CSS_PERCENTAGE);
 
-        float authorFontSize = std::max(DEFAULTCAPTIONFONTSIZE, static_cast<float>(videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100));
+        double authorFontSize = std::max(DEFAULTCAPTIONFONTSIZE, videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100.0);
         if (cue->fontSizeMultiplier())
             authorFontSize *= cue->fontSizeMultiplier() / 100;
 
-        float multiplier = std::max(1.0f, m_fontSizeFromCaptionUserPrefs / authorFontSize);
+        double multiplier = std::max(1.0, m_fontSizeFromCaptionUserPrefs / authorFontSize);
         if (cue->getWritingDirection() == VTTCue::Horizontal)
-            setInlineStyleProperty(CSSPropertyWidth, size * multiplier, CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyWidth, std::min(size * multiplier, 100.0), CSSPrimitiveValue::CSS_PERCENTAGE);
         else
-            setInlineStyleProperty(CSSPropertyHeight, size * multiplier,  CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyHeight, std::min(size * multiplier, 100.0),  CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     std::pair<float, float> position = m_cue.getCSSPosition();
     if (cue->getWritingDirection() == VTTCue::Horizontal) {
         setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
-        double maxWidth = videoSize.width() * (100.0 - position.first) / 100.0;
-        setInlineStyleProperty(CSSPropertyMaxWidth, maxWidth, CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMaxWidth, 100.0 - position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
-        double maxHeight = videoSize.height() * (100.0 - position.second) / 100.0;
-        setInlineStyleProperty(CSSPropertyMaxHeight, maxHeight, CSSPrimitiveValue::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMaxHeight, 100.0 - position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     if (cue->foregroundColor().isValid())

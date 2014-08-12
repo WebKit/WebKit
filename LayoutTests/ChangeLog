@@ -1,3 +1,18 @@
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172351
+
+    2014-08-07  Roger Fong  <roger_fong@apple.com>
+
+            Adjustments to CueBox CSS Width calculations.
+            https://bugs.webkit.org/show_bug.cgi?id=135759
+            <rdar://problem/17954473>.
+
+            Reviewed by Eric Carlson.
+
+            * TestExpectations:
+            Unskip tests media/track/track-cue-rendering-horizontal.html and media/track/track-cue-rendering-rtl.html.
+
 2014-08-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172332
