@@ -1,3 +1,18 @@
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172397
+
+    2014-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Adjust build script for Windows production build.
+            https://bugs.webkit.org/show_bug.cgi?id=135806
+            <rdar://problem/17978299>
+
+            Reviewed by Timothy Hatcher.
+
+            * JavaScriptCore.vcxproj/copy-files.cmd: Copy file for later use
+            in WebInspectorUI build.
+
 2014-08-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171949

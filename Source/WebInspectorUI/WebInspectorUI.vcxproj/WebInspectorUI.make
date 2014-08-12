@@ -1,4 +1,5 @@
 make:
+	-mkdir "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI"
 	perl build-webinspectorui.pl "%ConfigurationBuildDir%" "%WebKit_Libraries%" windows "%PlatformArchitecture%"
 	if errorlevel 1 exit 1
 
