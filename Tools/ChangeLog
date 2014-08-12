@@ -1,3 +1,15 @@
+2014-08-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Adds dependency for GnuTLS 3.0+ explicitly in gtk/install-dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=135850
+
+        Reviewed by Philippe Normand.
+
+        After r172433, GTK port requires GnuTLS 3.0+. In this time, libgnutls-dev is 2.x in
+        Ubuntu(trusty) and Debian(sid). So added libgnutls28-dev explicitly.
+
+        * gtk/install-dependencies:
+
 2014-08-12  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Subtle-crypto feature off by default and add a new configure flag to enable it
