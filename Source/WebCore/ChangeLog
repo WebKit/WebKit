@@ -1,3 +1,23 @@
+2014-08-12  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        Make sure that begin time cannot be greater than SMILTime::indefiniteValue unintentionally.
+        https://bugs.webkit.org/show_bug.cgi?id=135838
+
+        Reviewed by Darin Adler.
+
+        When WebCore::SVGSMILElement::resolveInterval creates a SMILTime begin
+        node for a SMILInterval, then it only checks if the value of begin is
+        indefinite or unresolved but misses the case if it is between these two
+        reference values.
+
+        This is a backport of my fix in Blink: https://codereview.chromium.org/406263002/.
+
+        Test: svg/animations/animateMotion-crash-with-large-begin-time.html
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseOffsetValue):
+        (WebCore::SVGSMILElement::parseClockValue):
+
 2014-08-12  Andy Estes  <aestes@apple.com>
 
         Revert a change that wasn't meant to be a part of r172482.
