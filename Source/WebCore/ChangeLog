@@ -1,5 +1,16 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172428
+
+    2014-08-11  Mark Rowe  <mrowe@apple.com>
+
+            Fix the Mac build.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            #if a function that's only used on iOS.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172422
 
     2014-08-11  Jer Noble  <jer.noble@apple.com>
