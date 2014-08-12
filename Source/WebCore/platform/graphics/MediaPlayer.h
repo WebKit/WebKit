@@ -76,6 +76,7 @@ class MediaSourcePrivateClient;
 #endif
 class MediaPlayerPrivateInterface;
 class TextTrackRepresentation;
+struct Cookie;
 
 // Structure that will hold every native
 // types supported by the current media player.
@@ -264,6 +265,7 @@ public:
 
 #if PLATFORM(IOS)
     virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
+    virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const { return false; }
 #endif
     
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
@@ -560,6 +562,7 @@ public:
 
 #if PLATFORM(IOS)
     String mediaPlayerNetworkInterfaceName() const;
+    bool getRawCookies(const URL&, Vector<Cookie>&) const;
 #endif
 
     static void resetMediaEngines();
