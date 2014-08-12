@@ -576,6 +576,30 @@ bool ServicesOverlayController::highlightsAreEquivalent(const Highlight* a, cons
     return false;
 }
 
+ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight(Highlight& selectionHighlight)
+{
+    if (selectionHighlight.type() != Highlight::Type::Selection)
+        return nullptr;
+
+    const VisibleSelection& selection = m_webPage.corePage()->selection();
+    if (!selection.isRange())
+        return nullptr;
+
+    RefPtr<Range> activeSelectionRange = selection.toNormalizedRange();
+    if (!activeSelectionRange)
+        return nullptr;
+
+    for (auto& highlight : m_potentialHighlights) {
+        if (highlight->type() != Highlight::Type::TelephoneNumber)
+            continue;
+
+        if (highlight->range()->contains(*activeSelectionRange))
+            return highlight.get();
+    }
+
+    return nullptr;
+}
+
 void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActiveHighlightButton)
 {
     mouseIsOverActiveHighlightButton = false;
@@ -601,6 +625,18 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
 
         newActiveHighlight = highlight;
         mouseIsOverActiveHighlightButton = mouseIsOverButton;
+    }
+
+    // If our new active highlight is a selection highlight that is completely contained
+    // by one of the phone number highlights, we'll make the phone number highlight active even if it's not hovered.
+    if (newActiveHighlight && newActiveHighlight->type() == Highlight::Type::Selection) {
+        if (Highlight* containedTelephoneNumberHighlight = findTelephoneNumberHighlightContainingSelectionHighlight(*newActiveHighlight)) {
+            newActiveHighlight = containedTelephoneNumberHighlight;
+
+            // We will always initially choose the telephone number highlight over the selection highlight if the
+            // mouse is over the telephone number highlight's button, so we know that it's not hovered if we got here.
+            mouseIsOverActiveHighlightButton = false;
+        }
     }
 
     if (!this->highlightsAreEquivalent(m_activeHighlight.get(), newActiveHighlight.get())) {

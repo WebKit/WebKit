@@ -117,6 +117,8 @@ private:
     void clearActiveHighlight();
     Highlight* activeHighlight() const { return m_activeHighlight.get(); }
 
+    Highlight* findTelephoneNumberHighlightContainingSelectionHighlight(Highlight&);
+
     bool hasRelevantSelectionServices();
 
     bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
