@@ -434,18 +434,15 @@ bool Element::isFocusable() const
     if (!inDocument() || !supportsFocus())
         return false;
 
-    // Elements in canvas fallback content are not rendered, but they are allowed to be
-    // focusable as long as their canvas is displayed and visible.
-    if (isInCanvasSubtree()) {
-        ASSERT(lineageOfType<HTMLCanvasElement>(*this).first());
-        auto& canvas = *lineageOfType<HTMLCanvasElement>(*this).first();
-        return canvas.renderer() && canvas.renderer()->style().visibility() == VISIBLE;
-    }
-
     if (!renderer()) {
         // If the node is in a display:none tree it might say it needs style recalc but
         // the whole document is actually up to date.
         ASSERT(!needsStyleRecalc() || !document().childNeedsStyleRecalc());
+
+        // Elements in canvas fallback content are not rendered, but they are allowed to be
+        // focusable as long as their canvas is displayed and visible.
+        if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
+            return canvas->renderer() && canvas->renderer()->style().visibility() == VISIBLE;
     }
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
@@ -2212,16 +2209,6 @@ unsigned Element::rareDataChildIndex() const
     return elementRareData()->childIndex();
 }
 
-void Element::setIsInCanvasSubtree(bool isInCanvasSubtree)
-{
-    ensureElementRareData().setIsInCanvasSubtree(isInCanvasSubtree);
-}
-
-bool Element::isInCanvasSubtree() const
-{
-    return hasRareData() && elementRareData()->isInCanvasSubtree();
-}
-
 void Element::setRegionOversetState(RegionOversetState state)
 {
     ensureElementRareData().setRegionOversetState(state);
@@ -2890,7 +2877,6 @@ void Element::clearStyleDerivedDataBeforeDetachingRenderer()
     if (!hasRareData())
         return;
     ElementRareData* data = elementRareData();
-    data->setIsInCanvasSubtree(false);
     data->resetComputedStyle();
     data->resetDynamicRestyleObservations();
 }

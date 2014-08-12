@@ -85,7 +85,6 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     , m_didClearImageBuffer(false)
 {
     ASSERT(hasTagName(canvasTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(Document& document)
@@ -123,11 +122,6 @@ RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(PassRef<Render
 
     m_rendererIsCanvas = false;
     return HTMLElement::createElementRenderer(WTF::move(style));
-}
-
-void HTMLCanvasElement::willAttachRenderers()
-{
-    setIsInCanvasSubtree(true);
 }
 
 bool HTMLCanvasElement::canContainRangeEndPoint() const

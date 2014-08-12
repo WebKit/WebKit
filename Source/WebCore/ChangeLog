@@ -1,3 +1,35 @@
+2014-08-12  Antti Koivisto  <antti@apple.com>
+
+        Remove isInCanvasSubtree bit
+        https://bugs.webkit.org/show_bug.cgi?id=135837
+
+        Reviewed by Andreas Kling.
+
+        The logic to update this bit is in a wrong place and it is not clear it does 
+        the right thing in all cases. Also the optimization doesn't seem necessary,
+        the focus code is not that hot.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        (WebCore::Element::setIsInCanvasSubtree): Deleted.
+        (WebCore::Element::isInCanvasSubtree): Deleted.
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::isInCanvasSubtree): Deleted.
+        (WebCore::ElementRareData::setIsInCanvasSubtree): Deleted.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::willAttachRenderers): Deleted.
+        * html/HTMLCanvasElement.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachRenderTree):
+
 2014-08-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Get rid of iOS.xcconfig

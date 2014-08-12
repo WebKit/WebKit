@@ -26,6 +26,7 @@
 
 #include "Attribute.h"
 #include "DNS.h"
+#include "ElementIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -33,6 +34,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameSelection.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
@@ -142,7 +144,7 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (!document().frame()->eventHandler().tabsToLinks(event))
         return false;
 
-    if (isInCanvasSubtree())
+    if (!renderer() && ancestorsOfType<HTMLCanvasElement>(*this).first())
         return true;
 
     return hasNonEmptyBox(renderBoxModelObject());

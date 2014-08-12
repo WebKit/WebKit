@@ -58,9 +58,11 @@
 #include "AccessibilityTableRow.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ElementIterator.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "HTMLAreaElement.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
@@ -379,8 +381,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     
     // It's only allowed to create an AccessibilityObject from a Node if it's in a canvas subtree.
     // Or if it's a hidden element, but we still want to expose it because of other ARIA attributes.
-    bool inCanvasSubtree = node->parentElement()->isInCanvasSubtree();
-    bool isHidden = !node->renderer() && isNodeAriaVisible(node);
+    bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
+    bool isHidden = isNodeAriaVisible(node);
 
     bool insideMeterElement = false;
 #if ENABLE(METER_ELEMENT)

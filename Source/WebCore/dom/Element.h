@@ -382,9 +382,6 @@ public:
     void setChildrenAffectedByBackwardPositionalRules();
     void setChildIndex(unsigned);
 
-    void setIsInCanvasSubtree(bool);
-    bool isInCanvasSubtree() const;
-
     void setRegionOversetState(RegionOversetState);
     RegionOversetState regionOversetState() const;
 

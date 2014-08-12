@@ -587,9 +587,6 @@ static void attachRenderTree(Element& current, RenderStyle* inheritedStyle, Rend
 
     createRendererIfNeeded(current, inheritedStyle, renderTreePosition, resolvedStyle);
 
-    if (current.parentElement() && current.parentElement()->isInCanvasSubtree())
-        current.setIsInCanvasSubtree(true);
-
     StyleResolverParentPusher parentPusher(&current);
 
     RenderTreePosition childRenderTreePosition(current.renderer());
