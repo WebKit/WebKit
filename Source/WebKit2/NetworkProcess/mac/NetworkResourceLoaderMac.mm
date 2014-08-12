@@ -93,14 +93,14 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
     if (!cache)
         return;
 
-    if (!buffer->hasPlatformData())
+    CFDataRef data = buffer->existingCFData();
+    if (!data)
         return;
 
-    RetainPtr<CFDataRef> data = buffer->createCFData();
-    if (_CFURLCacheIsResponseDataMemMapped(cache, data.get()) == kCFBooleanFalse)
+    if (_CFURLCacheIsResponseDataMemMapped(cache, data) == kCFBooleanFalse)
         return;
 
-    tryGetShareableHandleFromCFData(handle, data.get());
+    tryGetShareableHandleFromCFData(handle, data);
 }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 

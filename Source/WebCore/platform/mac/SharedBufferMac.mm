@@ -128,15 +128,23 @@ RetainPtr<NSData> SharedBuffer::createNSData()
     return adoptNS((NSData *)createCFData().leakRef());
 }
 
-RetainPtr<CFDataRef> SharedBuffer::createCFData()
+CFDataRef SharedBuffer::existingCFData()
 {
     if (m_cfData)
-        return m_cfData;
+        return m_cfData.get();
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     if (m_dataArray.size() == 1)
-        return m_dataArray.at(0);
+        return m_dataArray.at(0).get();
 #endif
+
+    return nullptr;
+}
+
+RetainPtr<CFDataRef> SharedBuffer::createCFData()
+{
+    if (CFDataRef cfData = existingCFData())
+        return cfData;
 
 #if ENABLE(DISK_IMAGE_CACHE)
     if (isMemoryMapped())

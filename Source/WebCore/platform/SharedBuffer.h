@@ -74,6 +74,7 @@ public:
 #endif
 #if USE(CF)
     RetainPtr<CFDataRef> createCFData();
+    CFDataRef existingCFData();
     static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
 #endif
 
