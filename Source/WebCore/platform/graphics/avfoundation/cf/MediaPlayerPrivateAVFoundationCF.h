@@ -73,7 +73,6 @@ private:
     virtual void platformSetVisible(bool);
     virtual void platformPlay();
     virtual void platformPause();
-    virtual float currentTime() const override;
     virtual double currentTimeDouble() const override;
     virtual void setVolume(float);
     virtual void setClosedCaptionsVisible(bool);
