@@ -1,5 +1,30 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172417
+
+    2014-08-11  Beth Dakin  <bdakin@apple.com>
+
+            Fixed backgrounds don't paint in blurred inset areas
+            https://bugs.webkit.org/show_bug.cgi?id=135712
+
+            Reviewed by Simon Fraser.
+
+            * platform/mac-wk1/TestExpectations:
+            * platform/mac-wk1/fast: Added.
+            * platform/mac-wk1/fast/backgrounds: Added.
+            * platform/mac-wk1/fast/backgrounds/resources: Added.
+            * platform/mac-wk1/fast/backgrounds/resources/green.png: Added.
+            * platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment-expected.html: Added.
+            * platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment.html: Added.
+            * platform/mac-wk2/tiled-drawing/resources/green-blue.png: Added.
+            * platform/mac-wk2/tiled-drawing/resources/green.png: Added.
+            * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-body-expected.html: Added.
+            * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-body.html: Added.
+            * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-expected.html: Added.
+            * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment.html: Added.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172373
 
     2014-08-09  Zalan Bujtas  <zalan@apple.com>

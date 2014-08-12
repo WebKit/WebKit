@@ -1,0 +1,27 @@
+<html>
+<head>
+<style>
+
+body {
+    height:2000px;
+    margin:0;
+    background-image:url(resources/green-blue.png);
+    background-attachment:fixed;
+    overflow:hidden;
+}
+
+</style>
+
+<script>
+function runTest() {
+    if (window.internals)
+        window.internals.setTopContentInset(50);
+}
+
+window.addEventListener('load', runTest, false);
+</script>
+</head>
+
+<body>
+</body>
+</html>
