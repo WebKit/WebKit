@@ -1,3 +1,16 @@
+2014-08-12  Pratik Solanki  <psolanki@apple.com>
+
+        Enable didReceiveDataArray callback on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135554
+        <rdar://problem/9170731>
+
+        Reviewed by Andreas Kling.
+
+        Enable WTF_USE_NETWORK_CFDATA_ARRAY_CALLBACK for all Cocoa platforms so that we use the same
+        code path for Mac and iOS.
+
+        * wtf/Platform.h:
+
 2014-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Generate header detection headers for CMake on Windows.
