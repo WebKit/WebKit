@@ -132,24 +132,6 @@ String WebContext::platformDefaultCookieStorageDirectory() const
     return String();
 }
 
-String WebContext::platformDefaultOpenGLCacheDirectory() const
-{
-    notImplemented();
-    return String();
-}
-
-String WebContext::containerTemporaryDirectory() const
-{
-    notImplemented();
-    return String();
-}
-
-String WebContext::platformDefaultNetworkingHSTSDatabasePath() const
-{
-    notImplemented();
-    return String();
-}
-
 void WebContext::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;

@@ -71,15 +71,11 @@ struct WebProcessCreationParameters {
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
     String cookieStorageDirectory;
-    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
-    String openGLCacheDirectory;
-    SandboxExtension::Handle openGLCacheDirectoryExtensionHandle;
-    String containerTemporaryDirectory;
-    SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
-
 #if PLATFORM(IOS)
+    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
+    SandboxExtension::Handle openGLCacheDirectoryExtensionHandle;
+    SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
     // FIXME: Remove this once <rdar://problem/17726660> is fixed.
-    String hstsDatabasePath;
     SandboxExtension::Handle hstsDatabasePathExtensionHandle;
 #endif
 

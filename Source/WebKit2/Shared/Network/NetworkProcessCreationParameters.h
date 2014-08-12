@@ -57,14 +57,13 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
 
     String cookieStorageDirectory;
-    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
 
 #if PLATFORM(IOS)
+    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
+
     // FIXME: Remove this once <rdar://problem/17726660> is fixed.
-    String hstsDatabasePath;
     SandboxExtension::Handle hstsDatabasePathExtensionHandle;
 
-    String parentBundleDirectory;
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
 #endif
     bool shouldUseTestingNetworkSession;
