@@ -202,6 +202,9 @@ WebInspector.GeneralTreeElement.prototype = {
 
     set status(x)
     {
+        if (this._status === x)
+            return;
+
         this._status = x || "";
         this._updateStatusElement();
     },
