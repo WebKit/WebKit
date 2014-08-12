@@ -33,7 +33,9 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/PageCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -131,6 +133,7 @@ void WebBackForwardListProxy::removeItem(uint64_t itemID)
         return;
         
     pageCache()->remove(item.get());
+    WebCore::Page::clearPreviousItemFromAllPages(item.get());
     historyItemToIDMap().remove(item);
 }
 

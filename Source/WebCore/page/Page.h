@@ -117,6 +117,7 @@ class Page : public Supplementable<Page> {
 
 public:
     static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+    static void clearPreviousItemFromAllPages(HistoryItem*);
 
     // It is up to the platform to ensure that non-null clients are provided where required.
     // FIXME: Rename this to PageConfiguration and move it to its own class.

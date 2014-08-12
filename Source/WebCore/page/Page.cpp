@@ -267,6 +267,20 @@ Page::~Page()
         m_visitedLinkStore->removePage(*this);
 }
 
+void Page::clearPreviousItemFromAllPages(HistoryItem* item)
+{
+    if (!allPages)
+        return;
+
+    for (auto& page : *allPages) {
+        HistoryController& controller = page->mainFrame().loader().history();
+        if (item == controller.previousItem()) {
+            controller.clearPreviousItem();
+            return;
+        }
+    }
+}
+
 uint64_t Page::renderTreeSize() const
 {
     uint64_t total = 0;

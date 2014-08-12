@@ -1,3 +1,37 @@
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172235
+
+    2014-08-07  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+            Provide methods to clear undesired references to HistoryItems that have been removed from the back/forard list.
+            https://bugs.webkit.org/show_bug.cgi?id=135634
+            <rdar://problem/17388461>
+
+            Reviewed by Brady Eidson.
+
+            No new tests.  Would require an API test that also needs an httpd, which we don't currently support.
+
+            * WebCore.exp.in:
+            Added export for Page::clearPreviousItemFromAllPages.
+
+            * loader/HistoryController.cpp:
+            (WebCore::HistoryController::clearPreviousItem):
+            Clear m_previousItem and iterate over children recursively calling clearPreviousItem().
+            The m_previousItem is cleared for the target HistoryController, and all of its descendents.
+
+            * loader/HistoryController.h:
+            Declared HistoryController::clearPreviousItem.
+
+            * page/Page.cpp:
+            (WebCore::Page::clearPreviousItemFromAllPages):
+            Iterate over each page in the web process, checking if the previous item of
+            the HistoryController for the main frame is the same as the item being removed. If so, the
+            frameTree is traversed and each associated HistoryController has its m_previousItem cleared.
+
+            * page/Page.h:
+            Declared Page::clearPreviousItemFromAllPages.
+
 2014-08-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172332
