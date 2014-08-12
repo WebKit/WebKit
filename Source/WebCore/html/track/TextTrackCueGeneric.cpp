@@ -102,13 +102,20 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         }
     }
 
-    std::pair<float, float> position = m_cue.getCSSPosition();
+    double textPosition = m_cue.position();
+    double maxSize = 100.0;
+    
+    if (alignment == CSSValueEnd || alignment == CSSValueRight)
+        maxSize = textPosition;
+    else if (alignment == CSSValueStart || alignment == CSSValueLeft)
+        maxSize = 100.0 - textPosition;
+
     if (cue->getWritingDirection() == VTTCue::Horizontal) {
         setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
-        setInlineStyleProperty(CSSPropertyMaxWidth, 100.0 - position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
-        setInlineStyleProperty(CSSPropertyMaxHeight, 100.0 - position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     if (cue->foregroundColor().isValid())
