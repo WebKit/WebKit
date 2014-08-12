@@ -147,59 +147,22 @@ static void expandForGap(Vector<LayoutRect>& rects, uint8_t* alignments, const G
     }
 }
 
-static inline void stitchRects(Vector<LayoutRect>& rects)
-{
-    if (rects.size() <= 1)
-        return;
-    
-    Vector<LayoutRect> newRects;
-    
-    // FIXME: Need to support vertical layout.
-    // First stitch together all the rects on the first line of the selection.
-    size_t indexFromStart = 0;
-    LayoutUnit firstTop = rects[indexFromStart].y();
-    LayoutRect& currentRect = rects[indexFromStart++];
-    while (indexFromStart < rects.size() && rects[indexFromStart].y() == firstTop)
-        currentRect.unite(rects[indexFromStart++]);
-    
-    newRects.append(currentRect);
-    if (indexFromStart == rects.size()) {
-        // All the rects are on one line. There is nothing else to do.
-        rects.swap(newRects);
-        return;
-    }
-    
-    // Next stitch together all the rects on the last line of the selection.
-    size_t indexFromEnd = rects.size() - 1;
-    LayoutUnit lastTop = rects[indexFromEnd].y();
-    LayoutRect lastRect = rects[indexFromEnd];
-    while (indexFromEnd != indexFromStart && rects[--indexFromEnd].y() == lastTop)
-        lastRect.unite(rects[indexFromEnd]);
-    
-    if (indexFromEnd == indexFromStart) {
-        // All the rects are on two lines only. There is nothing else to do.
-        newRects.append(lastRect);
-        rects.swap(newRects);
-        return;
-    }
-    
-    // indexFromStart is the index of the first rectangle on the second line.
-    // indexFromEnd is the index of the last rectangle on the second to the last line.
-    // Stitch together all the rects after the first line until the second to the last included.
-    currentRect = rects[indexFromStart];
-    while (indexFromStart != indexFromEnd)
-        currentRect.unite(rects[++indexFromStart]);
-    
-    newRects.append(currentRect);
-    newRects.append(lastRect);
-
-    rects.swap(newRects);
-}
-
 static void compactRectsWithGapRects(Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects)
 {
-    stitchRects(rects);
-    
+    if (rects.isEmpty())
+        return;
+
+    // All of the middle rects - everything but the first and last - can be unioned together.
+    if (rects.size() > 3) {
+        LayoutRect united;
+        for (unsigned i = 1; i < rects.size() - 1; ++i)
+            united.unite(rects[i]);
+
+        rects[1] = united;
+        rects[2] = rects.last();
+        rects.shrink(3);
+    }
+
     // FIXME: The following alignments are correct for LTR text.
     // We should also account for RTL.
     uint8_t alignments[3];
