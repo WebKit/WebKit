@@ -572,6 +572,7 @@ private:
 
 #if PLATFORM(IOS)
     virtual String mediaPlayerNetworkInterfaceName() const;
+    virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const override;
 #endif
 
     void loadTimerFired(Timer<HTMLMediaElement>&);
