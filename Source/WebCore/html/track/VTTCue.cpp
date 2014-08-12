@@ -58,6 +58,9 @@
 
 namespace WebCore {
 
+// This constant should correspond with the percentage returned by CaptionUserPreferences::captionFontSizeScaleAndImportance.
+const static double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;
+
 static const int undefinedPosition = -1;
 
 static const CSSValueID displayWritingModeMap[] = {
@@ -138,7 +141,7 @@ VTTCue* VTTCueBox::getCue() const
     return &m_cue;
 }
 
-void VTTCueBox::applyCSSProperties(const IntSize&)
+void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 {
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
 #if ENABLE(WEBVTT_REGIONS)
@@ -170,18 +173,28 @@ void VTTCueBox::applyCSSProperties(const IntSize&)
     // the 'left' property must be set to left
     setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first), CSSPrimitiveValue::CSS_PERCENTAGE);
 
-    double multiplier = std::max(1.0, m_fontSizeFromCaptionUserPrefs / DEFAULTCAPTIONFONTSIZE);
+    double authorFontSize = std::min(videoSize.width(), videoSize.height()) * DEFAULTCAPTIONFONTSIZEPERCENTAGE / 100.0;
+    double multiplier = 1.0;
+    if (authorFontSize)
+        multiplier = m_fontSizeFromCaptionUserPrefs / authorFontSize;
+
+    double newCueSize = std::min(m_cue.getCSSSize() * multiplier, 100.0);
+    CSSValueID alignment = m_cue.getCSSAlignment();
     // the 'width' property must be set to width, and the 'height' property  must be set to height
     if (m_cue.vertical() == horizontalKeyword()) {
-        setInlineStyleProperty(CSSPropertyWidth, std::min(m_cue.getCSSSize() * multiplier, 100.0), CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyMinWidth, "-webkit-min-content");
         setInlineStyleProperty(CSSPropertyMaxWidth, 100.0 - position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
+        if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
+            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyHeight, std::min(m_cue.getCSSSize() * multiplier, 100.0), CSSPrimitiveValue::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyMinHeight, "-webkit-min-content");
         setInlineStyleProperty(CSSPropertyMaxHeight, 100.0 - position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
+        if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
+            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
