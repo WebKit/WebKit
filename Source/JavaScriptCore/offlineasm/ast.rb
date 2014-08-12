@@ -580,6 +580,44 @@ class BitnotImmediate < Node
     end
 end
 
+class StringLiteral < NoChildren
+    attr_reader :value
+    
+    def initialize(codeOrigin, value)
+        super(codeOrigin)
+        @value = value[1..-2]
+        raise "Bad string literal #{value.inspect} at #{codeOriginString}" unless value.is_a? String
+    end
+    
+    def dump
+        "#{value}"
+    end
+    
+    def ==(other)
+        other.is_a? StringLiteral and other.value == @value
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        false
+    end
+    
+    def immediateOperand?
+        false
+    end
+        
+    def register?
+        false
+    end
+end
+
 class RegisterID < NoChildren
     attr_reader :name
     
@@ -889,6 +927,8 @@ class Instruction < Node
             $asm.putLocalAnnotation
         when "globalAnnotation"
             $asm.putGlobalAnnotation
+        when "emit"
+          $asm.puts "#{operands[0].dump}"
         else
             raise "Unhandled opcode #{opcode} at #{codeOriginString}"
         end

@@ -1104,9 +1104,6 @@ class Instruction
                 $asm.putc "POP(#{op.clDump});"
             }
 
-        when "pushCalleeSaves"
-        when "popCalleeSaves"
-
 
         # A convenience and compact call to crash because we don't want to use
         # the generic llint crash mechanism which relies on the availability

@@ -1146,38 +1146,6 @@ class Instruction
                 | op |
                 $asm.puts "push #{op.x86Operand(:ptr)}"
             }
-        when "popCalleeSaves"
-            if isX64
-                if isMSVC
-                    $asm.puts "pop " + register("rsi")
-                    $asm.puts "pop " + register("rdi")
-                end
-                $asm.puts "pop " + register("rbx")
-                $asm.puts "pop " + register("r15")
-                $asm.puts "pop " + register("r14")
-                $asm.puts "pop " + register("r13")
-                $asm.puts "pop " + register("r12")
-            else
-                $asm.puts "pop " + register("ebx")
-                $asm.puts "pop " + register("edi")
-                $asm.puts "pop " + register("esi")
-            end
-        when "pushCalleeSaves"
-            if isX64
-                $asm.puts "push " + register("r12")
-                $asm.puts "push " + register("r13")
-                $asm.puts "push " + register("r14")
-                $asm.puts "push " + register("r15")
-                $asm.puts "push " + register("rbx")
-                if isMSVC
-                    $asm.puts "push " + register("rdi")
-                    $asm.puts "push " + register("rsi")
-                end
-            else
-                $asm.puts "push " + register("esi")
-                $asm.puts "push " + register("edi")
-                $asm.puts "push " + register("ebx")
-            end
         when "move"
             handleMove
         when "sxi2q"

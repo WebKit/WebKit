@@ -850,20 +850,6 @@ class Instruction
                 $asm.puts "addiu $sp, $sp, -4"
                 $asm.puts "sw #{op.mipsOperand}, 0($sp)"
             }
-        when "popCalleeSaves"
-            $asm.puts "lw $16, 0($sp)"
-            $asm.puts "lw $17, 4($sp)"
-            $asm.puts "lw $18, 8($sp)"
-            $asm.puts "lw $19, 12($sp)"
-            $asm.puts "lw $20, 16($sp)"
-            $asm.puts "addiu $sp, $sp, 20"
-        when "pushCalleeSaves"
-            $asm.puts "addiu $sp, $sp, -20"
-            $asm.puts "sw $20, 16($sp)"
-            $asm.puts "sw $19, 12($sp)"
-            $asm.puts "sw $18, 8($sp)"
-            $asm.puts "sw $17, 4($sp)"
-            $asm.puts "sw $16, 0($sp)"
         when "move", "sxi2p", "zxi2p"
             if operands[0].is_a? Immediate
                 mipsMoveImmediate(operands[0].value, operands[1])

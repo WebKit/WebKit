@@ -423,6 +423,11 @@ class Immediate
     end
 end
 
+class StringLiteral
+    def validate
+    end
+end
+
 class RegisterID
     def validate
     end

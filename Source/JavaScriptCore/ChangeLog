@@ -1,3 +1,29 @@
+2014-08-11  Michael Saboff  <msaboff@apple.com>
+
+        Eliminate {push,pop}CalleeSaves in favor of individual pushes & pops
+        https://bugs.webkit.org/show_bug.cgi?id=127155
+
+        Reviewed by Geoffrey Garen.
+
+        Eliminated the offline assembler instructions {push,pop}CalleeSaves as well as the
+        ARM64 specific {push,pop}LRAndFP and replaced them with individual push and pop
+        instructions. Where the registers referenced by the added push and pop instructions
+        are not part of the offline assembler register aliases, used a newly added "emit"
+        offline assembler instruction which takes a string literal and outputs that
+        string as a native instruction.
+
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/arm64.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/mips.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/sh4.rb:
+        * offlineasm/transform.rb:
+        * offlineasm/x86.rb:
+
 2014-08-11  Mark Lam  <mark.lam@apple.com>
 
         Re-landing r172401 with fixed test.

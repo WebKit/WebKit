@@ -246,6 +246,106 @@ macro checkStackPointerAlignment(tempReg, location)
     end
 end
 
+macro pushCalleeSaves()
+    if C_LOOP
+    elsif ARM or ARMv7_TRADITIONAL
+        emit "push {r4-r10}"
+    elsif ARMv7
+        emit "push {r4-r6, r8-r11}"
+    elsif ARM64
+        emit "stp x20, x19, [sp, #-16]!"
+        emit "stp x22, x21, [sp, #-16]!"
+        emit "stp x24, x23, [sp, #-16]!"
+        emit "stp x26, x25, [sp, #-16]!"
+        emit "stp x28, x27, [sp, #-16]!"
+    elsif MIPS
+        emit "addiu $sp, $sp, -20"
+        emit "sw $20, 16($sp)"
+        emit "sw $19, 12($sp)"
+        emit "sw $18, 8($sp)"
+        emit "sw $17, 4($sp)"
+        emit "sw $16, 0($sp)"
+    elsif SH4
+        emit "mov.l r13, @-r15"
+        emit "mov.l r11, @-r15"
+        emit "mov.l r10, @-r15"
+        emit "mov.l r9, @-r15"
+        emit "mov.l r8, @-r15"
+    elsif X86
+        emit "push %esi"
+        emit "push %edi"
+        emit "push %ebx"
+    elsif X86_WIN
+        emit "push esi"
+        emit "push edi"
+        emit "push ebx"
+    elsif X86_64
+        emit "push %r12"
+        emit "push %r13"
+        emit "push %r14"
+        emit "push %r15"
+        emit "push %rbx"
+    elsif X86_64_WIN
+        emit "push r12"
+        emit "push r13"
+        emit "push r14"
+        emit "push r15"
+        emit "push rbx"
+        emit "push rdi"
+        emit "push rsi"
+    end
+end
+
+macro popCalleeSaves()
+    if C_LOOP
+    elsif ARM or ARMv7_TRADITIONAL
+        emit "pop {r4-r10}"
+    elsif ARMv7
+        emit "pop {r4-r6, r8-r11}"
+    elsif ARM64
+        emit "ldp x28, x27, [sp], #16"
+        emit "ldp x26, x25, [sp], #16"
+        emit "ldp x24, x23, [sp], #16"
+        emit "ldp x22, x21, [sp], #16"
+        emit "ldp x20, x19, [sp], #16"
+    elsif MIPS
+        emit "lw $16, 0($sp)"
+        emit "lw $17, 4($sp)"
+        emit "lw $18, 8($sp)"
+        emit "lw $19, 12($sp)"
+        emit "lw $20, 16($sp)"
+        emit "addiu $sp, $sp, 20"
+    elsif SH4
+        emit "mov.l @r15+, r8"
+        emit "mov.l @r15+, r9"
+        emit "mov.l @r15+, r10"
+        emit "mov.l @r15+, r11"
+        emit "mov.l @r15+, r13"
+    elsif X86
+        emit "pop %ebx"
+        emit "pop %edi"
+        emit "pop %esi"
+    elsif X86_WIN
+        emit "pop ebx"
+        emit "pop edi"
+        emit "pop esi"
+    elsif X86_64
+        emit "pop %rbx"
+        emit "pop %r15"
+        emit "pop %r14"
+        emit "pop %r13"
+        emit "pop %r12"
+    elsif X86_64_WIN
+        emit "pop rsi"
+        emit "pop rdi"
+        emit "pop rbx"
+        emit "pop r15"
+        emit "pop r14"
+        emit "pop r13"
+        emit "pop r12"
+    end
+end
+
 macro preserveCallerPCAndCFR()
     if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
@@ -253,7 +353,7 @@ macro preserveCallerPCAndCFR()
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
     elsif ARM64
-        pushLRAndFP
+        push cfr, lr
     else
         error
     end
@@ -268,7 +368,7 @@ macro restoreCallerPCAndCFR()
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64
-        popLRAndFP
+        pop lr, cfr
     end
 end
 
@@ -298,7 +398,7 @@ macro functionPrologue()
     if X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
     elsif ARM64
-        pushLRAndFP
+        push cfr, lr
     elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
         push cfr
@@ -310,7 +410,7 @@ macro functionEpilogue()
     if X86 or X86_WIN or X86_64 or X86_64_WIN
         pop cfr
     elsif ARM64
-        popLRAndFP
+        pop lr, cfr
     elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
@@ -324,12 +424,12 @@ macro callToJavaScriptPrologue()
     elsif X86 or X86_WIN
         push cfr
     elsif ARM64
-        pushLRAndFP
+        push cfr, lr
     elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         push lr
         push cfr
     end
-    pushCalleeSaves
+    pushCalleeSaves()
     if X86
         subp 12, sp
     elsif X86_WIN
@@ -372,14 +472,14 @@ macro callToJavaScriptEpilogue()
         addp 4, sp
     end
 
-    popCalleeSaves
+    popCalleeSaves()
     if X86_64 or X86_64_WIN
         pop t2
         pop cfr
     elsif X86 or X86_WIN
         pop cfr
     elsif ARM64
-        popLRAndFP
+        pop lr, cfr
     elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
@@ -526,7 +626,7 @@ else
     move cfr, sp # restore the previous sp
     # pop the callerFrame since we will jump to a function that wants to save it
     if ARM64
-        popLRAndFP
+        pop lr, cfr
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         pop cfr
         pop lr
@@ -763,13 +863,13 @@ global _llint_entry
 # Entry point for the llint to initialize.
 _llint_entry:
     functionPrologue()
-    pushCalleeSaves
+    pushCalleeSaves()
     initPCRelative(t1)
 
     # Include generated bytecode initialization file.
     include InitBytecodes
 
-    popCalleeSaves
+    popCalleeSaves()
     functionEpilogue()
     ret
 end

@@ -1091,18 +1091,6 @@ class Instruction
             else
                 $asm.puts "mov.l #{sh4Operands(operands)}, @-r15"
             end
-        when "popCalleeSaves"
-            $asm.puts "mov.l @r15+, r8"
-            $asm.puts "mov.l @r15+, r9"
-            $asm.puts "mov.l @r15+, r10"
-            $asm.puts "mov.l @r15+, r11"
-            $asm.puts "mov.l @r15+, r13"
-        when "pushCalleeSaves"
-            $asm.puts "mov.l r13, @-r15"
-            $asm.puts "mov.l r11, @-r15"
-            $asm.puts "mov.l r10, @-r15"
-            $asm.puts "mov.l r9, @-r15"
-            $asm.puts "mov.l r8, @-r15"
         when "break"
             # This special opcode always generates an illegal instruction exception.
             $asm.puts ".word 0xfffd"

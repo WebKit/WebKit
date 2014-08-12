@@ -466,18 +466,6 @@ class Instruction
                 | op |
                 $asm.puts "push { #{op.armOperand} }"
             }
-        when "popCalleeSaves"
-            if isARMv7
-                $asm.puts "pop {r4-r6, r8-r11}"                
-            else
-                $asm.puts "pop {r4-r10}"
-            end
-        when "pushCalleeSaves"
-            if isARMv7
-                $asm.puts "push {r4-r6, r8-r11}"
-            else
-                $asm.puts "push {r4-r10}"
-            end
         when "move"
             if operands[0].immediate?
                 armMoveImmediate(operands[0].value, operands[1])
