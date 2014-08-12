@@ -1,3 +1,10 @@
+2014-08-12  Andy Estes  <aestes@apple.com>
+
+        Revert a change that wasn't meant to be a part of r172482.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+
 2014-08-12  Antti Koivisto  <antti@apple.com>
 
         Don't recurse into non-rendered subtrees when computing style
