@@ -1,5 +1,23 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172436
+
+    2014-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: GoToLine dialog clear text button looks poor
+            https://bugs.webkit.org/show_bug.cgi?id=135828
+
+            Reviewed by Timothy Hatcher.
+
+            Legacy/CloseWhite.svg was not used, but in the case where the white
+            close button is needed the thicker bars looks better. Re-use the
+            Legacy image as the default CloseWhite.svg.
+
+            * UserInterface/Images/CloseWhite.svg:
+            * UserInterface/Images/Legacy/CloseWhite.svg: Removed.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172435
 
     2014-08-12  Joseph Pecoraro  <pecoraro@apple.com>
