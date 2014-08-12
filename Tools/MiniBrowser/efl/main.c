@@ -654,26 +654,37 @@ static void
 on_download_request(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
     Ewk_Download_Job *download = (Ewk_Download_Job *)event_info;
+    Browser_Window *window = (Browser_Window *)user_data;
 
-    // FIXME: The destination folder should be selected by the user but we set it to '/tmp' for now.
     Eina_Strbuf *destination_path = eina_strbuf_new();
+
+    const char *home_path = getenv("HOME");
+    Eina_Stringshare *save_file_path = show_file_entry_dialog(window, "DOWNLOAD", home_path ? home_path : "/tmp");
+
+    if (save_file_path)
+        eina_strbuf_append_printf(destination_path, "%s", save_file_path);
+    else
+        eina_strbuf_append(destination_path, "/tmp");
 
     const char *suggested_name = ewk_download_job_suggested_filename_get(download);
     if (suggested_name && *suggested_name)
-        eina_strbuf_append_printf(destination_path, "/tmp/%s", suggested_name);
+        eina_strbuf_append_printf(destination_path, "/%s", suggested_name);
     else {
         // Generate a unique file name since no name was suggested.
-        char unique_path[] = "/tmp/downloaded-file.XXXXXX";
-        if (mkstemp(unique_path) == -1) {
+        eina_strbuf_append(destination_path, "/downloaded-file.XXXXXX");
+        char *url = NULL;
+        url = eina_strbuf_string_steal(destination_path);
+        if (mkstemp(url) == -1) {
             info("ERROR: Could not generate a unique file name.");
             return;
         }
-        eina_strbuf_append(destination_path, unique_path);
+        eina_strbuf_append(destination_path, url);
     }
 
     ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
     info("Downloading: %s", eina_strbuf_string_get(destination_path));
     eina_strbuf_free(destination_path);
+    eina_stringshare_del(save_file_path);
 }
 
 static void on_filepicker_parent_deletion(void *user_data, Evas *evas, Evas_Object *elm_window, void *event);

@@ -1,3 +1,16 @@
+2014-08-12  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL][WK2] Minibrowser: Enhance the application to use download directory selector.
+        https://bugs.webkit.org/show_bug.cgi?id=135791
+
+        Reviewed by Gyuyoung Kim.
+
+        Currently Minibrowser stores the downloaded files to /tmp directory, add support so that destination folder can be selected by the
+        user.
+
+        * MiniBrowser/efl/main.c:
+        (on_download_request):
+
 2014-08-11  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Prevent the client from creating ewk_view when EWebkit is not initialized
