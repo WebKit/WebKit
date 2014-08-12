@@ -715,6 +715,7 @@ static NSURL *canonicalURL(const String& url)
     return [canonicalRequest URL];
 }
 
+#if PLATFORM(IOS)
 static NSHTTPCookie* toNSHTTPCookie(const Cookie& cookie)
 {
     RetainPtr<NSMutableDictionary> properties = adoptNS([[NSMutableDictionary alloc] init]);
@@ -732,6 +733,7 @@ static NSHTTPCookie* toNSHTTPCookie(const Cookie& cookie)
 
     return [NSHTTPCookie cookieWithProperties:properties.get()];
 }
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 {
