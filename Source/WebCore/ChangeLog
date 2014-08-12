@@ -1,3 +1,13 @@
+2014-08-12  Eduardo Lima Mitev  <elima@igalia.com>
+        [GTK] Adds dependency on GnuTLS 3.0+ for the implementation of subtle crypto algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=133317
+
+        Reviewed by Philippe Normand.
+
+        No new tests since no new functionality has been added.
+
+        * PlatformGTK.cmake: Adds GnuTLS libs and included dirs to WebCore targets
+
 2014-08-10  Philippe Normand  <pnormand@igalia.com>
 
         [WebAudio] FFTFrame is cluttered with dead code
