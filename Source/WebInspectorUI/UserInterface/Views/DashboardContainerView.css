@@ -156,3 +156,7 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard {
         -webkit-transform: translateY(30px);
     }
 }
+
+body.mac-platform.legacy .dashboard-container .advance-arrow {
+    background-image: url(../Images/Legacy/UpDownArrows.svg);
+}

@@ -495,7 +495,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     window->_dockButton = _dockButton;
 
     // Get the dock image and make it a template so the button cell effects will apply.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     NSString *dockImageName = @"Dock";
     _dockButton.get().alphaValue = 0.55;
 #else

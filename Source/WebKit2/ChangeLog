@@ -1,5 +1,19 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172379
+
+    2014-08-10  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: new glyphs are visible on OS X 10.9 builds
+            https://bugs.webkit.org/show_bug.cgi?id=135743
+
+            Reviewed by Joseph Pecoraro.
+
+            * UIProcess/mac/WebInspectorProxyMac.mm:
+            (WebKit::WebInspectorProxy::createInspectorWindow): Use 10100 instead of 1090 for the version.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172424
 
     2014-08-11  Enrica Casucci  <enrica@apple.com>

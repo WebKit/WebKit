@@ -1,5 +1,41 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172379
+
+    2014-08-10  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: new glyphs are visible on OS X 10.9 builds
+            https://bugs.webkit.org/show_bug.cgi?id=135743
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Images/Legacy/UserInputPrompt.svg: Removed.
+            * UserInterface/Images/Legacy/UserInputPromptPrevious.svg: Removed.
+            * UserInterface/Images/Legacy/UserInputResult.svg: Removed.
+            Removed images that were not used.
+
+            * UserInterface/Views/DashboardContainerView.css:
+            (body.mac-platform.legacy .dashboard-container .advance-arrow):
+            * UserInterface/Views/DebuggerDashboardView.js:
+            (WebInspector.DebuggerDashboardView):
+            * UserInterface/Views/FolderIcon.css:
+            (body.mac-platform.legacy .folder-icon .icon):
+            * UserInterface/Views/HierarchicalPathComponent.css:
+            (body.mac-platform.legacy .hierarchical-path-component > .selector-arrows):
+            * UserInterface/Views/LogContentView.js:
+            (WebInspector.LogContentView):
+            Use legacy images.
+
+            * UserInterface/Views/NavigationSidebarPanel.css:
+            (.navigation-sidebar-panel-content-tree-outline:focus .item.selected .subtitle):
+            Fix color for selected subtitle.
+
+            * UserInterface/Views/TimelineSidebarPanel.js:
+            (WebInspector.TimelineSidebarPanel):
+            Use legacy images.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172397
 
     2014-08-11  Brent Fulgham  <bfulgham@apple.com>
