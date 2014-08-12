@@ -1,3 +1,19 @@
+2014-08-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r171903. <rdar://problem/17885078>
+
+    2014-07-31  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] Use RC_PROJECTBUILDVERSION as build portion of version
+            https://bugs.webkit.org/show_bug.cgi?id=135478
+    
+            Reviewed by David Kilzer.
+    
+            * win/tools/scripts/version-stamp.pl: Check environment for
+            RC_PROJECTBUILDVERSION, and use it for the build portion of
+            the file version resource. Otherwise, use the __VERSION_BUILD__
+            value we calculated from the version string.
+    
 2014-08-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Turn off features we don't want to ship this cycle.
