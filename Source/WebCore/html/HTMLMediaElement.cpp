@@ -37,6 +37,7 @@
 #include "ClientRectList.h"
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
+#include "CookieJar.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DisplaySleepDisabler.h"
 #include "DocumentLoader.h"
@@ -5743,6 +5744,11 @@ String HTMLMediaElement::mediaPlayerNetworkInterfaceName() const
         return emptyString();
 
     return settings->networkInterfaceName();
+}
+
+bool HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, Vector<Cookie>& cookies) const
+{
+    return getRawCookies(&document(), url, cookies);
 }
 #endif
     

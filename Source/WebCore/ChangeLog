@@ -1,5 +1,33 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172422
+
+    2014-08-11  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] <video> element requests are missing session cookies; sometimes persistant cookies.
+            https://bugs.webkit.org/show_bug.cgi?id=135816
+
+            Reviewed by Alexey Proskuryakov.
+
+            On iOS, the AVFoundation framework will copy appropriate cookies for the requested URL across to the
+            mediaserverd process. For WebKit2, the WebProcess does not have access to session cookies for the 
+            current browsing session. When creating an AVURLAsset, fetch the appropriate cookies for the requested
+            URL, and pass them into AVURLAsset in the options dictionary.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::mediaPlayerGetRawCookies): Call CookieJar's equivalent method.
+            * html/HTMLMediaElement.h:
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::getRawCookies): Pass to HTMLMediaElement.
+            * platform/graphics/MediaPlayer.h:
+            (WebCore::MediaPlayerClient::mediaPlayerGetRawCookies):
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::toNSHTTPCookie): Convert a WebCore Cookie -> NSHTTPCookie.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Fetch cookies for the requested
+                URL, and if successful, add them to the AVURLAsset options dictionary.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172421
 
     2014-08-11  Roger Fong  <roger_fong@apple.com>
