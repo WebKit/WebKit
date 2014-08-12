@@ -91,9 +91,9 @@ CGContextRef WKGetCurrentGraphicsContext(void)
     return threadContext->currentCGContext;
 }
 
-static NSString *imageResourcePath(const char* imageFile, unsigned scaleFactor)
+static NSString *imageResourcePath(const char* imageFile, bool is2x)
 {
-    NSString *fileName = scaleFactor == 1 ? [NSString stringWithUTF8String:imageFile] : [NSString stringWithFormat:@"%s@%dx", imageFile, scaleFactor];
+    NSString *fileName = is2x ? [NSString stringWithFormat:@"%s@2x", imageFile] : [NSString stringWithUTF8String:imageFile];
 #if PLATFORM(IOS_SIMULATOR)
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
     return [bundle pathForResource:fileName ofType:@"png"];
@@ -104,18 +104,22 @@ static NSString *imageResourcePath(const char* imageFile, unsigned scaleFactor)
 #endif
 }
 
-CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file)
+CGImageRef WKGraphicsCreateImageFromBundleWithName (const char *image_file)
 {
     if (!image_file)
         return NULL;
 
     CGImageRef image = nullptr;
-    NSData *imageData = nullptr;
-    for (unsigned scaleFactor = wkGetScreenScaleFactor(); scaleFactor > 0; --scaleFactor) {
-        imageData = [NSData dataWithContentsOfFile:imageResourcePath(image_file, scaleFactor)];
-        ASSERT(scaleFactor != wkGetScreenScaleFactor() || imageData);
-        if (imageData)
-            break;
+    NSData *imageData = nil;
+
+    if (wkGetScreenScaleFactor() == 2) {
+        NSString* full2xPath = imageResourcePath(image_file, true);
+        imageData = [NSData dataWithContentsOfFile:full2xPath];
+    }
+    if (!imageData) {
+        // We got here either because we didn't request hi-dpi or the @2x file doesn't exist.
+        NSString* full1xPath = imageResourcePath(image_file, false);
+        imageData = [NSData dataWithContentsOfFile:full1xPath];
     }
     
     if (imageData) {
