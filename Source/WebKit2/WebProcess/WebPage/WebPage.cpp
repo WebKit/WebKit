@@ -2833,6 +2833,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setUseImageDocumentForSubframePDF(true);
 #endif
 
+    settings.setLongMousePressEnabled(store.getBoolValueForKey(WebPreferencesKey::longMousePressEnabledKey()));
+
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled(store.getBoolValueForKey(WebPreferencesKey::gamepadsEnabledKey()));
 #endif

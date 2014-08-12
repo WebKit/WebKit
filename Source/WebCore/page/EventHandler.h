@@ -380,9 +380,7 @@ private:
     bool dragHysteresisExceeded(const IntPoint&) const;
 #endif // ENABLE(DRAG_SUPPORT)
     
-#if ENABLE(DRAG_SUPPORT) || ENABLE(LONG_MOUSE_PRESS)
     bool mouseMovementExceedsThreshold(const FloatPoint&, int pointsThreshold) const;
-#endif
 
     bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
     bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = 0);
@@ -442,15 +440,13 @@ private:
     void autoHideCursorTimerFired(Timer<EventHandler>&);
 #endif
 
-#if ENABLE(LONG_MOUSE_PRESS)
     void beginTrackingPotentialLongMousePress();
     void recognizeLongMousePress(Timer<EventHandler>&);
     void cancelTrackingPotentialLongMousePress();
     bool longMousePressHysteresisExceeded();
     void clearLongMousePressState();
     bool handleLongMousePressMouseMovedEvent(const PlatformMouseEvent&);
-#endif
-    
+
     void clearLatchedState();
 
     Frame& m_frame;
@@ -478,10 +474,9 @@ private:
 #if ENABLE(CURSOR_SUPPORT)
     Timer<EventHandler> m_cursorUpdateTimer;
 #endif
-#if ENABLE(LONG_MOUSE_PRESS)
+
     Timer<EventHandler> m_longMousePressTimer;
     bool m_didRecognizeLongMousePress;
-#endif
 
     std::unique_ptr<AutoscrollController> m_autoscrollController;
     bool m_mouseDownMayStartAutoscroll;

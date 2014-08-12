@@ -1,3 +1,31 @@
+2014-08-12  Peyton Randolph  <prandolph@apple.com>
+
+        Runtime switch for long mouse press gesture. Part of 135257 - Add long mouse press gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=135682
+
+        Reviewed by Tim Horton.
+
+        This patch adds a runtime switch for the Long Mouse Press Gesture and initially sets the feature flag
+        to false. It also removes the ENABLE_LONG_MOUSE_PRESS feature flag as the runtime switch now guards
+        its functionality.
+
+        * Configurations/FeatureDefines.xcconfig: Remove LONG_MOUSE_PRESS feature flag.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear): Remove feature flag.
+        (WebCore::EventHandler::handleMousePressEvent): Ditto.
+        (WebCore::EventHandler::eventMayStartDrag): Ditto.
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        Perform event iff long mouse presses are enabled.
+        (WebCore::EventHandler::beginTrackingPotentialLongMousePress): Ditto.
+        (WebCore::EventHandler::recognizeLongMousePress): Ditto.
+        (WebCore::EventHandler::cancelTrackingPotentialLongMousePress): Ditto.
+        (WebCore::EventHandler::handleMouseMoveEvent): Remove feature flag.
+        (WebCore::EventHandler::handleDrag): Ditto.
+        (WebCore::EventHandler::mouseMovementExceedsThreshold): Ditto.
+        * page/EventHandler.h:
+        * page/Settings.in: Add longMousePressEnabled setting, initially false.
+
 2014-08-12  Pratik Solanki  <psolanki@apple.com>
 
         Cached file backed resources don't make it to the Web Process when NETWORK_CFDATA_ARRAY_CALLBACK is enabled

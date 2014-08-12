@@ -131,10 +131,8 @@ const int TextDragHysteresis = 3;
 const int GeneralDragHysteresis = 3;
 #endif // ENABLE(DRAG_SUPPORT)
 
-#if ENABLE(LONG_MOUSE_PRESS)
-const std::chrono::milliseconds longMousePressRecognitionDelay = 500_ms;
+const std::chrono::milliseconds longMousePressRecognitionDelay = std::chrono::milliseconds(500);
 const int maximumLongMousePressDragDistance = 5; // in points.
-#endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)
 const float GestureUnknown = 0;
@@ -376,10 +374,8 @@ EventHandler::EventHandler(Frame& frame)
 #if ENABLE(CURSOR_SUPPORT)
     , m_cursorUpdateTimer(this, &EventHandler::cursorUpdateTimerFired)
 #endif
-#if ENABLE(LONG_MOUSE_PRESS)
     , m_longMousePressTimer(this, &EventHandler::recognizeLongMousePress)
     , m_didRecognizeLongMousePress(false)
-#endif
     , m_autoscrollController(std::make_unique<AutoscrollController>())
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
@@ -456,9 +452,7 @@ void EventHandler::clear()
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
 #endif
-#if ENABLE(LONG_MOUSE_PRESS)
     clearLongMousePressState();
-#endif
     m_resizeLayer = 0;
     m_elementUnderMouse = nullptr;
     m_lastElementUnderMouse = nullptr;
@@ -774,12 +768,10 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         }
     }
 
-#if ENABLE(LONG_MOUSE_PRESS)
     if (event.event().button() == LeftButton && event.isOverLink()) {
         // FIXME 135703: Handle long press for more than just links.
         beginTrackingPotentialLongMousePress();
     }
-#endif
 
     // We don't do this at the start of mouse down handling,
     // because we don't want to do it until we know we didn't hit a widget.
@@ -866,10 +858,8 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (event.button() != LeftButton || event.clickCount() != 1)
         return false;
 
-#if ENABLE(LONG_MOUSE_PRESS)
     if (m_didRecognizeLongMousePress)
         return false;
-#endif
     
     FrameView* view = m_frame.view();
     if (!view)
@@ -1027,10 +1017,10 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
   
     bool handled = false;
     
-#if ENABLE(LONG_MOUSE_PRESS)
-    if (event.event().button() == LeftButton)
+    if (event.event().button() == LeftButton) {
+        // FIXME 135767: Implement long mouse press for arbitrary mouse buttons.
         clearLongMousePressState();
-#endif
+    }
 
     // Clear the selection if the mouse didn't move after the last mouse
     // press and it's not a context menu click.  We do this so when clicking
@@ -1575,19 +1565,26 @@ void EventHandler::autoHideCursorTimerFired(Timer<EventHandler>& timer)
 }
 #endif
     
-#if ENABLE(LONG_MOUSE_PRESS)
 void EventHandler::beginTrackingPotentialLongMousePress()
 {
     clearLongMousePressState();
-    
+
+    Page* page = m_frame.page();
+    if (!(page && page->settings().longMousePressEnabled()))
+        return;
+
     m_longMousePressTimer.startOneShot(longMousePressRecognitionDelay);
-    
+
     // FIXME 135580: Bubble long mouse press up to the client.
 }
     
 void EventHandler::recognizeLongMousePress(Timer<EventHandler>& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_longMousePressTimer);
+
+    Page* page = m_frame.page();
+    if (!page)
+        return;
 
     m_didRecognizeLongMousePress = true;
 
@@ -1604,7 +1601,11 @@ void EventHandler::cancelTrackingPotentialLongMousePress()
         return;
 
     clearLongMousePressState();
-    
+
+    Page* page = m_frame.page();
+    if (!(page && page->settings().longMousePressEnabled()))
+        return;
+
     // FIXME 135580: Bubble long mouse press up to the client.
 }
 
@@ -1627,8 +1628,6 @@ bool EventHandler::handleLongMousePressMouseMovedEvent(const PlatformMouseEvent&
 
     return false;
 }
-
-#endif // ENABLE(LONG_MOUSE_PRESS)
 
 static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& windowPoint)
 {
@@ -1880,10 +1879,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         return true;
 #endif
 
-#if ENABLE(LONG_MOUSE_PRESS)
     if (handleLongMousePressMouseMovedEvent(mouseEvent))
         return true;
-#endif
 
     RefPtr<FrameView> protector(m_frame.view());
     
@@ -3497,9 +3494,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         if (m_didStartDrag) {
             m_mouseDownMayStartDrag = false;
 
-#if ENABLE(LONG_MOUSE_PRESS)
             cancelTrackingPotentialLongMousePress();
-#endif
             return true;
         }
         if (dragState().source && dragState().shouldDispatchEvents) {
@@ -3520,8 +3515,7 @@ cleanupDrag:
     return true;
 }
 #endif // ENABLE(DRAG_SUPPORT)
-    
-#if ENABLE(DRAG_SUPPORT) || ENABLE(LONG_MOUSE_PRESS)
+
 bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocation, int pointsThreshold) const
 {
     FrameView* view = m_frame.view();
@@ -3532,7 +3526,6 @@ bool EventHandler::mouseMovementExceedsThreshold(const FloatPoint& viewportLocat
     
     return abs(delta.width()) >= pointsThreshold || abs(delta.height()) >= pointsThreshold;
 }
-#endif // ENABLE(DRAG_SUPPORT) || ENABLE(LONG_MOUSE_PRESS)
 
 bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent, TextEventInputType inputType)
 {

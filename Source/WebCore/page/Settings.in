@@ -229,3 +229,5 @@ useImageDocumentForSubframePDF initial=false
 # Allow clients to permit navigation to an invalid URL. Some apps may use invalid URLs
 # as a means to pass data from the web-portion of their app to the native portion.
 allowNavigationToInvalidURL initial=false
+
+longMousePressEnabled initial=false

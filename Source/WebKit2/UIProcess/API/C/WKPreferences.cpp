@@ -1285,3 +1285,13 @@ bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->gamepadsEnabled();
 }
+
+void WKPreferencesSetLongMousePressEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setLongMousePressEnabled(enabled);
+}
+
+bool WKPreferencesGetLongMousePressEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->longMousePressEnabled();
+}

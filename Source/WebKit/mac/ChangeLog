@@ -1,3 +1,13 @@
+2014-08-12  Peyton Randolph  <prandolph@apple.com>
+
+        Runtime switch for long mouse press gesture. Part of 135257 - Add long mouse press gesture.           
+        https://bugs.webkit.org/show_bug.cgi?id=135682
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Remove LONG_MOUSE_PRESS feature flag.
+
 2014-08-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Get rid of iOS.xcconfig
