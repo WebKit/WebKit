@@ -170,7 +170,9 @@ protected:
     virtual bool hasAudio() const override { return m_cachedHasAudio; }
     virtual void setVisible(bool) override;
     virtual float duration() const override;
-    virtual float currentTime() const = 0;
+    virtual double durationDouble() const override;
+    virtual float currentTime() const override;
+    virtual double currentTimeDouble() const = 0;
     virtual void seek(float) override;
     virtual void seekWithTolerance(double, double, double) override;
     virtual bool seeking() const override;
@@ -242,7 +244,7 @@ protected:
     virtual double platformMaxTimeSeekable() const = 0;
     virtual double platformMinTimeSeekable() const = 0;
     virtual float platformMaxTimeLoaded() const = 0;
-    virtual float platformDuration() const = 0;
+    virtual double platformDuration() const = 0;
 
     virtual void beginLoadingMetadata() = 0;
     virtual void tracksChanged() = 0;
@@ -329,7 +331,7 @@ private:
     mutable float m_cachedMaxTimeLoaded;
     mutable double m_cachedMaxTimeSeekable;
     mutable double m_cachedMinTimeSeekable;
-    mutable float m_cachedDuration;
+    mutable double m_cachedDuration;
     float m_reportedDuration;
     mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
     float m_requestedRate;

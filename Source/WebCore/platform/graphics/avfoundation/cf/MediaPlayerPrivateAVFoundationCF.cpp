@@ -569,7 +569,7 @@ void MediaPlayerPrivateAVFoundationCF::platformPause()
     setDelayCallbacks(false);
 }
 
-float MediaPlayerPrivateAVFoundationCF::platformDuration() const
+double MediaPlayerPrivateAVFoundationCF::platformDuration() const
 {
     if (!metaDataAvailable() || !avAsset(m_avfWrapper))
         return 0;
@@ -583,23 +583,23 @@ float MediaPlayerPrivateAVFoundationCF::platformDuration() const
         cmDuration = AVCFAssetGetDuration(avAsset(m_avfWrapper));
 
     if (CMTIME_IS_NUMERIC(cmDuration))
-        return narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
+        return CMTimeGetSeconds(cmDuration);
 
     if (CMTIME_IS_INDEFINITE(cmDuration))
-        return numeric_limits<float>::infinity();
+        return numeric_limits<double>::infinity();
 
     LOG(Media, "MediaPlayerPrivateAVFoundationCF::platformDuration(%p) - invalid duration, returning %.0f", this, static_cast<float>(MediaPlayer::invalidTime()));
     return static_cast<float>(MediaPlayer::invalidTime());
 }
 
-float MediaPlayerPrivateAVFoundationCF::currentTime() const
+double MediaPlayerPrivateAVFoundationCF::currentTimeDouble() const
 {
     if (!metaDataAvailable() || !avPlayerItem(m_avfWrapper))
         return 0;
 
     CMTime itemTime = AVCFPlayerItemGetCurrentTime(avPlayerItem(m_avfWrapper));
     if (CMTIME_IS_NUMERIC(itemTime))
-        return max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
+        return std::max(CMTimeGetSeconds(itemTime), 0.0);
 
     return 0;
 }

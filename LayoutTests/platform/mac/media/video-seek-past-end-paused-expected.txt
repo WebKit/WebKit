@@ -12,7 +12,7 @@ EXPECTED (mediaElement.currentTime > '0') OK
 EXPECTED (video.paused == 'true') OK
 
 EXPECTED (video.paused == 'true') OK
-EXPECTED (mediaElement.currentTime == 'mediaElement.duration'), OBSERVED '6.026666641235352' FAIL
+EXPECTED (mediaElement.currentTime == 'mediaElement.duration'), OBSERVED '6.026666666666666' FAIL
 EXPECTED (video.ended == 'true'), OBSERVED 'false' FAIL
 
 END OF TEST
