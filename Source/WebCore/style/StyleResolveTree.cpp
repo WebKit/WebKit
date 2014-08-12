@@ -555,27 +555,6 @@ static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
     current.clearAfterPseudoElement();
 }
 
-static void resetStyleForNonRenderedDescendants(Element& current)
-{
-    ASSERT(!current.renderStyle());
-    auto descendants = descendantsOfType<Element>(current);
-    auto it = descendants.begin();
-    auto end = descendants.end();
-    while (it != end) {
-        auto& element = *it;
-        ASSERT(!element.renderStyle());
-        if (element.needsStyleRecalc()) {
-            element.resetComputedStyle();
-            element.clearNeedsStyleRecalc();
-        }
-        if (element.childNeedsStyleRecalc()) {
-            element.clearChildNeedsStyleRecalc();
-            it.traverseNext();
-        } else
-            it.traverseNextSkippingChildren();
-    }
-}
-
 static bool needsPseudoElement(Element& current, PseudoId pseudoId)
 {
     if (!current.document().styleSheetCollection().usesBeforeAfterRules())
@@ -603,41 +582,36 @@ static void attachRenderTree(Element& current, RenderStyle* inheritedStyle, Rend
     PostResolutionCallbackDisabler callbackDisabler(current.document());
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    if (isInsertionPoint(current)) {
-        attachDistributedChildren(toInsertionPoint(current), inheritedStyle, renderTreePosition);
-        return;
-    }
-
     if (current.hasCustomStyleResolveCallbacks())
         current.willAttachRenderers();
 
     createRendererIfNeeded(current, inheritedStyle, renderTreePosition, resolvedStyle);
 
-    if (RenderStyle* style = current.renderStyle()) {
-        StyleResolverParentPusher parentPusher(&current);
+    StyleResolverParentPusher parentPusher(&current);
 
-        RenderTreePosition childRenderTreePosition(current.renderer());
-        attachBeforeOrAfterPseudoElementIfNeeded(current, BEFORE, childRenderTreePosition);
+    RenderTreePosition childRenderTreePosition(current.renderer());
+    attachBeforeOrAfterPseudoElementIfNeeded(current, BEFORE, childRenderTreePosition);
 
-        if (ShadowRoot* shadowRoot = current.shadowRoot()) {
-            parentPusher.push();
-            attachShadowRoot(*shadowRoot);
-        } else if (current.firstChild())
-            parentPusher.push();
+    if (ShadowRoot* shadowRoot = current.shadowRoot()) {
+        parentPusher.push();
+        attachShadowRoot(*shadowRoot);
+    } else if (current.firstChild())
+        parentPusher.push();
 
-        attachChildren(current, style, childRenderTreePosition);
-
-        if (AXObjectCache* cache = current.document().axObjectCache())
-            cache->updateCacheAfterNodeIsAttached(&current);
-
-        attachBeforeOrAfterPseudoElementIfNeeded(current, AFTER, childRenderTreePosition);
-
-        current.updateFocusAppearanceAfterAttachIfNeeded();
-    } else
-        resetStyleForNonRenderedDescendants(current);
+    if (isInsertionPoint(current))
+        attachDistributedChildren(toInsertionPoint(current), inheritedStyle, renderTreePosition);
+    else
+        attachChildren(current, current.renderStyle(), childRenderTreePosition);
 
     current.clearNeedsStyleRecalc();
     current.clearChildNeedsStyleRecalc();
+
+    if (AXObjectCache* cache = current.document().axObjectCache())
+        cache->updateCacheAfterNodeIsAttached(&current);
+
+    attachBeforeOrAfterPseudoElementIfNeeded(current, AFTER, childRenderTreePosition);
+
+    current.updateFocusAppearanceAfterAttachIfNeeded();
 
     if (current.hasCustomStyleResolveCallbacks())
         current.didAttachRenderers();
@@ -910,9 +884,7 @@ void resolveTree(Element& current, RenderStyle* inheritedStyle, RenderTreePositi
     if (inheritedStyle && (change >= Inherit || current.needsStyleRecalc()))
         change = resolveLocal(current, inheritedStyle, renderTreePosition, change);
 
-    RenderStyle* style = current.renderStyle();
-
-    if (change != Detach && style) {
+    if (change != Detach) {
         StyleResolverParentPusher parentPusher(&current);
 
         if (ShadowRoot* shadowRoot = current.shadowRoot()) {
@@ -945,7 +917,7 @@ void resolveTree(Element& current, RenderStyle* inheritedStyle, RenderTreePositi
                 childElement->setNeedsStyleRecalc();
             if (change >= Inherit || childElement->childNeedsStyleRecalc() || childElement->needsStyleRecalc()) {
                 parentPusher.push();
-                resolveTree(*childElement, style, childRenderTreePosition, change);
+                resolveTree(*childElement, current.renderStyle(), childRenderTreePosition, change);
             }
             forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
             forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
@@ -953,8 +925,6 @@ void resolveTree(Element& current, RenderStyle* inheritedStyle, RenderTreePositi
 
         updateBeforeOrAfterPseudoElement(current, change, AFTER, childRenderTreePosition);
     }
-    if (change != Detach && !style)
-        resetStyleForNonRenderedDescendants(current);
 
     current.clearNeedsStyleRecalc();
     current.clearChildNeedsStyleRecalc();

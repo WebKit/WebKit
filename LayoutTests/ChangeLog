@@ -1,3 +1,17 @@
+2014-08-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r172494.
+        https://bugs.webkit.org/show_bug.cgi?id=135864
+
+        asserting on bots (Requested by kling on #webkit).
+
+        Reverted changeset:
+
+        "Don't recurse into non-rendered subtrees when computing
+        style"
+        https://bugs.webkit.org/show_bug.cgi?id=135844
+        http://trac.webkit.org/changeset/172494
+
 2014-08-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fonts forced to use non synthetic italics might be laid out with the incorrect baseline
