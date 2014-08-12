@@ -118,6 +118,9 @@
 /* Undo action name */
 "Bold (Undo action name)" = "Bold";
 
+/* menu item title for phone number */
+"Call Using iPhone:" = "Call Using iPhone:";
+
 /* menu item for making a telephone call to a telephone number */
 "Call “%@” Using iPhone" = "Call “%@” Using iPhone";
 

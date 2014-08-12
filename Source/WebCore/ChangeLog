@@ -1,5 +1,21 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172424
+
+    2014-08-11  Enrica Casucci  <enrica@apple.com>
+
+            Improve look and feel of combined service menu..
+            https://bugs.webkit.org/show_bug.cgi?id=135824
+            <rdar://problem/17936880>
+
+            Reviewed by Tim Horton.
+
+            Adding some localizable strings.
+
+            * English.lproj/Localizable.strings:
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172428
 
     2014-08-11  Mark Rowe  <mrowe@apple.com>
