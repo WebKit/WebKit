@@ -1,3 +1,16 @@
+2014-08-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Make GRefPtr move-able
+        https://bugs.webkit.org/show_bug.cgi?id=135801
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add move constructor and move assignment operator for GRefPtr.
+
+        * wtf/gobject/GRefPtr.h:
+        (WTF::GRefPtr::GRefPtr):
+        (WTF::=):
+
 2014-08-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Update HashTable's operator= after r172167 per review comments
