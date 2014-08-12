@@ -1,5 +1,26 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172404
+
+    2014-08-11  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: console.profile shouldn't stop auto-recorded profiles
+            https://bugs.webkit.org/show_bug.cgi?id=135810
+
+            Reviewed by Joseph Pecoraro.
+
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::start): Added. Call internalStart. Set m_enabledFromFrontend.
+            (WebCore::InspectorTimelineAgent::stop): Added. Calls internalStop. Clear m_enabledFromFrontend.
+            (WebCore::InspectorTimelineAgent::internalStart): Renamed from start.
+            (WebCore::InspectorTimelineAgent::internalStop): Renamed from stop.
+            (WebCore::InspectorTimelineAgent::startFromConsole): Use internalStart.
+            (WebCore::InspectorTimelineAgent::stopFromConsole): Use internalStop. Only stop if !m_enabledFromFrontend.
+            (WebCore::InspectorTimelineAgent::InspectorTimelineAgent): Initialize m_enabledFromFrontend.
+            * inspector/InspectorTimelineAgent.h: Added m_enabledFromFrontend.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172397
 
     2014-08-11  Brent Fulgham  <bfulgham@apple.com>
