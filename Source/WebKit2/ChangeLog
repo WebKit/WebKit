@@ -1,5 +1,31 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172344
+
+    2014-08-08  Timothy Horton  <timothy_horton@apple.com>
+
+            Services overlay dropdown is often in the wrong place with zoomed pages or horizontal scrolling
+            https://bugs.webkit.org/show_bug.cgi?id=135755
+            <rdar://problem/17907752>
+
+            Reviewed by Brady Eidson.
+
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::establishHoveredTelephoneHighlight):
+            (WebKit::ServicesOverlayController::maybeCreateSelectionHighlight):
+            DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection adjusts the
+            location of the button based on the visible rect, trying to keep the button visible.
+
+            We're handing it the wrong visible rect, though, not taking scrolling into account.
+
+            This leads to pages that scroll horizontally showing the button on the left
+            even if there's space for it on the right, or sometimes not showing it at all.
+
+            Instead, provide the actual main FrameView visible rect; the same coordinate
+            space that the highlight rects are provided in.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172343
 
     2014-08-08  Timothy Horton  <timothy_horton@apple.com>
