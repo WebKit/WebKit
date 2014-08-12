@@ -1,5 +1,47 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172366
+
+    2014-08-08  Tim Horton  <timothy_horton@apple.com>
+
+            [mac] Dynamically update serviceability when the set of services changes
+            https://bugs.webkit.org/show_bug.cgi?id=135738
+            <rdar://problem/17533459>
+
+            Reviewed by Brady Eidson.
+
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::createNewWebProcess):
+            Adopt the new universal refreshExistingServices.
+
+            (WebKit::WebContext::refreshExistingServices): Deleted.
+            * UIProcess/WebContext.h:
+            Remove WebContext::refreshExistingServices; there's no need for it.
+
+            * UIProcess/mac/ServicesController.h:
+            * UIProcess/mac/ServicesController.mm:
+            Fix the build with only public headers by including NSSharingService.h itself.
+            Place the NSSharingServicePicker (Details) category outside the #ifdef.
+            Forward-declare and possibly import NSExtension SPI.
+
+            (WebKit::ServicesController::ServicesController):
+            Register a callback to be notified whenever the set of services changes.
+            When this occurs, call refreshExistingServices. We let refreshExistingServices
+            coalesce updates because these notifications can come in small batches.
+
+            (WebKit::ServicesController::refreshExistingServices):
+            Dispatch changes in service availability to all processes in all contexts.
+
+            * UIProcess/mac/WebContextMenuProxyMac.mm:
+            (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+            Adjust the referenced rdar:// and call ServicesController::refreshExistingServices
+            instead of the now-removed WebContext:: variant. We can't remove this
+            yet because our services state can still be stale because NSServiceSharingPicker
+            can still sometimes lie about the current service state immediately after a change occurs;
+            once that is fixed, we should get rid of this as well as the refresh in Web Process creation.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172364
 
     2014-08-08  Timothy Horton  <timothy_horton@apple.com>

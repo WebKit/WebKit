@@ -682,7 +682,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     parameters.hasImageServices = ServicesController::shared().hasImageServices();
     parameters.hasSelectionServices = ServicesController::shared().hasSelectionServices();
     parameters.hasRichContentServices = ServicesController::shared().hasRichContentServices();
-    ServicesController::shared().refreshExistingServices(this);
+    ServicesController::shared().refreshExistingServices();
 #endif
 
     // Add any platform specific parameters
@@ -1361,14 +1361,6 @@ void WebContext::didGetStatistics(const StatisticsData& statisticsData, uint64_t
     request->completedRequest(requestID, statisticsData);
 }
 
-#if ENABLE(SERVICE_CONTROLS)
-void WebContext::refreshExistingServices()
-{
-    ServicesController::shared().refreshExistingServices(this);
-}
-#endif
-
-    
 void WebContext::garbageCollectJavaScriptObjects()
 {
     sendToAllProcesses(Messages::WebProcess::GarbageCollectJavaScriptObjects());

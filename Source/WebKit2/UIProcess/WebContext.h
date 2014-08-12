@@ -350,10 +350,6 @@ public:
 
     void setMemoryCacheDisabled(bool);
 
-#if ENABLE(SERVICE_CONTROLS)
-    void refreshExistingServices();
-#endif
-
 private:
     void platformInitialize();
 
