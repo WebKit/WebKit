@@ -22,8 +22,8 @@
 #include "config.h"
 #include "ewk_main.h"
 
+#include "EwkDebug.h"
 #include "ewk_main_private.h"
-#include "ewk_private.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_IMF.h>

@@ -1,3 +1,18 @@
+2014-08-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Rename ewk_private.h to EwkDebug.h
+        https://bugs.webkit.org/show_bug.cgi?id=135797
+
+        Reviewed by Gyuyoung Kim.
+
+        ewk_private.h contains only debug macros alllowing
+        logging.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/API/efl/ewk_main.cpp:
+        * UIProcess/efl/EwkDebug.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_private.h.
+        * UIProcess/efl/ViewClientEfl.cpp:
+
 2014-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] The plugins metadata cache doesn't work if the user cache directory doesn't exist

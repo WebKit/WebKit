@@ -26,10 +26,10 @@
 #include "config.h"
 #include "ViewClientEfl.h"
 
+#include "EwkDebug.h"
 #include "EwkView.h"
 #include "PageViewportController.h" 
 #include "WebViewportAttributes.h"
-#include "ewk_private.h"
 #include "ewk_view.h"
 #include <WebKit/WKString.h>
 #include <WebKit/WKView.h>

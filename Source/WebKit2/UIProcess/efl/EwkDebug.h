@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +24,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_private_h
-#define ewk_private_h
+#ifndef EwkDebug_h
+#define EwkDebug_h
 
 #include "ewk_main_private.h"
 
@@ -34,4 +35,4 @@
 #define INFO(...) EINA_LOG_DOM_INFO(EwkMain::shared().logDomainId(), __VA_ARGS__)
 #define DBG(...) EINA_LOG_DOM_DBG(EwkMain::shared().logDomainId(), __VA_ARGS__)
 
-#endif // ewk_private_h
+#endif // EwkDebug_h
