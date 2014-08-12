@@ -171,6 +171,7 @@
             hash="sha256:5dbeb99e1d26ccc74c9d054de5607a7e1020052b313c4b60c9a9794b45307501"
             md5sum="51222f49d8faa7e72f097075fec223f5">
       <patch file="ecore.patch" strip="1"/>
+      <patch file="ecore_remove_warnings.patch" strip="1"/>
     </branch>
   </autotools>
 

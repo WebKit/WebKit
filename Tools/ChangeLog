@@ -1,3 +1,17 @@
+2014-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Disable ecore logs about bad fd
+        https://bugs.webkit.org/show_bug.cgi?id=135831
+
+        Reviewed by Gyuyoung Kim.
+
+        ecore checks EBADF and prints the warnings.
+        But, it looks noise in layout test because it's not webkit issue.
+        This patch disables it until we found right solution.
+
+        * efl/jhbuild.modules:
+        * efl/patches/ecore_remove_warnings.patch: Added.
+
 2014-08-12  Shivakumar JM  <shiva.jm@samsung.com>
 
         [EFL][WK2] Minibrowser: Enhance the application to use download directory selector.
