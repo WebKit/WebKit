@@ -1,3 +1,14 @@
+2014-08-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] Get rid of iOS.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=135809
+
+        Reviewed by Joseph Pecoraro.
+
+        All iOS.xcconfig did was include AspenFamily.xcconfig, so there's no need for the indirection.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-08-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

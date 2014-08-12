@@ -146,7 +146,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
         return false;
 #endif
 
-    if (clientRequest.isNull()) {
+    if (clientRequest.isNull() || !clientRequest.url().isValid()) {
         cancel();
         return false;
     }

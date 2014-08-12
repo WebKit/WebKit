@@ -121,7 +121,6 @@
 		14B650C518F39F4800751968 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		14B650C618F39F4800751968 /* bmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bmalloc.xcconfig; sourceTree = "<group>"; };
 		14B650C718F39F4800751968 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
-		14B650C818F39F4800751968 /* iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		14B650C918F3A04200751968 /* mbmalloc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = mbmalloc.xcconfig; sourceTree = "<group>"; };
 		14C919C818FCC59F0028DB43 /* BPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPlatform.h; path = bmalloc/BPlatform.h; sourceTree = "<group>"; };
 		14CC394418EA8743004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -222,7 +221,6 @@
 				14B650C518F39F4800751968 /* Base.xcconfig */,
 				14B650C618F39F4800751968 /* bmalloc.xcconfig */,
 				14B650C718F39F4800751968 /* DebugRelease.xcconfig */,
-				14B650C818F39F4800751968 /* iOS.xcconfig */,
 				14B650C918F3A04200751968 /* mbmalloc.xcconfig */,
 			);
 			path = Configurations;

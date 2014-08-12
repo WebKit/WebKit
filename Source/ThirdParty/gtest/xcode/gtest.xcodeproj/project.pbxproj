@@ -202,7 +202,6 @@
 		1A0A4C4414B7A3B500895135 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		224A12A10E9EADA700BD17FD /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
 		224A12A20E9EADCC00BD17FD /* gtest-test-part.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "gtest-test-part.h"; sourceTree = "<group>"; };
-		299E51021790C981006F6AFE /* iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		3B238C120E7FE13C00846E11 /* gtest_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_unittest.cc; sourceTree = "<group>"; };
 		3B87D2100E96B92E000D1852 /* runtests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = runtests.sh; sourceTree = "<group>"; };
 		3BF6F29F0E79B5AD000F2EEE /* gtest-type-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-type-util.h"; sourceTree = "<group>"; };
@@ -434,7 +433,6 @@
 				40D4CDF10E30E07400294801 /* DebugProject.xcconfig */,
 				40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */,
 				40D4CDF30E30E07400294801 /* General.xcconfig */,
-				299E51021790C981006F6AFE /* iOS.xcconfig */,
 				44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */,
 				40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */,
 				40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */,

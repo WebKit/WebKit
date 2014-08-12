@@ -7,7 +7,7 @@
 //  http://code.google.com/p/google-toolbox-for-mac/
 //
 
-#include "iOS.xcconfig"
+#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AspenFamily.xcconfig"
 
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 
