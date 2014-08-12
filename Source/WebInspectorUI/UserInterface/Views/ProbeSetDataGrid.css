@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.details-section.probe-set .data-grid .data-container tr.past-value td {
+.details-section.probe-set .data-grid tr.past-value td {
     background-color: rgba(100, 100, 100, 0.2);
     font-style: italic;
     color: #777;
 }
 
-.details-section.probe-set .data-grid > .data-container td.unknown-value {
+.details-section.probe-set .data-grid > td.unknown-value {
     background-color: rgba(230, 230, 230, 0.8);
     background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(255, 255, 255, .5) 7px, rgba(255, 255, 255, .5) 14px);
 }
 
-.details-section.probe-set .data-grid .data-container tr.revealed.highlighted {
+.details-section.probe-set .data-grid tr.revealed.highlighted {
     -webkit-animation-duration: 2s;
     animation-timing-function: ease;
     -webkit-animation-iteration-count: infinite;
@@ -51,15 +51,15 @@
     }
 }
 
-.details-section.probe-set .data-grid .data-container tr.separator {
+.details-section.probe-set .data-grid tr.separator {
     border-bottom: 3px solid #555;
 }
 
-.details-section.probe-set .data-grid .data-container tr.separator {
+.details-section.probe-set .data-grid tr.separator {
     border-bottom: 2px solid #666;
 }
 
-.details-section.probe-set .data-grid > .data-container tr.data-updated {
+.details-section.probe-set .data-grid > tr.data-updated {
     -webkit-animation-duration: 0.3s;
     -webkit-animation-name: blink-probe-frame;
 }
@@ -74,42 +74,14 @@
     }
 }
 
-.details-section.probe-set .data-grid .data-container .selected .section * {
+.details-section.probe-set .data-grid .selected .section * {
     color: white;
 }
 
-.details-section.probe-set .data-grid .data-container .selected td.unknown-value {
+.details-section.probe-set .data-grid .selected td.unknown-value {
     color: black !important;
 }
 
-.details-section.probe-set .data-grid .data-container .section {
+.details-section.probe-set .data-grid .section {
     left: -6px;
-}
-
-.details-section.probe-set .data-grid th {
-    height: 21px;
-
-    background-image: linear-gradient(to bottom, rgb(248, 248, 248), rgb(226, 226, 226));
-    background-size: 100% 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-
-    box-shadow: inset rgba(255, 255, 255, 0.1) 0 1px 0;
-    border-bottom: 1px solid rgb(179, 179, 179) !important;
-}
-
-.details-section.probe-set .data-grid th:not(:last-child) {
-    border-right: 1px solid rgb(179, 179, 179);
-}
-
-.details-section.probe-set .data-grid th,
-.details-section.probe-set .data-grid td {
-    padding-left: 6px;
-    padding-right: 6px;
-}
-
-.details-section.probe-set .data-grid td {
-    padding-top: 2px;
-    padding-bottom: 2px;
-    line-height: 17px;
 }

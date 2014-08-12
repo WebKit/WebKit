@@ -24,13 +24,10 @@
  */
 
 .storage-view {    
-    /* Added so fonts look good */
     font-family: Menlo, monospace;
-    font-size: 11px;
 }
 
 .storage-view .data-grid {
-    border: none;
     height: 100%;
 }
 

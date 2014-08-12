@@ -1,5 +1,116 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172399
+
+    2014-08-11  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: DataGrid and its clients are a cluster-cuss of styles
+            https://bugs.webkit.org/show_bug.cgi?id=135788
+
+            Clean up DataGrid and its subclasses and client styles.
+
+            Reviewed by Joseph Pecoraro.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            * UserInterface/Views/ApplicationCacheFrameContentView.css:
+            (.content-view.application-cache-frame > .data-grid):
+            * UserInterface/Views/CookieStorageContentView.css:
+            (.content-view.cookie-storage > .data-grid):
+            * UserInterface/Views/DOMStorageContentView.css:
+            (.content-view.dom-storage > .data-grid):
+            * UserInterface/Views/DOMTreeDataGrid.css:
+            (.dom-tree-data-grid .data-grid):
+            (.dom-tree-data-grid .name-column .icon):
+            * UserInterface/Views/DOMTreeDataGrid.js:
+            (WebInspector.DOMTreeDataGrid):
+            * UserInterface/Views/DataGrid.css:
+            (.data-grid):
+            (.data-grid table):
+            (.data-grid .data-container):
+            (.data-grid.inline):
+            (.data-grid th):
+            (.data-grid :-webkit-any(th, td):not(:last-child)):
+            (.data-grid th.sortable:active):
+            (.data-grid th:-webkit-any(.sort-ascending, .sort-descending)):
+            (.data-grid table.data):
+            (.data-grid td):
+            (.data-grid:focus tr.selected td:not(:last-child)):
+            (body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child)):
+            (.data-grid :-webkit-any(th, td) > div):
+            (.data-grid th:-webkit-any(.sort-ascending, .sort-descending) > div:first-child):
+            (.data-grid th.sort-ascending > div:first-child::after):
+            (.data-grid th.sort-descending > div:first-child::after):
+            (.data-grid td .subtitle):
+            (.data-grid td .subtitle::before):
+            (.data-grid:focus tr.selected td .subtitle):
+            (.data-grid td.error):
+            (.data-grid tr.selected td.error):
+            (.data-grid td .icon):
+            (.data-grid td .go-to-arrow):
+            (.data-grid tr:-webkit-any(.selected, :hover) .go-to-arrow):
+            * UserInterface/Views/DatabaseContentView.css:
+            (.storage-view):
+            * UserInterface/Views/DatabaseTableContentView.css:
+            (.content-view.database-table > .data-grid):
+            * UserInterface/Views/DetailsSection.css:
+            (.details-section > .content .data-grid):
+            * UserInterface/Views/IndexedDatabaseObjectStoreContentView.css:
+            (.content-view.indexed-database-object-store > .data-grid):
+            * UserInterface/Views/LayerTreeDataGridNode.js:
+            (WebInspector.LayerTreeDataGridNode.prototype._makeNameCell):
+            (WebInspector.LayerTreeDataGridNode.prototype._updateNameCellData):
+            * UserInterface/Views/LayerTreeSidebarPanel.css:
+            (.layer-tree.panel .data-grid):
+            (.layer-tree.panel .name-column .icon):
+            (.layer-tree.panel tr.reflection .name-column .icon):
+            (.layer-tree.panel tr.pseudo-element .name-column .icon):
+            (.layer-tree.panel .name-column .reflection):
+            (.layer-tree.panel tr.selected .name-column .reflection):
+            (.layer-tree.panel .bottom-bar):
+            (body.mac-platform.legacy .layer-tree.panel .bottom-bar):
+            (.layer-tree.panel .bottom-bar > div):
+            (body.mac-platform.legacy .layer-tree.panel .bottom-bar > div):
+            (body.mac-platform.legacy .layer-tree-popover):
+            * UserInterface/Views/LayerTreeSidebarPanel.js:
+            (WebInspector.LayerTreeSidebarPanel):
+            (WebInspector.LayerTreeSidebarPanel.prototype._buildLayerInfoSection):
+            (WebInspector.LayerTreeSidebarPanel.prototype._buildDataGridSection):
+            (WebInspector.LayerTreeSidebarPanel.prototype._buildBottomBar):
+            (WebInspector.LayerTreeSidebarPanel.prototype._updateMetrics):
+            * UserInterface/Views/LegacyJavaScriptProfileView.css:
+            (.content-view.profile-view > .data-grid):
+            * UserInterface/Views/LegacyProfileView.css:
+            * UserInterface/Views/LogContentView.css:
+            (.console-message .bubble):
+            * UserInterface/Views/NetworkTimelineView.css:
+            (.timeline-view.network > .data-grid):
+            * UserInterface/Views/OverviewTimelineView.css:
+            (.timeline-view.overview > .timeline-ruler > .header):
+            (.timeline-view.overview > .data-grid):
+            * UserInterface/Views/OverviewTimelineView.js:
+            * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+            (.details-section.probe-set .options > .probe-add):
+            (.popover .probe-popover):
+            * UserInterface/Views/ProbeSetDataGrid.css:
+            (.details-section.probe-set .data-grid tr.past-value td):
+            (.details-section.probe-set .data-grid > td.unknown-value):
+            (.details-section.probe-set .data-grid tr.revealed.highlighted):
+            (.details-section.probe-set .data-grid tr.separator):
+            (.details-section.probe-set .data-grid > tr.data-updated):
+            (.details-section.probe-set .data-grid .selected .section *):
+            (.details-section.probe-set .data-grid .selected td.unknown-value):
+            (.details-section.probe-set .data-grid .section):
+            * UserInterface/Views/QuickConsole.css:
+            (.quick-console):
+            * UserInterface/Views/TimelineDataGrid.css:
+            (.data-grid.timeline th):
+            (.data-grid.timeline > .navigation-bar-container > .navigation-bar):
+            * UserInterface/Views/TimelineRuler.css:
+            (.timeline-ruler > .header):
+            (.timeline-ruler > .header > .divider):
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172379
 
     2014-08-10  Timothy Hatcher  <timothy@apple.com>

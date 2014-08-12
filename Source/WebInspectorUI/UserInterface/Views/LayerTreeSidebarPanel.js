@@ -34,10 +34,6 @@ WebInspector.LayerTreeSidebarPanel = function() {
 
     window.addEventListener("resize", this._windowResized.bind(this));
 
-    // Add a container that will host all sections as a vertical stack.
-    this._container = this.element.appendChild(document.createElement("div"));
-    this._container.className = "box-container";
-
     this._buildLayerInfoSection();
     this._buildDataGridSection();
     this._buildBottomBar();
@@ -123,7 +119,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
 
         this._layerInfoSection = new WebInspector.DetailsSection("layer-info", WebInspector.UIString("Layer Info"), [this._noLayerInformationGroup]);
 
-        this._container.appendChild(this._layerInfoSection.element);
+        this.element.appendChild(this._layerInfoSection.element);
     },
 
     _buildDataGridSection: function()
@@ -151,6 +147,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
         this.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
 
         var element = this._dataGrid.element;
+        element.classList.add("inline");
         element.addEventListener("focus", this._dataGridGainedFocus.bind(this), false);
         element.addEventListener("blur", this._dataGridLostFocus.bind(this), false);
         element.addEventListener("click", this._dataGridWasClicked.bind(this), false);
@@ -159,15 +156,13 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
         var group = new WebInspector.DetailsSectionGroup([this._childLayersRow]);
         var section = new WebInspector.DetailsSection("layer-children", WebInspector.UIString("Child Layers"), [group], null, true);
 
-        // Display it in the container with a class name so we can easily style it differently to other sections,
-        // this specific section is meant to scale to fill the space available vertically.
-        var element = this._container.appendChild(section.element);
+        var element = this.element.appendChild(section.element);
         element.classList.add(section.identifier);
     },
 
     _buildBottomBar: function()
     {
-        var bottomBar = this._container.appendChild(document.createElement("div"));
+        var bottomBar = this.element.appendChild(document.createElement("div"));
         bottomBar.className = "bottom-bar";
 
         this._layersCountLabel = bottomBar.appendChild(document.createElement("div"));
@@ -320,7 +315,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
             totalMemory += layer.memory || 0;
         });
 
-        this._layersCountLabel.textContent = WebInspector.UIString("Layer count: %d").format(layerCount);
+        this._layersCountLabel.textContent = WebInspector.UIString("Layer Count: %d").format(layerCount);
         this._layersMemoryLabel.textContent = WebInspector.UIString("Memory: %s").format(Number.bytesToString(totalMemory));
     },
 

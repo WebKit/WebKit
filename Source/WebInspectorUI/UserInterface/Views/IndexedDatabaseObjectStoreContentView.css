@@ -29,7 +29,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    border: none;
 }
 
 .content-view.indexed-database-object-store > .data-grid td .section .header {

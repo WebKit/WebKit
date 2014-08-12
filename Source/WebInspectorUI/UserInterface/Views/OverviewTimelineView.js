@@ -35,6 +35,7 @@ WebInspector.OverviewTimelineView = function(recording)
 
     this._dataGrid = new WebInspector.DataGrid(columns);
     this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+    this._dataGrid.element.classList.add("no-header");
 
     this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this._contentTreeOutline, this._dataGrid);
 

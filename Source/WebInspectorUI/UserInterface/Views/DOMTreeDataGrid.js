@@ -31,6 +31,7 @@ WebInspector.DOMTreeDataGrid = function() {
     this._previousHoveredElement = null;
 
     this.element.classList.add("dom-tree-data-grid");
+    this.element.classList.add("inline");
 
     this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.element.addEventListener("mouseout", this._onmouseout.bind(this), false);
@@ -56,4 +57,3 @@ WebInspector.DOMTreeDataGrid.prototype = {
         this._previousHoveredElement = null;
     }
 };
-

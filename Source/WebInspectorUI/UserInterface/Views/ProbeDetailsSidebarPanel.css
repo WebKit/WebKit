@@ -44,7 +44,6 @@
     height: 11px;
     margin-top: 1px;
     margin-left: 5px;
-    cursor: pointer;
 }
 
 .details-section.probe-set .options > .probe-clear-samples {
@@ -88,46 +87,8 @@ body.mac-platform.legacy .details-section.probe-set .options > .probe-add {
     display: block;
 }
 
-.details-section.probe-set {
-    -webkit-flex: 1;
-    margin-bottom: 0 !important;
-    position: relative;
-}
-
-.details-section.probe-set.collapsed > .content {
-    display: none !important;
-}
-
-.details-section.probe-set.collapsed {
-    -webkit-flex: 0;
-    min-height: 23px;
-}
-
-.details-section.probe-set .content,
-.details-section.probe-set .group,
-.details-section.probe-set .row,
-.details-section.probe-set .data-grid {
-    display: block !important;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
-.details-section.probe-set .data-grid .data-container {
-    top: 23px;
-}
-
-.sidebar > .panel.probe.selected {
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
-}
-
 .popover .probe-popover {
     padding: 2px;
-    font-family: 'Lucida Grande', Helvetica, sans-serif;
-    font-size: 11px;
     margin: 2px;
 }
 

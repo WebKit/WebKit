@@ -29,8 +29,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    outline: none;
-    border: none;
 }
 
 .profile-view .data-grid th.average-column {
