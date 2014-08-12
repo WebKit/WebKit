@@ -1,3 +1,13 @@
+2014-08-12  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Subtle-crypto feature off by default and add a new configure flag to enable it
+        https://bugs.webkit.org/show_bug.cgi?id=135798
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitperl/FeatureList.pm: Adds new flag --subtle-crypto to
+            toggle SUBTLE_CRYPTO feature.
+
 2014-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Disable ecore logs about bad fd
