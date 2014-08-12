@@ -1,3 +1,13 @@
+2014-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Generate header detection headers for CMake on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=135807
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        Include the derived sources directory to find WTF/WTFHeaderDetection.h.
+
 2014-08-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Get rid of iOS.xcconfig

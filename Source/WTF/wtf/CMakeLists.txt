@@ -218,6 +218,7 @@ set(WTF_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf/unicode"
     "${THIRDPARTY_DIR}"
     "${CMAKE_BINARY_DIR}"
+    "${DERIVED_SOURCES_DIR}"
 )
 
 set(WTF_LIBRARIES

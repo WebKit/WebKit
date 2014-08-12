@@ -85,3 +85,15 @@ else ()
         plugins/PluginViewNone.cpp
     )
 endif ()
+
+list(APPEND WebCore_SOURCES
+    "${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreHeaderDetection.h"
+)
+
+# FIXME: This should test if AVF headers are available.
+# https://bugs.webkit.org/show_bug.cgi?id=135861
+add_custom_command(
+    OUTPUT "${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreHeaderDetection.h"
+    WORKING_DIRECTORY "${DERIVED_SOURCES_WEBCORE_DIR}"
+    COMMAND echo /* Identifying AVFoundation Support */ > WebCoreHeaderDetection.h
+    VERBATIM)
