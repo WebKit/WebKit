@@ -58,6 +58,11 @@ static NSString *menuItemTitleForTelephoneNumber(const String& telephoneNumber)
     return [NSString stringWithFormat:WEB_UI_STRING("Call “%@” Using iPhone", "menu item for making a telephone call to a telephone number"), formattedPhoneNumberString(telephoneNumber)];
 }
 
+NSString *menuItemTitleForTelephoneNumberGroup()
+{
+    return WEB_UI_STRING("Call Using iPhone:", "menu item title for phone number");
+}
+
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 {
     NSArray *proposedMenu = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:nil];
@@ -71,7 +76,7 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
             continue;
 
         if ([actionObject.actionUTI hasPrefix:@"com.apple.dial"]) {
-            item.title = menuItemTitleForTelephoneNumber(telephoneNumber);
+            item.title = formattedPhoneNumberString(telephoneNumber);
             return item;
         }
     }

@@ -407,12 +407,18 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     const Vector<String>& selectedTelephoneNumbers = context.selectedTelephoneNumbers();
     if (!selectedTelephoneNumbers.isEmpty()) {
         if (m_servicesMenu)
-            [m_servicesMenu addItem:[NSMenuItem separatorItem]];
+            [m_servicesMenu insertItem:[NSMenuItem separatorItem] atIndex:0];
         else
             m_servicesMenu = adoptNS([[NSMenu alloc] init]);
+        int itemPosition = 0;
+        NSMenuItem *groupEntry = [[NSMenuItem alloc] initWithTitle:menuItemTitleForTelephoneNumberGroup() action:nil keyEquivalent:@""];
+        [groupEntry setEnabled:NO];
+        [m_servicesMenu insertItem:groupEntry atIndex:itemPosition++];
         for (auto& telephoneNumber : selectedTelephoneNumbers) {
-            if (NSMenuItem *item = menuItemForTelephoneNumber(telephoneNumber))
-                [m_servicesMenu addItem:item];
+            if (NSMenuItem *item = menuItemForTelephoneNumber(telephoneNumber)) {
+                [item setIndentationLevel:1];
+                [m_servicesMenu insertItem:item atIndex:itemPosition++];
+            }
         }
     }
 
