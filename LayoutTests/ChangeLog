@@ -1,5 +1,24 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172373
+
+    2014-08-09  Zalan Bujtas  <zalan@apple.com>
+
+            Subpixel rendering: Transforms on non-compositing layers leave bits behind when the box boundaries changes.
+            https://bugs.webkit.org/show_bug.cgi?id=135786
+
+            Reviewed by Simon Fraser.
+
+            Since we don't control the transformed context painting's snapping strategy, our best bet to fully
+            include the transformed box when requesting for repaint is to use enclosing.
+            Pixelsnapping doesn't work here for all cases. For example, a scaled box at 0.8px can be anti-aliased painted
+            both at 0.5px and 1px, while with pixelsnapping we'd expect it to be painted starting from 1px;
+
+            * fast/repaint/hidpi-transform-on-subpixel-repaintrect-expected.txt: Added.
+            * fast/repaint/hidpi-transform-on-subpixel-repaintrect.html: Added.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172365
 
     2014-08-08  Simon Fraser  <simon.fraser@apple.com>
