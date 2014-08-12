@@ -1,5 +1,57 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172435
+
+    2014-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Easier Way to go back to the Timeline Overviews
+            https://bugs.webkit.org/show_bug.cgi?id=135827
+
+            Reviewed by Timothy Hatcher.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            Added new tooltip UIString.
+
+            * UserInterface/Images/Close.svg:
+            * UserInterface/Images/CloseLarge.svg:
+            * UserInterface/Images/Legacy/Close.svg:
+            Add "stroked" class so the buttons can fill with white on selected rows.
+            Also re-center the non-legacy images horizontally.
+
+            * UserInterface/Views/GeneralTreeElement.js:
+            (WebInspector.GeneralTreeElement.prototype.set status):
+            Do not recreate elements if the status did not change.
+
+            * UserInterface/Views/LayoutTimelineView.js:
+            (WebInspector.LayoutTimelineView):
+            (WebInspector.LayoutTimelineView.prototype._treeElementDeselected):
+            (WebInspector.LayoutTimelineView.prototype._treeElementSelected):
+            (WebInspector.LayoutTimelineView.prototype._updateTreeElementWithCloseButton):
+            (WebInspector.LayoutTimelineView.prototype._closeStatusButtonClicked):
+            * UserInterface/Views/NetworkTimelineView.js:
+            (WebInspector.NetworkTimelineView):
+            (WebInspector.NetworkTimelineView.prototype._treeElementDeselected):
+            (WebInspector.NetworkTimelineView.prototype._treeElementSelected):
+            (WebInspector.NetworkTimelineView.prototype._updateTreeElementWithCloseButton):
+            (WebInspector.NetworkTimelineView.prototype._closeStatusButtonClicked):
+            * UserInterface/Views/OverviewTimelineView.js:
+            (WebInspector.OverviewTimelineView.prototype._treeElementDeselected):
+            (WebInspector.OverviewTimelineView.prototype._treeElementSelected):
+            (WebInspector.OverviewTimelineView.prototype._updateTreeElementWithCloseButton):
+            (WebInspector.OverviewTimelineView.prototype._closeStatusButtonClicked):
+            * UserInterface/Views/ScriptTimelineView.js:
+            (WebInspector.ScriptTimelineView):
+            (WebInspector.ScriptTimelineView.prototype._treeElementDeselected):
+            (WebInspector.ScriptTimelineView.prototype._treeElementSelected):
+            (WebInspector.ScriptTimelineView.prototype._updateTreeElementWithCloseButton):
+            (WebInspector.ScriptTimelineView.prototype._closeStatusButtonClicked):
+            Provide select/deselect handlers to show/hide the close status bar button
+            when selecting a row that shows a non-Timeline content view. Currently the
+            only content views the tree elements can show are Resource views, so the
+            tooltip is the same everywhere.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172432
 
     2014-08-12  Timothy Hatcher  <timothy@apple.com>

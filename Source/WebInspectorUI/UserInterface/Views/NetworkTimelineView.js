@@ -28,6 +28,7 @@ WebInspector.NetworkTimelineView = function(recording)
     WebInspector.TimelineView.call(this);
 
     this.navigationSidebarTreeOutline.onselect = this._treeElementSelected.bind(this);
+    this.navigationSidebarTreeOutline.ondeselect = this._treeElementDeselected.bind(this);    
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
     this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NetworkTimelineView.TreeOutlineStyleClassName);
 
@@ -191,6 +192,12 @@ WebInspector.NetworkTimelineView.prototype = {
         this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
     },
 
+    _treeElementDeselected: function(treeElement)
+    {
+        if (treeElement.status)
+            treeElement.status = "";
+    },
+
     _treeElementSelected: function(treeElement, selectedByUser)
     {
         if (this._dataGrid.shouldIgnoreSelectionEvent())
@@ -204,9 +211,31 @@ WebInspector.NetworkTimelineView.prototype = {
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
             WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
+            this._updateTreeElementWithCloseButton(treeElement);
             return;
         }
 
         console.error("Unknown tree element selected.");
+    },
+
+    _updateTreeElementWithCloseButton: function(treeElement)
+    {
+        if (this._closeStatusButton) {
+            treeElement.status = this._closeStatusButton.element;
+            return;
+        }
+
+        wrappedSVGDocument(platformImagePath("Close.svg"), null, WebInspector.UIString("Close resource view"), function(element) {
+            this._closeStatusButton = new WebInspector.TreeElementStatusButton(element);
+            this._closeStatusButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._closeStatusButtonClicked, this);
+            if (treeElement === this.navigationSidebarTreeOutline.selectedTreeElement)
+                this._updateTreeElementWithCloseButton(treeElement);
+        }.bind(this));
+    },
+
+    _closeStatusButtonClicked: function(event)
+    {
+        this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
+        WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Network);
     }
 };
