@@ -1,5 +1,23 @@
 2014-08-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        Dont allocate GCond in VideoSinkGStreamer.cpp dynamically.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (_WebKitVideoSinkPrivate::_WebKitVideoSinkPrivate): Move the
+        g_cond_init() and gst_video_info_init() calls here.
+        (_WebKitVideoSinkPrivate::~_WebKitVideoSinkPrivate): Move the
+        g_cond_clear() call here.
+        (webkit_video_sink_init):
+        (webkitVideoSinkTimeoutCallback):
+        (webkitVideoSinkRender):
+        (unlockBufferMutex):
+        (webkit_video_sink_class_init):
+        (webkitVideoSinkDispose): Deleted. Not required anymore.
+
+2014-08-12  Zan Dobersek  <zdobersek@igalia.com>
+
         Clean up GMutexLocker
         https://bugs.webkit.org/show_bug.cgi?id=135833
 
