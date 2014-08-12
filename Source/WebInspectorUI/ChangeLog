@@ -1,5 +1,21 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172336
+
+    2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Fix accidental always true comparison
+            https://bugs.webkit.org/show_bug.cgi?id=135741
+
+            Reviewed by Timothy Hatcher.
+
+            Remove accidental "!" that would always cause this comparison to succeed.
+
+            * UserInterface/Views/OverviewTimelineView.js:
+            (WebInspector.OverviewTimelineView.prototype.updateLayout):
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172333
 
     2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
