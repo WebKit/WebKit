@@ -1,3 +1,22 @@
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172333
+
+    2014-08-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: breakpoints enabled state is not persisted across re-opening the inspector
+            https://bugs.webkit.org/show_bug.cgi?id=135745
+
+            Reviewed by Timothy Hatcher.
+
+            When restoring breakpoints when the inspector is initializing, do not
+            let setting these breakpoints automatically enable breakpoints. We should
+            respect the setting in this case.
+
+            * UserInterface/Controllers/DebuggerManager.js:
+            (WebInspector.DebuggerManager.restoreBreakpointsSoon):
+            (WebInspector.DebuggerManager):
+
 2014-08-11  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172403
