@@ -1,5 +1,27 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172343
+
+    2014-08-08  Timothy Horton  <timothy_horton@apple.com>
+
+            Additional items added to selection services menus are misaligned
+            https://bugs.webkit.org/show_bug.cgi?id=135747
+            <rdar://problem/17933167>
+
+            Reviewed by Brady Eidson.
+
+            * UIProcess/mac/WebContextMenuProxyMac.mm:
+            (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+            Use NSSharingServicePickerStyleRollover for the rollover image services menu;
+            use NSSharingServicePickerStyleTextSelection for the selection services menu.
+
+            Set NSMenu's showsStateColumn to YES for selection services menus, so that
+            other items added to the menu line up correctly.
+
+            Remove an unncessary .get()
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172235
 
     2014-08-07  Gordon Sheridan  <gordon_sheridan@apple.com>

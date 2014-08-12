@@ -372,8 +372,9 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
 {
     RetainPtr<NSSharingServicePicker> picker;
     bool includeEditorServices = context.controlledDataIsEditable();
+    bool hasControlledImage = !context.controlledImageHandle().isNull();
     NSArray *items = nil;
-    if (!context.controlledImageHandle().isNull()) {
+    if (hasControlledImage) {
         RefPtr<ShareableBitmap> image = ShareableBitmap::create(context.controlledImageHandle());
         if (!image)
             return;
@@ -392,12 +393,15 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     }
 
     picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
-    [picker setStyle:NSSharingServicePickerStyleRollover];
+    [picker setStyle:hasControlledImage ? NSSharingServicePickerStyleRollover : NSSharingServicePickerStyleTextSelection];
     [picker setDelegate:[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate]];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:picker.get()];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setIncludeEditorServices:includeEditorServices];
 
     m_servicesMenu = [picker menu];
+
+    if (!hasControlledImage)
+        [m_servicesMenu setShowsStateColumn:YES];
 
     // Explicitly add a menu item for each telephone number that is in the selection.
     const Vector<String>& selectedTelephoneNumbers = context.selectedTelephoneNumbers();
@@ -405,7 +409,7 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
         [m_servicesMenu.get() addItem:[NSMenuItem separatorItem]];
         for (auto& telephoneNumber : selectedTelephoneNumbers) {
             if (NSMenuItem *item = menuItemForTelephoneNumber(telephoneNumber))
-                [m_servicesMenu.get() addItem:item];
+                [m_servicesMenu addItem:item];
         }
     }
 
