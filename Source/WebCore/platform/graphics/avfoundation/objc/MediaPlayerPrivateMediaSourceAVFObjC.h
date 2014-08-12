@@ -195,6 +195,7 @@ private:
     Timer<MediaPlayerPrivateMediaSourceAVFObjC> m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
+    MediaTime m_lastSeekTime;
     double m_rate;
     bool m_playing;
     bool m_seeking;
