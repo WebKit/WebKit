@@ -44,9 +44,12 @@ PluginInfoCache& PluginInfoCache::shared()
 
 PluginInfoCache::PluginInfoCache()
     : m_cacheFile(g_key_file_new())
-    , m_cachePath(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "plugins", nullptr))
 {
-    g_key_file_load_from_file(m_cacheFile.get(), m_cachePath.get(), G_KEY_FILE_NONE, nullptr);
+    GUniquePtr<char> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", nullptr));
+    if (WebCore::makeAllDirectories(cacheDirectory.get())) {
+        m_cachePath.reset(g_build_filename(cacheDirectory.get(), "plugins", nullptr));
+        g_key_file_load_from_file(m_cacheFile.get(), m_cachePath.get(), G_KEY_FILE_NONE, nullptr);
+    }
 
     if (g_key_file_has_group(m_cacheFile.get(), "schema")) {
         unsigned schemaVersion = static_cast<unsigned>(g_key_file_get_integer(m_cacheFile.get(), "schema", "version", nullptr));
@@ -130,13 +133,15 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
 
     g_key_file_set_boolean(m_cacheFile.get(), pluginGroup.data(), "requires-gtk2", plugin.requiresGtk2);
 
-    // Save the cache file in an idle to make sure it happens in the main thread and
-    // it's done only once when this is called multiple times in a very short time.
-    std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_saveToFileIdle.isScheduled())
-        return;
+    if (m_cachePath) {
+        // Save the cache file in an idle to make sure it happens in the main thread and
+        // it's done only once when this is called multiple times in a very short time.
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_saveToFileIdle.isScheduled())
+            return;
 
-    m_saveToFileIdle.schedule("[WebKit] PluginInfoCache::saveToFile", std::bind(&PluginInfoCache::saveToFile, this), G_PRIORITY_DEFAULT_IDLE);
+        m_saveToFileIdle.schedule("[WebKit] PluginInfoCache::saveToFile", std::bind(&PluginInfoCache::saveToFile, this), G_PRIORITY_DEFAULT_IDLE);
+    }
 }
 
 } // namespace WebKit
