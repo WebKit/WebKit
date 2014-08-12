@@ -1,3 +1,13 @@
+2014-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Allow reading CoreGraphics debugging preferences
+        https://bugs.webkit.org/show_bug.cgi?id=135821
+        <rdar://problem/11219259>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2014-08-11  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Prevent the client from creating ewk_view when EWebkit is not initialized
