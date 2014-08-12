@@ -1,5 +1,28 @@
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172421
+
+    2014-08-11  Roger Fong  <roger_fong@apple.com>
+
+            Adjustments to CueBox CSS Width calculations Part 2.
+            https://bugs.webkit.org/show_bug.cgi?id=135820
+            <rdar://problem/17954473>.
+
+            Reviewed by Brent Fulgham.
+
+            Two adjustments made:
+            a) The default font size used was incorrect. It is not just 10px, 
+            but should be based off a percentage of the video size.
+            b) The top/left CSS property needs to be adjusted appropriately if the cue
+            is center aligned and we change the cue's size such that the cue remains centered.
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCueBox::applyCSSProperties):
+            * html/track/VTTCue.h: Remove unnecessary constant.
+
+2014-08-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172417
 
     2014-08-11  Beth Dakin  <bdakin@apple.com>
