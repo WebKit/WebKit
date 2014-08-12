@@ -108,13 +108,12 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     node->setScrollableAreaParameters(scrollParameters);
 }
 
-void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameView* frameView)
+void AsyncScrollingCoordinator::frameViewNonFastScrollableRegionChanged(FrameView*)
 {
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    if (frameView->frame().isMainFrame())
-        m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&frameView->frame(), IntPoint()));
+    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(&m_page->mainFrame(), IntPoint()));
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
