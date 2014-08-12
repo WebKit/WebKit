@@ -1428,6 +1428,14 @@ String MediaPlayer::mediaPlayerNetworkInterfaceName() const
 
     return m_mediaPlayerClient->mediaPlayerNetworkInterfaceName();
 }
+
+bool MediaPlayer::getRawCookies(const URL& url, Vector<Cookie>& cookies) const
+{
+    if (!m_mediaPlayerClient)
+        return false;
+
+    return m_mediaPlayerClient->mediaPlayerGetRawCookies(url, cookies);
+}
 #endif
 
 }

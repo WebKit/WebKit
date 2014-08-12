@@ -33,6 +33,7 @@
 #import "AuthenticationChallenge.h"
 #import "BlockExceptions.h"
 #import "CDMSessionAVFoundationObjC.h"
+#import "Cookie.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
 #import "FloatConversion.h"
@@ -228,6 +229,7 @@ SOFT_LINK_POINTER(AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSo
 #endif
 
 #if ENABLE(AVF_CAPTIONS)
+SOFT_LINK_POINTER(AVFoundation, AVURLAssetHTTPCookiesKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetOutOfBandAlternateTracksKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackDisplayNameKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackExtendedLanguageTagKey, NSString*)
@@ -238,6 +240,7 @@ SOFT_LINK_POINTER(AVFoundation, AVOutOfBandAlternateTrackSourceKey, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, NSString*)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString*)
 
+#define AVURLAssetHTTPCookiesKey getAVURLAssetHTTPCookiesKey()
 #define AVURLAssetOutOfBandAlternateTracksKey getAVURLAssetOutOfBandAlternateTracksKey()
 #define AVOutOfBandAlternateTrackDisplayNameKey getAVOutOfBandAlternateTrackDisplayNameKey()
 #define AVOutOfBandAlternateTrackExtendedLanguageTagKey getAVOutOfBandAlternateTrackExtendedLanguageTagKey()
@@ -712,6 +715,24 @@ static NSURL *canonicalURL(const String& url)
     return [canonicalRequest URL];
 }
 
+static NSHTTPCookie* toNSHTTPCookie(const Cookie& cookie)
+{
+    RetainPtr<NSMutableDictionary> properties = adoptNS([[NSMutableDictionary alloc] init]);
+    [properties setDictionary:@{
+        NSHTTPCookieName: cookie.name,
+        NSHTTPCookieValue: cookie.value,
+        NSHTTPCookieDomain: cookie.domain,
+        NSHTTPCookiePath: cookie.path,
+        NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSince1970:(cookie.expires / 1000)],
+    }];
+    if (cookie.secure)
+        [properties setObject:@YES forKey:NSHTTPCookieSecure];
+    if (cookie.session)
+        [properties setObject:@YES forKey:NSHTTPCookieDiscard];
+
+    return [NSHTTPCookie cookieWithProperties:properties.get()];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 {
     if (m_avAsset)
@@ -772,6 +793,17 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     String networkInterfaceName = player()->mediaPlayerNetworkInterfaceName();
     if (!networkInterfaceName.isEmpty())
         [options setObject:networkInterfaceName forKey:AVURLAssetBoundNetworkInterfaceName];
+#endif
+
+#if PLATFORM(IOS)
+    Vector<Cookie> cookies;
+    if (player()->getRawCookies(URL(ParsedURLString, url), cookies)) {
+        RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
+        for (auto& cookie : cookies)
+            [nsCookies addObject:toNSHTTPCookie(cookie)];
+
+        [options setObject:nsCookies.get() forKey:AVURLAssetHTTPCookiesKey];
+    }
 #endif
 
     NSURL *cocoaURL = canonicalURL(url);
