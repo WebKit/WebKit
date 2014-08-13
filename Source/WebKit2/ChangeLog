@@ -1,3 +1,16 @@
+2014-08-13  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Workaround a NSWindow change to the title bar.
+        https://bugs.webkit.org/show_bug.cgi?id=135880
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow): Set titlebarAppearsTransparent on 10.10.
+        Only call border thickness APIs on 10.9 and earlier.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Only call setDrawsBackground: on 10.9 and earlier.
+        (WebKit::WebInspectorProxy::platformSetToolbarHeight): Only call setContentBorderThickness: on 10.9 and earlier.
+
 2014-08-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add API to set application name for the user agent
