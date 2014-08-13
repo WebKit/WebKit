@@ -1,3 +1,16 @@
+2014-08-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Media document sends incorrect referer header
+        https://bugs.webkit.org/show_bug.cgi?id=135839
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/media-document-referer-expected.txt: Added.
+        * http/tests/media/media-document-referer.html: Added.
+        * http/tests/media/resources/video-referer-check-referer.php: Take expected referer as a
+            parameter instead of hard coding it.
+        * http/tests/media/video-referer.html: Pass referer to loader script.
+
 2014-08-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Move scrolling tests under fast/regions/scrolling

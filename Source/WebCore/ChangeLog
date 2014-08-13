@@ -1,3 +1,18 @@
+2014-08-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Media document sends incorrect referer header
+        https://bugs.webkit.org/show_bug.cgi?id=135839
+
+        Reviewed by Jer Noble.
+
+        Test: http/tests/media/media-document-referer.html
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::MediaDocumentParser): Stash referrer.
+        (WebCore::MediaDocumentParser::createDocumentStructure): Set outgoing referrer.
+        (WebCore::MediaDocument::MediaDocument): Stash referrer.
+        * html/MediaDocument.h:
+
 2014-08-13  Antti Koivisto  <antti@apple.com>
 
         Don't recurse into non-rendered subtrees when computing style

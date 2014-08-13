@@ -58,10 +58,11 @@ public:
     }
     
 private:
-    MediaDocumentParser(Document& document)
+    MediaDocumentParser(MediaDocument& document)
         : RawDataDocumentParser(document)
         , m_mediaElement(0)
     {
+        m_outgoingReferrer = document.outgoingReferrer();
     }
 
     virtual void appendBytes(DocumentWriter&, const char*, size_t) override;
@@ -69,6 +70,7 @@ private:
     void createDocumentStructure();
 
     HTMLMediaElement* m_mediaElement;
+    String m_outgoingReferrer;
 };
     
 void MediaDocumentParser::createDocumentStructure()
@@ -124,6 +126,7 @@ void MediaDocumentParser::createDocumentStructure()
         return;
 
     frame->loader().activeDocumentLoader()->setMainResourceDataBufferingPolicy(DoNotBufferData);
+    frame->loader().setOutgoingReferrer(frame->document()->completeURL(m_outgoingReferrer));
 }
 
 void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
@@ -141,6 +144,8 @@ MediaDocument::MediaDocument(Frame* frame, const URL& url)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
+    if (frame)
+        m_outgoingReferrer = frame->loader().outgoingReferrer();
 }
 
 MediaDocument::~MediaDocument()
