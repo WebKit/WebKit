@@ -261,7 +261,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
     {
         console.assert(message);
 
-        if (this._emptyContentPlaceholderMessageElement.parentNode && this._emptyContentPlaceholderMessageElement.textContent === message)
+        if (this._emptyContentPlaceholderElement.parentNode && this._emptyContentPlaceholderMessageElement.textContent === message)
             return;
 
         this._emptyContentPlaceholderMessageElement.textContent = message;
