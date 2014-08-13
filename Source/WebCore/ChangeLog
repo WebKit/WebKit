@@ -1,3 +1,21 @@
+2014-08-13  Antti Koivisto  <antti@apple.com>
+
+        Don't recurse into non-rendered subtrees when computing style
+        https://bugs.webkit.org/show_bug.cgi?id=135844
+
+        Reviewed by Andreas Kling.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        
+        Do a simple reset of the style dirty bits and any computed style in non-renderer subtrees.
+
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::resolveTree):
+        
+        Don't recurse into descendants if the element does not create a renderer.
+        We didn't compute style anyway in such subtrees.
+
 2014-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Elements whose contents start with an astral Unicode symbol disappear when CSS `::first-letter` is applied to them
