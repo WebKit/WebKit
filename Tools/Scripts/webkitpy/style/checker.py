@@ -47,6 +47,7 @@ from checkers.jsonchecker import JSONChecker
 from checkers.jsonchecker import JSONContributorsChecker
 from checkers.messagesin import MessagesInChecker
 from checkers.png import PNGChecker
+from checkers.exportfile import ExportFileChecker
 from checkers.python import PythonChecker
 from checkers.test_expectations import TestExpectationsChecker
 from checkers.text import TextChecker
@@ -306,6 +307,12 @@ _XML_FILE_EXTENSIONS = [
 
 _PNG_FILE_EXTENSION = 'png'
 
+_EXPORT_FILE_PATH = [
+    'Source/WebCore/WebCore.exp.in',
+    'Source/WebKit/mac/WebKit.exp',
+    'Source/WebKit/mac/WebKit.mac.exp',
+    ]
+
 _CMAKE_FILE_EXTENSION = 'cmake'
 
 # Files to skip that are less obvious.
@@ -356,6 +363,7 @@ def _all_categories():
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
+    categories = categories.union(ExportFileChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for
@@ -506,6 +514,7 @@ class FileType:
     XCODEPROJ = 10
     CMAKE = 11
     FEATUREDEFINES = 12
+    EXPORTFILE = 13
 
 class CheckerDispatcher(object):
 
@@ -585,6 +594,8 @@ class CheckerDispatcher(object):
             return FileType.XCODEPROJ
         elif file_extension == _PNG_FILE_EXTENSION:
             return FileType.PNG
+        elif file_path in _EXPORT_FILE_PATH:
+            return FileType.EXPORTFILE
         elif ((file_extension == _CMAKE_FILE_EXTENSION) or os.path.basename(file_path) == 'CMakeLists.txt'):
             return FileType.CMAKE
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
@@ -629,6 +640,8 @@ class CheckerDispatcher(object):
             checker = XcodeProjectFileChecker(file_path, handle_style_error)
         elif file_type == FileType.PNG:
             checker = PNGChecker(file_path, handle_style_error)
+        elif file_type == FileType.EXPORTFILE:
+            checker = ExportFileChecker(file_path, handle_style_error)
         elif file_type == FileType.CMAKE:
             checker = CMakeChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:

@@ -1,3 +1,32 @@
+2014-08-13  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Make check-webkit-style run sort-export-file
+        https://bugs.webkit.org/show_bug.cgi?id=135877
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories):
+        (FileType):
+        (CheckerDispatcher._file_type):
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checkers/exportfile.py: Added.
+        (ExportFileChecker):
+        (ExportFileChecker.__init__):
+        (ExportFileChecker.check):
+        * Scripts/webkitpy/style/checkers/exportfile_unittest.py: Added.
+        (handle_style_error):
+        (MockErrorHandler):
+        (MockErrorHandler.__init__):
+        (MockErrorHandler.turn_off_line_filtering):
+        (MockErrorHandler.__call__):
+        (ExportFileTest):
+        (ExportFileTest.setUp):
+        (ExportFileTest.tearDown):
+        (ExportFileTest.test_sorted):
+        (ExportFileTest.test_non_sorted):
+        (ExportFileTest.test_parse_error):
+
 2014-08-13  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Sets the persistent storage for cookies in MiniBrowser
