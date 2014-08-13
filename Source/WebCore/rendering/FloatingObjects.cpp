@@ -141,7 +141,7 @@ public:
     LayoutUnit offset() const { return m_offset; }
 
 protected:
-    virtual bool updateOffsetIfNeeded(const FloatingObject*) = 0;
+    virtual bool updateOffsetIfNeeded(const FloatingObject&) = 0;
 
     const RenderBlockFlow& m_renderer;
     LayoutUnit m_lineTop;
@@ -151,7 +151,7 @@ protected:
 };
 
 template <FloatingObject::Type FloatTypeValue>
-class ComputeFloatOffsetForFloatLayoutAdapter : public ComputeFloatOffsetAdapter<FloatTypeValue> { 
+class ComputeFloatOffsetForFloatLayoutAdapter : public ComputeFloatOffsetAdapter<FloatTypeValue> {
 public:
     ComputeFloatOffsetForFloatLayoutAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
         : ComputeFloatOffsetAdapter<FloatTypeValue>(renderer, lineTop, lineBottom, offset)
@@ -163,7 +163,7 @@ public:
     LayoutUnit heightRemaining() const;
 
 protected:
-    virtual bool updateOffsetIfNeeded(const FloatingObject*) override final;
+    virtual bool updateOffsetIfNeeded(const FloatingObject&) override final;
 };
 
 template <FloatingObject::Type FloatTypeValue>
@@ -177,7 +177,7 @@ public:
     virtual ~ComputeFloatOffsetForLineLayoutAdapter() { }
 
 protected:
-    virtual bool updateOffsetIfNeeded(const FloatingObject*) override final;
+    virtual bool updateOffsetIfNeeded(const FloatingObject&) override final;
 };
 
 class FindNextFloatLogicalBottomAdapter {
@@ -425,9 +425,9 @@ LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUni
 }
 
 template<>
-inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
+inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
-    LayoutUnit logicalRight = m_renderer.logicalRightForFloat(floatingObject);
+    LayoutUnit logicalRight = m_renderer.logicalRightForFloat(&floatingObject);
     if (logicalRight > m_offset) {
         m_offset = logicalRight;
         return true;
@@ -436,9 +436,9 @@ inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatLeft>::
 }
 
 template<>
-inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
+inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
-    LayoutUnit logicalLeft = m_renderer.logicalLeftForFloat(floatingObject);
+    LayoutUnit logicalLeft = m_renderer.logicalLeftForFloat(&floatingObject);
     if (logicalLeft < m_offset) {
         m_offset = logicalLeft;
         return true;
@@ -463,35 +463,22 @@ inline void ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const Int
     ASSERT(floatingObject->isPlaced());
     ASSERT(rangesIntersect(m_renderer.logicalTopForFloat(floatingObject), m_renderer.logicalBottomForFloat(floatingObject), m_lineTop, m_lineBottom));
 
-    bool floatIsNewExtreme = updateOffsetIfNeeded(floatingObject);
+    bool floatIsNewExtreme = updateOffsetIfNeeded(*floatingObject);
     if (floatIsNewExtreme)
         m_outermostFloat = floatingObject;
 }
 
-#if ENABLE(CSS_SHAPES)
-static inline ShapeOutsideInfo* shapeInfoForFloat(const FloatingObject* floatingObject, const RenderBlockFlow& containingBlock, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    if (floatingObject) {
-        if (ShapeOutsideInfo* shapeOutside = floatingObject->renderer().shapeOutsideInfo()) {
-            shapeOutside->updateDeltasForContainingBlockLine(containingBlock, *floatingObject, lineTop, lineBottom - lineTop);
-            return shapeOutside;
-        }
-    }
-
-    return nullptr;
-}
-#endif
-
 template<>
-inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
+inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
-    LayoutUnit logicalRight = m_renderer.logicalRightForFloat(floatingObject);
+    LayoutUnit logicalRight = m_renderer.logicalRightForFloat(&floatingObject);
 #if ENABLE(CSS_SHAPES)
-    if (ShapeOutsideInfo* shapeOutside = shapeInfoForFloat(floatingObject, m_renderer, m_lineTop, m_lineBottom)) {
-        if (!shapeOutside->lineOverlapsShape())
+    if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
+        ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
+        if (!shapeDeltas.lineOverlapsShape())
             return false;
 
-        logicalRight += shapeOutside->rightMarginBoxDelta();
+        logicalRight += shapeDeltas.rightMarginBoxDelta();
     }
 #endif
     if (logicalRight > m_offset) {
@@ -503,15 +490,16 @@ inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::u
 }
 
 template<>
-inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
+inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
-    LayoutUnit logicalLeft = m_renderer.logicalLeftForFloat(floatingObject);
+    LayoutUnit logicalLeft = m_renderer.logicalLeftForFloat(&floatingObject);
 #if ENABLE(CSS_SHAPES)
-    if (ShapeOutsideInfo* shapeOutside = shapeInfoForFloat(floatingObject, m_renderer, m_lineTop, m_lineBottom)) {
-        if (!shapeOutside->lineOverlapsShape())
+    if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
+        ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
+        if (!shapeDeltas.lineOverlapsShape())
             return false;
 
-        logicalLeft += shapeOutside->leftMarginBoxDelta();
+        logicalLeft += shapeDeltas.leftMarginBoxDelta();
     }
 #endif
     if (logicalLeft < m_offset) {

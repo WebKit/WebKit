@@ -83,10 +83,10 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         return;
 
 #if ENABLE(CSS_SHAPES)
-    ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer().shapeOutsideInfo();
-    if (shapeOutsideInfo) {
+    ShapeOutsideDeltas shapeDeltas;
+    if (ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer().shapeOutsideInfo()) {
         LayoutUnit lineHeight = m_block.lineHeight(m_isFirstLine, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-        shapeOutsideInfo->updateDeltasForContainingBlockLine(m_block, *newFloat, m_block.logicalHeight(), lineHeight);
+        shapeDeltas = shapeOutsideInfo->computeDeltasForContainingBlockLine(m_block, *newFloat, m_block.logicalHeight(), lineHeight);
     }
 #endif
 
@@ -95,9 +95,9 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         if (shouldIndentText() && m_block.style().isLeftToRightDirection())
             newLeft += floorToInt(m_block.textIndentOffset());
 #if ENABLE(CSS_SHAPES)
-        if (shapeOutsideInfo) {
-            if (shapeOutsideInfo->lineOverlapsShape())
-                newLeft += shapeOutsideInfo->rightMarginBoxDelta();
+        if (shapeDeltas.isValid()) {
+            if (shapeDeltas.lineOverlapsShape())
+                newLeft += shapeDeltas.rightMarginBoxDelta();
             else // If the line doesn't overlap the shape, then we need to act as if this float didn't exist.
                 newLeft = m_left;
         }
@@ -108,9 +108,9 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         if (shouldIndentText() && !m_block.style().isLeftToRightDirection())
             newRight -= floorToInt(m_block.textIndentOffset());
 #if ENABLE(CSS_SHAPES)
-        if (shapeOutsideInfo) {
-            if (shapeOutsideInfo->lineOverlapsShape())
-                newRight += shapeOutsideInfo->leftMarginBoxDelta();
+        if (shapeDeltas.isValid()) {
+            if (shapeDeltas.lineOverlapsShape())
+                newRight += shapeDeltas.leftMarginBoxDelta();
             else // If the line doesn't overlap the shape, then we need to act as if this float didn't exist.
                 newRight = m_right;
         }

@@ -1,3 +1,40 @@
+2014-08-13  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Refactor ShapeOutsideInfo so it isn't mutated for each line
+        https://bugs.webkit.org/show_bug.cgi?id=135781
+
+        Reviewed by Zoltan Horvath.
+
+        Encapsulate the per line state into a ShapeOutsideDeltas object.
+        updateDeltasForContainingBlockLine has been renamed to
+        computeDeltasForContainingBlockLine, and it returns an instance of the
+        ShapeOutsideDeltas object for that line. This object is cached, but
+        none of the functionality of ShapeOutsideInfo is dependant on any line
+        specific data anymore.
+
+        No new tests, no behavior change.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded):
+            Update to take a FloatingObject reference because the FloatingObject cannot be null.
+        (WebCore::ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded):
+            Ditto.
+        (WebCore::ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded): Pass FloatingObject to
+            updateOffsetIfNeeded as a reference, since it cannot be null.
+        (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded):
+            Use ShapeOutsideDeltas object to calculate the offset and take the FloatingObject as a
+            reference.
+        (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded):
+            Ditto.
+        (WebCore::shapeInfoForFloat): Deleted.
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded): Update to use ShapeOutsideDeltas object.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computeDeltasForContainingBlockLine): Return a ShaoeOutsideDeltas object
+            instead of storing line specific data in instance variables.
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine): Deleted.
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-08-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS3-Text] Add rendering support for the none value of text-justify property

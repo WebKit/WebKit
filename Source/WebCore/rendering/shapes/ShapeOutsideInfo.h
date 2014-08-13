@@ -43,22 +43,58 @@ class RenderBox;
 class StyleImage;
 class FloatingObject;
 
+class ShapeOutsideDeltas final {
+public:
+    ShapeOutsideDeltas()
+        : m_leftMarginBoxDelta(0)
+        , m_rightMarginBoxDelta(0)
+        , m_borderBoxLineTop(0)
+        , m_lineHeight(0)
+        , m_lineOverlapsShape(false)
+        , m_isValid(false)
+    {
+    }
+
+    ShapeOutsideDeltas(LayoutUnit leftMarginBoxDelta, LayoutUnit rightMarginBoxDelta, bool lineOverlapsShape, LayoutUnit borderBoxLineTop, LayoutUnit lineHeight)
+        : m_leftMarginBoxDelta(leftMarginBoxDelta)
+        , m_rightMarginBoxDelta(rightMarginBoxDelta)
+        , m_borderBoxLineTop(borderBoxLineTop)
+        , m_lineHeight(lineHeight)
+        , m_lineOverlapsShape(lineOverlapsShape)
+        , m_isValid(true)
+    {
+    }
+
+    bool isForLine(LayoutUnit borderBoxLineTop, LayoutUnit lineHeight)
+    {
+        return m_isValid && m_borderBoxLineTop == borderBoxLineTop && m_lineHeight == lineHeight;
+    }
+
+    bool isValid() { return m_isValid; }
+    LayoutUnit leftMarginBoxDelta() { ASSERT(m_isValid); return m_leftMarginBoxDelta; }
+    LayoutUnit rightMarginBoxDelta() { ASSERT(m_isValid); return m_rightMarginBoxDelta; }
+    bool lineOverlapsShape() { ASSERT(m_isValid); return m_lineOverlapsShape; }
+
+private:
+    LayoutUnit m_leftMarginBoxDelta;
+    LayoutUnit m_rightMarginBoxDelta;
+    LayoutUnit m_borderBoxLineTop;
+    LayoutUnit m_lineHeight;
+    bool m_lineOverlapsShape;
+    bool m_isValid;
+};
+
 class ShapeOutsideInfo final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ShapeOutsideInfo(const RenderBox& renderer)
         : m_renderer(renderer)
-        , m_lineOverlapsShape(false)
     {
     }
 
     static bool isEnabledFor(const RenderBox&);
 
-    LayoutUnit leftMarginBoxDelta() const { return m_leftMarginBoxDelta; }
-    LayoutUnit rightMarginBoxDelta() const { return m_rightMarginBoxDelta; }
-    bool lineOverlapsShape() const { return m_lineOverlapsShape; }
-
-    void updateDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
+    ShapeOutsideDeltas computeDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
 
     void setReferenceBoxLogicalSize(LayoutSize);
 
@@ -68,10 +104,6 @@ public:
     LayoutUnit shapeLogicalRight() const { return computedShape().shapeMarginLogicalBoundingBox().maxX() + logicalLeftOffset(); }
     LayoutUnit shapeLogicalWidth() const { return computedShape().shapeMarginLogicalBoundingBox().width(); }
     LayoutUnit shapeLogicalHeight() const { return computedShape().shapeMarginLogicalBoundingBox().height(); }
-
-    LayoutUnit logicalLineTop() const { return m_referenceBoxLineTop + logicalTopOffset(); }
-    LayoutUnit logicalLineBottom() const { return m_referenceBoxLineTop + m_lineHeight + logicalTopOffset(); }
-    LayoutUnit logicalLineBottom(LayoutUnit lineHeight) const { return m_referenceBoxLineTop + lineHeight + logicalTopOffset(); }
 
     void markShapeAsDirty() { m_shape = nullptr; }
     bool isShapeDirty() { return !m_shape; }
@@ -110,13 +142,8 @@ private:
 
     mutable std::unique_ptr<Shape> m_shape;
     LayoutSize m_referenceBoxLogicalSize;
-    LayoutUnit m_referenceBoxLineTop;
-    LayoutUnit m_lineHeight;
 
-    LayoutUnit m_leftMarginBoxDelta;
-    LayoutUnit m_rightMarginBoxDelta;
-    LayoutUnit m_borderBoxLineTop;
-    bool m_lineOverlapsShape;
+    ShapeOutsideDeltas m_shapeOutsideDeltas;
 };
 
 }
