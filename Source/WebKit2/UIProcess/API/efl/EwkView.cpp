@@ -282,6 +282,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_backForwardList(std::make_unique<EwkBackForwardList>(WKPageGetBackForwardList(wkPage())))
     , m_useCustomCursor(false)
     , m_userAgent(WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage())))
+    , m_applicationNameForUserAgent(WKEinaSharedString(AdoptWK, WKPageCopyApplicationNameForUserAgent(wkPage())))
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventsEnabled(false)
@@ -709,6 +710,20 @@ void EwkView::setUserAgent(const char* userAgent)
 
     // When 'userAgent' is 0, user agent is set as a standard user agent by WKPageSetCustomUserAgent()
     // so m_userAgent needs to be updated using WKPageCopyUserAgent().
+    m_userAgent = WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage()));
+}
+
+void EwkView::setApplicationNameForUserAgent(const char* applicationNameForUserAgent)
+{
+    if (m_applicationNameForUserAgent == applicationNameForUserAgent)
+        return;
+
+    m_applicationNameForUserAgent = applicationNameForUserAgent;
+
+    WKRetainPtr<WKStringRef> wkApplicationName = adoptWK(WKStringCreateWithUTF8CString(applicationNameForUserAgent));
+    WKPageSetApplicationNameForUserAgent(wkPage(), wkApplicationName.get());
+
+    // WKPageSetApplicationNameForUserAgent also changes user agent.
     m_userAgent = WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage()));
 }
 

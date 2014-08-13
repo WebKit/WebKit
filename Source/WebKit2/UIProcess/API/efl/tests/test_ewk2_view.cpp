@@ -1065,6 +1065,22 @@ TEST_F(EWK2ViewTest, ewk_view_user_agent)
     eina_stringshare_del(defaultUserAgent);
 }
 
+TEST_F(EWK2ViewTest, ewk_view_application_name_for_user_agent)
+{
+    const char customUserAgent[] = "Foo";
+    const char applicationNameForUserAgent[] = "Bar";
+
+    ASSERT_TRUE(ewk_view_user_agent_set(webView(), customUserAgent));
+
+    ASSERT_TRUE(ewk_view_application_name_for_user_agent_set(webView(), applicationNameForUserAgent));
+    ASSERT_STREQ(applicationNameForUserAgent, ewk_view_application_name_for_user_agent_get(webView()));
+    ASSERT_STREQ(customUserAgent, ewk_view_user_agent_get(webView()));
+    ASSERT_FALSE(strstr(ewk_view_user_agent_get(webView()), applicationNameForUserAgent));
+
+    ASSERT_TRUE(ewk_view_user_agent_set(webView(), nullptr));
+    ASSERT_TRUE(strstr(ewk_view_user_agent_get(webView()), applicationNameForUserAgent));
+}
+
 static void scriptExecuteCallback(Evas_Object*, const char* returnValue, void* userData)
 {
     Eina_Strbuf* buffer = static_cast<Eina_Strbuf*>(userData);

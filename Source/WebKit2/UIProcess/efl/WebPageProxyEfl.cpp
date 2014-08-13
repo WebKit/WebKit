@@ -42,17 +42,19 @@ void WebPageProxy::platformInitialize()
 {
 }
 
-String WebPageProxy::standardUserAgent(const String& /*applicationNameForUserAgent*/)
+String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    WTF::String platform;
-    WTF::String version;
-    WTF::String osVersion;
+    String platform;
+    String version;
+    String osVersion;
+    String standardUserAgentString;
 
 #if PLATFORM(X11)
     platform = "X11";
 #else
     platform = "Unknown";
 #endif
+
     version = String::number(WEBKIT_MAJOR_VERSION) + '.' + String::number(WEBKIT_MINOR_VERSION) + '+';
     struct utsname name;
     if (uname(&name) != -1)
@@ -60,8 +62,10 @@ String WebPageProxy::standardUserAgent(const String& /*applicationNameForUserAge
     else
         osVersion = "Unknown";
 
-    return "Mozilla/5.0 (" + platform + "; " + osVersion + ") AppleWebKit/" + version
+    standardUserAgentString = "Mozilla/5.0 (" + platform + "; " + osVersion + ") AppleWebKit/" + version
         + " (KHTML, like Gecko) Version/5.0 Safari/" + version;
+
+    return applicationNameForUserAgent.isEmpty() ? standardUserAgentString : standardUserAgentString + ' ' + applicationNameForUserAgent;
 }
 
 void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& /*commandsList*/)

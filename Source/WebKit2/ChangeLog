@@ -1,3 +1,29 @@
+2014-08-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add API to set application name for the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=135640
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_application_name_for_user_agent_set to make default user agent string
+        with application name which application passes.
+        It's useful for application to set only application information without knowledge
+        of legacy user agent components.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::setApplicationNameForUserAgent):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::applicationNameForUserAgent):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_application_name_for_user_agent_set):
+        (ewk_view_application_name_for_user_agent_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
 2014-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CMAKE] WebProcess shouldn't need to explicitly link to JavaScriptCore and WebCore

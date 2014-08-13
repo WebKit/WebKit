@@ -368,6 +368,21 @@ Eina_Bool ewk_view_user_agent_set(Evas_Object* ewkView, const char* userAgent)
     return true;
 }
 
+Eina_Bool ewk_view_application_name_for_user_agent_set(Evas_Object* ewkView, const char* applicationName)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+
+    impl->setApplicationNameForUserAgent(applicationName);
+    return true;
+}
+
+const char* ewk_view_application_name_for_user_agent_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
+
+    return impl->applicationNameForUserAgent();
+}
+
 inline WKFindOptions toWKFindOptions(Ewk_Find_Options options)
 {
     unsigned wkFindOptions = 0;

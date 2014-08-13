@@ -117,6 +117,8 @@ public:
     void setCustomTextEncodingName(const char* customEncoding);
     const char* userAgent() const { return m_userAgent; }
     void setUserAgent(const char* userAgent);
+    const char* applicationNameForUserAgent() const { return m_applicationNameForUserAgent; }
+    void setApplicationNameForUserAgent(const char* applicationNameForUserAgent);
 
     bool mouseEventsEnabled() const { return m_mouseEventsEnabled; }
     void setMouseEventsEnabled(bool enabled);
@@ -274,6 +276,7 @@ private:
     WKEinaSharedString m_theme;
     WKEinaSharedString m_customEncoding;
     WKEinaSharedString m_userAgent;
+    WKEinaSharedString m_applicationNameForUserAgent;
     bool m_mouseEventsEnabled;
 #if ENABLE(TOUCH_EVENTS)
     bool m_touchEventsEnabled;
