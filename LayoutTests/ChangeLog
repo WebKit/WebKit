@@ -1,3 +1,15 @@
+2014-08-13  Antti Koivisto  <antti@apple.com>
+
+        Don't recurse into non-rendered subtrees when computing style
+        https://bugs.webkit.org/show_bug.cgi?id=135844
+
+        Reviewed by Andreas Kling.
+        
+        Rebase.
+
+        * http/tests/security/video-poster-cross-origin-crash-expected.txt:
+        * platform/mac/fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt:
+
 2014-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Elements whose contents start with an astral Unicode symbol disappear when CSS `::first-letter` is applied to them
