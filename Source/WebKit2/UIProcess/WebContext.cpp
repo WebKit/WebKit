@@ -430,7 +430,7 @@ void WebContext::ensureNetworkProcess()
     if (!hstsDatabasePath.isEmpty())
         SandboxExtension::createHandle(hstsDatabasePath, SandboxExtension::ReadWrite, parameters.hstsDatabasePathExtensionHandle);
 
-    String parentBundleDirectory = parentBundleDirectory();
+    String parentBundleDirectory = this->parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
 #endif
@@ -624,11 +624,11 @@ WebProcessProxy& WebContext::createNewWebProcess()
     if (!parameters.cookieStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
-    String openGLCacheDirectory = openGLCacheDirectory();
+    String openGLCacheDirectory = this->openGLCacheDirectory();
     if (!openGLCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(openGLCacheDirectory, parameters.openGLCacheDirectoryExtensionHandle);
 
-    String containerTemporaryDirectory = containerTemporaryDirectory();
+    String containerTemporaryDirectory = this->containerTemporaryDirectory();
     if (!containerTemporaryDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(containerTemporaryDirectory, parameters.containerTemporaryDirectoryExtensionHandle);
 
