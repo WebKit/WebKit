@@ -151,6 +151,7 @@ private:
 
     std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
     std::chrono::steady_clock::time_point m_nextActiveHighlightChangeTime;
+    std::chrono::steady_clock::time_point m_lastMouseUpTime;
 
     RefPtr<Highlight> m_currentMouseDownOnButtonHighlight;
     WebCore::IntPoint m_mousePosition;
