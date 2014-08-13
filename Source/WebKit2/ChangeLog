@@ -1,3 +1,14 @@
+2014-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CMAKE] WebProcess shouldn't need to explicitly link to JavaScriptCore and WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=135832
+
+        Reviewed by Gyuyoung Kim.
+
+        Linking to WebKit2 should be enough, like Network and Plugin processes.
+
+        * CMakeLists.txt:
+
 2014-08-12  Tim Horton  <timothy_horton@apple.com>
 
         Document-relative page overlays drop some mouse events with non-zero top content inset
