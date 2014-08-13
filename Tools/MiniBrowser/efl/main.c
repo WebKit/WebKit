@@ -2102,8 +2102,18 @@ elm_main(int argc, char *argv[])
     // Enable favicon database.
     ewk_context_favicon_database_directory_set(context, NULL);
 
-    if (cookies_policy_string)
-        ewk_cookie_manager_accept_policy_set(ewk_context_cookie_manager_get(context), parse_cookies_policy(cookies_policy_string));
+    if (cookies_policy_string) {
+        Ewk_Cookie_Accept_Policy cookie_policy = parse_cookies_policy(cookies_policy_string);
+        ewk_cookie_manager_accept_policy_set(ewk_context_cookie_manager_get(context), cookie_policy);
+
+        if (cookie_policy == EWK_COOKIE_ACCEPT_POLICY_ALWAYS) {
+            const char cookie_storage_directory[] = "/tmp/ewebkit2_minibrowser_cookie/";
+            mkdir(cookie_storage_directory, S_IRWXU);
+            char storage_name[64];
+            snprintf(storage_name, sizeof(storage_name), "%stxt-cookie", cookie_storage_directory);
+            ewk_cookie_manager_persistent_storage_set(ewk_context_cookie_manager_get(context), storage_name, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
+        }
+    }
 
     if (window_size_string)
         parse_window_size(window_size_string, &window_width, &window_height);
