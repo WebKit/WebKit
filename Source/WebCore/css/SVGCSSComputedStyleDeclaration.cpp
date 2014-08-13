@@ -40,25 +40,25 @@ static PassRefPtr<CSSValue> paintOrder(PaintOrder paintOrder)
     case PaintOrderNormal:
         return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
     case PaintOrderFill:
-        paintOrderList->append(fill.release());
+        paintOrderList->append(fill.releaseNonNull());
         break;
     case PaintOrderFillMarkers:
-        paintOrderList->append(fill.release());
-        paintOrderList->append(markers.release());
+        paintOrderList->append(fill.releaseNonNull());
+        paintOrderList->append(markers.releaseNonNull());
         break;
     case PaintOrderStroke:
-        paintOrderList->append(stroke.release());
+        paintOrderList->append(stroke.releaseNonNull());
         break;
     case PaintOrderStrokeMarkers:
-        paintOrderList->append(stroke.release());
-        paintOrderList->append(markers.release());
+        paintOrderList->append(stroke.releaseNonNull());
+        paintOrderList->append(markers.releaseNonNull());
         break;
     case PaintOrderMarkers:
-        paintOrderList->append(markers.release());
+        paintOrderList->append(markers.releaseNonNull());
         break;
     case PaintOrderMarkersStroke:
-        paintOrderList->append(markers.release());
-        paintOrderList->append(stroke.release());
+        paintOrderList->append(markers.releaseNonNull());
+        paintOrderList->append(stroke.releaseNonNull());
         break;
     }
     return paintOrderList.release();

@@ -42,7 +42,7 @@ class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
 
-PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle*, const BasicShape*);
+PassRef<CSSValue> valueForBasicShape(const RenderStyle*, const BasicShape*);
 PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData&, const CSSBasicShape*);
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);

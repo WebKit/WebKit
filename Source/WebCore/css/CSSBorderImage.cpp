@@ -22,30 +22,29 @@
 
 namespace WebCore {
 
-PassRefPtr<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSValue> imageSlice, PassRefPtr<CSSValue> borderSlice,
-                                                PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
+PassRef<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSValue> imageSlice, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     if (image)
-        list->append(image);
+        list.get().append(*image);
 
     if (borderSlice || outset) {
-        RefPtr<CSSValueList> listSlash = CSSValueList::createSlashSeparated();
+        auto listSlash = CSSValueList::createSlashSeparated();
         if (imageSlice)
-            listSlash->append(imageSlice);
+            listSlash.get().append(*imageSlice);
 
         if (borderSlice)
-            listSlash->append(borderSlice);
+            listSlash.get().append(*borderSlice);
 
         if (outset)
-            listSlash->append(outset);
+            listSlash.get().append(*outset);
 
-        list->append(listSlash);
+        list.get().append(WTF::move(listSlash));
     } else if (imageSlice)
-        list->append(imageSlice);
+        list.get().append(*imageSlice);
     if (repeat)
-        list->append(repeat);
-    return list.release();
+        list.get().append(*repeat);
+    return list;
 }
 
 } // namespace WebCore

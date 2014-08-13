@@ -402,17 +402,17 @@ PassRefPtr<CSSValue> CSSParser::parsePaintOrder()
     case CSSValueFill:
         FALLTHROUGH;
     case CSSValueStroke:
-        paintOrderList->append(firstPaintOrderType == CSSValueFill ? fill.release() : stroke.release());
+        paintOrderList->append(firstPaintOrderType == CSSValueFill ? fill.releaseNonNull() : stroke.releaseNonNull());
         if (paintTypeList.size() > 1) {
             if (paintTypeList.at(1) == CSSValueMarkers)
-                paintOrderList->append(markers.release());
+                paintOrderList->append(markers.releaseNonNull());
         }
         break;
     case CSSValueMarkers:
-        paintOrderList->append(markers.release());
+        paintOrderList->append(markers.releaseNonNull());
         if (paintTypeList.size() > 1) {
             if (paintTypeList.at(1) == CSSValueStroke)
-                paintOrderList->append(stroke.release());
+                paintOrderList->append(stroke.releaseNonNull());
         }
         break;
     default:

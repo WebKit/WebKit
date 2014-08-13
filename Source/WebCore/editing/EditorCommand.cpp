@@ -142,7 +142,7 @@ static bool executeToggleStyleInList(Frame& frame, EditorCommandSource source, E
     if (selectedCSSValue->isValueList()) {
         RefPtr<CSSValueList> selectedCSSValueList = toCSSValueList(selectedCSSValue.get());
         if (!selectedCSSValueList->removeAll(value))
-            selectedCSSValueList->append(value);
+            selectedCSSValueList->append(*value);
         if (selectedCSSValueList->length())
             newStyle = selectedCSSValueList->cssText();
 

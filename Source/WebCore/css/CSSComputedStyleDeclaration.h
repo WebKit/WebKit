@@ -72,7 +72,7 @@ private:
     PassRefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout) const;
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
 
-    static PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
+    static PassRef<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
 
     PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;

@@ -1,3 +1,109 @@
+2014-08-13  Andreas Kling  <akling@apple.com>
+
+        CSSValueList should never contain null values.
+        <https://webkit.org/b/135887>
+
+        It's not legal for a CSSValueList to contain null CSSValues, so make
+        it store a Vector of Ref<CSSValue> internally instead.
+
+        This allows the compiler to avoid emitting a number of null checks.
+        It will also allow a future patch to make CSSValueList vend CSSValue&
+        instead of CSSValue*.
+
+        Most of the patch is fixing up things on their way into a CSSValueList
+        to not be null at the call site, now that append() and prepend() are
+        taking PassRef instead of PassRefPtr.
+
+        Reviewed by Sam Weinig.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        * css/BasicShapeFunctions.h:
+        * css/CSSBorderImage.cpp:
+        (WebCore::createBorderImageValue):
+        * css/CSSBorderImage.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForImageSliceSide):
+        (WebCore::valueForNinePieceImageSlice):
+        (WebCore::valueForNinePieceImageQuad):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::getBorderRadiusShorthandValue):
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        (WebCore::specifiedValueForGridTrackSize):
+        (WebCore::addValuesForNamedGridLinesAtIndex):
+        (WebCore::scrollSnapCoordinates):
+        (WebCore::createTimingFunctionValue):
+        (WebCore::fillSourceTypeToCSSValue):
+        (WebCore::contentToCSSValue):
+        (WebCore::shapePropertyValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForSidesShorthand):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand):
+        (WebCore::ComputedStyleExtractor::getBackgroundShorthandValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSParser.cpp:
+        (WebCore::createPrimitiveValuePair):
+        (WebCore::parseTranslateTransformValue):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::createPrimitiveStringValue):
+        (WebCore::CSSParser::addFillValue):
+        (WebCore::CSSParser::parseNonElementSnapPoints):
+        (WebCore::CSSParser::parseScrollSnapDestination):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::addAnimationValue):
+        (WebCore::CSSParser::parseAnimationShorthand):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseQuotes):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseGridPosition):
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreas):
+        (WebCore::CSSParser::parseGridLineNames):
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+        (WebCore::CSSParser::parseGridTrackSize):
+        (WebCore::CSSParser::parseBasicShapeAndOrBox):
+        (WebCore::CSSParser::parseFontVariant):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseBuiltinFilterArguments):
+        (WebCore::CSSParser::parseFilter):
+        (WebCore::CSSParser::parseTextEmphasisStyle):
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::wrapValueInCommaSeparatedList):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        (WebCore::CSSValueList::removeAll):
+        (WebCore::CSSValueList::hasValue):
+        (WebCore::CSSValueList::copy):
+        (WebCore::CSSValueList::customCSSText):
+        (WebCore::CSSValueList::equals):
+        (WebCore::CSSValueList::addSubresourceStyleURLs):
+        (WebCore::CSSValueList::hasFailedOrCanceledSubresources):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::item):
+        (WebCore::CSSValueList::itemWithoutBoundsCheck):
+        (WebCore::CSSValueList::append):
+        (WebCore::CSSValueList::prepend):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::paintOrder):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parsePaintOrder):
+        * editing/EditingStyle.cpp:
+        (WebCore::mergeTextDecorationValues):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::srcValue):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::toCSSPrimitiveValue):
+        * svg/SVGLength.h:
+
 2014-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Removed dead plugins code.

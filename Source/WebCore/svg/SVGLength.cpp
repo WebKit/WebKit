@@ -335,7 +335,7 @@ SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue* value)
     return length;
 }
 
-PassRefPtr<CSSPrimitiveValue> SVGLength::toCSSPrimitiveValue(const SVGLength& length)
+PassRef<CSSPrimitiveValue> SVGLength::toCSSPrimitiveValue(const SVGLength& length)
 {
     CSSPrimitiveValue::UnitTypes cssType = CSSPrimitiveValue::CSS_UNKNOWN;
     switch (length.unitType()) {

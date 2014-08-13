@@ -49,9 +49,9 @@ CSSPropertyID StylePropertyMetadata::shorthandID() const
 
 void CSSProperty::wrapValueInCommaSeparatedList()
 {
-    RefPtr<CSSValue> value = m_value.release();
-    m_value = CSSValueList::createCommaSeparated();
-    toCSSValueList(m_value.get())->append(value.release());
+    auto list = CSSValueList::createCommaSeparated();
+    list.get().append(m_value.releaseNonNull());
+    m_value = WTF::move(list);
 }
 
 enum LogicalBoxSide { BeforeSide, EndSide, AfterSide, StartSide };

@@ -168,8 +168,8 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
         // font-variant descriptor can be a value list.
         if (fontVariant->isPrimitiveValue()) {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            list->append(fontVariant);
-            fontVariant = list;
+            list->append(fontVariant.releaseNonNull());
+            fontVariant = list.releaseNonNull();
         } else if (!fontVariant->isValueList())
             return;
 

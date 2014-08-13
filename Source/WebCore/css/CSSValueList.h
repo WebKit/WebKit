@@ -49,13 +49,13 @@ public:
     }
 
     size_t length() const { return m_values.size(); }
-    CSSValue* item(size_t index) { return index < m_values.size() ? m_values[index].get() : 0; }
-    const CSSValue* item(size_t index) const { return index < m_values.size() ? m_values[index].get() : 0; }
-    CSSValue* itemWithoutBoundsCheck(size_t index) { return m_values[index].get(); }
-    const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return m_values[index].get(); }
+    CSSValue* item(size_t index) { return index < m_values.size() ? &m_values[index].get() : nullptr; }
+    const CSSValue* item(size_t index) const { return index < m_values.size() ? &m_values[index].get() : nullptr; }
+    CSSValue* itemWithoutBoundsCheck(size_t index) { return &m_values[index].get(); }
+    const CSSValue* itemWithoutBoundsCheck(size_t index) const { ASSERT(index < m_values.size()); return &m_values[index].get(); }
 
-    void append(PassRefPtr<CSSValue>);
-    void prepend(PassRefPtr<CSSValue>);
+    void append(PassRef<CSSValue>);
+    void prepend(PassRef<CSSValue>);
     bool removeAll(CSSValue*);
     bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();
@@ -78,21 +78,19 @@ private:
     explicit CSSValueList(ValueListSeparator);
     explicit CSSValueList(CSSParserValueList&);
 
-    Vector<RefPtr<CSSValue>, 4> m_values;
+    Vector<Ref<CSSValue>, 4> m_values;
 };
 
 CSS_VALUE_TYPE_CASTS(CSSValueList, isValueList())
 
-inline void CSSValueList::append(PassRefPtr<CSSValue> value)
+inline void CSSValueList::append(PassRef<CSSValue> value)
 {
-    ASSERT(value);
-    m_values.append(value);
+    m_values.append(WTF::move(value));
 }
 
-inline void CSSValueList::prepend(PassRefPtr<CSSValue> value)
+inline void CSSValueList::prepend(PassRef<CSSValue> value)
 {
-    ASSERT(value);
-    m_values.insert(0, value);
+    m_values.insert(0, WTF::move(value));
 }
 
 // Objects of this class are intended to be stack-allocated and scoped to a single function.

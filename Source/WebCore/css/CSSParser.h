@@ -141,9 +141,8 @@ public:
     bool parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool parseFillShorthand(CSSPropertyID, const CSSPropertyID* properties, int numProperties, bool important);
 
-    void addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
-
-    void addAnimationValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
+    void addFillValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval);
+    void addAnimationValue(RefPtr<CSSValue>& lval, PassRef<CSSValue> rval);
 
     PassRefPtr<CSSValue> parseAnimationDelay();
     PassRefPtr<CSSValue> parseAnimationDirection();
@@ -413,8 +412,8 @@ public:
     PassRefPtr<StyleRuleBase> createViewportRule();
 #endif
 
-    PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
-    PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
+    PassRef<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
+    PassRef<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
 
     static URL completeURL(const CSSParserContext&, const String& url);
 

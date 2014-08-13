@@ -1051,10 +1051,10 @@ static void mergeTextDecorationValues(CSSValueList* mergedValue, const CSSValueL
     RefPtr<CSSPrimitiveValue> lineThrough = cssValuePool().createIdentifierValue(CSSValueLineThrough);
 
     if (valueToMerge->hasValue(underline.get()) && !mergedValue->hasValue(underline.get()))
-        mergedValue->append(underline.get());
+        mergedValue->append(underline.releaseNonNull());
 
     if (valueToMerge->hasValue(lineThrough.get()) && !mergedValue->hasValue(lineThrough.get()))
-        mergedValue->append(lineThrough.get());
+        mergedValue->append(lineThrough.releaseNonNull());
 }
 
 void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideMode mode)
