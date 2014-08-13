@@ -26,7 +26,11 @@
 #ifndef BPlatform_h
 #define BPlatform_h
 
-#define BPLATFORM(PLATFORM) (defined BPLATFORM_##PLATFORM && PLATFORM_##PLATFORM)
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
+#define BPLATFORM(PLATFORM) (defined BPLATFORM_##PLATFORM && BPLATFORM_##PLATFORM)
 
 #if ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
     || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) \

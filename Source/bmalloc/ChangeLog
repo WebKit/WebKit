@@ -1,3 +1,20 @@
+2014-08-12  Daniel Bates  <dabates@apple.com>
+
+        BPLATFORM(IOS) always evaluates to false
+        https://bugs.webkit.org/show_bug.cgi?id=135843
+
+        Reviewed by Geoffrey Garen.
+
+        Fix typo in definition of BPLATFORM() and include system header TargetConditionals.h
+        (when building on an Apple platform) so that BPLATFORM(X) evaluates to true when
+        building for platform X. In particular, so that BPLATFORM(IOS) evaluates to true when
+        building for iOS.
+
+        As a side effect of this change, the change made in <http://trac.webkit.org/changeset/167289>
+        will be honored and iOS will assume a VM page size of 16kB (again) instead of 4kB.
+
+        * bmalloc/BPlatform.h:
+
 2014-08-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Get rid of iOS.xcconfig
