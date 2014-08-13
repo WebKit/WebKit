@@ -1,3 +1,12 @@
+2014-08-13  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/135911> WebKit should build on Yosemite with the public SDK.
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/mac/ImportanceAssertion.h: Forward-declare the new assertion functions we use.
+        * UIProcess/mac/WebContextMenuProxyMac.mm: Forward-declare some details related to NSSharingServicePicker.
+
 2014-08-13  Alexey Proskuryakov  <ap@apple.com>
 
         iOS build fix.

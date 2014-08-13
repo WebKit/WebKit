@@ -1,3 +1,11 @@
+2014-08-13  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/135911> WebKit should build on Yosemite with the public SDK.
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/TextInputController.m: Don't use extern "C" in a non-C++ file.
+
 2014-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.

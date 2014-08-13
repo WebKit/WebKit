@@ -43,7 +43,7 @@
 #if __has_include(<AppKit/NSTextInputContext_Private.h>)
 #import <AppKit/NSTextInputContext_Private.h>
 #else
-extern "C" NSString *NSTextInsertionUndoableAttributeName;
+NSString *NSTextInsertionUndoableAttributeName;
 #endif
 #endif
 

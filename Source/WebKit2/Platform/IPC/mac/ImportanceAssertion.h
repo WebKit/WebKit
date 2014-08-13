@@ -32,8 +32,13 @@
 #include <libproc_internal.h>
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+extern "C" int proc_denap_assertion_begin_with_msg(mach_msg_header_t*, uint64_t *);
+extern "C" int proc_denap_assertion_complete(uint64_t);
+#else
 extern "C" int proc_importance_assertion_begin_with_msg(mach_msg_header_t*, mach_msg_trailer_t*, uint64_t*);
 extern "C" int proc_importance_assertion_complete(uint64_t assertion_handle);
+#endif
 
 namespace IPC {
 
