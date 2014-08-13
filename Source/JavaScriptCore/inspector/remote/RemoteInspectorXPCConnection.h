@@ -31,7 +31,13 @@
 #import <dispatch/dispatch.h>
 #import <mutex>
 #import <wtf/ThreadSafeRefCounted.h>
+
+#if __has_include(<xpc/xpc.h>)
 #import <xpc/xpc.h>
+#else
+typedef void* xpc_connection_t;
+typedef void* xpc_object_t;
+#endif
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;

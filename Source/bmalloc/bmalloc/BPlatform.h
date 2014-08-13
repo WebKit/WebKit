@@ -38,4 +38,8 @@
 #define BPLATFORM_IOS 1
 #endif
 
+#if defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR
+#define BPLATFORM_IOS_SIMULATOR 1
+#endif
+
 #endif // BPlatform_h

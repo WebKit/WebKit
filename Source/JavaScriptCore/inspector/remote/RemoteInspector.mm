@@ -37,7 +37,15 @@
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
+
+#if __has_include(<xpc/xpc.h>)
 #import <xpc/xpc.h>
+#else
+extern "C" {
+    xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
+    void xpc_release(xpc_object_t);
+}
+#endif
 
 #if PLATFORM(IOS)
 #import <wtf/ios/WebCoreThread.h>

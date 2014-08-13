@@ -1,3 +1,21 @@
+2014-08-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make JavaScriptCore and bmalloc build with the public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=135848
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSBase.h: Declare NSMap functions with external linkage when building for iOS without the
+        header <Foundation/NSMapTablePriv.h>.
+        * inspector/remote/RemoteInspector.mm: Define XPC functions with external linkage when building
+        without the system header <xpc/xpc.h>.
+        * inspector/remote/RemoteInspectorXPCConnection.h: Define xpc_connection_t and xpc_object_t when building
+        without the system header <xpc/xpc.h>.
+        * inspector/remote/RemoteInspectorXPCConnection.mm: Declare XPC functions with external linkage when
+        building without without the system header <xpc/xpc.h>.
+        (Inspector::RemoteInspectorXPCConnection::closeOnQueue): Fix code style; use nullptr instead of NULL.
+        (Inspector::RemoteInspectorXPCConnection::sendMessage): Ditto.
+
 2014-08-12  Peyton Randolph  <prandolph@apple.com>
 
         Runtime switch for long mouse press gesture. Part of 135257 - Add long mouse press gesture.

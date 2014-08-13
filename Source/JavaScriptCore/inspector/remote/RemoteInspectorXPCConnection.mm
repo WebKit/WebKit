@@ -32,11 +32,38 @@
 #import <wtf/Assertions.h>
 #import <wtf/Ref.h>
 
+#if !__has_include(<xpc/xpc.h>)
+extern "C" {
+    typedef void (^xpc_handler_t)(xpc_object_t);
+    void xpc_connection_cancel(xpc_connection_t);
+    void xpc_connection_resume(xpc_connection_t);
+    void xpc_connection_send_message(xpc_connection_t, xpc_object_t message);
+    void xpc_connection_set_event_handler(xpc_connection_t, xpc_handler_t);
+    void xpc_connection_set_target_queue(xpc_connection_t, dispatch_queue_t);
+
+    xpc_object_t xpc_retain(xpc_object_t);
+    void xpc_release(xpc_object_t);
+
+    typedef void* xpc_type_t;
+    xpc_type_t xpc_get_type(xpc_object_t);
+
+    void* XPC_ERROR_CONNECTION_INVALID;
+    void* XPC_TYPE_DICTIONARY;
+    void* XPC_TYPE_ERROR;
+
+    xpc_object_t xpc_dictionary_create(const char* const* keys, const xpc_object_t* values, size_t count);
+    xpc_object_t xpc_dictionary_get_value(xpc_object_t, const char* key);
+    void xpc_dictionary_set_value(xpc_object_t, const char* key, xpc_object_t value);
+}
+#endif
+
 #if __has_include(<CoreFoundation/CFXPCBridge.h>)
 #import <CoreFoundation/CFXPCBridge.h>
 #else
-extern "C" xpc_object_t _CFXPCCreateXPCMessageWithCFObject(CFTypeRef);
-extern "C" CFTypeRef _CFXPCCreateCFObjectFromXPCMessage(xpc_object_t);
+extern "C" {
+    xpc_object_t _CFXPCCreateXPCMessageWithCFObject(CFTypeRef);
+    CFTypeRef _CFXPCCreateCFObjectFromXPCMessage(xpc_object_t);
+}
 #endif
 
 namespace Inspector {
@@ -96,12 +123,12 @@ void RemoteInspectorXPCConnection::closeOnQueue()
     if (m_connection) {
         xpc_connection_cancel(m_connection);
         xpc_release(m_connection);
-        m_connection = NULL;
+        m_connection = nullptr;
     }
 
     if (m_queue) {
         dispatch_release(m_queue);
-        m_queue = NULL;
+        m_queue = nullptr;
     }
 }
 
@@ -170,7 +197,7 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
     if (!xpcDictionary)
         return;
 
-    xpc_object_t msg = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_object_t msg = xpc_dictionary_create(nullptr, nullptr, 0);
     xpc_dictionary_set_value(msg, RemoteInspectorXPCConnectionSerializedMessageKey, xpcDictionary);
     xpc_release(xpcDictionary);
 

@@ -1,3 +1,19 @@
+2014-08-13  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make JavaScriptCore and bmalloc build with the public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=135848
+
+        Reviewed by Geoffrey Garen.
+
+        * bmalloc/BPlatform.h: Added macro BPLATFORM_IOS_SIMULATOR, which evaluates to true
+        when building for the iOS Simulator.
+        * bmalloc/PerThread.h: Use pthread_machdep.h code path when building for iOS Simulator
+        using the public SDK.
+        (_pthread_setspecific_direct): Added; only defined when building for the iOS Simulator
+        using the public SDK.
+        (_pthread_getspecific_direct): Added; only defined when building for the iOS Simulator
+        using the public SDK.
+
 2014-08-12  Daniel Bates  <dabates@apple.com>
 
         BPLATFORM(IOS) always evaluates to false

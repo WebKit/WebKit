@@ -26,11 +26,21 @@
 #ifndef PerThread_h
 #define PerThread_h
 
+#include "BPlatform.h"
 #include "Inline.h"
 #include <mutex>
 #include <pthread.h>
 #if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 #include <System/pthread_machdep.h>
+#elif BPLATFORM(IOS_SIMULATOR)
+// FIXME: We shouldn't hardcode this constant as it can become out-of-date with the macro define of the same
+// name in System/pthread_machdep.h. Instead, we should make PerThread work without C++ thread local storage.
+// See <https://bugs.webkit.org/show_bug.cgi?id=135895> for more details.
+const pthread_key_t __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0 = 90;
+
+INLINE int _pthread_setspecific_direct(pthread_key_t key, const void* value) { return pthread_setspecific(key, value); }
+INLINE void* _pthread_getspecific_direct(pthread_key_t key) { return pthread_getspecific(key); }
+extern "C" int pthread_key_init_np(int, void (*destructor)(void*));
 #endif
 
 namespace bmalloc {
@@ -53,8 +63,7 @@ class Cache;
 
 template<typename T> struct PerThreadStorage;
 
-#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
-
+#if (defined(__has_include) && __has_include(<System/pthread_machdep.h>)) || BPLATFORM(IOS_SIMULATOR)
 // For now, we only support PerThread<Cache>. We can expand to other types by
 // using more keys.
 
@@ -90,7 +99,7 @@ template<typename T> __thread void* PerThreadStorage<T>::object;
 template<typename T> pthread_key_t PerThreadStorage<T>::key;
 template<typename T> std::once_flag PerThreadStorage<T>::onceFlag;
 
-#endif // defined(__has_include) && __has_include(<System/pthread_machdep.h>)
+#endif // (defined(__has_include) && __has_include(<System/pthread_machdep.h>)) || BPLATFORM(IOS_SIMULATOR)
 
 template<typename T>
 INLINE T* PerThread<T>::getFastCase()
