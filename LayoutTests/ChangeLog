@@ -1,3 +1,62 @@
+2014-08-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Move scrolling tests under fast/regions/scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=135881
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/scrolling/scroll-into-view-expected.html: Renamed from LayoutTests/fast/regions/scroll-into-view-expected.html.
+        * fast/regions/scrolling/scroll-into-view-relative-expected.html: Renamed from LayoutTests/fast/regions/scroll-into-view-relative-expected.html.
+        * fast/regions/scrolling/scroll-into-view-relative.html: Renamed from LayoutTests/fast/regions/scroll-into-view-relative.html.
+        * fast/regions/scrolling/scroll-into-view.html: Renamed from LayoutTests/fast/regions/scroll-into-view.html.
+        * fast/regions/scrolling/scrollable-first-region-expected.html: Renamed from LayoutTests/fast/regions/scrollable-first-region-expected.html.
+        * fast/regions/scrolling/scrollable-first-region.html: Renamed from LayoutTests/fast/regions/scrollable-first-region.html.
+        * fast/regions/scrolling/scrollable-last-region-expected.html: Renamed from LayoutTests/fast/regions/scrollable-last-region-expected.html.
+        * fast/regions/scrolling/scrollable-last-region.html: Renamed from LayoutTests/fast/regions/scrollable-last-region.html.
+        * fast/regions/scrolling/scrollable-paragraph-unsplittable-expected.html: Renamed from LayoutTests/fast/regions/scrollable-paragraph-unsplittable-expected.html.
+        * fast/regions/scrolling/scrollable-paragraph-unsplittable.html: Renamed from LayoutTests/fast/regions/scrollable-paragraph-unsplittable.html.
+        * fast/regions/scrolling/scrollable-region-content-size-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-horiz-bt-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-horiz-bt-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-horiz-bt.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-horiz-bt.html.
+        * fast/regions/scrolling/scrollable-region-content-size-no-overflow-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-no-overflow-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-no-overflow-horiz-bt-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-no-overflow-horiz-bt-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-no-overflow-horiz-bt.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-no-overflow-horiz-bt.html.
+        * fast/regions/scrolling/scrollable-region-content-size-no-overflow-vert-rl-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-no-overflow-vert-rl-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-no-overflow-vert-rl.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-no-overflow-vert-rl.html.
+        * fast/regions/scrolling/scrollable-region-content-size-no-overflow.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-no-overflow.html.
+        * fast/regions/scrolling/scrollable-region-content-size-relative-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-relative-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-relative.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-relative.html.
+        * fast/regions/scrolling/scrollable-region-content-size-vert-rl-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-vert-rl-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-vert-rl.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-vert-rl.html.
+        * fast/regions/scrolling/scrollable-region-content-size-vertical-lr-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-vertical-lr-expected.html.
+        * fast/regions/scrolling/scrollable-region-content-size-vertical-lr.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size-vertical-lr.html.
+        * fast/regions/scrolling/scrollable-region-content-size.html: Renamed from LayoutTests/fast/regions/scrollable-region-content-size.html.
+        * fast/regions/scrolling/scrollable-region-scrollable-absolute-content-background-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-scrollable-absolute-content-background-expected.html.
+        * fast/regions/scrolling/scrollable-region-scrollable-absolute-content-background.html: Renamed from LayoutTests/fast/regions/scrollable-region-scrollable-absolute-content-background.html.
+        * fast/regions/scrolling/scrollable-region-scrollable-content-background-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-scrollable-content-background-expected.html.
+        * fast/regions/scrolling/scrollable-region-scrollable-content-background.html: Renamed from LayoutTests/fast/regions/scrollable-region-scrollable-content-background.html.
+        * fast/regions/scrolling/scrollable-region-scrollable-content-expected.html: Renamed from LayoutTests/fast/regions/scrollable-region-scrollable-content-expected.html.
+        * fast/regions/scrolling/scrollable-region-scrollable-content.html: Renamed from LayoutTests/fast/regions/scrollable-region-scrollable-content.html.
+        * fast/regions/scrolling/scrollable-regions-hit-testing-inside-expected.html: Renamed from LayoutTests/fast/regions/scrollable-regions-hit-testing-inside-expected.html.
+        * fast/regions/scrolling/scrollable-regions-hit-testing-inside.html: Renamed from LayoutTests/fast/regions/scrollable-regions-hit-testing-inside.html.
+        * fast/regions/scrolling/scrollable-single-region-bt-expected.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-bt-expected.html.
+        * fast/regions/scrolling/scrollable-single-region-bt.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-bt.html.
+        * fast/regions/scrolling/scrollable-single-region-expected.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-expected.html.
+        * fast/regions/scrolling/scrollable-single-region-lr-expected.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-lr-expected.html.
+        * fast/regions/scrolling/scrollable-single-region-lr.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-lr.html.
+        * fast/regions/scrolling/scrollable-single-region-relative-element-expected.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-relative-element-expected.html.
+        * fast/regions/scrolling/scrollable-single-region-relative-element.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-relative-element.html.
+        * fast/regions/scrolling/scrollable-single-region-rl-expected.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-rl-expected.html.
+        * fast/regions/scrolling/scrollable-single-region-rl.html: Renamed from LayoutTests/fast/regions/scrollable-single-region-rl.html.
+        * fast/regions/scrolling/scrollable-single-region.html: Renamed from LayoutTests/fast/regions/scrollable-single-region.html.
+        * fast/regions/scrolling/wheel-scroll-abspos-expected.html: Renamed from LayoutTests/fast/regions/wheel-scroll-abspos-expected.html.
+        * fast/regions/scrolling/wheel-scroll-abspos.html: Renamed from LayoutTests/fast/regions/wheel-scroll-abspos.html.
+        * fast/regions/scrolling/wheel-scroll-expected.html: Renamed from LayoutTests/fast/regions/wheel-scroll-expected.html.
+        * fast/regions/scrolling/wheel-scroll.html: Renamed from LayoutTests/fast/regions/wheel-scroll.html.
+        * fast/regions/scrolling/wheel-scrollable-single-region-expected.html: Renamed from LayoutTests/fast/regions/wheel-scrollable-single-region-expected.html.
+        * fast/regions/scrolling/wheel-scrollable-single-region.html: Renamed from LayoutTests/fast/regions/wheel-scrollable-single-region.html.
+        * platform/gtk/TestExpectations: Fix path for previously moved tests.
+
 2014-08-13  Antti Koivisto  <antti@apple.com>
 
         Don't recurse into non-rendered subtrees when computing style

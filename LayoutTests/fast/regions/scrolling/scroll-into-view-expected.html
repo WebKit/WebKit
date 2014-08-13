@@ -21,7 +21,6 @@
 
 <style>
     #region {
-        -webkit-flow-from: flow;
         border: 4px solid brown;
         padding: 5px;
         position: relative;
@@ -29,7 +28,6 @@
     }
 
     #content {
-        -webkit-flow-into: flow;
         border: 2px solid green;
         width: 210px;
         height: 150px;
@@ -38,10 +36,9 @@
 </style>
 
 <body onload="onLoad()">
-    <div id="region"></div>
-
-    <div id="content">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <span style="color:brown"><b>THE END</b></span>.
+    <div id="region">
+        <div id="content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <span style="color:brown"><b>THE END</b></span>.
+        </div>
     </div>
-
 </body>

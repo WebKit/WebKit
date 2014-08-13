@@ -847,8 +847,8 @@ webkit.org/b/132266 js/slow-stress/Int32Array-alloc-huge.html [ Timeout Pass ]
 
 #Regions
 webkit.org/b/132273 fast/regions/simplified-layout-no-regions.html [ Failure Pass ]
-webkit.org/b/132273 fast/regions/full-screen-video-in-region-crash.html [ Failure Pass ]
-webkit.org/b/132273 fast/regions/full-screen-video-from-region.html [ Pass Timeout ]
+webkit.org/b/132273 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Failure Pass ]
+webkit.org/b/132273 fast/regions/fullscreen/full-screen-video-from-region.html [ Pass Timeout ]
 webkit.org/b/132273 fast/regions/assert-hit-test-image.html [ Failure Pass Crash ]
 
 #Image map
