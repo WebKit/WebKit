@@ -1,5 +1,14 @@
 2014-08-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused variable in Platform.js
+        https://bugs.webkit.org/show_bug.cgi?id=135869
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Platform.js:
+
+2014-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timeline selection range creation does not work when clicking event bubble or near bottom of overview
         https://bugs.webkit.org/show_bug.cgi?id=135849
 

@@ -40,7 +40,6 @@ WebInspector.Platform = {
     if (versionMatch && versionMatch[1].indexOf("+") !== -1 && document.styleSheets.length < 10)
         WebInspector.Platform.isNightlyBuild = true;
 
-    var isLegacyMacOS = false;
     var osVersionMatch = / Mac OS X (\d+)_(\d+)/.exec(navigator.appVersion);
     if (osVersionMatch && osVersionMatch[1] === "10") {
         WebInspector.Platform.version.base = 10;
