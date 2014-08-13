@@ -24,9 +24,10 @@
  *
  */
 
+#import "config.h"
+
 #if PLATFORM(IOS)
 
-#import "config.h"
 #import "DOMUIKitExtensions.h"
 
 #import "CachedImage.h"

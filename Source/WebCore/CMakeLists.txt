@@ -167,16 +167,18 @@ set(WebCore_IDL_INCLUDES
     xml
 )
 
-set(WebCore_IDL_FILES
+set(WebCore_NON_SVG_IDL_FILES
     Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
 
-    Modules/gamepad/Gamepad.idl
-    Modules/gamepad/GamepadButton.idl
-    Modules/gamepad/GamepadEvent.idl
-    Modules/gamepad/NavigatorGamepad.idl
+# FIXME: These were causing name conflicts on Mac, and the Gamepad API is not finished yet.
+# https://bugs.webkit.org/show_bug.cgi?id=135858
+#   Modules/gamepad/Gamepad.idl
+#   Modules/gamepad/GamepadButton.idl
+#   Modules/gamepad/GamepadEvent.idl
+#   Modules/gamepad/NavigatorGamepad.idl
 
     Modules/gamepad/deprecated/Gamepad.idl
     Modules/gamepad/deprecated/GamepadList.idl
@@ -335,6 +337,7 @@ set(WebCore_IDL_FILES
     css/CSSStyleRule.idl
     css/CSSStyleSheet.idl
     css/CSSSupportsRule.idl
+    css/CSSUnknownRule.idl
     css/CSSValue.idl
     css/CSSValueList.idl
     css/Counter.idl
@@ -603,6 +606,29 @@ set(WebCore_IDL_FILES
     storage/Storage.idl
     storage/StorageEvent.idl
 
+    workers/AbstractWorker.idl
+    workers/DedicatedWorkerGlobalScope.idl
+    workers/SharedWorker.idl
+    workers/SharedWorkerGlobalScope.idl
+    workers/Worker.idl
+    workers/WorkerGlobalScope.idl
+    workers/WorkerLocation.idl
+
+    xml/DOMParser.idl
+    xml/XMLHttpRequest.idl
+    xml/XMLHttpRequestException.idl
+    xml/XMLHttpRequestProgressEvent.idl
+    xml/XMLHttpRequestUpload.idl
+    xml/XMLSerializer.idl
+    xml/XPathEvaluator.idl
+    xml/XPathException.idl
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
+    xml/XSLTProcessor.idl
+)
+
+set(WebCore_SVG_IDL_FILES
     svg/SVGAElement.idl
     svg/SVGAltGlyphDefElement.idl
     svg/SVGAltGlyphElement.idl
@@ -752,27 +778,11 @@ set(WebCore_IDL_FILES
     svg/SVGViewSpec.idl
     svg/SVGZoomAndPan.idl
     svg/SVGZoomEvent.idl
+)
 
-    workers/AbstractWorker.idl
-    workers/DedicatedWorkerGlobalScope.idl
-    workers/SharedWorker.idl
-    workers/SharedWorkerGlobalScope.idl
-    workers/Worker.idl
-    workers/WorkerGlobalScope.idl
-    workers/WorkerLocation.idl
-
-    xml/DOMParser.idl
-    xml/XMLHttpRequest.idl
-    xml/XMLHttpRequestException.idl
-    xml/XMLHttpRequestProgressEvent.idl
-    xml/XMLHttpRequestUpload.idl
-    xml/XMLSerializer.idl
-    xml/XPathEvaluator.idl
-    xml/XPathException.idl
-    xml/XPathExpression.idl
-    xml/XPathNSResolver.idl
-    xml/XPathResult.idl
-    xml/XSLTProcessor.idl
+set(WebCore_IDL_FILES
+    ${WebCore_NON_SVG_IDL_FILES}
+    ${WebCore_SVG_IDL_FILES}
 )
 
 set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
@@ -3473,7 +3483,7 @@ GENERATE_BINDINGS(WebCore_SOURCES
     "${WEBCORE_DIR}"
     "${IDL_INCLUDES}"
     "${FEATURE_DEFINES_JAVASCRIPT}"
-    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS
+    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS cpp
     ${IDL_ATTRIBUTES_FILE}
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
     ${WINDOW_CONSTRUCTORS_FILE}
@@ -3486,7 +3496,7 @@ GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
     "${WEBCORE_DIR}"
     "${IDL_INCLUDES}"
     "${FEATURE_DEFINES_JAVASCRIPT}"
-    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS
+    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS cpp
     ${IDL_ATTRIBUTES_FILE}
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
     ${WINDOW_CONSTRUCTORS_FILE}

@@ -92,9 +92,11 @@ NotEnumerable
 NotDeletable
 ObjCCustomImplementation
 ObjCExplicitAtomicString
+ObjCImplementedAsUnsignedLong
 ObjCLegacyUnnamedParameters
 ObjCPolymorphic
 ObjCProtocol
+ObjCUseDefaultView
 OperationsNotDeletable
 PassContext
 RaisesException

@@ -804,6 +804,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     heap
     inspector
     inspector/agents
+    inspector/remote
     interpreter
     jit
     llint
@@ -864,7 +865,15 @@ set(JavaScriptCore_FORWARDING_HEADERS_FILES
     assembler/MacroAssembler.h
     assembler/MacroAssemblerCodeRef.h
     assembler/MacroAssemblerCodeRef.h
+
+    inspector/remote/RemoteInspector.h
+    inspector/remote/RemoteInspectorConstants.h
+    inspector/remote/RemoteInspectorDebuggable.h
+    inspector/remote/RemoteInspectorDebuggableConnection.h
+    inspector/remote/RemoteInspectorXPCConnection.h
+
     jit/GPRInfo.h
+
     runtime/VM.h
 
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h

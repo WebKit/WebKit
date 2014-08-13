@@ -1,8 +1,10 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/mac"
+    "${WEBCORE_DIR}/bindings/objc"
     "${WEBCORE_DIR}/bridge/objc"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
+    "${WEBCORE_DIR}/loader/mac"
     "${WEBCORE_DIR}/page/cocoa"
     "${WEBCORE_DIR}/page/mac"
     "${WEBCORE_DIR}/platform/cf"
@@ -163,7 +165,6 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/FormDataStreamCFNet.cpp
     platform/network/cf/LoaderRunLoopCF.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp
-    platform/network/cf/ProtectionSpaceCFNet.cpp
     platform/network/cf/ProxyServerCFNet.cpp
     platform/network/cf/ResourceErrorCF.cpp
     platform/network/cf/ResourceHandleCFNet.cpp
@@ -199,7 +200,36 @@ list(APPEND WebCore_SOURCES
     platform/text/mac/TextBoundaries.mm
     platform/text/mac/TextBreakIteratorInternalICUMac.mm
     platform/text/mac/TextCodecMac.cpp
-
-    plugins/mac/PluginPackageMac.cpp
-    plugins/mac/PluginViewMac.mm
 )
+
+set(WebCore_FORWARDING_HEADERS_DIRECTORIES
+    html
+    bindings/objc
+    platform
+    platform/mac
+    platform/network/cf
+)
+
+set(WebCore_FORWARDING_HEADERS_FILES
+    html/HTMLMediaElement.h
+    bindings/objc/WebKitAvailability.h
+    platform/DisplaySleepDisabler.h
+    platform/mac/SoftLinking.h
+    platform/network/cf/ResourceResponse.h
+)
+
+WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebCore_FORWARDING_HEADERS_FILES})
+
+set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+GENERATE_BINDINGS(WebCore_SOURCES
+    "${WebCore_NON_SVG_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_OBJECTIVE_C}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} DOM ObjC mm
+    ${IDL_ATTRIBUTES_FILE}
+    ${SUPPLEMENTAL_DEPENDENCY_FILE}
+    ${WINDOW_CONSTRUCTORS_FILE}
+    ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+    ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})

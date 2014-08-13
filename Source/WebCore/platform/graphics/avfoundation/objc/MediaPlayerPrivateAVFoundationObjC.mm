@@ -2339,7 +2339,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     return m_languageOfPrimaryAudioTrack;
 }
 
-#if ENABLE(IOS_AIRPLAY)
+#if ENABLE(IOS_AIRPLAY) && PLATFORM(IOS)
 bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
     if (!m_avPlayer)

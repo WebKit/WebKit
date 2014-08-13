@@ -27,6 +27,8 @@
 package CodeGeneratorObjC;
 
 use constant FileNamePrefix => "DOM";
+use File::Basename;
+use FindBin;
 
 sub ConditionalIsEnabled(\%$);
 
@@ -246,7 +248,8 @@ sub ReadPublicInterfaces
     push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
     push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
 
-    my $fileName = "WebCore/bindings/objc/PublicDOMInterfaces.h";
+    my $bindingsDir = dirname($FindBin::Bin);
+    my $fileName = "$bindingsDir/objc/PublicDOMInterfaces.h";
     my $gccLocation = "";
     if ($ENV{CC}) {
         $gccLocation = $ENV{CC};
@@ -377,7 +380,10 @@ sub GenerateInterface
         $fatalError = 1;
     }
 
-    die if $fatalError;
+    # FIXME: This should not need to be an exception.
+    # ObjCCustomImplementation doesn't work with CMake right now.
+    # https://bugs.webkit.org/show_bug.cgi?id=135860
+    die if $fatalError && $className ne "DOMAbstractView";
 }
 
 sub GetClassName

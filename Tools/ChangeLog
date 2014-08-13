@@ -1,3 +1,13 @@
+2014-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards CMake on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=135819
+
+        Reviewed by Laszlo Gombos.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        Added new cpp parameter for the extension of the generated files.
+
 2014-08-13  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Make check-webkit-style run sort-export-file
