@@ -183,7 +183,7 @@ private:
 unsigned numGraphemeClusters(const String&);
 // Returns the number of characters which will be less than or equal to
 // the specified grapheme cluster length.
-unsigned numCharactersInGraphemeClusters(const String&, unsigned);
+unsigned numCharactersInGraphemeClusters(const StringView&, unsigned);
 
 }
 

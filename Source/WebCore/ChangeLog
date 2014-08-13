@@ -1,3 +1,25 @@
+2014-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Elements whose contents start with an astral Unicode symbol disappear when CSS `::first-letter` is applied to them
+        https://bugs.webkit.org/show_bug.cgi?id=135756
+
+        Reviewed by Darin Adler.
+
+        The previous code assumed that all "characters" are exactly 1 16-bit code unit wide. Instead, use numCharactersInGraphemeClusters().
+
+        This patch also modifies the signature of numCharactersInGraphemeClusters() to take a StringView instead
+        of a string, which will avoid a copy.
+
+        Test: css1/pseudo/firstletter-surrogate.html
+
+        * platform/text/TextBreakIterator.cpp:
+        (WebCore::numCharactersInGraphemeClusters): Update numCharactersInGraphemeClusters() to take a StringView.
+        * platform/text/TextBreakIterator.h: Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createFirstLetterRenderer): Use numCharactersInGraphemeClusters() to determine the length
+        of the first letter, rather than assuming it has length of 1 code unit
+        (WebCore::RenderBlock::updateFirstLetter): Add a FIXME comment.
+
 2014-08-12  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Seeking to the very beginning of a buffered range stalls video playback

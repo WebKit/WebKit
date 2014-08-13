@@ -63,6 +63,7 @@
 #include "SVGTextRunRenderingContext.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "TextBreakIterator.h"
 #include "TransformState.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StackStats.h>
@@ -3585,8 +3586,8 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         while (length < oldText.length() && shouldSkipForFirstLetter(oldText[length]))
             length++;
 
-        // Account for first letter.
-        length++;
+        // Account for first grapheme cluster.
+        length += numCharactersInGraphemeClusters(StringView(oldText).substring(length), 1);
         
         // Keep looking for whitespace and allowed punctuation, but avoid
         // accumulating just whitespace into the :first-letter.
@@ -3686,6 +3687,8 @@ void RenderBlock::updateFirstLetter()
 {
     RenderObject* firstLetterObj;
     RenderElement* firstLetterContainer;
+    // FIXME: The first letter might be composed of a variety of code units, and therefore might
+    // be contained within multiple RenderElements.
     getFirstLetter(firstLetterObj, firstLetterContainer);
 
     if (!firstLetterObj)
