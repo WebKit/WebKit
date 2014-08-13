@@ -195,18 +195,6 @@ if (isAppleMacWebKit()) {
         push @options, $option unless $option eq "";
     }
 
-    if (isIOSWebKit()) {
-        # FIXME: Remove the inclusion of both WebKit System Interface and WebKit Additions projects
-        # once the iOS build is stable.
-
-        # WebKitSystemInterface should always be built just before WebKit.
-        my $webKitIndex = first { $projects[$_] eq "Source/WebKit" } 0..$#projects;
-        splice(@projects, $webKitIndex, 0, "../Internal/WebKitSystemInterface");
-
-        # WebKitAdditions must come before WebCore
-        splice(@projects, 0, 0, "../Internal/WebKitAdditions");
-    }
-
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
 
