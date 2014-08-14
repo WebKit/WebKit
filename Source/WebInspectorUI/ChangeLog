@@ -1,3 +1,23 @@
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172488
+
+    2014-08-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Timeline selection range creation does not work when clicking event bubble or near bottom of overview
+            https://bugs.webkit.org/show_bug.cgi?id=135849
+
+            Reviewed by Timothy Hatcher.
+
+            Click events on elements in the graph container (event bubbles) or
+            in the scroll container (bottom 16px) were becoming the event targets.
+            As siblings of the ruler, the dispatch would not go through the ruler.
+            The ruler was supposed to be overlaying everything in the overview,
+            so give the ruler a z-index so it really is overlaying elements.
+
+            * UserInterface/Views/TimelineRuler.css:
+            (.timeline-ruler):
+
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172436

@@ -26,6 +26,7 @@
 .timeline-ruler {
     position: relative;
     pointer-events: none;
+    z-index: 1;
 }
 
 .timeline-ruler.allows-time-range-selection {
