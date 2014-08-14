@@ -1,5 +1,39 @@
 2014-08-14  Antti Koivisto  <antti@apple.com>
 
+        Make inherited style and parent renderer references
+        https://bugs.webkit.org/show_bug.cgi?id=135857
+
+        Reviewed by Andreas Kling.
+
+        We don't recurse into non-rendered subtrees anymore so they can't be null.
+        Also stop using Element::renderStyle() as it differs from e->renderer().style() in
+        some rare cases (that should be fixed).
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::RenderTreePosition::parent):
+        (WebCore::Style::RenderTreePosition::RenderTreePosition):
+        (WebCore::Style::RenderTreePosition::canInsert):
+        (WebCore::Style::RenderTreePosition::insert):
+        (WebCore::Style::RenderTreePosition::computeNextSibling):
+        (WebCore::Style::shouldCreateRenderer):
+        (WebCore::Style::styleForElement):
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::textRendererIsNeeded):
+        (WebCore::Style::createTextRendererIfNeeded):
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachDistributedChildren):
+        (WebCore::Style::attachShadowRoot):
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::resolveShadowTree):
+        (WebCore::Style::updateBeforeOrAfterPseudoElement):
+        (WebCore::Style::resolveTree):
+
+2014-08-14  Antti Koivisto  <antti@apple.com>
+
         [Forms] We should share RenderStyle object for optgroup and option element
         https://bugs.webkit.org/show_bug.cgi?id=88405
 
