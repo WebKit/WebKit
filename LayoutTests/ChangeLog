@@ -1,3 +1,21 @@
+2014-08-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Move svg tests into fast/regions/svg
+        https://bugs.webkit.org/show_bug.cgi?id=135883
+
+        Reviewed by Andrei Bucur.
+
+        Move tests and adjust paths accordingly.
+
+        * fast/regions/svg/svg-doc-fragment-not-collected-expected.html: Renamed from LayoutTests/fast/regions/svg-doc-fragment-not-collected-expected.html.
+        * fast/regions/svg/svg-doc-fragment-not-collected.html: Renamed from LayoutTests/fast/regions/svg-doc-fragment-not-collected.html.
+        * fast/regions/svg/svg-element-not-collected-expected.html: Renamed from LayoutTests/fast/regions/svg-element-not-collected-expected.html.
+        * fast/regions/svg/svg-element-not-collected.html: Renamed from LayoutTests/fast/regions/svg-element-not-collected.html.
+        * fast/regions/svg/svg-root-element-collected-expected.txt: Renamed from LayoutTests/fast/regions/svg-root-element-collected-expected.txt.
+        * fast/regions/svg/svg-root-element-collected.html: Renamed from LayoutTests/fast/regions/svg-root-element-collected.html.
+        * fast/regions/svg/symbol-in-named-flow-crash-expected.txt: Renamed from LayoutTests/fast/regions/symbol-in-named-flow-crash-expected.txt.
+        * fast/regions/svg/symbol-in-named-flow-crash.svg: Renamed from LayoutTests/fast/regions/symbol-in-named-flow-crash.svg.
+
 2014-08-13  Simon Fraser  <simon.fraser@apple.com>
 
         Land correct results for compositing/fixed-image-loading.html on WK1 and WK2.
