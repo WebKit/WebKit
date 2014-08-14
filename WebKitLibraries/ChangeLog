@@ -1,3 +1,22 @@
+2014-08-14  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172604
+
+    2014-08-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Extend auto-version and version-stamp for RC_ProjectBuildVersion
+            https://bugs.webkit.org/show_bug.cgi?id=135948
+            <rdar://problem/18022221>
+
+            Reviewed by David Kilzer.
+
+            * win/tools/scripts/auto-version.pl:
+            (splitVersion): Use RC_ProjectBuildVersion (or RC_PROJECTBUILDVERSION) if set
+            in the environment as the 'Build Version', unless the multi-tuple version
+            supplied by RC_ProjectSourceVersion already has a fourth component.
+            * win/tools/scripts/version-stamp.pl: Check for RC_ProjectBuildVersion and
+            use it in preference to RC_PROJECTBUILDVERSION.
+
 2014-08-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171903. <rdar://problem/17885078>

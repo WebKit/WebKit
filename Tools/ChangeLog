@@ -1,3 +1,18 @@
+2014-08-14  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172604
+
+    2014-08-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Extend auto-version and version-stamp for RC_ProjectBuildVersion
+            https://bugs.webkit.org/show_bug.cgi?id=135948
+            <rdar://problem/18022221>
+
+            Reviewed by David Kilzer.
+
+            * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl: Add tests
+            for RC_ProjectBuildVersion.
+
 2014-08-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r171903. <rdar://problem/17885078>

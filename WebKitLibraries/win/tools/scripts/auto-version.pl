@@ -62,12 +62,8 @@ my $OUTPUT_FILE = File::Spec->catfile($OUTPUT_DIR, 'autoversion.h');
 
 # Take the initial version number from RC_ProjectSourceVersion if it
 # exists, otherwise fall back to the version number stored in the source.
-my $ENVIRONMENT_VERSION = $ENV{'RC_ProjectSourceVersion'};
-if (!defined $ENVIRONMENT_VERSION) {
-    $ENVIRONMENT_VERSION = $ENV{'RC_PROJECTSOURCEVERSION'};
-}
-
-my $PROPOSED_VERSION = (defined $ENVIRONMENT_VERSION) ? $ENVIRONMENT_VERSION : $FALLBACK_VERSION;
+my $ENVIRONMENT_VERSION = $ENV{'RC_ProjectSourceVersion'} || $ENV{'RC_PROJECTSOURCEVERSION'};
+my $PROPOSED_VERSION = $ENVIRONMENT_VERSION || $FALLBACK_VERSION;
 chomp($PROPOSED_VERSION);
 
 my ($BUILD_MAJOR_VERSION, $BUILD_MINOR_VERSION, $BUILD_TINY_VERSION, $BUILD_VARIANT_VERSION, $ADJUSTED_PROPOSED_VERSION) = splitVersion($PROPOSED_VERSION);
@@ -153,7 +149,7 @@ sub splitVersion($)
         $BUILD_MICRO_VERSION = $components[3];
     }
 
-    my $RETURN_NANO_VERSION = $BUILD_MICRO_VERSION;
+    my $RETURN_NANO_VERSION = $ENV{'RC_ProjectBuildVersion'} || $ENV{'RC_PROJECTBUILDVERSION'} || $BUILD_MICRO_VERSION;
     if ($componentCount > 4) {
         $BUILD_NANO_VERSION = $components[4];
         $RETURN_NANO_VERSION = $BUILD_NANO_VERSION;
