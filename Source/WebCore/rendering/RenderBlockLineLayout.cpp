@@ -350,14 +350,16 @@ ETextAlign RenderBlockFlow::textAlignmentForLine(bool endsWithSoftBreak) const
     ETextAlign alignment = style().textAlign();
 #if ENABLE(CSS3_TEXT)
     TextJustify textJustify = style().textJustify();
-    if (alignment == JUSTIFY &&  textJustify == TextJustifyNone)
+    if (alignment == JUSTIFY && textJustify == TextJustifyNone)
         return style().direction() == LTR ? LEFT : RIGHT;
 #endif
 
     if (endsWithSoftBreak)
         return alignment;
 
-#if ENABLE(CSS3_TEXT)
+#if !ENABLE(CSS3_TEXT)
+    return (alignment == JUSTIFY) ? TASTART : alignment;
+#else
     if (alignment != JUSTIFY)
         return alignment;
 
@@ -381,8 +383,6 @@ ETextAlign RenderBlockFlow::textAlignmentForLine(bool endsWithSoftBreak) const
         return TASTART;
     }
     return alignment;
-#else
-    return (alignment == JUSTIFY) ? TASTART : alignment;
 #endif
 }
 

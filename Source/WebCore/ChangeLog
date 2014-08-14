@@ -1,3 +1,15 @@
+2014-08-14  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS3-Text] Cosmetics on RenderBlockFlow::textAlignmentForLine
+        https://bugs.webkit.org/show_bug.cgi?id=135940
+
+        Reviewed by Darin Adler.
+
+        Processing the not CSS3_TEXT case first, and removing an extra whitespace after r172524.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::textAlignmentForLine):
+
 2014-08-14  Martin Hock  <mhock@apple.com>
 
         IndexedDB should respect SchemeRegistry's database access setting.
