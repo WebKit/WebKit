@@ -2861,11 +2861,17 @@ void Element::resetComputedStyle()
 {
     if (!hasRareData() || !elementRareData()->computedStyle())
         return;
-    elementRareData()->resetComputedStyle();
-    for (auto& child : descendantsOfType<Element>(*this)) {
-        if (child.hasRareData())
-            child.elementRareData()->resetComputedStyle();
-    }
+
+    auto reset = [](Element& element) {
+        if (!element.hasRareData() || !element.elementRareData()->computedStyle())
+            return;
+        if (element.hasCustomStyleResolveCallbacks())
+            element.willResetComputedStyle();
+        element.elementRareData()->resetComputedStyle();
+    };
+    reset(*this);
+    for (auto& child : descendantsOfType<Element>(*this))
+        reset(child);
 }
 
 void Element::clearStyleDerivedDataBeforeDetachingRenderer()
@@ -2899,6 +2905,11 @@ bool Element::willRecalcStyle(Style::Change)
 }
 
 void Element::didRecalcStyle(Style::Change)
+{
+    ASSERT(hasCustomStyleResolveCallbacks());
+}
+
+void Element::willResetComputedStyle()
 {
     ASSERT(hasCustomStyleResolveCallbacks());
 }

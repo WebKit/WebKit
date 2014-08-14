@@ -1,3 +1,55 @@
+2014-08-14  Antti Koivisto  <antti@apple.com>
+
+        Remove nonRendererStyle
+        https://bugs.webkit.org/show_bug.cgi?id=135938
+
+        Reviewed by Andreas Kling.
+
+        It is used to support styling of non-renderer option elements. We have a better
+        mechanism for this, Element::computedStyle().
+
+        * dom/Element.cpp:
+        (WebCore::Element::resetComputedStyle):
+        (WebCore::Element::willResetComputedStyle):
+        
+            Add a virtual callback for computed style reset.
+
+        * dom/Element.h:
+        * dom/Node.h:
+        (WebCore::Node::nonRendererStyle): Deleted.
+        * dom/NodeRenderStyle.h:
+        (WebCore::Node::renderStyle):
+        
+            renderStyle() now always matches renderer()->style()
+
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        (WebCore::HTMLOptGroupElement::isFocusable):
+        (WebCore::HTMLOptGroupElement::didAttachRenderers): Deleted.
+        (WebCore::HTMLOptGroupElement::willDetachRenderers): Deleted.
+        (WebCore::HTMLOptGroupElement::updateNonRenderStyle): Deleted.
+        (WebCore::HTMLOptGroupElement::nonRendererStyle): Deleted.
+        (WebCore::HTMLOptGroupElement::customStyleForRenderer): Deleted.
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::isFocusable):
+        
+            Use computedStyle.
+
+        (WebCore::HTMLOptionElement::willResetComputedStyle):
+        (WebCore::HTMLOptionElement::didAttachRenderers): Deleted.
+        (WebCore::HTMLOptionElement::willDetachRenderers): Deleted.
+        (WebCore::HTMLOptionElement::updateNonRenderStyle): Deleted.
+        (WebCore::HTMLOptionElement::nonRendererStyle): Deleted.
+        (WebCore::HTMLOptionElement::customStyleForRenderer): Deleted.
+        (WebCore::HTMLOptionElement::didRecalcStyle): Deleted.
+        * html/HTMLOptionElement.h:
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::updateOptionsWidth):
+        (RenderMenuList::setTextFromOption):
+        
+            Use computedStyle.
+
 2014-08-14  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Altering the quality of a YouTube video will cause the video to distort and display an error message

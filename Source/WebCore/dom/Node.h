@@ -686,8 +686,6 @@ private:
     virtual void refEventTarget() override;
     virtual void derefEventTarget() override;
 
-    virtual RenderStyle* nonRendererStyle() const { return nullptr; }
-
     Element* ancestorElement() const;
 
     void trackForDebugging();
