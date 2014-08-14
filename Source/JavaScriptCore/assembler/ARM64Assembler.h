@@ -624,9 +624,9 @@ public:
                 JumpType m_type : 8;
                 JumpLinkType m_linkType : 8;
                 Condition m_condition : 4;
-                bool m_is64Bit : 1;
                 unsigned m_bitNumber : 6;
-                RegisterID m_compareRegister : 5;
+                RegisterID m_compareRegister : 6;
+                bool m_is64Bit : 1;
             } realTypes;
             struct CopyTypes {
                 uint64_t content[3];

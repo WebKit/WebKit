@@ -1,3 +1,17 @@
+2014-08-14  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Fix JSC::ARM64Assembler::LinkRecord::RealTypes
+        https://bugs.webkit.org/show_bug.cgi?id=135906
+
+        Reviewed by Michael Saboff.
+
+        JSC::ARM64Assembler::LinkRecord::RealTypes::m_compareRegister is defined
+        to occupy 5 bits but JSC::ARM64Assembler::RegisterID needs 6 bits. So,
+        increase the size of the bit field and also reorganize the struct to 
+        better align with word boundaries.
+
+        * assembler/ARM64Assembler.h:
+
 2014-08-13  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Add ARM64 support to CMake-based builds
