@@ -1,3 +1,66 @@
+2014-08-14  Oliver Hunt  <oliver@apple.com>
+
+        Create activations eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=135942
+
+        Reviewed by Geoffrey Garen.
+
+        Prepare to rewrite activation objects into a more
+        sane implementation. Step 1 is reverting to eager
+        creation of the activation object. This results in
+        a 1.35x regression in earley, but otherwise has a
+        minimal performance impact.
+
+        The earley regression is being tracked by bug #135943
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::createActivationIfNecessary): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_activation):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_activation):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2014-08-14  Oliver Hunt  <oliver@apple.com>
+
+        Create activations eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=135942
+
+        Reviewed by Geoffrey Garen.
+
+        Prepare to rewrite activation objects into a more
+        sane implementation. Step 1 is reverting to eager
+        creation of the activation object. This results in
+        a 1.35x regression in earley, but otherwise has a
+        minimal performance impact.
+
+        The earley regression is being tracked by 
+        http://webkit.org/b/135943
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::createActivationIfNecessary): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_activation):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_activation):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-08-14  Tomas Popela  <tpopela@redhat.com>
 
         Add support for ppc, ppc64, ppc64le, s390, s390x into the CMake build

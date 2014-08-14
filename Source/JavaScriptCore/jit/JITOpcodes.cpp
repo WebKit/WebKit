@@ -679,11 +679,9 @@ void JIT::emit_op_enter(Instruction*)
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    
-    Jump activationCreated = branchTest64(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
+
     callOperation(operationCreateActivation, 0);
     emitStoreCell(dst, returnValueGPR);
-    activationCreated.link(this);
 }
 
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)

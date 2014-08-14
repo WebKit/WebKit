@@ -624,9 +624,7 @@ _llint_op_enter:
 _llint_op_create_activation:
     traceExecution()
     loadisFromInstruction(1, t0)
-    bqneq [cfr, t0, 8], ValueEmpty, .opCreateActivationDone
     callSlowPath(_llint_slow_path_create_activation)
-.opCreateActivationDone:
     dispatch(2)
 
 

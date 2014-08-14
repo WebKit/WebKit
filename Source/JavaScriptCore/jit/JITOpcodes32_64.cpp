@@ -905,11 +905,9 @@ void JIT::emit_op_enter(Instruction* currentInstruction)
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
 {
     int activation = currentInstruction[1].u.operand;
-    
-    Jump activationCreated = branch32(NotEqual, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
+
     callOperation(operationCreateActivation, 0);
     emitStoreCell(activation, returnValueGPR);
-    activationCreated.link(this);
 }
 
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)

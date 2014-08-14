@@ -248,6 +248,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_activationRegister = addVar();
         emitInitLazyRegister(m_activationRegister);
         m_codeBlock->setActivationRegister(m_activationRegister->virtualRegister());
+        emitOpcode(op_create_activation);
+        instructions().append(m_activationRegister->index());
     }
 
     m_symbolTable->setCaptureStart(virtualRegisterForLocal(m_codeBlock->m_numVars).offset());
@@ -1642,7 +1644,6 @@ RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBody
 
 RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, CaptureMode captureMode, unsigned index, bool doNullCheck)
 {
-    createActivationIfNecessary();
     emitOpcode(captureMode == IsCaptured ? op_new_captured_func : op_new_func);
     instructions().append(dst->index());
     instructions().append(index);
@@ -1666,8 +1667,7 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExp
 {
     FunctionBodyNode* function = n->body();
     unsigned index = m_codeBlock->addFunctionExpr(makeFunction(function));
-    
-    createActivationIfNecessary();
+
     emitOpcode(op_new_func_exp);
     instructions().append(r0->index());
     instructions().append(index);
@@ -1695,17 +1695,8 @@ void BytecodeGenerator::createArgumentsIfNecessary()
     ASSERT(!hasWatchableVariable(m_codeBlock->argumentsRegister().offset()));
 }
 
-void BytecodeGenerator::createActivationIfNecessary()
-{
-    if (!m_activationRegister)
-        return;
-    emitOpcode(op_create_activation);
-    instructions().append(m_activationRegister->index());
-}
-
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
-    createActivationIfNecessary();
     return emitCall(op_call_eval, dst, func, NoExpectedFunction, callArguments, divot, divotStart, divotEnd);
 }
 
@@ -2010,7 +2001,6 @@ RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* scope)
     m_scopeContextStack.append(context);
     m_localScopeDepth++;
 
-    createActivationIfNecessary();
     return emitUnaryNoDstOp(op_push_with_scope, scope);
 }
 
@@ -2336,8 +2326,6 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
 
 void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* value, unsigned attributes)
 {
-    createActivationIfNecessary();
-
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);

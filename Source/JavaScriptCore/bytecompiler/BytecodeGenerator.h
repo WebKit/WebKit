@@ -678,7 +678,6 @@ namespace JSC {
         RegisterID* emitThrowExpressionTooDeepException();
 
         void createArgumentsIfNecessary();
-        void createActivationIfNecessary();
         RegisterID* createLazyRegisterIfNecessary(RegisterID*);
         
         unsigned watchableVariable(int operand)
