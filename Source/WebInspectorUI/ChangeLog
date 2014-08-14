@@ -1,5 +1,25 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172527
+
+    2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Timeline Close buttons can use polish for new and legacy styles
+            https://bugs.webkit.org/show_bug.cgi?id=135870
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Images/Legacy/Close.svg:
+            Ensure this has fill colors in tree selections.
+
+            * UserInterface/Views/TimelineSidebarPanel.css:
+            (.sidebar > .panel.navigation.timeline > .timelines-content .close-button):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content .close-button):
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content .item > .status > .status-button):
+            Size the close-button for the top overviews differently in new styles (14x14) and legacy (12x12).
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172526
 
     2014-08-13  Timothy Hatcher  <timothy@apple.com>
