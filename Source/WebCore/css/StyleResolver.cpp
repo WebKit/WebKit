@@ -628,12 +628,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->hasID() && m_ruleSets.features().idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
 
-    // FIXME: We should share style for option and optgroup whenever possible.
-    // Before doing so, we need to resolve issues in HTMLSelectElement::recalcListItems
-    // and RenderMenuList::setText. See also https://bugs.webkit.org/show_bug.cgi?id=88405
-    if (isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
-        return false;
-
     bool isControl = element->isFormControlElement();
 
     if (isControl != state.element()->isFormControlElement())

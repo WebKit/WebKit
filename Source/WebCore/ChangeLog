@@ -1,5 +1,17 @@
 2014-08-14  Antti Koivisto  <antti@apple.com>
 
+        [Forms] We should share RenderStyle object for optgroup and option element
+        https://bugs.webkit.org/show_bug.cgi?id=88405
+
+        Reviewed by Andreas Kling.
+
+        We can remove this special case now.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+
+2014-08-14  Antti Koivisto  <antti@apple.com>
+
         Remove nonRendererStyle
         https://bugs.webkit.org/show_bug.cgi?id=135938
 
