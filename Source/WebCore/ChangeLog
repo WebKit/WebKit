@@ -1,5 +1,32 @@
 2014-08-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172584
+
+    2014-08-14  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Altering the quality of a YouTube video will cause the video to distort and display an error message
+            https://bugs.webkit.org/show_bug.cgi?id=135931
+
+            Reviewed by Eric Carlson.
+
+            When removing samples from the TrackBuffer's sample map, also remove those samples from the
+            TrackBuffer's decode queue. Otherwise, removed samples may persist in the decode queue and
+            either break sync-sample dependencies or cause decoding artifacts.
+
+            Pull the code which removes samples from a track buffer into its own utility function, and
+            use this function both from removeCodedFrames(), and also when samples are removed due to
+            overlapping appends in sourceBufferPrivateDidReceiveSample(). In order to reference
+            TrackBuffers outside of SourceBuffer (and in the static removeSamplesFromTrackBuffer()
+            function), make TrackBuffer a public forward declaration.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::removeSamplesFromTrackBuffer):
+            (WebCore::SourceBuffer::removeCodedFrames):
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+            * Modules/mediasource/SourceBuffer.h:
+
+2014-08-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172506
 
     2014-08-12  Jer Noble  <jer.noble@apple.com>

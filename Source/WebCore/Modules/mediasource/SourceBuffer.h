@@ -103,6 +103,8 @@ public:
     using RefCounted<SourceBuffer>::ref;
     using RefCounted<SourceBuffer>::deref;
 
+    struct TrackBuffer;
+
 protected:
     // EventTarget interface
     virtual void refEventTarget() override { ref(); }
@@ -149,7 +151,6 @@ private:
 
     bool validateInitializationSegment(const InitializationSegment&);
 
-    struct TrackBuffer;
     void reenqueueMediaForTime(TrackBuffer&, AtomicString trackID, const MediaTime&);
     void provideMediaData(TrackBuffer&, AtomicString trackID);
     void didDropSample();

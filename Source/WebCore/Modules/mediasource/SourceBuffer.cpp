@@ -527,6 +527,27 @@ static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::valu
     return a.second->decodeTime() < b.second->decodeTime();
 }
 
+static PassRefPtr<TimeRanges> removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, SourceBuffer::TrackBuffer& trackBuffer)
+{
+    RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
+    MediaTime microsecond(1, 1000000);
+    for (auto sampleIt : samples) {
+        const DecodeOrderSampleMap::KeyType& decodeKey = sampleIt.first;
+        RefPtr<MediaSample>& sample = sampleIt.second;
+
+        // Remove the erased samples from the TrackBuffer sample map.
+        trackBuffer.samples.removeSample(sample.get());
+
+        // Also remove the erased samples from the TrackBuffer decodeQueue.
+        trackBuffer.decodeQueue.erase(decodeKey);
+
+        double startTime = sample->presentationTime().toDouble();
+        double endTime = startTime + (sample->duration() + microsecond).toDouble();
+        erasedRanges->add(startTime, endTime);
+    }
+    return erasedRanges.release();
+}
+
 void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end)
 {
     LOG(MediaSource, "SourceBuffer::removeCodedFrames(%p) - start(%s), end(%s)", this, toString(start).utf8().data(), toString(end).utf8().data());
@@ -569,16 +590,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         DecodeOrderSampleMap::iterator removeDecodeStart = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(decodeKey);
 
         DecodeOrderSampleMap::MapType erasedSamples(removeDecodeStart, removeDecodeEnd);
-
-        RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
-        MediaTime microsecond(1, 1000000);
-        for (auto erasedIt : erasedSamples) {
-            RefPtr<MediaSample>& sample = erasedIt.second;
-            trackBuffer.samples.removeSample(sample.get());
-            double startTime = sample->presentationTime().toDouble();
-            double endTime = startTime + (sample->duration() + microsecond).toDouble();
-            erasedRanges->add(startTime, endTime);
-        }
+        RefPtr<TimeRanges> erasedRanges = removeSamplesFromTrackBuffer(erasedSamples, trackBuffer);
 
         // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
         // not yet displayed samples.
@@ -1186,15 +1198,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             auto nextSyncIter = trackBuffer.samples.decodeOrder().findSyncSampleAfterDecodeIterator(lastDecodeIter);
             dependentSamples.insert(firstDecodeIter, nextSyncIter);
 
-
-            RefPtr<TimeRanges> erasedRanges = TimeRanges::create();
-            for (auto& samplePair : dependentSamples) {
-                MediaTime startTime = samplePair.second->presentationTime();
-                MediaTime endTime = startTime + samplePair.second->duration() + microsecond;
-                erasedRanges->add(startTime.toDouble(), endTime.toDouble());
+            RefPtr<TimeRanges> erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer);
+#if !LOG_DISABLED
+            for (auto& samplePair : dependentSamples)
                 LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveSample(%p) - removing sample(%s)", this, toString(*samplePair.second).utf8().data());
-                trackBuffer.samples.removeSample(samplePair.second.get());
-            }
+#endif
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.
