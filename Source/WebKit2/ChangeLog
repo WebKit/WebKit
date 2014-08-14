@@ -1,5 +1,52 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172500
+
+    2014-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION: WebContent process has a sandbox extension for the entirety of user's temp directory
+            https://bugs.webkit.org/show_bug.cgi?id=135853
+            <rdar://problem/17986556>
+
+            Reviewed by Oliver hunt.
+
+            Move extensions recently added for iOS benefit under PLATFORM(IOS). Removed some
+            dead code while at it (child processes don't need actual paths, they only need
+            sandbox extensions in most cases).
+
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+            * Shared/Network/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * Shared/Network/NetworkProcessCreationParameters.h:
+            * Shared/WebProcessCreationParameters.cpp:
+            (WebKit::WebProcessCreationParameters::encode):
+            (WebKit::WebProcessCreationParameters::decode):
+            * Shared/WebProcessCreationParameters.h:
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::ensureNetworkProcess):
+            (WebKit::WebContext::createNewWebProcess):
+            (WebKit::WebContext::openGLCacheDirectory): Deleted.
+            (WebKit::WebContext::networkingHSTSDatabasePath): Deleted.
+            * UIProcess/WebContext.h:
+            * UIProcess/efl/WebContextEfl.cpp:
+            (WebKit::WebContext::containerTemporaryDirectory): Deleted.
+            (WebKit::WebContext::platformDefaultNetworkingHSTSDatabasePath): Deleted.
+            * UIProcess/gtk/WebContextGtk.cpp:
+            (WebKit::WebContext::containerTemporaryDirectory): Deleted.
+            (WebKit::WebContext::platformDefaultNetworkingHSTSDatabasePath): Deleted.
+            * UIProcess/mac/WebContextMac.mm:
+            (WebKit::WebContext::openGLCacheDirectory):
+            (WebKit::WebContext::parentBundleDirectory):
+            (WebKit::WebContext::networkingHSTSDatabasePath):
+            (WebKit::WebContext::platformDefaultOpenGLCacheDirectory): Deleted.
+            (WebKit::WebContext::platformDefaultNetworkingHSTSDatabasePath): Deleted.
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess):
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172498
 
     2014-08-12  Tim Horton  <timothy_horton@apple.com>
