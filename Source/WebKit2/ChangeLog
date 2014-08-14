@@ -1,5 +1,27 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172501
+
+    2014-08-12  Tim Horton  <timothy_horton@apple.com>
+
+            Small region (~1px tall) where you get the selection button instead of the phone number overlay
+            https://bugs.webkit.org/show_bug.cgi?id=135852
+            <rdar://problem/17992795>
+
+            Reviewed by Enrica Casucci.
+
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight):
+            (WebKit::ServicesOverlayController::determineActiveHighlight):
+            If our new active highlight is a selection highlight that is completely contained
+            by one of the phone number highlights, we'll make the phone number highlight active
+            even if it's not hovered. This fixes the case where the selection highlight
+            (a subset of a telephone number) is slightly taller than the telephone number
+            highlight, and can be hovered without hovering the phone number highlight.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172500
 
     2014-08-12  Alexey Proskuryakov  <ap@apple.com>
