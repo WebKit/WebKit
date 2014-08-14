@@ -1,3 +1,33 @@
+2014-08-14  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172506
+
+    2014-08-12  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] YouTube will lose audio, video after seeking backwards to an unbuffered range.
+            https://bugs.webkit.org/show_bug.cgi?id=135855
+
+            Reviewed by Eric Carlson.
+
+            When seeking into an unbuffered or partially buffered range, we will unconditionally pass samples to the
+            decode queue even if there exist large gaps between those samples. Subsequently, the decoder will not
+            notify us that it has become ready for new samples until playback reaches those later samples and the samples
+            are discarded.
+
+            When sending samples to be decoded in provideMediaData(), stop if there exists a large gap in the sample timeline.
+            Do this by tracking the last enqueued decode end time, and look to see if the next sample's decode time indicates
+            a gap of greater than 1 second.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::TrackBuffer::TrackBuffer): Initialize lastEnqueuedDecodeEndTime.
+            (WebCore::SourceBuffer::seekToTime): Set needsReenqueueing, in case samples do not yet exist in the trackBuffer
+                sufficient to re-enqueue for the destination time, so that re-enqueueing will occur after the next append.
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Check against lastEnqueuedDecodeEndTime, rather than
+                lastEnqueuedPresentationTime before adding samples to the decodeQueue.
+            (WebCore::SourceBuffer::provideMediaData): Stop when we reach a large gap between samples.
+            (WebCore::SourceBuffer::reenqueueMediaForTime): Set or clear lastEnqueuedDecodeEndTime based on whether we
+                have appended any non-displaying samples after flushing.
+
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172538

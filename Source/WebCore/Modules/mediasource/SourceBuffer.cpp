@@ -71,6 +71,7 @@ struct SourceBuffer::TrackBuffer {
     MediaTime lastFrameDuration;
     MediaTime highestPresentationTimestamp;
     MediaTime lastEnqueuedPresentationTime;
+    MediaTime lastEnqueuedDecodeEndTime;
     bool needRandomAccessFlag;
     bool enabled;
     bool needsReenqueueing;
@@ -83,6 +84,7 @@ struct SourceBuffer::TrackBuffer {
         , lastFrameDuration(MediaTime::invalidTime())
         , highestPresentationTimestamp(MediaTime::invalidTime())
         , lastEnqueuedPresentationTime(MediaTime::invalidTime())
+        , lastEnqueuedDecodeEndTime(MediaTime::invalidTime())
         , needRandomAccessFlag(true)
         , enabled(false)
         , needsReenqueueing(false)
@@ -317,6 +319,7 @@ void SourceBuffer::seekToTime(const MediaTime& time)
         TrackBuffer& trackBuffer = trackBufferPair.value;
         const AtomicString& trackID = trackBufferPair.key;
 
+        trackBuffer.needsReenqueueing = true;
         reenqueueMediaForTime(trackBuffer, trackID, time);
     }
 }
@@ -1215,7 +1218,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // Add the coded frame with the presentation timestamp, decode timestamp, and frame duration to the track buffer.
         trackBuffer.samples.addSample(sample);
 
-        if (trackBuffer.lastEnqueuedPresentationTime.isInvalid() || presentationTimestamp > trackBuffer.lastEnqueuedPresentationTime) {
+        if (trackBuffer.lastEnqueuedDecodeEndTime.isInvalid() || decodeTimestamp >= trackBuffer.lastEnqueuedDecodeEndTime) {
             DecodeOrderSampleMap::KeyType decodeKey(decodeTimestamp, presentationTimestamp);
             trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
         }
@@ -1390,7 +1393,19 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
         }
 
         RefPtr<MediaSample> sample = sampleIt->second;
+        // Do not enqueue samples spanning a significant unbuffered gap.
+        // NOTE: one second is somewhat arbitrary. MediaSource::monitorSourceBuffers() is run
+        // on the playbackTimer, which is effectively every 350ms. Allowing > 350ms gap between
+        // enqueued samples allows for situations where we overrun the end of a buffered range
+        // but don't notice for 350s of playback time, and the client can enqueue data for the
+        // new current time without triggering this early return.
+        // FIXME(135867): Make this gap detection logic less arbitrary.
+        MediaTime oneSecond(1, 1);
+        if (trackBuffer.lastEnqueuedDecodeEndTime.isValid() && sample->decodeTime() - trackBuffer.lastEnqueuedDecodeEndTime > oneSecond)
+            break;
+
         trackBuffer.lastEnqueuedPresentationTime = sample->presentationTime();
+        trackBuffer.lastEnqueuedDecodeEndTime = sample->decodeTime() + sample->duration();
         m_private->enqueueSample(sample.release(), trackID);
 #if !LOG_DISABLED
         ++enqueuedSamples;
@@ -1432,8 +1447,13 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString 
 
     m_private->flushAndEnqueueNonDisplayingSamples(nonDisplayingSamples, trackID);
 
-    if (!nonDisplayingSamples.isEmpty())
+    if (!nonDisplayingSamples.isEmpty()) {
         trackBuffer.lastEnqueuedPresentationTime = nonDisplayingSamples.last()->presentationTime();
+        trackBuffer.lastEnqueuedDecodeEndTime = nonDisplayingSamples.last()->decodeTime();
+    } else {
+        trackBuffer.lastEnqueuedPresentationTime = MediaTime::invalidTime();
+        trackBuffer.lastEnqueuedDecodeEndTime = MediaTime::invalidTime();
+    }
 
     // Fill the decode queue with the remaining samples.
     trackBuffer.decodeQueue.clear();
