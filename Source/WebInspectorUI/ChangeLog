@@ -1,5 +1,21 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172531
+
+    2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: "No Filter Results" view only shows once, does not show again
+            https://bugs.webkit.org/show_bug.cgi?id=135892
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/NavigationSidebarPanel.js:
+            (WebInspector.NavigationSidebarPanel.prototype.showEmptyContentPlaceholder):
+            We were checking at the wrong level for a parent. Check if the root
+            placeholder element has a parent or not.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172530
 
     2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>
