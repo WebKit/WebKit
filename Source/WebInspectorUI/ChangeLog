@@ -1,3 +1,17 @@
+2014-08-13  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: eslint configuration should be stored as .eslintrc
+        https://bugs.webkit.org/show_bug.cgi?id=135916
+
+        .eslintrc file added to allow for ESLint solutions, within editors and otherwise,
+        to be automatically configured based on the WebKit JavaScript coding style. The
+        initial file is incomplete.
+
+        Reviewed by Joseph Pecoraro.
+
+        * .eslintrc: Added.
+        * External/.eslintrc: Added.
+
 2014-08-13  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Missing semicolon after console.assert in TimelineSidebarPanel.js
