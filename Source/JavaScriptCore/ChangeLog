@@ -1,3 +1,12 @@
+2014-08-14  Tomas Popela  <tpopela@redhat.com>
+
+        Add support for ppc, ppc64, ppc64le, s390, s390x into the CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=135937
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+
 2014-08-14  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Fix JSC::ARM64Assembler::LinkRecord::RealTypes
