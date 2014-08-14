@@ -1,5 +1,22 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172538
+
+    2014-08-13  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Replacing existing samples with overlapping new samples will cause playback to stutter.
+            https://bugs.webkit.org/show_bug.cgi?id=135902
+
+            Reviewed by Eric Carlson.
+
+            Only mark the TrackBuffer as needing re-enqueueing if the samples removed by overlapping samples
+            themselves overlap with potentially enqueued but not yet displayed frames.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172534
 
     2014-08-13  Simon Fraser  <simon.fraser@apple.com>

@@ -1193,9 +1193,16 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
                 trackBuffer.samples.removeSample(samplePair.second.get());
             }
 
+            // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
+            // not yet displayed samples.
+            MediaTime currentMediaTime = MediaTime::createWithDouble(m_source->currentTime());
+            PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
+            possiblyEnqueuedRanges.intersectWith(erasedRanges->ranges());
+            if (possiblyEnqueuedRanges.length())
+                trackBuffer.needsReenqueueing = true;
+
             erasedRanges->invert();
             m_buffered->intersectWith(*erasedRanges.get());
-            trackBuffer.needsReenqueueing = true;
         }
 
         // 1.17 If spliced audio frame is set:
