@@ -94,6 +94,8 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard-container {
     left: 0;
     right: 0;
 
+    background-color: rgb(252, 252, 252);
+
     padding: 0 5px;
 
     -webkit-animation-duration: 0.4s;
