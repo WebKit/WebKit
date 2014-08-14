@@ -28,9 +28,21 @@
 
 #include <errno.h>
 
+#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
+
 #define SYSCALL(x) do { \
     while ((x) == -1) \
         RELEASE_BASSERT(errno == EAGAIN); \
 } while (0);
+
+#else
+
+// Older versions of OS X return EINVAL when trying to madvise COW pages. So, we
+// can't ASSERT that we'll only see EAGAIN.
+#define SYSCALL(x) do { \
+    while ((x) == -1 && errno == EAGAIN) { } \
+} while (0);
+
+#endif
 
 #endif // Syscall_h

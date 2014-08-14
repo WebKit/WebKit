@@ -1,5 +1,20 @@
 2014-08-14  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed a bmalloc crash seen on the EWS bot
+        https://bugs.webkit.org/show_bug.cgi?id=135955
+
+        Reviewed by Andreas Kling.
+
+        * bmalloc/Syscall.h: Some CG APIs vm_copy their input buffers. If the
+        input buffer is a malloc region, that region will get marked Copy-On-Write
+        by the kernel. Calls to madvise() for COW regions fail and return EINVAL
+        on older OS X's. In 10.10, they still fail, but they do not return
+        EINVAL.
+
+        So, we can only ASSERT that our syscalls succeed starting with 10.10.
+
+2014-08-14  Geoffrey Garen  <ggaren@apple.com>
+
         Fixed the bmalloc build
         https://bugs.webkit.org/show_bug.cgi?id=135953
 
