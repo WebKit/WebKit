@@ -1,3 +1,124 @@
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172382
+
+    2014-08-10  Tim Horton  <timothy_horton@apple.com>
+
+            Refactor ServiceOverlayController in preparation for fading between highlights
+            https://bugs.webkit.org/show_bug.cgi?id=135787
+            <rdar://problem/17935736>
+
+            Reviewed by Brady Eidson.
+
+            Rework ServicesOverlayController so that we always keep a set of generic
+            "potential highlights", which are refcounted Highlight objects and
+            wrap a DDHighlightRef, as well as a type (Selection or TelephoneNumber),
+            Range (only used in the case of TelephoneNumber), and potentially more
+            things in the future (like, say, fade state!).
+
+            We eagerly update the list of potential highlights when the selection or set
+            of detected telephone numbers changes, and use this information to install
+            or uninstall the page overlay as needed.
+
+            When we need to recompute the "active" highlight from this set (for example,
+            we need to handle a mouse event or paint the highlight), we look through
+            the set of potential highlights and decide. This moves the "active" highlight
+            decision logic into one small and confined place.
+
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            (WebKit::ServicesOverlayController::Highlight):
+            Add the new aforementioned refcounted Highlight class.
+            Rename m_lastHoveredHighlightChangeTime to m_lastActiveHighlightChangeTime.
+            Make m_webPage a reference.
+            The rest is just added/removed/adjusted functions for the refactoring.
+
+            (WebKit::TelephoneNumberData::TelephoneNumberData): Deleted.
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::Highlight::createForSelection):
+            (WebKit::ServicesOverlayController::Highlight::createForTelephoneNumber):
+            Create Highlights for the two different highlight types.
+
+            (WebKit::ServicesOverlayController::ServicesOverlayController):
+            (WebKit::ServicesOverlayController::willMoveToWebPage):
+            Our WebPage pointer is always valid because it owns us; don't clear it.
+            We need to keep it around so that we can uninstall the overlay and
+            install it again later, anyway.
+
+            (WebKit::ServicesOverlayController::selectionRectsDidChange):
+            (WebKit::ServicesOverlayController::selectedTelephoneNumberRangesChanged):
+            When selection rects or detected telephone numbers change, rebuild potential highlights.
+            This will have the side-effect of installing the overlay if needed.
+
+            (WebKit::ServicesOverlayController::mouseIsOverHighlight):
+            Make this function take a Highlight instead of a DDHighlightRef.
+
+            (WebKit::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown):
+            Make this function take a Highlight instead of a DDHighlightRef.
+
+            (WebKit::ServicesOverlayController::drawHighlight):
+            Make this function take a Highlight instead of a DDHighlightRef.
+            There's no reason to do the translation separately from the layer blit,
+            also allowing us to avoid the StateSaver.
+
+            (WebKit::ServicesOverlayController::drawRect):
+            drawRect now always paints the active highlight, instead of duplicating
+            logic about which highlight should be active.
+            Also, it will update the active highlight before painting.
+            We no longer need to re-determine whether the active highlight's phone
+            number range is still a valid phone number range, because we rebuild
+            the potential highlights whenever the set of phone number ranges changes.
+
+            (WebKit::ServicesOverlayController::clearActiveHighlight):
+            Mostly an adoption of new names.
+
+            (WebKit::ServicesOverlayController::removeAllPotentialHighlightsOfType):
+            Run through the list of potential highlights and remove any of the given type.
+            The two highlight building functions use this helper to clear the old ones before building.
+
+            (WebKit::ServicesOverlayController::buildPhoneNumberHighlights):
+            (WebKit::ServicesOverlayController::buildSelectionHighlight):
+            Rebuild the list of potential highlights, replacing all highlights of
+            the given type with new ones.
+
+            (WebKit::ServicesOverlayController::hasRelevantSelectionServices):
+            Factor out the code that decides whether our current selection is
+            viable for servicing based on whether we have plain-text and/or rich-text services.
+
+            (WebKit::ServicesOverlayController::didRebuildPotentialHighlights):
+            When rebuilding potential highlights, if we have no potential highlights at all,
+            uninstall the page overlay; we don't need mouse tracking and don't need to
+            paint anything. This improves memory use and compositing performance significantly,
+            where previously we were leaving the overlay up forever after creating it.
+
+            If we have either detected telephone numbers or relevant selection services,
+            create and install the overlay if it doesn't already exist.
+
+            (WebKit::ServicesOverlayController::createOverlayIfNeeded):
+            This just moved from elsehwere, except that it now uses FadeMode::DoNotFade.
+            It doesn't make sense to fade on install/uninstall (which happens even before hover)
+            but not on changing the active highlight; fading will be re-addressed in the next patch.
+
+            (WebKit::ServicesOverlayController::highlightsAreEquivalent):
+            Determine whether two highlights are equivalent. While we may have
+            created a new Highlight at rebuild time, if two telephone number
+            highlights have equivalent ranges, there's no need to 'transition' to the new one.
+
+            (WebKit::ServicesOverlayController::determineActiveHighlight):
+            Run through the list of services, and try to find one that is hovered.
+            We prefer telephone number highlights to selection highlights, and
+            we will never make a selection highlight active if it is both
+            not serviceable and there are no telephone numbers to show in the combined menu.
+            This is the centralized location for determination of which highlight
+            should be considered active. If the active highlight changed, update
+            the time since last change and cancel the mouse-down tracking.
+
+            (WebKit::ServicesOverlayController::mouseEvent):
+            Adjust some comments to be more explanatory.
+            A bunch of code moved out of here and into determineActiveHighlight.
+
+            (WebKit::ServicesOverlayController::handleClick):
+            Adjust to take a reference and use Highlight instead of DDHighlightRef.
+
 2014-08-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout 172395. <rdar://problem/17837670>
