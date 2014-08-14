@@ -1,5 +1,23 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172533
+
+    2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Inline DataGrid inside details sidebar has double thick top border with legacy styles
+            https://bugs.webkit.org/show_bug.cgi?id=135894
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/DetailsSection.css:
+            (body.mac-platform.legacy .details-section:not(.collapsed) .data-grid.inline):
+            In legacy styles the details-section header always has a 1px bottom border.
+            In all styles, an inline data grid had a 1px border everywhere. So, handle
+            this specific case by removing the top border of an inline data grid
+            that is inside an expanded details section.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172531
 
     2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>

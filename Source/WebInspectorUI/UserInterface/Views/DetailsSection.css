@@ -107,6 +107,10 @@ body.mac-platform.legacy .details-section .details-section.collapsed > .header {
     box-shadow: none;
 }
 
+body.mac-platform.legacy .details-section:not(.collapsed) .data-grid.inline {
+    border-top: none;
+}
+
 .details-section.computed-style-properties:not(.collapsed) > .header {
     background-color: rgb(255, 255, 255);
 }
