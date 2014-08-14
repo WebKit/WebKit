@@ -171,6 +171,12 @@ void PageOverlayController::clearPageOverlay(PageOverlay& overlay)
     m_overlayGraphicsLayers.get(&overlay)->setDrawsContent(false);
 }
 
+GraphicsLayer* PageOverlayController::layerForOverlay(PageOverlay& overlay) const
+{
+    ASSERT(m_pageOverlays.contains(&overlay));
+    return m_overlayGraphicsLayers.get(&overlay);
+}
+
 void PageOverlayController::didChangeViewSize()
 {
     for (auto& overlayAndLayer : m_overlayGraphicsLayers) {

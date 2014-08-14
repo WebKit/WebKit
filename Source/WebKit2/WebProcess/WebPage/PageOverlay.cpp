@@ -233,4 +233,9 @@ void PageOverlay::clear()
     m_webPage->pageOverlayController().clearPageOverlay(*this);
 }
 
+WebCore::GraphicsLayer* PageOverlay::layer()
+{
+    return m_webPage->pageOverlayController().layerForOverlay(*this);
+}
+
 } // namespace WebKit

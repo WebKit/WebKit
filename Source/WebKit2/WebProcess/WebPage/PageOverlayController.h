@@ -57,6 +57,7 @@ public:
     void setPageOverlayNeedsDisplay(PageOverlay&, const WebCore::IntRect&);
     void setPageOverlayOpacity(PageOverlay&, float);
     void clearPageOverlay(PageOverlay&);
+    WebCore::GraphicsLayer* layerForOverlay(PageOverlay&) const;
 
     void didChangeViewSize();
     void didChangeDocumentSize();

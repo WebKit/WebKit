@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class GraphicsContext;
+class GraphicsLayer;
 }
 
 namespace WebKit {
@@ -95,6 +96,8 @@ public:
 
     WebCore::RGBA32 backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(WebCore::RGBA32);
+
+    WebCore::GraphicsLayer* layer();
     
 protected:
     explicit PageOverlay(Client*, OverlayType);

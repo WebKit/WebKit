@@ -30,6 +30,7 @@
 
 #include "PageOverlay.h"
 #include "WebFrame.h"
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Range.h>
 #include <WebCore/Timer.h>
 #include <wtf/RefCounted.h>
@@ -55,14 +56,18 @@ public:
     void selectionRectsDidChange(const Vector<WebCore::LayoutRect>&, const Vector<WebCore::GapRects>&, bool isTextOnly);
 
 private:
-    class Highlight : public RefCounted<Highlight> {
+    class Highlight : public RefCounted<Highlight>, private WebCore::GraphicsLayerClient {
         WTF_MAKE_NONCOPYABLE(Highlight);
     public:
-        static PassRefPtr<Highlight> createForSelection(RetainPtr<DDHighlightRef>);
-        static PassRefPtr<Highlight> createForTelephoneNumber(RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
+        static PassRefPtr<Highlight> createForSelection(ServicesOverlayController&, RetainPtr<DDHighlightRef>);
+        static PassRefPtr<Highlight> createForTelephoneNumber(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
+        ~Highlight();
+
+        void invalidate();
 
         DDHighlightRef ddHighlight() const { return m_ddHighlight.get(); }
         WebCore::Range* range() const { return m_range.get(); }
+        WebCore::GraphicsLayer* layer() const { return m_graphicsLayer.get(); }
 
         enum class Type {
             TelephoneNumber,
@@ -70,19 +75,25 @@ private:
         };
         Type type() const { return m_type; }
 
+        void fadeIn();
+        void fadeOut();
+
     private:
-        explicit Highlight(Type type, RetainPtr<DDHighlightRef> ddHighlight, PassRefPtr<WebCore::Range> range)
-            : m_ddHighlight(ddHighlight)
-            , m_range(range)
-            , m_type(type)
-        {
-            ASSERT(m_ddHighlight);
-            ASSERT(type != Type::TelephoneNumber || m_range);
-        }
+        explicit Highlight(ServicesOverlayController&, Type, RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
+
+        // GraphicsLayerClient
+        virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
+        virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
+        virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip) override;
+        virtual float deviceScaleFactor() const override;
+
+        void didFinishFadeOutAnimation();
 
         RetainPtr<DDHighlightRef> m_ddHighlight;
         RefPtr<WebCore::Range> m_range;
+        std::unique_ptr<WebCore::GraphicsLayer> m_graphicsLayer;
         Type m_type;
+        ServicesOverlayController* m_controller;
     };
 
     // PageOverlay::Client
@@ -104,33 +115,44 @@ private:
 
     void determineActiveHighlight(bool& mouseIsOverButton);
     void clearActiveHighlight();
+    Highlight* activeHighlight() const { return m_activeHighlight.get(); }
 
     bool hasRelevantSelectionServices();
 
     bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
-    std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown() const;
-    void repaintHighlightTimerFired(WebCore::Timer<ServicesOverlayController>&);
+    std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown(Highlight*) const;
+    void determineActiveHighlightTimerFired(WebCore::Timer<ServicesOverlayController>&);
 
     static bool highlightsAreEquivalent(const Highlight* a, const Highlight* b);
 
     Vector<RefPtr<WebCore::Range>> telephoneNumberRangesForFocusedFrame();
 
+    void didCreateHighlight(Highlight*);
+    void willDestroyHighlight(Highlight*);
+    void didFinishFadingOutHighlight(Highlight*);
+
+    WebPage& webPage() const { return m_webPage; }
+
     WebPage& m_webPage;
     PageOverlay* m_servicesOverlay;
 
     RefPtr<Highlight> m_activeHighlight;
+    RefPtr<Highlight> m_nextActiveHighlight;
     HashSet<RefPtr<Highlight>> m_potentialHighlights;
+    HashSet<RefPtr<Highlight>> m_animatingHighlights;
+
+    HashSet<Highlight*> m_highlights;
 
     Vector<WebCore::LayoutRect> m_currentSelectionRects;
     bool m_isTextOnly;
 
     std::chrono::steady_clock::time_point m_lastSelectionChangeTime;
-    std::chrono::steady_clock::time_point m_lastActiveHighlightChangeTime;
+    std::chrono::steady_clock::time_point m_nextActiveHighlightChangeTime;
 
     RefPtr<Highlight> m_currentMouseDownOnButtonHighlight;
     WebCore::IntPoint m_mousePosition;
 
-    WebCore::Timer<ServicesOverlayController> m_repaintHighlightTimer;
+    WebCore::Timer<ServicesOverlayController> m_determineActiveHighlightTimer;
 };
 
 } // namespace WebKit
