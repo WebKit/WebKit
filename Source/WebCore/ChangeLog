@@ -1,5 +1,28 @@
 2014-08-14  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172609
+
+    2014-08-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Correct build when DerivedSources location not supplied by build environment
+            https://bugs.webkit.org/show_bug.cgi?id=135954
+            <rdar://problem/18023620>
+
+            Reviewed by Joseph Pecoraro.
+
+            The DerivedSourcesDirectory is not always defined, depending on what
+            solution is being used to build this project. Instead, just define
+            it directly, since we already know where it needs to go.
+
+            Also:
+            1. Stop redirecting the copy output to NUL so I can see if this fails in the future.
+            2. Make sure the target directory exists before copying to it.
+
+            * WebCore.vcxproj/copyForwardingHeaders.cmd: Properly specify
+            the directories for copying the JS file.
+
+2014-08-14  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172584
 
     2014-08-14  Jer Noble  <jer.noble@apple.com>

@@ -1,6 +1,7 @@
 rem %1 argument is used for graphics. It can be cg or cairo
 rem %2 argument is used for network. It can be cf or curl
 
+mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\private\WebCore"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\bindings"
@@ -104,7 +105,8 @@ xcopy /y /d "%ProjectDir%..\ForwardingHeaders\yarr\*.h" "%CONFIGURATIONBUILDDIR%
 
 xcopy /y /d "%ProjectDir%..\testing\js\WebCoreTestSupport.h" "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
 
+set DerivedSourcesDirectory=%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebCore\DerivedSources
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\WebCore
-xcopy /y "%DerivedSourcesDirectory%\InspectorWebBackendCommands.js" "%PrivateHeadersDirectory%" >NUL
+xcopy /y "%DerivedSourcesDirectory%\InspectorWebBackendCommands.js" "%PrivateHeadersDirectory%"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
