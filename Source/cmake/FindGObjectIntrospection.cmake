@@ -44,8 +44,6 @@ if (PKG_CONFIG_FOUND)
         _gir_get_pkgconfig_var(INTROSPECTION_GENERATE "g_ir_generate" "")
         _gir_get_pkgconfig_var(INTROSPECTION_GIRDIR "girdir" "")
         _gir_get_pkgconfig_var(INTROSPECTION_TYPELIBDIR "typelibdir" "")
-        _gir_get_pkgconfig_var(INTROSPECTION_INSTALL_GIRDIR "girdir" "--define-variable=datadir=${DATA_INSTALL_DIR}")
-        _gir_get_pkgconfig_var(INTROSPECTION_INSTALL_TYPELIBDIR "typelibdir" "--define-variable=libdir=${LIB_INSTALL_DIR}")
         set(INTROSPECTION_CFLAGS "${_pc_gir_CFLAGS}")
         set(INTROSPECTION_LIBS "${_pc_gir_LIBS}")
     endif ()
@@ -59,6 +57,4 @@ mark_as_advanced(
     INTROSPECTION_TYPELIBDIR
     INTROSPECTION_CFLAGS
     INTROSPECTION_LIBS
-    INTROSPECTION_INSTALL_GIRDIR
-    INTROSPECTION_INSTALL_TYPELIBDIR
 )

@@ -1,5 +1,28 @@
 2014-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] REGRESSION(r171598, CMake): Introspection files are installed at the wrong path
+        https://bugs.webkit.org/show_bug.cgi?id=135934
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Since r171598 gir files are installed under $datadir/webkitgtk-4.0/gir-1.0/.
+        The gir files should installed in $datadir/gir-1.0/ together with all other
+        gir files. We don't need to install introspection files in a versioned
+        directory because their filenames already contain the binary version. But before
+        r171598, the files were only installed to the right directory if the
+        gobject-instrospection pkg-config file was in the same prefix than the one we
+        wanted to install, because the gir and typelibs directories were extracted from
+        the pkg-config file. We should define INTROSPECTION_INSTALL_GIRDIR and
+        INTROSPECTION_INSTALL_TYPELIBDIR in OptionsGTK.cmake based on $datadir and $libdir
+        like we do in the autotools build.
+
+        * Source/cmake/FindGObjectIntrospection.cmake: Do not define
+        INTROSPECTION_INSTALL_GIRDIR and INTROSPECTION_INSTALL_TYPELIBDIR.
+        * Source/cmake/OptionsGTK.cmake: Define
+        INTROSPECTION_INSTALL_GIRDIR and INTROSPECTION_INSTALL_TYPELIBDIR.
+
+2014-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKit DOM documentation (webkitdomgtk) not installed after make install
         https://bugs.webkit.org/show_bug.cgi?id=135836
 
