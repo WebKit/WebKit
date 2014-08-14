@@ -239,7 +239,7 @@ static void expandForGap(Vector<LayoutRect>& rects, uint8_t* alignments, const G
 {
     if (!gap.left().isEmpty()) {
         LayoutUnit leftEdge = gap.left().x();
-        for (unsigned i = 0; i < 3; ++i) {
+        for (unsigned i = 0; i < rects.size(); ++i) {
             if (alignments[i] & AlignmentLeft)
                 rects[i].shiftXEdgeTo(leftEdge);
         }
@@ -247,7 +247,7 @@ static void expandForGap(Vector<LayoutRect>& rects, uint8_t* alignments, const G
 
     if (!gap.right().isEmpty()) {
         LayoutUnit rightEdge = gap.right().maxX();
-        for (unsigned i = 0; i < 3; ++i) {
+        for (unsigned i = 0; i < rects.size(); ++i) {
             if (alignments[i] & AlignmentRight)
                 rects[i].shiftMaxXEdgeTo(rightEdge);
         }
