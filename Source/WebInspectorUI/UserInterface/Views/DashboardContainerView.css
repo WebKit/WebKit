@@ -32,7 +32,9 @@
     background-color: rgb(252, 252, 252);
 
     border: 1px solid transparent;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0, inset white 0 1px 0;
+    border-top-color: white;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0;
 
     margin: 4px 10px;
     overflow: hidden;
@@ -93,9 +95,6 @@ body.mac-platform.legacy.window-inactive .toolbar .dashboard-container {
     right: 0;
 
     padding: 0 5px;
-
-    background-color: rgb(252, 252, 252);
-    box-shadow: inset white 0 1px 0;
 
     -webkit-animation-duration: 0.4s;
 }

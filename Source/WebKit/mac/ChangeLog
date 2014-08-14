@@ -1,3 +1,20 @@
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172526
+
+    2014-08-13  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Workaround a NSWindow change to the title bar.
+            https://bugs.webkit.org/show_bug.cgi?id=135880
+
+            Reviewed by Joseph Pecoraro.
+
+            * WebCoreSupport/WebInspectorClient.mm:
+            (WebInspectorFrontendClient::setToolbarHeight): Only call setContentBorderThickness: on 10.9 and earlier.
+            (-[WebInspectorWindowController init]): Only call setDrawsBackground: on 10.9 and earlier.
+            (-[WebInspectorWindowController window]): Set titlebarAppearsTransparent on 10.10.
+            Only call border thickness APIs on 10.9 and earlier.
+
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172379

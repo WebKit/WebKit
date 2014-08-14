@@ -29,9 +29,16 @@
     white-space: nowrap;
     overflow: hidden;
 
-    border-bottom: 1px solid rgb(85, 85, 85);
+    border-bottom: 1px solid rgb(179, 179, 179);
+    background-image: linear-gradient(to bottom, rgb(232, 232, 232), rgb(209, 209, 209));
+    box-shadow: inset rgba(255, 255, 255, 0.5) 0 1px 1px;
 
     outline: none;
+}
+
+body.window-inactive .toolbar {
+    background-image: none;
+    background-color: rgb(246, 246, 246);
 }
 
 .toolbar.icon-and-label-vertical {
@@ -53,18 +60,40 @@
     height: 32px;
 }
 
-body.docked .toolbar,
-body:not(.mac-platform) .toolbar {
-    background-image: linear-gradient(to bottom, rgb(233, 233, 233), rgb(229, 229, 229));
-    box-shadow: inset rgb(252, 252, 252) 0 1px 0;
+body.mac-platform:not(.legacy):not(.docked) .toolbar {
+    padding-top: 22px;
 }
 
-body.docked.mac-platform.legacy .toolbar {
+body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical {
+    height: 78px;
+}
+
+body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical.small-size {
+    height: 70px;
+}
+
+body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-horizontal,
+body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-only {
+    height: 62px;
+}
+
+body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-horizontal.small-size,
+body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-only.small-size,
+body.mac-platform:not(.legacy):not(.docked) .toolbar.label-only {
+    height: 54px;
+}
+
+body.mac-platform.legacy .toolbar {
+    box-shadow: none;
+}
+
+body.mac-platform.legacy.docked .toolbar {
+    border-bottom-color: rgb(85, 85, 85);
     background-image: linear-gradient(to bottom, rgb(216, 216, 216), rgb(190, 190, 190));
     box-shadow: inset rgba(255, 255, 255, 0.1) 0 1px 0, inset rgba(0, 0, 0, 0.02) 0 -1px 0;
 }
 
-body.mac-platform:not(.docked) .toolbar .item.button > .label {
+body.mac-platform.legacy:not(.docked) .toolbar .item.button > .label {
  /* We need to disable sub-pixel antialiasing in the toolbar when not docked because the
     toolbar is transparent and so is the WebView. */
     -webkit-font-smoothing: antialiased;
@@ -73,8 +102,8 @@ body.mac-platform:not(.docked) .toolbar .item.button > .label {
     -webkit-text-stroke: 0.2px;
 }
 
-body.window-inactive .toolbar {
-    border-bottom: 1px solid rgb(128, 128, 128);
+body.mac-platform.legacy.window-inactive .toolbar {
+    border-bottom-color: rgb(128, 128, 128);
 }
 
 .toolbar .control-section {

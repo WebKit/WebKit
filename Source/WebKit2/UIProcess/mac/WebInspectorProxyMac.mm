@@ -56,8 +56,10 @@ SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 using namespace WebCore;
 using namespace WebKit;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 // The height needed to match a typical NSToolbar.
 static const CGFloat windowContentBorderThickness = 55;
+#endif
 
 // The margin from the top and right of the dock button (same as the full screen button).
 static const CGFloat dockButtonMargin = 3;
@@ -65,11 +67,11 @@ static const CGFloat dockButtonMargin = 3;
 // The spacing between the dock buttons.
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 static const CGFloat dockButtonSpacing = 1;
+static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
 #else
 static const CGFloat dockButtonSpacing = dockButtonMargin * 2;
-#endif
-
 static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
+#endif
 
 // WKWebInspectorProxyObjCAdapter is a helper ObjC object used as a delegate or notification observer
 // for the sole purpose of getting back into the C++ code from an ObjC caller.
@@ -302,8 +304,13 @@ void WebInspectorProxy::createInspectorWindow()
     [window setDelegate:m_inspectorProxyObjCAdapter.get()];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setReleasedWhenClosed:NO];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    window.titlebarAppearsTransparent = YES;
+#else
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:windowContentBorderThickness forEdge:NSMaxYEdge];
+#endif
 
     m_inspectorWindow = adoptNS(window);
 
@@ -414,7 +421,9 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&page()->process().context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
     ASSERT(m_inspectorView);
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
     [m_inspectorView setDrawsBackground:NO];
+#endif
 
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
 
@@ -764,7 +773,9 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
 
 void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
     [m_inspectorWindow setContentBorderThickness:height forEdge:NSMaxYEdge];
+#endif
 }
 
 String WebInspectorProxy::inspectorPageURL() const

@@ -994,7 +994,8 @@ WebInspector._sidebarWidthDidChange = function(event)
 
 WebInspector._updateToolbarHeight = function()
 {
-    InspectorFrontendHost.setToolbarHeight(this.toolbar.element.offsetHeight);
+    if (WebInspector.Platform.isLegacyMacOS)
+        InspectorFrontendHost.setToolbarHeight(this.toolbar.element.offsetHeight);
 }
 
 WebInspector._toolbarDisplayModeDidChange = function(event)

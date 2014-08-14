@@ -1,5 +1,46 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172526
+
+    2014-08-13  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Workaround a NSWindow change to the title bar.
+            https://bugs.webkit.org/show_bug.cgi?id=135880
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Base/Main.js:
+            (WebInspector._updateToolbarHeight): Don't call in legacy mode.
+
+            * UserInterface/Views/DashboardContainerView.css:
+            (.toolbar .dashboard-container):
+            (.toolbar .dashboard):
+            Drive-by fix some errant drop-shadows. The transparent border was pushing the inset top
+            drop shadow down when it shouldn't. Remove duplicate background and shadow.
+
+            * UserInterface/Views/Main.css:
+            (body): Set the background white, never needs to be transparent now.
+            (body.mac-platform.legacy:not(.docked)): Set background to transparent when not docked in legacy.
+            (body.docked.bottom): Update border color.
+            (body.docked.right): Ditto.
+            (body.docked.bottom.mac-platform.legacy): Keep old border color.
+            (body.docked.right.mac-platform.legacy): Ditto.
+
+            * UserInterface/Views/Toolbar.css:
+            (.toolbar): Set a default border and background gradient.
+            (body.window-inactive .toolbar): No gradient but use a solid color when inactive.
+            (body.mac-platform:not(.legacy):not(.docked) .toolbar): Padding on the top for the title bar.
+            (body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical): Account for title bar height.
+            (body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-and-label-vertical.small-size): Ditto.
+            (body.mac-platform:not(.legacy):not(.docked) .toolbar.icon-only): Ditto.
+            (body.mac-platform:not(.legacy):not(.docked) .toolbar.label-only): Ditto.
+            (body.mac-platform.legacy .toolbar): No inset shadow in legacy when not docked.
+            (body.mac-platform.legacy.docked .toolbar): Restore legacy border color.
+            (body.mac-platform.legacy:not(.docked) .toolbar .item.button > .label): Only disable sub-pixel antialiasing on legacy!
+            (body.mac-platform.legacy.window-inactive .toolbar): Restore legacy border color.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172525
 
     2014-08-13  Timothy Hatcher  <timothy@apple.com>

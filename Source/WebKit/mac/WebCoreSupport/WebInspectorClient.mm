@@ -295,7 +295,9 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
 
 void WebInspectorFrontendClient::setToolbarHeight(unsigned height)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
     [[m_windowController window] setContentBorderThickness:height forEdge:NSMaxYEdge];
+#endif
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
@@ -408,10 +410,13 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     _webView = [[WebView alloc] init];
     [_webView setPreferences:preferences];
-    [_webView setDrawsBackground:NO];
     [_webView setProhibitsMainFrameScrolling:YES];
     [_webView setUIDelegate:self];
     [_webView setPolicyDelegate:self];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+    [_webView setDrawsBackground:NO];
+#endif
 
     [preferences release];
 
@@ -479,12 +484,22 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     if (window)
         return window;
 
-    NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
+#else
+    NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
+#endif
+
     window = [[WebInspectorWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(400.0, 400.0)];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    window.titlebarAppearsTransparent = YES;
+#else
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
+#endif
 
     // Create a full screen button so we can turn it into a dock button.
     _dockButton = [NSWindow standardWindowButton:NSWindowFullScreenButton forStyleMask:styleMask];
