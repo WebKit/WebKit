@@ -1,5 +1,25 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172528
+
+    2014-08-13  Tim Horton  <timothy_horton@apple.com>
+
+            Avoid making new active service overlay highlights while the mouse is down
+            https://bugs.webkit.org/show_bug.cgi?id=135872
+            <rdar://problem/17982341>
+
+            Reviewed by Enrica Casucci.
+
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown):
+            (WebKit::ServicesOverlayController::mouseEvent):
+            If the mouse is pressed or it's been less than 200ms since the mouse went up,
+            don't allow the highlight to change. We apply the mouse-is-pressed rule to telephone
+            number highlights as well, unlike the rest of the hysteresis logic.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172526
 
     2014-08-13  Timothy Hatcher  <timothy@apple.com>
