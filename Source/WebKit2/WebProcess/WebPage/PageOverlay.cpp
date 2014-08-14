@@ -158,8 +158,13 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
     
 bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+    IntPoint mousePositionInOverlayCoordinates(mouseEvent.position());
+
+    if (m_overlayType == PageOverlay::OverlayType::Document)
+        mousePositionInOverlayCoordinates = m_webPage->corePage()->mainFrame().view()->rootViewToContents(mousePositionInOverlayCoordinates);
+
     // Ignore events outside the bounds.
-    if (!bounds().contains(mouseEvent.position()))
+    if (!bounds().contains(mousePositionInOverlayCoordinates))
         return false;
 
     return m_client->mouseEvent(this, mouseEvent);

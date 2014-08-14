@@ -1,5 +1,22 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172512
+
+    2014-08-12  Tim Horton  <timothy_horton@apple.com>
+
+            Document-relative page overlays drop some mouse events with non-zero top content inset
+            https://bugs.webkit.org/show_bug.cgi?id=135871
+            <rdar://problem/17982275>
+
+            Reviewed by Beth Dakin.
+
+            * WebProcess/WebPage/PageOverlay.cpp:
+            (WebKit::PageOverlay::mouseEvent):
+            Convert the mouse position into document-relative coordinates; the bounds()
+            already are! This way, we can actually compare them without being wrong sometimes.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172501
 
     2014-08-12  Tim Horton  <timothy_horton@apple.com>
