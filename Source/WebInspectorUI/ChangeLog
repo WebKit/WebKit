@@ -1,5 +1,26 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172530
+
+    2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Incorrect border colors in event listeners sections in details sidebar
+            https://bugs.webkit.org/show_bug.cgi?id=135891
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/DetailsSection.css:
+            (.details-section .details-section > .header):
+            (.details-section .details-section:not(.collapsed) > .header):
+            Remove box-shadow and replace with a bottom border.
+
+            (body.mac-platform.legacy .details-section .details-section.collapsed > .header):
+            (.details-section .details-section.collaspsed > .header): Deleted.
+            Collapsed was spelled incorrectly so this was not applying properly before.
+            But correct this for legacy because legacy still uses a box-shadow.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172527
 
     2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>

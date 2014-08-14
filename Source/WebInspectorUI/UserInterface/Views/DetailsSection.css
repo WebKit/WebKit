@@ -89,11 +89,12 @@ body.mac-platform.legacy .details-section > .header {
     top: 21px;
     background-color: rgb(255, 255, 255);
 
-    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 0;
-
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
     z-index: 100;
+}
 
+.details-section .details-section:not(.collapsed) > .header {
+    border-bottom: 1px solid rgb(222, 222, 222);
 }
 
 body.mac-platform.legacy .details-section .details-section > .header {
@@ -102,7 +103,7 @@ body.mac-platform.legacy .details-section .details-section > .header {
     box-shadow: none;
 }
 
-.details-section .details-section.collaspsed > .header {
+body.mac-platform.legacy .details-section .details-section.collapsed > .header {
     box-shadow: none;
 }
 
