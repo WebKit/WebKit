@@ -1,5 +1,31 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172534
+
+    2014-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+            [WK1] A fixed-position <img> may not show on page load
+            https://bugs.webkit.org/show_bug.cgi?id=135893
+
+            Reviewed by Tim Horton.
+
+            A position:fixed image could fail to display because we didn't make a
+            compositing layer for it under some circumstances. This can happen if
+            RenderLayerCompositor::requiresCompositingForPosition() runs before the
+            image is loaded, in which cause the layer is zero-sized, so does not get
+            composited.
+
+            When the image loads, there was no code path that ensured that compositing
+            would be re-evaluated (unlike size changes due to style updates). Fix by
+            having RenderLayer::contentChanged() also check for ImageChanged.
+
+            Test: compositing/fixed-image-loading.html
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::contentChanged):
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172507
 
     2014-08-12  Jer Noble  <jer.noble@apple.com>
