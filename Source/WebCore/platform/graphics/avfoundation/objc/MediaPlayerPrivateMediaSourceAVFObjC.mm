@@ -417,7 +417,12 @@ double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
 {
-    return std::max(MediaTime::zeroTime(), toMediaTime(CMTimebaseGetTime([m_synchronizer timebase])));
+    MediaTime synchronizerTime = toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
+    if (synchronizerTime < MediaTime::zeroTime())
+        return MediaTime::zeroTime();
+    if (synchronizerTime < m_lastSeekTime)
+        return m_lastSeekTime;
+    return synchronizerTime;
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble() const
@@ -463,16 +468,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     if (!m_mediaSourcePrivate)
         return;
 
-    MediaTime seekTime;
     if (pendingSeek->negativeThreshold == MediaTime::zeroTime() && pendingSeek->positiveThreshold == MediaTime::zeroTime())
-        seekTime = pendingSeek->targetTime;
+        m_lastSeekTime = pendingSeek->targetTime;
     else
-        seekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
+        m_lastSeekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
 
-    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(%p) - seekTime(%s)", this, toString(seekTime).utf8().data());
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(%p) - seekTime(%s)", this, toString(m_lastSeekTime).utf8().data());
 
-    [m_synchronizer setRate:0 time:toCMTime(seekTime)];
-    m_mediaSourcePrivate->seekToTime(seekTime);
+    [m_synchronizer setRate:0 time:toCMTime(m_lastSeekTime)];
+    m_mediaSourcePrivate->seekToTime(m_lastSeekTime);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted()

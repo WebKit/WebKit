@@ -1,5 +1,31 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172507
+
+    2014-08-12  Jer Noble  <jer.noble@apple.com>
+
+            [MSE][Mac] Seeking to the very beginning of a buffered range stalls video playback
+            https://bugs.webkit.org/show_bug.cgi?id=135865
+
+            Reviewed by Eric Carlson.
+
+            AVSampleBufferRenderSynchronizer will report a current time of about 100ms or so before
+            the destination seek time when seeking. It does this in order to pre-roll the synchronized
+            audio renderer, but this can lead to playback stalling when MediaSource::monitorSourceBuffers()
+            looks at the media element's current time and determines that the current time is 100ms before
+            any buffered samples.
+
+            Clamp the value of currentMediaTime() to, at a minimum, the last requested seek time. This was
+            the suggested course of action from <rdar://problem/17789374>.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationDouble):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172501
 
     2014-08-12  Tim Horton  <timothy_horton@apple.com>
