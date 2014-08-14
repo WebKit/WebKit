@@ -1,3 +1,37 @@
+2014-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Compute and store snap point positions
+        https://bugs.webkit.org/show_bug.cgi?id=135268
+
+        Reviewed by Simon Fraser.
+
+        Working towards implementing a way to extract snap positions (i.e. LayoutUnits) from the parsed snap point properties from CSS,
+        as well as a way of storing the information. Supports both mainframe and overflow scrolling.
+
+        No changes in behavior. I will write tests when I implement snapping for iOS and Mac.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateSnapOffsets): Invokes the static routine in AxisScrollSnapOffsets to update snap offsets for mainframe.
+        * page/FrameView.h:
+        * page/scrolling/AxisScrollSnapOffsets.cpp: Added.
+        (WebCore::appendAndSortChildSnapOffsets):
+        (WebCore::updateFromStyle):
+        (WebCore::updateSnapOffsetsForScrollableArea): Update the ScrollableArea's snap axes.
+        * page/scrolling/AxisScrollSnapOffsets.h: Added.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setHorizontalSnapOffsets):
+        (WebCore::ScrollableArea::setVerticalSnapOffsets):
+        (WebCore::ScrollableArea::clearHorizontalSnapOffsets): Resets the unique_ptr for horizontal snap points.
+        (WebCore::ScrollableArea::clearVerticalSnapOffsets): Resets the unique_ptr for vertical snap points.
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::horizontalSnapOffsets): Returns a pointer to the ScrollableArea's horizontal snap points.
+        (WebCore::ScrollableArea::verticalSnapOffsets): Returns a pointer to the ScrollableArea's vertical snap points.
+        (WebCore::ScrollableArea::updateSnapOffsets):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateSnapOffsets): Invokes the static routine in AxisScrollSnapOffsets to update snap offsets for an overflow area.
+        * rendering/RenderLayer.h:
+
 2014-08-13  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/135911> WebKit should build on Yosemite with the public SDK.

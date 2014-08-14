@@ -98,6 +98,10 @@
 #include "TextAutosizer.h"
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "AxisScrollSnapOffsets.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "DocumentLoader.h"
 #include "LegacyTileCache.h"
@@ -846,6 +850,21 @@ GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) co
 }
 
 #endif // ENABLE(RUBBER_BANDING)
+
+#if ENABLE(CSS_SCROLL_SNAP)
+void FrameView::updateSnapOffsets()
+{
+    if (!frame().document())
+        return;
+
+    // FIXME: Should we allow specifying snap points through <html> tags too?
+    HTMLElement* body = frame().document()->body();
+    if (!renderView() || !body || !body->renderer())
+        return;
+    
+    updateSnapOffsetsForScrollableArea(*this, *body, *renderView(), body->renderer()->style());
+}
+#endif
 
 bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
 {

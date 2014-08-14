@@ -6245,6 +6245,8 @@
 		F3F5CF1112ED81A80084C569 /* InspectorConsoleInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F5CF1012ED81A80084C569 /* InspectorConsoleInstrumentation.h */; };
 		F3F5CF1312ED81B30084C569 /* InspectorDatabaseInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F5CF1212ED81B30084C569 /* InspectorDatabaseInstrumentation.h */; };
 		F42FFB461984B71600F6837F /* LengthRepeat.h in Headers */ = {isa = PBXBuildFile; fileRef = F42FFB451984B71600F6837F /* LengthRepeat.h */; };
+		F45C231D1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */; };
+		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A5E3F195B8E4800483100 /* StyleScrollSnapPoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */; };
 		F50664F7157F52DC00AC226F /* FormController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50664F5157F52DC00AC226F /* FormController.cpp */; };
@@ -13762,6 +13764,8 @@
 		F3F5CF1012ED81A80084C569 /* InspectorConsoleInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorConsoleInstrumentation.h; sourceTree = "<group>"; };
 		F3F5CF1212ED81B30084C569 /* InspectorDatabaseInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDatabaseInstrumentation.h; sourceTree = "<group>"; };
 		F42FFB451984B71600F6837F /* LengthRepeat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthRepeat.h; sourceTree = "<group>"; };
+		F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AxisScrollSnapOffsets.cpp; sourceTree = "<group>"; };
+		F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxisScrollSnapOffsets.h; sourceTree = "<group>"; };
 		F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleScrollSnapPoints.cpp; path = style/StyleScrollSnapPoints.cpp; sourceTree = "<group>"; };
 		F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleScrollSnapPoints.h; path = style/StyleScrollSnapPoints.h; sourceTree = "<group>"; };
 		F50664F5157F52DC00AC226F /* FormController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormController.cpp; sourceTree = "<group>"; };
@@ -15137,6 +15141,8 @@
 				9391A99B1629D70000297330 /* ScrollingTreeScrollingNode.h */,
 				0F6383DB18615B29003E5DB5 /* ThreadedScrollingTree.cpp */,
 				0F6383DC18615B29003E5DB5 /* ThreadedScrollingTree.h */,
+				F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */,
+				F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */,
 			);
 			path = scrolling;
 			sourceTree = "<group>";
@@ -24419,6 +24425,7 @@
 				A81369E0097374F600D74463 /* HTMLLegendElement.h in Headers */,
 				A8EA79F60A1916DF00A8EF5F /* HTMLLIElement.h in Headers */,
 				A871DC200A15205700B12A68 /* HTMLLinkElement.h in Headers */,
+				F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */,
 				A8EA7D2C0A19385500A8EF5F /* HTMLMapElement.h in Headers */,
 				A8EA7CAB0A192B9C00A8EF5F /* HTMLMarqueeElement.h in Headers */,
 				E44613A50CD6331000FADA75 /* HTMLMediaElement.h in Headers */,
@@ -27754,6 +27761,7 @@
 				B2AFFC7D0D00A5C10030074D /* FontCustomPlatformData.cpp in Sources */,
 				371F4F410D25B9AF00ECE0D5 /* FontData.cpp in Sources */,
 				37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */,
+				F45C231D1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp in Sources */,
 				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				4A6E9FC713C17D570046A7F8 /* FontFeatureSettings.cpp in Sources */,
 				E44EE3A817577EBD00EEE8CF /* FontGenericFamilies.cpp in Sources */,

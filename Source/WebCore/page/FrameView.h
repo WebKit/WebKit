@@ -496,6 +496,10 @@ public:
     void setExposedRect(FloatRect);
     FloatRect exposedRect() const { return m_exposedRect; }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    virtual void updateSnapOffsets() override;
+#endif
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) override;

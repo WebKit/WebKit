@@ -122,6 +122,10 @@
 #include "RenderLayerFilterInfo.h"
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "AxisScrollSnapOffsets.h"
+#endif
+
 #define MIN_INTERSECT_FOR_REVEAL 32
 
 namespace WebCore {
@@ -3027,6 +3031,18 @@ ScrollableArea* RenderLayer::enclosingScrollableArea() const
     // if the frame view isn't scrollable.
     return 0;
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+void RenderLayer::updateSnapOffsets()
+{
+    // FIXME: Extend support beyond HTMLElements.
+    if (!enclosingElement() || !enclosingElement()->renderBox() || !enclosingElement()->isHTMLElement())
+        return;
+
+    RenderBox* box = enclosingElement()->renderBox();
+    updateSnapOffsetsForScrollableArea(*this, *toHTMLElement(enclosingElement()), *box, box->style());
+}
+#endif
 
 int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
 {

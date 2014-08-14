@@ -58,6 +58,16 @@ public:
 
     bool handleWheelEvent(const PlatformWheelEvent&);
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    const Vector<LayoutUnit>* horizontalSnapOffsets() const { return m_horizontalSnapOffsets.get(); };
+    const Vector<LayoutUnit>* verticalSnapOffsets() const { return m_verticalSnapOffsets.get(); };
+    virtual void updateSnapOffsets() { };
+    void setHorizontalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>>);
+    void setVerticalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>>);
+    void clearHorizontalSnapOffsets();
+    void clearVerticalSnapOffsets();
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     virtual bool isTouchScrollable() const { return false; }
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
@@ -274,6 +284,11 @@ private:
     virtual void setScrollOffset(const IntPoint&) = 0;
 
     mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    std::unique_ptr<Vector<LayoutUnit>> m_horizontalSnapOffsets;
+    std::unique_ptr<Vector<LayoutUnit>> m_verticalSnapOffsets;
+#endif
 
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode. The combinations are:

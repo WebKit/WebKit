@@ -45,7 +45,11 @@ namespace WebCore {
 
 struct SameSizeAsScrollableArea {
     virtual ~SameSizeAsScrollableArea();
+#if ENABLE(CSS_SCROLL_SNAP)
+    void* pointers[3];
+#else
     void* pointer;
+#endif
     IntPoint origin;
     unsigned bitfields : 16;
 };
@@ -375,6 +379,28 @@ bool ScrollableArea::hasLayerForScrollCorner() const
 {
     return layerForScrollCorner();
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+void ScrollableArea::setHorizontalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> horizontalSnapOffsets)
+{
+    m_horizontalSnapOffsets = WTF::move(horizontalSnapOffsets);
+}
+
+void ScrollableArea::setVerticalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> verticalSnapOffsets)
+{
+    m_verticalSnapOffsets = WTF::move(verticalSnapOffsets);
+}
+
+void ScrollableArea::clearHorizontalSnapOffsets()
+{
+    m_horizontalSnapOffsets = nullptr;
+}
+
+void ScrollableArea::clearVerticalSnapOffsets()
+{
+    m_verticalSnapOffsets = nullptr;
+}
+#endif
 
 void ScrollableArea::serviceScrollAnimations()
 {
