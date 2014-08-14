@@ -62,17 +62,16 @@ RuntimeType TypeSet::getRuntimeTypeForValue(JSValue v)
     else if (v.isObject())
         ret = TypeObject;
     else
-        CRASH();
+        ret = TypeNothing;
 
     return ret;
 }
 
-void TypeSet::addTypeForValue(JSValue v, PassRefPtr<StructureShape> shape, StructureID id) 
+void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> shape, StructureID id) 
 {
-    RuntimeType t = getRuntimeTypeForValue(v);
-    m_seenTypes = m_seenTypes | t;
+    m_seenTypes = m_seenTypes | type;
 
-    if (id && shape && !v.isString() && !v.isFunction()) {
+    if (id && shape && type != TypeString) {
         ASSERT(m_structureIDHistory.isValidKey(id));
         auto iter = m_structureIDHistory.find(id);
         if (iter == m_structureIDHistory.end()) {
@@ -218,8 +217,6 @@ String TypeSet::displayName() const
 PassRefPtr<Inspector::TypeBuilder::Array<String>> TypeSet::allPrimitiveTypeNames() const
 {
     RefPtr<Inspector::TypeBuilder::Array<String>> seen = Inspector::TypeBuilder::Array<String>::create();
-    if (m_seenTypes & TypeFunction)
-         seen->addItem("Function");
     if (m_seenTypes & TypeUndefined)
          seen->addItem("Undefined");
     if (m_seenTypes & TypeNull)

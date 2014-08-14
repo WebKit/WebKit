@@ -324,6 +324,8 @@ JSCell* JIT_OPERATION operationGetGenericPropertyEnumerator(ExecState*, JSCell*,
 EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState*, JSCell*, int32_t);
 JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);
 
+void JIT_OPERATION operationProcessTypeProfilerLog(ExecState*) WTF_INTERNAL;
+
 } // extern "C"
 
 inline P_JITOperation_ECli operationLinkFor(

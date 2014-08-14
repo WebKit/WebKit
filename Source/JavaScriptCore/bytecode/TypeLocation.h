@@ -33,22 +33,23 @@ namespace JSC {
 enum HighFidelityGlobalIDFlags {
     HighFidelityNeedsUniqueIDGeneration = -1,
     HighFidelityNoGlobalIDExists = -2,
-    HighFidelityReturnStatement = -3,
-    HighFidelityThisStatement = -4
+    HighFidelityReturnStatement = -3
 };
 
 typedef intptr_t GlobalVariableID;
 
 class TypeLocation {
 public:
-    TypeLocation() 
-        : m_divotForFunctionOffsetIfReturnStatement(UINT_MAX)
+    TypeLocation()
+        : m_lastSeenType(TypeNothing)
+        , m_divotForFunctionOffsetIfReturnStatement(UINT_MAX)
         , m_instructionTypeSet(TypeSet::create())
         , m_globalTypeSet(nullptr)
     {
     }
 
     GlobalVariableID m_globalVariableID;
+    RuntimeType m_lastSeenType;
     intptr_t m_sourceID;
     unsigned m_divotStart;
     unsigned m_divotEnd;

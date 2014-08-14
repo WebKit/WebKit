@@ -41,7 +41,7 @@ std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariable
 
     bool isNewLocation = false;
     if (m_locationMap.find(key) == m_locationMap.end()) {
-        TypeLocation* location = vm->nextLocation();
+        TypeLocation* location = vm->nextTypeLocation();
         location->m_globalVariableID = globalVariableID;
         location->m_sourceID = sourceID;
         location->m_divotStart = start;

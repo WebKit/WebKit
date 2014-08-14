@@ -417,12 +417,6 @@ public:
     
     Map::AddResult add(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
     {
-        if (m_uniqueIDMap) {
-            // Use a flag to indicate that we need to produce a unique ID. Because VM is in charge of creating uniqueIDs, 
-            // when uniqueID() is called, we check this flag to see if uniqueID creation is necessary.
-            m_uniqueIDMap->set(key, HighFidelityNeedsUniqueIDGeneration); 
-            m_registerToVariableMap->set(entry.getIndex(), key);
-        }
         return m_map.add(key, entry);
     }
     
@@ -434,10 +428,6 @@ public:
     
     Map::AddResult set(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
     {
-        if (m_uniqueIDMap) {
-            m_uniqueIDMap->set(key, HighFidelityNeedsUniqueIDGeneration); 
-            m_registerToVariableMap->set(entry.getIndex(), key);
-        }
         return m_map.set(key, entry);
     }
     
@@ -489,6 +479,8 @@ public:
     
     SymbolTable* cloneCapturedNames(VM&);
 
+    void prepareForHighFidelityTypeProfiling(const ConcurrentJITLocker&);
+
     static void visitChildren(JSCell*, SlotVisitor&);
 
     DECLARE_EXPORT_INFO;
@@ -513,9 +505,12 @@ private:
     ~SymbolTable();
 
     Map m_map;
-    std::unique_ptr<UniqueIDMap> m_uniqueIDMap;
-    std::unique_ptr<RegisterToVariableMap> m_registerToVariableMap;
-    std::unique_ptr<UniqueTypeSetMap> m_uniqueTypeSetMap;
+    struct TypeProfilingRareData {
+        UniqueIDMap m_uniqueIDMap;
+        RegisterToVariableMap m_registerToVariableMap;
+        UniqueTypeSetMap m_uniqueTypeSetMap;
+    };
+    std::unique_ptr<TypeProfilingRareData> m_typeProfilingRareData;
 
     int m_parameterCountIncludingThis;
     bool m_usesNonStrictEval;

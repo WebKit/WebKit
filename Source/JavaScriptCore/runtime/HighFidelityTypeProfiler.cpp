@@ -35,9 +35,7 @@ static const bool verbose = false;
 
 void HighFidelityTypeProfiler::logTypesForTypeLocation(TypeLocation* location)
 {
-    TypeProfilerSearchDescriptor descriptor = location->m_globalVariableID == HighFidelityReturnStatement ? TypeProfilerSearchDescriptorFunctionReturn
-        : location->m_globalVariableID == HighFidelityThisStatement ? TypeProfilerSearchDescriptorThisStatement
-        : TypeProfilerSearchDescriptorNormal;
+    TypeProfilerSearchDescriptor descriptor = location->m_globalVariableID == HighFidelityReturnStatement ? TypeProfilerSearchDescriptorFunctionReturn : TypeProfilerSearchDescriptorNormal;
 
     dataLogF("[Start, End]::[%u, %u]\n", location->m_divotStart, location->m_divotEnd);
 
@@ -46,9 +44,7 @@ void HighFidelityTypeProfiler::logTypesForTypeLocation(TypeLocation* location)
     else
         dataLog("\t\t[Entry IS NOT in system]\n");
 
-    dataLog("\t\t", location->m_globalVariableID == HighFidelityReturnStatement ? "[Return Statement]"
-        : location->m_globalVariableID == HighFidelityThisStatement ? "[This Statement]"
-        : "[Normal Statement]", "\n");
+    dataLog("\t\t", location->m_globalVariableID == HighFidelityReturnStatement ? "[Return Statement]" : "[Normal Statement]", "\n");
 
     dataLog("\t\t#Local#\n\t\t", location->m_instructionTypeSet->seenTypes().replace("\n", "\n\t\t"), "\n");
     if (location->m_globalTypeSet)
@@ -91,10 +87,7 @@ static bool descriptorMatchesTypeLocation(TypeProfilerSearchDescriptor descripto
     if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID == HighFidelityReturnStatement)  
         return true;
 
-    if (descriptor == TypeProfilerSearchDescriptorThisStatement && location->m_globalVariableID == HighFidelityThisStatement)  
-        return true;
-
-    if (descriptor == TypeProfilerSearchDescriptorNormal && location->m_globalVariableID != HighFidelityReturnStatement && location->m_globalVariableID != HighFidelityThisStatement)  
+    if (descriptor == TypeProfilerSearchDescriptorNormal && location->m_globalVariableID != HighFidelityReturnStatement)  
         return true;
 
     return false;

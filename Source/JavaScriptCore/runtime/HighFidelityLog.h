@@ -46,7 +46,12 @@ public:
         JSValue value;
         TypeLocation* location; 
         StructureID structureID;
+
+        static ptrdiff_t structureIDOffset() { return OBJECT_OFFSETOF(LogEntry, structureID); }
+        static ptrdiff_t valueOffset() { return OBJECT_OFFSETOF(LogEntry, value); }
+        static ptrdiff_t locationOffset() { return OBJECT_OFFSETOF(LogEntry, location); }
     };
+
 
     HighFidelityLog()
         : m_logStartPtr(0)
@@ -59,37 +64,29 @@ public:
     ALWAYS_INLINE void recordTypeInformationForLocation(JSValue value, TypeLocation* location)
     {
         ASSERT(m_logStartPtr);
-        ASSERT(m_currentOffset < m_highFidelityLogSize);
+
+        m_currentLogEntryPtr->location = location;
+        m_currentLogEntryPtr->value = value;
+        m_currentLogEntryPtr->structureID = (value.isCell() ? value.asCell()->structureID() : 0);
     
-        LogEntry* entry = m_logStartPtr + m_currentOffset;
-    
-        entry->location = location;
-        entry->value = value;
-        entry->structureID = (value.isCell() ? value.asCell()->structureID() : 0);
-    
-        m_currentOffset += 1;
-        if (m_currentOffset == m_highFidelityLogSize)
+        m_currentLogEntryPtr += 1;
+        if (UNLIKELY(m_currentLogEntryPtr == m_logEndPtr))
             processHighFidelityLog("Log Full");
     }
 
     void processHighFidelityLog(String);
+    LogEntry* logEndPtr() const { return m_logEndPtr; }
+
+    static ptrdiff_t logStartOffset() { return OBJECT_OFFSETOF(HighFidelityLog, m_logStartPtr); }
+    static ptrdiff_t currentLogEntryOffset() { return OBJECT_OFFSETOF(HighFidelityLog, m_currentLogEntryPtr); }
 
 private:
     void initializeHighFidelityLog();
 
     unsigned m_highFidelityLogSize;
-    size_t m_currentOffset;
     LogEntry* m_logStartPtr;
-    LogEntry* m_nextBuffer;
-
-    ByteSpinLock m_lock;
-
-    struct ThreadData {
-        public:
-        LogEntry* m_processLogPtr;
-        size_t m_proccessLogToOffset;
-        ByteSpinLocker* m_locker;
-    };
+    LogEntry* m_currentLogEntryPtr;
+    LogEntry* m_logEndPtr;
 };
 
 } //namespace JSC

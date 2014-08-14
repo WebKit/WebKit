@@ -90,7 +90,7 @@ class TypeSet : public RefCounted<TypeSet> {
 public:
     static PassRefPtr<TypeSet> create() { return adoptRef(new TypeSet); }
     TypeSet();
-    void addTypeForValue(JSValue v, PassRefPtr<StructureShape>, StructureID);
+    void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, StructureID);
     static RuntimeType getRuntimeTypeForValue(JSValue);
     JS_EXPORT_PRIVATE String seenTypes() const;
     String displayName() const;

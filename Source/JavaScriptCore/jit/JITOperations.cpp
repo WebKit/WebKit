@@ -40,6 +40,7 @@
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
+#include "HighFidelityLog.h"
 #include "HostCallReturnValue.h"
 #include "JIT.h"
 #include "JITToDFGDeferredCompilationCallback.h"
@@ -1919,6 +1920,11 @@ JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     return jsString(exec, Identifier::from(exec, index).string());
+}
+
+void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
+{
+    exec->vm().highFidelityLog()->processHighFidelityLog(ASCIILiteral("Log Full, called from inside baseline JIT"));
 }
 
 } // extern "C"

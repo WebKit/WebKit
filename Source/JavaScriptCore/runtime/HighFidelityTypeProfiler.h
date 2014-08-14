@@ -89,8 +89,7 @@ namespace JSC {
 
 enum TypeProfilerSearchDescriptor {
     TypeProfilerSearchDescriptorNormal = 1,
-    TypeProfilerSearchDescriptorThisStatement = 2,
-    TypeProfilerSearchDescriptorFunctionReturn = 3
+    TypeProfilerSearchDescriptorFunctionReturn = 2
 };
 
 class HighFidelityTypeProfiler {

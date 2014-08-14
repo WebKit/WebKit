@@ -35,6 +35,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "Completion.h"
+#include "HeapIterationScope.h"
 #include "HighFidelityLog.h"
 #include "HighFidelityTypeProfiler.h"
 #include "InjectedScript.h"
@@ -44,6 +45,7 @@
 #include "ParserError.h"
 #include "ScriptDebugServer.h"
 #include "SourceCode.h"
+#include "VMEntryScope.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/CurrentTime.h>
 
@@ -61,6 +63,7 @@ InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScri
     , m_injectedScriptManager(injectedScriptManager)
     , m_scriptDebugServer(nullptr)
     , m_enabled(false)
+    , m_isTypeProfilingEnabled(false)
 {
 }
 
@@ -199,8 +202,10 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
     static const bool verbose = false;
     VM& vm = globalVM();
     typeDescriptions = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::TypeDescription>::create();
-    if (!vm.isProfilingTypesWithHighFidelity())
+    if (!vm.isProfilingTypesWithHighFidelity()) {
+        *errorString = ASCIILiteral("The VM does not currently have Type Information.");
         return;
+    }
 
     double start = currentTimeMS();
     vm.highFidelityLog()->processHighFidelityLog("User Query");
@@ -229,6 +234,68 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
     double end = currentTimeMS();
     if (verbose)
         dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", end - start);
+}
+
+class TypeRecompiler : public MarkedBlock::VoidFunctor {
+public:
+    inline void operator()(JSCell* cell)
+    {
+        if (!cell->inherits(FunctionExecutable::info()))
+            return;
+
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
+        executable->clearCodeIfNotCompiling();
+        executable->clearUnlinkedCodeForRecompilationIfNotCompiling();
+    }
+};
+
+static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTypeProfiling)
+{
+    vm.waitForCompilationsToComplete();
+
+    bool needsToRecompile = (shouldEnableTypeProfiling ? vm.enableHighFidelityTypeProfiling() : vm.disableHighFidelityTypeProfiling());
+    if (needsToRecompile) {
+        TypeRecompiler recompiler;
+        HeapIterationScope iterationScope(vm.heap);
+        vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
+    }
+}
+
+void InspectorRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
+{
+    if (reason != InspectorDisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
+        setHighFidelityTypeProfilingEnabledState(false);
+}
+
+void InspectorRuntimeAgent::enableHighFidelityTypeProfiling(ErrorString*)
+{
+    setHighFidelityTypeProfilingEnabledState(true);
+}
+
+void InspectorRuntimeAgent::disableHighFidelityTypeProfiling(ErrorString*)
+{
+    setHighFidelityTypeProfilingEnabledState(false);
+}
+
+void InspectorRuntimeAgent::setHighFidelityTypeProfilingEnabledState(bool shouldEnableTypeProfiling)
+{
+    if (m_isTypeProfilingEnabled == shouldEnableTypeProfiling)
+        return;
+
+    m_isTypeProfilingEnabled = shouldEnableTypeProfiling;
+
+    VM& vm = globalVM();
+
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    if (vm.entryScope) {
+        vm.entryScope->setEntryScopeDidPopListener(this,
+            [=] (VM& vm, JSGlobalObject*) {
+                recompileAllJSFunctionsForTypeProfiling(vm, shouldEnableTypeProfiling); 
+            }
+        );
+    } else
+        recompileAllJSFunctionsForTypeProfiling(vm, shouldEnableTypeProfiling);
 }
 
 } // namespace Inspector

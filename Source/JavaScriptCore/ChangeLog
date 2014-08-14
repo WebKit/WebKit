@@ -1,3 +1,144 @@
+2014-08-14  Saam Barati  <sbarati@apple.com>
+
+        Allow high fidelity type profiling to be enabled and disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=135423
+
+        Reviewed by Geoffrey Garen.
+
+        - Merged op_put_to_scope_with_profile and op_get_from_scope_with_profile into
+          op_profile_types_with_high_fidelity by adding extra arguments to the opcode.
+        - Altered SymbolTable to use less memory by adding a rare data structure for 
+          type profiling.
+        - Created an interface to turn on and off type profiling from the Web
+          Inspector.
+        - Refactored how entries are written to HighFidelityLog to make it
+          easier to inline when generating machine code.
+        - Implemented op_profile_types_with_high_fidelity in the baseline JIT
+          by inlining the process of writing to the log and doing a small amount
+          of type inference optimizations.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::scopeDependentProfile): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/TypeLocation.h:
+        (JSC::TypeLocation::TypeLocation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitProfileTypesWithHighFidelity):
+        (JSC::BytecodeGenerator::emitGetFromScopeWithProfile): Deleted.
+        (JSC::BytecodeGenerator::emitPutToScopeWithProfile): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::TypeRecompiler::operator()):
+        (Inspector::recompileAllJSFunctionsForTypeProfiling):
+        (Inspector::InspectorRuntimeAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorRuntimeAgent::enableHighFidelityTypeProfiling):
+        (Inspector::InspectorRuntimeAgent::disableHighFidelityTypeProfiling):
+        (Inspector::InspectorRuntimeAgent::setHighFidelityTypeProfilingEnabledState):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        (Inspector::JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/protocol/Runtime.json:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_types_with_high_fidelity):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_types_with_high_fidelity):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::getFromScopeCommon): Deleted.
+        (JSC::LLInt::putToScopeCommon): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/HighFidelityLog.cpp:
+        (JSC::HighFidelityLog::initializeHighFidelityLog):
+        (JSC::HighFidelityLog::~HighFidelityLog):
+        (JSC::HighFidelityLog::processHighFidelityLog):
+        * runtime/HighFidelityLog.h:
+        (JSC::HighFidelityLog::LogEntry::structureIDOffset):
+        (JSC::HighFidelityLog::LogEntry::valueOffset):
+        (JSC::HighFidelityLog::LogEntry::locationOffset):
+        (JSC::HighFidelityLog::recordTypeInformationForLocation):
+        (JSC::HighFidelityLog::logEndPtr):
+        (JSC::HighFidelityLog::logStartOffset):
+        (JSC::HighFidelityLog::currentLogEntryOffset):
+        * runtime/HighFidelityTypeProfiler.cpp:
+        (JSC::HighFidelityTypeProfiler::logTypesForTypeLocation):
+        (JSC::descriptorMatchesTypeLocation):
+        * runtime/HighFidelityTypeProfiler.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::cloneCapturedNames):
+        (JSC::SymbolTable::prepareForHighFidelityTypeProfiling):
+        (JSC::SymbolTable::uniqueIDForVariable):
+        (JSC::SymbolTable::uniqueIDForRegister):
+        (JSC::SymbolTable::globalTypeSetForRegister):
+        (JSC::SymbolTable::globalTypeSetForVariable):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTable::add):
+        (JSC::SymbolTable::set):
+        * runtime/TypeLocationCache.cpp:
+        (JSC::TypeLocationCache::getTypeLocation):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::getRuntimeTypeForValue):
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::allPrimitiveTypeNames):
+        (JSC::TypeSet::addTypeForValue): Deleted.
+        * runtime/TypeSet.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::nextTypeLocation):
+        (JSC::VM::enableHighFidelityTypeProfiling):
+        (JSC::VM::disableHighFidelityTypeProfiling):
+        (JSC::VM::dumpHighFidelityProfilingTypes):
+        * runtime/VM.h:
+        (JSC::VM::nextLocation): Deleted.
+
 2014-08-14  Oliver Hunt  <oliver@apple.com>
 
         Update scope resolution to assume that the parent activation is always there

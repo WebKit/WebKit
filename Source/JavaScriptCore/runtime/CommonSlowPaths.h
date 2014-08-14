@@ -233,6 +233,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_get_structure_property_enumerator);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_generic_property_enumerator);
 SLOW_PATH_HIDDEN_DECL(slow_path_next_enumerator_pname);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_index_string);
+SLOW_PATH_HIDDEN_DECL(slow_path_profile_types_with_high_fidelity);
 
 } // namespace JSC
 

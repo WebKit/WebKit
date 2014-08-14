@@ -191,6 +191,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_enabledProfiler(nullptr)
     , m_builtinExecutables(BuiltinExecutables::create(*this))
     , m_nextUniqueVariableID(1)
+    , m_highFidelityTypeProfilingEnabledCount(0)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
@@ -283,11 +284,8 @@ VM::VM(VMType vmType, HeapType heapType)
     // won't use this.
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 
-    // FIXME: conditionally allocate this stuff based on whether or not the inspector is running OR this flag is enabled (not just if the flag is enabled).
-    if (Options::profileTypesWithHighFidelity()) {
-        m_highFidelityTypeProfiler = std::make_unique<HighFidelityTypeProfiler>();
-        m_highFidelityLog = std::make_unique<HighFidelityLog>();
-    }
+    if (Options::profileTypesWithHighFidelity())
+        enableHighFidelityTypeProfiling();
 }
 
 VM::~VM()
@@ -858,6 +856,43 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
     }
 }
 
+TypeLocation* VM::nextTypeLocation() 
+{ 
+    RELEASE_ASSERT(!!m_typeLocationInfo);
+
+    return m_typeLocationInfo->add(); 
+}
+
+bool VM::enableHighFidelityTypeProfiling()
+{
+    bool needsToRecompile = false;
+    if (!m_highFidelityTypeProfilingEnabledCount) {
+        m_highFidelityTypeProfiler = std::make_unique<HighFidelityTypeProfiler>();
+        m_highFidelityLog = std::make_unique<HighFidelityLog>();
+        m_typeLocationInfo = std::make_unique<Bag<TypeLocation>>();
+        needsToRecompile = true;
+    }
+    m_highFidelityTypeProfilingEnabledCount++;
+
+    return needsToRecompile;
+}
+
+bool VM::disableHighFidelityTypeProfiling()
+{
+    RELEASE_ASSERT(m_highFidelityTypeProfilingEnabledCount > 0);
+
+    bool needsToRecompile = false;
+    m_highFidelityTypeProfilingEnabledCount--;
+    if (!m_highFidelityTypeProfilingEnabledCount) {
+        m_highFidelityTypeProfiler.reset(nullptr);
+        m_highFidelityLog.reset(nullptr);
+        m_typeLocationInfo.reset(nullptr);
+        needsToRecompile = true;
+    }
+
+    return needsToRecompile;
+}
+
 void VM::dumpHighFidelityProfilingTypes()
 {
     if (!isProfilingTypesWithHighFidelity())
@@ -865,7 +900,7 @@ void VM::dumpHighFidelityProfilingTypes()
 
     highFidelityLog()->processHighFidelityLog("VM Dump Types");
     HighFidelityTypeProfiler* profiler = m_highFidelityTypeProfiler.get();
-    for (Bag<TypeLocation>::iterator iter = m_locationInfo.begin(); !!iter; ++iter) {
+    for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo->begin(); !!iter; ++iter) {
         TypeLocation* location = *iter;
         profiler->logTypesForTypeLocation(location);
     }

@@ -137,7 +137,14 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.moveToDestinationIfNeeded(dst, generator.thisRegister());
+
+    RegisterID* result = generator.moveToDestinationIfNeeded(dst, generator.thisRegister());
+    if (generator.isProfilingTypesWithHighFidelity()) {
+        generator.emitProfileTypesWithHighFidelity(generator.thisRegister(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
+        static const unsigned thisLength = 4;
+        generator.emitHighFidelityTypeProfilingExpressionInfo(position(), JSTextPosition(-1, position().offset + thisLength, -1));
+    }
+    return result;
 }
 
 // ------------------------------ ResolveNode ----------------------------------
@@ -153,7 +160,7 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
         if (dst == generator.ignoredResult())
             return 0;
         if (generator.isProfilingTypesWithHighFidelity()) {
-            generator.emitProfileTypesWithHighFidelity(local.get(), ProfileTypesBytecodeHasGlobalID);
+            generator.emitProfileTypesWithHighFidelity(local.get(), ProfileTypesBytecodeHasGlobalID, nullptr);
             generator.emitHighFidelityTypeProfilingExpressionInfo(m_position, JSTextPosition(-1, m_position.offset + m_ident.length(), -1));
         }
         return generator.moveToDestinationIfNeeded(dst, local.get());
@@ -162,13 +169,13 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     JSTextPosition divot = m_start + m_ident.length();
     generator.emitExpressionInfo(divot, m_start, divot);
     RefPtr<RegisterID> scope = generator.emitResolveScope(generator.tempDestination(dst), m_ident);
-    RegisterID* ret;
+    RegisterID* finalDest = generator.finalDestination(dst);
+    RegisterID* result = generator.emitGetFromScope(finalDest, scope.get(), m_ident, ThrowIfNotFound);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        ret = generator.emitGetFromScopeWithProfile(generator.finalDestination(dst), scope.get(), m_ident, ThrowIfNotFound);
+        generator.emitProfileTypesWithHighFidelity(finalDest, ProfileTypesBytecodeGetFromScope, &m_ident);
         generator.emitHighFidelityTypeProfilingExpressionInfo(m_position, JSTextPosition(-1, m_position.offset + m_ident.length(), -1));
-    } else
-        ret = generator.emitGetFromScope(generator.finalDestination(dst), scope.get(), m_ident, ThrowIfNotFound);
-    return ret;
+    }
+    return result;
 }
 
 // ------------------------------ ArrayNode ------------------------------------
@@ -387,7 +394,7 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
     RegisterID* finalDest = generator.finalDestination(dst);
     RegisterID* ret = generator.emitGetByVal(finalDest, base.get(), property);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(finalDest, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(finalDest, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -413,7 +420,7 @@ nonArgumentsPath:
     RegisterID* finalDest = generator.finalDestination(dst);
     RegisterID* ret = generator.emitGetById(finalDest, base, m_ident);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(finalDest, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(finalDest, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -497,7 +504,7 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
     generator.emitLoad(callArguments.thisRegister(), jsUndefined());
     RegisterID* ret = generator.emitCall(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -518,7 +525,7 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
         // local variable, then it's not one of our built-in constructors.
         RegisterID* ret = generator.emitCall(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
         if (generator.isProfilingTypesWithHighFidelity()) {
-            generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+            generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
             generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
         }
         return ret;
@@ -534,7 +541,7 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
     generator.emitGetFromScope(func.get(), callArguments.thisRegister(), m_ident, ThrowIfNotFound);
     RegisterID* ret = generator.emitCall(returnValue.get(), func.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -553,7 +560,7 @@ RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, 
     generator.emitMove(callArguments.thisRegister(), base.get());
     RegisterID* ret = generator.emitCall(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -571,7 +578,7 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     generator.emitGetById(function.get(), callArguments.thisRegister(), m_ident);
     RegisterID* ret = generator.emitCall(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -645,7 +652,7 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
         generator.emitLabel(end.get());
     }
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return returnValue.get();
@@ -759,7 +766,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         generator.emitLabel(end.get());
     }
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(returnValue.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return returnValue.get();
@@ -814,11 +821,11 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
     RefPtr<RegisterID> scope = generator.emitResolveScope(generator.newTemporary(), ident);
     RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), ident, ThrowIfNotFound);
     RefPtr<RegisterID> oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), value.get(), m_operator);
+    generator.emitPutToScope(scope.get(), ident, value.get(), ThrowIfNotFound);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitPutToScopeWithProfile(scope.get(), ident, value.get(), ThrowIfNotFound);
+        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodePutToScope, &ident);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
-    } else
-        generator.emitPutToScope(scope.get(), ident, value.get(), ThrowIfNotFound);
+    }
 
     return oldValue.get();
 }
@@ -842,7 +849,7 @@ RegisterID* PostfixNode::emitBracket(BytecodeGenerator& generator, RegisterID* d
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitPutByVal(base.get(), property.get(), value.get());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return generator.moveToDestinationIfNeeded(dst, oldValue);
@@ -866,7 +873,7 @@ RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitPutById(base.get(), ident, value.get());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return generator.moveToDestinationIfNeeded(dst, oldValue);
@@ -1002,11 +1009,11 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
     RefPtr<RegisterID> scope = generator.emitResolveScope(generator.tempDestination(dst), ident);
     RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), ident, ThrowIfNotFound);
     emitIncOrDec(generator, value.get(), m_operator);
+    generator.emitPutToScope(scope.get(), ident, value.get(), ThrowIfNotFound);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitPutToScopeWithProfile(scope.get(), ident, value.get(), ThrowIfNotFound);
+        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodePutToScope, &ident);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
-    } else 
-        generator.emitPutToScope(scope.get(), ident, value.get(), ThrowIfNotFound);
+    }
     return generator.moveToDestinationIfNeeded(dst, value.get());
 }
 
@@ -1027,7 +1034,7 @@ RegisterID* PrefixNode::emitBracket(BytecodeGenerator& generator, RegisterID* ds
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitPutByVal(base.get(), property.get(), value);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(value, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(value, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
@@ -1049,7 +1056,7 @@ RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitPutById(base.get(), ident, value);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(value, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(value, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
@@ -1520,13 +1527,12 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     RefPtr<RegisterID> scope = generator.emitResolveScope(generator.newTemporary(), m_ident);
     RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), m_ident, ThrowIfNotFound);
     RefPtr<RegisterID> result = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()), this);
-    RegisterID* ret; 
+    RegisterID* returnResult = generator.emitPutToScope(scope.get(), m_ident, result.get(), ThrowIfNotFound);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        ret = generator.emitPutToScopeWithProfile(scope.get(), m_ident, result.get(), ThrowIfNotFound);
+        generator.emitProfileTypesWithHighFidelity(result.get(), ProfileTypesBytecodePutToScope, &m_ident);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
-    } else
-        ret = generator.emitPutToScope(scope.get(), m_ident, result.get(), ThrowIfNotFound);
-    return ret;
+    }
+    return returnResult;
 }
 
 // ------------------------------ AssignResolveNode -----------------------------------
@@ -1559,13 +1565,12 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         dst = 0;
     RefPtr<RegisterID> result = generator.emitNode(dst, m_right);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    RegisterID* ret;
+    RegisterID* returnResult = generator.emitPutToScope(scope.get(), m_ident, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        ret = generator.emitPutToScopeWithProfile(scope.get(), m_ident, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
+        generator.emitProfileTypesWithHighFidelity(result.get(), ProfileTypesBytecodePutToScope, &m_ident);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
-    } else
-        ret = generator.emitPutToScope(scope.get(), m_ident, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
-    return ret;
+    } 
+    return returnResult;
 }
 
 // ------------------------------ AssignDotNode -----------------------------------
@@ -1579,7 +1584,7 @@ RegisterID* AssignDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     RegisterID* forwardResult = (dst == generator.ignoredResult()) ? result : generator.moveToDestinationIfNeeded(generator.tempDestination(result), result);
     generator.emitPutById(base.get(), m_ident, forwardResult);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(forwardResult, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(forwardResult, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return generator.moveToDestinationIfNeeded(dst, forwardResult);
@@ -1598,7 +1603,7 @@ RegisterID* ReadModifyDotNode::emitBytecode(BytecodeGenerator& generator, Regist
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* ret = generator.emitPutById(base.get(), m_ident, updatedValue);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(updatedValue, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(updatedValue, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return ret;
@@ -1624,7 +1629,7 @@ RegisterID* AssignBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     RegisterID* forwardResult = (dst == generator.ignoredResult()) ? result : generator.moveToDestinationIfNeeded(generator.tempDestination(result), result);
     generator.emitPutByVal(base.get(), property.get(), forwardResult);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(forwardResult, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(forwardResult, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     return generator.moveToDestinationIfNeeded(dst, forwardResult);
@@ -1644,7 +1649,7 @@ RegisterID* ReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, Re
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitPutByVal(base.get(), property.get(), updatedValue);
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(updatedValue, ProfileTypesBytecodeDoesNotHaveGlobalID);
+        generator.emitProfileTypesWithHighFidelity(updatedValue, ProfileTypesBytecodeDoesNotHaveGlobalID, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
 
@@ -2251,7 +2256,7 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     RefPtr<RegisterID> returnRegister = m_value ? generator.emitNode(dst, m_value) : generator.emitLoad(dst, jsUndefined());
     if (generator.isProfilingTypesWithHighFidelity()) {
-        generator.emitProfileTypesWithHighFidelity(returnRegister.get(), ProfileTypesBytecodeFunctionReturnStatement);
+        generator.emitProfileTypesWithHighFidelity(returnRegister.get(), ProfileTypesBytecodeFunctionReturnStatement, nullptr);
         generator.emitHighFidelityTypeProfilingExpressionInfo(divotStart(), divotEnd());
     }
     if (generator.scopeDepth()) {
@@ -2582,17 +2587,13 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 void FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     if (generator.isProfilingTypesWithHighFidelity()) {
-        JSTextPosition start(-1, m_startStartOffset, -1); // This divot is at the open brace of the function.
-        JSTextPosition end(-1, m_startStartOffset + 1, -1);
-        generator.emitProfileTypesWithHighFidelity(generator.thisRegister(), ProfileTypesBytecodeFunctionThisObject);
-        generator.emitHighFidelityTypeProfilingExpressionInfo(start, end);
         for (size_t i = 0; i < m_parameters->size(); i++) {
             // FIXME: Handle Destructuring assignments into arguments.
             if (!m_parameters->at(i)->isBindingNode())
                 continue;
             BindingNode* parameter = static_cast<BindingNode*>(m_parameters->at(i));
             RegisterID reg(CallFrame::argumentOffset(i));
-            generator.emitProfileTypesWithHighFidelity(&reg, ProfileTypesBytecodeFunctionArgument);
+            generator.emitProfileTypesWithHighFidelity(&reg, ProfileTypesBytecodeFunctionArgument, nullptr);
             generator.emitHighFidelityTypeProfilingExpressionInfo(parameter->divotStart(), parameter->divotEnd());
         }
     }
@@ -2614,7 +2615,7 @@ void FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     if (!returnNode) {
         RegisterID* r0 = generator.isConstructor() ? generator.thisRegister() : generator.emitLoad(0, jsUndefined());
         if (generator.isProfilingTypesWithHighFidelity())
-            generator.emitProfileTypesWithHighFidelity(r0, ProfileTypesBytecodeFunctionReturnStatement); // Do not emit expression info for this profile because it's not in the user's source code.
+            generator.emitProfileTypesWithHighFidelity(r0, ProfileTypesBytecodeFunctionReturnStatement, nullptr); // Do not emit expression info for this profile because it's not in the user's source code.
         ASSERT(startOffset() >= lineStartOffset());
         generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
         generator.emitReturn(r0);

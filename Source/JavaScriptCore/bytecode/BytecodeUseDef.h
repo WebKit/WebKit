@@ -106,7 +106,6 @@ void computeUsesForBytecodeOffset(
     case op_put_by_id_transition_normal_out_of_line:
     case op_put_by_id_out_of_line:
     case op_put_by_id:
-    case op_put_to_scope_with_profile:
     case op_put_to_scope: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
@@ -123,7 +122,6 @@ void computeUsesForBytecodeOffset(
     case op_init_global_const_nop:
     case op_init_global_const:
     case op_push_name_scope:
-    case op_get_from_scope_with_profile:
     case op_get_from_scope:
     case op_to_primitive:
     case op_get_by_id:
@@ -251,7 +249,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_push_name_scope:
     case op_push_with_scope:
     case op_put_to_scope:
-    case op_put_to_scope_with_profile:
     case op_pop_scope:
     case op_end:
     case op_profile_will_call:
@@ -321,7 +318,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_func_exp:
     case op_call_varargs:
     case op_construct_varargs:
-    case op_get_from_scope_with_profile:
     case op_get_from_scope:
     case op_call:
     case op_call_eval:

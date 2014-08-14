@@ -48,10 +48,12 @@ void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(InspectorFrontendCh
     m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
+
+    InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
 VM& JSGlobalObjectRuntimeAgent::globalVM()

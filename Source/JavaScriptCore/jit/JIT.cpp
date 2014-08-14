@@ -38,6 +38,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "ArityCheckFailReturnThunks.h"
 #include "CodeBlock.h"
 #include "DFGCapabilities.h"
+#include "HighFidelityLog.h"
 #include "Interpreter.h"
 #include "JITInlines.h"
 #include "JITOperations.h"
@@ -267,6 +268,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_inc)
         DEFINE_OP(op_profile_did_call)
         DEFINE_OP(op_profile_will_call)
+        DEFINE_OP(op_profile_types_with_high_fidelity)
         DEFINE_OP(op_push_name_scope)
         DEFINE_OP(op_push_with_scope)
         case op_put_by_id_out_of_line:
@@ -498,6 +500,10 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_codeBlock->m_shouldAlwaysBeInlined &= canInline(level) && DFG::mightInlineFunction(m_codeBlock);
         break;
     }
+
+    // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_types_with_high_fidelity.
+    if (m_vm->isProfilingTypesWithHighFidelity())
+        m_vm->highFidelityLog()->processHighFidelityLog(ASCIILiteral("Preparing for JIT compilation."));
     
     if (Options::showDisassembly() || m_vm->m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new JITDisassembler(m_codeBlock));

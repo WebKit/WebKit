@@ -1381,15 +1381,5 @@ _llint_op_init_global_const_nop:
     dispatch(5)
 
 _llint_op_profile_types_with_high_fidelity:
-    callSlowPath(_llint_slow_path_profile_types_with_high_fidelity)
-    dispatch(4)
-
-_llint_op_put_to_scope_with_profile:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_to_scope_with_profile)
-    dispatch(8)
-
-_llint_op_get_from_scope_with_profile:
-    traceExecution()
-    callSlowPath(_llint_slow_path_get_from_scope_with_profile)
-    dispatch(9)
+    callSlowPath(_slow_path_profile_types_with_high_fidelity)
+    dispatch(6)

@@ -67,13 +67,15 @@ void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendC
     m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void PageRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void PageRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
     m_backendDispatcher.clear();
 
     String errorString;
     disable(&errorString);
+
+    InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
 void PageRuntimeAgent::enable(ErrorString* errorString)

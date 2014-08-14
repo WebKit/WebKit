@@ -223,12 +223,13 @@ namespace JSC {
         TryData* tryData;
     };
 
-    enum ProfileTypesWithHighFidelityBytecodeFlag { 
+    enum ProfileTypesWithHighFidelityBytecodeFlag {
+        ProfileTypesBytecodePutToScope,
+        ProfileTypesBytecodeGetFromScope,
         ProfileTypesBytecodeHasGlobalID,
         ProfileTypesBytecodeDoesNotHaveGlobalID,
         ProfileTypesBytecodeFunctionArgument,
-        ProfileTypesBytecodeFunctionThisObject,
-        ProfileTypesBytecodeFunctionReturnStatement  
+        ProfileTypesBytecodeFunctionReturnStatement
     };
 
     class BytecodeGenerator {
@@ -410,7 +411,7 @@ namespace JSC {
         }
 
         void emitHighFidelityTypeProfilingExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
-        void emitProfileTypesWithHighFidelity(RegisterID* dst, ProfileTypesWithHighFidelityBytecodeFlag);
+        void emitProfileTypesWithHighFidelity(RegisterID* registerToProfile, ProfileTypesWithHighFidelityBytecodeFlag, const Identifier*);
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
@@ -477,9 +478,7 @@ namespace JSC {
         ResolveType resolveType();
         RegisterID* emitResolveScope(RegisterID* dst, const Identifier&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode);
-        RegisterID* emitGetFromScopeWithProfile(RegisterID* dst, RegisterID* scope, const Identifier&, ResolveMode);
         RegisterID* emitPutToScope(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode);
-        RegisterID* emitPutToScopeWithProfile(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode);
 
         PassRefPtr<Label> emitLabel(Label*);
         void emitLoopHint();

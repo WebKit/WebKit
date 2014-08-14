@@ -1,3 +1,20 @@
+2014-08-14  Saam Barati  <sbarati@apple.com>
+
+        Allow high fidelity type profiling to be enabled and disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=135423
+
+        Reviewed by Geoffrey Garen.
+
+        PageRuntimeAgent and WorkerRuntimeAgent now call their super 
+        class's (InspectorRuntimeAgent) implementation of willDestroyFrontendAndBackend
+        to give InspectorRuntimeAgent a chance to recompile all JavaScript
+        functions, if necessary, for type profiling.
+
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::willDestroyFrontendAndBackend):
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::willDestroyFrontendAndBackend):
+
 2014-08-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Correct build when DerivedSources location not supplied by build environment

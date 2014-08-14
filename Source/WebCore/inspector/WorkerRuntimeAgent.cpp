@@ -59,9 +59,11 @@ void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFronten
     m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
-void WorkerRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason)
+void WorkerRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     m_backendDispatcher.clear();
+
+    InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }
 
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)

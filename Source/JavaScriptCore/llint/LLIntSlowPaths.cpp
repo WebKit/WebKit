@@ -540,15 +540,6 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_profile_types_with_high_fidelity)
-{
-    LLINT_BEGIN();
-    TypeLocation* location = pc[2].u.location;
-    JSValue val = LLINT_OP_C(1).jsValue();
-    vm.highFidelityLog()->recordTypeInformationForLocation(val, location);
-    LLINT_END_IMPL();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
 {
     LLINT_BEGIN();
@@ -1375,8 +1366,10 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
     LLINT_RETURN(JSScope::resolve(exec, exec->scope(), ident));
 }
 
-static JSValue getFromScopeCommon(ExecState* exec, Instruction* pc, VM& vm)
+LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
 {
+    LLINT_BEGIN();
+
     const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(2).jsValue());
     ResolveModeAndType modeAndType(pc[4].u.operand);
@@ -1384,8 +1377,8 @@ static JSValue getFromScopeCommon(ExecState* exec, Instruction* pc, VM& vm)
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
         if (modeAndType.mode() == ThrowIfNotFound)
-            return exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
-        return jsUndefined();
+            LLINT_RETURN(exec->vm().throwException(exec, createUndefinedVariableError(exec, ident)));
+        LLINT_RETURN(jsUndefined());
     }
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
@@ -1402,27 +1395,13 @@ static JSValue getFromScopeCommon(ExecState* exec, Instruction* pc, VM& vm)
         }
     }
 
-    return slot.getValue(exec, ident);
+    LLINT_RETURN(slot.getValue(exec, ident));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
+LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
 {
     LLINT_BEGIN();
-    JSValue value = getFromScopeCommon(exec, pc, vm);
-    LLINT_RETURN(value);
-}
 
-LLINT_SLOW_PATH_DECL(slow_path_get_from_scope_with_profile)
-{
-    LLINT_BEGIN();
-    JSValue value = getFromScopeCommon(exec, pc, vm);
-    TypeLocation* location = pc[8].u.location;
-    vm.highFidelityLog()->recordTypeInformationForLocation(value, location);
-    LLINT_RETURN(value);
-}
-
-static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc)
-{
     CodeBlock* codeBlock = exec->codeBlock();
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     JSObject* scope = jsCast<JSObject*>(LLINT_OP(1).jsValue());
@@ -1430,35 +1409,13 @@ static JSObject* putToScopeCommon(ExecState* exec, Instruction* pc)
     ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
 
     if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident))
-        return createUndefinedVariableError(exec, ident);
+        LLINT_THROW(createUndefinedVariableError(exec, ident));
 
     PutPropertySlot slot(scope, codeBlock->isStrictMode());
     scope->methodTable()->put(scope, exec, ident, value, slot);
     
     CommonSlowPaths::tryCachePutToScopeGlobal(exec, codeBlock, pc, scope, modeAndType, slot);
 
-    return nullptr;
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
-{
-    LLINT_BEGIN();
-    JSObject* error = putToScopeCommon(exec, pc);
-    if (error)
-        LLINT_THROW(error);
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_put_to_scope_with_profile)
-{
-    // The format of this instruction is the same as put_to_scope with a TypeLocation appended: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
-    LLINT_BEGIN();
-    JSObject* error = putToScopeCommon(exec, pc);
-    if (error)
-        LLINT_THROW(error);
-    TypeLocation* location = pc[7].u.location;
-    JSValue val = LLINT_OP_C(3).jsValue();
-    vm.highFidelityLog()->recordTypeInformationForLocation(val, location);
     LLINT_END();
 }
 

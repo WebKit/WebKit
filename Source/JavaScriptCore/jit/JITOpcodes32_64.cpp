@@ -1306,6 +1306,12 @@ void JIT::emit_op_to_index_string(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
+void JIT::emit_op_profile_types_with_high_fidelity(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_profile_types_with_high_fidelity);
+    slowPathCall.call();
+}
+
 } // namespace JSC
 
 #endif // USE(JSVALUE32_64)

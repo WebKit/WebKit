@@ -1020,8 +1020,6 @@ private:
             m_rareData = adoptPtr(new RareData);
     }
 
-    TypeLocation* scopeDependentProfile(ResolveOp, const Identifier&, size_t);
-    
 #if ENABLE(JIT)
     void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
     void resetStubDuringGCInternal(RepatchBuffer&, StructureStubInfo&);

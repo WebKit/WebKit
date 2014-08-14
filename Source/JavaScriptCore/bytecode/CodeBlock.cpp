@@ -1523,7 +1523,6 @@ void CodeBlock::dumpBytecode(
                 operand);
             break;
         }
-        case op_put_to_scope_with_profile:
         case op_put_to_scope: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
@@ -1532,8 +1531,6 @@ void CodeBlock::dumpBytecode(
             ++it; // Structure
             int operand = (++it)->u.operand; // Operand
             printLocationAndOp(out, exec, location, it, "put_to_scope");
-            if (opcode == op_put_to_scope_with_profile)
-                ++it;
             out.printf("%s, %s, %s, %u<%s|%s>, <structure>, %d",
                 registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(),
                 modeAndType.operand(), resolveModeName(modeAndType.mode()), resolveTypeName(modeAndType.type()),
@@ -1716,6 +1713,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     bool didCloneSymbolTable = false;
     
     if (SymbolTable* symbolTable = unlinkedCodeBlock->symbolTable()) {
+        if (m_vm->isProfilingTypesWithHighFidelity()) {
+            ConcurrentJITLocker locker(symbolTable->m_lock);
+            symbolTable->prepareForHighFidelityTypeProfiling(locker);
+        }
+
         if (codeType() == FunctionCode && symbolTable->captureCount()) {
             m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable->cloneCapturedNames(*m_vm));
             didCloneSymbolTable = true;
@@ -1949,13 +1951,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
 
-        case op_get_from_scope_with_profile:
         case op_get_from_scope: {
-            int offset = (pc[0].u.opcode == op_get_from_scope_with_profile ? 2 : 1);
-            ValueProfile* profile = &m_valueProfiles[pc[opLength - offset].u.operand];
+            ValueProfile* profile = &m_valueProfiles[pc[opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
-            instructions[i + opLength - offset] = profile;
+            instructions[i + opLength - 1] = profile;
 
             // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[3].u.operand);
@@ -1969,16 +1969,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
 
-            if (pc[0].u.opcode == op_get_from_scope_with_profile) {
-                // The format of this instruction is: get_from_scope_with_profile dst, scope, id, ResolveModeAndType, Structure, Operand, ..., TypeLocation
-                size_t instructionOffset = i + opLength - 1;
-                TypeLocation* location = scopeDependentProfile(op, ident, instructionOffset);
-                instructions[i + 8].u.location = location;
-            }
             break;
         }
 
-        case op_put_to_scope_with_profile:
         case op_put_to_scope: {
             // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[2].u.operand);
@@ -1995,39 +1988,55 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
 
-            if (pc[0].u.opcode == op_put_to_scope_with_profile) {
-                // The format of this instruction is: put_to_scope_with_profile scope, id, value, ResolveModeAndType, Structure, Operand, TypeLocation*
-                size_t instructionOffset = i + opLength - 1;
-                TypeLocation* location = scopeDependentProfile(op, ident, instructionOffset);
-                instructions[i + 7].u.location = location;
-            }
             break;
         }
 
         case op_profile_types_with_high_fidelity: {
+            // The format of this instruction is: op_profile_types_with_high_fidelity regToProfile, TypeLocation*, flag, identifier?, resolveType?
             size_t instructionOffset = i + opLength - 1;
             unsigned divotStart, divotEnd;
             GlobalVariableID globalVariableID;
             RefPtr<TypeSet> globalTypeSet;
             bool shouldAnalyze = m_unlinkedCode->highFidelityTypeProfileExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
-            VirtualRegister virtualRegister(pc[1].u.operand);
-            SymbolTable* symbolTable = m_symbolTable.get();
-
+            VirtualRegister profileRegister(pc[1].u.operand);
             ProfileTypesWithHighFidelityBytecodeFlag flag = static_cast<ProfileTypesWithHighFidelityBytecodeFlag>(pc[3].u.operand);
+            SymbolTable* symbolTable = nullptr;
+
             switch (flag) {
+            case ProfileTypesBytecodePutToScope:
+            case ProfileTypesBytecodeGetFromScope: {
+                const Identifier& ident = identifier(pc[4].u.operand);
+                ResolveType type = static_cast<ResolveType>(pc[5].u.operand);
+                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, (flag == ProfileTypesBytecodeGetFromScope ? Get : Put), type);
+
+                // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
+                // https://bugs.webkit.org/show_bug.cgi?id=135184
+                if (op.type == ClosureVar)
+                    symbolTable = op.activation->symbolTable();
+                else if (op.type == GlobalVar)
+                    symbolTable = m_globalObject.get()->symbolTable();
+                
+                if (symbolTable) {
+                    ConcurrentJITLocker locker(symbolTable->m_lock);
+                    // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
+                    symbolTable->prepareForHighFidelityTypeProfiling(locker);
+                    globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
+                    globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
+                } else
+                    globalVariableID = HighFidelityNoGlobalIDExists;
+
+                break;
+            }
             case ProfileTypesBytecodeHasGlobalID: {
+                symbolTable = m_symbolTable.get();
                 ConcurrentJITLocker locker(symbolTable->m_lock);
-                globalVariableID = symbolTable->uniqueIDForRegister(locker, virtualRegister.offset(), *vm());
-                globalTypeSet = symbolTable->globalTypeSetForRegister(locker, virtualRegister.offset(), *vm());
+                globalVariableID = symbolTable->uniqueIDForRegister(locker, profileRegister.offset(), *vm());
+                globalTypeSet = symbolTable->globalTypeSetForRegister(locker, profileRegister.offset(), *vm());
                 break;
             }
             case ProfileTypesBytecodeDoesNotHaveGlobalID: 
             case ProfileTypesBytecodeFunctionArgument: {
                 globalVariableID = HighFidelityNoGlobalIDExists;
-                break;
-            }
-            case ProfileTypesBytecodeFunctionThisObject: {
-                globalVariableID = HighFidelityThisStatement;
                 break;
             }
             case ProfileTypesBytecodeFunctionReturnStatement: {
@@ -2043,7 +2052,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             }
             }
 
-            std::pair<TypeLocation*, bool> locationPair = vm()->highFidelityTypeProfiler()->typeLocationCache()->getTypeLocation(globalVariableID, m_ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
+            std::pair<TypeLocation*, bool> locationPair = vm()->highFidelityTypeProfiler()->typeLocationCache()->getTypeLocation(globalVariableID,
+                m_ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
             TypeLocation* location = locationPair.first;
             bool isNewLocation = locationPair.second;
 
@@ -2524,9 +2534,7 @@ void CodeBlock::finalizeUnconditionally()
                 activation.clear();
                 break;
             }
-            case op_get_from_scope_with_profile:
             case op_get_from_scope:
-            case op_put_to_scope_with_profile:
             case op_put_to_scope: {
                 ResolveModeAndType modeAndType =
                     ResolveModeAndType(curInstruction[4].u.operand);
@@ -3934,36 +3942,5 @@ DFG::CapabilityLevel CodeBlock::capabilityLevel()
     return result;
 }
 #endif
-
-TypeLocation* CodeBlock::scopeDependentProfile(ResolveOp op, const Identifier& ident, size_t instructionOffset)
-{
-    unsigned divotStart, divotEnd;
-    bool shouldAnalyze = m_unlinkedCode->highFidelityTypeProfileExpressionInfoForBytecodeOffset(instructionOffset, divotStart, divotEnd);
-    GlobalVariableID globalVariableID;
-    RefPtr<TypeSet> globalTypeSet;
-
-    // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
-    SymbolTable* symbolTable = nullptr;
-    if (op.type == ClosureVar) 
-        symbolTable = op.activation->symbolTable();
-    else if (op.type == GlobalVar)
-        symbolTable = m_globalObject.get()->symbolTable();
-    
-    if (symbolTable) {
-        ConcurrentJITLocker locker(symbolTable->m_lock);
-        globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
-        globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
-    } else
-        globalVariableID = HighFidelityNoGlobalIDExists;
-
-    std::pair<TypeLocation*, bool> locationPair = vm()->highFidelityTypeProfiler()->typeLocationCache()->getTypeLocation(globalVariableID, m_ownerExecutable->sourceID(), divotStart, divotEnd, globalTypeSet, vm());
-    TypeLocation* location = locationPair.first;
-    bool isNewLocation = locationPair.second;
-
-    if (shouldAnalyze & isNewLocation)
-        vm()->highFidelityTypeProfiler()->insertNewLocation(location);
-
-    return location;
-}
 
 } // namespace JSC

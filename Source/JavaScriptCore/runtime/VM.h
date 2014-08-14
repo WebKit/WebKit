@@ -496,9 +496,11 @@ namespace JSC {
         BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
         bool isProfilingTypesWithHighFidelity() { return !!m_highFidelityTypeProfiler; }
+        bool enableHighFidelityTypeProfiling();
+        bool disableHighFidelityTypeProfiling();
         HighFidelityLog* highFidelityLog() { return m_highFidelityLog.get(); }
         HighFidelityTypeProfiler* highFidelityTypeProfiler() { return m_highFidelityTypeProfiler.get(); }
-        TypeLocation* nextLocation() { return m_locationInfo.add(); } //TODO: possible optmization: when codeblocks die, report which locations are no longer being changed so we don't walk over them
+        TypeLocation* nextTypeLocation();
         JS_EXPORT_PRIVATE void dumpHighFidelityProfilingTypes();
         GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
 
@@ -553,7 +555,8 @@ namespace JSC {
         std::unique_ptr<HighFidelityTypeProfiler> m_highFidelityTypeProfiler;
         std::unique_ptr<HighFidelityLog> m_highFidelityLog;
         GlobalVariableID m_nextUniqueVariableID;
-        Bag<TypeLocation> m_locationInfo;
+        unsigned m_highFidelityTypeProfilingEnabledCount;
+        std::unique_ptr<Bag<TypeLocation>> m_typeLocationInfo;
     };
 
 #if ENABLE(GC_VALIDATION)

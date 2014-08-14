@@ -43,49 +43,47 @@ void HighFidelityLog::initializeHighFidelityLog()
     ASSERT(!m_logStartPtr);
     m_highFidelityLogSize = 50000;
     m_logStartPtr = new LogEntry[m_highFidelityLogSize];
-    m_nextBuffer = new LogEntry[m_highFidelityLogSize];
-    m_currentOffset = 0;
+    m_currentLogEntryPtr = m_logStartPtr;
+    m_logEndPtr = m_logStartPtr + m_highFidelityLogSize;
 }
 
 HighFidelityLog::~HighFidelityLog()
 {
     delete[] m_logStartPtr;
-    delete[] m_nextBuffer;
 }
 
 void HighFidelityLog::processHighFidelityLog(String reason)
 {
-    if (!m_currentOffset)
-        return;
-
     if (verbose)
         dataLog("Process caller:'", reason,"'");
 
     double before = currentTimeMS();
     LogEntry* entry = m_logStartPtr;
     HashMap<StructureID, RefPtr<StructureShape>> seenShapes;
-    size_t i = 0;
-    while (i < m_currentOffset) {
+    while (entry != m_currentLogEntryPtr) {
         StructureID id = entry->structureID;
         RefPtr<StructureShape> shape; 
+        JSValue value = entry->value;
         if (id) {
             auto iter = seenShapes.find(id);
             if (iter == seenShapes.end()) {
-                shape = Heap::heap(entry->value.asCell())->structureIDTable().get(entry->structureID)->toStructureShape(entry->value);
+                shape = Heap::heap(value.asCell())->structureIDTable().get(entry->structureID)->toStructureShape(value);
                 seenShapes.set(id, shape);
-            } else 
+            } else
                 shape = iter->value;
         }
 
-        if (entry->location->m_globalTypeSet)
-            entry->location->m_globalTypeSet->addTypeForValue(entry->value, shape, id);
-        entry->location->m_instructionTypeSet->addTypeForValue(entry->value, shape, id);
+        RuntimeType type = TypeSet::getRuntimeTypeForValue(value);
+        TypeLocation* location = entry->location;
+        location->m_lastSeenType = type;
+        if (location->m_globalTypeSet)
+            location->m_globalTypeSet->addTypeInformation(type, shape, id);
+        location->m_instructionTypeSet->addTypeInformation(type, shape, id);
 
         entry++;
-        i++;
     }
 
-    m_currentOffset = 0;
+    m_currentLogEntryPtr = m_logStartPtr;
 
     if (verbose) {
         double after = currentTimeMS();
