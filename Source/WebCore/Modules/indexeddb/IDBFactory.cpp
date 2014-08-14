@@ -46,6 +46,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
@@ -70,7 +71,7 @@ static bool isContextValid(ScriptExecutionContext* context)
     ASSERT(context->isDocument() || context->isWorkerGlobalScope());
     if (context->isDocument()) {
         Document* document = toDocument(context);
-        return document->frame() && document->page();
+        return document->frame() && document->page() && (!document->page()->usesEphemeralSession() || SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->securityOrigin()->protocol()));
     }
     return true;
 }
