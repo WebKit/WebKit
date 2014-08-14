@@ -402,6 +402,8 @@ std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlight
         return std::chrono::milliseconds::zero();
 
     auto minimumTimeUntilHighlightShouldBeShown = 200_ms;
+    if (m_webPage.corePage()->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
+        minimumTimeUntilHighlightShouldBeShown = 1000_ms;
 
     bool mousePressed = false;
     if (Frame* mainFrame = m_webPage.mainFrame())
