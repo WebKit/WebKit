@@ -1,3 +1,23 @@
+2014-08-14  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed.  Removing empty directories.
+
+        * qt: Removed.
+        * qt/declarative: Removed.
+        * qt/docs: Removed.
+        * qt/docs/webkitsnippets: Removed.
+        * qt/examples: Removed.
+        * qt/tests: Removed.
+        * qt/tests/MIMESniffing: Removed.
+        * qt/tests/benchmarks: Removed.
+        * qt/tests/qgraphicswebview: Removed.
+        * qt/tests/qwebelement: Removed.
+        * qt/tests/qwebframe: Removed.
+        * qt/tests/qwebhistory: Removed.
+        * qt/tests/qwebpage: Removed.
+        * qt/tests/qwebsecurityorigin: Removed.
+        * qt/tests/qwebview: Removed.
+
 2014-08-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r172504
