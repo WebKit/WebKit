@@ -1,3 +1,22 @@
+2014-08-13  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/135909> Move helper applications out of the root of the framework.
+
+        As described in <https://developer.apple.com/library/mac/technotes/tn2206/>, for bundles containing
+        a Versions directory there may be no other content at the top level of the bundle other than symlinks.
+        Upcoming changes to code signing will prevent bundles that violate this rule from being signed.
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig: Define a configuration setting that points to the content directory
+        of the framework. On OS X this is Versions/A. On iOS, where frameworks are shallow, this is the top level.
+        * Configurations/BaseLegacyProcess.xcconfig: Install the legacy processes in the content directory
+        of the framework.
+        * WebKit2.xcodeproj/project.pbxproj: Copy the legacy processes into the content directory of the
+        framework during engineering builds. Generate symlinks for the legacy processes to their locations
+        in Versions/Current. This is necessary because -[NSBundle pathForAuxiliaryExecutable:] only looks
+        at the top level of the framework wrapper.
+
 2014-08-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         WebKit2GTK - WebKitWebProcess assertion fails when dragging and dropping a file into the view

@@ -1,3 +1,16 @@
+2014-08-13  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/135909> Move helper applications out of the root of the framework.
+
+        As described in <https://developer.apple.com/library/mac/technotes/tn2206/>, for bundles containing
+        a Versions directory there may be no other content at the top level of the bundle other than symlinks.
+        Upcoming changes to code signing will prevent bundles that violate this rule from being signed.
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.xcodeproj/project.pbxproj: Add the symlink to WebKitPluginHost.app in the Versions/A
+        directory of the framework rather than at the top level.
+
 2014-08-14  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed.  Removing empty directories.

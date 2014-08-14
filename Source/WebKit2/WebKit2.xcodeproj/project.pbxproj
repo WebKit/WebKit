@@ -12,7 +12,7 @@
 			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
 				1A50DB70110A3D67000D3FE5 /* Copy Files */,
-				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
+				BCFFCA8A160D6DEA003DF315 /* Add current version symlinks */,
 				BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */,
 			);
 			dependencies = (
@@ -1920,7 +1920,7 @@
 		1A50DB70110A3D67000D3FE5 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = WebKit.framework;
+			dstPath = "WebKit.framework/$(FRAMEWORK_CONTENT_DIRECTORY)";
 			dstSubfolderSpec = 1;
 			files = (
 				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
@@ -8587,20 +8587,20 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers || exit $?\nfi";
 		};
-		BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */ = {
+		BCFFCA8A160D6DEA003DF315 /* Add current version symlinks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Add XPCServices symlink";
+			name = "Add current version symlinks";
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(WRAPPER_NAME)/WebKit.framework/XPCServices",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == macosx ]]; then\n    ln -sf Versions/Current/XPCServices \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit.framework/XPCServices\"\nfi\n";
+			shellScript = "if [[ ${PLATFORM_NAME} == macosx ]]; then\n    for name in XPCServices NetworkProcess.app PluginProcess.app DatabaseProcess.app WebProcess.app; do\n        ln -sf \"Versions/Current/${name}\" \"${BUILT_PRODUCTS_DIR}/WebKit.framework/${name}\";\n    done\nfi\n";
 		};
 		BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */ = {
 			isa = PBXShellScriptBuildPhase;
