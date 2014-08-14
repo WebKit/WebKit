@@ -143,6 +143,7 @@ private:
 
     HashSet<Highlight*> m_highlights;
 
+    // FIXME: These should move onto Highlight.
     Vector<WebCore::LayoutRect> m_currentSelectionRects;
     bool m_isTextOnly;
 
