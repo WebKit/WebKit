@@ -1,5 +1,16 @@
 2014-08-13  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the build following <http://trac.webkit.org/changeset/172576>
+        (https://bugs.webkit.org/show_bug.cgi?id=135895)
+
+        Substitute PerThreadStorage<T>::initSharedKeyIfNeeded() for initSharedKeyIfNeeded() in
+        implementation of PerThread<T>::getFastCase().
+
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThread<T>::getFastCase):
+
+2014-08-13  Daniel Bates  <dabates@apple.com>
+
         Make bmalloc::PerThread work without C++ thread local storage
         https://bugs.webkit.org/show_bug.cgi?id=135895
 

@@ -115,7 +115,7 @@ template<typename T>
 INLINE T* PerThread<T>::getFastCase()
 {
 #if (!defined(__has_include) || !__has_include(<System/pthread_machdep.h>)) && !BCOMPILER_SUPPORTS(CXX_THREAD_LOCAL)
-    initSharedKeyIfNeeded(destructor);
+    PerThreadStorage<T>::initSharedKeyIfNeeded(destructor);
 #endif
     return static_cast<T*>(PerThreadStorage<T>::get());
 }
