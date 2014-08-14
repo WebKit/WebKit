@@ -424,6 +424,7 @@ webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-i
 webkit.org/b/131347 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
+webkit.org/b/131347 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFailure Timeout ]
 webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
@@ -801,6 +802,7 @@ webkit.org/b/132248 media/media-fragments/TC0015.html [ Failure Crash Pass ]
 webkit.org/b/134574 media/media-fragments/TC0024.html [ Failure Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0037.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0038.html [ Failure Crash Pass ]
+webkit.org/b/132248 media/media-fragments/TC0044.html [ Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Crash Pass ]
@@ -925,6 +927,8 @@ webkit.org/b/135534 animations/fill-mode-forwards.html [ Crash Timeout Pass ]
 webkit.org/b/135583 http/tests/media/video-play-progress.html [ Crash Timeout Pass ]
 
 webkit.org/b/135584 media/track/track-cue-empty-text-crash.html [ Crash Timeout Pass ]
+
+webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1503,7 +1507,7 @@ Bug(GTK) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 Bug(GTK) http/tests/local/drag-over-remote-content.html [ Failure ]
 Bug(GTK) http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 Bug(GTK) fast/events/drag-in-frames.html [ Failure Timeout ]
-Bug(GTK) http/tests/misc/bubble-drag-events.html [ Failure ]
+Bug(GTK) http/tests/misc/bubble-drag-events.html [ Failure Timeout ]
 
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
 webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]
@@ -1990,7 +1994,7 @@ webkit.org/b/132126 media/restore-from-page-cache.html [ Crash ]
 
 webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
-webkit.org/b/132234 fast/regions/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
+webkit.org/b/132234 fast/regions/scrolling/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 

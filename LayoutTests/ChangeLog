@@ -1,3 +1,14 @@
+2014-08-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Update expectations with new identified failures and flakiness.
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Rebaseline after r172517.
+        * platform/gtk/fast/ruby/ruby/ruby-base-merge-block-children-crash-2-expected.png: Removed. File was in wrong path.
+        * platform/gtk/fast/ruby/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Removed. File was in wrong path.
+        * platform/gtk/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Rebaseline after r172136.
+        * platform/gtk/scrollbars/scrollbar-selectors-expected.txt: Added. Rebaseline after r172220.
+
 2014-08-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Move svg tests into fast/regions/svg
