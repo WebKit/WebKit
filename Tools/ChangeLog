@@ -1,3 +1,15 @@
+2014-08-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Initialize a separate variable (TestWTF_SOURCES) with the list of files
+        that are built into the TestWTF executable and move it above the platform-specific
+        config file inclusion. This makes it possible to add platform-specific files to that
+        list (e.g. GUniquePtr.cpp for the GTK port).
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+
 2014-08-13  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         [EFL] Bump up and patch dependencies to allow building for aarch64

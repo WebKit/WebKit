@@ -63,6 +63,36 @@ set(TestJavaScriptCore_LIBRARIES
     JavaScriptCore
 )
 
+set(TestWTF_SOURCES
+    ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Functional.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/MD5.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/RefPtr.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/SHA1.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/SaturatedArithmeticOperations.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringBuilder.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringHasher.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringImpl.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringOperators.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringView.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
+)
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 add_library(TestWebKitAPIInjectedBundle SHARED
@@ -112,33 +142,7 @@ endif ()
 
 add_executable(TestWTF
     ${test_main_SOURCES}
-    ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Functional.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/MD5.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/RefPtr.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/SHA1.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/SaturatedArithmeticOperations.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringBuilder.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringHasher.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringImpl.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringOperators.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringView.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
+    ${TestWTF_SOURCES}
 )
 
 target_link_libraries(TestWTF ${test_wtf_LIBRARIES})
