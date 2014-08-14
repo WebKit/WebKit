@@ -1,3 +1,12 @@
+2014-08-13  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Missing semicolon after console.assert in TimelineSidebarPanel.js
+        https://bugs.webkit.org/show_bug.cgi?id=135917
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+
 2014-08-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inline DataGrid inside details sidebar has double thick top border with legacy styles

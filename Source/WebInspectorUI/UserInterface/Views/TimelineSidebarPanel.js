@@ -360,7 +360,7 @@ WebInspector.TimelineSidebarPanel.prototype = {
     _recordingsTreeElementSelected: function(treeElement, selectedByUser)
     {
         console.assert(treeElement.representedObject instanceof WebInspector.TimelineRecording);
-        console.assert(!selectedByUser, "Recording tree elements should be hidden and only programmatically selectable.")
+        console.assert(!selectedByUser, "Recording tree elements should be hidden and only programmatically selectable.");
 
         this._activeContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(treeElement.representedObject);
 
