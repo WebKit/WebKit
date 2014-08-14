@@ -44,6 +44,7 @@ WebInspector.TimelineRecording = function(identifier, displayName)
 
 WebInspector.TimelineRecording.Event = {
     Reset: "timeline-recording-reset",
+    Unloaded: "timeline-recording-unloaded",
     SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
     TimesUpdated: "timeline-recording-times-updated"
 };
@@ -105,6 +106,8 @@ WebInspector.TimelineRecording.prototype = {
         console.assert(!this.isEmpty(), "Shouldn't unload an empty recording; it should be reused instead.");
 
         this._isWritable = false;
+
+        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Unloaded);
     },
 
     reset: function(suppressEvents)
