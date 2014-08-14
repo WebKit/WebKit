@@ -236,6 +236,6 @@ WebInspector.NetworkTimelineView.prototype = {
     _closeStatusButtonClicked: function(event)
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Network);
+        WebInspector.timelineSidebarPanel.showTimelineView(WebInspector.TimelineRecord.Type.Network);
     }
 };

@@ -220,6 +220,6 @@ WebInspector.LayoutTimelineView.prototype = {
     _closeStatusButtonClicked: function(event)
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Layout);
+        WebInspector.timelineSidebarPanel.showTimelineView(WebInspector.TimelineRecord.Type.Layout);
     }
 };

@@ -298,6 +298,6 @@ WebInspector.ScriptTimelineView.prototype = {
     _closeStatusButtonClicked: function(event)
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
-        WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Script);
+        WebInspector.timelineSidebarPanel.showTimelineView(WebInspector.TimelineRecord.Type.Script);
     }
 };
