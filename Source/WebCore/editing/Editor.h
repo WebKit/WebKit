@@ -450,6 +450,7 @@ public:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
     void scanSelectionForTelephoneNumbers();
+    const Vector<RefPtr<Range>>& detectedTelephoneNumberRanges() const { return m_detectedTelephoneNumberRanges; }
 #endif
 
 private:
@@ -521,9 +522,9 @@ private:
     bool shouldDetectTelephoneNumbers();
     void scanSelectionForTelephoneNumbers(Timer<Editor>&);
     void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
-    void clearDataDetectedTelephoneNumbers();
 
     Timer<Editor> m_telephoneNumberDetectionUpdateTimer;
+    Vector<RefPtr<Range>> m_detectedTelephoneNumberRanges;
 #endif
 };
 

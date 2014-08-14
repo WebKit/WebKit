@@ -1,5 +1,47 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172383
+
+    2014-08-10  Tim Horton  <timothy_horton@apple.com>
+
+            Yelp phone number highlights often disappear
+            https://bugs.webkit.org/show_bug.cgi?id=135789
+            <rdar://problem/17971057>
+
+            Reviewed by Brady Eidson.
+
+            Since selectedTelephoneNumberRangesChanged doesn't provide an associated
+            Frame, an incoming selectedTelephoneNumberRangesChanged from a subframe
+            would overwrite ServicesOverlayController's cached (and potentially active)
+            telephone number highlights.
+
+            This happens a lot on Yelp, because they have many subframes which are
+            doing layout on a regular basis.
+
+            * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+            (WebKit::WebEditorClient::selectedTelephoneNumberRangesChanged):
+            * WebProcess/WebCoreSupport/WebEditorClient.h:
+            Adjust to the new (lack of) arguments.
+
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::selectedTelephoneNumberRangesChanged):
+            Adjust logging; we can revisit it later.
+
+            (WebKit::ServicesOverlayController::buildPhoneNumberHighlights):
+            When building phone number highlights, walk the Frame tree and retrieve
+            them from all of the Editors.
+
+            (WebKit::ServicesOverlayController::didRebuildPotentialHighlights):
+            (WebKit::ServicesOverlayController::telephoneNumberRangesForFocusedFrame):
+            (WebKit::ServicesOverlayController::determineActiveHighlight):
+            (WebKit::ServicesOverlayController::handleClick):
+            Retrieve the detected telephone number ranges from the focused frame
+            when combining telephone numbers with selection services.
+            This ensures that we don't show combined phone number highlights from other frames.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172382
 
     2014-08-10  Tim Horton  <timothy_horton@apple.com>

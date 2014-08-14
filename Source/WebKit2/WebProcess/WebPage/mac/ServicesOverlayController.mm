@@ -33,6 +33,7 @@
 #import "WebProcess.h"
 #import <WebCore/Document.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GapRects.h>
 #import <WebCore/GraphicsContext.h>
@@ -224,12 +225,10 @@ void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>
 #endif
 }
 
-void ServicesOverlayController::selectedTelephoneNumberRangesChanged(const Vector<RefPtr<Range>>& ranges)
+void ServicesOverlayController::selectedTelephoneNumberRangesChanged()
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
-    LOG(Services, "ServicesOverlayController - Telephone number ranges changed - Had %lu, now have %lu\n", m_currentTelephoneNumberRanges.size(), ranges.size());
-    m_currentTelephoneNumberRanges = ranges;
-
+    LOG(Services, "ServicesOverlayController - Telephone number ranges changed\n");
     buildPhoneNumberHighlights();
 #else
     UNUSED_PARAM(ranges);
@@ -323,25 +322,30 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 {
     removeAllPotentialHighlightsOfType(Highlight::Type::TelephoneNumber);
 
-    for (unsigned i = 0; i < m_currentTelephoneNumberRanges.size(); ++i) {
-        // FIXME: This will choke if the range wraps around the edge of the view.
-        // What should we do in that case?
-        IntRect rect = textQuadsToBoundingRectForRange(*m_currentTelephoneNumberRanges[i]);
+    Frame* mainFrame = m_webPage.mainFrame();
+    FrameView& mainFrameView = *mainFrame->view();
 
-        // Convert to the main document's coordinate space.
-        // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
-        // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
-        // not equivalent to what we need when you have a topContentInset or a header banner.
-        FrameView* viewForRange = m_currentTelephoneNumberRanges[i]->ownerDocument().view();
-        if (!viewForRange)
-            continue;
-        FrameView& mainFrameView = *m_webPage.corePage()->mainFrame().view();
-        rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
+    for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
+        auto& ranges = frame->editor().detectedTelephoneNumberRanges();
+        for (auto& range : ranges) {
+            // FIXME: This will choke if the range wraps around the edge of the view.
+            // What should we do in that case?
+            IntRect rect = textQuadsToBoundingRectForRange(*range);
 
-        CGRect cgRect = rect;
-        RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+            // Convert to the main document's coordinate space.
+            // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
+            // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
+            // not equivalent to what we need when you have a topContentInset or a header banner.
+            FrameView* viewForRange = range->ownerDocument().view();
+            if (!viewForRange)
+                continue;
+            rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
-        m_potentialHighlights.add(Highlight::createForTelephoneNumber(ddHighlight, m_currentTelephoneNumberRanges[i]));
+            CGRect cgRect = rect;
+            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), DDHighlightOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+
+            m_potentialHighlights.add(Highlight::createForTelephoneNumber(ddHighlight, range));
+        }
     }
 
     didRebuildPotentialHighlights();
@@ -380,7 +384,7 @@ void ServicesOverlayController::didRebuildPotentialHighlights()
         return;
     }
 
-    if (m_currentTelephoneNumberRanges.isEmpty() && !hasRelevantSelectionServices())
+    if (telephoneNumberRangesForFocusedFrame().isEmpty() && !hasRelevantSelectionServices())
         return;
 
     createOverlayIfNeeded();
@@ -397,6 +401,15 @@ void ServicesOverlayController::createOverlayIfNeeded()
     m_servicesOverlay = overlay.get();
     m_webPage.installPageOverlay(overlay.release(), PageOverlay::FadeMode::DoNotFade);
     m_servicesOverlay->setNeedsDisplay();
+}
+
+Vector<RefPtr<Range>> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
+{
+    Page* page = m_webPage.corePage();
+    if (!page)
+        return Vector<RefPtr<Range>>();
+
+    return page->focusController().focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
 }
 
 bool ServicesOverlayController::highlightsAreEquivalent(const Highlight* a, const Highlight* b)
@@ -427,7 +440,7 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
                 continue;
 
             // If this highlight has no compatible services, it can't be active, unless we have telephone number highlights to show in the combined menu.
-            if (m_currentTelephoneNumberRanges.isEmpty() && !hasRelevantSelectionServices())
+            if (telephoneNumberRangesForFocusedFrame().isEmpty() && !hasRelevantSelectionServices())
                 continue;
         }
 
@@ -505,9 +518,10 @@ void ServicesOverlayController::handleClick(const WebCore::IntPoint& clickPoint,
     IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
 
     if (highlight.type() == Highlight::Type::Selection) {
+        auto telephoneNumberRanges = telephoneNumberRangesForFocusedFrame();
         Vector<String> selectedTelephoneNumbers;
-        selectedTelephoneNumbers.reserveCapacity(m_currentTelephoneNumberRanges.size());
-        for (auto& range : m_currentTelephoneNumberRanges)
+        selectedTelephoneNumbers.reserveCapacity(telephoneNumberRanges.size());
+        for (auto& range : telephoneNumberRanges)
             selectedTelephoneNumbers.append(range->text());
 
         m_webPage.handleSelectionServiceClick(m_webPage.corePage()->mainFrame().selection(), selectedTelephoneNumbers, windowPoint);
