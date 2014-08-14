@@ -596,9 +596,7 @@ void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned dep
     emitGetVirtualRegister(JSStack::ScopeChain, regT0);
     if (m_codeBlock->needsActivation()) {
         emitGetVirtualRegister(m_codeBlock->activationRegister(), regT1);
-        Jump noActivation = branchTestPtr(Zero, regT1);
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
-        noActivation.link(this);
     }
     for (unsigned i = 0; i < depth; ++i)
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);

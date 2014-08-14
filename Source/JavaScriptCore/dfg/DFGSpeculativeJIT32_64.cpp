@@ -3517,13 +3517,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary result(this, Reuse, scope);
         GPRReg resultGPR = result.gpr();
         m_jit.move(scope.gpr(), resultGPR);
-        JITCompiler::Jump activationNotCreated =
-            m_jit.branchTestPtr(
-                JITCompiler::Zero,
-                JITCompiler::payloadFor(
-                    static_cast<VirtualRegister>(m_jit.graph().machineActivationRegister())));
         m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
-        activationNotCreated.link(&m_jit);
         cellResult(resultGPR, node);
         break;
     }

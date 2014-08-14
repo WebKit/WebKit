@@ -2170,7 +2170,6 @@ macro resolveScope()
     loadisFromInstruction(4, t2)
     btbz CodeBlock::m_needsActivation[t0], .resolveScopeAfterActivationCheck
     loadis CodeBlock::m_activationRegister[t0], t1
-    btpz PayloadOffset[cfr, t1, 8], .resolveScopeAfterActivationCheck
     addi 1, t2
 
 .resolveScopeAfterActivationCheck:

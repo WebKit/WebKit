@@ -619,9 +619,7 @@ void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned dep
     emitLoadPayload(JSStack::ScopeChain, regT0);
     if (m_codeBlock->needsActivation()) {
         emitLoadPayload(m_codeBlock->activationRegister().offset(), regT2);
-        Jump noActivation = branchTestPtr(Zero, regT2);
         loadPtr(Address(regT2, JSScope::offsetOfNext()), regT0);
-        noActivation.link(this);
     }
     for (unsigned i = 0; i < depth; ++i)
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
