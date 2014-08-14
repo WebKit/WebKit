@@ -1,3 +1,15 @@
+2014-08-05  David Farler  <dfarler@apple.com>
+
+        [iOS] run-webkit-tests runs webkit-build-directory on every test
+        https://bugs.webkit.org/show_bug.cgi?id=135409
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__): Cache Mac build directory.
+        (IOSSimulatorPort.relay_path): Use cached build directory.
+        (IOSSimulatorPort._path_to_image_diff): Use cached build directory.
+
 2014-08-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Initialize a separate variable (TestWTF_SOURCES) with the list of files
