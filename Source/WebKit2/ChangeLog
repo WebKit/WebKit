@@ -1,5 +1,22 @@
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r172498
+
+    2014-08-12  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r172424): Extra menu header in combined telephone number menu when no phone paired
+            https://bugs.webkit.org/show_bug.cgi?id=135854
+            <rdar://problem/17996339>
+
+            Reviewed by Enrica Casucci.
+
+            * UIProcess/mac/WebContextMenuProxyMac.mm:
+            (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+            Get all the menu items ahead of time, and only add the shared header
+            if there are any telephone number menu items.
+
+2014-08-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172497
 
     2014-08-12  Enrica Casucci  <enrica@apple.com>
