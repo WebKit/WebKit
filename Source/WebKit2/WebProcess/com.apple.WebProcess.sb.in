@@ -91,6 +91,10 @@
 ;; and to allow issuing extensions.
 (allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
 
+;; Allow issuing extensions to system libraries that the Network process can already read.
+;; This is to avoid warnings attempting to create extensions for these resources.
+(allow-read-directory-and-issue-read-extensions "/System/Library/PrivateFrameworks/WebInspectorUI.framework")
+
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
     (op file-read* path-filter)
