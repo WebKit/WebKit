@@ -1,3 +1,21 @@
+2014-08-13  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        [EFL] Bump up and patch dependencies to allow building for aarch64
+        https://bugs.webkit.org/show_bug.cgi?id=135885
+
+        Reviewed by Gyuyoung Kim.
+
+        The currently used versions of pixman, libffi, glib, glib-networking,
+        and fontconfig fail to configure for aarch64, so they are bumped up to
+        the latest stable version.
+
+        Gstreamer-plugins-base configures for aarch64 but incorrectly recogizes
+        ARM NEON assembly support, so it is patched with a change that has been
+        accepted by upstream.
+
+        * efl/jhbuild.modules:
+        * efl/patches/gst-prevent-neon-check-in-configure-from-passing-under-aarch64.patch: Added.
+
 2014-08-13  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/135911> WebKit should build on Yosemite with the public SDK.
