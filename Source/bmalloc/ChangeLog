@@ -1,5 +1,29 @@
 2014-08-13  Daniel Bates  <dabates@apple.com>
 
+        Make bmalloc::PerThread work without C++ thread local storage
+        https://bugs.webkit.org/show_bug.cgi?id=135895
+
+        Reviewed by Geoffrey Garen.
+
+        Implement support for building bmalloc without C++ thread local storage.
+
+        * bmalloc/BPlatform.h: Remove macro define BPLATFORM_IOS_SIMULATOR. Added macro function
+        BCOMPILER_SUPPORTS() and macro define BCOMPILER_SUPPORTS_CXX_THREAD_LOCAL that can be used
+        to determine whether the compiler supports C++ thread local storage.
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThreadStorage::get): Modified to call pthread_getspecific() when building
+        without C++ thread local storage.
+        (bmalloc::PerThreadStorage::initSharedKeyIfNeeded): Added.
+        (bmalloc::PerThreadStorage::init): Moved logic to initialize shared Pthread key from here to
+        PerThreadStorage::initSharedKeyIfNeeded().
+        (bmalloc::PerThread<T>::getFastCase): Modified to call PerThreadStorage::initSharedKeyIfNeeded()
+        before querying PerThreadStorage::get() when building without C++ thread local storage so as to
+        ensure that the shared key has been initialized.
+        (_pthread_setspecific_direct): Deleted.
+        (_pthread_getspecific_direct): Deleted.
+
+2014-08-13  Daniel Bates  <dabates@apple.com>
+
         [iOS] Make JavaScriptCore and bmalloc build with the public SDK
         https://bugs.webkit.org/show_bug.cgi?id=135848
 

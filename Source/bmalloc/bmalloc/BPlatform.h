@@ -38,8 +38,7 @@
 #define BPLATFORM_IOS 1
 #endif
 
-#if defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR
-#define BPLATFORM_IOS_SIMULATOR 1
-#endif
+#define BCOMPILER_SUPPORTS(COMPILER_FEATURE) (defined BCOMPILER_SUPPORTS_##COMPILER_FEATURE && BCOMPILER_SUPPORTS_##COMPILER_FEATURE)
+#define BCOMPILER_SUPPORTS_CXX_THREAD_LOCAL (defined(__has_feature) && __has_feature(cxx_thread_local))
 
 #endif // BPlatform_h
