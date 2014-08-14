@@ -1,5 +1,12 @@
 2014-08-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Land correct results for compositing/fixed-image-loading.html on WK1 and WK2.
+
+        * compositing/fixed-image-loading-expected.txt:
+        * platform/mac-wk2/compositing/fixed-image-loading-expected.txt: Added.
+
+2014-08-13  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the test result for MountainLion and Mavericks, which don't composite fixed position.
         
         * compositing/fixed-image-loading-expected.txt:
