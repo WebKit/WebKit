@@ -1,3 +1,13 @@
+2014-08-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. In r165709 I mistakenly appended the -fno-exceptions
+        and -fno-strict-aliasing compiler flags to CMAKE_CXX_FLAGS and then
+        re-set CMAKE_C_FLAGS with the new string. The two flags should really
+        be appended to CMAKE_C_FLAGS and the same variable re-set with the
+        new string.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2014-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac.
