@@ -38,7 +38,8 @@ namespace WebCore {
 enum class ScrollSnapState {
     Snapping,
     Gliding,
-    Idle
+    DestinationReached,
+    UserInteraction
 };
 
 enum class WheelEventStatus {
@@ -71,7 +72,7 @@ public:
 
 private:
     void beginScrollSnapAnimation(ScrollSnapState);
-    void endScrollSnapAnimation();
+    void endScrollSnapAnimation(ScrollSnapState);
 
     float computeSnapDelta() const;
     float computeGlideDelta() const;

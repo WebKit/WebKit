@@ -1,3 +1,23 @@
+2014-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix gliding in AxisScrollSnapAnimator for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135971
+
+        Reviewed by Dean Jackson.
+
+        Previously, momentum events that are handled immediately after finishing a glide animation cause a second, extremely
+        slow glide animation to trigger. To fix this, I added a new state DestinationReached. During this state, additional
+        momentum events that are handled after the glide animation completes will not fill up the momentum window and trigger
+        a second glide event.
+
+        * platform/mac/AxisScrollSnapAnimator.h:
+        * platform/mac/AxisScrollSnapAnimator.mm:
+        (WebCore::AxisScrollSnapAnimator::AxisScrollSnapAnimator):
+        (WebCore::AxisScrollSnapAnimator::handleWheelEvent):
+        (WebCore::AxisScrollSnapAnimator::scrollSnapAnimationUpdate):
+        (WebCore::AxisScrollSnapAnimator::endScrollSnapAnimation):
+        (WebCore::AxisScrollSnapAnimator::computeGlideDelta):
+
 2014-08-15  Eric Carlson  <eric.carlson@apple.com>
 
         [MSE] Implement a maximum buffer size for SourceBuffer

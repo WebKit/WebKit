@@ -86,7 +86,7 @@ AxisScrollSnapAnimator::AxisScrollSnapAnimator(AxisScrollSnapAnimatorClient* cli
     : m_client(client)
     , m_snapOffsets(snapOffsets)
     , m_axis(axis)
-    , m_currentState(ScrollSnapState::Idle)
+    , m_currentState(ScrollSnapState::DestinationReached)
     , m_initialOffset(0)
     , m_targetOffset(0)
     , m_beginTrackingWheelDeltaOffset(0)
@@ -108,7 +108,7 @@ void AxisScrollSnapAnimator::handleWheelEvent(const PlatformWheelEvent& event)
     switch (wheelStatus) {
     case WheelEventStatus::UserScrollBegin:
     case WheelEventStatus::UserScrolling:
-        endScrollSnapAnimation();
+        endScrollSnapAnimation(ScrollSnapState::UserInteraction);
         break;
 
     case WheelEventStatus::UserScrollEnd:
@@ -117,15 +117,15 @@ void AxisScrollSnapAnimator::handleWheelEvent(const PlatformWheelEvent& event)
 
     case WheelEventStatus::InertialScrollBegin:
         // Begin tracking wheel deltas for glide prediction.
-        endScrollSnapAnimation();
+        endScrollSnapAnimation(ScrollSnapState::UserInteraction);
         pushInitialWheelDelta(wheelDelta);
         m_beginTrackingWheelDeltaOffset = m_client->scrollOffsetInAxis(m_axis);
         break;
 
     case WheelEventStatus::InertialScrolling:
-        if (m_currentState != ScrollSnapState::Gliding) {
-            // FIXME: Investigate why small wheel deltas pushed into the window without the < -1, > 1 check.
-            if (m_numWheelDeltasTracked < wheelDeltaWindowSize && (wheelDelta < -1 || wheelDelta > 1))
+        // This check for DestinationReached ensures that we don't receive another set of momentum events after ending the last glide.
+        if (m_currentState != ScrollSnapState::Gliding && m_currentState != ScrollSnapState::DestinationReached) {
+            if (m_numWheelDeltasTracked < wheelDeltaWindowSize)
                 pushInitialWheelDelta(wheelDelta);
 
             if (m_numWheelDeltasTracked == wheelDeltaWindowSize)
@@ -155,10 +155,8 @@ void AxisScrollSnapAnimator::scrollSnapAnimationUpdate()
     float delta = m_currentState == ScrollSnapState::Snapping ? computeSnapDelta() : computeGlideDelta();
     if (delta)
         m_client->immediateScrollInAxis(m_axis, delta);
-    else {
-        endScrollSnapAnimation();
-        m_currentState = ScrollSnapState::Idle;
-    }
+    else
+        endScrollSnapAnimation(ScrollSnapState::DestinationReached);
 }
 
 void AxisScrollSnapAnimator::beginScrollSnapAnimation(ScrollSnapState newState)
@@ -189,12 +187,13 @@ void AxisScrollSnapAnimator::beginScrollSnapAnimation(ScrollSnapState newState)
     m_client->startScrollSnapTimer();
 }
 
-void AxisScrollSnapAnimator::endScrollSnapAnimation()
+void AxisScrollSnapAnimator::endScrollSnapAnimation(ScrollSnapState newState)
 {
+    ASSERT(newState == ScrollSnapState::DestinationReached || newState == ScrollSnapState::UserInteraction);
     if (m_currentState == ScrollSnapState::Gliding)
         clearInitialWheelDeltaWindow();
 
-    m_currentState = ScrollSnapState::Idle;
+    m_currentState = newState;
     m_client->stopScrollSnapTimer();
 }
 
@@ -245,7 +244,8 @@ float AxisScrollSnapAnimator::computeGlideDelta() const
         return 0;
 
     float progress = ((float)(offset - m_initialOffset)) / (m_targetOffset - m_initialOffset);
-    float shift = ceil(m_glideMagnitude * (1 + cos(piFloat * progress + m_glidePhaseShift)));
+    // FIXME: We might want to investigate why -m_glidePhaseShift results in the behavior we want.
+    float shift = ceil(m_glideMagnitude * (1 + cos(piFloat * progress - m_glidePhaseShift)));
     shift = m_initialOffset < m_targetOffset ? std::max<float>(shift, 1) : std::min<float>(shift, -1);
     if ((m_initialOffset < m_targetOffset && offset + shift > m_targetOffset) || (m_initialOffset > m_targetOffset && offset + shift < m_targetOffset))
         return m_targetOffset - offset;
