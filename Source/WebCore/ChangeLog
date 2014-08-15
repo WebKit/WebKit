@@ -1,3 +1,55 @@
+2014-08-15  Dirk Schulze  <krit@webkit.org>
+
+        Turn cx/cy to presentation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135975
+
+        Reviewed by Dean Jackson.
+
+        This follows the patch for width and height presentation attributes and
+        turns x and y to presentation attributes as well:
+
+        ​http://trac.webkit.org/changeset/171341
+
+        Extended existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSPropertyNames.in:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setCx):
+        (WebCore::SVGRenderStyle::setCy):
+        (WebCore::SVGRenderStyle::cx):
+        (WebCore::SVGRenderStyle::cy):
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleLayoutData::StyleLayoutData):
+        (WebCore::StyleLayoutData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::calculateRadiiAndCenter):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromCircleElement):
+        (WebCore::updatePathFromEllipseElement):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        (WebCore::SVGCircleElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGCircleElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::populateAttributeNameToCSSPropertyIDMap):
+        (WebCore::populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        (WebCore::SVGEllipseElement::selfHasRelativeLengths): Deleted.
+        * svg/SVGEllipseElement.h:
+
 2014-08-15  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Fix typo in Path comment

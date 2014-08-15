@@ -302,6 +302,8 @@ namespace WebCore {
             return !(*this == other);
         }
 
+        Length cx;
+        Length cy;
         Length x;
         Length y;
 

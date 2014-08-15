@@ -32,6 +32,24 @@ function negativeTestZero(property, value) {
     testComputed(property, value, "0px");
 }
 
+// Test 'cx'.
+testComputed("cx", "  100", "100px");
+testComputed("cx", "100   ", "100px");
+testComputed("cx", "100px", "100px");
+testComputed("cx", "1em", "16px");
+testComputed("cx", "1ex", "12.800000190734863px");
+testComputed("cx", "20%", "20%");
+testComputed("cx", "-200px", "-200px");
+
+// Test 'cx'.
+testComputed("cy", "  100", "100px");
+testComputed("cy", "100   ", "100px");
+testComputed("cy", "100px", "100px");
+testComputed("cy", "1em", "16px");
+testComputed("cy", "1ex", "12.800000190734863px");
+testComputed("cy", "20%", "20%");
+testComputed("cy", "-200px", "-200px");
+
 // Test 'width'.
 testComputed("width", "auto", "auto");
 testComputed("width", "  100", "100px");
@@ -61,6 +79,20 @@ testComputed("y", "1em", "16px");
 testComputed("y", "1ex", "12.800000190734863px");
 testComputed("y", "20%", "20%");
 testComputed("y", "-200px", "-200px");
+
+// Negative tests for 'cx'.
+negativeTestZero("cx", "auto", "auto");
+negativeTestZero("cx", "100   px");
+negativeTestZero("cx", "100px;");
+negativeTestZero("cx", "100px !important");
+negativeTestZero("cx", "{ 100px }");
+
+// Negative tests for 'cy'.
+negativeTestZero("cy", "auto");
+negativeTestZero("cy", "100   px");
+negativeTestZero("cy", "100px;");
+negativeTestZero("cy", "100px !important");
+negativeTestZero("cy", "{ 100px }");
 
 // Negative tests for 'width'.
 negativeTest("width", "100   px");

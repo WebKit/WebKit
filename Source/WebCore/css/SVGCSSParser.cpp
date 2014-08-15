@@ -299,6 +299,8 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         m_implicitShorthand = false;
         return true;
     }
+    case CSSPropertyCx:
+    case CSSPropertyCy:
     case CSSPropertyX:
     case CSSPropertyY:
         valid_primitive = (!id && validUnit(value, FLength | FPercent));

@@ -1,3 +1,20 @@
+2014-08-15  Dirk Schulze  <krit@webkit.org>
+
+        Turn cx/cy to presentation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135975
+
+        Reviewed by Dean Jackson.
+
+        This follows the patch for width and height presentation attributes and
+        turns cx and cy to presentation attributes as well:
+
+        ​http://trac.webkit.org/changeset/171341
+
+        * svg/css/parse-length-expected.txt:
+        * svg/css/parse-length.html:
+        * transitions/svg-layout-transition-expected.txt:
+        * transitions/svg-layout-transition.html:
+
 2014-08-14  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: compile the :empty pseudo class

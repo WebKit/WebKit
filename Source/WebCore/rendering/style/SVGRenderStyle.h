@@ -146,6 +146,16 @@ public:
     void setGlyphOrientationVertical(EGlyphOrientation val) { svg_inherited_flags._glyphOrientationVertical = val; }
     void setMaskType(EMaskType val) { svg_noninherited_flags.f.maskType = val; }
     void setPaintOrder(PaintOrder val) { svg_inherited_flags.paintOrder = val; }
+    void setCx(const Length& obj)
+    {
+        if (!(layout->cx == obj))
+            layout.access()->cx = obj;
+    }
+    void setCy(const Length& obj)
+    {
+        if (!(layout->cy == obj))
+            layout.access()->cy = obj;
+    }
     void setX(const Length& obj)
     {
         if (!(layout->x == obj))
@@ -353,6 +363,8 @@ public:
     const Color& lightingColor() const { return misc->lightingColor; }
     SVGLength baselineShiftValue() const { return misc->baselineShiftValue; }
     ShadowData* shadow() const { return shadowSVG->shadow.get(); }
+    const Length& cx() const { return layout->cx; }
+    const Length& cy() const { return layout->cy; }
     const Length& x() const { return layout->x; }
     const Length& y() const { return layout->y; }
     String clipperResource() const { return resources->clipper; }

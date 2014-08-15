@@ -404,6 +404,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
     CSSPropertyClipRule,
+    CSSPropertyCx,
+    CSSPropertyCy,
     CSSPropertyMask,
     CSSPropertyFilter,
     CSSPropertyFloodColor,
@@ -2966,6 +2968,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             break;
 
         // New positioning properties for SVG.
+        case CSSPropertyCx:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().cx(), style.get());
+        case CSSPropertyCy:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().cy(), style.get());
         case CSSPropertyX:
             return zoomAdjustedPixelValueForLength(style->svgStyle().x(), style.get());
         case CSSPropertyY:

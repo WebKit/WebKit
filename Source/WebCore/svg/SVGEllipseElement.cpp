@@ -110,9 +110,13 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
-    bool isLengthAttribute = attrName == SVGNames::cxAttr
-                          || attrName == SVGNames::cyAttr
-                          || attrName == SVGNames::rxAttr
+    if (attrName == SVGNames::cxAttr
+        || attrName == SVGNames::cyAttr) {
+        invalidateSVGPresentationAttributeStyle();
+        return;
+    }
+
+    bool isLengthAttribute = attrName == SVGNames::rxAttr
                           || attrName == SVGNames::ryAttr;
 
     if (isLengthAttribute)
@@ -134,14 +138,6 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     ASSERT_NOT_REACHED();
-}
- 
-bool SVGEllipseElement::selfHasRelativeLengths() const
-{
-    return cx().isRelative()
-        || cy().isRelative()
-        || rx().isRelative()
-        || ry().isRelative();
 }
 
 RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(PassRef<RenderStyle> style)

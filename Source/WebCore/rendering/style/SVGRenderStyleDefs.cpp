@@ -278,13 +278,17 @@ bool StyleInheritedResourceData::operator==(const StyleInheritedResourceData& ot
 }
 
 StyleLayoutData::StyleLayoutData()
-    : x(RenderStyle::initialZeroLength())
+    : cx(RenderStyle::initialZeroLength())
+    , cy(RenderStyle::initialZeroLength())
+    , x(RenderStyle::initialZeroLength())
     , y(RenderStyle::initialZeroLength())
 {
 }
 
 inline StyleLayoutData::StyleLayoutData(const StyleLayoutData& other)
     : RefCounted<StyleLayoutData>()
+    , cx(other.cx)
+    , cy(other.cy)
     , x(other.x)
     , y(other.y)
 {
@@ -297,7 +301,9 @@ PassRef<StyleLayoutData> StyleLayoutData::copy() const
 
 bool StyleLayoutData::operator==(const StyleLayoutData& other) const
 {
-    return x == other.x
+    return cx == other.cx
+        && cy == other.cy
+        && x == other.x
         && y == other.y;
 }
 

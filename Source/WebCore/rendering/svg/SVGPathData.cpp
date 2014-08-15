@@ -44,8 +44,15 @@ static void updatePathFromCircleElement(SVGElement* element, Path& path)
 
     SVGLengthContext lengthContext(element);
     float r = circle->r().value(lengthContext);
-    if (r > 0)
-        path.addEllipse(FloatRect(circle->cx().value(lengthContext) - r, circle->cy().value(lengthContext) - r, r * 2, r * 2));
+    if (r > 0) {
+        RenderElement* renderer = circle->renderer();
+        if (!renderer)
+            return;
+        RenderStyle& style = renderer->style();
+        float cx = lengthContext.valueForLength(style.svgStyle().cx(), LengthModeWidth);
+        float cy = lengthContext.valueForLength(style.svgStyle().cy(), LengthModeHeight);
+        path.addEllipse(FloatRect(cx - r, cy - r, r * 2, r * 2));
+    }
 }
 
 static void updatePathFromEllipseElement(SVGElement* element, Path& path)
@@ -59,7 +66,13 @@ static void updatePathFromEllipseElement(SVGElement* element, Path& path)
     float ry = ellipse->ry().value(lengthContext);
     if (ry <= 0)
         return;
-    path.addEllipse(FloatRect(ellipse->cx().value(lengthContext) - rx, ellipse->cy().value(lengthContext) - ry, rx * 2, ry * 2));
+    RenderElement* renderer = ellipse->renderer();
+    if (!renderer)
+        return;
+    RenderStyle& style = renderer->style();
+    float cx = lengthContext.valueForLength(style.svgStyle().cx(), LengthModeWidth);
+    float cy = lengthContext.valueForLength(style.svgStyle().cy(), LengthModeHeight);
+    path.addEllipse(FloatRect(cx - rx, cy - ry, rx * 2, ry * 2));
 }
 
 static void updatePathFromLineElement(SVGElement* element, Path& path)
