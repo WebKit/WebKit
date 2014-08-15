@@ -76,7 +76,7 @@ WebInspector.LogContentView = function(representedObject)
     var toolTip = WebInspector.UIString("Show split console");
     var altToolTip = WebInspector.UIString("Show full-height console");
 
-    this._toggleSplitNavigationItem = new WebInspector.ToggleButtonNavigationItem("split-toggle", toolTip, altToolTip, platformImagePath("SplitToggleDown.svg"), platformImagePath("Images/SplitToggleUp.svg"), 16, 16);
+    this._toggleSplitNavigationItem = new WebInspector.ToggleButtonNavigationItem("split-toggle", toolTip, altToolTip, platformImagePath("SplitToggleDown.svg"), platformImagePath("SplitToggleUp.svg"), 16, 16);
     this._toggleSplitNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleSplit, this);
     this._toggleSplitNavigationItem.toggled = WebInspector.isShowingSplitConsole();
 
