@@ -1,3 +1,14 @@
+2014-08-15  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Fix typo in Path comment
+        https://bugs.webkit.org/show_bug.cgi?id=135960
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, no change on behavior.
+
+        * platform/graphics/Path.h:
+
 2014-08-14  Andreas Kling  <akling@apple.com>
 
         Remove two unused Range functions.
