@@ -682,6 +682,14 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
     NavigationState::fromWebPage(*m_webView->_page).willRecordNavigationSnapshot(item);
 }
 
+void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
+{
+}
+
+void PageClientImpl::didFinishLoadForMainFrame()
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

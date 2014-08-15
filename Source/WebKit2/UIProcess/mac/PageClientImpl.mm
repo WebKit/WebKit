@@ -722,6 +722,21 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 #endif
 }
 
+void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
+{
+    [m_wkView _didFirstVisuallyNonEmptyLayoutForMainFrame];
+}
+
+void PageClientImpl::didFinishLoadForMainFrame()
+{
+    [m_wkView _didFinishLoadForMainFrame];
+}
+
+void PageClientImpl::removeNavigationGestureSnapshot()
+{
+    [m_wkView _removeNavigationGestureSnapshot];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
