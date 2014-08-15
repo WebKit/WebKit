@@ -775,6 +775,8 @@
 		A10C1D891820305E0036883A /* WebPDFViewPlaceholder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPDFViewPlaceholder.mm; path = ios/WebView/WebPDFViewPlaceholder.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D8F1820307D0036883A /* WebKit.iOS.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = WebKit.iOS.exp; path = ios/WebKit.iOS.exp; sourceTree = "<group>"; };
 		A17A11B0180DC84800E5498C /* WebPluginPackagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPackagePrivate.h; sourceTree = "<group>"; };
+		A182B74E199E7B8F001FD95A /* migrate-headers.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "migrate-headers.sh"; path = "mac/migrate-headers.sh"; sourceTree = "<group>"; };
+		A182B74F199E7B8F001FD95A /* postprocess-headers.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "postprocess-headers.sh"; path = "mac/postprocess-headers.sh"; sourceTree = "<group>"; };
 		A560946414D8AD2600799A8A /* WebIndicateLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIndicateLayer.h; sourceTree = "<group>"; };
 		A560946514D8AD2600799A8A /* WebIndicateLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIndicateLayer.mm; sourceTree = "<group>"; };
 		A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNodeHighlighter.h; sourceTree = "<group>"; };
@@ -938,6 +940,8 @@
 				319A3F4D1885E5FB00E0C900 /* WebKit.mac.exp */,
 				A10C1D8F1820307D0036883A /* WebKit.iOS.exp */,
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
+				A182B74E199E7B8F001FD95A /* migrate-headers.sh */,
+				A182B74F199E7B8F001FD95A /* postprocess-headers.sh */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
 				F57D194A034E732C01A80180 /* DOM */,
 				25A8176801B5474B0ECA149E /* History */,
