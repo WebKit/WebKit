@@ -84,10 +84,18 @@ public:
     void scrollingTreeNodeWillStartPanGesture();
     void scrollingTreeNodeWillStartScroll();
     void scrollingTreeNodeDidEndScroll();
+#if ENABLE(CSS_SCROLL_SNAP)
+    void adjustTargetContentOffsetForSnapping(CGSize maxScrollDimensions, CGPoint velocity, CGPoint* targetContentOffset) const;
+    bool shouldSetScrollViewDecelerationRateFast() const;
+#endif
 #endif
 
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
+    float closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float scrollDestination, float velocity) const;
+#endif
 
     WebPageProxy& m_webPageProxy;
     RefPtr<RemoteScrollingTree> m_scrollingTree;

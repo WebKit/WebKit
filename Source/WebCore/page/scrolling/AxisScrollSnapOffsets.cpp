@@ -43,14 +43,22 @@ static void appendChildSnapOffsets(HTMLElement& parent, bool shouldAddHorizontal
         if (RenderBox* box = child->renderBox()) {
             LayoutUnit viewWidth = box->width();
             LayoutUnit viewHeight = box->height();
-            // FIXME: Check behavior with CSS rotations.
+#if PLATFORM(IOS)
+            // FIXME: Investigate why using localToContainerPoint gives the wrong offsets for iOS mainframe. Also, these offsets won't take transforms into account (make sure to test this!)
+            float left = child->offsetLeft();
+            float top = child->offsetTop();
+#else
+            // FIXME: Check that localToContainerPoint works with CSS rotations.
             FloatPoint position = box->localToContainerPoint(FloatPoint(), parent.renderBox());
+            float left = position.x();
+            float top = position.y();
+#endif
             for (SnapCoordinate coordinate : box->style().scrollSnapCoordinates()) {
-                LayoutUnit lastPotentialSnapPositionX = LayoutUnit(position.x()) + valueForLength(coordinate.first, viewWidth);
+                LayoutUnit lastPotentialSnapPositionX = LayoutUnit(left) + valueForLength(coordinate.first, viewWidth);
                 if (shouldAddHorizontalChildOffsets && lastPotentialSnapPositionX > 0)
                     horizontalSnapOffsetSubsequence.append(lastPotentialSnapPositionX);
 
-                LayoutUnit lastPotentialSnapPositionY = LayoutUnit(position.y()) + valueForLength(coordinate.second, viewHeight);
+                LayoutUnit lastPotentialSnapPositionY = LayoutUnit(top) + valueForLength(coordinate.second, viewHeight);
                 if (shouldAddVerticalChildOffsets && lastPotentialSnapPositionY > 0)
                     verticalSnapOffsetSubsequence.append(lastPotentialSnapPositionY);
             }

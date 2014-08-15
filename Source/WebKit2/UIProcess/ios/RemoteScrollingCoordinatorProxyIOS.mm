@@ -23,19 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteScrollingCoordinatorProxy.h"
+#import "config.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 
 #if PLATFORM(IOS)
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "LayerRepresentation.h"
-#include "RemoteLayerTreeHost.h"
-#include "WebPageProxy.h"
-#include <WebCore/ScrollingStateFrameScrollingNode.h>
-#include <WebCore/ScrollingStateOverflowScrollingNode.h>
-#include <WebCore/ScrollingStateTree.h>
-#include <UIKit/UIView.h>
+#import "LayerRepresentation.h"
+#import "RemoteLayerTreeHost.h"
+#import "WebPageProxy.h"
+#import <UIKit/UIView.h>
+#import <WebCore/ScrollingStateFrameScrollingNode.h>
+#import <WebCore/ScrollingStateOverflowScrollingNode.h>
+#import <WebCore/ScrollingStateTree.h>
+
+#if ENABLE(CSS_SCROLL_SNAP)
+#import <WebCore/AxisScrollSnapOffsets.h>
+#import <WebCore/ScrollTypes.h>
+#import <WebCore/ScrollingTreeFrameScrollingNode.h>
+#endif
 
 using namespace WebCore;
 
@@ -105,6 +111,47 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll()
 {
     m_webPageProxy.overflowScrollDidEndScroll();
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSize maxScrollOffsets, CGPoint velocity, CGPoint* targetContentOffset) const
+{
+    // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
+    if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal) && targetContentOffset->x > 0 && targetContentOffset->x < maxScrollOffsets.width) {
+        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal, targetContentOffset->x, velocity.x);
+        targetContentOffset->x = std::min<float>(maxScrollOffsets.width, potentialSnapPosition);
+    }
+    // FIXME: We need to account for how the top navigation bar changes in size.
+    if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical) && targetContentOffset->y > 0 && targetContentOffset->y < maxScrollOffsets.height) {
+        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, targetContentOffset->y, velocity.y);
+        targetContentOffset->y = std::min<float>(maxScrollOffsets.height, potentialSnapPosition);
+    }
+}
+
+bool RemoteScrollingCoordinatorProxy::shouldSetScrollViewDecelerationRateFast() const
+{
+    return shouldSnapForMainFrameScrolling(ScrollEventAxis::Horizontal) || shouldSnapForMainFrameScrolling(ScrollEventAxis::Vertical);
+}
+
+bool RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling(ScrollEventAxis axis) const
+{
+    ScrollingTreeNode* root = m_scrollingTree->rootNode();
+    if (root && root->isFrameScrollingNode()) {
+        ScrollingTreeFrameScrollingNode* rootFrame = static_cast<ScrollingTreeFrameScrollingNode*>(root);
+        const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootFrame->horizontalSnapOffsets() : rootFrame->verticalSnapOffsets();
+        return snapOffsets.size() > 0;
+    }
+    return false;
+}
+
+float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float scrollDestination, float velocity) const
+{
+    ScrollingTreeNode* root = m_scrollingTree->rootNode();
+    ASSERT(root && root->isFrameScrollingNode());
+    ScrollingTreeFrameScrollingNode* rootFrame = static_cast<ScrollingTreeFrameScrollingNode*>(root);
+    const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootFrame->horizontalSnapOffsets() : rootFrame->verticalSnapOffsets();
+    return closestSnapOffset<float, float>(snapOffsets, scrollDestination, velocity);
+}
+#endif
 
 } // namespace WebKit
 

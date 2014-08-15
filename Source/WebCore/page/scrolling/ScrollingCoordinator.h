@@ -43,6 +43,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+#include "AxisScrollSnapOffsets.h"
+#endif
+
 namespace WebCore {
 
 typedef unsigned SynchronousScrollingReasons;
@@ -164,6 +168,10 @@ public:
         FloatSize reachableContentSize; // Smaller than contentSize when overflow is hidden on one axis.
         FloatPoint scrollPosition;
         IntPoint scrollOrigin;
+#if ENABLE(CSS_SCROLL_SNAP)
+        Vector<LayoutUnit> horizontalSnapOffsets;
+        Vector<LayoutUnit> verticalSnapOffsets;
+#endif
     };
 
     virtual void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, GraphicsLayer* /*insetClipLayer*/, const ScrollingGeometry* = nullptr) { }

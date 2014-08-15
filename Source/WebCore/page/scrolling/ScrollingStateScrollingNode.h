@@ -48,6 +48,10 @@ public:
         ScrollableAreaParams,
         RequestedScrollPosition,
         NumScrollingStateNodeBits,
+#if ENABLE(CSS_SCROLL_SNAP)
+        HorizontalSnapOffsets,
+        VerticalSnapOffsets,
+#endif
     };
 
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
@@ -64,6 +68,14 @@ public:
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     void setScrollOrigin(const IntPoint&);
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    const Vector<float>& horizontalSnapOffsets() const { return m_horizontalSnapOffsets; }
+    void setHorizontalSnapOffsets(const Vector<float>&);
+
+    const Vector<float>& verticalSnapOffsets() const { return m_verticalSnapOffsets; }
+    void setVerticalSnapOffsets(const Vector<float>&);
+#endif
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
     void setScrollableAreaParameters(const ScrollableAreaParameters& params);
@@ -85,6 +97,10 @@ private:
     FloatPoint m_scrollPosition;
     FloatPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;
+#if ENABLE(CSS_SCROLL_SNAP)
+    Vector<float> m_horizontalSnapOffsets;
+    Vector<float> m_verticalSnapOffsets;
+#endif
     ScrollableAreaParameters m_scrollableAreaParameters;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
 };

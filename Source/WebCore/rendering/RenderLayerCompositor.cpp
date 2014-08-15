@@ -3770,6 +3770,12 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Scr
             scrollingGeometry.scrollableAreaSize = layer.visibleSize();
             scrollingGeometry.contentSize = layer.contentsSize();
             scrollingGeometry.reachableContentSize = layer.scrollableContentsSize();
+#if ENABLE(CSS_SCROLL_SNAP)
+            if (const Vector<LayoutUnit>* offsets = layer.horizontalSnapOffsets())
+                scrollingGeometry.horizontalSnapOffsets = *offsets;
+            if (const Vector<LayoutUnit>* offsets = layer.verticalSnapOffsets())
+                scrollingGeometry.verticalSnapOffsets = *offsets;
+#endif
             scrollingCoordinator->updateOverflowScrollingNode(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer(), &scrollingGeometry);
         }
     }

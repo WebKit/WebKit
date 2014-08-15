@@ -1,3 +1,41 @@
+2014-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement snapping behavior for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=135769
+
+        Reviewed by Brent Fulgham.
+
+        Added support for snap points on iOS. This entails sending snap points from the web process to the UI process
+        by encoding and decoding snap points and updating ScrollingTreeOverflowScrollingNodeIOS and WKWebView to support
+        animation to snap points in the cases of mainframe and overflow scrolling, respectively.
+
+        There are no new tests yet -- we'll need to find a way to test this!
+
+        * WebCore.exp.in:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::setStateScrollingNodeSnapOffsetsAsFloat): Helper functions used to convert LayoutUnits to floats for snap offsets.
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated): Update snap offsets for mainframe scrolling, as well as the state node.
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode): Added snap offsets.
+        * page/scrolling/AxisScrollSnapOffsets.h:
+        (WebCore::closestSnapOffset): Computes the closest snap offset given a sorted vector of comparable types (e.g. float, LayoutUnit).
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setHorizontalSnapOffsets):
+        (WebCore::ScrollingStateScrollingNode::setVerticalSnapOffsets):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::horizontalSnapOffsets):
+        (WebCore::ScrollingStateScrollingNode::verticalSnapOffsets):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::horizontalSnapOffsets):
+        (WebCore::ScrollingTreeScrollingNode::verticalSnapOffsets):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Update snap offsets for overflow scrolling.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer): Updates the state node's snap offsets for overflow scrolling.
+
 2014-08-15  Dirk Schulze  <krit@webkit.org>
 
         Turn r/rx/ry to presentation attributes

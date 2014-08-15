@@ -1,3 +1,27 @@
+2014-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement snapping behavior for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=135769
+
+        Reviewed by Brent Fulgham.
+
+        Added support for snap points on iOS.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode): Added snap offset encoding.
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode): Added snap offset decoding.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]): For mainframe scrolling, retargets the scroll destination to the appropriate snap point.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h: Added methods to extract relevant information for WKWebView from snap offsets in mainframe scrolling.
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): For overflow scrolling, retargets the scroll destination to the appropriate snap point.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateAfterChildren): Sets the deceleration factor to FAST if snap points are active.
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping): Used by WKWebView for mainframe scrolling to retarget the scroll destination, if necessary.
+        (WebKit::RemoteScrollingCoordinatorProxy::shouldSetScrollViewDecelerationRateFast): Used by WKWebView for mainframe scrolling to determine whether to set deceleration rate to the fast value.
+        (WebKit::RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling): Helper method.
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling): Helper method.
+
 2014-08-15  Gavin Barraclough  <barraclough@apple.com>
 
         Fix plugin visibility check.

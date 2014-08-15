@@ -41,8 +41,11 @@ class ScrollableArea;
 
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, HTMLElement& scrollingElement, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle);
 
-template <typename T>
-T closestSnapOffset(const Vector<T>& snapOffsets, T scrollDestination, float velocity)
+// closestSnapOffset is a templated function that takes in a Vector representing snap offsets as LayoutTypes (e.g. LayoutUnit or float) and
+// as well as a VelocityType indicating the velocity (e.g. float, CGFloat, etc.) This function is templated because the UI process will now
+// use pixel snapped floats to represent snap offsets rather than LayoutUnits.
+template <typename LayoutType, typename VelocityType>
+LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, LayoutType scrollDestination, VelocityType velocity)
 {
     ASSERT(snapOffsets.size());
     if (scrollDestination <= snapOffsets.first())
@@ -65,8 +68,8 @@ T closestSnapOffset(const Vector<T>& snapOffsets, T scrollDestination, float vel
             break;
         }
     }
-    T lowerSnapPosition = snapOffsets[lowerIndex];
-    T upperSnapPosition = snapOffsets[upperIndex];
+    LayoutType lowerSnapPosition = snapOffsets[lowerIndex];
+    LayoutType upperSnapPosition = snapOffsets[upperIndex];
     // Nonzero velocity indicates a flick gesture. Even if another snap point is closer, snap to the one in the direction of the flick gesture.
     if (velocity)
         return velocity < 0 ? lowerSnapPosition : upperSnapPosition;

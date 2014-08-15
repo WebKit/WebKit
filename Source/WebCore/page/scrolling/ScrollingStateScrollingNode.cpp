@@ -48,6 +48,10 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_scrollPosition(stateNode.scrollPosition())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
+#if ENABLE(CSS_SCROLL_SNAP)
+    , m_horizontalSnapOffsets(stateNode.horizontalSnapOffsets())
+    , m_verticalSnapOffsets(stateNode.verticalSnapOffsets())
+#endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
 {
@@ -101,6 +105,26 @@ void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
     m_scrollOrigin = scrollOrigin;
     setPropertyChanged(ScrollOrigin);
 }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+void ScrollingStateScrollingNode::setHorizontalSnapOffsets(const Vector<float>& snapOffsets)
+{
+    if (m_horizontalSnapOffsets == snapOffsets)
+        return;
+
+    m_horizontalSnapOffsets = snapOffsets;
+    setPropertyChanged(HorizontalSnapOffsets);
+}
+
+void ScrollingStateScrollingNode::setVerticalSnapOffsets(const Vector<float>& snapOffsets)
+{
+    if (m_verticalSnapOffsets == snapOffsets)
+        return;
+
+    m_verticalSnapOffsets = snapOffsets;
+    setPropertyChanged(VerticalSnapOffsets);
+}
+#endif
 
 void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAreaParameters& parameters)
 {

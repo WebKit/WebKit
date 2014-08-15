@@ -169,7 +169,7 @@ void AxisScrollSnapAnimator::beginScrollSnapAnimation(ScrollSnapState newState)
     LayoutUnit projectedScrollDestination = newState == ScrollSnapState::Gliding ? m_beginTrackingWheelDeltaOffset + LayoutUnit(projectedInertialScrollDistance(initialWheelDelta)) : offset;
     projectedScrollDestination = std::min(std::max(projectedScrollDestination, m_snapOffsets->first()), m_snapOffsets->last());
     m_initialOffset = offset;
-    m_targetOffset = closestSnapOffset<LayoutUnit>(*m_snapOffsets, projectedScrollDestination, initialWheelDelta);
+    m_targetOffset = closestSnapOffset<LayoutUnit, float>(*m_snapOffsets, projectedScrollDestination, initialWheelDelta);
     if (m_initialOffset == m_targetOffset)
         return;
 

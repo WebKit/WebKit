@@ -67,6 +67,14 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
         m_scrollOrigin = state.scrollOrigin();
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsets))
+        m_horizontalSnapOffsets = state.horizontalSnapOffsets();
+
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets))
+        m_verticalSnapOffsets = state.verticalSnapOffsets();
+#endif
+
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams))
         m_scrollableAreaParameters = state.scrollableAreaParameters();
 }

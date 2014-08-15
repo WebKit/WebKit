@@ -57,6 +57,11 @@ public:
 
     virtual FloatPoint scrollPosition() const = 0;
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    const Vector<float>& horizontalSnapOffsets() const { return m_horizontalSnapOffsets; }
+    const Vector<float>& verticalSnapOffsets() const { return m_verticalSnapOffsets; }
+#endif
+
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
@@ -92,7 +97,10 @@ private:
     FloatSize m_reachableContentsSize;
     FloatPoint m_lastCommittedScrollPosition;
     IntPoint m_scrollOrigin;
-    
+#if ENABLE(CSS_SCROLL_SNAP)
+    Vector<float> m_horizontalSnapOffsets;
+    Vector<float> m_verticalSnapOffsets;
+#endif
     ScrollableAreaParameters m_scrollableAreaParameters;
 };
 
