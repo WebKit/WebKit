@@ -46,7 +46,7 @@ RegExpMatchesArray* RegExpMatchesArray::create(ExecState* exec, JSString* input,
 {
     ASSERT(result);
     VM& vm = exec->vm();
-    Butterfly* butterfly = createArrayButterfly(vm, 0, regExp->numSubpatterns() + 1);
+    Butterfly* butterfly = createArrayButterflyWithExactLength(vm, 0, regExp->numSubpatterns() + 1);
     RegExpMatchesArray* array = new (NotNull, allocateCell<RegExpMatchesArray>(vm.heap)) RegExpMatchesArray(vm, butterfly, exec->lexicalGlobalObject(), input, regExp, result);
     array->finishCreation(vm);
     return array;

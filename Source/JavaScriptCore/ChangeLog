@@ -1,3 +1,22 @@
+2014-08-14  Andreas Kling  <akling@apple.com>
+
+        Allocate the whole RegExpMatchesArray backing store up front.
+        <https://webkit.org/b/135217>
+
+        We were using the generic array backing store allocation path for
+        RegExpMatchesArray which meant starting with 4 slots and then growing
+        it dynamically as we append. Since we always know the final number of
+        entries up front, allocate a perfectly-sized backing store right away.
+
+        ~2% progression on Octane/regexp.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSArray.h:
+        (JSC::createArrayButterflyWithExactLength):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::RegExpMatchesArray::create):
+
 2014-08-14  Saam Barati  <sbarati@apple.com>
 
         Allow high fidelity type profiling to be enabled and disabled.
