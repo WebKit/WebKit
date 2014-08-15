@@ -543,7 +543,7 @@ class Port(object):
 
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories
-        skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests', 'reference', 'reftest'])
+        skipped_directories = set(['.svn', '_svn', 'resources', 'support', 'script-tests', 'reference', 'reftest'])
         files = find_files.find(self._filesystem, self.layout_tests_dir(), paths, skipped_directories, Port._is_test_file, self.test_key)
         return [self.relative_test_filename(f) for f in files]
 

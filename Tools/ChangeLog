@@ -1,3 +1,19 @@
+2014-08-15  Rebecca Hauck  <rhauck@adobe.com>
+
+        run-webkit-tests should skip 'support' directories
+        https://bugs.webkit.org/show_bug.cgi?id=135910
+
+        Reviewed by Bem Jones-Bey.
+        
+        This patch adds the 'support' directory to the list
+        of dirs to skip when looking for runnable tests.
+        the W3C uses this name for support files, so tests
+        imported from the W3C will not work without this change
+        or without many edits.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._real_tests):
+
 2014-08-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Extend auto-version and version-stamp for RC_ProjectBuildVersion
