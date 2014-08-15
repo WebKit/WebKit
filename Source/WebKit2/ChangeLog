@@ -1,3 +1,24 @@
+2014-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix plugin visibility check.
+        https://bugs.webkit.org/show_bug.cgi?id=135991
+
+        Reviewed by Andreas Kling.
+
+        We should only take a UserActivity if the plugin is in a visible window,
+        and also is itself visible.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+            - initialize member state.
+        (WebKit::PluginControllerProxy::visibilityDidChange):
+        (WebKit::PluginControllerProxy::windowVisibilityChanged):
+            - update member state & call updateVisiblityActivity.
+        (WebKit::PluginControllerProxy::updateVisiblityActivity):
+            - enable the UserActivity only if both visibilities are true.
+        * PluginProcess/PluginControllerProxy.h:
+            - added m_isVisible, m_isWindowVisible, updateVisibilityActivity.
+
 2014-08-15  Enrica Casucci  <enrica@apple.com>
 
         [Services with UI] Selections are incorrect when selecting three lines.

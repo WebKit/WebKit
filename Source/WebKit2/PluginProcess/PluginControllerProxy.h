@@ -151,6 +151,7 @@ private:
 
     void windowFocusChanged(bool);
     void windowVisibilityChanged(bool);
+    void updateVisiblityActivity();
 
 #if PLATFORM(COCOA)
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
@@ -176,6 +177,8 @@ private:
     bool m_isPrivateBrowsingEnabled;
     bool m_isAcceleratedCompositingEnabled;
     bool m_isInitializing;
+    bool m_isVisibile;
+    bool m_isWindowVisibile;
 
     RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> m_initializationReply;
 
