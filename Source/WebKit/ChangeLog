@@ -1,3 +1,15 @@
+2014-08-15  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/135979> WebKit1 Plug-in test failures in clean builds after r172595
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj: Add a WebKitPluginHost.app symlink at the top level of
+        WebKitLegacy.framework that points into Versions/Current. This enables -[NSBundle pathForAuxiliaryExecutable:]
+        to work correctly. Adding this symlink requires deleting any content that may already exist
+        at that path, since prior to r172595 it may have contained either a symlink or an
+        application bundle.
+
 2014-08-13  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/135909> Move helper applications out of the root of the framework.
