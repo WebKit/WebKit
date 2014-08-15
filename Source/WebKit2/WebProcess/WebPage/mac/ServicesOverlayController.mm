@@ -279,7 +279,7 @@ static inline void stitchRects(Vector<LayoutRect>& rects)
     // First stitch together all the rects on the first line of the selection.
     size_t indexFromStart = 0;
     LayoutUnit firstTop = rects[indexFromStart].y();
-    LayoutRect& currentRect = rects[indexFromStart++];
+    LayoutRect& currentRect = rects[indexFromStart];
     while (indexFromStart < rects.size() && rects[indexFromStart].y() == firstTop)
         currentRect.unite(rects[indexFromStart++]);
     
@@ -294,18 +294,22 @@ static inline void stitchRects(Vector<LayoutRect>& rects)
     size_t indexFromEnd = rects.size() - 1;
     LayoutUnit lastTop = rects[indexFromEnd].y();
     LayoutRect lastRect = rects[indexFromEnd];
-    while (indexFromEnd != indexFromStart && rects[--indexFromEnd].y() == lastTop)
-        lastRect.unite(rects[indexFromEnd]);
+    while (indexFromEnd >= indexFromStart && rects[indexFromEnd].y() == lastTop)
+        lastRect.unite(rects[indexFromEnd--]);
     
-    if (indexFromEnd == indexFromStart) {
-        // All the rects are on two lines only. There is nothing else to do.
+    // indexFromStart is the index of the first rectangle on the second line.
+    // indexFromEnd is the index of the last rectangle on the second to the last line.
+    // if they are equal, there is one additional rectangle for the line in the middle.
+    if (indexFromEnd == indexFromStart)
+        newRects.append(rects[indexFromStart]);
+    
+    if (indexFromEnd <= indexFromStart) {
+        // There are no more rects to stitch. Just append the last line.
         newRects.append(lastRect);
         rects.swap(newRects);
         return;
     }
     
-    // indexFromStart is the index of the first rectangle on the second line.
-    // indexFromEnd is the index of the last rectangle on the second to the last line.
     // Stitch together all the rects after the first line until the second to the last included.
     currentRect = rects[indexFromStart];
     while (indexFromStart != indexFromEnd)
