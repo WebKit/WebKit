@@ -94,23 +94,9 @@ void PluginControllerProxy::platformGeometryDidChange()
     [CATransaction commit];
 }
 
-void PluginControllerProxy::windowFocusChanged(bool hasFocus)
-{
-    m_plugin->windowFocusChanged(hasFocus);
-}
-
 void PluginControllerProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
     m_plugin->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
-}
-
-void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
-{
-    m_plugin->windowVisibilityChanged(isVisible);
-    if (isVisible)
-        m_visiblityActivity.start();
-    else
-        m_visiblityActivity.stop();
 }
 
 void PluginControllerProxy::sendComplexTextInput(const String& textInput)

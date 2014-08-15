@@ -219,15 +219,15 @@ public:
     // Get the NPObject that corresponds to the plug-in's scriptable object. Returns a retained object.
     virtual NPObject* pluginScriptableNPObject() = 0;
 
-#if PLATFORM(COCOA)
     // Tells the plug-in about window focus changes.
     virtual void windowFocusChanged(bool) = 0;
-
-    // Tells the plug-in about window and plug-in frame changes.
-    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) = 0;
-
+    
     // Tells the plug-in about window visibility changes.
     virtual void windowVisibilityChanged(bool) = 0;
+    
+#if PLATFORM(COCOA)
+    // Tells the plug-in about window and plug-in frame changes.
+    virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) = 0;
 
     // Get the per complex text input identifier.
     virtual uint64_t pluginComplexTextInputIdentifier() const = 0;
