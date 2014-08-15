@@ -412,6 +412,7 @@ public:
     WTF_EXPORT_STRING_API static PassRef<StringImpl> adopt(StringBuffer<LChar>&);
 
     unsigned length() const { return m_length; }
+    static ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
 
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }

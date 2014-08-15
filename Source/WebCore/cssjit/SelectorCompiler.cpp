@@ -238,6 +238,7 @@ private:
     void generateElementFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     void generateContextFunctionCallTest(Assembler::JumpList& failureCases, JSC::FunctionPtr);
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsEmpty(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsInLanguage(Assembler::JumpList& failureCases, const AtomicString&);
@@ -497,7 +498,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::CannotMatchAnything;
 
     // FIXME: Compile these pseudoclasses, too!
-    case CSSSelector::PseudoClassEmpty:
     case CSSSelector::PseudoClassFirstOfType:
     case CSSSelector::PseudoClassLastOfType:
     case CSSSelector::PseudoClassOnlyOfType:
@@ -529,6 +529,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SelectorCheckerWithCheckingContext;
 
     case CSSSelector::PseudoClassActive:
+    case CSSSelector::PseudoClassEmpty:
     case CSSSelector::PseudoClassFirstChild:
     case CSSSelector::PseudoClassHover:
     case CSSSelector::PseudoClassLastChild:
@@ -1963,6 +1964,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
 
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassActive))
         generateElementIsActive(matchingPostTagNameFailureCases, fragment);
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassEmpty))
+        generateElementIsEmpty(matchingPostTagNameFailureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassHover))
         generateElementIsHovered(matchingPostTagNameFailureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClassOnlyChild))
@@ -2457,6 +2460,97 @@ void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failure
         functionCall.setTwoArguments(elementAddressRegister, checkingContext);
         failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
     }
+}
+
+static void jumpIfElementIsNotEmpty(Assembler& assembler, RegisterAllocator& registerAllocator, Assembler::JumpList& notEmptyCases, Assembler::RegisterID element)
+{
+    LocalRegister currentChild(registerAllocator);
+    assembler.loadPtr(Assembler::Address(element, ContainerNode::firstChildMemoryOffset()), currentChild);
+
+    Assembler::Label loopStart(assembler.label());
+    Assembler::Jump noMoreChildren = assembler.branchTestPtr(Assembler::Zero, currentChild);
+
+    notEmptyCases.append(testIsElementFlagOnNode(Assembler::NonZero, assembler, currentChild));
+
+    {
+        Assembler::Jump skipTextNodeCheck = assembler.branchTest32(Assembler::Zero, Assembler::Address(currentChild, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsText()));
+
+        LocalRegister textStringImpl(registerAllocator);
+        assembler.loadPtr(Assembler::Address(currentChild, CharacterData::dataMemoryOffset()), textStringImpl);
+        notEmptyCases.append(assembler.branchTest32(Assembler::NonZero, Assembler::Address(textStringImpl, StringImpl::lengthMemoryOffset())));
+
+        skipTextNodeCheck.link(&assembler);
+    }
+
+    assembler.loadPtr(Assembler::Address(currentChild, Node::nextSiblingMemoryOffset()), currentChild);
+    assembler.jump().linkTo(loopStart, &assembler);
+
+    noMoreChildren.link(&assembler);
+}
+
+static void setElementStyleIsAffectedByEmpty(Element* element)
+{
+    element->setStyleAffectedByEmpty();
+}
+
+static void setElementStyleFromContextIsAffectedByEmptyAndUpdateRenderStyleIfNecessary(CheckingContext* context, bool isEmpty)
+{
+    ASSERT(context->elementStyle);
+    context->elementStyle->setEmptyState(isEmpty);
+}
+
+static void setElementStyleIsAffectedByEmptyAndUpdateRenderStyleIfNecessary(Element* element, bool isEmpty)
+{
+    element->setStyleAffectedByEmpty();
+
+    if (element->renderStyle() && (element->document().styleSheetCollection().usesSiblingRules() || element->renderStyle()->unique()))
+        element->renderStyle()->setEmptyState(isEmpty);
+}
+
+void SelectorCodeGenerator::generateElementIsEmpty(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    if (m_selectorContext == SelectorContext::QuerySelector) {
+        jumpIfElementIsNotEmpty(m_assembler, m_registerAllocator, failureCases, elementAddressRegister);
+        return;
+    }
+
+    LocalRegisterWithPreference isEmptyResults(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
+    m_assembler.move(Assembler::TrustedImm32(0), isEmptyResults);
+
+    Assembler::JumpList notEmpty;
+    jumpIfElementIsNotEmpty(m_assembler, m_registerAllocator, notEmpty, elementAddressRegister);
+    m_assembler.move(Assembler::TrustedImm32(1), isEmptyResults);
+    notEmpty.link(&m_assembler);
+
+    Assembler::Jump skipMarking;
+    if (shouldUseRenderStyleFromCheckingContext(m_selectorContext, fragment)) {
+        {
+            LocalRegister checkingContext(m_registerAllocator);
+            skipMarking = jumpIfNotResolvingStyle(checkingContext);
+
+            FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+            functionCall.setFunctionAddress(setElementStyleFromContextIsAffectedByEmptyAndUpdateRenderStyleIfNecessary);
+            functionCall.setTwoArguments(checkingContext, isEmptyResults);
+            functionCall.call();
+        }
+
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(setElementStyleIsAffectedByEmpty);
+        functionCall.setOneArgument(elementAddressRegister);
+        functionCall.call();
+    } else {
+        {
+            LocalRegister checkingContext(m_registerAllocator);
+            skipMarking = jumpIfNotResolvingStyle(checkingContext);
+        }
+        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+        functionCall.setFunctionAddress(setElementStyleIsAffectedByEmptyAndUpdateRenderStyleIfNecessary);
+        functionCall.setTwoArguments(elementAddressRegister, isEmptyResults);
+        functionCall.call();
+    }
+    skipMarking.link(&m_assembler);
+
+    failureCases.append(m_assembler.branchTest32(Assembler::Zero, isEmptyResults));
 }
 
 void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

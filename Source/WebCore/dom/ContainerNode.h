@@ -84,6 +84,7 @@ public:
     virtual ~ContainerNode();
 
     Node* firstChild() const { return m_firstChild; }
+    static ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
     Node* lastChild() const { return m_lastChild; }
     bool hasChildNodes() const { return m_firstChild; }
 

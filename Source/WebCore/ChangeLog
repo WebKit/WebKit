@@ -1,3 +1,32 @@
+2014-08-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: compile the :empty pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=135958
+
+        Reviewed by Andreas Kling.
+
+        Compile :empty, nothing fancy.
+
+        Tests: fast/selectors/empty-basics.html
+               fast/selectors/empty-long-adjacent-backtracking.html
+               fast/selectors/empty-adjacent-style-update.html
+               fast/selectors/empty-style-update.html
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::jumpIfElementIsNotEmpty):
+        (WebCore::SelectorCompiler::setElementStyleIsAffectedByEmpty):
+        (WebCore::SelectorCompiler::setElementStyleFromContextIsAffectedByEmptyAndUpdateRenderStyleIfNecessary):
+        (WebCore::SelectorCompiler::setElementStyleIsAffectedByEmptyAndUpdateRenderStyleIfNecessary):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsEmpty):
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::dataMemoryOffset):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::firstChildMemoryOffset):
+        * dom/Node.h:
+        (WebCore::Node::flagIsText):
+
 2014-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement scroll snapping animations on Mac

@@ -1,3 +1,24 @@
+2014-08-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: compile the :empty pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=135958
+
+        Reviewed by Andreas Kling.
+
+        Add some test coverage, :empty had very little testing.
+
+        The test empty-adjacent-style-update expose some problems with style update,
+        I will look into them separately.
+
+        * fast/selectors/empty-adjacent-style-update-expected.txt: Added.
+        * fast/selectors/empty-adjacent-style-update.html: Added.
+        * fast/selectors/empty-basics-expected.txt: Added.
+        * fast/selectors/empty-basics.html: Added.
+        * fast/selectors/empty-long-adjacent-backtracking-expected.txt: Added.
+        * fast/selectors/empty-long-adjacent-backtracking.html: Added.
+        * fast/selectors/empty-style-update-expected.txt: Added.
+        * fast/selectors/empty-style-update.html: Added.
+
 2014-08-14  Martin Hock  <mhock@apple.com>
 
         IndexedDB should respect SchemeRegistry's database access setting.
