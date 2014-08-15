@@ -14,10 +14,10 @@ endif ()
 
 if (ENABLE_GTKDOC)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk/html/
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkit2gtk
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkit2gtk-${WEBKITGTK_API_VERSION}"
     )
     install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk/html/
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkitdomgtk
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkitdomgtk-${WEBKITGTK_API_VERSION}"
     )
 endif ()
 
