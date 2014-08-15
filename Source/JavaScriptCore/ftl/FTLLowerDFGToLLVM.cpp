@@ -1899,7 +1899,7 @@ private:
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
 
-        if (Options::verboseCompilation())
+        if (verboseCompilationEnabled())
             dataLog("    Emitting PutById patchpoint with stackmap #", stackmapID, "\n");
         
         LValue call = m_out.call(
@@ -3715,7 +3715,7 @@ private:
             : m_out.bitCast(calleeCallFrame, typeCalleeArg);
         LValue call = vmCall(callee, argument);
 
-        if (Options::verboseCompilation())
+        if (verboseCompilationEnabled())
             dataLog("Native calling: ", info.dli_sname, "\n");
 
         setJSValue(call);
@@ -4382,16 +4382,22 @@ private:
             isX86() ? "/Resources/Runtime/x86_64/" : "/Resources/Runtime/arm64/",
             path.data());
 
-        if (createMemoryBufferWithContentsOfFile(actualPath.data(), &memBuf, nullptr)) {
-            if (Options::verboseCompilation()) 
-                dataLog("Failed to load module at ", actualPath.data(), "\n for symbol ", symbol.data());
+        char* outMsg;
+        
+        if (createMemoryBufferWithContentsOfFile(actualPath.data(), &memBuf, &outMsg)) {
+            if (Options::verboseFTLFailure())
+                dataLog("Failed to load module at ", actualPath, "\n for symbol ", symbol, "\nERROR: ", outMsg, "\n");
+            disposeMessage(outMsg);
             return false;
         }
 
         LModule module;
 
-        if (parseBitcodeInContext(m_ftlState.context, memBuf, &module, nullptr)) {
+        if (parseBitcodeInContext(m_ftlState.context, memBuf, &module, &outMsg)) {
+            if (Options::verboseFTLFailure())
+                dataLog("Failed to parse module at ", actualPath, "\n for symbol ", symbol, "\nERROR: ", outMsg, "\n");
             disposeMemoryBuffer(memBuf);
+            disposeMessage(outMsg);
             return false;
         }
 
@@ -4424,8 +4430,12 @@ private:
             namedGlobals.append(globalName);
         }
 
-        if (linkModules(m_ftlState.module, module, LLVMLinkerDestroySource, nullptr))
+        if (linkModules(m_ftlState.module, module, LLVMLinkerDestroySource, &outMsg)) {
+            if (Options::verboseFTLFailure())
+                dataLog("Failed to link module at ", actualPath, "\n for symbol ", symbol, "\nERROR: ", outMsg, "\n");
+            disposeMessage(outMsg);
             return false;
+        }
         
         for (CString* symbol = namedFunctions.begin(); symbol != namedFunctions.end(); ++symbol) {
             LValue function = getNamedFunction(m_ftlState.module, symbol->data());

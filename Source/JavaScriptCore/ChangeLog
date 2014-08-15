@@ -1,3 +1,19 @@
+2014-08-15  Matthew Mirman  <mmirman@apple.com>
+
+        Made native inlining errors not segfault. 
+        https://bugs.webkit.org/show_bug.cgi?id=135988
+        
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::disposeMessage): Added.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compilePutById): 
+        abstracted out Options::verboseCompilation as was the case in the rest of the file.
+        (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct):
+        (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol): 
+        added output error messages for llvm module loading.
+
 2014-08-14  Andreas Kling  <akling@apple.com>
 
         Allocate the whole RegExpMatchesArray backing store up front.

@@ -187,6 +187,8 @@ static inline void disposeMemoryBuffer(LLVMMemoryBufferRef memBuf){ llvm->Dispos
 static inline LModule moduleCreateWithNameInContext(const char* moduleID, LContext context){ return llvm->ModuleCreateWithNameInContext(moduleID, context); }
 static inline void disposeModule(LModule m){ llvm->DisposeModule(m); }
 
+static inline void disposeMessage(char* outMsg) { llvm->DisposeMessage(outMsg); }
+
 static inline LValue getParam(LValue function, unsigned index) { return llvm->GetParam(function, index); }
 
 static inline void getParamTypes(LType function, LType* dest) { return llvm->GetParamTypes(function, dest); }
