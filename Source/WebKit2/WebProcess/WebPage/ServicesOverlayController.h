@@ -59,7 +59,7 @@ private:
     class Highlight : public RefCounted<Highlight>, private WebCore::GraphicsLayerClient {
         WTF_MAKE_NONCOPYABLE(Highlight);
     public:
-        static PassRefPtr<Highlight> createForSelection(ServicesOverlayController&, RetainPtr<DDHighlightRef>);
+        static PassRefPtr<Highlight> createForSelection(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
         static PassRefPtr<Highlight> createForTelephoneNumber(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
         ~Highlight();
 
@@ -77,6 +77,8 @@ private:
 
         void fadeIn();
         void fadeOut();
+
+        void setDDHighlight(DDHighlightRef);
 
     private:
         explicit Highlight(ServicesOverlayController&, Type, RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
@@ -102,12 +104,14 @@ private:
     virtual void didMoveToWebPage(PageOverlay*, WebPage*) override;
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
+    virtual void didScrollFrame(PageOverlay*, WebCore::Frame*) override;
 
     void createOverlayIfNeeded();
     void handleClick(const WebCore::IntPoint&, Highlight&);
 
     void drawHighlight(Highlight&, WebCore::GraphicsContext&);
 
+    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<Highlight>>&, Highlight::Type);
     void removeAllPotentialHighlightsOfType(Highlight::Type);
     void buildPhoneNumberHighlights();
     void buildSelectionHighlight();

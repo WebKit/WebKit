@@ -170,6 +170,11 @@ bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
     return m_client->mouseEvent(this, mouseEvent);
 }
 
+void PageOverlay::didScrollFrame(Frame* frame)
+{
+    m_client->didScrollFrame(this, frame);
+}
+
 WKTypeRef PageOverlay::copyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter)
 {
     return m_client->copyAccessibilityAttributeValue(this, attribute, parameter);
