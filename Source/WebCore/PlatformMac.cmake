@@ -93,6 +93,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/opentype/OpenTypeMathData.cpp
 
+    platform/mac/AxisScrollSnapAnimator.mm
     platform/mac/BlockExceptions.mm
     platform/mac/ContentFilterMac.mm
     platform/mac/ContextMenuItemMac.mm

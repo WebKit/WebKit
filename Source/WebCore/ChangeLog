@@ -1,3 +1,50 @@
+2014-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement scroll snapping animations on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135768
+
+        Reviewed by Beth Dakin.
+
+        Implementing the scroll snap animations required for snapping in both overflow and mainframe areas on Mac.
+        Since we receive a series of discrete wheel events, we need to predict the distance we need to traverse,
+        compute the appropriate snap point, and then compute an animation curve to that location. The snap animations
+        are split into two types: snapping, which handles letting go of the trackpad with zero velocity, and gliding,
+        which handles flick gestures. In both cases, sinusoidal curves are used to ease animation to the target
+        location. In the former case, the initial velocity is low, and increases to a maximum value during the middle
+        of the animation before decreasing to 0. In the latter case, the curve is computed such that the initial
+        velocity matches the user's scroll velocity, and the final velocity matches a lower final velocity that is
+        somewhat arbitrarily computed. (See the FIXME in AxisScrollSnapOffsets::initializeGlideParameters). How the
+        equations and constants were chosen is described in greater detail in the comments above
+        AxisScrollSnapOffsets::computeGlideDelta and AxisScrollSnapOffsets::computeSnapDelta. Note that the final
+        velocity should ideally be equal to 0. However, with this particular curve, this caused the animation to feel
+        too slow near the snap point.
+
+        No tests, since there is no observable change in behavior. Tests will be included when iOS and Mac scrolling
+        areas hook into this code.
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj: 
+        * page/scrolling/AxisScrollSnapOffsets.cpp: 
+        (WebCore::closestSnapOffset): Computes the closest snap offset given velocity and prdicted destination.
+        * page/scrolling/AxisScrollSnapOffsets.h:
+        * platform/mac/AxisScrollSnapAnimator.h: Added.
+        (WebCore::AxisScrollSnapAnimatorClient::~AxisScrollSnapAnimatorClient):
+        * platform/mac/AxisScrollSnapAnimator.mm: Added.
+        (WebCore::toWheelEventStatus): Converts a pair of PlatformWheelEventPhases to a WheelEventStatus.
+        (WebCore::projectedInertialScrollDistance): Attempts to predict the distance covered by the inertial scrolling phase.
+        (WebCore::AxisScrollSnapAnimator::AxisScrollSnapAnimator):
+        (WebCore::AxisScrollSnapAnimator::handleWheelEvent): Updates the internal state of the AxisScrollSnapAnimator, given a PlatformWheelEvent
+        (WebCore::AxisScrollSnapAnimator::shouldOverrideWheelEvent): Determines whether or not we should override a wheel event given the animator's internal state.
+        (WebCore::AxisScrollSnapAnimator::scrollSnapAnimationUpdate): Updates a single loop of the scroll snapping animation.
+        (WebCore::AxisScrollSnapAnimator::beginScrollSnapAnimation):
+        (WebCore::AxisScrollSnapAnimator::endScrollSnapAnimation):
+        (WebCore::AxisScrollSnapAnimator::computeSnapDelta): See comments for more information.
+        (WebCore::AxisScrollSnapAnimator::computeGlideDelta): See comments for more information.
+        (WebCore::AxisScrollSnapAnimator::initializeGlideParameters):
+        (WebCore::AxisScrollSnapAnimator::pushInitialWheelDelta):
+        (WebCore::AxisScrollSnapAnimator::averageInitialWheelDelta):
+        (WebCore::AxisScrollSnapAnimator::clearInitialWheelDeltaWindow):
+
 2014-08-14  Saam Barati  <sbarati@apple.com>
 
         Allow high fidelity type profiling to be enabled and disabled.

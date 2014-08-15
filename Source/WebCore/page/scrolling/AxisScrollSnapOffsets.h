@@ -28,7 +28,6 @@
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-#include "LayoutUnit.h"
 #include "ScrollTypes.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -41,6 +40,40 @@ class RenderStyle;
 class ScrollableArea;
 
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, HTMLElement& scrollingElement, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle);
+
+template <typename T>
+T closestSnapOffset(const Vector<T>& snapOffsets, T scrollDestination, float velocity)
+{
+    ASSERT(snapOffsets.size());
+    if (scrollDestination <= snapOffsets.first())
+        return snapOffsets.first();
+
+    if (scrollDestination >= snapOffsets.last())
+        return snapOffsets.last();
+
+    size_t lowerIndex = 0;
+    size_t upperIndex = snapOffsets.size() - 1;
+    while (lowerIndex < upperIndex - 1) {
+        size_t middleIndex = (lowerIndex + upperIndex) / 2;
+        if (scrollDestination < snapOffsets[middleIndex])
+            upperIndex = middleIndex;
+        else if (scrollDestination > snapOffsets[middleIndex])
+            lowerIndex = middleIndex;
+        else {
+            upperIndex = middleIndex;
+            lowerIndex = middleIndex;
+            break;
+        }
+    }
+    T lowerSnapPosition = snapOffsets[lowerIndex];
+    T upperSnapPosition = snapOffsets[upperIndex];
+    // Nonzero velocity indicates a flick gesture. Even if another snap point is closer, snap to the one in the direction of the flick gesture.
+    if (velocity)
+        return velocity < 0 ? lowerSnapPosition : upperSnapPosition;
+
+    bool isCloserToLowerSnapPosition = scrollDestination - lowerSnapPosition <= upperSnapPosition - scrollDestination;
+    return isCloserToLowerSnapPosition ? lowerSnapPosition : upperSnapPosition;
+}
 
 } // namespace WebCore
 
