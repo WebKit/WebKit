@@ -3,6 +3,20 @@
         Fix plugin visibility check.
         https://bugs.webkit.org/show_bug.cgi?id=135991
 
+        Unreviewed typo fix.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::visibilityDidChange):
+        (WebKit::PluginControllerProxy::windowVisibilityChanged):
+        (WebKit::PluginControllerProxy::updateVisiblityActivity):
+        * PluginProcess/PluginControllerProxy.h:
+
+2014-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix plugin visibility check.
+        https://bugs.webkit.org/show_bug.cgi?id=135991
+
         Reviewed by Andreas Kling.
 
         We should only take a UserActivity if the plugin is in a visible window,
