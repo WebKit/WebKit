@@ -1,3 +1,18 @@
+2014-08-14  Daniel Bates  <dabates@apple.com>
+
+        Preserve editing style for -webkit-tap-highlight-color on all ports that enable ENABLE_TOUCH_EVENTS
+        https://bugs.webkit.org/show_bug.cgi?id=135963
+
+        Reviewed by Andy Estes.
+
+        Currently we only preserve the CSS property -webkit-tap-highlight-color during editing operations
+        for iOS. Instead we should preserve it for all ports that enable ENABLE_TOUCH_EVENTS as this CSS
+        property isn't specific to iOS.
+
+        Also added FIXME comment with regards to the CSS property -webkit-composition-fill-color.
+
+        * editing/EditingStyle.cpp:
+
 2014-08-14  Benjamin Poulain  <benjamin@webkit.org>
 
         CSS JIT: compile the :empty pseudo class
