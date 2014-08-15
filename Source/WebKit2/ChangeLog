@@ -1,3 +1,17 @@
+2014-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix plugin visibility check.
+        https://bugs.webkit.org/show_bug.cgi?id=135991
+
+        D'oh, more unreviewed typo fix. :-(
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::visibilityDidChange):
+        (WebKit::PluginControllerProxy::windowVisibilityChanged):
+        (WebKit::PluginControllerProxy::updateVisibilityActivity):
+        (WebKit::PluginControllerProxy::updateVisiblityActivity): Deleted.
+        * PluginProcess/PluginControllerProxy.h:
+
 2014-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement snapping behavior for iOS
@@ -33,7 +47,7 @@
         (WebKit::PluginControllerProxy::PluginControllerProxy):
         (WebKit::PluginControllerProxy::visibilityDidChange):
         (WebKit::PluginControllerProxy::windowVisibilityChanged):
-        (WebKit::PluginControllerProxy::updateVisiblityActivity):
+        (WebKit::PluginControllerProxy::updateVisibilityActivity):
         * PluginProcess/PluginControllerProxy.h:
 
 2014-08-15  Gavin Barraclough  <barraclough@apple.com>
@@ -51,8 +65,8 @@
             - initialize member state.
         (WebKit::PluginControllerProxy::visibilityDidChange):
         (WebKit::PluginControllerProxy::windowVisibilityChanged):
-            - update member state & call updateVisiblityActivity.
-        (WebKit::PluginControllerProxy::updateVisiblityActivity):
+            - update member state & call updateVisibilityActivity.
+        (WebKit::PluginControllerProxy::updateVisibilityActivity):
             - enable the UserActivity only if both visibilities are true.
         * PluginProcess/PluginControllerProxy.h:
             - added m_isVisible, m_isWindowVisible, updateVisibilityActivity.
