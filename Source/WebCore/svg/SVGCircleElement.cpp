@@ -107,23 +107,15 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::cxAttr
-        || attrName == SVGNames::cyAttr) {
+        || attrName == SVGNames::cyAttr
+        || attrName == SVGNames::rAttr) {
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    if (attrName == SVGNames::rAttr)
-        updateRelativeLengthsInformation();
-
     RenderSVGShape* renderer = toRenderSVGShape(this->renderer());
     if (!renderer)
         return;
-
-    if (attrName == SVGNames::rAttr) {
-        renderer->setNeedsShapeUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        return;
-    }
 
     if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);

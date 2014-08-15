@@ -1669,6 +1669,12 @@ public:
     void setCx(Length cx) { accessSVGStyle().setCx(cx); }
     const Length& cy() const { return svgStyle().cy(); }
     void setCy(Length cy) { accessSVGStyle().setCy(cy); }
+    const Length& r() const { return svgStyle().r(); }
+    void setR(Length r) { accessSVGStyle().setR(r); }
+    const Length& rx() const { return svgStyle().rx(); }
+    void setRx(Length rx) { accessSVGStyle().setRx(rx); }
+    const Length& ry() const { return svgStyle().ry(); }
+    void setRy(Length ry) { accessSVGStyle().setRy(ry); }
     const Length& x() const { return svgStyle().x(); }
     void setX(Length x) { accessSVGStyle().setX(x); }
     const Length& y() const { return svgStyle().y(); }

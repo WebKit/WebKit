@@ -50,6 +50,33 @@ testComputed("cy", "1ex", "12.800000190734863px");
 testComputed("cy", "20%", "20%");
 testComputed("cy", "-200px", "-200px");
 
+// Test 'r'.
+testComputed("r", "  100", "100px");
+testComputed("r", "100   ", "100px");
+testComputed("r", "100px", "100px");
+testComputed("r", "1em", "16px");
+testComputed("r", "1ex", "12.800000190734863px");
+testComputed("r", "20%", "20%");
+testComputed("r", "-200px", "-200px");
+
+// Test 'rx'.
+testComputed("rx", "  100", "100px");
+testComputed("rx", "100   ", "100px");
+testComputed("rx", "100px", "100px");
+testComputed("rx", "1em", "16px");
+testComputed("rx", "1ex", "12.800000190734863px");
+testComputed("rx", "20%", "20%");
+testComputed("rx", "-200px", "-200px");
+
+// Test 'ry'.
+testComputed("ry", "  100", "100px");
+testComputed("ry", "100   ", "100px");
+testComputed("ry", "100px", "100px");
+testComputed("ry", "1em", "16px");
+testComputed("ry", "1ex", "12.800000190734863px");
+testComputed("ry", "20%", "20%");
+testComputed("ry", "-200px", "-200px");
+
 // Test 'width'.
 testComputed("width", "auto", "auto");
 testComputed("width", "  100", "100px");
@@ -93,6 +120,27 @@ negativeTestZero("cy", "100   px");
 negativeTestZero("cy", "100px;");
 negativeTestZero("cy", "100px !important");
 negativeTestZero("cy", "{ 100px }");
+
+// Negative tests for 'r'.
+negativeTestZero("r", "auto", "auto");
+negativeTestZero("r", "100   px");
+negativeTestZero("r", "100px;");
+negativeTestZero("r", "100px !important");
+negativeTestZero("r", "{ 100px }");
+
+// Negative tests for 'rx'.
+negativeTestZero("rx", "auto", "auto");
+negativeTestZero("rx", "100   px");
+negativeTestZero("rx", "100px;");
+negativeTestZero("rx", "100px !important");
+negativeTestZero("rx", "{ 100px }");
+
+// Negative tests for 'ry'.
+negativeTestZero("ry", "auto");
+negativeTestZero("ry", "100   px");
+negativeTestZero("ry", "100px;");
+negativeTestZero("ry", "100px !important");
+negativeTestZero("ry", "{ 100px }");
 
 // Negative tests for 'width'.
 negativeTest("width", "100   px");

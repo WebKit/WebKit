@@ -125,26 +125,16 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::xAttr
         || attrName == SVGNames::yAttr
         || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr) {
+        || attrName == SVGNames::heightAttr
+        || attrName == SVGNames::rxAttr
+        || attrName == SVGNames::ryAttr) {
         invalidateSVGPresentationAttributeStyle();
         return;
     }
 
-    bool isLengthAttribute = attrName == SVGNames::rxAttr
-                          || attrName == SVGNames::ryAttr;
-
-    if (isLengthAttribute)
-        updateRelativeLengthsInformation();
-
     RenderSVGShape* renderer = toRenderSVGShape(this->renderer());
     if (!renderer)
         return;
-
-    if (isLengthAttribute) {
-        renderer->setNeedsShapeUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        return;
-    }
 
     if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);

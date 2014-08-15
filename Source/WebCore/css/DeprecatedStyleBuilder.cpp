@@ -2596,6 +2596,9 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
 
     setPropertyHandler(CSSPropertyCx, ApplyPropertyLength<&RenderStyle::cx, &RenderStyle::setCx, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyCy, ApplyPropertyLength<&RenderStyle::cy, &RenderStyle::setCy, &RenderStyle::initialZeroLength>::createHandler());
+    setPropertyHandler(CSSPropertyR, ApplyPropertyLength<&RenderStyle::r, &RenderStyle::setR, &RenderStyle::initialZeroLength>::createHandler());
+    setPropertyHandler(CSSPropertyRx, ApplyPropertyLength<&RenderStyle::rx, &RenderStyle::setRx, &RenderStyle::initialZeroLength>::createHandler());
+    setPropertyHandler(CSSPropertyRy, ApplyPropertyLength<&RenderStyle::ry, &RenderStyle::setRy, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyX, ApplyPropertyLength<&RenderStyle::x, &RenderStyle::setX, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyY, ApplyPropertyLength<&RenderStyle::y, &RenderStyle::setY, &RenderStyle::initialZeroLength>::createHandler());
 

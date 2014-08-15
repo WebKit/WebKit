@@ -424,6 +424,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyMarkerStart,
     CSSPropertyMaskType,
     CSSPropertyPaintOrder,
+    CSSPropertyR,
+    CSSPropertyRx,
+    CSSPropertyRy,
     CSSPropertyShapeRendering,
     CSSPropertyStroke,
     CSSPropertyStrokeDasharray,
@@ -2972,6 +2975,12 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return zoomAdjustedPixelValueForLength(style->svgStyle().cx(), style.get());
         case CSSPropertyCy:
             return zoomAdjustedPixelValueForLength(style->svgStyle().cy(), style.get());
+        case CSSPropertyR:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().r(), style.get());
+        case CSSPropertyRx:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().rx(), style.get());
+        case CSSPropertyRy:
+            return zoomAdjustedPixelValueForLength(style->svgStyle().ry(), style.get());
         case CSSPropertyX:
             return zoomAdjustedPixelValueForLength(style->svgStyle().x(), style.get());
         case CSSPropertyY:

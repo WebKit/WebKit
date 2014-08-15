@@ -304,6 +304,9 @@ namespace WebCore {
 
         Length cx;
         Length cy;
+        Length r;
+        Length rx;
+        Length ry;
         Length x;
         Length y;
 

@@ -54,6 +54,9 @@ writing-mode [Inherited]
 
 cx
 cy
+r
+rx
+ry
 x
 y
 

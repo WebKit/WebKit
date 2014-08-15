@@ -280,6 +280,9 @@ bool StyleInheritedResourceData::operator==(const StyleInheritedResourceData& ot
 StyleLayoutData::StyleLayoutData()
     : cx(RenderStyle::initialZeroLength())
     , cy(RenderStyle::initialZeroLength())
+    , r(RenderStyle::initialZeroLength())
+    , rx(RenderStyle::initialZeroLength())
+    , ry(RenderStyle::initialZeroLength())
     , x(RenderStyle::initialZeroLength())
     , y(RenderStyle::initialZeroLength())
 {
@@ -289,6 +292,9 @@ inline StyleLayoutData::StyleLayoutData(const StyleLayoutData& other)
     : RefCounted<StyleLayoutData>()
     , cx(other.cx)
     , cy(other.cy)
+    , r(other.r)
+    , rx(other.rx)
+    , ry(other.ry)
     , x(other.x)
     , y(other.y)
 {
@@ -303,6 +309,9 @@ bool StyleLayoutData::operator==(const StyleLayoutData& other) const
 {
     return cx == other.cx
         && cy == other.cy
+        && r == other.r
+        && rx == other.rx
+        && ry == other.ry
         && x == other.x
         && y == other.y;
 }

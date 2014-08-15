@@ -301,6 +301,9 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     }
     case CSSPropertyCx:
     case CSSPropertyCy:
+    case CSSPropertyR:
+    case CSSPropertyRx:
+    case CSSPropertyRy:
     case CSSPropertyX:
     case CSSPropertyY:
         valid_primitive = (!id && validUnit(value, FLength | FPercent));

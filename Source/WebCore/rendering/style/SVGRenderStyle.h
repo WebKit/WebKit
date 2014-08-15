@@ -156,6 +156,21 @@ public:
         if (!(layout->cy == obj))
             layout.access()->cy = obj;
     }
+    void setR(const Length& obj)
+    {
+        if (!(layout->r == obj))
+            layout.access()->r = obj;
+    }
+    void setRx(const Length& obj)
+    {
+        if (!(layout->rx == obj))
+            layout.access()->rx = obj;
+    }
+    void setRy(const Length& obj)
+    {
+        if (!(layout->ry == obj))
+            layout.access()->ry = obj;
+    }
     void setX(const Length& obj)
     {
         if (!(layout->x == obj))
@@ -365,6 +380,9 @@ public:
     ShadowData* shadow() const { return shadowSVG->shadow.get(); }
     const Length& cx() const { return layout->cx; }
     const Length& cy() const { return layout->cy; }
+    const Length& r() const { return layout->r; }
+    const Length& rx() const { return layout->rx; }
+    const Length& ry() const { return layout->ry; }
     const Length& x() const { return layout->x; }
     const Length& y() const { return layout->y; }
     String clipperResource() const { return resources->clipper; }
