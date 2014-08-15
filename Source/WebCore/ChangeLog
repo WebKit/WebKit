@@ -1,3 +1,15 @@
+2014-08-14  Andreas Kling  <akling@apple.com>
+
+        Remove two unused Range functions.
+        <https://webkit.org/b/135944>
+
+        Reviewed by Geoffrey Garen.
+
+        * dom/Range.cpp:
+        (WebCore::Range::maxStartOffset): Deleted.
+        (WebCore::Range::maxEndOffset): Deleted.
+        * dom/Range.h:
+
 2014-08-14  Daniel Bates  <dabates@apple.com>
 
         Preserve editing style for -webkit-tap-highlight-color on all ports that enable ENABLE_TOUCH_EVENTS

@@ -173,8 +173,6 @@ private:
     void checkNodeBA(Node*, ExceptionCode&) const;
     void checkDeleteExtract(ExceptionCode&);
     bool containedByReadOnly() const;
-    int maxStartOffset() const;
-    int maxEndOffset() const;
 
     enum ActionType { Delete, Extract, Clone };
     PassRefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
