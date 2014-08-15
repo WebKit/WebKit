@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class HTMLMediaElement;
+class SourceBuffer;
 
 class HTMLMediaSession : public MediaSession {
 public:
@@ -81,6 +82,10 @@ public:
 
     void addBehaviorRestriction(BehaviorRestrictions);
     void removeBehaviorRestriction(BehaviorRestrictions);
+
+#if ENABLE(MEDIA_SOURCE)
+    size_t maximumMediaSourceBufferSize(const SourceBuffer&) const;
+#endif
 
 private:
     BehaviorRestrictions m_restrictions;
