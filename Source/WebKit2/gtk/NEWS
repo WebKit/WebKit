@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.5.3
+=================
+
+What's new in WebKitGTK+ 2.5.3?
+
+  - Fix a crash when drag and drop to a WebKitWebView.
+  - Fix slow motion rendering problem in GStreamer media backend due to integer rounding.
+  - Make sure the plugins cache is always used even if the cache directory doesn't exist.
+  - Fix the build on FreeBSD.
+  - Install the HTML API docs for WebKit2 and WebKitDOM in a versioned directory.
+  - Intall the GObject instrospection files to the correct path.
+
+=================
 WebKitGTK+  2.5.2
 =================
 

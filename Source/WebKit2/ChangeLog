@@ -1,3 +1,9 @@
+2014-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.3 release.
+
+        * gtk/NEWS: Add release notes for 2.5.3.
+
 2014-08-14  Enrica Casucci  <enrica@apple.com>
 
         [Services with UI] Selection services don't work inside <iframes>.

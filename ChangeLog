@@ -1,3 +1,9 @@
+2014-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.3 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-08-15  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Disable memory sampler on non-Linux system
