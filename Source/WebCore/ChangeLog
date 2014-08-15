@@ -1,3 +1,19 @@
+2014-08-15  Jer Noble  <jer.noble@apple.com>
+
+        [EME][Mac] Adopt AVStreamSession.
+        https://bugs.webkit.org/show_bug.cgi?id=135983
+
+        Reviewed by Eric Carlson.
+
+        Add AVStreamDataParsers to a new AVStreamSession instance, and expire that session when asked to release
+        the session's keys.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC):
+        (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys):
+        (WebCore::CDMSessionMediaSourceAVFObjC::update):
+
 2014-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement snapping behavior for iOS
