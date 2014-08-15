@@ -186,6 +186,9 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, 
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
 {
+    ASSERT(!m_pageMap.contains(pageID));
+    ASSERT(!globalPageMap().contains(pageID));
+
     m_pageMap.set(pageID, webPage);
     globalPageMap().set(pageID, webPage);
 #if PLATFORM(COCOA)
@@ -215,7 +218,7 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 
     // If this was the last WebPage open in that web process, and we have no other reason to keep it alive, let it go.
     // We only allow this when using a network process, as otherwise the WebProcess needs to preserve its session state.
-    if (!m_context->usesNetworkProcess() || !canTerminateChildProcess())
+    if (!m_context->usesNetworkProcess() || state() == State::Terminated || !canTerminateChildProcess())
         return;
 
     abortProcessLaunchIfNeeded();
@@ -471,8 +474,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
-    for (auto& page : m_pageMap.values())
+    for (WebPageProxy* page : m_pageMap.values()) {
+        ASSERT(this == &page->process());
         page->processDidFinishLaunching();
+    }
 
     m_webConnection = WebConnectionToWebProcess::create(this);
 

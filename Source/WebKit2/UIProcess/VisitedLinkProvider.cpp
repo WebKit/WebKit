@@ -97,8 +97,11 @@ void VisitedLinkProvider::removeAll()
     m_tableSize = 0;
     m_table.clear();
 
-    for (auto& processAndCount : m_processes)
-        processAndCount.key->connection()->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), m_identifier);
+    for (auto& processAndCount : m_processes) {
+        WebProcessProxy* process = processAndCount.key;
+        ASSERT(process->context().processes().contains(process));
+        process->connection()->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), m_identifier);
+    }
 }
 
 void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
@@ -175,10 +178,13 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
         return;
 
     for (auto& processAndCount : m_processes) {
+        WebProcessProxy* process = processAndCount.key;
+        ASSERT(process->context().processes().contains(process));
+
         if (addedVisitedLinks.size() > 20)
-            processAndCount.key->connection()->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), m_identifier);
+            process->connection()->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), m_identifier);
         else
-            processAndCount.key->connection()->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedVisitedLinks), m_identifier);
+            process->connection()->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedVisitedLinks), m_identifier);
     }
 }
 
@@ -229,6 +235,8 @@ void VisitedLinkProvider::resizeTable(unsigned newTableSize)
 
 void VisitedLinkProvider::sendTable(WebProcessProxy& process)
 {
+    ASSERT(process.context().processes().contains(&process));
+
     SharedMemory::Handle handle;
     if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
         return;

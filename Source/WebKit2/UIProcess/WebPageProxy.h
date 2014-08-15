@@ -740,8 +740,6 @@ public:
 
     bool isValid() const;
 
-    PassRefPtr<API::Array> relatedPages() const;
-
     const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
     FrameLoadState::State loadStateAtProcessExit() const { return m_loadStateAtProcessExit; }
 
