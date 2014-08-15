@@ -88,7 +88,9 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
     }
 
     ASSERT(isSVGEllipseElement(graphicsElement()));
-    m_radii = FloatSize(lengthContext.valueForLength(style().svgStyle().rx()), lengthContext.valueForLength(style().svgStyle().ry()));
+    m_radii = FloatSize(
+        lengthContext.valueForLength(style().svgStyle().rx(), LengthModeWidth),
+        lengthContext.valueForLength(style().svgStyle().ry(), LengthModeHeight));
 }
 
 void RenderSVGEllipse::fillShape(GraphicsContext* context) const

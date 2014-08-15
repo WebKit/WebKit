@@ -3,6 +3,16 @@
         Turn r/rx/ry to presentation attributes
         https://bugs.webkit.org/show_bug.cgi?id=135978
 
+        Unreviewed typo.
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::calculateRadiiAndCenter):
+
+2014-08-15  Dirk Schulze  <krit@webkit.org>
+
+        Turn r/rx/ry to presentation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=135978
+
         Reviewed by Dean Jackson.
 
         This follows the patch for width and height presentation attributes and
