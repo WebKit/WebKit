@@ -14,6 +14,20 @@ postProcessInDirectory()
         unifdefOptions="-DTARGET_OS_EMBEDDED=0 -DTARGET_OS_IPHONE=0 -DTARGET_IPHONE_SIMULATOR=0";
     fi
 
+    # FIXME: We should consider making this logic general purpose so as to support keeping or removing
+    # code guarded by an arbitrary feature define. For now it's sufficient to process touch- and gesture-
+    # guarded code.
+    for featureDefine in "ENABLE_TOUCH_EVENTS" "ENABLE_IOS_GESTURE_EVENTS"
+    do
+        # We assume a disabled feature is either undefined or has the empty string as its value.
+        eval "isFeatureEnabled=\$$featureDefine"
+        if [[ -z $isFeatureEnabled ]]; then
+            unifdefOptions="$unifdefOptions -D$featureDefine=0"
+        else
+            unifdefOptions="$unifdefOptions -D$featureDefine=1"
+        fi
+    done
+
     if [[ ${PLATFORM_NAME} == iphone* ]]; then
         sedExpression='s/ *WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)_MAC\([^)]+\)//g';
     else
