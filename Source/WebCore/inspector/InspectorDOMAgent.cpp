@@ -1445,7 +1445,7 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
 
     Node* activeDescendantNode = nullptr;
     bool busy = false;
-    TypeBuilder::DOM::AccessibilityProperties::Checked::Enum checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
+    TypeBuilder::DOM::AccessibilityProperties::Checked checked = TypeBuilder::DOM::AccessibilityProperties::Checked::False;
     RefPtr<Inspector::TypeBuilder::Array<int>> childNodeIds;
     RefPtr<Inspector::TypeBuilder::Array<int>> controlledNodeIds;
     bool exists = false;
@@ -1455,12 +1455,12 @@ PassRefPtr<TypeBuilder::DOM::AccessibilityProperties> InspectorDOMAgent::buildOb
     bool focused = false;
     bool ignored = true;
     bool ignoredByDefault = false;
-    TypeBuilder::DOM::AccessibilityProperties::Invalid::Enum invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
+    TypeBuilder::DOM::AccessibilityProperties::Invalid invalid = TypeBuilder::DOM::AccessibilityProperties::Invalid::False;
     bool hidden = false;
     String label;
     bool liveRegionAtomic = false;
     RefPtr<Inspector::TypeBuilder::Array<String>> liveRegionRelevant;
-    TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Enum liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Off;
+    TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus liveRegionStatus = TypeBuilder::DOM::AccessibilityProperties::LiveRegionStatus::Off;
     Node* mouseEventNode = nullptr;
     RefPtr<Inspector::TypeBuilder::Array<int>> ownedNodeIds;
     Node* parentNode = nullptr;

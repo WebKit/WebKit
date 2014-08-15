@@ -122,8 +122,19 @@ INSPECTOR_DOMAINS = \
 #
 
 INSPECTOR_GENERATOR_SCRIPTS = \
-	$(JavaScriptCore)/inspector/scripts/CodeGeneratorInspector.py \
-	$(JavaScriptCore)/inspector/scripts/CodeGeneratorInspectorStrings.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/__init__.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_backend_commands.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_backend_dispatcher_header.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_backend_dispatcher_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_frontend_dispatcher_header.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_frontend_dispatcher_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_type_builder_header.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generate_type_builder_implementation.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generator_templates.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/generator.py \
+	$(JavaScriptCore)/inspector/scripts/codegen/models.py \
+	$(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py \
+	$(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py \
 #
 
 all : \
@@ -144,7 +155,7 @@ InspectorJS.json : inspector/scripts/generate-combined-inspector-json.py $(INSPE
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
 InspectorJSFrontendDispatchers.h : InspectorJS.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/CodeGeneratorInspector.py ./InspectorJS.json --output_h_dir . --output_cpp_dir . --output_js_dir . --output_type JavaScript
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./InspectorJS.json
 
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore)/inspector/scripts/jsmin.py $(JavaScriptCore)/inspector/scripts/xxd.pl
 	echo "//# sourceURL=__WebInspectorInjectedScript__" > ./InjectedScriptSource.min.js

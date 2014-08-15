@@ -29,26 +29,25 @@
             ]
         },
         {
+            "id": "FrameResource",
+            "type": "object",
+            "properties": [
+                { "name": "url", "type": "string", "description": "Resource URL." },
+                { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." },
+                { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." },
+                { "name": "failed", "type": "boolean", "optional": true, "description": "True if the resource failed to load." },
+                { "name": "canceled", "type": "boolean", "optional": true, "description": "True if the resource was canceled during loading." },
+                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." }
+            ]
+        },
+        {
             "id": "FrameResourceTree",
             "type": "object",
             "description": "Information about the Frame hierarchy along with their cached resources.",
             "properties": [
                 { "name": "frame", "$ref": "Frame", "description": "Frame information for this tree item." },
                 { "name": "childFrames", "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" }, "description": "Child frames." },
-                { "name": "resources", "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": [
-                            { "name": "url", "type": "string", "description": "Resource URL." },
-                            { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." },
-                            { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." },
-                            { "name": "failed", "type": "boolean", "optional": true, "description": "True if the resource failed to load." },
-                            { "name": "canceled", "type": "boolean", "optional": true, "description": "True if the resource was canceled during loading." },
-                            { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." }
-                        ]
-                    },
-                    "description": "Information about frame resources."
-                }
+                { "name": "resources", "type": "array", "items": { "$ref": "FrameResource" }, "description": "Information about frame resources." }
             ]
         },
         {

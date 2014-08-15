@@ -131,7 +131,7 @@ void ConsoleMessage::autogenerateMetadata(JSC::ExecState* state)
     }
 }
 
-static Inspector::TypeBuilder::Console::ConsoleMessage::Source::Enum messageSourceValue(MessageSource source)
+static Inspector::TypeBuilder::Console::ConsoleMessage::Source messageSourceValue(MessageSource source)
 {
     switch (source) {
     case MessageSource::XML: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::XML;
@@ -148,7 +148,7 @@ static Inspector::TypeBuilder::Console::ConsoleMessage::Source::Enum messageSour
     return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Other;
 }
 
-static Inspector::TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeValue(MessageType type)
+static Inspector::TypeBuilder::Console::ConsoleMessage::Type messageTypeValue(MessageType type)
 {
     switch (type) {
     case MessageType::Log: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Log;
@@ -168,7 +168,7 @@ static Inspector::TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeVa
     return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Log;
 }
 
-static Inspector::TypeBuilder::Console::ConsoleMessage::Level::Enum messageLevelValue(MessageLevel level)
+static Inspector::TypeBuilder::Console::ConsoleMessage::Level messageLevelValue(MessageLevel level)
 {
     switch (level) {
     case MessageLevel::Log: return Inspector::TypeBuilder::Console::ConsoleMessage::Level::Log;

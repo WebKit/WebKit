@@ -1,3 +1,88 @@
+2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: rewrite CodeGeneratorInspector to be modular and testable
+        https://bugs.webkit.org/show_bug.cgi?id=131596
+
+        Reviewed by Joseph Pecoraro.
+
+        Aside from hooking up the new inspector bindings generator to the build system,
+        there are a few comingled changes that would be painful to split from the main
+        patch. Together, these changes make it possible to forward-declare all protocol
+        enumerations as scoped enums, reducing weird ordering dependencies between domains.
+
+        All runtimeCast() methods are now static methods of BindingTraits specializations,
+        rather than as static methods of the type builder classes.
+
+        All protocol enumeration types are scoped enums rather than struct-namespaced enums.
+
+        Remove some implicit protocol type and enumeration definitions because they trigger
+        compiler bugs or introduce unnecessary complexity in the bindings generator.
+
+        No new tests, no behavior changed.
+
+        * CMakeLists.txt:
+        * DerivedSources.make: Update script dependencies and the bindings generator script name.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspectImpl): Convert to BindingTraits.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::resourceTypeJson):
+        (WebCore::InspectorPageAgent::cachedResourceTypeJson):
+        (WebCore::InspectorPageAgent::getScriptExecutionStatus): Convert to scoped enums.
+
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree): Extract FrameResourceTree::Resources
+        into its own explicitly-defined object type. The new generator does not support implicitly
+        defining object types as elements of arrays.
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp: Disambiguate between internal and protocol types.
+        (WebCore::buildInspectorObjectForSessionState):
+        (WebCore::buildInspectorObjectForSegmentState):
+        (WebCore::InspectorReplayAgent::sessionState):
+        (WebCore::InspectorReplayAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorReplayAgent::frameNavigated):
+        (WebCore::InspectorReplayAgent::frameDetached):
+        (WebCore::InspectorReplayAgent::willDispatchEvent):
+        (WebCore::InspectorReplayAgent::startCapturing):
+        (WebCore::InspectorReplayAgent::stopCapturing):
+        (WebCore::InspectorReplayAgent::replayToPosition):
+        (WebCore::InspectorReplayAgent::replayToCompletion):
+        (WebCore::InspectorReplayAgent::pausePlayback):
+        (WebCore::InspectorReplayAgent::cancelPlayback):
+        (WebCore::InspectorReplayAgent::switchSession):
+        (WebCore::InspectorReplayAgent::insertSessionSegment):
+        (WebCore::InspectorReplayAgent::removeSessionSegment):
+        (WebCore::InspectorReplayAgent::currentReplayState):
+        (WebCore::InspectorReplayAgent::getAvailableSessions):
+        (WebCore::InspectorReplayAgent::getSessionData):
+        (WebCore::InspectorReplayAgent::getSegmentData):
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        * inspector/InspectorStyleSheet.cpp: Convert to scoped enums. Extract CSSProperty::Status
+        because scoped enums defined in a class scope trigger compiler bugs in GCC 4.8.
+        (WebCore::buildMediaObject):
+        (WebCore::InspectorStyle::styleWithProperties): Work around compiler disagreements.
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+
+        * inspector/InspectorTimelineAgent.cpp: Convert to scoped enums and BindingTraits.
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::sendEvent):
+
+        * inspector/protocol/CSS.json: Extract CSSProperty::Status.
+        * inspector/protocol/Page.json: Extract FrameResourceTree::Resources.
+
 2014-08-15  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Adopt AVStreamSession.

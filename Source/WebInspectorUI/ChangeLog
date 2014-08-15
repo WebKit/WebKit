@@ -1,3 +1,15 @@
+2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: rewrite CodeGeneratorInspector to be modular and testable
+        https://bugs.webkit.org/show_bug.cgi?id=131596
+
+        Reviewed by Joseph Pecoraro.
+
+        Also apply type extraction refactorings to old protocol versions for consistency.
+
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-08-15  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Probe details sidebar data grids do not show data

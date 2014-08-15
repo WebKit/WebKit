@@ -554,7 +554,7 @@ void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const I
     appendRecord(TimelineRecordFactory::createProbeSampleData(action, hitCount), TimelineRecordType::ProbeSample, false, frameFromExecState(exec));
 }
 
-static Inspector::TypeBuilder::Timeline::EventType::Enum toProtocol(TimelineRecordType type)
+static Inspector::TypeBuilder::Timeline::EventType toProtocol(TimelineRecordType type)
 {
     switch (type) {
     case TimelineRecordType::EventDispatch:
@@ -646,7 +646,7 @@ void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prp
 {
     prpRecord->setString("type", Inspector::TypeBuilder::getWebEnumConstantValue(toProtocol(type)));
 
-    RefPtr<Inspector::TypeBuilder::Timeline::TimelineEvent> record = Inspector::TypeBuilder::Timeline::TimelineEvent::runtimeCast(prpRecord);
+    RefPtr<Inspector::TypeBuilder::Timeline::TimelineEvent> record = BindingTraits<Inspector::TypeBuilder::Timeline::TimelineEvent>::runtimeCast(prpRecord);
 
     if (m_recordStack.isEmpty())
         sendEvent(record.release());
@@ -714,7 +714,7 @@ void InspectorTimelineAgent::sendEvent(PassRefPtr<InspectorObject> event)
         return;
 
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
-    RefPtr<Inspector::TypeBuilder::Timeline::TimelineEvent> recordChecked = Inspector::TypeBuilder::Timeline::TimelineEvent::runtimeCast(event);
+    RefPtr<Inspector::TypeBuilder::Timeline::TimelineEvent> recordChecked = BindingTraits<Inspector::TypeBuilder::Timeline::TimelineEvent>::runtimeCast(event);
     m_frontendDispatcher->eventRecorded(recordChecked.release());
 }
 

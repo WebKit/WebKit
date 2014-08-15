@@ -63,54 +63,6 @@ private:
     WTF_MAKE_NONCOPYABLE(OptOutput);
 };
 
-
-// A small transient wrapper around int type, that can be used as a funciton parameter type
-// cleverly disallowing C++ implicit casts from float or double.
-class ExactlyInt {
-public:
-    template<typename T>
-    ExactlyInt(T t) : m_value(cast_to_int<T>(t)) { }
-    ExactlyInt() { }
-
-    operator int() { return m_value; }
-
-private:
-    int m_value;
-
-    template<typename T>
-    static int cast_to_int(T) { return T::default_case_cast_is_not_supported(); }
-};
-
-template<>
-inline int ExactlyInt::cast_to_int<int>(int i) { return i; }
-
-template<>
-inline int ExactlyInt::cast_to_int<unsigned int>(unsigned int i) { return i; }
-
-#if !ASSERT_DISABLED
-class RuntimeCastHelper {
-public:
-    template<InspectorValue::Type TYPE>
-    static void assertType(InspectorValue* value)
-    {
-        ASSERT(value->type() == TYPE);
-    }
-
-    static void assertAny(InspectorValue*)
-    {
-    }
-
-    static void assertInt(InspectorValue* value)
-    {
-        double v;
-        bool castRes = value->asNumber(&v);
-        ASSERT_UNUSED(castRes, castRes);
-        ASSERT(static_cast<double>(static_cast<int>(v)) == v);
-    }
-};
-#endif
-
-
 // This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
 // technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
 template<typename T>
@@ -144,29 +96,6 @@ public:
     {
         return adoptRef(new Array<T>());
     }
-
-    static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
-    {
-        RefPtr<InspectorArray> array;
-        bool castRes = value->asArray(&array);
-        ASSERT_UNUSED(castRes, castRes);
-#if !ASSERT_DISABLED
-        assertCorrectValue(array.get());
-#endif // !ASSERT_DISABLED
-        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(InspectorArray), type_cast_problem);
-        return static_cast<Array<T>*>(static_cast<InspectorArrayBase*>(array.get()));
-    }
-
-#if !ASSERT_DISABLED
-    static void assertCorrectValue(InspectorValue* value)
-    {
-        RefPtr<InspectorArray> array;
-        bool castRes = value->asArray(&array);
-        ASSERT_UNUSED(castRes, castRes);
-        for (unsigned i = 0; i < array->length(); i++)
-            ArrayItemHelper<T>::Traits::template assertCorrectValue<T>(array->get(i).get());
-    }
-#endif // !ASSERT_DISABLED
 };
 
 struct StructItemTraits {
@@ -174,14 +103,6 @@ struct StructItemTraits {
     {
         array->pushValue(value);
     }
-
-#if !ASSERT_DISABLED
-    template<typename T>
-    static void assertCorrectValue(InspectorValue* value)
-    {
-        T::assertCorrectValue(value);
-    }
-#endif // !ASSERT_DISABLED
 };
 
 template<>
@@ -191,14 +112,6 @@ struct ArrayItemHelper<String> {
         {
             array->pushString(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertType<InspectorValue::TypeString>(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -209,14 +122,6 @@ struct ArrayItemHelper<int> {
         {
             array->pushInt(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertInt(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -227,14 +132,6 @@ struct ArrayItemHelper<double> {
         {
             array->pushNumber(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertType<InspectorValue::TypeNumber>(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -245,14 +142,6 @@ struct ArrayItemHelper<bool> {
         {
             array->pushBoolean(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertType<InspectorValue::TypeBoolean>(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -263,14 +152,6 @@ struct ArrayItemHelper<InspectorValue> {
         {
             array->pushValue(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertAny(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -281,14 +162,6 @@ struct ArrayItemHelper<InspectorObject> {
         {
             array->pushValue(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertType<InspectorValue::TypeObject>(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -299,14 +172,6 @@ struct ArrayItemHelper<InspectorArray> {
         {
             array->pushArray(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            RuntimeCastHelper::assertType<InspectorValue::TypeArray>(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
@@ -317,18 +182,91 @@ struct ArrayItemHelper<TypeBuilder::Array<T>> {
         {
             array->pushValue(value);
         }
-
-#if !ASSERT_DISABLED
-        template<typename S>
-        static void assertCorrectValue(InspectorValue* value)
-        {
-            S::assertCorrectValue(value);
-        }
-#endif // !ASSERT_DISABLED
     };
 };
 
+// Helper methods for TypeBuilder and other Inspector types are provided by
+// specializations of BindingTraits<T>. Some are generated for protocol types.
+
+template<typename T>
+struct BindingTraits {
+    typedef T BindingType;
+
+    static InspectorValue::Type typeTag();
+    static PassRefPtr<T> runtimeCast(PassRefPtr<InspectorObject>);
+#if !ASSERT_DISABLED
+    static void assertValueHasExpectedType(InspectorValue*);
+#endif // !ASSERT_DISABLED
+};
+
+template<InspectorValue::Type TYPE>
+struct PrimitiveBindingTraits {
+#if !ASSERT_DISABLED
+    static void assertValueHasExpectedType(InspectorValue* value)
+    {
+        ASSERT(value->type() == TYPE);
+    }
+#endif // !ASSERT_DISABLED
+};
+
+template<typename T>
+struct BindingTraits<TypeBuilder::Array<T>> {
+    static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
+    {
+        RefPtr<InspectorArray> array;
+        bool castRes = value->asArray(&array);
+        ASSERT_UNUSED(castRes, castRes);
+#if !ASSERT_DISABLED
+        assertValueHasExpectedType(array.get());
+#endif // !ASSERT_DISABLED
+        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(InspectorArray), type_cast_problem);
+        return static_cast<Array<T>*>(static_cast<InspectorArrayBase*>(array.get()));
+    }
+
+#if !ASSERT_DISABLED
+    static void assertValueHasExpectedType(InspectorValue* value)
+    {
+        RefPtr<InspectorArray> array;
+        bool castRes = value->asArray(&array);
+        ASSERT_UNUSED(castRes, castRes);
+        for (unsigned i = 0; i < array->length(); i++)
+            BindingTraits<T>::assertValueHasExpectedType(array->get(i).get());
+    }
+#endif // !ASSERT_DISABLED
+};
+
+template<>
+struct BindingTraits<InspectorValue> {
+#if !ASSERT_DISABLED
+    static void assertValueHasExpectedType(InspectorValue*)
+    {
+    }
+#endif // !ASSERT_DISABLED
+};
+
+template<> struct BindingTraits<InspectorArray> : public PrimitiveBindingTraits<InspectorValue::Type::Array> { };
+template<> struct BindingTraits<InspectorObject> : public PrimitiveBindingTraits<InspectorValue::Type::Object> { };
+template<> struct BindingTraits<String> : public PrimitiveBindingTraits<InspectorValue::Type::String> { };
+template<> struct BindingTraits<bool> : public PrimitiveBindingTraits<InspectorValue::Type::Boolean> { };
+template<> struct BindingTraits<double> : public PrimitiveBindingTraits<InspectorValue::Type::Number> { };
+
+// FIXME: Add an Inspector::Type tag for int so we can remove this special case.
+template<>
+struct BindingTraits<int> {
+#if !ASSERT_DISABLED
+    static void assertValueHasExpectedType(InspectorValue* value)
+    {
+        double v;
+        bool castRes = value->asNumber(&v);
+        ASSERT_UNUSED(castRes, castRes);
+        ASSERT(static_cast<double>(static_cast<int>(v)) == v);
+    }
+#endif // !ASSERT_DISABLED
+};
+
 } // namespace TypeBuilder
+
+using TypeBuilder::BindingTraits;
 
 } // namespace Inspector
 

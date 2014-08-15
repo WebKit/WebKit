@@ -95,7 +95,7 @@ void CommandLineAPIHost::disconnect()
 void CommandLineAPIHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
 {
     if (m_inspectorAgent) {
-        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> remoteObject = Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(object);
+        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> remoteObject = BindingTraits<Inspector::TypeBuilder::Runtime::RemoteObject>::runtimeCast(object);
         m_inspectorAgent->inspect(remoteObject, hints->asObject());
     }
 }

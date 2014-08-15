@@ -100,13 +100,13 @@ void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& 
 
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
-    if (!resultValue || resultValue->type() != InspectorValue::TypeObject) {
+    if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
         if (!resultValue->asString(errorString))
             *errorString = ASCIILiteral("Internal error");
         return;
     }
 
-    *result = Inspector::TypeBuilder::Debugger::FunctionDetails::runtimeCast(resultValue);
+    *result = BindingTraits<Inspector::TypeBuilder::Debugger::FunctionDetails>::runtimeCast(resultValue);
 }
 
 void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>* properties)
@@ -117,12 +117,12 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
 
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::TypeArray) {
+    if (!result || result->type() != InspectorValue::Type::Array) {
         *errorString = ASCIILiteral("Internal error");
         return;
     }
 
-    *properties = Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>::runtimeCast(result);
+    *properties = BindingTraits<Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>::runtimeCast(result);
 }
 
 void InjectedScript::getInternalProperties(ErrorString* errorString, const String& objectId, RefPtr<Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>* properties)
@@ -132,12 +132,12 @@ void InjectedScript::getInternalProperties(ErrorString* errorString, const Strin
 
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::TypeArray) {
+    if (!result || result->type() != InspectorValue::Type::Array) {
         *errorString = ASCIILiteral("Internal error");
         return;
     }
 
-    RefPtr<Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>> array = Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>::runtimeCast(result);
+    auto array = BindingTraits<Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>::runtimeCast(result);
     if (array->length() > 0)
         *properties = array;
 }
@@ -152,8 +152,8 @@ PassRefPtr<Array<Inspector::TypeBuilder::Debugger::CallFrame>> InjectedScript::w
     Deprecated::ScriptValue callFramesValue = callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     RefPtr<InspectorValue> result = callFramesValue.toInspectorValue(scriptState());
-    if (result->type() == InspectorValue::TypeArray)
-        return Array<Inspector::TypeBuilder::Debugger::CallFrame>::runtimeCast(result);
+    if (result->type() == InspectorValue::Type::Array)
+        return BindingTraits<Array<Inspector::TypeBuilder::Debugger::CallFrame>>::runtimeCast(result);
 
     return Array<Inspector::TypeBuilder::Debugger::CallFrame>::create();
 }
@@ -173,7 +173,7 @@ PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapOb
         return nullptr;
 
     RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
-    return Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
+    return BindingTraits<Inspector::TypeBuilder::Runtime::RemoteObject>::runtimeCast(rawResult);
 }
 
 PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const
@@ -193,7 +193,7 @@ PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapTa
         return nullptr;
 
     RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
-    return Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
+    return BindingTraits<Inspector::TypeBuilder::Runtime::RemoteObject>::runtimeCast(rawResult);
 }
 
 Deprecated::ScriptValue InjectedScript::findObjectById(const String& objectId) const

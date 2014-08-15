@@ -1,3 +1,22 @@
+2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: rewrite CodeGeneratorInspector to be modular and testable
+        https://bugs.webkit.org/show_bug.cgi?id=131596
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/run-inspector-generator-tests: Added.
+        (main):
+        * Scripts/webkitpy/inspector/__init__.py: Added.
+        * Scripts/webkitpy/inspector/main.py: Added.
+        (InspectorGeneratorTests):
+        (InspectorGeneratorTests.__init__):
+        (InspectorGeneratorTests.generate_from_json):
+        (InspectorGeneratorTests.write_error_file):
+        (InspectorGeneratorTests.detect_changes):
+        (InspectorGeneratorTests.run_tests):
+        (InspectorGeneratorTests.main):
+
 2014-08-15  Rebecca Hauck  <rhauck@adobe.com>
 
         run-webkit-tests should skip 'support' directories

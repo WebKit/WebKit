@@ -1000,9 +1000,9 @@ InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(ErrorString* error
     return it->value.get();
 }
 
-Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum InspectorCSSAgent::detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument)
+Inspector::TypeBuilder::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument)
 {
-    Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum origin = Inspector::TypeBuilder::CSS::StyleSheetOrigin::Regular;
+    Inspector::TypeBuilder::CSS::StyleSheetOrigin origin = Inspector::TypeBuilder::CSS::StyleSheetOrigin::Regular;
     if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
         origin = Inspector::TypeBuilder::CSS::StyleSheetOrigin::UserAgent;
     else if (pageStyleSheet && pageStyleSheet->ownerNode() && pageStyleSheet->ownerNode()->nodeName() == "#document")
@@ -1106,7 +1106,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::Region>> I
     RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::Region>> regions = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::CSS::Region>::create();
 
     for (unsigned i = 0; i < regionList->length(); ++i) {
-        Inspector::TypeBuilder::CSS::Region::RegionOverset::Enum regionOverset;
+        Inspector::TypeBuilder::CSS::Region::RegionOverset regionOverset;
 
         switch (toElement(regionList->item(i))->regionOversetState()) {
         case RegionFit:

@@ -88,7 +88,7 @@ static PassRefPtr<Inspector::TypeBuilder::Runtime::ErrorRange> buildErrorRangeOb
     return result.release();
 }
 
-void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspector::TypeBuilder::Runtime::SyntaxErrorType::Enum* result, Inspector::TypeBuilder::OptOutput<String>* message, RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange>& range)
+void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspector::TypeBuilder::Runtime::SyntaxErrorType* result, Inspector::TypeBuilder::OptOutput<String>* message, RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange>& range)
 {
     VM& vm = globalVM();
     JSLockHolder lock(vm);

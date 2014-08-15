@@ -1,3 +1,365 @@
+2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: rewrite CodeGeneratorInspector to be modular and testable
+        https://bugs.webkit.org/show_bug.cgi?id=131596
+
+        Reviewed by Joseph Pecoraro.
+
+        Replace CodeGeneratorInspector.py with generate-inspector-protocol-bindings.py.
+        The new generator decouples parsing and typechecking a model of the protocol from
+        code generation. Each generated file is created by a different subclass of Generator.
+        Helper methods to compute various type signatures are shared among generators.
+
+        This patch introduces a test harness and a test suite that covers all functionality.
+
+        Aside from hooking up the new inspector bindings generator to the build system,
+        there are a few comingled changes that would be painful to split from the main
+        patch:
+
+        Convert protocol enumeration types from struct-namespaced enums to C++ scoped enums.
+
+        Move all runtimeCast(), assertValueHasExpectedType(), and RuntimeCastHelper methods to static
+        methods of BindingTraits specializations.
+
+        Together, these changes reduce duplication and make it possible to forward-declare
+        all protocol enum and object types, reducing weird ordering dependencies between domains.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Add inspector scripts to solution filters.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/ConsoleMessage.cpp: Convert to scoped enums.
+        (Inspector::messageSourceValue):
+        (Inspector::messageTypeValue):
+        (Inspector::messageLevelValue):
+        * inspector/InjectedScript.cpp: Convert to scoped enums and BindingTraits.
+        (Inspector::InjectedScript::getFunctionDetails):
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        (Inspector::InjectedScript::wrapCallFrames):
+        (Inspector::InjectedScript::wrapObject):
+        (Inspector::InjectedScript::wrapTable):
+        * inspector/InjectedScriptBase.cpp: Convert InspectorValue::Type to a scoped enum.
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptForObjectId):
+        * inspector/InspectorTypeBuilder.h:
+        (Inspector::TypeBuilder::Array::create):
+        (Inspector::TypeBuilder::StructItemTraits::pushRefPtr):
+        (Inspector::TypeBuilder::ArrayItemHelper<String>::Traits::pushRaw):
+        (Inspector::TypeBuilder::ArrayItemHelper<int>::Traits::pushRaw):
+        (Inspector::TypeBuilder::ArrayItemHelper<double>::Traits::pushRaw):
+        (Inspector::TypeBuilder::ArrayItemHelper<bool>::Traits::pushRaw):
+        (Inspector::TypeBuilder::ArrayItemHelper<InspectorValue>::Traits::pushRefPtr):
+        (Inspector::TypeBuilder::ArrayItemHelper<InspectorObject>::Traits::pushRefPtr):
+        (Inspector::TypeBuilder::ArrayItemHelper<InspectorArray>::Traits::pushRefPtr):
+        (Inspector::TypeBuilder::PrimitiveBindingTraits::assertValueHasExpectedType):
+        (Inspector::TypeBuilder::BindingTraits<TypeBuilder::Array<T>>::runtimeCast):
+        (Inspector::TypeBuilder::BindingTraits<TypeBuilder::Array<T>>::assertValueHasExpectedType):
+        (Inspector::TypeBuilder::BindingTraits<InspectorValue>::assertValueHasExpectedType):
+        (Inspector::TypeBuilder::BindingTraits<int>::assertValueHasExpectedType):
+        (Inspector::TypeBuilder::ExactlyInt::ExactlyInt): Deleted. It was not used.
+        (Inspector::TypeBuilder::ExactlyInt::operator int): Deleted.
+        (Inspector::TypeBuilder::ExactlyInt::cast_to_int): Deleted.
+        (Inspector::TypeBuilder::ExactlyInt::cast_to_int<int>): Deleted.
+        (Inspector::TypeBuilder::int>): Deleted.
+        (Inspector::TypeBuilder::RuntimeCastHelper::assertType): Deleted.
+        (Inspector::TypeBuilder::RuntimeCastHelper::assertAny): Deleted.
+        (Inspector::TypeBuilder::RuntimeCastHelper::assertInt): Deleted.
+        (Inspector::TypeBuilder::Array::runtimeCast): Deleted.
+        (Inspector::TypeBuilder::Array::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::StructItemTraits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<String>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<int>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<double>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<bool>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<InspectorValue>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<InspectorObject>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<InspectorArray>::Traits::assertCorrectValue): Deleted.
+        (Inspector::TypeBuilder::ArrayItemHelper<TypeBuilder::Array<T>>::Traits::assertCorrectValue): Deleted.
+
+        * inspector/InspectorValues.cpp: Convert InspectorValue::Type to a scoped enum.
+        (Inspector::InspectorValue::writeJSON):
+        (Inspector::InspectorBasicValue::asBoolean):
+        (Inspector::InspectorBasicValue::asNumber):
+        (Inspector::InspectorBasicValue::writeJSON):
+        (Inspector::InspectorString::writeJSON):
+        (Inspector::InspectorObjectBase::InspectorObjectBase):
+        (Inspector::InspectorObjectBase::setArray): Take InspectorArrayBase.
+        (Inspector::InspectorObjectBase::setObject): Take InspectorObjectBase.
+        (Inspector::InspectorArrayBase::InspectorArrayBase):
+        * inspector/InspectorValues.h:
+
+        * inspector/agents/InspectorDebuggerAgent.cpp: Convert to scoped enums.
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::parse):
+        * inspector/agents/InspectorRuntimeAgent.h:
+
+        * inspector/scripts/CodeGeneratorInspector.py: Removed.
+        * inspector/scripts/codegen/__init__.py: Added.
+        * inspector/scripts/codegen/generate_backend_commands.py: Added.
+        (BackendCommandsGenerator):
+        (BackendCommandsGenerator.__init__):
+        (BackendCommandsGenerator.model):
+        (BackendCommandsGenerator.output_filename):
+        (BackendCommandsGenerator.generate_license):
+        (BackendCommandsGenerator.generate_output):
+        (BackendCommandsGenerator.generate_domain):
+        (BackendCommandsGenerator.generate_domain.is_anonymous_enum_member):
+        (BackendCommandsGenerator.generate_domain.generate_parameter_object):
+        * inspector/scripts/codegen/generate_backend_dispatcher_header.py: Added.
+        (BackendDispatcherHeaderGenerator):
+        (BackendDispatcherHeaderGenerator.__init__):
+        (BackendDispatcherHeaderGenerator.model):
+        (BackendDispatcherHeaderGenerator.output_filename):
+        (BackendDispatcherHeaderGenerator.generate_license):
+        (BackendDispatcherHeaderGenerator.generate_output):
+        (BackendDispatcherHeaderGenerator.generate_output.for):
+        (BackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        (BackendDispatcherHeaderGenerator._generate_anonymous_enum_for_parameter):
+        (BackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        (BackendDispatcherHeaderGenerator._generate_async_handler_declaration_for_command):
+        (BackendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        (BackendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_command):
+        * inspector/scripts/codegen/generate_backend_dispatcher_implementation.py: Added.
+        (BackendDispatcherImplementationGenerator):
+        (BackendDispatcherImplementationGenerator.__init__):
+        (BackendDispatcherImplementationGenerator.model):
+        (BackendDispatcherImplementationGenerator.output_filename):
+        (BackendDispatcherImplementationGenerator.generate_license):
+        (BackendDispatcherImplementationGenerator.generate_output):
+        (BackendDispatcherImplementationGenerator._generate_handler_class_destructor_for_domain):
+        (BackendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        (BackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (BackendDispatcherImplementationGenerator._generate_large_dispatcher_switch_implementation_for_domain):
+        (BackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain):
+        (BackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_frontend_dispatcher_header.py: Added.
+        (FrontendDispatcherHeaderGenerator):
+        (FrontendDispatcherHeaderGenerator.__init__):
+        (FrontendDispatcherHeaderGenerator.model):
+        (FrontendDispatcherHeaderGenerator.output_filename):
+        (FrontendDispatcherHeaderGenerator.generate_license):
+        (FrontendDispatcherHeaderGenerator.generate_output):
+        (FrontendDispatcherHeaderGenerator._generate_anonymous_enum_for_parameter):
+        (FrontendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        (FrontendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_event):
+        * inspector/scripts/codegen/generate_frontend_dispatcher_implementation.py: Added.
+        (FrontendDispatcherImplementationGenerator):
+        (FrontendDispatcherImplementationGenerator.__init__):
+        (FrontendDispatcherImplementationGenerator.model):
+        (FrontendDispatcherImplementationGenerator.output_filename):
+        (FrontendDispatcherImplementationGenerator.generate_license):
+        (FrontendDispatcherImplementationGenerator.generate_output):
+        (FrontendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        (FrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_type_builder_header.py: Added.
+        (TypeBuilderHeaderGenerator):
+        (TypeBuilderHeaderGenerator.__init__):
+        (TypeBuilderHeaderGenerator.model):
+        (TypeBuilderHeaderGenerator.output_filename):
+        (TypeBuilderHeaderGenerator.generate_license):
+        (TypeBuilderHeaderGenerator.generate_output):
+        (TypeBuilderHeaderGenerator._generate_forward_declarations):
+        (_generate_typedefs):
+        (_generate_typedefs_for_domain):
+        (_generate_builders_for_domain):
+        (_generate_class_for_object_declaration):
+        (_generate_struct_for_enum_declaration):
+        (_generate_struct_for_anonymous_enum_member):
+        (_generate_struct_for_anonymous_enum_member.apply_indentation):
+        (_generate_struct_for_enum_type):
+        (_generate_builder_state_enum):
+        (_generate_builder_setter_for_member):
+        (_generate_unchecked_setter_for_member):
+        (_generate_forward_declarations_for_binding_traits):
+        * inspector/scripts/codegen/generate_type_builder_implementation.py: Added.
+        (TypeBuilderImplementationGenerator):
+        (TypeBuilderImplementationGenerator.__init__):
+        (TypeBuilderImplementationGenerator.model):
+        (TypeBuilderImplementationGenerator.output_filename):
+        (TypeBuilderImplementationGenerator.generate_license):
+        (TypeBuilderImplementationGenerator.generate_output):
+        (TypeBuilderImplementationGenerator._generate_enum_mapping):
+        (TypeBuilderImplementationGenerator._generate_open_field_names):
+        (TypeBuilderImplementationGenerator._generate_builders_for_domain):
+        (TypeBuilderImplementationGenerator._generate_runtime_cast_for_object_declaration):
+        (TypeBuilderImplementationGenerator._generate_assertion_for_object_declaration):
+        (TypeBuilderImplementationGenerator._generate_assertion_for_enum):
+        * inspector/scripts/codegen/generator.py: Added.
+        (ucfirst):
+        (Generator):
+        (Generator.__init__):
+        (Generator.model):
+        (Generator.generate_license):
+        (Generator.domains_to_generate):
+        (Generator.generate_output):
+        (Generator.output_filename):
+        (Generator.encoding_for_enum_value):
+        (Generator.assigned_enum_values):
+        (Generator.type_needs_runtime_casts):
+        (Generator.type_has_open_fields):
+        (Generator.type_needs_shape_assertions):
+        (Generator.calculate_types_requiring_shape_assertions):
+        (Generator.calculate_types_requiring_shape_assertions.gather_transitively_referenced_types):
+        (Generator._traverse_and_assign_enum_values):
+        (Generator._assign_encoding_for_enum_value):
+        (Generator.wrap_with_guard_for_domain):
+        (Generator.stylized_name_for_enum_value):
+        (Generator.stylized_name_for_enum_value.replaceCallback):
+        (Generator.keyed_get_method_for_type):
+        (Generator.keyed_set_method_for_type):
+        (Generator.type_builder_string_for_type):
+        (Generator.type_builder_string_for_type_member):
+        (Generator.type_string_for_unchecked_formal_in_parameter):
+        (Generator.type_string_for_checked_formal_event_parameter):
+        (Generator.type_string_for_type_member):
+        (Generator.type_string_for_type_with_name):
+        (Generator.type_string_for_formal_out_parameter):
+        (Generator.type_string_for_formal_async_parameter):
+        (Generator.type_string_for_stack_in_parameter):
+        (Generator.type_string_for_stack_out_parameter):
+        (Generator.assertion_method_for_type_member):
+        (Generator.assertion_method_for_type_member.assertion_method_for_type):
+        (Generator.cpp_name_for_primitive_type):
+        (Generator.js_name_for_parameter_type):
+        (Generator.should_use_wrapper_for_return_type):
+        (Generator.should_pass_by_copy_for_return_type):
+        * inspector/scripts/codegen/generator_templates.py: Added.
+        (GeneratorTemplates):
+        (void):
+        (HashMap):
+        (Builder):
+        (Inspector):
+        * inspector/scripts/codegen/models.py: Added.
+        (ucfirst):
+        (ParseException):
+        (TypecheckException):
+        (Framework):
+        (Framework.__init__):
+        (Framework.setting):
+        (Framework.fromString):
+        (Frameworks):
+        (TypeReference):
+        (TypeReference.__init__):
+        (TypeReference.referenced_name):
+        (Type):
+        (Type.__init__):
+        (Type.__eq__):
+        (Type.__hash__):
+        (Type.raw_name):
+        (Type.is_enum):
+        (Type.type_domain):
+        (Type.qualified_name):
+        (Type.resolve_type_references):
+        (PrimitiveType):
+        (PrimitiveType.__init__):
+        (PrimitiveType.__repr__):
+        (PrimitiveType.type_domain):
+        (PrimitiveType.qualified_name):
+        (AliasedType):
+        (AliasedType.__init__):
+        (AliasedType.__repr__):
+        (AliasedType.is_enum):
+        (AliasedType.type_domain):
+        (AliasedType.qualified_name):
+        (AliasedType.resolve_type_references):
+        (EnumType):
+        (EnumType.__init__):
+        (EnumType.__repr__):
+        (EnumType.is_enum):
+        (EnumType.type_domain):
+        (EnumType.enum_values):
+        (EnumType.qualified_name):
+        (EnumType.resolve_type_references):
+        (ArrayType):
+        (ArrayType.__init__):
+        (ArrayType.__repr__):
+        (ArrayType.type_domain):
+        (ArrayType.qualified_name):
+        (ArrayType.resolve_type_references):
+        (ObjectType):
+        (ObjectType.__init__):
+        (ObjectType.__repr__):
+        (ObjectType.type_domain):
+        (ObjectType.qualified_name):
+        (check_for_required_properties):
+        (Protocol):
+        (Protocol.__init__):
+        (Protocol.parse_specification):
+        (Protocol.parse_domain):
+        (Protocol.parse_type_declaration):
+        (Protocol.parse_type_member):
+        (Protocol.parse_command):
+        (Protocol.parse_event):
+        (Protocol.parse_call_or_return_parameter):
+        (Protocol.resolve_types):
+        (Protocol.lookup_type_for_declaration):
+        (Protocol.lookup_type_reference):
+        (Domain):
+        (Domain.__init__):
+        (Domain.resolve_type_references):
+        (Domains):
+        (TypeDeclaration):
+        (TypeDeclaration.__init__):
+        (TypeDeclaration.resolve_type_references):
+        (TypeMember):
+        (TypeMember.__init__):
+        (TypeMember.resolve_type_references):
+        (Parameter):
+        (Parameter.__init__):
+        (Parameter.resolve_type_references):
+        (Command):
+        (Command.__init__):
+        (Command.resolve_type_references):
+        (Event):
+        (Event.__init__):
+        (Event.resolve_type_references):
+        * inspector/scripts/generate-inspector-protocol-bindings.py: Added.
+        (IncrementalFileWriter):
+        (IncrementalFileWriter.__init__):
+        (IncrementalFileWriter.write):
+        (IncrementalFileWriter.close):
+        (generate_from_specification):
+        (generate_from_specification.load_specification):
+        * inspector/scripts/tests/commands-with-async-attribute.json: Added.
+        * inspector/scripts/tests/commands-with-optional-call-return-parameters.json: Added.
+        * inspector/scripts/tests/domains-with-varying-command-sizes.json: Added.
+        * inspector/scripts/tests/events-with-optional-parameters.json: Added.
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result: Added.
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result: Added.
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result: Added.
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result: Added.
+        * inspector/scripts/tests/fail-on-duplicate-type-declarations.json-error: Added.
+        * inspector/scripts/tests/fail-on-enum-with-no-values.json-error: Added.
+        * inspector/scripts/tests/fail-on-type-declaration-using-type-reference.json-error: Added.
+        * inspector/scripts/tests/fail-on-type-with-lowercase-name.json-error: Added.
+        * inspector/scripts/tests/fail-on-unknown-type-reference-in-type-declaration.json-error: Added.
+        * inspector/scripts/tests/fail-on-unknown-type-reference-in-type-member.json-error: Added.
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result: Added.
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result: Added.
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result: Added.
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result: Added.
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result: Added.
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result: Added.
+        * inspector/scripts/tests/fail-on-duplicate-type-declarations.json: Added.
+        * inspector/scripts/tests/fail-on-enum-with-no-values.json: Added.
+        * inspector/scripts/tests/fail-on-type-declaration-using-type-reference.json: Added.
+        * inspector/scripts/tests/fail-on-type-with-lowercase-name.json: Added.
+        * inspector/scripts/tests/fail-on-unknown-type-reference-in-type-declaration.json: Added.
+        * inspector/scripts/tests/fail-on-unknown-type-reference-in-type-member.json: Added.
+        * inspector/scripts/tests/same-type-id-different-domain.json: Added.
+        * inspector/scripts/tests/type-declaration-aliased-primitive-type.json: Added.
+        * inspector/scripts/tests/type-declaration-array-type.json: Added.
+        * inspector/scripts/tests/type-declaration-enum-type.json: Added.
+        * inspector/scripts/tests/type-declaration-object-type.json: Added.
+        * inspector/scripts/tests/type-requiring-runtime-casts.json: Added.
+
 2014-08-15  Matthew Mirman  <mmirman@apple.com>
 
         Made native inlining errors not segfault. 

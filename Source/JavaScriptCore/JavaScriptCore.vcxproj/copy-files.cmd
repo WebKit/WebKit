@@ -64,6 +64,7 @@ for %%d in (
 echo Copying Inspector scripts as if they were private headers...
 for %%d in (
     inspector\scripts
+	inspector\scripts\codegen
 ) do (
     xcopy /y /d ..\%%d\* "%PrivateHeadersDirectory%" >NUL
 )

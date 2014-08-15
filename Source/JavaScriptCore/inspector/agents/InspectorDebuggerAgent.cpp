@@ -429,7 +429,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString* errorString, const 
     injectedScript.getFunctionDetails(errorString, functionId, &details);
 }
 
-void InspectorDebuggerAgent::schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data)
+void InspectorDebuggerAgent::schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data)
 {
     if (m_javaScriptPauseScheduled)
         return;
@@ -680,7 +680,7 @@ void InspectorDebuggerAgent::didContinue()
     m_frontendDispatcher->resumed();
 }
 
-void InspectorDebuggerAgent::breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data)
+void InspectorDebuggerAgent::breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data)
 {
     m_breakReason = breakReason;
     m_breakAuxData = data;

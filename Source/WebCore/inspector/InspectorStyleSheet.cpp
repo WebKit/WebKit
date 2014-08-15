@@ -166,7 +166,7 @@ static PassRefPtr<Inspector::TypeBuilder::CSS::SourceRange> buildSourceRangeObje
 static PassRefPtr<Inspector::TypeBuilder::CSS::CSSMedia> buildMediaObject(const MediaList* media, MediaListSource mediaListSource, const String& sourceURL)
 {
     // Make certain compilers happy by initializing |source| up-front.
-    Inspector::TypeBuilder::CSS::CSSMedia::Source::Enum source = Inspector::TypeBuilder::CSS::CSSMedia::Source::InlineSheet;
+    Inspector::TypeBuilder::CSS::CSSMedia::Source source = Inspector::TypeBuilder::CSS::CSSMedia::Source::InlineSheet;
     switch (mediaListSource) {
     case MediaListSourceMediaRule:
         source = Inspector::TypeBuilder::CSS::CSSMedia::Source::MediaRule;
@@ -528,7 +528,13 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
         const CSSPropertySourceData& propertyEntry = it->sourceData;
         const String& name = propertyEntry.name;
 
-        Inspector::TypeBuilder::CSS::CSSProperty::Status::Enum status = it->disabled ? Inspector::TypeBuilder::CSS::CSSProperty::Status::Disabled : Inspector::TypeBuilder::CSS::CSSProperty::Status::Active;
+        // Visual Studio disagrees with other compilers as to whether 'class' is needed here.
+#if COMPILER(MSVC)
+        enum class Inspector::TypeBuilder::CSS::CSSPropertyStatus status;
+#else
+        enum Inspector::TypeBuilder::CSS::CSSPropertyStatus status;
+#endif
+        status = it->disabled ? Inspector::TypeBuilder::CSS::CSSPropertyStatus::Disabled : Inspector::TypeBuilder::CSS::CSSPropertyStatus::Active;
 
         RefPtr<Inspector::TypeBuilder::CSS::CSSProperty> property = Inspector::TypeBuilder::CSS::CSSProperty::create()
             .setName(name.lower())
@@ -571,9 +577,9 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
                         if (successStatus && previousStatus != "inactive") {
                             if (propertyEntry.important || !successPriority) // Priority not set == "not important".
                                 shouldInactivate = true;
-                            else if (status == Inspector::TypeBuilder::CSS::CSSProperty::Status::Active) {
+                            else if (status == Inspector::TypeBuilder::CSS::CSSPropertyStatus::Active) {
                                 // Inactivate a non-important property following the same-named important property.
-                                status = Inspector::TypeBuilder::CSS::CSSProperty::Status::Inactive;
+                                status = Inspector::TypeBuilder::CSS::CSSPropertyStatus::Inactive;
                             }
                         }
                     } else {
@@ -586,7 +592,7 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
                     propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
 
                 if (shouldInactivate) {
-                    activeIt->value->setStatus(Inspector::TypeBuilder::CSS::CSSProperty::Status::Inactive);
+                    activeIt->value->setStatus(Inspector::TypeBuilder::CSS::CSSPropertyStatus::Inactive);
                     propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
                 }
             } else {
@@ -594,7 +600,7 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
                 // Default "implicit" == false.
                 if (implicit)
                     property->setImplicit(true);
-                status = Inspector::TypeBuilder::CSS::CSSProperty::Status::Style;
+                status = Inspector::TypeBuilder::CSS::CSSPropertyStatus::Style;
 
                 String shorthand = m_style->getPropertyShorthand(name);
                 if (!shorthand.isEmpty()) {
@@ -610,7 +616,7 @@ PassRefPtr<Inspector::TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithPrope
         }
 
         // Default "status" == "style".
-        if (status != Inspector::TypeBuilder::CSS::CSSProperty::Status::Style)
+        if (status != Inspector::TypeBuilder::CSS::CSSPropertyStatus::Style)
             property->setStatus(status);
     }
 
@@ -749,7 +755,7 @@ NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
     return m_format;
 }
 
-PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum origin, const String& documentURL, Listener* listener)
+PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, Inspector::TypeBuilder::CSS::StyleSheetOrigin origin, const String& documentURL, Listener* listener)
 {
     return adoptRef(new InspectorStyleSheet(pageAgent, id, pageStyleSheet, origin, documentURL, listener));
 }
@@ -762,7 +768,7 @@ String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
     return emptyString();
 }
 
-InspectorStyleSheet::InspectorStyleSheet(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum origin, const String& documentURL, Listener* listener)
+InspectorStyleSheet::InspectorStyleSheet(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, Inspector::TypeBuilder::CSS::StyleSheetOrigin origin, const String& documentURL, Listener* listener)
     : m_pageAgent(pageAgent)
     , m_id(id)
     , m_pageStyleSheet(pageStyleSheet)
@@ -1426,12 +1432,12 @@ void InspectorStyleSheet::collectFlatRules(PassRefPtr<CSSRuleList> ruleList, CSS
     }
 }
 
-PassRefPtr<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<Element> element, Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum origin, Listener* listener)
+PassRefPtr<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<Element> element, Inspector::TypeBuilder::CSS::StyleSheetOrigin origin, Listener* listener)
 {
     return adoptRef(new InspectorStyleSheetForInlineStyle(pageAgent, id, element, origin, listener));
 }
 
-InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<Element> element, Inspector::TypeBuilder::CSS::StyleSheetOrigin::Enum origin, Listener* listener)
+InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<Element> element, Inspector::TypeBuilder::CSS::StyleSheetOrigin origin, Listener* listener)
     : InspectorStyleSheet(pageAgent, id, nullptr, origin, "", listener)
     , m_element(element)
     , m_ruleSourceData(nullptr)

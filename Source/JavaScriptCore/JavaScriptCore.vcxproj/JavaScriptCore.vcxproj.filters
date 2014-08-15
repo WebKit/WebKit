@@ -67,6 +67,18 @@
     <Filter Include="llvm">
       <UniqueIdentifier>{852e9415-245c-4012-aeb8-38ca9efb73b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inspector\scripts">
+      <UniqueIdentifier>{a29d27c0-2c34-482b-87cc-21e7ef290c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inspector\scripts\codegen">
+      <UniqueIdentifier>{17e304e8-c0e8-4b18-88fa-62b86eba9959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inspector\scripts\tests">
+      <UniqueIdentifier>{0a034c97-3947-47c4-8085-2ddc8aa1ade0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inspector\scripts\tests\expected">
+      <UniqueIdentifier>{6be9d367-0091-4ebb-b96c-4ef83790362b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\API\JSBase.cpp">
@@ -4040,6 +4052,171 @@
     <None Include="JavaScriptCorePreBuild.cmd" />
     <None Include="..\bytecode\BytecodeList.json">
       <Filter>bytecode</Filter>
+    </None>
+    <None Include="..\inspector\scripts\cssmin.py">
+      <Filter>inspector\scripts</Filter>
+    </None>
+    <None Include="..\inspector\scripts\generate-combined-inspector-json.py">
+      <Filter>inspector\scripts</Filter>
+    </None>
+    <None Include="..\inspector\scripts\generate-inspector-protocol-bindings.py">
+      <Filter>inspector\scripts</Filter>
+    </None>
+    <None Include="..\inspector\scripts\inline-and-minify-stylesheets-and-scripts.py">
+      <Filter>inspector\scripts</Filter>
+    </None>
+    <None Include="..\inspector\scripts\jsmin.py">
+      <Filter>inspector\scripts</Filter>
+    </None>
+    <None Include="..\inspector\scripts\xxd.pl">
+      <Filter>inspector\scripts</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\__init__.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_backend_commands.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_backend_dispatcher_header.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_backend_dispatcher_implementation.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_header.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_implementation.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_type_builder_header.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generate_type_builder_implementation.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generator.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\generator_templates.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\codegen\models.py">
+      <Filter>inspector\scripts\codegen</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\commands-with-async-attribute.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\commands-with-optional-call-return-parameters.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\domains-with-varying-command-sizes.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\events-with-optional-parameters.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-duplicate-type-declarations.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-enum-with-no-values.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-string-typed-optional-parameter-flag.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-string-typed-optional-type-member.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-type-declaration-using-type-reference.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-type-with-lowercase-name.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-unknown-type-reference-in-type-declaration.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\fail-on-unknown-type-reference-in-type-member.json-error">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\same-type-id-different-domain.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\shadowed-optional-type-setters.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\type-declaration-aliased-primitive-type.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\type-declaration-array-type.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\type-declaration-enum-type.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\type-declaration-object-type.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\expected\type-requiring-runtime-casts.json-result">
+      <Filter>inspector\scripts\tests\expected</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\commands-with-async-attribute.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\commands-with-optional-call-return-parameters.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\domains-with-varying-command-sizes.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\events-with-optional-parameters.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-duplicate-type-declarations.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-enum-with-no-values.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-string-typed-optional-parameter-flag.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-string-typed-optional-type-member.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-type-declaration-using-type-reference.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-type-with-lowercase-name.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-unknown-type-reference-in-type-declaration.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\fail-on-unknown-type-reference-in-type-member.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\same-type-id-different-domain.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\shadowed-optional-type-setters.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\type-declaration-aliased-primitive-type.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\type-declaration-array-type.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\type-declaration-enum-type.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\type-declaration-object-type.json">
+      <Filter>inspector\scripts\tests</Filter>
+    </None>
+    <None Include="..\inspector\scripts\tests\type-requiring-runtime-casts.json">
+      <Filter>inspector\scripts\tests</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

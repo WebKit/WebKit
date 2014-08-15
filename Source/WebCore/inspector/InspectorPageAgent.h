@@ -90,9 +90,9 @@ public:
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const URL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const URL&);
-    static Inspector::TypeBuilder::Page::ResourceType::Enum resourceTypeJson(ResourceType);
+    static Inspector::TypeBuilder::Page::ResourceType resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
-    static Inspector::TypeBuilder::Page::ResourceType::Enum cachedResourceTypeJson(const CachedResource&);
+    static Inspector::TypeBuilder::Page::ResourceType cachedResourceTypeJson(const CachedResource&);
 
     // Page API for InspectorFrontend
     virtual void enable(ErrorString*) override;
@@ -115,7 +115,7 @@ public:
     virtual void setShowFPSCounter(ErrorString*, bool show) override;
     virtual void canContinuouslyPaint(ErrorString*, bool*) override;
     virtual void setContinuousPaintingEnabled(ErrorString*, bool enabled) override;
-    virtual void getScriptExecutionStatus(ErrorString*, Inspector::InspectorPageBackendDispatcherHandler::Result::Enum*) override;
+    virtual void getScriptExecutionStatus(ErrorString*, Inspector::InspectorPageBackendDispatcherHandler::Result*) override;
     virtual void setScriptExecutionDisabled(ErrorString*, bool) override;
     virtual void setTouchEmulationEnabled(ErrorString*, bool) override;
     virtual void setEmulatedMedia(ErrorString*, const String&) override;

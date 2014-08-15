@@ -91,9 +91,9 @@ public:
     
     void handleConsoleAssert();
 
-    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
+    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();
-    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
+    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data);
     void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class Listener {
@@ -159,7 +159,7 @@ private:
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
     BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;
     JSC::BreakpointID m_continueToLocationBreakpointID;
-    InspectorDebuggerFrontendDispatcher::Reason::Enum m_breakReason;
+    InspectorDebuggerFrontendDispatcher::Reason m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
     bool m_enabled;
     bool m_javaScriptPauseScheduled;

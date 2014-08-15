@@ -128,7 +128,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::Scri
         return;
     }
 
-    if (result->type() == InspectorValue::TypeString) {
+    if (result->type() == InspectorValue::Type::String) {
         result->asString(errorString);
         ASSERT(errorString->length());
         return;
@@ -147,7 +147,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::Scri
         return;
     }
 
-    *objectResult = TypeBuilder::Runtime::RemoteObject::runtimeCast(resultObj);
+    *objectResult = BindingTraits<TypeBuilder::Runtime::RemoteObject>::runtimeCast(resultObj);
     *wasThrown = wasThrownVal;
 }
 

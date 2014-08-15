@@ -101,18 +101,18 @@ public:
     virtual void cancelPlayback(ErrorString*) override;
 
     virtual void switchSession(ErrorString*, SessionIdentifier) override;
-    virtual void insertSessionSegment(ErrorString*, SessionIdentifier, SegmentIdentifier, int segmentIndex) override;
-    virtual void removeSessionSegment(ErrorString*, SessionIdentifier, int segmentIndex) override;
+    virtual void insertSessionSegment(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier, Inspector::TypeBuilder::Replay::SegmentIdentifier, int segmentIndex) override;
+    virtual void removeSessionSegment(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier, int segmentIndex) override;
 
-    virtual void currentReplayState(ErrorString*, SessionIdentifier*, Inspector::TypeBuilder::OptOutput<int>* segmentIdentifier, Inspector::TypeBuilder::Replay::SessionState::Enum* sessionState, Inspector::TypeBuilder::Replay::SegmentState::Enum* segmentState, RefPtr<Inspector::TypeBuilder::Replay::ReplayPosition>&) override;
-    virtual void getAvailableSessions(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<SessionIdentifier>>&) override;
-    virtual void getSessionData(ErrorString*, SessionIdentifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>&) override;
-    virtual void getSegmentData(ErrorString*, SegmentIdentifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>&) override;
+    virtual void currentReplayState(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier*, Inspector::TypeBuilder::OptOutput<Inspector::TypeBuilder::Replay::SegmentIdentifier>*, Inspector::TypeBuilder::Replay::SessionState*, Inspector::TypeBuilder::Replay::SegmentState* segmentState, RefPtr<Inspector::TypeBuilder::Replay::ReplayPosition>&) override;
+    virtual void getAvailableSessions(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Replay::SessionIdentifier>>&) override;
+    virtual void getSessionData(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>&) override;
+    virtual void getSegmentData(ErrorString*, Inspector::TypeBuilder::Replay::SegmentIdentifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>&) override;
 
 private:
     PassRefPtr<ReplaySession> findSession(ErrorString*, SessionIdentifier);
     PassRefPtr<ReplaySessionSegment> findSegment(ErrorString*, SegmentIdentifier);
-    SessionState sessionState() const;
+    WebCore::SessionState sessionState() const;
 
     std::unique_ptr<Inspector::InspectorReplayFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorReplayBackendDispatcher> m_backendDispatcher;

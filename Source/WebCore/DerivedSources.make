@@ -1151,8 +1151,18 @@ ifeq ($(findstring ENABLE_WEB_REPLAY,$(FEATURE_DEFINES)), ENABLE_WEB_REPLAY)
 endif
 
 INSPECTOR_GENERATOR_SCRIPTS = \
-	$(InspectorScripts)/CodeGeneratorInspector.py \
-	$(InspectorScripts)/CodeGeneratorInspectorStrings.py \
+    $(InspectorScripts)/generate_backend_commands.py \
+    $(InspectorScripts)/generate_backend_dispatcher_header.py \
+    $(InspectorScripts)/generate_backend_dispatcher_implementation.py \
+    $(InspectorScripts)/generate_frontend_dispatcher_header.py \
+    $(InspectorScripts)/generate_frontend_dispatcher_implementation.py \
+    $(InspectorScripts)/generate_type_builder_header.py \
+    $(InspectorScripts)/generate_type_builder_implementation.py \
+    $(InspectorScripts)/generator_templates.py \
+    $(InspectorScripts)/generator.py \
+    $(InspectorScripts)/generate-combined-inspector-json.py \
+    $(InspectorScripts)/generate-inspector-protocol-bindings.py \
+    $(InspectorScripts)/models.py \
 #
 
 all : InspectorWeb.json
@@ -1170,7 +1180,7 @@ InspectorWeb.json : $(InspectorScripts)/generate-combined-inspector-json.py $(IN
 all : InspectorWebFrontendDispatchers.h
 
 InspectorWebFrontendDispatchers.h : InspectorWeb.json $(InspectorScripts)/InspectorJS.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(PYTHON) $(InspectorScripts)/CodeGeneratorInspector.py ./InspectorWeb.json $(InspectorScripts)/InspectorJS.json --output_h_dir . --output_cpp_dir . --output_js_dir . --output_type Web
+	$(PYTHON) $(InspectorScripts)/generate-inspector-protocol-bindings.py --framework WebCore --outputDir . ./InspectorWeb.json $(InspectorScripts)/InspectorJS.json
 
 all : InspectorOverlayPage.h
 

@@ -1,0 +1,97 @@
+[
+{
+    "domain": "Database",
+    "description": "Test type builder generation of various object types.",
+    "types": [
+        {
+            "id": "Error",
+            "type": "object",
+            "description": "Database error.",
+            "properties": [
+                { "name": "message", "type": "string", "description": "Error message." },
+                { "name": "code", "type": "integer", "description": "Error code." }
+            ]
+        },
+        {
+            "id": "OptionalParameterBundle",
+            "type": "object",
+            "properties": [
+                { "name": "columnNames", "type": "array", "optional": true, "items": { "type": "string" } },
+                { "name": "notes", "type": "string", "optional": true },
+                { "name": "timestamp", "type": "number", "optional": true },
+                { "name": "values", "type": "object", "optional": true },
+                { "name": "payload", "type": "any", "optional": true },
+                { "name": "error", "$ref": "Error", "optional": true }
+            ]
+        },
+        {
+            "id": "ParameterBundle",
+            "type": "object",
+            "properties": [
+                { "name": "columnNames", "type": "array", "items": { "type": "string" } },
+                { "name": "notes", "type": "string" },
+                { "name": "timestamp", "type": "number" },
+                { "name": "values", "type": "object" },
+                { "name": "payload", "type": "any" },
+                { "name": "error", "$ref": "Error" }
+            ]
+        },
+        {
+            "id": "ObjectWithPropertyNameConflicts",
+            "description": "Conflicted names may cause generated getters/setters to clash with built-in InspectorObject methods.",
+            "type": "object",
+            "properties": [
+                { "name": "integer", "type": "string" },
+                { "name": "array", "type": "string" },
+                { "name": "string", "type": "string" },
+                { "name": "value", "type": "string" },
+                { "name": "object", "type": "string" }
+            ]
+        },
+        {
+            "id": "DummyObject",
+            "description": "An open object that doesn't have any predefined fields.",
+            "type": "object"
+        }
+    ]
+},
+{
+    "domain": "Test",
+    "description": "Test the generation of special behaviors that only apply to specific classes.",
+    "types": [
+        {
+            "id": "UnpleasantName",
+            "description": "This type should be renamed to HappyName",
+            "type": "object",
+            "members": [
+                { "name": "notes", "type": "string" },
+                { "name": "timestamp", "type": "number" },
+                { "name": "values", "type": "object" }
+            ]
+        },
+        {
+            "id": "ParameterBundle",
+            "type": "object",
+            "properties": [
+                { "name": "columnNames", "type": "array", "items": { "type": "string" } },
+                { "name": "notes", "type": "string" },
+                { "name": "timestamp", "type": "number" },
+                { "name": "values", "type": "object" },
+                { "name": "payload", "type": "any" },
+                { "name": "error", "$ref": "Database.Error" }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "attemptCurse",
+            "parameters": [
+                { "name": "curse", "$ref": "UnpleasantName" }
+            ],
+            "returns": [
+                { "name": "censoredCurse", "type": "string", "optional": true }
+            ]
+        }
+    ]
+}
+]

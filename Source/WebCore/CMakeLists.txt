@@ -787,6 +787,21 @@ set(WebCore_IDL_FILES
 
 set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
+set(WebCore_INSPECTOR_PROTOCOL_SCRIPTS
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_commands.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_header.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_implementation.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_header.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_implementation.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_type_builder_header.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_type_builder_implementation.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator_templates.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/__init__.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/models.py
+)
+
 set(WebCore_INSPECTOR_DOMAINS
     ${WEBCORE_DIR}/inspector/protocol/ApplicationCache.json
     ${WEBCORE_DIR}/inspector/protocol/CSS.json
@@ -3264,7 +3279,7 @@ add_custom_command(
     COMMAND ${PYTHON_EXECUTABLE} ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-combined-inspector-json.py ${WebCore_INSPECTOR_DOMAINS} > ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json
     VERBATIM)
 
-# All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
+# All Web Inspector generated files are created with this one call to generate-inspector-protocol-bindings.py
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.cpp
            ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.h
@@ -3274,11 +3289,9 @@ add_custom_command(
            ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebTypeBuilders.h
            ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorWebBackendCommands.js
     MAIN_DEPENDENCY ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json
-    DEPENDS ${WebCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py
-            ${WebCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspectorStrings.py
+    DEPENDS ${WebCore_INSPECTOR_PROTOCOL_SCRIPTS}
             ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
-            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSTypeBuilders.h
-    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_INSPECTOR_SCRIPTS_DIR}/CodeGeneratorInspector.py ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json --output_h_dir "${DERIVED_SOURCES_WEBCORE_DIR}" --output_cpp_dir "${DERIVED_SOURCES_WEBCORE_DIR}" --output_js_dir "${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol" --output_type Web --write_always
+    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --framework WebCore ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json && cp ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol
     VERBATIM)
 
 list(APPEND WebCore_SOURCES
