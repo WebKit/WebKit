@@ -93,7 +93,7 @@ WebInspector.KeyboardShortcut.Modifier = {
 
     get CommandOrControl()
     {
-        return InspectorFrontendHost.platform() === "mac" ? this.Command : this.Control;
+        return WebInspector.Platform.name === "mac" ? this.Command : this.Control;
     }
 };
 
@@ -181,7 +181,7 @@ WebInspector.KeyboardShortcut.prototype = {
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Control)
             result += "\u2303";
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Option)
-            result += InspectorFrontendHost.platform() === "mac" ? "\u2325" : "\u2387";
+            result += WebInspector.Platform.name === "mac" ? "\u2325" : "\u2387";
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Shift)
             result += "\u21e7";
         if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Command)
