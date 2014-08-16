@@ -1,3 +1,12 @@
+2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
+
+        Unreviewed build fix for some GTK bots after r172655.
+
+        Some bots use Python 2.6, which lacks the 'flags' named parameter for re.sub.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.stylized_name_for_enum_value): Do things the old-school way.
+
 2014-08-15  Michael Saboff  <msaboff@apple.com>
 
         Change callToJavaScript and callToNativeFunction so their callFrames match the native calling conventions

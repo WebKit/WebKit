@@ -229,7 +229,7 @@ class Generator:
 
         # Split on hyphen, introduce camelcase, and force uppercasing of acronyms.
         subwords = map(ucfirst, enum_value.split('-'))
-        return re.sub(regex, replaceCallback, "".join(subwords), flags=re.IGNORECASE)
+        return re.sub(re.compile(regex, re.IGNORECASE), replaceCallback, "".join(subwords))
 
     @staticmethod
     def keyed_get_method_for_type(_type):
