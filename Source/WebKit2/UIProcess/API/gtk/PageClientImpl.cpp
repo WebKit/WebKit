@@ -398,4 +398,12 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem&)
 {
 }
 
+void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
+{
+}
+
+void PageClientImpl::didFinishLoadForMainFrame()
+{
+}
+
 } // namespace WebKit

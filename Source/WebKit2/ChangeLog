@@ -1,3 +1,15 @@
+2014-08-16  Byungseon Shin  <sun.shin@lge.com>
+
+        [GTK] build fails with error: cannot allocate an object of abstract type 'WebKit::PageClientImpl'
+        https://bugs.webkit.org/show_bug.cgi?id=136017 
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
 2014-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add ewk_intro.h to describe main page of doxygen
