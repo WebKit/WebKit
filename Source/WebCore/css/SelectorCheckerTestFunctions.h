@@ -73,6 +73,11 @@ ALWAYS_INLINE bool isEnabled(const Element* element)
     return isEnabled;
 }
 
+ALWAYS_INLINE bool isMediaDocument(Element* element)
+{
+    return element->document().isMediaDocument();
+}
+
 ALWAYS_INLINE bool isChecked(Element* element)
 {
     // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that

@@ -1,3 +1,22 @@
+2014-08-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS JIT: compile :-webkit-full-page-media
+        https://bugs.webkit.org/show_bug.cgi?id=135968
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add the pseudo class :-webkit-full-page-media with an unoptimized function call.
+
+        It would be possible to inline it, but this selector is so uncommon I don't think
+        it is worth having any additional complexity for it.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isMediaDocument):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+
 2014-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix gliding in AxisScrollSnapAnimator for Mac
