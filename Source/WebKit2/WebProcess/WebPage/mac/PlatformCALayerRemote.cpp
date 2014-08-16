@@ -203,17 +203,19 @@ void PlatformCALayerRemote::updateBackingStore()
     m_properties.backingStore->ensureBackingStore(m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_properties.opaque);
 }
 
-void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* rect)
+void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)
 {
     ensureBackingStore();
 
-    if (!rect) {
-        m_properties.backingStore->setNeedsDisplay();
-        return;
-    }
-
     // FIXME: Need to map this through contentsRect/etc.
-    m_properties.backingStore->setNeedsDisplay(enclosingIntRect(*rect));
+    m_properties.backingStore->setNeedsDisplay(enclosingIntRect(rect));
+}
+
+void PlatformCALayerRemote::setNeedsDisplay()
+{
+    ensureBackingStore();
+
+    m_properties.backingStore->setNeedsDisplay();
 }
 
 void PlatformCALayerRemote::copyContentsFromLayer(PlatformCALayer* layer)

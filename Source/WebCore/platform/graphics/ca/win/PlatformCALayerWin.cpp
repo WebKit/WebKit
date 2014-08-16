@@ -208,11 +208,16 @@ void PlatformCALayerWin::animationStarted(const String&, CFTimeInterval beginTim
         m_owner->platformCALayerAnimationStarted(beginTime);
 }
 
-void PlatformCALayerWin::setNeedsDisplay(const FloatRect* dirtyRect)
+void PlatformCALayerWin::setNeedsDisplayInRect(const FloatRect& dirtyRect)
 {
-    intern(this)->setNeedsDisplay(dirtyRect);
+    intern(this)->setNeedsDisplayInRect(dirtyRect);
 }
-    
+
+void PlatformCALayerWin::setNeedsDisplay()
+{
+    intern(this)->setNeedsDisplay();
+}
+
 void PlatformCALayerWin::setNeedsCommit()
 {
     AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);

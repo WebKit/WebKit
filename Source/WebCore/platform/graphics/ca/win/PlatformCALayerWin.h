@@ -37,7 +37,8 @@ public:
     
     ~PlatformCALayerWin();
 
-    virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) override;
+    virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) override;
+    virtual void setNeedsDisplay() override;
 
     virtual void copyContentsFromLayer(PlatformCALayer*) override;
 

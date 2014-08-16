@@ -331,13 +331,17 @@ void PlatformCALayerMac::animationStarted(const String&, CFTimeInterval beginTim
         m_owner->platformCALayerAnimationStarted(beginTime);
 }
 
-void PlatformCALayerMac::setNeedsDisplay(const FloatRect* dirtyRect)
+void PlatformCALayerMac::setNeedsDisplay()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (dirtyRect)
-        [m_layer.get() setNeedsDisplayInRect:*dirtyRect];
-    else
-        [m_layer.get() setNeedsDisplay];
+    [m_layer.get() setNeedsDisplay];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void PlatformCALayerMac::setNeedsDisplayInRect(const FloatRect& dirtyRect)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer.get() setNeedsDisplayInRect:dirtyRect];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

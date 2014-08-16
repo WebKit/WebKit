@@ -48,7 +48,8 @@ public:
     ~PlatformCALayerWinInternal();
 
     void displayCallback(CACFLayerRef, CGContextRef);
-    void setNeedsDisplay(const FloatRect*);
+    void setNeedsDisplayInRect(const FloatRect&);
+    void setNeedsDisplay();
     PlatformCALayer* owner() const { return m_owner; }
 
     void setSublayers(const PlatformCALayerList&);

@@ -482,7 +482,8 @@ private:
     
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_isPageTiledBackingLayer : 1;
-    
+    bool m_needsFullRepaint : 1;
+
     Color m_contentsSolidColor;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;

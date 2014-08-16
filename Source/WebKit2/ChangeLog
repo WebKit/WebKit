@@ -1,3 +1,29 @@
+2014-08-15  Zalan Bujtas  <zalan@apple.com>
+
+        Do not use FloatRect::infiniteRect() to flag full repaints.
+        https://bugs.webkit.org/show_bug.cgi?id=135900
+
+        Reviewed by Simon Fraser.
+
+        Converting FloatRect::infiniteRect() to IntRect leads to value overflow
+        and we end up with invalid repaint rectangle. Use a boolean flag to indicate
+        full repaint request.
+
+        Covered by existing tests.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setNeedsDisplayInRect):
+        (WebKit::PlatformCALayerRemote::setNeedsDisplay):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::setNeedsDisplayInRect):
+        (WebKit::PlatformCALayerRemoteCustom::setNeedsDisplay):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        (WebKit::PlatformCALayerRemoteTiledBacking::setNeedsDisplayInRect):
+        (WebKit::PlatformCALayerRemoteTiledBacking::setNeedsDisplay):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h:
+
 2014-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r172660): WebKit2.TerminateTwice asserts

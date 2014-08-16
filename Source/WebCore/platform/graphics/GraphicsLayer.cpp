@@ -571,18 +571,19 @@ void GraphicsLayer::resetTrackedRepaints()
 
 void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
 {
-    if (m_client.isTrackingRepaints()) {
-        FloatRect largestRepaintRect(FloatPoint(), m_size);
-        largestRepaintRect.intersect(repaintRect);
-        RepaintMap::iterator repaintIt = repaintRectMap().find(this);
-        if (repaintIt == repaintRectMap().end()) {
-            Vector<FloatRect> repaintRects;
-            repaintRects.append(largestRepaintRect);
-            repaintRectMap().set(this, repaintRects);
-        } else {
-            Vector<FloatRect>& repaintRects = repaintIt->value;
-            repaintRects.append(largestRepaintRect);
-        }
+    if (!m_client.isTrackingRepaints())
+        return;
+
+    FloatRect largestRepaintRect(FloatPoint(), m_size);
+    largestRepaintRect.intersect(repaintRect);
+    RepaintMap::iterator repaintIt = repaintRectMap().find(this);
+    if (repaintIt == repaintRectMap().end()) {
+        Vector<FloatRect> repaintRects;
+        repaintRects.append(largestRepaintRect);
+        repaintRectMap().set(this, repaintRects);
+    } else {
+        Vector<FloatRect>& repaintRects = repaintIt->value;
+        repaintRects.append(largestRepaintRect);
     }
 }
 

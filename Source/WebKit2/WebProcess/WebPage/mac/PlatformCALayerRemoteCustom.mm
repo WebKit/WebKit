@@ -131,15 +131,20 @@ void PlatformCALayerRemoteCustom::setContents(CFTypeRef contents)
     [m_platformLayer setContents:(id)contents];
 }
 
-void PlatformCALayerRemoteCustom::setNeedsDisplay(const FloatRect* rect)
+void PlatformCALayerRemoteCustom::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (m_providesContents) {
-        if (rect)
-            [m_platformLayer setNeedsDisplayInRect:*rect];
-        else
-            [m_platformLayer setNeedsDisplay];
-    } else
-        PlatformCALayerRemote::setNeedsDisplay(rect);
+    if (m_providesContents)
+        [m_platformLayer setNeedsDisplayInRect:rect];
+    else
+        PlatformCALayerRemote::setNeedsDisplayInRect(rect);
+}
+
+void PlatformCALayerRemoteCustom::setNeedsDisplay()
+{
+    if (m_providesContents)
+        [m_platformLayer setNeedsDisplay];
+    else
+        PlatformCALayerRemote::setNeedsDisplay();
 }
 
 } // namespace WebKit

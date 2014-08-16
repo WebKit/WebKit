@@ -46,12 +46,14 @@ PlatformCALayerRemoteTiledBacking::~PlatformCALayerRemoteTiledBacking()
 {
 }
 
-void PlatformCALayerRemoteTiledBacking::setNeedsDisplay(const FloatRect* dirtyRect)
+void PlatformCALayerRemoteTiledBacking::setNeedsDisplayInRect(const FloatRect& dirtyRect)
 {
-    if (dirtyRect)
-        m_tileController->setNeedsDisplayInRect(enclosingIntRect(*dirtyRect));
-    else
-        m_tileController->setNeedsDisplay();
+    m_tileController->setNeedsDisplayInRect(enclosingIntRect(dirtyRect));
+}
+
+void PlatformCALayerRemoteTiledBacking::setNeedsDisplay()
+{
+    m_tileController->setNeedsDisplay();
 }
 
 const WebCore::PlatformCALayerList* PlatformCALayerRemoteTiledBacking::customSublayers() const

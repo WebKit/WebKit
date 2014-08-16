@@ -51,7 +51,8 @@ public:
 
     void recursiveBuildTransaction(RemoteLayerTreeContext&, RemoteLayerTreeTransaction&);
 
-    virtual void setNeedsDisplay(const WebCore::FloatRect* dirtyRect = 0) override;
+    virtual void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
+    virtual void setNeedsDisplay() override;
 
     virtual void copyContentsFromLayer(PlatformCALayer*) override;
 

@@ -103,7 +103,8 @@ public:
 
     virtual void animationStarted(const String& key, CFTimeInterval beginTime) = 0;
 
-    virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) = 0;
+    virtual void setNeedsDisplay() = 0;
+    virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) = 0;
 
     virtual void copyContentsFromLayer(PlatformCALayer*) = 0;
 

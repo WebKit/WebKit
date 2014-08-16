@@ -1,3 +1,30 @@
+2014-08-15  Zalan Bujtas  <zalan@apple.com>
+
+        Do not use FloatRect::infiniteRect() to flag full repaints.
+        https://bugs.webkit.org/show_bug.cgi?id=135900
+
+        Reviewed by Simon Fraser.
+
+        Converting FloatRect::infiniteRect() to IntRect leads to value overflow
+        and we end up with invalid repaint rectangle. Use a boolean flag to indicate
+        full repaint request.
+
+        Covered by existing tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::setNeedsDisplay):
+        (WebCore::GraphicsLayerCA::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerCA::repaintLayerDirtyRects):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::setTileNeedsDisplayInRect):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::setNeedsDisplay):
+        (PlatformCALayerMac::setNeedsDisplayInRect):
+
 2014-08-15  Benjamin Poulain  <benjamin@webkit.org>
 
         Unify the modes style resolution modes SharingRules and StyleInvalidation

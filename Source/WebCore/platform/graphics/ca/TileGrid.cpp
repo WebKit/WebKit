@@ -152,11 +152,11 @@ void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& t
     // We could test for intersection with the visible rect. This would reduce painting yet more,
     // but may make scrolling stale tiles into view more frequent.
     if (tileRect.intersects(coverageRectInTileCoords) && tileLayer->superlayer()) {
-        tileLayer->setNeedsDisplay(&tileRepaintRect);
+        tileLayer->setNeedsDisplayInRect(tileRepaintRect);
 
         if (m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0)) {
             FloatRect indicatorRect(0, 0, 52, 27);
-            tileLayer->setNeedsDisplay(&indicatorRect);
+            tileLayer->setNeedsDisplayInRect(indicatorRect);
         }
     } else
         tileInfo.hasStaleContent = true;
