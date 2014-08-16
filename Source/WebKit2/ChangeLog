@@ -1,3 +1,11 @@
+2014-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on the EFL port since r172635
+
+        * UIProcess/WebPageProxy.cpp: Guard removeNavigationGestureSnapshot with PLATFORM(MAC) macro.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/efl/WebViewEfl.h: Added didFirstVisuallyNonEmptyLayoutForMainFrame and didFinishLoadForMainFrame as dummy.
+
 2014-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         Improve page to process relationship tracking

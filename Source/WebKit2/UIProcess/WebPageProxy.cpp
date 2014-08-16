@@ -5191,9 +5191,11 @@ void WebPageProxy::willChangeCurrentHistoryItemForMainFrame()
     recordNavigationSnapshot();
 }
 
+#if PLATFORM(MAC)
 void WebPageProxy::removeNavigationGestureSnapshot()
 {
     m_pageClient.removeNavigationGestureSnapshot();
 }
+#endif
 
 } // namespace WebKit

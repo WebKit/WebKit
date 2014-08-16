@@ -908,7 +908,10 @@ public:
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
+
+#if PLATFORM(MAC)
     void removeNavigationGestureSnapshot();
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
