@@ -1,5 +1,26 @@
 2014-08-15  Benjamin Poulain  <benjamin@webkit.org>
 
+        Unify the modes style resolution modes SharingRules and StyleInvalidation
+        https://bugs.webkit.org/show_bug.cgi?id=135969
+
+        Reviewed by Andreas Kling.
+
+        Unifying the Collector and SelectorCheckers was done in previous patches,
+        this is just removing the enums.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::hasAnyMatchingRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::match):
+        * css/SelectorChecker.h:
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::invalidateStyleRecursively):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement):
+
+2014-08-15  Benjamin Poulain  <benjamin@webkit.org>
+
         CSS JIT: compile :-webkit-full-page-media
         https://bugs.webkit.org/show_bug.cgi?id=135968
 

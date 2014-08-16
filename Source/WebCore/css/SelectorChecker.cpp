@@ -146,8 +146,9 @@ bool SelectorChecker::match(const SelectorCheckingContext& context) const
         if (m_mode == Mode::ResolvingStyle && pseudoId < FIRST_INTERNAL_PSEUDOID)
             context.elementStyle->setHasPseudoStyle(pseudoId);
 
-        // For SharingRules testing, any match is good enough, we don't care what is matched.
-        return m_mode == Mode::SharingRules || m_mode == Mode::StyleInvalidation;
+        // When ignoring virtual pseudo elements, the context's pseudo should also be NOPSEUDO but that does
+        // not cause a failure.
+        return m_mode == Mode::CollectingRulesIgnoringVirtualPseudoElements;
     }
     return true;
 }
