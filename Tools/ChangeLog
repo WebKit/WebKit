@@ -1,3 +1,12 @@
+2014-08-16  Mark Hahnenberg  <mhahnenb@gmail.com>
+
+        Update contributors.json for my new email
+        https://bugs.webkit.org/show_bug.cgi?id=136021
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r172660): WebKit2.TerminateTwice asserts
