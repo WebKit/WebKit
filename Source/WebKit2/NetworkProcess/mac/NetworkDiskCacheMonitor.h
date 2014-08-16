@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiskCacheMonitor_h
-#define DiskCacheMonitor_h
+#ifndef NetworkDiskCacheMonitor_h
+#define NetworkDiskCacheMonitor_h
 
 #include "MessageSender.h"
 #include <WebCore/ResourceRequest.h>
@@ -38,14 +38,14 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class NetworkResourceLoader;
 
-class DiskCacheMonitor : public IPC::MessageSender {
+class NetworkDiskCacheMonitor : public IPC::MessageSender {
 public:
     static void monitorFileBackingStoreCreation(CFCachedURLResponseRef, NetworkResourceLoader*);
 
     const WebCore::ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
 private:
-    DiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
+    NetworkDiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
 
     // IPC::MessageSender
     virtual IPC::Connection* messageSenderConnection() override;
@@ -59,4 +59,4 @@ private:
 
 } // namespace WebKit
 
-#endif // DiskCacheMonitor_h
+#endif // NetworkDiskCacheMonitor_h

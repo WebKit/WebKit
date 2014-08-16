@@ -1,3 +1,24 @@
+2014-08-16  Pratik Solanki  <psolanki@apple.com>
+
+        Rename DiskCacheMonitor to NetworkDiskCacheMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=135897
+
+        Reviewed by Andreas Kling.
+
+        In preparation for moving DiskCacheMonitor code to WebCore in bug 135896, rename the WebKit2
+        class to NetworkDiskCacheMonitor.
+
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.h: Renamed from Source/WebKit2/NetworkProcess/mac/DiskCacheMonitor.h.
+        (WebKit::NetworkDiskCacheMonitor::resourceRequest):
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.mm: Renamed from Source/WebKit2/NetworkProcess/mac/DiskCacheMonitor.mm.
+        (WebKit::NetworkDiskCacheMonitor::monitorFileBackingStoreCreation):
+        (WebKit::NetworkDiskCacheMonitor::NetworkDiskCacheMonitor):
+        (WebKit::NetworkDiskCacheMonitor::messageSenderConnection):
+        (WebKit::NetworkDiskCacheMonitor::messageSenderDestinationID):
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-08-16  Byungseon Shin  <sun.shin@lge.com>
 
         [GTK] build fails with error: cannot allocate an object of abstract type 'WebKit::PageClientImpl'

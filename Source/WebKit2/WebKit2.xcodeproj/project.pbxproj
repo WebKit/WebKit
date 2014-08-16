@@ -891,8 +891,8 @@
 		51654EFD184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51654EFB184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp */; };
 		51654EFE184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = 51654EFC184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h */; };
 		51654F00184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51654EFF184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h */; };
-		5167EEA0170377BF007681CA /* DiskCacheMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5167EE9E170377BF007681CA /* DiskCacheMonitor.h */; };
-		5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5167EE9F170377BF007681CA /* DiskCacheMonitor.mm */; };
+		5167EEA0170377BF007681CA /* NetworkDiskCacheMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5167EE9E170377BF007681CA /* NetworkDiskCacheMonitor.h */; };
+		5167EEA1170377BF007681CA /* NetworkDiskCacheMonitor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5167EE9F170377BF007681CA /* NetworkDiskCacheMonitor.mm */; };
 		516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* APIError.h */; };
 		5175095A1897249700408FAC /* IDBIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 517509591897249700408FAC /* IDBIdentifier.h */; };
 		51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */; };
@@ -2919,8 +2919,8 @@
 		51654EFB184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseBackingStoreSQLite.cpp; sourceTree = "<group>"; };
 		51654EFC184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseBackingStoreSQLite.h; sourceTree = "<group>"; };
 		51654EFF184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseBackingStore.h; sourceTree = "<group>"; };
-		5167EE9E170377BF007681CA /* DiskCacheMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskCacheMonitor.h; sourceTree = "<group>"; };
-		5167EE9F170377BF007681CA /* DiskCacheMonitor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiskCacheMonitor.mm; sourceTree = "<group>"; };
+		5167EE9E170377BF007681CA /* NetworkDiskCacheMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDiskCacheMonitor.h; sourceTree = "<group>"; };
+		5167EE9F170377BF007681CA /* NetworkDiskCacheMonitor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDiskCacheMonitor.mm; sourceTree = "<group>"; };
 		516A4A5B120A2CCD00C05B7F /* APIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIError.h; sourceTree = "<group>"; };
 		517509591897249700408FAC /* IDBIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIdentifier.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
@@ -5209,8 +5209,8 @@
 			isa = PBXGroup;
 			children = (
 				E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */,
-				5167EE9E170377BF007681CA /* DiskCacheMonitor.h */,
-				5167EE9F170377BF007681CA /* DiskCacheMonitor.mm */,
+				5167EE9E170377BF007681CA /* NetworkDiskCacheMonitor.h */,
+				5167EE9F170377BF007681CA /* NetworkDiskCacheMonitor.mm */,
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
 				51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */,
 				512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */,
@@ -7132,7 +7132,7 @@
 				518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
 				C58CDF2E1887609F00871536 /* InteractionInformationAtPosition.h in Headers */,
-				5167EEA0170377BF007681CA /* DiskCacheMonitor.h in Headers */,
+				5167EEA0170377BF007681CA /* NetworkDiskCacheMonitor.h in Headers */,
 				518E8F0816B2093700E91429 /* Download.h in Headers */,
 				518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */,
 				518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */,
@@ -8803,7 +8803,7 @@
 				0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */,
 				2984F57C164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
-				5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */,
+				5167EEA1170377BF007681CA /* NetworkDiskCacheMonitor.mm in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,
 				2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.mm in Sources */,
 				518E8F0716B2093700E91429 /* Download.cpp in Sources */,

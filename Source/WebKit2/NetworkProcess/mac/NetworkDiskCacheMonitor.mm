@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "DiskCacheMonitor.h"
+#import "NetworkDiskCacheMonitor.h"
 
 #import "NetworkConnectionToWebProcess.h"
 #import "NetworkProcessConnectionMessages.h"
@@ -50,17 +50,17 @@ namespace WebKit {
 // The maximum number of seconds we'll try to wait for a resource to be disk cached before we forget the request.
 static const double diskCacheMonitorTimeout = 20;
 
-void DiskCacheMonitor::monitorFileBackingStoreCreation(CFCachedURLResponseRef cachedResponse, NetworkResourceLoader* loader)
+void NetworkDiskCacheMonitor::monitorFileBackingStoreCreation(CFCachedURLResponseRef cachedResponse, NetworkResourceLoader* loader)
 {
     if (!cachedResponse)
         return;
 
     ASSERT(loader);
 
-    new DiskCacheMonitor(cachedResponse, loader); // Balanced by adoptPtr in the blocks setup in the constructor, one of which is guaranteed to run.
+    new NetworkDiskCacheMonitor(cachedResponse, loader); // Balanced by adoptPtr in the blocks setup in the constructor, one of which is guaranteed to run.
 }
 
-DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, NetworkResourceLoader* loader)
+NetworkDiskCacheMonitor::NetworkDiskCacheMonitor(CFCachedURLResponseRef cachedResponse, NetworkResourceLoader* loader)
     : m_connectionToWebProcess(loader->connectionToWebProcess())
     , m_resourceRequest(loader->request())
     , m_sessionID(loader->sessionID())
@@ -68,10 +68,10 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
     ASSERT(RunLoop::isMain());
 
     // Set up a delayed callback to cancel this monitor if the resource hasn't been cached yet.
-    __block DiskCacheMonitor* rawMonitor = this;
+    __block NetworkDiskCacheMonitor* rawMonitor = this;
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * diskCacheMonitorTimeout), dispatch_get_main_queue(), ^{
-        adoptPtr(rawMonitor); // Balanced by `new DiskCacheMonitor` in monitorFileBackingStoreCreation.
+        adoptPtr(rawMonitor); // Balanced by `new NetworkDiskCacheMonitor` in monitorFileBackingStoreCreation.
         rawMonitor = 0;
     });
 
@@ -82,9 +82,9 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
         if (!rawMonitor)
             return;
 
-        OwnPtr<DiskCacheMonitor> monitor = adoptPtr(rawMonitor); // Balanced by `new DiskCacheMonitor` in monitorFileBackingStoreCreation.
+        OwnPtr<NetworkDiskCacheMonitor> monitor = adoptPtr(rawMonitor); // Balanced by `new NetworkDiskCacheMonitor` in monitorFileBackingStoreCreation.
         rawMonitor = 0;
-        
+
         ShareableResource::Handle handle;
         NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(handle, cachedResponse);
         if (handle.isNull())
@@ -96,12 +96,12 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
     _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, block, dispatch_get_main_queue());
 }
 
-IPC::Connection* DiskCacheMonitor::messageSenderConnection()
+IPC::Connection* NetworkDiskCacheMonitor::messageSenderConnection()
 {
     return m_connectionToWebProcess->connection();
 }
 
-uint64_t DiskCacheMonitor::messageSenderDestinationID()
+uint64_t NetworkDiskCacheMonitor::messageSenderDestinationID()
 {
     return 0;
 }
