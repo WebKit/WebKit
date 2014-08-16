@@ -12,6 +12,7 @@ include_directories(${CMAKE_BINARY_DIR}
     ${JAVASCRIPTCORE_DIR}/assembler
     ${JAVASCRIPTCORE_DIR}/bytecode
     ${JAVASCRIPTCORE_DIR}/disassembler
+    ${JAVASCRIPTCORE_DIR}/interpreter
     ${JAVASCRIPTCORE_DIR}/heap
     ${JAVASCRIPTCORE_DIR}/jit
     ${JAVASCRIPTCORE_DIR}/llint

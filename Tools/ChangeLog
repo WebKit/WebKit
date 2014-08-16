@@ -1,3 +1,9 @@
+2014-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on the CMake based pots since r172665
+
+        * TestWebKitAPI/CMakeLists.txt: Added JavaScriptCore/interpreter to the include list.
+
 2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: rewrite CodeGeneratorInspector to be modular and testable
