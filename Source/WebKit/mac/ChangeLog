@@ -1,3 +1,16 @@
+2014-08-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove the obsolete WebKitEnableCoalescedUpdatesPreferenceKey
+        https://bugs.webkit.org/show_bug.cgi?id=136024
+
+        Reviewed by Filip Pizlo.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]): Remove code that respects
+        this key. It was SPI and is no longer used; also it was
+        only relevant for versions of OS X that WebKit no longer supports.
+        * WebView/WebPreferenceKeysPrivate.h: Remove declaration.
+
 2014-08-15  Daniel Bates  <dabates@apple.com>
 
         [iOS] Teach postprocess-headers.sh to remove code guarded by ENABLE_IOS_GESTURE_EVENTS
