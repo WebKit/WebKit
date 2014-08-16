@@ -1,5 +1,24 @@
 2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: rewrite CodeGeneratorInspector to be modular and testable
+        https://bugs.webkit.org/show_bug.cgi?id=131596
+
+        Unreviewed gardening to rebaseline inspector generator tests after addressing review comments.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
+2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
+
         Unreviewed build fix for some GTK bots after r172655.
 
         Some bots use Python 2.6, which lacks the 'flags' named parameter for re.sub.
