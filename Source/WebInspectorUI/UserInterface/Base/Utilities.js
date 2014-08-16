@@ -1015,6 +1015,11 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
     }
 });
 
+function clamp(min, value, max)
+{
+    return Math.min(Math.max(min, value), max);
+}
+
 function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)
 {
     if (insertionIndexAfter) {

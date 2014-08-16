@@ -94,13 +94,15 @@ WebInspector.ProfileNode.prototype = {
 
     get startTime()
     {
-        this._computeTotalTimesIfNeeded();
+        if (this._startTime === undefined)
+            this._startTime =  Math.max(0, this._calls[0].startTime);
         return this._startTime;
     },
 
     get endTime()
     {
-        this._computeTotalTimesIfNeeded();
+        if (this._endTime === undefined)
+            this._endTime = Math.min(this._calls.lastValue.endTime, Infinity);
         return this._endTime;
     },
 
