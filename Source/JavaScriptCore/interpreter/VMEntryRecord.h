@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,33 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LLIntThunks_h
-#define LLIntThunks_h
-
-#include "MacroAssemblerCodeRef.h"
+#ifndef VMEntryRecord_h
+#define VMEntryRecord_h
 
 namespace JSC {
 
+typedef void VMEntryFrame;
+
+class ExecState;
 class VM;
-struct ProtoCallFrame;
 
-extern "C" {
-    EncodedJSValue vmEntryToJavaScript(void*, VM*, ProtoCallFrame*);
-    EncodedJSValue vmEntryToNative(void*, VM*, ProtoCallFrame*);
-}
+struct VMEntryRecord {
+    /*
+     * This record stored in a vmEntryTo{JavaScript,Host} allocated frame. It is allocated on the stack
+     * after callee save registers where local variables would go.
+     */
+    VM* m_vm;
+    ExecState* m_prevTopCallFrame;
+    VMEntryFrame* m_prevTopVMEntryFrame;
 
-namespace LLInt {
+    ExecState* prevTopCallFrame() { return m_prevTopCallFrame; }
 
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM*);
-MacroAssemblerCodeRef evalEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
+    VMEntryFrame* prevTopVMEntryFrame() { return m_prevTopVMEntryFrame; }
+};
 
-} } // namespace JSC::LLInt
+extern "C" VMEntryRecord* vmEntryRecord(VMEntryFrame*);
 
-#endif // LLIntThunks_h
+} // namespace JSC
+
+#endif // VMEntryRecord_h

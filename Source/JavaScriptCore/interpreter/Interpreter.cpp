@@ -479,8 +479,7 @@ static bool unwindCallFrame(StackVisitor& visitor)
         }
     }
 
-    CallFrame* callerFrame = callFrame->callerFrame();
-    return !callerFrame->isVMEntrySentinel();
+    return !visitor->callerIsVMEntryFrame();
 }
 
 static StackFrameCodeType getStackFrameCodeType(StackVisitor& visitor)
@@ -597,7 +596,6 @@ private:
 void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
 {
     VM& vm = m_vm;
-    ASSERT(!vm.topCallFrame->isVMEntrySentinel());
     CallFrame* callFrame = vm.topCallFrame;
     if (!callFrame)
         return;
@@ -683,15 +681,6 @@ private:
 
 NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& exceptionValue)
 {
-    if (callFrame->isVMEntrySentinel()) {
-        // This happens when we throw stack overflow in a function that is called
-        // directly from callToJavaScript. Stack overflow throws the exception in the
-        // context of the caller. In that case the caller is the sentinel frame. The
-        // right thing to do is to pretend that the exception is uncaught so that we
-        // go to the uncaught exception handler, which returns through callToJavaScript.
-        return 0;
-    }
-    
     CodeBlock* codeBlock = callFrame->codeBlock();
     ASSERT(codeBlock);
     bool isTermination = false;
@@ -996,7 +985,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         if (isJSCall)
             result = callData.js.functionExecutable->generatedJITCodeForCall()->execute(&vm, &protoCallFrame);
         else {
-            result = JSValue::decode(callToNativeFunction(reinterpret_cast<void*>(callData.native.function), &vm, &protoCallFrame));
+            result = JSValue::decode(vmEntryToNative(reinterpret_cast<void*>(callData.native.function), &vm, &protoCallFrame));
             if (callFrame->hadException())
                 result = jsNull();
         }
@@ -1064,7 +1053,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         if (isJSConstruct)
             result = constructData.js.functionExecutable->generatedJITCodeForConstruct()->execute(&vm, &protoCallFrame);
         else {
-            result = JSValue::decode(callToNativeFunction(reinterpret_cast<void*>(constructData.native.function), &vm, &protoCallFrame));
+            result = JSValue::decode(vmEntryToNative(reinterpret_cast<void*>(constructData.native.function), &vm, &protoCallFrame));
 
             if (!callFrame->hadException())
                 RELEASE_ASSERT(result.isObject());

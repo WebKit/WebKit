@@ -157,13 +157,11 @@ namespace JSC {
             : vm(currentVM)
             , oldCallFrame(currentVM.topCallFrame) 
         {
-            ASSERT(!callFrame->isVMEntrySentinel());
             currentVM.topCallFrame = callFrame;
         }
         
         ~TopCallFrameSetter() 
         {
-            ASSERT(!oldCallFrame->isVMEntrySentinel());
             vm.topCallFrame = oldCallFrame;
         }
     private:
@@ -177,17 +175,7 @@ namespace JSC {
         {
             ASSERT(vm);
             ASSERT(callFrame);
-            ASSERT(!callFrame->isVMEntrySentinel());
             vm->topCallFrame = callFrame;
-        }
-        
-        enum VMEntrySentinelOKTag { VMEntrySentinelOK };
-        ALWAYS_INLINE NativeCallFrameTracer(VM* vm, CallFrame* callFrame, VMEntrySentinelOKTag)
-        {
-            ASSERT(vm);
-            ASSERT(callFrame);
-            if (!callFrame->isVMEntrySentinel())
-                vm->topCallFrame = callFrame;
         }
     };
 

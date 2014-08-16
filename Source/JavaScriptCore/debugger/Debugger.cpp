@@ -607,7 +607,8 @@ void Debugger::stepOutOfFunction()
     if (!m_isPaused)
         return;
 
-    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrameSkippingVMEntrySentinel() : 0;
+    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : 0;
     notifyDoneProcessingDebuggerEvents();
 }
 
@@ -723,10 +724,13 @@ void Debugger::returnEvent(CallFrame* callFrame)
         return;
 
     // Treat stepping over a return statement like stepping out.
-    if (m_currentCallFrame == m_pauseOnCallFrame)
-        m_pauseOnCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
+    if (m_currentCallFrame == m_pauseOnCallFrame) {
+        VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+        m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
+    }
 
-    m_currentCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
+    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+    m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 }
 
 void Debugger::willExecuteProgram(CallFrame* callFrame)
@@ -756,11 +760,13 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
     if (m_currentCallFrame == m_pauseOnCallFrame) {
-        m_pauseOnCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
+        VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+        m_pauseOnCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
         if (!m_currentCallFrame)
             return;
     }
-    m_currentCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
+    VMEntryFrame* topVMEntryFrame = m_vm->topVMEntryFrame;
+    m_currentCallFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 }
 
 void Debugger::didReachBreakpoint(CallFrame* callFrame)

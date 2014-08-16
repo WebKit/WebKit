@@ -42,6 +42,9 @@ const CallFrameAlignSlots = 1
 end
 const SlotSize = 8
 
+const StackAlignment = 16
+const StackAlignmentMask = StackAlignment - 1
+
 const CallerFrameAndPCSize = 2 * PtrSize
 
 const CallerFrame = 0
@@ -235,9 +238,9 @@ macro checkStackPointerAlignment(tempReg, location)
         if ARM or ARMv7 or ARMv7_TRADITIONAL
             # ARM can't do logical ops with the sp as a source
             move sp, tempReg
-            andp 0xf, tempReg
+            andp StackAlignmentMask, tempReg
         else
-            andp sp, 0xf, tempReg
+            andp sp, StackAlignmentMask, tempReg
         end
         btpz tempReg, .stackPointerOkay
         move location, tempReg
@@ -245,6 +248,26 @@ macro checkStackPointerAlignment(tempReg, location)
     .stackPointerOkay:
     end
 end
+
+if C_LOOP
+    const CalleeSaveRegisterCount = 0
+elsif ARM or ARMv7_TRADITIONAL or ARMv7
+    const CalleeSaveRegisterCount = 7
+elsif ARM64 or MIPS
+    const CalleeSaveRegisterCount = 10
+elsif SH4 or X86_64
+    const CalleeSaveRegisterCount = 5
+elsif X86 or X86_WIN
+    const CalleeSaveRegisterCount = 3
+elsif X86_64_WIN
+    const CalleeSaveRegisterCount = 7
+end
+
+const CalleeRegisterSaveSize = CalleeSaveRegisterCount * PtrSize
+
+# VMEntryTotalFrameSize includes the space for struct VMEntryRecord and the
+# callee save registers rounded up to keep the stack aligned
+const VMEntryTotalFrameSize = (CalleeRegisterSaveSize + sizeof VMEntryRecord + StackAlignment - 1) & ~StackAlignmentMask
 
 macro pushCalleeSaves()
     if C_LOOP
@@ -417,73 +440,8 @@ macro functionEpilogue()
     end
 end
 
-macro callToJavaScriptPrologue()
-    if X86_64 or X86_64_WIN
-        push cfr
-        push t0
-    elsif X86 or X86_WIN
-        push cfr
-    elsif ARM64
-        push cfr, lr
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
-        push lr
-        push cfr
-    end
-    pushCalleeSaves()
-    if X86
-        subp 12, sp
-    elsif X86_WIN
-        subp 16, sp
-        move sp, t4
-        move t4, t0
-        move t4, t2
-        andp 0xf, t2
-        andp 0xfffffff0, t0
-        move t0, sp
-        storep t4, [sp]
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
-        subp 4, sp
-        move sp, t4
-        clrbp t4, 0xf, t5
-        move t5, sp
-        storep t4, [sp]
-    end
-end
-
-macro callToJavaScriptEpilogue()
-    if ARMv7
-        addp CallFrameHeaderSlots * 8, cfr, t4
-        move t4, sp
-    else
-        addp CallFrameHeaderSlots * 8, cfr, sp
-    end
-
-    loadp CallerFrame[cfr], cfr
-
-    if X86
-        addp 12, sp
-    elsif X86_WIN
-        pop t4
-        move t4, sp
-        addp 16, sp
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
-        pop t4
-        move t4, sp
-        addp 4, sp
-    end
-
-    popCalleeSaves()
-    if X86_64 or X86_64_WIN
-        pop t2
-        pop cfr
-    elsif X86 or X86_WIN
-        pop cfr
-    elsif ARM64
-        pop lr, cfr
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
-        pop cfr
-        pop lr
-    end
+macro vmEntryRecord(entryFramePointer, resultReg)
+    subp entryFramePointer, VMEntryTotalFrameSize, resultReg
 end
 
 macro moveStackPointerForCodeBlock(codeBlock, scratch)
@@ -728,25 +686,25 @@ macro doReturn()
 end
 
 # stub to call into JavaScript or Native functions
-# EncodedJSValue callToJavaScript(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
-# EncodedJSValue callToNativeFunction(void* code, ExecState** vmTopCallFrame, ProtoCallFrame* protoFrame)
+# EncodedJSValue vmEntryToJavaScript(void* code, VM* vm, ProtoCallFrame* protoFrame)
+# EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
 
 if C_LOOP
-_llint_call_to_javascript:
+_llint_vm_entry_to_javascript:
 else
-global _callToJavaScript
-_callToJavaScript:
+global _vmEntryToJavaScript
+_vmEntryToJavaScript:
 end
-    doCallToJavaScript(makeJavaScriptCall)
+    doVMEntry(makeJavaScriptCall)
 
 
 if C_LOOP
-_llint_call_to_native_function:
+_llint_vm_entry_to_native:
 else
-global _callToNativeFunction
-_callToNativeFunction:
+global _vmEntryToNative
+_vmEntryToNative:
 end
-    doCallToJavaScript(makeHostFunctionCall)
+    doVMEntry(makeHostFunctionCall)
 
 
 if C_LOOP
@@ -789,8 +747,31 @@ _sanitizeStackForVMImpl:
     move sp, address
     storep address, VM::m_lastStackTop[vm]
     ret
-end
 
+if C_LOOP
+else
+# VMEntryRecord* vmEntryRecord(const VMEntryFrame* entryFrame)
+global _vmEntryRecord
+_vmEntryRecord:
+    if X86_64
+        const entryFrame = t4
+        const result = t0
+    elsif X86 or X86_WIN
+        const entryFrame = t2
+        const result = t0
+    else
+        const entryFrame = a0
+        const result = t0
+    end
+
+    if X86 or X86_WIN
+        loadp 4[sp], entryFrame
+    end
+
+    vmEntryRecord(entryFrame, result)
+    ret
+end
+end
 
 if C_LOOP
 # Dummy entry point the C Loop uses to initialize.

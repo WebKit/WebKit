@@ -136,6 +136,16 @@ JSGlobalObject* CallFrame::vmEntryGlobalObject()
     return vm().entryScope->globalObject();
 }
 
+CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
+{
+    if (callerFrameOrVMEntryFrame() == currVMEntryFrame) {
+        VMEntryRecord* currVMEntryRecord = vmEntryRecord(currVMEntryFrame);
+        currVMEntryFrame = currVMEntryRecord->prevTopVMEntryFrame();
+        return currVMEntryRecord->prevTopCallFrame();
+    }
+    return static_cast<CallFrame*>(callerFrameOrVMEntryFrame());
+}
+
 JSActivation* CallFrame::activation() const
 {
     CodeBlock* codeBlock = this->codeBlock();

@@ -59,6 +59,7 @@
 #include "Repatch.h"
 #include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"
+#include "StackVisitor.h"
 #include "UnlinkedInstructionStream.h"
 #include <wtf/BagToHashMap.h>
 #include <wtf/CommaPrinter.h>
@@ -3159,6 +3160,46 @@ JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
     return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->eitherCodeBlock()->globalObject();
 }
 
+class RecursionCheckFunctor {
+public:
+    RecursionCheckFunctor(CallFrame* startCallFrame, CodeBlock* codeBlock, unsigned depthToCheck)
+        : m_startCallFrame(startCallFrame)
+        , m_codeBlock(codeBlock)
+        , m_depthToCheck(depthToCheck)
+        , m_foundStartCallFrame(false)
+        , m_didRecurse(false)
+    { }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        CallFrame* currentCallFrame = visitor->callFrame();
+
+        if (currentCallFrame == m_startCallFrame)
+            m_foundStartCallFrame = true;
+
+        if (m_foundStartCallFrame) {
+            if (visitor->callFrame()->codeBlock() == m_codeBlock) {
+                m_didRecurse = true;
+                return StackVisitor::Done;
+            }
+
+            if (!m_depthToCheck--)
+                return StackVisitor::Done;
+        }
+
+        return StackVisitor::Continue;
+    }
+
+    bool didRecurse() const { return m_didRecurse; }
+
+private:
+    CallFrame* m_startCallFrame;
+    CodeBlock* m_codeBlock;
+    unsigned m_depthToCheck;
+    bool m_foundStartCallFrame;
+    bool m_didRecurse;
+};
+
 void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
 {
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
@@ -3206,20 +3247,18 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
             dataLog("    Clearing SABI because caller is not a function.\n");
         return;
     }
-    
-    ExecState* frame = callerFrame;
-    for (unsigned i = Options::maximumInliningDepth(); i--; frame = frame->callerFrame()) {
-        if (frame->isVMEntrySentinel())
-            break;
-        if (frame->codeBlock() == this) {
-            // Recursive calls won't be inlined.
-            if (Options::verboseCallLink())
-                dataLog("    Clearing SABI because recursion was detected.\n");
-            m_shouldAlwaysBeInlined = false;
-            return;
-        }
+
+    // Recursive calls won't be inlined.
+    RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
+    vm()->topCallFrame->iterate(functor);
+
+    if (functor.didRecurse()) {
+        if (Options::verboseCallLink())
+            dataLog("    Clearing SABI because recursion was detected.\n");
+        m_shouldAlwaysBeInlined = false;
+        return;
     }
-    
+
     RELEASE_ASSERT(callerCodeBlock->m_capabilityLevelState != DFG::CapabilityLevelNotSet);
     
     if (canCompile(callerCodeBlock->m_capabilityLevelState))

@@ -80,6 +80,7 @@
 #include "RegExpObject.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
+#include "StackVisitor.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"
@@ -149,6 +150,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , heap(this, heapType)
     , vmType(vmType)
     , clientData(0)
+    , topVMEntryFrame(nullptr)
     , topCallFrame(CallFrame::noCaller())
     , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
@@ -593,7 +595,42 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     
     exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
 }
-    
+
+class FindFirstCallerFrameWithCodeblockFunctor {
+public:
+    FindFirstCallerFrameWithCodeblockFunctor(CallFrame* startCallFrame)
+        : m_startCallFrame(startCallFrame)
+        , m_foundCallFrame(nullptr)
+        , m_foundStartCallFrame(false)
+        , m_index(0)
+    { }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        if (!m_foundStartCallFrame && (visitor->callFrame() == m_startCallFrame))
+            m_foundStartCallFrame = true;
+
+        if (m_foundStartCallFrame) {
+            if (visitor->callFrame()->codeBlock()) {
+                m_foundCallFrame = visitor->callFrame();
+                return StackVisitor::Done;
+            }
+            m_index++;
+        }
+
+        return StackVisitor::Continue;
+    }
+
+    CallFrame* foundCallFrame() const { return m_foundCallFrame; }
+    unsigned index() const { return m_index; }
+
+private:
+    CallFrame* m_startCallFrame;
+    CallFrame* m_foundCallFrame;
+    bool m_foundStartCallFrame;
+    unsigned m_index;
+};
+
 JSValue VM::throwException(ExecState* exec, JSValue error)
 {
     if (Options::breakOnThrow()) {
@@ -631,12 +668,11 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
             exception->putDirect(*this, Identifier(this, "sourceURL"), jsString(this, stackFrame.sourceURL), ReadOnly | DontDelete);
     }
     if (exception->isErrorInstance() && static_cast<ErrorInstance*>(exception)->appendSourceToMessage()) {
-        unsigned stackIndex = 0;
-        CallFrame* callFrame;
-        for (callFrame = exec; callFrame && !callFrame->codeBlock(); ) {
-            stackIndex++;
-            callFrame = callFrame->callerFrameSkippingVMEntrySentinel();
-        }
+        FindFirstCallerFrameWithCodeblockFunctor functor(exec);
+        topCallFrame->iterate(functor);
+        CallFrame* callFrame = functor.foundCallFrame();
+        unsigned stackIndex = functor.index();
+
         if (callFrame && callFrame->codeBlock()) {
             stackFrame = stackTrace.at(stackIndex);
             bytecodeOffset = stackFrame.bytecodeOffset;

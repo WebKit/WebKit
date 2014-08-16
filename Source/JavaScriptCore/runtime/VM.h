@@ -47,6 +47,7 @@
 #include "ThunkGenerators.h"
 #include "TypedArrayController.h"
 #include "TypeLocation.h"
+#include "VMEntryRecord.h"
 #include "Watchdog.h"
 #include "Watchpoint.h"
 #include "WeakRandom.h"
@@ -235,6 +236,7 @@ namespace JSC {
 
         VMType vmType;
         ClientData* clientData;
+        VMEntryFrame* topVMEntryFrame;
         ExecState* topCallFrame;
         std::unique_ptr<Watchdog> watchdog;
 

@@ -138,7 +138,7 @@ macro cCall4(function, arg1, arg2, arg3, arg4)
     end
 end
 
-macro doCallToJavaScript(makeCall)
+macro doVMEntry(makeCall)
     if X86_64
         const entry = t4
         const vm = t5
@@ -171,46 +171,28 @@ macro doCallToJavaScript(makeCall)
         const temp3 = t6
     end
 
-    callToJavaScriptPrologue()
+    functionPrologue()
+    pushCalleeSaves()
 
-    if X86_64
-        loadp 7*8[sp], previousPC
-        move 6*8[sp], previousCFR
-    elsif X86_64_WIN
-        # Win64 pushes two more registers
-        loadp 9*8[sp], previousPC
-        move 8*8[sp], previousCFR
-    elsif ARM64
-        move cfr, previousCFR
-    end
+    vmEntryRecord(cfr, sp)
 
     checkStackPointerAlignment(temp2, 0xbad0dc01)
 
-    # The stack reserved zone ensures that we have adequate space for the
-    # VMEntrySentinelFrame. Proceed with allocating and initializing the
-    # sentinel frame.
-    move sp, cfr
-    subp CallFrameHeaderSlots * 8, cfr
-    storep 0, ArgumentCount[cfr]
-    storep vm, Callee[cfr]
+    storep vm, VMEntryRecord::m_vm[sp]
     loadp VM::topCallFrame[vm], temp2
-    storep temp2, ScopeChain[cfr]
-    storep 1, CodeBlock[cfr]
-
-    storep previousPC, ReturnPC[cfr]
-    storep previousCFR, CallerFrame[cfr]
+    storep temp2, VMEntryRecord::m_prevTopCallFrame[sp]
+    loadp VM::topVMEntryFrame[vm], temp2
+    storep temp2, VMEntryRecord::m_prevTopVMEntryFrame[sp]
 
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], temp2
     addp CallFrameHeaderSlots, temp2, temp2
     lshiftp 3, temp2
-    subp cfr, temp2, temp1
+    subp sp, temp2, temp1
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
     bpaeq temp1, VM::m_jsStackLimit[vm], .stackHeightOK
-
-    move cfr, sp
 
     if C_LOOP
         move entry, temp2
@@ -227,7 +209,19 @@ macro doCallToJavaScript(makeCall)
     end
 
     cCall2(_llint_throw_stack_overflow_error, vm, protoCallFrame)
-    callToJavaScriptEpilogue()
+
+    vmEntryRecord(cfr, temp2)
+
+    loadp VMEntryRecord::m_vm[temp2], vm
+    loadp VMEntryRecord::m_prevTopCallFrame[temp2], temp3
+    storep temp3, VM::topCallFrame[vm]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[temp2], temp3
+    storep temp3, VM::topVMEntryFrame[vm]
+
+    subp cfr, CalleeRegisterSaveSize, sp
+
+    popCalleeSaves()
+    functionEpilogue()
     ret
 
 .stackHeightOK:
@@ -269,6 +263,7 @@ macro doCallToJavaScript(makeCall)
     else
         storep sp, VM::topCallFrame[vm]
     end
+    storep cfr, VM::topVMEntryFrame[vm]
 
     move 0xffff000000000000, csr1
     addp 2, csr1, csr2
@@ -279,20 +274,18 @@ macro doCallToJavaScript(makeCall)
 
     checkStackPointerAlignment(temp3, 0xbad0dc03)
 
-    bpeq CodeBlock[cfr], 1, .calleeFramePopped
-    loadp CallerFrame[cfr], cfr
+    vmEntryRecord(cfr, temp2)
 
-.calleeFramePopped:
-    loadp Callee[cfr], temp2 # VM
-    loadp ScopeChain[cfr], temp3 # previous topCallFrame
-    storep temp3, VM::topCallFrame[temp2]
+    loadp VMEntryRecord::m_vm[temp2], vm
+    loadp VMEntryRecord::m_prevTopCallFrame[temp2], temp3
+    storep temp3, VM::topCallFrame[vm]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[temp2], temp3
+    storep temp3, VM::topVMEntryFrame[vm]
 
-    checkStackPointerAlignment(temp3, 0xbad0dc04)
+    subp cfr, CalleeRegisterSaveSize, sp
 
-    if X86_64 or X86_64_WIN
-        pop t5
-    end
-    callToJavaScriptEpilogue()
+    popCalleeSaves()
+    functionEpilogue()
 
     ret
 end
@@ -346,19 +339,19 @@ _handleUncaughtException:
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
 
-    # So far, we've unwound the stack to the frame just below the sentinel frame, except
-    # in the case of stack overflow in the first function called from callToJavaScript.
-    # Check if we need to pop to the sentinel frame and do the necessary clean up for
-    # returning to the caller C frame.
-    bpeq CodeBlock[cfr], 1, .handleUncaughtExceptionAlreadyIsSentinel
     loadp CallerFrame[cfr], cfr
-.handleUncaughtExceptionAlreadyIsSentinel:
+    vmEntryRecord(cfr, t2)
 
-    loadp Callee[cfr], t3 # VM
-    loadp ScopeChain[cfr], t5 # previous topCallFrame
+    loadp VMEntryRecord::m_vm[t2], t3
+    loadp VMEntryRecord::m_prevTopCallFrame[t2], t5
     storep t5, VM::topCallFrame[t3]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t2], t5
+    storep t5, VM::topVMEntryFrame[t3]
 
-    callToJavaScriptEpilogue()
+    subp cfr, CalleeRegisterSaveSize, sp
+
+    popCalleeSaves()
+    functionEpilogue()
     ret
 
 

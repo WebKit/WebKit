@@ -80,7 +80,9 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
 {
     // We pass in our own code block, because the callframe hasn't been populated.
     VM* vm = codeBlock->vm();
-    CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+
+    VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(topVMEntryFrame);
     if (!callerFrame)
         callerFrame = exec;
 
@@ -92,7 +94,8 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+    VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(topVMEntryFrame);
     NativeCallFrameTracer tracer(vm, callerFrame);
 
     JSStack& stack = vm->interpreter->stack();
@@ -107,7 +110,8 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+    VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(topVMEntryFrame);
     NativeCallFrameTracer tracer(vm, callerFrame);
 
     JSStack& stack = vm->interpreter->stack();
@@ -1823,7 +1827,7 @@ void JIT_OPERATION operationInitGlobalConst(ExecState* exec, Instruction* pc)
 
 void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)
 {
-    NativeCallFrameTracer tracer(vm, exec, NativeCallFrameTracer::VMEntrySentinelOK);
+    NativeCallFrameTracer tracer(vm, exec);
 
     JSValue exceptionValue = vm->exception();
     ASSERT(exceptionValue);
@@ -1837,7 +1841,6 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    ASSERT(!exec->isVMEntrySentinel());
     genericUnwind(vm, exec, vm->exception());
 }
 

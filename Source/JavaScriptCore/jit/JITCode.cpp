@@ -44,7 +44,7 @@ JITCode::~JITCode()
 
 JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
-    JSValue result = JSValue::decode(callToJavaScript(executableAddress(), vm, protoCallFrame));
+    JSValue result = JSValue::decode(vmEntryToJavaScript(executableAddress(), vm, protoCallFrame));
     return vm->exception() ? jsNull() : result;
 }
 

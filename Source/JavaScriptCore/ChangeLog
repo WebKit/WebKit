@@ -1,3 +1,151 @@
+2014-08-15  Michael Saboff  <msaboff@apple.com>
+
+        Change callToJavaScript and callToNativeFunction so their callFrames match the native calling conventions
+        https://bugs.webkit.org/show_bug.cgi?id=131578
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed callToJavaScript and callToNativeFunction to vmEntryToJavaScript and vmEntryToNative,
+        respectively.  Eliminated the sentinel frame and replaced it with the structure VMEntryRecord
+        that appears in the "locals" area of a VM entry stack frame.  Changed the order that
+        vmEntryToJavaScript and vmEntryToNative creates their stack frames to be native calling
+        convention compliant.  That is to save prior frame pointer, save callee save registers, then
+        allocate and populate the VMEntryRecord, and finally allocate a CallFrame for the JS function
+        that vmEntryToJavaScript will invoke.  The top most vm entry frame pointer is saved in
+        VM::topVMEntryFrame.  The vmEntry functions save prior contents of VM::topVMEntryFrame
+        along with the VM and VM::topCallFrame in the VMEntryRecord it places on the stack.  Starting
+        at VM::topCallFrame, the stack can be walked using these VMEntryRecords.
+
+        Arbitrary stack unwinding is now handled either iteratively by loading VM::topVMEntryFrame
+        into a local variable and using CallFrame::callerFrame(VMEntryFrame*&) or by using StackVisitor.
+        Given that the stack is effectively a singly linked list, general stack unwinding needs to use
+        one of these two methods.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Addition of VMEntryRecord.h
+
+        * bytecode/BytecodeList.json:
+        Renaming of llint helper opcodes due to renaming callToJavaScript and callToNativeFunction.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::stepOutOfFunction):
+        (JSC::Debugger::returnEvent):
+        (JSC::Debugger::didExecuteProgram):
+        * jsc.cpp:
+        (functionDumpCallFrame):
+        * jit/JITOperations.cpp:
+        Changed unwinding to use CallFrame::callerFrame(VMEntryFrame*&).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::RecursionCheckFunctor::RecursionCheckFunctor):
+        (JSC::RecursionCheckFunctor::operator()):
+        (JSC::RecursionCheckFunctor::didRecurse):
+        (JSC::CodeBlock::noticeIncomingCall):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::FindCallerMidStackFunctor::FindCallerMidStackFunctor):
+        (JSC::FindCallerMidStackFunctor::operator()):
+        (JSC::FindCallerMidStackFunctor::getCallerFrame):
+        (JSC::DebuggerCallFrame::callerFrame):
+        * interpreter/VMInspector.cpp:
+        (JSC::CountFramesFunctor::CountFramesFunctor):
+        (JSC::CountFramesFunctor::operator()):
+        (JSC::CountFramesFunctor::count):
+        (JSC::VMInspector::countFrames):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::FindFirstCallerFrameWithCodeblockFunctor):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator()):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::foundCallFrame):
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::index):
+        (JSC::VM::throwException):
+        Changed unwinding to use StackVisitor including added functor classes.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callerFrame):
+        Added new flavor of callerFrame() that can iteratively unwind the stack.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callerFrame): Changed callerFrame() to use private common helper.
+        (JSC::ExecState::callerFrameOrVMEntryFrame): Deleted.
+        (JSC::ExecState::isVMEntrySentinel): Deleted.
+        (JSC::ExecState::vmEntrySentinelCallerFrame): Deleted.
+        (JSC::ExecState::initializeVMEntrySentinelFrame): Deleted.
+        (JSC::ExecState::callerFrameSkippingVMEntrySentinel): Deleted.
+        (JSC::ExecState::vmEntrySentinelCodeBlock): Deleted.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        (JSC::ExecState::topOfFrame):
+        (JSC::ExecState::currentVPC):
+        (JSC::ExecState::setCurrentVPC):
+        Eliminated unneded checking of sentinel frame.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::Interpreter::getStackTrace): Updated for unwidning changes.
+        (JSC::Interpreter::unwind): Eliminated unneeded sentinel frame check.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JITStubs.h:
+        * llint/LLIntThunks.cpp:
+        (JSC::callToJavaScript): Deleted.
+        (JSC::callToNativetion): Deleted.
+        (JSC::vmEntryToJavaScript):
+        (JSC::vmEntryToNative):
+        * llint/LLIntThunks.h:
+        Updated for vmEntryToJavaScript and vmEntryToNative name changes.
+
+        * interpreter/Interpreter.h:
+        (JSC::TopCallFrameSetter::TopCallFrameSetter):
+        (JSC::TopCallFrameSetter::~TopCallFrameSetter):
+        Eliminated unneeded sentinel frame check.
+
+        * interpreter/Interpreter.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        Removed sentinel specific constructor.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::print):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::callerIsVMEntry):
+        Changes for unwinding using CallFrame::callerFrame(VMEntryFrame*&).  Also added field that
+        indicates when about to step over a VM entry frame.
+
+        * interpreter/VMEntryRecord.h: Added.
+        (JSC::VMEntryRecord::prevTopCallFrame):
+        (JSC::VMEntryRecord::prevTopVMEntryFrame):
+        New struct to record prior state of VM's notion of VM entry and top call frames.
+
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        Use new vmEntryToJavaScript and vmEntryToNative name.
+
+        * llint/LLIntOffsetsExtractor.cpp: Added include for VMEntryRecord.h.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Offline assembly implementation of creating stack frame with VMEntryRecord and well as restoring 
+        relevent VM fields when exiting the VM.  Added a helper that returns a VMEntryRecord given
+        a pointer to the VM entry frame.
+
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryRecord):
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        C Loop changes to mirror the assembly changes.
+
+        * runtime/VM.h:
+        Added topVMEntryFrame field.
+
 2014-08-15  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: rewrite CodeGeneratorInspector to be modular and testable

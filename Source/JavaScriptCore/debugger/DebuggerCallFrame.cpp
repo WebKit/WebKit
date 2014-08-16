@@ -55,6 +55,29 @@ private:
     unsigned m_column;
 };
 
+class FindCallerMidStackFunctor {
+public:
+    FindCallerMidStackFunctor(CallFrame* callFrame)
+        : m_callFrame(callFrame)
+        , m_callerFrame(nullptr)
+    { }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        if (visitor->callFrame() == m_callFrame) {
+            m_callerFrame = visitor->callerFrame();
+            return StackVisitor::Done;
+        }
+        return StackVisitor::Continue;
+    }
+
+    CallFrame* getCallerFrame() const { return m_callerFrame; }
+
+private:
+    CallFrame* m_callFrame;
+    CallFrame* m_callerFrame;
+};
+
 DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame)
     : m_callFrame(callFrame)
 {
@@ -70,7 +93,10 @@ PassRefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
     if (m_caller)
         return m_caller;
 
-    CallFrame* callerFrame = m_callFrame->callerFrameSkippingVMEntrySentinel();
+    FindCallerMidStackFunctor functor(m_callFrame);
+    m_callFrame->vm().topCallFrame->iterate(functor);
+
+    CallFrame* callerFrame = functor.getCallerFrame();
     if (!callerFrame)
         return 0;
 

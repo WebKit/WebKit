@@ -2213,6 +2213,9 @@
     <ClInclude Include="..\interpreter\CallFrameClosure.h">
       <Filter>interpreter</Filter>
     </ClInclude>
+    <ClInclude Include="..\interpreter\VMEntryRecord.h">
+      <Filter>interpreter</Filter>
+    </ClInclude>
     <ClInclude Include="..\interpreter\Interpreter.h">
       <Filter>interpreter</Filter>
     </ClInclude>

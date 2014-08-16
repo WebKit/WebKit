@@ -1271,6 +1271,7 @@
     <ClInclude Include="..\interpreter\CallFrame.h" />
     <ClInclude Include="..\interpreter\CallFrameInlines.h" />
     <ClInclude Include="..\interpreter\CallFrameClosure.h" />
+    <ClInclude Include="..\interpreter\VMEntryRecord.h" />
     <ClInclude Include="..\interpreter\Interpreter.h" />
     <ClInclude Include="..\interpreter\JSStack.h" />
     <ClInclude Include="..\interpreter\JSStackInlines.h" />

@@ -29,6 +29,7 @@
 #if ENABLE(VMINSPECTOR)
 
 #include "JSCInlines.h"
+#include "StackVisitor.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 
@@ -99,14 +100,30 @@ void VMInspector::dumpFrame(CallFrame* frame, const char* prefix,
     printf("\n");
 }
 
+class CountFramesFunctor {
+public:
+    CountFramesFunctor()
+        : m_count(-1)
+    { }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        m_count++;
+        return StackVisitor::Continue;
+    }
+
+    int count() const { return m_count; }
+
+private:
+    unsigned m_count;
+};
+
 int VMInspector::countFrames(CallFrame* frame)
 {
-    int count = -1;
-    while (frame && !frame->isVMEntrySentinel()) {
-        count++;
-        frame = frame->callerFrame();
-    }
-    return count;
+    CountFramesFunctor functor();
+    StackVisitor::visit(frame, functor);
+
+    return functor.count();
 }
 
 
