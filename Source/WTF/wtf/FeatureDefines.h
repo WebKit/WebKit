@@ -249,9 +249,12 @@
 #define ENABLE_WEB_ARCHIVE 1
 #endif
 
+/*
+FIXME: Remove under https://bugs.webkit.org/show_bug.cgi?id=135543
 #if !defined(ENABLE_WEBGL)
 #define ENABLE_WEBGL 1
 #endif
+*/
 
 #endif /* PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(WIN_CAIRO) */
 
