@@ -32,6 +32,8 @@
 #define EWK_VERSION_MINOR @PROJECT_VERSION_MINOR@
 #define EWK_VERSION_MICRO @PROJECT_VERSION_MICRO@
 
+#include "ewk_intro.h"
+
 #include "ewk_auth_request.h"
 #include "ewk_back_forward_list.h"
 #include "ewk_back_forward_list_item.h"
