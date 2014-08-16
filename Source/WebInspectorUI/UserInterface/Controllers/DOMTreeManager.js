@@ -37,6 +37,8 @@ WebInspector.DOMTreeManager = function() {
     this._flows = new Map;
     this._contentNodesToFlowsMap = new Map;
     this._restoreSelectedNodeIsAllowed = true;
+
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 };
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeManager);
@@ -271,8 +273,6 @@ WebInspector.DOMTreeManager.prototype = {
 
     inspectElement: function(nodeId)
     {
-        this._restoreSelectedNodeIsAllowed = true;
-
         var node = this._idToDOMNode[nodeId];
         if (node)
             this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, {node: node});
@@ -711,6 +711,14 @@ WebInspector.DOMTreeManager.prototype = {
 
             return result;
         }
+    },
+
+    // Private
+
+    _mainResourceDidChange: function(event)
+    {
+        if (event.target.isMainFrame())
+            this._restoreSelectedNodeIsAllowed = true;
     }
 };
 
