@@ -407,7 +407,7 @@
                 "type": "object",
                 "description": "Console message.",
                 "properties": [
-                    { "name": "source", "type": "string", "enum": ["html", "wml", "xml", "javascript", "network", "console-api", "other"], "description": "Message source." },
+                    { "name": "source", "type": "string", "enum": ["html", "xml", "javascript", "network", "console-api", "other"], "description": "Message source." },
                     { "name": "level", "type": "string", "enum": ["tip", "log", "warning", "error", "debug"], "description": "Message severity." },
                     { "name": "text", "type": "string", "description": "Message text." },
                     { "name": "type", "type": "string", "optional": true, "enum": ["log", "dir", "dirxml", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert"], "description": "Console message type." },
@@ -1822,7 +1822,7 @@
             {
                 "id": "EventType",
                 "type": "string",
-                "enum": ["EventDispatch", "Layout", "RecalculateStyles", "Paint", "BeginFrame", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame"],
+                "enum": ["EventDispatch", "Layout", "RecalculateStyles", "Paint", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame"],
                 "description": "Timeline record type."
             },
             {
@@ -1847,13 +1847,6 @@
             {
                 "name": "stop",
                 "description": "Stops capturing instrumentation events."
-            },
-            {
-                "name": "setIncludeMemoryDetails",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean", "description": "True to start collecting DOM counters." }
-                ],
-                "description": "Starts calculating various DOM statistics and sending them as part of timeline events."
             }
         ],
         "events": [
