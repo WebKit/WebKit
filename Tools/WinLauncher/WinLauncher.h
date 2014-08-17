@@ -65,6 +65,7 @@ public:
     IWebFramePtr mainFrame();
     IWebCoreStatisticsPtr statistics() { return m_statistics; }
     IWebCachePtr webCache() { return m_webCache;  }
+    IWebViewPtr webView() { return m_webView; }
 
     bool hasWebView() const { return !!m_webView; }
     bool usesLayeredWebView() const { return m_useLayeredWebView; }
