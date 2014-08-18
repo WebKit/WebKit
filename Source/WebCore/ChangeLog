@@ -1,3 +1,59 @@
+2014-08-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        The style is not updated correctly when the pseudo class :empty is applied on anything but the rightmost element
+        https://bugs.webkit.org/show_bug.cgi?id=135999
+
+        Reviewed by Antti Koivisto.
+
+        In Element's checkForEmptyStyleChange(), the style invalidation was only considering the invalidation of the element
+        for which the subtree has changed. When the pseudo class :empty is used with a sibling combinator (e.g. foo:empty+bar),
+        we were never invalidating the style of the element on which the selector applies.
+
+        This patch fixes the issue by invalidating the whole subtree rooted at the parent if the :empty rules applies
+        to siblings. A new flag "styleOfSiblingsAffectedByEmpty" is introduced to cover this case.
+
+        SelectorChecker just sets the flag all the time if any sibling rule exists.
+        This is overkill but that code is just there for non-jit cases.
+
+        SelectorCompiler does a better job and only sets the flag if matching anything else than the rightmost element.
+        There is a case not optimized, :empty with descendant (e.g. foo:empty>bar). Those cases are useless in practice,
+        it is not worth optimizing them.
+
+        Tests: fast/css/pseudo-element-updates-on-empty.html
+               fast/selectors/not-empty-adjacent-style-update.html
+               fast/selectors/not-empty-style-update.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentMatchesTheRightmostElement):
+        shouldUseRenderStyleFromCheckingContext() is renamed fragmentMatchesTheRightmostElement() because
+        it is now also used by generateElementIsEmpty() in a context where the Context's style is irrelevant.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::setStyleOfSiblingsAffectedByEmpty):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsEmpty):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPseudoElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudoElement):
+        (WebCore::SelectorCompiler::shouldUseRenderStyleFromCheckingContext): Deleted.
+        (WebCore::SelectorCompiler::setElementStyleIsAffectedByEmptyAndUpdateRenderStyleIfNecessary): Deleted.
+        * dom/Element.cpp:
+        (WebCore::checkForEmptyStyleChange):
+        (WebCore::Element::setStyleOfSiblingsAffectedByEmpty):
+        (WebCore::Element::rareDataStyleOfSiblingsAffectedByEmpty):
+        * dom/Element.h:
+        (WebCore::Element::styleOfSiblingsAffectedByEmpty):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::styleOfSiblingsAffectedByEmpty):
+        (WebCore::ElementRareData::setStyleOfSiblingsAffectedByEmpty):
+        (WebCore::ElementRareData::ElementRareData):
+
 2014-08-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Unreviewed merge correction.

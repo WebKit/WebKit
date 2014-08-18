@@ -60,6 +60,9 @@ public:
     bool styleAffectedByEmpty() const { return m_styleAffectedByEmpty; }
     void setStyleAffectedByEmpty(bool value) { m_styleAffectedByEmpty = value; }
 
+    bool styleOfSiblingsAffectedByEmpty() const { return m_styleOfSiblingsAffectedByEmpty; }
+    void setStyleOfSiblingsAffectedByEmpty(bool value) { m_styleOfSiblingsAffectedByEmpty = value; }
+
     RegionOversetState regionOversetState() const { return m_regionOversetState; }
     void setRegionOversetState(RegionOversetState state) { m_regionOversetState = state; }
 
@@ -121,6 +124,7 @@ private:
     unsigned m_tabIndexWasSetExplicitly : 1;
     unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
     unsigned m_styleAffectedByEmpty : 1;
+    unsigned m_styleOfSiblingsAffectedByEmpty : 1;
 #if ENABLE(FULLSCREEN_API)
     unsigned m_containsFullScreenElement : 1;
 #endif
@@ -165,6 +169,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_tabIndexWasSetExplicitly(false)
     , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
     , m_styleAffectedByEmpty(false)
+    , m_styleOfSiblingsAffectedByEmpty(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
 #endif

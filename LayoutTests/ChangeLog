@@ -1,3 +1,21 @@
+2014-08-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        The style is not updated correctly when the pseudo class :empty is applied on anything but the rightmost element
+        https://bugs.webkit.org/show_bug.cgi?id=135999
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/pseudo-element-updates-on-empty-expected.html: Added.
+        * fast/css/pseudo-element-updates-on-empty.html: Added.
+        * fast/selectors/empty-adjacent-style-update-expected.txt:
+        * fast/selectors/empty-adjacent-style-update.html:
+        * fast/selectors/empty-style-update-expected.txt:
+        * fast/selectors/empty-style-update.html:
+        * fast/selectors/not-empty-adjacent-style-update-expected.txt: Copied from LayoutTests/fast/selectors/empty-adjacent-style-update-expected.txt.
+        * fast/selectors/not-empty-adjacent-style-update.html: Copied from LayoutTests/fast/selectors/empty-adjacent-style-update.html.
+        * fast/selectors/not-empty-style-update-expected.txt: Copied from LayoutTests/fast/selectors/empty-style-update-expected.txt.
+        * fast/selectors/not-empty-style-update.html: Copied from LayoutTests/fast/selectors/empty-style-update.html.
+
 2014-08-18  Andy Estes  <aestes@apple.com>
 
         Remove a test inadvertently landed in r172709.

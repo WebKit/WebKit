@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        test1 > :empty::before {
+            background-color: green;
+            content: "Pass!";
+        }
+
+        test2 > :empty + ::before {
+            background-color: green;
+            content: "Pass!";
+        }
+
+        test3 > :empty + * > ::before {
+            background-color: green;
+            content: "Pass!";
+        }
+
+        test4 > :not(:empty)::before {
+            background-color: green;
+            content: "Pass!";
+        }
+
+        test5 > :not(:empty) + ::before {
+            background-color: green;
+            content: "Pass!";
+        }
+
+        test6 > :not(:empty) + * > ::before {
+            background-color: green;
+            content: "Pass!";
+        }
+    </style>
+    <script>
+        window.addEventListener('load', function() {
+            scratch = document.documentElement.offsetTop;
+            var children = document.querySelectorAll('child');
+            for (var i = 0; i < children.length; ++i)
+                children[i].parentNode.removeChild(children[i]);
+
+            var children = document.querySelectorAll('notempty');
+            for (var i = 0; i < children.length; ++i)
+                children[i].appendChild(document.createTextNode(" "));
+        });
+    </script>
+</head>
+<body>
+    <p>This tests pseudo elements are styled properly. If the test succeed, you should see 6 lines with "Pass!" over a green background.</p>
+    <test1>
+        <div><child></child></div>
+    </test1>
+
+    <test2>
+        <div><child></child></div>
+        <div></div>
+    </test2>
+
+    <test3>
+        <div><child></child></div>
+        <div>
+            <div></div>
+        </div>
+    </test3>
+
+    <test4>
+        <notempty></notempty>
+    </test4>
+
+    <test5>
+        <notempty></notempty>
+        <div></div>
+    </test5>
+
+    <test6>
+        <notempty></notempty>
+        <div>
+            <div></div>
+        </div>
+    </test6>
+</body>
+</html>

@@ -4,10 +4,10 @@
 <script src="../../resources/js-test-pre.js"></script>
 <style>
 testcase {
-    background-color: white;
-}
-testcase:empty {
     background-color: rgb(1, 2, 3);
+}
+testcase:not(:empty) {
+    background-color: white;
 }
 </style>
 </head>

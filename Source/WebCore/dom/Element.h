@@ -357,6 +357,7 @@ public:
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
+    bool styleOfSiblingsAffectedByEmpty() const { return hasRareData() && rareDataStyleOfSiblingsAffectedByEmpty(); }
     bool childrenAffectedByHover() const { return getFlag(ChildrenAffectedByHoverRulesFlag); }
     bool childrenAffectedByActive() const { return hasRareData() && rareDataChildrenAffectedByActive(); }
     bool childrenAffectedByDrag() const { return hasRareData() && rareDataChildrenAffectedByDrag(); }
@@ -371,6 +372,7 @@ public:
     bool hasFlagsSetDuringStylingOfChildren() const;
 
     void setStyleAffectedByEmpty();
+    void setStyleOfSiblingsAffectedByEmpty();
     void setChildrenAffectedByHover() { setFlag(ChildrenAffectedByHoverRulesFlag); }
     void setChildrenAffectedByActive();
     void setChildrenAffectedByDrag();
@@ -646,6 +648,7 @@ private:
     void removeShadowRoot();
 
     bool rareDataStyleAffectedByEmpty() const;
+    bool rareDataStyleOfSiblingsAffectedByEmpty() const;
     bool rareDataChildrenAffectedByHover() const;
     bool rareDataChildrenAffectedByActive() const;
     bool rareDataChildrenAffectedByDrag() const;
