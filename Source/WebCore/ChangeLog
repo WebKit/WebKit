@@ -1,3 +1,21 @@
+2014-08-18  Przemyslaw Kuczynski  <p.kuczynski@samsung.com>
+
+        Fix unintentional integer overflow before widen
+        https://bugs.webkit.org/show_bug.cgi?id=135463
+
+        Reviewed by Oliver Hunt.
+
+        Overflowing expression is evaluated using operands arithmetic but then is used in
+        context which expects an wider integer type. To avoid overflow at least one operand
+        has to be representative of the wider type.
+
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine): Changed strtoul to strtoull.
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress): Added static_cast to long long.
+        * platform/efl/FileSystemEfl.cpp:
+        (WebCore::getVolumeFreeSizeForPath): Added static_cast to uint64_t.
+
 2014-08-18  Vivek Galatage  <vivek.vg@samsung.com>
 
         Implement CanvasRenderingContext2D direction attribute

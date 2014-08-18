@@ -1,5 +1,19 @@
 2014-08-18  Przemyslaw Kuczynski  <p.kuczynski@samsung.com>
 
+        Fix unintentional integer overflow before widen
+        https://bugs.webkit.org/show_bug.cgi?id=135463
+
+        Reviewed by Oliver Hunt.
+
+        Overflowing expression is evaluated using operands arithmetic but then is used in
+        context which expects an wider integer type. To avoid overflow at least one operand
+        has to be representative of the wider type.
+
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::getMemorySize): Added long long literal.
+
+2014-08-18  Przemyslaw Kuczynski  <p.kuczynski@samsung.com>
+
         Fix resource leak in unclosed file descriptor handles
         https://bugs.webkit.org/show_bug.cgi?id=135458
 

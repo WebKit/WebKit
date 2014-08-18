@@ -505,7 +505,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                * So its rounded up to the next block, so what, its better
                * than not showing the size at all.
               */
-              uint64_t size = strtoul(tokens[1], NULL, 10) * 512;
+              uint64_t size = strtoull(tokens[1], 0, 10) * 512;
               result.fileSize = String::number(size);
             } 
 

@@ -74,7 +74,7 @@ static uint64_t getMemorySize()
     if (physPages == -1)
         return kDefaultMemorySize;
 
-    return ((pageSize / 1024) * physPages) / 1024;
+    return ((pageSize / 1024LL) * physPages) / 1024LL;
 #else
     // Fallback to default for other platforms.
     return kDefaultMemorySize;

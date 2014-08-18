@@ -105,7 +105,7 @@ uint64_t getVolumeFreeSizeForPath(const char* path)
     if (statvfs(path, &buf) < 0)
         return 0;
 
-    return buf.f_bavail * buf.f_bsize;
+    return static_cast<uint64_t>(buf.f_bavail) * buf.f_bsize;
 }
 
 }
