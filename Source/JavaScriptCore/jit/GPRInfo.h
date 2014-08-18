@@ -612,7 +612,7 @@ public:
 
     static const char* debugName(GPRReg reg)
     {
-        ASSERT(static_cast<unsigned>(reg) != InvalidGPRReg);
+        ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<unsigned>(reg) < 32);
         static const char* nameForRegister[32] = {
             "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",

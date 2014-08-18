@@ -1,3 +1,16 @@
+2014-08-18  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Fix ASSERT in ARM64's JSC::GPRInfo::debugName
+        https://bugs.webkit.org/show_bug.cgi?id=136050
+
+        Reviewed by Darin Adler.
+
+        Remove cast of GPRReg to unsigned to prevent signed/unsigned comparison
+        error.
+
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::debugName):
+
 2014-08-18  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r168256): JSString can get 8-bit flag wrong when re-using AtomicStrings.
