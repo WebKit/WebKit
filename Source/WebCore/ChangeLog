@@ -1,3 +1,39 @@
+2014-08-15  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r167856): adobe.com no longer able to launch Create Cloud app using a URL with a custom scheme
+        https://bugs.webkit.org/show_bug.cgi?id=136010
+
+        Reviewed by Darin Adler.
+
+        r167856 caused WebKit to stop scheduling certain kinds of navigations (window.location changes, meta-refresh,
+        and some calls to window.open) when the request URL is invalid. Adobe.com performs one of these navigations to
+        an invalid URL with an external scheme (aam:), relying on Safari's navigation policy delegate to ignore the
+        navigation and launch the external app registered to handle aam: URLs. Since the navigation is no longer
+        scheduled, the policy delegate is never executed and the external app never launches.
+
+        Instead of not scheduling the navigation, allow it to proceed until the client's policy delegate has executed
+        and made a decision. Only disallow the navigation if the policy delegate told WebKit to proceed with the load.
+        This exposes these navigations to clients via the policy delegate and via willPerformClientRedirectToURL and
+        didCancelClientRedirectForFrame on the frame load delegate.
+
+        Note that r167856 also caused an iOS regression, and this was resolved in r170120 by adding a linked-on-or-after
+        check and a WebCore setting. Since the iOS regression is also resolved by the approach described above, this
+        patch reverts r170120 (but keeps some of its tests).
+
+        Tests: fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate.html
+               fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html
+               fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html
+               fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html
+               fast/loader/window-open-to-invalid-url-calls-policy-delegate.html
+               fast/loader/window-open-to-invalid-url-disallowed.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Do not continue if the navigation will be a redirect
+        to an invalid URL.
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::shouldScheduleNavigation): Resumed scheduling navigations to invalid URLs.
+        * page/Settings.in: Removed the allowNavigationToInvalidURL setting.
+
 2014-08-15  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r164173): Safari AutoFill button in popover, default buttons on iCloud control panel and Safari Safe Browsing pages don't have default appearance

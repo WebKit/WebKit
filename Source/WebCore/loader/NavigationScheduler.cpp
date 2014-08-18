@@ -311,8 +311,6 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
         return false;
     if (protocolIsJavaScript(url))
         return true;
-    if (!url.isValid() && !m_frame.settings().allowNavigationToInvalidURL())
-        return false;
     return NavigationDisablerForBeforeUnload::isNavigationAllowed();
 }
 
