@@ -2655,7 +2655,7 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, E
     return didHandleEvent;
 }
 
-bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, ContainerNode*)
+bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent&, const Widget*, ContainerNode*)
 {
     return true;
 }
@@ -2714,7 +2714,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
                         scrollableArea->setScrolledProgrammatically(false);
                     if (!widget->platformWidget())
                         return true;
-                    return platformCompletePlatformWidgetWheelEvent(event, scrollableContainer.get());
+                    return platformCompletePlatformWidgetWheelEvent(event, widget, scrollableContainer.get());
                 }
             }
         }

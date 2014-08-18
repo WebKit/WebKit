@@ -916,8 +916,12 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
     return didHandleEvent;
 }
 
-bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer)
+bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, const Widget* widget, ContainerNode* scrollableContainer)
 {
+    // WebKit1: Prevent multiple copies of the scrollWheel event from being sent to the NSScrollView widget.
+    if (frameHasPlatformWidget(m_frame) && widget->isFrameView())
+        return true;
+
     if (wheelEvent.useLatchedEventElement() && m_latchedScrollableContainer && scrollableContainer == m_latchedScrollableContainer)
         return !m_startedGestureAtScrollLimit;
 
