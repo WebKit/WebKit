@@ -85,6 +85,10 @@ public:
     virtual WTF::String plugInStartLabelSubtitle(const WTF::String& mimeType) const { UNUSED_PARAM(mimeType); return emptyString(); }
     virtual WTF::String plugInExtraStyleSheet() const { return emptyString(); }
     virtual WTF::String plugInExtraScript() const { return emptyString(); }
+
+    virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPage*, const WebCore::IntPoint&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
+    virtual void didRecognizeLongMousePress(WebKit::WebPage*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
+    virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPage*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
 };
 
 } // namespace InjectedBundle

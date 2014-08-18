@@ -770,7 +770,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     if (event.event().button() == LeftButton && event.isOverLink()) {
         // FIXME 135703: Handle long press for more than just links.
-        beginTrackingPotentialLongMousePress();
+        beginTrackingPotentialLongMousePress(event.hitTestResult());
     }
 
     // We don't do this at the start of mouse down handling,
@@ -1565,7 +1565,7 @@ void EventHandler::autoHideCursorTimerFired(Timer<EventHandler>& timer)
 }
 #endif
     
-void EventHandler::beginTrackingPotentialLongMousePress()
+void EventHandler::beginTrackingPotentialLongMousePress(const HitTestResult& hitTestResult)
 {
     clearLongMousePressState();
 
@@ -1575,7 +1575,7 @@ void EventHandler::beginTrackingPotentialLongMousePress()
 
     m_longMousePressTimer.startOneShot(longMousePressRecognitionDelay);
 
-    // FIXME 135580: Bubble long mouse press up to the client.
+    page->chrome().didBeginTrackingPotentialLongMousePress(m_mouseDownPos, hitTestResult);
 }
     
 void EventHandler::recognizeLongMousePress(Timer<EventHandler>& timer)
@@ -1592,7 +1592,7 @@ void EventHandler::recognizeLongMousePress(Timer<EventHandler>& timer)
     m_mousePressed = false;
     invalidateClick();
 
-    // FIXME 135580: Bubble long mouse press up to the client.
+    page->chrome().didRecognizeLongMousePress();
 }
     
 void EventHandler::cancelTrackingPotentialLongMousePress()
@@ -1603,10 +1603,10 @@ void EventHandler::cancelTrackingPotentialLongMousePress()
     clearLongMousePressState();
 
     Page* page = m_frame.page();
-    if (!(page && page->settings().longMousePressEnabled()))
+    if (!page)
         return;
 
-    // FIXME 135580: Bubble long mouse press up to the client.
+    page->chrome().didCancelTrackingPotentialLongMousePress();
 }
 
 void EventHandler::clearLongMousePressState()

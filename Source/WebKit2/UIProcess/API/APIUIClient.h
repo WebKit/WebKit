@@ -140,6 +140,10 @@ public:
 
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
+    virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPageProxy*, const WebCore::IntPoint&, const WebKit::WebHitTestResult::Data&, API::Object*) { }
+    virtual void didRecognizeLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
+    virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
+
 #if PLATFORM(IOS)
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return WTF::move(defaultActions); }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }

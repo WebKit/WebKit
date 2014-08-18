@@ -74,7 +74,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4> Versions;
 };
 
 }
@@ -1582,6 +1582,31 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return;
 
             m_client.pinnedStateDidChange(toAPI(&page), m_client.base.clientInfo);
+        }
+
+        virtual void didBeginTrackingPotentialLongMousePress(WebPageProxy* page, const IntPoint& mouseDownPosition, const WebHitTestResult::Data& data, API::Object* userInfo)
+        {
+            if (!m_client.didBeginTrackingPotentialLongMousePress)
+                return;
+
+            RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(data);
+            m_client.didBeginTrackingPotentialLongMousePress(toAPI(page), toAPI(mouseDownPosition), toAPI(webHitTestResult.get()), toAPI(userInfo), m_client.base.clientInfo);
+        }
+
+        virtual void didRecognizeLongMousePress(WebPageProxy* page, API::Object* userInfo)
+        {
+            if (!m_client.didRecognizeLongMousePress)
+                return;
+
+            m_client.didRecognizeLongMousePress(toAPI(page), toAPI(userInfo), m_client.base.clientInfo);
+        }
+
+        virtual void didCancelTrackingPotentialLongMousePress(WebPageProxy* page, API::Object* userInfo)
+        {
+            if (!m_client.didCancelTrackingPotentialLongMousePress)
+                return;
+
+            m_client.didCancelTrackingPotentialLongMousePress(toAPI(page), toAPI(userInfo), m_client.base.clientInfo);
         }
     };
 

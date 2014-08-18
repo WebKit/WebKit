@@ -604,6 +604,40 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
+void WebChromeClient::didBeginTrackingPotentialLongMousePress(const IntPoint& mouseDownPosition, const HitTestResult& hitTestResult)
+{
+    RefPtr<API::Object> userData;
+
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().didBeginTrackingPotentialLongMousePress(m_page, mouseDownPosition, hitTestResult, userData);
+    
+    // Notify the UIProcess.
+    WebHitTestResult::Data webHitTestResultData(hitTestResult);
+    m_page->send(Messages::WebPageProxy::DidBeginTrackingPotentialLongMousePress(mouseDownPosition, webHitTestResultData, InjectedBundleUserMessageEncoder(userData.get())));
+}
+
+void WebChromeClient::didRecognizeLongMousePress()
+{
+    RefPtr<API::Object> userData;
+
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().didRecognizeLongMousePress(m_page, userData);
+
+    // Notify the UIProcess.
+    m_page->send(Messages::WebPageProxy::DidRecognizeLongMousePress(InjectedBundleUserMessageEncoder(userData.get())));
+}
+
+void WebChromeClient::didCancelTrackingPotentialLongMousePress()
+{
+    RefPtr<API::Object> userData;
+
+    // Notify the bundle client.
+    m_page->injectedBundleUIClient().didCancelTrackingPotentialLongMousePress(m_page, userData);
+
+    // Notify the UIProcess.
+    m_page->send(Messages::WebPageProxy::DidCancelTrackingPotentialLongMousePress(InjectedBundleUserMessageEncoder(userData.get())));
+}
+
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
 {
     // Only send a tool tip to the WebProcess if it has changed since the last time this function was called.

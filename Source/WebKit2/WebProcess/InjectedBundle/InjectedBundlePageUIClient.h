@@ -37,7 +37,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKBundlePageUIClientBase> {
-    typedef std::tuple<WKBundlePageUIClientV0, WKBundlePageUIClientV1, WKBundlePageUIClientV2> Versions;
+    typedef std::tuple<WKBundlePageUIClientV0, WKBundlePageUIClientV1, WKBundlePageUIClientV2, WKBundlePageUIClientV3> Versions;
 };
 }
 
@@ -69,6 +69,10 @@ public:
     String plugInStartLabelSubtitle(const String& mimeType) const override;
     String plugInExtraStyleSheet() const override;
     String plugInExtraScript() const override;
+
+    void didBeginTrackingPotentialLongMousePress(WebPage*, const WebCore::IntPoint&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) override;
+    void didRecognizeLongMousePress(WebPage*, RefPtr<API::Object>& userData) override;
+    void didCancelTrackingPotentialLongMousePress(WebPage*, RefPtr<API::Object>& userData) override;
 };
 
 } // namespace WebKit

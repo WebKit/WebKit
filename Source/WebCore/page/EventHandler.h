@@ -440,7 +440,7 @@ private:
     void autoHideCursorTimerFired(Timer<EventHandler>&);
 #endif
 
-    void beginTrackingPotentialLongMousePress();
+    void beginTrackingPotentialLongMousePress(const HitTestResult&);
     void recognizeLongMousePress(Timer<EventHandler>&);
     void cancelTrackingPotentialLongMousePress();
     bool longMousePressHysteresisExceeded();

@@ -30,6 +30,11 @@ messages -> WebPageProxy {
     RunJavaScriptPrompt(uint64_t frameID, String message, String defaultValue) -> (String result) Delayed
     ShouldInterruptJavaScript() -> (bool shouldInterupt)
     MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+
+    DidBeginTrackingPotentialLongMousePress(WebCore::IntPoint mouseDownPosition, WebKit::WebHitTestResult::Data hitTestResultData, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidRecognizeLongMousePress(WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidCancelTrackingPotentialLongMousePress(WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

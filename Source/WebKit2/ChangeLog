@@ -1,3 +1,44 @@
+2014-08-18  Peyton Randolph  <prandolph@apple.com>
+
+        Expose long mouse press WebKit API. Part of 135257 - Add long mouse press gesture
+        https://bugs.webkit.org/show_bug.cgi?id=136048
+
+        Reviewed by Dan Bernstein.
+
+        This patch exposes long mouse press API callbacks in both the injected bundle and on the UI process
+        through their respective page UI clients. The callbacks are modeled off of the mouseDidMoveOverElement
+        callback. Like the mouseDidMoveOverElement callback, these callbacks allow the bundle to pass 
+        information to the UI process via a userData out parameter.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didBeginTrackingPotentialLongMousePress): Added.
+        (API::UIClient::didRecognizeLongMousePress): Added.
+        (API::UIClient::didCancelTrackingPotentialLongMousePress): Added.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBeginTrackingPotentialLongMousePress): Added.
+        (WebKit::WebPageProxy::didRecognizeLongMousePress): Added.
+        (WebKit::WebPageProxy::didCancelTrackingPotentialLongMousePress): Added.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didBeginTrackingPotentialLongMousePress): Added.
+        (API::InjectedBundle::PageUIClient::didRecognizeLongMousePress): Added.
+        (API::InjectedBundle::PageUIClient::didCancelTrackingPotentialLongMousePress): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Added.
+        (WebKit::InjectedBundlePageUIClient::didBeginTrackingPotentialLongMousePress): Added.
+        (WebKit::InjectedBundlePageUIClient::didRecognizeLongMousePress): Added.
+        (WebKit::InjectedBundlePageUIClient::didCancelTrackingPotentialLongMousePress): Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didBeginTrackingPotentialLongMousePress): Added.
+        (WebKit::WebChromeClient::didRecognizeLongMousePress): Added.
+        (WebKit::WebChromeClient::didCancelTrackingPotentialLongMousePress): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2014-08-18  Przemyslaw Kuczynski  <p.kuczynski@samsung.com>
 
         Fix unintentional integer overflow before widen
