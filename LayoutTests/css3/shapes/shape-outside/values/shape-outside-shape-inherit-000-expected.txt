@@ -1,0 +1,3 @@
+
+PASS shape-outside can be assigned 'inherit' value 
+

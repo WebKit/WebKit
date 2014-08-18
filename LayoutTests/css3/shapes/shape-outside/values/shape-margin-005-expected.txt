@@ -1,0 +1,5 @@
+
+PASS shape-margin can be assigned 'inherit' value 
+PASS shape-margin is not inherited and defaults to 0px 
+PASS shape-margin is not inherited 
+

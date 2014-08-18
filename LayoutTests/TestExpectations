@@ -142,3 +142,28 @@ webkit.org/b/135390 fast/css/fontloader-multiple-faces.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-multiple-families.html [ Skip ]
 webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Skip ]
 
+# Various failures from the W3C CSS Shapes test suite import
+
+webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html [ ImageOnlyFailure ]
+webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html [ ImageOnlyFailure ]
+webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html [ ImageOnlyFailure ]
+webkit.org/b/135923 css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html [ ImageOnlyFailure ]
+
+webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html [ ImageOnlyFailure ]
+webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-013.html [ ImageOnlyFailure ]
+webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html [ ImageOnlyFailure ]
+webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html [ ImageOnlyFailure ]
+
+webkit.org/b/135926 css3/shapes/shape-outside/values/shape-image-threshold-001.html [ Failure ]
+
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-010.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-011.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-012.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-013.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-014.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-015.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-016.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-017.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-018.html [ ImageOnlyFailure ]
+webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-019.html [ ImageOnlyFailure ]
+

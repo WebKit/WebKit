@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Reference File</title>
+    <link rel="author" title="Rebecca Hauck" href="mailto:rhauck@adobe.com"/>
+    <style type="text/css">
+        .container {
+            position: absolute;
+            top: 70px;
+            width: 400px;
+            font-family: Ahem;
+            font-size: 20px;
+            line-height: 2em;
+            color: green;
+        }
+        #shape {
+            width: 160px;
+            height: 160px;
+            background-color: lightblue;
+            border: 20px solid lightblue;
+            border-radius: 90px;
+            z-index: -1;
+        }
+        #line-1, #line-5 { margin-left: 185px; }
+        #line-2, #line-4 { margin-left: 199px; }
+        #line-3 { margin-left: 200px; }
+    </style>
+</head>
+<body>
+    <p>
+        The test passes if the short green horizontal bars are the right of the shape,
+        the long green bar is beneath it, and no bars intersect it. There should be no red.
+    </p>
+    <div id="shape" class="container"></div>
+    <div id="lines" class="container">
+        <span id="line-1">XXXXXX</span>
+        <span id="line-2">XXXXXX</span>
+        <span id="line-3">XXXXXX</span>
+        <span id="line-4">XXXXXX</span>
+        <span id="line-5">XXXXXX</span>
+        XXXXXXXXXXXXXXX
+    </div>
+    
+</body>
+</html>

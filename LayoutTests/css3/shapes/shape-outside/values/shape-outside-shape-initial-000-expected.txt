@@ -1,0 +1,4 @@
+
+PASS shape-outside can be assigned 'initial' value 
+PASS 'initial' value computes to the default value 
+

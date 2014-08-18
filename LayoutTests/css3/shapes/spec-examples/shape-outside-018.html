@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Test: shape-margin offset from a polygonal shape-outside</title>
+    <link rel="author" title="Rebecca Hauck" href="mailto:rhauck@adobe.com"/>
+    <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shapes-from-box-values"/>
+    <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shape-outside-property"/>
+    <link rel="match" href="reference/shape-outside-018-ref.html"/>
+    <meta name="flags" content="ahem"/>
+    <meta name="assert" content="This test verifies that that content flows around the shape-margin
+                                 defined on a polygonal shape-outside."/>
+    <!--  This test is derived from Example 10 in this version of the spec:
+         http://www.w3.org/TR/2014/WD-css-shapes-1-20140211/  -->
+    <style type="text/css">
+        .container {
+            position: absolute;
+            top: 70px;
+            width: 300px;
+            font-family: Ahem;
+            font-size: 20px;
+            line-height: 2em;
+        }
+        #test {
+            color: green;
+        }
+        #shape-box {
+            float: left;
+            width: 200px;
+            height: 200px;
+            -webkit-shape-outside: polygon(20px 40px, 160px 180px, 20px 180px);
+            -webkit-shape-margin: 20px;
+        }
+        img {
+            position: absolute;
+            top: 70px;
+            z-index: -1;
+        }
+        #failure {
+            color: red;
+            z-index: -2;
+        }
+        #line-1 { margin-left: 48px; }
+        #line-2 { margin-left: 88px; }
+        #line-3 { margin-left: 128px; }
+        #line-4 { margin-left: 168px; }
+        #line-5 { margin-left: 180px; }
+    </style>
+</head>
+<body>
+    <p>
+        The test passes if the longest green horizontal bar is beneath the triangle and the 
+        rest of them are to its right and none intersect it. There should be no red.
+    </p>
+    <div id="test" class="container">
+        <div id="shape-box"></div>
+        XXXXXXXXXX XXXXXXXX XXXXXX XXXX XXX XXXXXXXXXXXX
+    </div>
+    <img src="support/rounded-triangle.svg">
+    <div id="failure" class="container">
+        <span id="line-1">XXXXXXXXXX</span>
+        <span id="line-2">XXXXXXXX</span>
+        <span id="line-3">XXXXXX</span>
+        <span id="line-4">XXXX</span>
+        <span id="line-5">XXX</span>
+        XXXXXXXXXXXX
+    </div>
+</body>
+</html>
