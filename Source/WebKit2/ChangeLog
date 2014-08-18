@@ -1,5 +1,17 @@
 2014-08-18  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172680
+
+    2014-08-15  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (r172660): WebKit2.TerminateTwice asserts
+            https://bugs.webkit.org/show_bug.cgi?id=136012
+
+            * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::terminateProcess):
+            Added bug number to a fixme.
+
+2014-08-18  Dana Burkart  <dburkart@apple.com>
+
         Merge r172660
 
     2014-08-15  Alexey Proskuryakov  <ap@apple.com>

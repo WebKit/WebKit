@@ -1868,6 +1868,7 @@ void WebPageProxy::terminateProcess()
 {
     // requestTermination() is a no-op for launching processes, so we get into an inconsistent state by calling resetStateAfterProcessExited().
     // FIXME: A client can terminate the page at any time, so we should do something more meaningful than assert and fall apart in release builds.
+    // See also <https://bugs.webkit.org/show_bug.cgi?id=136012>.
     ASSERT(m_process->state() != WebProcessProxy::State::Launching);
 
     // NOTE: This uses a check of m_isValid rather than calling isValid() since
