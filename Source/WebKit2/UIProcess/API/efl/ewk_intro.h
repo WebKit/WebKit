@@ -80,9 +80,6 @@
  *    Ecore_Evas *win;
  *    Evas_Object *ewk;
  *
- *    evas_init();
- *    ecore_init();
- *    ecore_evas_init();
  *    ewk_init();
  *
  *    win = ecore_evas_new(NULL, 0, 0, 800, 600, NULL);
@@ -98,9 +95,6 @@
  *    ecore_main_loop_begin();
  *
  *    ewk_shutdown();
- *    ecore_evas_shutdown();
- *    ecore_shutdown();
- *    evas_shutdown();
  *
  *    return 0;
  * }
