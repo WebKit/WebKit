@@ -1,3 +1,15 @@
+2014-08-18  Pratik Solanki  <psolanki@apple.com>
+
+        Use modern for loop instead of iterators in SharedBufferCF.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=136000
+
+        Reviewed by Andreas Kling.
+
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::copyBufferAndClear):
+        (WebCore::SharedBuffer::copySomeDataFromDataArray):
+        (WebCore::SharedBuffer::maybeAppendDataArray): Use auto& instead of auto for less RetainPtr/refcount churn.
+
 2014-08-18  Antti Koivisto  <antti@apple.com>
 
         Tighten RenderCounter typing
