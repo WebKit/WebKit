@@ -1,3 +1,18 @@
+2014-08-18  Pratik Solanki  <psolanki@apple.com>
+
+        Make update-webkit more lenient for pure git svn repositories
+        https://bugs.webkit.org/show_bug.cgi?id=135805
+
+        Reviewed by Oliver Hunt.
+
+        Make the call to git fetch be non fatal. If you have a pure git svn repository, then the
+        call to git fetch will fail and update-webkit will abort. The purpose of r72966 was to
+        provide an optimization when you have a git repository setup. We should not fail if the
+        git setup does not have svn-remote.svn.fetch set.
+
+        * Scripts/update-webkit:
+        (runGitUpdate):
+
 2014-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         Enable Web Inspector in MiniBrowser WK2 windows
