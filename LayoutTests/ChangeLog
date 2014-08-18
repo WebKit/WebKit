@@ -1,3 +1,10 @@
+2014-08-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Adding a GTK-specific baseline
+        that's required after changes in r172620.
+
+        * platform/gtk/editing/pasteboard/onpaste-text-html-expected.txt: Added.
+
 2014-08-18  Andy Estes  <aestes@apple.com>
 
         Revert r172697.
