@@ -1,3 +1,21 @@
+2014-08-18  Renata Hodovan  <rhodovan.u-szeged@partner.samsung.com>
+
+        Fix keyTimes list length of from/to/by animations.
+        https://bugs.webkit.org/show_bug.cgi?id=136037
+
+        Reviewed by Darin Adler.
+
+        For from/to/by animations, the length of keyTimes and keyPoints
+        attribute if are specified must be equal and must have at least
+        2 values.
+
+        This is backport of my fix in Blink: https://codereview.chromium.org/453243003/
+
+        Test: svg/animations/invalid-keytime-number-crash.html
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+
 2014-08-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Follow-up to r136040 based on Darin Adler's comments.
