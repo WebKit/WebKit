@@ -153,8 +153,8 @@ namespace WebCore {
         float opacity;
         float miterLimit;
 
-        SVGLength width;
-        SVGLength dashOffset;
+        Length width;
+        Length dashOffset;
         Vector<SVGLength> dashArray;
 
         SVGPaint::SVGPaintType paintType;

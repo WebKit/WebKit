@@ -432,7 +432,7 @@ void RenderSVGShape::updateRepaintBoundingBox()
 float RenderSVGShape::strokeWidth() const
 {
     SVGLengthContext lengthContext(&graphicsElement());
-    return style().svgStyle().strokeWidth().value(lengthContext);
+    return lengthContext.valueForLength(style().svgStyle().strokeWidth());
 }
 
 bool RenderSVGShape::hasSmoothStroke() const

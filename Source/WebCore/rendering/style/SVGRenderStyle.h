@@ -112,20 +112,6 @@ public:
         return length;
     }
 
-    static SVGLength initialStrokeDashOffset()
-    {
-        SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ASSERT_NO_EXCEPTION);
-        return length;
-    }
-
-    static SVGLength initialStrokeWidth()
-    {
-        SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 1, ASSERT_NO_EXCEPTION);
-        return length;
-    }
-
     // SVG CSS Property setters
     void setAlignmentBaseline(EAlignmentBaseline val) { svg_noninherited_flags.f._alignmentBaseline = val; }
     void setDominantBaseline(EDominantBaseline val) { svg_noninherited_flags.f._dominantBaseline = val; }
@@ -246,13 +232,13 @@ public:
             stroke.access()->miterLimit = obj;
     }
 
-    void setStrokeWidth(const SVGLength& obj)
+    void setStrokeWidth(const Length& obj)
     {
         if (!(stroke->width == obj))
             stroke.access()->width = obj;
     }
 
-    void setStrokeDashOffset(const SVGLength& obj)
+    void setStrokeDashOffset(const Length& obj)
     {
         if (!(stroke->dashOffset == obj))
             stroke.access()->dashOffset = obj;
@@ -368,8 +354,8 @@ public:
     const String& strokePaintUri() const { return stroke->paintUri; }
     Vector<SVGLength> strokeDashArray() const { return stroke->dashArray; }
     float strokeMiterLimit() const { return stroke->miterLimit; }
-    SVGLength strokeWidth() const { return stroke->width; }
-    SVGLength strokeDashOffset() const { return stroke->dashOffset; }
+    const Length& strokeWidth() const { return stroke->width; }
+    const Length& strokeDashOffset() const { return stroke->dashOffset; }
     SVGLength kerning() const { return text->kerning; }
     float stopOpacity() const { return stops->opacity; }
     const Color& stopColor() const { return stops->color; }

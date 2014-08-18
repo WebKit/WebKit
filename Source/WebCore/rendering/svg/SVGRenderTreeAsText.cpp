@@ -268,8 +268,8 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
             writeSVGPaintingResource(ts, strokePaintingResource);
 
             SVGLengthContext lengthContext(&shape.graphicsElement());
-            double dashOffset = svgStyle.strokeDashOffset().value(lengthContext);
-            double strokeWidth = svgStyle.strokeWidth().value(lengthContext);
+            double dashOffset = lengthContext.valueForLength(svgStyle.strokeDashOffset());
+            double strokeWidth = lengthContext.valueForLength(svgStyle.strokeWidth());
             const Vector<SVGLength>& dashes = svgStyle.strokeDashArray();
 
             DashArray dashArray;

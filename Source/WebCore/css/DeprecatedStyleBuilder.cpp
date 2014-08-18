@@ -2599,6 +2599,8 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyR, ApplyPropertyLength<&RenderStyle::r, &RenderStyle::setR, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyRx, ApplyPropertyLength<&RenderStyle::rx, &RenderStyle::setRx, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyRy, ApplyPropertyLength<&RenderStyle::ry, &RenderStyle::setRy, &RenderStyle::initialZeroLength>::createHandler());
+    setPropertyHandler(CSSPropertyStrokeWidth, ApplyPropertyLength<&RenderStyle::strokeWidth, &RenderStyle::setStrokeWidth, &RenderStyle::initialOneLength>::createHandler());
+    setPropertyHandler(CSSPropertyStrokeDashoffset, ApplyPropertyLength<&RenderStyle::strokeDashOffset, &RenderStyle::setStrokeDashOffset, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyX, ApplyPropertyLength<&RenderStyle::x, &RenderStyle::setX, &RenderStyle::initialZeroLength>::createHandler());
     setPropertyHandler(CSSPropertyY, ApplyPropertyLength<&RenderStyle::y, &RenderStyle::setY, &RenderStyle::initialZeroLength>::createHandler());
 

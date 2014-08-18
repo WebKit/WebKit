@@ -1656,12 +1656,12 @@ public:
     void setStrokePaintColor(const Color& c) { accessSVGStyle().setStrokePaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float strokeOpacity() const { return svgStyle().strokeOpacity(); }
     void setStrokeOpacity(float f) { accessSVGStyle().setStrokeOpacity(f); }
-    SVGLength strokeWidth() const { return svgStyle().strokeWidth(); }
-    void setStrokeWidth(SVGLength w) { accessSVGStyle().setStrokeWidth(w); }
+    const Length& strokeWidth() const { return svgStyle().strokeWidth(); }
+    void setStrokeWidth(Length w) { accessSVGStyle().setStrokeWidth(w); }
     Vector<SVGLength> strokeDashArray() const { return svgStyle().strokeDashArray(); }
     void setStrokeDashArray(Vector<SVGLength> array) { accessSVGStyle().setStrokeDashArray(array); }
-    SVGLength strokeDashOffset() const { return svgStyle().strokeDashOffset(); }
-    void setStrokeDashOffset(SVGLength d) { accessSVGStyle().setStrokeDashOffset(d); }
+    const Length& strokeDashOffset() const { return svgStyle().strokeDashOffset(); }
+    void setStrokeDashOffset(Length d) { accessSVGStyle().setStrokeDashOffset(d); }
     float strokeMiterLimit() const { return svgStyle().strokeMiterLimit(); }
     void setStrokeMiterLimit(float f) { accessSVGStyle().setStrokeMiterLimit(f); }
 
@@ -1836,6 +1836,7 @@ public:
     static Length initialPadding() { return Length(Fixed); }
     static Length initialTextIndent() { return Length(Fixed); }
     static Length initialZeroLength() { return Length(Fixed); }
+    static Length initialOneLength() { return Length(1, Fixed); }
 #if ENABLE(CSS3_TEXT)
     static TextIndentLine initialTextIndentLine() { return TextIndentFirstLine; }
     static TextIndentType initialTextIndentType() { return TextIndentNormal; }

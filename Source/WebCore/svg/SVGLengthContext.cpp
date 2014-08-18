@@ -89,7 +89,7 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
 
 float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode mode)
 {
-    if (length.isPercent())
+    if (length.isPercent() && !length.isCalculated())
         return convertValueFromPercentageToUserUnits(length.value() / 100, mode, IGNORE_EXCEPTION);
     if (length.isAuto())
         return 0;

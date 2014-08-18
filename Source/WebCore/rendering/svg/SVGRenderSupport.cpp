@@ -412,7 +412,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
     SVGLengthContext lengthContext(toSVGElement(renderer.element()));
-    context->setStrokeThickness(svgStyle.strokeWidth().value(lengthContext));
+    context->setStrokeThickness(lengthContext.valueForLength(svgStyle.strokeWidth()));
     context->setLineCap(svgStyle.capStyle());
     context->setLineJoin(svgStyle.joinStyle());
     if (svgStyle.joinStyle() == MiterJoin)
@@ -427,7 +427,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
         for (auto& dash : dashes)
             dashArray.uncheckedAppend(dash.value(lengthContext));
 
-        context->setLineDash(dashArray, svgStyle.strokeDashOffset().value(lengthContext));
+        context->setLineDash(dashArray, lengthContext.valueForLength(svgStyle.strokeDashOffset()));
     }
 }
 

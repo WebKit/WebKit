@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<style>
+* { font-size: 16px; }
+svg, rect { font-family: 'Ahem'; }
+div { font-size: 8px; } 
+</style>
+<html>
+<svg id="svg" width="0" height="0"></svg>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that length values for presentation attribute accept calc.");
+
+function computedStyle(property, value) {
+    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    document.getElementById('svg').appendChild(rect);
+    rect.setAttribute(property, value);
+    var computedValue = getComputedStyle(rect).getPropertyValue(property);
+    document.getElementById('svg').removeChild(rect);
+    return computedValue;
+}
+
+function testComputed(property, value, expected) {
+    shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+}
+
+function negativeTest(property, value) {
+    testComputed(property, value, "auto");
+}
+
+function negativeTestZero(property, value) {
+    testComputed(property, value, "0px");
+}
+
+// Test 'calc(500px - 400px)'.
+testComputed("baseline-shift", "calc(500px - 400px)", "100px");
+testComputed("cx", "calc(500px - 400px)", "100px");
+testComputed("cy", "calc(500px - 400px)", "100px");
+testComputed("height", "calc(500px - 400px)", "100px");
+testComputed("kerning", "calc(500px - 400px)", "100px");
+testComputed("r", "calc(500px - 400px)", "100px");
+testComputed("rx", "calc(500px - 400px)", "100px");
+testComputed("ry", "calc(500px - 400px)", "100px");
+testComputed("stroke-width", "calc(500px - 400px)", "100px");
+testComputed("stroke-dashoffset", "calc(500px - 400px)", "100px");
+testComputed("width", "calc(500px - 400px)", "100px")
+testComputed("x", "calc(500px - 400px)", "100px");
+testComputed("y", "calc(500px - 400px)", "100px");
+
+// Test 'calc(40px + 60px)'.
+testComputed("baseline-shift", "calc(40px + 60px)", "100px");
+testComputed("cx", "calc(40px + 60px)", "100px");
+testComputed("cy", "calc(40px + 60px)", "100px");
+testComputed("height", "calc(40px + 60px)", "100px");
+testComputed("kerning", "calc(40px + 60px)", "100px");
+testComputed("r", "calc(40px + 60px)", "100px");
+testComputed("rx", "calc(40px + 60px)", "100px");
+testComputed("ry", "calc(40px + 60px)", "100px");
+testComputed("stroke-width", "calc(40px + 60px)", "100px");
+testComputed("stroke-dashoffset", "calc(40px + 60px)", "100px");
+testComputed("width", "calc(40px + 60px)", "100px")
+testComputed("x", "calc(40px + 60px)", "100px");
+testComputed("y", "calc(40px + 60px)", "100px");
+
+// Test 'calc(0% + 100px)'.
+testComputed("baseline-shift", "calc(0% + 100px)", "0");
+testComputed("cx", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("cy", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("height", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("kerning", "calc(0% + 100px)", "0");
+testComputed("r", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("rx", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("ry", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("stroke-width", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("stroke-dashoffset", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("width", "calc(0% + 100px)", "calc(0% + 100px)")
+testComputed("x", "calc(0% + 100px)", "calc(0% + 100px)");
+testComputed("y", "calc(0% + 100px)", "calc(0% + 100px)");
+
+// Test 'calc(100% - 100px)'.
+testComputed("baseline-shift", "calc(100% - 100px)", "0");
+testComputed("cx", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("cy", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("height", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("kerning", "calc(100% - 100px)", "0");
+testComputed("r", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("rx", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("ry", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("stroke-width", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("stroke-dashoffset", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("width", "calc(100% - 100px)", "calc(100% - 100px)")
+testComputed("x", "calc(100% - 100px)", "calc(100% - 100px)");
+testComputed("y", "calc(100% - 100px)", "calc(100% - 100px)");
+
+// Number value properties.
+testComputed("stroke-miterlimit", "calc(500 - 400)", "100");
+testComputed("flood-opacity", "calc(500 - 400)", "100");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

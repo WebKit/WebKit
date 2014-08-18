@@ -1,3 +1,52 @@
+2014-08-18  Dirk Schulze  <krit@webkit.org>
+
+        calc() doesn't work for SVG CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=136026
+
+        Reviewed by Andreas Kling.
+
+        Make calc() work on SVG CSS properties as well. stroke-width and
+        stroke-dashoffset used SVGLength. SVGLength doesn't work together with
+        cross units length arguments like % and px (just returns 0 in these
+        cases). I moved these properties over to Length. All modified files
+        beside to SVGCSSParser are related to this switch.
+
+        Test: svg/css/parse-calc-length.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setStrokeWidth):
+        (WebCore::SVGRenderStyle::setStrokeDashOffset):
+        (WebCore::SVGRenderStyle::strokeWidth):
+        (WebCore::SVGRenderStyle::strokeDashOffset):
+        (WebCore::SVGRenderStyle::initialStrokeDashOffset): Deleted.
+        (WebCore::SVGRenderStyle::initialStrokeWidth): Deleted.
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::strokeWidth):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::valueForLength):
+
 2014-08-18  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r167856): adobe.com no longer able to launch Create Cloud app using a URL with a custom scheme

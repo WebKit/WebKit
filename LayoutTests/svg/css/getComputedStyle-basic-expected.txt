@@ -478,7 +478,7 @@ rect: style.getPropertyValue(stroke) : #ffa500
 rect: style.getPropertyCSSValue(stroke) : [object SVGPaint]
 rect: style.getPropertyValue(stroke-dasharray) : none
 rect: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(stroke-dashoffset) : 0
+rect: style.getPropertyValue(stroke-dashoffset) : 0px
 rect: style.getPropertyCSSValue(stroke-dashoffset) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke-linecap) : butt
 rect: style.getPropertyCSSValue(stroke-linecap) : [object CSSPrimitiveValue]
@@ -990,7 +990,7 @@ g: style.getPropertyValue(stroke) : #ffa500
 g: style.getPropertyCSSValue(stroke) : [object SVGPaint]
 g: style.getPropertyValue(stroke-dasharray) : none
 g: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(stroke-dashoffset) : 0
+g: style.getPropertyValue(stroke-dashoffset) : 0px
 g: style.getPropertyCSSValue(stroke-dashoffset) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke-linecap) : butt
 g: style.getPropertyCSSValue(stroke-linecap) : [object CSSPrimitiveValue]

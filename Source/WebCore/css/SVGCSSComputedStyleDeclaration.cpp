@@ -190,10 +190,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID prop
             return adjustSVGPaintForCurrentColor(SVGPaint::create(svgStyle.strokePaintType(), svgStyle.strokePaintUri(), svgStyle.strokePaintColor()), style);
         case CSSPropertyStrokeDasharray:
             return strokeDashArrayToCSSValueList(svgStyle.strokeDashArray());
-        case CSSPropertyStrokeDashoffset:
-            return SVGLength::toCSSPrimitiveValue(svgStyle.strokeDashOffset());
-        case CSSPropertyStrokeWidth:
-            return SVGLength::toCSSPrimitiveValue(svgStyle.strokeWidth());
         case CSSPropertyBaselineShift: {
             switch (svgStyle.baselineShift()) {
                 case BS_BASELINE:
