@@ -275,19 +275,13 @@ endif ()
 
 set(CPACK_SOURCE_GENERATOR TBZ2)
 
-# Optimize binary size for release builds by removing dead sections on unix/gcc
+# Optimize binary size for release builds by removing dead sections on unix/gcc.
+# Push of rbp is needed after JSC JIT uses CStack.
 if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-ffunction-sections -fdata-sections -fno-rtti ${CMAKE_CXX_FLAGS_RELEASE}")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffunction-sections -fdata-sections -fno-omit-frame-pointer -fno-tree-dce")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffunction-sections -fdata-sections -fno-rtti -fno-omit-frame-pointer -fno-tree-dce")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} -Wl,--gc-sections")
 endif ()
-
-# push of rbp is needed after JSC JIT uses CStack
-if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-fno-omit-frame-pointer -fno-tree-dce ${CMAKE_CXX_FLAGS_RELEASE}")
-endif ()
-
 
 if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)
