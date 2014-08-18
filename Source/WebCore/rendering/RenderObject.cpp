@@ -1941,14 +1941,6 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->remove(this);
 
-    // If this renderer had a parent, remove should have destroyed any counters
-    // attached to this renderer and marked the affected other counters for
-    // reevaluation. This apparently redundant check is here for the case when
-    // this renderer had no parent at the time remove() was called.
-
-    if (hasCounterNodeMap())
-        RenderCounter::destroyCounterNodes(this);
-
     // FIXME: Would like to do this in RenderBoxModelObject, but the timing is so complicated that this can't easily
     // be moved into RenderBoxModelObject::destroy.
     if (hasLayer()) {

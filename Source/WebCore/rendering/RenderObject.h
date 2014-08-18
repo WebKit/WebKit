@@ -390,8 +390,6 @@ public:
     static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
     static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
 
-    bool hasCounterNodeMap() const { return m_bitfields.hasCounterNodeMap(); }
-    void setHasCounterNodeMap(bool hasCounterNodeMap) { m_bitfields.setHasCounterNodeMap(hasCounterNodeMap); }
     bool everHadLayout() const { return m_bitfields.everHadLayout(); }
 
     bool childrenInline() const { return m_bitfields.childrenInline(); }
@@ -961,7 +959,6 @@ private:
             , m_hasOverflowClip(false)
             , m_hasTransform(false)
             , m_hasReflection(false)
-            , m_hasCounterNodeMap(false)
             , m_everHadLayout(false)
             , m_childrenInline(false)
             , m_positionedState(IsStaticallyPositioned)
@@ -971,7 +968,7 @@ private:
         {
         }
         
-        // 32 bits have been used here. There are no bits available.
+        // 31 bits have been used here. There is one bit available.
         ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
         ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
         ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);
@@ -994,7 +991,6 @@ private:
         ADD_BOOLEAN_BITFIELD(hasTransform, HasTransform);
         ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
 
-        ADD_BOOLEAN_BITFIELD(hasCounterNodeMap, HasCounterNodeMap);
         ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);
 
         // from RenderBlock

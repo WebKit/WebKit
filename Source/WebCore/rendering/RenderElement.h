@@ -159,6 +159,9 @@ public:
     void setRenderBoxNeedsLazyRepaint(bool b) { m_renderBoxNeedsLazyRepaint = b; }
     bool renderBoxNeedsLazyRepaint() const { return m_renderBoxNeedsLazyRepaint; }
 
+    bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
+    void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,
@@ -231,6 +234,7 @@ private:
     bool m_renderInlineAlwaysCreatesLineBoxes : 1;
     bool m_renderBoxNeedsLazyRepaint : 1;
     bool m_hasPausedImageAnimations : 1;
+    bool m_hasCounterNodeMap : 1;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

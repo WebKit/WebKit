@@ -1,3 +1,56 @@
+2014-08-18  Antti Koivisto  <antti@apple.com>
+
+        Tighten RenderCounter typing
+        https://bugs.webkit.org/show_bug.cgi?id=136049
+
+        Reviewed by Andreas Kling.
+
+        RenderObject* -> RenderElement&
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode):
+        (WebCore::CounterNode::create):
+        (WebCore::showTreeAndMark):
+        * rendering/CounterNode.h:
+        (WebCore::CounterNode::owner):
+        * rendering/RenderCounter.cpp:
+        (WebCore::previousInPreOrder):
+        (WebCore::parentOrPseudoHostElement):
+        (WebCore::previousSiblingOrParent):
+        (WebCore::areRenderersElementsSiblings):
+        (WebCore::nextInPreOrder):
+        (WebCore::planCounter):
+        (WebCore::findPlaceForCounter):
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::originalText):
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        (WebCore::RenderCounter::destroyCounterNode):
+        (WebCore::RenderCounter::rendererRemovedFromTree):
+        (WebCore::updateCounters):
+        (WebCore::RenderCounter::rendererSubtreeAttached):
+        (WebCore::RenderCounter::rendererStyleChanged):
+        (showCounterRendererTree):
+        * rendering/RenderCounter.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::removeChildInternal):
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasCounterNodeMap):
+        (WebCore::RenderElement::setHasCounterNodeMap):
+        
+            Move CounterNodeMap to RenderElement from RenderObject.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::hasCounterNodeMap): Deleted.
+        (WebCore::RenderObject::setHasCounterNodeMap): Deleted.
+
 2014-08-18  Peyton Randolph  <prandolph@apple.com>
 
         Expose long mouse press WebKit API. Part of 135257 - Add long mouse press gesture

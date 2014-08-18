@@ -28,11 +28,11 @@
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderElement* o, bool hasResetType, int value)
+CounterNode::CounterNode(RenderElement& owner, bool hasResetType, int value)
     : m_hasResetType(hasResetType)
     , m_value(value)
     , m_countInParent(0)
-    , m_owner(o)
+    , m_owner(owner)
     , m_rootRenderer(0)
     , m_parent(0)
     , m_previousSibling(0)
@@ -90,7 +90,7 @@ CounterNode::~CounterNode()
     resetRenderers();
 }
 
-PassRefPtr<CounterNode> CounterNode::create(RenderElement* owner, bool hasResetType, int value)
+PassRefPtr<CounterNode> CounterNode::create(RenderElement& owner, bool hasResetType, int value)
 {
     return adoptRef(new CounterNode(owner, hasResetType, value));
 }
@@ -365,7 +365,7 @@ static void showTreeAndMark(const CounterNode* node)
         fprintf(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
             current, current->actsAsReset() ? "reset____" : "increment", current->value(),
             current->countInParent(), current->parent(), current->previousSibling(),
-            current->nextSibling(), current->owner());
+            current->nextSibling(), &current->owner());
     }
     fflush(stderr);
 }
