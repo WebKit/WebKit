@@ -426,6 +426,36 @@ New API detected in GObject DOM bindings
         self.assertResults(expected_missing=False, expected_new=False, stdio="")
 
 
+class RunAndUploadPerfTestsTest(unittest.TestCase):
+    def assertResults(self, rc, expected_text):
+        cmd = StubRemoteCommand(rc, expected_text)
+        step = RunAndUploadPerfTests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_text = str(step.getText2(cmd, actual_results)[0])
+        self.assertEqual(expected_text, actual_text)
+
+    def test_success(self):
+        self.assertResults(0, "perf-test")
+
+    def test_tests_failed(self):
+        self.assertResults(5, "5 perf tests failed")
+
+    def test_build_bad_build(self):
+        self.assertResults(255, "build not up to date")
+
+    def test_build_bad_source_json(self):
+        self.assertResults(254, "slave config JSON error")
+
+    def test_build_bad_marge(self):
+        self.assertResults(253, "output JSON merge error")
+
+    def test_build_bad_failed_uploading(self):
+        self.assertResults(252, "upload error")
+
+    def test_build_bad_preparation(self):
+        self.assertResults(251, "system dependency error")
+
 # FIXME: We should run this file as part of test-webkitpy.
 # Unfortunately test-webkitpy currently requires that unittests
 # be located in a directory with a valid module name.

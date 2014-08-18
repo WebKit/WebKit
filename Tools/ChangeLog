@@ -1,3 +1,22 @@
+2014-08-18  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        master.cfg should handle special return codes of run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=135974
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunAndUploadPerfTests.getText2):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunAndUploadPerfTestsTest):
+        (RunAndUploadPerfTestsTest.assertResults):
+        (RunAndUploadPerfTestsTest.test_tests_failed):
+        (RunAndUploadPerfTestsTest.test_build_bad_build):
+        (RunAndUploadPerfTestsTest.test_build_bad_source_json):
+        (RunAndUploadPerfTestsTest.test_build_bad_marge):
+        (RunAndUploadPerfTestsTest.test_build_bad_failed_uploading):
+        (RunAndUploadPerfTestsTest.test_build_bad_preparation):
+
 2014-08-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed change to force rebuild
