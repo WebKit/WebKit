@@ -1,3 +1,13 @@
+2014-08-18  Andy Estes  <aestes@apple.com>
+
+        Revert r172697.
+
+        It made several webarchive layout tests flaky and didn't have the correct behavior for non-quick redirects.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-08-15  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r167856): adobe.com no longer able to launch Create Cloud app using a URL with a custom scheme
