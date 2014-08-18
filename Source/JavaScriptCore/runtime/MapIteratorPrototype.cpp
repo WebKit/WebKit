@@ -63,6 +63,7 @@ EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncNext(CallFrame* callFrame)
     JSValue result;
     if (iterator->next(callFrame, result))
         return JSValue::encode(result);
+    iterator->finish();
     return JSValue::encode(callFrame->vm().iterationTerminator.get());
 }
 

@@ -222,6 +222,10 @@ PASS key is 7
 PASS value is 14
 PASS i is 5
 PASS map.size is 4
+A dead iterator should remain dead
+PASS count is 0
+PASS count is 3
+PASS count is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE

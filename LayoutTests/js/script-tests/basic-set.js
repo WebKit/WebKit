@@ -205,3 +205,36 @@ for (var key of keyIterator) {
 }
 shouldBe("i", "5")
 shouldBe("set.size", "4");
+
+debug("A dead iterator should remain dead")
+
+var set = new Set;
+set.add("foo");
+var keys = set.keys()
+// Iterator reaches end and becomes dead.
+for (key of keys) {
+    // Do nothing
+}
+set.add("bar")
+set.add("wibble")
+
+// Iterator 'keys' remains dead.
+var count = 0;
+for (key of keys) {
+    count++;
+}
+shouldBe("count", "0");
+
+// New assignment creates a new iterator.
+keys = set.keys();
+for (key of keys) {
+    count++;
+}
+shouldBe("count", "3");
+
+// Iterating through set.keys()
+count = 0;
+for (key of set.keys()) {
+    count++;
+}
+shouldBe("count", "3");

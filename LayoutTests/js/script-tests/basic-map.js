@@ -246,3 +246,35 @@ map.forEach(function (v, k) {
 shouldBe("i", "5")
 shouldBe("map.size", "4");
 
+debug("A dead iterator should remain dead")
+
+var map = new Map;
+map.set(1, "foo");
+var keys = map.keys()
+// Iterator reaches end and becomes dead.
+for (key of keys) {
+    // Do nothing
+}
+map.set(2, "bar")
+map.set(3, "wibble")
+
+// Iterator 'keys' remains dead.
+var count = 0;
+for (key of keys) {
+    count++;
+}
+shouldBe("count", "0");
+
+// New assignment creates a new iterator.
+keys = map.keys();
+for (key of keys) {
+    count++;
+}
+shouldBe("count", "3");
+
+// Iterating through map.keys()
+count = 0;
+for (key of map.keys()) {
+    count++;
+}
+shouldBe("count", "3");

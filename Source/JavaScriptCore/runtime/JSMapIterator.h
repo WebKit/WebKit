@@ -70,6 +70,11 @@ public:
         return true;
     }
 
+    void finish()
+    {
+        m_iterator.finish();
+    }
+
 private:
     JSMapIterator(VM& vm, Structure* structure, JSMap* iteratedObject, MapIterationKind kind)
         : Base(vm, structure)
