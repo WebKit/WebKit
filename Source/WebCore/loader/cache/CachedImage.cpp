@@ -192,8 +192,6 @@ bool CachedImage::willPaintBrokenImage() const
 
 Image* CachedImage::image()
 {
-    ASSERT(!isPurgeable());
-
     if (errorOccurred() && m_shouldPaintBrokenImage) {
         // Returning the 1x broken image is non-ideal, but we cannot reliably access the appropriate
         // deviceScaleFactor from here. It is critical that callers use CachedImage::brokenImage() 
@@ -209,8 +207,6 @@ Image* CachedImage::image()
 
 Image* CachedImage::imageForRenderer(const RenderObject* renderer)
 {
-    ASSERT(!isPurgeable());
-
     if (errorOccurred() && m_shouldPaintBrokenImage) {
         // Returning the 1x broken image is non-ideal, but we cannot reliably access the appropriate
         // deviceScaleFactor from here. It is critical that callers use CachedImage::brokenImage() 
@@ -274,8 +270,6 @@ bool CachedImage::imageHasRelativeHeight() const
 
 LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float multiplier, SizeType sizeType)
 {
-    ASSERT(!isPurgeable());
-
     if (!m_image)
         return LayoutSize();
 
@@ -462,13 +456,9 @@ void CachedImage::responseReceived(const ResourceResponse& response)
 void CachedImage::destroyDecodedData()
 {
     bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());
-    if (isSafeToMakePurgeable() && canDeleteImage && !isLoading()) {
-        // Image refs the data buffer so we should not make it purgeable while the image is alive. 
-        // Invoking addClient() will reconstruct the image object.
+    if (canDeleteImage && !isLoading()) {
         m_image = 0;
         setDecodedSize(0);
-        if (!MemoryCache::shouldMakeResourcePurgeableOnEviction())
-            makePurgeable(true);
     } else if (m_image && !errorOccurred())
         m_image->destroyDecodedData();
 }
@@ -522,9 +512,6 @@ bool CachedImage::canUseDiskImageCache() const
         return false;
 
     if (!m_data)
-        return false;
-
-    if (isPurgeable())
         return false;
 
     if (m_data->size() < diskImageCache().minimumImageSize())

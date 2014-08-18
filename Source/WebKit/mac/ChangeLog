@@ -1,3 +1,13 @@
+2014-08-18  Pratik Solanki  <psolanki@apple.com>
+
+        Remove PurgeableBuffer since it is not very useful any more
+        https://bugs.webkit.org/show_bug.cgi?id=135939
+
+        Reviewed by Geoffrey Garen.
+
+        * Misc/WebCache.mm:
+        (+[WebCache statistics]):
+
 2014-08-18  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r167856): adobe.com no longer able to launch Create Cloud app using a URL with a custom scheme

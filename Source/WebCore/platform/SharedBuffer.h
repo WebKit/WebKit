@@ -49,8 +49,6 @@ OBJC_CLASS NSData;
 
 namespace WebCore {
     
-class PurgeableBuffer;
-
 class SharedBuffer : public RefCounted<SharedBuffer> {
 public:
     static PassRefPtr<SharedBuffer> create() { return adoptRef(new SharedBuffer); }
@@ -61,10 +59,6 @@ public:
     static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
     static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
-    
-    // The buffer must be in non-purgeable state before adopted to a SharedBuffer. 
-    // It will stay that way until released.
-    static PassRefPtr<SharedBuffer> adoptPurgeableBuffer(PassOwnPtr<PurgeableBuffer>);
     
     ~SharedBuffer();
     
@@ -110,11 +104,6 @@ public:
 
     PassRefPtr<SharedBuffer> copy() const;
     
-    bool hasPurgeableBuffer() const { return m_purgeableBuffer.get(); }
-
-    // Ensure this buffer has no other clients before calling this.
-    PassOwnPtr<PurgeableBuffer> releasePurgeableBuffer();
-
     // Return the number of consecutive bytes after "position". "data"
     // points to the first byte.
     // Return 0 when no more data left.
@@ -128,8 +117,6 @@ public:
     //          pos += length;
     //      }
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
-
-    void shouldUsePurgeableMemory(bool use) { m_shouldUsePurgeableMemory = use; }
 
 #if ENABLE(DISK_IMAGE_CACHE)
     enum MemoryMappingState { QueuedForMapping, PreviouslyQueuedForMapping, SuccessAlreadyMapped, FailureCacheFull };
@@ -155,8 +142,6 @@ public:
     void setMemoryMappedNotificationCallback(MemoryMappedNotifyCallback, MemoryMappedNotifyCallbackData);
 #endif
 
-    void createPurgeableBuffer() const;
-
     void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
     bool hasPlatformData() const;
 
@@ -173,8 +158,6 @@ private:
     // Calling this function will force internal segmented buffers
     // to be merged into a flat buffer. Use getSomeData() whenever possible
     // for better performance.
-    // As well, be aware that this method does *not* return any purgeable
-    // memory, which can be a source of bugs.
     const Vector<char>& buffer() const;
 
     void clearPlatformData();
@@ -190,8 +173,6 @@ private:
     unsigned m_size;
     mutable RefPtr<DataBuffer> m_buffer;
 
-    bool m_shouldUsePurgeableMemory;
-    mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     explicit SharedBuffer(CFArrayRef);
     mutable Vector<RetainPtr<CFDataRef>> m_dataArray;

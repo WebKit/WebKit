@@ -1,5 +1,93 @@
 2014-08-18  Pratik Solanki  <psolanki@apple.com>
 
+        Remove PurgeableBuffer since it is not very useful any more
+        https://bugs.webkit.org/show_bug.cgi?id=135939
+
+        Reviewed by Geoffrey Garen.
+
+        The usefulness of having purgeable memory for cached resources has diminished now that
+        WebKit uses file backed resources when possible. Since this is read only memory, it is in
+        essence "purgeable". Having the PurgeableBuffer code adds additional complexity that we
+        don't need. e.g. on my Mac, I am not seeing any entry for "WebCore purgeable data" when I
+        run vmmap against the web processes that I have running. It is used on iOS, however even
+        there much of the purgeable memory we create gets replaced by file backed memory once we get
+        the notification from CFNetwork.
+
+        No new tests because no functional changes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::prepareCachedResourceBuffer):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource):
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::hasPurgeableBuffer): Deleted.
+        (WebCore::ResourceBuffer::setShouldUsePurgeableMemory): Deleted.
+        (WebCore::ResourceBuffer::createPurgeableBuffer): Deleted.
+        (WebCore::ResourceBuffer::releasePurgeableBuffer): Deleted.
+        * loader/ResourceBuffer.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText):
+        (WebCore::CachedCSSStyleSheet::destroyDecodedData):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::imageForRenderer):
+        (WebCore::CachedImage::imageSizeForRenderer):
+        (WebCore::CachedImage::destroyDecodedData):
+        (WebCore::CachedImage::canUseDiskImageCache):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addClientToSet):
+        (WebCore::CachedResource::isSafeToMakePurgeable): Deleted.
+        (WebCore::CachedResource::makePurgeable): Deleted.
+        (WebCore::CachedResource::isPurgeable): Deleted.
+        (WebCore::CachedResource::wasPurged): Deleted.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::resourceBuffer):
+        (WebCore::CachedResource::purgePriority): Deleted.
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::destroyDecodedData):
+        * loader/cache/CachedScript.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::resourceForRequestImpl):
+        (WebCore::MemoryCache::pruneDeadResourcesToSize):
+        (WebCore::MemoryCache::evict):
+        (WebCore::MemoryCache::TypeStatistic::addResource):
+        (WebCore::MemoryCache::dumpStats):
+        (WebCore::MemoryCache::dumpLRULists):
+        (WebCore::MemoryCache::makeResourcePurgeable): Deleted.
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::TypeStatistic::TypeStatistic):
+        (WebCore::MemoryCache::shouldMakeResourcePurgeableOnEviction): Deleted.
+        * platform/PurgePriority.h: Removed.
+        * platform/PurgeableBuffer.h: Removed.
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::size):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::clear):
+        (WebCore::SharedBuffer::copy):
+        (WebCore::SharedBuffer::getSomeData):
+        (WebCore::SharedBuffer::adoptPurgeableBuffer): Deleted.
+        (WebCore::SharedBuffer::createPurgeableBuffer): Deleted.
+        (WebCore::SharedBuffer::releasePurgeableBuffer): Deleted.
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::hasPurgeableBuffer): Deleted.
+        (WebCore::SharedBuffer::shouldUsePurgeableMemory): Deleted.
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/mac/PurgeableBufferMac.cpp: Removed.
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        * platform/soup/SharedBufferSoup.cpp:
+
+2014-08-18  Pratik Solanki  <psolanki@apple.com>
+
         Use modern for loop instead of iterators in SharedBufferCF.cpp
         https://bugs.webkit.org/show_bug.cgi?id=136000
 
