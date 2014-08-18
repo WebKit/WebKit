@@ -1,3 +1,19 @@
+2014-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Added an update-webkit option to override the ../Internal check.
+        Part of https://bugs.webkit.org/show_bug.cgi?id=135815
+
+        Reviewed by Tim Horton.
+
+        * Scripts/update-webkit:
+        Added an explicit --internal option to control updating ../Internal, defaulting to whether
+        ../Internal exists.
+        (runSvnUpdate): Moved to webkitdirs.pm.
+        (runGitUpdate): Ditto.
+        * Scripts/webkitdirs.pm:
+        (runSvnUpdateAndResolveChangeLogs): Moved runSvnUpdate from update-webkit and renamed to this.
+        (runGitUpdate): Moved from update-webkit.
+
 2014-08-18  Pratik Solanki  <psolanki@apple.com>
 
         Make update-webkit more lenient for pure git svn repositories
