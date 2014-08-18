@@ -1,3 +1,17 @@
+2014-08-18  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Small cleanup for ShapeOutsideDeltas
+        https://bugs.webkit.org/show_bug.cgi?id=136043
+
+        Reviewed by Zoltan Horvath.
+
+        Remove explicit initializtion of LayoutUnit members and explicitly
+        size the boolean flags so they pack properly.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2014-08-18  Dirk Schulze  <krit@webkit.org>
 
         calc() doesn't work for SVG CSS properties

@@ -46,11 +46,7 @@ class FloatingObject;
 class ShapeOutsideDeltas final {
 public:
     ShapeOutsideDeltas()
-        : m_leftMarginBoxDelta(0)
-        , m_rightMarginBoxDelta(0)
-        , m_borderBoxLineTop(0)
-        , m_lineHeight(0)
-        , m_lineOverlapsShape(false)
+        : m_lineOverlapsShape(false)
         , m_isValid(false)
     {
     }
@@ -80,8 +76,8 @@ private:
     LayoutUnit m_rightMarginBoxDelta;
     LayoutUnit m_borderBoxLineTop;
     LayoutUnit m_lineHeight;
-    bool m_lineOverlapsShape;
-    bool m_isValid;
+    unsigned m_lineOverlapsShape : 1;
+    unsigned m_isValid : 1;
 };
 
 class ShapeOutsideInfo final {
