@@ -59,12 +59,15 @@ StdoutDevNullRedirector::StdoutDevNullRedirector()
         return;
     m_savedStdout = dup(STDOUT_FILENO);
     dup2(newStdout, STDOUT_FILENO);
+    close(newStdout);
 }
 
 StdoutDevNullRedirector::~StdoutDevNullRedirector()
 {
-    if (m_savedStdout != -1)
+    if (m_savedStdout != -1) {
         dup2(m_savedStdout, STDOUT_FILENO);
+        close(m_savedStdout);
+    }
 }
 
 

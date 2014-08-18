@@ -1,3 +1,18 @@
+2014-08-18  Przemyslaw Kuczynski  <p.kuczynski@samsung.com>
+
+        Fix resource leak in unclosed file descriptor handles
+        https://bugs.webkit.org/show_bug.cgi?id=135458
+
+        Reviewed by Oliver Hunt.
+
+        Leaving descriptor unclosed will cause the resources associated with the open
+        file description never be freed (they are freed on closing the last descriptor
+        refering to the underlying file).
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::StdoutDevNullRedirector::StdoutDevNullRedirector): Closed newStdout descriptor.
+        (WebKit::StdoutDevNullRedirector::~StdoutDevNullRedirector): Closed m_savedStdout descriptor.
+
 2014-08-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] ewk_init() is sufficient to initialize EFL components
