@@ -1782,6 +1782,27 @@ void VarStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     generator.emitNode(m_expr);
 }
 
+// ------------------------------ EmptyVarExpression ----------------------------
+
+RegisterID* EmptyVarExpression::emitBytecode(BytecodeGenerator& generator, RegisterID*)
+{
+    if (!generator.isProfilingTypesWithHighFidelity())
+        return nullptr;
+
+    if (Local local = generator.local(m_ident))
+        generator.emitProfileTypesWithHighFidelity(local.get(), ProfileTypesBytecodeHasGlobalID, nullptr);
+    else {
+        RefPtr<RegisterID> scope = generator.emitResolveScope(generator.newTemporary(), m_ident);
+        RefPtr<RegisterID> value = generator.emitGetFromScope(generator.newTemporary(), scope.get(), m_ident, DoNotThrowIfNotFound);
+        generator.emitProfileTypesWithHighFidelity(value.get(), ProfileTypesBytecodeGetFromScope, &m_ident);
+    }
+
+    generator.emitHighFidelityTypeProfilingExpressionInfo(position(), JSTextPosition(-1, position().offset + m_ident.length(), -1));
+
+    // It's safe to return null here because this node will always be a child node of VarStatementNode which ignores our return value.
+    return nullptr;
+}
+
 // ------------------------------ IfElseNode ---------------------------------------
 
 static inline StatementNode* singleStatement(StatementNode* statementNode)

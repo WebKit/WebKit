@@ -655,6 +655,12 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         , m_expr(expr)
     {
     }
+
+    inline EmptyVarExpression::EmptyVarExpression(const JSTokenLocation& location, const Identifier& ident)
+        : ExpressionNode(location)
+        , m_ident(ident)
+    {
+    }
     
     inline IfElseNode::IfElseNode(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
         : StatementNode(location)

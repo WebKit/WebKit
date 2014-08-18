@@ -458,6 +458,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
         bool hasInitializer = false;
         if (match(IDENT)) {
             JSTextPosition varStart = tokenStartPosition();
+            JSTokenLocation varStartLocation(tokenLocation());
             identStart = varStart;
             const Identifier* name = m_token.m_data.ident;
             lastIdent = name;
@@ -475,7 +476,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
                 failIfFalse(initializer, "Expected expression as the intializer for the variable '", name->impl(), "'");
                 
                 node = context.createAssignResolve(location, *name, initializer, varStart, varDivot, lastTokenEndPosition());
-            }
+            } else
+                node = context.createEmptyVarExpression(varStartLocation, *name);
         } else {
             lastIdent = 0;
             auto pattern = parseDeconstructionPattern(context, DeconstructToVariables);
@@ -490,12 +492,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             }
         }
         
-        if (hasInitializer) {
-            if (!varDecls)
-                varDecls = node;
-            else
-                varDecls = context.combineCommaNodes(location, varDecls, node);
-        }
+        if (!varDecls)
+            varDecls = node;
+        else
+            varDecls = context.combineCommaNodes(location, varDecls, node);
     } while (match(COMMA));
     if (lastIdent)
         lastPattern = createBindingPattern(context, DeconstructToVariables, *lastIdent, 0);

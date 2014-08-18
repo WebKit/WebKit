@@ -1,3 +1,31 @@
+2014-08-18  Saam Barati  <sbarati@apple.com>
+
+        The parser should generate AST nodes the var declarations with no initializers
+        https://bugs.webkit.org/show_bug.cgi?id=135545
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, JSC's parser ignores variable declarations
+        that have no assignment initializer value because all 
+        variables are implicitly assigned to undefined. But, 
+        type profiling needs an AST node to be generated for these 
+        empty variable declarations because it needs to be able to 
+        profile their text locations and to see that their type 
+        is undefined.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EmptyVarExpression::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createVarStatement):
+        (JSC::ASTBuilder::createEmptyVarExpression):
+        * parser/NodeConstructors.h:
+        (JSC::EmptyVarExpression::EmptyVarExpression):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createEmptyVarExpression):
+
 2014-08-18  Diego Pino Garcia  <dpino@igalia.com>
 
         Completed iterator can be revived by adding more than one new entry to the target object

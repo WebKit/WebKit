@@ -416,12 +416,14 @@ public:
     StatementNode* createVarStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
     {
         StatementNode* result;
-        if (!expr)
-            result = new (m_vm) EmptyStatementNode(location);
-        else
-            result = new (m_vm) VarStatementNode(location, expr);
+        result = new (m_vm) VarStatementNode(location, expr);
         result->setLoc(start, end, location.startOffset, location.lineStartOffset);
         return result;
+    }
+
+    ExpressionNode* createEmptyVarExpression(const JSTokenLocation& location, const Identifier& identifier)
+    {
+        return new (m_vm) EmptyVarExpression(location, identifier);
     }
 
     StatementNode* createReturnStatement(const JSTokenLocation& location, ExpressionNode* expression, const JSTextPosition& start, const JSTextPosition& end)

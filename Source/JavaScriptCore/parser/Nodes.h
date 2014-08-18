@@ -1212,6 +1212,17 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
+    class EmptyVarExpression : public ExpressionNode {
+    public:
+        EmptyVarExpression(const JSTokenLocation&, const Identifier&);
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        const Identifier& m_ident;
+    };
+
+
     class IfElseNode : public StatementNode {
     public:
         IfElseNode(const JSTokenLocation&, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock);
