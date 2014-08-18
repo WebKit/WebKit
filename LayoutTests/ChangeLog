@@ -1,3 +1,9 @@
+2014-08-18  Andy Estes  <aestes@apple.com>
+
+        Remove a test inadvertently landed in r172709.
+
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed-after-load.html: Removed.
+
 2014-08-18  Dirk Schulze  <krit@webkit.org>
 
         calc() doesn't work for SVG CSS properties
