@@ -1,3 +1,30 @@
+2014-08-18  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Implement CanvasRenderingContext2D direction attribute
+        https://bugs.webkit.org/show_bug.cgi?id=135878
+
+        Reviewed by Darin Adler.
+
+        The attribute, 'direction', represents the text directionality.
+        This is an important attribute for the bi-directional text within the CanvasRenderingContext2D.
+        The allowed set of values are 'rtl', 'ltr' and 'inherit'.
+
+        Specification URL: http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting.html#dom-context-2d-direction
+
+        Test: fast/canvas/canvas-direction.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::inheritedDirection):
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::State::operator=):
+        (WebCore::CanvasRenderingContext2D::direction):
+        (WebCore::CanvasRenderingContext2D::setDirection):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2014-08-18  Benjamin Poulain  <benjamin@webkit.org>
 
         The style is not updated correctly when the pseudo class :empty is applied on anything but the rightmost element

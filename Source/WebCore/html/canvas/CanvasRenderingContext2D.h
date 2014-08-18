@@ -38,6 +38,7 @@
 #include "ImageBuffer.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "TextDirection.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -211,6 +212,9 @@ public:
     String textBaseline() const;
     void setTextBaseline(const String&);
 
+    String direction() const;
+    void setDirection(const String&);
+
     void fillText(const String& text, float x, float y);
     void fillText(const String& text, float x, float y, float maxWidth);
     void strokeText(const String& text, float x, float y);
@@ -225,7 +229,7 @@ public:
 
 private:
     struct State : FontSelectorClient {
-        State();
+        explicit State(TextDirection = LTR);
         virtual ~State();
 
         State(const State&);
@@ -256,6 +260,7 @@ private:
         // Text state.
         TextAlign m_textAlign;
         TextBaseline m_textBaseline;
+        TextDirection m_direction;
 
         String m_unparsedFont;
         Font m_font;

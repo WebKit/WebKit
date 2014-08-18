@@ -104,6 +104,13 @@ private:
     CanvasRenderingContext2D* m_canvasContext;
 };
 
+static inline TextDirection inheritedDirection(HTMLCanvasElement& canvasElement)
+{
+    canvasElement.document().updateStyleIfNeeded();
+    RenderStyle* computedStyle = canvasElement.computedStyle();
+    return computedStyle ? computedStyle->direction() : LTR;
+}
+
 CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
     : CanvasRenderingContext(canvas)
     , m_stateStack(1)
@@ -113,6 +120,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
     , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
 #endif
 {
+    m_stateStack.first().m_direction = inheritedDirection(*canvas);
 #if !ENABLE(DASHBOARD_SUPPORT)
     ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
 #endif
@@ -154,12 +162,12 @@ void CanvasRenderingContext2D::reset()
 {
     unwindStateStack();
     m_stateStack.resize(1);
-    m_stateStack.first() = State();
+    m_stateStack.first() = State(inheritedDirection(*canvas()));
     m_path.clear();
     m_unrealizedSaveCount = 0;
 }
 
-CanvasRenderingContext2D::State::State()
+CanvasRenderingContext2D::State::State(TextDirection direction)
     : m_strokeStyle(Color::black)
     , m_fillStyle(Color::black)
     , m_lineWidth(1)
@@ -176,6 +184,7 @@ CanvasRenderingContext2D::State::State()
     , m_imageSmoothingEnabled(true)
     , m_textAlign(StartTextAlign)
     , m_textBaseline(AlphabeticTextBaseline)
+    , m_direction(direction)
     , m_unparsedFont(defaultFont)
     , m_realizedFont(false)
 {
@@ -203,6 +212,7 @@ CanvasRenderingContext2D::State::State(const State& other)
     , m_imageSmoothingEnabled(other.m_imageSmoothingEnabled)
     , m_textAlign(other.m_textAlign)
     , m_textBaseline(other.m_textBaseline)
+    , m_direction(other.m_direction)
     , m_unparsedFont(other.m_unparsedFont)
     , m_font(other.m_font)
     , m_realizedFont(other.m_realizedFont)
@@ -238,6 +248,7 @@ CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(cons
     m_imageSmoothingEnabled = other.m_imageSmoothingEnabled;
     m_textAlign = other.m_textAlign;
     m_textBaseline = other.m_textBaseline;
+    m_direction = other.m_direction;
     m_unparsedFont = other.m_unparsedFont;
     m_font = other.m_font;
     m_realizedFont = other.m_realizedFont;
@@ -2152,6 +2163,30 @@ void CanvasRenderingContext2D::setTextBaseline(const String& s)
     modifiableState().m_textBaseline = baseline;
 }
 
+String CanvasRenderingContext2D::direction() const
+{
+    return state().m_direction == RTL ? ASCIILiteral("rtl") : ASCIILiteral("ltr");
+}
+
+void CanvasRenderingContext2D::setDirection(const String& directionString)
+{
+    TextDirection direction;
+    if (directionString == "inherit")
+        direction = inheritedDirection(*canvas());
+    else if (directionString == "rtl")
+        direction = RTL;
+    else if (directionString == "ltr")
+        direction = LTR;
+    else
+        return;
+
+    if (state().m_direction == direction)
+        return;
+
+    realizeSaves();
+    modifiableState().m_direction = direction;
+}
+
 void CanvasRenderingContext2D::fillText(const String& text, float x, float y)
 {
     drawTextInternal(text, x, y, true);
@@ -2249,11 +2284,10 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     // FIXME: Need to turn off font smoothing.
 
     RenderStyle* computedStyle = canvas()->computedStyle();
-    TextDirection direction = computedStyle ? computedStyle->direction() : LTR;
-    bool isRTL = direction == RTL;
+    bool isRTL = state().m_direction == RTL;
     bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
 
-    TextRun textRun(normalizedText, 0, 0, TextRun::AllowTrailingExpansion, direction, override, true, TextRun::NoRounding);
+    TextRun textRun(normalizedText, 0, 0, TextRun::AllowTrailingExpansion, state().m_direction, override, true, TextRun::NoRounding);
     // Draw the item text at the correct point.
     FloatPoint location(x, y);
     switch (state().m_textBaseline) {
@@ -2274,7 +2308,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         break;
     }
 
-    float fontWidth = font.width(TextRun(normalizedText, 0, 0, TextRun::AllowTrailingExpansion, direction, override));
+    float fontWidth = font.width(TextRun(normalizedText, 0, 0, TextRun::AllowTrailingExpansion, state().m_direction, override));
 
     useMaxWidth = (useMaxWidth && maxWidth < fontWidth);
     float width = useMaxWidth ? maxWidth : fontWidth;

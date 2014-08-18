@@ -1,3 +1,13 @@
+2014-08-18  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Implement CanvasRenderingContext2D direction attribute
+        https://bugs.webkit.org/show_bug.cgi?id=135878
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/canvas-direction-expected.txt: Added.
+        * fast/canvas/canvas-direction.html: Added.
+
 2014-08-18  Benjamin Poulain  <benjamin@webkit.org>
 
         The style is not updated correctly when the pseudo class :empty is applied on anything but the rightmost element
