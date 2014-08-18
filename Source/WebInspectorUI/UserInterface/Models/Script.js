@@ -41,6 +41,8 @@ WebInspector.Script = function(id, range, url, injected, sourceMapURL)
 
     if (sourceMapURL)
         WebInspector.sourceMapManager.downloadSourceMap(sourceMapURL, this._url, this);
+
+    this._scriptSyntaxTree = null;
 };
 
 WebInspector.Script.TypeIdentifier = "script";
@@ -127,6 +129,32 @@ WebInspector.Script.prototype = {
         cookie[WebInspector.Script.DisplayNameCookieKey] = this.displayName;
     },
 
+    requestScriptSyntaxTree: function(callback)
+    {
+        if (this._scriptSyntaxTree) {
+            setTimeout(function() { callback(this._scriptSyntaxTree); }.bind(this), 0);
+            return;
+        }
+
+        var makeSyntaxTreeAndCallCallback = function(content)
+        {
+            this._makeSyntaxTree(content);
+            callback(this._scriptSyntaxTree);
+        }.bind(this);
+
+        var content = this.content;
+        if (!content && this._resource && this._resource.type === WebInspector.Resource.Type.Script && this._resource.finished)
+            content = this._resource.content;
+        if (content) {
+            setTimeout(makeSyntaxTreeAndCallCallback, 0, content);
+            return;
+        }
+
+        this.requestContent(function(error, sourceText) {
+            makeSyntaxTreeAndCallCallback(error ? null : sourceText);
+        });
+    },
+
     // Private
 
     _resolveResource: function()
@@ -174,6 +202,14 @@ WebInspector.Script.prototype = {
         }
 
         return null;
+    },
+
+    _makeSyntaxTree: function(sourceText) 
+    {
+        if (this._scriptSyntaxTree || !sourceText)
+            return;
+
+        this._scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(sourceText, this);
     }
 };
 

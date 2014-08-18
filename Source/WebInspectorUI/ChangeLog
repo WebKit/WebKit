@@ -1,3 +1,40 @@
+2014-08-18  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: Introduce an inspector Abstract Syntax Tree.
+        https://bugs.webkit.org/show_bug.cgi?id=135763
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch adds an Abstract Syntax Tree to the Web inspector. 
+        This syntax tree is modeled off the Esprima.js syntax tree
+        which complies with the Mozilla Parser API:
+        https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
+        Script is the owner of the Web Inspector syntax tree, and has an API
+        for accessing its syntax tree property.
+
+        * UserInterface/External/Esprima/esprima.js:
+        * UserInterface/Main.html:
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.requestScriptSyntaxTree.makeSyntaxTreeAndCallCallback):
+        (WebInspector.Script.prototype._resolveResource):
+        (WebInspector.Script.prototype._makeSyntaxTree):
+        * UserInterface/Models/ScriptSyntaxTree.js: Added.
+        (WebInspector.ScriptSyntaxTree):
+        (WebInspector.ScriptSyntaxTree.prototype.get parsedSuccessfully):
+        (WebInspector.ScriptSyntaxTree.prototype.forEachNode):
+        (WebInspector.ScriptSyntaxTree.prototype.):
+        (WebInspector.ScriptSyntaxTree.prototype.filter):
+        (WebInspector.ScriptSyntaxTree.prototype.filterForNodesInRange):
+        (WebInspector.ScriptSyntaxTree.prototype.filterByRange):
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement.removeFunctionsFilter):
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement):
+        (WebInspector.ScriptSyntaxTree.prototype.updateTypes):
+        (WebInspector.ScriptSyntaxTree.prototype._defaultParserState):
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._recurseArray):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+
 2014-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve performance of selection range changes viewing Scripts timeline
