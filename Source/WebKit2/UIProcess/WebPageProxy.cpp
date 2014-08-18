@@ -545,11 +545,16 @@ void WebPageProxy::reattachToWebProcess()
     ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     m_isValid = true;
+    m_process->removeWebPage(m_pageID);
 
     if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
         m_process = m_process->context().ensureSharedWebProcess();
     else
         m_process = m_process->context().createNewWebProcessRespectingProcessCountLimit();
+
+    ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
+    if (m_process->state() == ChildProcessProxy::State::Running)
+        processDidFinishLaunching();
     m_process->addExistingWebPage(this, m_pageID);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
@@ -579,7 +584,8 @@ uint64_t WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item
 
     if (item && item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
-    
+
+    ASSERT(!isValid());
     reattachToWebProcess();
 
     if (!item)
@@ -1860,6 +1866,10 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
 
 void WebPageProxy::terminateProcess()
 {
+    // requestTermination() is a no-op for launching processes, so we get into an inconsistent state by calling resetStateAfterProcessExited().
+    // FIXME: A client can terminate the page at any time, so we should do something more meaningful than assert and fall apart in release builds.
+    ASSERT(m_process->state() != WebProcessProxy::State::Launching);
+
     // NOTE: This uses a check of m_isValid rather than calling isValid() since
     // we want this to run even for pages being closed or that already closed.
     if (!m_isValid)
