@@ -1,3 +1,15 @@
+2014-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable Web Inspector in MiniBrowser WK2 windows
+        https://bugs.webkit.org/show_bug.cgi?id=136045
+
+        Reviewed by Tim Horton.
+        
+        Set the pref to enable developer extras for all WK2 windows.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+
 2014-08-18  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         master.cfg should handle special return codes of run-perf-tests

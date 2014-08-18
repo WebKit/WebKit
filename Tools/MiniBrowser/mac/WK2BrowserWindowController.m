@@ -53,6 +53,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
         configuration.preferences._fullScreenEnabled = YES;
+        configuration.preferences._developerExtrasEnabled = YES;
     }
     _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:configuration];
     [self didChangeSettings];
