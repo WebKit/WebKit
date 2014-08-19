@@ -1,3 +1,24 @@
+2014-08-19  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Remove obsolete run-javascriptcore-tests result parsing from master.cfg
+        https://bugs.webkit.org/show_bug.cgi?id=136039
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.commandComplete):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunJavaScriptCoreTestsTest.test_no_failure_new_output):
+        (RunJavaScriptCoreTestsTest.test_mozilla_failure_old_output):
+        (RunJavaScriptCoreTestsTest):
+        (RunJavaScriptCoreTestsTest.test_jsc_stress_failure_new_output):
+        (RunJavaScriptCoreTestsTest.test_mozilla_failure_new_output): Deleted.
+        (test_layout_failure_new_output): Deleted.
+        (test_layout_crash_new_output): Deleted.
+        (test_mozilla_and_layout_failure_new_output): Deleted.
+        (test_jsc_stress_failure_new_output): Deleted.
+        (test_js_crashes_and_jsc_stress_failures_new_output): Deleted.
+
 2014-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard should not request 50 revisions from trac each time
