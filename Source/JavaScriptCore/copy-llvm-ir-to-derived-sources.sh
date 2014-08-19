@@ -24,18 +24,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 OBJ_DIR=${TARGET_TEMP_DIR}/Objects-${CURRENT_VARIANT}
-RUNTIME_DERIVED_SOURCES_DIR=${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCoreRuntime
+RUNTIME_INSTALL_DIR=${BUILT_PRODUCTS_DIR}/${JAVASCRIPTCORE_RESOURCES_DIR}/Runtime
 
 shopt -s nullglob
 for arch in $ARCHS;
 do
     if [ -d "$OBJ_DIR/$arch" ];
     then
-        mkdir -p "$RUNTIME_DERIVED_SOURCES_DIR/$arch"
+        mkdir -p "$RUNTIME_INSTALL_DIR/$arch"
+
         for file in "$OBJ_DIR/$arch"/*.o;
         do
             file_name=${file##*/}
-            cp "$file" "$RUNTIME_DERIVED_SOURCES_DIR/$arch/${file_name%.o}.bc"
+            cp "$file" "$RUNTIME_INSTALL_DIR/$arch/${file_name%.o}.bc"
         done
+        ${SRCROOT}/build-symbol-table-index.py $arch
     fi
 done

@@ -57,22 +57,22 @@ namespace JSC {
 @end
 */
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState*);
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState*);
 
 }
 
@@ -208,84 +208,88 @@ EncodedJSValue setData(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState* exec)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-prototypes"
+
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt8(ExecState* exec)
 {
     return getData<Int8Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt16(ExecState* exec)
 {
     return getData<Int16Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetInt32(ExecState* exec)
 {
     return getData<Int32Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint8(ExecState* exec)
 {
     return getData<Uint8Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint16(ExecState* exec)
 {
     return getData<Uint16Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetUint32(ExecState* exec)
 {
     return getData<Uint32Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat32(ExecState* exec)
 {
     return getData<Float32Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncGetFloat64(ExecState* exec)
 {
     return getData<Float64Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt8(ExecState* exec)
 {
     return setData<Int8Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt16(ExecState* exec)
 {
     return setData<Int16Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetInt32(ExecState* exec)
 {
     return setData<Int32Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint8(ExecState* exec)
 {
     return setData<Uint8Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint16(ExecState* exec)
 {
     return setData<Uint16Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetUint32(ExecState* exec)
 {
     return setData<Uint32Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat32(ExecState* exec)
 {
     return setData<Float32Adaptor>(exec);
 }
 
-static EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dataViewProtoFuncSetFloat64(ExecState* exec)
 {
     return setData<Float64Adaptor>(exec);
 }
+#pragma clang diagnostic pop
 
 } // namespace JSC

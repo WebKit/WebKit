@@ -45,8 +45,8 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSONObject);
 
-static EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);
-static EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
+EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);
+EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
 
 }
 

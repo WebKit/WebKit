@@ -196,6 +196,50 @@
         (JSC::JSString::setIs8Bit):
         (JSC::JSString::toExistingAtomicString):
 
+2014-08-18  Matthew Mirman  <mmirman@apple.com>
+
+        Merges the two native inlining passes from the build.
+        Also adds the AvailableExternallyLinkage assertion to linked 
+        functions to allow unused and duplicate ones to be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=135526
+
+        Reviewed by Filip Pizlo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: 
+        Removed second generation of llvm binary files.
+        Fixed the flags on the first pass. 
+        * build-symbol-table-index.py: Modified some paths.
+        * build-symbol-table-index.sh: Removed.
+        * copy-llvm-ir-to-derived-sources.sh: Now calls build-symbol-table-index directly.
+        * ftl/FTLLowerDFGToLLVM.cpp: Added LLVMAvailableExternallyLinkage assertion.
+        (JSC::FTL::LowerDFGToLLVM::getModuleByPathForSymbol): 
+        * runtime/ArrayPrototype.cpp: Removed static declarations. 
+        * runtime/DateConstructor.cpp: ditto.
+        (JSC::dateParse):
+        (JSC::dateNow):
+        (JSC::dateUTC):
+        * runtime/DatePrototype.cpp: ditto.
+        * runtime/JSDataViewPrototype.cpp: ditto on both.
+        (JSC::dataViewProtoFuncGetInt8):
+        (JSC::dataViewProtoFuncGetInt16):
+        (JSC::dataViewProtoFuncGetInt32):
+        (JSC::dataViewProtoFuncGetUint8):
+        (JSC::dataViewProtoFuncGetUint16):
+        (JSC::dataViewProtoFuncGetUint32):
+        (JSC::dataViewProtoFuncGetFloat32):
+        (JSC::dataViewProtoFuncGetFloat64):
+        (JSC::dataViewProtoFuncSetInt8):
+        (JSC::dataViewProtoFuncSetInt16):
+        (JSC::dataViewProtoFuncSetInt32):
+        (JSC::dataViewProtoFuncSetUint8):
+        (JSC::dataViewProtoFuncSetUint16):
+        (JSC::dataViewProtoFuncSetUint32):
+        (JSC::dataViewProtoFuncSetFloat32):
+        (JSC::dataViewProtoFuncSetFloat64):
+        * runtime/JSONObject.cpp: ditto.
+        * runtime/ObjectConstructor.cpp: ditto.
+        * runtime/StringPrototype.cpp: ditto.
+
 2014-08-18  Saam Barati  <sbarati@apple.com>
 
         The parser should generate AST nodes the var declarations with no initializers

@@ -56,9 +56,9 @@ using namespace WTF;
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
-static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
+EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
+EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
+EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
 
 }
 
@@ -200,12 +200,12 @@ CallType DateConstructor::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-static EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
 {
     return JSValue::encode(jsNumber(parseDate(exec->vm(), exec->argument(0).toString(exec)->value(exec))));
 }
 
-static EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
 {
 #if !ENABLE(WEB_REPLAY)
     UNUSED_PARAM(exec);
@@ -214,7 +214,7 @@ static EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
     return JSValue::encode(jsNumber(NORMAL_OR_DETERMINISTIC_FUNCTION(jsCurrentTime(), deterministicCurrentTime(exec->lexicalGlobalObject()))));
 }
 
-static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec) 
+EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec) 
 {
     double doubleArguments[7] = {
         exec->argument(0).toNumber(exec), 

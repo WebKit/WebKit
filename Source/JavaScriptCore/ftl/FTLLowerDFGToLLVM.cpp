@@ -4444,6 +4444,7 @@ private:
                 setVisibility(function, LLVMHiddenVisibility);
             if (!isDeclaration(function)) {
                 setLinkage(function, LLVMPrivateLinkage);
+                setLinkage(function, LLVMAvailableExternallyLinkage);
 
                 if (ASSERT_DISABLED)
                     removeFunctionAttr(function, LLVMStackProtectAttribute);

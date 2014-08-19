@@ -44,25 +44,25 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncKeys(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayProtoFuncEntries(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncValues(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncKeys(ExecState*);
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncEntries(ExecState*);
 
 }
 

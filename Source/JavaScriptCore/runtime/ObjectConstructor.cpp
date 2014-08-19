@@ -37,19 +37,19 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState*);
-static EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState*);
+EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState*);
 
 }
 
