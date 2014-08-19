@@ -167,3 +167,5 @@ webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-017.html [ ImageOnly
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-018.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-019.html [ ImageOnlyFailure ]
 
+[ Debug ] css3/shapes/shape-outside/values/shape-image-threshold-001.html [ Crash ]
+

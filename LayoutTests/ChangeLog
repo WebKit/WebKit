@@ -1,3 +1,11 @@
+2014-08-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mark shape-image-threshold-001.html as crashing in debug
+
+        * TestExpectations:
+        The test css3/shapes/shape-outside/values/shape-image-threshold-001.html systematically assert
+        in debug. Skip the results until the author investigate.
+
 2014-08-18  Rebecca Hauck  <rhauck@adobe.com>
 
         [CSS Shapes] Import the CSS Shapes W3C test suite
