@@ -1708,7 +1708,7 @@ public:
 #endif
 
     StyleDifference diff(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
-    bool diffRequiresRepaint(const RenderStyle*) const;
+    bool diffRequiresLayerRepaint(const RenderStyle&, bool isComposited) const;
 
     bool isDisplayReplacedType() const { return isDisplayReplacedType(display()); }
     bool isDisplayInlineType() const { return isDisplayInlineType(display()); }

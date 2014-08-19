@@ -1,5 +1,35 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172656. <rdar://problem/17961698>
+
+    2014-08-15  Zalan Bujtas  <zalan@apple.com>
+    
+            REGRESSION: Parts of the route/route options windows are invisible at maps.google.com
+            https://bugs.webkit.org/show_bug.cgi?id=135977
+            <rdar://problem/17961698>
+    
+            Reviewed by Andreas Kling.
+    
+            When the style change requires both layout and repaint, the style diff is set to
+            'layout is needed' (and masks the repaint change) as normally layout is followed by a repaint.
+            However, in compositing context, layout may not be followed by repaint, so when the style diff
+            indicates layout, we need to figure out whether it implies repaint too.
+            This logic should eventually be moved from RenderElement to RenderLayerModelObject/RenderLayer.
+            -tracked here: webkit.org/b/135990
+    
+            Test: compositing/cliprect-and-position-change-on-compositing-layer.html
+    
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::setNeedsPositionedMovementLayout):
+            * rendering/style/RenderStyle.cpp:
+            (WebCore::RenderStyle::changeRequiresLayerRepaint):
+            (WebCore::RenderStyle::diffRequiresLayerRepaint):
+            (WebCore::RenderStyle::diffRequiresRepaint): Deleted.
+            * rendering/style/RenderStyle.h:
+            * rendering/style/RenderStyleConstants.h:
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172603
 
     2014-08-14  Martin Hock  <mhock@apple.com>

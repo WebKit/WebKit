@@ -678,9 +678,10 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned&
         return true;
 
     if (position() != StaticPosition) {
-        if (visual->clip != other->visual->clip
-            || visual->hasClip != other->visual->hasClip)
+        if (visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip) {
+            changedContextSensitiveProperties |= ContextSensitivePropertyClipRect;
             return true;
+        }
     }
 
 #if ENABLE(CSS_COMPOSITING)
@@ -809,10 +810,17 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     return StyleDifferenceEqual;
 }
 
-bool RenderStyle::diffRequiresRepaint(const RenderStyle* style) const
+bool RenderStyle::diffRequiresLayerRepaint(const RenderStyle& style, bool isComposited) const
 {
     unsigned changedContextSensitiveProperties = 0;
-    return changeRequiresRepaint(style, changedContextSensitiveProperties);
+
+    if (changeRequiresRepaint(&style, changedContextSensitiveProperties))
+        return true;
+
+    if (isComposited && changeRequiresLayerRepaint(&style, changedContextSensitiveProperties))
+        return changedContextSensitiveProperties & ContextSensitivePropertyClipRect;
+
+    return false;
 }
 
 void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)

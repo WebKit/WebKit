@@ -1028,7 +1028,7 @@ void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle
     setNeedsPositionedMovementLayoutBit(true);
     markContainingBlocksForLayout();
     if (hasLayer()) {
-        if (oldStyle && style().diffRequiresRepaint(oldStyle))
+        if (oldStyle && style().diffRequiresLayerRepaint(*oldStyle, toRenderLayerModelObject(this)->layer()->isComposited()))
             setLayerNeedsFullRepaint();
         else
             setLayerNeedsFullRepaintForPositionedMovementLayout();
