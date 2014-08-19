@@ -1,5 +1,24 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172727. <rdar://problem/18051847>
+
+    2014-08-18  Andreas Kling  <akling@apple.com>
+    
+            REGRESSION(r168256): JSString can get 8-bit flag wrong when re-using AtomicStrings.
+            <https://webkit.org/b/133574>
+            <rdar://problem/18051847>
+    
+            Add a tests that creates a 16-bit AtomicString with only 8-bit characters,
+            then tiers up into baseline JIT and uses that string as part of a rope-within-a-rope
+            and serializes that rope to get an incorrect concatenation.
+    
+            Reviewed by Darin Adler.
+    
+            * js/dopey-rope-with-16-bit-propertyname-expected.txt: Added.
+            * js/dopey-rope-with-16-bit-propertyname.html: Added.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172709. <rdar://problem/17850158>
 
     2014-08-18  Andy Estes  <aestes@apple.com>

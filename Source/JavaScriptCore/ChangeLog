@@ -1,3 +1,37 @@
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172727. <rdar://problem/18051847>
+
+    2014-08-18  Andreas Kling  <akling@apple.com>
+    
+            REGRESSION(r168256): JSString can get 8-bit flag wrong when re-using AtomicStrings.
+            <https://webkit.org/b/133574>
+            <rdar://problem/18051847>
+    
+            The optimization that resolves JSRopeStrings into an existing
+            AtomicString (to save time and memory by avoiding StringImpl allocation)
+            had a bug that it wasn't copying the 8-bit flag from the AtomicString.
+    
+            This could lead to a situation where a 16-bit StringImpl containing
+            only 8-bit characters is sitting in the AtomicString table, is found
+            by the rope resolution optimization, and gives you a rope that thinks
+            it's all 8-bit, but has a fiber with 16-bit characters.
+    
+            Resolving that rope will then yield incorrect results.
+    
+            This was all caught by an assertion, but very hard to reproduce.
+    
+            Test: js/dopey-rope-with-16-bit-propertyname.html
+    
+            Reviewed by Darin Adler.
+    
+            * runtime/JSString.cpp:
+            (JSC::JSRopeString::resolveRopeToAtomicString):
+            (JSC::JSRopeString::resolveRopeToExistingAtomicString):
+            * runtime/JSString.h:
+            (JSC::JSString::setIs8Bit):
+            (JSC::JSString::toExistingAtomicString):
+    
 2014-08-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172397

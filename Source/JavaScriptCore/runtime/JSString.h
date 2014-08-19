@@ -187,7 +187,7 @@ namespace JSC {
             
         bool isRope() const { return m_value.isNull(); }
         bool is8Bit() const { return m_flags & Is8Bit; }
-        void setIs8Bit(bool flag)
+        void setIs8Bit(bool flag) const
         {
             if (flag)
                 m_flags |= Is8Bit;
@@ -201,7 +201,7 @@ namespace JSC {
         bool tryHashConsLock();
         void releaseHashConsLock();
 
-        unsigned m_flags;
+        mutable unsigned m_flags;
             
         // A string is represented either by a String or a rope of fibers.
         unsigned m_length;
@@ -408,6 +408,7 @@ namespace JSC {
             return static_cast<AtomicStringImpl*>(m_value.impl());
         if (AtomicStringImpl* existingAtomicString = AtomicString::find(m_value.impl())) {
             m_value = *existingAtomicString;
+            setIs8Bit(m_value.impl()->is8Bit());
             return existingAtomicString;
         }
         return nullptr;
