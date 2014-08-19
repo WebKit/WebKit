@@ -218,6 +218,7 @@ void PageOverlayController::didScrollFrame(Frame* frame)
     for (auto& overlayAndLayer : m_overlayGraphicsLayers) {
         if (overlayAndLayer.key->overlayType() == PageOverlay::OverlayType::View || !frame->isMainFrame())
             overlayAndLayer.value->setNeedsDisplay();
+        overlayAndLayer.key->didScrollFrame(frame);
     }
 }
 

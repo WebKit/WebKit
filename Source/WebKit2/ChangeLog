@@ -1,5 +1,52 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172636. <rdar://problem/17957716>
+
+    2014-08-15  Tim Horton  <timothy_horton@apple.com>
+    
+            Service overlays stay fixed when <iframe> scrolls
+            https://bugs.webkit.org/show_bug.cgi?id=135959
+            <rdar://problem/17957716>
+    
+            Reviewed by Enrica Casucci.
+    
+            * WebProcess/WebPage/PageOverlay.cpp:
+            (WebKit::PageOverlay::didScrollFrame):
+            * WebProcess/WebPage/PageOverlay.h:
+            (WebKit::PageOverlay::Client::didScrollFrame):
+            * WebProcess/WebPage/PageOverlayController.cpp:
+            (WebKit::PageOverlayController::didScrollFrame):
+            Push didScrollFrame down to the overlays.
+    
+            * WebProcess/WebPage/ServicesOverlayController.h:
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::Highlight::createForSelection):
+            Hold on to the selection's Range so we can use it to compare Highlights later.
+    
+            (WebKit::ServicesOverlayController::Highlight::Highlight):
+            (WebKit::ServicesOverlayController::Highlight::setDDHighlight):
+            Factor the code to set up and paint the highlight out, so that we can
+            set a new DDHighlightRef on a Highlight and the layer moves/reshapes/repaints.
+    
+            (WebKit::ServicesOverlayController::buildPhoneNumberHighlights):
+            (WebKit::ServicesOverlayController::buildSelectionHighlight):
+            (WebKit::ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighlights):
+            Factor replaceHighlightsOfTypePreservingEquivalentHighlights out
+            so that we can use it for buildSelectionHighlight as well.
+    
+            Steal the DDHighlightRef from the new Highlight when re-using an old one
+            so that the newly computed rects are used instead of the old ones.
+    
+            (WebKit::ServicesOverlayController::highlightsAreEquivalent):
+            We will always have a Range now, so we can always check equivalence using it.
+    
+            (WebKit::ServicesOverlayController::didScrollFrame):
+            Rebuild all highlights upon subframe scroll, as they might have moved.
+            We could optimize this in the future, but for now it's cheap enough
+            and rare enough that it doesn't matter.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172635. <rdar://problem/18006149>
 
     2014-08-15  Tim Horton  <timothy_horton@apple.com>
