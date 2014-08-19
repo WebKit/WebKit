@@ -33,12 +33,12 @@ end
 # These declarations must match interpreter/JSStack.h.
 
 if JSVALUE64
-const PtrSize = 8
-const CallFrameHeaderSlots = 6
+    const PtrSize = 8
+    const CallFrameHeaderSlots = 6
 else
-const PtrSize = 4
-const CallFrameHeaderSlots = 5
-const CallFrameAlignSlots = 1
+    const PtrSize = 4
+    const CallFrameHeaderSlots = 5
+    const CallFrameAlignSlots = 1
 end
 const SlotSize = 8
 
@@ -58,37 +58,37 @@ const CallFrameHeaderSize = ThisArgumentOffset
 
 # Some value representation constants.
 if JSVALUE64
-const TagBitTypeOther = 0x2
-const TagBitBool      = 0x4
-const TagBitUndefined = 0x8
-const ValueEmpty      = 0x0
-const ValueFalse      = TagBitTypeOther | TagBitBool
-const ValueTrue       = TagBitTypeOther | TagBitBool | 1
-const ValueUndefined  = TagBitTypeOther | TagBitUndefined
-const ValueNull       = TagBitTypeOther
+    const TagBitTypeOther = 0x2
+    const TagBitBool      = 0x4
+    const TagBitUndefined = 0x8
+    const ValueEmpty      = 0x0
+    const ValueFalse      = TagBitTypeOther | TagBitBool
+    const ValueTrue       = TagBitTypeOther | TagBitBool | 1
+    const ValueUndefined  = TagBitTypeOther | TagBitUndefined
+    const ValueNull       = TagBitTypeOther
 else
-const Int32Tag = -1
-const BooleanTag = -2
-const NullTag = -3
-const UndefinedTag = -4
-const CellTag = -5
-const EmptyValueTag = -6
-const DeletedValueTag = -7
-const LowestTag = DeletedValueTag
+    const Int32Tag = -1
+    const BooleanTag = -2
+    const NullTag = -3
+    const UndefinedTag = -4
+    const CellTag = -5
+    const EmptyValueTag = -6
+    const DeletedValueTag = -7
+    const LowestTag = DeletedValueTag
 end
 
 const CallOpCodeSize = 9
 
 if X86_64 or ARM64 or C_LOOP
-const maxFrameExtentForSlowPathCall = 0
+    const maxFrameExtentForSlowPathCall = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7 or SH4
-const maxFrameExtentForSlowPathCall = 24
+    const maxFrameExtentForSlowPathCall = 24
 elsif X86 or X86_WIN
-const maxFrameExtentForSlowPathCall = 40
+    const maxFrameExtentForSlowPathCall = 40
 elsif MIPS
-const maxFrameExtentForSlowPathCall = 40
+    const maxFrameExtentForSlowPathCall = 40
 elsif X86_64_WIN
-const maxFrameExtentForSlowPathCall = 64
+    const maxFrameExtentForSlowPathCall = 64
 end
 
 # Watchpoint states
@@ -568,34 +568,33 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         addp maxFrameExtentForSlowPathCall, sp
     end
     codeBlockGetter(t1)
-if C_LOOP
-else
-    baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
-    if JSVALUE64
-        cCall2(osrSlowPath, cfr, PC)
-    else
-        # We are after the function prologue, but before we have set up sp from the CodeBlock.
-        # Temporarily align stack pointer for this call.
-        subp 8, sp
-        cCall2(osrSlowPath, cfr, PC)
-        addp 8, sp
+    if not C_LOOP
+        baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
+        if JSVALUE64
+            cCall2(osrSlowPath, cfr, PC)
+        else
+            # We are after the function prologue, but before we have set up sp from the CodeBlock.
+            # Temporarily align stack pointer for this call.
+            subp 8, sp
+            cCall2(osrSlowPath, cfr, PC)
+            addp 8, sp
+        end
+        btpz t0, .recover
+        move cfr, sp # restore the previous sp
+        # pop the callerFrame since we will jump to a function that wants to save it
+        if ARM64
+            pop lr, cfr
+        elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+            pop cfr
+            pop lr
+        else
+            pop cfr
+        end
+        jmp t0
+    .recover:
+        codeBlockGetter(t1)
+    .continue:
     end
-    btpz t0, .recover
-    move cfr, sp # restore the previous sp
-    # pop the callerFrame since we will jump to a function that wants to save it
-    if ARM64
-        pop lr, cfr
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
-        pop cfr
-        pop lr
-    else
-        pop cfr
-    end
-    jmp t0
-.recover:
-    codeBlockGetter(t1)
-.continue:
-end
 
     codeBlockSetter(t1)
     
@@ -690,121 +689,117 @@ end
 # EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
 
 if C_LOOP
-_llint_vm_entry_to_javascript:
+    _llint_vm_entry_to_javascript:
 else
-global _vmEntryToJavaScript
-_vmEntryToJavaScript:
+    global _vmEntryToJavaScript
+    _vmEntryToJavaScript:
 end
     doVMEntry(makeJavaScriptCall)
 
 
 if C_LOOP
-_llint_vm_entry_to_native:
+    _llint_vm_entry_to_native:
 else
-global _vmEntryToNative
-_vmEntryToNative:
+    global _vmEntryToNative
+    _vmEntryToNative:
 end
     doVMEntry(makeHostFunctionCall)
 
 
-if C_LOOP
-else
-# void sanitizeStackForVMImpl(VM* vm)
-global _sanitizeStackForVMImpl
-_sanitizeStackForVMImpl:
-    if X86_64
-        const vm = t4
-        const address = t1
-        const zeroValue = t0
-    elsif X86_64_WIN
-        const vm = t2
-        const address = t1
-        const zeroValue = t0
-    elsif X86 or X86_WIN
-        const vm = t2
-        const address = t1
-        const zeroValue = t0
-    else
-        const vm = a0
-        const address = t1
-        const zeroValue = t2
-    end
-
-    if X86 or X86_WIN
-        loadp 4[sp], vm
-    end
-
-    loadp VM::m_lastStackTop[vm], address
-    bpbeq sp, address, .zeroFillDone
-
-    move 0, zeroValue
-.zeroFillLoop:
-    storep zeroValue, [address]
-    addp PtrSize, address
-    bpa sp, address, .zeroFillLoop
-
-.zeroFillDone:
-    move sp, address
-    storep address, VM::m_lastStackTop[vm]
-    ret
-
-if C_LOOP
-else
-# VMEntryRecord* vmEntryRecord(const VMEntryFrame* entryFrame)
-global _vmEntryRecord
-_vmEntryRecord:
-    if X86_64
-        const entryFrame = t4
-        const result = t0
-    elsif X86 or X86_WIN
-        const entryFrame = t2
-        const result = t0
-    else
-        const entryFrame = a0
-        const result = t0
-    end
-
-    if X86 or X86_WIN
-        loadp 4[sp], entryFrame
-    end
-
-    vmEntryRecord(entryFrame, result)
-    ret
-end
+if not C_LOOP
+    # void sanitizeStackForVMImpl(VM* vm)
+    global _sanitizeStackForVMImpl
+    _sanitizeStackForVMImpl:
+        if X86_64
+            const vm = t4
+            const address = t1
+            const zeroValue = t0
+        elsif X86_64_WIN
+            const vm = t2
+            const address = t1
+            const zeroValue = t0
+        elsif X86 or X86_WIN
+            const vm = t2
+            const address = t1
+            const zeroValue = t0
+        else
+            const vm = a0
+            const address = t1
+            const zeroValue = t2
+        end
+    
+        if X86 or X86_WIN
+            loadp 4[sp], vm
+        end
+    
+        loadp VM::m_lastStackTop[vm], address
+        bpbeq sp, address, .zeroFillDone
+    
+        move 0, zeroValue
+    .zeroFillLoop:
+        storep zeroValue, [address]
+        addp PtrSize, address
+        bpa sp, address, .zeroFillLoop
+    
+    .zeroFillDone:
+        move sp, address
+        storep address, VM::m_lastStackTop[vm]
+        ret
+    
+    # VMEntryRecord* vmEntryRecord(const VMEntryFrame* entryFrame)
+    global _vmEntryRecord
+    _vmEntryRecord:
+        if X86_64
+            const entryFrame = t4
+            const result = t0
+        elsif X86 or X86_WIN
+            const entryFrame = t2
+            const result = t0
+        else
+            const entryFrame = a0
+            const result = t0
+        end
+    
+        if X86 or X86_WIN
+            loadp 4[sp], entryFrame
+        end
+    
+        vmEntryRecord(entryFrame, result)
+        ret
 end
 
 if C_LOOP
-# Dummy entry point the C Loop uses to initialize.
-_llint_entry:
-    crash()
-else
-macro initPCRelative(pcBase)
-    if X86_64 or X86_64_WIN
-        call _relativePCBase
-    _relativePCBase:
-        pop pcBase
-    elsif X86 or X86_WIN
-        call _relativePCBase
-    _relativePCBase:
-        pop pcBase
-        loadp 20[sp], t4
-    elsif ARM64
-    elsif ARMv7
-    _relativePCBase:
-        move pc, pcBase
-        subp 3, pcBase   # Need to back up the PC and set the Thumb2 bit
-    elsif ARM or ARMv7_TRADITIONAL
-    _relativePCBase:
-        move pc, pcBase
-        subp 8, pcBase
-    elsif MIPS
-        crash()  # Need to replace with any initialization steps needed to step up PC relative address calculation
-    elsif SH4
-        mova _relativePCBase, t0
-        move t0, pcBase
-        alignformova
-    _relativePCBase:
-    end
+    # Dummy entry point the C Loop uses to initialize.
+    _llint_entry:
+        crash()
+    else
+    macro initPCRelative(pcBase)
+        if X86_64 or X86_64_WIN
+            call _relativePCBase
+        _relativePCBase:
+            pop pcBase
+        elsif X86 or X86_WIN
+            call _relativePCBase
+        _relativePCBase:
+            pop pcBase
+            loadp 20[sp], t4
+        elsif ARM64
+        elsif ARMv7
+        _relativePCBase:
+            move pc, pcBase
+            subp 3, pcBase   # Need to back up the PC and set the Thumb2 bit
+        elsif ARM or ARMv7_TRADITIONAL
+        _relativePCBase:
+            move pc, pcBase
+            subp 8, pcBase
+        elsif MIPS
+            crash()  # Need to replace with any initialization steps needed to step up PC relative address calculation
+        elsif SH4
+            mova _relativePCBase, t0
+            move t0, pcBase
+            alignformova
+        _relativePCBase:
+        end
 end
 
 macro setEntryAddress(index, label)
