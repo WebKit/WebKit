@@ -33,25 +33,24 @@ namespace WebCore {
 
 class RenderObject;
 
-// Values for vertical alignment.
-const int PositionUndefined = 0x80000000;
-
 class VerticalPositionCache {
     WTF_MAKE_NONCOPYABLE(VerticalPositionCache);
 public:
     VerticalPositionCache()
     { }
     
-    int get(RenderObject* renderer, FontBaseline baselineType) const
+    bool get(RenderObject* renderer, FontBaseline baselineType, LayoutUnit& result) const
     {
-        const HashMap<RenderObject*, int>& mapToCheck = baselineType == AlphabeticBaseline ? m_alphabeticPositions : m_ideographicPositions;
-        const HashMap<RenderObject*, int>::const_iterator it = mapToCheck.find(renderer);
+        const HashMap<RenderObject*, LayoutUnit>& mapToCheck = baselineType == AlphabeticBaseline ? m_alphabeticPositions : m_ideographicPositions;
+        const HashMap<RenderObject*, LayoutUnit>::const_iterator it = mapToCheck.find(renderer);
         if (it == mapToCheck.end())
-            return PositionUndefined;
-        return it->value;
+            return false;
+
+        result = it->value;
+        return true;
     }
     
-    void set(RenderObject* renderer, FontBaseline baselineType, int position)
+    void set(RenderObject* renderer, FontBaseline baselineType, LayoutUnit position)
     {
         if (baselineType == AlphabeticBaseline)
             m_alphabeticPositions.set(renderer, position);
@@ -60,8 +59,8 @@ public:
     }
 
 private:
-    HashMap<RenderObject*, int> m_alphabeticPositions;
-    HashMap<RenderObject*, int> m_ideographicPositions;
+    HashMap<RenderObject*, LayoutUnit> m_alphabeticPositions;
+    HashMap<RenderObject*, LayoutUnit> m_ideographicPositions;
 };
 
 } // namespace WebCore
