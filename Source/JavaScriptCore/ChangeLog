@@ -1,3 +1,14 @@
+2014-08-18  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: build fix for non-Mac builds after r172737.
+        https://bugs.webkit.org/show_bug.cgi?id=135750
+
+        Not reviewed.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2014-08-18  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r172129): ftlopt branch merge made performance tests flakey crash

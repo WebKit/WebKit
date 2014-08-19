@@ -452,6 +452,7 @@
     <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStrengthReductionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStructureAbstractValue.cpp" />
+    <ClCompile Include="..\dfg\DFGStructureRegistrationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGThreadData.cpp" />
     <ClCompile Include="..\dfg\DFGThunks.cpp" />
     <ClCompile Include="..\dfg\DFGTierUpCheckInjectionPhase.cpp" />
@@ -470,7 +471,6 @@
     <ClCompile Include="..\dfg\DFGVariableEventStream.cpp" />
     <ClCompile Include="..\dfg\DFGVirtualRegisterAllocationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGWatchpointCollectionPhase.cpp" />
-    <ClCompile Include="..\dfg\DFGWatchableStructureWatchingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGWorklist.cpp" />
     <ClCompile Include="..\disassembler\Disassembler.cpp" />
     <ClCompile Include="..\disassembler\LLVMDisassembler.cpp" />
@@ -1093,6 +1093,7 @@
     <ClInclude Include="..\dfg\DFGStrengthReductionPhase.h" />
     <ClInclude Include="..\dfg\DFGStructureAbstractValue.h" />
     <ClInclude Include="..\dfg\DFGStructureClobberState.h" />
+    <ClInclude Include="..\dfg\DFGStructureRegistrationPhase.h" />
     <ClInclude Include="..\dfg\DFGThreadData.h" />
     <ClInclude Include="..\dfg\DFGThunks.h" />
     <ClInclude Include="..\dfg\DFGTierUpCheckInjectionPhase.h" />
@@ -1112,7 +1113,6 @@
     <ClInclude Include="..\dfg\DFGVariableEventStream.h" />
     <ClInclude Include="..\dfg\DFGVariadicFunction.h" />
     <ClInclude Include="..\dfg\DFGVirtualRegisterAllocationPhase.h" />
-    <ClInclude Include="..\dfg\DFGWatchableStructureWatchingPhase.h" />
     <ClInclude Include="..\dfg\DFGWatchpointCollectionPhase.h" />
     <ClInclude Include="..\dfg\DFGWorklist.h" />
     <ClInclude Include="..\disassembler\Disassembler.h" />

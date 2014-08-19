@@ -206,6 +206,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGStoreBarrierElisionPhase.cpp
     dfg/DFGStrengthReductionPhase.cpp
     dfg/DFGStructureAbstractValue.cpp
+    dfg/DFGStructureRegistrationPhase.cpp
     dfg/DFGThreadData.cpp
     dfg/DFGThunks.cpp
     dfg/DFGTierUpCheckInjectionPhase.cpp
@@ -221,7 +222,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGVariableEvent.cpp
     dfg/DFGVariableEventStream.cpp
     dfg/DFGVirtualRegisterAllocationPhase.cpp
-    dfg/DFGWatchableStructureWatchingPhase.cpp
     dfg/DFGWatchpointCollectionPhase.cpp
     dfg/DFGWorklist.cpp
 
