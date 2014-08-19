@@ -1,3 +1,62 @@
+2014-08-19  Zalan Bujtas  <zalan@apple.com>
+
+        Remove ENABLE(SUBPIXEL_LAYOUT).
+        https://bugs.webkit.org/show_bug.cgi?id=136077
+
+        Reviewed by Simon Fraser.
+
+        Remove compile time flag SUBPIXEL_LAYOUT. All ports have it enabled for a while now.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        * dom/Element.cpp:
+        (WebCore::adjustForLocalZoom):
+        (WebCore::Element::offsetWidth):
+        (WebCore::Element::offsetHeight):
+        (WebCore::Element::clientLeft):
+        (WebCore::Element::clientTop):
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::LayoutUnit):
+        (WebCore::LayoutUnit::ceilToFloat):
+        (WebCore::LayoutUnit::ceil):
+        (WebCore::LayoutUnit::round):
+        (WebCore::LayoutUnit::floor):
+        (WebCore::boundedMultiply):
+        (WebCore::operator*):
+        (WebCore::operator/):
+        (WebCore::intMod):
+        (WebCore::operator%):
+        (WebCore::roundedLayoutUnit):
+        (WebCore::ceiledLayoutUnit):
+        (WebCore::LayoutUnit::toInt): Deleted.
+        (WebCore::LayoutUnit::toFloat): Deleted.
+        (WebCore::LayoutUnit::toDouble): Deleted.
+        (WebCore::LayoutUnit::epsilon): Deleted.
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::roundedForPainting):
+        (WebCore::flooredForPainting):
+        (WebCore::ceiledForPainting):
+        (WebCore::roundedLayoutPoint):
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::enclosingLayoutRect):
+        * platform/graphics/LayoutRect.h:
+        (WebCore::pixelSnappedIntRect):
+        (WebCore::pixelSnappedForPainting):
+        * platform/graphics/LayoutSize.h:
+        (WebCore::roundedLayoutSize):
+        (WebCore::flooredForPainting):
+        * rendering/RenderBlock.cpp:
+        (WebCore::adjustFloatForSubPixelLayout):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        * rendering/RenderElement.h:
+        (WebCore::adjustLayoutUnitForAbsoluteZoom):
+        * rendering/style/RenderStyle.h:
+        (WebCore::adjustLayoutUnitForAbsoluteZoom):
+
 2014-08-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] A few calc() test failures in the shape-image-threshold parsing tests

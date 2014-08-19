@@ -377,12 +377,10 @@ inline int adjustForAbsoluteZoom(int value, const RenderElement& renderer)
     return adjustForAbsoluteZoom(value, renderer.style());
 }
 
-#if ENABLE(SUBPIXEL_LAYOUT)
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderElement& renderer)
 {
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
 }
-#endif
 
 } // namespace WebCore
 

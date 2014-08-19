@@ -186,43 +186,22 @@ inline IntSize pixelSnappedIntSize(const LayoutSize& s, const LayoutPoint& p)
 
 inline FloatPoint roundedForPainting(const LayoutPoint& point, float pixelSnappingFactor, bool directionalRoundingToRight = true, bool directionalRoundingToBottom = true)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return FloatPoint(roundToDevicePixel(point.x(), pixelSnappingFactor, !directionalRoundingToRight), roundToDevicePixel(point.y(), pixelSnappingFactor, !directionalRoundingToBottom));
-#else
-    UNUSED_PARAM(pixelSnappingFactor);
-    UNUSED_PARAM(directionalRoundingToRight);
-    UNUSED_PARAM(directionalRoundingToBottom);
-    return FloatPoint(point);
-#endif
 }
 
 inline FloatPoint flooredForPainting(const LayoutPoint& point, float pixelSnappingFactor)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return FloatPoint(floorToDevicePixel(point.x(), pixelSnappingFactor), floorToDevicePixel(point.y(), pixelSnappingFactor));
-#else
-    UNUSED_PARAM(pixelSnappingFactor);
-    return FloatPoint(point);
-#endif
 }
 
 inline FloatPoint ceiledForPainting(const LayoutPoint& point, float pixelSnappingFactor)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return FloatPoint(ceilToDevicePixel(point.x(), pixelSnappingFactor), ceilToDevicePixel(point.y(), pixelSnappingFactor));
-#else
-    UNUSED_PARAM(pixelSnappingFactor);
-    return FloatPoint(point);
-#endif
 }
 
 inline LayoutPoint roundedLayoutPoint(const FloatPoint& p)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return LayoutPoint(p);
-#else
-    return roundedIntPoint(p);
-#endif
 }
 
 } // namespace WebCore

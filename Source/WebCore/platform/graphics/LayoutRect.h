@@ -203,13 +203,8 @@ inline bool operator!=(const LayoutRect& a, const LayoutRect& b)
 
 inline IntRect pixelSnappedIntRect(const LayoutRect& rect)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
-    return IntRect(roundedIntPoint(rect.location()), IntSize(snapSizeToPixel(rect.width(), rect.x()),
-                                                             snapSizeToPixel(rect.height(), rect.y())));
+    return IntRect(roundedIntPoint(rect.location()), IntSize(snapSizeToPixel(rect.width(), rect.x()), snapSizeToPixel(rect.height(), rect.y())));
 
-#else
-    return IntRect(rect);
-#endif
 }
 
 IntRect enclosingIntRect(const LayoutRect&);
@@ -233,13 +228,8 @@ inline IntRect pixelSnappedIntRect(LayoutPoint location, LayoutSize size)
 
 inline FloatRect pixelSnappedForPainting(const LayoutRect& rect, float pixelSnappingFactor)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return FloatRect(roundToDevicePixel(rect.x(), pixelSnappingFactor), roundToDevicePixel(rect.y(), pixelSnappingFactor),
         snapSizeToDevicePixel(rect.width(), rect.x(), pixelSnappingFactor), snapSizeToDevicePixel(rect.height(), rect.y(), pixelSnappingFactor));
-#else
-    UNUSED_PARAM(pixelSnappingFactor);
-    return FloatRect(rect);
-#endif
 }
 
 inline FloatRect pixelSnappedForPainting(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height, float pixelSnappingFactor)

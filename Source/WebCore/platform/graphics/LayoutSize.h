@@ -185,21 +185,12 @@ inline IntSize roundedIntSize(const LayoutSize& s)
 
 inline LayoutSize roundedLayoutSize(const FloatSize& s)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return LayoutSize(s);
-#else
-    return roundedIntSize(s);
-#endif
 }
 
 inline FloatSize flooredForPainting(const LayoutSize& size, float pixelSnappingFactor)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
-#else
-    UNUSED_PARAM(pixelSnappingFactor);
-    return FloatSize(size);
-#endif
 }
 
 } // namespace WebCore

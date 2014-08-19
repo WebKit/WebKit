@@ -56,19 +56,13 @@ while (0)
 #endif
 
 static const int kFixedPointDenominator = 64;
-
-#if ENABLE(SUBPIXEL_LAYOUT)
 static const int kEffectiveFixedPointDenominator = kFixedPointDenominator;
-#else
-static const int kEffectiveFixedPointDenominator = 1;
-#endif
 const int intMaxForLayoutUnit = INT_MAX / kEffectiveFixedPointDenominator;
 const int intMinForLayoutUnit = INT_MIN / kEffectiveFixedPointDenominator;
 
 class LayoutUnit {
 public:
     LayoutUnit() : m_value(0) { }
-#if ENABLE(SUBPIXEL_LAYOUT)
     LayoutUnit(int value) { setValue(value); }
     LayoutUnit(unsigned short value) { setValue(value); }
     LayoutUnit(unsigned value) { setValue(value); }
@@ -108,15 +102,6 @@ public:
         m_value = value * kEffectiveFixedPointDenominator;
 #endif
     }
-#else
-    LayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    LayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    LayoutUnit(unsigned value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
-    LayoutUnit(unsigned long long value) { REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value))); m_value = clampTo<int>(value); }
-    LayoutUnit(unsigned long value) { REPORT_OVERFLOW(isInBounds(static_cast<unsigned>(value))); m_value = clampTo<int>(value); }
-    LayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
-    LayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = clampTo<int>(value); }
-#endif
 
     static LayoutUnit fromPixel(int value)
     {
@@ -163,7 +148,6 @@ public:
 #endif
     }
 
-#if ENABLE(SUBPIXEL_LAYOUT)
     int toInt() const { return m_value / kEffectiveFixedPointDenominator; }
     float toFloat() const { return static_cast<float>(m_value) / kEffectiveFixedPointDenominator; }
     double toDouble() const { return static_cast<double>(m_value) / kEffectiveFixedPointDenominator; }
@@ -176,12 +160,6 @@ public:
             return nextafterf(floatValue, std::numeric_limits<float>::max());
         return nextafterf(floatValue, std::numeric_limits<float>::min());
     }
-#else
-    int toInt() const { return m_value; }
-    float toFloat() const { return static_cast<float>(m_value); }
-    double toDouble() const { return static_cast<double>(m_value); }
-    float ceilToFloat() const { return toFloat(); }
-#endif
     unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
 
     operator int() const { return toInt(); }
@@ -216,7 +194,6 @@ public:
     int ceil() const
 #endif
     {
-#if ENABLE(SUBPIXEL_LAYOUT)
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
         if (UNLIKELY(m_value >= INT_MAX - kEffectiveFixedPointDenominator + 1))
             return intMaxForLayoutUnit;
@@ -224,28 +201,23 @@ public:
         if (m_value >= 0)
             return (m_value + kEffectiveFixedPointDenominator - 1) / kEffectiveFixedPointDenominator;
         return toInt();
-#else
-        return m_value;
-#endif
     }
+
     int round() const
     {
-#if ENABLE(SUBPIXEL_LAYOUT) && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+#if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
         if (m_value > 0)
             return saturatedAddition(rawValue(), kEffectiveFixedPointDenominator / 2) / kEffectiveFixedPointDenominator;
         return saturatedSubtraction(rawValue(), (kEffectiveFixedPointDenominator / 2) - 1) / kEffectiveFixedPointDenominator;
-#elif ENABLE(SUBPIXEL_LAYOUT)
+#else
         if (m_value > 0)
             return (m_value + (kEffectiveFixedPointDenominator / 2)) / kEffectiveFixedPointDenominator;
         return (m_value - ((kEffectiveFixedPointDenominator / 2) - 1)) / kEffectiveFixedPointDenominator;
-#else
-        return m_value;
 #endif
     }
 
     int floor() const
     {
-#if ENABLE(SUBPIXEL_LAYOUT)
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
         if (UNLIKELY(m_value <= INT_MIN + kEffectiveFixedPointDenominator - 1))
             return intMinForLayoutUnit;
@@ -253,9 +225,6 @@ public:
         if (m_value >= 0)
             return toInt();
         return (m_value - kEffectiveFixedPointDenominator + 1) / kEffectiveFixedPointDenominator;
-#else
-        return m_value;
-#endif
     }
 
     LayoutUnit fraction() const
@@ -267,7 +236,6 @@ public:
         return fraction;
     }
 
-#if ENABLE(SUBPIXEL_LAYOUT)
     bool mightBeSaturated() const
     {
         return rawValue() == std::numeric_limits<int>::max()
@@ -275,9 +243,7 @@ public:
     }
 
     static float epsilon() { return 1.0f / kEffectiveFixedPointDenominator; }
-#else
-    static int epsilon() { return 0; }
-#endif
+
     static const LayoutUnit max()
     {
         LayoutUnit m;
@@ -517,7 +483,6 @@ inline bool operator==(const float a, const LayoutUnit& b)
 // For multiplication that's prone to overflow, this bounds it to LayoutUnit::max() and ::min()
 inline LayoutUnit boundedMultiply(const LayoutUnit& a, const LayoutUnit& b)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     int64_t result = static_cast<int64_t>(a.rawValue()) * static_cast<int64_t>(b.rawValue()) / kEffectiveFixedPointDenominator;
     int32_t high = static_cast<int32_t>(result >> 32);
     int32_t low = static_cast<int32_t>(result);
@@ -529,23 +494,17 @@ inline LayoutUnit boundedMultiply(const LayoutUnit& a, const LayoutUnit& b)
     LayoutUnit returnVal;
     returnVal.setRawValue(static_cast<int>(result));
     return returnVal;
-#else
-    // FIXME: Should be bounded even in the non-subpixel case.
-    return a.rawValue() * b.rawValue();
-#endif
 }
 
 inline LayoutUnit operator*(const LayoutUnit& a, const LayoutUnit& b)
 {
-#if ENABLE(SUBPIXEL_LAYOUT) && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+#if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
     return boundedMultiply(a, b);
-#elif ENABLE(SUBPIXEL_LAYOUT)
+#else
     LayoutUnit returnVal;
     long long rawVal = static_cast<long long>(a.rawValue()) * b.rawValue() / kEffectiveFixedPointDenominator;
     returnVal.setRawValue(rawVal);
     return returnVal;
-#else
-    return a.rawValue() * b.rawValue();
 #endif
 }    
 
@@ -621,7 +580,6 @@ inline double operator*(const double a, const LayoutUnit& b)
 
 inline LayoutUnit operator/(const LayoutUnit& a, const LayoutUnit& b)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     LayoutUnit returnVal;
     long long rawVal = static_cast<long long>(kEffectiveFixedPointDenominator) * a.rawValue() / b.rawValue();
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
@@ -630,10 +588,7 @@ inline LayoutUnit operator/(const LayoutUnit& a, const LayoutUnit& b)
     returnVal.setRawValue(rawVal);
 #endif
     return returnVal;
-#else
-    return a.rawValue() / b.rawValue();
-#endif
-}    
+}
 
 inline float operator/(const LayoutUnit& a, float b)
 {
@@ -792,27 +747,19 @@ inline LayoutUnit operator-(const LayoutUnit& a)
 // For returning the remainder after a division with integer results.
 inline LayoutUnit intMod(const LayoutUnit& a, const LayoutUnit& b)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     // This calculates the modulo so that: a = static_cast<int>(a / b) * b + intMod(a, b).
     LayoutUnit returnVal;
     returnVal.setRawValue(a.rawValue() % b.rawValue());
     return returnVal;
-#else
-    return a.rawValue() % b.rawValue();
-#endif
 }
 
 inline LayoutUnit operator%(const LayoutUnit& a, const LayoutUnit& b)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     // This calculates the modulo so that: a = (a / b) * b + a % b.
     LayoutUnit returnVal;
     long long rawVal = (static_cast<long long>(kEffectiveFixedPointDenominator) * a.rawValue()) % b.rawValue();
     returnVal.setRawValue(rawVal / kEffectiveFixedPointDenominator);
     return returnVal;
-#else
-    return a.rawValue() % b.rawValue();
-#endif
 }
 
 inline LayoutUnit operator%(const LayoutUnit& a, int b)
@@ -967,20 +914,12 @@ inline float snapSizeToDevicePixel(LayoutUnit size, LayoutUnit location, float p
 
 inline LayoutUnit roundedLayoutUnit(float value)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return LayoutUnit::fromFloatRound(value);
-#else
-    return static_cast<int>(lroundf(value));
-#endif
 }
 
 inline LayoutUnit ceiledLayoutUnit(float value)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return LayoutUnit::fromFloatCeil(value);
-#else
-    return ceilf(value);
-#endif
 }
 
 inline LayoutUnit absoluteValue(const LayoutUnit& value)

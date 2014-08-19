@@ -646,14 +646,7 @@ static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer
     zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
         return value.toDouble();
-#if ENABLE(SUBPIXEL_LAYOUT)
     return value.toDouble() / zoomFactor;
-#else
-    // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
-    if (zoomFactor > 1)
-        ++value;
-    return value.toDouble() / zoomFactor;
-#endif
 }
 
 enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
@@ -696,12 +689,8 @@ double Element::offsetWidth()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
-#if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit offsetWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetWidth() : LayoutUnit(renderer->pixelSnappedOffsetWidth());
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble(), renderer->document());
-#else
-        return adjustForAbsoluteZoom(renderer->offsetWidth(), *renderer);
-#endif
     }
     return 0;
 }
@@ -710,12 +699,8 @@ double Element::offsetHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
-#if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit offsetHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetHeight() : LayoutUnit(renderer->pixelSnappedOffsetHeight());
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble(), renderer->document());
-#else
-        return adjustForAbsoluteZoom(renderer->offsetHeight(), *renderer);
-#endif
     }
     return 0;
 }
@@ -745,12 +730,8 @@ double Element::clientLeft()
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox()) {
-#if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit clientLeft = subpixelMetricsEnabled(renderer->document()) ? renderer->clientLeft() : LayoutUnit(roundToInt(renderer->clientLeft()));
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientLeft, *renderer).toDouble(), renderer->document());
-#else
-        return adjustForAbsoluteZoom(renderer->clientLeft(), *renderer);
-#endif
     }
     return 0;
 }
@@ -760,12 +741,8 @@ double Element::clientTop()
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox()) {
-#if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit clientTop = subpixelMetricsEnabled(renderer->document()) ? renderer->clientTop() : LayoutUnit(roundToInt(renderer->clientTop()));
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientTop, *renderer).toDouble(), renderer->document());
-#else
-        return adjustForAbsoluteZoom(renderer->clientTop(), *renderer);
-#endif
     }
     return 0;
 }
@@ -785,12 +762,8 @@ double Element::clientWidth()
         return adjustForAbsoluteZoom(renderView.frameView().layoutWidth(), renderView);
     
     if (RenderBox* renderer = renderBox()) {
-#if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit clientWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->clientWidth() : LayoutUnit(renderer->pixelSnappedClientWidth());
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble(), renderer->document());
-#else
-        return adjustForAbsoluteZoom(renderer->clientWidth(), *renderer);
-#endif
     }
     return 0;
 }
@@ -810,12 +783,8 @@ double Element::clientHeight()
         return adjustForAbsoluteZoom(renderView.frameView().layoutHeight(), renderView);
 
     if (RenderBox* renderer = renderBox()) {
-#if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit clientHeight = subpixelMetricsEnabled(renderer->document()) ? renderer->clientHeight() : LayoutUnit(renderer->pixelSnappedClientHeight());
         return convertToNonSubpixelValueIfNeeded(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble(), renderer->document());
-#else
-        return adjustForAbsoluteZoom(renderer->clientHeight(), *renderer);
-#endif
     }
     return 0;
 }

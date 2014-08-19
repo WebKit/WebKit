@@ -2914,11 +2914,7 @@ static inline void updatePreferredWidth(LayoutUnit& preferredWidth, float& resul
 // width.
 static inline LayoutUnit adjustFloatForSubPixelLayout(float value)
 {
-#if ENABLE(SUBPIXEL_LAYOUT)
     return ceiledLayoutUnit(value);
-#else
-    return static_cast<int>(value);
-#endif
 }
 
 

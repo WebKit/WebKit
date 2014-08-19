@@ -1,3 +1,14 @@
+2014-08-19  Zalan Bujtas  <zalan@apple.com>
+
+        Remove ENABLE(SUBPIXEL_LAYOUT).
+        https://bugs.webkit.org/show_bug.cgi?id=136077
+
+        Reviewed by Simon Fraser.
+
+        Remove compile time flag SUBPIXEL_LAYOUT. All ports have it enabled for a while now.
+
+        * wtf/FeatureDefines.h:
+
 2014-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Use NSURLFileTypeMappings directly instead of depending on WebKitSystemInterface wrappers for it
