@@ -1,3 +1,10 @@
+2014-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERT_NOT_REACHED on css3/shapes/shape-outside/values/shape-image-threshold-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=136075
+
+        * TestExpectations: Skipped the test in debug mode.
+
 2014-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
