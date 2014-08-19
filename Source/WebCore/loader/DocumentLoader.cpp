@@ -1093,6 +1093,11 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
     if (resource->type() == CachedResource::MainResource)
         return 0;
 
+    // FIXME: This has the side effect of making the resource non-purgeable.
+    // It would be better if it didn't have this permanent effect.
+    if (!resource->makePurgeable(false))
+        return 0;
+
     ResourceBuffer* data = resource->resourceBuffer();
     if (!data)
         return 0;

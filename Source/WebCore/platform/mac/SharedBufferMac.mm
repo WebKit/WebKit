@@ -152,6 +152,12 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
 #endif
 
     data(); // Force data into m_buffer from segments or data array.
+    if (hasPurgeableBuffer()) {
+        RefPtr<SharedBuffer::DataBuffer> copiedBuffer = adoptRef(new DataBuffer);
+        copiedBuffer->data.append(data(), size());
+        return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:copiedBuffer.get()]).leakRef());
+    }
+
     return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.get()]).leakRef());
 }
 

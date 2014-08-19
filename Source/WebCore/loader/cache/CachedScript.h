@@ -47,6 +47,7 @@ namespace WebCore {
 #endif
 
     private:
+        virtual PurgePriority purgePriority() const override { return PurgeLast; }
         virtual bool mayTryReplaceEncodedData() const override { return true; }
 
         virtual bool shouldIgnoreHTTPStatusCodeErrors() const override;

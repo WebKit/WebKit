@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceBuffer.h"
 
+#include "PurgeableBuffer.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -110,6 +111,30 @@ SharedBuffer* ResourceBuffer::sharedBuffer() const
 PassRefPtr<ResourceBuffer> ResourceBuffer::copy() const
 {
     return ResourceBuffer::adoptSharedBuffer(m_sharedBuffer->copy());
+}
+
+bool ResourceBuffer::hasPurgeableBuffer() const
+{
+    return m_sharedBuffer->hasPurgeableBuffer();
+}
+
+#if PLATFORM(IOS)
+void ResourceBuffer::setShouldUsePurgeableMemory(bool shouldUsePurgeableMemory)
+{
+    ASSERT(m_sharedBuffer);
+    sharedBuffer()->shouldUsePurgeableMemory(shouldUsePurgeableMemory);
+}
+#endif
+
+void ResourceBuffer::createPurgeableBuffer() const
+{
+    ASSERT(m_sharedBuffer);
+    sharedBuffer()->createPurgeableBuffer();
+}
+
+PassOwnPtr<PurgeableBuffer> ResourceBuffer::releasePurgeableBuffer()
+{
+    return m_sharedBuffer->releasePurgeableBuffer();
 }
 
 #if USE(CF)

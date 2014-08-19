@@ -27,6 +27,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include "PurgeableBuffer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -65,6 +66,7 @@ static inline void freeSegment(char* p)
 SharedBuffer::SharedBuffer()
     : m_size(0)
     , m_buffer(adoptRef(new DataBuffer))
+    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
@@ -77,6 +79,7 @@ SharedBuffer::SharedBuffer()
 SharedBuffer::SharedBuffer(unsigned size)
     : m_size(size)
     , m_buffer(adoptRef(new DataBuffer))
+    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
@@ -89,6 +92,7 @@ SharedBuffer::SharedBuffer(unsigned size)
 SharedBuffer::SharedBuffer(const char* data, unsigned size)
     : m_size(0)
     , m_buffer(adoptRef(new DataBuffer))
+    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
@@ -102,6 +106,7 @@ SharedBuffer::SharedBuffer(const char* data, unsigned size)
 SharedBuffer::SharedBuffer(const unsigned char* data, unsigned size)
     : m_size(0)
     , m_buffer(adoptRef(new DataBuffer))
+    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
@@ -132,10 +137,21 @@ PassRefPtr<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
     return buffer.release();
 }
 
+PassRefPtr<SharedBuffer> SharedBuffer::adoptPurgeableBuffer(PassOwnPtr<PurgeableBuffer> purgeableBuffer) 
+{ 
+    ASSERT(!purgeableBuffer->isPurgeable());
+    RefPtr<SharedBuffer> buffer = create();
+    buffer->m_purgeableBuffer = purgeableBuffer;
+    return buffer.release();
+}
+
 unsigned SharedBuffer::size() const
 {
     if (hasPlatformData())
         return platformDataSize();
+    
+    if (m_purgeableBuffer)
+        return m_purgeableBuffer->size();
     
     return m_size;
 }
@@ -200,6 +216,44 @@ void SharedBuffer::setMemoryMappedNotificationCallback(MemoryMappedNotifyCallbac
 }
 #endif
 
+// Try to create a PurgeableBuffer. We can fail to create one for any of the
+// following reasons:
+//   - shouldUsePurgeableMemory is set to false.
+//   - the size of the buffer is less than the minimum size required by
+//     PurgeableBuffer (currently 16k).
+//   - PurgeableBuffer::createUninitialized() call fails.
+void SharedBuffer::createPurgeableBuffer() const
+{
+    if (m_purgeableBuffer)
+        return;
+
+    if (hasPlatformData())
+        return;
+
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    if (singleDataArrayBuffer())
+        return;
+#endif
+
+    if (!m_buffer->hasOneRef())
+        return;
+
+    if (!m_shouldUsePurgeableMemory)
+        return;
+
+    char* destination = 0;
+    m_purgeableBuffer = PurgeableBuffer::createUninitialized(m_size, destination);
+    if (!m_purgeableBuffer)
+        return;
+    unsigned bufferSize = m_buffer->data.size();
+    if (bufferSize) {
+        memcpy(destination, m_buffer->data.data(), bufferSize);
+        destination += bufferSize;
+        (const_cast<SharedBuffer*>(this))->clearDataBuffer();
+    }
+    copyBufferAndClear(destination, m_size - bufferSize);
+}
+
 const char* SharedBuffer::data() const
 {
 #if ENABLE(DISK_IMAGE_CACHE)
@@ -215,6 +269,11 @@ const char* SharedBuffer::data() const
         return buffer;
 #endif
 
+    createPurgeableBuffer();
+
+    if (m_purgeableBuffer)
+        return m_purgeableBuffer->data();
+    
     return this->buffer().data();
 }
 
@@ -257,6 +316,7 @@ void SharedBuffer::append(SharedBuffer* data)
 
 void SharedBuffer::append(const char* data, unsigned length)
 {
+    ASSERT(!m_purgeableBuffer);
 #if ENABLE(DISK_IMAGE_CACHE)
     ASSERT(!isMemoryMapped());
 #endif
@@ -326,12 +386,13 @@ void SharedBuffer::clear()
 
     m_size = 0;
     clearDataBuffer();
+    m_purgeableBuffer.clear();
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 {
     RefPtr<SharedBuffer> clone(adoptRef(new SharedBuffer));
-    if (hasPlatformData()) {
+    if (m_purgeableBuffer || hasPlatformData()) {
         clone->append(data(), size());
         return clone;
     }
@@ -347,6 +408,12 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
         clone->append(m_dataArray[i].get());
 #endif
     return clone;
+}
+
+PassOwnPtr<PurgeableBuffer> SharedBuffer::releasePurgeableBuffer()
+{ 
+    ASSERT(hasOneRef()); 
+    return m_purgeableBuffer.release(); 
 }
 
 void SharedBuffer::duplicateDataBufferIfNecessary() const
@@ -419,7 +486,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     }
 #endif
 
-    if (hasPlatformData()) {
+    if (hasPlatformData() || m_purgeableBuffer) {
         ASSERT_WITH_SECURITY_IMPLICATION(position < size());
         someData = data() + position;
         return totalSize - position;

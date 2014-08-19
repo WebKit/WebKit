@@ -38,6 +38,7 @@ OBJC_CLASS NSData;
 
 namespace WebCore {
 
+class PurgeableBuffer;
 class SharedBuffer;
 
 class ResourceBuffer : public RefCounted<ResourceBuffer> {
@@ -67,6 +68,17 @@ public:
     void tryReplaceSharedBufferContents(SharedBuffer*);
 #endif
     PassRefPtr<ResourceBuffer> copy() const;
+
+    bool hasPurgeableBuffer() const;
+    void createPurgeableBuffer() const;
+
+#if PLATFORM(IOS)
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to SharedBuffer.{cpp, h} and SharedBufferCF.cpp.
+    void setShouldUsePurgeableMemory(bool);
+#endif
+
+    // Ensure this buffer has no other clients before calling this.
+    PassOwnPtr<PurgeableBuffer> releasePurgeableBuffer();
 
 #if USE(FOUNDATION)
     RetainPtr<NSData> createNSData();

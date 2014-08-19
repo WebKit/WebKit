@@ -25,6 +25,7 @@
 
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
+#include "PurgePriority.h"
 #include "ResourceError.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
@@ -46,6 +47,7 @@ class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
 class InspectorResource;
+class PurgeableBuffer;
 class ResourceBuffer;
 class SecurityOrigin;
 class SharedBuffer;
@@ -186,7 +188,7 @@ public:
     
     void clearLoader();
 
-    ResourceBuffer* resourceBuffer() const { return m_data.get(); }
+    ResourceBuffer* resourceBuffer() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) { m_requestedFromNetworkingLayer = true; }
     virtual void responseReceived(const ResourceResponse&);
@@ -229,6 +231,14 @@ public:
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
     
+    bool isPurgeable() const;
+    bool wasPurged() const;
+    
+    // This is used by the archive machinery to get at a purged resource without
+    // triggering a load. We should make it protected again if we can find a
+    // better way to handle the archive case.
+    bool makePurgeable(bool purgeable);
+    
     // HTTP revalidation support methods for CachedResourceLoader.
     void setResourceToRevalidate(CachedResource*);
     virtual void switchClientsToRevalidatedResource();
@@ -263,6 +273,8 @@ protected:
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
 
+    bool isSafeToMakePurgeable() const;
+    
     HashCountedSet<CachedResourceClient*> m_clients;
 
     class CachedResourceCallback {
@@ -290,6 +302,7 @@ protected:
     double m_responseTimestamp;
 
     RefPtr<ResourceBuffer> m_data;
+    OwnPtr<PurgeableBuffer> m_purgeableData;
     DeferrableOneShotTimer m_decodedDataDeletionTimer;
 
 private:
@@ -297,6 +310,7 @@ private:
 
     void decodedDataDeletionTimerFired();
 
+    virtual PurgePriority purgePriority() const { return PurgeDefault; }
     virtual bool mayTryReplaceEncodedData() const { return false; }
 
     double currentAge() const;

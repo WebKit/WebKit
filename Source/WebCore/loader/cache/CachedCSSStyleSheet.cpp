@@ -80,6 +80,8 @@ String CachedCSSStyleSheet::encoding() const
     
 const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValidMIMEType) const 
 { 
+    ASSERT(!isPurgeable());
+
     if (!m_data || m_data->isEmpty() || !canUseSheet(enforceMIMEType, hasValidMIMEType))
         return String();
     
@@ -146,6 +148,9 @@ void CachedCSSStyleSheet::destroyDecodedData()
     m_parsedStyleSheetCache.clear();
 
     setDecodedSize(0);
+
+    if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
+        makePurgeable(true);
 }
 
 PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(const CSSParserContext& context)

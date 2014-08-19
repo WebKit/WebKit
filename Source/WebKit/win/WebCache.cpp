@@ -202,6 +202,52 @@ HRESULT WebCache::statistics(int* count, IPropertyBag** s)
     propBag->setDictionary(dictionary.get());
     s[3] = propBag.leakRef();
 
+    // Purgable Sizes.
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.purgeableSize));
+    CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.purgeableSize));
+    CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
+
+#if ENABLE(XSLT)
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.purgeableSize));
+#else
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.purgeableSize));
+    CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
+
+    propBag = CFDictionaryPropertyBag::createInstance();
+    propBag->setDictionary(dictionary.get());
+    s[4] = propBag.leakRef();
+
+    // Purged Sizes.
+    dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.images.purgedSize));
+    CFDictionaryAddValue(dictionary.get(), imagesKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.purgedSize));
+    CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
+
+#if ENABLE(XSLT)
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.purgedSize));
+#else
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
+    CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
+
+    value = adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.purgedSize));
+    CFDictionaryAddValue(dictionary.get(), scriptsKey, value.get());
+
+    propBag = CFDictionaryPropertyBag::createInstance();
+    propBag->setDictionary(dictionary.get());
+    s[5] = propBag.leakRef();
+
     return S_OK;
 }
 

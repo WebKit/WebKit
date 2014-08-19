@@ -61,6 +61,22 @@ struct SecurityOriginHash;
 // -------|-----+++++++++++++++|
 // -------|-----+++++++++++++++|+++++
 
+// The behavior of the cache changes in the following way if shouldMakeResourcePurgeableOnEviction
+// returns true.
+//
+// 1. Dead resources in the cache are kept in non-purgeable memory.
+// 2. When we prune dead resources, instead of freeing them, we mark their memory as purgeable and
+//    keep the resources until the kernel reclaims the purgeable memory.
+//
+// By leaving the in-cache dead resources in dirty resident memory, we decrease the likelihood of
+// the kernel claiming that memory and forcing us to refetch the resource (for example when a user
+// presses back).
+//
+// And by having an unbounded number of resource objects using purgeable memory, we can use as much
+// memory as is available on the machine. The trade-off here is that the CachedResource object (and
+// its member variables) are allocated in non-purgeable TC-malloc'd memory so we would see slightly
+// more memory use due to this.
+
 class MemoryCache {
     WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -85,21 +101,14 @@ public:
         int size;
         int liveSize;
         int decodedSize;
+        int purgeableSize;
+        int purgedSize;
 #if ENABLE(DISK_IMAGE_CACHE)
         int mappedSize;
+        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0), purgeableSize(0), purgedSize(0), mappedSize(0) { }
+#else
+        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0), purgeableSize(0), purgedSize(0) { }
 #endif
-
-        TypeStatistic()
-            : count(0)
-            , size(0)
-            , liveSize(0)
-            , decodedSize(0)
-#if ENABLE(DISK_IMAGE_CACHE)
-            , mappedSize(0)
-#endif
-        {
-        }
-
         void addResource(CachedResource*);
     };
     
@@ -158,6 +167,8 @@ public:
     void addToLiveResourcesSize(CachedResource*);
     void removeFromLiveResourcesSize(CachedResource*);
 
+    static bool shouldMakeResourcePurgeableOnEviction();
+
 #if ENABLE(DISK_IMAGE_CACHE)
     void flushCachedImagesToDisk(); // Flush encoded data from resources still referenced by web pages.
 #endif
@@ -211,6 +222,7 @@ private:
     unsigned liveCapacity() const;
     unsigned deadCapacity() const;
 
+    bool makeResourcePurgeable(CachedResource*);
     void evict(CachedResource*);
 
     CachedResource* resourceForRequestImpl(const ResourceRequest&, CachedResourceMap&);
@@ -245,6 +257,15 @@ private:
     // referenced by a Web page).
     SessionCachedResourceMap m_sessionResources;
 };
+
+inline bool MemoryCache::shouldMakeResourcePurgeableOnEviction()
+{
+#if PLATFORM(IOS)
+    return true;
+#else
+    return false;
+#endif
+}
 
 // Function to obtain the global cache.
 MemoryCache* memoryCache();

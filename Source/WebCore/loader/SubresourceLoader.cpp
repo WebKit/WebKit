@@ -299,8 +299,12 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     LOG(ResourceLoading, "Received '%s'.", m_resource->url().string().latin1().data());
 
     Ref<SubresourceLoader> protect(*this);
-    CachedResourceHandle<CachedResource> protectResource(m_resource);
 
+#if PLATFORM(IOS)
+    if (resourceData())
+        resourceData()->setShouldUsePurgeableMemory(true);
+#endif
+    CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_resource->setLoadFinishTime(finishTime);
     m_resource->finishLoading(resourceData());

@@ -22,6 +22,7 @@
 
 #include "SharedBuffer.h"
 
+#include "PurgeableBuffer.h"
 #include <libsoup/soup.h>
 
 namespace WebCore {

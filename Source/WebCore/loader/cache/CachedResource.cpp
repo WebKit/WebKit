@@ -40,6 +40,7 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "PlatformStrategies.h"
+#include "PurgeableBuffer.h"
 #include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
@@ -465,6 +466,8 @@ void CachedResource::didAddClient(CachedResourceClient* c)
 
 bool CachedResource::addClientToSet(CachedResourceClient* client)
 {
+    ASSERT(!isPurgeable());
+
     if (m_preloadResult == PreloadNotReferenced) {
         if (isLoaded())
             m_preloadResult = PreloadReferencedWhileComplete;
@@ -781,6 +784,64 @@ bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) co
     }
 
     return false;
+}
+
+bool CachedResource::isSafeToMakePurgeable() const
+{ 
+#if ENABLE(DISK_IMAGE_CACHE)
+    // It does not make sense to have a resource in the disk image cache
+    // (memory mapped on disk) and purgeable (in memory). So do not allow
+    // disk image cached resources to be purgeable.
+    if (isUsingDiskImageCache())
+        return false;
+#endif
+
+    return !hasClients() && !m_proxyResource && !m_resourceToRevalidate;
+}
+
+bool CachedResource::makePurgeable(bool purgeable) 
+{ 
+    if (purgeable) {
+        ASSERT(isSafeToMakePurgeable());
+
+        if (m_purgeableData) {
+            ASSERT(!m_data);
+            return true;
+        }
+        if (!m_data)
+            return false;
+        
+        m_data->createPurgeableBuffer();
+        if (!m_data->hasPurgeableBuffer())
+            return false;
+
+        m_purgeableData = m_data->releasePurgeableBuffer();
+        m_purgeableData->setPurgePriority(purgePriority());
+        m_purgeableData->makePurgeable(true);
+        m_data.clear();
+        return true;
+    }
+
+    if (!m_purgeableData)
+        return true;
+    ASSERT(!m_data);
+    ASSERT(!hasClients());
+
+    if (!m_purgeableData->makePurgeable(false))
+        return false; 
+
+    m_data = ResourceBuffer::adoptSharedBuffer(SharedBuffer::adoptPurgeableBuffer(m_purgeableData.release()));
+    return true;
+}
+
+bool CachedResource::isPurgeable() const
+{
+    return m_purgeableData && m_purgeableData->isPurgeable();
+}
+
+bool CachedResource::wasPurged() const
+{
+    return m_purgeableData && m_purgeableData->wasPurged();
 }
 
 unsigned CachedResource::overheadSize() const
