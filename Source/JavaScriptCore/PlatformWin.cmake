@@ -23,3 +23,7 @@ if (MSVC AND "${JavaScriptCore_LIBRARY_TYPE}" MATCHES "SHARED")
         VERBATIM)
     list(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/forwarded-exports.cpp)
 endif ()
+
+list(REMOVE_ITEM JavaScriptCore_SOURCES
+    inspector/JSGlobalObjectInspectorController.cpp
+)

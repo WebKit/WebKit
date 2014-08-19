@@ -55,7 +55,7 @@ def useX87
 end
 
 def isWindows
-    RUBY_PLATFORM =~ /cygwin/i
+    ENV['OS'] == 'Windows_NT'
 end
 
 def isGCC
