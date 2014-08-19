@@ -336,6 +336,7 @@ WebInspector.TimelineContentView.prototype = {
         if (!isNaN(this._currentTime)) {
             // We have a current time already, so we likely need to jump into the future to a better current time.
             // This happens when you stop and later restart recording.
+            console.assert(!this._waitingToResetCurrentTime);
             this._waitingToResetCurrentTime = true;
             this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
         }
@@ -352,6 +353,12 @@ WebInspector.TimelineContentView.prototype = {
     {
         console.assert(this._updating);
         this._updating = false;
+
+        if (this._waitingToResetCurrentTime) {
+            // Did not get any event while waiting for the current time, but we should stop waiting.
+            this._recording.removeEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
+            this._waitingToResetCurrentTime = false;            
+        }
     },
 
     _capturingStarted: function(event)
@@ -382,7 +389,7 @@ WebInspector.TimelineContentView.prototype = {
         }
 
         this._recording.removeEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
-        delete this._waitingToResetCurrentTime;
+        this._waitingToResetCurrentTime = false;
     },
 
     _clearTimeline: function(event)
@@ -404,7 +411,7 @@ WebInspector.TimelineContentView.prototype = {
         this._startTimeNeedsReset = true;
 
         this._recording.removeEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
-        delete this._waitingToResetCurrentTime;
+        this._waitingToResetCurrentTime = false;
 
         this._overviewTimelineView.reset();
         for (var timelineView of this._discreteTimelineViewMap.values())

@@ -1,3 +1,39 @@
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172601
+
+    2014-08-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Timelines can get caught in requestAnimationFrame loop when not recording
+            https://bugs.webkit.org/show_bug.cgi?id=135946
+
+            Reviewed by Timothy Hatcher.
+
+            Each TimelineContentView was listening for the TimelineManager's start/stop
+            capturing events. However, only the active recording could possibly update.
+            Likewise, if a pre-existing recording started and stopped we did not properly
+            stop in the case where we were waiting for an event to update the current time,
+            which would result in an infinite rAF loop of no updates.
+
+            * UserInterface/Models/TimelineRecording.js:
+            (WebInspector.TimelineRecording.prototype.unloaded):
+            When a timeline recording is unloaded trigger an event.
+
+            * UserInterface/Views/TimelineContentView.js:
+            (WebInspector.TimelineContentView.prototype._startUpdatingCurrentTime):
+            Assert we were not already waiting.
+
+            (WebInspector.TimelineContentView.prototype._stopUpdatingCurrentTime):
+            Properly handle the case of starting/stoping an already existing recording
+            without a new event coming in.
+
+            (WebInspector.TimelineContentView.prototype._recordingTimesUpdated):
+            (WebInspector.TimelineContentView.prototype._recordingReset):
+            Convert to a boolean instead of deleting state.
+
+            (WebInspector.TimelineContentView.prototype._recordingUnloaded):
+            Stop listening to timeline manager events that no longer affect unloaded recordings.
+
 2014-08-13  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172533
