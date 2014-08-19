@@ -202,6 +202,9 @@ bool TextTrackCueGeneric::doesExtendCue(const TextTrackCue& cue) const
 
 bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
 {
+    if (VTTCue::isOrderedBefore(that))
+        return true;
+
     if (that->cueType() == Generic && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
         std::pair<double, double> thisPosition = getPositionCoordinates();
@@ -209,6 +212,18 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
         return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
     }
 
+    return false;
+}
+
+bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
+{
+    if (that->cueType() == Generic && startTime() == that->startTime() && endTime() == that->endTime()) {
+        // Further order generic cues by their calculated line value.
+        std::pair<double, double> thisPosition = getPositionCoordinates();
+        std::pair<double, double> thatPosition = toVTTCue(that)->getPositionCoordinates();
+        return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
+    }
+    
     if (that->cueType() == Generic)
         return startTime() > that->startTime();
     

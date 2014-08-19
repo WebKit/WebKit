@@ -1,5 +1,36 @@
 2014-08-18  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172213.
+
+    2014-08-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac, iOS] Captions are appearing multiple times during repeated video play through
+            https://bugs.webkit.org/show_bug.cgi?id=135680
+            <rdar://problem/17926802>
+
+            Reviewed by Eric Carlson.
+
+            Test: media/track/track-in-band-cues-added-once.html
+
+            Revert TextTrackCueGeneric::isOrderedBefore logic to its original form, and add
+            a new 'isOrderedBeforeDuringDisplay' for the special case of displaying captions.
+
+            * html/shadow/MediaControlElements.cpp:
+            (WebCore::compareCueIntervalForDisplay): Added helper function.
+            (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Use the new
+            'isOrderedBeforeDuringDisplay' to order the cues for display.
+            * html/track/TextTrackCue.h:
+            (WebCore::TextTrackCue::isOrderedBeforeDuringDisplay): Added. This just
+            calls the existing 'isOrderedBefore' method.
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGeneric::isOrderedBefore): Revert to logic used
+            prior to r171700.
+            (WebCore::TextTrackCueGeneric::isOrderedBeforeDuringDisplay): New method that
+            implements the behavior in r171700.
+            * html/track/TextTrackCueGeneric.h:
+
+2014-08-18  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172317.
 
     2014-08-07  Simon Fraser  <simon.fraser@apple.com>
