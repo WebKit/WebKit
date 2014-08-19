@@ -33,6 +33,8 @@ WebInspector.TimelineManager = function()
 
     this._activeRecording = new WebInspector.TimelineRecording;
     this._isCapturing = false;
+
+    this._boundStopCapturing = this.stopCapturing.bind(this);
 };
 
 WebInspector.TimelineManager.Event = {
@@ -413,7 +415,7 @@ WebInspector.TimelineManager.prototype = {
 
         if (this._stopCapturingTimeout)
             clearTimeout(this._stopCapturingTimeout);
-        this._stopCapturingTimeout = setTimeout(this.stopCapturing.bind(this), WebInspector.TimelineManager.MaximumAutoRecordDuration);
+        this._stopCapturingTimeout = setTimeout(this._boundStopCapturing, WebInspector.TimelineManager.MaximumAutoRecordDuration);
 
         return true;
     },
@@ -426,7 +428,7 @@ WebInspector.TimelineManager.prototype = {
 
         if (this._stopCapturingTimeout)
             clearTimeout(this._stopCapturingTimeout);
-        this._stopCapturingTimeout = setTimeout(this.stopCapturing.bind(this), WebInspector.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent);
+        this._stopCapturingTimeout = setTimeout(this._boundStopCapturing, WebInspector.TimelineManager.MaximumAutoRecordDurationAfterLoadEvent);
     },
 
     _resetAutoRecordingDeadTimeTimeout: function()
@@ -437,7 +439,7 @@ WebInspector.TimelineManager.prototype = {
 
         if (this._deadTimeTimeout)
             clearTimeout(this._deadTimeTimeout);
-        this._deadTimeTimeout = setTimeout(this.stopCapturing.bind(this), WebInspector.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly);
+        this._deadTimeTimeout = setTimeout(this._boundStopCapturing, WebInspector.TimelineManager.DeadTimeRequiredToStopAutoRecordingEarly);
     },
 
     _mainResourceDidChange: function(event)

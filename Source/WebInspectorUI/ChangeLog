@@ -1,5 +1,22 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172606
+
+    2014-08-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Avoid re-binding the same function over and over
+            https://bugs.webkit.org/show_bug.cgi?id=135949
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Controllers/TimelineManager.js:
+            (WebInspector.TimelineManager.prototype._startAutoCapturing):
+            (WebInspector.TimelineManager.prototype._stopAutoRecordingSoon):
+            (WebInspector.TimelineManager.prototype._resetAutoRecordingDeadTimeTimeout):
+            Stash a bound copy of the function once, and reuse it.
+
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172601
 
     2014-08-14  Joseph Pecoraro  <pecoraro@apple.com>
