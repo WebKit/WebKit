@@ -613,7 +613,7 @@ bool ServicesOverlayController::highlightsAreEquivalent(const Highlight* a, cons
     if (!a || !b)
         return false;
 
-    if (areRangesEqual(a->range(), b->range()))
+    if (a->type() == b->type() && areRangesEqual(a->range(), b->range()))
         return true;
 
     return false;

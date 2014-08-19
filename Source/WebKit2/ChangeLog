@@ -1,5 +1,22 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172639. <rdar://problem/17957716>
+
+    2014-08-15  Tim Horton  <timothy_horton@apple.com>
+    
+            Service overlays stay fixed when <iframe> scrolls
+            https://bugs.webkit.org/show_bug.cgi?id=135959
+            <rdar://problem/17957716>
+    
+            Reviewed by Enrica Casucci.
+    
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::highlightsAreEquivalent):
+            Tiny correctness fix; highlights can only be equivalent if their
+            types are equivalent as well.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172636. <rdar://problem/17957716>
 
     2014-08-15  Tim Horton  <timothy_horton@apple.com>
