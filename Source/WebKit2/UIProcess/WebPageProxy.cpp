@@ -2660,13 +2660,17 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (frame->isMainFrame())
+    bool isMainFrame = frame->isMainFrame();
+    if (isMainFrame)
         m_pageLoadState.didFinishLoad(transaction);
 
     frame->didFinishLoad();
 
     m_pageLoadState.commitChanges();
     m_loaderClient->didFinishLoadForFrame(this, frame, navigationID, userData.get());
+
+    if (isMainFrame)
+        m_pageClient.didFinishLoadForMainFrame();
 }
 
 void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, const ResourceError& error, IPC::MessageDecoder& decoder)
@@ -2760,6 +2764,9 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, IPC:
     MESSAGE_CHECK(frame);
 
     m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(this, frame, userData.get());
+
+    if (frame->isMainFrame())
+        m_pageClient.didFirstVisuallyNonEmptyLayoutForMainFrame();
 }
 
 void WebPageProxy::didLayout(uint32_t layoutMilestones, IPC::MessageDecoder& decoder)
@@ -5178,6 +5185,11 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
 void WebPageProxy::willChangeCurrentHistoryItemForMainFrame()
 {
     recordNavigationSnapshot();
+}
+
+void WebPageProxy::removeNavigationGestureSnapshot()
+{
+    m_pageClient.removeNavigationGestureSnapshot();
 }
 
 } // namespace WebKit

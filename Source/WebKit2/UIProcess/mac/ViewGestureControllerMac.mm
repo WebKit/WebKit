@@ -105,6 +105,9 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_customSwipeViewsTopContentInset(0)
     , m_pendingSwipeReason(PendingSwipeReason::None)
     , m_shouldIgnorePinnedState(false)
+    , m_swipeWaitingForVisuallyNonEmptyLayout(false)
+    , m_swipeWaitingForRenderTreeSizeThreshold(false)
+    , m_swipeWaitingForRepaint(false)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
@@ -641,29 +644,70 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction), m_webPageProxy.pageID());
 
+    m_swipeWaitingForVisuallyNonEmptyLayout = true;
+    m_swipeWaitingForRenderTreeSizeThreshold = true;
+
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(targetItem);
-
-    if (!renderTreeSize) {
-        removeSwipeSnapshot();
-        return;
-    }
-
-    m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
 }
 
 void ViewGestureController::didHitRenderTreeSizeThreshold()
 {
-    removeSwipeSnapshot();
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    m_swipeWaitingForRenderTreeSizeThreshold = false;
+
+    if (!m_swipeWaitingForVisuallyNonEmptyLayout)
+        removeSwipeSnapshotAfterRepaint();
+}
+
+void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    m_swipeWaitingForVisuallyNonEmptyLayout = false;
+
+    if (!m_swipeWaitingForRenderTreeSizeThreshold)
+        removeSwipeSnapshotAfterRepaint();
+    else
+        m_swipeWatchdogTimer.startOneShot(swipeSnapshotRemovalWatchdogDuration.count());
+}
+
+void ViewGestureController::didFinishLoadForMainFrame()
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    removeSwipeSnapshotAfterRepaint();
 }
 
 void ViewGestureController::swipeSnapshotWatchdogTimerFired()
 {
-    removeSwipeSnapshot();
+    removeSwipeSnapshotAfterRepaint();
+}
+
+void ViewGestureController::removeSwipeSnapshotAfterRepaint()
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    if (m_swipeWaitingForRepaint)
+        return;
+
+    m_swipeWaitingForRepaint = true;
+
+    WebPageProxy* webPageProxy = &m_webPageProxy;
+    m_webPageProxy.forceRepaint(VoidCallback::create([webPageProxy] (CallbackBase::Error error) {
+        webPageProxy->removeNavigationGestureSnapshot();
+    }));
 }
 
 void ViewGestureController::removeSwipeSnapshot()
 {
+    m_swipeWaitingForRepaint = false;
+
     m_swipeWatchdogTimer.stop();
 
     if (m_activeGestureType != ViewGestureType::Swipe)

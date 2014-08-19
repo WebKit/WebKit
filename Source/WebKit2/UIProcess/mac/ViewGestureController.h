@@ -104,6 +104,9 @@ public:
 
     bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
     void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
+
+    void didFirstVisuallyNonEmptyLayoutForMainFrame();
+    void didFinishLoadForMainFrame();
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     void setAlternateBackForwardListSourceView(WKWebView *);
@@ -114,11 +117,12 @@ public:
     void setRenderTreeSize(uint64_t);
 #endif
 
+    void removeSwipeSnapshot();
+
 private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-    
-    void removeSwipeSnapshot();
+
     void swipeSnapshotWatchdogTimerFired();
 
 #if PLATFORM(MAC)
@@ -126,6 +130,7 @@ private:
     void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds, bool frameHandlesMagnificationGesture);
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
     void didHitRenderTreeSizeThreshold();
+    void removeSwipeSnapshotAfterRepaint();
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
@@ -145,7 +150,7 @@ private:
 
     WebPageProxy& m_webPageProxy;
     ViewGestureType m_activeGestureType;
-    
+
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogTimer;
 
 #if USE(IOSURFACE)
@@ -181,6 +186,10 @@ private:
     WebCore::FloatSize m_cumulativeDeltaForPendingSwipe;
 
     bool m_shouldIgnorePinnedState;
+
+    bool m_swipeWaitingForVisuallyNonEmptyLayout;
+    bool m_swipeWaitingForRenderTreeSizeThreshold;
+    bool m_swipeWaitingForRepaint;
 #else    
     UIView *m_liveSwipeView;
     RetainPtr<UIView> m_liveSwipeViewClippingView;

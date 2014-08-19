@@ -1,5 +1,76 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172635. <rdar://problem/18006149>
+
+    2014-08-15  Tim Horton  <timothy_horton@apple.com>
+    
+            REGRESSION (WebKit2 Gestures): White flash when swiping back to cnn.com's homepage from an article
+            https://bugs.webkit.org/show_bug.cgi?id=135951
+            <rdar://problem/18006149>
+    
+            Reviewed by Simon Fraser.
+    
+            Wait for (the first visually non-empty layout AND the render tree size threshold to be hit),
+            OR didFinishLoadForFrame, whichever comes first. Once we've done the first visually non-empty layout,
+            we'll start the watchdog and tear down the snapshot in three seconds no matter what.
+            Also, force a repaint so we can asynchronously wait for the Web Process to paint and return to us
+            before removing the snapshot, which improves our chances that something is actually on the screen.
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _didFirstVisuallyNonEmptyLayoutForMainFrame]):
+            (-[WKView _didFinishLoadForMainFrame]):
+            (-[WKView _removeNavigationGestureSnapshot]):
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didFinishLoadForFrame):
+            (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+            (WebKit::WebPageProxy::removeNavigationGestureSnapshot):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+            (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+            (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+            (WebKit::PageClientImpl::removeNavigationGestureSnapshot):
+            Plumb didFirstVisuallyNonEmptyLayoutForMainFrame and didFinishLoadForMainFrame
+            through to ViewGestureController from WebPageProxy via the PageClient, etc.
+    
+            Ditto for removeNavigationGestureSnapshot, though it is called from a
+            VoidCallback in ViewGestureController instead of from WebFrameLoaderClient and friends.
+    
+            * UIProcess/mac/ViewGestureController.h:
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::ViewGestureController):
+            (WebKit::ViewGestureController::endSwipeGesture):
+            When finishing a swipe, we want to wait for both the first visually non-empty layout
+            and the render tree size threshold being hit.
+    
+            (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold):
+            (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame):
+            When both of these things have happened, remove the swipe snapshot (after forcing a repaint).
+            For didFirstVisuallyNonEmptyLayoutForMainFrame, we will also start a watchdog
+            ensuring that we remove the snapshot in three seconds.
+    
+            (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+            When didFinishLoadForMainFrame happens, remove the swipe snapshot (after forcing a repaint).
+    
+            (WebKit::ViewGestureController::swipeSnapshotWatchdogTimerFired):
+            If the watchdog timer fires, remove the swipe snapshot (after forcing a repaint).
+    
+            (WebKit::ViewGestureController::removeSwipeSnapshotAfterRepaint):
+            Force a repaint and wait for the async callback before removing the snapshot.
+            It is safe to hold on to the WebPageProxy here because it will always
+            call all of its callbacks before it is destroyed.
+            Avoid enqueuing multiple force-repaints.
+    
+            (WebKit::ViewGestureController::removeSwipeSnapshot):
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172596
 
     2014-08-14  Enrica Casucci  <enrica@apple.com>

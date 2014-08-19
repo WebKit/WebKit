@@ -179,6 +179,10 @@ private:
 
     NSView *activeView() const;
 
+    virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
+    virtual void didFinishLoadForMainFrame() override;
+    virtual void removeNavigationGestureSnapshot() override;
+
     WKView *m_wkView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

@@ -3598,6 +3598,24 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #endif
 
+- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame
+{
+    if (_data->_gestureController)
+        _data->_gestureController->didFirstVisuallyNonEmptyLayoutForMainFrame();
+}
+
+- (void)_didFinishLoadForMainFrame
+{
+    if (_data->_gestureController)
+        _data->_gestureController->didFinishLoadForMainFrame();
+}
+
+- (void)_removeNavigationGestureSnapshot
+{
+    if (_data->_gestureController)
+        _data->_gestureController->removeSwipeSnapshot();
+}
+
 @end
 
 @implementation WKView (Private)
