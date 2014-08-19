@@ -1,5 +1,19 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172650. <rdar://problem/18034356>
+
+    2014-08-15  Timothy Hatcher  <timothy@apple.com>
+    
+            Web Inspector: Probe details sidebar data grids do not show data
+            https://bugs.webkit.org/show_bug.cgi?id=135992
+    
+            Reviewed by Joseph Pecoraro.
+    
+            * UserInterface/Views/ProbeSetDataGrid.js:
+            (WebInspector.ProbeSetDataGrid): Make the DataGrid be inline to show the data correctly.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172640. <rdar://problem/18025668>
 
     2014-08-15  Timothy Hatcher  <timothy@apple.com>
