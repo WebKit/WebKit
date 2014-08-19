@@ -1,5 +1,23 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172705. <rdar://problem/17767169>
+
+    2014-08-18  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Mac] Follow-up to r136040 based on Darin Adler's comments.
+    
+            Pass Widget* as a Widget&, since it can never be null.
+    
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent):
+            (WebCore::EventHandler::handleWheelEvent):
+            * page/EventHandler.h:
+            * page/mac/EventHandlerMac.mm:
+            (WebCore::EventHandler::platformCompleteWheelEvent):
+            (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent):
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172703. <rdar://problem/17767169>
 
     2014-08-17  Brent Fulgham  <bfulgham@apple.com>

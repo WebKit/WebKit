@@ -893,10 +893,11 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
                 didHandleWheelEvent = !m_startedGestureAtScrollLimit;
             }
 
-            // If the platform widget is handling the event, we always want to return false.
+            // If the platform widget is handling the event, we always want to return false for WebKit2, but
+            // true for WebKit1.
             if (view && scrollableArea == view && view->platformWidget())
-                didHandleWheelEvent = false;
-
+                didHandleWheelEvent = frameHasPlatformWidget(m_frame);
+            
             m_isHandlingWheelEvent = false;
             return didHandleWheelEvent;
         }
@@ -916,10 +917,10 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
     return didHandleEvent;
 }
 
-bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, const Widget* widget, ContainerNode* scrollableContainer)
+bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, const Widget& widget, ContainerNode* scrollableContainer)
 {
     // WebKit1: Prevent multiple copies of the scrollWheel event from being sent to the NSScrollView widget.
-    if (frameHasPlatformWidget(m_frame) && widget->isFrameView())
+    if (frameHasPlatformWidget(m_frame) && widget.isFrameView())
         return true;
 
     if (wheelEvent.useLatchedEventElement() && m_latchedScrollableContainer && scrollableContainer == m_latchedScrollableContainer)
