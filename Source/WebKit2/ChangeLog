@@ -1,5 +1,23 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172643. <rdar://problem/18032571>
+
+    2014-08-15  Enrica Casucci  <enrica@apple.com>
+    
+            [Services with UI] Selections are incorrect when selecting three lines.
+            https://bugs.webkit.org/show_bug.cgi?id=135989
+            <rdar://problem/18032571>
+    
+            Reviewed by Tim Horton.
+    
+            The stitching algorithm did not handle correctly the case of selections
+            over three lines if the middle line is composed of only one rectangle.
+    
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::stitchRects):
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172639. <rdar://problem/17957716>
 
     2014-08-15  Tim Horton  <timothy_horton@apple.com>
