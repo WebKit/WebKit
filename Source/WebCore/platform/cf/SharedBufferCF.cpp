@@ -28,7 +28,6 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
-#include "PurgeableBuffer.h"
 #include <wtf/cf/TypeCasts.h>
 
 #if ENABLE(DISK_IMAGE_CACHE)
@@ -40,7 +39,6 @@ namespace WebCore {
 SharedBuffer::SharedBuffer(CFDataRef cfData)
     : m_size(0)
     , m_buffer(adoptRef(new DataBuffer))
-    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
@@ -130,7 +128,6 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
 SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
     : m_size(0)
     , m_buffer(adoptRef(new DataBuffer))
-    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)

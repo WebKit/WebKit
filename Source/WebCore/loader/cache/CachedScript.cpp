@@ -71,8 +71,6 @@ String CachedScript::mimeType() const
 
 const String& CachedScript::script()
 {
-    ASSERT(!isPurgeable());
-
     if (!m_script && m_data) {
         m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
         setDecodedSize(m_script.sizeInBytes());
@@ -93,8 +91,6 @@ void CachedScript::destroyDecodedData()
 {
     m_script = String();
     setDecodedSize(0);
-    if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
-        makePurgeable(true);
 }
 
 #if ENABLE(NOSNIFF)
