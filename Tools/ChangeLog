@@ -1,3 +1,35 @@
+2014-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard should not request 50 revisions from trac each time
+        https://bugs.webkit.org/show_bug.cgi?id=127130
+
+        build.webkit.org/dashboard sometimes fetches a Trac revision in an intermediate state, and never updates later
+        https://bugs.webkit.org/show_bug.cgi?id=127131
+
+        Reviewed by Timothy Hatcher.
+
+        Turns out that requesting 50 builds is much slower than requesting by date - even
+        if the request ends up returning more than 50 results. There is no way to only
+        request updates, but this change brings request time from 6-8 seconds down to
+        less than a second.
+
+        This patch generalizes date handling for later use in metrics code. As part of the
+        rewrite, I made newly fetched data update author e-mail in previously fetched
+        revisions, as it changes after commit queue first lands.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        Updated for event rename. I changed the trac event to not contain the list of new
+        commits, as we now sometimes update old commits, and that couldn't be expressed
+        in event data. We never used the list anywhere in the first place.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype._xmlTimelineURL): Made this function take arbitrary dates. When called
+        without arguments, return commits for today and yesterday.
+        (Trac.prototype._loaded):
+        (Trac.prototype.update): Moved the function for processing loaded results out of
+        here for clarity, and also because I'm going to have a separate loading code path
+        for metrics.
+
 2014-08-18  Dan Bernstein  <mitz@apple.com>
 
         Added an update-webkit option to override the ../Internal check.

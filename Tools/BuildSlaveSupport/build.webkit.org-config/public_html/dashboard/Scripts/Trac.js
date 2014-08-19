@@ -44,7 +44,7 @@ Trac.NeedsAuthentication = "needsAuthentication";
 Trac.UpdateInterval = 45000; // 45 seconds
 
 Trac.Event = {
-    NewCommitsRecorded: "new-commits-recorded"
+    CommitsUpdated: "commits-updated"
 };
 
 Trac.prototype = {
@@ -63,9 +63,24 @@ Trac.prototype = {
         return this.baseURL + "changeset/" + encodeURIComponent(revision);
     },
 
-    _xmlTimelineURL: function()
+    _xmlTimelineURL: function(fromDate, toDate)
     {
-        return this.baseURL + "timeline?changeset=on&max=50&format=rss";
+        if (typeof fromDate === "undefined") {
+            fromDate = new Date();
+            toDate = new Date(fromDate);
+            // By default, get at least one full day of changesets, as the current day may have only begun.
+            fromDate.setDate(fromDate.getDate() - 1);
+        } else if (typeof toDate === "undefined")
+            toDate = fromDate;
+
+        console.assert(fromDate <= toDate);
+
+        var fromDay = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+        var toDay = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+
+        return this.baseURL + "timeline?changeset=on&format=rss&max=-1" +
+            "&from=" +  (toDay.getMonth() + 1) + "%2F" + toDay.getDate() + "%2F" + (toDay.getFullYear() % 100) +
+            "&daysback=" + ((toDay - fromDay) / 1000 / 60 / 60 / 24);
     },
 
     _convertCommitInfoElementToObject: function(doc, commitElement)
@@ -109,30 +124,63 @@ Trac.prototype = {
         };
     },
 
+    _loaded: function(dataDocument)
+    {
+        var earliestKnownRevision = 0;
+        var latestKnownRevision = 0;
+        if (this.recordedCommits.length) {
+            earliestKnownRevision = this.recordedCommits[0].revisionNumber;
+            latestKnownRevision = this.recordedCommits[this.recordedCommits.length - 1].revisionNumber;
+        }
+
+        var knownCommitsWereUpdated = false;
+        var newCommits = [];
+        var newCommitsBeforeEarliestKnownRevision = [];
+
+        var commitInfoElements = dataDocument.evaluate("/rss/channel/item", dataDocument, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+        var commitInfoElement = undefined;
+        var indexInRecordedCommits = undefined;
+        while (commitInfoElement = commitInfoElements.iterateNext()) {
+            var commit = this._convertCommitInfoElementToObject(dataDocument, commitInfoElement);
+            if (commit.revisionNumber > latestKnownRevision) {
+                console.assert(typeof indexInRecordedCommits === "undefined");
+                newCommits.push(commit);
+            } else if (commit.revisionNumber < earliestKnownRevision) {
+                console.assert(typeof indexInRecordedCommits === "undefined" || indexInRecordedCommits === -1);
+                newCommitsBeforeEarliestKnownRevision.push(commit);
+            } else {
+                if (typeof indexInRecordedCommits === "undefined") {
+                    // We could have started anywhere in the recorded commits array, let's find where.
+                    // With periodic updates, this will be the latest recorded commit, so starting from the end.
+                    for (var i = this.recordedCommits.length - 1; i >= 0; --i) {
+                        if (this.recordedCommits[i].revisionNumber === commit.revisionNumber) {
+                            indexInRecordedCommits = i;
+                            break;
+                        }
+                    }
+                }
+
+                console.assert(indexInRecordedCommits >= 0);
+                console.assert(this.recordedCommits[indexInRecordedCommits].revisionNumber === commit.revisionNumber);
+
+                // Author could have changed, as commit queue replaces it after the fact.
+                if (this.recordedCommits[indexInRecordedCommits].author !== commit.author) {
+                    this.recordedCommits[indexInRecordedCommits].author = commit.author;
+                    knownCommitWasUpdated = true;
+                }
+                --indexInRecordedCommits;
+            }
+        }
+
+        if (newCommits.length || newCommitsBeforeEarliestKnownRevision.length)
+            this.recordedCommits = newCommitsBeforeEarliestKnownRevision.reverse().concat(this.recordedCommits, newCommits.reverse());
+
+        if (newCommits.length || newCommitsBeforeEarliestKnownRevision.length || knownCommitsWereUpdated)
+            this.dispatchEventToListeners(Trac.Event.CommitsUpdated, null);
+    },
+
     update: function()
     {
-        loadXML(this._xmlTimelineURL(), function(dataDocument) {
-            var latestKnownRevision = 0;
-            if (this.recordedCommits.length)
-                latestKnownRevision = this.recordedCommits[this.recordedCommits.length - 1].revisionNumber;
-
-            var newCommits = [];
-
-            var commitInfoElements = dataDocument.evaluate("/rss/channel/item", dataDocument, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
-            var commitInfoElement = undefined;
-            while (commitInfoElement = commitInfoElements.iterateNext()) {
-                var commit = this._convertCommitInfoElementToObject(dataDocument, commitInfoElement);
-                if (commit.revisionNumber == latestKnownRevision)
-                    break;
-                newCommits.push(commit);
-            }
-            
-            if (!newCommits.length)
-                return;
-
-            this.recordedCommits = this.recordedCommits.concat(newCommits.reverse());
-
-            this.dispatchEventToListeners(Trac.Event.NewCommitsRecorded, {newCommits: newCommits});
-        }.bind(this), this._needsAuthentication ? { withCredentials: true } : {});
+        loadXML(this._xmlTimelineURL(), this._loaded.bind(this), this._needsAuthentication ? { withCredentials: true } : {});
     }
 };

@@ -48,9 +48,9 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
     }.bind(this));
 
-    webkitTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
+    webkitTrac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
     if (typeof internalTrac != "undefined")
-        internalTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
+        internalTrac.addEventListener(Trac.Event.CommitsUpdated, this._newCommitsRecorded, this);
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueueView);
