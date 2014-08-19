@@ -119,6 +119,11 @@ enum class FrameLoadType {
         Yes,
         No
     };
+
+    enum class AllowNavigationToInvalidURL {
+        Yes,
+        No
+    };
 }
 
 #endif

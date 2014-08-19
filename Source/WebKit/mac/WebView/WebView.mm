@@ -2327,8 +2327,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     settings.setMinimumZoomFontSize([preferences _minimumZoomFontSize]);
 #endif
-
-    settings.setAllowNavigationToInvalidURL(!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_NAVIGATION_URL_VALIDATION));
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

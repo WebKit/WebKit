@@ -165,7 +165,7 @@ public:
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         bool refresh = equalIgnoringFragmentIdentifier(frame.document()->url(), url());
-        frame.loader().changeLocation(securityOrigin(), url(), referrer(), lockHistory(), lockBackForwardList(), refresh);
+        frame.loader().changeLocation(securityOrigin(), url(), referrer(), lockHistory(), lockBackForwardList(), refresh, AllowNavigationToInvalidURL::No);
     }
 };
 
@@ -173,6 +173,12 @@ class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
     ScheduledLocationChange(SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad)
         : ScheduledURLNavigation(0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true) { }
+
+    virtual void fire(Frame& frame) override
+    {
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
+        frame.loader().changeLocation(securityOrigin(), url(), referrer(), lockHistory(), lockBackForwardList(), false, AllowNavigationToInvalidURL::No);
+    }
 };
 
 class ScheduledRefresh : public ScheduledURLNavigation {
@@ -240,7 +246,7 @@ public:
             return;
         FrameLoadRequest frameRequest(requestingDocument->securityOrigin());
         m_submission->populateFrameLoadRequest(frameRequest);
-        frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer);
+        frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes);
     }
     
     virtual void didStartTimer(Frame& frame, Timer<NavigationScheduler>& timer) override
@@ -311,8 +317,6 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
         return false;
     if (protocolIsJavaScript(url))
         return true;
-    if (!url.isValid() && !m_frame.settings().allowNavigationToInvalidURL())
-        return false;
     return NavigationDisablerForBeforeUnload::isNavigationAllowed();
 }
 
@@ -364,7 +368,7 @@ void NavigationScheduler::scheduleLocationChange(SecurityOrigin* securityOrigin,
     // fragment part, we don't need to schedule the location change.
     URL parsedURL(ParsedURLString, url);
     if (parsedURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame.document()->url(), parsedURL)) {
-        loader.changeLocation(securityOrigin, m_frame.document()->completeURL(url), referrer, lockHistory, lockBackForwardList);
+        loader.changeLocation(securityOrigin, m_frame.document()->completeURL(url), referrer, lockHistory, lockBackForwardList, false, AllowNavigationToInvalidURL::No);
         return;
     }
 

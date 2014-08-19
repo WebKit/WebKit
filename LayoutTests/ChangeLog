@@ -1,5 +1,39 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172709. <rdar://problem/17850158>
+
+    2014-08-18  Andy Estes  <aestes@apple.com>
+    
+            REGRESSION (r167856): adobe.com no longer able to launch Create Cloud app using a URL with a custom scheme
+            https://bugs.webkit.org/show_bug.cgi?id=136010
+    
+            Reviewed by Darin Adler.
+    
+            Removed tests that verified the behavior of setAllowNavigationToInvalidURL(true), which no longer exists:
+            * fast/loader/allow-redirect-to-invalid-url-using-javascript-expected.txt: Removed.
+            * fast/loader/allow-redirect-to-invalid-url-using-javascript.html: Removed.
+            * fast/loader/allow-redirect-to-invalid-url-using-meta-refresh-expected.txt: Removed.
+            * fast/loader/allow-redirect-to-invalid-url-using-meta-refresh.html: Removed.
+    
+            Added tests that verify the policy delegate is executed on some navigations to invalid URLs:
+            * fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate-expected.txt: Added.
+            * fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate.html: Added.
+            * fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate-expected.txt: Added.
+            * fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html: Added.
+            * fast/loader/window-open-to-invalid-url-calls-policy-delegate-expected.txt: Added.
+            * fast/loader/window-open-to-invalid-url-calls-policy-delegate.html: Added.
+    
+            Renamed some existing tests added in r170120, modified them to log willPerformClientRedirectToURL and
+            didCancelClientRedirectForFrame, and added a test to verify navigations in existing frames via window.open:
+            * fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt: Renamed from fast/loader/disallow-redirect-to-invalid-url-using-javascript-expected.txt.
+            * fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html: Renamed from fast/loader/disallow-redirect-to-invalid-url-using-javascript.html.
+            * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-expected.txt: Renamed from fast/loader/disallow-redirect-to-invalid-url-using-meta-refresh-expected.txt.
+            * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html: Renamed from fast/loader/disallow-redirect-to-invalid-url-using-meta-refresh.html.
+            * fast/loader/window-open-to-invalid-url-disallowed-expected.txt: Added.
+            * fast/loader/window-open-to-invalid-url-disallowed.html: Added.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172656. <rdar://problem/17961698>
 
     2014-08-15  Zalan Bujtas  <zalan@apple.com>

@@ -1,5 +1,71 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172709. <rdar://problem/17850158>
+
+    2014-08-18  Andy Estes  <aestes@apple.com>
+    
+            REGRESSION (r167856): adobe.com no longer able to launch Create Cloud app using a URL with a custom scheme
+            https://bugs.webkit.org/show_bug.cgi?id=136010
+    
+            Reviewed by Darin Adler.
+    
+            r167856 caused WebKit to stop scheduling certain kinds of navigations (window.location changes, meta-refresh,
+            and some calls to window.open) when the request URL is invalid. Adobe.com performs one of these navigations to
+            an invalid URL with an external scheme (aam:), relying on Safari's navigation policy delegate to ignore the
+            navigation and launch the external app registered to handle aam: URLs. Since the navigation is no longer
+            scheduled, the policy delegate is never executed and the external app never launches.
+    
+            Instead of not scheduling the navigation, allow it to proceed until the client's policy delegate has executed
+            and made a decision. Only disallow the navigation if the policy delegate told WebKit to proceed with the load.
+            This exposes these navigations to clients via the policy delegate and via willPerformClientRedirectToURL and
+            didCancelClientRedirectForFrame on the frame load delegate.
+            
+            To constrain this check only to the navigation types covered by r167856, only two NavigationSchedulers
+            (ScheduledRedirect and ScheduledLocationChange) enable the invalid URL check.
+    
+            Note that r167856 also caused an iOS regression, and this was resolved in r170120 by adding a linked-on-or-after
+            check and a WebCore setting. Since the iOS regression is also resolved by the approach described above, this
+            patch reverts r170120 (but keeps some of its tests).
+    
+            Tests: fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate.html
+                   fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html
+                   fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate.html
+                   fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html
+                   fast/loader/window-open-to-invalid-url-calls-policy-delegate.html
+                   fast/loader/window-open-to-invalid-url-disallowed.html
+    
+            * WebCore.exp.in: Updated the symbol FrameLoader::loadFrameRequest.
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::changeLocation): Added an AllowNavigationToInvalidURL argument; passed down to urlSelected.
+            (WebCore::FrameLoader::urlSelected): Added an AllowNavigationToInvalidURL argument; passed down to loadFrameRequest.
+            (WebCore::FrameLoader::loadURLIntoChildFrame): Passed AllowNavigationToInvalidURL::Yes to loadURL.
+            (WebCore::FrameLoader::loadFrameRequest): Added an AllowNavigationToInvalidURL argument; passed down to loadURL and loadPostRequest.
+            (WebCore::FrameLoader::loadURL): Added an AllowNavigationToInvalidURL argument; passed down to continueLoadAfterNewWindowPolicy and loadWithNavigationAction.
+            (WebCore::FrameLoader::loadPostRequest): Ditto.
+            (WebCore::FrameLoader::load): Passed AllowNavigationToInvalidURL::Yes to continueLoadAfterNewWindowPolicy.
+            (WebCore::FrameLoader::loadWithNavigationAction): Added an AllowNavigationToInvalidURL argument; passed down to loadWithDocumentLoader.
+            (WebCore::FrameLoader::loadWithDocumentLoader): Added an AllowNavigationToInvalidURL argument; passed down to continueLoadAfterNavigationPolicy.
+            (WebCore::FrameLoader::reloadWithOverrideEncoding): Passed AllowNavigationToInvalidURL::Yes to loadWithDocumentLoader.
+            (WebCore::FrameLoader::reload): Ditto.
+            (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+                Added an AllowNavigationToInvalidURL argument; if its value is No and the request's URL is invalid, do not continue.
+                Added a FIXME about calling clientRedirectCancelledOrFinished on non-quick redirect cancellations.
+            (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Added an AllowNavigationToInvalidURL argument; passed down to loadWithNavigationAction.
+            (WebCore::FrameLoader::loadDifferentDocumentItem): Passed AllowNavigationToInvalidURL::Yes to either loadWithDocumentLoader or loadWithNavigationAction.
+            * loader/FrameLoader.h:
+            * loader/FrameLoaderTypes.h: Defined AllowNavigationToInvalidURL to have values of Yes and No.
+            * loader/NavigationScheduler.cpp:
+            (WebCore::ScheduledRedirect::fire): Passed AllowNavigationToInvalidURL::No to FrameLoader::changeLocation.
+            (WebCore::ScheduledLocationChange::fire): Ditto.
+            (WebCore::NavigationScheduler::shouldScheduleNavigation): Removed the URL::isValid check.
+            (WebCore::NavigationScheduler::scheduleLocationChange): Passed AllowNavigationToInvalidURL::No to FrameLoder::changeLocation during fragment navigations.
+            * page/ContextMenuController.cpp:
+            (WebCore::openNewWindow): Passed AllowNavigationToInvalidURL::Yes to FrameLoader::loadFrameRequest.
+            (WebCore::ContextMenuController::contextMenuItemSelected): Ditto.
+            * page/Settings.in: Removed allowNavigationToInvalidURL.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172705. <rdar://problem/17767169>
 
     2014-08-18  Brent Fulgham  <bfulgham@apple.com>
