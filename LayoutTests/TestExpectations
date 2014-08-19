@@ -154,8 +154,6 @@ webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-out
 webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html [ ImageOnlyFailure ]
 webkit.org/b/135925 css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html [ ImageOnlyFailure ]
 
-webkit.org/b/135926 css3/shapes/shape-outside/values/shape-image-threshold-001.html [ Failure ]
-
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-010.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-011.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-012.html [ ImageOnlyFailure ]
@@ -166,7 +164,3 @@ webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-016.html [ ImageOnly
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-017.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-018.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-019.html [ ImageOnlyFailure ]
-
-[ Debug ] css3/shapes/shape-outside/values/shape-image-threshold-001.html [ Crash ]
-
-webkit.org/b/136075 [ Debug ] css3/shapes/shape-outside/values/shape-image-threshold-001.html [ Skip ]

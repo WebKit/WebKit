@@ -2582,7 +2582,7 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitClipPath, ApplyPropertyClipPath<&RenderStyle::clipPath, &RenderStyle::setClipPath, &RenderStyle::initialClipPath>::createHandler());
 #if ENABLE(CSS_SHAPES)
     setPropertyHandler(CSSPropertyWebkitShapeMargin, ApplyPropertyLength<&RenderStyle::shapeMargin, &RenderStyle::setShapeMargin, &RenderStyle::initialShapeMargin>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitShapeImageThreshold, ApplyPropertyDefault<float, &RenderStyle::shapeImageThreshold, float, &RenderStyle::setShapeImageThreshold, float, &RenderStyle::initialShapeImageThreshold>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitShapeImageThreshold, ApplyPropertyNumber<float, &RenderStyle::shapeImageThreshold, &RenderStyle::setShapeImageThreshold, &RenderStyle::initialShapeImageThreshold>::createHandler());
     setPropertyHandler(CSSPropertyWebkitShapeOutside, ApplyPropertyShape<&RenderStyle::shapeOutside, &RenderStyle::setShapeOutside, &RenderStyle::initialShapeOutside>::createHandler());
 #endif
     setPropertyHandler(CSSPropertyWhiteSpace, ApplyPropertyDefault<EWhiteSpace, &RenderStyle::whiteSpace, EWhiteSpace, &RenderStyle::setWhiteSpace, EWhiteSpace, &RenderStyle::initialWhiteSpace>::createHandler());

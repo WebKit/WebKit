@@ -1,3 +1,20 @@
+2014-08-19  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] A few calc() test failures in the shape-image-threshold parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=135926
+
+        Reviewed by Dirk Schulze.
+
+        shape-image-threshold is a Number, so it should be parsed as one. The
+        default parsing doesn't support calcs, but numbers do.
+
+        No new tests, fixes exitsing test to pass.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): Use
+            ApplyPropertyNumber instead of ApplyPropertyDefault for
+            shape-image-threshold.
+
 2014-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Use NSURLFileTypeMappings directly instead of depending on WebKitSystemInterface wrappers for it

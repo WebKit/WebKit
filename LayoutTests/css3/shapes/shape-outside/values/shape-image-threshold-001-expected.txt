@@ -1,1 +1,10 @@
-PASS
+
+PASS calc(10/100) - inline 
+PASS calc(10/100 + 30/100) - inline 
+PASS calc(150/100) - inline 
+PASS calc(150/100 - 2) - inline 
+PASS calc(10/100) - computed 
+PASS calc(10/100 + 30/100) - computed 
+PASS calc(150/100) - computed 
+PASS calc(150/100 - 2) - computed 
+
