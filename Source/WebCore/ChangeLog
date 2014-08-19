@@ -1,5 +1,31 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172600
+
+    2014-08-14  Yoav Weiss  <yoav@yoav.ws>
+
+            srcset with w descriptor doesn't behave as expected when sizes is not supported.
+            https://bugs.webkit.org/show_bug.cgi?id=135935
+
+            Reviewed by Dean Jackson.
+
+            In current implementation, if sizes is not supported, when authors would write
+            markup such as `<img src=fallback.jpg srcset="100px.jpg 100w, 400px.jpg 400w">`
+            the first candidate in srcset would be picked, regardless of its dimensions 
+            That is likely to be confusing for authors.
+            Dropping these "not yet supported" candidates is likely to be less confusing,
+            and will result in the "fallback.jpg" candidate being picked.
+
+            No new tests since this change only concerns builds that are built
+            with the PICTURE_SIZES compile flag turned off.
+
+            * html/parser/HTMLSrcsetParser.cpp:
+            (WebCore::parseDescriptors):
+            Drop candidates that include either 'w' or 'h' descriptors when the
+            sizes feature is not supported.
+
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172502
 
     2014-08-12  Pratik Solanki  <psolanki@apple.com>
