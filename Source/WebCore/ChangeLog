@@ -1,5 +1,34 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172703. <rdar://problem/17767169>
+
+    2014-08-17  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Mac] Gesture scrolls don't work in the WebKit1 clients after scrolling a non-scrollable iFrame
+            https://bugs.webkit.org/show_bug.cgi?id=136029
+            <rdar://problem/17767169>
+    
+            Reviewed by Maciej Stachowiak.
+    
+            This is difficult to test in our layout tests, since it relies on specific host application
+            behavior.
+    
+            If the platform widget is a frame view (IFrame), and we are in WebKit1, 'passWheelEventToWidget'
+            has already called 'scrollWheel' on the underlying platform widget. We need to return true in
+            this case to avoid getting multiple copies of the scrollWheel event sent to the platform widget.
+    
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent): Revise default stub to
+            accept a Widget* argument.
+            (WebCore::EventHandler::handleWheelEvent):
+            * page/EventHandler.h:
+            * page/mac/EventHandlerMac.mm:
+            (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent): Check for WK1 case and
+            return 'true' when the underlying NSScrollView has been issues a scrollWheel event.
+            
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172693. <rdar://problem/17577321>
 
     2014-08-15  Dean Jackson  <dino@apple.com>
