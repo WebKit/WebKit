@@ -1,3 +1,16 @@
+2014-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Provide default implementations of all GraphicsLayerClient methods
+        https://bugs.webkit.org/show_bug.cgi?id=136054
+
+        Reviewed by Tim Horton.
+        
+        Remove overrides which are no longer required.
+
+        * WebProcess/WebPage/PageOverlayController.h:
+        * WebProcess/WebPage/ServicesOverlayController.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+
 2014-08-18  Pratik Solanki  <psolanki@apple.com>
 
         Remove PurgeableBuffer since it is not very useful any more

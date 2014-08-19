@@ -84,7 +84,6 @@ private:
         explicit Highlight(ServicesOverlayController&, Type, RetainPtr<DDHighlightRef>, PassRefPtr<WebCore::Range>);
 
         // GraphicsLayerClient
-        virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
         virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
         virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip) override;
         virtual float deviceScaleFactor() const override;

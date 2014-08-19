@@ -105,11 +105,6 @@ private:
 
     virtual bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
 
-    // GraphicsLayerClient
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) override { }
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) override { }
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip) override { }
-
     void updateScrolledExposedRect();
 
     void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*);
