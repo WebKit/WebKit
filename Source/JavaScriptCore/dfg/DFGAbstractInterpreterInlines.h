@@ -1773,7 +1773,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         transitions.append(
                             Transition(
                                 variant.oldStructureForTransition(), variant.newStructure()));
-                        m_graph.watchpoints().consider(variant.newStructure());
+                        m_graph.registerStructure(variant.newStructure());
                         newSet.add(variant.newStructure());
                     } else {
                         ASSERT(variant.kind() == PutByIdVariant::Replace);

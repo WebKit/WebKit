@@ -50,13 +50,17 @@ DesiredWeakReferences::~DesiredWeakReferences()
 
 void DesiredWeakReferences::addLazily(JSCell* cell)
 {
-    m_references.append(cell);
+    m_references.add(cell);
+}
+
+bool DesiredWeakReferences::contains(JSCell* cell)
+{
+    return m_references.contains(cell);
 }
 
 void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
-    for (unsigned i = 0; i < m_references.size(); i++) {
-        JSCell* target = m_references[i];
+    for (JSCell* target : m_references) {
         if (Structure* structure = jsDynamicCast<Structure*>(target)) {
             common->weakStructureReferences.append(
                 WriteBarrier<Structure>(vm, m_codeBlock->ownerExecutable(), structure));
@@ -69,8 +73,8 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 
 void DesiredWeakReferences::visitChildren(SlotVisitor& visitor)
 {
-    for (unsigned i = m_references.size(); i--;)
-        visitor.appendUnbarrieredPointer(&m_references[i]);
+    for (JSCell* target : m_references)
+        visitor.appendUnbarrieredPointer(&target);
 }
 
 } } // namespace JSC::DFG

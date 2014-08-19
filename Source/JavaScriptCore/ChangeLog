@@ -1,3 +1,74 @@
+2014-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r172129): ftlopt branch merge made performance tests flakey crash
+        https://bugs.webkit.org/show_bug.cgi?id=135750
+
+        Reviewed by Mark Lam.
+        
+        This was caused by a rather embarrassing oversight in how the DFG tracks structures: we
+        could sometimes perform an optimization that requires a structure to be alive but forget to
+        ensure that the structure is actually kept alive. In particular, any watchpoint-based
+        optimizations involve setting watchpoints even if the code that got optimized is eventually
+        deleted because it is unreachable. All such optimizations would leave behind something in
+        the IR to tell us that we are interested in the structure and that therefore it should be
+        kept alive. But, IR can be deleted if it is unreachable.
+        
+        The solution is to ensure that as soon as the DFG is made aware of a structure, it adds it
+        to the set of weak references.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setOSREntryValue):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::normalizeClarity):
+        (JSC::DFG::AbstractValue::assertIsRegistered):
+        (JSC::DFG::AbstractValue::assertIsWatched): Deleted.
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::assertIsRegistered):
+        (JSC::DFG::AbstractValue::assertIsWatched): Deleted.
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::addLazily):
+        (JSC::DFG::DesiredWeakReferences::contains):
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+        (JSC::DFG::DesiredWeakReferences::visitChildren):
+        * dfg/DFGDesiredWeakReferences.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::registerFrozenValues):
+        (JSC::DFG::Graph::convertToConstant):
+        (JSC::DFG::Graph::registerStructure):
+        (JSC::DFG::Graph::assertIsRegistered):
+        (JSC::DFG::Graph::assertIsWatched): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::assertIsRegistered):
+        (JSC::DFG::StructureAbstractValue::assertIsWatched): Deleted.
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::assertIsRegistered):
+        (JSC::DFG::StructureAbstractValue::assertIsWatched): Deleted.
+        * dfg/DFGStructureRegistrationPhase.cpp: Copied from Source/JavaScriptCore/dfg/DFGWatchableStructureWatchingPhase.cpp.
+        (JSC::DFG::StructureRegistrationPhase::StructureRegistrationPhase):
+        (JSC::DFG::StructureRegistrationPhase::run):
+        (JSC::DFG::StructureRegistrationPhase::registerStructures):
+        (JSC::DFG::StructureRegistrationPhase::registerStructure):
+        (JSC::DFG::performStructureRegistration):
+        (JSC::DFG::WatchableStructureWatchingPhase::WatchableStructureWatchingPhase): Deleted.
+        (JSC::DFG::WatchableStructureWatchingPhase::run): Deleted.
+        (JSC::DFG::WatchableStructureWatchingPhase::tryWatch): Deleted.
+        (JSC::DFG::performWatchableStructureWatching): Deleted.
+        * dfg/DFGStructureRegistrationPhase.h: Copied from Source/JavaScriptCore/dfg/DFGWatchableStructureWatchingPhase.h.
+        * dfg/DFGWatchableStructureWatchingPhase.cpp: Removed.
+        * dfg/DFGWatchableStructureWatchingPhase.h: Removed.
+
 2014-08-18  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Fix ASSERT in ARM64's JSC::GPRInfo::debugName

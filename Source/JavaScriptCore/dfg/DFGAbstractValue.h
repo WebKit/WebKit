@@ -321,10 +321,10 @@ struct AbstractValue {
     
 #if ASSERT_DISABLED
     void checkConsistency() const { }
-    void assertIsWatched(Graph&) const { }
+    void assertIsRegistered(Graph&) const { }
 #else
     void checkConsistency() const;
-    void assertIsWatched(Graph&) const;
+    void assertIsRegistered(Graph&) const;
 #endif
     
     void dumpInContext(PrintStream&, DumpContext*) const;

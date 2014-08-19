@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGWatchableStructureWatchingPhase_h
-#define DFGWatchableStructureWatchingPhase_h
+#ifndef DFGStructureRegistrationPhase_h
+#define DFGStructureRegistrationPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -32,9 +32,10 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Set watchpoints on any structures that we know of that are currently watchable. It's
-// somewhat counterintuitive, but this ends up being the cleanest and most effective way
-// of reducing structure checks on terminal structures:
+// Registers any structures we know about as weak references, and sets watchpoints on any
+// such structures that we know of that are currently watchable. It's somewhat
+// counterintuitive, but this ends up being the cleanest and most effective way of reducing
+// structure checks on terminal structures:
 //
 // - We used to only set watchpoints on watchable structures if we knew that this would
 //   remove a structure check. Experiments show that switching from that, to blindly
@@ -43,11 +44,11 @@ class Graph;
 // - It makes abstract interpretation a whole lot easier. We just assume that watchable
 //   structures are unclobberable without having to do any other logic.
 
-bool performWatchableStructureWatching(Graph&);
+bool performStructureRegistration(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGWatchableStructureWatchingPhase_h
+#endif // DFGStructureRegistrationPhase_h
 

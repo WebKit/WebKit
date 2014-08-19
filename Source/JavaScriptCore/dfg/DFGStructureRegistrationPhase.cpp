@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DFGWatchableStructureWatchingPhase.h"
+#include "DFGStructureRegistrationPhase.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -35,23 +35,23 @@
 
 namespace JSC { namespace DFG {
 
-class WatchableStructureWatchingPhase : public Phase {
+class StructureRegistrationPhase : public Phase {
 public:
-    WatchableStructureWatchingPhase(Graph& graph)
-        : Phase(graph, "watchable structure watching")
+    StructureRegistrationPhase(Graph& graph)
+        : Phase(graph, "structure registration")
     {
     }
     
     bool run()
     {
-        // These are pretty dumb, but needed to placate subsequent assertions. We con't actually
+        // These are pretty dumb, but needed to placate subsequent assertions. We don't actually
         // have to watch these because there is no way to transition away from it, but they are
         // watchable and so we will assert if they aren't watched.
-        tryWatch(m_graph.m_vm.stringStructure.get());
-        tryWatch(m_graph.m_vm.getterSetterStructure.get());
+        registerStructure(m_graph.m_vm.stringStructure.get());
+        registerStructure(m_graph.m_vm.getterSetterStructure.get());
         
         for (FrozenValue* value : m_graph.m_frozenValues)
-            tryWatch(value->structure());
+            registerStructure(value->structure());
         
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
@@ -63,30 +63,30 @@ public:
             
                 switch (node->op()) {
                 case CheckExecutable:
-                    tryWatch(node->executable()->structure());
+                    registerStructure(node->executable()->structure());
                     break;
                 
                 case CheckStructure:
-                    tryWatch(node->structureSet());
+                    registerStructures(node->structureSet());
                     break;
                 
                 case NewObject:
                 case ArrayifyToStructure:
                 case NewStringObject:
-                    tryWatch(node->structure());
+                    registerStructure(node->structure());
                     break;
                 
                 case PutStructure:
                 case AllocatePropertyStorage:
                 case ReallocatePropertyStorage:
-                    RELEASE_ASSERT(node->transition()->previous->transitionWatchpointSetHasBeenInvalidated());
-                    tryWatch(node->transition()->next);
+                    registerStructure(node->transition()->previous);
+                    registerStructure(node->transition()->next);
                     break;
                     
                 case MultiGetByOffset:
                     for (unsigned i = node->multiGetByOffsetData().variants.size(); i--;) {
                         GetByIdVariant& variant = node->multiGetByOffsetData().variants[i];
-                        tryWatch(variant.structureSet());
+                        registerStructures(variant.structureSet());
                         // Don't need to watch anything in the structure chain because that would
                         // have been decomposed into CheckStructure's. Don't need to watch the
                         // callLinkStatus because we wouldn't use MultiGetByOffset if any of the
@@ -98,31 +98,36 @@ public:
                 case MultiPutByOffset:
                     for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
                         PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-                        tryWatch(variant.oldStructure());
+                        registerStructures(variant.oldStructure());
                         if (variant.kind() == PutByIdVariant::Transition)
-                            tryWatch(variant.newStructure());
+                            registerStructure(variant.newStructure());
                     }
                     break;
                     
                 case NewArray:
                 case NewArrayBuffer:
-                    tryWatch(m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
                     break;
                     
                 case NewTypedArray:
-                    tryWatch(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructure(node->typedArrayType()));
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructure(node->typedArrayType()));
                     break;
                     
                 case ToString:
-                    tryWatch(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure());
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->stringObjectStructure());
                     break;
                     
                 case CreateActivation:
-                    tryWatch(m_graph.globalObjectFor(node->origin.semantic)->activationStructure());
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->activationStructure());
                     break;
                     
                 case NewRegexp:
-                    tryWatch(m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
+                    break;
+                    
+                case NewFunctionExpression:
+                case NewFunctionNoCheck:
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->functionStructure());
                     break;
                     
                 default:
@@ -131,29 +136,29 @@ public:
             }
         }
         
-        m_graph.m_structureWatchpointState = WatchingAllWatchableStructures;
+        m_graph.m_structureRegistrationState = AllStructuresAreRegistered;
         
         return true;
     }
 
 private:
-    void tryWatch(const StructureSet& set)
+    void registerStructures(const StructureSet& set)
     {
         for (unsigned i = set.size(); i--;)
-            tryWatch(set[i]);
+            registerStructure(set[i]);
     }
     
-    void tryWatch(Structure* structure)
+    void registerStructure(Structure* structure)
     {
         if (structure)
-            m_graph.watchpoints().consider(structure);
+            m_graph.registerStructure(structure);
     }
 };
 
-bool performWatchableStructureWatching(Graph& graph)
+bool performStructureRegistration(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Watchable Structure Watching");
-    return runPhase<WatchableStructureWatchingPhase>(graph);
+    SamplingRegion samplingRegion("DFG Structure Registration Phase");
+    return runPhase<StructureRegistrationPhase>(graph);
 }
 
 } } // namespace JSC::DFG

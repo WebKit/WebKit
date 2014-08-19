@@ -371,6 +371,8 @@
 		0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */; };
 		0F766D3915AE4A1F008F363E /* StructureStubClearingWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
+		0F79085519A290B200F6310C /* DFGStructureRegistrationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F79085319A290B200F6310C /* DFGStructureRegistrationPhase.cpp */; };
+		0F79085619A290B200F6310C /* DFGStructureRegistrationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F79085419A290B200F6310C /* DFGStructureRegistrationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0977E1469EBC400CF2442 /* DFGCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B3661197C525C00ED1DDC /* DFGPhantomCanonicalizationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7B365F197C525C00ED1DDC /* DFGPhantomCanonicalizationPhase.cpp */; };
@@ -526,8 +528,6 @@
 		0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFADD180738C000472CE4 /* FTLLocation.cpp */; };
 		0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADE180738C000472CE4 /* FTLLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2C92316D01EE900C7803F /* StructureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FD2D4FE192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD2D4FC192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.cpp */; };
-		0FD2D4FF192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2D4FD192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3C82014115CF800FD81CB /* DFGDriver.cpp */; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
 		0FD81AD2154FB4EE00983E72 /* DFGDominators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD81ACF154FB4EB00983E72 /* DFGDominators.cpp */; };
@@ -2579,6 +2579,8 @@
 		0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureStubClearingWatchpoint.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
+		0F79085319A290B200F6310C /* DFGStructureRegistrationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStructureRegistrationPhase.cpp; path = dfg/DFGStructureRegistrationPhase.cpp; sourceTree = "<group>"; };
+		0F79085419A290B200F6310C /* DFGStructureRegistrationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureRegistrationPhase.h; path = dfg/DFGStructureRegistrationPhase.h; sourceTree = "<group>"; };
 		0F7B365F197C525C00ED1DDC /* DFGPhantomCanonicalizationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPhantomCanonicalizationPhase.cpp; path = dfg/DFGPhantomCanonicalizationPhase.cpp; sourceTree = "<group>"; };
 		0F7B3660197C525C00ED1DDC /* DFGPhantomCanonicalizationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPhantomCanonicalizationPhase.h; path = dfg/DFGPhantomCanonicalizationPhase.h; sourceTree = "<group>"; };
 		0F8023E91613832300A0BA45 /* ByValInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByValInfo.h; sourceTree = "<group>"; };
@@ -2744,8 +2746,6 @@
 		0FCEFADD180738C000472CE4 /* FTLLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLocation.cpp; path = ftl/FTLLocation.cpp; sourceTree = "<group>"; };
 		0FCEFADE180738C000472CE4 /* FTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLocation.h; path = ftl/FTLLocation.h; sourceTree = "<group>"; };
 		0FD2C92316D01EE900C7803F /* StructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureInlines.h; sourceTree = "<group>"; };
-		0FD2D4FC192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGWatchableStructureWatchingPhase.cpp; path = dfg/DFGWatchableStructureWatchingPhase.cpp; sourceTree = "<group>"; };
-		0FD2D4FD192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGWatchableStructureWatchingPhase.h; path = dfg/DFGWatchableStructureWatchingPhase.h; sourceTree = "<group>"; };
 		0FD3C82014115CF800FD81CB /* DFGDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDriver.cpp; path = dfg/DFGDriver.cpp; sourceTree = "<group>"; };
 		0FD3C82214115D0E00FD81CB /* DFGDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDriver.h; path = dfg/DFGDriver.h; sourceTree = "<group>"; };
 		0FD5652216AB780A00197653 /* DFGBasicBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBasicBlockInlines.h; path = dfg/DFGBasicBlockInlines.h; sourceTree = "<group>"; };
@@ -3739,17 +3739,17 @@
 		C2FCAE0F17A9C24E0034C735 /* BytecodeLivenessAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeLivenessAnalysis.h; sourceTree = "<group>"; };
 		C2FE18A316BAEC4000AF3061 /* StructureRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureRareData.h; sourceTree = "<group>"; };
 		C4703CBF192844960013FBEA /* generate-inspector-protocol-bindings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-inspector-protocol-bindings.py"; sourceTree = "<group>"; };
-		C4703CC2192844CC0013FBEA /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = __init__.py; path = __init__.py; sourceTree = "<group>"; };
-		C4703CC3192844CC0013FBEA /* generate_backend_commands.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_backend_commands.py; path = generate_backend_commands.py; sourceTree = "<group>"; };
-		C4703CC4192844CC0013FBEA /* generate_backend_dispatcher_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_backend_dispatcher_header.py; path = generate_backend_dispatcher_header.py; sourceTree = "<group>"; };
-		C4703CC5192844CC0013FBEA /* generate_backend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_backend_dispatcher_implementation.py; path = generate_backend_dispatcher_implementation.py; sourceTree = "<group>"; };
-		C4703CC6192844CC0013FBEA /* generate_frontend_dispatcher_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_frontend_dispatcher_header.py; path = generate_frontend_dispatcher_header.py; sourceTree = "<group>"; };
-		C4703CC7192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_frontend_dispatcher_implementation.py; path = generate_frontend_dispatcher_implementation.py; sourceTree = "<group>"; };
-		C4703CC8192844CC0013FBEA /* generate_type_builder_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_type_builder_header.py; path = generate_type_builder_header.py; sourceTree = "<group>"; };
-		C4703CC9192844CC0013FBEA /* generate_type_builder_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_type_builder_implementation.py; path = generate_type_builder_implementation.py; sourceTree = "<group>"; };
-		C4703CCA192844CC0013FBEA /* generator_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generator_templates.py; path = generator_templates.py; sourceTree = "<group>"; };
-		C4703CCB192844CC0013FBEA /* generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generator.py; path = generator.py; sourceTree = "<group>"; };
-		C4703CCC192844CC0013FBEA /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = models.py; path = models.py; sourceTree = "<group>"; };
+		C4703CC2192844CC0013FBEA /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		C4703CC3192844CC0013FBEA /* generate_backend_commands.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_backend_commands.py; sourceTree = "<group>"; };
+		C4703CC4192844CC0013FBEA /* generate_backend_dispatcher_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_backend_dispatcher_header.py; sourceTree = "<group>"; };
+		C4703CC5192844CC0013FBEA /* generate_backend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_backend_dispatcher_implementation.py; sourceTree = "<group>"; };
+		C4703CC6192844CC0013FBEA /* generate_frontend_dispatcher_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_frontend_dispatcher_header.py; sourceTree = "<group>"; };
+		C4703CC7192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_frontend_dispatcher_implementation.py; sourceTree = "<group>"; };
+		C4703CC8192844CC0013FBEA /* generate_type_builder_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_type_builder_header.py; sourceTree = "<group>"; };
+		C4703CC9192844CC0013FBEA /* generate_type_builder_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_type_builder_implementation.py; sourceTree = "<group>"; };
+		C4703CCA192844CC0013FBEA /* generator_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generator_templates.py; sourceTree = "<group>"; };
+		C4703CCB192844CC0013FBEA /* generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generator.py; sourceTree = "<group>"; };
+		C4703CCC192844CC0013FBEA /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		E124A8F50E555775003091F1 /* OpaqueJSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpaqueJSString.h; sourceTree = "<group>"; };
@@ -5295,6 +5295,8 @@
 				0F893BDA1936E23C001211F4 /* DFGStructureAbstractValue.cpp */,
 				0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */,
 				0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */,
+				0F79085319A290B200F6310C /* DFGStructureRegistrationPhase.cpp */,
+				0F79085419A290B200F6310C /* DFGStructureRegistrationPhase.h */,
 				0F2FCCF718A60070001A27F8 /* DFGThreadData.cpp */,
 				0F2FCCF818A60070001A27F8 /* DFGThreadData.h */,
 				0FC0979F146B28C700CF2442 /* DFGThunks.cpp */,
@@ -5330,8 +5332,6 @@
 				0F2BDC431522801700CD8910 /* DFGVariableEventStream.h */,
 				0FFFC95314EF909500C72532 /* DFGVirtualRegisterAllocationPhase.cpp */,
 				0FFFC95414EF909500C72532 /* DFGVirtualRegisterAllocationPhase.h */,
-				0FD2D4FC192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.cpp */,
-				0FD2D4FD192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.h */,
 				0FC97F3B18202119002C9B26 /* DFGWatchpointCollectionPhase.cpp */,
 				0FC97F3C18202119002C9B26 /* DFGWatchpointCollectionPhase.h */,
 				0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */,
@@ -6205,6 +6205,7 @@
 				0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */,
 				0FB14E211812570B009B6B4D /* DFGInlineCacheWrapper.h in Headers */,
 				0FB14E2318130955009B6B4D /* DFGInlineCacheWrapperInlines.h in Headers */,
+				0F79085619A290B200F6310C /* DFGStructureRegistrationPhase.h in Headers */,
 				A704D90617A0BAA8006BA554 /* DFGInPlaceAbstractState.h in Headers */,
 				0F2BDC21151E803B00CD8910 /* DFGInsertionSet.h in Headers */,
 				0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */,
@@ -6310,7 +6311,6 @@
 				0F485328187DFDEC0083B687 /* FTLAvailableRecovery.h in Headers */,
 				0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */,
 				0FEA0A231709606900BB722C /* FTLCommonValues.h in Headers */,
-				0FD2D4FF192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.h in Headers */,
 				0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */,
 				0FE95F7A18B5694700B531FB /* FTLDataSection.h in Headers */,
 				2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */,
@@ -7819,7 +7819,6 @@
 				0FF0F19916B729F6005DF95B /* DFGLongLivedState.cpp in Sources */,
 				A767B5B517A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp in Sources */,
 				0F2BDC4D1522818600CD8910 /* DFGMinifiedNode.cpp in Sources */,
-				0FD2D4FE192FEE5800A178BF /* DFGWatchableStructureWatchingPhase.cpp in Sources */,
 				A737810D1799EA2E00817533 /* DFGNaturalLoops.cpp in Sources */,
 				0FF0F19C16B72A03005DF95B /* DFGNode.cpp in Sources */,
 				0FA581BA150E952C00B9A2D9 /* DFGNodeFlags.cpp in Sources */,
@@ -7891,6 +7890,7 @@
 				0F0332C018ADFAE1005F979A /* ExitingJITType.cpp in Sources */,
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
+				0F79085519A290B200F6310C /* DFGStructureRegistrationPhase.cpp in Sources */,
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
 				0F485327187DFDEC0083B687 /* FTLAvailableRecovery.cpp in Sources */,
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,

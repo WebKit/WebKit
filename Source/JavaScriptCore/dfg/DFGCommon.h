@@ -146,7 +146,9 @@ enum PredictionPass {
     FixupPass
 };
 
-enum StructureWatchpointState { HaveNotStartedWatching, WatchingAllWatchableStructures };
+enum StructureRegistrationState { HaveNotStartedRegistering, AllStructuresAreRegistered };
+
+enum StructureRegistrationResult { StructureRegisteredNormally, StructureRegisteredAndWatched };
 
 enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointConverged };
 

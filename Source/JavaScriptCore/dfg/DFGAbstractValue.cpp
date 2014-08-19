@@ -51,7 +51,7 @@ void AbstractValue::setOSREntryValue(Graph& graph, const FrozenValue& value)
 {
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
-        graph.watchpoints().consider(structure);
+        graph.registerStructure(structure);
         m_structure = structure;
         m_arrayModes = asArrayModes(structure->indexingType());
     } else {
@@ -63,18 +63,17 @@ void AbstractValue::setOSREntryValue(Graph& graph, const FrozenValue& value)
     m_value = value.value();
         
     checkConsistency();
-    assertIsWatched(graph);
+    assertIsRegistered(graph);
 }
 
 void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobberState clobberState)
 {
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
-        if (graph.watchpoints().consider(structure)) {
-            // We should be able to assume that the watchpoint for this has already been set.
-            // But we can't because our view of what structure a value has keeps changing. That's
-            // why we call consider().
-            // https://bugs.webkit.org/show_bug.cgi?id=133426
+        // FIXME: This check may not be necessary since any frozen value should have its structure
+        // watched already.
+        // https://bugs.webkit.org/show_bug.cgi?id=136055
+        if (graph.registerStructure(structure) == StructureRegisteredAndWatched) {
             m_structure = structure;
             if (clobberState == StructuresAreClobbered) {
                 m_arrayModes = ALL_ARRAY_MODES;
@@ -94,7 +93,7 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
     m_value = value.value();
     
     checkConsistency();
-    assertIsWatched(graph);
+    assertIsRegistered(graph);
 }
 
 void AbstractValue::set(Graph& graph, Structure* structure)
@@ -105,7 +104,7 @@ void AbstractValue::set(Graph& graph, Structure* structure)
     m_value = JSValue();
     
     checkConsistency();
-    assertIsWatched(graph);
+    assertIsRegistered(graph);
 }
 
 void AbstractValue::set(Graph& graph, const StructureSet& set)
@@ -116,7 +115,7 @@ void AbstractValue::set(Graph& graph, const StructureSet& set)
     m_value = JSValue();
     
     checkConsistency();
-    assertIsWatched(graph);
+    assertIsRegistered(graph);
 }
 
 void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
@@ -364,7 +363,7 @@ FiltrationResult AbstractValue::normalizeClarity()
 FiltrationResult AbstractValue::normalizeClarity(Graph& graph)
 {
     FiltrationResult result = normalizeClarity();
-    assertIsWatched(graph);
+    assertIsRegistered(graph);
     return result;
 }
 
@@ -394,9 +393,9 @@ void AbstractValue::checkConsistency() const
     // complexity of the code.
 }
 
-void AbstractValue::assertIsWatched(Graph& graph) const
+void AbstractValue::assertIsRegistered(Graph& graph) const
 {
-    m_structure.assertIsWatched(graph);
+    m_structure.assertIsRegistered(graph);
 }
 #endif
 

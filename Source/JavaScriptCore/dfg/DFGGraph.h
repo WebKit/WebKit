@@ -154,7 +154,8 @@ public:
     void convertToConstant(Node* node, JSValue value);
     void convertToStrongConstant(Node* node, JSValue value);
     
-    void assertIsWatched(Structure* structure);
+    StructureRegistrationResult registerStructure(Structure* structure);
+    void assertIsRegistered(Structure* structure);
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(PrintStream& = WTF::dataFile(), DumpContext* = 0);
@@ -757,7 +758,7 @@ public:
 #endif
     
     OptimizationFixpointState m_fixpointState;
-    StructureWatchpointState m_structureWatchpointState;
+    StructureRegistrationState m_structureRegistrationState;
     GraphForm m_form;
     UnificationState m_unificationState;
     RefCountState m_refCountState;

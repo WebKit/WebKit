@@ -571,8 +571,10 @@ private:
 
     void addStructureTransitionCheck(NodeOrigin origin, unsigned indexInBlock, JSCell* cell, Structure* structure)
     {
-        if (m_graph.watchpoints().consider(cell->structure()))
+        if (m_graph.registerStructure(cell->structure()) == StructureRegisteredAndWatched)
             return;
+        
+        m_graph.registerStructure(structure);
 
         Node* weakConstant = m_insertionSet.insertNode(
             indexInBlock, speculationFromValue(cell), JSConstant, origin,

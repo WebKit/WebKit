@@ -65,7 +65,7 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_nextMachineLocal(0)
     , m_machineCaptureStart(std::numeric_limits<int>::max())
     , m_fixpointState(BeforeFixpoint)
-    , m_structureWatchpointState(HaveNotStartedWatching)
+    , m_structureRegistrationState(HaveNotStartedRegistering)
     , m_form(LoadStore)
     , m_unificationState(LocallyUnified)
     , m_refCountState(EverythingIsLive)
@@ -943,8 +943,8 @@ void Graph::registerFrozenValues()
 {
     m_codeBlock->constants().resize(0);
     for (FrozenValue* value : m_frozenValues) {
-        if (value->structure() && value->structure()->dfgShouldWatch())
-            m_plan.weakReferences.addLazily(value->structure());
+        if (value->structure())
+            ASSERT(m_plan.weakReferences.contains(value->structure()));
         
         switch (value->strength()) {
         case FragileValue: {
@@ -1071,7 +1071,7 @@ FrozenValue* Graph::freezeStrong(JSValue value)
 void Graph::convertToConstant(Node* node, FrozenValue* value)
 {
     if (value->structure())
-        assertIsWatched(value->structure());
+        assertIsRegistered(value->structure());
     if (m_form == ThreadedCPS) {
         if (node->op() == GetLocal)
             dethread();
@@ -1091,10 +1091,20 @@ void Graph::convertToStrongConstant(Node* node, JSValue value)
     convertToConstant(node, freezeStrong(value));
 }
 
-void Graph::assertIsWatched(Structure* structure)
+StructureRegistrationResult Graph::registerStructure(Structure* structure)
 {
-    if (m_structureWatchpointState == HaveNotStartedWatching)
+    m_plan.weakReferences.addLazily(structure);
+    if (m_plan.watchpoints.consider(structure))
+        return StructureRegisteredAndWatched;
+    return StructureRegisteredNormally;
+}
+
+void Graph::assertIsRegistered(Structure* structure)
+{
+    if (m_structureRegistrationState == HaveNotStartedRegistering)
         return;
+    
+    DFG_ASSERT(*this, nullptr, m_plan.weakReferences.contains(structure));
     
     if (!structure->dfgShouldWatch())
         return;

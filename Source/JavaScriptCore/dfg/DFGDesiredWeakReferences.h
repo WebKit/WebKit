@@ -26,7 +26,7 @@
 #ifndef DFGDesiredWeakReferences_h
 #define DFGDesiredWeakReferences_h
 
-#include <wtf/Vector.h>
+#include <wtf/HashSet.h>
 
 #if ENABLE(DFG_JIT)
 
@@ -48,13 +48,15 @@ public:
     ~DesiredWeakReferences();
 
     void addLazily(JSCell*);
+    bool contains(JSCell*);
+    
     void reallyAdd(VM&, CommonData*);
     
     void visitChildren(SlotVisitor&);
 
 private:
     CodeBlock* m_codeBlock;
-    Vector<JSCell*> m_references;
+    HashSet<JSCell*> m_references;
 };
 
 } } // namespace JSC::DFG

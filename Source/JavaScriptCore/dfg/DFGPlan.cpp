@@ -60,12 +60,12 @@
 #include "DFGStaticExecutionCountEstimationPhase.h"
 #include "DFGStoreBarrierElisionPhase.h"
 #include "DFGStrengthReductionPhase.h"
+#include "DFGStructureRegistrationPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
-#include "DFGWatchableStructureWatchingPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
 #include "Debugger.h"
 #include "JSCInlines.h"
@@ -237,7 +237,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performBackwardsPropagation(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
-    performWatchableStructureWatching(dfg);
+    performStructureRegistration(dfg);
     performInvalidationPointInjection(dfg);
     performTypeCheckHoisting(dfg);
     
