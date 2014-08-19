@@ -1,5 +1,24 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172596
+
+    2014-08-14  Enrica Casucci  <enrica@apple.com>
+
+            [Services with UI] Selection services don't work inside <iframes>.
+            https://bugs.webkit.org/show_bug.cgi?id=135941
+            <rdar://problem/17957690>
+
+            Reviewed by Tim Horton.
+
+            Need to map the selection rectangles using the correct FrameView.
+            When handling the click, we must use the selection from the focused frame.
+
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::buildSelectionHighlight):
+            (WebKit::ServicesOverlayController::handleClick):
+
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172502
 
     2014-08-12  Pratik Solanki  <psolanki@apple.com>

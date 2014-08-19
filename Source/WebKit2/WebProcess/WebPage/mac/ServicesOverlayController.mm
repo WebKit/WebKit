@@ -518,14 +518,24 @@ void ServicesOverlayController::buildSelectionHighlight()
     Vector<CGRect> cgRects;
     cgRects.reserveCapacity(m_currentSelectionRects.size());
 
-    for (auto& rect : m_currentSelectionRects)
-        cgRects.append((CGRect)pixelSnappedIntRect(rect));
+    RefPtr<Range> selectionRange = m_webPage.corePage()->selection().firstRange();
+    if (selectionRange) {
+        Frame* mainFrame = m_webPage.mainFrame();
+        FrameView& mainFrameView = *mainFrame->view();
+        FrameView* viewForRange = selectionRange->ownerDocument().view();
 
-    if (!cgRects.isEmpty()) {
-        CGRect visibleRect = m_webPage.corePage()->mainFrame().view()->visibleContentRect();
-        RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightNoOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
-        
-        m_potentialHighlights.add(Highlight::createForSelection(*this, ddHighlight));
+        for (auto& rect : m_currentSelectionRects) {
+            IntRect currentRect = pixelSnappedIntRect(rect);
+            currentRect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(currentRect.location())));
+            cgRects.append((CGRect)currentRect);
+        }
+
+        if (!cgRects.isEmpty()) {
+            CGRect visibleRect = m_webPage.corePage()->mainFrame().view()->visibleContentRect();
+            RetainPtr<DDHighlightRef> ddHighlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, DDHighlightNoOutlineWithArrow, YES, NSWritingDirectionNatural, NO, YES));
+            
+            m_potentialHighlights.add(Highlight::createForSelection(*this, ddHighlight));
+        }
     }
 
     didRebuildPotentialHighlights();
@@ -745,7 +755,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, Highligh
         for (auto& range : telephoneNumberRanges)
             selectedTelephoneNumbers.append(range->text());
 
-        m_webPage.handleSelectionServiceClick(m_webPage.corePage()->mainFrame().selection(), selectedTelephoneNumbers, windowPoint);
+        m_webPage.handleSelectionServiceClick(m_webPage.corePage()->focusController().focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
     } else if (highlight.type() == Highlight::Type::TelephoneNumber)
         m_webPage.handleTelephoneNumberClick(highlight.range()->text(), windowPoint);
 }
