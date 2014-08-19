@@ -144,7 +144,16 @@ static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& re
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
         shouldPaintSelection = FrameView::ExcludeSelection;
 
+    PaintBehavior paintBehavior = frameView->paintBehavior() | PaintBehaviorFlattenCompositingLayers;
+    if (options & SnapshotOptionsForceBlackText)
+        paintBehavior |= PaintBehaviorForceBlackText;
+    if (options & SnapshotOptionsForceWhiteText)
+        paintBehavior |= PaintBehaviorForceWhiteText;
+
+    PaintBehavior oldPaintBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(paintBehavior);
     frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection, FrameView::DocumentCoordinates);
+    frameView->setPaintBehavior(oldPaintBehavior);
 
     return snapshot.release();
 }

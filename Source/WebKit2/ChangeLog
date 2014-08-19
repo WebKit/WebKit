@@ -1,3 +1,20 @@
+2014-08-19  Peyton Randolph  <prandolph@apple.com>
+
+        Extend injected bundle node snapshotting to support forced white and black text
+        https://bugs.webkit.org/show_bug.cgi?id=136061
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/c/WKImage.h:
+        Add -ForceBlackText and -ForceWhiteText snapshotting options.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toSnapshotOptions):
+        Support aforementioned text snapshotting options.
+        * Shared/ImageOptions.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        Respect text color snapshotting options by setting appropriate paint behaviors.
+
 2014-08-18  Maciej Stachowiak  <mjs@apple.com>
 
         Use NSURLFileTypeMappings directly instead of depending on WebKitSystemInterface wrappers for it

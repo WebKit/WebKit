@@ -38,6 +38,8 @@ enum {
     SnapshotOptionsInViewCoordinates = 1 << 2,
     SnapshotOptionsPaintSelectionRectangle = 1 << 3,
     SnapshotOptionsExcludeDeviceScaleFactor = 1 << 5,
+    SnapshotOptionsForceBlackText = 1 << 6,
+    SnapshotOptionsForceWhiteText = 1 << 7,
 };
 typedef uint32_t SnapshotOptions;
 

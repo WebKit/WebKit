@@ -42,7 +42,9 @@ enum {
     kWKSnapshotOptionsShareable = 1 << 0,
     kWKSnapshotOptionsExcludeSelectionHighlighting = 1 << 1,
     kWKSnapshotOptionsInViewCoordinates = 1 << 2,
-    kWKSnapshotOptionsPaintSelectionRectangle = 1 << 3
+    kWKSnapshotOptionsPaintSelectionRectangle = 1 << 3,
+    kWKSnapshotOptionsForceBlackText = 1 << 4,
+    kWKSnapshotOptionsForceWhiteText = 1 << 5,
 };
 typedef uint32_t WKSnapshotOptions;
 
