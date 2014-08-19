@@ -1,5 +1,26 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172617. <rdar://problem/18023242>
+
+    2014-08-14  Joseph Pecoraro  <pecoraro@apple.com>
+    
+            Web Inspector: Dragging Undocked inspector by window title has broken behavior
+            https://bugs.webkit.org/show_bug.cgi?id=135950
+    
+            Reviewed by Timothy Hatcher.
+    
+            * UserInterface/Base/Main.js:
+            On Mac ports where we the inspector content goes everywhere, window dragging behavior
+            still exists for the top 22px of the window. So don't do our JavaScript based window
+            dragging for this special region.
+    
+            * UserInterface/Models/KeyboardShortcut.js:
+            (WebInspector.KeyboardShortcut.Modifier.get CommandOrControl):
+            (WebInspector.KeyboardShortcut.prototype.get displayName):
+            Instead of calling a host function, use the value already in the frontend.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172615. <rdar://problem/18024530>
 
     2014-08-14  Joseph Pecoraro  <pecoraro@apple.com>

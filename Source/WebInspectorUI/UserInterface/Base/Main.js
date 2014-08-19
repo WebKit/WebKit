@@ -1312,6 +1312,13 @@ WebInspector._moveWindowMouseDown = function(event)
         !event.target.classList.contains("item-section"))
         return;
 
+    // Ignore dragging on the top of the toolbar on Mac where the inspector content fills the entire window.
+    if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release >= 10) {
+        const windowDragHandledTitleBarHeight = 22;
+        if (event.pageY < windowDragHandledTitleBarHeight)
+            return;
+    }
+
     var lastScreenX = event.screenX;
     var lastScreenY = event.screenY;
 
