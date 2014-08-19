@@ -1,3 +1,24 @@
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172481
+
+    2014-08-11  Roger Fong  <roger_fong@apple.com>
+
+            Adjust max-width of cues based on text alignment when cue size is expanded.
+            https://bugs.webkit.org/show_bug.cgi?id=135823.
+
+            Reviewed by Brent Fulgham.
+
+            All units are in percentages.
+            If we are left aligned the max cue width is the 100 minus the cue position.
+            If we are right aligned the max cue width is the cue position.
+            If we are centered the max cue width is just 100.
+
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCueBox::applyCSSProperties):
+
 2014-08-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172609
