@@ -67,6 +67,37 @@ WORKING_BACKENDS =
 
 BACKEND_PATTERN = Regexp.new('\\A(' + BACKENDS.join(')|(') + ')\\Z')
 
+$allBackends = {}
+$validBackends = {}
+BACKENDS.each {
+    | backend |
+    $validBackends[backend] = true
+    $allBackends[backend] = true
+}
+
+def includeOnlyBackends(list)
+    newValidBackends = {}
+    list.each {
+        | backend |
+        if $validBackends[backend]
+            newValidBackends[backend] = true
+        end
+    }
+    $validBackends = newValidBackends
+end
+
+def isBackend?(backend)
+    $allBackends[backend]
+end
+
+def isValidBackend?(backend)
+    $validBackends[backend]
+end
+
+def validBackends
+    $validBackends.keys
+end
+
 class Node
     def lower(name)
         begin

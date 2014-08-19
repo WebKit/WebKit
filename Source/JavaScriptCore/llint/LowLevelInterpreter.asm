@@ -658,25 +658,21 @@ macro functionInitialization(profileArgSkip)
 end
 
 macro allocateJSObject(allocator, structure, result, scratch1, slowCase)
-    if ALWAYS_ALLOCATE_SLOW
-        jmp slowCase
-    else
-        const offsetOfFirstFreeCell = 
-            MarkedAllocator::m_freeList + 
-            MarkedBlock::FreeList::head
+    const offsetOfFirstFreeCell = 
+        MarkedAllocator::m_freeList + 
+        MarkedBlock::FreeList::head
 
-        # Get the object from the free list.   
-        loadp offsetOfFirstFreeCell[allocator], result
-        btpz result, slowCase
-        
-        # Remove the object from the free list.
-        loadp [result], scratch1
-        storep scratch1, offsetOfFirstFreeCell[allocator]
+    # Get the object from the free list.   
+    loadp offsetOfFirstFreeCell[allocator], result
+    btpz result, slowCase
     
-        # Initialize the object.
-        storep 0, JSObject::m_butterfly[result]
-        storeStructureWithTypeInfo(result, structure, scratch1)
-    end
+    # Remove the object from the free list.
+    loadp [result], scratch1
+    storep scratch1, offsetOfFirstFreeCell[allocator]
+
+    # Initialize the object.
+    storep 0, JSObject::m_butterfly[result]
+    storeStructureWithTypeInfo(result, structure, scratch1)
 end
 
 macro doReturn()

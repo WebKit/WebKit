@@ -1,5 +1,34 @@
 2014-08-19  Filip Pizlo  <fpizlo@apple.com>
 
+        LLInt build should be way faster
+        https://bugs.webkit.org/show_bug.cgi?id=136085
+
+        Reviewed by Geoffrey Garen.
+        
+        This does three things to improve the LLInt build performance. One of them is only for
+        Xcode for now while the others should benefit all platforms:
+        
+        - Don't exponentially build settings combinations that correspond to being on two backends
+          simultaneously. This is by far the biggest win.
+        
+        - Don't generate offset extraction code for backends that aren't supported by the current
+          port. This currently only works on Xcode-based ports. This is a relatively small win.
+        
+        - Remove the ALWAYS_ALLOCATE_SLOW option. Each option increases build time, and we haven't
+          used this one in a long time. Anyway, setting this option could be emulated by just
+          directly hacking the code.
+        
+        This is an enormous speed-up in the LLInt build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Prune the set of backends that we should consider on Xcode-based platforms.
+        * llint/LLIntOfflineAsmConfig.h: Remove ALWAYS_ALLOCATE_SLOW
+        * llint/LowLevelInterpreter.asm: Remove ALWAYS_ALLOCATE_SLOW
+        * offlineasm/backends.rb: Add infrastructure for reasoning about valid backends.
+        * offlineasm/generate_offset_extractor.rb: Allow the client to specify a filtered set of valid backends.
+        * offlineasm/settings.rb: Improve the construction of settings combinations so that it doesn't traverse the enourmous set of obviously invalid multi-backend combinations. Also glue into support for valid backends.
+
+2014-08-19  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation and style in LowLevelInterpreter.asm
         https://bugs.webkit.org/show_bug.cgi?id=136083
 

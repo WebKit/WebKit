@@ -39,6 +39,12 @@ IncludeFile.processIncludeOptions()
 inputFlnm = ARGV.shift
 outputFlnm = ARGV.shift
 
+validBackends = ARGV.shift
+if validBackends
+    $stderr.puts "Only dealing with backends: #{validBackends}"
+    includeOnlyBackends(validBackends.split(","))
+end
+
 $stderr.puts "offlineasm: Parsing #{inputFlnm} and creating offset extractor #{outputFlnm}."
 
 def emitMagicNumber
