@@ -1,3 +1,15 @@
+2014-08-19  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Offline Assembler build phase fails when $BUILT_PRODUCTS_DIR contains spaces
+        https://bugs.webkit.org/show_bug.cgi?id=136086
+
+        Reviewed by Filip Pizlo.
+
+        Enclosed arguments to asm.rb containing $BUILT_PRODUCTS_DIR in double quotes so that they don't get split on
+        whitespace. Also let Xcode have its way with an unrelated part of the project file.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-08-19  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt build should be way faster
