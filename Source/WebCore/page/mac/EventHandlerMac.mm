@@ -893,10 +893,9 @@ bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEve
                 didHandleWheelEvent = !m_startedGestureAtScrollLimit;
             }
 
-            // If the platform widget is handling the event, we always want to return false for WebKit2, but
-            // true for WebKit1.
+            // If the platform widget is handling the event, we always want to return false
             if (view && scrollableArea == view && view->platformWidget())
-                didHandleWheelEvent = frameHasPlatformWidget(m_frame);
+                didHandleWheelEvent = false;
             
             m_isHandlingWheelEvent = false;
             return didHandleWheelEvent;

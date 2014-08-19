@@ -1,5 +1,17 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172720. <rdar://problem/17767169>
+
+    2014-08-18  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Mac] Unreviewed merge correction.
+    
+            * page/mac/EventHandlerMac.mm:
+            (WebCore::EventHandler::platformCompleteWheelEvent): Revert an
+            unintended change from r172705.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172709. <rdar://problem/17850158>
 
     2014-08-18  Andy Estes  <aestes@apple.com>
