@@ -1,5 +1,26 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172662. <rdar://problem/17971908>
+
+    2014-08-15  Jono Wells  <jonowells@apple.com>
+    
+            Web Inspector: Inspect Element doesn't always highlight the correct element when inspector is closed before inspecting
+            https://bugs.webkit.org/show_bug.cgi?id=135995
+    
+            Reviewed by Joseph Pecoraro.
+    
+            Change so if an element is inspected via the Inspect Element context menu, selected
+            node restoration is disallowed until the main resource in the main frame changes.
+            This way an attempt by a sub-frame will not change the highlighted element in the
+            Main Frame's DOM tree unexpectedly.
+    
+            * UserInterface/Controllers/DOMTreeManager.js:
+            (WebInspector.DOMTreeManager):
+            (WebInspector.DOMTreeManager.prototype._mainResourceDidChange):
+            (WebInspector.DOMTreeManager.prototype.inspectElement):
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172650. <rdar://problem/18034356>
 
     2014-08-15  Timothy Hatcher  <timothy@apple.com>
