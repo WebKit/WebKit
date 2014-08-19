@@ -85,10 +85,11 @@ body.mac-platform:not(.legacy):not(.docked) .toolbar.label-only {
 
 body.mac-platform.legacy .toolbar {
     box-shadow: none;
+    background-image: none;
+    border-bottom-color: rgb(85, 85, 85);
 }
 
 body.mac-platform.legacy.docked .toolbar {
-    border-bottom-color: rgb(85, 85, 85);
     background-image: linear-gradient(to bottom, rgb(216, 216, 216), rgb(190, 190, 190));
     box-shadow: inset rgba(255, 255, 255, 0.1) 0 1px 0, inset rgba(0, 0, 0, 0.02) 0 -1px 0;
 }

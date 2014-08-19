@@ -1,5 +1,21 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172640. <rdar://problem/18025668>
+
+    2014-08-15  Timothy Hatcher  <timothy@apple.com>
+    
+            Web Inspector: Legacy Mac toolbar appearance looks wrong
+            https://bugs.webkit.org/show_bug.cgi?id=135962
+    
+            Reviewed by Joseph Pecoraro.
+    
+            * UserInterface/Views/Toolbar.css:
+            (body.mac-platform.legacy .toolbar): Don't draw a gradient background when not docked.
+            Move border-bottom-color from body.mac-platform.legacy.docked .toolbar to here so it
+            applies all the time as it should have.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172617. <rdar://problem/18023242>
 
     2014-08-14  Joseph Pecoraro  <pecoraro@apple.com>
