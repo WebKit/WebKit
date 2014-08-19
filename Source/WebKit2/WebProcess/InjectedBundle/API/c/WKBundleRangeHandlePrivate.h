@@ -28,12 +28,17 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit/WKBase.h>
+#include <WebKit/WKGeometry.h>
+#include <WebKit/WKImage.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef context, JSObjectRef object);
+
+WK_EXPORT WKRect WKBundleRangeHandleGetBoundingRectInWindowCoordinates(WKBundleRangeHandleRef rangeHandle);
+WK_EXPORT WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef rangeHandle, WKSnapshotOptions options);
 
 #ifdef __cplusplus
 }

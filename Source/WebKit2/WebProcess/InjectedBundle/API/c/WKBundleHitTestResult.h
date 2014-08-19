@@ -43,6 +43,7 @@ typedef uint32_t WKBundleHitTestResultMediaType;
 WK_EXPORT WKTypeID WKBundleHitTestResultGetTypeID();
 
 WK_EXPORT WKBundleNodeHandleRef WKBundleHitTestResultCopyNodeHandle(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKBundleNodeHandleRef WKBundleHitTestResultCopyURLElementHandle(WKBundleHitTestResultRef hitTestResult);
 
 WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hitTestResult);

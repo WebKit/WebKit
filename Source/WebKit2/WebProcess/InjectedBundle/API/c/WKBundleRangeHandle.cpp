@@ -30,6 +30,8 @@
 #include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebImage.h"
+#include <WebCore/IntRect.h>
 
 using namespace WebKit;
 
@@ -42,4 +44,16 @@ WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef contextRef, JSObje
 {
     RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef);
     return toAPI(rangeHandle.release().leakRef());
+}
+
+WKRect WKBundleRangeHandleGetBoundingRectInWindowCoordinates(WKBundleRangeHandleRef rangeHandleRef)
+{
+    WebCore::IntRect boundingRect = toImpl(rangeHandleRef)->boundingRectInWindowCoordinates();
+    return WKRectMake(boundingRect.x(), boundingRect.y(), boundingRect.width(), boundingRect.height());
+}
+
+WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef rangeHandleRef, WKSnapshotOptions options)
+{
+    RefPtr<WebImage> image = toImpl(rangeHandleRef)->renderedImage(toSnapshotOptions(options));
+    return toAPI(image.release().leakRef());
 }

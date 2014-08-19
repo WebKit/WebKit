@@ -40,6 +40,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebFrame;
 class WebImage;
@@ -61,6 +62,7 @@ public:
     WebCore::IntRect elementBounds() const;
     WebCore::IntRect renderRect(bool*) const;
     PassRefPtr<WebImage> renderedImage(SnapshotOptions);
+    PassRefPtr<InjectedBundleRangeHandle> visibleRange() const;
     void setHTMLInputElementValueForUser(const String&);
     bool isHTMLInputElementAutofilled() const;
     void setHTMLInputElementAutofilled(bool);

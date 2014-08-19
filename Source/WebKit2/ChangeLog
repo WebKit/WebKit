@@ -1,3 +1,32 @@
+2014-08-19  Peyton Randolph  <prandolph@apple.com>
+
+        Expose injected bundle SPI to get a node's URL element, get the visible selection range of that
+        element, and snapshot that range
+        https://bugs.webkit.org/show_bug.cgi?id=136076
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultCopyURLElementHandle): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCopyVisibleRange): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp:
+        (WKBundleRangeHandleGetBoundingRectInWindowCoordinates): Added.
+        (WKBundleRangeHandleCopySnapshotWithOptions): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::visibleRange): Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::boundingRectInWindowCoordinates): Added.
+        (WebKit::InjectedBundleRangeHandle::renderedImage): Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::urlElementHandle): Added.
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
 2014-08-19  Zalan Bujtas  <zalan@apple.com>
 
         Remove ENABLE(SUBPIXEL_LAYOUT).

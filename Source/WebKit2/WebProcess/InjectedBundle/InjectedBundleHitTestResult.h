@@ -44,7 +44,8 @@ public:
 
     const WebCore::HitTestResult& coreHitTestResult() const { return m_hitTestResult; }
 
-    PassRefPtr<InjectedBundleNodeHandle> nodeHandle() const; 
+    PassRefPtr<InjectedBundleNodeHandle> nodeHandle() const;
+    PassRefPtr<InjectedBundleNodeHandle> urlElementHandle() const;
     WebFrame* frame() const;
     WebFrame* targetFrame() const;
 

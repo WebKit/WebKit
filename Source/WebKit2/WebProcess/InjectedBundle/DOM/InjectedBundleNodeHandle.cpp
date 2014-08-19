@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundleNodeHandle.h"
 
+#include "InjectedBundleRangeHandle.h"
 #include "ShareableBitmap.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
@@ -46,7 +47,10 @@
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
 #include <WebCore/Page.h>
+#include <WebCore/Position.h>
+#include <WebCore/Range.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/VisiblePosition.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -182,6 +186,15 @@ PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions opt
     frameView->setNodeToDraw(0);
 
     return image.release();
+}
+
+PassRefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange() const
+{
+    VisiblePosition start = firstPositionInNode(m_node.get());
+    VisiblePosition end = lastPositionInNode(m_node.get());
+
+    RefPtr<Range> range = makeRange(start, end);
+    return InjectedBundleRangeHandle::getOrCreate(range.get());
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)

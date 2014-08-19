@@ -44,6 +44,12 @@ WKBundleNodeHandleRef WKBundleHitTestResultCopyNodeHandle(WKBundleHitTestResultR
     return toAPI(nodeHandle.release().leakRef());
 }
 
+WKBundleNodeHandleRef WKBundleHitTestResultCopyURLElementHandle(WKBundleHitTestResultRef hitTestResultRef)
+{
+    RefPtr<InjectedBundleNodeHandle> urlElementNodeHandle = toImpl(hitTestResultRef)->urlElementHandle();
+    return toAPI(urlElementNodeHandle.release().leakRef());
+}
+
 WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toAPI(toImpl(hitTestResultRef)->frame());

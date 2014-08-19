@@ -51,6 +51,11 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() c
     return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.innerNonSharedNode());
 }
 
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle() const
+{
+    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.URLElement());
+}
+
 WebFrame* InjectedBundleHitTestResult::frame() const
 {
     Node* node = m_hitTestResult.innerNonSharedNode();

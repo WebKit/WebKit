@@ -27,17 +27,20 @@
 #define InjectedBundleRangeHandle_h
 
 #include "APIObject.h"
+#include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    class Range;
+class IntRect;
+class Range;
 }
 
 namespace WebKit {
 
 class InjectedBundleScriptWorld;
+class WebImage;
 
 class InjectedBundleRangeHandle : public API::ObjectImpl<API::Object::Type::BundleRangeHandle> {
 public:
@@ -45,6 +48,9 @@ public:
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
 
     virtual ~InjectedBundleRangeHandle();
+
+    WebCore::IntRect boundingRectInWindowCoordinates() const;
+    PassRefPtr<WebImage> renderedImage(SnapshotOptions);
 
     WebCore::Range* coreRange() const;
 
