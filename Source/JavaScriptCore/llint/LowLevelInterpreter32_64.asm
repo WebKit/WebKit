@@ -203,7 +203,12 @@ macro doVMEntry(makeCall)
         loadp 8[cfr], entry
     end
 
-    vmEntryRecord(cfr, sp)
+    if ARMv7
+        vmEntryRecord(cfr, temp1)
+        move temp1, sp
+    else
+        vmEntryRecord(cfr, sp)
+    end
 
     storep vm, VMEntryRecord::m_vm[sp]
     loadp VM::topCallFrame[vm], temp2
@@ -219,7 +224,12 @@ macro doVMEntry(makeCall)
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
         addp CallFrameAlignSlots * SlotSize, sp, temp1
         clrbp temp1, StackAlignmentMask, temp1
-        subp temp1, CallFrameAlignSlots * SlotSize, sp
+        if ARMv7
+            subp temp1, CallFrameAlignSlots * SlotSize, temp1
+            move temp1, sp
+        else
+            subp temp1, CallFrameAlignSlots * SlotSize, sp
+        end
     end
 
     if X86 or X86_WIN
@@ -252,7 +262,12 @@ macro doVMEntry(makeCall)
 
     cCall2(_llint_throw_stack_overflow_error, vm, protoCallFrame)
 
-    vmEntryRecord(cfr, sp)
+    if ARMv7
+        vmEntryRecord(cfr, temp1)
+        move temp1, sp
+    else
+        vmEntryRecord(cfr, sp)
+    end
 
     loadp VMEntryRecord::m_vm[sp], temp3
     loadp VMEntryRecord::m_prevTopCallFrame[sp], temp4
@@ -260,7 +275,12 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], temp4
     storep temp4, VM::topVMEntryFrame[temp3]
 
-    subp cfr, CalleeRegisterSaveSize, sp
+    if ARMv7
+        subp cfr, CalleeRegisterSaveSize, temp3
+        move temp3, sp
+    else
+        subp cfr, CalleeRegisterSaveSize, sp
+    end
 
     popCalleeSaves()
     functionEpilogue()
@@ -308,7 +328,12 @@ macro doVMEntry(makeCall)
 
     makeCall(entry, temp1, temp2)
 
-    vmEntryRecord(cfr, sp)
+    if ARMv7
+        vmEntryRecord(cfr, temp1)
+        move temp1, sp
+    else
+        vmEntryRecord(cfr, sp)
+    end
 
     loadp VMEntryRecord::m_vm[sp], temp3
     loadp VMEntryRecord::m_prevTopCallFrame[sp], temp4
@@ -316,7 +341,12 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], temp4
     storep temp4, VM::topVMEntryFrame[temp3]
 
-    subp cfr, CalleeRegisterSaveSize, sp
+    if ARMv7
+        subp cfr, CalleeRegisterSaveSize, temp3
+        move temp3, sp
+    else
+        subp cfr, CalleeRegisterSaveSize, sp
+    end
 
     popCalleeSaves()
     functionEpilogue()
@@ -372,7 +402,12 @@ _handleUncaughtException:
 
     loadp CallerFrame + PayloadOffset[cfr], cfr
 
-    vmEntryRecord(cfr, sp)
+    if ARMv7
+        vmEntryRecord(cfr, t3)
+        move t3, sp
+    else
+        vmEntryRecord(cfr, sp)
+    end
 
     loadp VMEntryRecord::m_vm[sp], t3
     loadp VMEntryRecord::m_prevTopCallFrame[sp], t5
@@ -380,7 +415,12 @@ _handleUncaughtException:
     loadp VMEntryRecord::m_prevTopVMEntryFrame[sp], t5
     storep t5, VM::topVMEntryFrame[t3]
 
-    subp cfr, CalleeRegisterSaveSize, sp
+    if ARMv7
+        subp cfr, CalleeRegisterSaveSize, t3
+        move t3, sp
+    else
+        subp cfr, CalleeRegisterSaveSize, sp
+    end
 
     popCalleeSaves()
     functionEpilogue()
