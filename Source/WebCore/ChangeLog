@@ -1,3 +1,28 @@
+2014-08-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Use NSURLFileTypeMappings directly instead of depending on WebKitSystemInterface wrappers for it
+        https://bugs.webkit.org/show_bug.cgi?id=136035
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in: Remove reference to no longer existent sumbols.
+        * WebCore.order: ditto
+        * WebCore.xcodeproj/project.pbxproj: Install new NSURLFileTyeMappings.h header.
+        * platform/ios/MIMETypeRegistryIOS.mm:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): Use NSURLFileTypeMappings
+        directly instead of via WKSI wrapper.
+        * platform/mac/MIMETypeRegistryMac.mm:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension): ditto
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType): ditto
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType): ditto
+        * platform/mac/WebCoreSystemInterface.h: Remove references to the no-longer-used
+        WKGetExtensionsForMIMEType, WKGetPreferredExtensionForMIMEType, or WKGetMIMETypeForExtension
+        * platform/mac/WebCoreSystemInterface.mm: ditto
+        * platform/spi: Added. This is where headers to declare SPI go.
+        * platform/spi/cocoa: Added. See above.
+        * platform/spi/cocoa/NSURLFileTypeMappingsSPI.h: Added. Header to declare
+        the internal class NSURLFileTypeMappings and some of its methods.
+
 2014-08-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172736.

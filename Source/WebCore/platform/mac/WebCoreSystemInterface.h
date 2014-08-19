@@ -171,10 +171,7 @@ extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float t
     float duration, unsigned state);
 extern void (*wkDrawMediaUIPart)(int part, CGContextRef context, CGRect rect, unsigned state);
 extern CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
-extern NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
-extern NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 #endif
-extern NSString* (*wkGetMIMETypeForExtension)(NSString*);
 #if !PLATFORM(IOS)
 extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);

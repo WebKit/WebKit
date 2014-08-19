@@ -27,22 +27,22 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
-#include "WebCoreSystemInterface.h"
+#include "NSURLFileTypeMappingsSPI.h"
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore 
 {
 
-String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
     ASSERT(isMainThread());
-    return wkGetMIMETypeForExtension(ext);
+    return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:(NSString *)extension];
 }
 
 Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String& type)
 {
-    NSArray *stringsArray = wkGetExtensionsForMIMEType(type);
+    NSArray *stringsArray = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:(NSString *)type];
     Vector<String> stringsVector = Vector<String>();
     unsigned count = [stringsArray count];
     if (count > 0) {
@@ -56,7 +56,7 @@ Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String& type)
 
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 {
-    return wkGetPreferredExtensionForMIMEType(type);
+    return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:(NSString *)type];
 }
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)

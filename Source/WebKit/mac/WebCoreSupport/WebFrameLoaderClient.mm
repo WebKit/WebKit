@@ -109,6 +109,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
+#import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginViewBase.h>
 #import <WebCore/ProtectionSpace.h>
@@ -1620,7 +1621,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
         NSURL *URL = url;
         NSString *extension = [[URL path] pathExtension];
         if ([extension length] > 0) {
-            type = WKGetMIMETypeForExtension(extension);
+            type = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
             if (type.isEmpty()) {
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
                 if (WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForExtension:extension]) {

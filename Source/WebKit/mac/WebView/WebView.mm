@@ -148,6 +148,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MemoryPressureHandler.h>
+#import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>
 #import <WebCore/NotificationController.h>
@@ -1098,7 +1099,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     NSEnumerator *enumerator = [MIMETypes objectEnumerator];
     NSString *MIMEType;
     while ((MIMEType = [enumerator nextObject]) != nil) {
-        NSArray *extensionsForType = WKGetExtensionsForMIMEType(MIMEType);
+        NSArray *extensionsForType = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:MIMEType];
         if (extensionsForType) {
             [extensions addObjectsFromArray:extensionsForType];
         }
@@ -1495,7 +1496,7 @@ static NSMutableSet *knownPluginMIMETypes()
 #if !PLATFORM(IOS)
 + (NSString *)suggestedFileExtensionForMIMEType:(NSString *)type
 {
-    return WKGetPreferredExtensionForMIMEType(type);
+    return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
 }
 #endif
 
@@ -1798,7 +1799,7 @@ static bool fastDocumentTeardownEnabled()
 #if !PLATFORM(IOS)
     // Get the MIME type from the extension.
     if ([extension length] != 0) {
-        MIMEType = WKGetMIMETypeForExtension(extension);
+        MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
     }
 #endif
 

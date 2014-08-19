@@ -63,7 +63,6 @@ void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
-NSString* (*wkGetMIMETypeForExtension)(NSString*);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);

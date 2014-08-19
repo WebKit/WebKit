@@ -42,6 +42,7 @@
 #import "WebPluginPackage.h"
 #import "WebViewPrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
@@ -175,7 +176,7 @@ struct PluginPackageCandidates {
         // If no plug-in was found from the extension, attempt to map from the extension to a MIME type
         // and find the a plug-in from the MIME type. This is done in case the plug-in has not fully specified
         // an extension <-> MIME type mapping.
-        NSString *MIMEType = WKGetMIMETypeForExtension(extension);
+        NSString *MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
         if ([MIMEType length] > 0)
             plugin = [self pluginForMIMEType:MIMEType];
     }

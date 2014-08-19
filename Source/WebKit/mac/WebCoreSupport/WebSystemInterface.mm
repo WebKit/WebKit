@@ -72,18 +72,15 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
     INIT(DrawTextFieldCellFocusRing);
-    INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
     INIT(GetGlyphTransformedAdvances);
 #endif
     INIT(GetHTTPRequestPriority);
-    INIT(GetMIMETypeForExtension);
     INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetWebDefaultCFStringEncoding);
 #if !PLATFORM(IOS)
     INIT(SignedPublicKeyAndChallengeString);
-    INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
     INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);

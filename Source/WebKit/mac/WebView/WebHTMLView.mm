@@ -102,6 +102,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>
@@ -768,7 +769,7 @@ static NSCellStateValue kit(TriState state)
     NSString *path;
     
     while ((path = [enumerator nextObject]) != nil) {
-        NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
+        NSString *MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:[path pathExtension]];
         if (MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType))
             return YES;
     }

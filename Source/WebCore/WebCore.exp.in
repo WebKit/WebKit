@@ -2106,7 +2106,6 @@ _wkGetCFURLResponseMIMEType
 _wkGetCFURLResponseURL
 _wkGetHTTPCookieAcceptPolicy
 _wkGetHTTPRequestPriority
-_wkGetMIMETypeForExtension
 _wkGetNSURLResponseLastModifiedDate
 _wkGetUserToBaseCTM
 _wkGetWebDefaultCFStringEncoding

@@ -195,7 +195,7 @@
     } else {
         // FIXME: This has been broken for a while.
         // There's no way to get the MIME type for the image from a DOM element.
-        // The old code used WKGetPreferredExtensionForMIMEType([image MIMEType]);
+        // The old code used [image MIMEType];
         NSString *extension = @"";
         dragImage = [[NSWorkspace sharedWorkspace] iconForFileType:extension];
         NSSize offset = NSMakeSize([dragImage size].width - WebDragIconRightInset, -WebDragIconBottomInset);
