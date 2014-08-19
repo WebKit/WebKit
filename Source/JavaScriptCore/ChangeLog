@@ -1,3 +1,17 @@
+2014-08-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r172741.
+        https://bugs.webkit.org/show_bug.cgi?id=136058
+
+        This change is breaking PLT. (Requested by mlam on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION(r172401): for-in optimization no longer works at
+        all"
+        https://bugs.webkit.org/show_bug.cgi?id=136056
+        http://trac.webkit.org/changeset/172741
+
 2014-08-18  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r172401): for-in optimization no longer works at all

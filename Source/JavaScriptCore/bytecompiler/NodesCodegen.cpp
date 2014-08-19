@@ -2070,7 +2070,7 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
         generator.emitToIndexString(propertyName.get(), i.get());
         this->emitLoopHeader(generator, propertyName.get());
 
-        generator.pushIndexedForInScope(local.get(), i.get());
+        generator.pushIndexedForInScope(base.get(), local.get(), i.get());
         generator.emitNode(dst, m_statement);
         generator.popIndexedForInScope(local.get());
 
@@ -2104,7 +2104,7 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
         this->emitLoopHeader(generator, propertyName.get());
 
-        generator.pushStructureForInScope(local.get(), i.get(), propertyName.get(), structureEnumerator.get());
+        generator.pushStructureForInScope(base.get(), local.get(), i.get(), propertyName.get(), structureEnumerator.get());
         generator.emitNode(dst, m_statement);
         generator.popStructureForInScope(local.get());
 
