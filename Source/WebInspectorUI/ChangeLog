@@ -1,5 +1,43 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172689. <rdar://problem/18040028>
+
+    2014-08-16  Joseph Pecoraro  <pecoraro@apple.com>
+    
+            Web Inspector: Improve performance of selection range changes viewing Scripts timeline
+            https://bugs.webkit.org/show_bug.cgi?id=136015
+    
+            Reviewed by Timothy Hatcher.
+    
+            * UserInterface/Base/Utilities.js:
+            (clamp):
+            Helper function to clamp a value between a min and max.
+    
+            * UserInterface/Models/ProfileNode.js:
+            (WebInspector.ProfileNode.prototype.get startTime):
+            (WebInspector.ProfileNode.prototype.get endTime):
+            These can be quickly calculated, so avoid full calculation to grab the values.
+    
+            * UserInterface/Views/ScriptTimelineView.js:
+            (WebInspector.ScriptTimelineView.prototype.updateLayout):
+            Update ranges with a smart helper, instead of blindly doing it and needing refresh.
+    
+            * UserInterface/Views/ProfileNodeDataGridNode.js:
+            (WebInspector.ProfileNodeDataGridNode.prototype.get rangeEndTime):
+            (WebInspector.ProfileNodeDataGridNode.prototype.get data):
+            (WebInspector.ProfileNodeDataGridNode.prototype.updateRangeTimes):
+            (WebInspector.ProfileNodeDataGridNode.prototype.set rangeStartTime): Deleted.
+            (WebInspector.ProfileNodeDataGridNode.prototype.set rangeEndTime): Deleted.
+            * UserInterface/Views/ScriptTimelineDataGridNode.js:
+            (WebInspector.ScriptTimelineDataGridNode.prototype.updateRangeTimes):
+            (WebInspector.ScriptTimelineDataGridNode.prototype.set rangeStartTime): Deleted.
+            (WebInspector.ScriptTimelineDataGridNode.prototype.set rangeEndTime): Deleted.
+            When updating the range selection, compare to the last range selection
+            on this DataGridNode. If the visible portion of this node's time range
+            changes, we need a refresh. Otherwise, we don't need a refresh.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172682. <rdar://problem/18038767>
 
     2014-08-15  Joseph Pecoraro  <pecoraro@apple.com>

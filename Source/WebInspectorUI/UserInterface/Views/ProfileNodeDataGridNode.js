@@ -68,32 +68,37 @@ WebInspector.ProfileNodeDataGridNode.prototype = {
         return this._rangeStartTime;
     },
 
-    set rangeStartTime(x)
-    {
-        if (this._rangeStartTime === x)
-            return;
-
-        this._rangeStartTime = x;
-        this.needsRefresh();
-    },
-
     get rangeEndTime()
     {
         return this._rangeEndTime;
     },
 
-    set rangeEndTime(x)
-    {
-        if (this._rangeEndTime === x)
-            return;
-
-        this._rangeEndTime = x;
-        this.needsRefresh();
-    },
-
     get data()
     {
         return this._data;
+    },
+
+    updateRangeTimes: function(startTime, endTime)
+    {
+        var oldRangeStartTime = this._rangeStartTime;
+        var oldRangeEndTime = this._rangeEndTime;
+
+        if (oldRangeStartTime === startTime && oldRangeEndTime === endTime)
+            return;
+
+        this._rangeStartTime = startTime;
+        this._rangeEndTime = endTime;
+
+        // We only need a refresh if the new range time changes the visible portion of this record.
+        var profileStart = this._profileNode.startTime;
+        var profileEnd = this._profileNode.endTime;
+        var oldStartBoundary = clamp(profileStart, oldRangeStartTime, profileEnd);
+        var oldEndBoundary = clamp(profileStart, oldRangeEndTime, profileEnd);
+        var newStartBoundary = clamp(profileStart, startTime, profileEnd);
+        var newEndBoundary = clamp(profileStart, endTime, profileEnd);
+
+        if (oldStartBoundary !== newStartBoundary || oldEndBoundary !== newEndBoundary)
+            this.needsRefresh();
     },
 
     refresh: function()

@@ -111,8 +111,7 @@ WebInspector.ScriptTimelineView.prototype = {
         if (this.startTime !== this._oldStartTime || this.endTime !== this._oldEndTime) {
             var dataGridNode = this._dataGrid.children[0];
             while (dataGridNode) {
-                dataGridNode.rangeStartTime = this.startTime;
-                dataGridNode.rangeEndTime = this.endTime;
+                dataGridNode.updateRangeTimes(this.startTime, this.endTime);
                 if (dataGridNode.revealed)
                     dataGridNode.refreshIfNeeded();
                 dataGridNode = dataGridNode.traverseNextNode(false, null, true);
