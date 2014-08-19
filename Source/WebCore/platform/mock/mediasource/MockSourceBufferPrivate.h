@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,8 +68,6 @@ private:
     virtual void removedFromMediaSource() override;
     virtual MediaPlayer::ReadyState readyState() const override;
     virtual void setReadyState(MediaPlayer::ReadyState) override;
-    virtual void evictCodedFrames() override;
-    virtual bool isFull() override;
 
     virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) override { }
     virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) override;

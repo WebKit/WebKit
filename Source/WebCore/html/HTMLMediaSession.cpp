@@ -38,6 +38,7 @@
 #include "MediaSessionManager.h"
 #include "Page.h"
 #include "ScriptController.h"
+#include "SourceBuffer.h"
 
 #if PLATFORM(IOS)
 #include "AudioSession.h"
@@ -300,6 +301,38 @@ void HTMLMediaSession::applyMediaPlayerRestrictions(const HTMLMediaElement& elem
 #endif
     
 }
+
+#if ENABLE(MEDIA_SOURCE)
+const unsigned fiveMinutesOf1080PVideo = 290 * 1024 * 1024; // 290 MB is approximately 5 minutes of 8Mbps (1080p) content.
+const unsigned fiveMinutesStereoAudio = 14 * 1024 * 1024; // 14 MB is approximately 5 minutes of 384kbps content.
+
+size_t HTMLMediaSession::maximumMediaSourceBufferSize(const SourceBuffer& buffer) const
+{
+    // A good quality 1080p video uses 8,000 kbps and stereo audio uses 384 kbps, so assume 95% for video and 5% for audio.
+    const float bufferBudgetPercentageForVideo = .95;
+    const float bufferBudgetPercentageForAudio = .05;
+
+    size_t maximum;
+    Settings* settings = buffer.document().settings();
+    if (settings)
+        maximum = settings->maximumSourceBufferSize();
+    else
+        maximum = fiveMinutesOf1080PVideo + fiveMinutesStereoAudio;
+
+    // Allow a SourceBuffer to buffer as though it is audio-only even if it doesn't have any active tracks (yet).
+    size_t bufferSize = static_cast<size_t>(maximum * bufferBudgetPercentageForAudio);
+    if (buffer.hasVideo())
+        bufferSize += static_cast<size_t>(maximum * bufferBudgetPercentageForVideo);
+
+    // FIXME: we might want to modify this algorithm to:
+    // - decrease the maximum size for background tabs
+    // - decrease the maximum size allowed for inactive elements when a process has more than one
+    //   element, eg. so a page with many elements which are played one at a time doesn't keep
+    //   everything buffered after an element has finished playing.
+
+    return bufferSize;
+}
+#endif
 
 }
 

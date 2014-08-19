@@ -1,5 +1,95 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172657. <rdar://problem/17896828>
+
+    2014-08-15  Eric Carlson  <eric.carlson@apple.com>
+    
+            [MSE] Implement a maximum buffer size for SourceBuffer
+            https://bugs.webkit.org/show_bug.cgi?id=135614
+    
+            Reviewed by Jer Noble.
+    
+            Implement the MSE coded frame eviction algorithm: when new buffers are appended attempt
+            to keep the amount of data buffered below a maximum size (which is determined by the media
+            session manager) by freeing coded frames as follows:
+                1 - Free frames in 30 second chunks from 0 to 30 seconds before the current time.
+                2 - If there are time ranges after the range with the current time, free frames in
+                    30 second chunks from duration back to the beginning of the time range after
+                    current time.
+    
+            For now we DO NOT throw a QUOTA_EXCEEDED_ERR when we are not able to free up enough
+            space to remain below the prescribed quota, because some big name, widely deployed, 
+            code bases ignore the error and continue appending data as though the failed append
+            succeeded, leading to a corrupted bitstream and failure to play.
+    
+            * Modules/mediasource/SampleMap.cpp:
+            (WebCore::SampleMap::addSample): Drive-by performance optimization: sample->presentationTime()
+                is used more than once, stash it in a local variable.
+            (WebCore::SampleMap::removeSample): Ditto.
+    
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::logRanges): Debug-only function to log TimeRanges.
+            (WebCore::SourceBuffer::SourceBuffer):
+            (WebCore::SourceBuffer::remove): Optimize logging. Buffer full and coded frame eviction logic
+                is in SourceBuffer instead of SourceBufferPrivate.
+            (WebCore::SourceBuffer::appendBufferInternal): Ditto.
+            (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete): Set m_bufferFull when more data
+                has been buffered than allowed.
+            (WebCore::removeSamplesFromTrackBuffer): Add logging.
+            (WebCore::SourceBuffer::removeCodedFrames): Improve logging. Avoid debug build assert when
+                current time is after last enqueued presentation time.
+            (WebCore::SourceBuffer::evictCodedFrames): The coded frame eviction algorithm.
+            (WebCore::SourceBuffer::maximumBufferSize): Return the maximum amount of data that can 
+                be buffered.
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Improve logging. Don't attempt
+                to create a PlatformTimeRanges with inverted start and end to avoid an assert in debug.
+            (WebCore::SourceBuffer::hasAudio): New, return true if there are any audio tracks.
+            (WebCore::SourceBuffer::hasVideo): New, return true if there are any video tracks.
+            (WebCore::SourceBuffer::sourceBufferPrivateHasAudio): Call hasAudio.
+            (WebCore::SourceBuffer::sourceBufferPrivateHasVideo): Call hasVideo.
+            (WebCore::SourceBuffer::hasCurrentTime): Return true if currentTime is greater than duration.
+            (WebCore::SourceBuffer::hasFutureTime): Ditto.
+            (WebCore::SourceBuffer::extraMemoryCost): Return the amount of data buffered: the size of
+                the input buffer plus the size of all track samples.
+            (WebCore::SourceBuffer::reportExtraMemoryCost): Move buffered size calculation to extraMemoryCost.
+            (WebCore::SourceBuffer::document): Document accessor.
+            * Modules/mediasource/SourceBuffer.h: Drive-by size optimization by moving all bool member
+                variables to the end of class.
+    
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::refreshCachedTime): Drive-by removal of overly chatty logging.
+            (WebCore::HTMLMediaElement::maximumSourceBufferSize): New, maximum source buffer size.
+            * html/HTMLMediaElement.h:
+    
+            * html/HTMLMediaSession.cpp:
+            (WebCore::HTMLMediaSession::maximumMediaSourceBufferSize): New, get maximum source buffer 
+                size from settings, return full amount for an SourceBuffer with video and audio, return 5%
+                of the maximum for an audio-only SourceBuffer.
+            * html/HTMLMediaSession.h:
+    
+            * page/Settings.in: Add maximumSourceBufferSize. Default value is enough for approximately
+                five minutes of 1080p video and stereo audio.
+    
+            * platform/graphics/PlatformTimeRanges.cpp:
+            (WebCore::PlatformTimeRanges::totalDuration): Drive-by optimization.
+            (WebCore::PlatformTimeRanges::dump): New, allow a PlatformTimeRanges to be printed.
+            * platform/graphics/PlatformTimeRanges.h:
+    
+            * platform/graphics/SourceBufferPrivate.h: Delete evictCodedFrames and isFull, that logic
+                is not in SourceBuffer.
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame): Drive-by logging fix.
+            (WebCore::SourceBufferPrivateAVFObjC::evictCodedFrames): Deleted.
+            (WebCore::SourceBufferPrivateAVFObjC::isFull): Deleted.
+    
+            * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+            (WebCore::MockSourceBufferPrivate::evictCodedFrames): Deleted.
+            (WebCore::MockSourceBufferPrivate::isFull): Deleted.
+            * platform/mock/mediasource/MockSourceBufferPrivate.h:
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172656. <rdar://problem/17961698>
 
     2014-08-15  Zalan Bujtas  <zalan@apple.com>

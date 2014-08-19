@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -632,7 +632,7 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
         CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
         FloatSize formatSize = FloatSize(CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (formatSize != m_cachedSize) {
-            LOG(MediaSource, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - size change detected: {width=%lf, height=%lf", formatSize.width(), formatSize.height());
+            LOG(MediaSource, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - size change detected: {width=%lf, height=%lf}", formatSize.width(), formatSize.height());
             m_cachedSize = formatSize;
             if (m_mediaSource)
                 m_mediaSource->player()->sizeChanged();
@@ -778,18 +778,6 @@ void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyStat
     if (m_mediaSource)
         m_mediaSource->player()->setReadyState(readyState);
 }
-
-void SourceBufferPrivateAVFObjC::evictCodedFrames()
-{
-    notImplemented();
-}
-
-bool SourceBufferPrivateAVFObjC::isFull()
-{
-    notImplemented();
-    return false;
-}
-
 
 bool SourceBufferPrivateAVFObjC::hasVideo() const
 {

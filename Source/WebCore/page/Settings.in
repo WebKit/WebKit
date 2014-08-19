@@ -228,3 +228,7 @@ useImageDocumentForSubframePDF initial=false
 # Allow clients to permit navigation to an invalid URL. Some apps may use invalid URLs
 # as a means to pass data from the web-portion of their app to the native portion.
 allowNavigationToInvalidURL initial=false
+
+# Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes
+# of 1080p video and stereo audio.
+maximumSourceBufferSize type=int, initial=318767104, conditional=MEDIA_SOURCE

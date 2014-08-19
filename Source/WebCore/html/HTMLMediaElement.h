@@ -72,6 +72,7 @@ class MediaKeys;
 #endif
 #if ENABLE(MEDIA_SOURCE)
 class MediaSource;
+class SourceBuffer;
 class VideoPlaybackQuality;
 #endif
 
@@ -208,6 +209,7 @@ public:
 //  Media Source.
     void closeMediaSource();
     void incrementDroppedFrameCount() { ++m_droppedVideoFrames; }
+    size_t maximumSourceBufferSize(const SourceBuffer&) const;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

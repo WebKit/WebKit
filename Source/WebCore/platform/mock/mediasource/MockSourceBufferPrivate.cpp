@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,16 +211,6 @@ void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
     if (m_mediaSource)
         m_mediaSource->player()->setReadyState(readyState);
-}
-
-void MockSourceBufferPrivate::evictCodedFrames()
-{
-    // No-op.
-}
-
-bool MockSourceBufferPrivate::isFull()
-{
-    return false;
 }
 
 void MockSourceBufferPrivate::setActive(bool isActive)

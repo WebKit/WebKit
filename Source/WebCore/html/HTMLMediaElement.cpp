@@ -2518,7 +2518,6 @@ void HTMLMediaElement::refreshCachedTime() const
         return; 
     } 
 
-    LOG(Media, "HTMLMediaElement::refreshCachedTime - caching time %f", m_cachedTime); 
     m_clockTimeAtLastCachedTimeUpdate = monotonicallyIncreasingTime();
 }
 
@@ -5971,6 +5970,13 @@ MediaSession::MediaType HTMLMediaElement::presentationType() const
 
     return MediaSession::Audio;
 }
+
+#if ENABLE(MEDIA_SOURCE)
+size_t HTMLMediaElement::maximumSourceBufferSize(const SourceBuffer& buffer) const
+{
+    return m_mediaSession->maximumMediaSourceBufferSize(buffer);
+}
+#endif
 
 void HTMLMediaElement::pausePlayback()
 {
