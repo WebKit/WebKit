@@ -1,3 +1,15 @@
+2014-08-19  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Let the caller define JSC_timeout for run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=136068
+
+        Reviewed by Csaba Osztrogonác.
+
+        Keep the 60 second timeout for jsc tests as the default setting but
+        don't override the value of JSC_timeout if already set.
+
+        * Scripts/run-javascriptcore-tests:
+
 2014-08-19  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Remove obsolete run-javascriptcore-tests result parsing from master.cfg

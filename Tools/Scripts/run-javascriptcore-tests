@@ -148,7 +148,7 @@ if (!defined($root) && $buildJSC) {
 
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-$ENV{JSC_timeout} = 60; # Set a 60 second timeout on all jsc tests.
+$ENV{JSC_timeout} = 60 unless $ENV{JSC_timeout}; # Set a 60 second timeout on all jsc tests (if environment variable not defined already).
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
 sub testapiPath($)
