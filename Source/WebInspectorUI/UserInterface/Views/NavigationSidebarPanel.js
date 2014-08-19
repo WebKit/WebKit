@@ -297,11 +297,6 @@ WebInspector.NavigationSidebarPanel.prototype = {
         }
     },
 
-    updateCustomContentOverflow: function()
-    {
-        // Implemented by subclasses if needed.
-    },
-
     updateFilter: function()
     {
         this._updateFilter();
@@ -440,8 +435,6 @@ WebInspector.NavigationSidebarPanel.prototype = {
     _updateContentOverflowShadowVisibility: function()
     {
         delete this._updateContentOverflowShadowVisibilityIdentifier;
-
-        this.updateCustomContentOverflow();
 
         var scrollHeight = this._contentElement.scrollHeight;
         var offsetHeight = this._contentElement.offsetHeight;

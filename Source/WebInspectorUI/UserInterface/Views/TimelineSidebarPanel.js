@@ -125,10 +125,6 @@ WebInspector.TimelineSidebarPanel = function()
     this._timelineOverviewTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass, WebInspector.UIString("Timelines"), null, WebInspector.timelineManager.activeRecording);
     this._timelineOverviewTreeElement.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.showTimelineOverview, this);
 
-    this._stripeBackgroundElement = document.createElement("div");
-    this._stripeBackgroundElement.className = WebInspector.TimelineSidebarPanel.StripeBackgroundStyleClass;
-    this.contentElement.insertBefore(this._stripeBackgroundElement, this.contentElement.firstChild);
-
     WebInspector.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
@@ -144,7 +140,6 @@ WebInspector.TimelineSidebarPanel.TitleBarStyleClass = "title-bar";
 WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass = "timelines";
 WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass = "timeline-events";
 WebInspector.TimelineSidebarPanel.TimelinesContentContainerStyleClass = "timelines-content";
-WebInspector.TimelineSidebarPanel.StripeBackgroundStyleClass = "stripe-background";
 WebInspector.TimelineSidebarPanel.CloseButtonStyleClass = "close-button";
 WebInspector.TimelineSidebarPanel.LargeIconStyleClass = "large";
 WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass = "stopwatch-icon";
@@ -267,17 +262,6 @@ WebInspector.TimelineSidebarPanel.prototype = {
     },
 
     // Protected
-
-    updateCustomContentOverflow: function()
-    {
-        if (!this._stripeBackgroundElement)
-            return;
-
-        var contentHeight = this.contentTreeOutline.element.offsetHeight;
-        var currentHeight = parseInt(this._stripeBackgroundElement.style.height);
-        if (currentHeight !== contentHeight)
-            this._stripeBackgroundElement.style.height = contentHeight + "px";
-    },
 
     hasCustomFilters: function()
     {

@@ -1,5 +1,39 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172682. <rdar://problem/18038767>
+
+    2014-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+    
+            Web Inspector: Remove forced layouts during recording caused by striped background element resizing
+            https://bugs.webkit.org/show_bug.cgi?id=136009
+    
+            Reviewed by Timothy Hatcher.
+    
+            We used to manually resize and a custom striped background behind
+            the timeline tree outline content area. This can happen frequently
+            during timeline recordings causing forced layouts. We can eliminate
+            the hack and instead put the stripe background on the tree outline.
+    
+            * UserInterface/Views/TimelineSidebarPanel.js:
+            (WebInspector.TimelineSidebarPanel.prototype.updateCustomContentOverflow): Deleted.
+            * UserInterface/Views/TimelineSidebarPanel.css:
+            (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content .item > .status > .status-button):
+            (.sidebar > .panel.navigation.timeline > .content > .stripe-background): Deleted.
+            (.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content > .stripe-background): Deleted.
+            Eliminate the striped background element.
+    
+            * UserInterface/Views/TimelineView.css:
+            (.panel.navigation.timeline > .content > .navigation-sidebar-panel-content-tree-outline):
+            (.panel.navigation.timeline.timeline-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline):
+            Give the timeline content tree outlines the striped background.
+    
+            * UserInterface/Views/NavigationSidebarPanel.js:
+            (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+            (WebInspector.NavigationSidebarPanel.prototype.updateCustomContentOverflow): Deleted.
+            Remove the now unused updateCustomContentOverflow method.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172662. <rdar://problem/17971908>
 
     2014-08-15  Jono Wells  <jonowells@apple.com>
