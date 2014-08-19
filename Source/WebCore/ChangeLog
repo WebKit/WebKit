@@ -1,5 +1,25 @@
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172693. <rdar://problem/17577321>
+
+    2014-08-15  Dean Jackson  <dino@apple.com>
+    
+            REGRESSION (r164173): Safari AutoFill button in popover, default buttons on iCloud control panel and Safari Safe Browsing pages don't have default appearance
+            https://bugs.webkit.org/show_bug.cgi?id=136011
+    
+            Reviewed by Sam Weinig.
+    
+            When we render some controls, we need to make sure the NSWindow subclass we
+            use as the host of the AppKit views identifies itself as the key window (if
+            the control state is correct). We already have a flag tracking this for
+            key appearance - just make sure we do the same for isKeyWindow.
+    
+            * platform/mac/ThemeMac.mm:
+            (-[WebCoreThemeWindow isKeyWindow]): New override to mirror the static
+            variable for key appearance.
+    
+2014-08-19  Dana Burkart  <dburkart@apple.com>
+
         Merge r172657. <rdar://problem/17896828>
 
     2014-08-15  Eric Carlson  <eric.carlson@apple.com>

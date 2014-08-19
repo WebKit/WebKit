@@ -58,6 +58,11 @@ static BOOL themeWindowHasKeyAppearance;
     return themeWindowHasKeyAppearance;
 }
 
+- (BOOL)isKeyWindow
+{
+    return themeWindowHasKeyAppearance;
+}
+
 @end
 
 @interface WebCoreThemeView : NSControl
