@@ -401,7 +401,6 @@ webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-re
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position.html [ Missing ]
-webkit.org/b/131347 fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/hidpi/clip-text-in-hidpi.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-background-dynamic.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-border-image-dynamic.html [ Failure Pass Missing ]
@@ -417,9 +416,6 @@ webkit.org/b/131347 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOn
 webkit.org/b/131347 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/inline/hidpi-selection-gap-and-inline-selection-have-gap-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/inline/hidpi-selection-gap-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/131347 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
@@ -682,7 +678,7 @@ webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]
 
 webkit.org/b/119041 css3/calc/img-size.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
+webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass Crash ]
 
 # These tests started to time out (or time out more often) since the FTL merge
 webkit.org/b/119253 [ Release ] css3/autoclose-braces-and-parentheses.html [ Timeout Pass ]
@@ -797,12 +793,24 @@ webkit.org/b/132248 media/media-fragments/TC0002.html [ Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0004.html [ Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0005.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0006.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0009.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0011.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0014.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0015.html [ Failure Crash Pass ]
 webkit.org/b/134574 media/media-fragments/TC0024.html [ Failure Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0035.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0036.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0037.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0039.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0038.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0044.html [ Crash Pass ]
+webkit.org/b/132248 media/media-fragments/TC0051.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0052.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0053.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0054.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0055.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0059.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Crash Pass ]
@@ -838,9 +846,11 @@ webkit.org/b/132258 fast/overflow/scrollbar-click-retains-focus.html [ Failure P
 
 #Media controls
 webkit.org/b/132271 media/controls-styling-strict.html [ Failure Timeout Pass ]
+webkit.org/b/132271 media/controls-strict.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/132271 media/media-controller-playbackrate.html [ Timeout Pass Crash ]
 webkit.org/b/132271 media/track/add-and-remove-track.html [ Timeout Pass ]
 webkit.org/b/132271 media/controls-without-preload.html [ ImageOnlyFailure Timeout Pass ]
+webkit.org/b/132271 media/controls-right-click-on-timebar.html [ Timeout Pass ]
 
 #JS slow stress
 webkit.org/b/132266 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Timeout Pass ]
@@ -929,6 +939,17 @@ webkit.org/b/135583 http/tests/media/video-play-progress.html [ Crash Timeout Pa
 webkit.org/b/135584 media/track/track-cue-empty-text-crash.html [ Crash Timeout Pass ]
 
 webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Failure Pass ]
+
+webkit.org/b/136066 animations/big-rotation.html [ Crash Pass ]
+webkit.org/b/136066 animations/missing-from-to.html [ Crash Pass ]
+webkit.org/b/136066 animations/missing-keyframe-properties.html [ Crash Pass ]
+webkit.org/b/136066 animations/missing-values-first-keyframe.html [ Crash Pass ]
+webkit.org/b/136066 animations/state-at-end-event.html [ Crash Pass ]
+
+webkit.org/b/136067 fast/profiler/dead-time.html [ Failure Pass ]
+webkit.org/b/136067 fast/profiler/stop-profiling-after-setTimeout.html [ Failure Pass ]
+
+webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-label.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1107,6 +1128,8 @@ webkit.org/b/135094 fast/workers/worker-exception-during-navigation.html [ Timeo
 webkit.org/b/135095 fast/loader/child-frame-add-after-back-forward.html [ Timeout Pass ]
 
 webkit.org/b/135531 fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Timeout ]
+
+webkit.org/b/136069 fast/forms/mailto/formenctype-attribute-input-2.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1398,7 +1421,7 @@ webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
 webkit.org/b/53964 fast/forms/option-mouseevents.html [ Failure ]
 
 # Probably failing because resizing is asynchronous.
-webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout ]
+webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 
 # keygen element rendering is broken
 webkit.org/b/54136 http/tests/misc/submit-post-keygen.html [ Failure ]
@@ -1436,11 +1459,6 @@ webkit.org/b/30577 editing/selection/move-left-right.html [ Failure ]
 webkit.org/b/30620 fast/xsl/sort-locale.xml [ Failure ]
 
 webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
-
-# This port doesn't have a global history delegate yet
-Bug(GTK) http/tests/globalhistory [ Failure ]
-Bug(GTK) http/tests/globalhistory/history-delegate-basic-302-redirect.html [ Pass ]
-Bug(GTK) http/tests/globalhistory/history-delegate-basic-title.html [ Pass ]
 
 # Need to add functionality to DumpRenderTree to handle error pages
 Bug(GTK) fast/history/back-forward-reset-after-error-handling.html [ Failure ]
@@ -1674,7 +1692,8 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
 webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure Timeout ]
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
-webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure Timeout ]
+webkit.org/b/102776 media/track/track-cue-rendering-tree-is-removed-properly.html [ Timeout Pass ]
 
 webkit.org/b/104686 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
 
@@ -1696,9 +1715,6 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/htm
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html [ Failure ]
-
-# Test fails on JSC platforms due to GC timing issues
-webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html [ Skip ]
@@ -2050,6 +2066,33 @@ webkit.org/b/135529 svg/animations/animate-css-xml-attributeType.html [ Failure 
 webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
 
 webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
+
+# Various failures from the W3C CSS Shapes test suite import
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
+webkit.org/b/136065 css3/shapes/shape-outside/shape-box/shape-outside-box-002.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/shape-box/shape-outside-box-003.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/shape-box/shape-outside-box-004.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/shape-box/shape-outside-box-006.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/shape-box/shape-outside-box-007.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/shape-box/shape-outside-box-008.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-017.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-017.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-010.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-011.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-012.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-013.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-014.html [ ImageOnlyFailure ]
+webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015.html [ ImageOnlyFailure ]
+
+webkit.org/b/132421 fast/multicol/fixed-stack.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

@@ -1,3 +1,10 @@
+2014-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Mark tests failing after r172733 (W3C CSS Shapes test suite import)
+        Update list of flaky tests. Report and mark new failures. Remove expectations for new passing tests.
+
 2014-08-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Mark shape-image-threshold-001.html as crashing in debug
