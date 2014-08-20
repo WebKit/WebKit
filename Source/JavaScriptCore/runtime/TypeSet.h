@@ -76,7 +76,7 @@ public:
     void setProto(PassRefPtr<StructureShape> shape) { m_proto = shape; }
 
 private:
-    static String leastCommonAncestor(const Vector<RefPtr<StructureShape>>*);
+    static String leastCommonAncestor(const Vector<RefPtr<StructureShape>>);
 
     Vector<RefPtr<StringImpl>> m_fields;
     RefPtr<StructureShape> m_proto;
@@ -103,7 +103,7 @@ private:
     bool doesTypeConformTo(uint32_t test) const;
 
     uint32_t m_seenTypes;
-    Vector<RefPtr<StructureShape>>* m_structureHistory;
+    Vector<RefPtr<StructureShape>> m_structureHistory;
     HashMap<StructureID, uint8_t> m_structureIDHistory;
 };
 

@@ -38,7 +38,6 @@ namespace JSC {
 
 TypeSet::TypeSet()
     : m_seenTypes(TypeNothing)
-    , m_structureHistory(new Vector<RefPtr<StructureShape>>)
 {
 }
 
@@ -79,8 +78,8 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> sh
             // Make one more pass making sure that we don't have the same shape. (Same shapes may have different StructureIDs).
             bool found = false;
             String hash = shape->propertyHash();
-            for (size_t i = 0; i < m_structureHistory->size(); i++) {
-                RefPtr<StructureShape> obj = m_structureHistory->at(i);
+            for (size_t i = 0; i < m_structureHistory.size(); i++) {
+                RefPtr<StructureShape> obj = m_structureHistory.at(i);
                 if (obj->propertyHash() == hash) {
                     found = true;
                     break;
@@ -88,7 +87,7 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> sh
             }
 
             if (!found)
-                m_structureHistory->append(shape);
+                m_structureHistory.append(shape);
         }
     }
 }
@@ -117,22 +116,22 @@ String TypeSet::seenTypes() const
     if (m_seenTypes & TypeObject)
          seen.append("Object ");
 
-    for (size_t i = 0; i < m_structureHistory->size(); i++) {
-        RefPtr<StructureShape> shape = m_structureHistory->at(i);
+    for (size_t i = 0; i < m_structureHistory.size(); i++) {
+        RefPtr<StructureShape> shape = m_structureHistory.at(i);
         seen.append(shape->m_constructorName);
         seen.append(" ");
     }
 
-    if (m_structureHistory->size()) 
+    if (m_structureHistory.size()) 
         seen.append("\nStructures:[ ");
-    for (size_t i = 0; i < m_structureHistory->size(); i++) {
-        seen.append(m_structureHistory->at(i)->stringRepresentation());
+    for (size_t i = 0; i < m_structureHistory.size(); i++) {
+        seen.append(m_structureHistory.at(i)->stringRepresentation());
         seen.append(" ");
     }
-    if (m_structureHistory->size())
+    if (m_structureHistory.size())
         seen.append("]");
 
-    if (m_structureHistory->size()) {
+    if (m_structureHistory.size()) {
         seen.append("\nLeast Common Ancestor: ");
         seen.append(leastCommonAncestor());
     }
@@ -165,7 +164,7 @@ String TypeSet::displayName() const
     if (m_seenTypes == TypeNothing)
         return "";
 
-    if (m_structureHistory->size() && doesTypeConformTo(TypeObject | TypeNull | TypeUndefined)) {
+    if (m_structureHistory.size() && doesTypeConformTo(TypeObject | TypeNull | TypeUndefined)) {
         String ctorName = leastCommonAncestor(); 
 
         if (doesTypeConformTo(TypeObject))
@@ -237,8 +236,8 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::Struct
 {
     RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> description = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>::create();
 
-    for (size_t i = 0; i < m_structureHistory->size(); i++)
-        description->addItem(m_structureHistory->at(i)->inspectorRepresentation());
+    for (size_t i = 0; i < m_structureHistory.size(); i++)
+        description->addItem(m_structureHistory.at(i)->inspectorRepresentation());
 
     return description.release();
 }
@@ -299,16 +298,16 @@ String StructureShape::propertyHash()
     return *m_propertyHash;
 }
 
-String StructureShape::leastCommonAncestor(const Vector<RefPtr<StructureShape>>* shapes)
+String StructureShape::leastCommonAncestor(const Vector<RefPtr<StructureShape>> shapes)
 {
-    if (!shapes->size())
+    if (!shapes.size())
         return "";
 
-    RefPtr<StructureShape> origin = shapes->at(0);
-    for (size_t i = 1; i < shapes->size(); i++) {
+    RefPtr<StructureShape> origin = shapes.at(0);
+    for (size_t i = 1; i < shapes.size(); i++) {
         bool foundLUB = false;
         while (!foundLUB) {
-            RefPtr<StructureShape> check = shapes->at(i);
+            RefPtr<StructureShape> check = shapes.at(i);
             String curCtorName = origin->m_constructorName;
             while (check) {
                 if (check->m_constructorName == curCtorName) {

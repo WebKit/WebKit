@@ -1,3 +1,24 @@
+2014-08-20  Saam Barati  <sbarati@apple.com>
+
+        Fix a memory leak in TypeSet
+        https://bugs.webkit.org/show_bug.cgi?id=135913
+
+        Reviewed by Filip Pizlo.
+
+        Currently, TypeSet unconditionally allocates memory for its member
+        variable m_structureHistory, but never deallocates it. Change this 
+        from being a pointer that is unconditionally allocated to a member 
+        variable that will be deallocated when TypeSet itself is deallocated.
+
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::TypeSet):
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::seenTypes):
+        (JSC::TypeSet::displayName):
+        (JSC::TypeSet::allStructureRepresentations):
+        (JSC::StructureShape::leastCommonAncestor):
+        * runtime/TypeSet.h:
+
 2014-08-20  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Assertion fails when running JSC stress tests.
