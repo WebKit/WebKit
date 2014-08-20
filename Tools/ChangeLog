@@ -1,3 +1,12 @@
+2014-08-19  Dan Bernstein  <mitz@apple.com>
+
+        update-webkit should not check for the presence of Apple’s Internal directory
+        Last part of https://bugs.webkit.org/show_bug.cgi?id=135815
+
+        Reviewed by Tim Horton.
+
+        * Scripts/update-webkit:
+
 2014-08-19  Zalan Bujtas  <zalan@apple.com>
 
         Remove ENABLE(SUBPIXEL_LAYOUT).

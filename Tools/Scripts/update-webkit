@@ -47,15 +47,14 @@ determineIsWinCairo();
 
 chdirWebKit();
 
-# FIXME: Remove the check for ../Internal once Apple-internal users of this script pass --no-auxiliary-libs
-my $auxiliaryLibs = ! -d "../Internal";
-# FIXME: http://webkit.org/b/135815 update-webkit should not check for the presence of Apple's Internal directory
-my $internal = -d "../Internal";
+my $auxiliaryLibs;
+my $internal;
 
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
     'q|quiet' => \$quiet,
     'auxiliary-libs!' => \$auxiliaryLibs,
+    # FIXME: This option is ignored. Remove it once no one in passing it in.
     'internal!' => \$internal,
 );
 
@@ -65,7 +64,6 @@ Usage: @{[ basename($0) ]} [options]
   -h|--help                 show the help message
   -q|--quiet                pass -q to svn update for quiet updates
   --[no-]auxiliary-libs     [don\'t] update the auxiliary libraries for Windows (default: update)
-  --[no-]internal           [don\'t] update ../Internal (default: update if it exists)
 __END__
     exit 1;
 }
@@ -79,13 +77,6 @@ push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 print "Updating OpenSource\n" unless $quiet;
 runSvnUpdateAndResolveChangeLogs(@svnOptions) if isSVN();
 runGitUpdate() if isGit();
-
-if ($internal) {
-    chdir("../Internal");
-    print "Updating Internal\n" unless $quiet;
-    runSvnUpdateAndResolveChangeLogs(@svnOptions) if isSVNDirectory(".");
-    runGitUpdate() if isGitDirectory(".");
-}
 
 if (isAppleWinWebKit() && $auxiliaryLibs) {
     system("perl", "Tools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
