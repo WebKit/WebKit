@@ -36,19 +36,19 @@ class AuthenticationChallenge;
 
 class AuthenticationChallengeBase {
 public:
-    AuthenticationChallengeBase();
+    WEBCORE_EXPORT AuthenticationChallengeBase();
     AuthenticationChallengeBase(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error);
 
-    unsigned previousFailureCount() const;
-    const Credential& proposedCredential() const;
-    const ProtectionSpace& protectionSpace() const;
-    const ResourceResponse& failureResponse() const;
-    const ResourceError& error() const;
+    WEBCORE_EXPORT unsigned previousFailureCount() const;
+    WEBCORE_EXPORT const Credential& proposedCredential() const;
+    WEBCORE_EXPORT const ProtectionSpace& protectionSpace() const;
+    WEBCORE_EXPORT const ResourceResponse& failureResponse() const;
+    WEBCORE_EXPORT const ResourceError& error() const;
     
-    bool isNull() const;
-    void nullify();
+    WEBCORE_EXPORT bool isNull() const;
+    WEBCORE_EXPORT void nullify();
     
-    static bool compare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
+    WEBCORE_EXPORT static bool compare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
 
 protected:
     // The AuthenticationChallenge subclass may "shadow" this method to compare platform specific fields

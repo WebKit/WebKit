@@ -139,7 +139,7 @@ public:
     void shrinkToFit();
 
 private:
-    StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
+    WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
 
     void clearCharsetRule();

@@ -49,7 +49,7 @@ public:
     EventListenerMap();
 
     bool isEmpty() const { return m_entries.isEmpty(); }
-    bool contains(const AtomicString& eventType) const;
+    WEBCORE_EXPORT bool contains(const AtomicString& eventType) const;
     bool containsCapturing(const AtomicString& eventType) const;
 
     void clear();

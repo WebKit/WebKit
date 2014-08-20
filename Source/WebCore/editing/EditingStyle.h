@@ -95,7 +95,7 @@ public:
         return adoptRef(new EditingStyle(propertyID, value));
     }
 
-    ~EditingStyle();
+    WEBCORE_EXPORT ~EditingStyle();
 
     MutableStyleProperties* style() { return m_mutableStyle.get(); }
     bool textDirection(WritingDirection&) const;

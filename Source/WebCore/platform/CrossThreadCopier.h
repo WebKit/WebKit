@@ -107,7 +107,7 @@ namespace WebCore {
         static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
         typedef PassRefPtr<RefCountedType> Type;
-        static Type copy(const T& refPtr)
+        WEBCORE_EXPORT static Type copy(const T& refPtr)
         {
             return refPtr;
         }

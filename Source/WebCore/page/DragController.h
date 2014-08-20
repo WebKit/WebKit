@@ -57,10 +57,10 @@ namespace WebCore {
 
         DragClient& client() const { return m_client; }
 
-        DragOperation dragEntered(DragData&);
-        void dragExited(DragData&);
-        DragOperation dragUpdated(DragData&);
-        bool performDragOperation(DragData&);
+        WEBCORE_EXPORT DragOperation dragEntered(DragData&);
+        WEBCORE_EXPORT void dragExited(DragData&);
+        WEBCORE_EXPORT DragOperation dragUpdated(DragData&);
+        WEBCORE_EXPORT bool performDragOperation(DragData&);
 
         bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
         unsigned numberOfItemsToBeAccepted() const { return m_numberOfItemsToBeAccepted; }
@@ -80,9 +80,9 @@ namespace WebCore {
         DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
         
         Element* draggableElement(const Frame*, Element* start, const IntPoint&, DragState&) const;
-        void dragEnded();
+        WEBCORE_EXPORT void dragEnded();
         
-        void placeDragCaret(const IntPoint&);
+        WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
         
         bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin);
         static const IntSize& maxDragImageSize();

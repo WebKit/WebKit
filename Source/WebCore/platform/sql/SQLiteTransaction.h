@@ -36,12 +36,12 @@ class SQLiteDatabase;
 class SQLiteTransaction {
     WTF_MAKE_NONCOPYABLE(SQLiteTransaction); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SQLiteTransaction(SQLiteDatabase& db, bool readOnly = false);
-    ~SQLiteTransaction();
+    WEBCORE_EXPORT SQLiteTransaction(SQLiteDatabase& db, bool readOnly = false);
+    WEBCORE_EXPORT ~SQLiteTransaction();
     
-    void begin();
-    void commit();
-    void rollback();
+    WEBCORE_EXPORT void begin();
+    WEBCORE_EXPORT void commit();
+    WEBCORE_EXPORT void rollback();
     void stop();
     
     bool inProgress() const { return m_inProgress; }

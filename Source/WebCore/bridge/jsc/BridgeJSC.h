@@ -70,7 +70,7 @@ public:
 
 class Instance : public RefCounted<Instance> {
 public:
-    Instance(PassRefPtr<RootObject>);
+    WEBCORE_EXPORT Instance(PassRefPtr<RootObject>);
 
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
@@ -79,7 +79,7 @@ public:
     void end();
 
     virtual Class* getClass() const = 0;
-    JSObject* createRuntimeObject(ExecState*);
+    WEBCORE_EXPORT JSObject* createRuntimeObject(ExecState*);
     void willInvalidateRuntimeObject();
 
     // Returns false if the value was not set successfully.
@@ -102,7 +102,7 @@ public:
 
     RootObject* rootObject() const;
 
-    virtual ~Instance();
+    WEBCORE_EXPORT virtual ~Instance();
 
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&) { return false; }
     virtual void put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { }
@@ -110,7 +110,7 @@ public:
 protected:
     virtual void virtualBegin() { }
     virtual void virtualEnd() { }
-    virtual RuntimeObject* newRuntimeObject(ExecState*);
+    WEBCORE_EXPORT virtual RuntimeObject* newRuntimeObject(ExecState*);
 
     RefPtr<RootObject> m_rootObject;
 

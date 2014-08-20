@@ -41,7 +41,7 @@ public:
     explicit DOMWindowSpeechSynthesis(DOMWindow*);
     virtual ~DOMWindowSpeechSynthesis();
     
-    static SpeechSynthesis* speechSynthesis(DOMWindow*);
+    WEBCORE_EXPORT static SpeechSynthesis* speechSynthesis(DOMWindow*);
     static DOMWindowSpeechSynthesis* from(DOMWindow*);
     
 private:

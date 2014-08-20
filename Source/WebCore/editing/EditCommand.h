@@ -70,7 +70,7 @@ protected:
     Document& document() { return m_document.get(); }
     CompositeEditCommand* parent() const { return m_parent; }
     void setStartingSelection(const VisibleSelection&);
-    void setEndingSelection(const VisibleSelection&);
+    WEBCORE_EXPORT void setEndingSelection(const VisibleSelection&);
 
 private:
     Ref<Document> m_document;

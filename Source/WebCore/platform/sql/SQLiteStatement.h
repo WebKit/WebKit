@@ -37,23 +37,23 @@ class SQLValue;
 class SQLiteStatement {
     WTF_MAKE_NONCOPYABLE(SQLiteStatement); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SQLiteStatement(SQLiteDatabase&, const String&);
-    ~SQLiteStatement();
+    WEBCORE_EXPORT SQLiteStatement(SQLiteDatabase&, const String&);
+    WEBCORE_EXPORT ~SQLiteStatement();
     
-    int prepare();
-    int bindBlob(int index, const void* blob, int size);
-    int bindBlob(int index, const String&);
-    int bindText(int index, const String&);
-    int bindInt(int index, int);
-    int bindInt64(int index, int64_t);
-    int bindDouble(int index, double);
-    int bindNull(int index);
-    int bindValue(int index, const SQLValue&);
-    unsigned bindParameterCount() const;
+    WEBCORE_EXPORT int prepare();
+    WEBCORE_EXPORT int bindBlob(int index, const void* blob, int size);
+    WEBCORE_EXPORT int bindBlob(int index, const String&);
+    WEBCORE_EXPORT int bindText(int index, const String&);
+    WEBCORE_EXPORT int bindInt(int index, int);
+    WEBCORE_EXPORT int bindInt64(int index, int64_t);
+    WEBCORE_EXPORT int bindDouble(int index, double);
+    WEBCORE_EXPORT int bindNull(int index);
+    WEBCORE_EXPORT int bindValue(int index, const SQLValue&);
+    WEBCORE_EXPORT unsigned bindParameterCount() const;
 
-    int step();
+    WEBCORE_EXPORT int step();
     int finalize();
-    int reset();
+    WEBCORE_EXPORT int reset();
     
     int prepareAndStep() { if (int error = prepare()) return error; return step(); }
     
@@ -73,8 +73,8 @@ public:
     // returned in the last step()
     int columnCount();
     
-    bool isColumnNull(int col);
-    bool isColumnDeclaredAsBlob(int col);
+    WEBCORE_EXPORT bool isColumnNull(int col);
+    WEBCORE_EXPORT bool isColumnDeclaredAsBlob(int col);
     String getColumnName(int col);
     SQLValue getColumnValue(int col);
     String getColumnText(int col);

@@ -40,13 +40,13 @@ struct Cookie;
 // Functions in this file take a Document pointer to determine which cookie storage to use. We should merge that into call sites, and use PlatformCookieJar directly.
 
 // These two functions implement document.cookie API, with special rules for HttpOnly cookies.
-String cookies(const Document*, const URL&);
-void setCookies(Document*, const URL&, const String& cookieString);
+WEBCORE_EXPORT String cookies(const Document*, const URL&);
+WEBCORE_EXPORT void setCookies(Document*, const URL&, const String& cookieString);
 
-bool cookiesEnabled(const Document*);
-String cookieRequestHeaderFieldValue(const Document*, const URL&);
-bool getRawCookies(const Document*, const URL&, Vector<Cookie>&);
-void deleteCookie(const Document*, const URL&, const String& cookieName);
+WEBCORE_EXPORT bool cookiesEnabled(const Document*);
+WEBCORE_EXPORT String cookieRequestHeaderFieldValue(const Document*, const URL&);
+WEBCORE_EXPORT bool getRawCookies(const Document*, const URL&, Vector<Cookie>&);
+WEBCORE_EXPORT void deleteCookie(const Document*, const URL&, const String& cookieName);
 
 }
 

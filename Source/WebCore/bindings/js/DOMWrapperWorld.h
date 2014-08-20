@@ -39,10 +39,10 @@ public:
     {
         return adoptRef(new DOMWrapperWorld(vm, isNormal));
     }
-    ~DOMWrapperWorld();
+    WEBCORE_EXPORT ~DOMWrapperWorld();
 
     // Free as much memory held onto by this world as possible.
-    void clearWrappers();
+    WEBCORE_EXPORT void clearWrappers();
 
     void didCreateWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.add(scriptController); }
     void didDestroyWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.remove(scriptController); }

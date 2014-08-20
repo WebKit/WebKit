@@ -39,11 +39,11 @@ public:
         return adoptRef(new BlobDataFileReference(path));
     }
 
-    virtual ~BlobDataFileReference();
+    WEBCORE_EXPORT virtual ~BlobDataFileReference();
 
     void startTrackingModifications();
 
-    const String& path();
+    WEBCORE_EXPORT const String& path();
     unsigned long long size();
     double expectedModificationTime();
 
@@ -51,7 +51,7 @@ public:
     virtual void revokeFileAccess();
 
 protected:
-    BlobDataFileReference(const String& path);
+    WEBCORE_EXPORT BlobDataFileReference(const String& path);
 
 private:
 #if ENABLE(FILE_REPLACEMENT)

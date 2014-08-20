@@ -53,20 +53,20 @@ public:
         DiskOrOperationFailure
     };
 
-    void setCacheDirectory(const String&);
+    WEBCORE_EXPORT void setCacheDirectory(const String&);
     const String& cacheDirectory() const;
     
-    void setMaximumSize(int64_t size);
-    int64_t maximumSize() const;
+    WEBCORE_EXPORT void setMaximumSize(int64_t size);
+    WEBCORE_EXPORT int64_t maximumSize() const;
     bool isMaximumSizeReached() const;
     int64_t spaceNeeded(int64_t cacheToSave);
 
     int64_t defaultOriginQuota() const { return m_defaultOriginQuota; }
-    void setDefaultOriginQuota(int64_t quota);
-    bool calculateUsageForOrigin(const SecurityOrigin*, int64_t& usage);
-    bool calculateQuotaForOrigin(const SecurityOrigin*, int64_t& quota);
+    WEBCORE_EXPORT void setDefaultOriginQuota(int64_t quota);
+    WEBCORE_EXPORT bool calculateUsageForOrigin(const SecurityOrigin*, int64_t& usage);
+    WEBCORE_EXPORT bool calculateQuotaForOrigin(const SecurityOrigin*, int64_t& quota);
     bool calculateRemainingSizeForOriginExcludingCache(const SecurityOrigin*, ApplicationCache*, int64_t& remainingSize);
-    bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
+    WEBCORE_EXPORT bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
     bool checkOriginQuota(ApplicationCacheGroup*, ApplicationCache* oldCache, ApplicationCache* newCache, int64_t& totalSpaceNeeded);
 
     ApplicationCacheGroup* cacheGroupForURL(const URL&); // Cache to load a main resource from.
@@ -85,17 +85,17 @@ public:
     // Removes the group if the cache to be removed is the newest one (so, storeNewestCache() needs to be called beforehand when updating).
     void remove(ApplicationCache*);
     
-    void empty();
+    WEBCORE_EXPORT void empty();
     
-    static bool storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost*);
+    static bool WEBCORE_EXPORT storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost*);
 
     bool manifestURLs(Vector<URL>* urls);
     bool cacheGroupSize(const String& manifestURL, int64_t* size);
     bool deleteCacheGroup(const String& manifestURL);
-    void vacuumDatabaseFile();
+    WEBCORE_EXPORT void vacuumDatabaseFile();
 
-    void getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&);
-    void deleteAllEntries();
+    WEBCORE_EXPORT void getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>&);
+    WEBCORE_EXPORT void deleteAllEntries();
 
     static int64_t unknownQuota() { return -1; }
     static int64_t noQuota() { return std::numeric_limits<int64_t>::max(); }

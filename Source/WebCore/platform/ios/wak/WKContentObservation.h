@@ -41,14 +41,14 @@ typedef enum
 
 bool WKObservingContentChanges(void);
 
-void WKStopObservingContentChanges(void);
-void WKBeginObservingContentChanges(bool allowsIntedeterminateChanges);
+WEBCORE_EXPORT void WKStopObservingContentChanges(void);
+WEBCORE_EXPORT void WKBeginObservingContentChanges(bool allowsIntedeterminateChanges);
 
 WKContentChange WKObservedContentChange(void);
 void WKSetObservedContentChange(WKContentChange aChange);
 
-int WebThreadCountOfObservedContentModifiers(void);
-void WebThreadClearObservedContentModifiers(void);
+WEBCORE_EXPORT int WebThreadCountOfObservedContentModifiers(void);
+WEBCORE_EXPORT void WebThreadClearObservedContentModifiers(void);
 
 bool WebThreadContainsObservedContentModifier(void * aContentModifier);
 void WebThreadAddObservedContentModifier(void * aContentModifier);

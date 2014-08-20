@@ -54,15 +54,15 @@ class ScriptExecutionContext;
 class DatabaseManager {
     WTF_MAKE_NONCOPYABLE(DatabaseManager); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static DatabaseManager& manager();
+    WEBCORE_EXPORT static DatabaseManager& manager();
 
-    void initialize(const String& databasePath);
-    void setClient(DatabaseManagerClient*);
+    WEBCORE_EXPORT void initialize(const String& databasePath);
+    WEBCORE_EXPORT void setClient(DatabaseManagerClient*);
     String databaseDirectoryPath() const;
     void setDatabaseDirectoryPath(const String&);
 
     bool isAvailable();
-    void setIsAvailable(bool);
+    WEBCORE_EXPORT void setIsAvailable(bool);
 
     // This gets a DatabaseContext for the specified ScriptExecutionContext.
     // If one doesn't already exist, it will create a new one.
@@ -86,24 +86,24 @@ public:
     PassRefPtr<Database> openDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, DatabaseError&);
     PassRefPtr<DatabaseSync> openDatabaseSync(ScriptExecutionContext*, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback>, DatabaseError&);
 
-    bool hasOpenDatabases(ScriptExecutionContext*);
+    WEBCORE_EXPORT bool hasOpenDatabases(ScriptExecutionContext*);
     void stopDatabases(ScriptExecutionContext*, DatabaseTaskSynchronizer*);
 
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
 
     bool hasEntryForOrigin(SecurityOrigin*);
-    void origins(Vector<RefPtr<SecurityOrigin>>& result);
-    bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
-    DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
+    WEBCORE_EXPORT void origins(Vector<RefPtr<SecurityOrigin>>& result);
+    WEBCORE_EXPORT bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
+    WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
 
-    unsigned long long usageForOrigin(SecurityOrigin*);
-    unsigned long long quotaForOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT unsigned long long usageForOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT unsigned long long quotaForOrigin(SecurityOrigin*);
 
-    void setQuota(SecurityOrigin*, unsigned long long);
+    WEBCORE_EXPORT void setQuota(SecurityOrigin*, unsigned long long);
 
-    void deleteAllDatabases();
-    bool deleteOrigin(SecurityOrigin*);
-    bool deleteDatabase(SecurityOrigin*, const String& name);
+    WEBCORE_EXPORT void deleteAllDatabases();
+    WEBCORE_EXPORT bool deleteOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT bool deleteDatabase(SecurityOrigin*, const String& name);
 
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 

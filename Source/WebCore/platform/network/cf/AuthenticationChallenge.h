@@ -49,7 +49,7 @@ namespace WebCore {
 class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge() {}
-    AuthenticationChallenge(const ProtectionSpace&, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse&, const ResourceError&);
+    WEBCORE_EXPORT AuthenticationChallenge(const ProtectionSpace&, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse&, const ResourceError&);
 #if USE(CFNETWORK)
     AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
 
@@ -61,8 +61,8 @@ public:
     NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }
 #endif
 
-    void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
-    AuthenticationClient* authenticationClient() const;
+    WEBCORE_EXPORT void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
+    WEBCORE_EXPORT AuthenticationClient* authenticationClient() const;
 
 private:
     friend class AuthenticationChallengeBase;

@@ -59,12 +59,12 @@ public:
     }
 
 protected:
-    RuntimeMethod(JSGlobalObject*, Structure*, Bindings::Method*);
-    void finishCreation(VM&, const String&);
+    WEBCORE_EXPORT RuntimeMethod(JSGlobalObject*, Structure*, Bindings::Method*);
+    WEBCORE_EXPORT void finishCreation(VM&, const String&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
-    static CallType getCallData(JSCell*, CallData&);
+    WEBCORE_EXPORT static CallType getCallData(JSCell*, CallData&);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    WEBCORE_EXPORT static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
 private:
     static EncodedJSValue lengthGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);

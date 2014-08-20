@@ -116,7 +116,7 @@ public:
     void focusedElementChanged(Element*) const;
     void focusedFrameChanged(Frame*) const;
 
-    Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;
+    WEBCORE_EXPORT Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;
     void show() const;
 
     bool canRunModal() const;
@@ -145,7 +145,7 @@ public:
     void runJavaScriptAlert(Frame*, const String&);
     bool runJavaScriptConfirm(Frame*, const String&);
     bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
-    void setStatusbarText(Frame*, const String&);
+    WEBCORE_EXPORT void setStatusbarText(Frame*, const String&);
     bool shouldInterruptJavaScript();
 
     IntRect windowResizerRect() const;
@@ -154,7 +154,7 @@ public:
 
     void setToolTip(const HitTestResult&);
 
-    void print(Frame*);
+    WEBCORE_EXPORT void print(Frame*);
 
     void enableSuddenTermination();
     void disableSuddenTermination();
@@ -175,7 +175,7 @@ public:
     bool requiresFullscreenForVideoPlayback();
 
 #if PLATFORM(COCOA)
-    void focusNSView(NSView*);
+    WEBCORE_EXPORT void focusNSView(NSView*);
 #endif
 
     bool selectItemWritingDirectionIsNatural();

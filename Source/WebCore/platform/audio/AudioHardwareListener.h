@@ -47,7 +47,7 @@ public:
         virtual void audioOutputDeviceChanged() = 0;
     };
 
-    static PassRefPtr<AudioHardwareListener> create(Client&);
+    WEBCORE_EXPORT static PassRefPtr<AudioHardwareListener> create(Client&);
     virtual ~AudioHardwareListener() { }
     
     AudioHardwareActivityType hardwareActivity() const { return m_activity; }
