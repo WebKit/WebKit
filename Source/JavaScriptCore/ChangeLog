@@ -1,3 +1,12 @@
+2014-08-19  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, fix EFL build after r17275
+
+        Fix error: ignoring #pragma clang diagnostic [-Werror=unknown-pragmas]
+
+        * runtime/JSDataViewPrototype.cpp:
+        Add #if COMPILER(CLANG) and #endif.
+
 2014-08-19  Michael Saboff  <msaboff@apple.com>
 
         Crash in jsc-layout-tests.yaml/js/script-tests/reentrant-caching.js
