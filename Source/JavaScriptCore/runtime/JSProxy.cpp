@@ -120,16 +120,17 @@ uint32_t JSProxy::getEnumerableLength(ExecState* exec, JSObject* object)
     return thisObject->target()->methodTable(exec->vm())->getEnumerableLength(exec, thisObject->target());
 }
 
-void JSProxy::getStructurePropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSProxy::getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
 {
-    JSProxy* thisObject = jsCast<JSProxy*>(object);
-    thisObject->target()->methodTable(exec->vm())->getStructurePropertyNames(thisObject->target(), exec, propertyNames, mode);
+    // Skip the structure loop, since it is invalid for proxies.
 }
 
 void JSProxy::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);
-    thisObject->target()->methodTable(exec->vm())->getGenericPropertyNames(thisObject->target(), exec, propertyNames, mode);
+    // Get *all* of the property names, not just the generic ones, since we skipped the structure
+    // ones above.
+    thisObject->target()->methodTable(exec->vm())->getPropertyNames(thisObject->target(), exec, propertyNames, mode);
 }
 
 void JSProxy::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

@@ -1,3 +1,15 @@
+2014-08-19  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r172401): for-in optimization no longer works at all
+        https://bugs.webkit.org/show_bug.cgi?id=136056
+
+        Reviewed by Geoffrey Garen.
+        
+        This just needs a rebase because the number of calls into the DOM has changed and so the
+        number of console messages about security stuff has now changed.
+
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+
 2014-08-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] A few calc() test failures in the shape-image-threshold parsing tests

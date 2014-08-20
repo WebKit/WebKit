@@ -1,3 +1,39 @@
+2014-08-19  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r172401): for-in optimization no longer works at all
+        https://bugs.webkit.org/show_bug.cgi?id=136056
+
+        Reviewed by Geoffrey Garen.
+        
+        Roll this back in, along with a fix to make proxies work. Previously, for-in over proxies
+        would instacrash every time.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::pushIndexedForInScope):
+        (JSC::BytecodeGenerator::pushStructureForInScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ForInContext::ForInContext):
+        (JSC::StructureForInContext::StructureForInContext):
+        (JSC::IndexedForInContext::IndexedForInContext):
+        (JSC::ForInContext::base): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::getStructurePropertyNames):
+        (JSC::JSProxy::getGenericPropertyNames):
+        * tests/stress/for-in-base-reassigned-later-and-change-structure.js: Added.
+        (foo):
+        * tests/stress/for-in-base-reassigned-later.js: Added.
+        (foo):
+        * tests/stress/for-in-base-reassigned.js: Added.
+        (foo):
+        * tests/stress/for-in-proxy-target-changed-structure.js: Added.
+        (deleteAll):
+        (foo):
+        * tests/stress/for-in-proxy.js: Added.
+        (foo):
+
 2014-08-19  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, fix EFL build after r17275
