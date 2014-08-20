@@ -665,11 +665,6 @@ String InputType::defaultValue() const
     return String();
 }
 
-bool InputType::canSetSuggestedValue()
-{
-    return false;
-}
-
 bool InputType::shouldSendChangeEventAfterCheckedChanged()
 {
     return true;

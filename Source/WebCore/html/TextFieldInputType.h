@@ -45,7 +45,6 @@ class TextFieldInputType : public InputType, protected SpinButtonElement::SpinBu
 protected:
     explicit TextFieldInputType(HTMLInputElement&);
     virtual ~TextFieldInputType();
-    virtual bool canSetSuggestedValue() override;
     virtual void handleKeydownEvent(KeyboardEvent*) override;
     void handleKeydownEventForSpinButton(KeyboardEvent*);
 

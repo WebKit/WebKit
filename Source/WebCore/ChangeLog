@@ -1,3 +1,36 @@
+2014-08-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove HTMLInputElement's suggestedValue
+        https://bugs.webkit.org/show_bug.cgi?id=136094
+
+        Reviewed by Darin Adler.
+
+        That code is Chrome specific. It is unused now.
+
+        * WebCore.exp.in:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::suggestedValue): Deleted.
+        (WebCore::HTMLInputElement::setSuggestedValue): Deleted.
+        * html/HTMLInputElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::isEmptySuggestedValue): Deleted.
+        * html/InputType.cpp:
+        (WebCore::InputType::canSetSuggestedValue): Deleted.
+        * html/InputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updateInnerTextValue):
+        (WebCore::TextFieldInputType::canSetSuggestedValue): Deleted.
+        * html/TextFieldInputType.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::suggestedValue): Deleted.
+        (WebCore::Internals::setSuggestedValue): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-08-20  Dean Jackson  <dino@apple.com>
 
         WebAudio FFT analysis uses incorrect scaling

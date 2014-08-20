@@ -1,3 +1,15 @@
+2014-08-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove HTMLInputElement's suggestedValue
+        https://bugs.webkit.org/show_bug.cgi?id=136094
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/suggested-value-after-setvalue-expected.txt: Removed.
+        * fast/forms/suggested-value-after-setvalue.html: Removed.
+        * fast/forms/suggested-value-expected.txt: Removed.
+        * fast/forms/suggested-value.html: Removed.
+
 2014-08-20  Dean Jackson  <dino@apple.com>
 
         WebAudio FFT analysis uses incorrect scaling

@@ -928,21 +928,6 @@ void HTMLInputElement::setValueForUser(const String& value)
     setValue(value, DispatchChangeEvent);
 }
 
-const String& HTMLInputElement::suggestedValue() const
-{
-    return m_suggestedValue;
-}
-
-void HTMLInputElement::setSuggestedValue(const String& value)
-{
-    if (!m_inputType->canSetSuggestedValue())
-        return;
-    setFormControlValueMatchesRenderer(false);
-    m_suggestedValue = sanitizeValue(value);
-    setNeedsStyleRecalc();
-    m_inputType->updateInnerTextValue();
-}
-
 void HTMLInputElement::setEditingValue(const String& value)
 {
     if (!renderer() || !isTextField())
@@ -980,7 +965,6 @@ void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior even
 
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
-    m_suggestedValue = String(); // Prevent TextFieldInputType::setValue from using the suggested value.
     m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior);
 
     if (!valueChanged)
@@ -1022,8 +1006,6 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 {
     // File upload controls will never use this.
     ASSERT(!isFileUpload());
-
-    m_suggestedValue = String();
 
     // Renderer and our event handler are responsible for sanitizing values.
     ASSERT(value == sanitizeValue(value) || sanitizeValue(value).isEmpty());

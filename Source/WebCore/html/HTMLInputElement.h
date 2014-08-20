@@ -185,9 +185,6 @@ public:
     // The value which is drawn by a renderer.
     String visibleValue() const;
 
-    const String& suggestedValue() const;
-    void setSuggestedValue(const String&);
-
     void setEditingValue(const String&);
 
     double valueAsDate() const;
@@ -396,7 +393,6 @@ private:
     virtual bool supportsPlaceholder() const override;
     virtual void updatePlaceholderText() override;
     virtual bool isEmptyValue() const override { return innerTextValue().isEmpty(); }
-    virtual bool isEmptySuggestedValue() const override { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection) override;
     virtual void handleBlurEvent() override;
 
@@ -422,7 +418,6 @@ private:
 
     AtomicString m_name;
     String m_valueIfDirty;
-    String m_suggestedValue;
     int m_size;
     int m_maxLength;
     short m_maxResults;

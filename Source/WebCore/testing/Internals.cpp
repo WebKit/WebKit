@@ -924,38 +924,6 @@ bool Internals::elementShouldAutoComplete(Element* element, ExceptionCode& ec)
     return false;
 }
 
-String Internals::suggestedValue(Element* element, ExceptionCode& ec)
-{
-    if (!element) {
-        ec = INVALID_ACCESS_ERR;
-        return String();
-    }
-
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement) {
-        ec = INVALID_NODE_TYPE_ERR;
-        return String();
-    }
-
-    return inputElement->suggestedValue();
-}
-
-void Internals::setSuggestedValue(Element* element, const String& value, ExceptionCode& ec)
-{
-    if (!element) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement) {
-        ec = INVALID_NODE_TYPE_ERR;
-        return;
-    }
-
-    inputElement->setSuggestedValue(value);
-}
-
 void Internals::setEditingValue(Element* element, const String& value, ExceptionCode& ec)
 {
     if (!element) {

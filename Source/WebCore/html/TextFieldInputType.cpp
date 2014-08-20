@@ -92,11 +92,6 @@ bool TextFieldInputType::valueMissing(const String& value) const
     return element().isRequired() && value.isEmpty();
 }
 
-bool TextFieldInputType::canSetSuggestedValue()
-{
-    return true;
-}
-
 void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
     // Grab this input element to keep reference even if JS event handler
@@ -473,10 +468,7 @@ void TextFieldInputType::spinButtonStepUp()
 
 void TextFieldInputType::updateInnerTextValue()
 {
-    if (!element().suggestedValue().isNull()) {
-        element().setInnerTextValue(element().suggestedValue());
-        element().updatePlaceholderVisibility(false);
-    } else if (!element().formControlValueMatchesRenderer()) {
+    if (!element().formControlValueMatchesRenderer()) {
         // Update the renderer value if the formControlValueMatchesRenderer() flag is false.
         // It protects an unacceptable renderer value from being overwritten with the DOM value.
         element().setInnerTextValue(visibleValue());

@@ -252,8 +252,6 @@ public:
     virtual String displayString() const;
 #endif
 
-    // Should return true if the corresponding renderer for a type can display a suggested value.
-    virtual bool canSetSuggestedValue();
     virtual bool shouldSendChangeEventAfterCheckedChanged();
     virtual bool canSetValue(const String&);
     virtual bool storesValueSeparateFromAttribute();
