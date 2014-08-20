@@ -535,7 +535,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int error)
 {
 #if LOG_DISABLED
-    UNUSED_PARAM(error)
+    UNUSED_PARAM(error);
 #endif
 
     LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(%p) - result = %i", this, error);

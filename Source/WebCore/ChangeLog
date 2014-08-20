@@ -1,3 +1,10 @@
+2014-08-20  Mark Rowe  <mrowe@apple.com>
+
+        Fix the release build after r172806.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError): Add a missing semicolon.
+
 2014-08-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove HTMLInputElement's suggestedValue
