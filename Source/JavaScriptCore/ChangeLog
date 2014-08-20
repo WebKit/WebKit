@@ -1,3 +1,18 @@
+2014-08-20  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172805
+
+    2014-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] JavaScriptCore.dll is missing version information.
+            https://bugs.webkit.org/show_bug.cgi?id=136105
+            <rdar://problem/18075852>
+
+            Reviewed by Dean Jackson.
+
+            * JavaScriptCore.vcxproj/JavaScriptCorePreBuild.cmd: Add missing step to generate
+            version information for intermediary build path.
+
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
         Merge r172727. <rdar://problem/18051847>
