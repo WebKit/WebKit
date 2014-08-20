@@ -1,5 +1,26 @@
 2014-08-20  Eric Carlson  <eric.carlson@apple.com>
 
+        Cleanup MediaSession
+        https://bugs.webkit.org/show_bug.cgi?id=136116
+
+        Reviewed by Brent Fulgham.
+
+        MediaSessionManagerClient interface isn't used, remove it.
+        No new tests, this doesn't change behavior.
+
+        * WebCore.exp.in:
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::addSession): 
+        (WebCore::MediaSessionManager::removeSession):
+        (WebCore::MediaSessionManager::sessionWillBeginPlayback):
+        (WebCore::MediaSessionManager::addClient): Deleted.
+        (WebCore::MediaSessionManager::removeClient): Deleted.
+        * platform/audio/MediaSessionManager.h:
+        (WebCore::MediaSessionManagerClient::~MediaSessionManagerClient): Deleted.
+        (WebCore::MediaSessionManagerClient::MediaSessionManagerClient): Deleted.
+
+2014-08-20  Eric Carlson  <eric.carlson@apple.com>
+
         [MSE] add additional SourceBuffer and MediaSource logging
         https://bugs.webkit.org/show_bug.cgi?id=136114
 

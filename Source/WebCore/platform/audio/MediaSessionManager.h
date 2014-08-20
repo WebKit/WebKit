@@ -40,19 +40,6 @@ class HTMLMediaElement;
 class MediaSession;
 class RemoteCommandListener;
 
-class MediaSessionManagerClient {
-public:
-    virtual ~MediaSessionManagerClient() { }
-
-    virtual bool isListeningForRemoteControlCommands() = 0;
-    virtual void startListeningForRemoteControlCommands() = 0;
-    virtual void stopListeningForRemoteControlCommands() = 0;
-    virtual void didBeginPlayback() = 0;
-
-protected:
-    MediaSessionManagerClient() { }
-};
-
 class MediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
 public:
     static MediaSessionManager& sharedManager();
@@ -95,9 +82,6 @@ public:
     virtual void stopMonitoringAirPlayRoutes() { }
 #endif
 
-    void addClient(MediaSessionManagerClient*);
-    void removeClient(MediaSessionManagerClient*);
-
 protected:
     friend class MediaSession;
     explicit MediaSessionManager();
@@ -112,7 +96,6 @@ private:
     friend class Internals;
 
     void updateSessionState();
-
 
     // RemoteCommandListenerClient
     virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
@@ -129,7 +112,6 @@ private:
     SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
 
     Vector<MediaSession*> m_sessions;
-    Vector<MediaSessionManagerClient*> m_clients;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<SystemSleepListener> m_systemSleepListener;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;

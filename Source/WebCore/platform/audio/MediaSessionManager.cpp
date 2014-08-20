@@ -127,12 +127,6 @@ void MediaSessionManager::addSession(MediaSession& session)
         m_audioHardwareListener = AudioHardwareListener::create(*this);
 
     updateSessionState();
-
-    if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
-        return;
-
-    for (auto& client : m_clients)
-        client->startListeningForRemoteControlCommands();
 }
 
 void MediaSessionManager::removeSession(MediaSession& session)
@@ -152,12 +146,6 @@ void MediaSessionManager::removeSession(MediaSession& session)
     }
 
     updateSessionState();
-
-    if (m_clients.isEmpty() || !(session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio))
-        return;
-
-    for (auto& client : m_clients)
-        client->startListeningForRemoteControlCommands();
 }
 
 void MediaSessionManager::addRestriction(MediaSession::MediaType type, SessionRestrictions restriction)
@@ -183,11 +171,6 @@ void MediaSessionManager::sessionWillBeginPlayback(MediaSession& session)
     LOG(Media, "MediaSessionManager::sessionWillBeginPlayback - %p", &session);
     
     setCurrentSession(session);
-
-    if (!m_clients.isEmpty() && (session.mediaType() == MediaSession::Video || session.mediaType() == MediaSession::Audio)) {
-        for (auto& client : m_clients)
-            client->didBeginPlayback();
-    }
 
     MediaSession::MediaType sessionType = session.mediaType();
     SessionRestrictions restrictions = m_restrictions[sessionType];
@@ -314,18 +297,6 @@ void MediaSessionManager::didReceiveRemoteControlCommand(MediaSession::RemoteCon
     if (!activeSession || !activeSession->canReceiveRemoteControlCommands())
         return;
     activeSession->didReceiveRemoteControlCommand(command);
-}
-
-void MediaSessionManager::addClient(MediaSessionManagerClient* client)
-{
-    ASSERT(!m_clients.contains(client));
-    m_clients.append(client);
-}
-
-void MediaSessionManager::removeClient(MediaSessionManagerClient* client)
-{
-    ASSERT(m_clients.contains(client));
-    m_clients.remove(m_clients.find(client));
 }
 
 void MediaSessionManager::systemWillSleep()
