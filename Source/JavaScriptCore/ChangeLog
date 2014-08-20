@@ -1,3 +1,10 @@
+2014-08-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r172799.
+
+        * disassembler/ARM64/A64DOpcode.cpp:
+        * disassembler/ARM64Disassembler.cpp:
+
 2014-08-20  Oliver Hunt  <oliver@apple.com>
 
         Stop implicitly skipping a function's own activation when walking the scope chain
