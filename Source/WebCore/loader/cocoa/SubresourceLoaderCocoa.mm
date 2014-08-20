@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkDiskCacheMonitor_h
-#define NetworkDiskCacheMonitor_h
+#include "config.h"
+#include "SubresourceLoader.h"
 
-#include "MessageSender.h"
-#include <WebCore/DiskCacheMonitorCocoa.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
-#include <WebCore/SharedBuffer.h>
-#include <wtf/RunLoop.h>
+#include "CachedResource.h"
+#include "DiskCacheMonitorCocoa.h"
+#include "ResourceHandle.h"
+#include "ResourceLoader.h"
+#include "SharedBuffer.h"
 
-typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
+@interface NSCachedURLResponse (Details)
+-(CFCachedURLResponseRef)_CFCachedURLResponse;
+@end
 
-namespace WebKit {
+namespace WebCore {
 
-class NetworkConnectionToWebProcess;
-class NetworkResourceLoader;
+#if USE(CFNETWORK)
 
-class NetworkDiskCacheMonitor final : public WebCore::DiskCacheMonitor, private IPC::MessageSender {
-public:
-    static void monitorFileBackingStoreCreation(CFCachedURLResponseRef, NetworkResourceLoader*);
+CFCachedURLResponseRef SubresourceLoader::willCacheResponse(ResourceHandle* handle, CFCachedURLResponseRef cachedResponse)
+{
+    DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), cachedResponse);
+    return ResourceLoader::willCacheResponse(handle, cachedResponse);
+}
 
-private:
-    NetworkDiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
+#else
 
-    // WebCore::DiskCacheMonitor
-    virtual void resourceBecameFileBacked(PassRefPtr<WebCore::SharedBuffer>) override;
+NSCachedURLResponse* SubresourceLoader::willCacheResponse(ResourceHandle* handle, NSCachedURLResponse* response)
+{
+    DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), [response _CFCachedURLResponse]);
+    return ResourceLoader::willCacheResponse(handle, response);
+}
 
-    // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() override;
-    virtual uint64_t messageSenderDestinationID() override;
+#endif
 
-    RefPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
-};
-
-
-} // namespace WebKit
-
-#endif // NetworkDiskCacheMonitor_h
+}

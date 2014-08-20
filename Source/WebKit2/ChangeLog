@@ -1,3 +1,19 @@
+2014-08-20  Pratik Solanki  <psolanki@apple.com>
+
+        Move DiskCacheMonitor to WebCore so that WebKit1 clients can use it as well
+        https://bugs.webkit.org/show_bug.cgi?id=135896
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.h:
+            Inherit from WebCore::DiskCacheMonitor which has the bulk of the functionality now.
+        (WebKit::NetworkDiskCacheMonitor::~NetworkDiskCacheMonitor):
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.mm:
+        (WebKit::NetworkDiskCacheMonitor::monitorFileBackingStoreCreation):
+        (WebKit::NetworkDiskCacheMonitor::NetworkDiskCacheMonitor):
+        (WebKit::NetworkDiskCacheMonitor::resourceBecameFileBacked):
+            Override virtual method and send the data to the WebContent process as before.
+
 2014-08-19  Pratik Solanki  <psolanki@apple.com>
 
         Remove PurgeableBuffer since it is not very useful any more

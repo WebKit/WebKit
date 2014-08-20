@@ -74,6 +74,13 @@ private:
     virtual void willCancel(const ResourceError&) override;
     virtual void didCancel(const ResourceError&) override;
 
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
+    virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
+#endif
+#if PLATFORM(COCOA) && USE(CFNETWORK)
+    virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
+#endif
+
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     virtual bool supportsDataArray() override { return true; }
     virtual void didReceiveDataArray(CFArrayRef) override;

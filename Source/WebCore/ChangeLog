@@ -1,3 +1,37 @@
+2014-08-20  Pratik Solanki  <psolanki@apple.com>
+
+        Move DiskCacheMonitor to WebCore so that WebKit1 clients can use it as well
+        https://bugs.webkit.org/show_bug.cgi?id=135896
+
+        Reviewed by Andreas Kling.
+
+        Refactor code and move it to WebCore.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceLoader.h:
+            Make willCacheResponse protected so that SubresourceLoader can override it.
+        * loader/SubresourceLoader.h:
+        * loader/cocoa/DiskCacheMonitorCocoa.h: Added.
+            Mostly the same as the existing NetworkDiskCacheMonitor class in WebKit2. In the
+            CFNetwork callback block, it calls a virtual function that is overridden by
+            NetworkDiskCacheMonitor to send a message to WebContent process.
+        (WebCore::DiskCacheMonitor::~DiskCacheMonitor):
+        (WebCore::DiskCacheMonitor::resourceRequest):
+        (WebCore::DiskCacheMonitor::sessionID):
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse):
+            Copied from NetworkResourceLoader::tryGetFileBackedSharedBufferFromCFURLCachedResponse.
+        (WebCore::DiskCacheMonitor::monitorFileBackingStoreCreation):
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor):
+        (WebCore::DiskCacheMonitor::resourceBecameFileBacked):
+            Replace the cached resource data with the contents of the file backed buffer. This is
+            used in WebKit1 (and also for any resource loads that happen from the WebContent
+            process).
+        * loader/cocoa/SubresourceLoaderCocoa.mm: Added.
+        (WebCore::SubresourceLoader::willCacheResponse):
+            Override willCacheresponse from ResourceLoader to listen for disk cache notifications.
+
 2014-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         Cleanup MediaSession

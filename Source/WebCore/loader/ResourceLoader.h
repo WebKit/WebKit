@@ -155,6 +155,13 @@ protected:
 
     const ResourceLoaderOptions& options() { return m_options; }
 
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
+    virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
+#endif
+#if PLATFORM(COCOA) && USE(CFNETWORK)
+    virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
+#endif
+
     RefPtr<ResourceHandle> m_handle;
     RefPtr<Frame> m_frame;
     RefPtr<DocumentLoader> m_documentLoader;
@@ -186,12 +193,6 @@ private:
     virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace) override { return canAuthenticateAgainstProtectionSpace(protectionSpace); }
 #endif
     virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) override { receivedCancellation(challenge); }
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
-    virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
-#endif
-#if PLATFORM(COCOA) && USE(CFNETWORK)
-    virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
-#endif
 #if PLATFORM(IOS)
     virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) override;
 #endif

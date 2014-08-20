@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkDiskCacheMonitor_h
-#define NetworkDiskCacheMonitor_h
+#ifndef DiskCacheMonitor_h
+#define DiskCacheMonitor_h
 
-#include "MessageSender.h"
-#include <WebCore/DiskCacheMonitorCocoa.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
-#include <WebCore/SharedBuffer.h>
-#include <wtf/RunLoop.h>
+#include "ResourceRequest.h"
+#include "SessionID.h"
+#include <wtf/PassRefPtr.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 
-namespace WebKit {
+namespace WebCore {
 
-class NetworkConnectionToWebProcess;
-class NetworkResourceLoader;
+class SharedBuffer;
 
-class NetworkDiskCacheMonitor final : public WebCore::DiskCacheMonitor, private IPC::MessageSender {
+class DiskCacheMonitor {
 public:
-    static void monitorFileBackingStoreCreation(CFCachedURLResponseRef, NetworkResourceLoader*);
+    static void monitorFileBackingStoreCreation(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
+    static PassRefPtr<SharedBuffer> tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef);
+    virtual ~DiskCacheMonitor() { }
+
+protected:
+    DiskCacheMonitor(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
+
+    virtual void resourceBecameFileBacked(PassRefPtr<SharedBuffer>);
+
+    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+    SessionID sessionID() const { return m_sessionID; }
 
 private:
-    NetworkDiskCacheMonitor(CFCachedURLResponseRef, NetworkResourceLoader*);
-
-    // WebCore::DiskCacheMonitor
-    virtual void resourceBecameFileBacked(PassRefPtr<WebCore::SharedBuffer>) override;
-
-    // IPC::MessageSender
-    virtual IPC::Connection* messageSenderConnection() override;
-    virtual uint64_t messageSenderDestinationID() override;
-
-    RefPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
+    ResourceRequest m_resourceRequest;
+    SessionID m_sessionID;
 };
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090)
 
+void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest&, SessionID, CFCachedURLResponseRef) { }
+PassRefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef) { return nullptr; }
+
+#endif
 } // namespace WebKit
 
-#endif // NetworkDiskCacheMonitor_h
+#endif // DiskCacheMonitor_h
