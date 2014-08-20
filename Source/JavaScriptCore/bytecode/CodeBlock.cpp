@@ -1944,7 +1944,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             const Identifier& ident = identifier(pc[2].u.operand);
             ResolveType type = static_cast<ResolveType>(pc[3].u.operand);
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Get, type);
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, type);
             instructions[i + 3].u.operand = op.type;
             instructions[i + 4].u.operand = op.depth;
             if (op.activation)
@@ -1961,7 +1961,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[3].u.operand);
             ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Get, modeAndType.type());
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
@@ -1977,7 +1977,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             // put_to_scope scope, id, value, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[2].u.operand);
             ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Put, modeAndType.type());
+            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Put, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
@@ -2008,7 +2008,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             case ProfileTypesBytecodeGetFromScope: {
                 const Identifier& ident = identifier(pc[4].u.operand);
                 ResolveType type = static_cast<ResolveType>(pc[5].u.operand);
-                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, (flag == ProfileTypesBytecodeGetFromScope ? Get : Put), type);
+                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, (flag == ProfileTypesBytecodeGetFromScope ? Get : Put), type);
 
                 // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
                 // https://bugs.webkit.org/show_bug.cgi?id=135184

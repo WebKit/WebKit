@@ -136,10 +136,6 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("NamedPropertyLoc");
         return;
         
-    case SkipTopScopeLoc:
-        out.print("SkipTopScopeLoc");
-        return;
-        
     case TypedArrayByteOffsetLoc:
         out.print("TypedArrayByteOffsetLoc");
         return;

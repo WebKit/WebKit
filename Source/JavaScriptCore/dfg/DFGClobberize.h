@@ -748,11 +748,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
             def(PureValue(node));
         return;
         
-    case SkipTopScope:
-        read(AbstractHeap(Variables, graph.activationRegister()));
-        def(HeapLocation(SkipTopScopeLoc, AbstractHeap(Variables, graph.activationRegister()), node->child1()), node);
-        return;
-        
     case GetClosureRegisters:
         read(JSVariableObject_registers);
         def(HeapLocation(ClosureRegistersLoc, JSVariableObject_registers, node->child1()), node);

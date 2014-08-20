@@ -198,7 +198,7 @@ private:
         bool isDirect);
     void emitChecks(const ConstantStructureCheckVector&);
 
-    Node* getScope(bool skipTop, unsigned skipCount);
+    Node* getScope(unsigned skipCount);
     
     // Prepare to parse a block.
     void prepareToParseBlock();
@@ -2023,13 +2023,9 @@ void ByteCodeParser::prepareToParseBlock()
     m_constants.resize(0);
 }
 
-Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
+Node* ByteCodeParser::getScope(unsigned skipCount)
 {
     Node* localBase = get(VirtualRegister(JSStack::ScopeChain));
-    if (skipTop) {
-        ASSERT(!inlineCallFrame());
-        localBase = addToGraph(SkipTopScope, localBase);
-    }
     for (unsigned n = skipCount; n--;)
         localBase = addToGraph(SkipScope, localBase);
     return localBase;
@@ -2929,8 +2925,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     set(VirtualRegister(dst), weakJSConstant(activation));
                     break;
                 }
-                set(VirtualRegister(dst),
-                    getScope(m_inlineStackTop->m_codeBlock->needsActivation(), depth));
+                set(VirtualRegister(dst), getScope(depth));
                 break;
             }
             case Dynamic:

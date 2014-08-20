@@ -853,7 +853,6 @@ private:
         }
 
         case GetClosureRegisters:
-        case SkipTopScope:
         case SkipScope:
         case GetScope:
         case GetGetter:

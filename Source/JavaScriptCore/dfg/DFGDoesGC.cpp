@@ -96,7 +96,6 @@ bool doesGC(Graph& graph, Node* node)
     case CheckArray:
     case GetScope:
     case GetMyScope:
-    case SkipTopScope:
     case SkipScope:
     case GetClosureRegisters:
     case GetClosureVar:

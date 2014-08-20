@@ -55,7 +55,6 @@ enum LocationKind {
     MyArgumentsLengthLoc,
     NamedPropertyLoc,
     SetterLoc,
-    SkipTopScopeLoc,
     TypeOfLoc,
     TypedArrayByteOffsetLoc,
     VarInjectionWatchpointLoc,

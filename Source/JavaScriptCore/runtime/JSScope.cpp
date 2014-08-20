@@ -148,13 +148,13 @@ JSValue JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& iden
     }
 }
 
-ResolveOp JSScope::abstractResolve(ExecState* exec, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType)
+ResolveOp JSScope::abstractResolve(ExecState* exec, bool hasTopActivation, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType)
 {
     ResolveOp op(Dynamic, 0, 0, 0, 0, 0);
     if (unlinkedType == Dynamic)
         return op;
 
-    size_t depth = 0;
+    size_t depth = hasTopActivation ? 1 : 0;
     bool needsVarInjectionChecks = JSC::needsVarInjectionChecks(unlinkedType);
     for (; scope; scope = scope->next()) {
         if (abstractAccess(exec, scope, ident, getOrPut, depth, needsVarInjectionChecks, op))

@@ -460,7 +460,6 @@ private:
         }
             
         case GetMyScope:
-        case SkipTopScope:
         case SkipScope: {
             changed |= setPrediction(SpecObjectOther);
             break;

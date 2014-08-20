@@ -166,7 +166,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ArrayifyToStructure:
     case GetScope:
     case GetMyScope:
-    case SkipTopScope:
     case SkipScope:
     case GetClosureRegisters:
     case GetClosureVar:

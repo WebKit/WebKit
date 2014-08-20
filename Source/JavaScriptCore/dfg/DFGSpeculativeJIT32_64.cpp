@@ -3512,16 +3512,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case SkipTopScope: {
-        SpeculateCellOperand scope(this, node->child1());
-        GPRTemporary result(this, Reuse, scope);
-        GPRReg resultGPR = result.gpr();
-        m_jit.move(scope.gpr(), resultGPR);
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
-        cellResult(resultGPR, node);
-        break;
-    }
-        
     case SkipScope: {
         SpeculateCellOperand scope(this, node->child1());
         GPRTemporary result(this, Reuse, scope);

@@ -1,3 +1,50 @@
+2014-08-20  Oliver Hunt  <oliver@apple.com>
+
+        Stop implicitly skipping a function's own activation when walking the scope chain
+        https://bugs.webkit.org/show_bug.cgi?id=136118
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the current logic that implicitly skips a function's
+        own activation when walking the scope chain. This is ground
+        work for ensuring that all closed variable access is made
+        through the function's activation. This leads to a further
+        10% regression on earley, but we're already tracking the
+        overall performance regression.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getScope):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitResolveClosure):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::abstractResolve):
+        * runtime/JSScope.h:
+
 2014-08-20  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: Web Inspector crashes when reloading apple.com with Timeline recording active

@@ -2034,11 +2034,6 @@ end
 macro resolveScope()
     loadp CodeBlock[cfr], t0
     loadisFromInstruction(4, t2)
-    btbz CodeBlock::m_needsActivation[t0], .resolveScopeAfterActivationCheck
-    loadis CodeBlock::m_activationRegister[t0], t1
-    addi 1, t2
-
-.resolveScopeAfterActivationCheck:
     loadp ScopeChain[cfr], t0
     btiz t2, .resolveScopeLoopEnd
 
