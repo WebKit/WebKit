@@ -1,3 +1,12 @@
+2014-08-20  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/136119> WebKit1 plug-in test failures in production builds after r172595
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.xcodeproj/project.pbxproj: Add the symlinks at the top level of WebKitLegacy.framework
+        even in Production builds. Add the symlinks in the right locations too.
+
 2014-08-15  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add migrate-headers.sh and postprocess-headers.sh to WebKit.xcodeproj
