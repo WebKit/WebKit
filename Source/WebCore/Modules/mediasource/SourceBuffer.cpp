@@ -486,6 +486,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
     // then run the end of stream algorithm with the error parameter set to "decode" and abort this algorithm.
     if (result == ParsingFailed) {
+        LOG(MediaSource, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - result = ParsingFailed", this);
         m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
         return;
     }
@@ -531,8 +532,14 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     LOG(Media, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 }
 
-void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int)
+void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int error)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(error)
+#endif
+
+    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(%p) - result = %i", this, error);
+
     if (!isRemoved())
         m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
 }
@@ -845,6 +852,8 @@ void SourceBuffer::setActive(bool active)
 
 void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString& error)
 {
+    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidEndStream(%p) - result = %s", this, String(error).utf8().data());
+
     if (!isRemoved())
         m_source->streamEndedWithError(error, IgnorableExceptionCode());
 }
@@ -853,6 +862,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 {
     if (isRemoved())
         return;
+
+    LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(%p)", this);
 
     // 3.5.7 Initialization Segment Received
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
@@ -1187,6 +1198,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             // abort these steps.
             MediaTime presentationStartTime = MediaTime::zeroTime();
             if (presentationTimestamp < presentationStartTime || decodeTimestamp < presentationStartTime) {
+#if !LOG_DISABLED
+                LOG(MediaSource, "SourceBuffer::sourceBufferPrivateDidReceiveSample(%p) - failing because %s", this, presentationTimestamp < presentationStartTime ? "presentationTimestamp < presentationStartTime" : "decodeTimestamp < presentationStartTime");
+#endif
                 m_source->streamEndedWithError(decodeError(), IgnorableExceptionCode());
                 return;
             }
