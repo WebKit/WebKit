@@ -1,3 +1,13 @@
+2014-08-20  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Enable ARM64 disassembler on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=136089
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Platform.h:
+        Enable WTF_USE_ARM64_DISASSEMBLER for EFL as well.
+
 2014-08-19  Pratik Solanki  <psolanki@apple.com>
 
         Remove PurgeableBuffer since it is not very useful any more

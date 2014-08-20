@@ -172,12 +172,12 @@ protected:
 
     void appendUnsignedImmediate64(uint64_t immediate)
     {
-        bufferPrintf("#0x%llx", immediate);
+        bufferPrintf("#0x%" PRIx64, immediate);
     }
 
     void appendPCRelativeOffset(uint32_t* pc, int32_t immediate)
     {
-        bufferPrintf("0x%llx", reinterpret_cast<uint64_t>(pc + immediate));
+        bufferPrintf("0x%" PRIx64, reinterpret_cast<uint64_t>(pc + immediate));
     }
 
     void appendShiftAmount(unsigned amount)
