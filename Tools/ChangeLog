@@ -1,3 +1,17 @@
+2014-08-20  Rebecca Hauck  <rhauck@adobe.com>
+
+        import-w3c-tests doesn't import .svg support files
+        https://bugs.webkit.org/show_bug.cgi?id=135928
+
+        Reviewed by Bem Jones-Bey.
+
+        This patch fixes the W3C import script to not treat all
+        files with an xml mimetype as convertible tests, which
+        was causing SVG support files to not be imported.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests):
+
 2014-08-19  Dan Bernstein  <mitz@apple.com>
 
         update-webkit should not check for the presence of Apple’s Internal directory
