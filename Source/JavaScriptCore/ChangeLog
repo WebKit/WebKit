@@ -1,3 +1,29 @@
+2014-08-19  Michael Saboff  <msaboff@apple.com>
+
+        Crash in jsc-layout-tests.yaml/js/script-tests/reentrant-caching.js
+        https://bugs.webkit.org/show_bug.cgi?id=136080
+
+        Reviewed by Mark Lam.
+
+        Update VM::topVMEntryFrame via NativeCallFrameTracer() when we pass the caller's frame
+        to NativeCallFrameTracer() as the callee's frame may be the first callee from an entry
+        frame.  In that case, the caller will have the prior VM entry frame.
+
+        The new NativeCallFrameTracer with a VMEntryFrame parameter should be used when throwing
+        an exception from a caller frame.  The value to use for the VMEntryFrame should be a
+        value possibly modified by CallFrame::callerFrame(&*VMEntryFrame) used to find the caller.
+
+        * interpreter/Interpreter.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer): Added a new constructor that takes a
+        VMEntryFrame.  Added an ASSERT to both constructors to check that the updated topCallFrame
+        is below the current vmEntryFrame.
+
+        * jit/JITOperations.cpp:
+        (JSC::operationThrowStackOverflowError):
+        (JSC::operationCallArityCheck):
+        (JSC::operationConstructArityCheck):
+        Set VM::topVMEntryFrame to the possibly updated VMEntryFrame after getting the caller's frame.
+
 2014-08-19  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Offline Assembler build phase fails when $BUILT_PRODUCTS_DIR contains spaces

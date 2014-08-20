@@ -175,6 +175,16 @@ namespace JSC {
         {
             ASSERT(vm);
             ASSERT(callFrame);
+            ASSERT(callFrame < vm->topVMEntryFrame);
+            vm->topCallFrame = callFrame;
+        }
+
+        ALWAYS_INLINE NativeCallFrameTracer(VM* vm, VMEntryFrame* vmEntryFrame, CallFrame* callFrame)
+        {
+            ASSERT(vm);
+            ASSERT(callFrame);
+            ASSERT(callFrame < vmEntryFrame);
+            vm->topVMEntryFrame = vmEntryFrame;
             vm->topCallFrame = callFrame;
         }
     };

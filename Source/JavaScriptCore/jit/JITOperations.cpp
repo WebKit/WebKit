@@ -81,12 +81,12 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
     // We pass in our own code block, because the callframe hasn't been populated.
     VM* vm = codeBlock->vm();
 
-    VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(topVMEntryFrame);
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
     if (!callerFrame)
         callerFrame = exec;
 
-    NativeCallFrameTracer tracer(vm, callerFrame);
+    NativeCallFrameTracer tracer(vm, vmEntryFrame, callerFrame);
     ErrorHandlingScope errorScope(*vm);
     vm->throwException(callerFrame, createStackOverflowError(callerFrame));
 }
@@ -94,15 +94,16 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(topVMEntryFrame);
-    NativeCallFrameTracer tracer(vm, callerFrame);
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
 
     JSStack& stack = vm->interpreter->stack();
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForCall);
-    if (missingArgCount < 0)
+    if (missingArgCount < 0) {
+        NativeCallFrameTracer tracer(vm, vmEntryFrame, callerFrame);
         throwStackOverflowError(callerFrame);
+    }
 
     return missingArgCount;
 }
@@ -110,15 +111,16 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    VMEntryFrame* topVMEntryFrame = vm->topVMEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(topVMEntryFrame);
-    NativeCallFrameTracer tracer(vm, callerFrame);
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
 
     JSStack& stack = vm->interpreter->stack();
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForConstruct);
-    if (missingArgCount < 0)
+    if (missingArgCount < 0) {
+        NativeCallFrameTracer tracer(vm, vmEntryFrame, callerFrame);
         throwStackOverflowError(callerFrame);
+    }
 
     return missingArgCount;
 }
