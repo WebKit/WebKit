@@ -1,3 +1,15 @@
+2014-08-20  Dean Jackson  <dino@apple.com>
+
+        WebAudio FFT analysis uses incorrect scaling
+        https://bugs.webkit.org/show_bug.cgi?id=136120
+
+        Reviewed by Tim Horton.
+
+        Test from Blink r166687.
+
+        * webaudio/realtimeanalyser-fft-scaling.html: Added.
+        * webaudio/realtimeanalyser-fft-scaling-expected.txt: Added.
+
 2014-08-20  Alexey Proskuryakov  <ap@apple.com>
 
         fast/multicol/mixed-opacity-fixed-test.html fails in compositing mode

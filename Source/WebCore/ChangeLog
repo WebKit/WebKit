@@ -1,3 +1,31 @@
+2014-08-20  Dean Jackson  <dino@apple.com>
+
+        WebAudio FFT analysis uses incorrect scaling
+        https://bugs.webkit.org/show_bug.cgi?id=136120
+
+        Reviewed by Tim Horton.
+
+        This is a port of Blink r166687 (author rtoy)
+        https://codereview.chromium.org/156993002
+
+        Currently, for a fixed sine-wave input, the peak FFT amplitude changes
+        depending on the selected FFT size. This is incorrect; the FFT amplitude
+        should not appreciably change when the FFT size changes.
+
+        Layout test added to verify the FFT result stays approximately constant,
+        independent of the FFT size used.
+
+        When this test is run using an older version of WebKit, the peak varies
+        from about -44 dB (FFT size 32) to -7 dB (FFT size 2048).  With this CL,
+        the peak is about -7 dB.  (It's not 0 dB because of the Blackman window that is applied.)
+
+        Note: this change may break existing applications that depended on this strange scaling effect.
+
+        Test: webaudio/realtimeanalyser-fft-scaling.html
+
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::doFFTAnalysis):
+
 2014-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Introducing WEBCORE_EXPORT macro.

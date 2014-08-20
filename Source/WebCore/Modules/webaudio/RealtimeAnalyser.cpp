@@ -185,7 +185,7 @@ void RealtimeAnalyser::doFFTAnalysis()
     imagP[0] = 0;
     
     // Normalize so than an input sine wave at 0dBfs registers as 0dBfs (undo FFT scaling factor).
-    const double magnitudeScale = 1.0 / DefaultFFTSize;
+    const double magnitudeScale = 1.0 / fftSize;
 
     // A value of 0 does no averaging with the previous result.  Larger values produce slower, but smoother changes.
     double k = m_smoothingTimeConstant;
