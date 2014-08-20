@@ -117,13 +117,13 @@ public:
 
     void loadDone(CachedResource*, bool shouldPerformPostLoadActions = true);
 
-    WEBCORE_EXPORT void garbageCollectDocumentResources();
+    void garbageCollectDocumentResources();
     
     void incrementRequestCount(const CachedResource*);
     void decrementRequestCount(const CachedResource*);
     int requestCount() const { return m_requestCount; }
 
-    WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;
+    bool isPreloaded(const String& urlString) const;
     void clearPreloads();
     void clearPendingPreloads();
     void preload(CachedResource::Type, CachedResourceRequest&, const String& charset);

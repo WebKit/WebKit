@@ -44,32 +44,32 @@ class WebVideoFullscreenInterface;
 
 class WebVideoFullscreenModelMediaElement : public WebVideoFullscreenModel, public EventListener {
 public:
-    WEBCORE_EXPORT WebVideoFullscreenModelMediaElement();
-    WEBCORE_EXPORT virtual ~WebVideoFullscreenModelMediaElement();
+    WebVideoFullscreenModelMediaElement();
+    virtual ~WebVideoFullscreenModelMediaElement();
     void setWebVideoFullscreenInterface(WebVideoFullscreenInterface* interface) {m_videoFullscreenInterface = interface;}
-    WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
-    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*);
+    void setMediaElement(HTMLMediaElement*);
+    void setVideoFullscreenLayer(PlatformLayer*);
     
-    WEBCORE_EXPORT virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
+    virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) override
         {return static_cast<WebCore::EventListener*>(this) == &rhs;}
 
-    WEBCORE_EXPORT virtual void play() override;
-    WEBCORE_EXPORT virtual void pause() override;
-    WEBCORE_EXPORT virtual void togglePlayState() override;
-    WEBCORE_EXPORT virtual void beginScrubbing() override;
-    WEBCORE_EXPORT virtual void endScrubbing() override;
-    WEBCORE_EXPORT virtual void seekToTime(double time) override;
-    WEBCORE_EXPORT virtual void fastSeek(double time) override;
-    WEBCORE_EXPORT virtual void beginScanningForward() override;
-    WEBCORE_EXPORT virtual void beginScanningBackward() override;
-    WEBCORE_EXPORT virtual void endScanning() override;
-    WEBCORE_EXPORT virtual void requestExitFullscreen() override;
-    WEBCORE_EXPORT virtual void setVideoLayerFrame(FloatRect) override;
-    WEBCORE_EXPORT virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
-    WEBCORE_EXPORT virtual void selectAudioMediaOption(uint64_t index) override;
-    WEBCORE_EXPORT virtual void selectLegibleMediaOption(uint64_t index) override;
+    virtual void play() override;
+    virtual void pause() override;
+    virtual void togglePlayState() override;
+    virtual void beginScrubbing() override;
+    virtual void endScrubbing() override;
+    virtual void seekToTime(double time) override;
+    virtual void fastSeek(double time) override;
+    virtual void beginScanningForward() override;
+    virtual void beginScanningBackward() override;
+    virtual void endScanning() override;
+    virtual void requestExitFullscreen() override;
+    virtual void setVideoLayerFrame(FloatRect) override;
+    virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
+    virtual void selectAudioMediaOption(uint64_t index) override;
+    virtual void selectLegibleMediaOption(uint64_t index) override;
 
 private:
     static const Vector<WTF::AtomicString>& observedEventNames();

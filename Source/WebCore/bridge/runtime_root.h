@@ -55,7 +55,7 @@ class RootObject : public RefCounted<RootObject>, private JSC::WeakHandleOwner {
     friend class JavaJSObject;
 
 public:
-    WEBCORE_EXPORT virtual ~RootObject();
+    virtual ~RootObject();
     
     static PassRefPtr<RootObject> create(const void* nativeHandle, JSGlobalObject*);
 
@@ -67,7 +67,7 @@ public:
     bool gcIsProtected(JSObject*);
 
     const void* nativeHandle() const;
-    WEBCORE_EXPORT JSGlobalObject* globalObject() const;
+    JSGlobalObject* globalObject() const;
     void updateGlobalObject(JSGlobalObject*);
 
     void addRuntimeObject(VM&, RuntimeObject*);

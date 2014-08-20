@@ -77,12 +77,12 @@ public:
     explicit AXObjectCache(Document&);
     ~AXObjectCache();
 
-    WEBCORE_EXPORT static AccessibilityObject* focusedUIElementForPage(const Page*);
+    static AccessibilityObject* focusedUIElementForPage(const Page*);
 
     // Returns the root object for the entire document.
-    WEBCORE_EXPORT AccessibilityObject* rootObject();
+    AccessibilityObject* rootObject();
     // Returns the root object for a specific frame.
-    WEBCORE_EXPORT AccessibilityObject* rootObjectForFrame(Frame*);
+    AccessibilityObject* rootObjectForFrame(Frame*);
     
     // For AX objects with elements that back them.
     AccessibilityObject* getOrCreate(RenderObject*);
@@ -127,11 +127,11 @@ public:
     void recomputeIsIgnored(RenderObject* renderer);
 
 #if HAVE(ACCESSIBILITY)
-    WEBCORE_EXPORT static void enableAccessibility();
-    WEBCORE_EXPORT static void disableAccessibility();
+    static void enableAccessibility();
+    static void disableAccessibility();
 
     // Enhanced user interface accessibility can be toggled by the assistive technology.
-    WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
+    static void setEnhancedUserInterfaceAccessibility(bool flag);
     
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
@@ -236,8 +236,8 @@ private:
     HashMap<Node*, AXID> m_nodeObjectMapping;
     HashSet<Node*> m_textMarkerNodes;
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
-    WEBCORE_EXPORT static bool gAccessibilityEnabled;
-    WEBCORE_EXPORT static bool gAccessibilityEnhancedUserInterfaceEnabled;
+    static bool gAccessibilityEnabled;
+    static bool gAccessibilityEnhancedUserInterfaceEnabled;
     
     HashSet<AXID> m_idsInUse;
     

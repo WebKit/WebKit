@@ -40,7 +40,7 @@ namespace WebCore {
 
 class DOMWindowCSS : public RefCounted<DOMWindowCSS> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<DOMWindowCSS> create();
+    static PassRefPtr<DOMWindowCSS> create();
 
     bool supports(const String& property, const String& value) const;
     bool supports(const String& conditionText) const;

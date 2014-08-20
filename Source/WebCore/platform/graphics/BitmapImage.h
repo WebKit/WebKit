@@ -156,7 +156,7 @@ public:
 #endif
 
 #if USE(CG)
-    WEBCORE_EXPORT virtual CGImageRef getCGImageRef() override;
+    virtual CGImageRef getCGImageRef() override;
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) override;
     virtual RetainPtr<CFArrayRef> getCGImageArray() override;
 #endif
@@ -195,8 +195,8 @@ protected:
       Certain     // The repetition count is known to be correct.
     };
 
-    WEBCORE_EXPORT BitmapImage(PassNativeImagePtr, ImageObserver* = 0);
-    WEBCORE_EXPORT BitmapImage(ImageObserver* = 0);
+    BitmapImage(PassNativeImagePtr, ImageObserver* = 0);
+    BitmapImage(ImageObserver* = 0);
 
 #if PLATFORM(WIN)
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator) override;

@@ -56,8 +56,8 @@ public:
     CachedImage(const URL&, Image*, CacheBehaviorType, SessionID);
     virtual ~CachedImage();
 
-    WEBCORE_EXPORT Image* image(); // Returns the nullImage() if the image is not available yet.
-    WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
+    Image* image(); // Returns the nullImage() if the image is not available yet.
+    Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
     bool currentFrameKnownToBeOpaque(const RenderElement*);
 

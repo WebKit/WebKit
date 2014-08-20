@@ -47,31 +47,31 @@ public:
     Page* page() { return m_page; }
 
     virtual void addItem(PassRefPtr<HistoryItem>) override;
-    WEBCORE_EXPORT void goBack();
-    WEBCORE_EXPORT void goForward();
+    void goBack();
+    void goForward();
     virtual void goToItem(HistoryItem*) override;
         
-    WEBCORE_EXPORT HistoryItem* backItem();
-    WEBCORE_EXPORT HistoryItem* currentItem();
-    WEBCORE_EXPORT HistoryItem* forwardItem();
+    HistoryItem* backItem();
+    HistoryItem* currentItem();
+    HistoryItem* forwardItem();
     virtual HistoryItem* itemAtIndex(int) override;
 
-    WEBCORE_EXPORT void backListWithLimit(int, HistoryItemVector&);
-    WEBCORE_EXPORT void forwardListWithLimit(int, HistoryItemVector&);
+    void backListWithLimit(int, HistoryItemVector&);
+    void forwardListWithLimit(int, HistoryItemVector&);
 
-    WEBCORE_EXPORT int capacity();
-    WEBCORE_EXPORT void setCapacity(int);
-    WEBCORE_EXPORT bool enabled();
-    WEBCORE_EXPORT void setEnabled(bool);
+    int capacity();
+    void setCapacity(int);
+    bool enabled();
+    void setEnabled(bool);
     virtual int backListCount() override;
     virtual int forwardListCount() override;
-    WEBCORE_EXPORT bool containsItem(HistoryItem*);
+    bool containsItem(HistoryItem*);
 
     virtual void close() override;
-    WEBCORE_EXPORT bool closed();
+    bool closed();
 
-    WEBCORE_EXPORT void removeItem(HistoryItem*);
-    WEBCORE_EXPORT HistoryItemVector& entries();
+    void removeItem(HistoryItem*);
+    HistoryItemVector& entries();
 
 #if PLATFORM(IOS)
     virtual unsigned current() override;
@@ -81,7 +81,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT explicit BackForwardList(Page*);
+    explicit BackForwardList(Page*);
 
     Page* m_page;
     HistoryItemVector m_entries;

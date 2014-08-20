@@ -40,8 +40,8 @@
 #import "WebEvent.h"
 #import <wtf/Assertions.h>
 
-WEBCORE_EXPORT NSString *WAKViewFrameSizeDidChangeNotification =   @"WAKViewFrameSizeDidChangeNotification";
-WEBCORE_EXPORT NSString *WAKViewDidScrollNotification =            @"WAKViewDidScrollNotification";
+NSString *WAKViewFrameSizeDidChangeNotification =   @"WAKViewFrameSizeDidChangeNotification";
+NSString *WAKViewDidScrollNotification =            @"WAKViewDidScrollNotification";
 
 static WAKView *globalFocusView = nil;
 static CGInterpolationQuality sInterpolationQuality;

@@ -50,8 +50,8 @@ class TransformationMatrix;
 class AffineTransform {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT AffineTransform();
-    WEBCORE_EXPORT AffineTransform(double a, double b, double c, double d, double e, double f);
+    AffineTransform();
+    AffineTransform(double a, double b, double c, double d, double e, double f);
 
 #if USE(CG)
     AffineTransform(const CGAffineTransform&);
@@ -62,9 +62,9 @@ public:
     void map(double x, double y, double& x2, double& y2) const;
 
     // Rounds the mapped point to the nearest integer value.
-    WEBCORE_EXPORT IntPoint mapPoint(const IntPoint&) const;
+    IntPoint mapPoint(const IntPoint&) const;
 
-    WEBCORE_EXPORT FloatPoint mapPoint(const FloatPoint&) const;
+    FloatPoint mapPoint(const FloatPoint&) const;
 
     IntSize mapSize(const IntSize&) const;
 
@@ -74,10 +74,10 @@ public:
     // box computations but may not be what is wanted in other contexts.
     IntRect mapRect(const IntRect&) const;
 
-    WEBCORE_EXPORT FloatRect mapRect(const FloatRect&) const;
+    FloatRect mapRect(const FloatRect&) const;
     FloatQuad mapQuad(const FloatQuad&) const;
 
-    WEBCORE_EXPORT bool isIdentity() const;
+    bool isIdentity() const;
 
     double a() const { return m_transform[0]; }
     void setA(double a) { m_transform[0] = a; }
@@ -94,28 +94,28 @@ public:
 
     void makeIdentity();
 
-    WEBCORE_EXPORT AffineTransform& multiply(const AffineTransform& other);
-    WEBCORE_EXPORT AffineTransform& scale(double);
+    AffineTransform& multiply(const AffineTransform& other);
+    AffineTransform& scale(double); 
     AffineTransform& scale(double sx, double sy); 
     AffineTransform& scaleNonUniform(double sx, double sy);
     AffineTransform& rotate(double d);
     AffineTransform& rotateFromVector(double x, double y);
-    WEBCORE_EXPORT AffineTransform& translate(double tx, double ty);
+    AffineTransform& translate(double tx, double ty);
     AffineTransform& shear(double sx, double sy);
     AffineTransform& flipX();
-    WEBCORE_EXPORT AffineTransform& flipY();
+    AffineTransform& flipY();
     AffineTransform& skew(double angleX, double angleY);
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
 
     // These functions get the length of an axis-aligned unit vector
     // once it has been mapped through the transform
-    WEBCORE_EXPORT double xScale() const;
-    WEBCORE_EXPORT double yScale() const;
+    double xScale() const;
+    double yScale() const;
 
     double det() const;
-    WEBCORE_EXPORT bool isInvertible() const;
-    WEBCORE_EXPORT AffineTransform inverse() const;
+    bool isInvertible() const;
+    AffineTransform inverse() const;
 
     void blend(const AffineTransform& from, double progress);
 

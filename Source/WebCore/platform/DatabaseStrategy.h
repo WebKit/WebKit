@@ -37,11 +37,11 @@ class IDBFactoryBackendInterface;
 class DatabaseStrategy {
 public:
 #if ENABLE(SQL_DATABASE)
-    WEBCORE_EXPORT virtual AbstractDatabaseServer* getDatabaseServer();
+    virtual AbstractDatabaseServer* getDatabaseServer();
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    WEBCORE_EXPORT virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend(const String& databaseDirectoryIdentifier);
+    virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend(const String& databaseDirectoryIdentifier);
 #endif
 
 protected:

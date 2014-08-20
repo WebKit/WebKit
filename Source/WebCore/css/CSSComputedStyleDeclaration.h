@@ -99,7 +99,7 @@ public:
     String getPropertyValue(CSSPropertyID) const;
 
 private:
-    WEBCORE_EXPORT CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
+    CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
 
     // CSSOM functions. Don't make these public.
     virtual CSSRule* parentRule() const override;

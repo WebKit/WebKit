@@ -126,7 +126,7 @@ public:
     unsigned startOffset() const { return m_startOffset; }
     unsigned endOffset() const { return m_endOffset; }
 
-    WEBCORE_EXPORT const String& description() const;
+    const String& description() const;
     bool activeMatch() const;
     DocumentMarkerDetails* details() const;
 

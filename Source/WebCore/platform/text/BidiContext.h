@@ -38,7 +38,7 @@ enum BidiEmbeddingSource {
 // Used to keep track of explicit embeddings.
 class BidiContext : public RefCounted<BidiContext> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = 0);
+    static PassRefPtr<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = 0);
 
     BidiContext* parent() const { return m_parent.get(); }
     unsigned char level() const { return m_level; }
@@ -46,7 +46,7 @@ public:
     bool override() const { return m_override; }
     BidiEmbeddingSource source() const { return static_cast<BidiEmbeddingSource>(m_source); }
 
-    WEBCORE_EXPORT PassRefPtr<BidiContext> copyStackRemovingUnicodeEmbeddingContexts();
+    PassRefPtr<BidiContext> copyStackRemovingUnicodeEmbeddingContexts();
 private:
     BidiContext(unsigned char level, UCharDirection direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
         : m_level(level)

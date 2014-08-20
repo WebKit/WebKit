@@ -33,9 +33,9 @@ namespace WebCore {
 
 class CertificateInfo {
 public:
-    WEBCORE_EXPORT CertificateInfo();
-    WEBCORE_EXPORT explicit CertificateInfo(const ResourceResponse&);
-    WEBCORE_EXPORT explicit CertificateInfo(CFArrayRef certificateChain);
+    CertificateInfo();
+    explicit CertificateInfo(const ResourceResponse&);
+    explicit CertificateInfo(CFArrayRef certificateChain);
 
     void setCertificateChain(CFArrayRef certificateChain) { m_certificateChain = certificateChain; }
     CFArrayRef certificateChain() const { return m_certificateChain.get(); }

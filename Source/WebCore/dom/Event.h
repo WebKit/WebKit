@@ -86,7 +86,7 @@ public:
     {
         return adoptRef(new Event);
     }
-    WEBCORE_EXPORT static PassRefPtr<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
+    static PassRefPtr<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
     {
         return adoptRef(new Event(type, canBubble, cancelable));
     }

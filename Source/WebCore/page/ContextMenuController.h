@@ -50,16 +50,16 @@ public:
     ~ContextMenuController();
 
     ContextMenu* contextMenu() const { return m_contextMenu.get(); }
-    WEBCORE_EXPORT void clearContextMenu();
+    void clearContextMenu();
 
     void handleContextMenuEvent(Event*);
     void showContextMenu(Event*, PassRefPtr<ContextMenuProvider>);
 
     void populate();
-    WEBCORE_EXPORT void contextMenuItemSelected(ContextMenuItem*);
+    void contextMenuItemSelected(ContextMenuItem*);
     void addInspectElementItem();
 
-    WEBCORE_EXPORT void checkOrEnableIfNeeded(ContextMenuItem&) const;
+    void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
     void setContextMenuContext(const ContextMenuContext& context) { m_context = context; }
     const ContextMenuContext& context() const { return m_context; }

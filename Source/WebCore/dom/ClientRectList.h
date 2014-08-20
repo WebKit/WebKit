@@ -40,14 +40,14 @@ namespace WebCore {
     public:
         static PassRefPtr<ClientRectList> create() { return adoptRef(new ClientRectList); }
         static PassRefPtr<ClientRectList> create(const Vector<FloatQuad>& quads) { return adoptRef(new ClientRectList(quads)); }
-        WEBCORE_EXPORT ~ClientRectList();
+        ~ClientRectList();
 
         unsigned length() const;
         ClientRect* item(unsigned index);
 
     private:
-        WEBCORE_EXPORT ClientRectList();
-        WEBCORE_EXPORT explicit ClientRectList(const Vector<FloatQuad>&);
+        ClientRectList();
+        explicit ClientRectList(const Vector<FloatQuad>&);
 
         Vector<RefPtr<ClientRect>> m_list;
     }; 

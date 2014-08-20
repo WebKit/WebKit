@@ -53,7 +53,7 @@ public:
     DOMWrapperWorld& world() const { return *m_world; }
 
 private:
-    WEBCORE_EXPORT DOMWindowExtension(Frame*, DOMWrapperWorld&);
+    DOMWindowExtension(Frame*, DOMWrapperWorld&);
 
     RefPtr<DOMWrapperWorld> m_world;
     RefPtr<Frame> m_disconnectedFrame;

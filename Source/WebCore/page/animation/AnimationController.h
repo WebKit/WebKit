@@ -54,16 +54,16 @@ public:
     // This is called when an accelerated animation or transition has actually started to animate.
     void notifyAnimationStarted(RenderElement*, double startTime);
 
-    WEBCORE_EXPORT bool pauseAnimationAtTime(RenderElement*, const AtomicString& name, double t); // To be used only for testing
-    WEBCORE_EXPORT bool pauseTransitionAtTime(RenderElement*, const String& property, double t); // To be used only for testing
-    WEBCORE_EXPORT unsigned numberOfActiveAnimations(Document*) const; // To be used only for testing
+    bool pauseAnimationAtTime(RenderElement*, const AtomicString& name, double t); // To be used only for testing
+    bool pauseTransitionAtTime(RenderElement*, const String& property, double t); // To be used only for testing
+    unsigned numberOfActiveAnimations(Document*) const; // To be used only for testing
     
     bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, AnimationBase::RunningState) const;
 
-    WEBCORE_EXPORT bool isSuspended() const;
-    WEBCORE_EXPORT void suspendAnimations();
-    WEBCORE_EXPORT void resumeAnimations();
+    bool isSuspended() const;
+    void suspendAnimations();
+    void resumeAnimations();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void serviceAnimations();
 #endif
@@ -75,8 +75,8 @@ public:
     void beginAnimationUpdate();
     void endAnimationUpdate();
 
-    WEBCORE_EXPORT bool allowsNewAnimationsWhileSuspended() const;
-    WEBCORE_EXPORT void setAllowsNewAnimationsWhileSuspended(bool);
+    bool allowsNewAnimationsWhileSuspended() const;
+    void setAllowsNewAnimationsWhileSuspended(bool);
     
     static bool supportsAcceleratedAnimationOfProperty(CSSPropertyID);
 

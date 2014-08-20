@@ -44,20 +44,20 @@ public:
 
     BackForwardClient* client() const { return m_client.get(); }
 
-    WEBCORE_EXPORT bool canGoBackOrForward(int distance) const;
+    bool canGoBackOrForward(int distance) const;
     void goBackOrForward(int distance);
 
-    WEBCORE_EXPORT bool goBack();
-    WEBCORE_EXPORT bool goForward();
+    bool goBack();
+    bool goForward();
 
     void addItem(PassRefPtr<HistoryItem>);
     void setCurrentItem(HistoryItem*);
         
     int count() const;
-    WEBCORE_EXPORT int backCount() const;
-    WEBCORE_EXPORT int forwardCount() const;
+    int backCount() const;
+    int forwardCount() const;
 
-    WEBCORE_EXPORT HistoryItem* itemAtIndex(int);
+    HistoryItem* itemAtIndex(int);
 
     void close();
 

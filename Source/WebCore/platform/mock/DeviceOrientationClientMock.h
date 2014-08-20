@@ -42,7 +42,7 @@ class DeviceOrientationController;
 // client when running DumpRenderTree.
 class DeviceOrientationClientMock : public DeviceOrientationClient {
 public:
-    WEBCORE_EXPORT DeviceOrientationClientMock();
+    DeviceOrientationClientMock();
 
     // DeviceOrientationClient
     virtual void setController(DeviceOrientationController*) override;
@@ -51,7 +51,7 @@ public:
     virtual DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
     virtual void deviceOrientationControllerDestroyed() override { }
 
-    WEBCORE_EXPORT void setOrientation(PassRefPtr<DeviceOrientationData>);
+    void setOrientation(PassRefPtr<DeviceOrientationData>);
 
 private:
     void timerFired(Timer<DeviceOrientationClientMock>&);

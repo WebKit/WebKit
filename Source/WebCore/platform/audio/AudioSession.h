@@ -39,7 +39,7 @@ class AudioSessionPrivate;
 class AudioSession {
     WTF_MAKE_NONCOPYABLE(AudioSession);
 public:
-    WEBCORE_EXPORT static AudioSession& sharedSession();
+    static AudioSession& sharedSession();
 
     enum CategoryType {
         None,
@@ -50,7 +50,7 @@ public:
         PlayAndRecord,
         AudioProcessing,
     };
-    WEBCORE_EXPORT void setCategory(CategoryType);
+    void setCategory(CategoryType);
     CategoryType category() const;
 
     void setCategoryOverride(CategoryType);

@@ -67,7 +67,7 @@ private:
 };
 
 struct BlobDataItem {
-    WEBCORE_EXPORT static const long long toEndOfFile;
+    static const long long toEndOfFile;
 
     enum {
         Data,
@@ -124,7 +124,7 @@ public:
     }
 
     const String& contentType() const { return m_contentType; }
-    WEBCORE_EXPORT void setContentType(const String&);
+    void setContentType(const String&);
 
     const BlobDataItemList& items() const { return m_items; }
     void swapItems(BlobDataItemList&);

@@ -188,22 +188,22 @@ namespace WebCore {
     class ContextMenuItem {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu* subMenu = 0);
-        WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked);
+        ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu* subMenu = 0);
+        ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked);
 
-        WEBCORE_EXPORT ~ContextMenuItem();
+        ~ContextMenuItem();
 
         void setType(ContextMenuItemType);
-        WEBCORE_EXPORT ContextMenuItemType type() const;
+        ContextMenuItemType type() const;
 
         void setAction(ContextMenuAction);
-        WEBCORE_EXPORT ContextMenuAction action() const;
+        ContextMenuAction action() const;
 
         void setChecked(bool = true);
-        WEBCORE_EXPORT bool checked() const;
+        bool checked() const;
 
         void setEnabled(bool = true);
-        WEBCORE_EXPORT bool enabled() const;
+        bool enabled() const;
 
         void setSubMenu(ContextMenu*);
 
@@ -225,16 +225,16 @@ namespace WebCore {
         const Vector<ContextMenuItem>& subMenuItems() const { return m_subMenuItems; }
 #else
     public:
-        WEBCORE_EXPORT explicit ContextMenuItem(PlatformMenuItemDescription);
+        explicit ContextMenuItem(PlatformMenuItemDescription);
         explicit ContextMenuItem(ContextMenu* subMenu = 0);
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
 
-        WEBCORE_EXPORT PlatformMenuItemDescription releasePlatformDescription();
+        PlatformMenuItemDescription releasePlatformDescription();
 
-        WEBCORE_EXPORT String title() const;
+        String title() const;
         void setTitle(const String&);
 
-        WEBCORE_EXPORT PlatformMenuDescription platformSubMenu() const;
+        PlatformMenuDescription platformSubMenu() const;
         void setSubMenu(Vector<ContextMenuItem>&);
 
 #endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)

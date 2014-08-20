@@ -42,7 +42,7 @@ class DisplayRefreshMonitorClient;
 class DisplayRefreshMonitor : public RefCounted<DisplayRefreshMonitor> {
 public:
     static PassRefPtr<DisplayRefreshMonitor> create(DisplayRefreshMonitorClient*);
-    WEBCORE_EXPORT virtual ~DisplayRefreshMonitor();
+    virtual ~DisplayRefreshMonitor();
     
     // Return true if callback request was scheduled, false if it couldn't be
     // (e.g., hardware refresh is not available)
@@ -75,8 +75,8 @@ public:
     Mutex& mutex() { return m_mutex; }
 
 protected:
-    WEBCORE_EXPORT explicit DisplayRefreshMonitor(PlatformDisplayID);
-    WEBCORE_EXPORT static void handleDisplayRefreshedNotificationOnMainThread(void* data);
+    explicit DisplayRefreshMonitor(PlatformDisplayID);
+    static void handleDisplayRefreshedNotificationOnMainThread(void* data);
 
 private:
     void displayDidRefresh();

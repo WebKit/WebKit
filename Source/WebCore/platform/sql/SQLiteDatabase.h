@@ -57,21 +57,21 @@ class SQLiteDatabase {
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
     friend class SQLiteTransaction;
 public:
-    WEBCORE_EXPORT SQLiteDatabase();
-    WEBCORE_EXPORT ~SQLiteDatabase();
+    SQLiteDatabase();
+    ~SQLiteDatabase();
 
-    WEBCORE_EXPORT bool open(const String& filename, bool forWebSQLDatabase = false);
+    bool open(const String& filename, bool forWebSQLDatabase = false);
     bool isOpen() const { return m_db; }
-    WEBCORE_EXPORT void close();
+    void close();
     void interrupt();
     bool isInterrupted();
 
     void updateLastChangesCount();
 
-    WEBCORE_EXPORT bool executeCommand(const String&);
+    bool executeCommand(const String&);
     bool returnsAtLeastOneResult(const String&);
     
-    WEBCORE_EXPORT bool tableExists(const String&);
+    bool tableExists(const String&);
     void clearAllTables();
     int runVacuumCommand();
     int runIncrementalVacuumCommand();
@@ -104,8 +104,8 @@ public:
     enum SynchronousPragma { SyncOff = 0, SyncNormal = 1, SyncFull = 2 };
     void setSynchronous(SynchronousPragma);
     
-    WEBCORE_EXPORT int lastError();
-    WEBCORE_EXPORT const char* lastErrorMsg();
+    int lastError();
+    const char* lastErrorMsg();
     
     sqlite3* sqlite3Handle() const {
 #if !PLATFORM(IOS)
@@ -131,15 +131,15 @@ public:
     enum AutoVacuumPragma { AutoVacuumNone = 0, AutoVacuumFull = 1, AutoVacuumIncremental = 2 };
     bool turnOnIncrementalAutoVacuum();
 
-    WEBCORE_EXPORT void setCollationFunction(const String& collationName, std::function<int(int, const void*, int, const void*)>);
+    void setCollationFunction(const String& collationName, std::function<int(int, const void*, int, const void*)>);
     void removeCollationFunction(const String& collationName);
 
     // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
     // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.
 #ifndef NDEBUG
-    WEBCORE_EXPORT void disableThreadingChecks();
+    void disableThreadingChecks();
 #else
-    WEBCORE_EXPORT void disableThreadingChecks() {}
+    void disableThreadingChecks() {}
 #endif
 
 private:

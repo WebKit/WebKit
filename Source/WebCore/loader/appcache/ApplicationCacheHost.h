@@ -123,10 +123,10 @@ namespace WebCore {
         void finishedLoadingMainResource();
         void failedLoadingMainResource();
 
-        WEBCORE_EXPORT bool maybeLoadResource(ResourceLoader*, const ResourceRequest&, const URL& originalURL);
-        WEBCORE_EXPORT bool maybeLoadFallbackForRedirect(ResourceLoader*, ResourceRequest&, const ResourceResponse&);
-        WEBCORE_EXPORT bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
-        WEBCORE_EXPORT bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);
+        bool maybeLoadResource(ResourceLoader*, const ResourceRequest&, const URL& originalURL);
+        bool maybeLoadFallbackForRedirect(ResourceLoader*, ResourceRequest&, const ResourceResponse&);
+        bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
+        bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);
 
         bool maybeLoadSynchronously(ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
         void maybeLoadFallbackSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);

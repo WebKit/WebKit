@@ -100,7 +100,7 @@ public:
     explicit Editor(Frame&);
     ~Editor();
 
-    WEBCORE_EXPORT EditorClient* client() const;
+    EditorClient* client() const;
     TextCheckerClient* textChecker() const;
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
@@ -109,30 +109,30 @@ public:
     void handleInputMethodKeydown(KeyboardEvent*);
     bool handleTextEvent(TextEvent*);
 
-    WEBCORE_EXPORT bool canEdit() const;
-    WEBCORE_EXPORT bool canEditRichly() const;
+    bool canEdit() const;
+    bool canEditRichly() const;
 
     bool canDHTMLCut();
     bool canDHTMLCopy();
-    WEBCORE_EXPORT bool canDHTMLPaste();
+    bool canDHTMLPaste();
     bool tryDHTMLCopy();
     bool tryDHTMLCut();
-    WEBCORE_EXPORT bool tryDHTMLPaste();
+    bool tryDHTMLPaste();
 
-    WEBCORE_EXPORT bool canCut() const;
-    WEBCORE_EXPORT bool canCopy() const;
-    WEBCORE_EXPORT bool canPaste() const;
-    WEBCORE_EXPORT bool canDelete() const;
+    bool canCut() const;
+    bool canCopy() const;
+    bool canPaste() const;
+    bool canDelete() const;
     bool canSmartCopyOrDelete();
 
-    WEBCORE_EXPORT void cut();
-    WEBCORE_EXPORT void copy();
-    WEBCORE_EXPORT void paste();
+    void cut();
+    void copy();
+    void paste();
     void paste(Pasteboard&);
     void pasteAsPlainText();
-    WEBCORE_EXPORT void performDelete();
+    void performDelete();
 
-    WEBCORE_EXPORT void copyURL(const URL&, const String& title);
+    void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
 #if !PLATFORM(IOS)
     void copyImage(const HitTestResult&);
@@ -140,51 +140,51 @@ public:
 
     String readPlainTextFromPasteboard(Pasteboard&);
 
-    WEBCORE_EXPORT void indent();
-    WEBCORE_EXPORT void outdent();
+    void indent();
+    void outdent();
     void transpose();
 
     bool shouldInsertFragment(PassRefPtr<DocumentFragment>, PassRefPtr<Range>, EditorInsertAction);
     bool shouldInsertText(const String&, Range*, EditorInsertAction) const;
-    WEBCORE_EXPORT bool shouldDeleteRange(Range*) const;
+    bool shouldDeleteRange(Range*) const;
     bool shouldApplyStyle(StyleProperties*, Range*);
 
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
     bool selectionStartHasStyle(CSSPropertyID, const String& value) const;
-    WEBCORE_EXPORT TriState selectionHasStyle(CSSPropertyID, const String& value) const;
+    TriState selectionHasStyle(CSSPropertyID, const String& value) const;
     String selectionStartCSSPropertyValue(CSSPropertyID);
     
     TriState selectionUnorderedListState() const;
     TriState selectionOrderedListState() const;
-    WEBCORE_EXPORT PassRefPtr<Node> insertOrderedList();
-    WEBCORE_EXPORT PassRefPtr<Node> insertUnorderedList();
-    WEBCORE_EXPORT bool canIncreaseSelectionListLevel();
-    WEBCORE_EXPORT bool canDecreaseSelectionListLevel();
-    WEBCORE_EXPORT PassRefPtr<Node> increaseSelectionListLevel();
-    WEBCORE_EXPORT PassRefPtr<Node> increaseSelectionListLevelOrdered();
-    WEBCORE_EXPORT PassRefPtr<Node> increaseSelectionListLevelUnordered();
-    WEBCORE_EXPORT void decreaseSelectionListLevel();
+    PassRefPtr<Node> insertOrderedList();
+    PassRefPtr<Node> insertUnorderedList();
+    bool canIncreaseSelectionListLevel();
+    bool canDecreaseSelectionListLevel();
+    PassRefPtr<Node> increaseSelectionListLevel();
+    PassRefPtr<Node> increaseSelectionListLevelOrdered();
+    PassRefPtr<Node> increaseSelectionListLevelUnordered();
+    void decreaseSelectionListLevel();
    
     void removeFormattingAndStyle();
 
     void clearLastEditCommand();
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
+    void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
 #endif
 
-    WEBCORE_EXPORT bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
-    WEBCORE_EXPORT void deleteSelectionWithSmartDelete(bool smartDelete);
+    bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
+    void deleteSelectionWithSmartDelete(bool smartDelete);
 #if PLATFORM(IOS)
     void clearText();
-    WEBCORE_EXPORT void removeUnchangeableStyles();
+    void removeUnchangeableStyles();
 #endif
     
     bool dispatchCPPEvent(const AtomicString&, DataTransferAccessPolicy);
     
-    WEBCORE_EXPORT void applyStyle(StyleProperties*, EditAction = EditActionUnspecified);
+    void applyStyle(StyleProperties*, EditAction = EditActionUnspecified);
     void applyParagraphStyle(StyleProperties*, EditAction = EditActionUnspecified);
-    WEBCORE_EXPORT void applyStyleToSelection(StyleProperties*, EditAction);
+    void applyStyleToSelection(StyleProperties*, EditAction);
     void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
     void appliedEditing(PassRefPtr<CompositeEditCommand>);
@@ -197,58 +197,58 @@ public:
 
     class Command {
     public:
-        WEBCORE_EXPORT Command();
+        Command();
         Command(const EditorInternalCommand*, EditorCommandSource, PassRefPtr<Frame>);
 
-        WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = 0) const;
-        WEBCORE_EXPORT bool execute(Event* triggeringEvent) const;
+        bool execute(const String& parameter = String(), Event* triggeringEvent = 0) const;
+        bool execute(Event* triggeringEvent) const;
 
-        WEBCORE_EXPORT bool isSupported() const;
-        WEBCORE_EXPORT bool isEnabled(Event* triggeringEvent = 0) const;
+        bool isSupported() const;
+        bool isEnabled(Event* triggeringEvent = 0) const;
 
-        WEBCORE_EXPORT TriState state(Event* triggeringEvent = 0) const;
+        TriState state(Event* triggeringEvent = 0) const;
         String value(Event* triggeringEvent = 0) const;
 
-        WEBCORE_EXPORT bool isTextInsertion() const;
+        bool isTextInsertion() const;
 
     private:
         const EditorInternalCommand* m_command;
         EditorCommandSource m_source;
         RefPtr<Frame> m_frame;
     };
-    WEBCORE_EXPORT Command command(const String& commandName); // Command source is CommandFromMenuOrKeyBinding.
+    Command command(const String& commandName); // Command source is CommandFromMenuOrKeyBinding.
     Command command(const String& commandName, EditorCommandSource);
-    WEBCORE_EXPORT static bool commandIsSupportedFromMenuOrKeyBinding(const String& commandName); // Works without a frame.
+    static bool commandIsSupportedFromMenuOrKeyBinding(const String& commandName); // Works without a frame.
 
-    WEBCORE_EXPORT bool insertText(const String&, Event* triggeringEvent);
+    bool insertText(const String&, Event* triggeringEvent);
     bool insertTextForConfirmedComposition(const String& text);
-    WEBCORE_EXPORT bool insertDictatedText(const String&, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
+    bool insertDictatedText(const String&, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
     bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
     bool insertLineBreak();
     bool insertParagraphSeparator();
 
-    WEBCORE_EXPORT bool isContinuousSpellCheckingEnabled() const;
-    WEBCORE_EXPORT void toggleContinuousSpellChecking();
+    bool isContinuousSpellCheckingEnabled() const;
+    void toggleContinuousSpellChecking();
     bool isGrammarCheckingEnabled();
     void toggleGrammarChecking();
     void ignoreSpelling();
     void learnSpelling();
     int spellCheckerDocumentTag();
-    WEBCORE_EXPORT bool isSelectionUngrammatical();
+    bool isSelectionUngrammatical();
     String misspelledSelectionString() const;
     String misspelledWordAtCaretOrRange(Node* clickedNode) const;
     Vector<String> guessesForMisspelledWord(const String&) const;
     Vector<String> guessesForMisspelledOrUngrammatical(bool& misspelled, bool& ungrammatical);
     bool isSpellCheckingEnabledInFocusedNode() const;
     bool isSpellCheckingEnabledFor(Node*) const;
-    WEBCORE_EXPORT void markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement);
+    void markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement);
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
-    WEBCORE_EXPORT void toggleOverwriteModeEnabled();
+    void toggleOverwriteModeEnabled();
 
     void markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask, Range* spellingRange, Range* grammarRange);
 #if PLATFORM(IOS)
@@ -257,7 +257,7 @@ public:
     void changeBackToReplacedString(const String& replacedString);
 
 #if !PLATFORM(IOS)
-    WEBCORE_EXPORT void advanceToNextMisspelling(bool startBeforeSelection = false);
+    void advanceToNextMisspelling(bool startBeforeSelection = false);
 #endif // !PLATFORM(IOS)
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();
@@ -281,24 +281,24 @@ public:
     void showColorPanel();
     void toggleBold();
     void toggleUnderline();
-    WEBCORE_EXPORT void setBaseWritingDirection(WritingDirection);
+    void setBaseWritingDirection(WritingDirection);
 
     // smartInsertDeleteEnabled and selectTrailingWhitespaceEnabled are 
     // mutually exclusive, meaning that enabling one will disable the other.
     bool smartInsertDeleteEnabled();
     bool isSelectTrailingWhitespaceEnabled();
     
-    WEBCORE_EXPORT bool hasBidiSelection() const;
+    bool hasBidiSelection() const;
 
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
-    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, unsigned selectionStart, unsigned selectionEnd);
-    WEBCORE_EXPORT void confirmComposition();
-    WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
-    WEBCORE_EXPORT void cancelComposition();
+    void setComposition(const String&, const Vector<CompositionUnderline>&, unsigned selectionStart, unsigned selectionEnd);
+    void confirmComposition();
+    void confirmComposition(const String&); // if no existing composition, replaces selection
+    void cancelComposition();
     bool cancelCompositionIfSelectionIsInvalid();
-    WEBCORE_EXPORT PassRefPtr<Range> compositionRange() const;
-    WEBCORE_EXPORT bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
+    PassRefPtr<Range> compositionRange() const;
+    bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
 
     // getting international text input composition state (for use by InlineTextBox)
     Text* compositionNode() const { return m_compositionNode.get(); }
@@ -307,12 +307,12 @@ public:
     bool compositionUsesCustomUnderlines() const { return !m_customCompositionUnderlines.isEmpty(); }
     const Vector<CompositionUnderline>& customCompositionUnderlines() const { return m_customCompositionUnderlines; }
 
-    WEBCORE_EXPORT void setIgnoreCompositionSelectionChange(bool);
+    void setIgnoreCompositionSelectionChange(bool);
     bool ignoreCompositionSelectionChange() const { return m_ignoreCompositionSelectionChange; }
 
     void setStartNewKillRingSequence(bool);
 
-    WEBCORE_EXPORT PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
+    PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
 
     void clear();
 
@@ -326,25 +326,25 @@ public:
     PassRefPtr<Range> selectedRange();
 
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT void confirmMarkedText();
-    WEBCORE_EXPORT void setTextAsChildOfElement(const String&, Element*);
-    WEBCORE_EXPORT void setTextAlignmentForChangedBaseWritingDirection(WritingDirection);
-    WEBCORE_EXPORT void insertDictationPhrases(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata);
-    WEBCORE_EXPORT void setDictationPhrasesAsChildOfElement(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata, Element* element);
+    void confirmMarkedText();
+    void setTextAsChildOfElement(const String&, Element*);
+    void setTextAlignmentForChangedBaseWritingDirection(WritingDirection);
+    void insertDictationPhrases(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata);
+    void setDictationPhrasesAsChildOfElement(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata, Element* element);
 #endif
     
     void addToKillRing(Range*, bool prepend);
 
     void startAlternativeTextUITimer();
     // If user confirmed a correction in the correction panel, correction has non-zero length, otherwise it means that user has dismissed the panel.
-    WEBCORE_EXPORT void handleAlternativeTextUIResult(const String& correction);
+    void handleAlternativeTextUIResult(const String& correction);
     void dismissCorrectionPanelAsIgnored();
 
-    WEBCORE_EXPORT void pasteAsFragment(PassRefPtr<DocumentFragment>, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
-    WEBCORE_EXPORT void pasteAsPlainText(const String&, bool smartReplace);
+    void pasteAsFragment(PassRefPtr<DocumentFragment>, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    void pasteAsPlainText(const String&, bool smartReplace);
 
     // This is only called on the mac where paste is implemented primarily at the WebKit level.
-    WEBCORE_EXPORT void pasteAsPlainTextBypassingDHTML();
+    void pasteAsPlainTextBypassingDHTML();
  
     void clearMisspellingsAndBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection&);
@@ -353,7 +353,7 @@ public:
 
     String selectedText() const;
     String selectedTextForDataTransfer() const;
-    WEBCORE_EXPORT bool findString(const String&, FindOptions);
+    bool findString(const String&, FindOptions);
 
     PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
     PassRefPtr<Range> findStringAndScrollToVisible(const String&, Range*, FindOptions);
@@ -361,18 +361,18 @@ public:
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);
 
-    WEBCORE_EXPORT void computeAndSetTypingStyle(StyleProperties* , EditAction = EditActionUnspecified);
-    WEBCORE_EXPORT void applyEditingStyleToBodyElement() const;
+    void computeAndSetTypingStyle(StyleProperties* , EditAction = EditActionUnspecified);
+    void applyEditingStyleToBodyElement() const;
     void applyEditingStyleToElement(Element*) const;
 
-    WEBCORE_EXPORT IntRect firstRectForRange(Range*) const;
+    IntRect firstRectForRange(Range*) const;
 
     void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
-    WEBCORE_EXPORT void updateEditorUINowIfScheduled();
+    void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
-    WEBCORE_EXPORT unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches, Vector<RefPtr<Range>>*);
+    unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches, Vector<RefPtr<Range>>*);
     bool markedTextMatchesAreHighlighted() const;
-    WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
+    void setMarkedTextMatchesAreHighlighted(bool);
 
     void textFieldDidBeginEditing(Element*);
     void textFieldDidEndEditing(Element*);
@@ -380,15 +380,15 @@ public:
     bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
     void textWillBeDeletedInTextField(Element* input);
     void textDidChangeInTextArea(Element*);
-    WEBCORE_EXPORT WritingDirection baseWritingDirectionForSelectionStart() const;
+    WritingDirection baseWritingDirectionForSelectionStart() const;
 
-    WEBCORE_EXPORT void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
-    WEBCORE_EXPORT void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace);
-    WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
+    void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace);
+    bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
     void updateMarkersForWordsAffectedByEditing(bool onlyHandleWordsContainingSelection);
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString);
     
-    WEBCORE_EXPORT void simplifyMarkup(Node* startNode, Node* endNode);
+    void simplifyMarkup(Node* startNode, Node* endNode);
 
     void deviceScaleFactorChanged();
 
@@ -401,25 +401,25 @@ public:
     VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection&) const;
 
 #if USE(APPKIT)
-    WEBCORE_EXPORT void uppercaseWord();
-    WEBCORE_EXPORT void lowercaseWord();
-    WEBCORE_EXPORT void capitalizeWord();
+    void uppercaseWord();
+    void lowercaseWord();
+    void capitalizeWord();
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    WEBCORE_EXPORT void showSubstitutionsPanel();
-    WEBCORE_EXPORT bool substitutionsPanelIsShowing();
-    WEBCORE_EXPORT void toggleSmartInsertDelete();
-    WEBCORE_EXPORT bool isAutomaticQuoteSubstitutionEnabled();
-    WEBCORE_EXPORT void toggleAutomaticQuoteSubstitution();
-    WEBCORE_EXPORT bool isAutomaticLinkDetectionEnabled();
-    WEBCORE_EXPORT void toggleAutomaticLinkDetection();
-    WEBCORE_EXPORT bool isAutomaticDashSubstitutionEnabled();
-    WEBCORE_EXPORT void toggleAutomaticDashSubstitution();
-    WEBCORE_EXPORT bool isAutomaticTextReplacementEnabled();
-    WEBCORE_EXPORT void toggleAutomaticTextReplacement();
-    WEBCORE_EXPORT bool isAutomaticSpellingCorrectionEnabled();
-    WEBCORE_EXPORT void toggleAutomaticSpellingCorrection();
+    void showSubstitutionsPanel();
+    bool substitutionsPanelIsShowing();
+    void toggleSmartInsertDelete();
+    bool isAutomaticQuoteSubstitutionEnabled();
+    void toggleAutomaticQuoteSubstitution();
+    bool isAutomaticLinkDetectionEnabled();
+    void toggleAutomaticLinkDetection();
+    bool isAutomaticDashSubstitutionEnabled();
+    void toggleAutomaticDashSubstitution();
+    bool isAutomaticTextReplacementEnabled();
+    void toggleAutomaticTextReplacement();
+    bool isAutomaticSpellingCorrectionEnabled();
+    void toggleAutomaticSpellingCorrection();
 #endif
 
 #if ENABLE(DELETION_UI)
@@ -427,25 +427,25 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
-    WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
-    WEBCORE_EXPORT const SimpleFontData* fontForSelection(bool&) const;
-    WEBCORE_EXPORT NSDictionary* fontAttributesForSelectionStart() const;
-    WEBCORE_EXPORT String stringSelectionForPasteboard();
+    static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
+    bool insertParagraphSeparatorInQuotedContent();
+    const SimpleFontData* fontForSelection(bool&) const;
+    NSDictionary* fontAttributesForSelectionStart() const;
+    String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
     PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
 #if !PLATFORM(IOS)
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
-    WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
-    WEBCORE_EXPORT void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
-    WEBCORE_EXPORT PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
+    void readSelectionFromPasteboard(const String& pasteboardName, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    void replaceNodeFromPasteboard(Node*, const String& pasteboardName);
+    PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif // !PLATFORM(IOS)
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(EFL)
-    WEBCORE_EXPORT void writeSelectionToPasteboard(Pasteboard&);
-    WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
+    void writeSelectionToPasteboard(Pasteboard&);
+    void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
@@ -468,7 +468,7 @@ private:
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
     TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);
 
-    WEBCORE_EXPORT String selectedText(TextIteratorBehavior) const;
+    String selectedText(TextIteratorBehavior) const;
 
     void selectComposition();
     enum SetCompositionMode { ConfirmComposition, CancelComposition };

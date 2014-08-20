@@ -77,8 +77,8 @@ namespace WebCore {
 
         unsigned itemCount() const;
 
-        WEBCORE_EXPORT PlatformMenuDescription platformDescription() const;
-        WEBCORE_EXPORT void setPlatformDescription(PlatformMenuDescription);
+        PlatformMenuDescription platformDescription() const;
+        void setPlatformDescription(PlatformMenuDescription);
 
         PlatformMenuDescription releasePlatformDescription();
 #endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
@@ -101,7 +101,7 @@ namespace WebCore {
     };
 
 #if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
-WEBCORE_EXPORT Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription);
+Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription);
 PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>&);
 #endif
 

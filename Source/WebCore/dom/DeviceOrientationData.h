@@ -35,9 +35,9 @@ class DeviceOrientationData : public RefCounted<DeviceOrientationData> {
 public:
     static PassRefPtr<DeviceOrientationData> create();
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy);
+    static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy);
 #else
-    WEBCORE_EXPORT static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
+    static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
 #endif
 
     double alpha() const;

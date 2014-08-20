@@ -116,8 +116,8 @@ public:
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
     void setLoadPriority(ResourceLoadPriority);
 
-    WEBCORE_EXPORT void addClient(CachedResourceClient*);
-    WEBCORE_EXPORT void removeClient(CachedResourceClient*);
+    void addClient(CachedResourceClient*);
+    void removeClient(CachedResourceClient*);
     bool hasClients() const { return !m_clients.isEmpty() || !m_clientsAwaitingCallback.isEmpty(); }
     bool hasClient(CachedResourceClient* client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
     bool deleteIfPossible();
@@ -220,7 +220,7 @@ public:
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
     
     void registerHandle(CachedResourceHandleBase* h);
-    WEBCORE_EXPORT void unregisterHandle(CachedResourceHandleBase* h);
+    void unregisterHandle(CachedResourceHandleBase* h);
     
     bool canUseCacheValidator() const;
 
@@ -249,7 +249,7 @@ public:
     virtual bool canReuse(const ResourceRequest&) const { return true; }
 
 #if USE(FOUNDATION)
-    WEBCORE_EXPORT void tryReplaceEncodedData(PassRefPtr<SharedBuffer>);
+    void tryReplaceEncodedData(PassRefPtr<SharedBuffer>);
 #endif
 
 #if USE(SOUP)

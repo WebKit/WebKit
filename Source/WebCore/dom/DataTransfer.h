@@ -46,7 +46,7 @@ namespace WebCore {
     public:
         static PassRefPtr<DataTransfer> createForCopyAndPaste(DataTransferAccessPolicy);
 
-        WEBCORE_EXPORT ~DataTransfer();
+        ~DataTransfer();
 
         String dropEffect() const;
         void setDropEffect(const String&);

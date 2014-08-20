@@ -46,24 +46,24 @@ extern "C" {
 @end
 
 // Register a class for deallocation on the WebThread
-WEBCORE_EXPORT void WebCoreObjCDeallocOnWebThread(Class cls);
+void WebCoreObjCDeallocOnWebThread(Class cls);
 void WebCoreObjCDeallocWithWebThreadLock(Class cls);
 
 // Asynchronous from main thread to web thread.
-WEBCORE_EXPORT void WebThreadAdoptAndRelease(id obj);
+void WebThreadAdoptAndRelease(id obj);
 
 // Synchronous from web thread to main thread, or main thread to main thread.
-WEBCORE_EXPORT void WebThreadCallDelegate(NSInvocation *invocation);
-WEBCORE_EXPORT void WebThreadRunOnMainThread(void (^)(void));
+void WebThreadCallDelegate(NSInvocation *invocation);
+void WebThreadRunOnMainThread(void (^)(void));
 
 // Asynchronous from web thread to main thread, but synchronous when called on the main thread.
-WEBCORE_EXPORT void WebThreadCallDelegateAsync(NSInvocation *invocation);
+void WebThreadCallDelegateAsync(NSInvocation *invocation);
 
 // Asynchronous from web thread to main thread, but synchronous when called on the main thread.
-WEBCORE_EXPORT void WebThreadPostNotification(NSString *name, id object, id userInfo);
+void WebThreadPostNotification(NSString *name, id object, id userInfo);
 
 // Convenience method for making an NSInvocation object
-WEBCORE_EXPORT NSInvocation *WebThreadMakeNSInvocation(id target, SEL selector);
+NSInvocation *WebThreadMakeNSInvocation(id target, SEL selector);
 
 #if defined(__cplusplus)
 }

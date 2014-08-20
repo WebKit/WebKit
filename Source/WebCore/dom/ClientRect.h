@@ -50,9 +50,9 @@ namespace WebCore {
         float height() const { return m_rect.height(); }
 
     private:
-        WEBCORE_EXPORT ClientRect();
-        WEBCORE_EXPORT explicit ClientRect(const IntRect&);
-        WEBCORE_EXPORT explicit ClientRect(const FloatRect&);
+        ClientRect();
+        explicit ClientRect(const IntRect&);
+        explicit ClientRect(const FloatRect&);
 
         FloatRect m_rect;
     }; 

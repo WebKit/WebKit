@@ -53,7 +53,7 @@ class DatabaseTracker {
 public:
     static void initializeTracker(const String& databasePath);
 
-    WEBCORE_EXPORT static DatabaseTracker& tracker();
+    static DatabaseTracker& tracker();
     // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
     // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
     // m_databaseGuard before quotaManager if both locks are needed.
@@ -99,18 +99,18 @@ public:
     bool deleteDatabase(SecurityOrigin*, const String& name);
 
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT void removeDeletedOpenedDatabases();
-    WEBCORE_EXPORT static bool deleteDatabaseFileIfEmpty(const String&);
+    void removeDeletedOpenedDatabases();
+    static bool deleteDatabaseFileIfEmpty(const String&);
 
     // MobileSafari will grab this mutex on the main thread before dispatching the task to 
     // clean up zero byte database files.  Any operations to open new database will have to
     // wait for that task to finish by waiting on this mutex.
     static Mutex& openDatabaseMutex();
     
-    WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskWillBeScheduled();
-    WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskDidFinish();
+    static void emptyDatabaseFilesRemovalTaskWillBeScheduled();
+    static void emptyDatabaseFilesRemovalTaskDidFinish();
     
-    WEBCORE_EXPORT void setDatabasesPaused(bool);
+    void setDatabasesPaused(bool);
 #endif
     
     void setClient(DatabaseManagerClient*);

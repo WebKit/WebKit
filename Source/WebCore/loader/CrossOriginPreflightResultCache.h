@@ -66,12 +66,12 @@ class CrossOriginPreflightResultCache {
     WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCache); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    WEBCORE_EXPORT static CrossOriginPreflightResultCache& shared();
+    static CrossOriginPreflightResultCache& shared();
 
     void appendEntry(const String& origin, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
     bool canSkipPreflight(const String& origin, const URL&, StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
 
-    WEBCORE_EXPORT void empty();
+    void empty();
 
 private:
     friend NeverDestroyed<CrossOriginPreflightResultCache>;

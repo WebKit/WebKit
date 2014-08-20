@@ -73,8 +73,8 @@ public:
     void clear();
     void destroy();
 
-    WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
-    WEBCORE_EXPORT CachedFramePlatformData* cachedFramePlatformData();
+    void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
+    CachedFramePlatformData* cachedFramePlatformData();
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;
