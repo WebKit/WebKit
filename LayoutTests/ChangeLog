@@ -1,3 +1,17 @@
+2014-08-19  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Ignore usemap attributes without '#' in img element
+        https://bugs.webkit.org/show_bug.cgi?id=133336
+
+        Reviewed by Ryosuke Niwa.
+
+        HTML5 specification says we should ignore usemap attributes without #.
+        http://www.w3.org/TR/html5/infrastructure.html#valid-hash-name-reference
+
+        * fast/dom/replaced-image-map-valid-hash-name-expected.txt: Added.
+        * fast/dom/replaced-image-map-valid-hash-name.html: Added.
+        * fast/images/image-map-multiple-xhtml.xhtml: Modified usemap attribute value to use '#'.
+
 2014-08-19  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r172401): for-in optimization no longer works at all
