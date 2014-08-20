@@ -38,12 +38,20 @@ namespace JSC {
 StackVisitor::StackVisitor(CallFrame* startFrame)
 {
     m_frame.m_index = 0;
-    if (startFrame)
+    CallFrame* topFrame;
+    if (startFrame) {
         m_frame.m_VMEntryFrame = startFrame->vm().topVMEntryFrame;
-    else
+        topFrame = startFrame->vm().topCallFrame;
+    } else {
         m_frame.m_VMEntryFrame = 0;
+        topFrame = 0;
+    }
     m_frame.m_callerIsVMEntryFrame = false;
-    readFrame(startFrame);
+    readFrame(topFrame);
+
+    // Find the frame the caller wants to start unwinding from.
+    while (m_frame.callFrame() && m_frame.callFrame() != startFrame)
+        gotoNextFrame();
 }
 
 void StackVisitor::gotoNextFrame()
