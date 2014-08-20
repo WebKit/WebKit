@@ -30,8 +30,8 @@
 
 namespace WebCore {
 struct DictationAlternative {
-    DictationAlternative(unsigned start, unsigned length, uint64_t context);
-    DictationAlternative();
+    WEBCORE_EXPORT DictationAlternative(unsigned start, unsigned length, uint64_t context);
+    WEBCORE_EXPORT DictationAlternative();
     unsigned rangeStart;
     unsigned rangeLength;
 

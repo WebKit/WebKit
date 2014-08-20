@@ -49,7 +49,7 @@ protected:
     CachedResourceHandleBase(CachedResource*);
     CachedResourceHandleBase(const CachedResourceHandleBase&);
 
-    void setResource(CachedResource*);
+    WEBCORE_EXPORT void setResource(CachedResource*);
     
 private:
     CachedResourceHandleBase& operator=(const CachedResourceHandleBase&) { return *this; } 

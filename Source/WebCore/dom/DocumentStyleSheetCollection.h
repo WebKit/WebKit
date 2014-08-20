@@ -67,8 +67,8 @@ public:
     void invalidateInjectedStyleSheetCache();
     void updateInjectedStyleSheetCache() const;
 
-    void addAuthorSheet(PassRef<StyleSheetContents> authorSheet);
-    void addUserSheet(PassRef<StyleSheetContents> userSheet);
+    WEBCORE_EXPORT void addAuthorSheet(PassRef<StyleSheetContents> authorSheet);
+    WEBCORE_EXPORT void addUserSheet(PassRef<StyleSheetContents> userSheet);
 
     enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
 

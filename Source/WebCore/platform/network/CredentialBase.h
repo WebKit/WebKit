@@ -43,18 +43,18 @@ class CredentialBase {
 public:
     bool isEmpty() const;
     
-    const String& user() const;
-    const String& password() const;
-    bool hasPassword() const;
-    CredentialPersistence persistence() const;
+    WEBCORE_EXPORT const String& user() const;
+    WEBCORE_EXPORT const String& password() const;
+    WEBCORE_EXPORT bool hasPassword() const;
+    WEBCORE_EXPORT CredentialPersistence persistence() const;
 
     bool encodingRequiresPlatformData() const { return false; }
 
     static bool compare(const Credential&, const Credential&);
 
 protected:
-    CredentialBase();
-    CredentialBase(const String& user, const String& password, CredentialPersistence);
+    WEBCORE_EXPORT CredentialBase();
+    WEBCORE_EXPORT CredentialBase(const String& user, const String& password, CredentialPersistence);
     CredentialBase(const Credential& original, CredentialPersistence);
 
     static bool platformCompare(const Credential&, const Credential&) { return true; }

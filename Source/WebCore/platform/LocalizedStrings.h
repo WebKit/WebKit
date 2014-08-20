@@ -48,7 +48,7 @@ namespace WebCore {
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-    String contextMenuItemTagOpenLinkInNewWindow();
+    WEBCORE_EXPORT String contextMenuItemTagOpenLinkInNewWindow();
     String contextMenuItemTagDownloadLinkToDisk();
     String contextMenuItemTagCopyLinkToClipboard();
     String contextMenuItemTagOpenImageInNewWindow();
@@ -89,42 +89,42 @@ namespace WebCore {
     String contextMenuItemTagSearchWeb();
     String contextMenuItemTagLookUpInDictionary(const String& selectedString);
     String contextMenuItemTagOpenLink();
-    String contextMenuItemTagIgnoreGrammar();
-    String contextMenuItemTagSpellingMenu();
-    String contextMenuItemTagShowSpellingPanel(bool show);
-    String contextMenuItemTagCheckSpelling();
-    String contextMenuItemTagCheckSpellingWhileTyping();
-    String contextMenuItemTagCheckGrammarWithSpelling();
-    String contextMenuItemTagFontMenu();
-    String contextMenuItemTagBold();
-    String contextMenuItemTagItalic();
-    String contextMenuItemTagUnderline();
-    String contextMenuItemTagOutline();
-    String contextMenuItemTagWritingDirectionMenu();
+    WEBCORE_EXPORT String contextMenuItemTagIgnoreGrammar();
+    WEBCORE_EXPORT String contextMenuItemTagSpellingMenu();
+    WEBCORE_EXPORT String contextMenuItemTagShowSpellingPanel(bool show);
+    WEBCORE_EXPORT String contextMenuItemTagCheckSpelling();
+    WEBCORE_EXPORT String contextMenuItemTagCheckSpellingWhileTyping();
+    WEBCORE_EXPORT String contextMenuItemTagCheckGrammarWithSpelling();
+    WEBCORE_EXPORT String contextMenuItemTagFontMenu();
+    WEBCORE_EXPORT String contextMenuItemTagBold();
+    WEBCORE_EXPORT String contextMenuItemTagItalic();
+    WEBCORE_EXPORT String contextMenuItemTagUnderline();
+    WEBCORE_EXPORT String contextMenuItemTagOutline();
+    WEBCORE_EXPORT String contextMenuItemTagWritingDirectionMenu();
     String contextMenuItemTagTextDirectionMenu();
-    String contextMenuItemTagDefaultDirection();
-    String contextMenuItemTagLeftToRight();
-    String contextMenuItemTagRightToLeft();
+    WEBCORE_EXPORT String contextMenuItemTagDefaultDirection();
+    WEBCORE_EXPORT String contextMenuItemTagLeftToRight();
+    WEBCORE_EXPORT String contextMenuItemTagRightToLeft();
 #if PLATFORM(COCOA)
     String contextMenuItemTagSearchInSpotlight();
-    String contextMenuItemTagShowFonts();
-    String contextMenuItemTagStyles();
-    String contextMenuItemTagShowColors();
-    String contextMenuItemTagSpeechMenu();
-    String contextMenuItemTagStartSpeaking();
-    String contextMenuItemTagStopSpeaking();
-    String contextMenuItemTagCorrectSpellingAutomatically();
-    String contextMenuItemTagSubstitutionsMenu();
-    String contextMenuItemTagShowSubstitutions(bool show);
-    String contextMenuItemTagSmartCopyPaste();
-    String contextMenuItemTagSmartQuotes();
-    String contextMenuItemTagSmartDashes();
-    String contextMenuItemTagSmartLinks();
-    String contextMenuItemTagTextReplacement();
-    String contextMenuItemTagTransformationsMenu();
-    String contextMenuItemTagMakeUpperCase();
-    String contextMenuItemTagMakeLowerCase();
-    String contextMenuItemTagCapitalize();
+    WEBCORE_EXPORT String contextMenuItemTagShowFonts();
+    WEBCORE_EXPORT String contextMenuItemTagStyles();
+    WEBCORE_EXPORT String contextMenuItemTagShowColors();
+    WEBCORE_EXPORT String contextMenuItemTagSpeechMenu();
+    WEBCORE_EXPORT String contextMenuItemTagStartSpeaking();
+    WEBCORE_EXPORT String contextMenuItemTagStopSpeaking();
+    WEBCORE_EXPORT String contextMenuItemTagCorrectSpellingAutomatically();
+    WEBCORE_EXPORT String contextMenuItemTagSubstitutionsMenu();
+    WEBCORE_EXPORT String contextMenuItemTagShowSubstitutions(bool show);
+    WEBCORE_EXPORT String contextMenuItemTagSmartCopyPaste();
+    WEBCORE_EXPORT String contextMenuItemTagSmartQuotes();
+    WEBCORE_EXPORT String contextMenuItemTagSmartDashes();
+    WEBCORE_EXPORT String contextMenuItemTagSmartLinks();
+    WEBCORE_EXPORT String contextMenuItemTagTextReplacement();
+    WEBCORE_EXPORT String contextMenuItemTagTransformationsMenu();
+    WEBCORE_EXPORT String contextMenuItemTagMakeUpperCase();
+    WEBCORE_EXPORT String contextMenuItemTagMakeLowerCase();
+    WEBCORE_EXPORT String contextMenuItemTagCapitalize();
     String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagOpenVideoInNewWindow();
@@ -142,7 +142,7 @@ namespace WebCore {
     String contextMenuItemTagMediaPlay();
     String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();
-    String contextMenuItemTagInspectElement();
+    WEBCORE_EXPORT String contextMenuItemTagInspectElement();
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if !PLATFORM(IOS)

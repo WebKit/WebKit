@@ -35,7 +35,7 @@ namespace SQLiteDatabaseTracker {
 void decrementTransactionInProgressCount();
 void incrementTransactionInProgressCount();
 
-void setClient(SQLiteDatabaseTrackerClient*);
+WEBCORE_EXPORT void setClient(SQLiteDatabaseTrackerClient*);
 
 #if !ASSERT_DISABLED
 bool hasTransactionInProgress();

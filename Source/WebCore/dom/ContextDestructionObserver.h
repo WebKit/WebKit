@@ -33,13 +33,13 @@ class ScriptExecutionContext;
 
 class ContextDestructionObserver {
 public:
-    explicit ContextDestructionObserver(ScriptExecutionContext*);
-    virtual void contextDestroyed();
+    WEBCORE_EXPORT explicit ContextDestructionObserver(ScriptExecutionContext*);
+    WEBCORE_EXPORT virtual void contextDestroyed();
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
 protected:
-    virtual ~ContextDestructionObserver();
+    WEBCORE_EXPORT virtual ~ContextDestructionObserver();
     void observeContext(ScriptExecutionContext*);
 
     ScriptExecutionContext* m_scriptExecutionContext;

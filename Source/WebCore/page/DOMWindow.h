@@ -124,10 +124,10 @@ namespace WebCore {
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
 
-        unsigned pendingUnloadEventListeners() const;
+        WEBCORE_EXPORT unsigned pendingUnloadEventListeners() const;
 
-        static bool dispatchAllPendingBeforeUnloadEvents();
-        static void dispatchAllPendingUnloadEvents();
+        WEBCORE_EXPORT static bool dispatchAllPendingBeforeUnloadEvents();
+        WEBCORE_EXPORT static void dispatchAllPendingUnloadEvents();
 
         static FloatRect adjustWindowRect(Page*, const FloatRect& pendingChanges);
 
@@ -160,11 +160,11 @@ namespace WebCore {
 
         void focus(ScriptExecutionContext* = 0);
         void blur();
-        void close(ScriptExecutionContext* = 0);
+        WEBCORE_EXPORT void close(ScriptExecutionContext* = 0);
         void print();
         void stop();
 
-        PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
+        WEBCORE_EXPORT PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
             DOMWindow& activeWindow, DOMWindow& firstWindow);
 
         void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction);
@@ -216,7 +216,7 @@ namespace WebCore {
 
         // DOM Level 2 AbstractView Interface
 
-        Document* document() const;
+        WEBCORE_EXPORT Document* document() const;
 
         // CSSOM View Module
 

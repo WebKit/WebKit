@@ -39,7 +39,7 @@ struct Cookie;
 
 // FIXME: These should probably be NetworkStorageSession member functions.
 
-String cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&);
+WEBCORE_EXPORT String cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&);
 void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&);
 bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&);
 String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&);

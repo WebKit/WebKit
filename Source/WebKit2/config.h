@@ -34,6 +34,9 @@
 #include <wtf/DisallowCType.h>
 #include <wtf/ExportMacros.h>
 
+// This is needed because we include WebCore's headers.
+#define WEBCORE_EXPORT
+
 #ifdef __cplusplus
 #ifndef EXTERN_C_BEGIN
 #define EXTERN_C_BEGIN extern "C" {

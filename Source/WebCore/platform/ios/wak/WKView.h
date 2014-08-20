@@ -97,33 +97,33 @@ struct _WKView {
 
 extern WKClassInfo WKViewClassInfo;
 
-WKViewRef WKViewCreateWithFrame (CGRect rect, WKViewContext *context);
+WEBCORE_EXPORT WKViewRef WKViewCreateWithFrame (CGRect rect, WKViewContext *context);
 void WKViewInitialize (WKViewRef view, CGRect rect, WKViewContext *context);
 
 void WKViewSetViewContext (WKViewRef view, WKViewContext *context);
 void WKViewGetViewContext (WKViewRef view, WKViewContext *context);
 
-CGRect WKViewGetBounds (WKViewRef view);
+WEBCORE_EXPORT CGRect WKViewGetBounds (WKViewRef view);
 
-void WKViewSetFrameOrigin (WKViewRef view, CGPoint newPoint);
-void WKViewSetFrameSize (WKViewRef view, CGSize newSize);
+WEBCORE_EXPORT void WKViewSetFrameOrigin (WKViewRef view, CGPoint newPoint);
+WEBCORE_EXPORT void WKViewSetFrameSize (WKViewRef view, CGSize newSize);
 void WKViewSetBoundsOrigin(WKViewRef view, CGPoint newOrigin);
 void WKViewSetBoundsSize (WKViewRef view, CGSize newSize);
 
-CGRect WKViewGetFrame (WKViewRef view);
+WEBCORE_EXPORT CGRect WKViewGetFrame (WKViewRef view);
 
-void WKViewSetScale (WKViewRef view, float scale);
-float WKViewGetScale (WKViewRef view);
+WEBCORE_EXPORT void WKViewSetScale (WKViewRef view, float scale);
+WEBCORE_EXPORT float WKViewGetScale (WKViewRef view);
 CGAffineTransform _WKViewGetTransform(WKViewRef view);
 
-WAKWindow *WKViewGetWindow (WKViewRef view);
+WEBCORE_EXPORT WAKWindow *WKViewGetWindow (WKViewRef view);
 
 CFArrayRef WKViewGetSubviews (WKViewRef view);
 
 WKViewRef WKViewGetSuperview (WKViewRef view);
 
-void WKViewAddSubview (WKViewRef view, WKViewRef subview);
-void WKViewRemoveFromSuperview (WKViewRef view);
+WEBCORE_EXPORT void WKViewAddSubview (WKViewRef view, WKViewRef subview);
+WEBCORE_EXPORT void WKViewRemoveFromSuperview (WKViewRef view);
 
 CGPoint WKViewConvertPointToSuperview (WKViewRef view, CGPoint aPoint);
 CGPoint WKViewConvertPointFromSuperview (WKViewRef view, CGPoint aPoint);
@@ -132,18 +132,18 @@ CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint aPoint);
 
 CGRect WKViewConvertRectToSuperview (WKViewRef view, CGRect aRect);
 CGRect WKViewConvertRectFromSuperview (WKViewRef view, CGRect aRect);
-CGRect WKViewConvertRectToBase (WKViewRef view, CGRect r);
-CGRect WKViewConvertRectFromBase (WKViewRef view, CGRect aRect);
+WEBCORE_EXPORT CGRect WKViewConvertRectToBase (WKViewRef view, CGRect r);
+WEBCORE_EXPORT CGRect WKViewConvertRectFromBase (WKViewRef view, CGRect aRect);
 
 CGRect WKViewGetVisibleRect (WKViewRef view);
 
 WKViewRef WKViewFirstChild (WKViewRef view);
 WKViewRef WKViewNextSibling (WKViewRef view);
-WKViewRef WKViewTraverseNext (WKViewRef view);
+WEBCORE_EXPORT WKViewRef WKViewTraverseNext (WKViewRef view);
 
-bool WKViewAcceptsFirstResponder (WKViewRef view);
-bool WKViewBecomeFirstResponder (WKViewRef view);
-bool WKViewResignFirstResponder (WKViewRef view);
+WEBCORE_EXPORT bool WKViewAcceptsFirstResponder (WKViewRef view);
+WEBCORE_EXPORT bool WKViewBecomeFirstResponder (WKViewRef view);
+WEBCORE_EXPORT bool WKViewResignFirstResponder (WKViewRef view);
 
 unsigned int WKViewGetAutoresizingMask(WKViewRef view);
 void WKViewSetAutoresizingMask (WKViewRef view, unsigned int mask);

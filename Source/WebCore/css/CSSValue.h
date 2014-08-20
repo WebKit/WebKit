@@ -207,7 +207,7 @@ protected:
     ~CSSValue() { }
 
 private:
-    void destroy();
+    WEBCORE_EXPORT void destroy();
 
 protected:
     unsigned m_isCSSOMSafe : 1;

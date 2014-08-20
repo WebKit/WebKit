@@ -41,11 +41,11 @@ class AlternativeTextUIController {
 public:
     AlternativeTextUIController() { }
     // Returns a context ID.
-    uint64_t addAlternatives(const RetainPtr<NSTextAlternatives>&);
-    void clear();
-    void showAlternatives(NSView*, const FloatRect& boundingBoxOfPrimaryString, uint64_t context, void(^acceptanceHandler)(NSString*));
-    void removeAlternatives(uint64_t context);
-    Vector<String> alternativesForContext(uint64_t context);
+    WEBCORE_EXPORT uint64_t addAlternatives(const RetainPtr<NSTextAlternatives>&);
+    WEBCORE_EXPORT void clear();
+    WEBCORE_EXPORT void showAlternatives(NSView*, const FloatRect& boundingBoxOfPrimaryString, uint64_t context, void(^acceptanceHandler)(NSString*));
+    void WEBCORE_EXPORT removeAlternatives(uint64_t context);
+    WEBCORE_EXPORT Vector<String> alternativesForContext(uint64_t context);
 
 private:
     void handleAcceptedAlternative(NSString* acceptedAlternative, uint64_t context, NSTextAlternatives*);

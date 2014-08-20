@@ -147,14 +147,14 @@ public:
     void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
-    HitTestResult hitTestResultAtPoint(const LayoutPoint&,
+    WEBCORE_EXPORT HitTestResult hitTestResultAtPoint(const LayoutPoint&,
         HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent,
         const LayoutSize& padding = LayoutSize());
 
     bool mousePressed() const { return m_mousePressed; }
     Node* mousePressNode() const { return m_mousePressNode.get(); }
 
-    void setCapturingMouseEventsElement(PassRefPtr<Element>); // A caller is responsible for resetting capturing element to 0.
+    WEBCORE_EXPORT void setCapturingMouseEventsElement(PassRefPtr<Element>); // A caller is responsible for resetting capturing element to 0.
 
 #if ENABLE(DRAG_SUPPORT)
     bool updateDragAndDrop(const PlatformMouseEvent&, DataTransfer*);
@@ -178,22 +178,22 @@ public:
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
-    bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
-    bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
-    bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
+    WEBCORE_EXPORT bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
+    WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
+    WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
 
     bool tabsToLinks(KeyboardEvent*) const;
     bool tabsToAllFormControls(KeyboardEvent*) const;
 
     bool mouseMoved(const PlatformMouseEvent&);
-    bool passMouseMovedEventToScrollbars(const PlatformMouseEvent&);
+    WEBCORE_EXPORT bool passMouseMovedEventToScrollbars(const PlatformMouseEvent&);
 
     void lostMouseCapture();
 
     bool handleMousePressEvent(const PlatformMouseEvent&);
     bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* hoveredNode = 0, bool onlyUpdateScrollbars = false);
     bool handleMouseReleaseEvent(const PlatformMouseEvent&);
-    bool handleWheelEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
     void defaultWheelEventHandler(Node*, WheelEvent*);
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
 
@@ -221,7 +221,7 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-    bool sendContextMenuEvent(const PlatformMouseEvent&);
+    WEBCORE_EXPORT bool sendContextMenuEvent(const PlatformMouseEvent&);
     bool sendContextMenuEventForKey();
 #endif
 
@@ -230,41 +230,41 @@ public:
     bool needsKeyboardEventDisambiguationQuirks() const;
 
     static unsigned accessKeyModifiers();
-    bool handleAccessKey(const PlatformKeyboardEvent&);
-    bool keyEvent(const PlatformKeyboardEvent&);
+    WEBCORE_EXPORT bool handleAccessKey(const PlatformKeyboardEvent&);
+    WEBCORE_EXPORT bool keyEvent(const PlatformKeyboardEvent&);
     void defaultKeyboardEventHandler(KeyboardEvent*);
 
-    void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent*);
+    WEBCORE_EXPORT void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent*);
 
     bool handleTextInputEvent(const String& text, Event* underlyingEvent = 0, TextEventInputType = TextEventInputKeyboard);
     void defaultTextInputEventHandler(TextEvent*);
 
 #if ENABLE(DRAG_SUPPORT)
-    bool eventMayStartDrag(const PlatformMouseEvent&) const;
+    WEBCORE_EXPORT bool eventMayStartDrag(const PlatformMouseEvent&) const;
     
-    void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
+    WEBCORE_EXPORT void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
 #endif
 
     void focusDocumentView();
 
     void capsLockStateMayHaveChanged(); // Only called by FrameSelection
     
-    void sendScrollEvent(); // Ditto
+    WEBCORE_EXPORT void sendScrollEvent(); // Ditto
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
 #if !PLATFORM(IOS)
-    void mouseDown(NSEvent *);
-    void mouseDragged(NSEvent *);
-    void mouseUp(NSEvent *);
-    void mouseMoved(NSEvent *);
-    bool keyEvent(NSEvent *);
-    bool wheelEvent(NSEvent *);
+    WEBCORE_EXPORT void mouseDown(NSEvent *);
+    WEBCORE_EXPORT void mouseDragged(NSEvent *);
+    WEBCORE_EXPORT void mouseUp(NSEvent *);
+    WEBCORE_EXPORT void mouseMoved(NSEvent *);
+    WEBCORE_EXPORT bool keyEvent(NSEvent *);
+    WEBCORE_EXPORT bool wheelEvent(NSEvent *);
 #else
-    void mouseDown(WebEvent *);
-    void mouseUp(WebEvent *);
-    void mouseMoved(WebEvent *);
-    bool keyEvent(WebEvent *);
-    bool wheelEvent(WebEvent *);
+    WEBCORE_EXPORT void mouseDown(WebEvent *);
+    WEBCORE_EXPORT void mouseUp(WebEvent *);
+    WEBCORE_EXPORT void mouseMoved(WebEvent *);
+    WEBCORE_EXPORT bool keyEvent(WebEvent *);
+    WEBCORE_EXPORT bool wheelEvent(WebEvent *);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -272,15 +272,15 @@ public:
 #endif
 
 #if !PLATFORM(IOS)
-    void passMouseMovedEventToScrollbars(NSEvent *);
+    WEBCORE_EXPORT void passMouseMovedEventToScrollbars(NSEvent *);
 
-    void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
+    WEBCORE_EXPORT void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
 #endif
 
 #if !PLATFORM(IOS)
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
 
-    static NSEvent *currentNSEvent();
+    WEBCORE_EXPORT static NSEvent *currentNSEvent();
 #else
     static WebEvent *currentEvent();
 #endif // !PLATFORM(IOS)
@@ -291,7 +291,7 @@ public:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    bool handleTouchEvent(const PlatformTouchEvent&);
+    WEBCORE_EXPORT bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
@@ -315,14 +315,14 @@ private:
 
     bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);
 
-    bool handleMousePressEvent(const MouseEventWithHitTestResults&);
+    WEBCORE_EXPORT bool handleMousePressEvent(const MouseEventWithHitTestResults&);
     bool handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&);
 #endif
-    bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
+    WEBCORE_EXPORT bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
     OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
 

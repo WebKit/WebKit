@@ -60,7 +60,7 @@ public:
     static bool canHandleResponse(const ResourceResponse&);
 
     explicit ContentFilter(const ResourceResponse&);
-    ~ContentFilter();
+    WEBCORE_EXPORT ~ContentFilter();
 
     void addData(const char* data, int length);
     void finishedAddingData();
@@ -69,13 +69,13 @@ public:
     const char* getReplacementData(int& length) const;
 
 #if PLATFORM(COCOA)
-    ContentFilter();
-    void encode(NSKeyedArchiver *) const;
-    static bool decode(NSKeyedUnarchiver *, ContentFilter&);
+    WEBCORE_EXPORT ContentFilter();
+    WEBCORE_EXPORT void encode(NSKeyedArchiver *) const;
+    WEBCORE_EXPORT static bool decode(NSKeyedUnarchiver *, ContentFilter&);
 #endif
 
 #if PLATFORM(IOS)
-    bool handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest&, std::function<void()>);
+    WEBCORE_EXPORT bool handleUnblockRequestAndDispatchIfSuccessful(const ResourceRequest&, std::function<void()>);
 #endif
 
 private:

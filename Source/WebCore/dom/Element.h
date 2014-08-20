@@ -142,9 +142,9 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenerror);
 #endif
 
-    bool hasAttribute(const QualifiedName&) const;
-    const AtomicString& getAttribute(const QualifiedName&) const;
-    void setAttribute(const QualifiedName&, const AtomicString& value);
+    WEBCORE_EXPORT bool hasAttribute(const QualifiedName&) const;
+    WEBCORE_EXPORT const AtomicString& getAttribute(const QualifiedName&) const;
+    WEBCORE_EXPORT void setAttribute(const QualifiedName&, const AtomicString& value);
     void setAttributeWithoutSynchronization(const QualifiedName&, const AtomicString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomicString& value);
     bool removeAttribute(const QualifiedName&);
@@ -160,7 +160,7 @@ public:
     bool fastHasAttribute(const QualifiedName&) const;
     const AtomicString& fastGetAttribute(const QualifiedName&) const;
 #ifndef NDEBUG
-    bool fastAttributeLookupAllowed(const QualifiedName&) const;
+    WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
 
 #ifdef DUMP_NODE_STATISTICS
@@ -174,10 +174,10 @@ public:
     bool hasAttribute(const AtomicString& name) const;
     bool hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
-    const AtomicString& getAttribute(const AtomicString& name) const;
+    WEBCORE_EXPORT const AtomicString& getAttribute(const AtomicString& name) const;
     const AtomicString& getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
-    void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
+    WEBCORE_EXPORT void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
     static bool parseAttributeName(QualifiedName&, const AtomicString& namespaceURI, const AtomicString& qualifiedName, ExceptionCode&);
     void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&);
 
@@ -227,15 +227,15 @@ public:
     virtual int scrollWidth();
     virtual int scrollHeight();
 
-    IntRect boundsInRootViewSpace();
+    WEBCORE_EXPORT IntRect boundsInRootViewSpace();
 
     PassRefPtr<ClientRectList> getClientRects();
     PassRefPtr<ClientRect> getBoundingClientRect();
     
     // Returns the absolute bounding box translated into client coordinates.
-    IntRect clientRect() const;
+    WEBCORE_EXPORT IntRect clientRect() const;
     // Returns the absolute bounding box translated into screen coordinates.
-    IntRect screenRect() const;
+    WEBCORE_EXPORT IntRect screenRect() const;
 
     bool removeAttribute(const AtomicString& name);
     bool removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
@@ -324,8 +324,8 @@ public:
     virtual bool rendererIsNeeded(const RenderStyle&);
     void didAffectSelector(AffectedSelectorMask);
 
-    ShadowRoot* shadowRoot() const;
-    PassRefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
+    WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
+    WEBCORE_EXPORT PassRefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
 
     ShadowRoot* userAgentShadowRoot() const;
     ShadowRoot& ensureUserAgentShadowRoot();
@@ -397,7 +397,7 @@ public:
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
-    URL getURLAttribute(const QualifiedName&) const;
+    WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;
     URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
     virtual const AtomicString& imageSourceURL() const;
@@ -408,13 +408,13 @@ public:
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void blur();
 
-    String innerText();
+    WEBCORE_EXPORT String innerText();
     String outerText();
  
     virtual String title() const;
 
     const AtomicString& pseudo() const;
-    void setPseudo(const AtomicString&);
+    WEBCORE_EXPORT void setPseudo(const AtomicString&);
 
     LayoutSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const LayoutSize&);
@@ -443,8 +443,8 @@ public:
     virtual void finishParsingChildren() override;
     virtual void beginParsingChildren() override final;
 
-    PseudoElement* beforePseudoElement() const;
-    PseudoElement* afterPseudoElement() const;
+    WEBCORE_EXPORT PseudoElement* beforePseudoElement() const;
+    WEBCORE_EXPORT PseudoElement* afterPseudoElement() const;
     bool childNeedsShadowWalker() const;
     void didShadowTreeAwareChildrenChange();
 
@@ -501,7 +501,7 @@ public:
     };
     
     void webkitRequestFullScreen(unsigned short flags);
-    bool containsFullScreenElement() const;
+    WEBCORE_EXPORT bool containsFullScreenElement() const;
     void setContainsFullScreenElement(bool);
     void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
 
@@ -563,7 +563,7 @@ public:
     void clearStyleDerivedDataBeforeDetachingRenderer();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
-    URL absoluteLinkURL() const;
+    WEBCORE_EXPORT URL absoluteLinkURL() const;
 
 protected:
     Element(const QualifiedName& tagName, Document& document, ConstructionType type)

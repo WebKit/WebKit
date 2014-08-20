@@ -1,3 +1,13 @@
+2014-08-20  Alex Christensen  <achristensen@webkit.org>
+
+        Introducing WEBCORE_EXPORT macro.
+        https://bugs.webkit.org/show_bug.cgi?id=136108
+
+        Reviewed by Antti Koivisto.
+
+        * config.h:
+        Added stub definition of WEBCORE_EXPORT defined to nothing to be able to compile with WebCore headers.
+
 2014-08-20  Pratik Solanki  <psolanki@apple.com>
 
         Move DiskCacheMonitor to WebCore so that WebKit1 clients can use it as well

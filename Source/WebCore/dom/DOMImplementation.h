@@ -68,8 +68,8 @@ public:
     // Other methods (not part of DOM)
     static PassRefPtr<Document> createDocument(const String& MIMEType, Frame*, const URL&);
 
-    static bool isXMLMIMEType(const String& MIMEType);
-    static bool isTextMIMEType(const String& MIMEType);
+    WEBCORE_EXPORT static bool isXMLMIMEType(const String& MIMEType);
+    WEBCORE_EXPORT static bool isTextMIMEType(const String& MIMEType);
 
 private:
     Document& m_document;

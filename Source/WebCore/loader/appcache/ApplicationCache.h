@@ -48,7 +48,7 @@ class ApplicationCache : public RefCounted<ApplicationCache> {
 public:
     static PassRefPtr<ApplicationCache> create() { return adoptRef(new ApplicationCache); }
     
-    static void deleteCacheForOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT static void deleteCacheForOrigin(SecurityOrigin*);
     
     ~ApplicationCache();
 
@@ -89,7 +89,7 @@ public:
     
     static bool requestIsHTTPOrHTTPSGet(const ResourceRequest&);
 
-    static int64_t diskUsageForOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT static int64_t diskUsageForOrigin(SecurityOrigin*);
     
     int64_t estimatedSizeInStorage() const { return m_estimatedSizeInStorage; }
 

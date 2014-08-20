@@ -31,10 +31,10 @@ namespace WebCore {
 class DisplaySleepDisabler {
 public:
     static std::unique_ptr<DisplaySleepDisabler> create(const char*);
-    virtual ~DisplaySleepDisabler();
+    WEBCORE_EXPORT virtual ~DisplaySleepDisabler();
 
 protected:
-    DisplaySleepDisabler(const char*);
+    WEBCORE_EXPORT DisplaySleepDisabler(const char*);
 };
 
 }

@@ -26,24 +26,24 @@
 #import "config.h"
 #import "WebCoreSystemInterface.h"
 
-void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
-BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
-CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-void (*wkCGContextResetClip)(CGContextRef); 
-CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
-void (*wkClearGlyphVector)(void* glyphs);
-OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
-NSString* (*wkGetMIMETypeForExtension)(NSString*);
-NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
-void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
-void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
-CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
-bool (*wkCGContextIsPDFContext)(CGContextRef);
-void (*wkSetUpFontCache)();
-void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
-void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
-void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
-CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 
+WEBCORE_EXPORT void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
+WEBCORE_EXPORT BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
+WEBCORE_EXPORT CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
+WEBCORE_EXPORT void (*wkCGContextResetClip)(CGContextRef);
+WEBCORE_EXPORT CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
+WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
+WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
+WEBCORE_EXPORT NSString* (*wkGetMIMETypeForExtension)(NSString*);
+WEBCORE_EXPORT NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
+WEBCORE_EXPORT void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
+WEBCORE_EXPORT void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
+WEBCORE_EXPORT CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
+WEBCORE_EXPORT bool (*wkCGContextIsPDFContext)(CGContextRef);
+WEBCORE_EXPORT void (*wkSetUpFontCache)();
+WEBCORE_EXPORT void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
+WEBCORE_EXPORT void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
+WEBCORE_EXPORT void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
+WEBCORE_EXPORT CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *),
     void (*formFinalize)(CFReadStreamRef, void *), 
     Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
     CFIndex (*formRead)(CFReadStreamRef, UInt8 *, CFIndex, CFStreamError *, Boolean *, void *), 
@@ -52,104 +52,104 @@ CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRe
     void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
     void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
     void *context);
-NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
-void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
-void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
-id (*wkCreateNSURLConnectionDelegateProxy)(void);
-unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
-int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
-void (*wkSetHTTPRequestMaximumPriority)(int priority);
-void (*wkSetHTTPRequestPriority)(CFURLRequestRef, int priority);
-void (*wkSetHTTPRequestMinimumFastLanePriority)(int priority);
-void (*wkHTTPRequestEnablePipelining)(CFURLRequestRef);
-void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
-void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
-void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
-CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
-bool (*wkExecutableWasLinkedOnOrAfterIOSVersion)(int);
-int (*wkGetDeviceClass)(void);
-CGSize (*wkGetScreenSize)(void);
-CGSize (*wkGetAvailableScreenSize)(void);
-void (*wkSetLayerContentsScale)(CALayer *);
-float (*wkGetScreenScaleFactor)(void);
-bool (*wkIsGB18030ComplianceRequired)(void);
-void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight); 
-void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
-CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
-CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
+WEBCORE_EXPORT NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
+WEBCORE_EXPORT void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
+WEBCORE_EXPORT void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
+WEBCORE_EXPORT id (*wkCreateNSURLConnectionDelegateProxy)(void);
+WEBCORE_EXPORT unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
+WEBCORE_EXPORT int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
+WEBCORE_EXPORT void (*wkSetHTTPRequestMaximumPriority)(int priority);
+WEBCORE_EXPORT void (*wkSetHTTPRequestPriority)(CFURLRequestRef, int priority);
+WEBCORE_EXPORT void (*wkSetHTTPRequestMinimumFastLanePriority)(int priority);
+WEBCORE_EXPORT void (*wkHTTPRequestEnablePipelining)(CFURLRequestRef);
+WEBCORE_EXPORT void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
+WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
+WEBCORE_EXPORT void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
+WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
+WEBCORE_EXPORT bool (*wkExecutableWasLinkedOnOrAfterIOSVersion)(int);
+WEBCORE_EXPORT int (*wkGetDeviceClass)(void);
+WEBCORE_EXPORT CGSize (*wkGetScreenSize)(void);
+WEBCORE_EXPORT CGSize (*wkGetAvailableScreenSize)(void);
+WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
+WEBCORE_EXPORT float (*wkGetScreenScaleFactor)(void);
+WEBCORE_EXPORT bool (*wkIsGB18030ComplianceRequired)(void);
+WEBCORE_EXPORT void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
+WEBCORE_EXPORT void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
+WEBCORE_EXPORT CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
+WEBCORE_EXPORT CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 
 #if USE(CFNETWORK)
-CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
-WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);
-void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRef, bool);
-void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
+WEBCORE_EXPORT CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
+WEBCORE_EXPORT WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);
+WEBCORE_EXPORT void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRef, bool);
+WEBCORE_EXPORT void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
 #endif
 
-bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], size_t);
-CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, wkCTFontTransformOptions options);
+WEBCORE_EXPORT bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], size_t);
+WEBCORE_EXPORT CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
+WEBCORE_EXPORT bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, wkCTFontTransformOptions options);
 
-CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
+WEBCORE_EXPORT CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
 
-CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
+WEBCORE_EXPORT CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 #if !PLATFORM(IOS_SIMULATOR)
-CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
-CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
+WEBCORE_EXPORT CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
+WEBCORE_EXPORT CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 #endif // !PLATFORM(IOS_SIMULATOR)
 
 #if PLATFORM(IOS_SIMULATOR)
-void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
+WEBCORE_EXPORT void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 #endif
 
-CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
-NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
-CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
-unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
-void (*wkSetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef, unsigned);
-NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
-NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *, NSURL *);
-void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
-void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
-void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
+WEBCORE_EXPORT CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
+WEBCORE_EXPORT NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
+WEBCORE_EXPORT CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
+WEBCORE_EXPORT unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
+WEBCORE_EXPORT void (*wkSetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef, unsigned);
+WEBCORE_EXPORT NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
+WEBCORE_EXPORT NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *, NSURL *);
+WEBCORE_EXPORT void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
+WEBCORE_EXPORT void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
+WEBCORE_EXPORT void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
 
-CFStringRef (*wkGetCFURLResponseMIMEType)(CFURLResponseRef);
-CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
-CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
-CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
-void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
+WEBCORE_EXPORT CFStringRef (*wkGetCFURLResponseMIMEType)(CFURLResponseRef);
+WEBCORE_EXPORT CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
+WEBCORE_EXPORT CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
+WEBCORE_EXPORT CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
+WEBCORE_EXPORT void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 
-void(*wkDestroyRenderingResources)(void);
+WEBCORE_EXPORT void(*wkDestroyRenderingResources)(void);
 
-bool (*wkCaptionAppearanceHasUserPreferences)(void);
-bool (*wkCaptionAppearanceShowCaptionsWhenAvailable)(void);
-CGColorRef(*wkCaptionAppearanceCopyForegroundColor)(void);
-CGColorRef(*wkCaptionAppearanceCopyBackgroundColor)(void);
-CGColorRef(*wkCaptionAppearanceCopyWindowColor)(void);
-bool(*wkCaptionAppearanceGetForegroundOpacity)(CGFloat*);
-bool(*wkCaptionAppearanceGetBackgroundOpacity)(CGFloat*);
-bool(*wkCaptionAppearanceGetWindowOpacity)(CGFloat*);
-CGFontRef(*wkCaptionAppearanceCopyFontForStyle)(int);
-bool(*wkCaptionAppearanceGetRelativeCharacterSize)(CGFloat*);
-int(*wkCaptionAppearanceGetTextEdgeStyle)(void);
-CFStringRef(*wkCaptionAppearanceGetSettingsChangedNotification)(void);
+WEBCORE_EXPORT bool (*wkCaptionAppearanceHasUserPreferences)(void);
+WEBCORE_EXPORT bool (*wkCaptionAppearanceShowCaptionsWhenAvailable)(void);
+WEBCORE_EXPORT CGColorRef(*wkCaptionAppearanceCopyForegroundColor)(void);
+WEBCORE_EXPORT CGColorRef(*wkCaptionAppearanceCopyBackgroundColor)(void);
+WEBCORE_EXPORT CGColorRef(*wkCaptionAppearanceCopyWindowColor)(void);
+WEBCORE_EXPORT bool(*wkCaptionAppearanceGetForegroundOpacity)(CGFloat*);
+WEBCORE_EXPORT bool(*wkCaptionAppearanceGetBackgroundOpacity)(CGFloat*);
+WEBCORE_EXPORT bool(*wkCaptionAppearanceGetWindowOpacity)(CGFloat*);
+WEBCORE_EXPORT CGFontRef(*wkCaptionAppearanceCopyFontForStyle)(int);
+WEBCORE_EXPORT bool(*wkCaptionAppearanceGetRelativeCharacterSize)(CGFloat*);
+WEBCORE_EXPORT int(*wkCaptionAppearanceGetTextEdgeStyle)(void);
+WEBCORE_EXPORT CFStringRef(*wkCaptionAppearanceGetSettingsChangedNotification)(void);
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-bool (*wkIsPublicSuffix)(NSString *host);
+WEBCORE_EXPORT bool (*wkIsPublicSuffix)(NSString *host);
 #endif
 
 #if ENABLE(CACHE_PARTITIONING)
-CFStringRef (*wkCachePartitionKey)(void);
+WEBCORE_EXPORT CFStringRef (*wkCachePartitionKey)(void);
 #endif
 
-CFStringRef (*wkGetUserAgent)(void);
-CFStringRef (*wkGetDeviceName)(void);
-CFStringRef (*wkGetOSNameForUserAgent)(void);
-CFStringRef (*wkGetPlatformNameForNavigator)(void);
-CFStringRef (*wkGetVendorNameForNavigator)(void);
+WEBCORE_EXPORT CFStringRef (*wkGetUserAgent)(void);
+WEBCORE_EXPORT CFStringRef (*wkGetDeviceName)(void);
+WEBCORE_EXPORT CFStringRef (*wkGetOSNameForUserAgent)(void);
+WEBCORE_EXPORT CFStringRef (*wkGetPlatformNameForNavigator)(void);
+WEBCORE_EXPORT CFStringRef (*wkGetVendorNameForNavigator)(void);
 
-int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
-NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
+WEBCORE_EXPORT int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
+WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
 
-bool (*wkQueryDecoderAvailability)(void);
+WEBCORE_EXPORT bool (*wkQueryDecoderAvailability)(void);
 
