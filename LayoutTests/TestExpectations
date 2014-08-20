@@ -164,3 +164,8 @@ webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-016.html [ ImageOnly
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-017.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-018.html [ ImageOnlyFailure ]
 webkit.org/b/135927 css3/shapes/spec-examples/shape-outside-019.html [ ImageOnlyFailure ]
+
+# border painting diff (Path vs. drawLine)
+webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]
+webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure ]
