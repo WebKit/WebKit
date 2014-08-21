@@ -30,6 +30,7 @@
 import os
 import subprocess
 import uuid
+import logging
 
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -41,6 +42,7 @@ from webkitpy.port.xorgdriver import XorgDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
+_log = logging.getLogger(__name__)
 
 class GtkPort(Port):
     port_name = "gtk"
@@ -54,7 +56,7 @@ class GtkPort(Port):
             if not self.get_option("wrapper"):
                 raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
 
-        if os.path.exists(self.path_from_webkit_base('WebKitBuild', 'Dependencies')):
+        if self._should_use_jhbuild():
             self._jhbuild_wrapper = [self.path_from_webkit_base('Tools', 'jhbuild', 'jhbuild-wrapper'), '--gtk', 'run']
             if self.get_option('wrapper'):
                 self.set_option('wrapper', ' '.join(self._jhbuild_wrapper) + ' ' + self.get_option('wrapper'))
@@ -113,6 +115,16 @@ class GtkPort(Port):
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
+        if self._driver_class() == XvfbDriver and self._should_use_jhbuild():
+            llvmpipe_libgl_path = self.host.executive.run_command(self._jhbuild_wrapper + ['printenv', 'LLVMPIPE_LIBGL_PATH'],
+                                                                  error_handler=self.host.executive.ignore_error).strip()
+            if os.path.exists(os.path.join(llvmpipe_libgl_path, "libGL.so")):
+                    # Force the Gallium llvmpipe software rasterizer
+                    environment['LD_LIBRARY_PATH'] = llvmpipe_libgl_path
+                    if os.environ.get('LD_LIBRARY_PATH'):
+                            environment['LD_LIBRARY_PATH'] += ':%s' % os.environ.get('LD_LIBRARY_PATH')
+            else:
+                    _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs")
         if self.get_option("leaks"):
             #  Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
             environment['G_SLICE'] = 'always-malloc'

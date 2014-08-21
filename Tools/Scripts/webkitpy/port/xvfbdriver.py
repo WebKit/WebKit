@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2014 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -41,7 +42,10 @@ _log = logging.getLogger(__name__)
 class XvfbDriver(Driver):
     @staticmethod
     def check_driver(port):
-        xvfb_found = port.host.executive.run_command(['which', 'Xvfb'], return_exit_code=True) is 0
+        xvfb_findcmd = ['which', 'Xvfb']
+        if port._should_use_jhbuild():
+                xvfb_findcmd = port._jhbuild_wrapper + xvfb_findcmd
+        xvfb_found = port.host.executive.run_command(xvfb_findcmd, return_exit_code=True) is 0
         if not xvfb_found:
             _log.error("No Xvfb found. Cannot run layout tests.")
         return xvfb_found
@@ -80,13 +84,13 @@ class XvfbDriver(Driver):
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
 
-        llvmpipe_libgl_path = os.environ.get('LLVMPIPE_LIBGL_PATH')
-        if llvmpipe_libgl_path:
-            environment['LD_LIBRARY_PATH'] = '%s:%s' % (llvmpipe_libgl_path, os.environ.get('LD_LIBRARY_PATH', ''))
-
         run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "1024x768x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
+
+        if self._port._should_use_jhbuild():
+                run_xvfb = self._port._jhbuild_wrapper + run_xvfb
+
         with open(os.devnull, 'w') as devnull:
-            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull)
+            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment)
 
         # Crashes intend to occur occasionally in the first few tests that are run through each
         # worker because the Xvfb display isn't ready yet. Halting execution a bit should avoid that.

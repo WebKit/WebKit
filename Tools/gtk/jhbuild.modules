@@ -335,8 +335,10 @@
   </autotools>
 
   <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri --with-gallium-drivers=swrast" skip-install="true">
+    <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
+          we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
     <branch module="/pub/mesa/10.2.1/MesaLib-10.2.1.tar.bz2" version="10.2.1"
-            checkoutdir="Mesa-10.2.1"
+            checkoutdir="Mesa"
             repo="ftp.freedesktop.org"
             hash="sha256:461277909207da689d8152cfbf9e182ea6f70e1e672ab64c67df83725c8d2b54"/>
   </autotools>

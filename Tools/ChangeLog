@@ -1,3 +1,37 @@
+2014-08-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Load the llvmpipe (Mesa) libraries when running the tests with Xvfb.
+        https://bugs.webkit.org/show_bug.cgi?id=134070
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Set default _jhbuild_wrapper variable.
+        (Port._should_use_jhbuild): Implement generic check.
+        * Scripts/webkitpy/port/efl.py: Rename to jhbuild_wrapper variable
+        to make it consistent with the other ports.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__): Use the new _should_use_jhbuild() method.
+        (GtkPort.setup_environ_for_server): Get the path for llvmpipe_libgl_path by
+        querying the jhbuild with printenv. Also check that the path contains
+        the libraries we expect. Preload this path only for XvfbDriver.
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver.check_driver): Check for the jhbuild wrapper and use it.
+        (XvfbDriver._start): The environment for llvmpipe_libgl_path is now
+        configured at setup_environ_for_server()
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.make_driver): Get the port default environment.
+        (XvfbDriverTest.test_start_no_pixel_tests): The expected log now
+        should include the environment that is passed when running Xvfb.
+        (XvfbDriverTest.test_start_pixel_tests): Ditto.
+        (XvfbDriverTest.test_start_arbitrary_worker_number): Ditto.
+        (XvfbDriverTest.test_start_next_worker): Ditto.
+        * gtk/jhbuild.modules: Rename checkoutdir to generic "Mesa" to
+        prevent future problems when the version is raised. Add also a
+        comment with a warning.
+        * gtk/jhbuildrc: The path LLVMPIPE_LIBGL_PATH should be the one
+        that has the llvm optimized Gallium libGL libraries.
+
 2014-08-21  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Fix countFailures of RunLLINTCLoopTests and Run32bitJSCTests.
