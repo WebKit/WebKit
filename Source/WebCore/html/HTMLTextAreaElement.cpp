@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010, 2014 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -345,7 +345,7 @@ void HTMLTextAreaElement::updateValue() const
     const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
     m_isDirty = true;
     m_wasModifiedByUser = true;
-    const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility(false);
+    const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility();
 }
 
 String HTMLTextAreaElement::value() const
@@ -385,7 +385,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
     m_value = normalizedValue;
     setInnerTextValue(m_value);
     setLastChangeWasNotUserEdit();
-    updatePlaceholderVisibility(false);
+    updatePlaceholderVisibility();
     setNeedsStyleRecalc();
     setFormControlValueMatchesRenderer(true);
 
@@ -539,6 +539,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         RefPtr<HTMLDivElement> placeholder = HTMLDivElement::create(document());
         m_placeholder = placeholder.get();
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
+        m_placeholder->setInlineStyleProperty(CSSPropertyDisplay, isPlaceholderVisible() ? CSSValueBlock : CSSValueNone, true);
         userAgentShadowRoot()->insertBefore(m_placeholder, innerTextElement()->nextSibling());
     }
     m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);

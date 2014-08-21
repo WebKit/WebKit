@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2014 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -38,6 +38,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
+#include "Page.h"
 #include "RenderBlockFlow.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -55,10 +56,11 @@ static Position positionForIndex(TextControlInnerTextElement*, unsigned);
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, document, form)
-    , m_lastChangeWasUserEdit(false)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
     , m_cachedSelectionDirection(SelectionHasNoDirection)
+    , m_lastChangeWasUserEdit(false)
+    , m_isPlaceholderVisible(false)
 {
 }
 
@@ -88,7 +90,7 @@ Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(Cont
 void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection direction)
 {
     if (supportsPlaceholder())
-        updatePlaceholderVisibility(false);
+        updatePlaceholderVisibility();
     handleFocusEvent(oldFocusedElement.get(), direction);
     HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedElement, direction);
 }
@@ -96,7 +98,7 @@ void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Element> oldFocus
 void HTMLTextFormControlElement::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
 {
     if (supportsPlaceholder())
-        updatePlaceholderVisibility(false);
+        updatePlaceholderVisibility();
     handleBlurEvent();
     HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedElement);
 }
@@ -147,23 +149,26 @@ bool HTMLTextFormControlElement::isPlaceholderEmpty() const
 
 bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
+    // This function is used by the style resolver to match the :placeholder-shown pseudo class.
+    // Since it is used for styling, it must not use any value depending on the style.
     return supportsPlaceholder()
         && isEmptyValue()
         && !isPlaceholderEmpty()
-        && (document().focusedElement() != this || (renderer() && renderer()->theme().shouldShowPlaceholderWhenFocused()))
-        && (!renderer() || renderer()->style().visibility() == VISIBLE);
+        && (document().focusedElement() != this || (document().page()->theme().shouldShowPlaceholderWhenFocused()));
 }
 
-void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderValueChanged)
+void HTMLTextFormControlElement::updatePlaceholderVisibility()
 {
-    if (!supportsPlaceholder())
+    bool placeHolderWasVisible = m_isPlaceholderVisible;
+    m_isPlaceholderVisible = placeholderShouldBeVisible();
+
+    if (placeHolderWasVisible == m_isPlaceholderVisible)
         return;
-    if (!placeholderElement() || placeholderValueChanged)
-        updatePlaceholderText();
-    HTMLElement* placeholder = placeholderElement();
-    if (!placeholder)
-        return;
-    placeholder->setInlineStyleProperty(CSSPropertyVisibility, placeholderShouldBeVisible() ? CSSValueVisible : CSSValueHidden);
+
+    setNeedsStyleRecalc();
+
+    if (HTMLElement* placeholder = placeholderElement())
+        placeholder->setInlineStyleProperty(CSSPropertyDisplay, m_isPlaceholderVisible ? CSSValueBlock : CSSValueNone, true);
 }
 
 void HTMLTextFormControlElement::setSelectionStart(int start)
@@ -396,7 +401,7 @@ const AtomicString& HTMLTextFormControlElement::selectionDirection() const
     if (!isTextFormControl())
         return directionString(SelectionHasNoDirection);
     if (document().focusedElement() != this && hasCachedSelection())
-        return directionString(m_cachedSelectionDirection);
+        return directionString(cachedSelectionDirection());
 
     return directionString(computeSelectionDirection());
 }
@@ -466,7 +471,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
 
 void HTMLTextFormControlElement::restoreCachedSelection()
 {
-    setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd, m_cachedSelectionDirection);
+    setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd, cachedSelectionDirection());
 }
 
 void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
@@ -484,9 +489,10 @@ void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
 
 void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == placeholderAttr)
-        updatePlaceholderVisibility(true);
-    else
+    if (name == placeholderAttr) {
+        updatePlaceholderText();
+        updatePlaceholderVisibility();
+    } else
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
@@ -626,19 +632,14 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
 #if PLATFORM(IOS)
 void HTMLTextFormControlElement::hidePlaceholder()
 {
-    if (!supportsPlaceholder())
-        return;
-    HTMLElement* placeholder = placeholderElement();
-    if (!placeholder) {
-        updatePlaceholderText();
-        return;
-    }
-    placeholder->setInlineStyleProperty(CSSPropertyVisibility, ASCIILiteral("hidden"));
+    if (HTMLElement* placeholder = placeholderElement())
+        placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, true);
 }
 
 void HTMLTextFormControlElement::showPlaceholderIfNecessary()
 {
-    updatePlaceholderVisibility(false);
+    if (HTMLElement* placeholder = placeholderElement())
+        placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueVisible, true);
 }
 #endif
 

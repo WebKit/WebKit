@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -106,6 +106,9 @@ namespace WebCore {
             PseudoClassDefault,
             PseudoClassDisabled,
             PseudoClassOptional,
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            PseudoClassPlaceholderShown,
+#endif
             PseudoClassRequired,
             PseudoClassReadOnly,
             PseudoClassReadWrite,

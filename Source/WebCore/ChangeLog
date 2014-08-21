@@ -1,3 +1,82 @@
+2014-08-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSS: Implement the :placeholder-shown pseudo-class from Selectors Level 4
+        https://bugs.webkit.org/show_bug.cgi?id=118162
+
+        Reviewed by Antti Koivisto.
+
+        Previously, HTMLTextFormControlElement was using some mix of its own state
+        and style to change the visibility of the placeholder. That approach was a little
+        bit too fragile, and we do not want the style to depends on the renderer() since
+        that creates circular dependencies.
+
+        The biggest change here is refactoring HTMLTextFormControlElement to have
+        1) An explicit "visible placeholder" state.
+        2) Separate the textUpdate() from the visibilityUpdate().
+        3) Remove the dependencies between the Element's style and the placeholder's style.
+           This is done by simply using display:none; on the placeholder so that its parent's visibility
+           is irrelevant.
+
+        When matching the selector, the style is set as unique since style sharing does not deal with
+        the changes of HTMLTextFormControlElement.
+
+        Tests: fast/css/placeholder-shown-basics.html
+               fast/selectors/placeholder-shown-long-adjacent-backtracking.html
+               fast/selectors/placeholder-shown-sibling-style-update.html
+               fast/selectors/placeholder-shown-style-update.html
+               fast/selectors/placeholder-shown-with-input-basics.html
+               fast/selectors/placeholder-shown-with-textarea-basics.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        Add the CSS Selector description for CSSOM.
+
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isPlaceholderShown):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/html.css:
+        (::-webkit-input-placeholder):
+        Previously, the display was forced through the UA stylesheet. Since the display is now part
+        of the placeholder visibility, it is explicitly handled by HTMLTextFormControlElement and
+        its subclasses.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::makeUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPlaceholderShown):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateValue):
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+        (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+        (WebCore::HTMLTextFormControlElement::dispatchBlurEvent):
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        (WebCore::HTMLTextFormControlElement::selectionDirection):
+        (WebCore::HTMLTextFormControlElement::restoreCachedSelection):
+        (WebCore::HTMLTextFormControlElement::parseAttribute):
+        (WebCore::HTMLTextFormControlElement::hidePlaceholder):
+        (WebCore::HTMLTextFormControlElement::showPlaceholderIfNecessary):
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::isPlaceholderVisible):
+        (WebCore::HTMLTextFormControlElement::cachedSelectionDirection):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        (WebCore::TextFieldInputType::subtreeHasChanged):
+        (WebCore::TextFieldInputType::updateInnerTextValue):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        * testing/Internals.cpp:
+        (WebCore::Internals::visiblePlaceholder):
+
 2014-08-20  Mark Rowe  <mrowe@apple.com>
 
         Fix the release build after r172806.

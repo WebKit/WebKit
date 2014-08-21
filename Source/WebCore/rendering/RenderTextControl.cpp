@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2014 Apple Inc. All rights reserved.
  *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)  
  *
  * This library is free software; you can redistribute it and/or
@@ -70,7 +70,7 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         innerTextRenderer->style().setWidth(Length());
         innerTextRenderer->setStyle(createInnerTextStyle(&style()));
     }
-    textFormControlElement().updatePlaceholderVisibility(false);
+    textFormControlElement().updatePlaceholderVisibility();
 }
 
 void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const

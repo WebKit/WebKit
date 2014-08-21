@@ -636,7 +636,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         }
         // We only need to setChanged if the form is looking at the default value right now.
         if (!hasDirtyValue()) {
-            updatePlaceholderVisibility(false);
+            updatePlaceholderVisibility();
             setNeedsStyleRecalc();
         }
         setFormControlValueMatchesRenderer(false);

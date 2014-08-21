@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -617,8 +617,11 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
 String Internals::visiblePlaceholder(Element* element)
 {
     if (element && isHTMLTextFormControlElement(*element)) {
-        if (toHTMLTextFormControlElement(*element).placeholderShouldBeVisible())
-            return toHTMLTextFormControlElement(*element).placeholderElement()->textContent();
+        const HTMLTextFormControlElement& textFormControlElement = toHTMLTextFormControlElement(*element);
+        if (!textFormControlElement.isPlaceholderVisible())
+            return String();
+        if (HTMLElement* placeholderElement = textFormControlElement.placeholderElement())
+            return placeholderElement->textContent();
     }
 
     return String();

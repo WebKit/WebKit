@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -409,6 +409,7 @@ void TextFieldInputType::updatePlaceholderText()
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(element().document());
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
+        m_placeholder->setInlineStyleProperty(CSSPropertyDisplay, element().isPlaceholderVisible() ? CSSValueBlock : CSSValueNone, true);
         element().userAgentShadowRoot()->insertBefore(m_placeholder, m_container ? m_container.get() : innerTextElement(), ASSERT_NO_EXCEPTION);
     }
     m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);
@@ -438,7 +439,7 @@ void TextFieldInputType::subtreeHasChanged()
     // sanitizeUserInputValue().
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
     element().setValueFromRenderer(sanitizeValue(convertFromVisibleValue(element().innerTextValue())));
-    element().updatePlaceholderVisibility(false);
+    element().updatePlaceholderVisibility();
     // Recalc for :invalid change.
     element().setNeedsStyleRecalc();
 
@@ -472,7 +473,7 @@ void TextFieldInputType::updateInnerTextValue()
         // Update the renderer value if the formControlValueMatchesRenderer() flag is false.
         // It protects an unacceptable renderer value from being overwritten with the DOM value.
         element().setInnerTextValue(visibleValue());
-        element().updatePlaceholderVisibility(false);
+        element().updatePlaceholderVisibility();
     }
 }
 

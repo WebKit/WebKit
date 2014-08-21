@@ -604,6 +604,14 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                 return isFirstOfType(element, element->tagQName()) && isLastOfType(element, element->tagQName());
             }
             break;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+        case CSSSelector::PseudoClassPlaceholderShown:
+            if (m_mode == Mode::ResolvingStyle) {
+                if (RenderStyle* style = context.elementStyle ? context.elementStyle : element->renderStyle())
+                    style->setUnique();
+            }
+            return isPlaceholderShown(element);
+#endif
         case CSSSelector::PseudoClassNthChild:
             if (!selector->parseNth())
                 break;

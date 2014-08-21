@@ -417,6 +417,11 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassOptional:
                 str.appendLiteral(":optional");
                 break;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+            case CSSSelector::PseudoClassPlaceholderShown:
+                str.appendLiteral(":placeholder-shown");
+                break;
+#endif
             case CSSSelector::PseudoClassOutOfRange:
                 str.appendLiteral(":out-of-range");
                 break;
@@ -461,7 +466,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassWindowInactive:
                 str.appendLiteral(":window-inactive");
                 break;
-            default:
+            case CSSSelector::PseudoClassUnknown:
                 ASSERT_NOT_REACHED();
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {

@@ -611,7 +611,6 @@ textarea {
 ::-webkit-input-placeholder {
     -webkit-text-security: none;
     color: darkGray;
-    display: block !important;
     pointer-events: none !important;
 }
 

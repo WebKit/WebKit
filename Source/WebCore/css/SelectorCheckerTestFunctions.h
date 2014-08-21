@@ -114,6 +114,15 @@ ALWAYS_INLINE bool isOptionalFormControl(const Element* element)
     return element->isOptionalFormControl();
 }
 
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+ALWAYS_INLINE bool isPlaceholderShown(Element* element)
+{
+    if (isHTMLTextFormControlElement(*element))
+        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
+    return false;
+}
+#endif
+
 ALWAYS_INLINE bool isRequiredFormControl(const Element* element)
 {
     return element->isRequiredFormControl();

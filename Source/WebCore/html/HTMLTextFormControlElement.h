@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -50,11 +50,11 @@ public:
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
 
     // The derived class should return true if placeholder processing is needed.
+    bool isPlaceholderVisible() const { return m_isPlaceholderVisible; }
     virtual bool supportsPlaceholder() const = 0;
     String strippedPlaceholder() const;
-    bool placeholderShouldBeVisible() const;
     virtual HTMLElement* placeholderElement() const = 0;
-    void updatePlaceholderVisibility(bool);
+    void updatePlaceholderVisibility();
 
     int indexForVisiblePosition(const VisiblePosition&) const;
     VisiblePosition visiblePositionForIndex(int index) const;
@@ -120,6 +120,8 @@ protected:
     String valueWithHardLineBreaks() const;
 
 private:
+    TextFieldSelectionDirection cachedSelectionDirection() const { return static_cast<TextFieldSelectionDirection>(m_cachedSelectionDirection); }
+
     int computeSelectionStart() const;
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
@@ -137,12 +139,16 @@ private:
     // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
     virtual void handleBlurEvent() { }
 
+    bool placeholderShouldBeVisible() const;
+
     String m_textAsOfLastFormControlChangeEvent;
-    bool m_lastChangeWasUserEdit;
-    
+
     int m_cachedSelectionStart;
     int m_cachedSelectionEnd;
-    TextFieldSelectionDirection m_cachedSelectionDirection;
+
+    unsigned char m_cachedSelectionDirection : 2;
+    unsigned char m_lastChangeWasUserEdit : 1;
+    unsigned char m_isPlaceholderVisible : 1;
 };
 
 void isHTMLTextFormControlElement(const HTMLTextFormControlElement&); // Catch unnecessary runtime check of type known at compile time.
