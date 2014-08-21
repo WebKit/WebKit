@@ -843,6 +843,8 @@ void CodeBlock::dumpBytecode(
             int r0 = (++it)->u.operand;
             ++it;
             ++it;
+            ++it;
+            ++it;
             printLocationAndOp(out, exec, location, it, "op_profile_type");
             out.printf("%s", registerName(r0).data());
             break;
