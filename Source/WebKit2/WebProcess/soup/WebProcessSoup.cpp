@@ -110,6 +110,10 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     WebCore::pageCache()->setCapacity(pageCacheCapacity);
 
+#if PLATFORM(GTK)
+    WebCore::pageCache()->setShouldClearBackingStores(true);
+#endif
+
     if (!usesNetworkProcess()) {
         if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
             soup_cache_set_max_size(cache, urlCacheDiskCapacity);

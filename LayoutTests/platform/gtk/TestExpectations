@@ -580,8 +580,6 @@ webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 
-webkit.org/b/80158 plugins/netscape-plugin-page-cache-works.html [ Failure Pass ]
-
 webkit.org/b/89811 media/media-blocked-by-beforeload.html [ Failure Pass ]
 webkit.org/b/84856 media/media-controller-playback.html [ Crash Failure Timeout Pass ]
 
@@ -677,8 +675,6 @@ webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Fail
 webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]
 
 webkit.org/b/119041 css3/calc/img-size.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass Crash ]
 
 # These tests started to time out (or time out more often) since the FTL merge
 webkit.org/b/119253 [ Release ] css3/autoclose-braces-and-parentheses.html [ Timeout Pass ]
@@ -2006,7 +2002,6 @@ webkit.org/b/132126 animations/body-removal-crash.html [ Crash Pass ]
 webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
-webkit.org/b/132126 media/restore-from-page-cache.html [ Crash ]
 
 webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
@@ -2093,6 +2088,9 @@ webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outsi
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015.html [ ImageOnlyFailure ]
 
 webkit.org/b/132421 fast/multicol/fixed-stack.html [ Pass ]
+
+# The backing store is cleared when page cached in GTK
+webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
