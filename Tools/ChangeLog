@@ -1,3 +1,9 @@
+2014-08-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix since r172814.
+
+        * WebKitTestRunner/config.h: Define WEBCORE_EXPORT.
+
 2014-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Introducing WEBCORE_EXPORT macro.
