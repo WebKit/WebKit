@@ -102,6 +102,7 @@ public:
     virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
 
     virtual void animationStarted(const String& key, CFTimeInterval beginTime) = 0;
+    virtual void animationEnded(const String& key) = 0;
 
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const FloatRect& dirtyRect) = 0;

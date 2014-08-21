@@ -1,3 +1,35 @@
+2014-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add animationDidEnd callbacks on GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=136084
+
+        Reviewed by Tim Horton.
+
+        Hook up GraphicsLayerClient::notifyAnimationEnded() so that code using GraphicsLayers directly
+        can add animations, and know when they finish.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::notifyAnimationStarted):
+        (WebCore::GraphicsLayerClient::notifyAnimationEnded):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationEnded):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerAnimationStarted):
+        (WebCore::PlatformCALayerClient::platformCALayerAnimationEnded):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+        (-[WebAnimationDelegate animationDidStop:finished:]):
+        (PlatformCALayerMac::animationStarted):
+        (PlatformCALayerMac::animationEnded):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::notifyAnimationStarted):
+        * rendering/RenderLayerBacking.h:
+
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
         Enable SATURATED_LAYOUT_ARITHMETIC.

@@ -81,6 +81,12 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 
     _layerTreeHost->animationDidStart(_layerID, animation, startTime);
 }
+
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
+{
+    _layerTreeHost->animationDidEnd(_layerID, animation);
+}
+
 @end
 
 namespace WebKit {

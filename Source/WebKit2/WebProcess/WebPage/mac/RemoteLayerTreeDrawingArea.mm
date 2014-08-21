@@ -193,6 +193,11 @@ void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(uint64_t layerID, 
     m_remoteLayerTreeContext->animationDidStart(layerID, key, startTime);
 }
 
+void RemoteLayerTreeDrawingArea::acceleratedAnimationDidEnd(uint64_t layerID, const String& key)
+{
+    m_remoteLayerTreeContext->animationDidEnd(layerID, key);
+}
+
 void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
 {
     m_exposedRect = exposedRect;

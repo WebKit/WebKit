@@ -369,7 +369,13 @@ void PlatformCALayerRemote::animationStarted(const String& key, CFTimeInterval b
         toPlatformCAAnimationRemote(it->value.get())->didStart(beginTime);
     
     if (m_owner)
-        m_owner->platformCALayerAnimationStarted(beginTime);
+        m_owner->platformCALayerAnimationStarted(key, beginTime);
+}
+
+void PlatformCALayerRemote::animationEnded(const String& key)
+{
+    if (m_owner)
+        m_owner->platformCALayerAnimationEnded(key);
 }
 
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)

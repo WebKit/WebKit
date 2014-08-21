@@ -1,3 +1,38 @@
+2014-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add animationDidEnd callbacks on GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=136084
+
+        Reviewed by Tim Horton.
+
+        Hook up GraphicsLayerClient::notifyAnimationEnded() so that code using GraphicsLayers directly
+        can add animations, and know when they finish.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::animationDidEnd):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::acceleratedAnimationDidEnd):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (-[WKAnimationDelegate animationDidStop:finished:]):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::animationStarted):
+        (WebKit::PlatformCALayerRemote::animationEnded):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWillBeDestroyed):
+        (WebKit::RemoteLayerTreeContext::willStartAnimationOnLayer):
+        (WebKit::RemoteLayerTreeContext::animationDidStart):
+        (WebKit::RemoteLayerTreeContext::animationDidEnd):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::acceleratedAnimationDidEnd):
+
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
         Enable SATURATED_LAYOUT_ARITHMETIC.

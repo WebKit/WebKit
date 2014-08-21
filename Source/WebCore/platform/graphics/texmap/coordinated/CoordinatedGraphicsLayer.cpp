@@ -1226,7 +1226,7 @@ void CoordinatedGraphicsLayer::resumeAnimations()
 
 void CoordinatedGraphicsLayer::animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*)
 {
-    client().notifyAnimationStarted(this, m_lastAnimationStartTime);
+    client().notifyAnimationStarted(this, "", m_lastAnimationStartTime);
 }
 } // namespace WebCore
 #endif // USE(COORDINATED_GRAPHICS)

@@ -2460,7 +2460,7 @@ void RenderLayerBacking::transitionFinished(CSSPropertyID property)
         m_graphicsLayer->removeAnimation(GraphicsLayer::animationNameForTransition(animatedProperty));
 }
 
-void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, double time)
+void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, const String&, double time)
 {
     renderer().animation().notifyAnimationStarted(&renderer(), time);
 }

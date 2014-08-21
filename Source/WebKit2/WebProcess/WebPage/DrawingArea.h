@@ -88,6 +88,7 @@ public:
     virtual void setExposedRect(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect exposedRect() const = 0;
     virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, const String& /*key*/, double /*startTime*/) { }
+    virtual void acceleratedAnimationDidEnd(uint64_t /*layerID*/, const String& /*key*/) { }
 #endif
 #if PLATFORM(IOS)
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;

@@ -70,6 +70,7 @@ public:
     virtual void removeAnimationForKey(const String& key) override;
     virtual PassRefPtr<WebCore::PlatformCAAnimation> animationForKey(const String& key) override;
     virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;
+    virtual void animationEnded(const String& key) override;
 
     virtual void setMask(WebCore::PlatformCALayer*) override;
 

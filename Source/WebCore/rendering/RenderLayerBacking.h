@@ -194,7 +194,7 @@ public:
     // GraphicsLayerClient interface
     virtual bool shouldUseTiledBacking(const GraphicsLayer*) const override;
     virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) override;
+    virtual void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, double startTime) override;
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
 

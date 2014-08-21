@@ -78,7 +78,7 @@ void RemoteLayerTreeContext::layerWillBeDestroyed(PlatformCALayerRemote& layer)
     ASSERT(!m_destroyedLayers.contains(layerID));
     m_destroyedLayers.append(layerID);
     
-    m_layersAwaitingAnimationStart.remove(layerID);
+    m_layersWithAnimations.remove(layerID);
 }
 
 void RemoteLayerTreeContext::backingStoreWasCreated(RemoteLayerBackingStore& backingStore)
@@ -122,14 +122,21 @@ void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(Platfo
 
 void RemoteLayerTreeContext::willStartAnimationOnLayer(PlatformCALayerRemote& layer)
 {
-    m_layersAwaitingAnimationStart.add(layer.layerID(), &layer);
+    m_layersWithAnimations.add(layer.layerID(), &layer);
 }
 
 void RemoteLayerTreeContext::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key, double startTime)
 {
-    auto it = m_layersAwaitingAnimationStart.find(layerID);
-    if (it != m_layersAwaitingAnimationStart.end())
+    auto it = m_layersWithAnimations.find(layerID);
+    if (it != m_layersWithAnimations.end())
         it->value->animationStarted(key, startTime);
+}
+
+void RemoteLayerTreeContext::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, const String& key)
+{
+    auto it = m_layersWithAnimations.find(layerID);
+    if (it != m_layersWithAnimations.end())
+        it->value->animationEnded(key);
 }
 
 } // namespace WebKit

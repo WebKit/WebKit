@@ -843,9 +843,14 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
     noteLayerPropertyChanged(AnimationChanged);
 }
 
-void GraphicsLayerCA::platformCALayerAnimationStarted(CFTimeInterval startTime)
+void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey, CFTimeInterval startTime)
 {
-    client().notifyAnimationStarted(this, startTime);
+    client().notifyAnimationStarted(this, animationKey, startTime);
+}
+
+void GraphicsLayerCA::platformCALayerAnimationEnded(const String& animationKey)
+{
+    client().notifyAnimationEnded(this, animationKey);
 }
 
 void GraphicsLayerCA::setContentsToSolidColor(const Color& color)

@@ -65,6 +65,7 @@ public:
     virtual void removeAnimationForKey(const String& key) override;
     virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) override;
     virtual void animationStarted(const String& key, CFTimeInterval beginTime) override;
+    virtual void animationEnded(const String& key) override;
 
     virtual void setMask(PlatformCALayer*) override;
 

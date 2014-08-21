@@ -89,7 +89,7 @@ public:
 
 private:
     // GraphicsLayerClient
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) override;
+    virtual void notifyAnimationStarted(const GraphicsLayer*, const String&, double time) override;
     virtual void notifyFlushRequired(const GraphicsLayer*) override;
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& clipRect) override;
     virtual float deviceScaleFactor() const override;

@@ -152,6 +152,25 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLaye
         m_drawingArea.acceleratedAnimationDidStart(layerID, animationKey, startTime);
 }
 
+void RemoteLayerTreeHost::animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation)
+{
+    CALayer *layer = asLayer(getLayer(layerID));
+    if (!layer)
+        return;
+
+    String animationKey;
+    for (NSString *key in [layer animationKeys]) {
+        if ([layer animationForKey:key] == animation) {
+            animationKey = key;
+            break;
+        }
+    }
+
+    if (!animationKey.isEmpty())
+        m_drawingArea.acceleratedAnimationDidEnd(layerID, animationKey);
+
+}
+
 void RemoteLayerTreeHost::clearLayers()
 {
     for (auto& idLayer : m_layers) {

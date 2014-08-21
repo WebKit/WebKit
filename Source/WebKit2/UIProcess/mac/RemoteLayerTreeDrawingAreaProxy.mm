@@ -241,6 +241,11 @@ void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t laye
     m_webPageProxy->process().send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_webPageProxy->pageID());
 }
 
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(uint64_t layerID, const String& key)
+{
+    m_webPageProxy->process().send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), m_webPageProxy->pageID());
+}
+
 static const float indicatorInset = 10;
 
 #if PLATFORM(MAC)

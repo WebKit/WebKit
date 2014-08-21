@@ -558,7 +558,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer->setAnimations(m_animations);
 
     if (m_changeMask & AnimationStarted)
-        client().notifyAnimationStarted(this, m_animationStartTime);
+        client().notifyAnimationStarted(this, "", m_animationStartTime);
 
     if (m_changeMask & FixedToViewporChange)
         m_layer->setFixedToViewport(fixedToViewport());

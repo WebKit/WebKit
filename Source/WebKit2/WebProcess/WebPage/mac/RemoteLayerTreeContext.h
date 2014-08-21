@@ -63,6 +63,7 @@ public:
 
     // From the UI process
     void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, const String& key, double startTime);
+    void animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, const String& key);
 
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
@@ -78,7 +79,7 @@ private:
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayers;
 
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_liveLayers;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersAwaitingAnimationStart;
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersWithAnimations;
 
     RemoteLayerBackingStoreCollection m_backingStoreCollection;
     

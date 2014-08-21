@@ -239,7 +239,7 @@ void CompositingCoordinator::flushPendingImageBackingChanges()
         imageBacking->update();
 }
 
-void CompositingCoordinator::notifyAnimationStarted(const GraphicsLayer*, double /* time */)
+void CompositingCoordinator::notifyAnimationStarted(const GraphicsLayer*, const String&, double /* time */)
 {
 }
 
