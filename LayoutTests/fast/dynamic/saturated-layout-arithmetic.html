@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that saturated arithmetic feature clamps LayoutUnit overflow.</title>
+</head>
+<body>
+  <div id=foo style="position: relative">foobar</div>
+  <script>
+    document.getElementById("foo").style.left = 33554423 + "px";
+    document.getElementById("foo").style.webkitTransform = "translateX(-33554423px)";
+  </script>
+</body>

@@ -1,3 +1,18 @@
+2014-08-21  Zalan Bujtas  <zalan@apple.com>
+
+        Enable SATURATED_LAYOUT_ARITHMETIC.
+        https://bugs.webkit.org/show_bug.cgi?id=136106
+
+        Reviewed by Simon Fraser.
+
+        SATURATED_LAYOUT_ARITHMETIC protects LayoutUnit against arithmetic overflow.
+        (No measurable performance regression on Mac.)
+
+        * fast/dynamic/saturated-layout-arithmetic-expected.html: Added.
+        * fast/dynamic/saturated-layout-arithmetic.html: Added.
+        * fast/ruby/ruby-base-merge-block-children-crash-2.html: saturated arithmetics changes behavior. fix test case.
+        * scrollbars/scrollbar-large-overflow-rectangle.html: saturated arithmetics changes behavior. fix test case.
+
 2014-08-21  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         New ruby parsing rule breaks some real web sites.

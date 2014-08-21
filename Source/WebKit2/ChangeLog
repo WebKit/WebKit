@@ -1,3 +1,15 @@
+2014-08-21  Zalan Bujtas  <zalan@apple.com>
+
+        Enable SATURATED_LAYOUT_ARITHMETIC.
+        https://bugs.webkit.org/show_bug.cgi?id=136106
+
+        Reviewed by Simon Fraser.
+
+        SATURATED_LAYOUT_ARITHMETIC protects LayoutUnit against arithmetic overflow.
+        (No measurable performance regression on Mac.)
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] WebkitWebProcess crashing navigating away from ogg video element
