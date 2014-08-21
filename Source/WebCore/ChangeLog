@@ -1,5 +1,12 @@
 2014-08-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Try to fix the 32-bit build by using wildcards in the exported non-virtual thunks
+        for GraphicsLayerCA::platformCALayerAnimationStarted and GraphicsLayerCA::platformCALayerAnimationEnded.
+
+        * WebCore.exp.in:
+
+2014-08-21  Simon Fraser  <simon.fraser@apple.com>
+
         Add animationDidEnd callbacks on GraphicsLayer
         https://bugs.webkit.org/show_bug.cgi?id=136084
 
