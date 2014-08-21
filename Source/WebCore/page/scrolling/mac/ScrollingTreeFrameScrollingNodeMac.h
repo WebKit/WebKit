@@ -51,8 +51,8 @@ private:
     virtual void handleWheelEvent(const PlatformWheelEvent&) override;
 
     // ScrollElasticityController member functions.
-    virtual bool allowsHorizontalStretching() override;
-    virtual bool allowsVerticalStretching() override;
+    virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
+    virtual bool allowsVerticalStretching(const PlatformWheelEvent&) override;
     virtual IntSize stretchAmount() override;
     virtual bool pinnedInDirection(const FloatSize&) override;
     virtual bool canScrollHorizontally() override;
@@ -77,6 +77,8 @@ private:
     virtual FloatPoint maximumScrollPosition() const override;
 
     void updateMainFramePinState(const FloatPoint& scrollPosition);
+
+    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 
     void logExposedUnfilledArea();
 

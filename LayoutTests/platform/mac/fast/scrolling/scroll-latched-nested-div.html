@@ -103,7 +103,9 @@ function checkForFirstScroll() {
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-    setTimeout(checkForSecondScroll, 100);
+    // The timeout used to be only 100, but when we added support for rubber-banding in overflow
+    // areas, we found we had to increase the timeout to allow the rubber-band to finish.
+    setTimeout(checkForSecondScroll, 1000);
 }
 
 function scrollTest() {
@@ -133,7 +135,9 @@ function scrollTest() {
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'none', 'continue', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'none', 'continue', true);
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-    setTimeout(checkForFirstScroll, 100);
+    // The timeout used to be only 100, but when we added support for rubber-banding in overflow
+    // areas, we found we had to increase the timeout to allow the rubber-band to finish.
+    setTimeout(checkForFirstScroll, 1000);
 }
 
 function setupTopLevel() {

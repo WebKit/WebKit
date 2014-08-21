@@ -297,7 +297,11 @@ static inline bool didScrollInScrollableAreaForSingleAxis(ScrollableArea* scroll
 
 static inline bool handleWheelEventInAppropriateEnclosingBoxForSingleAxis(Node* startNode, WheelEvent* wheelEvent, Element** stopElement, ScrollEventAxis axis)
 {
-    if (!startNode->renderer() || (axis == ScrollEventAxis::Vertical && !wheelEvent->deltaY()) || (axis == ScrollEventAxis::Horizontal && !wheelEvent->deltaX()))
+    bool shouldHandleEvent = (axis == ScrollEventAxis::Vertical && wheelEvent->deltaY()) || (axis == ScrollEventAxis::Horizontal && wheelEvent->deltaX());
+#if PLATFORM(MAC)
+    shouldHandleEvent |= wheelEvent->phase() == PlatformWheelEventPhaseEnded;
+#endif
+    if (!startNode->renderer() || !shouldHandleEvent)
         return false;
 
     RenderBox& initialEnclosingBox = startNode->renderer()->enclosingBox();

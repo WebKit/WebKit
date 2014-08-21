@@ -2303,6 +2303,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
 #endif
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=136131
+    settings.setRubberBandingForOverflowScrollEnabled(false);
+
 #if PLATFORM(IOS)
     settings.setStandalone([preferences _standalone]);
     settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);

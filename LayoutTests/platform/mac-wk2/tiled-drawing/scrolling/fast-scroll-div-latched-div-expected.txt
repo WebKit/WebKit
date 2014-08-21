@@ -55,7 +55,7 @@ TEST COMPLETE
 div display height = 350
 Mouse moved to (28, 475)
 Page before: 0, div before: 586
-Page after:  0, div after: 666
+Page after:  0, div after: 656
 PASS Page did not receive wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)

@@ -1,3 +1,22 @@
+2014-08-21  Beth Dakin  <bdakin@apple.com>
+
+        overflow:scroll elements should support rubber-banding
+        https://bugs.webkit.org/show_bug.cgi?id=91655
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        Re-baseline. Mostly these tests are different now that end end event is handled.
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler-expected.txt:
+
+        This test requires a longer timeout to ensure that the rubber-band has ended.
+        * platform/mac/fast/scrolling/scroll-latched-nested-div.html:
+
 2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] WebkitWebProcess crashing navigating away from ogg video element

@@ -158,11 +158,34 @@ void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEve
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());
 }
 
-bool ScrollingTreeFrameScrollingNodeMac::allowsHorizontalStretching()
+// FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),
+// allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollAnimatorMac.
+static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
+{
+    return wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseBegan;
+}
+
+bool ScrollingTreeFrameScrollingNodeMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis)
+{
+    switch (axis) {
+    case ScrollEventAxis::Vertical:
+        return (wheelEvent.deltaY() > 0 && scrollPosition().y() <= minimumScrollPosition().y()) || (wheelEvent.deltaY() < 0 && scrollPosition().y() >= maximumScrollPosition().y());
+    case ScrollEventAxis::Horizontal:
+        return (wheelEvent.deltaX() > 0 && scrollPosition().x() <= minimumScrollPosition().x()) || (wheelEvent.deltaX() < 0 && scrollPosition().x() >= maximumScrollPosition().x());
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool ScrollingTreeFrameScrollingNodeMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent)
 {
     switch (horizontalScrollElasticity()) {
-    case ScrollElasticityAutomatic:
-        return hasEnabledHorizontalScrollbar() || !hasEnabledVerticalScrollbar();
+    case ScrollElasticityAutomatic: {
+        bool scrollbarsAllowStretching = hasEnabledHorizontalScrollbar() || !hasEnabledVerticalScrollbar();
+        bool eventPreventsStretching = newGestureIsStarting(wheelEvent) && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Horizontal);
+        return scrollbarsAllowStretching && !eventPreventsStretching;
+    }
     case ScrollElasticityNone:
         return false;
     case ScrollElasticityAllowed:
@@ -173,11 +196,14 @@ bool ScrollingTreeFrameScrollingNodeMac::allowsHorizontalStretching()
     return false;
 }
 
-bool ScrollingTreeFrameScrollingNodeMac::allowsVerticalStretching()
+bool ScrollingTreeFrameScrollingNodeMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent)
 {
     switch (verticalScrollElasticity()) {
-    case ScrollElasticityAutomatic:
-        return hasEnabledVerticalScrollbar() || !hasEnabledHorizontalScrollbar();
+    case ScrollElasticityAutomatic: {
+        bool scrollbarsAllowStretching = hasEnabledVerticalScrollbar() || !hasEnabledHorizontalScrollbar();
+        bool eventPreventsStretching = newGestureIsStarting(wheelEvent) && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Vertical);
+        return scrollbarsAllowStretching && !eventPreventsStretching;
+    }
     case ScrollElasticityNone:
         return false;
     case ScrollElasticityAllowed:
