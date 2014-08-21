@@ -1,3 +1,17 @@
+2014-08-21  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(r172808): It made 6 different tests fail on 32 bit platforms.
+        <https://webkit.org/b/136123>
+
+        Reviewed by Filip Pizlo.
+
+        The original patch in r172808 removed the code to skip the top scope in
+        the 64-bit port of JIT::emitResolveClosure() but not in the 32-bit port.
+        This patch fixes that and achieves parity.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitResolveClosure):
+
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
         Enable SATURATED_LAYOUT_ARITHMETIC.
