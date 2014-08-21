@@ -168,8 +168,8 @@ private:
 class NonSharedCharacterBreakIterator {
     WTF_MAKE_NONCOPYABLE(NonSharedCharacterBreakIterator);
 public:
-    NonSharedCharacterBreakIterator(StringView);
-    ~NonSharedCharacterBreakIterator();
+    WEBCORE_EXPORT NonSharedCharacterBreakIterator(StringView);
+    WEBCORE_EXPORT ~NonSharedCharacterBreakIterator();
 
     operator TextBreakIterator*() const { return m_iterator; }
 

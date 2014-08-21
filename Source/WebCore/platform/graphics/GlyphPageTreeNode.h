@@ -92,7 +92,7 @@ public:
     // The system fallback font has special rules (see above).
     bool isSystemFallback() const { return m_isSystemFallback; }
 
-    static size_t treeGlyphPageCount();
+    WEBCORE_EXPORT static size_t treeGlyphPageCount();
     size_t pageCount() const;
 
 private:

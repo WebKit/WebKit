@@ -46,7 +46,7 @@ class HIDGamepadProvider : public GamepadProvider {
     WTF_MAKE_NONCOPYABLE(HIDGamepadProvider);
     friend class NeverDestroyed<HIDGamepadProvider>;
 public:
-    static HIDGamepadProvider& shared();
+    WEBCORE_EXPORT static HIDGamepadProvider& shared();
 
     virtual void startMonitoringGamepads(GamepadProviderClient*);
     virtual void stopMonitoringGamepads(GamepadProviderClient*);

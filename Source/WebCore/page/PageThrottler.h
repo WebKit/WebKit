@@ -59,7 +59,7 @@ private:
     void updateHysteresis();
 
     friend class HysteresisActivity<PageThrottler>;
-    void started();
+    WEBCORE_EXPORT void started();
     void stopped();
 
     Page& m_page;

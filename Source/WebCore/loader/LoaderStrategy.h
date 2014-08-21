@@ -40,11 +40,11 @@ class ResourceResponse;
 
 class LoaderStrategy {
 public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
+    WEBCORE_EXPORT virtual ResourceLoadScheduler* resourceLoadScheduler();
 
-    virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
+    WEBCORE_EXPORT virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    virtual BlobRegistry* createBlobRegistry();
+    WEBCORE_EXPORT virtual BlobRegistry* createBlobRegistry();
 
 protected:
     virtual ~LoaderStrategy()

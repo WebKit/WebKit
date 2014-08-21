@@ -115,20 +115,20 @@ namespace WebCore {
 
     class Frame : public RefCounted<Frame> {
     public:
-        static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
+        WEBCORE_EXPORT static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
         void init();
 #if PLATFORM(IOS)
         // Creates <html><body style="..."></body></html> doing minimal amount of work.
-        void initWithSimpleHTMLDocument(const String& style, const URL&);
+        WEBCORE_EXPORT void initWithSimpleHTMLDocument(const String& style, const URL&);
 #endif
-        void setView(PassRefPtr<FrameView>);
-        void createView(const IntSize&, const Color&, bool,
+        WEBCORE_EXPORT void setView(PassRefPtr<FrameView>);
+        WEBCORE_EXPORT void createView(const IntSize&, const Color&, bool,
             const IntSize& fixedLayoutSize = IntSize(), const IntRect& fixedVisibleContentRect = IntRect(),
             bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
             ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
-        virtual ~Frame();
+        WEBCORE_EXPORT virtual ~Frame();
 
         void addDestructionObserver(FrameDestructionObserver*);
         void removeDestructionObserver(FrameDestructionObserver*);
@@ -155,79 +155,79 @@ namespace WebCore {
         AnimationController& animation() const;
         ScriptController& script();
         
-        RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
-        RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
+        WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
+        WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
         void injectUserScripts(UserScriptInjectionTime);
         
-        String layerTreeAsText(LayerTreeFlags = 0) const;
-        String trackedRepaintRectsAsText() const;
+        WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0) const;
+        WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
-        static Frame* frameForWidget(const Widget*);
+        WEBCORE_EXPORT static Frame* frameForWidget(const Widget*);
 
         Settings& settings() const { return *m_settings; }
 
         void setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot);
         bool shouldUsePrintingLayout() const;
-        FloatSize resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize);
+        WEBCORE_EXPORT FloatSize resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize);
 
         void setDocument(PassRefPtr<Document>);
 
-        void setPageZoomFactor(float factor);
+        WEBCORE_EXPORT void setPageZoomFactor(float);
         float pageZoomFactor() const { return m_pageZoomFactor; }
-        void setTextZoomFactor(float factor);
+        WEBCORE_EXPORT void setTextZoomFactor(float);
         float textZoomFactor() const { return m_textZoomFactor; }
-        void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
+        WEBCORE_EXPORT void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
         // Scale factor of this frame with respect to the container.
-        float frameScaleFactor() const;
+        WEBCORE_EXPORT float frameScaleFactor() const;
 
         void deviceOrPageScaleFactorChanged();
 
 #if PLATFORM(IOS)
         const ViewportArguments& viewportArguments() const;
-        void setViewportArguments(const ViewportArguments&);
+        WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
 
-        Node* deepestNodeAtLocation(const FloatPoint& viewportLocation);
-        Node* nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation);
-        Node* nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocation);
+        WEBCORE_EXPORT Node* deepestNodeAtLocation(const FloatPoint& viewportLocation);
+        WEBCORE_EXPORT Node* nodeRespondingToClickEvents(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation);
+        WEBCORE_EXPORT Node* nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocation);
 
         int indexCountOfWordPrecedingSelection(NSString* word) const;
-        NSArray* wordsInCurrentParagraph() const;
-        CGRect renderRectForPoint(CGPoint, bool* isReplaced, float* fontSize) const;
+        WEBCORE_EXPORT NSArray* wordsInCurrentParagraph() const;
+        WEBCORE_EXPORT CGRect renderRectForPoint(CGPoint, bool* isReplaced, float* fontSize) const;
 
-        void setSelectionChangeCallbacksDisabled(bool = true);
+        WEBCORE_EXPORT void setSelectionChangeCallbacksDisabled(bool = true);
         bool selectionChangeCallbacksDisabled() const;
 
         enum ViewportOffsetChangeType { IncrementalScrollOffset, CompletedScrollOffset };
-        void viewportOffsetChanged(ViewportOffsetChangeType);
+        WEBCORE_EXPORT void viewportOffsetChanged(ViewportOffsetChangeType);
         bool containsTiledBackingLayers() const;
 
-        void overflowScrollPositionChangedForNode(const IntPoint&, Node*, bool isUserScroll);
+        WEBCORE_EXPORT void overflowScrollPositionChangedForNode(const IntPoint&, Node*, bool isUserScroll);
 
-        void resetAllGeolocationPermission();
+        WEBCORE_EXPORT void resetAllGeolocationPermission();
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
         // Orientation is the interface orientation in degrees. Some examples are:
         //  0 is straight up; -90 is when the device is rotated 90 clockwise;
         //  90 is when rotated counter clockwise.
-        void orientationChanged();
+        WEBCORE_EXPORT void orientationChanged();
         int orientation() const;
 #endif
 
         void clearTimers();
         static void clearTimers(FrameView*, Document*);
 
-        String displayStringModifiedByEncoding(const String&) const;
+        WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
-        VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
+        WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
         Document* documentAtPoint(const IntPoint& windowPoint);
-        PassRefPtr<Range> rangeForPoint(const IntPoint& framePoint);
+        WEBCORE_EXPORT PassRefPtr<Range> rangeForPoint(const IntPoint& framePoint);
 
-        String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
+        WEBCORE_EXPORT String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
@@ -235,27 +235,27 @@ namespace WebCore {
         // Scroll the selection in an overflow layer on iOS.
         void scrollOverflowLayer(RenderLayer* , const IntRect& visibleRect, const IntRect& exposeRect);
 
-        int preferredHeight() const;
-        int innerLineHeight(DOMNode*) const;
-        void updateLayout() const;
-        NSRect caretRect() const;
-        NSRect rectForScrollToVisible() const;
-        DOMCSSStyleDeclaration* styleAtSelectionStart() const;
-        unsigned formElementsCharacterCount() const;
-        void setTimersPaused(bool);
+        WEBCORE_EXPORT int preferredHeight() const;
+        WEBCORE_EXPORT int innerLineHeight(DOMNode*) const;
+        WEBCORE_EXPORT void updateLayout() const;
+        WEBCORE_EXPORT NSRect caretRect() const;
+        WEBCORE_EXPORT NSRect rectForScrollToVisible() const;
+        WEBCORE_EXPORT DOMCSSStyleDeclaration* styleAtSelectionStart() const;
+        WEBCORE_EXPORT unsigned formElementsCharacterCount() const;
+        WEBCORE_EXPORT void setTimersPaused(bool);
         bool timersPaused() const { return m_timersPausedCount; }
-        void dispatchPageHideEventBeforePause();
-        void dispatchPageShowEventBeforeResume();
-        void setRangedSelectionBaseToCurrentSelection();
-        void setRangedSelectionBaseToCurrentSelectionStart();
-        void setRangedSelectionBaseToCurrentSelectionEnd();
-        void clearRangedSelectionInitialExtent();
-        void setRangedSelectionInitialExtentToCurrentSelectionStart();
-        void setRangedSelectionInitialExtentToCurrentSelectionEnd();
+        WEBCORE_EXPORT void dispatchPageHideEventBeforePause();
+        WEBCORE_EXPORT void dispatchPageShowEventBeforeResume();
+        WEBCORE_EXPORT void setRangedSelectionBaseToCurrentSelection();
+        WEBCORE_EXPORT void setRangedSelectionBaseToCurrentSelectionStart();
+        WEBCORE_EXPORT void setRangedSelectionBaseToCurrentSelectionEnd();
+        WEBCORE_EXPORT void clearRangedSelectionInitialExtent();
+        WEBCORE_EXPORT void setRangedSelectionInitialExtentToCurrentSelectionStart();
+        WEBCORE_EXPORT void setRangedSelectionInitialExtentToCurrentSelectionEnd();
         VisibleSelection rangedSelectionBase() const;
-        VisibleSelection rangedSelectionInitialExtent() const;
-        void recursiveSetUpdateAppearanceEnabled(bool);
-        NSArray* interpretationsForCurrentRoot() const;
+        WEBCORE_EXPORT VisibleSelection rangedSelectionInitialExtent() const;
+        WEBCORE_EXPORT void recursiveSetUpdateAppearanceEnabled(bool);
+        WEBCORE_EXPORT NSArray* interpretationsForCurrentRoot() const;
 #endif
         void suspendActiveDOMObjectsAndAnimations();
         void resumeActiveDOMObjectsAndAnimations();

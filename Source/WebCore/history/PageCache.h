@@ -45,18 +45,18 @@ namespace WebCore {
         
         bool canCache(Page*) const;
 
-        void setCapacity(int); // number of pages to cache
+        WEBCORE_EXPORT void setCapacity(int); // number of pages to cache
         int capacity() { return m_capacity; }
         
         void add(PassRefPtr<HistoryItem>, Page&); // Prunes if capacity() is exceeded.
-        void remove(HistoryItem*);
+        WEBCORE_EXPORT void remove(HistoryItem*);
         CachedPage* get(HistoryItem* item);
         std::unique_ptr<CachedPage> take(HistoryItem*);
 
         int pageCount() const { return m_size; }
-        int frameCount() const;
+        WEBCORE_EXPORT int frameCount() const;
 
-        void markPagesForVistedLinkStyleRecalc();
+        WEBCORE_EXPORT void markPagesForVistedLinkStyleRecalc();
 
         // Will mark all cached pages associated with the given page as needing style recalc.
         void markPagesForFullStyleRecalc(Page*);

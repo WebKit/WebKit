@@ -47,7 +47,7 @@ public:
     explicit IconController(Frame&);
     ~IconController();
 
-    URL url();
+    WEBCORE_EXPORT URL url();
     IconURLs urlsForTypes(int iconTypesMask);
     IconURL iconURL(IconType) const;
 

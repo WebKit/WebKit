@@ -40,10 +40,10 @@ typedef IntRectExtent FilterOutsets;
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FilterOperations();
+    WEBCORE_EXPORT FilterOperations();
     FilterOperations(const FilterOperations& other) { *this = other; }
     
-    FilterOperations& operator=(const FilterOperations&);
+    WEBCORE_EXPORT FilterOperations& operator=(const FilterOperations&);
     
     bool operator==(const FilterOperations&) const;
     bool operator!=(const FilterOperations& o) const

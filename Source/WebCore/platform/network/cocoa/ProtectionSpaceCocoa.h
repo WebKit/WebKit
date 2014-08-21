@@ -50,24 +50,24 @@ public:
 #if USE(CFNETWORK)
     explicit ProtectionSpace(CFURLProtectionSpaceRef);
 #endif
-    explicit ProtectionSpace(NSURLProtectionSpace *);
+    WEBCORE_EXPORT explicit ProtectionSpace(NSURLProtectionSpace *);
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
+    WEBCORE_EXPORT bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
 #endif
 
-    bool receivesCredentialSecurely() const;
+    WEBCORE_EXPORT bool receivesCredentialSecurely() const;
 
 #if USE(CFNETWORK)
     CFURLProtectionSpaceRef cfSpace() const;
 #endif
-    NSURLProtectionSpace *nsSpace() const;
+    WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
 
 private:
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    static bool encodingRequiresPlatformData(NSURLProtectionSpace *);
+    WEBCORE_EXPORT static bool encodingRequiresPlatformData(NSURLProtectionSpace *);
 #endif
 
     mutable RetainPtr<NSURLProtectionSpace> m_nsSpace;

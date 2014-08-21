@@ -62,7 +62,7 @@ public:
         OnlyApplicationPlugins
     };
 
-    bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
+    WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
     String pluginNameForMimeType(const String& mimeType) const;
     String pluginFileForMimeType(const String& mimeType) const;
 

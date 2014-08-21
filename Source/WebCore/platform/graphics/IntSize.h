@@ -62,7 +62,7 @@ class IntSize {
 public:
     IntSize() : m_width(0), m_height(0) { }
     IntSize(int width, int height) : m_width(width), m_height(height) { }
-    explicit IntSize(const FloatSize&); // don't do this implicitly since it's lossy
+    WEBCORE_EXPORT explicit IntSize(const FloatSize&); // don't do this implicitly since it's lossy
     
     int width() const { return m_width; }
     int height() const { return m_height; }
@@ -137,13 +137,13 @@ public:
     }
 
 #if USE(CG)
-    explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
-    operator CGSize() const;
+    WEBCORE_EXPORT explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
+    WEBCORE_EXPORT operator CGSize() const;
 #endif
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
-    operator NSSize() const;
+    WEBCORE_EXPORT explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
+    WEBCORE_EXPORT operator NSSize() const;
 #endif
 
 #if PLATFORM(WIN)

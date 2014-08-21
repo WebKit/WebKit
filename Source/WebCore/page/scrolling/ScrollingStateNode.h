@@ -171,8 +171,8 @@ public:
     bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
     
 private:
-    void retainPlatformLayer(PlatformLayer*);
-    void releasePlatformLayer(PlatformLayer*);
+    WEBCORE_EXPORT void retainPlatformLayer(PlatformLayer*);
+    WEBCORE_EXPORT void releasePlatformLayer(PlatformLayer*);
 
     union {
         GraphicsLayer* m_graphicsLayer;

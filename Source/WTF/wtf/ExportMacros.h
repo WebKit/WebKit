@@ -105,24 +105,6 @@
 
 #endif // USE(EXPORT_MACROS)
 
-// WTF_TESTING (and WEBCORE_TESTING in PlatformExportMacros.h) is used for
-// exporting symbols which are referred from WebCoreTestSupport library.
-// Since the set of APIs is common between ports,
-// it is rather worth annotating inside the code than maintaining port specific export lists.
-#if USE(EXPORT_MACROS_FOR_TESTING)
-
-#if defined(WTF_IS_LINKED_IN_SAME_BINARY)
-#define WTF_TESTING WTF_EXPORT_DECLARATION
-#else
-#define WTF_TESTING WTF_IMPORT_DECLARATION
-#endif
-
-#else // USE(EXPORT_MACROS_FOR_TESTING)
-
-#define WTF_TESTING
-
-#endif // USE(EXPORT_MACROS_FOR_TESTING)
-
 #if defined(WTF_IS_LINKED_IN_SAME_BINARY)
 #define WTF_EXPORT_PRIVATE WTF_EXPORT
 #else

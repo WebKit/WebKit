@@ -51,11 +51,11 @@ public:
         FirstLayoutDone
     };
 
-    bool committingFirstRealLoad() const;
+    WEBCORE_EXPORT bool committingFirstRealLoad() const;
     bool committedFirstRealDocumentLoad() const;
     bool creatingInitialEmptyDocument() const;
     bool isDisplayingInitialEmptyDocument() const;
-    bool firstLayoutDone() const;
+    WEBCORE_EXPORT bool firstLayoutDone() const;
     void advanceTo(State);
 
 private:

@@ -49,8 +49,8 @@ public:
     LayoutRect(const FloatPoint& location, const FloatSize& size)
         : m_location(location), m_size(size) { }
     LayoutRect(const IntRect& rect) : m_location(rect.location()), m_size(rect.size()) { }
-
-    explicit LayoutRect(const FloatRect&); // don't do this implicitly since it's lossy
+    
+    WEBCORE_EXPORT explicit LayoutRect(const FloatRect&); // don't do this implicitly since it's lossy
         
     LayoutPoint location() const { return m_location; }
     LayoutSize size() const { return m_size; }
@@ -134,7 +134,7 @@ public:
     LayoutPoint maxXMaxYCorner() const { return LayoutPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
     
     bool intersects(const LayoutRect&) const;
-    bool contains(const LayoutRect&) const;
+    WEBCORE_EXPORT bool contains(const LayoutRect&) const;
 
     // This checks to see if the rect contains x,y in the traditional sense.
     // Equivalent to checking if the rect contains a 1x1 rect below and to the right of (px,py).
@@ -143,7 +143,7 @@ public:
     bool contains(const LayoutPoint& point) const { return contains(point.x(), point.y()); }
 
     void intersect(const LayoutRect&);
-    void unite(const LayoutRect&);
+    WEBCORE_EXPORT void unite(const LayoutRect&);
     void uniteIfNonZero(const LayoutRect&);
 
     void inflateX(LayoutUnit dx)
@@ -157,7 +157,7 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }
-    void scale(float s);
+    WEBCORE_EXPORT void scale(float s);
     void scale(float xScale, float yScale);
 
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }

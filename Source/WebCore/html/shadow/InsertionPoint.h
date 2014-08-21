@@ -51,7 +51,7 @@ public:
     bool hasDistribution() const { return m_hasDistribution; }
     void setHasDistribution() { m_hasDistribution = true; }
     void clearDistribution() { m_hasDistribution = false; }
-    bool isActive() const;
+    WEBCORE_EXPORT bool isActive() const;
 
     virtual MatchType matchTypeFor(Node*) const { return AlwaysMatches; }
 

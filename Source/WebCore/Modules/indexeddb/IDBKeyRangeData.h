@@ -57,9 +57,9 @@ struct IDBKeyRangeData {
 
     IDBKeyRangeData isolatedCopy() const;
 
-    PassRefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
+    WEBCORE_EXPORT PassRefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
 
-    bool isExactlyOneKey() const;
+    WEBCORE_EXPORT bool isExactlyOneKey() const;
 
     bool isNull;
 

@@ -1,3 +1,157 @@
+2014-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        More WEBCORE_EXPORT macros.
+        https://bugs.webkit.org/show_bug.cgi?id=136129
+
+        Reviewed by Tim Horton.
+
+        * Modules/geolocation/Geolocation.h:
+        * Modules/geolocation/GeolocationController.h:
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+        * Modules/indexeddb/IDBDatabaseMetadata.h:
+        * Modules/indexeddb/IDBKey.h:
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/IDBKeyPath.h:
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationController.h:
+        * bindings/js/GCController.h:
+        * bridge/IdentifierRep.h:
+        * css/StyleProperties.h:
+        * dom/ExceptionCodePlaceholder.h:
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.h:
+        * dom/Node.h:
+        (WebCore::Node::hasEditableStyle):
+        * dom/NodeTraversal.h:
+        * dom/Position.h:
+        (WebCore::Position::Position):
+        * dom/Range.h:
+        (WebCore::Range::startContainer):
+        (WebCore::Range::startOffset):
+        (WebCore::Range::endContainer):
+        (WebCore::Range::endOffset):
+        * editing/FrameSelection.h:
+        (WebCore::DragCaretController::clear):
+        * history/HistoryItem.h:
+        * history/PageCache.h:
+        * html/FormController.h:
+        * html/HTMLElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.h:
+        * html/HTMLVideoElement.h:
+        * html/ImageDocument.h:
+        * html/PluginDocument.h:
+        * html/forms/FileIconLoader.h:
+        * html/shadow/InsertionPoint.h:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorInstrumentation.h:
+        * loader/FrameLoadRequest.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderStateMachine.h:
+        * loader/HistoryController.h:
+        * loader/LoaderStrategy.h:
+        * loader/NavigationAction.h:
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ProgressTracker.h:
+        * loader/archive/cf/LegacyWebArchive.h:
+        * loader/cache/MemoryCache.h:
+        * loader/icon/IconController.h:
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.h:
+        * page/FocusController.h:
+        * page/Frame.h:
+        * page/FrameDestructionObserver.h:
+        Replaced WEBCORE_TESTING with WEBCORE_EXPORT.
+        * page/FrameTree.h:
+        * page/FrameView.h:
+        * page/Page.h:
+        * page/PageConsole.h:
+        * page/PageGroup.h:
+        * page/PageThrottler.h:
+        * page/PrintContext.h:
+        * page/scrolling/ScrollingConstraints.h:
+        * page/scrolling/ScrollingStateNode.h:
+        * platform/FileChooser.h:
+        * platform/GamepadProvider.h:
+        * platform/Length.h:
+        * platform/MIMETypeRegistry.h:
+        * platform/MemoryPressureHandler.h:
+        * platform/Pasteboard.h:
+        * platform/PlatformExportMacros.h:
+        Removed WEBCORE_TESTING, which I'm replacing with WEBCORE_EXPORT.
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformPasteboard.h:
+        * platform/PlatformSpeechSynthesisVoice.h:
+        * platform/PlatformSpeechSynthesizer.h:
+        * platform/audio/MediaSessionManager.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatQuad.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontGlyphs.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/GlyphPageTreeNode.h:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/LayoutRect.h:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Region.h:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/LayerFlushScheduler.h:
+        * platform/graphics/ca/LayerPool.h:
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/filters/FilterOperations.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/ios/LegacyTileCache.h:
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/wak/FloatingPointEnvironment.h:
+        * platform/mac/HIDGamepadProvider.h:
+        * platform/mock/MockMediaStreamCenter.h:
+        * platform/network/FormData.h:
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ProtectionSpaceBase.h:
+        * platform/network/cocoa/ProtectionSpaceCocoa.h:
+        (WebCore::ProtectionSpace::encodingRequiresPlatformData):
+        * platform/network/ios/QuickLook.h:
+        * platform/text/TextBreakIterator.h:
+        * plugins/PluginData.h:
+        * plugins/PluginMainThreadScheduler.h:
+        * rendering/HitTestLocation.h:
+        * rendering/HitTestResult.h:
+        * rendering/InlineBox.h:
+        Added more WEBCORE_EXPORT macros, which don't do anything yet.
+
 2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] WebkitWebProcess crashing navigating away from ogg video element

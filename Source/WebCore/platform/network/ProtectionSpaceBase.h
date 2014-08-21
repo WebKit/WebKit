@@ -60,12 +60,12 @@ class ProtectionSpaceBase {
 public:
     bool isHashTableDeletedValue() const { return m_isHashTableDeletedValue; }
     
-    const String& host() const;
-    int port() const;
-    ProtectionSpaceServerType serverType() const;
-    bool isProxy() const;
-    const String& realm() const;
-    ProtectionSpaceAuthenticationScheme authenticationScheme() const;
+    WEBCORE_EXPORT const String& host() const;
+    WEBCORE_EXPORT int port() const;
+    WEBCORE_EXPORT ProtectionSpaceServerType serverType() const;
+    WEBCORE_EXPORT bool isProxy() const;
+    WEBCORE_EXPORT const String& realm() const;
+    WEBCORE_EXPORT ProtectionSpaceAuthenticationScheme authenticationScheme() const;
     
     bool receivesCredentialSecurely() const;
 
@@ -74,8 +74,8 @@ public:
     static bool compare(const ProtectionSpace& a, const ProtectionSpace& b);
 
 protected:
-    ProtectionSpaceBase();
-    ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType, const String& realm, ProtectionSpaceAuthenticationScheme);
+    WEBCORE_EXPORT ProtectionSpaceBase();
+    WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType, const String& realm, ProtectionSpaceAuthenticationScheme);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     ProtectionSpaceBase(WTF::HashTableDeletedValueType) : m_isHashTableDeletedValue(true) { }

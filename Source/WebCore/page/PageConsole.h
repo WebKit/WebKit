@@ -50,8 +50,8 @@ public:
     explicit PageConsole(Page&);
     virtual ~PageConsole();
 
-    static bool shouldPrintExceptions();
-    static void setShouldPrintExceptions(bool);
+    WEBCORE_EXPORT static bool shouldPrintExceptions();
+    WEBCORE_EXPORT static void setShouldPrintExceptions(bool);
 
     static void mute();
     static void unmute();

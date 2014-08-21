@@ -92,7 +92,7 @@ public:
     void restoreControlStateFor(HTMLFormControlElementWithState&);
     void restoreControlStateIn(HTMLFormElement&);
 
-    static Vector<String> getReferencedFilePaths(const Vector<String>& stateVector);
+    WEBCORE_EXPORT static Vector<String> getReferencedFilePaths(const Vector<String>& stateVector);
 
 private:
     typedef ListHashSet<RefPtr<HTMLFormControlElementWithState>, 64> FormElementListHashSet;

@@ -34,16 +34,16 @@ class Frame;
 
 class FrameDestructionObserver {
 public:
-    WEBCORE_TESTING explicit FrameDestructionObserver(Frame*);
+    WEBCORE_EXPORT explicit FrameDestructionObserver(Frame*);
 
-    WEBCORE_TESTING virtual void frameDestroyed();
-    WEBCORE_TESTING virtual void willDetachPage();
+    WEBCORE_EXPORT virtual void frameDestroyed();
+    WEBCORE_EXPORT virtual void willDetachPage();
 
     Frame* frame() const { return m_frame; }
 
 protected:
-    WEBCORE_TESTING virtual ~FrameDestructionObserver();
-    WEBCORE_TESTING void observeFrame(Frame*);
+    WEBCORE_EXPORT virtual ~FrameDestructionObserver();
+    WEBCORE_EXPORT void observeFrame(Frame*);
 
     Frame* m_frame;
 };

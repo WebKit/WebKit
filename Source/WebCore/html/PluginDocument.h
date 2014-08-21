@@ -41,7 +41,7 @@ public:
 
     void setPluginElement(PassRefPtr<HTMLPlugInElement>);
 
-    Widget* pluginWidget();
+    WEBCORE_EXPORT Widget* pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }
 
     void detachFromPluginElement();

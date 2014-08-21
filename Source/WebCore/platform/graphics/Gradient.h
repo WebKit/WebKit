@@ -65,10 +65,10 @@ namespace WebCore {
         {
             return adoptRef(new Gradient(p0, r0, p1, r1, aspectRatio));
         }
-        ~Gradient();
+        WEBCORE_EXPORT ~Gradient();
 
         struct ColorStop;
-        void addColorStop(const ColorStop&);
+        WEBCORE_EXPORT void addColorStop(const ColorStop&);
         void addColorStop(float, const Color&);
 
         bool hasAlpha() const;
@@ -165,7 +165,7 @@ namespace WebCore {
 #endif
 
     private:
-        Gradient(const FloatPoint& p0, const FloatPoint& p1);
+        WEBCORE_EXPORT Gradient(const FloatPoint& p0, const FloatPoint& p1);
         Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio);
 
         void platformInit() { m_gradient = 0; }

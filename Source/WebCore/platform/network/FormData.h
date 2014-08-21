@@ -193,13 +193,13 @@ public:
         MultipartFormData // for multipart/form-data
     };
 
-    static PassRefPtr<FormData> create();
-    static PassRefPtr<FormData> create(const void*, size_t);
+    WEBCORE_EXPORT static PassRefPtr<FormData> create();
+    WEBCORE_EXPORT static PassRefPtr<FormData> create(const void*, size_t);
     static PassRefPtr<FormData> create(const CString&);
     static PassRefPtr<FormData> create(const Vector<char>&);
     static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&, EncodingType = FormURLEncoded);
     static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
-    ~FormData();
+    WEBCORE_EXPORT ~FormData();
 
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
     // How much of that is intentional? We need better names that explain the difference.
@@ -211,10 +211,10 @@ public:
     template<typename Decoder>
     static PassRefPtr<FormData> decode(Decoder&);
 
-    void appendData(const void* data, size_t);
+    WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath, bool shouldGenerateFile = false);
-    void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
-    void appendBlob(const URL& blobURL);
+    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
+    WEBCORE_EXPORT void appendBlob(const URL& blobURL);
     char* expandDataStore(size_t);
 
     void flatten(Vector<char>&) const; // omits files

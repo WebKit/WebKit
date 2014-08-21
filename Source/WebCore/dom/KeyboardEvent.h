@@ -103,8 +103,8 @@ public:
 #endif
 
 private:
-    KeyboardEvent();
-    KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
+    WEBCORE_EXPORT KeyboardEvent();
+    WEBCORE_EXPORT KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
     KeyboardEvent(const AtomicString&, const KeyboardEventInit&);
 
     std::unique_ptr<PlatformKeyboardEvent> m_keyEvent;

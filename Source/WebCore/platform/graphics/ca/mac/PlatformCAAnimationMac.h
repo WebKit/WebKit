@@ -49,7 +49,7 @@ void setHasExplicitBeginTime(CAAnimation *, bool);
 class PlatformCAAnimationMac final : public PlatformCAAnimation {
 public:
     static PassRefPtr<PlatformCAAnimation> create(AnimationType, const String& keyPath);
-    static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef);
+    WEBCORE_EXPORT static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef);
 
     virtual ~PlatformCAAnimationMac();
 
