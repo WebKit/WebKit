@@ -876,7 +876,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         m_tree.insertHTMLElement(token);
         return;
     }
-    if (token->name() == rbTag || token->name() == rpTag || token->name() == rtcTag) {
+    if (token->name() == rbTag || token->name() == rtcTag) {
         if (m_tree.openElements()->inScope(rubyTag.localName())) {
             m_tree.generateImpliedEndTags();
             if (!m_tree.currentStackItem()->hasTagName(rubyTag))
@@ -885,7 +885,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         m_tree.insertHTMLElement(token);
         return;
     }
-    if (token->name() == rtTag) {
+    if (token->name() == rtTag || token->name() == rpTag) {
         if (m_tree.openElements()->inScope(rubyTag.localName())) {
             m_tree.generateImpliedEndTagsWithExclusion(rtcTag.localName());
             if (!m_tree.currentStackItem()->hasTagName(rubyTag) && !m_tree.currentStackItem()->hasTagName(rtcTag))

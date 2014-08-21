@@ -1,5 +1,26 @@
 2014-08-21  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
+        New ruby parsing rule breaks some real web sites.
+        https://bugs.webkit.org/show_bug.cgi?id=136062
+
+        Reviewed by Ryosuke Niwa.
+
+        An RP element should not auto close an RTC element.
+
+        The HTML5.1 spec was changed:
+        http://www.w3.org/html/wg/drafts/html/master/syntax.html#parsing-main-inbody
+        This was done at the following commit:
+        https://github.com/w3c/html/commit/c61397b989b28235ee2228f280aa8d475f3b9ebf
+
+        This patch changed the RP element's behavior to follow the spec change.
+
+        Test: fast/ruby/rp-inside-rtc.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+
+2014-08-21  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
         REGRESSION: CSS not() selector does not work when it appears after or within @supports
         https://bugs.webkit.org/show_bug.cgi?id=136063
 

@@ -195,7 +195,7 @@
 |       "a"
 |       <rtc>
 |         "b"
-|       <rp>
+|         <rp>
 
 #data
 <html><ruby>a<rtc>b<span></ruby></html>
