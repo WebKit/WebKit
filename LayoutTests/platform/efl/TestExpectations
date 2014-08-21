@@ -1514,9 +1514,7 @@ webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
 # EFL specific error : (_ecore_main_fd_handlers_bads_rem() No bad fd found).
-webkit.org/b/116587 http/tests/websocket/tests/hybi/close.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/close-on-navigate-new-location.html [ Skip ]
-webkit.org/b/116587 http/tests/websocket/tests/hybi/multiple-subprotocols.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/reload-crash.html [ Skip ]
 
 # Synthesized italics not supported
