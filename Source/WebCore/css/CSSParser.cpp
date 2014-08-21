@@ -471,7 +471,9 @@ PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet
 bool CSSParser::parseSupportsCondition(const String& string)
 {
     m_supportsCondition = false;
-    setupParser("@-webkit-supports-condition{ ", string, "} ");
+    // can't use { because tokenizer state switches from supports to initial state when it sees { token.
+    // instead insert one " " (which is WHITESPACE in CSSGrammar.y)
+    setupParser("@-webkit-supports-condition ", string, "} ");
     cssyyparse(this);
     return m_supportsCondition;
 }
@@ -9981,7 +9983,7 @@ enum CharacterType {
     CharacterOther,
     CharacterNull,
     CharacterWhiteSpace,
-    CharacterEndMediaQuery,
+    CharacterEndConditionQuery,
     CharacterEndNthChild,
     CharacterQuote,
     CharacterExclamationMark,
@@ -10060,7 +10062,7 @@ static const CharacterType typesOfASCIICharacters[128] = {
 /*  56 - 8                  */ CharacterNumber,
 /*  57 - 9                  */ CharacterNumber,
 /*  58 - :                  */ CharacterOther,
-/*  59 - ;                  */ CharacterEndMediaQuery,
+/*  59 - ;                  */ CharacterEndConditionQuery,
 /*  60 - <                  */ CharacterLess,
 /*  61 - =                  */ CharacterOther,
 /*  62 - >                  */ CharacterOther,
@@ -10124,7 +10126,7 @@ static const CharacterType typesOfASCIICharacters[128] = {
 /* 120 - x                  */ CharacterIdentifierStart,
 /* 121 - y                  */ CharacterIdentifierStart,
 /* 122 - z                  */ CharacterIdentifierStart,
-/* 123 - {                  */ CharacterEndMediaQuery,
+/* 123 - {                  */ CharacterEndConditionQuery,
 /* 124 - |                  */ CharacterVerticalBar,
 /* 125 - }                  */ CharacterOther,
 /* 126 - ~                  */ CharacterTilde,
@@ -11340,10 +11342,15 @@ restartAfterComment:
         } while (*currentCharacter<SrcCharacterType>() <= ' ' && (typesOfASCIICharacters[*currentCharacter<SrcCharacterType>()] == CharacterWhiteSpace));
         break;
 
-    case CharacterEndMediaQuery:
-        if (m_parsingMode == MediaQueryMode)
+    case CharacterEndConditionQuery: {
+        bool isParsingCondition = m_parsingMode == MediaQueryMode;
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        isParsingCondition = isParsingCondition || m_parsingMode == SupportsMode;
+#endif
+        if (isParsingCondition)
             m_parsingMode = NormalMode;
         break;
+    }
 
     case CharacterEndNthChild:
         if (m_parsingMode == NthChildMode)

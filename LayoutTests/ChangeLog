@@ -1,3 +1,17 @@
+2014-08-21  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        REGRESSION: CSS not() selector does not work when it appears after or within @supports
+        https://bugs.webkit.org/show_bug.cgi?id=136063
+
+        Reviewed by Darin Adler.
+
+        Test that @supports doesn't break "not" pseudo class selector.
+
+        * css3/supports-not-selector-cssom-expected.txt: Added.
+        * css3/supports-not-selector-cssom.html: Added.
+        * css3/supports-not-selector-expected.html: Added.
+        * css3/supports-not-selector.html: Added.
+
 2014-08-21  Beth Dakin  <bdakin@apple.com>
 
         overflow:scroll elements should support rubber-banding

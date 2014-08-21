@@ -391,7 +391,7 @@ webkit_selector:
 
 #if ENABLE_CSS3_CONDITIONAL_RULES
 
-webkit_supports_condition: WEBKIT_SUPPORTS_CONDITION_SYM '{' maybe_space supports_condition '}' { parser->m_supportsCondition = $4; } ;
+webkit_supports_condition: WEBKIT_SUPPORTS_CONDITION_SYM WHITESPACE maybe_space supports_condition '}' { parser->m_supportsCondition = $4; } ;
 
 #endif
 

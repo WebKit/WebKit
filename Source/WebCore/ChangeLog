@@ -1,3 +1,36 @@
+2014-08-21  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        REGRESSION: CSS not() selector does not work when it appears after or within @supports
+        https://bugs.webkit.org/show_bug.cgi?id=136063
+
+        Reviewed by Darin Adler.
+
+        CSSParser changes its m_parsingMode to SupportsMode when it finds
+        "@supports" token. However, the mode will be never changed to
+        NormalMode. This changes parsing algorithm for "not" token forever,
+        and it cannot parse not pseudo class selector.
+
+        When we finish parsing @supports rule, we should change to normal
+        mode.
+
+        @media does the same thing. This patch changed CharacterEndMediaQuery
+        to CharacterEndConditionQuery, and we change parsing mode from
+        SupportsMode to NormalMode when the parser finished to parse
+        @supports rule.
+
+        Like "@-webkit-mediaquery", we cannot use '{' to
+        "@-webkit-supports-condition". Changed "@-webkit-supports-condition"
+        parsing rule and parseSupportsCondition() not to use '{'.
+
+        Tests: css3/supports-not-selector-cssom.html
+               css3/supports-not-selector.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSupportsCondition):
+        (WebCore::isCSSLetter):
+        (WebCore::CSSParser::realLex):
+
 2014-08-21  Beth Dakin  <bdakin@apple.com>
 
         overflow:scroll elements should support rubber-banding
