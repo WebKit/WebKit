@@ -142,6 +142,48 @@ class RunJavaScriptCoreTestsTest(unittest.TestCase):
     5 failures found.""")
 
 
+class RunLLINTCLoopTestsTest(unittest.TestCase):
+    def assertResults(self, expected_result, expected_text, rc, stdio):
+        cmd = StubRemoteCommand(rc, stdio)
+        step = RunLLINTCLoopTests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_text = step.getText2(cmd, actual_results)
+
+        self.assertEqual(expected_result, actual_results)
+        self.assertEqual(actual_text, expected_text)
+
+    def test_failures(self):
+        self.assertResults(FAILURE, ['5 regressions found.'], 1,  '5 regressions found.')
+
+    def test_failure(self):
+        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '1 regression found.')
+
+    def test_no_failure(self):
+        self.assertResults(SUCCESS, ['webkit-jsc-cloop-test'], 0,  '0 regressions found.')
+
+
+class Run32bitJSCTestsTest(unittest.TestCase):
+    def assertResults(self, expected_result, expected_text, rc, stdio):
+        cmd = StubRemoteCommand(rc, stdio)
+        step = Run32bitJSCTests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_text = step.getText2(cmd, actual_results)
+
+        self.assertEqual(expected_result, actual_results)
+        self.assertEqual(actual_text, expected_text)
+
+    def test_failures(self):
+        self.assertResults(FAILURE, ['5 regressions found.'], 1,  '5 failures found.')
+
+    def test_failure(self):
+        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '1 failure found.')
+
+    def test_no_failure(self):
+        self.assertResults(SUCCESS, ['webkit-32bit-jsc-test'], 0,  '0 failures found.')
+
+
 class RunUnitTestsTest(unittest.TestCase):
     def assertFailures(self, expected_failure_count, stdio):
         if expected_failure_count:

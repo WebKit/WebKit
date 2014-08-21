@@ -1,3 +1,25 @@
+2014-08-21  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Fix countFailures of RunLLINTCLoopTests and Run32bitJSCTests.
+        https://bugs.webkit.org/show_bug.cgi?id=136125
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunLLINTCLoopTests.countFailures):
+        (Run32bitJSCTests.countFailures):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunLLINTCLoopTestsTest):
+        (RunLLINTCLoopTestsTest.assertResults):
+        (RunLLINTCLoopTestsTest.test_failures):
+        (RunLLINTCLoopTestsTest.test_failure):
+        (RunLLINTCLoopTestsTest.test_no_failure):
+        (Run32bitJSCTestsTest):
+        (Run32bitJSCTestsTest.assertResults):
+        (Run32bitJSCTestsTest.test_failures):
+        (Run32bitJSCTestsTest.test_failure):
+        (Run32bitJSCTestsTest.test_no_failure):
+
 2014-08-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix since r172814.
