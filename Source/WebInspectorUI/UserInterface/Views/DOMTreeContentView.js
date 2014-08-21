@@ -42,6 +42,10 @@ WebInspector.DOMTreeContentView = function(representedObject)
     this._compositingBordersButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
     this._compositingBordersButtonNavigationItem.enabled = !!PageAgent.getCompositingBordersVisible;
 
+    this._paintFlashingButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("paint-flashing", WebInspector.UIString("Enable paint flashing"), WebInspector.UIString("Disable paint flashing"), "Images/PaintFlashing.svg", 16, 16);
+    this._paintFlashingButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
+    this._paintFlashingButtonNavigationItem.enabled = true;
+
     WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
     this._showsShadowDOMButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("shows-shadow-DOM", WebInspector.UIString("Show shadow DOM nodes"), WebInspector.UIString("Hide shadow DOM nodes"), shadowDOMImage.src, shadowDOMImage.width, shadowDOMImage.height);
     this._showsShadowDOMButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
@@ -74,7 +78,7 @@ WebInspector.DOMTreeContentView.prototype = {
 
     get navigationItems()
     {
-        return [this._showsShadowDOMButtonNavigationItem, this._compositingBordersButtonNavigationItem];
+        return [this._showsShadowDOMButtonNavigationItem, this._compositingBordersButtonNavigationItem, this._paintFlashingButtonNavigationItem];
     },
 
     get domTreeOutline()
@@ -412,6 +416,15 @@ WebInspector.DOMTreeContentView.prototype = {
         var activated = !this._compositingBordersButtonNavigationItem.activated;
         this._compositingBordersButtonNavigationItem.activated = activated;
         PageAgent.setCompositingBordersVisible(activated);
+    },
+
+    _togglePaintFlashing: function(event)
+    {
+        console.assert(PageAgent.setShowPaintRects);
+
+        var activated = !this._paintFlashingButtonNavigationItem.activated;
+        this._paintFlashingButtonNavigationItem.activated = activated;
+        PageAgent.setShowPaintRects(activated);
     },
 
     _updateCompositingBordersButtonToMatchPageSettings: function()
