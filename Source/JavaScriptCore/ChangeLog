@@ -1,3 +1,186 @@
+2014-08-20  Saam Barati  <sbarati@apple.com>
+
+        Rename HighFidelityTypeProfiling variables for more clarity
+        https://bugs.webkit.org/show_bug.cgi?id=135899
+
+        Reviewed by Geoffrey Garen.
+
+        Many names that are used in the type profiling infrastructure
+        prefix themselves with "HighFidelity" or include the words "high"
+        and/or "fidelity" in some way. But the words "high" and "fidelity" don't 
+        add anything descriptive to the names surrounding type profiling. 
+        So this patch removes all uses of "HighFidelity" and its variants.
+
+        Most renamings change "HighFidelity*" to "TypeProfiler*" or simply 
+        drop the prefix "HighFidelity" all together. Now, almost all names 
+        in relation to type profiling contain in them "TypeProfiler" or 
+        "TypeProfiling" or some combination of the words "type" and "profile".
+
+        This patch also changes how we check if type profiling is enabled:
+        We no longer call vm::isProfilingTypesWithHighFidelity. We now just 
+        check that vm::typeProfiler is not null.
+
+        This patch also changes all calls to TypeProfilerLog::processLogEntries
+        to use ASCIILiteral to form WTFStrings instead of vanilla C string literals.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/TypeLocation.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset):
+        (JSC::UnlinkedCodeBlock::addTypeProfilerExpressionInfo):
+        (JSC::UnlinkedCodeBlock::highFidelityTypeProfileExpressionInfoForBytecodeOffset): Deleted.
+        (JSC::UnlinkedCodeBlock::addHighFidelityTypeProfileExpressionInfo): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::typeProfilingStartOffset):
+        (JSC::UnlinkedFunctionExecutable::typeProfilingEndOffset):
+        (JSC::UnlinkedFunctionExecutable::highFidelityTypeProfilingStartOffset): Deleted.
+        (JSC::UnlinkedFunctionExecutable::highFidelityTypeProfilingEndOffset): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitTypeProfilerExpressionInfo):
+        (JSC::BytecodeGenerator::emitProfileType):
+        (JSC::BytecodeGenerator::emitHighFidelityTypeProfilingExpressionInfo): Deleted.
+        (JSC::BytecodeGenerator::emitProfileTypesWithHighFidelity): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::isProfilingTypesWithHighFidelity): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::recompileAllJSFunctionsForTypeProfiling):
+        (Inspector::InspectorRuntimeAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorRuntimeAgent::enableTypeProfiler):
+        (Inspector::InspectorRuntimeAgent::disableTypeProfiler):
+        (Inspector::InspectorRuntimeAgent::setTypeProfilerEnabledState):
+        (Inspector::InspectorRuntimeAgent::enableHighFidelityTypeProfiling): Deleted.
+        (Inspector::InspectorRuntimeAgent::disableHighFidelityTypeProfiling): Deleted.
+        (Inspector::InspectorRuntimeAgent::setHighFidelityTypeProfilingEnabledState): Deleted.
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Runtime.json:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_profile_types_with_high_fidelity): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_profile_types_with_high_fidelity): Deleted.
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (functionDumpTypesForAllVariables):
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::typeProfilingStartOffset):
+        (JSC::ScriptExecutable::typeProfilingEndOffset):
+        (JSC::ScriptExecutable::highFidelityTypeProfilingStartOffset): Deleted.
+        (JSC::ScriptExecutable::highFidelityTypeProfilingEndOffset): Deleted.
+        * runtime/HighFidelityLog.cpp: Removed.
+        * runtime/HighFidelityLog.h: Removed.
+        * runtime/HighFidelityTypeProfiler.cpp: Removed.
+        * runtime/HighFidelityTypeProfiler.h: Removed.
+        * runtime/Options.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::prepareForTypeProfiling):
+        (JSC::SymbolTable::uniqueIDForVariable):
+        (JSC::SymbolTable::uniqueIDForRegister):
+        (JSC::SymbolTable::prepareForHighFidelityTypeProfiling): Deleted.
+        * runtime/SymbolTable.h:
+        * runtime/TypeProfiler.cpp: Added.
+        (JSC::TypeProfiler::logTypesForTypeLocation):
+        (JSC::TypeProfiler::insertNewLocation):
+        (JSC::TypeProfiler::getTypesForVariableAtOffsetForInspector):
+        (JSC::descriptorMatchesTypeLocation):
+        (JSC::TypeProfiler::findLocation):
+        * runtime/TypeProfiler.h: Added.
+        (JSC::QueryKey::QueryKey):
+        (JSC::QueryKey::isHashTableDeletedValue):
+        (JSC::QueryKey::operator==):
+        (JSC::QueryKey::hash):
+        (JSC::QueryKeyHash::hash):
+        (JSC::QueryKeyHash::equal):
+        (JSC::TypeProfiler::functionHasExecutedCache):
+        (JSC::TypeProfiler::typeLocationCache):
+        * runtime/TypeProfilerLog.cpp: Added.
+        (JSC::TypeProfilerLog::initializeLog):
+        (JSC::TypeProfilerLog::~TypeProfilerLog):
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeProfilerLog.h: Added.
+        (JSC::TypeProfilerLog::LogEntry::structureIDOffset):
+        (JSC::TypeProfilerLog::LogEntry::valueOffset):
+        (JSC::TypeProfilerLog::LogEntry::locationOffset):
+        (JSC::TypeProfilerLog::TypeProfilerLog):
+        (JSC::TypeProfilerLog::recordTypeInformationForLocation):
+        (JSC::TypeProfilerLog::logEndPtr):
+        (JSC::TypeProfilerLog::logStartOffset):
+        (JSC::TypeProfilerLog::currentLogEntryOffset):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::enableTypeProfiler):
+        (JSC::VM::disableTypeProfiler):
+        (JSC::VM::dumpTypeProfilerData):
+        (JSC::VM::enableHighFidelityTypeProfiling): Deleted.
+        (JSC::VM::disableHighFidelityTypeProfiling): Deleted.
+        (JSC::VM::dumpHighFidelityProfilingTypes): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::typeProfilerLog):
+        (JSC::VM::typeProfiler):
+        (JSC::VM::isProfilingTypesWithHighFidelity): Deleted.
+        (JSC::VM::highFidelityLog): Deleted.
+        (JSC::VM::highFidelityTypeProfiler): Deleted.
+
 2014-08-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r172799.

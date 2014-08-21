@@ -416,8 +416,6 @@ set(JavaScriptCore_SOURCES
     runtime/FunctionHasExecutedCache.cpp
     runtime/FunctionPrototype.cpp
     runtime/GetterSetter.cpp
-    runtime/HighFidelityLog.cpp
-    runtime/HighFidelityTypeProfiler.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp
     runtime/InitializeThreading.cpp
@@ -525,6 +523,8 @@ set(JavaScriptCore_SOURCES
     runtime/SymbolTable.cpp
     runtime/TestRunnerUtils.cpp
     runtime/TypeLocationCache.cpp
+    runtime/TypeProfiler.cpp
+    runtime/TypeProfilerLog.cpp
     runtime/TypeSet.cpp
     runtime/TypedArrayController.cpp
     runtime/TypedArrayType.cpp

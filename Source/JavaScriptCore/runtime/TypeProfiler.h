@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HighFidelityTypeProfiler_h
-#define HighFidelityTypeProfiler_h
+#ifndef TypeProfiler_h
+#define TypeProfiler_h
 
 #include "CodeBlock.h"
 #include "FunctionHasExecutedCache.h"
 #include "TypeLocationCache.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector { namespace TypeBuilder  { namespace Runtime {
 class TypeDescription;
@@ -71,7 +71,7 @@ struct QueryKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-} //namespace JSC
+} // namespace JSC
 
 namespace WTF {
 
@@ -92,16 +92,16 @@ enum TypeProfilerSearchDescriptor {
     TypeProfilerSearchDescriptorFunctionReturn = 2
 };
 
-class HighFidelityTypeProfiler {
+class TypeProfiler {
 public:
     void logTypesForTypeLocation(TypeLocation*);
-    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>&);
+    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>&);
     void insertNewLocation(TypeLocation*);
     FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }
     
 private:
-    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor descriptor);
+    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor);
     typedef HashMap<intptr_t, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
     SourceIDToLocationBucketMap m_bucketMap;
     FunctionHasExecutedCache m_functionHasExecutedCache;
@@ -112,4 +112,4 @@ private:
 
 } // namespace JSC
 
-#endif //HighFidelityTypeProfiler_h
+#endif // TypeProfiler_h

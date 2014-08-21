@@ -120,7 +120,7 @@
             { "name" : "op_profile_will_call", "length" : 2 },
             { "name" : "op_profile_did_call", "length" : 2 },
             { "name" : "op_end", "length" : 2 },
-            { "name" : "op_profile_types_with_high_fidelity", "length" : 6 },
+            { "name" : "op_profile_type", "length" : 6 },
             { "name" : "op_get_enumerable_length", "length" : 3 },
             { "name" : "op_has_indexed_property", "length" : 5 },
             { "name" : "op_has_structure_property", "length" : 5 },

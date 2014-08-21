@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "HighFidelityTypeProfiler.h"
+#include "TypeProfiler.h"
 
 #include "InspectorJSTypeBuilders.h"
 #include "TypeLocation.h"
@@ -33,9 +33,9 @@ namespace JSC {
 
 static const bool verbose = false;
 
-void HighFidelityTypeProfiler::logTypesForTypeLocation(TypeLocation* location)
+void TypeProfiler::logTypesForTypeLocation(TypeLocation* location)
 {
-    TypeProfilerSearchDescriptor descriptor = location->m_globalVariableID == HighFidelityReturnStatement ? TypeProfilerSearchDescriptorFunctionReturn : TypeProfilerSearchDescriptorNormal;
+    TypeProfilerSearchDescriptor descriptor = location->m_globalVariableID == TypeProfilerReturnStatement ? TypeProfilerSearchDescriptorFunctionReturn : TypeProfilerSearchDescriptorNormal;
 
     dataLogF("[Start, End]::[%u, %u]\n", location->m_divotStart, location->m_divotEnd);
 
@@ -44,14 +44,14 @@ void HighFidelityTypeProfiler::logTypesForTypeLocation(TypeLocation* location)
     else
         dataLog("\t\t[Entry IS NOT in system]\n");
 
-    dataLog("\t\t", location->m_globalVariableID == HighFidelityReturnStatement ? "[Return Statement]" : "[Normal Statement]", "\n");
+    dataLog("\t\t", location->m_globalVariableID == TypeProfilerReturnStatement ? "[Return Statement]" : "[Normal Statement]", "\n");
 
     dataLog("\t\t#Local#\n\t\t", location->m_instructionTypeSet->seenTypes().replace("\n", "\n\t\t"), "\n");
     if (location->m_globalTypeSet)
         dataLog("\t\t#Global#\n\t\t", location->m_globalTypeSet->seenTypes().replace("\n", "\n\t\t"), "\n");
 }
 
-void HighFidelityTypeProfiler::insertNewLocation(TypeLocation* location)
+void TypeProfiler::insertNewLocation(TypeLocation* location)
 {
     if (verbose)
         dataLogF("Registering location:: divotStart:%u, divotEnd:%u\n", location->m_divotStart, location->m_divotEnd);
@@ -65,13 +65,13 @@ void HighFidelityTypeProfiler::insertNewLocation(TypeLocation* location)
     bucket.append(location);
 }
 
-void HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>& description)
+void TypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>& description)
 {
     TypeLocation* location = findLocation(divot, sourceID, descriptor);
     if (!location)
         return;
 
-    if (location->m_globalTypeSet && location->m_globalVariableID != HighFidelityNoGlobalIDExists) {
+    if (location->m_globalTypeSet && location->m_globalVariableID != TypeProfilerNoGlobalIDExists) {
         description->setDisplayTypeName(location->m_globalTypeSet->displayName());
         description->setGlobalPrimitiveTypeNames(location->m_globalTypeSet->allPrimitiveTypeNames());
         description->setGlobalStructures(location->m_globalTypeSet->allStructureRepresentations());
@@ -84,16 +84,16 @@ void HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfi
 
 static bool descriptorMatchesTypeLocation(TypeProfilerSearchDescriptor descriptor, TypeLocation* location)
 {
-    if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID == HighFidelityReturnStatement)  
+    if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID == TypeProfilerReturnStatement)  
         return true;
 
-    if (descriptor == TypeProfilerSearchDescriptorNormal && location->m_globalVariableID != HighFidelityReturnStatement)  
+    if (descriptor == TypeProfilerSearchDescriptorNormal && location->m_globalVariableID != TypeProfilerReturnStatement)  
         return true;
 
     return false;
 }
 
-TypeLocation* HighFidelityTypeProfiler::findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor descriptor)
+TypeLocation* TypeProfiler::findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor descriptor)
 {
     QueryKey queryKey(sourceID, divot);
     auto iter = m_queryCache.find(queryKey);
@@ -126,4 +126,4 @@ TypeLocation* HighFidelityTypeProfiler::findLocation(unsigned divot, intptr_t so
     return bestMatch;
 }
 
-} //namespace JSC
+} // namespace JSC

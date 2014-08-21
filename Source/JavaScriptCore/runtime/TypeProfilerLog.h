@@ -26,19 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HighFidelityLog_h
-#define HighFidelityLog_h
+#ifndef TypeProfilerLog_h
+#define TypeProfilerLog_h
 
 #include "JSCJSValue.h"
-#include "HighFidelityTypeProfiler.h"
 #include "Structure.h"
+#include "TypeProfiler.h"
 #include <wtf/ByteSpinLock.h>
 
 namespace JSC {
 
 class TypeLocation;
 
-class HighFidelityLog {
+class TypeProfilerLog {
 
 public:
     struct LogEntry {
@@ -53,13 +53,13 @@ public:
     };
 
 
-    HighFidelityLog()
+    TypeProfilerLog()
         : m_logStartPtr(0)
     {
-        initializeHighFidelityLog();
+        initializeLog();
     }
 
-    ~HighFidelityLog();
+    ~TypeProfilerLog();
 
     ALWAYS_INLINE void recordTypeInformationForLocation(JSValue value, TypeLocation* location)
     {
@@ -71,24 +71,24 @@ public:
     
         m_currentLogEntryPtr += 1;
         if (UNLIKELY(m_currentLogEntryPtr == m_logEndPtr))
-            processHighFidelityLog("Log Full");
+            processLogEntries(ASCIILiteral("Log Full"));
     }
 
-    void processHighFidelityLog(String);
+    void processLogEntries(String);
     LogEntry* logEndPtr() const { return m_logEndPtr; }
 
-    static ptrdiff_t logStartOffset() { return OBJECT_OFFSETOF(HighFidelityLog, m_logStartPtr); }
-    static ptrdiff_t currentLogEntryOffset() { return OBJECT_OFFSETOF(HighFidelityLog, m_currentLogEntryPtr); }
+    static ptrdiff_t logStartOffset() { return OBJECT_OFFSETOF(TypeProfilerLog, m_logStartPtr); }
+    static ptrdiff_t currentLogEntryOffset() { return OBJECT_OFFSETOF(TypeProfilerLog, m_currentLogEntryPtr); }
 
 private:
-    void initializeHighFidelityLog();
+    void initializeLog();
 
-    unsigned m_highFidelityLogSize;
+    unsigned m_logSize;
     LogEntry* m_logStartPtr;
     LogEntry* m_currentLogEntryPtr;
     LogEntry* m_logEndPtr;
 };
 
-} //namespace JSC
+} // namespace JSC
 
-#endif //HighFidelityLog_h
+#endif // TypeProfilerLog_h

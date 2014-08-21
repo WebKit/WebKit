@@ -689,8 +689,6 @@
     <ClCompile Include="..\runtime\FunctionHasExecutedCache.cpp" />
     <ClCompile Include="..\runtime\FunctionPrototype.cpp" />
     <ClCompile Include="..\runtime\GetterSetter.cpp" />
-    <ClCompile Include="..\runtime\HighFidelityLog.cpp" />
-    <ClCompile Include="..\runtime\HighFidelityTypeProfiler.cpp" />
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
@@ -799,6 +797,8 @@
     <ClCompile Include="..\runtime\TypedArrayController.cpp" />
     <ClCompile Include="..\runtime\TypedArrayType.cpp" />
     <ClCompile Include="..\runtime\TypeLocationCache.cpp" />
+    <ClCompile Include="..\runtime\TypeProfiler.cpp" />
+    <ClCompile Include="..\runtime\TypeProfilerLog.cpp" />
     <ClCompile Include="..\runtime\TypeSet.cpp" />
     <ClCompile Include="..\runtime\VM.cpp" />
     <ClCompile Include="..\runtime\VMEntryScope.cpp" />
@@ -1425,8 +1425,6 @@
     <ClInclude Include="..\runtime\GenericTypedArrayView.h" />
     <ClInclude Include="..\runtime\GenericTypedArrayViewInlines.h" />
     <ClInclude Include="..\runtime\GetterSetter.h" />
-    <ClInclude Include="..\runtime\HighFidelityLog.h" />
-    <ClInclude Include="..\runtime\HighFidelityTypeProfiler.h" />
     <ClInclude Include="..\runtime\Identifier.h" />
     <ClInclude Include="..\runtime\IndexingHeader.h" />
     <ClInclude Include="..\runtime\IndexingHeaderInlines.h" />
@@ -1584,6 +1582,8 @@
     <ClInclude Include="..\runtime\TypedArrayInlines.h" />
     <ClInclude Include="..\runtime\TypedArrayType.h" />
     <ClInclude Include="..\runtime\TypeLocationCache.h" />
+    <ClInclude Include="..\runtime\TypeProfiler.h" />
+    <ClInclude Include="..\runtime\TypeProfilerLog.h" />
     <ClInclude Include="..\runtime\TypeSet.h" />
     <ClInclude Include="..\runtime\TypedArrays.h" />
     <ClInclude Include="..\runtime\Uint16Array.h" />

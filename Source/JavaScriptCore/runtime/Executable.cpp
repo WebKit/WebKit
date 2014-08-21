@@ -30,12 +30,12 @@
 #include "BytecodeGenerator.h"
 #include "CodeBlock.h"
 #include "DFGDriver.h"
-#include "HighFidelityTypeProfiler.h"
 #include "JIT.h"
 #include "LLIntEntrypoint.h"
 #include "JSCInlines.h"
 #include "Parser.h"
 #include "ProfilerDatabase.h"
+#include "TypeProfiler.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
@@ -104,8 +104,8 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_lastLine(-1)
     , m_startColumn(UINT_MAX)
     , m_endColumn(UINT_MAX)
-    , m_highFidelityTypeProfilingStartOffset(UINT_MAX)
-    , m_highFidelityTypeProfilingEndOffset(UINT_MAX)
+    , m_typeProfilingStartOffset(UINT_MAX)
+    , m_typeProfilingEndOffset(UINT_MAX)
 {
 }
 
@@ -376,10 +376,10 @@ const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecut
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->vm().programExecutableStructure.get(), exec->vm(), source, false)
 {
-    m_highFidelityTypeProfilingStartOffset = 0;
-    m_highFidelityTypeProfilingEndOffset = source.length() - 1;
-    if (exec->vm().isProfilingTypesWithHighFidelity())
-        exec->vm().highFidelityTypeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(sourceID(), m_highFidelityTypeProfilingStartOffset, m_highFidelityTypeProfilingEndOffset);
+    m_typeProfilingStartOffset = 0;
+    m_typeProfilingEndOffset = source.length() - 1;
+    if (exec->vm().typeProfiler())
+        exec->vm().typeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(sourceID(), m_typeProfilingStartOffset, m_typeProfilingEndOffset);
 }
 
 void ProgramExecutable::destroy(JSCell* cell)
@@ -403,8 +403,8 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
     ASSERT(endColumn != UINT_MAX);
     m_startColumn = startColumn;
     m_endColumn = endColumn;
-    m_highFidelityTypeProfilingStartOffset = unlinkedExecutable->highFidelityTypeProfilingStartOffset();
-    m_highFidelityTypeProfilingEndOffset = unlinkedExecutable->highFidelityTypeProfilingEndOffset();
+    m_typeProfilingStartOffset = unlinkedExecutable->typeProfilingStartOffset();
+    m_typeProfilingEndOffset = unlinkedExecutable->typeProfilingEndOffset();
 }
 
 void FunctionExecutable::destroy(JSCell* cell)
@@ -501,10 +501,10 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
         JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source, lineNo()), scope);
         globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
-        if (vm.isProfilingTypesWithHighFidelity()) {
-            vm.highFidelityTypeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
-                unlinkedFunctionExecutable->highFidelityTypeProfilingStartOffset(), 
-                unlinkedFunctionExecutable->highFidelityTypeProfilingEndOffset());
+        if (vm.typeProfiler()) {
+            vm.typeProfiler()->functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
+                unlinkedFunctionExecutable->typeProfilingStartOffset(), 
+                unlinkedFunctionExecutable->typeProfilingEndOffset());
         }
     }
 

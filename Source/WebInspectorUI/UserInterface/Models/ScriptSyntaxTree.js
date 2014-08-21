@@ -41,7 +41,7 @@ WebInspector.ScriptSyntaxTree = function(sourceText, script)
     }
 };
 
-// This should be kept in sync with an enum in JavaSciptCore/runtime/HighFidelityTypeProfiler.h
+// This should be kept in sync with an enum in JavaSciptCore/runtime/TypeProfiler.h
 WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
     NormalExpression: 1,
     FunctionReturn: 2

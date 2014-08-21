@@ -32,7 +32,6 @@
 #include "CopiedSpaceInlines.h"
 #include "Debugger.h"
 #include "Heap.h"
-#include "HighFidelityLog.h"
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSCell.h"
@@ -43,6 +42,7 @@
 #include "RepatchBuffer.h"
 #include "SlowPathCall.h"
 #include "TypeLocation.h"
+#include "TypeProfilerLog.h"
 #include "VirtualRegister.h"
 
 namespace JSC {
@@ -1339,7 +1339,7 @@ void JIT::emit_op_to_index_string(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
-void JIT::emit_op_profile_types_with_high_fidelity(Instruction* currentInstruction)
+void JIT::emit_op_profile_type(Instruction* currentInstruction)
 {
     TypeLocation* cachedTypeLocation = currentInstruction[2].u.location;
     int valueToProfile = currentInstruction[1].u.operand;
@@ -1369,31 +1369,31 @@ void JIT::emit_op_profile_types_with_high_fidelity(Instruction* currentInstructi
     }
 
     // Load the type profiling log into T2.
-    HighFidelityLog* cachedHighFidelityLog = m_vm->highFidelityLog();
-    move(TrustedImmPtr(cachedHighFidelityLog), regT2);
+    TypeProfilerLog* cachedTypeProfilerLog = m_vm->typeProfilerLog();
+    move(TrustedImmPtr(cachedTypeProfilerLog), regT2);
     // Load the next log entry into T1.
-    loadPtr(Address(regT2, HighFidelityLog::currentLogEntryOffset()), regT1);
+    loadPtr(Address(regT2, TypeProfilerLog::currentLogEntryOffset()), regT1);
 
     // Store the JSValue onto the log entry.
-    store64(regT0, Address(regT1, HighFidelityLog::LogEntry::valueOffset()));
+    store64(regT0, Address(regT1, TypeProfilerLog::LogEntry::valueOffset()));
 
     // Store the structureID of the cell if T0 is a cell, otherwise, store 0 on the log entry.
     Jump notCell = emitJumpIfNotJSCell(regT0);
     load32(Address(regT0, JSCell::structureIDOffset()), regT0);
-    store32(regT0, Address(regT1, HighFidelityLog::LogEntry::structureIDOffset()));
+    store32(regT0, Address(regT1, TypeProfilerLog::LogEntry::structureIDOffset()));
     Jump skipIsCell = jump();
     notCell.link(this);
-    store32(TrustedImm32(0), Address(regT1, HighFidelityLog::LogEntry::structureIDOffset()));
+    store32(TrustedImm32(0), Address(regT1, TypeProfilerLog::LogEntry::structureIDOffset()));
     skipIsCell.link(this);
 
     // Store the typeLocation on the log entry.
     move(TrustedImmPtr(cachedTypeLocation), regT0);
-    store64(regT0, Address(regT1, HighFidelityLog::LogEntry::locationOffset()));
+    store64(regT0, Address(regT1, TypeProfilerLog::LogEntry::locationOffset()));
 
     // Increment the current log entry.
-    addPtr(TrustedImm32(sizeof(HighFidelityLog::LogEntry)), regT1);
-    store64(regT1, Address(regT2, HighFidelityLog::currentLogEntryOffset()));
-    Jump skipClearLog = branchPtr(NotEqual, regT1, TrustedImmPtr(cachedHighFidelityLog->logEndPtr()));
+    addPtr(TrustedImm32(sizeof(TypeProfilerLog::LogEntry)), regT1);
+    store64(regT1, Address(regT2, TypeProfilerLog::currentLogEntryOffset()));
+    Jump skipClearLog = branchPtr(NotEqual, regT1, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr()));
     // Clear the log if we're at the end of the log.
     callOperation(operationProcessTypeProfilerLog);
     skipClearLog.link(this);

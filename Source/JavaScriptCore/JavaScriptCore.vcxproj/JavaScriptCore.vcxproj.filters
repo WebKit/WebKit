@@ -612,12 +612,6 @@
     <ClCompile Include="..\runtime\GetterSetter.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\HighFidelityLog.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="..\runtime\HighFidelityTypeProfiler.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\Identifier.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -853,6 +847,12 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\TypeLocationCache.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\TypeProfiler.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\TypeProfilerLog.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\TypeSet.cpp">
@@ -2558,12 +2558,6 @@
     <ClInclude Include="..\runtime\GetterSetter.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\HighFidelityLog.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\HighFidelityTypeProfiler.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\Identifier.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2832,6 +2826,12 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\TypeLocationCache.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TypeProfiler.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TypeProfilerLog.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\TypeSet.h">

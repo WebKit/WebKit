@@ -1,3 +1,15 @@
+2014-08-20  Saam Barati  <sbarati@apple.com>
+
+        Rename HighFidelityTypeProfiling variables for more clarity
+        https://bugs.webkit.org/show_bug.cgi?id=135899
+
+        Reviewed by Geoffrey Garen.
+
+        Change a reference in a comment to a JavaScriptCore file to its 
+        newly renamed variant.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+
 2014-08-18  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Introduce an inspector Abstract Syntax Tree.

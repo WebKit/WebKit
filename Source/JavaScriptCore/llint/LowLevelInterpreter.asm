@@ -1352,6 +1352,6 @@ end
 _llint_op_init_global_const_nop:
     dispatch(5)
 
-_llint_op_profile_types_with_high_fidelity:
-    callSlowPath(_slow_path_profile_types_with_high_fidelity)
+_llint_op_profile_type:
+    callSlowPath(_slow_path_profile_type)
     dispatch(6)

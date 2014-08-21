@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "HighFidelityLog.h"
+#include "TypeProfilerLog.h"
 
 #include "JSCJSValueInlines.h"
 #include "TypeLocation.h"
@@ -38,24 +38,24 @@ namespace JSC {
 
 static const bool verbose = false;
 
-void HighFidelityLog::initializeHighFidelityLog()
+void TypeProfilerLog::initializeLog()
 {
     ASSERT(!m_logStartPtr);
-    m_highFidelityLogSize = 50000;
-    m_logStartPtr = new LogEntry[m_highFidelityLogSize];
+    m_logSize = 50000;
+    m_logStartPtr = new LogEntry[m_logSize];
     m_currentLogEntryPtr = m_logStartPtr;
-    m_logEndPtr = m_logStartPtr + m_highFidelityLogSize;
+    m_logEndPtr = m_logStartPtr + m_logSize;
 }
 
-HighFidelityLog::~HighFidelityLog()
+TypeProfilerLog::~TypeProfilerLog()
 {
     delete[] m_logStartPtr;
 }
 
-void HighFidelityLog::processHighFidelityLog(String reason)
+void TypeProfilerLog::processLogEntries(String reason)
 {
     if (verbose)
-        dataLog("Process caller:'", reason,"'");
+        dataLog("Process caller:'", reason, "'");
 
     double before = currentTimeMS();
     LogEntry* entry = m_logStartPtr;
@@ -91,4 +91,4 @@ void HighFidelityLog::processHighFidelityLog(String reason)
     }
 }
 
-} //namespace JSC
+} // namespace JSC

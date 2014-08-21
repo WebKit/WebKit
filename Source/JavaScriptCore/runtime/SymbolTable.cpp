@@ -187,7 +187,7 @@ SymbolTable* SymbolTable::cloneCapturedNames(VM& vm)
     return result;
 }
 
-void SymbolTable::prepareForHighFidelityTypeProfiling(const ConcurrentJITLocker&)
+void SymbolTable::prepareForTypeProfiling(const ConcurrentJITLocker&)
 {
     if (m_typeProfilingRareData)
         return;
@@ -195,7 +195,7 @@ void SymbolTable::prepareForHighFidelityTypeProfiling(const ConcurrentJITLocker&
     m_typeProfilingRareData = std::make_unique<TypeProfilingRareData>();
 
     for (auto iter = m_map.begin(), end = m_map.end(); iter != end; ++iter) {
-        m_typeProfilingRareData->m_uniqueIDMap.set(iter->key, HighFidelityNeedsUniqueIDGeneration);
+        m_typeProfilingRareData->m_uniqueIDMap.set(iter->key, TypeProfilerNeedsUniqueIDGeneration);
         m_typeProfilingRareData->m_registerToVariableMap.set(iter->value.getIndex(), iter->key);
     }
 }
@@ -207,10 +207,10 @@ GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, St
     auto iter = m_typeProfilingRareData->m_uniqueIDMap.find(key);
     auto end = m_typeProfilingRareData->m_uniqueIDMap.end();
     if (iter == end)
-        return HighFidelityNoGlobalIDExists;
+        return TypeProfilerNoGlobalIDExists;
 
     GlobalVariableID id = iter->value;
-    if (id == HighFidelityNeedsUniqueIDGeneration) {
+    if (id == TypeProfilerNeedsUniqueIDGeneration) {
         id = vm.getNextUniqueVariableID();
         m_typeProfilingRareData->m_uniqueIDMap.set(key, id);
         m_typeProfilingRareData->m_uniqueTypeSetMap.set(key, TypeSet::create()); // Make a new global typeset for this corresponding ID.
@@ -226,7 +226,7 @@ GlobalVariableID SymbolTable::uniqueIDForRegister(const ConcurrentJITLocker& loc
     auto iter = m_typeProfilingRareData->m_registerToVariableMap.find(registerIndex);
     auto end = m_typeProfilingRareData->m_registerToVariableMap.end();
     if (iter == end)
-        return HighFidelityNoGlobalIDExists;
+        return TypeProfilerNoGlobalIDExists;
 
     return uniqueIDForVariable(locker, iter->value.get(), vm);
 }

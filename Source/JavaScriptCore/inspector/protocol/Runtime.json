@@ -241,12 +241,12 @@
             "description": "Returns detailed informtation on given function."
         },
         {
-            "name": "enableHighFidelityTypeProfiling",
-            "description": "Enables high fidelity type profiling on the VM."
+            "name": "enableTypeProfiler",
+            "description": "Enables type profiling on the VM."
         },
         {
-            "name": "disableHighFidelityTypeProfiling",
-            "description": "Disables high fidelity type profiling on the VM."
+            "name": "disableTypeProfiler",
+            "description": "Disables type profiling on the VM."
         }
     ],
     "events": [

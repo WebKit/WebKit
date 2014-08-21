@@ -65,7 +65,7 @@ void computeUsesForBytecodeOffset(
     case op_tear_off_activation:
     case op_profile_will_call:
     case op_profile_did_call:
-    case op_profile_types_with_high_fidelity:
+    case op_profile_type:
     case op_throw:
     case op_push_with_scope:
     case op_end:
@@ -287,7 +287,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_put_by_val_direct:
     case op_put_by_index:
     case op_tear_off_arguments:
-    case op_profile_types_with_high_fidelity:
+    case op_profile_type:
     case op_touch_entry:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);

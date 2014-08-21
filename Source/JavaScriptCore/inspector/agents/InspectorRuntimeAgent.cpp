@@ -36,8 +36,6 @@
 
 #include "Completion.h"
 #include "HeapIterationScope.h"
-#include "HighFidelityLog.h"
-#include "HighFidelityTypeProfiler.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorValues.h"
@@ -45,6 +43,8 @@
 #include "ParserError.h"
 #include "ScriptDebugServer.h"
 #include "SourceCode.h"
+#include "TypeProfiler.h"
+#include "TypeProfilerLog.h"
 #include "VMEntryScope.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/CurrentTime.h>
@@ -202,13 +202,13 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
     static const bool verbose = false;
     VM& vm = globalVM();
     typeDescriptions = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::TypeDescription>::create();
-    if (!vm.isProfilingTypesWithHighFidelity()) {
+    if (!vm.typeProfiler()) {
         *errorString = ASCIILiteral("The VM does not currently have Type Information.");
         return;
     }
 
     double start = currentTimeMS();
-    vm.highFidelityLog()->processHighFidelityLog("User Query");
+    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("User Query"));
 
     for (size_t i = 0; i < locations->length(); i++) {
         RefPtr<Inspector::InspectorValue> value = locations->get(i);
@@ -227,7 +227,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString* er
 
         RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription> typeDescription = Inspector::TypeBuilder::Runtime::TypeDescription::create();
         bool okay;
-        vm.highFidelityTypeProfiler()->getTypesForVariableAtOffsetForInspector(static_cast<TypeProfilerSearchDescriptor>(descriptor), divot, sourceIDAsString.toIntPtrStrict(&okay), typeDescription);
+        vm.typeProfiler()->getTypesForVariableAtOffsetForInspector(static_cast<TypeProfilerSearchDescriptor>(descriptor), divot, sourceIDAsString.toIntPtrStrict(&okay), typeDescription);
         typeDescriptions->addItem(typeDescription);
     }
 
@@ -253,7 +253,7 @@ static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTyp
 {
     vm.waitForCompilationsToComplete();
 
-    bool needsToRecompile = (shouldEnableTypeProfiling ? vm.enableHighFidelityTypeProfiling() : vm.disableHighFidelityTypeProfiling());
+    bool needsToRecompile = (shouldEnableTypeProfiling ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
     if (needsToRecompile) {
         TypeRecompiler recompiler;
         HeapIterationScope iterationScope(vm.heap);
@@ -264,20 +264,20 @@ static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTyp
 void InspectorRuntimeAgent::willDestroyFrontendAndBackend(InspectorDisconnectReason reason)
 {
     if (reason != InspectorDisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
-        setHighFidelityTypeProfilingEnabledState(false);
+        setTypeProfilerEnabledState(false);
 }
 
-void InspectorRuntimeAgent::enableHighFidelityTypeProfiling(ErrorString*)
+void InspectorRuntimeAgent::enableTypeProfiler(ErrorString*)
 {
-    setHighFidelityTypeProfilingEnabledState(true);
+    setTypeProfilerEnabledState(true);
 }
 
-void InspectorRuntimeAgent::disableHighFidelityTypeProfiling(ErrorString*)
+void InspectorRuntimeAgent::disableTypeProfiler(ErrorString*)
 {
-    setHighFidelityTypeProfilingEnabledState(false);
+    setTypeProfilerEnabledState(false);
 }
 
-void InspectorRuntimeAgent::setHighFidelityTypeProfilingEnabledState(bool shouldEnableTypeProfiling)
+void InspectorRuntimeAgent::setTypeProfilerEnabledState(bool shouldEnableTypeProfiling)
 {
     if (m_isTypeProfilingEnabled == shouldEnableTypeProfiling)
         return;

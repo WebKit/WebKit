@@ -30,10 +30,10 @@
 
 namespace JSC {
 
-enum HighFidelityGlobalIDFlags {
-    HighFidelityNeedsUniqueIDGeneration = -1,
-    HighFidelityNoGlobalIDExists = -2,
-    HighFidelityReturnStatement = -3
+enum TypeProfilerGlobalIDFlags {
+    TypeProfilerNeedsUniqueIDGeneration = -1,
+    TypeProfilerNoGlobalIDExists = -2,
+    TypeProfilerReturnStatement = -3
 };
 
 typedef intptr_t GlobalVariableID;

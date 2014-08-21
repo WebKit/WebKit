@@ -220,13 +220,13 @@ namespace JSC {
         TryData* tryData;
     };
 
-    enum ProfileTypesWithHighFidelityBytecodeFlag {
-        ProfileTypesBytecodePutToScope,
-        ProfileTypesBytecodeGetFromScope,
-        ProfileTypesBytecodeHasGlobalID,
-        ProfileTypesBytecodeDoesNotHaveGlobalID,
-        ProfileTypesBytecodeFunctionArgument,
-        ProfileTypesBytecodeFunctionReturnStatement
+    enum ProfileTypeBytecodeFlag {
+        ProfileTypeBytecodePutToScope,
+        ProfileTypeBytecodeGetFromScope,
+        ProfileTypeBytecodeHasGlobalID,
+        ProfileTypeBytecodeDoesNotHaveGlobalID,
+        ProfileTypeBytecodeFunctionArgument,
+        ProfileTypeBytecodeFunctionReturnStatement
     };
 
     class BytecodeGenerator {
@@ -407,8 +407,8 @@ namespace JSC {
             return emitNode(n);
         }
 
-        void emitHighFidelityTypeProfilingExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
-        void emitProfileTypesWithHighFidelity(RegisterID* registerToProfile, ProfileTypesWithHighFidelityBytecodeFlag, const Identifier*);
+        void emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
+        void emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag, const Identifier*);
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
@@ -754,8 +754,6 @@ namespace JSC {
         StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 
         VM* m_vm;
-
-        bool isProfilingTypesWithHighFidelity() { return vm()->isProfilingTypesWithHighFidelity(); }
 
         OpcodeID m_lastOpcodeID;
 #ifndef NDEBUG

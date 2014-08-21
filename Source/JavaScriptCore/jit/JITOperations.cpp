@@ -40,7 +40,6 @@
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
-#include "HighFidelityLog.h"
 #include "HostCallReturnValue.h"
 #include "JIT.h"
 #include "JITToDFGDeferredCompilationCallback.h"
@@ -54,6 +53,7 @@
 #include "Repatch.h"
 #include "RepatchBuffer.h"
 #include "TestRunnerUtils.h"
+#include "TypeProfilerLog.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
@@ -1929,7 +1929,7 @@ JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
 
 void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
 {
-    exec->vm().highFidelityLog()->processHighFidelityLog(ASCIILiteral("Log Full, called from inside baseline JIT"));
+    exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside baseline JIT"));
 }
 
 } // extern "C"

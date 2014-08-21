@@ -479,7 +479,7 @@ public:
     
     SymbolTable* cloneCapturedNames(VM&);
 
-    void prepareForHighFidelityTypeProfiling(const ConcurrentJITLocker&);
+    void prepareForTypeProfiling(const ConcurrentJITLocker&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

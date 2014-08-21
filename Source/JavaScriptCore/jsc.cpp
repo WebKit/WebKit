@@ -1061,7 +1061,7 @@ EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState* exec)
 {
-    exec->vm().dumpHighFidelityProfilingTypes();
+    exec->vm().dumpTypeProfilerData();
     return JSValue::encode(jsUndefined());
 }
 

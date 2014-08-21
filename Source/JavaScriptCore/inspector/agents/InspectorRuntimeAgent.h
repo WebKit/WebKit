@@ -69,8 +69,8 @@ public:
     virtual void releaseObjectGroup(ErrorString*, const String& objectGroup) override final;
     virtual void run(ErrorString*) override;
     virtual void getRuntimeTypesForVariablesAtOffsets(ErrorString*, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::TypeDescription>>&) override;
-    virtual void enableHighFidelityTypeProfiling(ErrorString*) override;
-    virtual void disableHighFidelityTypeProfiling(ErrorString*) override;
+    virtual void enableTypeProfiler(ErrorString*) override;
+    virtual void disableTypeProfiler(ErrorString*) override;
     
     void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
 
@@ -88,7 +88,7 @@ protected:
     virtual void unmuteConsole() = 0;
 
 private:
-    void setHighFidelityTypeProfilingEnabledState(bool);
+    void setTypeProfilerEnabledState(bool);
 
     InjectedScriptManager* m_injectedScriptManager;
     ScriptDebugServer* m_scriptDebugServer;

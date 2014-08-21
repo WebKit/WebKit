@@ -34,7 +34,6 @@
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
-#include "HighFidelityLog.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"

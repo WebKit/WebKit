@@ -48,8 +48,6 @@
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
-#include "HighFidelityTypeProfiler.h"
-#include "HighFidelityLog.h"
 #include "HostCallReturnValue.h"
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
@@ -84,6 +82,8 @@
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"
+#include "TypeProfiler.h"
+#include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
 #include "WeakMapData.h"
 #include <wtf/ProcessID.h>
@@ -193,7 +193,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_enabledProfiler(nullptr)
     , m_builtinExecutables(BuiltinExecutables::create(*this))
     , m_nextUniqueVariableID(1)
-    , m_highFidelityTypeProfilingEnabledCount(0)
+    , m_typeProfilerEnabledCount(0)
 {
     interpreter = new Interpreter(*this);
     StackBounds stack = wtfThreadData().stack();
@@ -286,8 +286,8 @@ VM::VM(VMType vmType, HeapType heapType)
     // won't use this.
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 
-    if (Options::profileTypesWithHighFidelity())
-        enableHighFidelityTypeProfiling();
+    if (Options::enableTypeProfiler())
+        enableTypeProfiler();
 }
 
 VM::~VM()
@@ -899,29 +899,29 @@ TypeLocation* VM::nextTypeLocation()
     return m_typeLocationInfo->add(); 
 }
 
-bool VM::enableHighFidelityTypeProfiling()
+bool VM::enableTypeProfiler()
 {
     bool needsToRecompile = false;
-    if (!m_highFidelityTypeProfilingEnabledCount) {
-        m_highFidelityTypeProfiler = std::make_unique<HighFidelityTypeProfiler>();
-        m_highFidelityLog = std::make_unique<HighFidelityLog>();
+    if (!m_typeProfilerEnabledCount) {
+        m_typeProfiler = std::make_unique<TypeProfiler>();
+        m_typeProfilerLog = std::make_unique<TypeProfilerLog>();
         m_typeLocationInfo = std::make_unique<Bag<TypeLocation>>();
         needsToRecompile = true;
     }
-    m_highFidelityTypeProfilingEnabledCount++;
+    m_typeProfilerEnabledCount++;
 
     return needsToRecompile;
 }
 
-bool VM::disableHighFidelityTypeProfiling()
+bool VM::disableTypeProfiler()
 {
-    RELEASE_ASSERT(m_highFidelityTypeProfilingEnabledCount > 0);
+    RELEASE_ASSERT(m_typeProfilerEnabledCount > 0);
 
     bool needsToRecompile = false;
-    m_highFidelityTypeProfilingEnabledCount--;
-    if (!m_highFidelityTypeProfilingEnabledCount) {
-        m_highFidelityTypeProfiler.reset(nullptr);
-        m_highFidelityLog.reset(nullptr);
+    m_typeProfilerEnabledCount--;
+    if (!m_typeProfilerEnabledCount) {
+        m_typeProfiler.reset(nullptr);
+        m_typeProfilerLog.reset(nullptr);
         m_typeLocationInfo.reset(nullptr);
         needsToRecompile = true;
     }
@@ -929,13 +929,13 @@ bool VM::disableHighFidelityTypeProfiling()
     return needsToRecompile;
 }
 
-void VM::dumpHighFidelityProfilingTypes()
+void VM::dumpTypeProfilerData()
 {
-    if (!isProfilingTypesWithHighFidelity())
+    if (!typeProfiler())
         return;
 
-    highFidelityLog()->processHighFidelityLog("VM Dump Types");
-    HighFidelityTypeProfiler* profiler = m_highFidelityTypeProfiler.get();
+    typeProfilerLog()->processLogEntries(ASCIILiteral("VM Dump Types"));
+    TypeProfiler* profiler = m_typeProfiler.get();
     for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo->begin(); !!iter; ++iter) {
         TypeLocation* location = *iter;
         profiler->logTypesForTypeLocation(location);

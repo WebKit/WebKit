@@ -99,8 +99,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_unlinkedBodyEndColumn(m_lineCount ? node->endColumn() : node->endColumn() - node->startColumn())
     , m_startOffset(node->source().startOffset() - source.startOffset())
     , m_sourceLength(node->source().length())
-    , m_highFidelityTypeProfilingStartOffset(node->functionNameStart())
-    , m_highFidelityTypeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
+    , m_typeProfilingStartOffset(node->functionNameStart())
+    , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_features(node->features())
     , m_functionMode(node->functionMode())
 {
@@ -402,11 +402,11 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
     m_expressionInfo.append(info);
 }
 
-bool UnlinkedCodeBlock::highFidelityTypeProfileExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
+bool UnlinkedCodeBlock::typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot)
 {
     static const bool verbose = false;
-    auto iter = m_highFidelityTypeProfileInfoMap.find(bytecodeOffset);
-    if (iter == m_highFidelityTypeProfileInfoMap.end()) {
+    auto iter = m_typeProfilerInfoMap.find(bytecodeOffset);
+    if (iter == m_typeProfilerInfoMap.end()) {
         if (verbose)
             dataLogF("Don't have assignment info for offset:%u\n", bytecodeOffset);
         startDivot = UINT_MAX;
@@ -414,18 +414,18 @@ bool UnlinkedCodeBlock::highFidelityTypeProfileExpressionInfoForBytecodeOffset(u
         return false;
     }
     
-    HighFidelityTypeProfileExpressionRange& range = iter->value;
+    TypeProfilerExpressionRange& range = iter->value;
     startDivot = range.m_startDivot;
     endDivot = range.m_endDivot;
     return true;
 }
 
-void UnlinkedCodeBlock::addHighFidelityTypeProfileExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot)
+void UnlinkedCodeBlock::addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot)
 {
-    HighFidelityTypeProfileExpressionRange range;
+    TypeProfilerExpressionRange range;
     range.m_startDivot = startDivot;
     range.m_endDivot = endDivot;
-    m_highFidelityTypeProfileInfoMap.set(instructionOffset, range);  
+    m_typeProfilerInfoMap.set(instructionOffset, range);  
 }
 
 void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
