@@ -190,10 +190,6 @@
 #endif
 #endif
 
-#if !defined(ENABLE_RUBBER_BANDING)
-#define ENABLE_RUBBER_BANDING 1
-#endif
-
 #if !defined(ENABLE_SMOOTH_SCROLLING)
 #define ENABLE_SMOOTH_SCROLLING 1
 #endif

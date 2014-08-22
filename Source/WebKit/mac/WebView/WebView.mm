@@ -2302,8 +2302,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
 #endif
 
+#if ENABLE(RUBBER_BANDING)
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=136131
     settings.setRubberBandingForOverflowScrollEnabled(false);
+#endif
 
 #if PLATFORM(IOS)
     settings.setStandalone([preferences _standalone]);
