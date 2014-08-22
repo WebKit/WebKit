@@ -1,5 +1,15 @@
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
+        ruby-base-merge-block-children-crash-2.html should not use render tree dump.
+        
+        Unreviewed gardening.
+
+        * fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Added.
+        * fast/ruby/ruby-base-merge-block-children-crash-2.html: restore previous version of the test.
+        * platform/mac/fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Removed.
+
+2014-08-21  Zalan Bujtas  <zalan@apple.com>
+
         Remove flaky saturated reftest. UnitTest takes care of saturated arithmetics.
 
         Unreviewed gardening.
