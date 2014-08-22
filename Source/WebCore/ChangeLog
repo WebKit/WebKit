@@ -1,5 +1,17 @@
 2014-08-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix showing paint rects when selecting lines in the timeline
+        https://bugs.webkit.org/show_bug.cgi?id=136173
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix the condition used to decide when to show the overlay.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::shouldShowOverlay):
+
+2014-08-22  Simon Fraser  <simon.fraser@apple.com>
+
         Use the correct rect for paint flashing
         https://bugs.webkit.org/show_bug.cgi?id=136169
 

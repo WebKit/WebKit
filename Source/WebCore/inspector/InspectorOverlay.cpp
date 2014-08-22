@@ -290,7 +290,7 @@ void InspectorOverlay::setIndicating(bool indicating)
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
-    return m_highlightNode || m_highlightNode || m_indicating || m_showingPaintRects || !m_pausedInDebuggerMessage.isNull();
+    return m_highlightNode || m_highlightQuad || m_indicating || m_showingPaintRects || !m_pausedInDebuggerMessage.isNull();
 }
 
 void InspectorOverlay::update()
