@@ -312,9 +312,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
     , m_elementIsHidden(document.hidden())
-#if PLATFORM(IOS)
-    , m_requestingPlay(false)
-#endif
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     , m_mediaControlsDependOnPageScaleFactor(false)
 #endif
@@ -514,35 +511,6 @@ bool HTMLMediaElement::isMouseFocusable() const
     return false;
 }
 
-#if PLATFORM(IOS)
-bool HTMLMediaElement::parseMediaPlayerAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    ASSERT(m_player);
-    if (name == data_youtube_idAttr) {
-        m_player->attributeChanged(name.toString(), value);
-        return true;
-    }
-    if (name == titleAttr) {
-        m_player->attributeChanged(name.toString(), value);
-        return true;
-    }
-
-    if (Settings* settings = document().settings()) {
-#if ENABLE(IOS_AIRPLAY)
-        if (name == webkitairplayAttr && settings->mediaPlaybackAllowsAirPlay()) {
-            m_player->attributeChanged(name.toString(), value);
-            return true;
-        }
-#endif
-        if (name == webkit_playsinlineAttr && settings->mediaPlaybackAllowsInline()) {
-            m_player->attributeChanged(name.toString(), ASCIILiteral(value.isNull() ? "false" : "true"));
-            return true;
-        }
-    }
-    return false;
-}
-#endif
-
 void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == srcAttr) {
@@ -633,10 +601,6 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setAttributeEventListener(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent, name, value);
     else if (name == onwebkitplaybacktargetavailabilitychangedAttr)
         setAttributeEventListener(eventNames().webkitplaybacktargetavailabilitychangedEvent, name, value);
-#endif
-#if PLATFORM(IOS)
-    else if (m_player && parseMediaPlayerAttribute(name, value))
-        return;
 #endif
     else
         HTMLElement::parseAttribute(name, value);
@@ -2784,9 +2748,6 @@ void HTMLMediaElement::playInternal()
             scheduleEvent(eventNames().playingEvent);
     }
     m_autoplaying = false;
-#if PLATFORM(IOS)
-    m_requestingPlay = true;
-#endif
     updatePlayState();
     updateMediaController();
 }
@@ -4573,10 +4534,6 @@ void HTMLMediaElement::updatePlayState()
         m_activityToken = nullptr;
     }
     
-#if PLATFORM(IOS)
-    m_requestingPlay = false;
-#endif
-
     updateMediaController();
 
     if (renderer())
@@ -4754,9 +4711,6 @@ void HTMLMediaElement::resume()
         // m_error is only left at MEDIA_ERR_ABORTED when the document becomes inactive (it is set to
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
-#if PLATFORM(IOS)
-        // FIXME: <rdar://problem/9751303> Merge: Does r1033092 need to be refixed in ToT?
-#endif
         // As it is not safe to immedately start loading now, let's schedule a load.
         scheduleDelayedAction(LoadMediaResource);
     }

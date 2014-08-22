@@ -1029,18 +1029,6 @@ void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)
     m_private->setPrivateBrowsingMode(m_privateBrowsing);
 }
 
-#if PLATFORM(IOS)
-void MediaPlayer::attributeChanged(const String& name, const String& value) 
-{
-    m_private->attributeChanged(name, value);
-}
-
-bool MediaPlayer::readyForPlayback() const
-{
-    return m_private->readyForPlayback();
-}
-#endif
-
 // Client callbacks.
 void MediaPlayer::networkStateChanged()
 {

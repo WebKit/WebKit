@@ -1,3 +1,28 @@
+2014-08-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Cleanup media code
+        https://bugs.webkit.org/show_bug.cgi?id=136163
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functionality was changed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Don't initialize m_requestingPlay.
+        (WebCore::HTMLMediaElement::parseMediaPlayerAttribute): Deleted.
+        (WebCore::HTMLMediaElement::parseAttribute): Don't call parseMediaPlayerAttribute.
+        (WebCore::HTMLMediaElement::playInternal): m_requestingPlay is dead, Jim.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        (WebCore::HTMLMediaElement::updatePlayState): Remove obsolete FIXME.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::attributeChanged): Deleted.
+        (WebCore::MediaPlayer::readyForPlayback): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::attributeChanged): Deleted.
+        (WebCore::MediaPlayerPrivateInterface::readyForPlayback): Deleted.
+
 2014-08-20  Maciej Stachowiak  <mjs@apple.com>
 
         Replace use of WKCopyCFLocalizationPreferredName with NSLocale public API

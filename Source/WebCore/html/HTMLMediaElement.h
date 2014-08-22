@@ -646,10 +646,6 @@ private:
     double minTimeSeekable() const;
     double maxTimeSeekable() const;
 
-#if PLATFORM(IOS)
-    bool parseMediaPlayerAttribute(const QualifiedName&, const AtomicString&);
-#endif
-
     // Pauses playback without changing any states or generating events
     void setPausedInternal(bool);
 
@@ -827,10 +823,6 @@ private:
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;
     bool m_elementIsHidden : 1;
-
-#if PLATFORM(IOS)
-    bool m_requestingPlay : 1;
-#endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     bool m_mediaControlsDependOnPageScaleFactor : 1;

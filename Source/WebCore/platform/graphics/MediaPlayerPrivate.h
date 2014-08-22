@@ -238,11 +238,6 @@ public:
     virtual void simulateAudioInterruption() { }
 #endif
 
-#if PLATFORM(IOS)
-    virtual void attributeChanged(const String&, const String&) { }
-    virtual bool readyForPlayback() const { return true; }
-#endif
-
     virtual String languageOfPrimaryAudioTrack() const { return emptyString(); }
 
     virtual size_t extraMemoryCost() const { return 0; }
