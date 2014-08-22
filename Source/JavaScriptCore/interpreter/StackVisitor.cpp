@@ -61,10 +61,11 @@ void StackVisitor::gotoNextFrame()
         InlineCallFrame* inlineCallFrame = m_frame.inlineCallFrame();
         CodeOrigin* callerCodeOrigin = &inlineCallFrame->caller;
         readInlinedFrame(m_frame.callFrame(), callerCodeOrigin);
-
-    } else
+        return;
+    }
 #endif // ENABLE(DFG_JIT)
-        readFrame(m_frame.callerFrame());
+    m_frame.m_VMEntryFrame = m_frame.m_CallerVMEntryFrame;
+    readFrame(m_frame.callerFrame());
 }
 
 void StackVisitor::readFrame(CallFrame* callFrame)
@@ -116,9 +117,9 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
 {
     m_frame.m_callFrame = callFrame;
     m_frame.m_argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
-    VMEntryFrame* currentVMEntryFrame = m_frame.m_VMEntryFrame;
-    m_frame.m_callerFrame = callFrame->callerFrame(m_frame.m_VMEntryFrame);
-    m_frame.m_callerIsVMEntryFrame = currentVMEntryFrame != m_frame.m_VMEntryFrame;
+    m_frame.m_CallerVMEntryFrame = m_frame.m_VMEntryFrame;
+    m_frame.m_callerFrame = callFrame->callerFrame(m_frame.m_CallerVMEntryFrame);
+    m_frame.m_callerIsVMEntryFrame = m_frame.m_CallerVMEntryFrame != m_frame.m_VMEntryFrame;
     m_frame.m_callee = callFrame->callee();
     m_frame.m_scope = callFrame->scope();
     m_frame.m_codeBlock = callFrame->codeBlock();

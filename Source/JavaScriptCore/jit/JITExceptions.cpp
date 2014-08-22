@@ -48,7 +48,8 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
     }
     
     RELEASE_ASSERT(exceptionValue);
-    HandlerInfo* handler = vm->interpreter->unwind(callFrame, exceptionValue); // This may update callFrame.
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    HandlerInfo* handler = vm->interpreter->unwind(vmEntryFrame, callFrame, exceptionValue); // This may update vmEntryFrame and callFrame.
 
     void* catchRoutine;
     Instruction* catchPCForInterpreter = 0;
@@ -62,6 +63,7 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
     } else
         catchRoutine = LLInt::getCodePtr(handleUncaughtException);
     
+    vm->vmEntryFrameForThrow = vmEntryFrame;
     vm->callFrameForThrow = callFrame;
     vm->targetMachinePCForThrow = catchRoutine;
     vm->targetInterpreterPCForThrow = catchPCForInterpreter;

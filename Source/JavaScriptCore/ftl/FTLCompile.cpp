@@ -285,24 +285,28 @@ static void fixFunctionBasedOnStackMaps(
         
         // At this point it's perfectly fair to just blow away all state and restore the
         // JS JIT view of the universe.
-        checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-
-        MacroAssembler::Label exceptionContinueArg1Set = checkJIT.label();
         checkJIT.move(MacroAssembler::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
         checkJIT.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
 
         checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
-        MacroAssembler::Call call = checkJIT.call();
+        checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+        MacroAssembler::Call callLookupExceptionHandler = checkJIT.call();
         checkJIT.jumpToExceptionHandler();
 
         stackOverflowException = checkJIT.label();
-        checkJIT.emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR1);
-        checkJIT.jump(exceptionContinueArg1Set);
+        checkJIT.move(MacroAssembler::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
+        checkJIT.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
+
+        checkJIT.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
+        checkJIT.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+        MacroAssembler::Call callLookupExceptionHandlerFromCallerFrame = checkJIT.call();
+        checkJIT.jumpToExceptionHandler();
 
         OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
             vm, checkJIT, codeBlock, JITCompilationMustSucceed));
-        linkBuffer->link(call, FunctionPtr(lookupExceptionHandler));
-        
+        linkBuffer->link(callLookupExceptionHandler, FunctionPtr(lookupExceptionHandler));
+        linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
+
         state.finalizer->handleExceptionsLinkBuffer = linkBuffer.release();
     }
 

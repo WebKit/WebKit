@@ -86,7 +86,7 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
     if (!callerFrame)
         callerFrame = exec;
 
-    NativeCallFrameTracer tracer(vm, vmEntryFrame, callerFrame);
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
     ErrorHandlingScope errorScope(*vm);
     vm->throwException(callerFrame, createStackOverflowError(callerFrame));
 }
@@ -101,7 +101,7 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForCall);
     if (missingArgCount < 0) {
-        NativeCallFrameTracer tracer(vm, vmEntryFrame, callerFrame);
+        NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
         throwStackOverflowError(callerFrame);
     }
 
@@ -118,7 +118,7 @@ int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForConstruct);
     if (missingArgCount < 0) {
-        NativeCallFrameTracer tracer(vm, vmEntryFrame, callerFrame);
+        NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
         throwStackOverflowError(callerFrame);
     }
 
@@ -1790,7 +1790,7 @@ void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExcepti
     JSValue exceptionValue = JSValue::decode(encodedExceptionValue);
     vm->throwException(exec, exceptionValue);
 
-    // Results stored out-of-band in vm.targetMachinePCForThrow & vm.callFrameForThrow
+    // Results stored out-of-band in vm.targetMachinePCForThrow, vm.callFrameForThrow & vm.vmEntryFrameForThrow
     genericUnwind(vm, exec, exceptionValue);
 }
 
@@ -1835,6 +1835,21 @@ void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)
     ASSERT(exceptionValue);
     
     genericUnwind(vm, exec, exceptionValue);
+    ASSERT(vm->targetMachinePCForThrow);
+}
+
+void JIT_OPERATION lookupExceptionHandlerFromCallerFrame(VM* vm, ExecState* exec)
+{
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
+    ASSERT(callerFrame);
+
+    NativeCallFrameTracer tracer(vm, callerFrame);
+
+    JSValue exceptionValue = vm->exception();
+    ASSERT(exceptionValue);
+    
+    genericUnwind(vm, callerFrame, exceptionValue);
     ASSERT(vm->targetMachinePCForThrow);
 }
 

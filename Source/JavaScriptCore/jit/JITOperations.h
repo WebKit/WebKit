@@ -205,6 +205,7 @@ typedef JSString* JIT_OPERATION (*Jss_JITOperation_EZ)(ExecState*, int32_t);
 // the return location from one of the calls out to one of the helper operations above.
 
 void JIT_OPERATION lookupExceptionHandler(VM*, ExecState*) WTF_INTERNAL;
+void JIT_OPERATION lookupExceptionHandlerFromCallerFrame(VM*, ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationVMHandleException(ExecState*) WTF_INTERNAL;
 
 void JIT_OPERATION operationThrowStackOverflowError(ExecState*, CodeBlock*) WTF_INTERNAL;

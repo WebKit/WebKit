@@ -116,35 +116,39 @@ void JITCompiler::compileBody()
 
 void JITCompiler::compileExceptionHandlers()
 {
-    if (m_exceptionChecks.empty() && m_exceptionChecksWithCallFrameRollback.empty())
-        return;
-
-    Jump doLookup;
-
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
-        emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR1);
-        doLookup = jump();
-    }
 
-    if (!m_exceptionChecks.empty())
-        m_exceptionChecks.link(this);
-
-    // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
-    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-
-    if (doLookup.isSet())
-        doLookup.link(this);
-
-    move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+        // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
+        move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
 
 #if CPU(X86)
-    // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-    poke(GPRInfo::argumentGPR0);
-    poke(GPRInfo::argumentGPR1, 1);
+        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
+        poke(GPRInfo::argumentGPR0);
+        poke(GPRInfo::argumentGPR1, 1);
 #endif
-    m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
-    jumpToExceptionHandler();
+        m_calls.append(CallLinkRecord(call(), lookupExceptionHandlerFromCallerFrame));
+
+        jumpToExceptionHandler();
+    }
+
+    if (!m_exceptionChecks.empty()) {
+        m_exceptionChecks.link(this);
+
+        // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
+        move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+
+#if CPU(X86)
+        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
+        poke(GPRInfo::argumentGPR0);
+        poke(GPRInfo::argumentGPR1, 1);
+#endif
+        m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
+
+        jumpToExceptionHandler();
+    }
 }
 
 void JITCompiler::link(LinkBuffer& linkBuffer)

@@ -1,3 +1,79 @@
+2014-08-21  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r163179): Sporadic crash in js/dom/line-column-numbers.html test
+        https://bugs.webkit.org/show_bug.cgi?id=136111
+
+        Reviewed by Filip Pizlo.
+
+        The problem was that we weren't properly handling VM::topVMEntryFrame in two ways.
+
+        First in the case where we get an exception of a stack overflow during setup of the direct
+        callee frame of a VM entry frame, we need to throw the exception in the caller's frame.
+        This requires unrolling topVMEntryFrame while creating the exception object.  This is
+        accomplished with the renamed NativeCallFrameTracerWithRestore object.  As part of this,
+        split the JIT rollback exception handling to call a new helper,
+        callLookupExceptionHandlerFromCallerFrame, which will unroll the callFrame and VMEntryFrame.
+
+        Second, when we unwind to find a handler, we also need to unwind topVMCallFrame for the
+        case where we end up (re)throwing another exception after entering the catch block, but
+        before another vmEntry call.  Added VM::vmEntryFrameForThrow as a way similar to
+        VM::callFrameForThrow to pass the appropriate VMENtryFrame to the catch block.
+
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        Split out the unroll cases to use the new helper callLookupExceptionHandlerFromCallerFrame()
+        to unwind both the callFrame and topVMEntryFrame.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        Added VMEntryFrame as another component to unwind.
+
+        * interpreter/Interpreter.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        (JSC::NativeCallFrameTracerWithRestore::NativeCallFrameTracerWithRestore):
+        (JSC::NativeCallFrameTracerWithRestore::~NativeCallFrameTracerWithRestore):
+        Renamed and changed to save and restore topCallFrame and topVMEntryFrame around the setting of
+        both values.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::gotoNextFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::vmEntryFrame):
+        Added code to unwind the VMEntryFrame.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler): Updated comment to indicate that the value
+        the handler should use for VM::topEntryFrame is in VM::vmEntryFrameForThrow.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Added code to update VM::topVMEntryFrame from VM::vmEntryFrameForThrowOffset.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        (JSC::operationThrowStackOverflowError):
+        (JSC::operationCallArityCheck):
+        (JSC::operationConstructArityCheck):
+
+        * runtime/VM.h:
+        (JSC::VM::vmEntryFrameForThrowOffset):
+        (JSC::VM::topVMEntryFrameOffset):
+        Added as the side channel to return the topVMEntryFrame that the handler should use.
+
 2014-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS

@@ -645,8 +645,9 @@ private:
 
 class UnwindFunctor {
 public:
-    UnwindFunctor(CallFrame*& callFrame, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
-        : m_callFrame(callFrame)
+    UnwindFunctor(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
+        : m_vmEntryFrame(vmEntryFrame)
+        , m_callFrame(callFrame)
         , m_isTermination(isTermination)
         , m_codeBlock(codeBlock)
         , m_handler(handler)
@@ -656,6 +657,7 @@ public:
     StackVisitor::Status operator()(StackVisitor& visitor)
     {
         VM& vm = m_callFrame->vm();
+        m_vmEntryFrame = visitor->vmEntryFrame();
         m_callFrame = visitor->callFrame();
         m_codeBlock = visitor->codeBlock();
         unsigned bytecodeOffset = visitor->bytecodeOffset();
@@ -673,13 +675,14 @@ public:
     }
 
 private:
+    VMEntryFrame*& m_vmEntryFrame;
     CallFrame*& m_callFrame;
     bool m_isTermination;
     CodeBlock*& m_codeBlock;
     HandlerInfo*& m_handler;
 };
 
-NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& exceptionValue)
+NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, JSValue& exceptionValue)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     ASSERT(codeBlock);
@@ -724,7 +727,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     HandlerInfo* handler = 0;
     VM& vm = callFrame->vm();
     ASSERT(callFrame == vm.topCallFrame);
-    UnwindFunctor functor(callFrame, isTermination, codeBlock, handler);
+    UnwindFunctor functor(vmEntryFrame, callFrame, isTermination, codeBlock, handler);
     callFrame->iterate(functor);
     if (!handler)
         return 0;

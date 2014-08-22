@@ -81,6 +81,7 @@ public:
 
         Arguments* createArguments();
         Arguments* existingArguments();
+        VMEntryFrame* vmEntryFrame() const { return m_VMEntryFrame; }
         CallFrame* callFrame() const { return m_callFrame; }
         
 #ifndef NDEBUG
@@ -97,6 +98,7 @@ public:
         size_t m_index;
         size_t m_argumentCountIncludingThis;
         VMEntryFrame* m_VMEntryFrame;
+        VMEntryFrame* m_CallerVMEntryFrame;
         CallFrame* m_callerFrame;
         JSObject* m_callee;
         JSScope* m_scope;
