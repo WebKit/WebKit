@@ -476,8 +476,8 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (!strcmp(ev->key, "F5")) {
         info("Reload (F5) was pressed, reloading.");
         ewk_view_reload(ewk_view);
-    } else if (!strcmp(ev->key, "F6")) {
-        info("Stop (F6) was pressed, stop loading.");
+    } else if (!strcmp(ev->key, "F6") || !strcmp(ev->key, "Escape")) {
+        info("Stop (F6 or Escape) was pressed, stop loading.");
         ewk_view_stop(ewk_view);
     } else if (!strcmp(ev->key, "F7")) {
         Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(ewk_view);
@@ -1071,6 +1071,15 @@ on_refresh_button_clicked(void *user_data, Evas_Object *refresh_button, void *ev
         info("Reloading...");
         ewk_view_reload(window->ewk_view);
     }
+}
+
+static void
+on_stop_button_clicked(void *user_data, Evas_Object *stop_button, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    info("Stop was Pressed. Aborting load...");
+    ewk_view_stop(window->ewk_view);
 }
 
 static void
@@ -1840,6 +1849,14 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_size_hint_align_set(refresh_button, 1.0, 0.5);
     elm_box_pack_end(horizontal_layout, refresh_button);
     evas_object_show(refresh_button);
+
+    /* Create Stop button */
+    Evas_Object *stop_button = create_toolbar_button(window->elm_window, "close");
+    evas_object_smart_callback_add(stop_button, "clicked", on_stop_button_clicked, window);
+    evas_object_size_hint_weight_set(stop_button, 0.0, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(stop_button, 1.0, 0.5);
+    elm_box_pack_end(horizontal_layout, stop_button);
+    evas_object_show(stop_button);
 
     /* Create Home button */
     Evas_Object *home_button = create_toolbar_button(window->elm_window, "home");

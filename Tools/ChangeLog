@@ -1,3 +1,15 @@
+2014-08-21  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][WK2] Minibrowser : Add stop button to abort page load
+        https://bugs.webkit.org/show_bug.cgi?id=136122
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+        (on_stop_button_clicked): Callback for stop button press.
+        (window_create):
+
 2014-08-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Load the llvmpipe (Mesa) libraries when running the tests with Xvfb.
