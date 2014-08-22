@@ -236,7 +236,7 @@ void RemoteInspectorDebuggableConnection::setupRunLoop()
     m_runLoop = debuggerRunLoop;
 
     CFRunLoopSourceContext runLoopSourceContext = {0, this, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, RemoteInspectorHandleRunSourceWithInfo};
-    m_runLoopSource = CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext);
+    m_runLoopSource = adoptCF(CFRunLoopSourceCreate(nullptr, 1, &runLoopSourceContext));
 
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), EventLoop::remoteInspectorRunLoopMode());

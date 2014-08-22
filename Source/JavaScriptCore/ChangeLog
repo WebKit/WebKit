@@ -1,3 +1,15 @@
+2014-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: RetainPtr misuse, CFRunLoopSource leak
+        https://bugs.webkit.org/show_bug.cgi?id=136143
+
+        Reviewed by Timothy Hatcher.
+
+        Adopt a Create into the RetainPtr to avoid leaking.
+
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setupRunLoop):
+
 2014-08-21  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION(r172808): It made 6 different tests fail on 32 bit platforms.
