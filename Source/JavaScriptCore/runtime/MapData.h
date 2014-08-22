@@ -48,6 +48,7 @@ public:
         static const_iterator end(const MapData*);
         bool operator!=(const const_iterator& other);
         bool operator==(const const_iterator& other);
+        void finish() { m_index = std::numeric_limits<int32_t>::max(); }
 
         bool ensureSlot();
 

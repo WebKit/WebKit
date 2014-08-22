@@ -68,6 +68,11 @@ public:
         return true;
     }
 
+    void finish()
+    {
+        m_iterator.finish();
+    }
+
 private:
 
     static const unsigned StructureFlags = Base::StructureFlags | OverridesVisitChildren;
