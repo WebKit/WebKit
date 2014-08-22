@@ -1,3 +1,39 @@
+2014-08-22  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172854
+
+    2014-08-21  Antti Koivisto  <antti@apple.com>
+
+            Animated GIFs scrolled out of view still cause titlebar blur to update, on tumblr.com page
+            https://bugs.webkit.org/show_bug.cgi?id=136139
+
+            Reviewed by Simon Fraser.
+
+            The mechanism for pausing GIF images outside the viewport did not work for subframes.
+
+            Test: fast/repaint/no-animation-outside-viewport-subframe.html
+
+            * WebCore.exp.in:
+            * page/FrameView.cpp:
+            (WebCore::FrameView::scrollPositionChanged):
+            (WebCore::FrameView::resumeVisibleImageAnimationsIncludingSubframes):
+
+                Add a function for resuming animations as needed in all subframes.
+                This is used after scrolling instead of calling the RenderView function directly.
+
+            * page/FrameView.h:
+            * page/Page.cpp:
+            (WebCore::Page::resumeAnimatingImages):
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::newImageAnimationFrameAvailable):
+
+                Determine the overall visible rect so that it is correct in subframes too.
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::scrollTo):
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::resumePausedImageAnimationsIfNeeded):
+
 2014-08-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172841. <rdar://problem/17733682>

@@ -2065,9 +2065,19 @@ void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoin
         document->sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize());
 
     if (RenderView* renderView = this->renderView()) {
-        renderView->resumePausedImageAnimationsIfNeeded();
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidScroll();
+    }
+
+    resumeVisibleImageAnimationsIncludingSubframes();
+}
+
+void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
+{
+    // A change in scroll position may affect image visibility in subframes.
+    for (auto* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
+        if (auto* renderView = frame->contentRenderer())
+            renderView->resumePausedImageAnimationsIfNeeded();
     }
 }
 

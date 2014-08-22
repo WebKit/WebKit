@@ -1305,7 +1305,8 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
 
 void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
 {
-    auto visibleRect = view().frameView().visibleContentRect();
+    auto& frameView = view().frameView();
+    auto visibleRect = frameView.windowToContents(frameView.windowClipRect());
     if (!shouldRepaintForImageAnimation(*this, visibleRect)) {
         view().addRendererWithPausedImageAnimations(*this);
         return;

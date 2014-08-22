@@ -1340,7 +1340,7 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
 
 void RenderView::resumePausedImageAnimationsIfNeeded()
 {
-    auto visibleRect = frameView().visibleContentRect();
+    auto visibleRect = frameView().windowToContents(frameView().windowClipRect());
     Vector<RenderElement*, 10> toRemove;
     for (auto* renderer : m_renderersWithPausedImageAnimation) {
         if (renderer->repaintForPausedImageAnimationsIfNeeded(visibleRect))
