@@ -1,5 +1,14 @@
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
+        Remove flaky saturated reftest. UnitTest takes care of saturated arithmetics.
+
+        Unreviewed gardening.
+
+        * fast/dynamic/saturated-layout-arithmetic-expected.html: Removed.
+        * fast/dynamic/saturated-layout-arithmetic.html: Removed.
+
+2014-08-21  Zalan Bujtas  <zalan@apple.com>
+
         Enable SATURATED_LAYOUT_ARITHMETIC.
         https://bugs.webkit.org/show_bug.cgi?id=136106
 
