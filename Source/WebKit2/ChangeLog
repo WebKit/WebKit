@@ -1,3 +1,15 @@
+2014-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Possible RetainPtr misuse in WKScriptMessage.mm - could leak
+        https://bugs.webkit.org/show_bug.cgi?id=136140
+
+        Reviewed by Darin Adler.
+
+        Adopt a copy into a RetainPtr to avoid leaking.
+
+        * UIProcess/API/Cocoa/WKScriptMessage.mm:
+        (-[WKScriptMessage _initWithBody:webView:frameInfo:name:]):
+
 2014-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add animationDidEnd callbacks on GraphicsLayer

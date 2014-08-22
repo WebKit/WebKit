@@ -44,7 +44,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _body = [body copy];
+    _body = adoptNS([body copy]);
     _webView = webView;
     _frameInfo = frameInfo;
     _name = adoptNS([name copy]);
