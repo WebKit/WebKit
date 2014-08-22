@@ -248,8 +248,26 @@ void RenderRubyRun::layout()
         firstLineRubyTextTop = rt->firstRootBox()->logicalTopLayoutOverflow();
         lastLineRubyTextBottom = rootBox->logicalBottomLayoutOverflow();
     }
-
-    if (style().isFlippedLinesWritingMode() == (style().rubyPosition() == RubyPositionAfter)) {
+    
+    if (isHorizontalWritingMode() && rt->style().rubyPosition() == RubyPositionInterCharacter) {
+        // Bopomofo. We need to move the RenderRubyText over to the right side and center it
+        // vertically relative to the base.
+        setWidth(width() + rt->layoutOverflowRect().maxX());
+        if (RenderRubyBase* rb = rubyBase()) {
+            LayoutUnit firstLineTop = 0;
+            LayoutUnit lastLineBottom = logicalHeight();
+            RootInlineBox* rootBox = rb->firstRootBox();
+            if (rootBox)
+                firstLineTop = rootBox->logicalTopLayoutOverflow();
+            firstLineTop += rb->logicalTop();
+            if (rootBox)
+                lastLineBottom = rootBox->logicalBottomLayoutOverflow();
+            lastLineBottom += rb->logicalTop();
+            rt->setX(rb->x() + rb->width());
+            LayoutUnit extent = lastLineBottom - firstLineTop;
+            rt->setY(firstLineTop + (extent - rt->height()) / 2);
+        }
+    } else if (style().isFlippedLinesWritingMode() == (style().rubyPosition() == RubyPositionAfter)) {
         LayoutUnit firstLineTop = 0;
         if (RenderRubyBase* rb = rubyBase()) {
             RootInlineBox* rootBox = rb->firstRootBox();

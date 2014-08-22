@@ -973,7 +973,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
 
     case CSSPropertyWebkitRubyPosition:
-        if (valueID == CSSValueBefore || valueID == CSSValueAfter)
+        if (valueID == CSSValueBefore || valueID == CSSValueAfter || valueID == CSSValueInterCharacter)
             return true;
         break;
 

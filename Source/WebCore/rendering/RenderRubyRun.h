@@ -66,7 +66,7 @@ public:
     void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, int& startOverhang, int& endOverhang) const;
 
     static RenderRubyRun* staticCreateRubyRun(const RenderObject* parentRuby);
-
+    
 protected:
     RenderRubyBase* createRubyBase() const;
 

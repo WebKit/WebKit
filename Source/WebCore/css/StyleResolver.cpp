@@ -1146,6 +1146,16 @@ static bool isScrollableOverflow(EOverflow overflow)
 }
 #endif
 
+void StyleResolver::adjustStyleForInterCharacterRuby()
+{
+    RenderStyle* style = m_state.style();
+    if (style->rubyPosition() != RubyPositionInterCharacter || !m_state.element() || !m_state.element()->hasTagName(rtTag))
+        return;
+    style->setTextAlign(CENTER);
+    if (style->isHorizontalWritingMode())
+        style->setWritingMode(LeftToRightWritingMode);
+}
+
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, Element *e)
 {
     // Cache our original display.
@@ -1696,7 +1706,12 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
             || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
             return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
+        applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
+        adjustStyleForInterCharacterRuby();
+
+        // Start by applying properties that other properties may depend on.
         applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+    
         updateFont();
         applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
 
@@ -1711,6 +1726,11 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     state.setLineHeightValue(nullptr);
+
+    applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
+    
+    // Adjust the font size to be smaller if ruby-position is inter-character.
+    adjustStyleForInterCharacterRuby();
 
     // Start by applying properties that other properties may depend on.
     applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);

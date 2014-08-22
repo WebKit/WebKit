@@ -101,8 +101,10 @@ large
 x-large
 xx-large
 -webkit-xxx-large
+-webkit-ruby-text
 smaller
 larger
+
 //
 // CSS_PROP_FONT_STRETCH:
 //
@@ -934,6 +936,7 @@ horizontal-bt
 // -webkit-ruby-position
 after
 before
+inter-character
 
 // -webkit-text-emphasis-position
 over

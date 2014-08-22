@@ -1,3 +1,59 @@
+2014-08-21  David Hyatt  <hyatt@apple.com>
+
+        Implement rudimentary Bopomofo Ruby support (ruby-position:inter-character)
+        https://bugs.webkit.org/show_bug.cgi?id=136137
+        <rdar://problem/12567545>
+
+        Reviewed by Sam Weinig.
+
+        Added fast/ruby/bopomofo.html and fast/ruby/bopomofo-rl.html.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator RubyPosition):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        Add support for the new inter-character value for ruby-position and also
+        add support for a new font-size keyword, -webkit-ruby-text, that is used
+        to set a smart initial font size based off the type of ruby being presented.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontSize::determineRubyTextSizeMultiplier):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        Determine the Ruby text size multiplier when -webkit-ruby-text is specified
+        as the font size. For ruby-position of before/after, we use 50% of the parent
+        font size. For inter-character ruby, we default to 25% instead. If inter-character
+        Ruby is nested, we assume it's to display tone marks, and we use 100% to ensure
+        the tone mark is the same size and does not get smaller.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustStyleForInterCharacterRuby):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        * css/StyleResolver.h:
+        ruby-position is now the highest priority CSS property, and it is resolved
+        before all other properties to ensure that its value can be checked when
+        determining a smart default font size. adjustStyleForInterCharacterRuby is a new
+        function called to auto-adjust inter-character ruby text to be vertical writing mode when
+        encountered inside horizontal documents.
+
+        * css/html.css:
+        (ruby > rt):
+        Change the font-size from 50% to -webkit-ruby-text to allow us to customize it as
+        needed depending on what kind of Ruby we want to show.
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        * rendering/RenderRubyRun.h:
+        Add layout code to properly position vertical ruby text relative to a horizontal base.
+
+        * rendering/style/RenderStyleConstants.h:
+        Add the new inter-character constant for ruby-position.
+
+        * rendering/style/StyleRareInheritedData.h:
+        Increase the number of storage bits for RubyPosition from 1 to 2 now that we support 3 values.
+
 2014-08-22  Jon Lee  <jonlee@apple.com>
 
         Fix iOS build due to r172832 and move RUBBER_BANDING out of FeatureDefines.h

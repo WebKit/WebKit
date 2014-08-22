@@ -1,3 +1,18 @@
+2014-08-21  David Hyatt  <hyatt@apple.com>
+
+        Implement rudimentary Bopomofo Ruby support (ruby-position:inter-character)
+        https://bugs.webkit.org/show_bug.cgi?id=136137
+        <rdar://problem/12567545>
+
+        Reviewed by Sam Weinig.
+
+        * fast/ruby/bopomofo-rl.html: Added.
+        * fast/ruby/bopomofo.html: Added.
+        * platform/mac/fast/ruby/bopomofo-expected.png: Added.
+        * platform/mac/fast/ruby/bopomofo-expected.txt: Added.
+        * platform/mac/fast/ruby/bopomofo-rl-expected.png: Added.
+        * platform/mac/fast/ruby/bopomofo-rl-expected.txt: Added.
+
 2014-08-21  Antti Koivisto  <antti@apple.com>
 
         Animated GIFs scrolled out of view still cause titlebar blur to update, on tumblr.com page

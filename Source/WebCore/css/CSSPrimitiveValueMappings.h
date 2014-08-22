@@ -3256,6 +3256,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RubyPosition position)
     case RubyPositionAfter:
         m_value.valueID = CSSValueAfter;
         break;
+    case RubyPositionInterCharacter:
+        m_value.valueID = CSSValueInterCharacter;
+        break;
     }
 }
 
@@ -3268,6 +3271,8 @@ template<> inline CSSPrimitiveValue::operator RubyPosition() const
         return RubyPositionBefore;
     case CSSValueAfter:
         return RubyPositionAfter;
+    case CSSValueInterCharacter:
+        return RubyPositionInterCharacter;
     default:
         break;
     }

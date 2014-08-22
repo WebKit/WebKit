@@ -1163,7 +1163,7 @@ rt {
 
 ruby > rt {
     display: block;
-    font-size: 50%;
+    font-size: -webkit-ruby-text;
     text-align: start;
 }
 

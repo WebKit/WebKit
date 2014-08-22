@@ -538,7 +538,7 @@ enum LineSnap { LineSnapNone, LineSnapBaseline, LineSnapContain };
 
 enum LineAlign { LineAlignNone, LineAlignEdges };
 
-enum RubyPosition { RubyPositionBefore, RubyPositionAfter };
+enum RubyPosition { RubyPositionBefore, RubyPositionAfter, RubyPositionInterCharacter };
 
 #if ENABLE(CSS_GRID_LAYOUT)
 static const size_t GridAutoFlowBits = 5;

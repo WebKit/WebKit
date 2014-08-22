@@ -38,6 +38,9 @@ zoom
 // line height needs to be right after the above high-priority properties
 line-height [Inherited]
 
+// Keep this in between the highest priority props and the lower ones.
+-webkit-ruby-position [Inherited]
+
 // The remaining properties are listed in alphabetical order
 background
 background-attachment
@@ -386,7 +389,6 @@ isolation
 -webkit-perspective-origin-y
 -webkit-print-color-adjust [Inherited]
 -webkit-rtl-ordering [Inherited]
--webkit-ruby-position [Inherited]
 #if defined(ENABLE_CSS_SCROLL_SNAP)
 -webkit-scroll-snap-points-x
 -webkit-scroll-snap-points-y

@@ -39,8 +39,8 @@
 #include "ClipPathOperation.h"
 #include "CursorList.h"
 #include "Document.h"
-#include "Element.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderStyle.h"
@@ -55,6 +55,8 @@
 #endif
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 enum ExpandValueBehavior {SuppressValue = 0, ExpandValue};
 template <ExpandValueBehavior expandValue, CSSPropertyID one = CSSPropertyInvalid, CSSPropertyID two = CSSPropertyInvalid, CSSPropertyID three = CSSPropertyInvalid, CSSPropertyID four = CSSPropertyInvalid, CSSPropertyID five = CSSPropertyInvalid>
@@ -817,6 +819,25 @@ public:
         return;
     }
 
+    static float determineRubyTextSizeMultiplier(StyleResolver* styleResolver)
+    {
+        if (styleResolver->style()->rubyPosition() != RubyPositionInterCharacter)
+            return 0.5f;
+        
+        Element* element = styleResolver->state().element();
+        if (element == nullptr)
+            return 0.25f;
+        
+        // FIXME: This hack is to ensure tone marks are the same size as
+        // the bopomofo. This code will go away if we make a special renderer
+        // for the tone marks eventually.
+        for (const Element* currElement = element->parentElement(); currElement; currElement = currElement->parentElement()) {
+            if (currElement->hasTagName(rtTag))
+                return 1.0f;
+        }
+        return 0.25f;
+    }
+    
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (!value->isPrimitiveValue())
@@ -855,11 +876,15 @@ public:
             case CSSValueSmaller:
                 size = smallerFontSize(parentSize);
                 break;
-            default:
+            case CSSValueWebkitRubyText: {
+                float rubyTextSizeMultiplier = determineRubyTextSizeMultiplier(styleResolver);
+                size = rubyTextSizeMultiplier * parentSize;
+                break;
+            } default:
                 return;
             }
 
-            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller));
+            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText));
         } else {
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
                                               || !(primitiveValue->isPercentage() || primitiveValue->isFontRelativeLength()));
