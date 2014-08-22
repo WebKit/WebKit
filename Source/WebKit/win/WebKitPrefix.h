@@ -43,5 +43,8 @@
 #define __STDC_LIMIT_MACROS
 #endif
 
+// This is needed because we include WebCore's headers.
+#define WEBCORE_EXPORT
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKit/WebKit.h>
