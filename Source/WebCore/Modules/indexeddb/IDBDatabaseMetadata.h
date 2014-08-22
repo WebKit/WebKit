@@ -76,7 +76,7 @@ struct IDBDatabaseMetadata {
     typedef HashMap<int64_t, IDBObjectStoreMetadata> ObjectStoreMap;
     ObjectStoreMap objectStores;
 
-    WEBCORE_EXPORT IDBDatabaseMetadata isolatedCopy() const;
+    IDBDatabaseMetadata isolatedCopy() const;
 };
 
 } // namespace WebCore

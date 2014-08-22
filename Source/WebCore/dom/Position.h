@@ -61,7 +61,7 @@ public:
         PositionIsAfterChildren,
     };
 
-    WEBCORE_EXPORT Position()
+    Position()
         : m_offset(0)
         , m_anchorType(PositionIsOffsetInAnchor)
         , m_isLegacyEditingPosition(false)
@@ -80,7 +80,7 @@ public:
 
         int m_offset;
     };
-    WEBCORE_EXPORT Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset);
+    Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset);
 
     // For creating before/after positions:
     Position(PassRefPtr<Node> anchorNode, AnchorType);
@@ -88,7 +88,7 @@ public:
 
     // For creating offset positions:
     // FIXME: This constructor should eventually go away. See bug 63040.
-    WEBCORE_EXPORT Position(PassRefPtr<Node> anchorNode, int offset, AnchorType);
+    Position(PassRefPtr<Node> anchorNode, int offset, AnchorType);
 
     AnchorType anchorType() const { return static_cast<AnchorType>(m_anchorType); }
 
@@ -96,11 +96,11 @@ public:
 
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
     // will return img->parentNode() and img->nodeIndex() from these functions.
-    WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
+    Node* containerNode() const; // NULL for a before/after position anchored to a node with no parent
     Text* containerText() const;
 
     int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
-    WEBCORE_EXPORT Position parentAnchoredEquivalent() const; // Convenience method for DOM positions that also fixes up some positions for editing
+    Position parentAnchoredEquivalent() const; // Convenience method for DOM positions that also fixes up some positions for editing
 
     // Inline O(1) access for Positions which callers know to be parent-anchored
     int offsetInContainerNode() const
@@ -149,7 +149,7 @@ public:
     // Move up or down the DOM by one position.
     // Offsets are computed using render text for nodes that have renderers - but note that even when
     // using composed characters, the result may be inside a single user-visible character if a ligature is formed.
-    WEBCORE_EXPORT Position previous(PositionMoveType = CodePoint) const;
+    Position previous(PositionMoveType = CodePoint) const;
     Position next(PositionMoveType = CodePoint) const;
     static int uncheckedPreviousOffset(const Node*, int current);
     static int uncheckedPreviousOffsetForBackwardDeletion(const Node*, int current);
@@ -170,12 +170,12 @@ public:
 
     // FIXME: Make these non-member functions and put them somewhere in the editing directory.
     // These aren't really basic "position" operations. More high level editing helper functions.
-    WEBCORE_EXPORT Position leadingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
-    WEBCORE_EXPORT Position trailingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
+    Position leadingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
+    Position trailingWhitespacePosition(EAffinity, bool considerNonCollapsibleWhitespace = false) const;
     
     // These return useful visually equivalent positions.
-    WEBCORE_EXPORT Position upstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
-    WEBCORE_EXPORT Position downstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
+    Position upstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
+    Position downstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
     
     bool isCandidate() const;
     bool isRenderedCharacter() const;
@@ -209,7 +209,7 @@ public:
 #endif
     
 private:
-    WEBCORE_EXPORT int offsetForPositionAfterAnchor() const;
+    int offsetForPositionAfterAnchor() const;
     
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;

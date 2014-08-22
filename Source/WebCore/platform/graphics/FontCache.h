@@ -134,18 +134,18 @@ public:
     void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);
 
     PassRefPtr<SimpleFontData> getCachedFontData(const FontDescription&, const AtomicString&, bool checkingAlternateName = false, ShouldRetain = Retain);
-    WEBCORE_EXPORT PassRefPtr<SimpleFontData> getLastResortFallbackFont(const FontDescription&, ShouldRetain = Retain);
+    PassRefPtr<SimpleFontData> getLastResortFallbackFont(const FontDescription&, ShouldRetain = Retain);
     SimpleFontData* getNonRetainedLastResortFallbackFont(const FontDescription&);
 
     void addClient(FontSelector*);
     void removeClient(FontSelector*);
 
     unsigned short generation();
-    WEBCORE_EXPORT void invalidate();
+    void invalidate();
 
-    WEBCORE_EXPORT size_t fontDataCount();
-    WEBCORE_EXPORT size_t inactiveFontDataCount();
-    WEBCORE_EXPORT void purgeInactiveFontData(int count = INT_MAX);
+    size_t fontDataCount();
+    size_t inactiveFontDataCount();
+    void purgeInactiveFontData(int count = INT_MAX);
 
 #if PLATFORM(WIN)
     PassRefPtr<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT&, AtomicString& outFontFamilyName);
@@ -175,7 +175,7 @@ private:
             purgeInactiveFontDataIfNeeded();
     }
 
-    void WEBCORE_EXPORT purgeInactiveFontDataIfNeeded();
+    void purgeInactiveFontDataIfNeeded();
 
     // FIXME: This method should eventually be removed.
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
@@ -190,7 +190,7 @@ private:
     PassRefPtr<SimpleFontData> similarFontPlatformData(const FontDescription&);
 #endif
 
-    WEBCORE_EXPORT PassRefPtr<SimpleFontData> getCachedFontData(const FontPlatformData*, ShouldRetain = Retain);
+    PassRefPtr<SimpleFontData> getCachedFontData(const FontPlatformData*, ShouldRetain = Retain);
 
     // Don't purge if this count is > 0;
     int m_purgePreventCount;

@@ -47,7 +47,7 @@ public:
     String headers() const;
     String scope() const;
 
-    WEBCORE_EXPORT HTMLTableCellElement* cellAbove() const;
+    HTMLTableCellElement* cellAbove() const;
 
 private:
     HTMLTableCellElement(const QualifiedName&, Document&);

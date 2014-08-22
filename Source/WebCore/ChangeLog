@@ -1,3 +1,7 @@
+2014-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        Revert r172831, it broke the Windows build.
+
 2014-08-21  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix when RUBBER_BANDING is not enabled.

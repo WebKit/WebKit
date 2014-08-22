@@ -37,7 +37,7 @@ public:
     virtual bool isDisabledFormControl() const override;
     HTMLSelectElement* ownerSelectElement() const;
     
-    WEBCORE_EXPORT String groupLabelText() const;
+    String groupLabelText() const;
 
 private:
     HTMLOptGroupElement(const QualifiedName&, Document&);

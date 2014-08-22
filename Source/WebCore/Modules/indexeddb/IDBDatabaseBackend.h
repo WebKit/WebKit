@@ -59,8 +59,8 @@ typedef int ExceptionCode;
 
 class IDBDatabaseBackend : public RefCounted<IDBDatabaseBackend> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<IDBDatabaseBackend> create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface*, IDBServerConnection&);
-    WEBCORE_EXPORT ~IDBDatabaseBackend();
+    static PassRefPtr<IDBDatabaseBackend> create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface*, IDBServerConnection&);
+    ~IDBDatabaseBackend();
 
     IDBServerConnection& serverConnection() { return m_serverConnection.get(); }
 
@@ -71,8 +71,8 @@ public:
     void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId);
     void removeIndex(int64_t objectStoreId, int64_t indexId);
 
-    WEBCORE_EXPORT void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
-    WEBCORE_EXPORT void deleteDatabase(PassRefPtr<IDBCallbacks>);
+    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
+    void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     // IDBDatabaseBackend
     void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);

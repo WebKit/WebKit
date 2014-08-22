@@ -37,9 +37,9 @@ namespace WebCore {
 
 class PlatformEventFactory {
 public:
-    WEBCORE_EXPORT static PlatformMouseEvent createPlatformMouseEvent(WebEvent *);
-    WEBCORE_EXPORT static PlatformWheelEvent createPlatformWheelEvent(WebEvent *);
-    WEBCORE_EXPORT static PlatformKeyboardEvent createPlatformKeyboardEvent(WebEvent *);
+    static PlatformMouseEvent createPlatformMouseEvent(WebEvent *);
+    static PlatformWheelEvent createPlatformWheelEvent(WebEvent *);
+    static PlatformKeyboardEvent createPlatformKeyboardEvent(WebEvent *);
 #if ENABLE(TOUCH_EVENTS)
     static PlatformTouchEvent createPlatformTouchEvent(WebEvent *);
 #endif

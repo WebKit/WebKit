@@ -62,7 +62,7 @@ public:
         : m_location(location), m_size(size) { }
     FloatRect(float x, float y, float width, float height)
         : m_location(FloatPoint(x, y)), m_size(FloatSize(width, height)) { }
-    WEBCORE_EXPORT FloatRect(const IntRect&);
+    FloatRect(const IntRect&);
 
     static FloatRect narrowPrecision(double x, double y, double width, double height);
 
@@ -127,12 +127,12 @@ public:
     FloatPoint minXMaxYCorner() const { return FloatPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
     FloatPoint maxXMaxYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
 
-    WEBCORE_EXPORT bool intersects(const FloatRect&) const;
-    WEBCORE_EXPORT bool contains(const FloatRect&) const;
-    WEBCORE_EXPORT bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
+    bool intersects(const FloatRect&) const;
+    bool contains(const FloatRect&) const;
+    bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
 
-    WEBCORE_EXPORT void intersect(const FloatRect&);
-    WEBCORE_EXPORT void unite(const FloatRect&);
+    void intersect(const FloatRect&);
+    void unite(const FloatRect&);
     void uniteEvenIfEmpty(const FloatRect&);
     void uniteIfNonZero(const FloatRect&);
     void extend(const FloatPoint&);
@@ -155,7 +155,7 @@ public:
     }
     void inflate(float d) { inflateX(d); inflateY(d); }
     void scale(float s) { scale(s, s); }
-    WEBCORE_EXPORT void scale(float sx, float sy);
+    void scale(float sx, float sy);
 
     FloatRect transposedRect() const { return FloatRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
@@ -165,13 +165,13 @@ public:
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3);
 
 #if USE(CG)
-    WEBCORE_EXPORT FloatRect(const CGRect&);
-    WEBCORE_EXPORT operator CGRect() const;
+    FloatRect(const CGRect&);
+    operator CGRect() const;
 #endif
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    WEBCORE_EXPORT FloatRect(const NSRect&);
-    WEBCORE_EXPORT operator NSRect() const;
+    FloatRect(const NSRect&);
+    operator NSRect() const;
 #endif
 
 #if USE(CAIRO)

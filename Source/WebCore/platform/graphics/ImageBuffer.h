@@ -87,15 +87,15 @@ public:
 
     static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, ColorSpace, const GraphicsContext*, bool hasAlpha);
 
-    WEBCORE_EXPORT ~ImageBuffer();
+    ~ImageBuffer();
 
     // The actual resolution of the backing store
     const IntSize& internalSize() const { return m_size; }
     const IntSize& logicalSize() const { return m_logicalSize; }
 
-    WEBCORE_EXPORT GraphicsContext* context() const;
+    GraphicsContext* context() const;
 
-    WEBCORE_EXPORT PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
+    PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
     // Give hints on the faster copyImage Mode, return DontCopyBackingStore if it supports the DontCopyBackingStore behavior
     // or return CopyBackingStore if it doesn't.  
     static BackingStoreCopy fastCopyImageMode();
@@ -158,7 +158,7 @@ private:
 
     // This constructor will place its success into the given out-variable
     // so that create() knows when it should return failure.
-    WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
+    ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
 };
 
 #if USE(CG)

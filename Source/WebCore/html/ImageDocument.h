@@ -39,7 +39,7 @@ public:
         return adoptRef(new ImageDocument(frame, url));
     }
 
-    WEBCORE_EXPORT HTMLImageElement* imageElement() const;
+    HTMLImageElement* imageElement() const;
 
     void updateDuringParsing();
     void finishedParsing();

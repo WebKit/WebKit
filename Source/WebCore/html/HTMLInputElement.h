@@ -70,7 +70,7 @@ public:
 
     virtual HTMLInputElement* toInputElement() override { return this; }
 
-    WEBCORE_EXPORT virtual bool shouldAutocomplete() const override;
+    virtual bool shouldAutocomplete() const override;
 
     // For ValidityState
     virtual bool hasBadInput() const override;
@@ -108,10 +108,10 @@ public:
     bool isTextButton() const;
 
     bool isRadioButton() const;
-    WEBCORE_EXPORT bool isTextField() const;
-    WEBCORE_EXPORT bool isSearchField() const;
+    bool isTextField() const;
+    bool isSearchField() const;
     bool isInputTypeHidden() const;
-    WEBCORE_EXPORT bool isPasswordField() const;
+    bool isPasswordField() const;
     bool isCheckbox() const;
     bool isRangeControl() const;
 
@@ -123,21 +123,21 @@ public:
     // be using a different one. Many input elements behave like text fields, and in addition
     // any unknown input type is treated as text. Consider, for example, isTextField or
     // isTextField && !isPasswordField.
-    WEBCORE_EXPORT bool isText() const;
+    bool isText() const;
 
-    WEBCORE_EXPORT bool isEmailField() const;
+    bool isEmailField() const;
     bool isFileUpload() const;
     bool isImageButton() const;
-    WEBCORE_EXPORT bool isNumberField() const;
+    bool isNumberField() const;
     bool isSubmitButton() const;
-    WEBCORE_EXPORT bool isTelephoneField() const;
-    WEBCORE_EXPORT bool isURLField() const;
-    WEBCORE_EXPORT bool isDateField() const;
-    WEBCORE_EXPORT bool isDateTimeField() const;
-    WEBCORE_EXPORT bool isDateTimeLocalField() const;
-    WEBCORE_EXPORT bool isMonthField() const;
-    WEBCORE_EXPORT bool isTimeField() const;
-    WEBCORE_EXPORT bool isWeekField() const;
+    bool isTelephoneField() const;
+    bool isURLField() const;
+    bool isDateField() const;
+    bool isDateTimeField() const;
+    bool isDateTimeLocalField() const;
+    bool isMonthField() const;
+    bool isTimeField() const;
+    bool isWeekField() const;
 
 #if PLATFORM(IOS)
     DateComponents::Type dateType() const;
@@ -171,8 +171,8 @@ public:
 
     virtual String value() const override;
     void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
-    WEBCORE_EXPORT void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
-    WEBCORE_EXPORT void setValueForUser(const String&);
+    void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
+    void setValueForUser(const String&);
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
     bool isValidValue(const String&) const;
@@ -185,13 +185,13 @@ public:
     // The value which is drawn by a renderer.
     String visibleValue() const;
 
-    WEBCORE_EXPORT void setEditingValue(const String&);
+    void setEditingValue(const String&);
 
     double valueAsDate() const;
     void setValueAsDate(double, ExceptionCode&);
 
-    WEBCORE_EXPORT double valueAsNumber() const;
-    WEBCORE_EXPORT void setValueAsNumber(double, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
+    double valueAsNumber() const;
+    void setValueAsNumber(double, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
 
     String valueWithDefault() const;
 
@@ -237,7 +237,7 @@ public:
     bool multiple() const;
 
     bool isAutofilled() const { return m_isAutofilled; }
-    WEBCORE_EXPORT void setAutofilled(bool = true);
+    void setAutofilled(bool = true);
 
     FileList* files();
     void setFiles(PassRefPtr<FileList>);
@@ -283,7 +283,7 @@ public:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     // For test purposes.
-    WEBCORE_EXPORT void selectColorInColorChooser(const Color&);
+    void selectColorInColorChooser(const Color&);
 #endif
 
     String defaultToolTip() const;

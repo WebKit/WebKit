@@ -96,10 +96,10 @@ public:
 
 #if OS(DARWIN)
 #if USE(APPKIT)
-    WEBCORE_EXPORT FontPlatformData(NSFont*, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
+    FontPlatformData(NSFont*, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
                      FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
 #else
-    WEBCORE_EXPORT FontPlatformData(CTFontRef, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
+    FontPlatformData(CTFontRef, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
                      FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
 #endif
 
@@ -120,7 +120,7 @@ public:
     FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
 #endif
 
-    WEBCORE_EXPORT ~FontPlatformData();
+    ~FontPlatformData();
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }

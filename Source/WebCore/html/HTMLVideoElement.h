@@ -39,8 +39,8 @@ class HTMLVideoElement final : public HTMLMediaElement {
 public:
     static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document&, bool);
 
-    WEBCORE_EXPORT unsigned videoWidth() const;
-    WEBCORE_EXPORT unsigned videoHeight() const;
+    unsigned videoWidth() const;
+    unsigned videoHeight() const;
     
     // Fullscreen
     void webkitEnterFullscreen(ExceptionCode&);

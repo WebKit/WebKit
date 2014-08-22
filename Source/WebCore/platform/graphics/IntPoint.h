@@ -104,14 +104,14 @@ public:
     }
 
 #if USE(CG)
-    WEBCORE_EXPORT explicit IntPoint(const CGPoint&); // don't do this implicitly since it's lossy
-    WEBCORE_EXPORT operator CGPoint() const;
+    explicit IntPoint(const CGPoint&); // don't do this implicitly since it's lossy
+    operator CGPoint() const;
 #endif
 
 #if !PLATFORM(IOS)
 #if OS(DARWIN) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    WEBCORE_EXPORT explicit IntPoint(const NSPoint&); // don't do this implicitly since it's lossy
-    WEBCORE_EXPORT operator NSPoint() const;
+    explicit IntPoint(const NSPoint&); // don't do this implicitly since it's lossy
+    operator NSPoint() const;
 #endif
 #endif // !PLATFORM(IOS)
 

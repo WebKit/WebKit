@@ -64,7 +64,7 @@ typedef int ExceptionCode;
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT Notification();
+    Notification();
 #if ENABLE(LEGACY_NOTIFICATIONS)
     static PassRef<Notification> create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
 #endif
@@ -72,7 +72,7 @@ public:
     static PassRef<Notification> create(ScriptExecutionContext&, const String& title, const Dictionary& options);
 #endif
     
-    WEBCORE_EXPORT virtual ~Notification();
+    virtual ~Notification();
 
     void show();
 #if ENABLE(LEGACY_NOTIFICATIONS)
@@ -111,10 +111,10 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(click);
     
-    WEBCORE_EXPORT void dispatchClickEvent();
-    WEBCORE_EXPORT void dispatchCloseEvent();
-    WEBCORE_EXPORT void dispatchErrorEvent();
-    WEBCORE_EXPORT void dispatchShowEvent();
+    void dispatchClickEvent();
+    void dispatchCloseEvent();
+    void dispatchErrorEvent();
+    void dispatchShowEvent();
 
     using RefCounted<Notification>::ref;
     using RefCounted<Notification>::deref;
@@ -128,11 +128,11 @@ public:
     // Deprecated. Use functions from NotificationCenter.
     void detachPresenter() { }
 
-    WEBCORE_EXPORT void finalize();
+    void finalize();
 
 #if ENABLE(NOTIFICATIONS)
     static const String permission(ScriptExecutionContext*);
-    WEBCORE_EXPORT static const String permissionString(NotificationClient::Permission);
+    static const String permissionString(NotificationClient::Permission);
     static void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback> = 0);
 #endif
 

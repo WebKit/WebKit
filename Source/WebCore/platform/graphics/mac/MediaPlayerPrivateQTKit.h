@@ -56,7 +56,7 @@ namespace WebCore {
 class MediaPlayerPrivateQTKit : public MediaPlayerPrivateInterface {
 public:
     ~MediaPlayerPrivateQTKit();
-    WEBCORE_EXPORT static void registerMediaEngine(MediaEngineRegistrar);
+    static void registerMediaEngine(MediaEngineRegistrar);
 
     void repaint();
     void loadStateChanged();

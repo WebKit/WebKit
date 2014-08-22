@@ -39,10 +39,10 @@ namespace WebCore {
 
     class NavigationAction {
     public:
-        WEBCORE_EXPORT NavigationAction();
-        WEBCORE_EXPORT explicit NavigationAction(const ResourceRequest&);
-        WEBCORE_EXPORT NavigationAction(const ResourceRequest&, NavigationType);
-        WEBCORE_EXPORT NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
+        NavigationAction();
+        explicit NavigationAction(const ResourceRequest&);
+        NavigationAction(const ResourceRequest&, NavigationType);
+        NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
         NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>);
         NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
 

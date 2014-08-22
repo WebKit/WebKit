@@ -39,7 +39,7 @@ public:
     static PassRefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
        bool defaultSelected, bool selected, ExceptionCode&);
 
-    WEBCORE_EXPORT virtual String text() const;
+    virtual String text() const;
     void setText(const String&, ExceptionCode&);
 
     int index() const;
@@ -47,7 +47,7 @@ public:
     String value() const;
     void setValue(const String&);
 
-    WEBCORE_EXPORT bool selected();
+    bool selected();
     void setSelected(bool);
 
 #if ENABLE(DATALIST_ELEMENT)

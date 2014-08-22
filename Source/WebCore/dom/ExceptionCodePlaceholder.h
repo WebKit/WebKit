@@ -68,8 +68,8 @@ class IgnorableExceptionCode : public ExceptionCodePlaceholder {
 
 class NoExceptionAssertionChecker : public ExceptionCodePlaceholder {
 public:
-    WEBCORE_EXPORT NoExceptionAssertionChecker(const char* file, int line);
-    WEBCORE_EXPORT ~NoExceptionAssertionChecker();
+    NoExceptionAssertionChecker(const char* file, int line);
+    ~NoExceptionAssertionChecker();
 
 private:
     static const ExceptionCode defaultExceptionCode = 0xaaaaaaaa;

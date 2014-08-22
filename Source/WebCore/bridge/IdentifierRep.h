@@ -36,10 +36,10 @@ namespace WebCore {
 class IdentifierRep {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static IdentifierRep* get(int);
-    WEBCORE_EXPORT static IdentifierRep* get(const char*);
+    static IdentifierRep* get(int);
+    static IdentifierRep* get(const char*);
 
-    WEBCORE_EXPORT static bool isValid(IdentifierRep*);
+    static bool isValid(IdentifierRep*);
     
     bool isString() const { return m_isString; }
 

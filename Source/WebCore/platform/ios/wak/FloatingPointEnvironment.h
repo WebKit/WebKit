@@ -36,11 +36,11 @@ class FloatingPointEnvironment {
 public:
     FloatingPointEnvironment();
 
-    WEBCORE_EXPORT void enableDenormalSupport();
-    WEBCORE_EXPORT void saveMainThreadEnvironment();
+    void enableDenormalSupport();
+    void saveMainThreadEnvironment();
     void propagateMainThreadEnvironment();
 
-    WEBCORE_EXPORT static FloatingPointEnvironment& shared();
+    static FloatingPointEnvironment& shared();
 
 private:
 

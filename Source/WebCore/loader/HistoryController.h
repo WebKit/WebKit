@@ -54,12 +54,12 @@ public:
 
     void saveScrollPositionAndViewStateToItem(HistoryItem*);
     void clearScrollPositionAndViewState();
-    WEBCORE_EXPORT void restoreScrollPositionAndViewState();
+    void restoreScrollPositionAndViewState();
 
     void updateBackForwardListForFragmentScroll();
 
     void saveDocumentState();
-    WEBCORE_EXPORT void saveDocumentAndScrollState();
+    void saveDocumentAndScrollState();
     void restoreDocumentState();
 
     void invalidateCurrentItemCachedPage();
@@ -77,7 +77,7 @@ public:
     void setCurrentItem(HistoryItem*);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
-    WEBCORE_EXPORT void replaceCurrentItem(HistoryItem*);
+    void replaceCurrentItem(HistoryItem*);
 
     HistoryItem* previousItem() const { return m_previousItem.get(); }
     void clearPreviousItem();

@@ -42,10 +42,10 @@ class SoupNetworkSession;
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static NetworkStorageSession& defaultStorageSession();
-    WEBCORE_EXPORT static std::unique_ptr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase = String());
+    static NetworkStorageSession& defaultStorageSession();
+    static std::unique_ptr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase = String());
 
-    WEBCORE_EXPORT static void switchToNewTestingSession();
+    static void switchToNewTestingSession();
 
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
     bool isPrivateBrowsingSession() const { return m_isPrivate; }
@@ -55,7 +55,7 @@ public:
     NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
-    WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
 #elif USE(SOUP)
     NetworkStorageSession(std::unique_ptr<SoupNetworkSession>);
     ~NetworkStorageSession();

@@ -52,7 +52,7 @@ class FocusNavigationScope {
 public:
     ContainerNode* rootNode() const;
     Element* owner() const;
-    WEBCORE_EXPORT static FocusNavigationScope focusNavigationScopeOf(Node*);
+    static FocusNavigationScope focusNavigationScopeOf(Node*);
     static FocusNavigationScope focusNavigationScopeOwnedByShadowHost(Node*);
     static FocusNavigationScope focusNavigationScopeOwnedByIFrame(HTMLFrameOwnerElement*);
 
@@ -66,28 +66,28 @@ class FocusController {
 public:
     explicit FocusController(Page&, ViewState::Flags);
 
-    WEBCORE_EXPORT void setFocusedFrame(PassRefPtr<Frame>);
+    void setFocusedFrame(PassRefPtr<Frame>);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
-    WEBCORE_EXPORT Frame& focusedOrMainFrame() const;
+    Frame& focusedOrMainFrame() const;
 
-    WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
+    bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
+    bool setFocusedElement(Element*, PassRefPtr<Frame>, FocusDirection = FocusDirectionNone);
 
     void setViewState(ViewState::Flags);
 
-    WEBCORE_EXPORT void setActive(bool);
+    void setActive(bool);
     bool isActive() const { return m_viewState & ViewState::WindowIsActive; }
 
-    WEBCORE_EXPORT void setFocused(bool);
+    void setFocused(bool);
     bool isFocused() const { return m_viewState & ViewState::IsFocused; }
 
     bool contentIsVisible() const { return m_viewState & ViewState::IsVisible; }
 
     // These methods are used in WebCore/bindings/objc/DOM.mm.
-    WEBCORE_EXPORT Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
-    WEBCORE_EXPORT Element* previousFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* previousFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
 
     void setFocusedElementNeedsRepaint();
     double timeSinceFocusWasSet() const;

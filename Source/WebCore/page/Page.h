@@ -116,16 +116,16 @@ class Page : public Supplementable<Page> {
     friend class PageThrottler;
 
 public:
-    WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
-    WEBCORE_EXPORT static void clearPreviousItemFromAllPages(HistoryItem*);
+    static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+    static void clearPreviousItemFromAllPages(HistoryItem*);
 
     // It is up to the platform to ensure that non-null clients are provided where required.
     // FIXME: Rename this to PageConfiguration and move it to its own class.
     struct PageClients {
         WTF_MAKE_NONCOPYABLE(PageClients); WTF_MAKE_FAST_ALLOCATED;
     public:
-        WEBCORE_EXPORT PageClients();
-        WEBCORE_EXPORT ~PageClients();
+        PageClients();
+        ~PageClients();
 
         AlternativeTextClient* alternativeTextClient;
         ChromeClient* chromeClient;
@@ -145,21 +145,21 @@ public:
         RefPtr<VisitedLinkStore> visitedLinkStore;
     };
 
-    WEBCORE_EXPORT explicit Page(PageClients&);
-    WEBCORE_EXPORT ~Page();
+    explicit Page(PageClients&);
+    ~Page();
 
-    WEBCORE_EXPORT uint64_t renderTreeSize() const;
+    uint64_t renderTreeSize() const;
 
     void setNeedsRecalcStyleInAllFrames();
 
     RenderTheme& theme() const { return *m_theme; }
 
-    WEBCORE_EXPORT ViewportArguments viewportArguments() const;
+    ViewportArguments viewportArguments() const;
 
     static void refreshPlugins(bool reload);
-    WEBCORE_EXPORT PluginData& pluginData() const;
+    PluginData& pluginData() const;
 
-    WEBCORE_EXPORT void setCanStartMedia(bool);
+    void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }
 
     EditorClient* editorClient() const { return m_editorClient; }
@@ -171,10 +171,10 @@ public:
     bool openedByDOM() const;
     void setOpenedByDOM();
 
-    WEBCORE_EXPORT void goToItem(HistoryItem*, FrameLoadType);
+    void goToItem(HistoryItem*, FrameLoadType);
 
-    WEBCORE_EXPORT void setGroupName(const String&);
-    WEBCORE_EXPORT const String& groupName() const;
+    void setGroupName(const String&);
+    const String& groupName() const;
 
     PageGroup& group();
     PageGroup* groupPtr() { return m_group; } // can return 0
@@ -184,8 +184,8 @@ public:
     int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
 
 #if ENABLE(REMOTE_INSPECTOR)
-    WEBCORE_EXPORT bool remoteInspectionAllowed() const;
-    WEBCORE_EXPORT void setRemoteInspectionAllowed(bool);
+    bool remoteInspectionAllowed() const;
+    void setRemoteInspectionAllowed(bool);
     void remoteInspectorInformationDidChange() const;
 #endif
 
@@ -212,9 +212,9 @@ public:
 
     ScrollingCoordinator* scrollingCoordinator();
 
-    WEBCORE_EXPORT String scrollingStateTreeAsText();
-    WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
-    WEBCORE_EXPORT PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
+    String scrollingStateTreeAsText();
+    String synchronousScrollingReasonsAsText();
+    PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
@@ -232,20 +232,20 @@ public:
     static ViewMode stringToViewMode(const String&);
 
     ViewMode viewMode() const { return m_viewMode; }
-    WEBCORE_EXPORT void setViewMode(ViewMode);
+    void setViewMode(ViewMode);
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
     bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
-    WEBCORE_EXPORT bool findString(const String&, FindOptions);
+    bool findString(const String&, FindOptions);
 
-    WEBCORE_EXPORT PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
+    PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
 
-    WEBCORE_EXPORT unsigned countFindMatches(const String&, FindOptions, unsigned maxMatchCount);
-    WEBCORE_EXPORT unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned maxMatchCount);
+    unsigned countFindMatches(const String&, FindOptions, unsigned maxMatchCount);
+    unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned maxMatchCount);
 
-    WEBCORE_EXPORT void unmarkAllTextMatches();
+    void unmarkAllTextMatches();
 
     // find all the Ranges for the matching text.
     // Upon return, indexForSelection will be one of the following:
@@ -253,39 +253,39 @@ public:
     // the index of the first range after the user selection
     // NoMatchAfterUserSelection if there is no matching text after the user selection.
     enum { NoMatchAfterUserSelection = -1 };
-    WEBCORE_EXPORT void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range>>&, int& indexForSelection);
+    void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range>>&, int& indexForSelection);
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT void addSchedulePair(PassRefPtr<SchedulePair>);
-    WEBCORE_EXPORT void removeSchedulePair(PassRefPtr<SchedulePair>);
+    void addSchedulePair(PassRefPtr<SchedulePair>);
+    void removeSchedulePair(PassRefPtr<SchedulePair>);
     SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
 
     std::unique_ptr<SchedulePairHashSet> m_scheduledRunLoopPairs;
 #endif
 
-    WEBCORE_EXPORT const VisibleSelection& selection() const;
+    const VisibleSelection& selection() const;
 
-    WEBCORE_EXPORT void setDefersLoading(bool);
+    void setDefersLoading(bool);
     bool defersLoading() const { return m_defersLoading; }
 
-    WEBCORE_EXPORT void clearUndoRedoOperations();
+    void clearUndoRedoOperations();
 
-    WEBCORE_EXPORT bool inLowQualityImageInterpolationMode() const;
-    WEBCORE_EXPORT void setInLowQualityImageInterpolationMode(bool = true);
+    bool inLowQualityImageInterpolationMode() const;
+    void setInLowQualityImageInterpolationMode(bool = true);
 
     float mediaVolume() const { return m_mediaVolume; }
-    WEBCORE_EXPORT void setMediaVolume(float);
+    void setMediaVolume(float);
 
-    WEBCORE_EXPORT void setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState = true);
+    void setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState = true);
     float pageScaleFactor() const { return m_pageScaleFactor; }
 
-    WEBCORE_EXPORT void setZoomedOutPageScaleFactor(float);
+    void setZoomedOutPageScaleFactor(float);
     float zoomedOutPageScaleFactor() const { return m_zoomedOutPageScaleFactor; }
 
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
-    WEBCORE_EXPORT void setDeviceScaleFactor(float);
+    void setDeviceScaleFactor(float);
 
     float topContentInset() const { return m_topContentInset; }
-    WEBCORE_EXPORT void setTopContentInset(float);
+    void setTopContentInset(float);
     
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
@@ -293,13 +293,13 @@ public:
 #endif
     
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
-    WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
+    void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
     
-    WEBCORE_EXPORT void setVerticalScrollElasticity(ScrollElasticity);
+    void setVerticalScrollElasticity(ScrollElasticity);
     ScrollElasticity verticalScrollElasticity() const { return static_cast<ScrollElasticity>(m_verticalScrollElasticity); }
 
-    WEBCORE_EXPORT void setHorizontalScrollElasticity(ScrollElasticity);
+    void setHorizontalScrollElasticity(ScrollElasticity);
     ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
     
     // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
@@ -307,18 +307,18 @@ public:
     // FrameViews in the page cache, but FrameView::pagination() only affects the current
     // FrameView.
     const Pagination& pagination() const { return m_pagination; }
-    WEBCORE_EXPORT void setPagination(const Pagination&);
+    void setPagination(const Pagination&);
 
-    WEBCORE_EXPORT unsigned pageCount() const;
+    unsigned pageCount() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
-    WEBCORE_EXPORT void setViewState(ViewState::Flags);
-    WEBCORE_EXPORT void setIsVisible(bool);
-    WEBCORE_EXPORT void setIsPrerender();
+    void setViewState(ViewState::Flags);
+    void setIsVisible(bool);
+    void setIsPrerender();
     bool isVisible() const { return m_viewState & ViewState::IsVisible; }
 
     // Notification that this Page was moved into or out of a native window.
-    WEBCORE_EXPORT void setIsInWindow(bool);
+    void setIsInWindow(bool);
     bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
 
     void setIsClosing() { m_isClosing = true; }
@@ -327,8 +327,8 @@ public:
     void addViewStateChangeObserver(ViewStateChangeObserver&);
     void removeViewStateChangeObserver(ViewStateChangeObserver&);
 
-    WEBCORE_EXPORT void suspendScriptedAnimations();
-    WEBCORE_EXPORT void resumeScriptedAnimations();
+    void suspendScriptedAnimations();
+    void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
     void userStyleSheetLocationChanged();
@@ -342,8 +342,8 @@ public:
 
     static void removeAllVisitedLinks();
 
-    WEBCORE_EXPORT void invalidateStylesForAllLinks();
-    WEBCORE_EXPORT void invalidateStylesForLink(LinkHash);
+    void invalidateStylesForAllLinks();
+    void invalidateStylesForLink(LinkHash);
 
     StorageNamespace* sessionStorage(bool optionalCreate = true);
     void setSessionStorage(PassRefPtr<StorageNamespace>);
@@ -351,7 +351,7 @@ public:
     bool hasCustomHTMLTokenizerTimeDelay() const;
     double customHTMLTokenizerTimeDelay() const;
 
-    WEBCORE_EXPORT void setMemoryCacheClientCallsEnabled(bool);
+    void setMemoryCacheClientCallsEnabled(bool);
     bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
 
     // Don't allow more than a certain number of frames in a page.
@@ -363,22 +363,22 @@ public:
     void setEditable(bool isEditable) { m_isEditable = isEditable; }
     bool isEditable() { return m_isEditable; }
 
-    WEBCORE_EXPORT PageVisibilityState visibilityState() const;
-    WEBCORE_EXPORT void resumeAnimatingImages();
+    PageVisibilityState visibilityState() const;
+    void resumeAnimatingImages();
 
-    WEBCORE_EXPORT void addLayoutMilestones(LayoutMilestones);
-    WEBCORE_EXPORT void removeLayoutMilestones(LayoutMilestones);
+    void addLayoutMilestones(LayoutMilestones);
+    void removeLayoutMilestones(LayoutMilestones);
     LayoutMilestones requestedLayoutMilestones() const { return m_requestedLayoutMilestones; }
 
 #if ENABLE(RUBBER_BANDING)
-    WEBCORE_EXPORT void addHeaderWithHeight(int);
-    WEBCORE_EXPORT void addFooterWithHeight(int);
+    void addHeaderWithHeight(int);
+    void addFooterWithHeight(int);
 #endif
 
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
 
-    WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
+    Color pageExtendedBackgroundColor() const;
 
     bool isCountingRelevantRepaintedObjects() const;
     void startCountingRelevantRepaintedObjects();
@@ -386,8 +386,8 @@ public:
     void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
     void addRelevantUnpaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
 
-    WEBCORE_EXPORT void suspendActiveDOMObjectsAndAnimations();
-    WEBCORE_EXPORT void resumeActiveDOMObjectsAndAnimations();
+    void suspendActiveDOMObjectsAndAnimations();
+    void resumeActiveDOMObjectsAndAnimations();
 #ifndef NDEBUG
     void setIsPainting(bool painting) { m_isPainting = painting; }
     bool isPainting() const { return m_isPainting; }
@@ -396,7 +396,7 @@ public:
     AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient; }
 
     bool hasSeenPlugin(const String& serviceType) const;
-    WEBCORE_EXPORT bool hasSeenAnyPlugin() const;
+    bool hasSeenAnyPlugin() const;
     void sawPlugin(const String& serviceType);
     void resetSeenPlugins();
 
@@ -406,7 +406,7 @@ public:
     void resetSeenMediaEngines();
 
     PageThrottler* pageThrottler() { return m_pageThrottler.get(); }
-    WEBCORE_EXPORT void createPageThrottler();
+    void createPageThrottler();
 
     PageConsole& console() { return *m_console; }
 
@@ -427,13 +427,13 @@ public:
 
     VisitedLinkStore& visitedLinkStore();
 
-    WEBCORE_EXPORT SessionID sessionID() const;
-    WEBCORE_EXPORT void setSessionID(SessionID);
-    WEBCORE_EXPORT void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
+    SessionID sessionID() const;
+    void setSessionID(SessionID);
+    void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
 private:
-    WEBCORE_EXPORT void initGroup();
+    void initGroup();
 
     void setIsInWindowInternal(bool);
     void setIsVisibleInternal(bool);
@@ -482,7 +482,7 @@ private:
 #if ENABLE(POINTER_LOCK)
     const std::unique_ptr<PointerLockController> m_pointerLockController;
 #endif
-    WEBCORE_EXPORT RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
+    RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
     const std::unique_ptr<ProgressTracker> m_progress;

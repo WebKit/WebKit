@@ -40,7 +40,7 @@ public:
     // is defined differently for Obj C and C++. This allows callers from both languages.
     static PassRefPtr<PlatformCALayer> create(void* platformLayer, PlatformCALayerClient*);
 
-    WEBCORE_EXPORT static LayerType layerTypeForPlatformLayer(PlatformLayer*);
+    static LayerType layerTypeForPlatformLayer(PlatformLayer*);
 
     ~PlatformCALayerMac();
 
@@ -89,7 +89,7 @@ public:
 
     virtual void setHidden(bool) override;
 
-    WEBCORE_EXPORT virtual void setGeometryFlipped(bool) override;
+    virtual void setGeometryFlipped(bool) override;
 
     virtual bool isDoubleSided() const override;
     virtual void setDoubleSided(bool) override;
@@ -120,7 +120,7 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     virtual void setFilters(const FilterOperations&) override;
-    WEBCORE_EXPORT static bool filtersCanBeComposited(const FilterOperations&);
+    static bool filtersCanBeComposited(const FilterOperations&);
     virtual void copyFiltersFrom(const PlatformCALayer*) override;
 #endif
 

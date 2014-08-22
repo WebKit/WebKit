@@ -52,7 +52,7 @@ public:
     Length(float value, LengthType, bool hasQuirk = false);
     Length(double value, LengthType, bool hasQuirk = false);
 
-    WEBCORE_EXPORT explicit Length(PassRef<CalculationValue>);
+    explicit Length(PassRef<CalculationValue>);
 
     Length(const Length&);
     Length(Length&&);
@@ -117,8 +117,8 @@ private:
     bool isCalculatedEqual(const Length&) const;
     Length blendMixedTypes(const Length& from, double progress) const;
 
-    WEBCORE_EXPORT void ref() const;
-    WEBCORE_EXPORT void deref() const;
+    void ref() const;
+    void deref() const;
     
     union {
         int m_intValue;

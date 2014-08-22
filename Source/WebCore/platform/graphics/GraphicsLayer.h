@@ -226,9 +226,9 @@ protected:
 class GraphicsLayer {
     WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&);
+    static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&);
     
-    WEBCORE_EXPORT virtual ~GraphicsLayer();
+    virtual ~GraphicsLayer();
 
     virtual void initialize() { }
 
@@ -249,17 +249,17 @@ public:
     
     const Vector<GraphicsLayer*>& children() const { return m_children; }
     // Returns true if the child list changed.
-    WEBCORE_EXPORT virtual bool setChildren(const Vector<GraphicsLayer*>&);
+    virtual bool setChildren(const Vector<GraphicsLayer*>&);
 
     // Add child layers. If the child is already parented, it will be removed from its old parent.
-    WEBCORE_EXPORT virtual void addChild(GraphicsLayer*);
-    WEBCORE_EXPORT virtual void addChildAtIndex(GraphicsLayer*, int index);
-    WEBCORE_EXPORT virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling);
-    WEBCORE_EXPORT virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling);
-    WEBCORE_EXPORT virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
+    virtual void addChild(GraphicsLayer*);
+    virtual void addChildAtIndex(GraphicsLayer*, int index);
+    virtual void addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling);
+    virtual void addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling);
+    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild);
 
-    WEBCORE_EXPORT void removeAllChildren();
-    WEBCORE_EXPORT virtual void removeFromParent();
+    void removeAllChildren();
+    virtual void removeFromParent();
 
     // The parent() of a maskLayer is set to the layer being masked.
     GraphicsLayer* maskLayer() const { return m_maskLayer; }
@@ -269,7 +269,7 @@ public:
     bool isMaskLayer() const { return m_isMaskLayer; }
     
     // The given layer will replicate this layer and its children; the replica renders behind this layer.
-    WEBCORE_EXPORT virtual void setReplicatedByLayer(GraphicsLayer*);
+    virtual void setReplicatedByLayer(GraphicsLayer*);
     // Whether this layer is being replicated by another layer.
     bool isReplicated() const { return m_replicaLayer; }
     // The layer that replicates this layer (if any).
@@ -301,7 +301,7 @@ public:
 
     // The size of the layer.
     const FloatSize& size() const { return m_size; }
-    WEBCORE_EXPORT virtual void setSize(const FloatSize&);
+    virtual void setSize(const FloatSize&);
 
     // The boundOrigin affects the offset at which content is rendered, and sublayers are positioned.
     const FloatPoint& boundsOrigin() const { return m_boundsOrigin; }
@@ -335,7 +335,7 @@ public:
     // Note that this covers the entire layer. Use setContentsToSolidColor() if the color should
     // only cover the contentsRect.
     const Color& backgroundColor() const { return m_backgroundColor; }
-    WEBCORE_EXPORT virtual void setBackgroundColor(const Color&);
+    virtual void setBackgroundColor(const Color&);
 
     // opaque means that we know the layer contents have no alpha
     bool contentsOpaque() const { return m_contentsOpaque; }
@@ -399,8 +399,8 @@ public:
     virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
     virtual void removeAnimation(const String& /*animationName*/) { }
 
-    WEBCORE_EXPORT virtual void suspendAnimations(double time);
-    WEBCORE_EXPORT virtual void resumeAnimations();
+    virtual void suspendAnimations(double time);
+    virtual void resumeAnimations();
     
     // Layer contents
     virtual void setContentsToImage(Image*) { }
@@ -454,10 +454,10 @@ public:
 
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
-    WEBCORE_EXPORT virtual void setZPosition(float);
+    virtual void setZPosition(float);
 
-    WEBCORE_EXPORT virtual void distributeOpacity(float);
-    WEBCORE_EXPORT virtual float accumulatedOpacity() const;
+    virtual void distributeOpacity(float);
+    virtual float accumulatedOpacity() const;
 
 #if PLATFORM(IOS)
     bool hasFlattenedPerspectiveTransform() const { return !preserves3D() && m_childrenTransform.hasPerspective(); }
@@ -471,7 +471,7 @@ public:
     float deviceScaleFactor() const { return m_client.deviceScaleFactor(); }
 
     virtual void deviceOrPageScaleFactorChanged() { }
-    WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+    void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer
@@ -488,7 +488,7 @@ public:
     String layerTreeAsText(LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
-    WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;
+    virtual double backingStoreMemoryEstimate() const;
 
     bool usingTiledBacking() const { return m_usingTiledBacking; }
     virtual TiledBacking* tiledBacking() const { return 0; }
@@ -524,7 +524,7 @@ public:
 
 protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
-    WEBCORE_EXPORT virtual void willBeDestroyed();
+    virtual void willBeDestroyed();
 
 #if ENABLE(CSS_FILTERS)
     // This method is used by platform GraphicsLayer classes to clear the filters
@@ -551,12 +551,12 @@ protected:
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
-    WEBCORE_EXPORT explicit GraphicsLayer(GraphicsLayerClient&);
+    explicit GraphicsLayer(GraphicsLayerClient&);
 
     void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
     virtual void dumpAdditionalProperties(TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
 
-    WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
+    virtual void getDebugBorderInfo(Color&, float& width) const;
 
     GraphicsLayerClient& m_client;
     String m_name;

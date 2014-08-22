@@ -46,8 +46,8 @@ namespace WebCore {
         const LayoutPoint& clientLocation() const { return m_clientLocation; }
         int layerX() override;
         int layerY() override;
-        WEBCORE_EXPORT int offsetX();
-        WEBCORE_EXPORT int offsetY();
+        int offsetX();
+        int offsetY();
         bool isSimulated() const { return m_isSimulated; }
         virtual int pageX() const override;
         virtual int pageY() const override;

@@ -76,7 +76,7 @@ public:
 
     virtual bool handleJavaScriptDialog(bool, const String*) { return false; }
 
-    WEBCORE_EXPORT static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
+    static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 
 } // namespace WebCore

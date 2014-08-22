@@ -47,7 +47,7 @@ class Scrollbar;
 class HitTestLocation {
 public:
 
-    WEBCORE_EXPORT HitTestLocation();
+    HitTestLocation();
     HitTestLocation(const LayoutPoint&);
     HitTestLocation(const FloatPoint&);
     HitTestLocation(const FloatPoint&, const FloatQuad&);
@@ -56,7 +56,7 @@ public:
     // Make a copy the HitTestLocation in a new region by applying given offset to internal point and area.
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);
     HitTestLocation(const HitTestLocation&);
-    WEBCORE_EXPORT ~HitTestLocation();
+    ~HitTestLocation();
     HitTestLocation& operator=(const HitTestLocation&);
 
     const LayoutPoint& point() const { return m_point; }
@@ -66,8 +66,8 @@ public:
     bool isRectBasedTest() const { return m_isRectBased; }
     bool isRectilinear() const { return m_isRectilinear; }
     IntRect boundingBox() const { return m_boundingBox; }
-    
-    WEBCORE_EXPORT static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+
+    static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     int topPadding() const { return roundedPoint().y() - m_boundingBox.y(); }
     int rightPadding() const { return m_boundingBox.maxX() - roundedPoint().x() - 1; }
     int bottomPadding() const { return m_boundingBox.maxY() - roundedPoint().y() - 1; }

@@ -48,7 +48,7 @@ public:
 
     static unsigned long createUniqueIdentifier();
 
-    WEBCORE_EXPORT double estimatedProgress() const;
+    double estimatedProgress() const;
 
     void progressStarted(Frame&);
     void progressCompleted(Frame&);

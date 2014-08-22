@@ -45,9 +45,9 @@ namespace WebCore {
 
         const AtomicString& name() const { return m_name; }
         const AtomicString& uniqueName() const { return m_uniqueName; }
-        WEBCORE_EXPORT void setName(const AtomicString&);
-        WEBCORE_EXPORT void clearName();
-        WEBCORE_EXPORT Frame* parent() const;
+        void setName(const AtomicString&);
+        void clearName();
+        Frame* parent() const;
         void setParent(Frame* parent) { m_parent = parent; }
         
         Frame* nextSibling() const { return m_nextSibling.get(); }
@@ -55,24 +55,24 @@ namespace WebCore {
         Frame* firstChild() const { return m_firstChild.get(); }
         Frame* lastChild() const { return m_lastChild; }
 
-        WEBCORE_EXPORT bool isDescendantOf(const Frame* ancestor) const;
-        WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = 0) const;
-        WEBCORE_EXPORT Frame* traverseNextWithWrap(bool) const;
-        WEBCORE_EXPORT Frame* traversePreviousWithWrap(bool) const;
+        bool isDescendantOf(const Frame* ancestor) const;
+        Frame* traverseNext(const Frame* stayWithin = 0) const;
+        Frame* traverseNextWithWrap(bool) const;
+        Frame* traversePreviousWithWrap(bool) const;
         
-        WEBCORE_EXPORT void appendChild(PassRefPtr<Frame>);
+        void appendChild(PassRefPtr<Frame>);
         bool transferChild(PassRefPtr<Frame>);
         void detachFromParent() { m_parent = 0; }
         void removeChild(Frame*);
 
         Frame* child(unsigned index) const;
         Frame* child(const AtomicString& name) const;
-        WEBCORE_EXPORT Frame* find(const AtomicString& name) const;
-        WEBCORE_EXPORT unsigned childCount() const;
+        Frame* find(const AtomicString& name) const;
+        unsigned childCount() const;
 
         AtomicString uniqueChildName(const AtomicString& requestedName) const;
 
-        WEBCORE_EXPORT Frame& top() const;
+        Frame& top() const;
 
         Frame* scopedChild(unsigned index) const;
         Frame* scopedChild(const AtomicString& name) const;

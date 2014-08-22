@@ -84,11 +84,11 @@ namespace WebCore {
     class Path {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        WEBCORE_EXPORT Path();
+        Path();
 #if USE(CG)
         Path(RetainPtr<CGMutablePathRef>);
 #endif
-        WEBCORE_EXPORT ~Path();
+        ~Path();
 
         Path(const Path&);
         Path& operator=(const Path&);
@@ -129,7 +129,7 @@ namespace WebCore {
             PreferBezierRoundedRect
         };
 
-        WEBCORE_EXPORT void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, RoundedRectStrategy = PreferNativeRoundedRect);
+        void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, RoundedRectStrategy = PreferNativeRoundedRect);
         void addRoundedRect(const FloatRoundedRect&, RoundedRectStrategy = PreferNativeRoundedRect);
         void addRoundedRect(const RoundedRect&);
 

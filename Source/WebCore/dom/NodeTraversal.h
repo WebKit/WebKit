@@ -71,9 +71,9 @@ Node* nextIncludingPseudoSkippingChildren(const Node*, const Node* = 0);
 
 namespace NodeTraversal {
 
-WEBCORE_EXPORT Node* nextAncestorSibling(const Node*);
-WEBCORE_EXPORT Node* nextAncestorSibling(const Node*, const Node* stayWithin);
-WEBCORE_EXPORT Node* deepLastChild(Node*);
+Node* nextAncestorSibling(const Node*);
+Node* nextAncestorSibling(const Node*, const Node* stayWithin);
+Node* deepLastChild(Node*);
 
 template <class NodeType>
 inline Node* traverseNextTemplate(NodeType* current)

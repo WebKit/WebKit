@@ -40,10 +40,10 @@ class HTMLSelectElement : public HTMLFormControlElementWithState, public TypeAhe
 public:
     static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
-    WEBCORE_EXPORT int selectedIndex() const;
+    int selectedIndex() const;
     void setSelectedIndex(int);
 
-    WEBCORE_EXPORT void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
+    void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
 
     // For ValidityState
     virtual String validationMessage() const override;
@@ -63,7 +63,7 @@ public:
     void removeByIndex(int);
     void remove(HTMLOptionElement*);
 
-    WEBCORE_EXPORT String value() const;
+    String value() const;
     void setValue(const String&);
 
     PassRefPtr<HTMLOptionsCollection> options();
@@ -75,7 +75,7 @@ public:
     void invalidateSelectedItems();
     void updateListItemSelectedStates();
 
-    WEBCORE_EXPORT const Vector<HTMLElement*>& listItems() const;
+    const Vector<HTMLElement*>& listItems() const;
 
     virtual void accessKeyAction(bool sendMouseEvents) override;
     void accessKeySetSelectedIndex(int);

@@ -76,56 +76,56 @@ public:
         return adoptRef(new HistoryItem(url, target, parent, title));
     }
     
-    WEBCORE_EXPORT ~HistoryItem();
+    ~HistoryItem();
 
-    WEBCORE_EXPORT PassRefPtr<HistoryItem> copy() const;
+    PassRefPtr<HistoryItem> copy() const;
 
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();
     
-    WEBCORE_EXPORT const String& originalURLString() const;
-    WEBCORE_EXPORT const String& urlString() const;
-    WEBCORE_EXPORT const String& title() const;
+    const String& originalURLString() const;
+    const String& urlString() const;
+    const String& title() const;
     
     bool isInPageCache() const { return m_cachedPage.get(); }
-    WEBCORE_EXPORT bool hasCachedPageExpired() const;
+    bool hasCachedPageExpired() const;
 
-    WEBCORE_EXPORT void setAlternateTitle(const String&);
-    WEBCORE_EXPORT const String& alternateTitle() const;
+    void setAlternateTitle(const String& alternateTitle);
+    const String& alternateTitle() const;
     
     const String& parent() const;
-    WEBCORE_EXPORT URL url() const;
-    WEBCORE_EXPORT URL originalURL() const;
-    WEBCORE_EXPORT const String& referrer() const;
-    WEBCORE_EXPORT const String& target() const;
-    WEBCORE_EXPORT bool isTargetItem() const;
+    URL url() const;
+    URL originalURL() const;
+    const String& referrer() const;
+    const String& target() const;
+    bool isTargetItem() const;
     
-    WEBCORE_EXPORT FormData* formData();
-    WEBCORE_EXPORT String formContentType() const;
+    FormData* formData();
+    String formContentType() const;
     
     bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
 
-    WEBCORE_EXPORT const IntPoint& scrollPoint() const;
-    WEBCORE_EXPORT void setScrollPoint(const IntPoint&);
+    const IntPoint& scrollPoint() const;
+    void setScrollPoint(const IntPoint&);
     void clearScrollPoint();
     
-    WEBCORE_EXPORT float pageScaleFactor() const;
-    WEBCORE_EXPORT void setPageScaleFactor(float);
+    float pageScaleFactor() const;
+    void setPageScaleFactor(float);
     
-    WEBCORE_EXPORT const Vector<String>& documentState() const;
-    WEBCORE_EXPORT void setDocumentState(const Vector<String>&);
+    const Vector<String>& documentState() const;
+    void setDocumentState(const Vector<String>&);
     void clearDocumentState();
 
     void setURL(const URL&);
-    WEBCORE_EXPORT void setURLString(const String&);
-    WEBCORE_EXPORT void setOriginalURLString(const String&);
-    WEBCORE_EXPORT void setReferrer(const String&);
-    WEBCORE_EXPORT void setTarget(const String&);
+    void setURLString(const String&);
+    void setOriginalURLString(const String&);
+    void setReferrer(const String&);
+    void setTarget(const String&);
     void setParent(const String&);
-    WEBCORE_EXPORT void setTitle(const String&);
-    WEBCORE_EXPORT void setIsTargetItem(bool);
+    void setTitle(const String&);
+    void setIsTargetItem(bool);
     
-    WEBCORE_EXPORT void setStateObject(PassRefPtr<SerializedScriptValue>);
+    void setStateObject(PassRefPtr<SerializedScriptValue> object);
     PassRefPtr<SerializedScriptValue> stateObject() const { return m_stateObject; }
 
     void setItemSequenceNumber(long long number) { m_itemSequenceNumber = number; }
@@ -135,38 +135,38 @@ public:
     long long documentSequenceNumber() const { return m_documentSequenceNumber; }
 
     void setFormInfoFromRequest(const ResourceRequest&);
-    WEBCORE_EXPORT void setFormData(PassRefPtr<FormData>);
-    WEBCORE_EXPORT void setFormContentType(const String&);
+    void setFormData(PassRefPtr<FormData>);
+    void setFormContentType(const String&);
 
     void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }
 
-    WEBCORE_EXPORT void addChildItem(PassRefPtr<HistoryItem>);
+    void addChildItem(PassRefPtr<HistoryItem>);
     void setChildItem(PassRefPtr<HistoryItem>);
-    WEBCORE_EXPORT HistoryItem* childItemWithTarget(const String&) const;
+    HistoryItem* childItemWithTarget(const String&) const;
     HistoryItem* childItemWithDocumentSequenceNumber(long long number) const;
-    WEBCORE_EXPORT HistoryItem* targetItem();
-    WEBCORE_EXPORT const HistoryItemVector& children() const;
-    WEBCORE_EXPORT bool hasChildren() const;
+    HistoryItem* targetItem();
+    const HistoryItemVector& children() const;
+    bool hasChildren() const;
     void clearChildren();
     bool isAncestorOf(const HistoryItem*) const;
     
     bool shouldDoSameDocumentNavigationTo(HistoryItem* otherItem) const;
     bool hasSameFrames(HistoryItem* otherItem) const;
 
-    WEBCORE_EXPORT void addRedirectURL(const String&);
-    WEBCORE_EXPORT Vector<String>* redirectURLs() const;
-    WEBCORE_EXPORT void setRedirectURLs(std::unique_ptr<Vector<String>>);
+    void addRedirectURL(const String&);
+    Vector<String>* redirectURLs() const;
+    void setRedirectURLs(std::unique_ptr<Vector<String>>);
 
     bool isCurrentDocument(Document*) const;
     
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT id viewState() const;
-    WEBCORE_EXPORT void setViewState(id);
+    id viewState() const;
+    void setViewState(id);
     
     // Transient properties may be of any ObjC type.  They are intended to be used to store state per back/forward list entry.
     // The properties will not be persisted; when the history item is removed, the properties will be lost.
-    WEBCORE_EXPORT id getTransientProperty(const String&) const;
-    WEBCORE_EXPORT void setTransientProperty(const String&, id);
+    id getTransientProperty(const String&) const;
+    void setTransientProperty(const String&, id);
 #endif
 
 #ifndef NDEBUG
@@ -206,10 +206,10 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT HistoryItem();
-    WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title);
-    WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title, const String& alternateTitle);
-    WEBCORE_EXPORT HistoryItem(const URL&, const String& frameName, const String& parent, const String& title);
+    HistoryItem();
+    HistoryItem(const String& urlString, const String& title);
+    HistoryItem(const String& urlString, const String& title, const String& alternateTitle);
+    HistoryItem(const URL& url, const String& frameName, const String& parent, const String& title);
 
     explicit HistoryItem(const HistoryItem&);
 

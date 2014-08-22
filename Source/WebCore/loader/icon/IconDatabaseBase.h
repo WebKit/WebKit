@@ -175,7 +175,7 @@ public:
 
     // Synchronous calls used internally by WebCore.
     // Usage should be replaced by asynchronous calls.
-    WEBCORE_EXPORT virtual String synchronousIconURLForPageURL(const String&);
+    virtual String synchronousIconURLForPageURL(const String&);
     virtual bool synchronousIconDataKnownForIconURL(const String&) { return false; }
     virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) { return IconLoadNo; }
     virtual Image* synchronousIconForPageURL(const String&, const IntSize&) { return 0; }
@@ -200,7 +200,7 @@ public:
 
     virtual bool shouldStopThreadActivity() const { return true; }
 
-    WEBCORE_EXPORT virtual bool open(const String& directory, const String& filename);
+    virtual bool open(const String& directory, const String& filename);
     virtual void close() { }
     virtual void removeAllIcons() { }
 
@@ -208,7 +208,7 @@ public:
     virtual void setClient(IconDatabaseClient*) { }
     
     virtual bool isOpen() const { return false; }
-    WEBCORE_EXPORT virtual String databasePath() const;
+    virtual String databasePath() const;
 
 };
 

@@ -1,3 +1,9 @@
+2014-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        Revert r172831, it broke the Windows build.
+
+        * wtf/ExportMacros.h:
+
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
         Enable SATURATED_LAYOUT_ARITHMETIC.

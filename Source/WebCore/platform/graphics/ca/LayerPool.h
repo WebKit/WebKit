@@ -41,8 +41,8 @@ namespace WebCore {
 class LayerPool {
     WTF_MAKE_NONCOPYABLE(LayerPool);
 public:
-    WEBCORE_EXPORT LayerPool();
-    WEBCORE_EXPORT ~LayerPool();
+    LayerPool();
+    ~LayerPool();
 
     static HashSet<LayerPool*>& allLayerPools();
     

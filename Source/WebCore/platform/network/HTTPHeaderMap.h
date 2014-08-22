@@ -47,8 +47,8 @@ class HTTPHeaderMap {
 public:
     typedef HashMapType::const_iterator const_iterator;
 
-    WEBCORE_EXPORT HTTPHeaderMap();
-    WEBCORE_EXPORT ~HTTPHeaderMap();
+    HTTPHeaderMap();
+    ~HTTPHeaderMap();
 
     // Gets a copy of the data suitable for passing to another thread.
     std::unique_ptr<CrossThreadHTTPHeaderMapData> copyData() const;
@@ -59,15 +59,15 @@ public:
 
     void clear() { m_headers.clear(); }
 
-    WEBCORE_EXPORT String get(const String& name) const;
-    WEBCORE_EXPORT void set(const String& name, const String& value);
+    String get(const String& name) const;
+    void set(const String& name, const String& value);
     void add(const String& name, const String& value);
 
-    WEBCORE_EXPORT String get(HTTPHeaderName) const;
+    String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
     bool contains(HTTPHeaderName) const;
     const_iterator find(HTTPHeaderName) const;
-    WEBCORE_EXPORT bool remove(HTTPHeaderName);
+    bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String get(const char (&)[length]) const = delete;

@@ -640,7 +640,7 @@ typedef void (*MediaEngineRegister)(MediaEngineRegistrar);
 
 class MediaPlayerFactorySupport {
 public:
-    WEBCORE_EXPORT static void callRegisterMediaEngine(MediaEngineRegister);
+    static void callRegisterMediaEngine(MediaEngineRegister);
 };
 
 }

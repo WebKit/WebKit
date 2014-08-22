@@ -54,7 +54,7 @@ class FloatPoint {
 public:
     FloatPoint() : m_x(0), m_y(0) { }
     FloatPoint(float x, float y) : m_x(x), m_y(y) { }
-    WEBCORE_EXPORT FloatPoint(const IntPoint&);
+    FloatPoint(const IntPoint&);
     explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
 
     static FloatPoint zero() { return FloatPoint(); }
@@ -132,13 +132,13 @@ public:
     }
 
 #if USE(CG)
-    WEBCORE_EXPORT FloatPoint(const CGPoint&);
-    WEBCORE_EXPORT operator CGPoint() const;
+    FloatPoint(const CGPoint&);
+    operator CGPoint() const;
 #endif
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    WEBCORE_EXPORT FloatPoint(const NSPoint&);
-    WEBCORE_EXPORT operator NSPoint() const;
+    FloatPoint(const NSPoint&);
+    operator NSPoint() const;
 #endif
 
     FloatPoint matrixTransform(const TransformationMatrix&) const;

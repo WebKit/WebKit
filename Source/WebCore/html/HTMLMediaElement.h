@@ -109,7 +109,7 @@ public:
     virtual bool hasAudio() const override;
 
     void rewind(double timeDelta);
-    WEBCORE_EXPORT virtual void returnToRealtime() override;
+    virtual void returnToRealtime() override;
 
     // Eventually overloaded in HTMLVideoElement
     virtual bool supportsFullscreen() const override { return false; };
@@ -119,7 +119,7 @@ public:
     
     virtual bool doesHaveAttribute(const AtomicString&, AtomicString* value = nullptr) const override;
 
-    WEBCORE_EXPORT PlatformMedia platformMedia() const;
+    PlatformMedia platformMedia() const;
     PlatformLayer* platformLayer() const;
 #if PLATFORM(IOS)
     void setVideoFullscreenLayer(PlatformLayer*);
@@ -167,26 +167,26 @@ public:
     bool seeking() const;
 
 // playback state
-    WEBCORE_EXPORT virtual double currentTime() const override;
+    virtual double currentTime() const override;
     virtual void setCurrentTime(double) override;
     virtual void setCurrentTime(double, ExceptionCode&);
-    WEBCORE_EXPORT virtual double duration() const override;
-    WEBCORE_EXPORT virtual bool paused() const override;
+    virtual double duration() const override;
+    virtual bool paused() const override;
     virtual double defaultPlaybackRate() const override;
     virtual void setDefaultPlaybackRate(double) override;
-    WEBCORE_EXPORT virtual double playbackRate() const override;
+    virtual double playbackRate() const override;
     virtual void setPlaybackRate(double) override;
     void updatePlaybackRate();
     bool webkitPreservesPitch() const;
     void setWebkitPreservesPitch(bool);
     virtual PassRefPtr<TimeRanges> played() override;
     virtual PassRefPtr<TimeRanges> seekable() const override;
-    WEBCORE_EXPORT bool ended() const;
+    bool ended() const;
     bool autoplay() const;
     bool loop() const;    
     void setLoop(bool b);
-    WEBCORE_EXPORT virtual void play() override;
-    WEBCORE_EXPORT virtual void pause() override;
+    virtual void play() override;
+    virtual void pause() override;
     virtual void setShouldBufferData(bool) override;
     void fastSeek(double);
     double minFastReverseRate() const;
@@ -235,20 +235,20 @@ public:
 // controls
     bool controls() const;
     void setControls(bool);
-    WEBCORE_EXPORT virtual double volume() const override;
+    virtual double volume() const override;
     virtual void setVolume(double, ExceptionCode&) override;
-    WEBCORE_EXPORT virtual bool muted() const override;
-    WEBCORE_EXPORT virtual void setMuted(bool) override;
+    virtual bool muted() const override;
+    virtual void setMuted(bool) override;
 
-    WEBCORE_EXPORT void togglePlayState();
-    WEBCORE_EXPORT virtual void beginScrubbing() override;
-    WEBCORE_EXPORT virtual void endScrubbing() override;
+    void togglePlayState();
+    virtual void beginScrubbing() override;
+    virtual void endScrubbing() override;
 
     virtual void beginScanning(ScanDirection) override;
     virtual void endScanning() override;
     double nextScanRate();
 
-    WEBCORE_EXPORT virtual bool canPlay() const override;
+    virtual bool canPlay() const override;
 
     double percentLoaded() const;
 
@@ -377,10 +377,10 @@ public:
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     
-    WEBCORE_EXPORT virtual bool isFullscreen() const override;
+    virtual bool isFullscreen() const override;
     void toggleFullscreenState();
     virtual void enterFullscreen() override;
-    WEBCORE_EXPORT void exitFullscreen();
+    void exitFullscreen();
 
     virtual bool hasClosedCaptions() const override;
     virtual bool closedCaptionsVisible() const override;
@@ -394,9 +394,9 @@ public:
     virtual void privateBrowsingStateDidChange() override;
 
     // Media cache management.
-    WEBCORE_EXPORT static void getSitesInMediaCache(Vector<String>&);
-    WEBCORE_EXPORT static void clearMediaCache();
-    WEBCORE_EXPORT static void clearMediaCacheForSite(const String&);
+    static void getSitesInMediaCache(Vector<String>&);
+    static void clearMediaCache();
+    static void clearMediaCacheForSite(const String&);
     static void resetMediaEngines();
 
     bool isPlaying() const { return m_playing; }

@@ -45,7 +45,7 @@ public:
 
     virtual bool isLineBreak() const { return renderer().isLineBreak(); }
 
-    WEBCORE_EXPORT virtual void adjustPosition(float dx, float dy);
+    virtual void adjustPosition(float dx, float dy);
     void adjustLogicalPosition(float deltaLogicalLeft, float deltaLogicalTop)
     {
         if (isHorizontal())
@@ -212,11 +212,11 @@ public:
     FloatRect logicalFrameRect() const { return isHorizontal() ? FloatRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : FloatRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
     FloatRect frameRect() const { return FloatRect(topLeft(), size()); }
 
-    WEBCORE_EXPORT virtual int baselinePosition(FontBaseline baselineType) const;
-    WEBCORE_EXPORT virtual LayoutUnit lineHeight() const;
+    virtual int baselinePosition(FontBaseline baselineType) const;
+    virtual LayoutUnit lineHeight() const;
 
-    WEBCORE_EXPORT virtual int caretMinOffset() const;
-    WEBCORE_EXPORT virtual int caretMaxOffset() const;
+    virtual int caretMinOffset() const;
+    virtual int caretMaxOffset() const;
 
     unsigned char bidiLevel() const { return m_bitfields.bidiEmbeddingLevel(); }
     void setBidiLevel(unsigned char level) { m_bitfields.setBidiEmbeddingLevel(level); }
@@ -230,13 +230,13 @@ public:
     bool isDirty() const { return m_bitfields.dirty(); }
     virtual void markDirty(bool dirty = true) { m_bitfields.setDirty(dirty); }
 
-    WEBCORE_EXPORT virtual void dirtyLineBoxes();
+    virtual void dirtyLineBoxes();
     
-    WEBCORE_EXPORT virtual RenderObject::SelectionState selectionState();
+    virtual RenderObject::SelectionState selectionState();
 
-    WEBCORE_EXPORT virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const;
+    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const;
     // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.
-    WEBCORE_EXPORT virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool&);
+    virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool&);
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     void setHasBadParent();

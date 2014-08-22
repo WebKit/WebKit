@@ -35,19 +35,19 @@ namespace WebCore {
 class LayerFlushScheduler {
     WTF_MAKE_NONCOPYABLE(LayerFlushScheduler);
 public:
-    WEBCORE_EXPORT LayerFlushScheduler(LayerFlushSchedulerClient*);
-    WEBCORE_EXPORT virtual ~LayerFlushScheduler();
+    LayerFlushScheduler(LayerFlushSchedulerClient*);
+    virtual ~LayerFlushScheduler();
 
-    WEBCORE_EXPORT void schedule();
-    WEBCORE_EXPORT void invalidate();
+    void schedule();
+    void invalidate();
 
-    WEBCORE_EXPORT void suspend();
-    WEBCORE_EXPORT void resume();
+    void suspend();
+    void resume();
 
     bool isSuspended() const { return m_isSuspended; }
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT virtual void layerFlushCallback();
+    virtual void layerFlushCallback();
 #endif
 
 private:

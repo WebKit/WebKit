@@ -56,7 +56,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT FrameLoadRequest(Frame*, const ResourceRequest&, const SubstituteData& = SubstituteData());
+    FrameLoadRequest(Frame*, const ResourceRequest&, const SubstituteData& = SubstituteData());
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 

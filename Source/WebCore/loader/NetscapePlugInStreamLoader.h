@@ -50,10 +50,10 @@ protected:
 
 class NetscapePlugInStreamLoader final : public ResourceLoader {
 public:
-    WEBCORE_EXPORT static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
+    static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     virtual ~NetscapePlugInStreamLoader();
 
-    WEBCORE_EXPORT bool isDone() const;
+    bool isDone() const;
 
 private:
     virtual void didReceiveResponse(const ResourceResponse&) override;

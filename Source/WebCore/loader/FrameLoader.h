@@ -88,7 +88,7 @@ public:
     FrameLoader(Frame&, FrameLoaderClient&);
     ~FrameLoader();
 
-    WEBCORE_EXPORT void init();
+    void init();
 #if PLATFORM(IOS)
     void initForSynthesizedDocument(const URL&);
 #endif
@@ -106,14 +106,14 @@ public:
     void setupForReplace();
 
     // FIXME: These are all functions which start loads. We have too many.
-    WEBCORE_EXPORT void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
-    WEBCORE_EXPORT void loadFrameRequest(const FrameLoadRequest&, LockHistory, LockBackForwardList, // Called by submitForm, calls loadPostRequest and loadURL.
+    void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
+    void loadFrameRequest(const FrameLoadRequest&, LockHistory, LockBackForwardList,  // Called by submitForm, calls loadPostRequest and loadURL.
         PassRefPtr<Event>, PassRefPtr<FormState>, ShouldSendReferrer, AllowNavigationToInvalidURL);
 
-    WEBCORE_EXPORT void load(const FrameLoadRequest&);
+    void load(const FrameLoadRequest&);
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-    WEBCORE_EXPORT void loadArchive(PassRefPtr<Archive>);
+    void loadArchive(PassRefPtr<Archive>);
 #endif
     unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
@@ -122,8 +122,8 @@ public:
     void urlSelected(const URL&, const String& target, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer);
     void submitForm(PassRefPtr<FormSubmission>);
 
-    WEBCORE_EXPORT void reload(bool endToEndReload = false);
-    WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
+    void reload(bool endToEndReload = false);
+    void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);
     void loadItem(HistoryItem*, FrameLoadType);
@@ -135,7 +135,7 @@ public:
 
     // FIXME: These are all functions which stop loads. We have too many.
     void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
-    WEBCORE_EXPORT void stopForUserCancel(bool deferCheckLoadComplete = false);
+    void stopForUserCancel(bool deferCheckLoadComplete = false);
     void stop();
     void stopLoading(UnloadEventPolicy);
     bool closeURL();
@@ -144,14 +144,14 @@ public:
     void clear(Document* newDocument, bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 
     bool isLoading() const;
-    WEBCORE_EXPORT bool frameHasLoaded() const;
+    bool frameHasLoaded() const;
 
-    WEBCORE_EXPORT int numPendingOrLoadingRequests(bool recurse) const;
+    int numPendingOrLoadingRequests(bool recurse) const;
     String referrer() const;
-    WEBCORE_EXPORT String outgoingReferrer() const;
+    String outgoingReferrer() const;
     String outgoingOrigin() const;
 
-    WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
+    DocumentLoader* activeDocumentLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     DocumentLoader* policyDocumentLoader() const { return m_policyDocumentLoader.get(); }
     DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
@@ -168,7 +168,7 @@ public:
 
     void handleFallbackContent();
 
-    WEBCORE_EXPORT ResourceError cancelledError(const ResourceRequest&) const;
+    ResourceError cancelledError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;
 
@@ -181,7 +181,7 @@ public:
 
     bool shouldTreatURLAsSrcdocDocument(const URL&) const;
 
-    WEBCORE_EXPORT FrameLoadType loadType() const;
+    FrameLoadType loadType() const;
 
     CachePolicy subresourceCachePolicy() const;
 
@@ -192,7 +192,7 @@ public:
     void tellClientAboutPastMemoryCacheLoads();
 
     void checkLoadComplete();
-    WEBCORE_EXPORT void detachFromParent();
+    void detachFromParent();
     void detachViewsAndDocumentLoader();
 
     void addExtraFieldsToSubresourceRequest(ResourceRequest&);
@@ -225,7 +225,7 @@ public:
     bool checkIfFormActionAllowedByCSP(const URL&) const;
 
     Frame* opener();
-    WEBCORE_EXPORT void setOpener(Frame*);
+    void setOpener(Frame*);
 
     void resetMultipleFormSubmissionProtection();
 
@@ -239,7 +239,7 @@ public:
     void finishedParsing();
     void checkCompleted();
 
-    WEBCORE_EXPORT bool isComplete() const;
+    bool isComplete() const;
 
     void commitProvisionalLoad();
 
@@ -248,7 +248,7 @@ public:
 
     FrameLoaderStateMachine& stateMachine() { return m_stateMachine; }
 
-    WEBCORE_EXPORT Frame* findFrameForNavigation(const AtomicString& name, Document* activeDocument = 0);
+    Frame* findFrameForNavigation(const AtomicString& name, Document* activeDocument = 0);
 
     void applyUserAgent(ResourceRequest&);
 
@@ -264,7 +264,7 @@ public:
     // introduce a proper callback type for this function, we should make it private again.
     void continueLoadAfterWillSubmitForm();
 
-    WEBCORE_EXPORT void setOriginalURLForDownloadRequest(ResourceRequest&);
+    void setOriginalURLForDownloadRequest(ResourceRequest&);
 
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
 
@@ -272,7 +272,7 @@ public:
 
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
-    WEBCORE_EXPORT bool shouldClose();
+    bool shouldClose();
     
     void started();
 
@@ -284,7 +284,7 @@ public:
     };
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
-    WEBCORE_EXPORT NetworkingContext* networkingContext() const;
+    NetworkingContext* networkingContext() const;
 
     void loadProgressingStatusChanged();
 
@@ -342,7 +342,7 @@ private:
 
     void dispatchDidCommitLoad();
 
-    WEBCORE_EXPORT void urlSelected(const FrameLoadRequest&, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer, ShouldReplaceDocumentIfJavaScriptURL, AllowNavigationToInvalidURL);
+    void urlSelected(const FrameLoadRequest&, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer, ShouldReplaceDocumentIfJavaScriptURL, AllowNavigationToInvalidURL);
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>, AllowNavigationToInvalidURL); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   
@@ -359,7 +359,7 @@ private:
 
     void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
 
-    WEBCORE_EXPORT void detachChildren();
+    void detachChildren();
     void closeAndRemoveChild(Frame*);
 
     void loadInSameDocument(const URL&, PassRefPtr<SerializedScriptValue> stateObject, bool isNewNavigation);
@@ -407,7 +407,7 @@ private:
 
     bool m_quickRedirectComing;
     bool m_sentRedirectNotification;
-    WEBCORE_EXPORT bool m_inStopAllLoaders;
+    bool m_inStopAllLoaders;
 
     String m_outgoingReferrer;
 

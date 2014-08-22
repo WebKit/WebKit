@@ -66,10 +66,10 @@ public:
     bool shouldAutocomplete() const;
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-    WEBCORE_EXPORT bool autocorrect() const;
+    bool autocorrect() const;
     void setAutocorrect(bool);
 
-    WEBCORE_EXPORT WebAutocapitalizeType autocapitalizeType() const;
+    WebAutocapitalizeType autocapitalizeType() const;
     const AtomicString& autocapitalize() const;
     void setAutocapitalize(const AtomicString&);
 #endif

@@ -46,9 +46,9 @@ class IntRect;
     
 class Icon : public RefCounted<Icon> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
+    static PassRefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
 
-    WEBCORE_EXPORT ~Icon();
+    ~Icon();
 
     void paint(GraphicsContext*, const IntRect&);
 
@@ -58,7 +58,7 @@ public:
 
 #if PLATFORM(IOS)
     // FIXME: Make this work for non-iOS ports and remove the PLATFORM(IOS)-guard.
-    WEBCORE_EXPORT static PassRefPtr<Icon> createIconForImage(NativeImagePtr);
+    static PassRefPtr<Icon> createIconForImage(NativeImagePtr);
 #endif
 
 private:

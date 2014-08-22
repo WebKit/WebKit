@@ -68,8 +68,8 @@ enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, Inclu
 
 struct PasteboardWebContent {
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(WIN))
-    WEBCORE_EXPORT PasteboardWebContent();
-    WEBCORE_EXPORT ~PasteboardWebContent();
+    PasteboardWebContent();
+    ~PasteboardWebContent();
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     RefPtr<SharedBuffer> dataInRTFDFormat;
@@ -89,8 +89,8 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
-    WEBCORE_EXPORT PasteboardImage();
-    WEBCORE_EXPORT ~PasteboardImage();
+    PasteboardImage();
+    ~PasteboardImage();
     RefPtr<Image> image;
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(WIN))
     PasteboardURL url;
@@ -129,7 +129,7 @@ class Pasteboard {
 public:
     ~Pasteboard();
 
-    WEBCORE_EXPORT static PassOwnPtr<Pasteboard> createForCopyAndPaste();
+    static PassOwnPtr<Pasteboard> createForCopyAndPaste();
     static PassOwnPtr<Pasteboard> createPrivate(); // Temporary pasteboard. Can put data on this and then write to another pasteboard with writePasteboard.
 
     bool hasData();
@@ -152,7 +152,7 @@ public:
 
     void writeMarkup(const String& markup);
     enum SmartReplaceOption { CanSmartReplace, CannotSmartReplace };
-    WEBCORE_EXPORT void writePlainText(const String&, SmartReplaceOption); // FIXME: Two separate functions would be clearer than one function with an argument.
+    void writePlainText(const String&, SmartReplaceOption); // FIXME: Two separate functions would be clearer than one function with an argument.
     void writePasteboard(const Pasteboard& sourcePasteboard);
 
 #if ENABLE(DRAG_SUPPORT)

@@ -42,18 +42,18 @@ class RemoteCommandListener;
 
 class MediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
 public:
-    WEBCORE_EXPORT static MediaSessionManager& sharedManager();
+    static MediaSessionManager& sharedManager();
     virtual ~MediaSessionManager() { }
 
     bool has(MediaSession::MediaType) const;
     int count(MediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
 
-    WEBCORE_EXPORT void beginInterruption(MediaSession::InterruptionType);
-    WEBCORE_EXPORT void endInterruption(MediaSession::EndInterruptionFlags);
+    void beginInterruption(MediaSession::InterruptionType);
+    void endInterruption(MediaSession::EndInterruptionFlags);
 
-    WEBCORE_EXPORT void applicationWillEnterForeground() const;
-    WEBCORE_EXPORT void applicationWillEnterBackground() const;
+    void applicationWillEnterForeground() const;
+    void applicationWillEnterBackground() const;
     void wirelessRoutesAvailableChanged();
 
     enum SessionRestrictionFlags {
@@ -66,9 +66,9 @@ public:
     };
     typedef unsigned SessionRestrictions;
     
-    WEBCORE_EXPORT void addRestriction(MediaSession::MediaType, SessionRestrictions);
-    WEBCORE_EXPORT void removeRestriction(MediaSession::MediaType, SessionRestrictions);
-    WEBCORE_EXPORT SessionRestrictions restrictions(MediaSession::MediaType);
+    void addRestriction(MediaSession::MediaType, SessionRestrictions);
+    void removeRestriction(MediaSession::MediaType, SessionRestrictions);
+    SessionRestrictions restrictions(MediaSession::MediaType);
     virtual void resetRestrictions();
 
     virtual void sessionWillBeginPlayback(MediaSession&);
@@ -98,7 +98,7 @@ private:
     void updateSessionState();
 
     // RemoteCommandListenerClient
-    WEBCORE_EXPORT virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
+    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
 
     // AudioHardwareListenerClient
     virtual void audioHardwareDidBecomeActive() override { }

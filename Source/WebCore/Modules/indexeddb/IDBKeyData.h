@@ -43,7 +43,7 @@ struct IDBKeyData {
     {
     }
 
-    WEBCORE_EXPORT IDBKeyData(const IDBKey*);
+    IDBKeyData(const IDBKey*);
 
     static IDBKeyData minimum()
     {
@@ -61,26 +61,26 @@ struct IDBKeyData {
         return result;
     }
 
-    WEBCORE_EXPORT PassRefPtr<IDBKey> maybeCreateIDBKey() const;
+    PassRefPtr<IDBKey> maybeCreateIDBKey() const;
 
     IDBKeyData isolatedCopy() const;
 
-    WEBCORE_EXPORT void encode(KeyedEncoder&) const;
-    WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyData&);
+    void encode(KeyedEncoder&) const;
+    static bool decode(KeyedDecoder&, IDBKeyData&);
 
     // compare() has the same semantics as strcmp().
     //   - Returns negative if this IDBKeyData is less than other.
     //   - Returns positive if this IDBKeyData is greater than other.
     //   - Returns zero if this IDBKeyData is equal to other.
-    WEBCORE_EXPORT int compare(const IDBKeyData& other) const;
+    int compare(const IDBKeyData& other) const;
 
     void setArrayValue(const Vector<IDBKeyData>&);
     void setStringValue(const String&);
     void setDateValue(double);
-    WEBCORE_EXPORT void setNumberValue(double);
+    void setNumberValue(double);
 
 #ifndef NDEBUG
-    WEBCORE_EXPORT String loggingString() const;
+    String loggingString() const;
 #endif
 
     IDBKey::Type type;

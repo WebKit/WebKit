@@ -152,8 +152,8 @@ public:
 
     static bool isSupported(const String& feature, const String& version);
 
-    WEBCORE_EXPORT static void startIgnoringLeaks();
-    WEBCORE_EXPORT static void stopIgnoringLeaks();
+    static void startIgnoringLeaks();
+    static void stopIgnoringLeaks();
 
     static void dumpStatistics();
 
@@ -193,12 +193,12 @@ public:
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
     // these methods to be more efficient since they don't need to return a ref
-    WEBCORE_EXPORT bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
+    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
     bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
-    WEBCORE_EXPORT bool removeChild(Node* child, ExceptionCode&);
-    WEBCORE_EXPORT bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
+    bool removeChild(Node* child, ExceptionCode&);
+    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
 
-    WEBCORE_EXPORT void remove(ExceptionCode&);
+    void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
     virtual PassRefPtr<Node> cloneNode(bool deep) = 0;
     virtual const AtomicString& localName() const;
@@ -214,8 +214,8 @@ public:
     String lookupNamespaceURI(const String& prefix) const;
     String lookupNamespacePrefix(const AtomicString& namespaceURI, const Element* originalElement) const;
     
-    WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
-    WEBCORE_EXPORT void setTextContent(const String&, ExceptionCode&);
+    String textContent(bool convertBRsToNewlines = false) const;
+    void setTextContent(const String&, ExceptionCode&);
     
     Node* lastDescendant() const;
     Node* firstDescendant() const;
@@ -270,7 +270,7 @@ public:
     Element* shadowHost() const;
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns this.
     // Deprecated. Should use shadowHost() and check the return value.
-    WEBCORE_EXPORT Node* deprecatedShadowAncestorNode() const;
+    Node* deprecatedShadowAncestorNode() const;
     ShadowRoot* containingShadowRoot() const;
     ShadowRoot* shadowRoot() const;
 
@@ -301,7 +301,7 @@ public:
     virtual bool canContainRangeEndPoint() const { return false; }
 
     bool isRootEditableElement() const;
-    WEBCORE_EXPORT Element* rootEditableElement() const;
+    Element* rootEditableElement() const;
     Element* rootEditableElement(EditableType) const;
 
     // Called by the parser when this element's close tag is reached,
@@ -331,7 +331,7 @@ public:
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
     void clearChildNeedsStyleRecalc() { clearFlag(ChildNeedsStyleRecalcFlag); }
 
-    WEBCORE_EXPORT void setNeedsStyleRecalc(StyleChangeType = FullStyleChange);
+    void setNeedsStyleRecalc(StyleChangeType changeType = FullStyleChange);
     void clearNeedsStyleRecalc() { m_nodeFlags &= ~StyleChangeMask; }
 
     void setIsLink(bool f) { setFlag(f, IsLinkFlag); }
@@ -348,12 +348,12 @@ public:
         UserSelectAllDoesNotAffectEditability,
         UserSelectAllIsAlwaysNonEditable
     };
-    WEBCORE_EXPORT bool isContentEditable(UserSelectAllTreatment = UserSelectAllDoesNotAffectEditability);
+    bool isContentEditable(UserSelectAllTreatment = UserSelectAllDoesNotAffectEditability);
     bool isContentRichlyEditable();
 
-    WEBCORE_EXPORT void inspect();
+    void inspect();
 
-    WEBCORE_EXPORT bool hasEditableStyle(EditableType editableType = ContentIsEditable, UserSelectAllTreatment treatment = UserSelectAllIsAlwaysNonEditable) const
+    bool hasEditableStyle(EditableType editableType = ContentIsEditable, UserSelectAllTreatment treatment = UserSelectAllIsAlwaysNonEditable) const
     {
         switch (editableType) {
         case ContentIsEditable:
@@ -379,14 +379,14 @@ public:
 
     virtual LayoutRect boundingBox() const;
     IntRect pixelSnappedBoundingBox() const { return pixelSnappedIntRect(boundingBox()); }
-    WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
+    LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return pixelSnappedIntRect(renderRect(isReplaced)); }
 
-    WEBCORE_EXPORT unsigned nodeIndex() const;
+    unsigned nodeIndex() const;
 
     // Returns the DOM ownerDocument attribute. This method never returns null, except in the case
     // of a Document node.
-    WEBCORE_EXPORT Document* ownerDocument() const;
+    Document* ownerDocument() const;
 
     // Returns the document associated with this node.
     // A Document node returns itself.
@@ -420,7 +420,7 @@ public:
 
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
 
-    WEBCORE_EXPORT bool isDescendantOf(const Node*) const;
+    bool isDescendantOf(const Node*) const;
     bool isDescendantOrShadowDescendantOf(const Node*) const;
     bool contains(const Node*) const;
     bool containsIncludingShadowDOM(const Node*) const;
@@ -510,7 +510,7 @@ public:
     virtual bool willRespondToMouseClickEvents();
     virtual bool willRespondToMouseWheelEvents();
 
-    WEBCORE_EXPORT unsigned short compareDocumentPosition(Node*);
+    unsigned short compareDocumentPosition(Node*);
 
     virtual Node* toNode() override;
     virtual HTMLInputElement* toInputElement();
@@ -559,7 +559,7 @@ public:
     void unregisterTransientMutationObserver(MutationObserverRegistration*);
     void notifyMutationObserversNodeWillDetach();
 
-    WEBCORE_EXPORT void textRects(Vector<IntRect>&) const;
+    void textRects(Vector<IntRect>&) const;
 
     unsigned connectedSubframeCount() const;
     void incrementConnectedSubframeCount(unsigned amount = 1);
@@ -677,12 +677,12 @@ private:
         return NOPSEUDO;
     }
 
-    WEBCORE_EXPORT void removedLastRef();
+    void removedLastRef();
     bool hasTreeSharedParent() const { return !!parentNode(); }
 
     enum EditableLevel { Editable, RichlyEditable };
     bool hasEditableStyle(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
-    WEBCORE_EXPORT bool isEditableToAccessibility(EditableLevel) const;
+    bool isEditableToAccessibility(EditableLevel) const;
 
     virtual void refEventTarget() override;
     virtual void derefEventTarget() override;

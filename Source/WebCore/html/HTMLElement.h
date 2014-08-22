@@ -44,7 +44,7 @@ public:
 
     PassRefPtr<HTMLCollection> children();
 
-    WEBCORE_EXPORT virtual String title() const override final;
+    virtual String title() const override final;
 
     virtual short tabIndex() const override;
 

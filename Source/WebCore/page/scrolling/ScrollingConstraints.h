@@ -85,7 +85,7 @@ public:
         , m_layerPositionAtLastLayout(other.m_layerPositionAtLastLayout)
     { }
     
-    WEBCORE_EXPORT FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
+    FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
 
     const FloatRect& viewportRectAtLastLayout() const { return m_viewportRectAtLastLayout; }
     void setViewportRectAtLastLayout(const FloatRect& rect) { m_viewportRectAtLastLayout = rect; }

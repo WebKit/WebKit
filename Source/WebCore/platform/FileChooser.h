@@ -78,16 +78,16 @@ public:
 class FileChooser : public RefCounted<FileChooser> {
 public:
     static PassRefPtr<FileChooser> create(FileChooserClient*, const FileChooserSettings&);
-    WEBCORE_EXPORT ~FileChooser();
+    ~FileChooser();
 
     void invalidate();
 
-    WEBCORE_EXPORT void chooseFile(const String& path);
-    WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths);
+    void chooseFile(const String& path);
+    void chooseFiles(const Vector<String>& paths);
 #if PLATFORM(IOS)
     // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this
     // function with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS)-guard.
-    WEBCORE_EXPORT void chooseMediaFiles(const Vector<String>& paths, const String& displayString, Icon*);
+    void chooseMediaFiles(const Vector<String>& paths, const String& displayString, Icon*);
 #endif    
 
     // FIXME: We should probably just pass file paths that could be virtual paths with proper display names rather than passing structs.

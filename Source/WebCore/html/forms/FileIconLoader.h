@@ -50,7 +50,7 @@ public:
     explicit FileIconLoader(FileIconLoaderClient&);
 
     void invalidate();
-    WEBCORE_EXPORT void notifyFinished(PassRefPtr<Icon>);
+    void notifyFinished(PassRefPtr<Icon>);
 
 private:
     FileIconLoaderClient* m_client;

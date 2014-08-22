@@ -35,7 +35,7 @@ namespace WebCore {
 
 class MockMediaStreamCenter final : public MediaStreamCenter {
 public:
-    WEBCORE_EXPORT static void registerMockMediaStreamCenter();
+    static void registerMockMediaStreamCenter();
 
     virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);

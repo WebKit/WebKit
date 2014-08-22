@@ -57,7 +57,7 @@ public:
     void updatePlaceholderVisibility();
 
     int indexForVisiblePosition(const VisiblePosition&) const;
-    WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index) const;
+    VisiblePosition visiblePositionForIndex(int index) const;
     int selectionStart() const;
     int selectionEnd() const;
     const AtomicString& selectionDirection() const;
@@ -80,7 +80,7 @@ public:
     virtual TextControlInnerTextElement* innerTextElement() const = 0;
 
     void selectionChanged(bool shouldFireSelectEvent);
-    WEBCORE_EXPORT bool lastChangeWasUserEdit() const;
+    bool lastChangeWasUserEdit() const;
     void setInnerTextValue(const String&);
     String innerTextValue() const;
 
@@ -88,8 +88,8 @@ public:
 
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT void hidePlaceholder();
-    WEBCORE_EXPORT void showPlaceholderIfNecessary();
+    void hidePlaceholder();
+    void showPlaceholderIfNecessary();
 #endif
 
 protected:

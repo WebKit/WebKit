@@ -126,8 +126,8 @@ public:
 
     void hostLayerSizeChanged();
 
-    WEBCORE_EXPORT static void setLayerPoolCapacity(unsigned);
-    WEBCORE_EXPORT static void drainLayerPool();
+    static void setLayerPoolCapacity(unsigned);
+    static void drainLayerPool();
 
     // Logging
     void dumpTiles();

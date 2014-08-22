@@ -48,8 +48,8 @@ void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
 class IDBKeyPath {
 public:
     IDBKeyPath() : m_type(NullType) { }
-    WEBCORE_EXPORT explicit IDBKeyPath(const String&);
-    WEBCORE_EXPORT explicit IDBKeyPath(const Vector<String>& array);
+    explicit IDBKeyPath(const String&);
+    explicit IDBKeyPath(const Vector<String>& array);
 
     enum Type {
         NullType = 0,
@@ -77,8 +77,8 @@ public:
 
     IDBKeyPath isolatedCopy() const;
 
-    WEBCORE_EXPORT void encode(KeyedEncoder&) const;
-    WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyPath&);
+    void encode(KeyedEncoder&) const;
+    static bool decode(KeyedDecoder&, IDBKeyPath&);
 
 private:
     Type m_type;

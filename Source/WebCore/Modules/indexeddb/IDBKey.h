@@ -94,7 +94,7 @@ public:
         return adoptRef(new IDBKey(array, sizeEstimate));
     }
 
-    WEBCORE_EXPORT ~IDBKey();
+    ~IDBKey();
 
     // In order of the least to the highest precedent in terms of sort order.
     enum Type {
@@ -108,7 +108,7 @@ public:
     };
 
     Type type() const { return m_type; }
-    WEBCORE_EXPORT bool isValid() const;
+    bool isValid() const;
 
     const KeyArray& array() const
     {

@@ -473,7 +473,7 @@ private:
     static void networkStateChangedImpl(InstrumentingAgents*);
     static void updateApplicationCacheStatusImpl(InstrumentingAgents*, Frame*);
 
-    WEBCORE_EXPORT static InstrumentingAgents* instrumentingAgentsForPage(Page*);
+    static InstrumentingAgents* instrumentingAgentsForPage(Page*);
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame*);
     static InstrumentingAgents* instrumentingAgentsForContext(ScriptExecutionContext*);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document*);
@@ -490,7 +490,7 @@ private:
     static void renderLayerDestroyedImpl(InstrumentingAgents*, const RenderLayer*);
     static void pseudoElementDestroyedImpl(InstrumentingAgents*, PseudoElement*);
 
-    WEBCORE_EXPORT static int s_frontendCounter;
+    static int s_frontendCounter;
 #endif
 };
 

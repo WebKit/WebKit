@@ -54,14 +54,14 @@ public:
     void requestPermission(Geolocation*);
     void cancelPermissionRequest(Geolocation*);
 
-    WEBCORE_EXPORT void positionChanged(GeolocationPosition*);
-    WEBCORE_EXPORT void errorOccurred(GeolocationError*);
+    void positionChanged(GeolocationPosition*);
+    void errorOccurred(GeolocationError*);
 
     GeolocationPosition* lastPosition();
 
     GeolocationClient* client() { return m_client; }
 
-    WEBCORE_EXPORT static const char* supplementName();
+    static const char* supplementName();
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:

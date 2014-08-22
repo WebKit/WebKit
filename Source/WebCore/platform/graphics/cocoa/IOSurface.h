@@ -37,22 +37,22 @@ namespace WebCore {
 
 class IOSurface final : public RefCounted<IOSurface> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<IOSurface> create(IntSize, ColorSpace);
-    WEBCORE_EXPORT static PassRefPtr<IOSurface> createFromMachPort(mach_port_t, ColorSpace);
+    static PassRefPtr<IOSurface> create(IntSize, ColorSpace);
+    static PassRefPtr<IOSurface> createFromMachPort(mach_port_t, ColorSpace);
     static PassRefPtr<IOSurface> createFromSurface(IOSurfaceRef, ColorSpace);
-    WEBCORE_EXPORT static PassRefPtr<IOSurface> createFromImage(CGImageRef);
+    static PassRefPtr<IOSurface> createFromImage(CGImageRef);
 
     static IntSize maximumSize();
 
-    WEBCORE_EXPORT mach_port_t createMachPort() const;
+    mach_port_t createMachPort() const;
 
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.
-    WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
+    RetainPtr<CGImageRef> createImage();
 
     IOSurfaceRef surface() const { return m_surface.get(); }
-    WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
-    WEBCORE_EXPORT CGContextRef ensurePlatformContext();
+    GraphicsContext& ensureGraphicsContext();
+    CGContextRef ensurePlatformContext();
 
     enum class SurfaceState {
         Valid,
@@ -66,17 +66,17 @@ public:
     bool isVolatile() const;
 
     // setIsVolatile only has an effect on iOS and OS 10.9 and above.
-    WEBCORE_EXPORT SurfaceState setIsVolatile(bool);
+    SurfaceState setIsVolatile(bool);
 
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
     ColorSpace colorSpace() const { return m_colorSpace; }
 
-    WEBCORE_EXPORT bool isInUse() const;
+    bool isInUse() const;
 
     // The graphics context cached on the surface counts as a "user", so to get
     // an accurate result from isInUse(), it needs to be released.
-    WEBCORE_EXPORT void releaseGraphicsContext();
+    void releaseGraphicsContext();
 
 private:
     IOSurface(IntSize, ColorSpace);

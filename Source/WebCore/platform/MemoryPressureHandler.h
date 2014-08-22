@@ -51,7 +51,7 @@ class MemoryPressureHandler {
 public:
     friend MemoryPressureHandler& memoryPressureHandler();
 
-    WEBCORE_EXPORT void install();
+    void install();
 
     void setLowMemoryHandler(LowMemoryHandler handler)
     {
@@ -64,10 +64,10 @@ public:
 
 #if PLATFORM(IOS)
     // FIXME: Can we share more of this with OpenSource?
-    WEBCORE_EXPORT void installMemoryReleaseBlock(void (^releaseMemoryBlock)(), bool clearPressureOnMemoryRelease = true);
-    WEBCORE_EXPORT void setReceivedMemoryPressure(MemoryPressureReason);
-    WEBCORE_EXPORT void clearMemoryPressure();
-    WEBCORE_EXPORT bool shouldWaitForMemoryClearMessage();
+    void installMemoryReleaseBlock(void (^releaseMemoryBlock)(), bool clearPressureOnMemoryRelease = true);
+    void setReceivedMemoryPressure(MemoryPressureReason);
+    void clearMemoryPressure();
+    bool shouldWaitForMemoryClearMessage();
     void respondToMemoryPressureIfNeeded();
 #endif
 
@@ -99,7 +99,7 @@ public:
         static bool s_loggingEnabled;
     };
 
-    WEBCORE_EXPORT static void releaseMemory(bool critical);
+    static void releaseMemory(bool critical);
 
 private:
     static void releaseNoncriticalMemory();

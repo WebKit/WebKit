@@ -52,22 +52,22 @@ class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, publ
 {
 public:
     static PassRef<Geolocation> create(ScriptExecutionContext*);
-    WEBCORE_EXPORT ~Geolocation();
+    ~Geolocation();
 
 #if PLATFORM(IOS)
     virtual bool canSuspend() const override;
     virtual void suspend(ReasonForSuspension) override;
     virtual void resume() override;
-    WEBCORE_EXPORT void resetAllGeolocationPermission();
+    void resetAllGeolocationPermission();
 #endif // PLATFORM(IOS)
     Document* document() const;
-    WEBCORE_EXPORT Frame* frame() const;
+    Frame* frame() const;
 
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchID);
 
-    WEBCORE_EXPORT void setIsAllowed(bool);
+    void setIsAllowed(bool);
     bool isAllowed() const { return m_allowGeolocation == Yes; }
 
     void positionChanged();
