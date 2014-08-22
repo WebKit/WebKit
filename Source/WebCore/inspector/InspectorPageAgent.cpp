@@ -652,9 +652,11 @@ void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
 {
     m_showPaintRects = show;
     m_client->setShowPaintRects(show);
+    
+    if (m_client->overridesShowPaintRects())
+        return;
 
-    if (!show && mainFrame() && mainFrame()->view())
-        mainFrame()->view()->invalidate();
+    m_overlay->setShowingPaintRects(show);
 }
 
 void InspectorPageAgent::canShowDebugBorders(ErrorString*, bool* outParam)
@@ -899,7 +901,7 @@ void InspectorPageAgent::didPaint(RenderObject* renderer, const LayoutRect& rect
         return;
     }
 
-    // FIXME: the overlay needs to accumulate paint rects and draw them itself.
+    m_overlay->showPaintRect(rect);
 }
 
 void InspectorPageAgent::didLayout()

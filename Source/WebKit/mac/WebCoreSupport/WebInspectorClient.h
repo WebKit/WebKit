@@ -76,6 +76,10 @@ public:
 #if PLATFORM(IOS)
     virtual void showInspectorIndication() override;
     virtual void hideInspectorIndication() override;
+
+    virtual bool overridesShowPaintRects() const override { return true; }
+    virtual void setShowPaintRects(bool) override;
+    virtual void showPaintRect(const WebCore::FloatRect&) override;
 #endif
 
     virtual void didSetSearchingForNode(bool) override;

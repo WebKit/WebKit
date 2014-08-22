@@ -1,3 +1,23 @@
+2014-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement paint flashing in the WK1 InspectorOverlay page
+        https://bugs.webkit.org/show_bug.cgi?id=136138
+
+        Reviewed by Sam Weinig, Joseph Pecoraro.
+
+        Implement paint flashing for the WebKit1 InspectorOverlay via a second canvas in the overlay page.
+        We avoid allocating backing store for this canvas until we have paint rects.
+        
+        Because this overlay page is weird and doesn't know how to paint itself, InspectorOverlay manages
+        an array of rects, and pushes them to the page when they change, before forcing a paint.
+        
+        Because iOS doesn't use the InspectorOverlay page, stub out setShowPaintRects on its
+        WebKit WebInspectorClient, but don't yet implement paint flashing there.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::setShowPaintRects):
+        (WebInspectorClient::showPaintRect):
+
 2014-08-18  Andy Estes  <aestes@apple.com>
 
         Fix the iOS build after  r172709.

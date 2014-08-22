@@ -97,6 +97,16 @@ void WebInspectorClient::hideInspectorIndication()
     [m_webView setShowingInspectorIndication:NO];
 }
 
+void WebInspectorClient::setShowPaintRects(bool)
+{
+    // FIXME: implement.
+}
+
+void WebInspectorClient::showPaintRect(const FloatRect&)
+{
+    // FIXME: need to do CALayer-based highlighting of paint rects.
+}
+
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
     WebInspector *inspector = [m_webView inspector];

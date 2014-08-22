@@ -1,3 +1,42 @@
+2014-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement paint flashing in the WK1 InspectorOverlay page
+        https://bugs.webkit.org/show_bug.cgi?id=136138
+
+        Reviewed by Sam Weinig, Joseph Pecoraro.
+
+        Implement paint flashing for the WebKit1 InspectorOverlay via a second canvas in the overlay page.
+        We avoid allocating backing store for this canvas until we have paint rects.
+        
+        Because this overlay page is weird and doesn't know how to paint itself, InspectorOverlay manages
+        an array of rects, and pushes them to the page when they change, before forcing a paint.
+        
+        Because iOS doesn't use the InspectorOverlay page, stub out setShowPaintRects on its
+        WebKit WebInspectorClient, but don't yet implement paint flashing there.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::shouldShowOverlay):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::buildObjectForRect):
+        (WebCore::InspectorOverlay::setShowingPaintRects):
+        (WebCore::InspectorOverlay::showPaintRect):
+        (WebCore::InspectorOverlay::updatePaintRectsTimerFired):
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::InspectorOverlay::forcePaint):
+        (WebCore::quadToPath): Deleted.
+        (WebCore::drawOutlinedQuad): Deleted.
+        (WebCore::InspectorOverlay::drawOutline): Deleted.
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorOverlayPage.html:
+        * inspector/InspectorOverlayPage.js:
+        (updatePaintRects):
+        (reset):
+        (_drawShapeHighlight):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setShowPaintRects):
+        (WebCore::InspectorPageAgent::didPaint):
+
 2014-08-22  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Cleanup media code

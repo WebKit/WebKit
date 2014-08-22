@@ -22,6 +22,8 @@ const regionNumberStrokeColor = "rgb(61, 127, 204)";
 const shapeHighlightColor = "rgba(96, 82, 127, 0.8)";
 const shapeMarginHighlightColor = "rgba(96, 82, 127, 0.6)";
 
+const paintRectFillColor = "rgba(255, 0, 0, 0.5)";
+
 function drawPausedInDebuggerMessage(message)
 {
     var pausedInDebugger = document.getElementById("paused-in-debugger");
@@ -163,6 +165,24 @@ function drawGutter()
     }
 }
 
+var updatePaintRectsIntervalID;
+
+function updatePaintRects(paintRectList)
+{
+    var context = paintRectsCanvas.getContext("2d");
+    context.save();
+    context.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    context.clearRect(0, 0, paintRectsCanvas.width, paintRectsCanvas.height);
+
+    context.fillStyle = paintRectFillColor;
+
+    for (var rectObject of paintRectList)
+        context.fillRect(rectObject.x, rectObject.y, rectObject.width, rectObject.height);
+
+    context.restore();
+}
+
 function reset(resetData)
 {
     var deviceScaleFactor = resetData.deviceScaleFactor;
@@ -170,6 +190,8 @@ function reset(resetData)
     window.frameViewFullSize = resetData.frameViewFullSize;
 
     window.canvas = document.getElementById("canvas");
+    window.paintRectsCanvas = document.getElementById("paintrects-canvas");
+
     window.context = canvas.getContext("2d");
     window.rightGutter = document.getElementById("right-gutter");
     window.bottomGutter = document.getElementById("bottom-gutter");
@@ -179,6 +201,12 @@ function reset(resetData)
     canvas.style.width = viewportSize.width + "px";
     canvas.style.height = viewportSize.height + "px";
     context.scale(deviceScaleFactor, deviceScaleFactor);
+
+    // We avoid getting the the context for the paint rects canvas until we need to paint, to avoid backing store allocation.
+    paintRectsCanvas.width = deviceScaleFactor * viewportSize.width;
+    paintRectsCanvas.height = deviceScaleFactor * viewportSize.height;
+    paintRectsCanvas.style.width = viewportSize.width + "px";
+    paintRectsCanvas.style.height = viewportSize.height + "px";
 
     document.getElementById("paused-in-debugger").style.visibility = "hidden";
     document.getElementById("element-title-container").innerHTML = "";
@@ -383,7 +411,8 @@ function _drawRegionsHighlight(regions)
     }
 }
 
-function _drawShapeHighlight(shapeInfo) {
+function _drawShapeHighlight(shapeInfo)
+{
     if (shapeInfo.marginShape)
         drawPath(context, shapeInfo.marginShape, shapeMarginHighlightColor);
 

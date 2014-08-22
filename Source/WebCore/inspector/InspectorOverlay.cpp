@@ -63,41 +63,6 @@ using namespace Inspector;
 
 namespace WebCore {
 
-static Path quadToPath(const FloatQuad& quad)
-{
-    Path quadPath;
-    quadPath.moveTo(quad.p1());
-    quadPath.addLineTo(quad.p2());
-    quadPath.addLineTo(quad.p3());
-    quadPath.addLineTo(quad.p4());
-    quadPath.closeSubpath();
-    return quadPath;
-}
-
-static void drawOutlinedQuad(GraphicsContext* context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor)
-{
-    static const int outlineThickness = 2;
-
-    Path quadPath = quadToPath(quad);
-
-    // Clip out the quad, then draw with a 2px stroke to get a pixel
-    // of outline (because inflating a quad is hard)
-    {
-        context->save();
-        context->clipOut(quadPath);
-
-        context->setStrokeThickness(outlineThickness);
-        context->setStrokeColor(outlineColor, ColorSpaceDeviceRGB);
-        context->strokePath(quadPath);
-
-        context->restore();
-    }
-
-    // Now do the fill
-    context->setFillColor(fillColor, ColorSpaceDeviceRGB);
-    context->fillPath(quadPath);
-}
-
 static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     quad.setP1(view->contentsToRootView(roundedIntPoint(quad.p1())));
@@ -238,7 +203,9 @@ static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& hig
 InspectorOverlay::InspectorOverlay(Page& page, InspectorClient* client)
     : m_page(page)
     , m_client(client)
+    , m_paintRectUpdateTimer(this, &InspectorOverlay::updatePaintRectsTimerFired)
     , m_indicating(false)
+    , m_showingPaintRects(false)
 {
 }
 
@@ -255,12 +222,6 @@ void InspectorOverlay::paint(GraphicsContext& context)
     FrameView* view = overlayPage()->mainFrame().view();
     view->updateLayoutAndStyleIfNeededRecursive();
     view->paint(&context, IntRect(0, 0, view->width(), view->height()));
-}
-
-void InspectorOverlay::drawOutline(GraphicsContext* context, const LayoutRect& rect, const Color& color)
-{
-    FloatRect outlineRect = rect;
-    drawOutlinedQuad(context, outlineRect, Color(), color);
 }
 
 void InspectorOverlay::getHighlight(Highlight* highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
@@ -329,7 +290,7 @@ void InspectorOverlay::setIndicating(bool indicating)
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
-    return m_highlightNode || m_highlightNode || m_indicating || !m_pausedInDebuggerMessage.isNull();
+    return m_highlightNode || m_highlightNode || m_indicating || m_showingPaintRects || !m_pausedInDebuggerMessage.isNull();
 }
 
 void InspectorOverlay::update()
@@ -359,21 +320,31 @@ void InspectorOverlay::update()
     drawNodeHighlight();
     drawQuadHighlight();
     drawPausedInDebuggerMessage();
+    drawPaintRects();
 
     // Position DOM elements.
     overlayPage()->mainFrame().document()->recalcStyle(Style::Force);
     if (overlayView->needsLayout())
         overlayView->layout();
 
-    // Kick paint.
-    m_client->highlight();
+    forcePaint();
 }
 
 static PassRefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
-    object->setNumber("x", point.x());
-    object->setNumber("y", point.y());
+    object->setNumber(ASCIILiteral("x"), point.x());
+    object->setNumber(ASCIILiteral("y"), point.y());
+    return object.release();
+}
+
+static PassRefPtr<InspectorObject> buildObjectForRect(const FloatRect& rect)
+{
+    RefPtr<InspectorObject> object = InspectorObject::create();
+    object->setNumber(ASCIILiteral("x"), rect.x());
+    object->setNumber(ASCIILiteral("y"), rect.y());
+    object->setNumber(ASCIILiteral("width"), rect.width());
+    object->setNumber(ASCIILiteral("height"), rect.height());
     return object.release();
 }
 
@@ -499,9 +470,71 @@ static PassRefPtr<InspectorObject> buildObjectForCSSRegionContentClip(RenderRegi
     return regionObject.release();
 }
 
+void InspectorOverlay::setShowingPaintRects(bool showingPaintRects)
+{
+    if (m_showingPaintRects == showingPaintRects)
+        return;
+
+    m_showingPaintRects = showingPaintRects;
+    if (!m_showingPaintRects) {
+        m_paintRects.clear();
+        m_paintRectUpdateTimer.stop();
+        drawPaintRects();
+        forcePaint();
+    }
+}
+
+void InspectorOverlay::showPaintRect(const FloatRect& rect)
+{
+    if (!m_showingPaintRects)
+        return;
+
+    IntRect rootRect = m_page.mainFrame().view()->contentsToRootView(enclosedIntRect(rect));
+
+    const constexpr std::chrono::milliseconds removeDelay = std::chrono::milliseconds(250);
+
+    std::chrono::steady_clock::time_point removeTime = std::chrono::steady_clock::now() + removeDelay;
+    m_paintRects.append(TimeRectPair(removeTime, rootRect));
+
+    if (!m_paintRectUpdateTimer.isActive()) {
+        const double paintRectsUpdateIntervalSeconds = 0.032;
+        m_paintRectUpdateTimer.startRepeating(paintRectsUpdateIntervalSeconds);
+    }
+
+    drawPaintRects();
+    forcePaint();
+}
+
+void InspectorOverlay::updatePaintRectsTimerFired(Timer<InspectorOverlay>&)
+{
+    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    bool rectsChanged = false;
+    while (!m_paintRects.isEmpty() && m_paintRects.first().first < now) {
+        m_paintRects.removeFirst();
+        rectsChanged = true;
+    }
+    
+    if (m_paintRects.isEmpty())
+        m_paintRectUpdateTimer.stop();
+
+    if (rectsChanged) {
+        drawPaintRects();
+        forcePaint();
+    }
+}
+
+void InspectorOverlay::drawPaintRects()
+{
+    RefPtr<InspectorArray> fragmentsArray = InspectorArray::create();
+    for (const auto& pair : m_paintRects)
+        fragmentsArray->pushObject(buildObjectForRect(pair.second));
+
+    evaluateInOverlay(ASCIILiteral("updatePaintRects"), fragmentsArray.release());
+}
+
 void InspectorOverlay::drawGutter()
 {
-    evaluateInOverlay("drawGutter");
+    evaluateInOverlay(ASCIILiteral("drawGutter"));
 }
 
 static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
@@ -815,6 +848,12 @@ Page* InspectorOverlay::overlayPage()
 #endif
 
     return m_overlayPage.get();
+}
+
+void InspectorOverlay::forcePaint()
+{
+    // This overlay page is very weird and doesn't automatically paint. We have to force paints manually.
+    m_client->highlight();
 }
 
 void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameViewFullSize)
