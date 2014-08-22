@@ -39,6 +39,9 @@
 #endif
 
 #if PLATFORM(WIN)
+// This is needed because we include WebCore's headers. 
+#define WEBCORE_EXPORT 
+
 #define WTF_USE_CF 1 
 #if PLATFORM(WIN_CAIRO)
 #define WTF_USE_CAIRO 1

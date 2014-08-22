@@ -1,3 +1,10 @@
+2014-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Another unreviewed build fix.
+
+        * DumpRenderTree/config.h:
+        Defined WEBCORE_EXPORT on Windows.
+
 2014-08-21  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL][WK2] Minibrowser : Add stop button to abort page load
