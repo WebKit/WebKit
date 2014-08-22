@@ -491,7 +491,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
 
     IntRect rootRect = m_page.mainFrame().view()->contentsToRootView(enclosedIntRect(rect));
 
-    const constexpr std::chrono::milliseconds removeDelay = std::chrono::milliseconds(250);
+    const std::chrono::milliseconds removeDelay = std::chrono::milliseconds(250);
 
     std::chrono::steady_clock::time_point removeTime = std::chrono::steady_clock::now() + removeDelay;
     m_paintRects.append(TimeRectPair(removeTime, rootRect));

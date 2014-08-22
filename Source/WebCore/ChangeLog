@@ -1,5 +1,12 @@
 2014-08-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Maybe fix Windows.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::showPaintRect):
+
+2014-08-22  Simon Fraser  <simon.fraser@apple.com>
+
         Implement paint flashing in the WK1 InspectorOverlay page
         https://bugs.webkit.org/show_bug.cgi?id=136138
 
