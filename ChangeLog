@@ -1,3 +1,16 @@
+2014-08-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Apply eflsymbols.filter to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=136148
+
+        Reviewed by Csaba Osztrogonác.
+
+        eflsymbol filter hasn't been applied to WK2 port. Additionally clean up WK1 symbol
+        in the eflsymbols.filter.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/eflsymbols.filter:
+
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
         Enable SATURATED_LAYOUT_ARITHMETIC.
