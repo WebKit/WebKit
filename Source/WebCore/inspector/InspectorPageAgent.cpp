@@ -897,11 +897,11 @@ void InspectorPageAgent::didPaint(RenderObject* renderer, const LayoutRect& rect
     }
     
     if (m_client->overridesShowPaintRects()) {
-        m_client->showPaintRect(rect);
+        m_client->showPaintRect(rootRect);
         return;
     }
 
-    m_overlay->showPaintRect(rect);
+    m_overlay->showPaintRect(rootRect);
 }
 
 void InspectorPageAgent::didLayout()

@@ -1,3 +1,15 @@
+2014-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Use the correct rect for paint flashing
+        https://bugs.webkit.org/show_bug.cgi?id=136169
+
+        Reviewed by Sam Weinig.
+
+        Use the rect we've converted to root document coordinates for paint flashing.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didPaint):
+
 2014-08-22  Dean Jackson  <dino@apple.com>
 
         Google Canvas2D maps are too slow and uncontrollable with Safari with full screen mode
