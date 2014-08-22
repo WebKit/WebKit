@@ -3403,7 +3403,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             m_inlineCallFrame,
             byteCodeParser->m_codeBlock->ownerExecutable(),
             codeBlock->ownerExecutable());
-        m_inlineCallFrame->stackOffset = inlineCallFrameStart.offset() - JSStack::CallFrameHeaderSize;
+        m_inlineCallFrame->setStackOffset(inlineCallFrameStart.offset() - JSStack::CallFrameHeaderSize);
         if (callee) {
             m_inlineCallFrame->calleeRecovery = ValueRecovery::constant(callee);
             m_inlineCallFrame->isClosureCall = false;

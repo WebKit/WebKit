@@ -1,3 +1,22 @@
+2014-08-21  Mark Lam  <mark.lam@apple.com>
+
+        r171362 accidentally increased the size of InlineCallFrame.
+        <https://webkit.org/b/136141>
+
+        Reviewed by Filip Pizlo.
+
+        r171362 increased the size of InlineCallFrame::kind to 2 bits.  This increased
+        the size of InlineCallFrame from 72 to 80 though not intentionally.  The fix
+        is to reduce the size of InlineCallFrame::stackOffset to 29 bits.
+
+        Also added an assert to ensure that we never set a value that exceeds the size
+        of InlineCallFrame::stackOffset.
+
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::setStackOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+
 2014-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: RetainPtr misuse, CFRunLoopSource leak
