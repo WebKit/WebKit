@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 
 #include <WebKitAdditions/JSTouchConstructorIOS.cpp>
 #include <WebKitAdditions/JSTouchListConstructorIOS.cpp>

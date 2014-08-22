@@ -1,3 +1,46 @@
+2014-08-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS
+        and ENABLE_XSLT when building with the iOS public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=135945
+
+        Reviewed by Andy Estes.
+
+        Towards bringing up the iOS WebKit port using the iOS public SDK, disable the proprietary
+        iOS gesture and touch event code. For now we also temporarily disable ENABLE_TOUCH_EVENTS
+        and ENABLE_XSLT while we focus to get the rest of the port built using the public SDK. We'll
+        look to enable these features once we stabilize the build.
+
+        * Configurations/FeatureDefines.xcconfig: Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, ENABLE_TOUCH_EVENTS
+        and ENABLE_XSLT when building with the public SDK.
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.make: Conditionally generate derived sources for touch and gesture events as applicable and pass
+        define WTF_USE_APPLE_INTERNAL_SDK when generating bindings (if applicable). Make the logic for determining
+        whether WTF_PLATFORM_IOS is defined consistent with logic for determining whether WTF_USE_APPLE_INTERNAL_SDK and
+        ENABLE_ORIENTATION_EVENTS are defined. We should look to further cleanup this code.
+        * bindings/js/ios/TouchConstructors.cpp: Substitute ENABLE(IOS_TOUCH_EVENTS) for macro expression "PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)".
+        * bindings/objc/DOMEvents.h: Write preprocessor logic in terms of ENABLE_TOUCH_EVENTS and ENABLE_IOS_GESTURE_EVENTS.
+        * bindings/objc/PublicDOMInterfaces.h: Include private header <WebKitAdditions/PublicDOMInterfacesIOS.h> when
+        it exists as opposed to assuming it exists when building for iOS.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Substitute ENABLE(IOS_TOUCH_EVENTS) for macro expression "ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)".
+        (WebCore::Document::prepareForDestruction): Ditto.
+        (WebCore::Document::removeAllEventListeners): Ditto.
+        * dom/Document.h: Write preprocessor logic in terms of ENABLE_IOS_TOUCH_EVENTS and ENABLE_TOUCH_EVENTS.
+        * dom/Document.idl: Ditto.
+        * dom/Touch.h: Substitute ENABLE(IOS_TOUCH_EVENTS) for PLATFORM(IOS)..
+        * dom/TouchEvent.h: Ditto.
+        * dom/TouchList.h: Ditto.
+        * dom/ios/TouchEvents.cpp: Substitute ENABLE(IOS_TOUCH_EVENTS) for macro expression "PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)".
+        * history/CachedFrame.cpp: Add PLATFORM(IOS) guard.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement): Substitute ENABLE(IOS_TOUCH_EVENTS) for ENABLE(TOUCH_EVENTS).
+        (WebCore::SliderThumbElement::willDetachRenderers): Ditto.
+        * html/shadow/SliderThumbElement.h: Ditto.
+        * loader/EmptyClients.h: Ditto.
+        * platform/ios/PlatformEventFactoryIOS.h: Write preprocessor logic in terms of ENABLE_IOS_TOUCH_EVENTS and ENABLE_TOUCH_EVENTS.
+        Only include header <WebKitAdditions/PlatformTouchEventIOS.h> when building with ENABLE_TOUCH_EVENTS enabled.
+
 2014-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         Implement paint flashing via GraphicsLayers in the WK2 inspector overlay

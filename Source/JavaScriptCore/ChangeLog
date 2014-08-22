@@ -1,3 +1,13 @@
+2014-08-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS
+        and ENABLE_XSLT when building with the iOS public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=135945
+
+        Reviewed by Andy Estes.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-08-22  Jon Lee  <jonlee@apple.com>
 
         Fix iOS build due to r172832 and move RUBBER_BANDING out of FeatureDefines.h

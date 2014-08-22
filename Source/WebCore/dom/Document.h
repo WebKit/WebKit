@@ -168,10 +168,11 @@ class TransformSource;
 struct AnnotatedRegionValue;
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/DocumentIOSForward.h>
-#endif // PLATFORM(IOS)
+#endif
+
+#if ENABLE(TOUCH_EVENTS) || ENABLE(IOS_TOUCH_EVENTS)
 class Touch;
 class TouchList;
 #endif
@@ -1159,12 +1160,10 @@ public:
     void decrementLoadEventDelayCount();
     bool isDelayingLoadEvent() const { return m_loadEventDelayCount; }
 
-#if ENABLE(TOUCH_EVENTS)
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/DocumentIOS.h>
-#else
+#elif ENABLE(TOUCH_EVENTS)
     PassRefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
-#endif // PLATFORM(IOS)
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)

@@ -1,3 +1,16 @@
+2014-08-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS
+        and ENABLE_XSLT when building with the iOS public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=135945
+
+        Reviewed by Andy Estes.
+
+        * Configurations/FeatureDefines.xcconfig: Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, ENABLE_TOUCH_EVENTS
+        and ENABLE_XSLT when building with the public SDK.
+        * Shared/WebEventConversion.h: Write preprocessor logic in terms of ENABLE(IOS_TOUCH_EVENTS).
+        * WebProcess/WebPage/WebPage.h: Ditto.
+
 2014-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         Implement paint flashing via GraphicsLayers in the WK2 inspector overlay

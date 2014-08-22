@@ -694,10 +694,16 @@ ifneq ($(SDKROOT),)
 	SDK_FLAGS=-isysroot $(SDKROOT)
 endif
 
-ifeq ($(shell $(CC) -isysroot $(SDKROOT) -std=gnu++11 -x c++ -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS ' | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS ' | cut -d' ' -f3), 1)
     WTF_PLATFORM_IOS = 1
 else
     WTF_PLATFORM_IOS = 0
+endif
+
+ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep WTF_USE_APPLE_INTERNAL_SDK | cut -d' ' -f3), 1)
+    WTF_USE_APPLE_INTERNAL_SDK = 1
+else
+    WTF_USE_APPLE_INTERNAL_SDK = 0
 endif
 
 ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
@@ -709,12 +715,18 @@ PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
 endif
 
 ifeq ($(WTF_PLATFORM_IOS), 1)
+ADDITIONAL_BINDING_IDLS =
 
-ADDITIONAL_BINDING_IDLS = \
-    GestureEvent.idl \
+ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
+ADDITIONAL_BINDING_IDLS += \
     Touch.idl \
     TouchEvent.idl \
     TouchList.idl
+endif
+
+ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
+ADDITIONAL_BINDING_IDLS += GestureEvent.idl
+endif
 
 NON_SVG_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
@@ -792,6 +804,10 @@ endif
 
 ifeq ($(ENABLE_ORIENTATION_EVENTS), 1)
     ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) ENABLE_ORIENTATION_EVENTS
+endif
+
+ifeq ($(WTF_USE_APPLE_INTERNAL_SDK), 1)
+    ADDITIONAL_IDL_DEFINES := $(ADDITIONAL_IDL_DEFINES) WTF_USE_APPLE_INTERNAL_SDK
 endif
 
 # --------

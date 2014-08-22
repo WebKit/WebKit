@@ -94,7 +94,7 @@
 #define ENABLE_IOS_AUTOCORRECT_AND_AUTOCAPITALIZE 1
 #endif
 
-#if !defined(ENABLE_IOS_GESTURE_EVENTS)
+#if !defined(ENABLE_IOS_GESTURE_EVENTS) && USE(APPLE_INTERNAL_SDK)
 #define ENABLE_IOS_GESTURE_EVENTS 1
 #endif
 
@@ -102,7 +102,7 @@
 #define ENABLE_IOS_TEXT_AUTOSIZING 1
 #endif
 
-#if !defined(ENABLE_IOS_TOUCH_EVENTS)
+#if !defined(ENABLE_IOS_TOUCH_EVENTS) && USE(APPLE_INTERNAL_SDK)
 #define ENABLE_IOS_TOUCH_EVENTS 1
 #endif
 
@@ -138,7 +138,9 @@
 #define ENABLE_TEXT_SELECTION 0
 #endif
 
-#if !defined(ENABLE_TOUCH_EVENTS)
+/* FIXME: Remove the USE(APPLE_INTERNAL_SDK) conjunct once we support touch events when building against
+the public iOS SDK. We will also need to update the FeatureDefines.xcconfig files. */
+#if !defined(ENABLE_TOUCH_EVENTS) && USE(APPLE_INTERNAL_SDK)
 #define ENABLE_TOUCH_EVENTS 1
 #endif
 
@@ -152,6 +154,12 @@
 
 #if !defined(ENABLE_WEBGL)
 #define ENABLE_WEBGL 1
+#endif
+
+/* FIXME: Remove this logic and always enable XSLT once we support XSLT when building against
+the public iOS SDK. We will also need to update the FeatureDefines.xcconfig files. */
+#if !defined(ENABLE_XSLT) && !USE(APPLE_INTERNAL_SDK)
+#define ENABLE_XSLT 0
 #endif
 
 #endif /* PLATFORM(IOS) */

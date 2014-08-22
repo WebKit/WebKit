@@ -52,7 +52,7 @@ public:
     HTMLInputElement* hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     void handleTouchEvent(TouchEvent*);
 
     void disabledAttributeChanged();
@@ -73,7 +73,7 @@ private:
     virtual bool willRespondToMouseClickEvents() override;
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     virtual void didAttachRenderers() override;
 #endif
     virtual void willDetachRenderers() override;
@@ -83,7 +83,7 @@ private:
     void startDragging();
     void stopDragging();
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     unsigned exclusiveTouchIdentifier() const;
     void setExclusiveTouchIdentifier(unsigned);
     void clearExclusiveTouchIdentifier();
@@ -99,7 +99,7 @@ private:
 
     bool m_inDragMode;
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     // FIXME: Currently it is safe to use 0, but this may need to change
     // if touch identifers change in the future and can be 0.
     static const unsigned NoIdentifier = 0;

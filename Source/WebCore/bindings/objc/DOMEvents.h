@@ -42,6 +42,11 @@
 #import <WebCore/DOMWheelEvent.h>
 
 #if TARGET_OS_IPHONE
+#if defined(ENABLE_IOS_GESTURE_EVENTS) && ENABLE_IOS_GESTURE_EVENTS
 #import <WebCore/DOMGestureEvent.h>
+#endif
+
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 #import <WebCore/DOMTouchEvent.h>
 #endif
+#endif // TARGET_OS_IPHONE

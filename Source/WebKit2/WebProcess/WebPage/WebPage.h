@@ -80,12 +80,10 @@
 #import "WebPageMessages.h"
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
-#else
+#elif ENABLE(TOUCH_EVENTS)
 #include <WebCore/PlatformTouchEvent.h>
-#endif
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

@@ -26,7 +26,7 @@
 #ifndef TouchList_h
 #define TouchList_h
 
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/TouchListIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
 
