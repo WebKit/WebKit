@@ -78,15 +78,15 @@ public:
     // that is, if two edges are parallel to the x-axis and the other two
     // are parallel to the y-axis. If this method returns true, the
     // corresponding FloatRect can be retrieved with boundingBox().
-    bool isRectilinear() const;
+    WEBCORE_EXPORT bool isRectilinear() const;
 
     // Tests whether the given point is inside, or on an edge or corner of this quad.
-    bool containsPoint(const FloatPoint&) const;
+    WEBCORE_EXPORT bool containsPoint(const FloatPoint&) const;
 
     // Tests whether the four corners of other are inside, or coincident with the sides of this quad.
     // Note that this only works for convex quads, but that includes all quads that originate
     // from transformed rects.
-    bool containsQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT bool containsQuad(const FloatQuad&) const;
 
     // Tests whether any part of the rectangle intersects with this quad.
     // This only works for convex quads.
@@ -104,7 +104,7 @@ public:
                           (m_p1.y() + m_p2.y() + m_p3.y() + m_p4.y()) / 4.0);
     }
 
-    FloatRect boundingBox() const;
+    WEBCORE_EXPORT FloatRect boundingBox() const;
     IntRect enclosingBoundingBox() const
     {
         return enclosingIntRect(boundingBox());

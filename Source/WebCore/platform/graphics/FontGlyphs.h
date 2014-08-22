@@ -91,13 +91,13 @@ public:
 
     const SimpleFontData* primarySimpleFontData(const FontDescription&) const;
     const FontData* primaryFontData(const FontDescription& description) const { return realizeFontDataAt(description, 0); }
-    const FontData* realizeFontDataAt(const FontDescription&, unsigned index) const;
+    WEBCORE_EXPORT const FontData* realizeFontDataAt(const FontDescription&, unsigned index) const;
 
 private:
     FontGlyphs(PassRefPtr<FontSelector>);
     FontGlyphs(const FontPlatformData&);
 
-    void releaseFontData();
+    WEBCORE_EXPORT void releaseFontData();
     
     mutable Vector<RefPtr<FontData>, 1> m_realizedFontData;
     mutable GlyphPages m_pages;

@@ -57,15 +57,15 @@ namespace WebCore {
         explicit PageGroup(Page&);
         ~PageGroup();
 
-        static PageGroup* pageGroup(const String& groupName);
+        WEBCORE_EXPORT static PageGroup* pageGroup(const String& groupName);
 
-        static void closeLocalStorage();
+        WEBCORE_EXPORT static void closeLocalStorage();
 
         static void clearLocalStorageForAllOrigins();
         static void clearLocalStorageForOrigin(SecurityOrigin*);
-        static void closeIdleLocalStorageDatabases();
+        WEBCORE_EXPORT static void closeIdleLocalStorageDatabases();
         // DumpRenderTree helper that triggers a StorageArea sync.
-        static void syncLocalStorage();
+        WEBCORE_EXPORT static void syncLocalStorage();
 
         const HashSet<Page*>& pages() const { return m_pages; }
 
@@ -74,16 +74,16 @@ namespace WebCore {
 
         VisitedLinkStore& visitedLinkStore();
 
-        bool isLinkVisited(LinkHash);
+        WEBCORE_EXPORT bool isLinkVisited(LinkHash);
 
         void addVisitedLink(const URL&);
         void addVisitedLink(const UChar*, size_t);
-        void addVisitedLinkHash(LinkHash);
-        void removeVisitedLink(const URL&);
+        WEBCORE_EXPORT void addVisitedLinkHash(LinkHash);
+        WEBCORE_EXPORT void removeVisitedLink(const URL&);
         void removeVisitedLinks();
 
-        static void setShouldTrackVisitedLinks(bool);
-        static void removeAllVisitedLinks();
+        WEBCORE_EXPORT static void setShouldTrackVisitedLinks(bool);
+        WEBCORE_EXPORT static void removeAllVisitedLinks();
 
         const String& name() { return m_name; }
         unsigned identifier() { return m_identifier; }
@@ -93,23 +93,23 @@ namespace WebCore {
 
         StorageNamespace* transientLocalStorage(SecurityOrigin* topOrigin);
 
-        void addUserScriptToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime, UserContentInjectedFrames);
-        void addUserStyleSheetToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames, UserStyleLevel = UserStyleUserLevel, UserStyleInjectionTime = InjectInExistingDocuments);
-        void removeUserStyleSheetFromWorld(DOMWrapperWorld&, const URL&);
-        void removeUserScriptFromWorld(DOMWrapperWorld&, const URL&);
-        void removeUserScriptsFromWorld(DOMWrapperWorld&);
-        void removeUserStyleSheetsFromWorld(DOMWrapperWorld&);
-        void removeAllUserContent();
+        WEBCORE_EXPORT void addUserScriptToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime, UserContentInjectedFrames);
+        WEBCORE_EXPORT void addUserStyleSheetToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames, UserStyleLevel = UserStyleUserLevel, UserStyleInjectionTime = InjectInExistingDocuments);
+        WEBCORE_EXPORT void removeUserStyleSheetFromWorld(DOMWrapperWorld&, const URL&);
+        WEBCORE_EXPORT void removeUserScriptFromWorld(DOMWrapperWorld&, const URL&);
+        WEBCORE_EXPORT void removeUserScriptsFromWorld(DOMWrapperWorld&);
+        WEBCORE_EXPORT void removeUserStyleSheetsFromWorld(DOMWrapperWorld&);
+        WEBCORE_EXPORT void removeAllUserContent();
 
         GroupSettings& groupSettings() const { return *m_groupSettings; }
 
 #if ENABLE(VIDEO_TRACK)
-        void captionPreferencesChanged();
+        WEBCORE_EXPORT void captionPreferencesChanged();
         CaptionUserPreferences* captionPreferences();
 #endif
 
     private:
-        void addVisitedLink(LinkHash);
+        WEBCORE_EXPORT void addVisitedLink(LinkHash);
 
         String m_name;
         HashSet<Page*> m_pages;

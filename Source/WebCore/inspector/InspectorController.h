@@ -81,21 +81,21 @@ public:
     bool enabled() const;
     Page& inspectedPage() const;
 
-    void show();
-    void close();
+    WEBCORE_EXPORT void show();
+    WEBCORE_EXPORT void close();
 
-    void setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient>);
+    WEBCORE_EXPORT void setInspectorFrontendClient(std::unique_ptr<InspectorFrontendClient>);
     bool hasInspectorFrontendClient() const;
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
 
-    void dispatchMessageFromFrontend(const String& message);
+    WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
     bool hasFrontend() const { return !!m_inspectorFrontendChannel; }
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
-    void connectFrontend(Inspector::InspectorFrontendChannel*);
-    void disconnectFrontend(Inspector::InspectorDisconnectReason);
+    WEBCORE_EXPORT void connectFrontend(Inspector::InspectorFrontendChannel*);
+    WEBCORE_EXPORT void disconnectFrontend(Inspector::InspectorDisconnectReason);
     void setProcessId(long);
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -103,21 +103,21 @@ public:
 #endif
 
     void inspect(Node*);
-    void drawHighlight(GraphicsContext&) const;
-    void getHighlight(Highlight*, InspectorOverlay::CoordinateSystem) const;
+    WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
+    WEBCORE_EXPORT void getHighlight(Highlight*, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();
     Node* highlightedNode() const;
 
     void setIndicating(bool);
 
-    PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
+    WEBCORE_EXPORT PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
 
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
-    void evaluateForTestInFrontend(const String& script);
+    WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
 
-    bool profilerEnabled() const;
-    void setProfilerEnabled(bool);
+    WEBCORE_EXPORT bool profilerEnabled() const;
+    WEBCORE_EXPORT void setProfilerEnabled(bool);
 
     void resume();
 

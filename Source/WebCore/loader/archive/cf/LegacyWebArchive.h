@@ -40,18 +40,18 @@ class Range;
 
 class LegacyWebArchive : public Archive {
 public:
-    static PassRefPtr<LegacyWebArchive> create();
-    static PassRefPtr<LegacyWebArchive> create(SharedBuffer*);
-    static PassRefPtr<LegacyWebArchive> create(const URL&, SharedBuffer*);
-    static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<RefPtr<ArchiveResource>> subresources, Vector<RefPtr<LegacyWebArchive>> subframeArchives);
-    static PassRefPtr<LegacyWebArchive> create(Node*, std::function<bool (Frame&)> frameFilter = nullptr);
-    static PassRefPtr<LegacyWebArchive> create(Frame*);
-    static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
-    static PassRefPtr<LegacyWebArchive> create(Range*);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create();
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(SharedBuffer*);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(const URL&, SharedBuffer*);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(PassRefPtr<ArchiveResource> mainResource, Vector<RefPtr<ArchiveResource>> subresources, Vector<RefPtr<LegacyWebArchive>> subframeArchives);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Node*, std::function<bool(Frame&)> frameFilter = nullptr);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Frame*);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
+    WEBCORE_EXPORT static PassRefPtr<LegacyWebArchive> create(Range*);
 
     virtual Type type() const override;
 
-    RetainPtr<CFDataRef> rawDataRepresentation();
+    WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
 
 private:
     LegacyWebArchive() { }

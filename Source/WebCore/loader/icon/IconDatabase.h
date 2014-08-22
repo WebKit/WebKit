@@ -67,46 +67,46 @@ class IconDatabase final : public IconDatabaseBase {
     
 // *** Main Thread Only ***
 public:
-    IconDatabase();
+    WEBCORE_EXPORT IconDatabase();
     ~IconDatabase();
 
-    virtual void setClient(IconDatabaseClient*) override;
+    WEBCORE_EXPORT virtual void setClient(IconDatabaseClient*) override;
 
-    virtual bool open(const String& directory, const String& filename) override;
-    virtual void close() override;
+    WEBCORE_EXPORT virtual bool open(const String& directory, const String& filename) override;
+    WEBCORE_EXPORT virtual void close() override;
             
-    virtual void removeAllIcons() override;
+    WEBCORE_EXPORT virtual void removeAllIcons() override;
 
     void readIconForPageURLFromDisk(const String&);
 
-    virtual Image* defaultIcon(const IntSize&) override;
+    WEBCORE_EXPORT virtual Image* defaultIcon(const IntSize&) override;
 
-    virtual void retainIconForPageURL(const String&) override;
-    virtual void releaseIconForPageURL(const String&) override;
-    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) override;
-    virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
+    WEBCORE_EXPORT virtual void retainIconForPageURL(const String&) override;
+    WEBCORE_EXPORT virtual void releaseIconForPageURL(const String&) override;
+    WEBCORE_EXPORT virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) override;
+    WEBCORE_EXPORT virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL) override;
 
-    virtual Image* synchronousIconForPageURL(const String&, const IntSize&) override;
+    WEBCORE_EXPORT virtual Image* synchronousIconForPageURL(const String&, const IntSize&) override;
     virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&) override;
-    virtual String synchronousIconURLForPageURL(const String&) override;
+    WEBCORE_EXPORT virtual String synchronousIconURLForPageURL(const String&) override;
     virtual bool synchronousIconDataKnownForIconURL(const String&) override;
-    virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
+    WEBCORE_EXPORT virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) override;
 
-    virtual void setEnabled(bool) override;
+    WEBCORE_EXPORT virtual void setEnabled(bool) override;
     virtual bool isEnabled() const override;
 
-    virtual void setPrivateBrowsingEnabled(bool flag) override;
+    WEBCORE_EXPORT virtual void setPrivateBrowsingEnabled(bool flag) override;
     bool isPrivateBrowsingEnabled() const;
 
-    static void delayDatabaseCleanup();
-    static void allowDatabaseCleanup();
-    static void checkIntegrityBeforeOpening();
+    WEBCORE_EXPORT static void delayDatabaseCleanup();
+    WEBCORE_EXPORT static void allowDatabaseCleanup();
+    WEBCORE_EXPORT static void checkIntegrityBeforeOpening();
 
     // Support for WebCoreStatistics in WebKit
-    virtual size_t pageURLMappingCount() override;
-    virtual size_t retainedPageURLCount() override;
-    virtual size_t iconRecordCount() override;
-    virtual size_t iconRecordCountWithData() override;
+    WEBCORE_EXPORT virtual size_t pageURLMappingCount() override;
+    WEBCORE_EXPORT virtual size_t retainedPageURLCount() override;
+    WEBCORE_EXPORT virtual size_t iconRecordCount() override;
+    WEBCORE_EXPORT virtual size_t iconRecordCountWithData() override;
 
 private:
     friend IconDatabaseBase& iconDatabase();
@@ -130,15 +130,15 @@ private:
 
 // *** Any Thread ***
 public:
-    virtual bool isOpen() const;
-    virtual String databasePath() const;
-    static String defaultDatabaseFilename();
+    WEBCORE_EXPORT virtual bool isOpen() const;
+    WEBCORE_EXPORT virtual String databasePath() const;
+    WEBCORE_EXPORT static String defaultDatabaseFilename();
 
 private:
     PassRefPtr<IconRecord> getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
     
-    bool m_isEnabled;
+    WEBCORE_EXPORT bool m_isEnabled;
     bool m_privateBrowsingEnabled;
 
     mutable Mutex m_syncLock;
@@ -178,7 +178,7 @@ private:
 
 // *** Sync Thread Only ***
 public:
-    virtual bool shouldStopThreadActivity() const;
+    WEBCORE_EXPORT virtual bool shouldStopThreadActivity() const;
 
 private:    
     static void iconDatabaseSyncThreadStart(void *);

@@ -228,13 +228,13 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
     public:
 #if !PLATFORM(IOS)
-        GraphicsContext(PlatformGraphicsContext*);
+        WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*);
 #else
-        GraphicsContext(PlatformGraphicsContext*, bool shouldUseContextColors = true);
+        WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*, bool shouldUseContextColors = true);
 #endif
-        ~GraphicsContext();
+        WEBCORE_EXPORT ~GraphicsContext();
 
-        PlatformGraphicsContext* platformContext() const;
+        WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
 
         float strokeThickness() const;
         void setStrokeThickness(float);
@@ -242,7 +242,7 @@ namespace WebCore {
         void setStrokeStyle(StrokeStyle);
         Color strokeColor() const;
         ColorSpace strokeColorSpace() const;
-        void setStrokeColor(const Color&, ColorSpace);
+        WEBCORE_EXPORT void setStrokeColor(const Color&, ColorSpace);
 
         void setStrokePattern(PassRefPtr<Pattern>);
         Pattern* strokePattern() const;
@@ -254,21 +254,21 @@ namespace WebCore {
         void setFillRule(WindRule);
         Color fillColor() const;
         ColorSpace fillColorSpace() const;
-        void setFillColor(const Color&, ColorSpace);
+        WEBCORE_EXPORT void setFillColor(const Color&, ColorSpace);
 
         void setFillPattern(PassRefPtr<Pattern>);
         Pattern* fillPattern() const;
 
-        void setFillGradient(PassRefPtr<Gradient>);
+        WEBCORE_EXPORT void setFillGradient(PassRefPtr<Gradient>);
         Gradient* fillGradient() const;
 
         void setShadowsIgnoreTransforms(bool);
         bool shadowsIgnoreTransforms() const;
 
-        void setShouldAntialias(bool);
+        WEBCORE_EXPORT void setShouldAntialias(bool);
         bool shouldAntialias() const;
 
-        void setShouldSmoothFonts(bool);
+        WEBCORE_EXPORT void setShouldSmoothFonts(bool);
         bool shouldSmoothFonts() const;
 
         // Normally CG enables subpixel-quantization because it improves the performance of aligning glyphs.
@@ -283,20 +283,20 @@ namespace WebCore {
         void applyFillPattern();
         void drawPath(const Path&);
 
-        void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
+        WEBCORE_EXPORT void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
 
         // Allow font smoothing (LCD antialiasing). Not part of the graphics state.
         void setAllowsFontSmoothing(bool);
         
-        void setIsCALayerContext(bool);
+        WEBCORE_EXPORT void setIsCALayerContext(bool);
         bool isCALayerContext() const;
 
-        void setIsAcceleratedContext(bool);
+        WEBCORE_EXPORT void setIsAcceleratedContext(bool);
 #endif
         bool isAcceleratedContext() const;
 
-        void save();
-        void restore();
+        WEBCORE_EXPORT void save();
+        WEBCORE_EXPORT void restore();
 
         // These draw methods will do both stroking and filling.
         // FIXME: ...except drawRect(), which fills properly but always strokes
@@ -316,24 +316,24 @@ namespace WebCore {
 #endif
         void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
 
-        void fillPath(const Path&);
+        WEBCORE_EXPORT void fillPath(const Path&);
         void strokePath(const Path&);
 
         void fillEllipse(const FloatRect&);
         void strokeEllipse(const FloatRect&);
 
-        void fillRect(const FloatRect&);
-        void fillRect(const FloatRect&, const Color&, ColorSpace);
+        WEBCORE_EXPORT void fillRect(const FloatRect&);
+        WEBCORE_EXPORT void fillRect(const FloatRect&, const Color&, ColorSpace);
         void fillRect(const FloatRect&, Gradient&);
         void fillRect(const FloatRect&, const Color&, ColorSpace, CompositeOperator, BlendMode = BlendModeNormal);
         void fillRoundedRect(const FloatRoundedRect&, const Color&, ColorSpace, BlendMode = BlendModeNormal);
         void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&, ColorSpace);
 
-        void clearRect(const FloatRect&);
+        WEBCORE_EXPORT void clearRect(const FloatRect&);
 
-        void strokeRect(const FloatRect&, float lineWidth);
+        WEBCORE_EXPORT void strokeRect(const FloatRect&, float lineWidth);
 
-        void drawImage(Image*, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        WEBCORE_EXPORT void drawImage(Image*, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
         void drawImage(Image*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
         void drawImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
@@ -346,11 +346,11 @@ namespace WebCore {
         void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
         void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
-        void setImageInterpolationQuality(InterpolationQuality);
+        WEBCORE_EXPORT void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;
 
-        void clip(const IntRect&);
-        void clip(const FloatRect&);
+        WEBCORE_EXPORT void clip(const IntRect&);
+        WEBCORE_EXPORT void clip(const FloatRect&);
         void clipRoundedRect(const FloatRoundedRect&);
 
         void clipOut(const FloatRect&);
@@ -366,7 +366,7 @@ namespace WebCore {
 
 #if PLATFORM(IOS)
         bool emojiDrawingEnabled();
-        void setEmojiDrawingEnabled(bool);
+        WEBCORE_EXPORT void setEmojiDrawingEnabled(bool);
 #endif
         
 #if !PLATFORM(IOS)
@@ -379,7 +379,7 @@ namespace WebCore {
 #if !PLATFORM(IOS)
         void drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady);
 #else
-        float drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
+        WEBCORE_EXPORT float drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
 #endif
         enum RoundingMode {
             RoundAllSides,
@@ -388,7 +388,7 @@ namespace WebCore {
         FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides);
 
         FloatRect computeLineBoundsForText(const FloatPoint&, float width, bool printing);
-        void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false);
+        WEBCORE_EXPORT void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false);
         void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines = false);
         enum DocumentMarkerLineStyle {
 #if PLATFORM(IOS)
@@ -402,24 +402,24 @@ namespace WebCore {
         static void updateDocumentMarkerResources();
         void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
 
-        bool paintingDisabled() const;
+        WEBCORE_EXPORT bool paintingDisabled() const;
         void setPaintingDisabled(bool);
 
-        bool updatingControlTints() const;
+        WEBCORE_EXPORT bool updatingControlTints() const;
         void setUpdatingControlTints(bool);
 
-        void beginTransparencyLayer(float opacity);
-        void endTransparencyLayer();
+        WEBCORE_EXPORT void beginTransparencyLayer(float opacity);
+        WEBCORE_EXPORT void endTransparencyLayer();
         bool isInTransparencyLayer() const;
 
         bool hasShadow() const;
-        void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+        WEBCORE_EXPORT void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         // Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
         // It has different treatment of radii > 8px.
         void setLegacyShadow(const FloatSize&, float blur, const Color&, ColorSpace);
 
         bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
-        void clearShadow();
+        WEBCORE_EXPORT void clearShadow();
 
         bool hasBlurredShadow() const;
 #if USE(CAIRO)
@@ -439,14 +439,14 @@ namespace WebCore {
 
         void setAlpha(float);
 
-        void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
+        WEBCORE_EXPORT void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
         CompositeOperator compositeOperation() const;
         BlendMode blendModeOperation() const;
 
         void setDrawLuminanceMask(bool);
         bool drawLuminanceMask() const;
 
-        void clip(const Path&, WindRule = RULE_EVENODD);
+        WEBCORE_EXPORT void clip(const Path&, WindRule = RULE_EVENODD);
 
         // This clip function is used only by <canvas> code. It allows
         // implementations to handle clipping on the canvas differently since
@@ -454,10 +454,10 @@ namespace WebCore {
         void canvasClip(const Path&, WindRule = RULE_EVENODD);
         void clipOut(const Path&);
 
-        void scale(const FloatSize&);
+        WEBCORE_EXPORT void scale(const FloatSize&);
         void rotate(float angleInRadians);
         void translate(const FloatSize& size) { translate(size.width(), size.height()); }
-        void translate(float x, float y);
+        WEBCORE_EXPORT void translate(float x, float y);
 
         void setURLForRect(const URL&, const IntRect&);
 
@@ -480,7 +480,7 @@ namespace WebCore {
 
         // This function applies the device scale factor to the context, making the context capable of
         // acting as a base-level context for a HiDPI environment.
-        void applyDeviceScaleFactor(float);
+        WEBCORE_EXPORT void applyDeviceScaleFactor(float);
         void platformApplyDeviceScaleFactor(float);
 
 #if OS(WINDOWS)

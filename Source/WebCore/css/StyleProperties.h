@@ -156,7 +156,7 @@ private:
 
 class ImmutableStyleProperties : public StyleProperties {
 public:
-    ~ImmutableStyleProperties();
+    WEBCORE_EXPORT ~ImmutableStyleProperties();
     static PassRef<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const { return m_arraySize; }
@@ -186,7 +186,7 @@ public:
     static PassRef<MutableStyleProperties> create(CSSParserMode = CSSQuirksMode);
     static PassRef<MutableStyleProperties> create(const CSSProperty* properties, unsigned count);
 
-    ~MutableStyleProperties();
+    WEBCORE_EXPORT ~MutableStyleProperties();
 
     unsigned propertyCount() const { return m_propertyVector.size(); }
 
@@ -216,7 +216,7 @@ public:
     void clear();
     void parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet);
 
-    CSSStyleDeclaration* ensureCSSStyleDeclaration();
+    WEBCORE_EXPORT CSSStyleDeclaration* ensureCSSStyleDeclaration();
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(StyledElement* parentElement);
 
     int findPropertyIndex(CSSPropertyID) const;

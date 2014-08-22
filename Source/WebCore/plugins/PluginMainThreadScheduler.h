@@ -41,12 +41,12 @@ class PluginMainThreadScheduler {
 public:
     typedef void MainThreadFunction(void*);
 
-    static PluginMainThreadScheduler& scheduler();
+    WEBCORE_EXPORT static PluginMainThreadScheduler& scheduler();
 
-    void scheduleCall(NPP, MainThreadFunction*, void* userData);
+    WEBCORE_EXPORT void scheduleCall(NPP, MainThreadFunction*, void* userData);
 
-    void registerPlugin(NPP);
-    void unregisterPlugin(NPP);
+    WEBCORE_EXPORT void registerPlugin(NPP);
+    WEBCORE_EXPORT void unregisterPlugin(NPP);
 
 private:
     PluginMainThreadScheduler();

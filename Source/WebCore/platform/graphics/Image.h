@@ -76,8 +76,8 @@ public:
     virtual ~Image();
     
     static PassRefPtr<Image> create(ImageObserver* = 0);
-    static PassRefPtr<Image> loadPlatformResource(const char* name);
-    static bool supportsType(const String&); 
+    WEBCORE_EXPORT static PassRefPtr<Image> loadPlatformResource(const char* name);
+    WEBCORE_EXPORT static bool supportsType(const String&);
 
     virtual bool isSVGImage() const { return false; }
     virtual bool isBitmapImage() const { return false; }
@@ -88,7 +88,7 @@ public:
     // the image contains only resources from its own security origin.
     virtual bool hasSingleSecurityOrigin() const { return false; }
 
-    static Image* nullImage();
+    WEBCORE_EXPORT static Image* nullImage();
     bool isNull() const { return size().isEmpty(); }
 
     virtual void setContainerSize(const FloatSize&) { }
@@ -107,7 +107,7 @@ public:
     virtual FloatSize originalSize() const { return size(); }
 #endif
 
-    bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+    WEBCORE_EXPORT bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual bool dataChanged(bool /*allDataReceived*/) { return false; }
     
     virtual String filenameExtension() const { return String(); } // null string if unknown

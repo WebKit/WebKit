@@ -35,30 +35,30 @@ class Region {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Region();
-    Region(const IntRect&);
+    WEBCORE_EXPORT Region();
+    WEBCORE_EXPORT Region(const IntRect&);
 
     IntRect bounds() const { return m_bounds; }
     bool isEmpty() const { return m_bounds.isEmpty(); }
     bool isRect() const { return m_shape.isRect(); }
 
-    Vector<IntRect> rects() const;
+    WEBCORE_EXPORT Vector<IntRect> rects() const;
 
-    void unite(const Region&);
-    void intersect(const Region&);
-    void subtract(const Region&);
+    WEBCORE_EXPORT void unite(const Region&);
+    WEBCORE_EXPORT void intersect(const Region&);
+    WEBCORE_EXPORT void subtract(const Region&);
 
     void translate(const IntSize&);
 
     // Returns true if the query region is a subset of this region.
-    bool contains(const Region&) const;
+    WEBCORE_EXPORT bool contains(const Region&) const;
 
     bool contains(const IntPoint&) const;
 
     // Returns true if the query region intersects any part of this region.
     bool intersects(const Region&) const;
 
-    unsigned totalArea() const;
+    WEBCORE_EXPORT unsigned totalArea() const;
 
     unsigned gridSize() const { return m_shape.gridSize(); }
 
@@ -93,7 +93,7 @@ public:
 
     void setShapeSegments(const Vector<int>& segments) { m_shape.setSegments(segments); }
     void setShapeSpans(const Vector<Span>& spans) { m_shape.setSpans(spans); }
-    void updateBoundsFromShape();
+    WEBCORE_EXPORT void updateBoundsFromShape();
 
 private:
 
@@ -119,7 +119,7 @@ private:
         static Shape intersectShapes(const Shape& shape1, const Shape& shape2);
         static Shape subtractShapes(const Shape& shape1, const Shape& shape2);
 
-        void translate(const IntSize&);
+        WEBCORE_EXPORT void translate(const IntSize&);
         void swap(Shape&);
 
         struct CompareContainsOperation;
@@ -128,7 +128,7 @@ private:
         template<typename CompareOperation>
         static bool compareShapes(const Shape& shape1, const Shape& shape2);
         
-        bool isValid() const;
+        WEBCORE_EXPORT bool isValid() const;
 
         // For encoding/decoding only.
         const Vector<int, 32>& segments() const { return m_segments; }

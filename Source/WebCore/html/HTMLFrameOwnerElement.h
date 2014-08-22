@@ -37,7 +37,7 @@ public:
 
     Frame* contentFrame() const { return m_contentFrame; }
     DOMWindow* contentWindow() const;
-    Document* contentDocument() const;
+    WEBCORE_EXPORT Document* contentDocument() const;
 
     void setContentFrame(Frame*);
     void clearContentFrame();

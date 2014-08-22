@@ -73,8 +73,8 @@ public:
     IntRect(int x, int y, int width, int height)
         : m_location(IntPoint(x, y)), m_size(IntSize(width, height)) { }
 
-    explicit IntRect(const FloatRect&); // don't do this implicitly since it's lossy
-    explicit IntRect(const LayoutRect&); // don't do this implicitly since it's lossy
+    WEBCORE_EXPORT explicit IntRect(const FloatRect&); // don't do this implicitly since it's lossy
+    WEBCORE_EXPORT explicit IntRect(const LayoutRect&); // don't do this implicitly since it's lossy
         
     IntPoint location() const { return m_location; }
     IntSize size() const { return m_size; }
@@ -137,8 +137,8 @@ public:
     IntPoint minXMaxYCorner() const { return IntPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
     IntPoint maxXMaxYCorner() const { return IntPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
     
-    bool intersects(const IntRect&) const;
-    bool contains(const IntRect&) const;
+    WEBCORE_EXPORT bool intersects(const IntRect&) const;
+    WEBCORE_EXPORT bool contains(const IntRect&) const;
 
     // This checks to see if the rect contains x,y in the traditional sense.
     // Equivalent to checking if the rect contains a 1x1 rect below and to the right of (px,py).
@@ -146,8 +146,8 @@ public:
         { return px >= x() && px < maxX() && py >= y() && py < maxY(); }
     bool contains(const IntPoint& point) const { return contains(point.x(), point.y()); }
 
-    void intersect(const IntRect&);
-    void unite(const IntRect&);
+    WEBCORE_EXPORT void intersect(const IntRect&);
+    WEBCORE_EXPORT void unite(const IntRect&);
     void uniteIfNonZero(const IntRect&);
 
     void inflateX(int dx)
@@ -161,7 +161,7 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(int d) { inflateX(d); inflateY(d); }
-    void scale(float s);
+    WEBCORE_EXPORT void scale(float s);
 
     IntSize differenceToPoint(const IntPoint&) const;
     int distanceSquaredToPoint(const IntPoint& p) const { return differenceToPoint(p).diagonalLengthSquared(); }
@@ -187,11 +187,11 @@ public:
 #endif
 
 #if USE(CG)
-    operator CGRect() const;
+    WEBCORE_EXPORT operator CGRect() const;
 #endif
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-    operator NSRect() const;
+    WEBCORE_EXPORT operator NSRect() const;
 #endif
 
     void dump(WTF::PrintStream& out) const;

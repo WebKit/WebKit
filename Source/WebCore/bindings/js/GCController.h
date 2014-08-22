@@ -40,13 +40,13 @@ namespace WebCore {
         friend GCController& gcController();
 
     public:
-        void garbageCollectSoon();
-        void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
+        WEBCORE_EXPORT void garbageCollectSoon();
+        WEBCORE_EXPORT void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
 
-        void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
-        void releaseExecutableMemory();
-        void setJavaScriptGarbageCollectorTimerEnabled(bool);
-        void discardAllCompiledCode();
+        WEBCORE_EXPORT void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
+        WEBCORE_EXPORT void releaseExecutableMemory();
+        WEBCORE_EXPORT void setJavaScriptGarbageCollectorTimerEnabled(bool);
+        WEBCORE_EXPORT void discardAllCompiledCode();
 
     private:
         GCController(); // Use gcController() instead

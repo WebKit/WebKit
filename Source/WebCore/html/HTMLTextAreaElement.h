@@ -40,8 +40,8 @@ public:
 
     bool shouldWrapText() const { return m_wrap != NoWrap; }
 
-    virtual String value() const override;
-    void setValue(const String&);
+    WEBCORE_EXPORT virtual String value() const override;
+    WEBCORE_EXPORT void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
     int textLength() const { return value().length(); }

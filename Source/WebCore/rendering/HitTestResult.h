@@ -55,13 +55,13 @@ public:
     HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     explicit HitTestResult(const HitTestLocation&);
     HitTestResult(const HitTestResult&);
-    ~HitTestResult();
+    WEBCORE_EXPORT ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);
 
     Node* innerNode() const { return m_innerNode.get(); }
-    Element* innerElement() const;
+    WEBCORE_EXPORT Element* innerElement() const;
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
-    Element* innerNonSharedElement() const;
+    WEBCORE_EXPORT Element* innerNonSharedElement() const;
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     bool isOverWidget() const { return m_isOverWidget; }
@@ -76,7 +76,7 @@ public:
     // The hit-tested point in the coordinates of the innerNode frame, the frame containing innerNode.
     const LayoutPoint& pointInInnerNodeFrame() const { return m_pointInInnerNodeFrame; }
     IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
-    Frame* innerNodeFrame() const;
+    WEBCORE_EXPORT Frame* innerNodeFrame() const;
 
     // The hit-tested point in the coordinates of the inner node.
     const LayoutPoint& localPoint() const { return m_localPoint; }
@@ -92,27 +92,27 @@ public:
     void setScrollbar(Scrollbar*);
     void setIsOverWidget(bool b) { m_isOverWidget = b; }
 
-    Frame* targetFrame() const;
-    bool isSelected() const;
-    String spellingToolTip(TextDirection&) const;
+    WEBCORE_EXPORT Frame* targetFrame() const;
+    WEBCORE_EXPORT bool isSelected() const;
+    WEBCORE_EXPORT String spellingToolTip(TextDirection&) const;
     String replacedString() const;
-    String title(TextDirection&) const;
+    WEBCORE_EXPORT String title(TextDirection&) const;
     String innerTextIfTruncated(TextDirection&) const;
-    String altDisplayString() const;
-    String titleDisplayString() const;
-    Image* image() const;
-    IntRect imageRect() const;
-    URL absoluteImageURL() const;
-    URL absolutePDFURL() const;
-    URL absoluteMediaURL() const;
-    URL absoluteLinkURL() const;
-    String textContent() const;
-    bool isLiveLink() const;
+    WEBCORE_EXPORT String altDisplayString() const;
+    WEBCORE_EXPORT String titleDisplayString() const;
+    WEBCORE_EXPORT Image* image() const;
+    WEBCORE_EXPORT IntRect imageRect() const;
+    WEBCORE_EXPORT URL absoluteImageURL() const;
+    WEBCORE_EXPORT URL absolutePDFURL() const;
+    WEBCORE_EXPORT URL absoluteMediaURL() const;
+    WEBCORE_EXPORT URL absoluteLinkURL() const;
+    WEBCORE_EXPORT String textContent() const;
+    WEBCORE_EXPORT bool isLiveLink() const;
     bool isOverLink() const;
-    bool isContentEditable() const;
+    WEBCORE_EXPORT bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;
     void toggleMediaLoopPlayback() const;
-    bool mediaIsInFullscreen() const;
+    WEBCORE_EXPORT bool mediaIsInFullscreen() const;
     void toggleMediaFullscreenState() const;
     void enterFullscreenForVideo() const;
     bool mediaControlsEnabled() const;
@@ -120,8 +120,8 @@ public:
     bool mediaPlaying() const;
     bool mediaSupportsFullscreen() const;
     void toggleMediaPlayState() const;
-    bool mediaHasAudio() const;
-    bool mediaIsVideo() const;
+    WEBCORE_EXPORT bool mediaHasAudio() const;
+    WEBCORE_EXPORT bool mediaIsVideo() const;
     bool mediaMuted() const;
     void toggleMediaMuteState() const;
 
@@ -134,7 +134,7 @@ public:
     // If m_rectBasedTestResult is 0 then set it to a new NodeSet. Return *m_rectBasedTestResult. Lazy allocation makes
     // sense because the NodeSet is seldom necessary, and it's somewhat expensive to allocate and initialize. This method does
     // the same thing as mutableRectBasedTestResult(), but here the return value is const.
-    const NodeSet& rectBasedTestResult() const;
+    WEBCORE_EXPORT const NodeSet& rectBasedTestResult() const;
 
     Vector<String> dictationAlternatives() const;
 

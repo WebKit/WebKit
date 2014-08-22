@@ -52,43 +52,43 @@ class VisiblePosition;
 
 class Range : public RefCounted<Range> {
 public:
-    static PassRefPtr<Range> create(Document&);
-    static PassRefPtr<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
-    static PassRefPtr<Range> create(Document&, const Position&, const Position&);
-    static PassRefPtr<Range> create(ScriptExecutionContext&);
+    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&);
+    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
+    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&, const Position&, const Position&);
+    WEBCORE_EXPORT static PassRefPtr<Range> create(ScriptExecutionContext&);
 #if PLATFORM(IOS)
     // FIXME: Consider making this a static non-member, non-friend function.
-    static PassRefPtr<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
+    WEBCORE_EXPORT static PassRefPtr<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
 #endif
-    ~Range();
+    WEBCORE_EXPORT ~Range();
 
     Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
 
-    Node* startContainer() const { return m_start.container(); }
-    int startOffset() const { return m_start.offset(); }
-    Node* endContainer() const { return m_end.container(); }
-    int endOffset() const { return m_end.offset(); }
+    WEBCORE_EXPORT Node* startContainer() const { return m_start.container(); }
+    WEBCORE_EXPORT int startOffset() const { return m_start.offset(); }
+    WEBCORE_EXPORT Node* endContainer() const { return m_end.container(); }
+    WEBCORE_EXPORT int endOffset() const { return m_end.offset(); }
 
     Node* startContainer(ExceptionCode&) const;
     int startOffset(ExceptionCode&) const;
     Node* endContainer(ExceptionCode&) const;
     int endOffset(ExceptionCode&) const;
-    bool collapsed(ExceptionCode&) const;
+    WEBCORE_EXPORT bool collapsed(ExceptionCode&) const;
 
-    Node* commonAncestorContainer(ExceptionCode&) const;
+    WEBCORE_EXPORT Node* commonAncestorContainer(ExceptionCode&) const;
     static Node* commonAncestorContainer(Node* containerA, Node* containerB);
-    void setStart(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void collapse(bool toStart, ExceptionCode&);
-    bool isPointInRange(Node* refNode, int offset, ExceptionCode&);
+    WEBCORE_EXPORT void setStart(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void collapse(bool toStart, ExceptionCode&);
+    WEBCORE_EXPORT bool isPointInRange(Node* refNode, int offset, ExceptionCode&);
     short comparePoint(Node* refNode, int offset, ExceptionCode&) const;
     enum CompareResults { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
     CompareResults compareNode(Node* refNode, ExceptionCode&) const;
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
-    short compareBoundaryPoints(CompareHow, const Range* sourceRange, ExceptionCode&) const;
+    WEBCORE_EXPORT short compareBoundaryPoints(CompareHow, const Range* sourceRange, ExceptionCode&) const;
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB, ExceptionCode&);
     static short compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB, ExceptionCode&);
-    bool boundaryPointsValid() const;
+    WEBCORE_EXPORT bool boundaryPointsValid() const;
     bool intersectsNode(Node* refNode, ExceptionCode&);
     void deleteContents(ExceptionCode&);
     PassRefPtr<DocumentFragment> extractContents(ExceptionCode&);
@@ -97,28 +97,28 @@ public:
     String toString(ExceptionCode&) const;
 
     String toHTML() const;
-    String text() const;
+    WEBCORE_EXPORT String text() const;
 
     PassRefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&);
 
     void detach(ExceptionCode&);
-    PassRefPtr<Range> cloneRange(ExceptionCode&) const;
+    WEBCORE_EXPORT PassRefPtr<Range> cloneRange(ExceptionCode&) const;
 
-    void setStartAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void setEndBefore(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void setEndAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void selectNode(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void selectNodeContents(Node*, ExceptionCode&);
+    WEBCORE_EXPORT void setStartAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEndBefore(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEndAfter(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void selectNode(Node*, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void selectNodeContents(Node*, ExceptionCode&);
     void surroundContents(PassRefPtr<Node>, ExceptionCode&);
-    void setStartBefore(Node*, ExceptionCode&);
+    WEBCORE_EXPORT void setStartBefore(Node*, ExceptionCode&);
 
     const Position startPosition() const { return m_start.toPosition(); }
     const Position endPosition() const { return m_end.toPosition(); }
-    void setStart(const Position&, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    void setEnd(const Position&, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setStart(const Position&, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    WEBCORE_EXPORT void setEnd(const Position&, ExceptionCode& = ASSERT_NO_EXCEPTION);
 
-    Node* firstNode() const;
-    Node* pastLastNode() const;
+    WEBCORE_EXPORT Node* firstNode() const;
+    WEBCORE_EXPORT Node* pastLastNode() const;
 
     ShadowRoot* shadowRoot() const;
 
@@ -130,14 +130,14 @@ public:
 
     // Not transform-friendly
     void textRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
-    IntRect boundingBox() const;
+    WEBCORE_EXPORT IntRect boundingBox() const;
 
     // Transform-friendly
-    void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
+    WEBCORE_EXPORT void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
     void getBorderAndTextQuads(Vector<FloatQuad>&) const;
-    FloatRect boundingRect() const;
+    WEBCORE_EXPORT FloatRect boundingRect() const;
 #if PLATFORM(IOS)
-    void collectSelectionRects(Vector<SelectionRect>&);
+    WEBCORE_EXPORT void collectSelectionRects(Vector<SelectionRect>&);
 #endif
 
     void nodeChildrenChanged(ContainerNode&);
@@ -161,7 +161,7 @@ public:
     void formatForDebugger(char* buffer, unsigned length) const;
 #endif
 
-    bool contains(const Range&) const;
+    WEBCORE_EXPORT bool contains(const Range&) const;
 
 private:
     explicit Range(Document&);

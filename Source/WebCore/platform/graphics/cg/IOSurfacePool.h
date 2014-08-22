@@ -47,14 +47,14 @@ class IOSurfacePool {
     friend class NeverDestroyed<IOSurfacePool>;
 
 public:
-    static IOSurfacePool& sharedPool();
+    WEBCORE_EXPORT static IOSurfacePool& sharedPool();
 
     PassRefPtr<IOSurface> takeSurface(IntSize size, ColorSpace colorSpace);
-    void addSurface(IOSurface*);
+    WEBCORE_EXPORT void addSurface(IOSurface*);
 
     void discardAllSurfaces();
 
-    void setPoolSize(size_t);
+    WEBCORE_EXPORT void setPoolSize(size_t);
 
     void showPoolStatistics();
 

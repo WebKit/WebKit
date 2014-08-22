@@ -70,13 +70,13 @@ public:
     void userDidClickSnapshot(PassRefPtr<MouseEvent>, bool forwardEvent);
     void checkSnapshotStatus();
     Image* snapshotImage() const { return m_snapshotImage.get(); }
-    void restartSnapshottedPlugIn();
+    WEBCORE_EXPORT void restartSnapshottedPlugIn();
 
     // Plug-in URL might not be the same as url() with overriding parameters.
     void subframeLoaderWillCreatePlugIn(const URL& plugInURL);
     void subframeLoaderDidCreatePlugIn(const Widget*);
 
-    void setIsPrimarySnapshottedPlugIn(bool);
+    WEBCORE_EXPORT void setIsPrimarySnapshottedPlugIn(bool);
     bool partOfSnapshotOverlay(Node*);
 
     bool needsCheckForSizeChange() const { return m_needsCheckForSizeChange; }

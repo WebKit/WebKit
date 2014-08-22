@@ -51,7 +51,7 @@ public:
 
     PassRefPtr<JSC::Bindings::Instance> getInstance();
 
-    Widget* pluginWidget() const;
+    WEBCORE_EXPORT Widget* pluginWidget() const;
 
     enum DisplayState {
         WaitingForSnapshot,
@@ -71,7 +71,7 @@ public:
     JSC::JSObject* scriptObjectForPluginReplacement();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* getNPObject();
+    WEBCORE_EXPORT NPObject* getNPObject();
 #endif
 
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }

@@ -66,11 +66,11 @@ protected:
 
 class PlatformSpeechSynthesizer {
 public:
-    explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
+    WEBCORE_EXPORT explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
 
     // FIXME: We have multiple virtual functions just so we can support a mock for testing.
     // Seems wasteful. Would be nice to find a better way.
-    virtual ~PlatformSpeechSynthesizer();
+    WEBCORE_EXPORT virtual ~PlatformSpeechSynthesizer();
     
     const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& voiceList() const;
     virtual void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);

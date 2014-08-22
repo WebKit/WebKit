@@ -55,96 +55,96 @@ public:
     // to keep the overall tile cost low.
     static const int kTiledLayerTileSize = 512;
 
-    explicit GraphicsLayerCA(GraphicsLayerClient&);
-    virtual ~GraphicsLayerCA();
+    WEBCORE_EXPORT explicit GraphicsLayerCA(GraphicsLayerClient&);
+    WEBCORE_EXPORT virtual ~GraphicsLayerCA();
 
-    virtual void initialize() override;
+    WEBCORE_EXPORT virtual void initialize() override;
 
-    virtual void setName(const String&) override;
+    WEBCORE_EXPORT virtual void setName(const String&) override;
 
-    virtual PlatformLayerID primaryLayerID() const override;
+    WEBCORE_EXPORT virtual PlatformLayerID primaryLayerID() const override;
 
-    virtual PlatformLayer* platformLayer() const override;
+    WEBCORE_EXPORT virtual PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
-    virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
-    virtual void addChild(GraphicsLayer*) override;
-    virtual void addChildAtIndex(GraphicsLayer*, int index) override;
-    virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
-    virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
-    virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
+    WEBCORE_EXPORT virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
+    WEBCORE_EXPORT virtual void addChild(GraphicsLayer*) override;
+    WEBCORE_EXPORT virtual void addChildAtIndex(GraphicsLayer*, int index) override;
+    WEBCORE_EXPORT virtual void addChildAbove(GraphicsLayer*, GraphicsLayer* sibling) override;
+    WEBCORE_EXPORT virtual void addChildBelow(GraphicsLayer*, GraphicsLayer* sibling) override;
+    WEBCORE_EXPORT virtual bool replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild) override;
 
-    virtual void removeFromParent() override;
+    WEBCORE_EXPORT virtual void removeFromParent() override;
 
-    virtual void setMaskLayer(GraphicsLayer*) override;
-    virtual void setReplicatedLayer(GraphicsLayer*) override;
+    WEBCORE_EXPORT virtual void setMaskLayer(GraphicsLayer*) override;
+    WEBCORE_EXPORT virtual void setReplicatedLayer(GraphicsLayer*) override;
 
-    virtual void setPosition(const FloatPoint&) override;
-    virtual void setAnchorPoint(const FloatPoint3D&) override;
-    virtual void setSize(const FloatSize&) override;
-    virtual void setBoundsOrigin(const FloatPoint&) override;
+    WEBCORE_EXPORT virtual void setPosition(const FloatPoint&) override;
+    WEBCORE_EXPORT virtual void setAnchorPoint(const FloatPoint3D&) override;
+    WEBCORE_EXPORT virtual void setSize(const FloatSize&) override;
+    WEBCORE_EXPORT virtual void setBoundsOrigin(const FloatPoint&) override;
 
-    virtual void setTransform(const TransformationMatrix&) override;
+    WEBCORE_EXPORT virtual void setTransform(const TransformationMatrix&) override;
 
-    virtual void setChildrenTransform(const TransformationMatrix&) override;
+    WEBCORE_EXPORT virtual void setChildrenTransform(const TransformationMatrix&) override;
 
-    virtual void setPreserves3D(bool) override;
-    virtual void setMasksToBounds(bool) override;
-    virtual void setDrawsContent(bool) override;
-    virtual void setContentsVisible(bool) override;
-    virtual void setAcceleratesDrawing(bool) override;
+    WEBCORE_EXPORT virtual void setPreserves3D(bool) override;
+    WEBCORE_EXPORT virtual void setMasksToBounds(bool) override;
+    WEBCORE_EXPORT virtual void setDrawsContent(bool) override;
+    WEBCORE_EXPORT virtual void setContentsVisible(bool) override;
+    WEBCORE_EXPORT virtual void setAcceleratesDrawing(bool) override;
 
-    virtual void setBackgroundColor(const Color&) override;
+    WEBCORE_EXPORT virtual void setBackgroundColor(const Color&) override;
 
-    virtual void setContentsOpaque(bool) override;
-    virtual void setBackfaceVisibility(bool) override;
+    WEBCORE_EXPORT virtual void setContentsOpaque(bool) override;
+    WEBCORE_EXPORT virtual void setBackfaceVisibility(bool) override;
 
     // return true if we started an animation
-    virtual void setOpacity(float) override;
+    WEBCORE_EXPORT virtual void setOpacity(float) override;
 
 #if ENABLE(CSS_FILTERS)
-    virtual bool setFilters(const FilterOperations&) override;
+    WEBCORE_EXPORT virtual bool setFilters(const FilterOperations&) override;
     virtual bool filtersCanBeComposited(const FilterOperations&);
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    virtual void setBlendMode(BlendMode) override;
+    WEBCORE_EXPORT virtual void setBlendMode(BlendMode) override;
 #endif
 
-    virtual void setNeedsDisplay() override;
-    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
-    virtual void setContentsNeedsDisplay() override;
+    WEBCORE_EXPORT virtual void setNeedsDisplay() override;
+    WEBCORE_EXPORT virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+    WEBCORE_EXPORT virtual void setContentsNeedsDisplay() override;
     
-    virtual void setContentsRect(const FloatRect&) override;
-    virtual void setContentsClippingRect(const FloatRect&) override;
+    WEBCORE_EXPORT virtual void setContentsRect(const FloatRect&) override;
+    WEBCORE_EXPORT virtual void setContentsClippingRect(const FloatRect&) override;
     
-    virtual void suspendAnimations(double time) override;
-    virtual void resumeAnimations() override;
+    WEBCORE_EXPORT virtual void suspendAnimations(double time) override;
+    WEBCORE_EXPORT virtual void resumeAnimations() override;
 
-    virtual bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
-    virtual void pauseAnimation(const String& animationName, double timeOffset) override;
-    virtual void removeAnimation(const String& animationName) override;
+    WEBCORE_EXPORT virtual bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
+    WEBCORE_EXPORT virtual void pauseAnimation(const String& animationName, double timeOffset) override;
+    WEBCORE_EXPORT virtual void removeAnimation(const String& animationName) override;
 
-    virtual void setContentsToImage(Image*) override;
-    virtual void setContentsToMedia(PlatformLayer*) override;
+    WEBCORE_EXPORT virtual void setContentsToImage(Image*) override;
+    WEBCORE_EXPORT virtual void setContentsToMedia(PlatformLayer*) override;
 #if PLATFORM(IOS)
-    virtual PlatformLayer* contentsLayerForMedia() const override;
+    WEBCORE_EXPORT virtual PlatformLayer* contentsLayerForMedia() const override;
 #endif
-    virtual void setContentsToCanvas(PlatformLayer*) override;
-    virtual void setContentsToSolidColor(const Color&) override;
+    WEBCORE_EXPORT virtual void setContentsToCanvas(PlatformLayer*) override;
+    WEBCORE_EXPORT virtual void setContentsToSolidColor(const Color&) override;
 
     virtual bool usesContentsLayer() const override { return m_contentsLayerPurpose != NoContentsLayer; }
     
-    virtual void setShowDebugBorder(bool) override;
-    virtual void setShowRepaintCounter(bool) override;
+    WEBCORE_EXPORT virtual void setShowDebugBorder(bool) override;
+    WEBCORE_EXPORT virtual void setShowRepaintCounter(bool) override;
 
-    virtual void setDebugBackgroundColor(const Color&) override;
-    virtual void setDebugBorder(const Color&, float borderWidth) override;
+    WEBCORE_EXPORT virtual void setDebugBackgroundColor(const Color&) override;
+    WEBCORE_EXPORT virtual void setDebugBorder(const Color&, float borderWidth) override;
 
-    virtual void setCustomAppearance(CustomAppearance) override;
-    virtual void setCustomBehavior(CustomBehavior) override;
+    WEBCORE_EXPORT virtual void setCustomAppearance(CustomAppearance) override;
+    WEBCORE_EXPORT virtual void setCustomBehavior(CustomBehavior) override;
 
-    virtual void deviceOrPageScaleFactorChanged() override;
+    WEBCORE_EXPORT virtual void deviceOrPageScaleFactorChanged() override;
 
     virtual FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
@@ -158,51 +158,51 @@ public:
     };
     void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
-    virtual void flushCompositingState(const FloatRect&) override;
-    virtual void flushCompositingStateForThisLayerOnly() override;
+    WEBCORE_EXPORT virtual void flushCompositingState(const FloatRect&) override;
+    WEBCORE_EXPORT virtual void flushCompositingStateForThisLayerOnly() override;
 
-    virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
+    WEBCORE_EXPORT virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
 
-    virtual TiledBacking* tiledBacking() const override;
+    WEBCORE_EXPORT virtual TiledBacking* tiledBacking() const override;
 
 protected:
-    virtual void setOpacityInternal(float) override;
+    WEBCORE_EXPORT virtual void setOpacityInternal(float) override;
     
-    bool animationCanBeAccelerated(const KeyframeValueList&, const Animation*) const;
+    WEBCORE_EXPORT bool animationCanBeAccelerated(const KeyframeValueList&, const Animation*) const;
 
 private:
     virtual bool isGraphicsLayerCA() const override { return true; }
 
-    virtual void willBeDestroyed() override;
+    WEBCORE_EXPORT virtual void willBeDestroyed() override;
 
     // PlatformCALayerClient overrides
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) override { }
     virtual bool platformCALayerRespondsToLayoutChanges() const override { return false; }
 
-    virtual void platformCALayerAnimationStarted(const String& animationKey, CFTimeInterval beginTime) override;
-    virtual void platformCALayerAnimationEnded(const String& animationKey) override;
+    WEBCORE_EXPORT void platformCALayerAnimationStarted(const String& animationKey, CFTimeInterval beginTime) override;
+    WEBCORE_EXPORT void platformCALayerAnimationEnded(const String& animationKey) override;
     virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return contentsOrientation(); }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip) override;
+    WEBCORE_EXPORT virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip) override;
     virtual bool platformCALayerShowDebugBorders() const override { return isShowingDebugBorder(); }
-    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
+    WEBCORE_EXPORT virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
     virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) override { return incrementRepaintCount(); }
 
     virtual bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
     virtual bool platformCALayerDrawsContent() const override { return drawsContent(); }
     virtual void platformCALayerLayerDidDisplay(PlatformCALayer* layer) override { return layerDidDisplay(layer); }
-    virtual void platformCALayerSetNeedsToRevalidateTiles() override;
-    virtual float platformCALayerDeviceScaleFactor() const override;
-    virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
-    virtual bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
-    virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
+    WEBCORE_EXPORT virtual void platformCALayerSetNeedsToRevalidateTiles() override;
+    WEBCORE_EXPORT virtual float platformCALayerDeviceScaleFactor() const override;
+    WEBCORE_EXPORT virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
+    WEBCORE_EXPORT virtual bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
+    WEBCORE_EXPORT virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 
-    virtual double backingStoreMemoryEstimate() const override;
+    WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const override;
 
-    virtual bool shouldRepaintOnSizeChange() const override;
+    WEBCORE_EXPORT virtual bool shouldRepaintOnSizeChange() const override;
 
-    void layerDidDisplay(PlatformCALayer*);
+    WEBCORE_EXPORT void layerDidDisplay(PlatformCALayer*);
     void updateOpacityOnLayer();
     
 #if ENABLE(CSS_FILTERS)
@@ -273,10 +273,10 @@ private:
     void setupContentsLayer(PlatformCALayer*);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
-    virtual void setReplicatedByLayer(GraphicsLayer*) override;
+    WEBCORE_EXPORT virtual void setReplicatedByLayer(GraphicsLayer*) override;
 
-    virtual void getDebugBorderInfo(Color&, float& width) const override;
-    virtual void dumpAdditionalProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const override;
+    WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const override;
+    WEBCORE_EXPORT virtual void dumpAdditionalProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const override;
 
     void computePixelAlignment(float contentsScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
@@ -292,7 +292,7 @@ private:
 
     bool recursiveVisibleRectChangeRequiresFlush(const TransformState&) const;
 
-    virtual bool canThrottleLayerFlush() const override;
+    WEBCORE_EXPORT virtual bool canThrottleLayerFlush() const override;
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {

@@ -82,7 +82,7 @@ public:
 
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient*) const = 0;
 
-    virtual ~PlatformCALayer();
+    WEBCORE_EXPORT virtual ~PlatformCALayer();
 
     GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
 
@@ -92,7 +92,7 @@ public:
 
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
-    static PlatformCALayer* platformCALayer(void* platformLayer);
+    WEBCORE_EXPORT static PlatformCALayer* platformCALayer(void* platformLayer);
 
     virtual PlatformLayer* platformLayer() const { return m_layer.get(); }
 
@@ -245,14 +245,14 @@ public:
         
     // Functions allows us to share implementation across WebTiledLayer and WebLayer
     static RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
-    static void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
+    WEBCORE_EXPORT static void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
     static void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
     static CGRect frameForLayer(const PlatformLayer*);
 
     void moveToLayerPool();
 
 protected:
-    PlatformCALayer(LayerType, PlatformCALayerClient* owner);
+    WEBCORE_EXPORT PlatformCALayer(LayerType, PlatformCALayerClient* owner);
 
     virtual LayerPool& layerPool();
 
