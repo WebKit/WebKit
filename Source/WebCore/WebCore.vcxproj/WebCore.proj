@@ -51,6 +51,7 @@
     <Message Text="Build output -> $(OBJROOT)" />
     <Message Text="Final output -> $(DSTROOT)" />
     <MakeDir Directories="$(AppleInternalLib32);$(AppleInternalLib64);$(AppleInternalBin32);$(AppleInternalBin64);$(AppleInternal32Symbols);$(AppleInternal64Symbols);$(AppleInternal)\include;$(DSTROOT)\$(ProgramFilesAAS32);$(DSTROOT)\$(ProgramFilesAAS64)" />
+    <MakeDir Directories="$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources;$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources" />
     <MakeDir Directories="$(DSTROOT)\AppleInternal\Sources32\WebCore;$(DSTROOT)\AppleInternal\Sources64\WebCore" />
   </Target>
 
@@ -82,6 +83,12 @@
     <CreateItem Include="$(ConfigurationBuildDir)\bin64\*.pdb">
       <Output TaskParameter="Include" ItemName="Bin64SymbolFiles" />
     </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\WebKit.resources\**\*.*">
+      <Output TaskParameter="Include" ItemName="Bin32Resources" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\WebKit.resources\**\*.*">
+      <Output TaskParameter="Include" ItemName="Bin64Resources" />
+    </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\lib32\*">
       <Output TaskParameter="Include" ItemName="Lib32Files" />
     </CreateItem>
@@ -101,9 +108,11 @@
     <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(AppleInternalBin32)" />
     <Copy SourceFiles="@(Bin32Files)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
     <Copy SourceFiles="@(Bin32SymbolFiles)" DestinationFolder="$(AppleInternal32Symbols)" />
+    <Copy SourceFiles="@(Bin32Resources)" DestinationFiles="@(Bin32Resources->'$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Bin64Files)" DestinationFolder="$(AppleInternalBin64)" />
     <Copy SourceFiles="@(Bin64Files)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
     <Copy SourceFiles="@(Bin64SymbolFiles)" DestinationFolder="$(AppleInternal64Symbols)" />
+    <Copy SourceFiles="@(Bin64Resources)" DestinationFiles="@(Bin64Resources->'$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Derived32Sources)" DestinationFiles="@(Derived32Sources->'$(DSTROOT)\AppleInternal\Sources32\WebCore\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Derived64Sources)" DestinationFiles="@(Derived64Sources->'$(DSTROOT)\AppleInternal\Sources64\WebCore\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
