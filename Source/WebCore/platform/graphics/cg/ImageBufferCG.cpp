@@ -48,6 +48,7 @@
 #endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#include "IOSurface.h"
 #include <IOSurface/IOSurface.h>
 #endif
 
@@ -57,11 +58,6 @@
 namespace WebCore {
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-#if PLATFORM(IOS)
-static const int maxIOSurfaceDimension = 2048;
-#else
-static const int maxIOSurfaceDimension = 4096;
-#endif
 
 // FIXME: Adopt WebCore::IOSurface.
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
@@ -156,7 +152,8 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         return;
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (width.unsafeGet() > maxIOSurfaceDimension || height.unsafeGet() > maxIOSurfaceDimension)
+    IntSize maxSize = IOSurface::maximumSize();
+    if (width.unsafeGet() > maxSize.width() || height.unsafeGet() > maxSize.height())
         accelerateRendering = false;
 #else
     ASSERT(renderingMode == Unaccelerated);
