@@ -28,8 +28,8 @@
 
 #import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
-#import "WebKitSystemInterface.h"
 #import <WebCore/SoftLinking.h>
+#import <WebCore/WebCoreNSStringExtras.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/machine.h>
@@ -210,8 +210,7 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
-    RetainPtr<CFStringRef> localization = adoptCF(WKCopyCFLocalizationPreferredName(0));
-    if (localization && _CFBundleSetupXPCBootstrapPtr()) {
+    if (_CFBundleSetupXPCBootstrapPtr()) {
         auto initializationMessage = IPC::adoptXPC(xpc_dictionary_create(nullptr, nullptr, 0));
         _CFBundleSetupXPCBootstrapPtr()(initializationMessage.get());
         xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
@@ -457,7 +456,7 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
-    CString appleLanguagesArgument = String("('" + String(adoptCF(WKCopyCFLocalizationPreferredName(0)).get()) + "')").utf8();
+    CString appleLanguagesArgument = String("('" + String(preferredBundleLocalizationName()) + "')").utf8();
 
     Vector<const char*> args;
     args.append([processAppExecutablePath fileSystemRepresentation]);

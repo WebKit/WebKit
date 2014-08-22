@@ -1,3 +1,25 @@
+2014-08-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace use of WKCopyCFLocalizationPreferredName with NSLocale public API
+        https://bugs.webkit.org/show_bug.cgi?id=136082
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/Language.mm:
+        (WebCore::httpStyleLanguageCode): Replace use of WKCopyCFLocalizationPreferredName
+        with new WebCoreNSStringExtras helper.
+        * platform/mac/WebCoreNSStringExtras.mm: Replacements for the aspects of
+        WKCopyCFLocalizationPreferredName.
+        (preferredBundleLocalizationName): New helper - most preferred localization available
+        in the main bundle, canonicalized the way we like it.
+        (canonicalLocalizationName): Convert a lcalization name to a string with language and
+        country code, using default if necessary (e.g. "en" maps to "en_US").
+        * WebCore.order: Remove mention of WKCopyCFLocalizationPreferredName.
+        * WebCore.exp.in: ditto; also export preferredBundleLocalizationName for WebKit(2).
+        * platform/ios/WebCoreSystemInterfaceIOS.mm: ditto
+        * platform/mac/WebCoreSystemInterface.h: ditto
+        * platform/mac/WebCoreSystemInterface.mm: ditto
+
 2014-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS

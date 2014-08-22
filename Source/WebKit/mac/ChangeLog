@@ -1,3 +1,24 @@
+2014-08-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace use of WKCopyCFLocalizationPreferredName with NSLocale public API
+        https://bugs.webkit.org/show_bug.cgi?id=136082
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost): Get current
+        localization name using WebCore helper instead of SPI.
+        * Plugins/WebBasePluginPackage.mm: Fixed the include style for this 
+        file.
+        (-[WebBasePluginPackage getPluginInfoFromPLists]): Get current
+        localization name using WebCore helper instead of SPI.
+        (+[WebBasePluginPackage preferredLocalizationName]): Deleted. This
+        helper no longer pulls its weight.
+        * WebCoreSupport/WebSystemInterface.mm: 
+        (InitWebCoreSystemInterface): Remove mention of
+        WKCopyCFLocalizationPreferredName.
+        * WebKit.order: ditto
+
 2014-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS

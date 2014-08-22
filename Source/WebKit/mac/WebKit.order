@@ -26,7 +26,6 @@ __Z26InitWebCoreSystemInterfacev
 +[WebView _shouldAutomaticDashSubstitutionBeEnabled]
 +[WebView _shouldAutomaticTextReplacementBeEnabled]
 +[WebView _shouldAutomaticSpellingCorrectionBeEnabled]
-_WKCopyCFLocalizationPreferredName
 +[WebView(WebPrivate) _setDomainRelaxationForbidden:forURLScheme:]
 +[WebView(WebPrivate) _registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing:]
 +[WebView(WebPrivate) _registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:]
@@ -849,7 +848,6 @@ __ZN3WTF6VectorINS_6StringELm0ENS_15CrashOnOverflowEEC2ERKS3_
 __ZN7WebCore13MimeClassInfoD2Ev
 -[WebBasePluginPackage isNativeLibraryData:]
 -[WebBasePluginPackage pListForPath:createFile:]
-+[WebBasePluginPackage preferredLocalizationName]
 -[WebPluginDatabase(Internal) _addPlugin:]
 -[WebBasePluginPackage path]
 -[WebBasePluginPackage wasAddedToPluginDatabase:]

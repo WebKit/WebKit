@@ -26,13 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/WebBasePluginPackage.h>
+#import "WebBasePluginPackage.h"
 
-#import <algorithm>
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebPluginPackage.h"
+#import "WebTypesInternal.h"
+#import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebKitLegacy/WebKitNSStringExtras.h>
-#import <WebKitLegacy/WebNetscapePluginPackage.h>
-#import <WebKitLegacy/WebPluginPackage.h>
+#import <algorithm>
+#import <mach-o/arch.h>
+#import <mach-o/fat.h>
+#import <mach-o/loader.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
@@ -41,14 +47,6 @@
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
 
-#import <WebKitSystemInterface.h>
-
-#import "WebKitLogging.h"
-#import "WebTypesInternal.h"
-
-#import <mach-o/arch.h>
-#import <mach-o/fat.h>
-#import <mach-o/loader.h>
 
 #define JavaCocoaPluginIdentifier   "com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier  "com.apple.JavaAppletPlugin"
@@ -88,11 +86,6 @@ using namespace WebCore;
     }
 
     return [pluginPackage autorelease];
-}
-
-+ (NSString *)preferredLocalizationName
-{
-    return CFBridgingRelease(WKCopyCFLocalizationPreferredName(NULL));
 }
 
 #if COMPILER(CLANG)
@@ -196,7 +189,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         if (pList) {
             // If the plist isn't localized, have the plug-in recreate it in the preferred language.
             NSString *localizationName = [pList objectForKey:WebPluginLocalizationNameKey];
-            if (![localizationName isEqualToString:[[self class] preferredLocalizationName]])
+            if (![localizationName isEqualToString:preferredBundleLocalizationName()])
                 pList = [self pListForPath:pListPath createFile:YES];
             MIMETypes = [pList objectForKey:WebPluginMIMETypesKey];
         } else

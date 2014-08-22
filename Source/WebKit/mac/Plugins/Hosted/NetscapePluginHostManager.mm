@@ -32,6 +32,7 @@
 #import "WebLocalizableStringsInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebNetscapePluginPackage.h"
+#import <WebCore/WebCoreNSStringExtras.h>
 #import <mach/mach_port.h>
 #import <servers/bootstrap.h>
 #import <spawn.h>
@@ -113,12 +114,10 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
     NSString *pluginHostAppPath = [[NSBundle bundleForClass:[WebNetscapePluginPackage class]] pathForAuxiliaryExecutable:pluginHostAppName];
     NSString *pluginHostAppExecutablePath = [[NSBundle bundleWithPath:pluginHostAppPath] executablePath];
 
-    RetainPtr<CFStringRef> localization = adoptCF(WKCopyCFLocalizationPreferredName(NULL));
-    
     NSDictionary *launchProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                       pluginHostAppExecutablePath, @"pluginHostPath",
                                       [NSNumber numberWithInt:pluginArchitecture], @"cpuType",
-                                      (NSString *)localization.get(), @"localization",
+                                      preferredBundleLocalizationName(), @"localization",
                                       nil];
 
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
