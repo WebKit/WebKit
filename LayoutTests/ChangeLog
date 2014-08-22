@@ -1,3 +1,13 @@
+2014-08-21  Antti Koivisto  <antti@apple.com>
+
+        Animated GIFs scrolled out of view still cause titlebar blur to update, on tumblr.com page
+        https://bugs.webkit.org/show_bug.cgi?id=136139
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/no-animation-outside-viewport-subframe-expected.txt: Added.
+        * fast/repaint/no-animation-outside-viewport-subframe.html: Added.
+
 2014-08-21  Zalan Bujtas  <zalan@apple.com>
 
         ruby-base-merge-block-children-crash-2.html should not use render tree dump.

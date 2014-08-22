@@ -243,6 +243,8 @@ public:
     virtual IntPoint maximumScrollPosition() const override;
     void delayedScrollEventTimerFired(Timer<FrameView>&);
 
+    void resumeVisibleImageAnimationsIncludingSubframes();
+
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
     // offsets from rubber-banding, and it takes zooming into account. 
     LayoutRect viewportConstrainedVisibleContentRect() const;
