@@ -57,6 +57,7 @@ void InitWebCoreSystemInterface(void)
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     INIT(CTFontTransformGlyphs);
 #endif
+    INIT(CopyCFLocalizationPreferredName);
     INIT(CopyCONNECTProxyResponse);
     INIT(CopyNSURLResponseStatusLine);
     INIT(CopyNSURLResponseCertificateChain);

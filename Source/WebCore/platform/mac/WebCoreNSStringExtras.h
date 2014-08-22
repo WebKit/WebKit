@@ -48,9 +48,6 @@ NSString *filenameByFixingIllegalCharacters(NSString *);
 CFStringEncoding stringEncodingForResource(Handle resource);
 #endif
 
-NSString *preferredBundleLocalizationName();
-NSString *canonicalLocaleName(NSString *);
-
 #ifdef __cplusplus
 }
 #endif

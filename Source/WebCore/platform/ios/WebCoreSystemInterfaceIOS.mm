@@ -30,6 +30,7 @@ WEBCORE_EXPORT void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGC
 WEBCORE_EXPORT BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 WEBCORE_EXPORT CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 WEBCORE_EXPORT void (*wkCGContextResetClip)(CGContextRef);
+WEBCORE_EXPORT CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
 WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
 WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 WEBCORE_EXPORT NSString* (*wkGetMIMETypeForExtension)(NSString*);
