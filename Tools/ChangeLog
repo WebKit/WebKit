@@ -1,3 +1,12 @@
+2014-08-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] install-dependencies don't installs Xvfb that is needed for the tests.
+        https://bugs.webkit.org/show_bug.cgi?id=136153
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies: Add Xvfb package to the list of dependencies necessary for running tests.
+
 2014-08-21  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Another unreviewed build fix.

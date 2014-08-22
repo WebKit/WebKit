@@ -93,7 +93,8 @@ function installDependenciesWithApt {
         python-gi \
         ruby \
         ruby-json \
-        ruby-highline
+        ruby-highline \
+        xvfb
 
     # These are dependencies necessary for building the jhbuild.
     apt-get install \
@@ -194,7 +195,8 @@ function installDependenciesWithYum {
         pygobject3-base \
         ruby \
         rubygem-json \
-        rubygem-highline
+        rubygem-highline \
+        xorg-x11-server-Xvfb
 
     # These are dependencies necessary for building the jhbuild.
     yum install \
