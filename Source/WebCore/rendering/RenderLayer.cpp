@@ -2649,6 +2649,7 @@ IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScroll
 
 IntSize RenderLayer::overhangAmount() const
 {
+#if ENABLE(RUBBER_BANDING)
     if (!renderer().frame().settings().rubberBandingForOverflowScrollEnabled())
         return IntSize();
 
@@ -2667,6 +2668,9 @@ IntSize RenderLayer::overhangAmount() const
         stretch.setWidth(physicalScrollX - (scrollableContentsSize().width() - visibleWidth()));
 
     return stretch;
+#else
+    return IntSize();
+#endif
 }
 
 bool RenderLayer::isActive() const
@@ -3000,10 +3004,14 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 
     if (hasScrollbar) {
         m_hBar = createScrollbar(HorizontalScrollbar);
+#if ENABLE(RUBBER_BANDING)
         ScrollableArea::setHorizontalScrollElasticity(renderer().frame().settings().rubberBandingForOverflowScrollEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone);
+#endif
     } else {
         destroyScrollbar(HorizontalScrollbar);
+#if ENABLE(RUBBER_BANDING)
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityNone);
+#endif
     }
 
     // Destroying or creating one bar can cause our scrollbar corner to come and go.  We need to update the opposite scrollbar's style.
@@ -3026,10 +3034,14 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
     if (hasScrollbar) {
         m_vBar = createScrollbar(VerticalScrollbar);
+#if ENABLE(RUBBER_BANDING)
         ScrollableArea::setVerticalScrollElasticity((renderer().frame().settings().rubberBandingForOverflowScrollEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone));
+#endif
     } else {
         destroyScrollbar(VerticalScrollbar);
+#if ENABLE(RUBBER_BANDING)
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityNone);
+#endif
     }
 
      // Destroying or creating one bar can cause our scrollbar corner to come and go.  We need to update the opposite scrollbar's style.
