@@ -31,23 +31,23 @@
 
 namespace WebCore {
 
-NSString *userVisibleString(NSURL *);
-NSURL *URLByCanonicalizingURL(NSURL *);
-NSURL *URLWithUserTypedString(NSString *, NSURL *baseURL);
-NSURL *URLByRemovingUserInfo(NSURL *);
-BOOL hostNameNeedsDecodingWithRange(NSString *, NSRange);
-BOOL hostNameNeedsEncodingWithRange(NSString *, NSRange);
-NSString *decodeHostNameWithRange(NSString *, NSRange);
-NSString *encodeHostNameWithRange(NSString *, NSRange);
-NSString *decodeHostName(NSString *);
-NSString *encodeHostName(NSString *);
-NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFURLComponentType);
-NSURL *URLWithData(NSData *, NSURL *baseURL);
-NSData *originalURLData(NSURL *);
-NSData *dataForURLComponentType(NSURL *, CFURLComponentType);
+WEBCORE_EXPORT NSString *userVisibleString(NSURL *);
+WEBCORE_EXPORT NSURL *URLByCanonicalizingURL(NSURL *);
+WEBCORE_EXPORT NSURL *URLWithUserTypedString(NSString *, NSURL *baseURL);
+WEBCORE_EXPORT NSURL *URLByRemovingUserInfo(NSURL *);
+WEBCORE_EXPORT BOOL hostNameNeedsDecodingWithRange(NSString *, NSRange);
+WEBCORE_EXPORT BOOL hostNameNeedsEncodingWithRange(NSString *, NSRange);
+WEBCORE_EXPORT NSString *decodeHostNameWithRange(NSString *, NSRange);
+WEBCORE_EXPORT NSString *encodeHostNameWithRange(NSString *, NSRange);
+WEBCORE_EXPORT NSString *decodeHostName(NSString *);
+WEBCORE_EXPORT NSString *encodeHostName(NSString *);
+WEBCORE_EXPORT NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFURLComponentType);
+WEBCORE_EXPORT NSURL *URLWithData(NSData *, NSURL *baseURL);
+WEBCORE_EXPORT NSData *originalURLData(NSURL *);
+WEBCORE_EXPORT NSData *dataForURLComponentType(NSURL *, CFURLComponentType);
 
 NSRange rangeOfURLScheme(NSString *);
-BOOL isUserVisibleURL(NSString *);
-BOOL looksLikeAbsoluteURL(NSString *);
+WEBCORE_EXPORT BOOL isUserVisibleURL(NSString *);
+WEBCORE_EXPORT BOOL looksLikeAbsoluteURL(NSString *);
 
 } // namespace WebCore

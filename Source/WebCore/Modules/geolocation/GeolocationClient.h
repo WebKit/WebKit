@@ -54,7 +54,7 @@ protected:
     virtual ~GeolocationClient() { }
 };
 
-void provideGeolocationTo(Page*, GeolocationClient*);
+WEBCORE_EXPORT void provideGeolocationTo(Page*, GeolocationClient*);
 
 } // namespace WebCore
 

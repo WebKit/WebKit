@@ -124,7 +124,7 @@ inline bool NetworkStateNotifier::onLine() const
 }
 #endif
 
-NetworkStateNotifier& networkStateNotifier();
+WEBCORE_EXPORT NetworkStateNotifier& networkStateNotifier();
 
 } // namespace WebCore
 

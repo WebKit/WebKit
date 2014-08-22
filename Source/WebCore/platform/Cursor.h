@@ -183,11 +183,11 @@ namespace WebCore {
 
     IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
     
-    const Cursor& pointerCursor();
+    WEBCORE_EXPORT const Cursor& pointerCursor();
     const Cursor& crossCursor();
-    const Cursor& handCursor();
+    WEBCORE_EXPORT const Cursor& handCursor();
     const Cursor& moveCursor();
-    const Cursor& iBeamCursor();
+    WEBCORE_EXPORT const Cursor& iBeamCursor();
     const Cursor& waitCursor();
     const Cursor& helpCursor();
     const Cursor& eastResizeCursor();

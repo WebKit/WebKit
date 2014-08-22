@@ -34,11 +34,11 @@ namespace WebCore {
 
 class ScrollingTreeOverflowScrollingNode : public ScrollingTreeScrollingNode {
 public:
-    virtual ~ScrollingTreeOverflowScrollingNode();
+    WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollingNode();
 
     
 protected:
-    ScrollingTreeOverflowScrollingNode(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT ScrollingTreeOverflowScrollingNode(ScrollingTree&, ScrollingNodeID);
 };
 
 SCROLLING_NODE_TYPE_CASTS(ScrollingTreeOverflowScrollingNode, isOverflowScrollingNode());

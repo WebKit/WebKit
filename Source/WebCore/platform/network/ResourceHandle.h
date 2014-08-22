@@ -108,10 +108,10 @@ class ResourceHandle : public RefCounted<ResourceHandle>
 #endif
     {
 public:
-    static PassRefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
-    static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
+    WEBCORE_EXPORT static PassRefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    virtual ~ResourceHandle();
+    WEBCORE_EXPORT virtual ~ResourceHandle();
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -133,7 +133,7 @@ public:
 
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
-    NSURLConnection *connection() const;
+    WEBCORE_EXPORT NSURLConnection *connection() const;
     id makeDelegate(bool);
     id delegate();
     void releaseDelegate();
@@ -156,7 +156,7 @@ public:
 #if USE(CFNETWORK)
     CFURLStorageSessionRef storageSession() const;
     CFURLConnectionRef connection() const;
-    RetainPtr<CFURLConnectionRef> releaseConnectionForDownload();
+    WEBCORE_EXPORT RetainPtr<CFURLConnectionRef> releaseConnectionForDownload();
     const ResourceRequest& currentRequest() const;
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, CFDataRef);
@@ -179,7 +179,7 @@ public:
     bool shouldContentSniff() const;
     static bool shouldContentSniffURL(const URL&);
 
-    static void forceContentSniffing();
+    WEBCORE_EXPORT static void forceContentSniffing();
 
 #if USE(WININET)
     void setSynchronousInternetHandle(HINTERNET);
@@ -211,36 +211,36 @@ public:
 
     bool hasAuthenticationChallenge() const;
     void clearAuthentication();
-    virtual void cancel();
+    WEBCORE_EXPORT virtual void cancel();
 
     // The client may be 0, in which case no callbacks will be made.
     ResourceHandleClient* client() const;
-    void setClient(ResourceHandleClient*);
+    WEBCORE_EXPORT void setClient(ResourceHandleClient*);
 
     // Called in response to ResourceHandleClient::willSendRequestAsync().
-    void continueWillSendRequest(const ResourceRequest&);
+    WEBCORE_EXPORT void continueWillSendRequest(const ResourceRequest&);
 
     // Called in response to ResourceHandleClient::didReceiveResponseAsync().
-    virtual void continueDidReceiveResponse();
+    WEBCORE_EXPORT virtual void continueDidReceiveResponse();
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     // Called in response to ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync().
-    void continueCanAuthenticateAgainstProtectionSpace(bool);
+    WEBCORE_EXPORT void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
 
     // Called in response to ResourceHandleClient::willCacheResponseAsync().
 #if USE(CFNETWORK)
-    void continueWillCacheResponse(CFCachedURLResponseRef);
+    WEBCORE_EXPORT void continueWillCacheResponse(CFCachedURLResponseRef);
 #endif
 #if PLATFORM(COCOA) && !USE(CFNETWORK)
-    void continueWillCacheResponse(NSCachedURLResponse *);
+    WEBCORE_EXPORT void continueWillCacheResponse(NSCachedURLResponse *);
 #endif
 
-    void setDefersLoading(bool);
+    WEBCORE_EXPORT void setDefersLoading(bool);
 
     void didChangePriority(ResourceLoadPriority);
 
-    ResourceRequest& firstRequest();
+    WEBCORE_EXPORT ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 
     void failureTimerFired(Timer<ResourceHandle>&);
@@ -251,7 +251,7 @@ public:
     using RefCounted<ResourceHandle>::deref;
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    static CFStringRef synchronousLoadRunLoopMode();
+    WEBCORE_EXPORT static CFStringRef synchronousLoadRunLoopMode();
 #endif
 
 #if PLATFORM(IOS) && USE(CFNETWORK)

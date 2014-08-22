@@ -187,7 +187,7 @@ public:
 
     virtual RenderBoxModelObject* virtualContinuation() const override final { return continuation(); }
     bool isAnonymousBlockContinuation() const { return isAnonymousBlock() && continuation(); }
-    RenderInline* inlineElementContinuation() const;
+    WEBCORE_EXPORT RenderInline* inlineElementContinuation() const;
     RenderBlock* blockElementContinuation() const;
 
     using RenderBoxModelObject::continuation;

@@ -49,8 +49,8 @@ enum EChildrenOnly { IncludeNode, ChildrenOnly };
 enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
 enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerialization };
 
-PassRefPtr<DocumentFragment> createFragmentFromText(Range& context, const String& text);
-PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
+WEBCORE_EXPORT PassRefPtr<DocumentFragment> createFragmentFromText(Range& context, const String& text);
+WEBCORE_EXPORT PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
 PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String&, Element*, ParserContentPolicy, ExceptionCode&);
 PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String&, const String& sourceMIMEType, Document* outputDoc);
 PassRefPtr<DocumentFragment> createContextualFragment(const String&, HTMLElement*, ParserContentPolicy, ExceptionCode&);
@@ -65,8 +65,8 @@ void replaceChildrenWithText(ContainerNode&, const String&, ExceptionCode&);
 String createMarkup(const Range&, Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
 String createMarkup(const Node&, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = 0, EFragmentSerialization = HTMLFragmentSerialization);
 
-String createFullMarkup(const Node&);
-String createFullMarkup(const Range&);
+WEBCORE_EXPORT String createFullMarkup(const Node&);
+WEBCORE_EXPORT String createFullMarkup(const Range&);
 
 String urlToMarkup(const URL&, const String& title);
 

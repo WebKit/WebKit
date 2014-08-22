@@ -58,7 +58,7 @@ public:
     // The argument is an absolute URL string. The string is assumed to be output of URL::string() called on a valid
     // URL object, or indiscernible from such.
     // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
-    URL(ParsedURLStringTag, const String&);
+    WEBCORE_EXPORT URL(ParsedURLStringTag, const String&);
     explicit URL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return string().isHashTableDeletedValue(); }
 
@@ -69,7 +69,7 @@ public:
     // FIXME: If the base URL is invalid, this always creates an invalid
     // URL. Instead I think it would be better to treat all invalid base URLs
     // the same way we treate null and empty base URLs.
-    URL(const URL& base, const String& relative);
+    WEBCORE_EXPORT URL(const URL& base, const String& relative);
     URL(const URL& base, const String& relative, const TextEncoding&);
 
     static URL fakeURLWithRelativePart(const String&);
@@ -100,31 +100,31 @@ public:
 
     String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
-    String protocol() const;
-    String host() const;
-    unsigned short port() const;
+    WEBCORE_EXPORT String protocol() const;
+    WEBCORE_EXPORT String host() const;
+    WEBCORE_EXPORT unsigned short port() const;
     bool hasPort() const;
-    String user() const;
-    String pass() const;
-    String path() const;
-    String lastPathComponent() const;
-    String query() const;
-    String fragmentIdentifier() const;
-    bool hasFragmentIdentifier() const;
+    WEBCORE_EXPORT String user() const;
+    WEBCORE_EXPORT String pass() const;
+    WEBCORE_EXPORT String path() const;
+    WEBCORE_EXPORT String lastPathComponent() const;
+    WEBCORE_EXPORT String query() const;
+    WEBCORE_EXPORT String fragmentIdentifier() const;
+    WEBCORE_EXPORT bool hasFragmentIdentifier() const;
 
-    String baseAsString() const;
+    WEBCORE_EXPORT String baseAsString() const;
 
-    String fileSystemPath() const;
+    WEBCORE_EXPORT String fileSystemPath() const;
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
-    bool protocolIs(const char*) const;
+    WEBCORE_EXPORT bool protocolIs(const char*) const;
     bool protocolIsData() const { return protocolIs("data"); }
     bool protocolIsInHTTPFamily() const;
-    bool isLocalFile() const;
+    WEBCORE_EXPORT bool isLocalFile() const;
     bool isBlankURL() const;
 
-    bool setProtocol(const String&);
+    WEBCORE_EXPORT bool setProtocol(const String&);
     void setHost(const String&);
 
     void removePort();
@@ -138,7 +138,7 @@ public:
 
     // If you pass an empty path for HTTP or HTTPS URLs, the resulting path
     // will be "/".
-    void setPath(const String&);
+    WEBCORE_EXPORT void setPath(const String&);
 
     // The query may begin with a question mark, or, if not, one will be added
     // for you. Setting the query to the empty string will leave a "?" in the
@@ -162,8 +162,8 @@ public:
     operator const String&() const { return string(); }
 
 #if USE(CF)
-    URL(CFURLRef);
-    RetainPtr<CFURLRef> createCFURL() const;
+    WEBCORE_EXPORT URL(CFURLRef);
+    WEBCORE_EXPORT RetainPtr<CFURLRef> createCFURL() const;
 #endif
 
 #if USE(SOUP)
@@ -172,8 +172,8 @@ public:
 #endif
 
 #if USE(FOUNDATION)
-    URL(NSURL*);
-    operator NSURL*() const;
+    WEBCORE_EXPORT URL(NSURL*);
+    WEBCORE_EXPORT operator NSURL*() const;
 #endif
 #ifdef __OBJC__
     operator NSString*() const { return string(); }
@@ -188,7 +188,7 @@ public:
     bool isSafeToSendToAnotherThread() const;
 
 private:
-    void invalidate();
+    WEBCORE_EXPORT void invalidate();
     static bool protocolIs(const String&, const char*);
     void init(const URL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
@@ -224,10 +224,10 @@ bool operator!=(const URL&, const URL&);
 bool operator!=(const URL&, const String&);
 bool operator!=(const String&, const URL&);
 
-bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
-bool protocolHostAndPortAreEqual(const URL&, const URL&);
+WEBCORE_EXPORT bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+WEBCORE_EXPORT bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
-const URL& blankURL();
+WEBCORE_EXPORT const URL& blankURL();
 
 // Functions to do URL operations on strings.
 // These are operations that aren't faster on a parsed URL.
@@ -235,7 +235,7 @@ const URL& blankURL();
 // This is especially important because valid javascript URLs are not necessarily considered valid by URL.
 
 bool protocolIs(const String& url, const char* protocol);
-bool protocolIsJavaScript(const String& url);
+WEBCORE_EXPORT bool protocolIsJavaScript(const String& url);
 bool protocolIsInHTTPFamily(const String& url);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
@@ -244,15 +244,15 @@ bool portAllowed(const URL&); // Blacklist ports that should never be used for W
 bool isValidProtocol(const String&);
 
 String mimeTypeFromDataURL(const String& url);
-String mimeTypeFromURL(const URL&);
+WEBCORE_EXPORT String mimeTypeFromURL(const URL&);
 
 // Unescapes the given string using URL escaping rules, given an optional
 // encoding (defaulting to UTF-8 otherwise). DANGER: If the URL has "%00"
 // in it, the resulting string will have embedded null characters!
-String decodeURLEscapeSequences(const String&);
+WEBCORE_EXPORT String decodeURLEscapeSequences(const String&);
 String decodeURLEscapeSequences(const String&, const TextEncoding&);
 
-String encodeWithURLEscapeSequences(const String&);
+WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);
 
 // Inlines.
 
@@ -345,7 +345,7 @@ inline unsigned URL::pathAfterLastSlash() const
 }
 
 #if PLATFORM(IOS)
-void enableURLSchemeCanonicalization(bool);
+WEBCORE_EXPORT void enableURLSchemeCanonicalization(bool);
 #endif
 
 } // namespace WebCore

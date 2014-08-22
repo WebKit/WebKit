@@ -163,7 +163,7 @@ public:
     IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), m_frameRect.pixelSnappedSize()); }
     virtual IntRect borderBoundingBox() const override final { return pixelSnappedBorderBoxRect(); }
 
-    RoundedRect::Radii borderRadii() const;
+    WEBCORE_EXPORT RoundedRect::Radii borderRadii() const;
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
     LayoutRect contentBoxRect() const { return LayoutRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
@@ -189,7 +189,7 @@ public:
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
     // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr,
     // but it is on the right in vertical-rl.
-    LayoutRect flippedClientBoxRect() const;
+    WEBCORE_EXPORT LayoutRect flippedClientBoxRect() const;
     LayoutRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : flippedClientBoxRect(); }
     LayoutUnit logicalLeftLayoutOverflow() const { return style().isHorizontalWritingMode() ? layoutOverflowRect().x() : layoutOverflowRect().y(); }
     LayoutUnit logicalRightLayoutOverflow() const { return style().isHorizontalWritingMode() ? layoutOverflowRect().maxX() : layoutOverflowRect().maxY(); }
@@ -231,8 +231,8 @@ public:
     // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
     LayoutUnit clientLeft() const { return borderLeft(); }
     LayoutUnit clientTop() const { return borderTop(); }
-    LayoutUnit clientWidth() const;
-    LayoutUnit clientHeight() const;
+    WEBCORE_EXPORT LayoutUnit clientWidth() const;
+    WEBCORE_EXPORT LayoutUnit clientHeight() const;
     LayoutUnit clientLogicalWidth() const { return style().isHorizontalWritingMode() ? clientWidth() : clientHeight(); }
     LayoutUnit clientLogicalHeight() const { return style().isHorizontalWritingMode() ? clientHeight() : clientWidth(); }
     LayoutUnit clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }

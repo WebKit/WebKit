@@ -198,9 +198,9 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(COCOA)
-    String builtInPDFPluginName();
-    String pdfDocumentTypeDescription();
-    String postScriptDocumentTypeDescription();
+    WEBCORE_EXPORT String builtInPDFPluginName();
+    WEBCORE_EXPORT String pdfDocumentTypeDescription();
+    WEBCORE_EXPORT String postScriptDocumentTypeDescription();
     String keygenMenuItem512();
     String keygenMenuItem1024();
     String keygenMenuItem2048();
@@ -262,7 +262,7 @@ namespace WebCore {
     String snapshottedPlugInLabelTitle();
     String snapshottedPlugInLabelSubtitle();
 
-    String useBlockedPlugInContextMenuTitle();
+    WEBCORE_EXPORT String useBlockedPlugInContextMenuTitle();
 
 #if ENABLE(SUBTLE_CRYPTO)
     String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName);
@@ -272,7 +272,7 @@ namespace WebCore {
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
 
-    String localizedString(const char* key);
+    WEBCORE_EXPORT String localizedString(const char* key);
 
 } // namespace WebCore
 

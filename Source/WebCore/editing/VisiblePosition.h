@@ -53,7 +53,7 @@ public:
     // NOTE: UPSTREAM affinity will be used only if pos is at end of a wrapped line,
     // otherwise it will be converted to DOWNSTREAM
     VisiblePosition() : m_affinity(VP_DEFAULT_AFFINITY) { }
-    VisiblePosition(const Position&, EAffinity = VP_DEFAULT_AFFINITY);
+    WEBCORE_EXPORT VisiblePosition(const Position&, EAffinity = VP_DEFAULT_AFFINITY);
 
     void clear() { m_deepPosition.clear(); }
 
@@ -68,15 +68,15 @@ public:
     // FIXME: Change the following functions' parameter from a boolean to StayInEditableContent.
 
     // next() and previous() will increment/decrement by a character cluster.
-    VisiblePosition next(EditingBoundaryCrossingRule = CanCrossEditingBoundary) const;
-    VisiblePosition previous(EditingBoundaryCrossingRule = CanCrossEditingBoundary) const;
+    WEBCORE_EXPORT VisiblePosition next(EditingBoundaryCrossingRule = CanCrossEditingBoundary) const;
+    WEBCORE_EXPORT VisiblePosition previous(EditingBoundaryCrossingRule = CanCrossEditingBoundary) const;
     VisiblePosition honorEditingBoundaryAtOrBefore(const VisiblePosition&) const;
     VisiblePosition honorEditingBoundaryAtOrAfter(const VisiblePosition&) const;
 
-    VisiblePosition left(bool stayInEditableContent = false) const;
-    VisiblePosition right(bool stayInEditableContent = false) const;
+    WEBCORE_EXPORT VisiblePosition left(bool stayInEditableContent = false) const;
+    WEBCORE_EXPORT VisiblePosition right(bool stayInEditableContent = false) const;
 
-    UChar32 characterAfter() const;
+    WEBCORE_EXPORT UChar32 characterAfter() const;
     UChar32 characterBefore() const { return previous().characterAfter(); }
 
     // FIXME: This does not handle [table, 0] correctly.
@@ -93,12 +93,12 @@ public:
     }
 
     // Rect is local to the returned renderer
-    LayoutRect localCaretRect(RenderObject*&) const;
+    WEBCORE_EXPORT LayoutRect localCaretRect(RenderObject*&) const;
     // Bounds of (possibly transformed) caret in absolute coords
-    IntRect absoluteCaretBounds() const;
+    WEBCORE_EXPORT IntRect absoluteCaretBounds() const;
     // Abs x/y position of the caret ignoring transforms.
     // FIXME: navigation with transforms should be smarter.
-    int lineDirectionPointForBlockDirectionNavigation() const;
+    WEBCORE_EXPORT int lineDirectionPointForBlockDirectionNavigation() const;
     
 #ifndef NDEBUG
     void debugPosition(const char* msg = "") const;
@@ -150,13 +150,13 @@ inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b)
 }    
 #endif
 
-PassRefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
+WEBCORE_EXPORT PassRefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
 bool setStart(Range*, const VisiblePosition&);
 bool setEnd(Range*, const VisiblePosition&);
 VisiblePosition startVisiblePosition(const Range*, EAffinity);
 VisiblePosition endVisiblePosition(const Range*, EAffinity);
 
-Element* enclosingBlockFlowElement(const VisiblePosition&);
+WEBCORE_EXPORT Element* enclosingBlockFlowElement(const VisiblePosition&);
 
 bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
 bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);

@@ -284,7 +284,7 @@ public:
 
     String getCurrentCursorInfo(ExceptionCode&);
 
-    String markerTextForListItem(Element*, ExceptionCode&);
+    WEBCORE_EXPORT String markerTextForListItem(Element*, ExceptionCode&);
 
     void forceReload(bool endToEnd);
 

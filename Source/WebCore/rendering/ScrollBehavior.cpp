@@ -47,8 +47,8 @@
 namespace WebCore {
 
 const ScrollAlignment ScrollAlignment::alignCenterIfNeeded = { noScroll, alignCenter, alignToClosestEdge };
-const ScrollAlignment ScrollAlignment::alignToEdgeIfNeeded = { noScroll, alignToClosestEdge, alignToClosestEdge };
-const ScrollAlignment ScrollAlignment::alignCenterAlways = { alignCenter, alignCenter, alignCenter };
+WEBCORE_EXPORT const ScrollAlignment ScrollAlignment::alignToEdgeIfNeeded = { noScroll, alignToClosestEdge, alignToClosestEdge };
+WEBCORE_EXPORT const ScrollAlignment ScrollAlignment::alignCenterAlways = { alignCenter, alignCenter, alignCenter };
 const ScrollAlignment ScrollAlignment::alignTopAlways = { alignTop, alignTop, alignTop };
 const ScrollAlignment ScrollAlignment::alignBottomAlways = { alignBottom, alignBottom, alignBottom };
 

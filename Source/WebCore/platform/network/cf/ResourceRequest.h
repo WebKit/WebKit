@@ -64,7 +64,7 @@ namespace WebCore {
         
 #if USE(CFNETWORK)
 #if PLATFORM(COCOA)
-        ResourceRequest(NSURLRequest *);
+        WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
         void updateNSURLRequest();
         void clearOrUpdateNSURLRequest();
 #endif
@@ -82,7 +82,7 @@ namespace WebCore {
         }
 #endif
 
-        void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
+        WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
 #if PLATFORM(MAC)
         void applyWebArchiveHackForMail();
@@ -93,22 +93,22 @@ namespace WebCore {
 #else
         bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
 #endif
-        NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
+        WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 #endif
 
 #if ENABLE(CACHE_PARTITIONING)
-        static String partitionName(const String& domain);
+        WEBCORE_EXPORT static String partitionName(const String& domain);
         const String& cachePartition() const { return m_cachePartition.isNull() ? emptyString() : m_cachePartition; }
         void setCachePartition(const String& cachePartition) { m_cachePartition = partitionName(cachePartition); }
 #endif
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-        CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
+        WEBCORE_EXPORT CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
         void setStorageSession(CFURLStorageSessionRef);
 #endif
 
-        static bool httpPipeliningEnabled();
-        static void setHTTPPipeliningEnabled(bool);
+        WEBCORE_EXPORT static bool httpPipeliningEnabled();
+        WEBCORE_EXPORT static void setHTTPPipeliningEnabled(bool);
 
         static bool resourcePrioritiesEnabled();
 

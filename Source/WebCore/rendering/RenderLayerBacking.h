@@ -185,7 +185,7 @@ public:
     bool hasUnpositionedOverflowControlsLayers() const;
 
     bool usingTiledBacking() const { return m_usingTiledCacheLayer; }
-    TiledBacking* tiledBacking() const;
+    WEBCORE_EXPORT TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
     void setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom);
     
@@ -222,10 +222,10 @@ public:
     virtual void verifyNotPainting();
 #endif
 
-    LayoutRect contentsBox() const;
+    WEBCORE_EXPORT LayoutRect contentsBox() const;
     
     // For informative purposes only.
-    CompositingLayerType compositingLayerType() const;
+    WEBCORE_EXPORT CompositingLayerType compositingLayerType() const;
     
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }

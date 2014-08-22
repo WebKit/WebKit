@@ -56,20 +56,20 @@ public:
     static PassRefPtr<SharedBuffer> create(const char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
     static PassRefPtr<SharedBuffer> create(const unsigned char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
 
-    static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
+    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
-    static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
+    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
     
-    ~SharedBuffer();
+    WEBCORE_EXPORT ~SharedBuffer();
     
 #if USE(FOUNDATION)
-    RetainPtr<NSData> createNSData();
-    static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
+    WEBCORE_EXPORT RetainPtr<NSData> createNSData();
+    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
 #endif
 #if USE(CF)
-    RetainPtr<CFDataRef> createCFData();
-    CFDataRef existingCFData();
-    static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
+    WEBCORE_EXPORT RetainPtr<CFDataRef> createCFData();
+    WEBCORE_EXPORT CFDataRef existingCFData();
+    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
 #endif
 
 #if USE(SOUP)
@@ -79,18 +79,18 @@ public:
     // Calling this function will force internal segmented buffers
     // to be merged into a flat buffer. Use getSomeData() whenever possible
     // for better performance.
-    const char* data() const;
+    WEBCORE_EXPORT const char* data() const;
     // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
     // ArrayBuffer without merging segmented buffers into a flat buffer.
     PassRefPtr<ArrayBuffer> createArrayBuffer() const;
 
-    unsigned size() const;
+    WEBCORE_EXPORT unsigned size() const;
 
 
     bool isEmpty() const { return !size(); }
 
-    void append(SharedBuffer*);
-    void append(const char*, unsigned);
+    WEBCORE_EXPORT void append(SharedBuffer*);
+    WEBCORE_EXPORT void append(const char*, unsigned);
     void append(const Vector<char>&);
 
     void clear();
@@ -116,14 +116,14 @@ public:
     //          // Use the data. for example: decoder->decode(segment, length);
     //          pos += length;
     //      }
-    unsigned getSomeData(const char*& data, unsigned position = 0) const;
+    WEBCORE_EXPORT unsigned getSomeData(const char*& data, unsigned position = 0) const;
 
 #if ENABLE(DISK_IMAGE_CACHE)
     enum MemoryMappingState { QueuedForMapping, PreviouslyQueuedForMapping, SuccessAlreadyMapped, FailureCacheFull };
 
     // Calling this will cause this buffer to be memory mapped.
-    MemoryMappingState allowToBeMemoryMapped();
-    bool isAllowedToBeMemoryMapped() const;
+    WEBCORE_EXPORT MemoryMappingState allowToBeMemoryMapped();
+    WEBCORE_EXPORT bool isAllowedToBeMemoryMapped() const;
 
     // This is called to indicate that the memory mapping failed.
     void failedMemoryMap();
@@ -137,23 +137,23 @@ public:
     typedef void* MemoryMappedNotifyCallbackData;
     typedef void (*MemoryMappedNotifyCallback)(PassRefPtr<SharedBuffer>, CompletionStatus, MemoryMappedNotifyCallbackData);
 
-    MemoryMappedNotifyCallbackData memoryMappedNotificationCallbackData() const;
-    MemoryMappedNotifyCallback memoryMappedNotificationCallback() const;
-    void setMemoryMappedNotificationCallback(MemoryMappedNotifyCallback, MemoryMappedNotifyCallbackData);
+    WEBCORE_EXPORT MemoryMappedNotifyCallbackData memoryMappedNotificationCallbackData() const;
+    WEBCORE_EXPORT MemoryMappedNotifyCallback memoryMappedNotificationCallback() const;
+    WEBCORE_EXPORT void setMemoryMappedNotificationCallback(MemoryMappedNotifyCallback, MemoryMappedNotifyCallbackData);
 #endif
 
     void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
-    bool hasPlatformData() const;
+    WEBCORE_EXPORT bool hasPlatformData() const;
 
     struct DataBuffer : public ThreadSafeRefCounted<DataBuffer> {
         Vector<char> data;
     };
 
 private:
-    SharedBuffer();
+    WEBCORE_EXPORT SharedBuffer();
     explicit SharedBuffer(unsigned);
-    SharedBuffer(const char*, unsigned);
-    SharedBuffer(const unsigned char*, unsigned);
+    WEBCORE_EXPORT SharedBuffer(const char*, unsigned);
+    WEBCORE_EXPORT SharedBuffer(const unsigned char*, unsigned);
     
     // Calling this function will force internal segmented buffers
     // to be merged into a flat buffer. Use getSomeData() whenever possible

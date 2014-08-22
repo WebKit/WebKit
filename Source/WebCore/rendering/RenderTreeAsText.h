@@ -51,8 +51,8 @@ enum RenderAsTextBehaviorFlags {
 typedef unsigned RenderAsTextBehavior;
 
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
-String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+WEBCORE_EXPORT String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+WEBCORE_EXPORT String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 void write(TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
 class RenderTreeAsText {
@@ -66,7 +66,7 @@ static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTex
 // Helper function shared with SVGRenderTreeAsText
 String quoteAndEscapeNonPrintables(const String&);
 
-String counterValueForElement(Element*);
+WEBCORE_EXPORT String counterValueForElement(Element*);
 
 String markerTextForListItem(Element*);
 

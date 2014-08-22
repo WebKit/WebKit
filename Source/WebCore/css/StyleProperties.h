@@ -101,7 +101,7 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, StyleSheetContents* contextStyleSheet) const;
 
-    PassRef<MutableStyleProperties> mutableCopy() const;
+    WEBCORE_EXPORT PassRef<MutableStyleProperties> mutableCopy() const;
     PassRef<ImmutableStyleProperties> immutableCopyIfNeeded() const;
 
     PassRef<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;

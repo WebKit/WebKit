@@ -24,6 +24,6 @@
 
 namespace WebCore {
 
-NSString *systemMarketingVersion();
+WEBCORE_EXPORT NSString *systemMarketingVersion();
 
 }

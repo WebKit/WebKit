@@ -178,9 +178,9 @@ public:
     // Returns true if the given layer needs it own backing store.
     bool requiresOwnBackingStore(const RenderLayer&, const RenderLayer* compositingAncestorLayer, const LayoutRect& layerCompositedBoundsInAncestor, const LayoutRect& ancestorCompositedBounds) const;
 
-    RenderLayer& rootRenderLayer() const;
+    WEBCORE_EXPORT RenderLayer& rootRenderLayer() const;
     GraphicsLayer* rootGraphicsLayer() const;
-    GraphicsLayer* scrollLayer() const;
+    WEBCORE_EXPORT GraphicsLayer* scrollLayer() const;
     GraphicsLayer* clipLayer() const;
     GraphicsLayer* rootContentLayer() const;
 

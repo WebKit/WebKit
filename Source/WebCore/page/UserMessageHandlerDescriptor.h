@@ -52,7 +52,7 @@ public:
     {
         return adoptRef(new UserMessageHandlerDescriptor(name, world, client));
     }
-    ~UserMessageHandlerDescriptor();
+    WEBCORE_EXPORT ~UserMessageHandlerDescriptor();
 
     const AtomicString& name();
     DOMWrapperWorld& world();
@@ -60,7 +60,7 @@ public:
     Client& client() const { return m_client; }
 
 private:
-    explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&, Client&);
+    WEBCORE_EXPORT explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&, Client&);
     
     AtomicString m_name;
     Ref<DOMWrapperWorld> m_world;

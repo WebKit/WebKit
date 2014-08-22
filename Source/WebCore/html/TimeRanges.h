@@ -38,31 +38,31 @@ typedef int ExceptionCode;
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:
-    static PassRefPtr<TimeRanges> create();
-    static PassRefPtr<TimeRanges> create(double start, double end);
+    WEBCORE_EXPORT static PassRefPtr<TimeRanges> create();
+    WEBCORE_EXPORT static PassRefPtr<TimeRanges> create(double start, double end);
     static PassRefPtr<TimeRanges> create(const PlatformTimeRanges&);
 
-    double start(unsigned index, ExceptionCode&) const;
-    double end(unsigned index, ExceptionCode&) const;
+    WEBCORE_EXPORT double start(unsigned index, ExceptionCode&) const;
+    WEBCORE_EXPORT double end(unsigned index, ExceptionCode&) const;
 
-    PassRefPtr<TimeRanges> copy() const;
+    WEBCORE_EXPORT PassRefPtr<TimeRanges> copy() const;
     void invert();
-    void intersectWith(const TimeRanges&);
+    WEBCORE_EXPORT void intersectWith(const TimeRanges&);
     void unionWith(const TimeRanges&);
     
-    unsigned length() const;
+    WEBCORE_EXPORT unsigned length() const;
 
-    void add(double start, double end);
+    WEBCORE_EXPORT void add(double start, double end);
     bool contain(double time) const;
     
     size_t find(double time) const;
-    double nearest(double time) const;
+    WEBCORE_EXPORT double nearest(double time) const;
     double totalDuration() const;
 
     const PlatformTimeRanges& ranges() const { return m_ranges; }
 
 private:
-    explicit TimeRanges();
+    WEBCORE_EXPORT explicit TimeRanges();
     TimeRanges(double start, double end);
     TimeRanges(const PlatformTimeRanges&);
 

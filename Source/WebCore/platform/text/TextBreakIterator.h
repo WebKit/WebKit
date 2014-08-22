@@ -40,8 +40,8 @@ TextBreakIterator* cursorMovementIterator(StringView);
 TextBreakIterator* wordBreakIterator(StringView);
 TextBreakIterator* sentenceBreakIterator(StringView);
 
-TextBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
-void releaseLineBreakIterator(TextBreakIterator*);
+WEBCORE_EXPORT TextBreakIterator* acquireLineBreakIterator(StringView, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength);
+WEBCORE_EXPORT void releaseLineBreakIterator(TextBreakIterator*);
 
 int textBreakFirst(TextBreakIterator*);
 int textBreakLast(TextBreakIterator*);
@@ -49,7 +49,7 @@ int textBreakNext(TextBreakIterator*);
 int textBreakPrevious(TextBreakIterator*);
 int textBreakCurrent(TextBreakIterator*);
 int textBreakPreceding(TextBreakIterator*, int);
-int textBreakFollowing(TextBreakIterator*, int);
+WEBCORE_EXPORT int textBreakFollowing(TextBreakIterator*, int);
 bool isTextBreak(TextBreakIterator*, int);
 bool isWordTextBreak(TextBreakIterator*);
 

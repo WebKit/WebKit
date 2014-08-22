@@ -41,12 +41,12 @@ public:
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
 // FIXME: This doesn't really belong here.
-IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
+WEBCORE_EXPORT IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 
 // FIXME: WebKit2 has a lot of code copy/pasted from PlatformEventFactoryMac in WebEventFactory. It should be carefully shared with WebCore.
-int windowsKeyCodeForKeyEvent(NSEvent*);
-String keyIdentifierForKeyEvent(NSEvent*);
-double eventTimeStampSince1970(NSEvent*);
+WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(NSEvent*);
+WEBCORE_EXPORT String keyIdentifierForKeyEvent(NSEvent*);
+WEBCORE_EXPORT double eventTimeStampSince1970(NSEvent*);
 
 #endif
 

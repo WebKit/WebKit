@@ -150,7 +150,7 @@ private:
     friend class WTF::NeverDestroyed<ApplicationCacheStorage>;
 };
 
-ApplicationCacheStorage& cacheStorage();
+WEBCORE_EXPORT ApplicationCacheStorage& cacheStorage();
 
 } // namespace WebCore
 

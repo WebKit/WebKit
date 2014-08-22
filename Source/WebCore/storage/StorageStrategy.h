@@ -37,9 +37,9 @@ class StorageNamespace;
 
 class StorageStrategy {
 public:
-    virtual PassRefPtr<StorageNamespace> localStorageNamespace(PageGroup*);
-    virtual PassRefPtr<StorageNamespace> transientLocalStorageNamespace(PageGroup*, SecurityOrigin*);
-    virtual PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
+    WEBCORE_EXPORT virtual PassRefPtr<StorageNamespace> localStorageNamespace(PageGroup*);
+    WEBCORE_EXPORT virtual PassRefPtr<StorageNamespace> transientLocalStorageNamespace(PageGroup*, SecurityOrigin*);
+    WEBCORE_EXPORT virtual PassRefPtr<StorageNamespace> sessionStorageNamespace(Page*);
 
 protected:
     virtual ~StorageStrategy()

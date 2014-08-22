@@ -65,7 +65,7 @@ private:
 };
 
 DOMWrapperWorld& normalWorld(JSC::VM&);
-DOMWrapperWorld& mainThreadNormalWorld();
+WEBCORE_EXPORT DOMWrapperWorld& mainThreadNormalWorld();
 inline DOMWrapperWorld& debuggerWorld() { return mainThreadNormalWorld(); }
 inline DOMWrapperWorld& pluginWorld() { return mainThreadNormalWorld(); }
 

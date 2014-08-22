@@ -37,18 +37,18 @@ namespace WebCore {
 class StorageMap : public RefCounted<StorageMap> {
 public:
     // Quota size measured in bytes.
-    static PassRefPtr<StorageMap> create(unsigned quotaSize);
+    WEBCORE_EXPORT static PassRefPtr<StorageMap> create(unsigned quotaSize);
 
-    unsigned length() const;
-    String key(unsigned index);
-    String getItem(const String&) const;
-    PassRefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
-    PassRefPtr<StorageMap> setItemIgnoringQuota(const String& key, const String& value);
-    PassRefPtr<StorageMap> removeItem(const String&, String& oldValue);
+    WEBCORE_EXPORT unsigned length() const;
+    WEBCORE_EXPORT String key(unsigned index);
+    WEBCORE_EXPORT String getItem(const String&) const;
+    WEBCORE_EXPORT PassRefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
+    WEBCORE_EXPORT PassRefPtr<StorageMap> setItemIgnoringQuota(const String& key, const String& value);
+    WEBCORE_EXPORT PassRefPtr<StorageMap> removeItem(const String&, String& oldValue);
 
-    bool contains(const String& key) const;
+    WEBCORE_EXPORT bool contains(const String& key) const;
 
-    void importItems(const HashMap<String, String>&);
+    WEBCORE_EXPORT void importItems(const HashMap<String, String>&);
     const HashMap<String, String>& items() const { return m_map; }
 
     unsigned quota() const { return m_quotaSize; }

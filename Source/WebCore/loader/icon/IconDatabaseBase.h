@@ -213,8 +213,8 @@ public:
 };
 
 // Functions to get/set the global icon database.
-IconDatabaseBase& iconDatabase();
-void setGlobalIconDatabase(IconDatabaseBase*);
+WEBCORE_EXPORT IconDatabaseBase& iconDatabase();
+WEBCORE_EXPORT void setGlobalIconDatabase(IconDatabaseBase*);
 bool documentCanHaveIcon(const String&);
 
 } // namespace WebCore

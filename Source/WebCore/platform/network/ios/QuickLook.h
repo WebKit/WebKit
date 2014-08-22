@@ -66,18 +66,18 @@ NSSet *QLPreviewGetSupportedMIMETypesSet();
 NSDictionary *QLFileAttributes();
 NSDictionary *QLDirectoryAttributes();
 
-void addQLPreviewConverterWithFileForURL(NSURL *, id converter, NSString *fileName);
-NSString *qlPreviewConverterFileNameForURL(NSURL *);
-NSString *qlPreviewConverterUTIForURL(NSURL *);
-void removeQLPreviewConverterForURL(NSURL *);
+WEBCORE_EXPORT void addQLPreviewConverterWithFileForURL(NSURL *, id converter, NSString *fileName);
+WEBCORE_EXPORT NSString *qlPreviewConverterFileNameForURL(NSURL *);
+WEBCORE_EXPORT NSString *qlPreviewConverterUTIForURL(NSURL *);
+WEBCORE_EXPORT void removeQLPreviewConverterForURL(NSURL *);
 
-PassOwnPtr<ResourceRequest> registerQLPreviewConverterIfNeeded(NSURL *, NSString *mimeType, NSData *);
+WEBCORE_EXPORT PassOwnPtr<ResourceRequest> registerQLPreviewConverterIfNeeded(NSURL *, NSString *mimeType, NSData *);
 
 const URL safeQLURLForDocumentURLAndResourceURL(const URL& documentURL, const String& resourceURL);
 
 const char* QLPreviewProtocol();
 
-NSString *createTemporaryFileForQuickLook(NSString *fileName);
+WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 
 class QuickLookHandle {
     WTF_MAKE_NONCOPYABLE(QuickLookHandle);

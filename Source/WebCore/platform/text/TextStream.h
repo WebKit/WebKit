@@ -46,24 +46,24 @@ public:
         double value;
     };
 
-    TextStream& operator<<(bool);
-    TextStream& operator<<(int);
-    TextStream& operator<<(unsigned);
+    WEBCORE_EXPORT TextStream& operator<<(bool);
+    WEBCORE_EXPORT TextStream& operator<<(int);
+    WEBCORE_EXPORT TextStream& operator<<(unsigned);
     TextStream& operator<<(long);
     TextStream& operator<<(unsigned long);
     TextStream& operator<<(long long);
-    TextStream& operator<<(unsigned long long);
-    TextStream& operator<<(float);
-    TextStream& operator<<(double);
-    TextStream& operator<<(const char*);
-    TextStream& operator<<(const void*);
-    TextStream& operator<<(const String&);
+    WEBCORE_EXPORT TextStream& operator<<(unsigned long long);
+    WEBCORE_EXPORT TextStream& operator<<(float);
+    WEBCORE_EXPORT TextStream& operator<<(double);
+    WEBCORE_EXPORT TextStream& operator<<(const char*);
+    WEBCORE_EXPORT TextStream& operator<<(const void*);
+    WEBCORE_EXPORT TextStream& operator<<(const String&);
     TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
-    TextStream& operator<<(const IntPoint&);
-    TextStream& operator<<(const IntRect&);
-    TextStream& operator<<(const FloatPoint&);
-    TextStream& operator<<(const FloatSize&);
+    WEBCORE_EXPORT TextStream& operator<<(const IntPoint&);
+    WEBCORE_EXPORT TextStream& operator<<(const IntRect&);
+    WEBCORE_EXPORT TextStream& operator<<(const FloatPoint&);
+    WEBCORE_EXPORT TextStream& operator<<(const FloatSize&);
     TextStream& operator<<(const LayoutUnit&);
     TextStream& operator<<(const LayoutPoint&);
     TextStream& operator<<(const LayoutRect&);
@@ -83,7 +83,7 @@ public:
         return *this << "]";
     }
 
-    String release();
+    WEBCORE_EXPORT String release();
 
 private:
     StringBuilder m_text;

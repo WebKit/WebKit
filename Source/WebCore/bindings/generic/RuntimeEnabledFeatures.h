@@ -200,7 +200,7 @@ public:
     bool gamepadsEnabled() const { return m_areGamepadsEnabled; }
 #endif
 
-    static RuntimeEnabledFeatures& sharedFeatures();
+    WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
     // Never instantiate.

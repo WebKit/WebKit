@@ -34,9 +34,9 @@ namespace WebCore {
 
 typedef Vector<char, 512> URLCharBuffer;
 
-RetainPtr<CFURLRef> createCFURLFromBuffer(const char*, size_t, CFURLRef baseURL = 0);
-void getURLBytes(CFURLRef, URLCharBuffer&);
-void getURLBytes(CFURLRef, CString&);
+WEBCORE_EXPORT RetainPtr<CFURLRef> createCFURLFromBuffer(const char*, size_t, CFURLRef baseURL = 0);
+WEBCORE_EXPORT void getURLBytes(CFURLRef, URLCharBuffer&);
+WEBCORE_EXPORT void getURLBytes(CFURLRef, CString&);
 
 }
 

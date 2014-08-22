@@ -36,30 +36,30 @@ typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
 
 class SchemeRegistry {
 public:
-    static void registerURLSchemeAsLocal(const String&);
+    WEBCORE_EXPORT static void registerURLSchemeAsLocal(const String&);
     static void removeURLSchemeRegisteredAsLocal(const String&);
     static const URLSchemesMap& localSchemes();
 
-    static bool shouldTreatURLSchemeAsLocal(const String&);
+    WEBCORE_EXPORT static bool shouldTreatURLSchemeAsLocal(const String&);
 
     // Secure schemes do not trigger mixed content warnings. For example,
     // https and data are secure schemes because they cannot be corrupted by
     // active network attackers.
-    static void registerURLSchemeAsSecure(const String&);
+    WEBCORE_EXPORT static void registerURLSchemeAsSecure(const String&);
     static bool shouldTreatURLSchemeAsSecure(const String&);
 
-    static void registerURLSchemeAsNoAccess(const String&);
+    WEBCORE_EXPORT static void registerURLSchemeAsNoAccess(const String&);
     static bool shouldTreatURLSchemeAsNoAccess(const String&);
 
     // Display-isolated schemes can only be displayed (in the sense of
     // SecurityOrigin::canDisplay) by documents from the same scheme.
-    static void registerURLSchemeAsDisplayIsolated(const String&);
+    WEBCORE_EXPORT static void registerURLSchemeAsDisplayIsolated(const String&);
     static bool shouldTreatURLSchemeAsDisplayIsolated(const String&);
 
-    static void registerURLSchemeAsEmptyDocument(const String&);
-    static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
+    WEBCORE_EXPORT static void registerURLSchemeAsEmptyDocument(const String&);
+    WEBCORE_EXPORT static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
 
-    static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String&);
+    WEBCORE_EXPORT static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String&);
     static bool isDomainRelaxationForbiddenForURLScheme(const String&);
 
     // Such schemes should delegate to SecurityOrigin::canRequest for any URL
@@ -74,19 +74,19 @@ public:
 
     // Let some schemes opt-out of Private Browsing's default behavior of prohibiting read/write
     // access to Local Storage and Databases.
-    static void registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(const String& scheme);
-    static bool allowsLocalStorageAccessInPrivateBrowsing(const String& scheme);
-    static void registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme);
+    WEBCORE_EXPORT static void registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(const String& scheme);
+    WEBCORE_EXPORT static bool allowsLocalStorageAccessInPrivateBrowsing(const String& scheme);
+    WEBCORE_EXPORT static void registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme);
     static bool allowsDatabaseAccessInPrivateBrowsing(const String& scheme);
 
     // Allow non-HTTP schemes to be registered to allow CORS requests.
-    static void registerURLSchemeAsCORSEnabled(const String& scheme);
+    WEBCORE_EXPORT static void registerURLSchemeAsCORSEnabled(const String& scheme);
     static bool shouldTreatURLSchemeAsCORSEnabled(const String& scheme);
 
     // Allow resources from some schemes to load on a page, regardless of its
     // Content Security Policy.
-    static void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
-    static void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
+    WEBCORE_EXPORT static void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
+    WEBCORE_EXPORT static void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
     static bool schemeShouldBypassContentSecurityPolicy(const String& scheme);
     
     // Schemes whose responses can be cached indefinitely.
@@ -94,7 +94,7 @@ public:
 
 #if ENABLE(CACHE_PARTITIONING)
     // Schemes whose requests should be partitioned in the cache
-    static void registerURLSchemeAsCachePartitioned(const String& scheme);
+    WEBCORE_EXPORT static void registerURLSchemeAsCachePartitioned(const String& scheme);
     static bool shouldPartitionCacheForURLScheme(const String& scheme);
 #endif
 };

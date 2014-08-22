@@ -48,7 +48,7 @@ public:
     RenderView(Document&, PassRef<RenderStyle>);
     virtual ~RenderView();
 
-    bool hitTest(const HitTestRequest&, HitTestResult&);
+    WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
 
     virtual const char* renderName() const override { return "RenderView"; }
@@ -185,14 +185,14 @@ public:
     // Notification that this view moved into or out of a native window.
     void setIsInWindow(bool);
 
-    RenderLayerCompositor& compositor();
-    bool usesCompositing() const;
+    WEBCORE_EXPORT RenderLayerCompositor& compositor();
+    WEBCORE_EXPORT bool usesCompositing() const;
 
-    IntRect unscaledDocumentRect() const;
+    WEBCORE_EXPORT IntRect unscaledDocumentRect() const;
     LayoutRect unextendedBackgroundRect(RenderBox* backgroundRenderer) const;
     LayoutRect backgroundRect(RenderBox* backgroundRenderer) const;
 
-    IntRect documentRect() const;
+    WEBCORE_EXPORT IntRect documentRect() const;
 
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
@@ -231,7 +231,7 @@ public:
     void didCreateRenderer() { ++m_rendererCount; }
     void didDestroyRenderer() { --m_rendererCount; }
 
-    void resumePausedImageAnimationsIfNeeded();
+    WEBCORE_EXPORT void resumePausedImageAnimationsIfNeeded();
     void addRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
 

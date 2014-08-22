@@ -94,7 +94,7 @@ namespace WebCore {
      };
 
     // Function to obtain the global page cache.
-    PageCache* pageCache();
+    WEBCORE_EXPORT PageCache* pageCache();
 
 } // namespace WebCore
 

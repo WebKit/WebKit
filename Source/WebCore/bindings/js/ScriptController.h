@@ -77,7 +77,7 @@ public:
     explicit ScriptController(Frame&);
     ~ScriptController();
 
-    static PassRefPtr<DOMWrapperWorld> createWorld();
+    WEBCORE_EXPORT static PassRefPtr<DOMWrapperWorld> createWorld();
 
     JSDOMWindowShell* createWindowShell(DOMWrapperWorld&);
     void destroyWindowShell(DOMWrapperWorld&);
@@ -102,8 +102,8 @@ public:
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
 
     Deprecated::ScriptValue executeScript(const ScriptSourceCode&);
-    Deprecated::ScriptValue executeScript(const String& script, bool forceUserGesture = false);
-    Deprecated::ScriptValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
+    WEBCORE_EXPORT Deprecated::ScriptValue executeScript(const String& script, bool forceUserGesture = false);
+    WEBCORE_EXPORT Deprecated::ScriptValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const URL&, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
@@ -120,10 +120,10 @@ public:
     void enableEval();
     void disableEval(const String& errorMessage);
 
-    static bool processingUserGesture();
+    WEBCORE_EXPORT static bool processingUserGesture();
 
     static bool canAccessFromCurrentOrigin(Frame*);
-    bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
+    WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
 
     // Debugger can be 0 to detach any existing Debugger.
     void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window shells.
@@ -141,7 +141,7 @@ public:
     void namedItemRemoved(HTMLDocument*, const AtomicString&) { }
 
     void clearScriptObjects();
-    void cleanupScriptObjectsForPlugin(void*);
+    WEBCORE_EXPORT void cleanupScriptObjectsForPlugin(void*);
 
     void updatePlatformScriptObjects();
 
@@ -149,28 +149,28 @@ public:
     JSC::Bindings::RootObject* bindingRootObject();
     JSC::Bindings::RootObject* cacheableBindingRootObject();
 
-    PassRefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
+    WEBCORE_EXPORT PassRefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
 #if ENABLE(INSPECTOR)
     void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>&);
 #endif
 
 #if PLATFORM(COCOA)
-    WebScriptObject* windowScriptObject();
-    JSContext *javaScriptContext();
+    WEBCORE_EXPORT WebScriptObject* windowScriptObject();
+    WEBCORE_EXPORT JSContext *javaScriptContext();
 #endif
 
-    JSC::JSObject* jsObjectForPluginElement(HTMLPlugInElement*);
+    WEBCORE_EXPORT JSC::JSObject* jsObjectForPluginElement(HTMLPlugInElement*);
     
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
-    NPObject* windowScriptNPObject();
+    WEBCORE_EXPORT NPObject* windowScriptNPObject();
 #endif
 
     bool shouldBypassMainWorldContentSecurityPolicy();
 
 private:
-    JSDOMWindowShell* initScript(DOMWrapperWorld&);
+    WEBCORE_EXPORT JSDOMWindowShell* initScript(DOMWrapperWorld&);
 
     void disconnectPlatformScriptObjects();
 

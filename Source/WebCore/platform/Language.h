@@ -31,23 +31,23 @@
 
 namespace WebCore {
 
-String defaultLanguage();
-Vector<String> userPreferredLanguages();
+WEBCORE_EXPORT String defaultLanguage();
+WEBCORE_EXPORT Vector<String> userPreferredLanguages();
 Vector<String> userPreferredLanguagesOverride();
-void overrideUserPreferredLanguages(const Vector<String>&);
+WEBCORE_EXPORT void overrideUserPreferredLanguages(const Vector<String>&);
 size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList);
 
 // The observer function will be called when system language changes.
 typedef void (*LanguageChangeObserverFunction)(void* context);
-void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
-void removeLanguageChangeObserver(void* context);
+WEBCORE_EXPORT void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
+WEBCORE_EXPORT void removeLanguageChangeObserver(void* context);
 
 Vector<String> platformUserPreferredLanguages();
 
 String displayNameForLanguageLocale(const String&);
 
 // Called from platform specific code when the user's preferred language(s) change.
-void languageDidChange();
+WEBCORE_EXPORT void languageDidChange();
 }
 
 #endif

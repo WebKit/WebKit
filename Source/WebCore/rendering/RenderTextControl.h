@@ -34,7 +34,7 @@ class RenderTextControl : public RenderBlockFlow {
 public:
     virtual ~RenderTextControl();
 
-    HTMLTextFormControlElement& textFormControlElement() const;
+    WEBCORE_EXPORT HTMLTextFormControlElement& textFormControlElement() const;
     virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
 #if PLATFORM(IOS)

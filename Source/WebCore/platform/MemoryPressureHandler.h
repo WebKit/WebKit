@@ -131,7 +131,7 @@ private:
 };
  
 // Function to obtain the global memory pressure object.
-MemoryPressureHandler& memoryPressureHandler();
+WEBCORE_EXPORT MemoryPressureHandler& memoryPressureHandler();
 
 } // namespace WebCore
 

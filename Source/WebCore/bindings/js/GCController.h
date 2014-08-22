@@ -58,7 +58,7 @@ namespace WebCore {
     };
 
     // Function to obtain the global GC controller.
-    GCController& gcController() PURE_FUNCTION;
+    WEBCORE_EXPORT GCController& gcController() PURE_FUNCTION;
 
 } // namespace WebCore
 

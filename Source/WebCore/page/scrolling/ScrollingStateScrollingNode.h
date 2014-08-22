@@ -55,19 +55,19 @@ public:
     };
 
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
-    void setScrollableAreaSize(const FloatSize&);
+    WEBCORE_EXPORT void setScrollableAreaSize(const FloatSize&);
 
     const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
-    void setTotalContentsSize(const FloatSize&);
+    WEBCORE_EXPORT void setTotalContentsSize(const FloatSize&);
 
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
-    void setReachableContentsSize(const FloatSize&);
+    WEBCORE_EXPORT void setReachableContentsSize(const FloatSize&);
 
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
-    void setScrollPosition(const FloatPoint&);
+    WEBCORE_EXPORT void setScrollPosition(const FloatPoint&);
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
-    void setScrollOrigin(const IntPoint&);
+    WEBCORE_EXPORT void setScrollOrigin(const IntPoint&);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     const Vector<float>& horizontalSnapOffsets() const { return m_horizontalSnapOffsets; }
@@ -78,11 +78,11 @@ public:
 #endif
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
-    void setScrollableAreaParameters(const ScrollableAreaParameters& params);
+    WEBCORE_EXPORT void setScrollableAreaParameters(const ScrollableAreaParameters& params);
 
     const FloatPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
-    void setRequestedScrollPosition(const FloatPoint&, bool representsProgrammaticScroll);
+    WEBCORE_EXPORT void setRequestedScrollPosition(const FloatPoint&, bool representsProgrammaticScroll);
     
     virtual void dumpProperties(TextStream&, int indent) const override;
     

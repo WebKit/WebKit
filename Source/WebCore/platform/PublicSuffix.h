@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool isPublicSuffix(const String& domain);
+WEBCORE_EXPORT bool isPublicSuffix(const String& domain);
 String topPrivatelyControlledDomain(const String& domain);
 
 } // namespace WebCore

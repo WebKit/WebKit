@@ -39,8 +39,8 @@ extern "C" NSString *NSTextInsertionUndoableAttributeName;
 namespace WebCore {
     
 #if USE(INSERTION_UNDO_GROUPING)
-bool shouldRegisterInsertionUndoGroup(NSAttributedString*);
-void registerInsertionUndoGroupingWithUndoManager(NSUndoManager*);
+WEBCORE_EXPORT bool shouldRegisterInsertionUndoGroup(NSAttributedString*);
+WEBCORE_EXPORT void registerInsertionUndoGroupingWithUndoManager(NSUndoManager*);
 #endif
     
 } // namespace WebCore

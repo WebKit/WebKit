@@ -50,15 +50,15 @@ class ResourceLoadScheduler {
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
-    virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
-    virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
-    virtual void remove(ResourceLoader*);
+    WEBCORE_EXPORT virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
+    WEBCORE_EXPORT virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
+    WEBCORE_EXPORT virtual void remove(ResourceLoader*);
     virtual void setDefersLoading(ResourceLoader*, bool);
     virtual void crossOriginRedirectReceived(ResourceLoader*, const URL& redirectURL);
     
-    virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
-    virtual void suspendPendingRequests();
-    virtual void resumePendingRequests();
+    WEBCORE_EXPORT virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
+    WEBCORE_EXPORT virtual void suspendPendingRequests();
+    WEBCORE_EXPORT virtual void resumePendingRequests();
     
     bool isSerialLoadingEnabled() const { return m_isSerialLoadingEnabled; }
     virtual void setSerialLoadingEnabled(bool b) { m_isSerialLoadingEnabled = b; }
@@ -72,13 +72,13 @@ public:
     };
 
 protected:
-    ResourceLoadScheduler();
-    virtual ~ResourceLoadScheduler();
+    WEBCORE_EXPORT ResourceLoadScheduler();
+    WEBCORE_EXPORT virtual ~ResourceLoadScheduler();
 
-    void notifyDidScheduleResourceRequest(ResourceLoader*);
+    WEBCORE_EXPORT void notifyDidScheduleResourceRequest(ResourceLoader*);
 
 #if USE(QUICK_LOOK)
-    bool maybeLoadQuickLookResource(ResourceLoader&);
+    WEBCORE_EXPORT bool maybeLoadQuickLookResource(ResourceLoader&);
 #endif
 
 private:
@@ -118,7 +118,7 @@ private:
     };
     
     HostInformation* hostForURL(const URL&, CreateHostPolicy = FindOnly);
-    void servePendingRequests(HostInformation*, ResourceLoadPriority);
+    WEBCORE_EXPORT void servePendingRequests(HostInformation*, ResourceLoadPriority);
 
     typedef HashMap<String, HostInformation*, StringHash> HostMap;
     HostMap m_hosts;
@@ -130,7 +130,7 @@ private:
     bool m_isSerialLoadingEnabled;
 };
 
-ResourceLoadScheduler* resourceLoadScheduler();
+WEBCORE_EXPORT ResourceLoadScheduler* resourceLoadScheduler();
 
 }
 

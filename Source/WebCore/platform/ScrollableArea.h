@@ -43,20 +43,20 @@ class TiledBacking;
 
 class ScrollableArea {
 public:
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
-    void scrollToOffsetWithoutAnimation(const FloatPoint&);
+    WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
+    WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(const FloatPoint&);
     void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
 
     // Should be called when the scroll position changes externally, for example if the scroll layer position
     // is updated on the scrolling thread and we need to notify the main thread.
-    void notifyScrollPositionChanged(const IntPoint&);
+    WEBCORE_EXPORT void notifyScrollPositionChanged(const IntPoint&);
 
     // Allows subclasses to handle scroll position updates themselves. If this member function
     // returns true, the scrollable area won't actually update the scroll position and instead
     // expect it to happen sometime in the future.
     virtual bool requestScrollPositionUpdate(const IntPoint&) { return false; }
 
-    bool handleWheelEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     const Vector<LayoutUnit>* horizontalSnapOffsets() const { return m_horizontalSnapOffsets.get(); };
@@ -92,32 +92,32 @@ public:
     ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
 
     bool inLiveResize() const { return m_inLiveResize; }
-    virtual void willStartLiveResize();
-    virtual void willEndLiveResize();
+    WEBCORE_EXPORT virtual void willStartLiveResize();
+    WEBCORE_EXPORT virtual void willEndLiveResize();
 
-    void contentAreaWillPaint() const;
-    void mouseEnteredContentArea() const;
-    void mouseExitedContentArea() const;
-    void mouseMovedInContentArea() const;
-    void mouseEnteredScrollbar(Scrollbar*) const;
+    WEBCORE_EXPORT void contentAreaWillPaint() const;
+    WEBCORE_EXPORT void mouseEnteredContentArea() const;
+    WEBCORE_EXPORT void mouseExitedContentArea() const;
+    WEBCORE_EXPORT void mouseMovedInContentArea() const;
+    WEBCORE_EXPORT void mouseEnteredScrollbar(Scrollbar*) const;
     void mouseExitedScrollbar(Scrollbar*) const;
     void contentAreaDidShow() const;
     void contentAreaDidHide() const;
 
     void lockOverlayScrollbarStateToHidden(bool shouldLockState) const;
-    bool scrollbarsCanBeActive() const;
+    WEBCORE_EXPORT bool scrollbarsCanBeActive() const;
 
-    virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation);
-    virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation);
+    WEBCORE_EXPORT virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation);
+    WEBCORE_EXPORT virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation);
 
-    virtual void contentsResized();
+    WEBCORE_EXPORT virtual void contentsResized();
 
     bool hasOverlayScrollbars() const;
-    virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
+    WEBCORE_EXPORT virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
 
     // This getter will create a ScrollAnimator if it doesn't already exist.
-    ScrollAnimator* scrollAnimator() const;
+    WEBCORE_EXPORT ScrollAnimator* scrollAnimator() const;
 
     // This getter will return null if the ScrollAnimator hasn't been created yet.
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
@@ -128,10 +128,10 @@ public:
     virtual bool isActive() const = 0;
     virtual int scrollSize(ScrollbarOrientation) const = 0;
     virtual int scrollPosition(Scrollbar*) const = 0;
-    virtual void invalidateScrollbar(Scrollbar*, const IntRect&);
+    WEBCORE_EXPORT virtual void invalidateScrollbar(Scrollbar*, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
     virtual IntRect scrollCornerRect() const = 0;
-    virtual void invalidateScrollCorner(const IntRect&);
+    WEBCORE_EXPORT virtual void invalidateScrollCorner(const IntRect&);
 
     virtual bool updatesScrollLayerPositionOnMainThread() const = 0;
 
@@ -163,10 +163,10 @@ public:
     virtual IntPoint scrollPosition() const;
     virtual IntPoint minimumScrollPosition() const;
     virtual IntPoint maximumScrollPosition() const;
-    virtual bool scrolledToTop() const;
-    virtual bool scrolledToBottom() const;
-    virtual bool scrolledToLeft() const;
-    virtual bool scrolledToRight() const;
+    WEBCORE_EXPORT virtual bool scrolledToTop() const;
+    WEBCORE_EXPORT virtual bool scrolledToBottom() const;
+    WEBCORE_EXPORT virtual bool scrolledToLeft() const;
+    WEBCORE_EXPORT virtual bool scrolledToRight() const;
 
     bool isScrolledProgrammatically() const { return m_scrolledProgrammatically; }
     void setScrolledProgrammatically(bool state) { m_scrolledProgrammatically = state; }
@@ -182,8 +182,8 @@ public:
 #endif
     };
 
-    IntRect visibleContentRect(VisibleContentRectBehavior = ContentsVisibleRect) const;
-    IntRect visibleContentRectIncludingScrollbars(VisibleContentRectBehavior = ContentsVisibleRect) const;
+    WEBCORE_EXPORT IntRect visibleContentRect(VisibleContentRectBehavior = ContentsVisibleRect) const;
+    WEBCORE_EXPORT IntRect visibleContentRectIncludingScrollbars(VisibleContentRectBehavior = ContentsVisibleRect) const;
 
     int visibleWidth() const { return visibleSize().width(); }
     int visibleHeight() const { return visibleSize().height(); }
@@ -198,7 +198,7 @@ public:
     virtual int footerHeight() const { return 0; }
 
     // The totalContentsSize() is equivalent to the contentsSize() plus the header and footer heights.
-    IntSize totalContentsSize() const;
+    WEBCORE_EXPORT IntSize totalContentsSize() const;
 
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
@@ -215,9 +215,9 @@ public:
     virtual bool scrollAnimatorEnabled() const { return false; }
 
     // NOTE: Only called from Internals for testing.
-    void setScrollOffsetFromInternals(const IntPoint&);
+    WEBCORE_EXPORT void setScrollOffsetFromInternals(const IntPoint&);
 
-    static LayoutPoint constrainScrollPositionForOverhang(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, int headerHeight, int footetHeight);
+    WEBCORE_EXPORT static LayoutPoint constrainScrollPositionForOverhang(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, int headerHeight, int footetHeight);
     LayoutPoint constrainScrollPositionForOverhang(const LayoutPoint& scrollPosition);
 
     // Computes the double value for the scrollbar's current position and the current overhang amount.
@@ -253,8 +253,8 @@ public:
     void horizontalScrollbarLayerDidChange();
 
 protected:
-    ScrollableArea();
-    virtual ~ScrollableArea();
+    WEBCORE_EXPORT ScrollableArea();
+    WEBCORE_EXPORT virtual ~ScrollableArea();
 
     void setScrollOrigin(const IntPoint&);
     void resetScrollOriginChanged() { m_scrollOriginChanged = false; }
@@ -272,7 +272,7 @@ protected:
     bool hasLayerForScrollCorner() const;
 
 private:
-    virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
+    WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const IntPoint&);
     
     // NOTE: Only called from the ScrollAnimator.

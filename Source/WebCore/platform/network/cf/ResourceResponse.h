@@ -54,7 +54,7 @@ public:
         m_isNull = !cfResponse;
     }
 #if PLATFORM(COCOA)
-    ResourceResponse(NSURLResponse *);
+    WEBCORE_EXPORT ResourceResponse(NSURLResponse *);
 #endif
 #else
     ResourceResponse(NSURLResponse *nsResponse)
@@ -86,15 +86,15 @@ public:
     }
 
 #if USE(CFNETWORK)
-    CFURLResponseRef cfURLResponse() const;
+    WEBCORE_EXPORT CFURLResponseRef cfURLResponse() const;
 #endif
 #if PLATFORM(COCOA)
-    NSURLResponse *nsURLResponse() const;
+    WEBCORE_EXPORT NSURLResponse *nsURLResponse() const;
 #endif
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-    void setCertificateChain(CFArrayRef);
-    RetainPtr<CFArrayRef> certificateChain() const;
+    WEBCORE_EXPORT void setCertificateChain(CFArrayRef);
+    WEBCORE_EXPORT RetainPtr<CFArrayRef> certificateChain() const;
 #endif
 
     bool platformResponseIsUpToDate() const { return m_platformResponseIsUpToDate; }

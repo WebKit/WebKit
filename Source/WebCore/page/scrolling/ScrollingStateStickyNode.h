@@ -49,7 +49,7 @@ public:
         ViewportConstraints = NumStateNodeBits
     };
 
-    void updateConstraints(const StickyPositionViewportConstraints&);
+    WEBCORE_EXPORT void updateConstraints(const StickyPositionViewportConstraints&);
     const StickyPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:

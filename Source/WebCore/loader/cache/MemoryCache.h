@@ -247,7 +247,7 @@ private:
 };
 
 // Function to obtain the global cache.
-MemoryCache* memoryCache();
+WEBCORE_EXPORT MemoryCache* memoryCache();
 
 }
 

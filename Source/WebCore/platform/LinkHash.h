@@ -54,8 +54,8 @@ struct LinkHashHash {
 };
 
 // Returns the hash of the string that will be used for visited link coloring.
-LinkHash visitedLinkHash(const String& url);
-LinkHash visitedLinkHash(const UChar* url, unsigned length);
+WEBCORE_EXPORT LinkHash visitedLinkHash(const String& url);
+WEBCORE_EXPORT LinkHash visitedLinkHash(const UChar* url, unsigned length);
 
 // Resolves the potentially relative URL "attributeURL" relative to the given
 // base URL, and returns the hash of the string that will be used for visited

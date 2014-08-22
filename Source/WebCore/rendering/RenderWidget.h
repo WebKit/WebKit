@@ -51,9 +51,9 @@ private:
     typedef HashMap<RefPtr<Widget>, FrameView*> WidgetToParentMap;
     static WidgetToParentMap& widgetNewParentMap();
 
-    void moveWidgets();
+    WEBCORE_EXPORT void moveWidgets();
 
-    static unsigned s_widgetHierarchyUpdateSuspendCount;
+    WEBCORE_EXPORT static unsigned s_widgetHierarchyUpdateSuspendCount;
 };
     
 class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
@@ -63,12 +63,12 @@ public:
     HTMLFrameOwnerElement& frameOwnerElement() const { return toHTMLFrameOwnerElement(nodeForNonAnonymous()); }
 
     Widget* widget() const { return m_widget.get(); }
-    void setWidget(PassRefPtr<Widget>);
+    WEBCORE_EXPORT void setWidget(PassRefPtr<Widget>);
 
     static RenderWidget* find(const Widget*);
 
     void updateWidgetPosition();
-    IntRect windowClipRect() const;
+    WEBCORE_EXPORT IntRect windowClipRect() const;
 
     bool requiresAcceleratedCompositing() const;
 

@@ -138,7 +138,7 @@ private:
 };
 
 // Function to obtain the global disk image cache.
-DiskImageCache& diskImageCache();
+WEBCORE_EXPORT DiskImageCache& diskImageCache();
 
 } // namespace WebCore
 

@@ -33,7 +33,7 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 namespace WebCore {
 
 CGColorSpaceRef deviceRGBColorSpaceRef();
-CGColorSpaceRef sRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
 CGColorSpaceRef linearRGBColorSpaceRef();
 
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)

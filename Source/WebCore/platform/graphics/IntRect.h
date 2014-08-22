@@ -226,11 +226,11 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
 }
 
 #if USE(CG)
-IntRect enclosingIntRect(const CGRect&);
+WEBCORE_EXPORT IntRect enclosingIntRect(const CGRect&);
 #endif
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
-IntRect enclosingIntRect(const NSRect&);
+WEBCORE_EXPORT IntRect enclosingIntRect(const NSRect&);
 #endif
 
 } // namespace WebCore

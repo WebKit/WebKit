@@ -203,7 +203,7 @@ private:
 };
 
 // Get the global fontCache.
-FontCache& fontCache();
+WEBCORE_EXPORT FontCache& fontCache();
 
 class FontCachePurgePreventer {
 public:

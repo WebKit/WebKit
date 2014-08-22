@@ -50,8 +50,8 @@ namespace WebCore {
     class ThreadGlobalData {
         WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
     public:
-        ThreadGlobalData();
-        ~ThreadGlobalData();
+        WEBCORE_EXPORT ThreadGlobalData();
+        WEBCORE_EXPORT ~ThreadGlobalData();
         void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
         const CachedResourceRequestInitiators& cachedResourceRequestInitiators() { return *m_cachedResourceRequestInitiators; }
@@ -90,17 +90,17 @@ namespace WebCore {
         OwnPtr<TECConverterWrapper> m_cachedConverterTEC;
 #endif
 
-        static ThreadSpecific<ThreadGlobalData>* staticData;
+        WEBCORE_EXPORT static ThreadSpecific<ThreadGlobalData>* staticData;
 #if USE(WEB_THREAD)
-        static ThreadGlobalData* sharedMainThreadStaticData;
+        WEBCORE_EXPORT static ThreadGlobalData* sharedMainThreadStaticData;
 #endif
         friend ThreadGlobalData& threadGlobalData();
     };
 
 #if USE(WEB_THREAD)
-ThreadGlobalData& threadGlobalData();
+WEBCORE_EXPORT ThreadGlobalData& threadGlobalData();
 #else
-ThreadGlobalData& threadGlobalData() PURE_FUNCTION;
+WEBCORE_EXPORT ThreadGlobalData& threadGlobalData() PURE_FUNCTION;
 #endif
     
 } // namespace WebCore

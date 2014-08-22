@@ -108,7 +108,7 @@ public:
     static PassRefPtr<ScrollingCoordinator> create(Page*);
     virtual ~ScrollingCoordinator();
 
-    virtual void pageDestroyed();
+    WEBCORE_EXPORT virtual void pageDestroyed();
     
     virtual bool isAsyncScrollingCoordinator() const { return false; }
     virtual bool isRemoteScrollingCoordinator() const { return false; }
@@ -150,7 +150,7 @@ public:
 #endif
 
     // Force all scroll layer position updates to happen on the main thread.
-    void setForceSynchronousScrollLayerPositionUpdates(bool);
+    WEBCORE_EXPORT void setForceSynchronousScrollLayerPositionUpdates(bool);
 
     // These virtual functions are currently unique to the threaded scrolling architecture. 
     // Their meaningful implementations are in ScrollingCoordinatorMac.

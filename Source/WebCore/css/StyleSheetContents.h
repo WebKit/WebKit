@@ -54,14 +54,14 @@ public:
         return adoptRef(*new StyleSheetContents(ownerRule, originalURL, context));
     }
 
-    ~StyleSheetContents();
+    WEBCORE_EXPORT ~StyleSheetContents();
     
     const CSSParserContext& parserContext() const { return m_parserContext; }
 
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
     void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
-    bool parseString(const String&);
+    WEBCORE_EXPORT bool parseString(const String&);
     bool parseStringAtLine(const String&, int startLineNumber, bool);
 
     bool isCacheable() const;

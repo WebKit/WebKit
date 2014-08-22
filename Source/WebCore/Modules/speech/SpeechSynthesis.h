@@ -58,7 +58,7 @@ public:
     const Vector<RefPtr<SpeechSynthesisVoice>>& getVoices();
     
     // Used in testing to use a mock platform synthesizer
-    void setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer>);
+    WEBCORE_EXPORT void setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer>);
     
 private:
     SpeechSynthesis();

@@ -228,8 +228,8 @@ public:
     RenderingContext* renderingContext() const { return m_renderingContext.get(); }
     void setRenderingContext(PassRefPtr<RenderingContext> context) { m_renderingContext = context; }
 
-    static void setAllowsRoundingHacks(bool);
-    static bool allowsRoundingHacks();
+    WEBCORE_EXPORT static void setAllowsRoundingHacks(bool);
+    WEBCORE_EXPORT static bool allowsRoundingHacks();
 
 private:
     static bool s_allowsRoundingHacks;

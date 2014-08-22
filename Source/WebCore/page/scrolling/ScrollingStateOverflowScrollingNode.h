@@ -46,7 +46,7 @@ public:
 
     // This is a layer with the contents that move.
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
-    void setScrolledContentsLayer(const LayerRepresentation&);
+    WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
     
     virtual void dumpProperties(TextStream&, int indent) const override;
 

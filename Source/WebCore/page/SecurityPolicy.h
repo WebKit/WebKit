@@ -42,7 +42,7 @@ public:
     // True if the referrer should be omitted according to the
     // ReferrerPolicyDefault. If you intend to send a referrer header, you
     // should use generateReferrerHeader instead.
-    static bool shouldHideReferrer(const URL&, const String& referrer);
+    WEBCORE_EXPORT static bool shouldHideReferrer(const URL&, const String& referrer);
 
     // Returns the referrer modified according to the referrer policy for a
     // navigation to a given URL. If the referrer returned is empty, the
@@ -55,13 +55,13 @@ public:
         AllowLocalLoadsForLocalOnly,
     };
 
-    static void setLocalLoadPolicy(LocalLoadPolicy);
+    WEBCORE_EXPORT static void setLocalLoadPolicy(LocalLoadPolicy);
     static bool restrictAccessToLocal();
     static bool allowSubstituteDataAccessToLocal();
 
-    static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
-    static void resetOriginAccessWhitelists();
+    WEBCORE_EXPORT static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
+    WEBCORE_EXPORT static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
+    WEBCORE_EXPORT static void resetOriginAccessWhitelists();
 
     static bool isAccessWhiteListed(const SecurityOrigin* activeOrigin, const SecurityOrigin* targetOrigin);
     static bool isAccessToURLWhiteListed(const SecurityOrigin* activeOrigin, const URL&);

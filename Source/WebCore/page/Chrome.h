@@ -156,8 +156,8 @@ public:
 
     WEBCORE_EXPORT void print(Frame*);
 
-    void enableSuddenTermination();
-    void disableSuddenTermination();
+    WEBCORE_EXPORT void enableSuddenTermination();
+    WEBCORE_EXPORT void disableSuddenTermination();
 
 #if ENABLE(INPUT_TYPE_COLOR)
     PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);

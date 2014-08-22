@@ -43,19 +43,19 @@ class StorageTracker {
     WTF_MAKE_NONCOPYABLE(StorageTracker);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void initializeTracker(const String& storagePath, StorageTrackerClient*);
-    static StorageTracker& tracker();
+    WEBCORE_EXPORT static void initializeTracker(const String& storagePath, StorageTrackerClient*);
+    WEBCORE_EXPORT static StorageTracker& tracker();
 
     void setDatabaseDirectoryPath(const String&);
     String databaseDirectoryPath() const;
 
     void setOriginDetails(const String& originIdentifier, const String& databaseFile);
     
-    void deleteAllOrigins();
-    void deleteOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT void deleteAllOrigins();
+    WEBCORE_EXPORT void deleteOrigin(SecurityOrigin*);
     void deleteOriginWithIdentifier(const String& originIdentifier);
-    void origins(Vector<RefPtr<SecurityOrigin>>& result);
-    long long diskUsageForOrigin(SecurityOrigin*);
+    WEBCORE_EXPORT void origins(Vector<RefPtr<SecurityOrigin>>& result);
+    WEBCORE_EXPORT long long diskUsageForOrigin(SecurityOrigin*);
     
     void cancelDeletingOrigin(const String& originIdentifier);
     
@@ -64,7 +64,7 @@ public:
     double storageDatabaseIdleInterval() { return m_StorageDatabaseIdleInterval; }
     void setStorageDatabaseIdleInterval(double interval) { m_StorageDatabaseIdleInterval = interval; }
 
-    void syncFileSystemAndTrackerDatabase();
+    WEBCORE_EXPORT void syncFileSystemAndTrackerDatabase();
 
 private:
     explicit StorageTracker(const String& storagePath);

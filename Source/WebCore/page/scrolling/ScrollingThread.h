@@ -46,11 +46,11 @@ class ScrollingThread {
 
 public:
     static bool isCurrentThread();
-    static void dispatch(std::function<void ()>);
+    WEBCORE_EXPORT static void dispatch(std::function<void ()>);
 
     // Will dispatch the given function on the main thread once all pending functions
     // on the scrolling thread have finished executing. Used for synchronization purposes.
-    static void dispatchBarrier(std::function<void ()>);
+    WEBCORE_EXPORT static void dispatchBarrier(std::function<void ()>);
 
 private:
     friend NeverDestroyed<ScrollingThread>;

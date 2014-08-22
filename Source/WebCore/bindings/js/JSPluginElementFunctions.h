@@ -36,7 +36,7 @@ namespace WebCore {
     // JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
     JSC::Bindings::Instance* pluginInstance(HTMLElement&);
-    JSC::JSObject* pluginScriptObject(JSC::ExecState*, JSHTMLElement*);
+    WEBCORE_EXPORT JSC::JSObject* pluginScriptObject(JSC::ExecState*, JSHTMLElement*);
 
     JSC::EncodedJSValue pluginElementPropertyGetter(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
     bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);

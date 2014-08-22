@@ -40,7 +40,7 @@ class FixedPositionViewportConstraints;
 
 class ScrollingTreeFixedNode : public ScrollingTreeNode {
 public:
-    static PassRefPtr<ScrollingTreeFixedNode> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static PassRefPtr<ScrollingTreeFixedNode> create(ScrollingTree&, ScrollingNodeID);
 
     virtual ~ScrollingTreeFixedNode();
 

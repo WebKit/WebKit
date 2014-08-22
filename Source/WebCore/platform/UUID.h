@@ -47,7 +47,7 @@ namespace WebCore {
 // On Windows, version 4 UUIDs are used since Windows 2000 (http://msdn.microsoft.com/en-us/library/aa446557.aspx).
 // On MacOSX, version 4 UUIDs are used since Tiger (http://developer.apple.com/mac/library/technotes/tn/tn1103.html#TNTAG8).
 // On Linux, the kernel offers the procfs pseudo-file /proc/sys/kernel/random/uuid that yields version 4 UUIDs (http://hbfs.wordpress.com/2008/09/30/ueid-unique-enough-ids/).
-String createCanonicalUUIDString();
+WEBCORE_EXPORT String createCanonicalUUIDString();
 
 }
 

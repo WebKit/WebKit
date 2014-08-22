@@ -37,7 +37,7 @@ int intValueForLength(const Length&, LayoutUnit maximumValue);
 LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false);
 LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue);
 float floatValueForLength(const Length&, LayoutUnit maximumValue);
-float floatValueForLength(const Length&, float maximumValue);
+WEBCORE_EXPORT float floatValueForLength(const Length&, float maximumValue);
 FloatSize floatSizeForLengthSize(const LengthSize&, const FloatSize&);
 
 } // namespace WebCore

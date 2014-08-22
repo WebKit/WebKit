@@ -47,7 +47,7 @@ public:
     void setNotInList(bool notInList) { m_notInList = notInList; }
     bool notInList() const { return m_notInList; }
 
-    const String& markerText() const;
+    WEBCORE_EXPORT const String& markerText() const;
     String markerTextWithSuffix() const;
 
     void updateListMarkerNumbers();

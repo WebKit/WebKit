@@ -46,17 +46,17 @@ public:
         PluginBlockedByContentSecurityPolicy,
         InsecurePluginVersion,
     };
-    void setPluginUnavailabilityReason(PluginUnavailabilityReason);
-    void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
+    WEBCORE_EXPORT void setPluginUnavailabilityReason(PluginUnavailabilityReason);
+    WEBCORE_EXPORT void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
 
     bool isPluginUnavailable() const { return m_isPluginUnavailable; }
     bool showsUnavailablePluginIndicator() const { return isPluginUnavailable() && !m_isUnavailablePluginIndicatorHidden; }
 
-    void setUnavailablePluginIndicatorIsHidden(bool);
+    WEBCORE_EXPORT void setUnavailablePluginIndicatorIsHidden(bool);
 
     void handleUnavailablePluginIndicatorEvent(Event*);
 
-    bool isReplacementObscured() const;
+    WEBCORE_EXPORT bool isReplacementObscured() const;
 
     bool allowsAcceleratedCompositing() const;
 

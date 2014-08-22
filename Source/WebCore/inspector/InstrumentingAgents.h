@@ -173,7 +173,7 @@ private:
     InspectorWorkerAgent* m_inspectorWorkerAgent;
 };
 
-InstrumentingAgents* instrumentationForPage(Page*);
+WEBCORE_EXPORT InstrumentingAgents* instrumentationForPage(Page*);
 InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
 
 }

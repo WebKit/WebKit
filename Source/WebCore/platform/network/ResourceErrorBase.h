@@ -74,7 +74,7 @@ protected:
     {
     }
 
-    void lazyInit() const;
+    WEBCORE_EXPORT void lazyInit() const;
 
     // The ResourceError subclass may "shadow" this method to lazily initialize platform specific fields
     void platformLazyInit() {}

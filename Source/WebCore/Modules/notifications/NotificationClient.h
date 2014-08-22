@@ -91,7 +91,7 @@ protected:
     virtual ~NotificationClient() { }
 };
 
-void provideNotification(Page*, NotificationClient*);
+WEBCORE_EXPORT void provideNotification(Page*, NotificationClient*);
 
 } // namespace WebCore
 

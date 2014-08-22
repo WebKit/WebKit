@@ -697,9 +697,9 @@ public:
     EClear clear() const { return noninherited_flags.clear(); }
     ETableLayout tableLayout() const { return noninherited_flags.tableLayout(); }
 
-    const Font& font() const;
-    const FontMetrics& fontMetrics() const;
-    const FontDescription& fontDescription() const;
+    WEBCORE_EXPORT const Font& font() const;
+    WEBCORE_EXPORT const FontMetrics& fontMetrics() const;
+    WEBCORE_EXPORT const FontDescription& fontDescription() const;
     float specifiedFontSize() const;
     float computedFontSize() const;
     int fontSize() const;
@@ -1789,7 +1789,7 @@ public:
     bool lastChildState() const { return noninherited_flags.lastChildState(); }
     void setLastChildState() { setUnique(); noninherited_flags.setLastChildState(true); }
 
-    Color visitedDependentColor(int colorProperty) const;
+    WEBCORE_EXPORT Color visitedDependentColor(int colorProperty) const;
 
     void setHasExplicitlyInheritedProperties() { noninherited_flags.setHasExplicitlyInheritedProperties(true); }
     bool hasExplicitlyInheritedProperties() const { return noninherited_flags.hasExplicitlyInheritedProperties(); }

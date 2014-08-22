@@ -96,10 +96,10 @@ public:
                            float& beginMaxW, float& endMaxW,
                            float& minW, float& maxW, bool& stripFrontSpaces);
 
-    virtual IntRect linesBoundingBox() const;
+    WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 
-    IntPoint firstRunLocation() const;
+    WEBCORE_EXPORT IntPoint firstRunLocation() const;
 
     virtual void setText(const String&, bool force = false);
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);

@@ -47,31 +47,31 @@ class UserMessageHandlerDescriptor;
 
 class UserContentController : public RefCounted<UserContentController> {
 public:
-    static RefPtr<UserContentController> create();
-    ~UserContentController();
+    WEBCORE_EXPORT static RefPtr<UserContentController> create();
+    WEBCORE_EXPORT ~UserContentController();
 
     void addPage(Page&);
     void removePage(Page&);
 
     const UserScriptMap* userScripts() const { return m_userScripts.get(); }
 
-    void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);
+    WEBCORE_EXPORT void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);
     void removeUserScript(DOMWrapperWorld&, const URL&);
-    void removeUserScripts(DOMWrapperWorld&);
+    WEBCORE_EXPORT void removeUserScripts(DOMWrapperWorld&);
 
     const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
 
-    void addUserStyleSheet(DOMWrapperWorld&, std::unique_ptr<UserStyleSheet>, UserStyleInjectionTime);
+    WEBCORE_EXPORT void addUserStyleSheet(DOMWrapperWorld&, std::unique_ptr<UserStyleSheet>, UserStyleInjectionTime);
     void removeUserStyleSheet(DOMWrapperWorld&, const URL&);
-    void removeUserStyleSheets(DOMWrapperWorld&);
+    WEBCORE_EXPORT void removeUserStyleSheets(DOMWrapperWorld&);
 
     void removeAllUserContent();
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
     const UserMessageHandlerDescriptorMap* userMessageHandlerDescriptors() const { return m_userMessageHandlerDescriptors.get(); }
 
-    void addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
-    void removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
+    WEBCORE_EXPORT void addUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
+    WEBCORE_EXPORT void removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
 #endif
 
 private:

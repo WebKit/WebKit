@@ -45,7 +45,7 @@ class Scrollbar : public Widget,
 
 public:
     // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
-    static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollableArea*, ScrollbarOrientation orientation, ScrollbarControlSize size);
+    WEBCORE_EXPORT static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollableArea*, ScrollbarOrientation orientation, ScrollbarControlSize size);
 
     virtual ~Scrollbar();
 
@@ -98,7 +98,7 @@ public:
 
     static int pixelsPerLineStep() { return 40; }
     static float minFractionToStepWhenPaging() { return 0.875f; }
-    static int maxOverlapBetweenPages();
+    WEBCORE_EXPORT static int maxOverlapBetweenPages();
     static int pageStep(int widthOrHeight) { return std::max(std::max<int>(lroundf(widthOrHeight * Scrollbar::minFractionToStepWhenPaging()), lroundf(widthOrHeight - Scrollbar::maxOverlapBetweenPages())), 1); }
     static float pageStepDelta(int widthOrHeight) { return std::max(std::max(static_cast<float>(widthOrHeight) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(widthOrHeight) - Scrollbar::maxOverlapBetweenPages()), 1.0f); }
 
@@ -112,8 +112,8 @@ public:
     virtual void setHoveredPart(ScrollbarPart);
     virtual void setPressedPart(ScrollbarPart);
 
-    void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
-    void setProportion(int visibleSize, int totalSize);
+    WEBCORE_EXPORT void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
+    WEBCORE_EXPORT void setProportion(int visibleSize, int totalSize);
     void setPressedPos(int p) { m_pressedPos = p; }
 
     virtual void paint(GraphicsContext*, const IntRect& damageRect) override;
@@ -127,15 +127,15 @@ public:
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
     // grabbing all events in that case anyway.
 #if !PLATFORM(IOS)
-    bool mouseMoved(const PlatformMouseEvent&);
+    WEBCORE_EXPORT bool mouseMoved(const PlatformMouseEvent&);
 #endif
-    void mouseEntered();
-    bool mouseExited();
+    WEBCORE_EXPORT void mouseEntered();
+    WEBCORE_EXPORT bool mouseExited();
 
     // Used by some platform scrollbars to know when they've been released from capture.
-    bool mouseUp(const PlatformMouseEvent&);
+    WEBCORE_EXPORT bool mouseUp(const PlatformMouseEvent&);
 
-    bool mouseDown(const PlatformMouseEvent&);
+    WEBCORE_EXPORT bool mouseDown(const PlatformMouseEvent&);
 
     ScrollbarTheme* theme() const { return m_theme; }
 

@@ -78,7 +78,7 @@ Node* previousLeafNode(const Node*);
 
 // offset functions on Node
 
-int lastOffsetForEditing(const Node*);
+WEBCORE_EXPORT int lastOffsetForEditing(const Node*);
 int caretMinOffset(const Node*);
 int caretMaxOffset(const Node*);
 
@@ -159,7 +159,7 @@ int comparePositions(const Position&, const Position&);
 // boolean functions on Position
 
 enum EUpdateStyle { UpdateStyle, DoNotUpdateStyle };
-bool isEditablePosition(const Position&, EditableType = ContentIsEditable, EUpdateStyle = UpdateStyle);
+WEBCORE_EXPORT bool isEditablePosition(const Position&, EditableType = ContentIsEditable, EUpdateStyle = UpdateStyle);
 bool isRichlyEditablePosition(const Position&, EditableType = ContentIsEditable);
 bool isFirstVisiblePositionInSpecialElement(const Position&);
 bool isLastVisiblePositionInSpecialElement(const Position&);
@@ -198,7 +198,7 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node*, int index);
     
 // Functions returning HTMLElement
     
-PassRefPtr<HTMLElement> createDefaultParagraphElement(Document&);
+WEBCORE_EXPORT PassRefPtr<HTMLElement> createDefaultParagraphElement(Document&);
 PassRefPtr<HTMLElement> createBreakElement(Document&);
 PassRefPtr<HTMLElement> createOrderedListElement(Document&);
 PassRefPtr<HTMLElement> createUnorderedListElement(Document&);

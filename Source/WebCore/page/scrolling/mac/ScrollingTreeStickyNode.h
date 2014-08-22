@@ -40,7 +40,7 @@ class StickyPositionViewportConstraints;
 
 class ScrollingTreeStickyNode : public ScrollingTreeNode {
 public:
-    static PassRefPtr<ScrollingTreeStickyNode> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static PassRefPtr<ScrollingTreeStickyNode> create(ScrollingTree&, ScrollingNodeID);
 
     virtual ~ScrollingTreeStickyNode();
 

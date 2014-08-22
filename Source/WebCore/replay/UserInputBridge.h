@@ -72,25 +72,25 @@ public:
 
     // User input APIs.
 #if ENABLE(CONTEXT_MENUS)
-    bool handleContextMenuEvent(const PlatformMouseEvent&, const Frame*, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleContextMenuEvent(const PlatformMouseEvent&, const Frame*, InputSource source = InputSource::User);
 #endif
-    bool handleMousePressEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    bool handleMouseMoveEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    bool handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
-    bool handleWheelEvent(const PlatformWheelEvent&, InputSource source = InputSource::User);
-    bool handleKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
-    bool handleAccessKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleMouseMoveEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool handleAccessKeyEvent(const PlatformKeyboardEvent&, InputSource source = InputSource::User);
     void focusSetActive(bool active, InputSource source = InputSource::User);
     void focusSetFocused(bool focused, InputSource source = InputSource::User);
-    bool scrollRecursively(ScrollDirection, ScrollGranularity, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, InputSource source = InputSource::User);
     bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, InputSource source = InputSource::User);
 
     // Navigation APIs.
-    void loadRequest(const FrameLoadRequest&, InputSource source = InputSource::User);
-    void reloadFrame(Frame*, bool endToEndReload, InputSource source = InputSource::User);
-    void stopLoadingFrame(Frame*, InputSource source = InputSource::User);
-    bool tryClosePage(InputSource source = InputSource::User);
+    WEBCORE_EXPORT void loadRequest(const FrameLoadRequest&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT void reloadFrame(Frame*, bool endToEndReload, InputSource source = InputSource::User);
+    WEBCORE_EXPORT void stopLoadingFrame(Frame*, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool tryClosePage(InputSource source = InputSource::User);
 
 private:
     Page& m_page;

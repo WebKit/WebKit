@@ -63,40 +63,40 @@ public:
         bool initialScaleIsSet;
     };
 
-    ViewportConfiguration();
+    WEBCORE_EXPORT ViewportConfiguration();
 
     const Parameters& defaultConfiguration() const { return m_defaultConfiguration; }
-    void setDefaultConfiguration(const Parameters&);
+    WEBCORE_EXPORT void setDefaultConfiguration(const Parameters&);
 
     const IntSize& contentsSize() const { return m_contentSize; }
-    void setContentsSize(const IntSize&);
+    WEBCORE_EXPORT void setContentsSize(const IntSize&);
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    void setMinimumLayoutSize(const FloatSize&);
+    WEBCORE_EXPORT void setMinimumLayoutSize(const FloatSize&);
 
     const FloatSize& minimumLayoutSizeForMinimalUI() const { return m_minimumLayoutSizeForMinimalUI.isEmpty() ? m_minimumLayoutSize : m_minimumLayoutSizeForMinimalUI; }
-    void setMinimumLayoutSizeForMinimalUI(const FloatSize&);
+    WEBCORE_EXPORT void setMinimumLayoutSizeForMinimalUI(const FloatSize&);
 
-    const FloatSize& activeMinimumLayoutSizeInScrollViewCoordinates() const;
+    WEBCORE_EXPORT const FloatSize& activeMinimumLayoutSizeInScrollViewCoordinates() const;
 
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
-    void setViewportArguments(const ViewportArguments&);
+    WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
 
-    void resetMinimalUI();
-    void didFinishDocumentLoad();
+    WEBCORE_EXPORT void resetMinimalUI();
+    WEBCORE_EXPORT void didFinishDocumentLoad();
 
-    IntSize layoutSize() const;
-    double initialScale() const;
-    double minimumScale() const;
+    WEBCORE_EXPORT IntSize layoutSize() const;
+    WEBCORE_EXPORT double initialScale() const;
+    WEBCORE_EXPORT double minimumScale() const;
     double maximumScale() const { return m_configuration.maximumScale; }
     bool allowsUserScaling() const { return m_configuration.allowsUserScaling; }
     bool usesMinimalUI() const { return m_usesMinimalUI; }
 
-    static Parameters webpageParameters();
-    static Parameters textDocumentParameters();
-    static Parameters imageDocumentParameters();
-    static Parameters xhtmlMobileParameters();
-    static Parameters testingParameters();
+    WEBCORE_EXPORT static Parameters webpageParameters();
+    WEBCORE_EXPORT static Parameters textDocumentParameters();
+    WEBCORE_EXPORT static Parameters imageDocumentParameters();
+    WEBCORE_EXPORT static Parameters xhtmlMobileParameters();
+    WEBCORE_EXPORT static Parameters testingParameters();
     
 #ifndef NDEBUG
     WTF::CString description() const;

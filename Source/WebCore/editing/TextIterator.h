@@ -40,8 +40,8 @@ class InlineTextBox;
 class RenderText;
 class RenderTextFragment;
 
-String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
-String plainTextReplacingNoBreakSpace(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+WEBCORE_EXPORT String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 PassRefPtr<Range> findPlainText(const Range&, const String&, FindOptions);
 
 // FIXME: Move this somewhere else in the editing directory. It doesn't belong here.
@@ -93,23 +93,23 @@ private:
 
 class TextIterator {
 public:
-    explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
-    ~TextIterator();
+    WEBCORE_EXPORT explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT ~TextIterator();
 
     bool atEnd() const { return !m_positionNode; }
-    void advance();
+    WEBCORE_EXPORT void advance();
 
     StringView text() const { ASSERT(!atEnd()); return m_text; }
     PassRefPtr<Range> range() const;
-    Node* node() const;
+    WEBCORE_EXPORT Node* node() const;
 
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
-    static int rangeLength(const Range*, bool spacesForReplacedElements = false);
-    static PassRefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
-    static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
-    static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
+    WEBCORE_EXPORT static int rangeLength(const Range*, bool spacesForReplacedElements = false);
+    WEBCORE_EXPORT static PassRefPtr<Range> rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
+    WEBCORE_EXPORT static bool getLocationAndLengthFromRange(Node* scope, const Range*, size_t& location, size_t& length);
+    WEBCORE_EXPORT static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
 
 private:
     void exitNode();
@@ -185,7 +185,7 @@ public:
     void advance();
 
     StringView text() const { ASSERT(!atEnd()); return m_text; }
-    PassRefPtr<Range> range() const;
+    WEBCORE_EXPORT PassRefPtr<Range> range() const;
     Node* node() const { ASSERT(!atEnd()); return m_node; }
 
 private:

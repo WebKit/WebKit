@@ -33,9 +33,9 @@ namespace WebCore {
 
 class AuthenticationChallenge;
 
-NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
+WEBCORE_EXPORT NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&);
 
-AuthenticationChallenge core(NSURLAuthenticationChallenge *);
+WEBCORE_EXPORT AuthenticationChallenge core(NSURLAuthenticationChallenge *);
 
 }
 #endif // __OBJC__

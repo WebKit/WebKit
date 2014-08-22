@@ -52,11 +52,11 @@ class Color;
 
 typedef unsigned RGBA32;        // RGBA quadruplet
 
-RGBA32 makeRGB(int r, int g, int b);
-RGBA32 makeRGBA(int r, int g, int b, int a);
+WEBCORE_EXPORT RGBA32 makeRGB(int r, int g, int b);
+WEBCORE_EXPORT RGBA32 makeRGBA(int r, int g, int b, int a);
 
-RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
-RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
+WEBCORE_EXPORT RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
+WEBCORE_EXPORT RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
 RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a);
 RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a);
 
@@ -188,9 +188,9 @@ inline uint16_t fastDivideBy255(uint16_t value)
 }
 
 #if USE(CG)
-CGColorRef cachedCGColor(const Color&, ColorSpace);
+WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&, ColorSpace);
 #if PLATFORM(IOS)
-CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha);
+WEBCORE_EXPORT CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha);
 #endif // PLATFORM(IOS)
 #endif
 

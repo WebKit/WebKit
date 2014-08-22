@@ -57,7 +57,7 @@ class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHand
 public:
     virtual ~ResourceLoader() = 0;
 
-    void cancel();
+    WEBCORE_EXPORT void cancel();
 
     virtual bool init(const ResourceRequest&);
 
@@ -71,12 +71,12 @@ public:
     virtual const ResourceRequest& iOSOriginalRequest() const { return request(); }
 #endif
 
-    FrameLoader* frameLoader() const;
+    WEBCORE_EXPORT FrameLoader* frameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    const ResourceRequest& originalRequest() const { return m_originalRequest; }
+    WEBCORE_EXPORT const ResourceRequest& originalRequest() const { return m_originalRequest; }
     
-    void cancel(const ResourceError&);
-    ResourceError cancelledError();
+    WEBCORE_EXPORT void cancel(const ResourceError&);
+    WEBCORE_EXPORT ResourceError cancelledError();
     ResourceError blockedError();
     ResourceError cannotShowURLError();
     
@@ -107,7 +107,7 @@ public:
 
     virtual bool shouldUseCredentialStorage();
     virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
+    WEBCORE_EXPORT void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
 #endif

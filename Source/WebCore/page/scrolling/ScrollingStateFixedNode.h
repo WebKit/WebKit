@@ -49,7 +49,7 @@ public:
         ViewportConstraints = NumStateNodeBits
     };
 
-    void updateConstraints(const FixedPositionViewportConstraints&);
+    WEBCORE_EXPORT void updateConstraints(const FixedPositionViewportConstraints&);
     const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:

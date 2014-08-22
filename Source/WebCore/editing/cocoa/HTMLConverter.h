@@ -32,9 +32,9 @@ namespace WebCore {
     
 class Range;
     
-NSAttributedString *attributedStringFromRange(Range&);
+WEBCORE_EXPORT NSAttributedString *attributedStringFromRange(Range&);
 #if !PLATFORM(IOS)
-NSAttributedString *editingAttributedStringFromRange(Range&);
+WEBCORE_EXPORT NSAttributedString *editingAttributedStringFromRange(Range&);
 #endif
 
 }

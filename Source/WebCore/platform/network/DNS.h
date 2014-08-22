@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void prefetchDNS(const String& hostname);
+WEBCORE_EXPORT void prefetchDNS(const String& hostname);
 }
 
 #endif

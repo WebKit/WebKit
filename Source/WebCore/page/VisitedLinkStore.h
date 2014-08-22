@@ -39,8 +39,8 @@ class URL;
 
 class VisitedLinkStore : public RefCounted<VisitedLinkStore> {
 public:
-    VisitedLinkStore();
-    virtual ~VisitedLinkStore();
+    WEBCORE_EXPORT VisitedLinkStore();
+    WEBCORE_EXPORT virtual ~VisitedLinkStore();
 
     // FIXME: These two members should only take the link hash.
     virtual bool isLinkVisited(Page&, LinkHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
@@ -49,8 +49,8 @@ public:
     void addPage(Page&);
     void removePage(Page&);
 
-    void invalidateStylesForAllLinks();
-    void invalidateStylesForLink(LinkHash);
+    WEBCORE_EXPORT void invalidateStylesForAllLinks();
+    WEBCORE_EXPORT void invalidateStylesForLink(LinkHash);
 
 private:
     HashSet<Page*> m_pages;

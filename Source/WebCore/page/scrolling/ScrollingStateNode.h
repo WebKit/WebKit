@@ -218,7 +218,7 @@ public:
     virtual void syncLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/) { }
 
     const LayerRepresentation& layer() const { return m_layer; }
-    void setLayer(const LayerRepresentation&);
+    WEBCORE_EXPORT void setLayer(const LayerRepresentation&);
 
     ScrollingStateTree& scrollingStateTree() const { return m_scrollingStateTree; }
 

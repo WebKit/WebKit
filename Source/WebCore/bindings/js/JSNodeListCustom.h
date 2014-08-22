@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-JSC::JSValue createWrapper(JSDOMGlobalObject&, NodeList&);
+WEBCORE_EXPORT JSC::JSValue createWrapper(JSDOMGlobalObject&, NodeList&);
 
 ALWAYS_INLINE JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, NodeList* nodeList)
 {

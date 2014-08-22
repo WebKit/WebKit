@@ -35,11 +35,11 @@ namespace WebCore {
 class SelectionRect {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit SelectionRect(const IntRect&, bool isHorizontal, int columnNumber);
+    WEBCORE_EXPORT explicit SelectionRect(const IntRect&, bool isHorizontal, int columnNumber);
 
     // FIXME: We should move some of these arguments to an auxillary struct.
     SelectionRect(const IntRect&, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
-    SelectionRect();
+    WEBCORE_EXPORT SelectionRect();
     ~SelectionRect() { }
 
     IntRect rect() const { return m_rect; }
