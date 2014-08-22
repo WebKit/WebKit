@@ -166,7 +166,7 @@ public:
     static void willScrollLayer(Frame*);
     static void didScrollLayer(Frame*);
     static void willPaint(RenderObject*);
-    static void didPaint(RenderObject*, GraphicsContext*, const LayoutRect&);
+    static void didPaint(RenderObject*, const LayoutRect&);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculation(Document*);
@@ -364,7 +364,7 @@ private:
     static void willScrollLayerImpl(InstrumentingAgents*, Frame*);
     static void didScrollLayerImpl(InstrumentingAgents*);
     static void willPaintImpl(InstrumentingAgents*, RenderObject*);
-    static void didPaintImpl(InstrumentingAgents*, RenderObject*, GraphicsContext*, const LayoutRect&);
+    static void didPaintImpl(InstrumentingAgents*, RenderObject*, const LayoutRect&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*, Frame*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
@@ -1121,15 +1121,14 @@ inline void InspectorInstrumentation::willPaint(RenderObject* renderer)
 #endif
 }
 
-inline void InspectorInstrumentation::didPaint(RenderObject* renderer, GraphicsContext* context, const LayoutRect& rect)
+inline void InspectorInstrumentation::didPaint(RenderObject* renderer, const LayoutRect& rect)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderer(renderer))
-        didPaintImpl(instrumentingAgents, renderer, context, rect);
+        didPaintImpl(instrumentingAgents, renderer, rect);
 #else
     UNUSED_PARAM(renderer);
-    UNUSED_PARAM(context);
     UNUSED_PARAM(rect);
 #endif
 }

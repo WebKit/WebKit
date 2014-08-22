@@ -485,12 +485,13 @@ void InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingA
         timelineAgent->willPaint(&renderer->frame());
 }
 
-void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, RenderObject* renderer, GraphicsContext* context, const LayoutRect& rect)
+void InspectorInstrumentation::didPaintImpl(InstrumentingAgents* instrumentingAgents, RenderObject* renderer, const LayoutRect& rect)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didPaint(renderer, rect);
+
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
-        pageAgent->didPaint(context, rect);
+        pageAgent->didPaint(renderer, rect);
 }
 
 void InspectorInstrumentation::willScrollLayerImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)

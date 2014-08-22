@@ -32,23 +32,24 @@
 
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorForwarding.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 class GraphicsContext;
+class GraphicsLayer;
 class IntRect;
 }
 
 namespace WebKit {
 
 class WebPage;
+class RepaintIndicatorLayerClient;
 
 class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel, private PageOverlay::Client {
+friend class RepaintIndicatorLayerClient;
 public:
-    WebInspectorClient(WebPage* page)
-        : m_page(page)
-        , m_highlightOverlay(0)
-    {
-    }
+    WebInspectorClient(WebPage*);
+    virtual ~WebInspectorClient();
 
 private:
     virtual void inspectorDestroyed() override;
@@ -68,6 +69,9 @@ private:
     virtual void didSetSearchingForNode(bool) override;
 #endif
 
+    virtual bool overridesShowPaintRects() const override { return true; }
+    virtual void showPaintRect(const WebCore::FloatRect&) override;
+
     virtual bool sendMessageToFrontend(const String&) override;
 
     virtual bool supportsFrameInstrumentation();
@@ -79,8 +83,14 @@ private:
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&) override;
     virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) override;
 
+    void animationEndedForLayer(const WebCore::GraphicsLayer*);
+
     WebPage* m_page;
     PageOverlay* m_highlightOverlay;
+    
+    RefPtr<PageOverlay> m_paintRectOverlay;
+    std::unique_ptr<RepaintIndicatorLayerClient> m_paintIndicatorLayerClient;
+    HashSet<WebCore::GraphicsLayer*> m_paintRectLayers; // Ideally this would be HashSet<std::unique_ptr<GraphicsLayer>> but that doesn't work yet. webkit.org/b/136166
 };
 
 } // namespace WebKit

@@ -1,3 +1,33 @@
+2014-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement paint flashing via GraphicsLayers in the WK2 inspector overlay
+        https://bugs.webkit.org/show_bug.cgi?id=136136
+
+        Reviewed by Sam Weinig, Joseph Pecoraro.
+        
+        Allow InspectorClient to have a custom implementation of showPaintRect(). For
+        WebKit2's WebInspectorClient, implement this by creating a set of GraphicsLayers
+        which are parented in a document overlay, with 0.25s fade-out animations.
+        
+        Also change InspectorInstrumentation::didPaintImpl() to no longer take a GraphicsContext;
+        it makes no sense to paint the paint rects directly into the context of the web page.
+        Now that the paint rects are painted into an overlay, the rectangles need to be converted
+        to root document coordinates, which is done in InspectorInstrumentation::didPaintImpl().
+        
+        Remove the generic InspectorOverlay::drawOutline()-based indicators; they will
+        be reimplemented in a later patch.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::RepaintIndicatorLayerClient::RepaintIndicatorLayerClient):
+        (WebKit::RepaintIndicatorLayerClient::~RepaintIndicatorLayerClient):
+        (WebKit::RepaintIndicatorLayerClient::notifyAnimationEnded):
+        (WebKit::WebInspectorClient::WebInspectorClient):
+        (WebKit::WebInspectorClient::~WebInspectorClient):
+        (WebKit::WebInspectorClient::showPaintRect):
+        (WebKit::WebInspectorClient::animationEndedForLayer):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        (WebKit::WebInspectorClient::WebInspectorClient): Deleted.
+
 2014-08-22  Jon Lee  <jonlee@apple.com>
 
         Fix iOS build due to r172832 and move RUBBER_BANDING out of FeatureDefines.h

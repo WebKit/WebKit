@@ -55,12 +55,12 @@ class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
 class Frontend;
-class GraphicsContext;
 class InspectorClient;
 class InspectorOverlay;
 class InstrumentingAgents;
 class URL;
 class Page;
+class RenderObject;
 class SharedBuffer;
 class TextResourceDecoder;
 
@@ -140,7 +140,7 @@ public:
     void willRunJavaScriptDialog(const String& message);
     void didRunJavaScriptDialog();
     void applyEmulatedMedia(String*);
-    void didPaint(GraphicsContext*, const LayoutRect&);
+    void didPaint(RenderObject*, const LayoutRect&);
     void didLayout();
     void didScroll();
     void didRecalculateStyle();

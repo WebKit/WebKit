@@ -28,10 +28,12 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "DrawingArea.h"
 #include "WebInspector.h"
 #include "WebPage.h"
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
+#include <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
 #include <WebCore/InspectorOverlay.h>
@@ -40,6 +42,39 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+class RepaintIndicatorLayerClient final : public GraphicsLayerClient {
+public:
+    RepaintIndicatorLayerClient(WebInspectorClient& inspectorClient)
+        : m_inspectorClient(inspectorClient)
+    {
+    }
+    virtual ~RepaintIndicatorLayerClient() { }
+private:
+    virtual void notifyAnimationEnded(const GraphicsLayer* layer, const String&) override
+    {
+        m_inspectorClient.animationEndedForLayer(layer);
+    }
+    
+    WebInspectorClient& m_inspectorClient;
+};
+
+WebInspectorClient::WebInspectorClient(WebPage* page)
+    : m_page(page)
+    , m_highlightOverlay(nullptr)
+{
+}
+
+WebInspectorClient::~WebInspectorClient()
+{
+    for (auto layer : m_paintRectLayers) {
+        layer->removeFromParent();
+        delete layer;
+    }
+
+    if (m_paintRectOverlay)
+        m_page->uninstallPageOverlay(m_paintRectOverlay.get());
+}
 
 void WebInspectorClient::inspectorDestroyed()
 {
@@ -98,6 +133,48 @@ void WebInspectorClient::hideHighlight()
 #else
     m_page->hideInspectorHighlight();
 #endif
+}
+
+void WebInspectorClient::showPaintRect(const FloatRect& rect)
+{
+    if (!m_paintRectOverlay) {
+        m_paintRectOverlay = PageOverlay::create(this, PageOverlay::OverlayType::Document);
+        m_page->installPageOverlay(m_paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
+    }
+
+    if (!m_paintIndicatorLayerClient)
+        m_paintIndicatorLayerClient = std::make_unique<RepaintIndicatorLayerClient>(*this);
+
+    std::unique_ptr<GraphicsLayer> paintLayer = GraphicsLayer::create(m_page->drawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
+    
+    paintLayer->setAnchorPoint(FloatPoint3D());
+    paintLayer->setPosition(rect.location());
+    paintLayer->setSize(rect.size());
+    paintLayer->setBackgroundColor(Color(1.0f, 0.0f, 0.0f, 0.2f));
+
+    KeyframeValueList fadeKeyframes(AnimatedPropertyOpacity);
+    OwnPtr<AnimationValue> intialValue = FloatAnimationValue::create(0, 1);
+    fadeKeyframes.insert(intialValue.release());
+
+    OwnPtr<AnimationValue> finalValue = FloatAnimationValue::create(0.25, 0);
+    fadeKeyframes.insert(finalValue.release());
+    
+    RefPtr<Animation> opacityAnimation = Animation::create();
+    opacityAnimation->setDuration(0.25);
+
+    paintLayer->addAnimation(fadeKeyframes, FloatSize(), opacityAnimation.get(), ASCIILiteral("opacity"), 0);
+    
+    m_paintRectLayers.add(paintLayer.get());
+
+    GraphicsLayer* overlayRootLayer = m_paintRectOverlay->layer();
+    overlayRootLayer->addChild(paintLayer.release());
+}
+
+void WebInspectorClient::animationEndedForLayer(const GraphicsLayer* layer)
+{
+    const_cast<GraphicsLayer*>(layer)->removeFromParent();
+    m_paintRectLayers.remove(const_cast<GraphicsLayer*>(layer));
+    delete layer;
 }
 
 #if PLATFORM(IOS)

@@ -3669,7 +3669,7 @@ void FrameView::didPaintContents(GraphicsContext* context, const IntRect& dirtyR
         sCurrentPaintTimeStamp = 0;
 
     if (!context->paintingDisabled()) {
-        InspectorInstrumentation::didPaint(renderView(), context, dirtyRect);
+        InspectorInstrumentation::didPaint(renderView(), dirtyRect);
         // FIXME: should probably not fire milestones for snapshot painting. https://bugs.webkit.org/show_bug.cgi?id=117623
         firePaintRelatedMilestonesIfNeeded();
     }
