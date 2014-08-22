@@ -1,3 +1,21 @@
+2014-08-22  David Hyatt  <hyatt@apple.com>
+
+        Add proper support for letter-spacing to bopomofo Ruby
+        https://bugs.webkit.org/show_bug.cgi?id=136171
+
+        Reviewed by Sam Weinig.
+
+        Added fast/ruby/bopomofo-letter-spacing.html
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        Alter the layout of bopomofo ruby so that the distance between the base characters is the max of
+        the letter-spacing between the characters and the minimum required width to hold two rows of
+        Ruby.
+
+        Push the bopomofo ruby into the letter-spacing to ensure that it comes right after the base character
+        and not after all the letter-spacing.
+
 2014-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix showing paint rects when selecting lines in the timeline

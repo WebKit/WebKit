@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+using namespace std;
+
 RenderRubyRun::RenderRubyRun(Document& document, PassRef<RenderStyle> style)
     : RenderBlockFlow(document, WTF::move(style))
 {
@@ -252,7 +254,9 @@ void RenderRubyRun::layout()
     if (isHorizontalWritingMode() && rt->style().rubyPosition() == RubyPositionInterCharacter) {
         // Bopomofo. We need to move the RenderRubyText over to the right side and center it
         // vertically relative to the base.
-        setWidth(width() + rt->layoutOverflowRect().maxX());
+        const Font& font = style().font();
+        float distanceBetweenBase = max(font.letterSpacing(), 2.0f * rt->style().font().fontMetrics().height());
+        setWidth(width() + distanceBetweenBase - font.letterSpacing());
         if (RenderRubyBase* rb = rubyBase()) {
             LayoutUnit firstLineTop = 0;
             LayoutUnit lastLineBottom = logicalHeight();
@@ -263,7 +267,7 @@ void RenderRubyRun::layout()
             if (rootBox)
                 lastLineBottom = rootBox->logicalBottomLayoutOverflow();
             lastLineBottom += rb->logicalTop();
-            rt->setX(rb->x() + rb->width());
+            rt->setX(rb->x() + rb->width() - font.letterSpacing());
             LayoutUnit extent = lastLineBottom - firstLineTop;
             rt->setY(firstLineTop + (extent - rt->height()) / 2);
         }
