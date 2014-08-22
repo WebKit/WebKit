@@ -1,3 +1,20 @@
+2014-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add the Wayland protocol extension
+        https://bugs.webkit.org/show_bug.cgi?id=136102
+
+        Reviewed by Martin Robinson.
+
+        Add the Wayland protocol extension that allows mapping GtkWidget
+        objects (via an ID that's unique to that GtkWidget) to the
+        corresponding Wayland surface objects. This way the nested
+        compositor has the proper information about what GtkWidget has
+        to be updated when surfaces are committed by the LayerTreeHost.
+
+        * PlatformGTK.cmake:
+        * platform/graphics/wayland: Added.
+        * platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml: Added.
+
 2014-08-21  Antti Koivisto  <antti@apple.com>
 
         Animated GIFs scrolled out of view still cause titlebar blur to update, on tumblr.com page
