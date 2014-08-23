@@ -77,18 +77,21 @@ void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad)
 
 void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepad)
 {
-    Vector<DOMWindow*> domWindowVector;
-    copyToVector(m_domWindows, domWindowVector);
+    Vector<WeakPtr<DOMWindow>> weakWindows;
+    for (auto* domWindow : m_domWindows)
+        weakWindows.append(domWindow->createWeakPtr());
 
     HashSet<NavigatorGamepad*> notifiedNavigators;
 
     // Handle the disconnect for all DOMWindows with event listeners and their Navigators.
-    for (auto* window : domWindowVector) {
+    for (auto& window : weakWindows) {
         // Event dispatch might have made this window go away.
-        if (!m_domWindows.contains(window))
+        if (!window)
             continue;
 
-        NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window);
+        // This DOMWindow's Navigator might not be accessible. e.g. The DOMWindow might be in the back/forward cache.
+        // If this happens the DOMWindow will not get this gamepaddisconnected event.
+        NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window.get());
         if (!navigator)
             continue;
 
@@ -96,8 +99,7 @@ void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepa
         if (m_gamepadBlindNavigators.contains(navigator))
             continue;
 
-        RefPtr<Gamepad> gamepad = navigator->gamepadAtIndex(platformGamepad.index());
-        ASSERT(gamepad);
+        Ref<Gamepad> gamepad(navigator->gamepadFromPlatformGamepad(platformGamepad));
 
         navigator->gamepadDisconnected(platformGamepad);
         notifiedNavigators.add(navigator);
@@ -132,21 +134,23 @@ void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, HashSe
     for (auto* navigator : navigatorSet)
         navigator->gamepadConnected(platformGamepad);
 
-    Vector<DOMWindow*> domWindowVector;
-    copyToVector(domWindowSet, domWindowVector);
+    Vector<WeakPtr<DOMWindow>> weakWindows;
+    for (auto* domWindow : m_domWindows)
+        weakWindows.append(domWindow->createWeakPtr());
 
-    for (auto* window : domWindowVector) {
+    for (auto& window : weakWindows) {
         // Event dispatch might have made this window go away.
-        if (!m_domWindows.contains(window))
+        if (!window)
             continue;
 
-        NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window);
+        // This DOMWindow's Navigator might not be accessible. e.g. The DOMWindow might be in the back/forward cache.
+        // If this happens the DOMWindow will not get this gamepadconnected event.
+        // The new gamepad will still be visibile to it once it is restored from the back/forward cache.
+        NavigatorGamepad* navigator = navigatorGamepadFromDOMWindow(window.get());
         if (!navigator)
             continue;
 
-        RefPtr<Gamepad> gamepad = navigator->gamepadAtIndex(platformGamepad.index());
-        ASSERT(gamepad);
-
+        Ref<Gamepad> gamepad(navigator->gamepadFromPlatformGamepad(platformGamepad));
         window->dispatchEvent(GamepadEvent::create(eventNames().gamepadconnectedEvent, gamepad.get()), window->document());
     }
 }

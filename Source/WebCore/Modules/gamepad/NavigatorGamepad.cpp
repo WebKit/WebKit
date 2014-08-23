@@ -72,11 +72,13 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
     return supplement;
 }
 
-Gamepad* NavigatorGamepad::gamepadAtIndex(unsigned index)
+PassRef<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platformGamepad)
 {
-    if (index >= m_gamepads.size())
-        return nullptr;
-    return m_gamepads[index].get();
+    unsigned index = platformGamepad.index();
+    if (index >= m_gamepads.size() || !m_gamepads[index])
+        return adoptRef(*Gamepad::create(platformGamepad).leakRef());
+
+    return *m_gamepads[index];
 }
 
 const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator* navigator)

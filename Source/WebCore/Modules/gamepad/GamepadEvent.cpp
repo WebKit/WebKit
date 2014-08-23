@@ -33,9 +33,9 @@ GamepadEvent::GamepadEvent()
 {
 }
 
-GamepadEvent::GamepadEvent(const AtomicString& eventType, Gamepad* gamepad)
+GamepadEvent::GamepadEvent(const AtomicString& eventType, Gamepad& gamepad)
     : Event(eventType, false, false)
-    , m_gamepad(gamepad)
+    , m_gamepad(&gamepad)
 {
 }
 

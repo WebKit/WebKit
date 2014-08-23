@@ -34,6 +34,7 @@
 #include "Supplementable.h"
 #include <functional>
 #include <memory>
+#include <wtf/WeakPtr.h>
 
 namespace Inspector {
 class ScriptCallStack;
@@ -445,6 +446,8 @@ namespace WebCore {
         void enableSuddenTermination();
         void disableSuddenTermination();
 
+        WeakPtr<DOMWindow> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     private:
         explicit DOMWindow(Document*);
 
@@ -493,6 +496,8 @@ namespace WebCore {
 
         enum PageStatus { PageStatusNone, PageStatusShown, PageStatusHidden };
         PageStatus m_lastPageStatus;
+
+        WeakPtrFactory<DOMWindow> m_weakPtrFactory;
 
 #if PLATFORM(IOS)
         unsigned m_scrollEventListenerCount;

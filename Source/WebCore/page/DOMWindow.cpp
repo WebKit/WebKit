@@ -393,6 +393,7 @@ DOMWindow::DOMWindow(Document* document)
     , m_shouldPrintWhenFinishedLoading(false)
     , m_suspendedForPageCache(false)
     , m_lastPageStatus(PageStatusNone)
+    , m_weakPtrFactory(this)
 #if PLATFORM(IOS)
     , m_scrollEventListenerCount(0)
 #endif

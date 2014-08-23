@@ -50,7 +50,7 @@ public:
         return adoptRef(new GamepadEvent);
     }
 
-    static PassRefPtr<GamepadEvent> create(const AtomicString& eventType, Gamepad* gamepad)
+    static PassRefPtr<GamepadEvent> create(const AtomicString& eventType, Gamepad& gamepad)
     {
         return adoptRef(new GamepadEvent(eventType, gamepad));
     }
@@ -66,7 +66,7 @@ public:
 
 private:
     GamepadEvent();
-    explicit GamepadEvent(const AtomicString& eventType, Gamepad*);
+    explicit GamepadEvent(const AtomicString& eventType, Gamepad&);
     GamepadEvent(const AtomicString& eventType, const GamepadEventInit&);
 
     RefPtr<Gamepad> m_gamepad;
