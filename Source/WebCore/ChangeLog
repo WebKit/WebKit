@@ -1,3 +1,71 @@
+2014-08-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove uses of CrossThreadTask in ThreadableWebSocketChannelClientWrapper, WorkerThreadableWebSocketChannel
+        https://bugs.webkit.org/show_bug.cgi?id=133954
+
+        Reviewed by Darin Adler.
+
+        Replace uses of CrossThreadTask with C++11 lambdas in the ThreadableWebSocketChannelClientWrapper
+        and WorkerThreadableWebSocketChannel classes.
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmountCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback): Deleted.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageErrorCallback): Deleted.
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::resume):
+        (WebCore::workerGlobalScopeDidSend): Deleted.
+        (WebCore::workerGlobalScopeDidGetBufferedAmount): Deleted.
+        (WebCore::workerGlobalScopeDidConnect): Deleted.
+        (WebCore::workerGlobalScopeDidReceiveMessage): Deleted.
+        (WebCore::workerGlobalScopeDidReceiveBinaryData): Deleted.
+        (WebCore::workerGlobalScopeDidUpdateBufferedAmount): Deleted.
+        (WebCore::workerGlobalScopeDidStartClosingHandshake): Deleted.
+        (WebCore::workerGlobalScopeDidClose): Deleted.
+        (WebCore::workerGlobalScopeDidReceiveMessageError): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadConnect): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSend): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendArrayBuffer): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendBlob): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadBufferedAmount): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadClose): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadFail): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadDestroy): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSuspend): Deleted.
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadResume): Deleted.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+
 2014-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Clean up build warnings: control reaches end of non-void function

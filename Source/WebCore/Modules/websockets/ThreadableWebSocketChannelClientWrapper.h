@@ -92,16 +92,7 @@ public:
 private:
     ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext*, WebSocketChannelClient*);
 
-    static void processPendingTasksCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
     void processPendingTasks();
-
-    static void didConnectCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
-    static void didReceiveMessageCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& message);
-    static void didReceiveBinaryDataCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassOwnPtr<Vector<char>>);
-    static void didUpdateBufferedAmountCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long bufferedAmount);
-    static void didStartClosingHandshakeCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
-    static void didCloseCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
-    static void didReceiveMessageErrorCallback(ScriptExecutionContext&, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
     ScriptExecutionContext* m_context;
     WebSocketChannelClient* m_client;
