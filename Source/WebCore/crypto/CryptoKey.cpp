@@ -57,6 +57,8 @@ String CryptoKey::type() const
     case CryptoKeyType::Private:
         return ASCIILiteral("private");
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return emptyString();
 }
 
 void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const

@@ -1,3 +1,24 @@
+2014-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up build warnings: control reaches end of non-void function
+        https://bugs.webkit.org/show_bug.cgi?id=135889
+
+        Reviewed by Alexey Proskuryakov.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey):
+        * crypto/CryptoKey.cpp:
+        (WebCore::CryptoKey::type):
+
 2014-08-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Only notify of a required flush on the first layer property change
