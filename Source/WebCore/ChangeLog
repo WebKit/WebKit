@@ -1,3 +1,9 @@
+2014-08-22  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Mac build using the internal SDK.
+
+        * bindings/objc/PublicDOMInterfaces.h:
+
 2014-08-22  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Remove LevelDB.
