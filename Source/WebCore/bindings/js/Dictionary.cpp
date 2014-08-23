@@ -98,7 +98,7 @@ bool Dictionary::getOwnPropertyNames(Vector<String>& names) const
     return true;
 }
 
-bool Dictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& value) const
+bool Dictionary::getWithUndefinedOrNullCheck(const char* propertyName, String& value) const
 {
     return m_dictionary.getWithUndefinedOrNullCheck(propertyName, value);
 }

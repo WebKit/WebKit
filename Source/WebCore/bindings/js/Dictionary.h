@@ -61,7 +61,7 @@ public:
     bool isUndefinedOrNull() const { return !m_dictionary.isValid(); }
     bool getOwnPropertiesAsStringHashMap(HashMap<String, String>&) const;
     bool getOwnPropertyNames(Vector<String>&) const;
-    bool getWithUndefinedOrNullCheck(const String& propertyName, String& value) const;
+    bool getWithUndefinedOrNullCheck(const char* propertyName, String& value) const;
 
 private:
     template <typename T>

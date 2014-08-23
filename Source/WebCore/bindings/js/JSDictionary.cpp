@@ -265,11 +265,11 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Game
 }
 #endif
 
-bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& result) const
+bool JSDictionary::getWithUndefinedOrNullCheck(const char* propertyName, String& result) const
 {
     ASSERT(isValid());
     JSValue value;
-    if (tryGetProperty(propertyName.utf8().data(), value) != PropertyFound || value.isUndefinedOrNull())
+    if (tryGetProperty(propertyName, value) != PropertyFound || value.isUndefinedOrNull())
         return false;
 
     result = value.toWTFString(m_exec);
