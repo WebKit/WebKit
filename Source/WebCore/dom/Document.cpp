@@ -6144,8 +6144,14 @@ bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t
 
 static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
 {
-    for (const Node* n = &node; n; n = n->parentOrShadowHostNode()) {
-        if (n->needsStyleRecalc())
+    if (node.needsStyleRecalc())
+        return true;
+
+    for (const Element* ancestor = node.parentOrShadowHostElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+        if (ancestor->needsStyleRecalc())
+            return true;
+
+        if (ancestor->directChildNeedsStyleRecalc() && (ancestor->childrenAffectedByDirectAdjacentRules() || ancestor->childrenAffectedByForwardPositionalRules()))
             return true;
     }
     return false;

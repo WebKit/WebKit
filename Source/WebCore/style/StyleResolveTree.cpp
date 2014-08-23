@@ -552,9 +552,10 @@ static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
 static void resetStyleForNonRenderedDescendants(Element& current)
 {
     ASSERT(!current.renderer());
+    bool shouldInvalidateDirectChildren = current.directChildNeedsStyleRecalc() && (current.childrenAffectedByDirectAdjacentRules() || current.childrenAffectedByForwardPositionalRules());
     for (auto& child : childrenOfType<Element>(current)) {
         ASSERT(!child.renderer());
-        if (child.needsStyleRecalc()) {
+        if (shouldInvalidateDirectChildren || child.needsStyleRecalc()) {
             child.resetComputedStyle();
             child.clearNeedsStyleRecalc();
         }

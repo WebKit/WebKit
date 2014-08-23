@@ -88,6 +88,9 @@ public:
     Node* lastChild() const { return m_lastChild; }
     bool hasChildNodes() const { return m_firstChild; }
 
+    bool directChildNeedsStyleRecalc() const { return getFlag(DirectChildNeedsStyleRecalcFlag); }
+    void setDirectChildNeedsStyleRecalc() { setFlag(DirectChildNeedsStyleRecalcFlag); }
+
     WEBCORE_EXPORT unsigned childNodeCount() const;
     WEBCORE_EXPORT Node* childNode(unsigned index) const;
 

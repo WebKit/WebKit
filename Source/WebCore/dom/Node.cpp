@@ -639,16 +639,6 @@ LayoutRect Node::renderRect(bool* isReplaced)
     return LayoutRect();    
 }
 
-void Node::markAncestorsWithChildNeedsStyleRecalc()
-{
-    ContainerNode* ancestor = isPseudoElement() ? toPseudoElement(this)->hostElement() : parentOrShadowHostNode();
-    for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
-        ancestor->setChildNeedsStyleRecalc();
-
-    if (document().childNeedsStyleRecalc())
-        document().scheduleStyleRecalc();
-}
-
 void Node::refEventTarget()
 {
     ref();
@@ -657,6 +647,20 @@ void Node::refEventTarget()
 void Node::derefEventTarget()
 {
     deref();
+}
+
+static inline void markAncestorsWithChildNeedsStyleRecalc(Node& node)
+{
+    if (ContainerNode* ancestor = node.isPseudoElement() ? toPseudoElement(node).hostElement() : node.parentOrShadowHostNode()) {
+        ancestor->setDirectChildNeedsStyleRecalc();
+
+        for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
+            ancestor->setChildNeedsStyleRecalc();
+    }
+
+    Document& document = node.document();
+    if (document.childNeedsStyleRecalc())
+        document.scheduleStyleRecalc();
 }
 
 void Node::setNeedsStyleRecalc(StyleChangeType changeType)
@@ -670,7 +674,7 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
         setStyleChange(changeType);
 
     if (existingChangeType == NoStyleChange || changeType == ReconstructRenderTree)
-        markAncestorsWithChildNeedsStyleRecalc();
+        markAncestorsWithChildNeedsStyleRecalc(*this);
 }
 
 unsigned Node::nodeIndex() const

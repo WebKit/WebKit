@@ -2511,11 +2511,6 @@ static void setElementStyleFromContextIsAffectedByEmptyAndUpdateRenderStyleIfNec
     context->elementStyle->setEmptyState(isEmpty);
 }
 
-static void setStyleOfSiblingsAffectedByEmpty(Element* element)
-{
-    element->setStyleOfSiblingsAffectedByEmpty();
-}
-
 void SelectorCodeGenerator::generateElementIsEmpty(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     if (m_selectorContext == SelectorContext::QuerySelector) {
@@ -2553,7 +2548,7 @@ void SelectorCodeGenerator::generateElementIsEmpty(Assembler::JumpList& failureC
             skipMarking = jumpIfNotResolvingStyle(checkingContext);
         }
         FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-        functionCall.setFunctionAddress(setStyleOfSiblingsAffectedByEmpty);
+        functionCall.setFunctionAddress(setElementStyleIsAffectedByEmpty);
         functionCall.setOneArgument(elementAddressRegister);
         functionCall.call();
     }

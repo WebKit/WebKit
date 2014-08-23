@@ -1532,11 +1532,6 @@ static void checkForEmptyStyleChange(Element& element)
         if (!style || (!style->emptyState() || element.hasChildNodes()))
             element.setNeedsStyleRecalc();
     }
-
-    if (element.styleOfSiblingsAffectedByEmpty()) {
-        if (Element* parent = element.parentElement())
-            parent->setNeedsStyleRecalc();
-    }
 }
 
 enum SiblingCheckType { FinishedParsingChildren, SiblingElementRemoved, Other };
@@ -2103,11 +2098,6 @@ void Element::setStyleAffectedByEmpty()
     ensureElementRareData().setStyleAffectedByEmpty(true);
 }
 
-void Element::setStyleOfSiblingsAffectedByEmpty()
-{
-    ensureElementRareData().setStyleOfSiblingsAffectedByEmpty(true);
-}
-
 void Element::setChildrenAffectedByActive()
 {
     ensureElementRareData().setChildrenAffectedByActive(true);
@@ -2153,12 +2143,6 @@ bool Element::rareDataStyleAffectedByEmpty() const
 {
     ASSERT(hasRareData());
     return elementRareData()->styleAffectedByEmpty();
-}
-
-bool Element::rareDataStyleOfSiblingsAffectedByEmpty() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->styleOfSiblingsAffectedByEmpty();
 }
 
 bool Element::rareDataChildrenAffectedByActive() const

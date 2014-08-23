@@ -9,10 +9,10 @@ PASS getComputedStyle(document.getElementById("target2")).backgroundColor is "rg
 PASS getComputedStyle(document.getElementById("target3")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("target4")).backgroundColor is "rgb(255, 255, 255)"
 Adding a placeholder, the targets should match the style.
-FAIL getComputedStyle(document.getElementById("target1")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
-FAIL getComputedStyle(document.getElementById("target2")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
-FAIL getComputedStyle(document.getElementById("target3")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
-FAIL getComputedStyle(document.getElementById("target4")).backgroundColor should be rgb(1, 2, 3). Was rgb(255, 255, 255).
+PASS getComputedStyle(document.getElementById("target1")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("target2")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("target3")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("target4")).backgroundColor is "rgb(1, 2, 3)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

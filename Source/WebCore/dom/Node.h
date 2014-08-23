@@ -329,7 +329,7 @@ public:
     bool isEditingText() const { return getFlag(IsEditingTextFlag); }
 
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
-    void clearChildNeedsStyleRecalc() { clearFlag(ChildNeedsStyleRecalcFlag); }
+    void clearChildNeedsStyleRecalc() { m_nodeFlags &= ~(ChildNeedsStyleRecalcFlag | DirectChildNeedsStyleRecalcFlag); }
 
     WEBCORE_EXPORT void setNeedsStyleRecalc(StyleChangeType = FullStyleChange);
     void clearNeedsStyleRecalc() { m_nodeFlags &= ~StyleChangeMask; }
@@ -567,8 +567,6 @@ public:
     void updateAncestorConnectedSubframeCountForRemoval() const;
     void updateAncestorConnectedSubframeCountForInsertion() const;
 
-    void markAncestorsWithChildNeedsStyleRecalc();
-
 #if ENABLE(CSS_SELECTOR_JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
     static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_data.m_rareData); }
@@ -616,10 +614,11 @@ protected:
         ChildrenAffectedByLastChildRulesFlag = 1 << 26,
         ChildrenAffectedByDirectAdjacentRulesFlag = 1 << 27,
         ChildrenAffectedByHoverRulesFlag = 1 << 28,
+        DirectChildNeedsStyleRecalcFlag = 1 << 29,
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 29,
+        SelfOrAncestorHasDirAutoFlag = 1 << 30,
 
-        IsHTMLUnknownElementFlag = 1 << 30,
+        IsHTMLUnknownElementFlag = 1 << 31,
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };

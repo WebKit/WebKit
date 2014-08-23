@@ -524,8 +524,6 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                 }
                 if (m_mode == Mode::ResolvingStyle) {
                     element->setStyleAffectedByEmpty();
-                    if (element->document().styleSheetCollection().usesSiblingRules())
-                        element->setStyleOfSiblingsAffectedByEmpty();
                     if (context.elementStyle)
                         context.elementStyle->setEmptyState(result);
                 }

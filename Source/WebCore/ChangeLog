@@ -1,3 +1,81 @@
+2014-08-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        Style invalidation does not work for adjacent node updates
+        https://bugs.webkit.org/show_bug.cgi?id=136145
+
+        Reviewed by Antti Koivisto.
+
+        There were a bunch of cases in which the style would be in an inconsistent
+        state until the style resolver kicks in for the entire document.
+
+        For example, let's take the selector "foo.bar + target". When the class "bar"
+        changes, the element foo is invalidated. The element target is untouched.
+
+        Now, if the style of "target" is accessed, nodeOrItsAncestorNeedsStyleRecalc()
+        returns false and the old style is accessed.
+
+        At some point, when the style of the entire document is resolved, the node
+        "foo" is styled, and "target" is invalidated.
+
+
+        To fix the issue, this patch adds an extra flag keeping track of subtrees that
+        have any node needing style recalc: DirectChildNeedsStyleRecalcFlag.
+
+        When invalidating the node "foo", its parent is marked with
+        DirectChildNeedsStyleRecalcFlag to note that one of the child nodes has an invalid style.
+
+        When verifying the style state in nodeOrItsAncestorNeedsStyleRecalc(), we check that flag
+        in addition to the siblings dependencies to find if the node is part of a subtree that may
+        be invalid due to sibling selectors.
+
+        Similarly, in the style resolver, we use the flag to clear the style on all elements
+        that could potentially be invalid.
+
+
+        This patch removes the changes introduced by r172721
+        (The style is not updated correctly when the pseudo class :empty is applied on anything but the rightmost element).
+        That bug was just a special case of what is solved here.
+
+
+        Tests: fast/selectors/attribute-direct-adjacent-style-update.html
+               fast/selectors/attribute-sibling-style-update.html
+               fast/selectors/class-direct-adjacent-style-update.html
+               fast/selectors/class-sibling-style-update.html
+               fast/selectors/first-child-direct-adjacent-style-update.html
+               fast/selectors/first-child-sibling-style-update.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsEmpty):
+        (WebCore::SelectorCompiler::setStyleOfSiblingsAffectedByEmpty): Deleted.
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::directChildNeedsStyleRecalc):
+        (WebCore::ContainerNode::setDirectChildNeedsStyleRecalc):
+        Remove the special case for :empty.
+
+        * dom/Document.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        * dom/Element.cpp:
+        (WebCore::checkForEmptyStyleChange):
+        (WebCore::checkForSiblingStyleChanges):
+        (WebCore::Element::setStyleOfSiblingsAffectedByEmpty): Deleted.
+        (WebCore::Element::rareDataStyleOfSiblingsAffectedByEmpty): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::styleOfSiblingsAffectedByEmpty): Deleted.
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::styleOfSiblingsAffectedByEmpty): Deleted.
+        (WebCore::ElementRareData::setStyleOfSiblingsAffectedByEmpty): Deleted.
+        * dom/Node.cpp:
+        (WebCore::markAncestorsWithChildNeedsStyleRecalc):
+        (WebCore::Node::setNeedsStyleRecalc):
+        (WebCore::Node::markAncestorsWithChildNeedsStyleRecalc): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::clearChildNeedsStyleRecalc):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+
 2014-08-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused legacy InspectorFrontendHost methods
