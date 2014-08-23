@@ -1,3 +1,14 @@
+2014-08-22  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Turn on ENABLE_GAMEPAD_DEPRECATED option.
+        https://bugs.webkit.org/show_bug.cgi?id=136110
+
+        Reviewed by Gyuyoung Kim.
+
+        Turn on ENABLE_GAMEPAD_DEPRECATED option for the WK2 Efl.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-08-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Apply eflsymbols.filter to WebKit2

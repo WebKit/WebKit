@@ -243,6 +243,13 @@ if (ENABLE_BATTERY_STATUS OR (EFL_REQUIRED_VERSION VERSION_LESS 1.8))
     list(APPEND WebCore_LIBRARIES ${E_DBUS_EUKIT_LIBRARIES})
 endif ()
 
+if (ENABLE_GAMEPAD_DEPRECATED)
+    # FIXME: GAMEPAD_DEPRECATED is legacy implementation. Need to be removed.
+    list(REMOVE_ITEM WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/gamepad"
+    )
+endif ()
+
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.css
 )
