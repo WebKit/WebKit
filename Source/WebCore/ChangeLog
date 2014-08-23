@@ -1,3 +1,17 @@
+2014-08-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Only notify of a required flush on the first layer property change
+        https://bugs.webkit.org/show_bug.cgi?id=136104
+
+        Reviewed by Martin Robinson.
+
+        The GraphicsLayer's client should only be notified that a flush is required
+        when the first change of one of the layer's properties is initiated, instead
+        of requesting the flush on every such change.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::notifyChange):
+
 2014-08-22  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Mac build using the internal SDK.

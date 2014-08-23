@@ -59,8 +59,11 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient& clie
 
 void GraphicsLayerTextureMapper::notifyChange(ChangeMask changeMask)
 {
+    bool flushRequired = m_changeMask == NoChanges;
     m_changeMask |= changeMask;
-    client().notifyFlushRequired(this);
+
+    if (flushRequired)
+        client().notifyFlushRequired(this);
 }
 
 void GraphicsLayerTextureMapper::setName(const String& name)
