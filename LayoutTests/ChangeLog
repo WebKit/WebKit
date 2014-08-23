@@ -1,3 +1,13 @@
+2014-08-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        [EFL][WK2] Remove fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html from skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=128732
+
+        Reviewed by Gyuyoung Kim.
+
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html:
+        * platform/efl/TestExpectations:
+
 2014-08-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Style invalidation does not work for adjacent node updates

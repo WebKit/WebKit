@@ -849,8 +849,6 @@ webkit.org/b/127914 webgl/conformance/textures/texture-npot.html [ Crash Pass ]
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
 webkit.org/b/129199 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash Failure Pass ]
 
-webkit.org/b/128732 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash Pass ]
 webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash Pass ]
 
