@@ -923,24 +923,24 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
     noteLayerPropertyChanged(ContentsImageChanged);
 }
 
-void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
+void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)
 {
-    if (m_contentsLayer && mediaLayer == m_contentsLayer->platformLayer())
+    if (m_contentsLayer && platformLayer == m_contentsLayer->platformLayer())
         return;
-        
-    // FIXME: The passed in layer might be a raw layer or an externally created 
+
+    // FIXME: The passed in layer might be a raw layer or an externally created
     // PlatformCALayer. To determine this we attempt to get the
     // PlatformCALayer pointer. If this returns a null pointer we assume it's
     // raw. This test might be invalid if the raw layer is, for instance, the
     // PlatformCALayer is using a user data pointer in the raw layer, and
     // the creator of the raw layer is using it for some other purpose.
     // For now we don't support such a case.
-    PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(mediaLayer);
-    m_contentsLayer = mediaLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(mediaLayer, this)) : 0;
-    m_contentsLayerPurpose = mediaLayer ? ContentsLayerForMedia : NoContentsLayer;
+    PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(platformLayer);
+    m_contentsLayer = platformLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(platformLayer, this)) : 0;
+    m_contentsLayerPurpose = platformLayer ? purpose : NoContentsLayer;
 
     noteSublayersChanged();
-    noteLayerPropertyChanged(ContentsMediaLayerChanged);
+    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
 #if PLATFORM(IOS)
@@ -950,20 +950,6 @@ PlatformLayer* GraphicsLayerCA::contentsLayerForMedia() const
 }
 #endif
 
-void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
-{
-    if (m_contentsLayer && canvasLayer == m_contentsLayer->platformLayer())
-        return;
-    
-    // Create the PlatformCALayer to wrap the incoming layer
-    m_contentsLayer = canvasLayer ? createPlatformCALayer(canvasLayer, this) : 0;
-    
-    m_contentsLayerPurpose = canvasLayer ? ContentsLayerForCanvas : NoContentsLayer;
-
-    noteSublayersChanged();
-    noteLayerPropertyChanged(ContentsCanvasLayerChanged);
-}
-    
 void GraphicsLayerCA::layerDidDisplay(PlatformCALayer* layer)
 {
     LayerMap* layerCloneMap;
@@ -1308,11 +1294,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsImageChanged) // Needs to happen before ChildrenChanged
         updateContentsImage();
         
-    if (m_uncommittedChanges & ContentsMediaLayerChanged) // Needs to happen before ChildrenChanged
-        updateContentsMediaLayer();
-    
-    if (m_uncommittedChanges & ContentsCanvasLayerChanged) // Needs to happen before ChildrenChanged
-        updateContentsCanvasLayer();
+    if (m_uncommittedChanges & ContentsPlatformLayerChanged) // Needs to happen before ChildrenChanged
+        updateContentsPlatformLayer();
 
     if (m_uncommittedChanges & ContentsColorLayerChanged) // Needs to happen before ChildrenChanged
         updateContentsColorLayer();
@@ -1941,24 +1924,17 @@ void GraphicsLayerCA::updateContentsImage()
     }
 }
 
-void GraphicsLayerCA::updateContentsMediaLayer()
+void GraphicsLayerCA::updateContentsPlatformLayer()
 {
-    if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForMedia)
+    if (!m_contentsLayer)
         return;
 
-    // Video layer was set as m_contentsLayer, and will get parented in updateSublayerList().
+    // Platform layer was set as m_contentsLayer, and will get parented in updateSublayerList().
     setupContentsLayer(m_contentsLayer.get());
-    updateContentsRects();
-}
 
-void GraphicsLayerCA::updateContentsCanvasLayer()
-{
-    if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForCanvas)
-        return;
+    if (m_contentsLayerPurpose == ContentsLayerForCanvas)
+        m_contentsLayer->setNeedsDisplay();
 
-    // CanvasLayer was set as m_contentsLayer, and will get parented in updateSublayerList().
-    setupContentsLayer(m_contentsLayer.get());
-    m_contentsLayer->setNeedsDisplay();
     updateContentsRects();
 }
 

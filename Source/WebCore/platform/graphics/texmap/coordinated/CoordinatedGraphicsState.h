@@ -89,8 +89,8 @@ struct CoordinatedGraphicsLayerState {
             bool filtersChanged: 1;
             bool childrenChanged: 1;
             bool repaintCountChanged : 1;
-            bool canvasChanged: 1;
-            bool canvasShouldSwapBuffers: 1;
+            bool platformLayerChanged: 1;
+            bool platformLayerShouldSwapBuffers: 1;
             bool isScrollableChanged: 1;
             bool committedScrollOffsetChanged: 1;
             bool contentsTilingChanged: 1;
@@ -131,7 +131,7 @@ struct CoordinatedGraphicsLayerState {
         , mask(InvalidCoordinatedLayerID)
         , imageID(InvalidCoordinatedImageBackingID)
 #if USE(GRAPHICS_SURFACE)
-        , canvasFrontBuffer(0)
+        , platformLayerFrontBuffer(0)
 #endif
     {
     }
@@ -163,10 +163,10 @@ struct CoordinatedGraphicsLayerState {
     Vector<TileUpdateInfo> tilesToUpdate;
 
 #if USE(GRAPHICS_SURFACE)
-    IntSize canvasSize;
-    GraphicsSurfaceToken canvasToken;
-    uint32_t canvasFrontBuffer;
-    GraphicsSurface::Flags canvasSurfaceFlags;
+    IntSize platformLayerSize;
+    GraphicsSurfaceToken platformLayerToken;
+    uint32_t platformLayerFrontBuffer;
+    GraphicsSurface::Flags platformLayerSurfaceFlags;
 #endif
 
     IntSize committedScrollOffset;

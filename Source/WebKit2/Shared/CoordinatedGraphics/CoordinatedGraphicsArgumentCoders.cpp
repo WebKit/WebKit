@@ -686,11 +686,11 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encod
     encoder << state.tilesToUpdate;
 
 #if USE(GRAPHICS_SURFACE)
-    if (state.canvasChanged) {
-        encoder << state.canvasSize;
-        encoder << state.canvasToken;
-        encoder << state.canvasFrontBuffer;
-        encoder << state.canvasSurfaceFlags;
+    if (state.platformLayerChanged) {
+        encoder << state.platformLayerSize;
+        encoder << state.platformLayerToken;
+        encoder << state.platformLayerFrontBuffer;
+        encoder << state.platformLayerSurfaceFlags;
     }
 #endif
 
@@ -776,17 +776,17 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decod
         return false;
 
 #if USE(GRAPHICS_SURFACE)
-    if (state.canvasChanged) {
-        if (!decoder.decode(state.canvasSize))
+    if (state.platformLayerChanged) {
+        if (!decoder.decode(state.platformLayerSize))
             return false;
 
-        if (!decoder.decode(state.canvasToken))
+        if (!decoder.decode(state.platformLayerToken))
             return false;
 
-        if (!decoder.decode(state.canvasFrontBuffer))
+        if (!decoder.decode(state.platformLayerFrontBuffer))
             return false;
 
-        if (!decoder.decode(state.canvasSurfaceFlags))
+        if (!decoder.decode(state.platformLayerSurfaceFlags))
             return false;
     }
 #endif

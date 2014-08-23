@@ -1,3 +1,75 @@
+2014-08-23  Byungseon Shin  <sun.shin@lge.com>
+
+        Unify GraphicsLayer::setContentsToMedia and setContentsToCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=109658
+
+        Reviewed by Martin Robinson.
+ 
+        Based on patch originally written by Tim Horton.
+        Merge setContentsToMedia and setContentsToCanvas into setContentsToPlatformLayer.
+ 
+        * WebCore.exp.in:
+        Adjust exports.
+ 
+        * platform/graphics/GraphicsLayer.h:
+        Move ContentsLayerPurpose enum up out of GraphicsLayer platform implmentations
+        and into GraphicsLayer, so we can use it as a parameter.
+        Add ContentsLayerForPlugin.
+ 
+        (WebCore::GraphicsLayer::setContentsToPlatformLayer):
+        Remove setContentsToMedia and setContentsToCanvas, and replace them
+        with setContentsToPlatformLayer, which previously existed but was unused
+        and simply called setContentsToMedia.
+        setContentsToPlatformLayer takes a ContentsLayerPurpose, primarily
+        so that GraphicsLayerCA can know whether it needs to setNeedsDisplay
+        the layer when parenting it (canvas) or not (everything else).
+ 
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToPlatformLayer):
+        Rename function setContentsToMedia -> setContentsToPlatformLayer.
+        Rename argument mediaLayer -> platformLayer.
+        Store the passed-in ContentsLayerPurpose.
+        Remove setContentsToCanvas.
+ 
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsPlatformLayer):
+        Remove updateContentsMediaLayer and updateContentsCanvas layer,
+        add updateContentsPlatformLayer.
+ 
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        Do the same to the LayerChange enum.
+ 
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsToImage):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToPlatformLayer):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::destroyPlatformLayerIfNeeded):
+        (WebCore::CoordinatedGraphicsLayer::createPlatformLayerIfNeeded):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        Fold these together in the same way as elsewhere.
+ 
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        Do the same to the LayerChange enum.
+ 
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::createPlatformLayerIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::syncPlatformLayerIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::destroyPlatformLayerIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::setLayerState):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (WebCore::CoordinatedGraphicsLayerState::CoordinatedGraphicsLayerState):
+        Rename canvasLayer -> platformLayer.
+ 
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        Use the new setContentsToPlatformLayer, passing in the relevant ContentsLayerPurpose.
+
 2014-08-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Do not copy large module source strings

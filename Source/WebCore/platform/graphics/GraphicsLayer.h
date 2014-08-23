@@ -251,6 +251,15 @@ public:
     // Returns true if the child list changed.
     WEBCORE_EXPORT virtual bool setChildren(const Vector<GraphicsLayer*>&);
 
+    enum ContentsLayerPurpose {
+        NoContentsLayer = 0,
+        ContentsLayerForImage,
+        ContentsLayerForMedia,
+        ContentsLayerForCanvas,
+        ContentsLayerForBackgroundColor,
+        ContentsLayerForPlugin
+    };
+
     // Add child layers. If the child is already parented, it will be removed from its old parent.
     WEBCORE_EXPORT virtual void addChild(GraphicsLayer*);
     WEBCORE_EXPORT virtual void addChildAtIndex(GraphicsLayer*, int index);
@@ -405,16 +414,12 @@ public:
     // Layer contents
     virtual void setContentsToImage(Image*) { }
     virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
-    virtual void setContentsToMedia(PlatformLayer*) { } // video or plug-in
 #if PLATFORM(IOS)
     virtual PlatformLayer* contentsLayerForMedia() const { return 0; }
 #endif
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
-    virtual void setContentsToCanvas(PlatformLayer*) { }
-    // FIXME: webkit.org/b/109658
-    // Should unify setContentsToMedia and setContentsToCanvas
-    virtual void setContentsToPlatformLayer(PlatformLayer* layer) { setContentsToMedia(layer); }
+    virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
     virtual bool usesContentsLayer() const { return false; }
 
     // Callback from the underlying graphics system to draw layer contents.

@@ -68,8 +68,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToSolidColor(const Color&);
     Color solidColor() const { return m_solidColor; }
-    virtual void setContentsToMedia(PlatformLayer*);
-    virtual void setContentsToCanvas(PlatformLayer* canvas) { setContentsToMedia(canvas); }
+    virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose);
     virtual void setShowDebugBorder(bool) override;
     virtual void setDebugBorder(const Color&, float width) override;
     virtual void setShowRepaintCounter(bool) override;
@@ -112,7 +111,7 @@ private:
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
 
-    virtual void platformLayerWillBeDestroyed() override { setContentsToMedia(0); }
+    virtual void platformLayerWillBeDestroyed() override { setContentsToPlatformLayer(0, NoContentsLayer); }
     virtual void setPlatformLayerNeedsDisplay() override { setContentsNeedsDisplay(); }
 
     // This set of flags help us defer which properties of the layer have been

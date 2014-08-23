@@ -371,17 +371,17 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
         m_compositedImage = 0;
     }
 
-    setContentsToMedia(m_compositedImage.get());
+    setContentsToPlatformLayer(m_compositedImage.get(), ContentsLayerForImage);
     notifyChange(ContentChange);
     GraphicsLayer::setContentsToImage(image);
 }
 
-void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* media)
+void GraphicsLayerTextureMapper::setContentsToPlatformLayer(TextureMapperPlatformLayer* media, ContentsLayerPurpose purpose)
 {
     if (media == m_contentsLayer)
         return;
 
-    GraphicsLayer::setContentsToMedia(media);
+    GraphicsLayer::setContentsToPlatformLayer(media, purpose);
     notifyChange(ContentChange);
 
     if (m_contentsLayer)

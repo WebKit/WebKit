@@ -92,7 +92,7 @@ public:
     virtual void setShowDebugBorder(bool) override;
     virtual void setShowRepaintCounter(bool) override;
     virtual bool shouldDirectlyCompositeImage(Image*) const override;
-    virtual void setContentsToCanvas(PlatformLayer*) override;
+    virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     virtual void setMaskLayer(GraphicsLayer*) override;
     virtual void setReplicatedByLayer(GraphicsLayer*) override;
     virtual void setNeedsDisplay() override;
@@ -109,7 +109,7 @@ public:
     virtual void removeAnimation(const String&) override;
     virtual void suspendAnimations(double time) override;
     virtual void resumeAnimations() override;
-    virtual bool usesContentsLayer() const override { return m_canvasPlatformLayer || m_compositedImage; }
+    virtual bool usesContentsLayer() const override { return m_platformLayer || m_compositedImage; }
 
     void syncPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();
@@ -154,18 +154,18 @@ public:
 
 private:
 #if USE(GRAPHICS_SURFACE)
-    enum PendingCanvasOperation {
+    enum PendingPlatformLayerOperation {
         None = 0x00,
-        CreateCanvas = 0x01,
-        DestroyCanvas = 0x02,
-        SyncCanvas = 0x04,
-        CreateAndSyncCanvas = CreateCanvas | SyncCanvas,
-        RecreateCanvas = CreateAndSyncCanvas | DestroyCanvas
+        CreatePlatformLayer = 0x01,
+        DestroyPlatformLayer = 0x02,
+        SyncPlatformLayer = 0x04,
+        CreateAndSyncPlatformLayer = CreatePlatformLayer | SyncPlatformLayer,
+        RecreatePlatformLayer = CreateAndSyncPlatformLayer | DestroyPlatformLayer
     };
 
-    void syncCanvas();
-    void destroyCanvasIfNeeded();
-    void createCanvasIfNeeded();
+    void syncPlatformLayer();
+    void destroyPlatformLayerIfNeeded();
+    void createPlatformLayerIfNeeded();
 #endif
 
     virtual void setDebugBorder(const Color&, float width) override;
@@ -232,8 +232,8 @@ private:
     bool m_pendingContentsScaleAdjustment : 1;
     bool m_pendingVisibleRectAdjustment : 1;
 #if USE(GRAPHICS_SURFACE)
-    bool m_isValidCanvas : 1;
-    unsigned m_pendingCanvasOperation : 3;
+    bool m_isValidPlatformLayer : 1;
+    unsigned m_pendingPlatformLayerOperation : 3;
 #endif
 
     CoordinatedGraphicsLayerClient* m_coordinator;
@@ -244,10 +244,10 @@ private:
     NativeImagePtr m_compositedNativeImagePtr;
     RefPtr<CoordinatedImageBacking> m_coordinatedImageBacking;
 
-    PlatformLayer* m_canvasPlatformLayer;
+    PlatformLayer* m_platformLayer;
 #if USE(GRAPHICS_SURFACE)
-    IntSize m_canvasSize;
-    GraphicsSurfaceToken m_canvasToken;
+    IntSize m_platformLayerSize;
+    GraphicsSurfaceToken m_platformLayerToken;
 #endif
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
     GraphicsLayerAnimations m_animations;

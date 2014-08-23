@@ -126,11 +126,10 @@ public:
     WEBCORE_EXPORT virtual void removeAnimation(const String& animationName) override;
 
     WEBCORE_EXPORT virtual void setContentsToImage(Image*) override;
-    WEBCORE_EXPORT virtual void setContentsToMedia(PlatformLayer*) override;
 #if PLATFORM(IOS)
     WEBCORE_EXPORT virtual PlatformLayer* contentsLayerForMedia() const override;
 #endif
-    WEBCORE_EXPORT virtual void setContentsToCanvas(PlatformLayer*) override;
+    WEBCORE_EXPORT virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     WEBCORE_EXPORT virtual void setContentsToSolidColor(const Color&) override;
 
     virtual bool usesContentsLayer() const override { return m_contentsLayerPurpose != NoContentsLayer; }
@@ -374,8 +373,7 @@ private:
     void updateBackgroundColor();
 
     void updateContentsImage();
-    void updateContentsMediaLayer();
-    void updateContentsCanvasLayer();
+    void updateContentsPlatformLayer();
     void updateContentsColorLayer();
     void updateContentsRects();
     void updateMaskLayer();
@@ -429,24 +427,23 @@ private:
         AnimationChanged = 1LLU << 13,
         DirtyRectsChanged = 1LLU << 14,
         ContentsImageChanged = 1LLU << 15,
-        ContentsMediaLayerChanged = 1LLU << 16,
-        ContentsCanvasLayerChanged = 1LLU << 17,
-        ContentsColorLayerChanged = 1LLU << 18,
-        ContentsRectsChanged = 1LLU << 19,
-        MaskLayerChanged = 1LLU << 20,
-        ReplicatedLayerChanged = 1LLU << 21,
-        ContentsNeedsDisplay = 1LLU << 22,
-        AcceleratesDrawingChanged = 1LLU << 23,
-        ContentsScaleChanged = 1LLU << 24,
-        ContentsVisibilityChanged = 1LLU << 25,
-        VisibleRectChanged = 1LLU << 26,
-        FiltersChanged = 1LLU << 27,
-        TilingAreaChanged = 1LLU << 28,
-        TilesAdded = 1LLU < 29,
-        DebugIndicatorsChanged = 1LLU << 30,
-        CustomAppearanceChanged = 1LLU << 31,
-        CustomBehaviorChanged = 1LLU << 32,
-        BlendModeChanged = 1LLU << 33
+        ContentsPlatformLayerChanged = 1LLU << 16,
+        ContentsColorLayerChanged = 1LLU << 17,
+        ContentsRectsChanged = 1LLU << 18,
+        MaskLayerChanged = 1LLU << 19,
+        ReplicatedLayerChanged = 1LLU << 20,
+        ContentsNeedsDisplay = 1LLU << 21,
+        AcceleratesDrawingChanged = 1LLU << 22,
+        ContentsScaleChanged = 1LLU << 23,
+        ContentsVisibilityChanged = 1LLU << 24,
+        VisibleRectChanged = 1LLU << 25,
+        FiltersChanged = 1LLU << 26,
+        TilingAreaChanged = 1LLU << 27,
+        TilesAdded = 1LLU < 28,
+        DebugIndicatorsChanged = 1LLU << 29,
+        CustomAppearanceChanged = 1LLU << 30,
+        CustomBehaviorChanged = 1LLU << 31,
+        BlendModeChanged = 1LLU << 32
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
@@ -472,14 +469,6 @@ private:
 #endif
     FloatRect m_visibleRect;
     FloatSize m_sizeAtLastVisibleRectUpdate;
-    
-    enum ContentsLayerPurpose {
-        NoContentsLayer = 0,
-        ContentsLayerForImage,
-        ContentsLayerForMedia,
-        ContentsLayerForCanvas,
-        ContentsLayerForBackgroundColor
-    };
     
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_isPageTiledBackingLayer : 1;
