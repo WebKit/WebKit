@@ -66,10 +66,6 @@
     void sendMessageToBackend(DOMString message);
     void unbufferedLog(DOMString message);
 
-    [Custom] void recordActionTaken(unsigned long actionCode);
-    [Custom] void recordPanelShown(unsigned long panelCode);
-    [Custom] void recordSettingChanged(unsigned long settingChanged);
-
     boolean isUnderTest();
 
     void beep();
