@@ -120,7 +120,7 @@ void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 
 String InjectedScriptManager::injectedScriptSource()
 {
-    return String(reinterpret_cast<const char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
+    return StringImpl::createWithoutCopying(InjectedScriptSource_js, sizeof(InjectedScriptSource_js));
 }
 
 Deprecated::ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ExecState* scriptState, int id)

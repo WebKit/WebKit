@@ -1,3 +1,13 @@
+2014-08-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Do not copy large module source strings
+        https://bugs.webkit.org/show_bug.cgi?id=136191
+
+        Reviewed by Benjamin Poulain.
+
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptSource):
+
 2014-08-21  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r163179): Sporadic crash in js/dom/line-column-numbers.html test
