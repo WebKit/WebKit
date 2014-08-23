@@ -1,3 +1,13 @@
+2014-08-22  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Remove LevelDB.
+        https://bugs.webkit.org/show_bug.cgi?id=136170
+
+        Reviewed by Gyuyoung Kim.
+
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/style/checker.py:
+
 2014-08-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] install-dependencies don't installs Xvfb that is needed for the tests.

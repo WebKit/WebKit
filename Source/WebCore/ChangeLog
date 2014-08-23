@@ -1,3 +1,45 @@
+2014-08-22  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Remove LevelDB.
+        https://bugs.webkit.org/show_bug.cgi?id=136170
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp:
+        (WebCore::IDBTransactionCoordinator::canRunTransaction):
+        (WebCore::doScopesOverlap): Deleted.
+        * Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.h: Removed.
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h: Removed.
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.h: Removed.
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h: Removed.
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.h: Removed.
+        * Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBLevelDBCoding.h: Removed.
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h: Removed.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/DatabaseStrategy.cpp:
+        (WebCore::DatabaseStrategy::createIDBFactoryBackend):
+        * platform/leveldb/LevelDBComparator.h: Removed.
+        * platform/leveldb/LevelDBDatabase.cpp: Removed.
+        * platform/leveldb/LevelDBDatabase.h: Removed.
+        * platform/leveldb/LevelDBIterator.h: Removed.
+        * platform/leveldb/LevelDBSlice.h: Removed.
+        * platform/leveldb/LevelDBTransaction.cpp: Removed.
+        * platform/leveldb/LevelDBTransaction.h: Removed.
+        * platform/leveldb/LevelDBWriteBatch.cpp: Removed.
+        * platform/leveldb/LevelDBWriteBatch.h: Removed.
+
 2014-08-22  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Fix build break caused by ENABLE_GAMEPAD_DEPRECATED.

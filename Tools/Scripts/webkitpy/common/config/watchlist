@@ -262,7 +262,6 @@
             "filename": r"Source/WebCore/Modules/indexeddb"
                         r"|Source/WebCore/bindings/.*IDB.*\.(h|cpp)"
                         r"|Source/WebCore/bindings/.*SerializedScriptValue.*\.(h|cpp)"
-                        r"|Source/WebCore/platform/leveldb"
                         r"|LayoutTests/storage/indexeddb"
                         r"|LayoutTests/platform/.*/storage/indexeddb",
         },

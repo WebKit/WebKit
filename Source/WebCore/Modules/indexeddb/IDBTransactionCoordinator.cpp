@@ -105,49 +105,12 @@ void IDBTransactionCoordinator::processStartedTransactions()
     }
 }
 
-#if USE(LEVELDB)
-static bool doScopesOverlap(const HashSet<int64_t>& scope1, const HashSet<int64_t>& scope2)
-{
-    for (HashSet<int64_t>::const_iterator it = scope1.begin(); it != scope1.end(); ++it) {
-        if (scope2.contains(*it))
-            return true;
-    }
-    return false;
-}
-#endif
-
 bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackend* transaction)
 {
     ASSERT(m_queuedTransactions.contains(transaction));
 
-#if USE(LEVELDB)
-    switch (transaction->mode()) {
-    case IndexedDB::TransactionMode::VersionChange:
-        ASSERT(m_queuedTransactions.size() == 1);
-        ASSERT(m_startedTransactions.isEmpty());
-        return true;
-
-    case IndexedDB::TransactionMode::ReadOnly:
-        return true;
-
-    case IndexedDB::TransactionMode::ReadWrite:
-        for (HashSet<IDBTransactionBackend*>::const_iterator it = m_startedTransactions.begin(); it != m_startedTransactions.end(); ++it) {
-            if ((*it)->mode() == IndexedDB::TransactionMode::ReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
-                return false;
-        }
-        for (ListHashSet<IDBTransactionBackend*>::const_iterator it = m_queuedTransactions.begin(); *it != transaction; ++it) {
-            ASSERT(it != m_queuedTransactions.end());
-            if ((*it)->mode() == IndexedDB::TransactionMode::ReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
-                return false;
-        }
-        return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-#else
     UNUSED_PARAM(transaction);
     return !m_startedTransactions.size();
-#endif
 }
 
 };

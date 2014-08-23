@@ -6725,7 +6725,6 @@
     <ClCompile Include="..\Modules\indexeddb\IDBCursorBackend.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBDatabase.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBFactory.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBFactoryBackendInterface.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBIndex.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKey.cpp" />

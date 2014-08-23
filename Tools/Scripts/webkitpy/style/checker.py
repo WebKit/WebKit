@@ -336,7 +336,6 @@ _SKIPPED_FILES_WITH_WARNING = [
 # with FileType.NONE are automatically skipped without warning.
 _SKIPPED_FILES_WITHOUT_WARNING = [
     "LayoutTests" + os.path.sep,
-    "Source/ThirdParty/leveldb" + os.path.sep,
     ]
 
 # Extensions of files which are allowed to contain carriage returns.

@@ -313,9 +313,6 @@
     <Filter Include="rendering\shapes">
       <UniqueIdentifier>{c1c88449-966f-4628-a88b-16c30f08dd7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Modules\indexeddb\leveldb">
-      <UniqueIdentifier>{54c889f7-b5e7-491e-9029-65dc7185b9d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="platform\graphics\texmap">
       <UniqueIdentifier>{984df990-811f-422a-8d2b-f090395f3e4b}</UniqueIdentifier>
     </Filter>
@@ -6822,9 +6819,6 @@
     </ClCompile>
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp">
       <Filter>rendering\shapes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
-      <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp">
       <Filter>DerivedSources</Filter>

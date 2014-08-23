@@ -29,10 +29,6 @@
 #include "DatabaseServer.h"
 #include "IDBFactoryBackendInterface.h"
 
-#if USE(LEVELDB)
-#include "IDBFactoryBackendLevelDB.h"
-#endif
-
 namespace WebCore {
 
 #if ENABLE(SQL_DATABASE)
@@ -46,12 +42,8 @@ AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
 PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend(const String& databaseDirectoryIdentifier)
 {
     // FIXME: Need a better platform abstraction here, but this stop gap will work for now.
-#if USE(LEVELDB)
-    return IDBFactoryBackendLevelDB::create(databaseDirectoryIdentifier);
-#else
     UNUSED_PARAM(databaseDirectoryIdentifier);
     return 0;
-#endif
 }
 #endif // ENABLE(INDEXED_DATABASE)
 
