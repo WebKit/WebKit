@@ -1,3 +1,24 @@
+2014-08-23  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Make it possible to pull historic data from Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=136182
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        Make it possible to create a complete BuildbotIteration object with JSON, not only by
+        loading data from the network.
+
+        An iteration has three states:
+        1. Just created, it only knows the revision, and whether it's already finished.
+        BuildbotIteration constructor used to create these.
+        2. A complete JSON report loaded from buildbot. The new constructor form creates these.
+        3. Data about tests is fetched.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        Make it possible to pull all data from a buildbot queue. This needs to be better
+        optimized eventually, as it's somewhat slow.
+
 2014-08-22  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Remove LevelDB.

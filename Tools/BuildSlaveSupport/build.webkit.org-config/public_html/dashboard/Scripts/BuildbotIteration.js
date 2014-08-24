@@ -23,14 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-BuildbotIteration = function(queue, id, finished)
+BuildbotIteration = function(queue, dataOrID, finished)
 {
     BaseObject.call(this);
 
     console.assert(queue);
 
     this.queue = queue;
-    this.id = id;
+
+    if (typeof dataOrID === "object") {
+        this._parseData(dataOrID);
+        return;
+    }
+
+    console.assert(typeof dataOrID === "number");
+    this.id = dataOrID;
 
     this.loaded = false;
 
@@ -153,14 +160,8 @@ BuildbotIteration.prototype = {
         return null;
     },
 
-    update: function()
+    _parseData: function(data)
     {
-        if (this.loaded && this._finished)
-            return;
-
-        if (this.queue.buildbot.needsAuthentication && this.queue.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
-            return;
-
         function collectTestResults(data, stepName)
         {
             var testStep = data.steps.findFirst(function(step) { return step.name === stepName; });
@@ -214,68 +215,99 @@ BuildbotIteration.prototype = {
             return testResults;
         }
 
+        console.assert(!this.id || this.id === data.number);
+        this.id = data.number;
+
+        // The property got_revision may have the following forms:
+        //
+        // ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
+        // OR
+        // ["got_revision","2468_1357","Source"]
+        // OR
+        // ["got_revision","2468","Source"]
+        //
+        // When extracting the OpenSource revision from property got_revision we don't need to check whether the
+        // value of got_revision is a dictionary (represents multiple codebases) or a string literal because we
+        // assume that got_revision contains the OpenSource revision. However, it may not have the Internal
+        // revision. Therefore, we only look at got_revision to extract the Internal revision when it's
+        // a dictionary.
+
+        var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
+        this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKit");
+
+        var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
+        this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
+
+        this.branch = data.properties.findFirst(function(property) { return property[0] === "branch" })[1];
+
+        this.changes = [];
+        var changes = data.sourceStamp.changes;
+        for (var i = 0; i < changes.length; ++i)
+            this.changes[i] = { revisionNumber: parseInt(changes[i].revision, 10) }
+
+        this.startTime = new Date(data.times[0] * 1000);
+        this.endTime = new Date(data.times[1] * 1000);
+
+        var layoutTestResults = collectTestResults.call(this, data, "layout-test");
+        this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;
+
+        var javascriptTestResults = collectTestResults.call(this, data, "jscore-test");
+        this.javascriptTestResults = javascriptTestResults ? new BuildbotTestResults(this, javascriptTestResults) : null;
+
+        var apiTestResults = collectTestResults.call(this, data, "run-api-tests");
+        this.apiTestResults = apiTestResults ? new BuildbotTestResults(this, apiTestResults) : null;
+
+        var platformAPITestResults = collectTestResults.call(this, data, "API tests");
+        this.platformAPITestResults = platformAPITestResults ? new BuildbotTestResults(this, platformAPITestResults) : null;
+
+        var pythonTestResults = collectTestResults.call(this, data, "webkitpy-test");
+        this.pythonTestResults = pythonTestResults ? new BuildbotTestResults(this, pythonTestResults) : null;
+
+        var perlTestResults = collectTestResults.call(this, data, "webkitperl-test");
+        this.perlTestResults = perlTestResults ? new BuildbotTestResults(this, perlTestResults) : null;
+
+        var bindingTestResults = collectTestResults.call(this, data, "bindings-generation-tests");
+        this.bindingTestResults = bindingTestResults ? new BuildbotTestResults(this, bindingTestResults) : null;
+
+        this.loaded = true;
+
+        this._firstFailedStep = data.steps.findFirst(function(step) { return step.results[0] === BuildbotIteration.FAILURE; });
+
+        console.assert(data.results === null || typeof data.results === "number");
+        this._result = data.results;
+
+        this.text = data.text.join(" ");
+
+        if (!data.currentStep)
+            this.finished = true;
+
+        // Update the sorting since it is based on the revisions we just loaded.
+        this.queue.sortIterations();
+    },
+
+    _updateWithData: function(data)
+    {
+        if (this.loaded && this._finished)
+            return;
+
+        this._parseData(data);
+        this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
+    },
+
+    update: function()
+    {
+        if (this.loaded && this._finished)
+            return;
+
+        if (this.queue.buildbot.needsAuthentication && this.queue.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
+            return;
+
         JSON.load(this.queue.baseURL + "/builds/" + this.id, function(data) {
             this.queue.buildbot.isAuthenticated = true;
             if (!data || !data.properties)
                 return;
 
-            // The property got_revision may have the following forms:
-            //
-            // ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
-            // OR
-            // ["got_revision","2468_1357","Source"]
-            // OR
-            // ["got_revision","2468","Source"]
-            //
-            // When extracting the OpenSource revision from property got_revision we don't need to check whether the
-            // value of got_revision is a dictionary (represents multiple codebases) or a string literal because we
-            // assume that got_revision contains the OpenSource revision. However, it may not have the Internal
-            // revision. Therefore, we only look at got_revision to extract the Internal revision when it's
-            // a dictionary.
-
-            var openSourceRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "got_revision" || property[0] === "revision" || property[0] === "opensource_got_revision"; });
-            this.openSourceRevision = parseRevisionProperty(openSourceRevisionProperty, "WebKit");
-
-            var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
-            this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
-
-            var layoutTestResults = collectTestResults.call(this, data, "layout-test");
-            this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;
-
-            var javascriptTestResults = collectTestResults.call(this, data, "jscore-test");
-            this.javascriptTestResults = javascriptTestResults ? new BuildbotTestResults(this, javascriptTestResults) : null;
-
-            var apiTestResults = collectTestResults.call(this, data, "run-api-tests");
-            this.apiTestResults = apiTestResults ? new BuildbotTestResults(this, apiTestResults) : null;
-
-            var platformAPITestResults = collectTestResults.call(this, data, "API tests");
-            this.platformAPITestResults = platformAPITestResults ? new BuildbotTestResults(this, platformAPITestResults) : null;
-
-            var pythonTestResults = collectTestResults.call(this, data, "webkitpy-test");
-            this.pythonTestResults = pythonTestResults ? new BuildbotTestResults(this, pythonTestResults) : null;
-
-            var perlTestResults = collectTestResults.call(this, data, "webkitperl-test");
-            this.perlTestResults = perlTestResults ? new BuildbotTestResults(this, perlTestResults) : null;
-
-            var bindingTestResults = collectTestResults.call(this, data, "bindings-generation-tests");
-            this.bindingTestResults = bindingTestResults ? new BuildbotTestResults(this, bindingTestResults) : null;
-
-            this.loaded = true;
-
-            this._firstFailedStep = data.steps.findFirst(function(step) { return step.results[0] === BuildbotIteration.FAILURE; });
-
-            console.assert(data.results === null || typeof data.results === "number");
-            this._result = data.results;
-
-            this.text = data.text.join(" ");
-
-            if (!data.currentStep)
-                this.finished = true;
-
-            // Update the sorting since it is based on the revisions we just loaded.
-            this.queue.sortIterations();
-
-            this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
+            this._updateWithData(data);
         }.bind(this),
         function(data) {
             if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {

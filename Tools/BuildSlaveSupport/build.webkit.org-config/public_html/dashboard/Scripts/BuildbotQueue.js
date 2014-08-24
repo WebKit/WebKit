@@ -65,6 +65,12 @@ BuildbotQueue.prototype = {
         return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id);
     },
 
+    get allIterationsURL()
+    {
+        // Getting too many builds results in a timeout error, 10000 is OK.
+        return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id) + "/builds/_all/?max=10000";
+    },
+
     get overviewURL()
     {
         return this.buildbot.baseURL + "builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
@@ -118,13 +124,39 @@ BuildbotQueue.prototype = {
         return null;
     },
 
-    update: function()
+    _load: function(url, callback)
     {
         if (this.buildbot.needsAuthentication && this.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
             return;
 
-        JSON.load(this.baseURL, function(data) {
-            this.buildbot.isAuthenticated = true;
+        JSON.load(
+            url,
+            function(data) {
+                this.buildbot.isAuthenticated = true;
+                callback(data);
+            }.bind(this),
+            function(data) {
+                if (this.buildbot.isAuthenticated) {
+                    // FIXME (128006): Safari/WebKit should coalesce authentication requests with the same origin and authentication realm.
+                    // In absence of the fix, Safari presents additional authentication dialogs regardless of whether an earlier authentication
+                    // dialog was dismissed. As a way to ameliorate the user experience where a person authenticated successfully using an
+                    // earlier authentication dialog and cancelled the authentication dialog associated with the load for this queue, we call
+                    // ourself so that we can schedule another load, which should complete successfully now that we have credentials.
+                    this._load(url, callback);
+                    return;
+                }
+                if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
+                    this.buildbot.isAuthenticated = false;
+                    this.dispatchEventToListeners(BuildbotQueue.Event.UnauthorizedAccess, { });
+                }
+            }.bind(this),
+            {withCredentials: this.buildbot.needsAuthentication}
+        );
+    },
+
+    update: function()
+    {
+        this._load(this.baseURL, function(data) {
             if (!(data.cachedBuilds instanceof Array))
                 return;
 
@@ -155,22 +187,22 @@ BuildbotQueue.prototype = {
             this.sortIterations();
 
             this.dispatchEventToListeners(BuildbotQueue.Event.IterationsAdded, {addedIterations: newIterations});
-        }.bind(this),
-        function(data) {
-            if (this.buildbot.isAuthenticated) {
-                // FIXME (128006): Safari/WebKit should coallesce authentication requests with the same origin and authentication realm.
-                // In absence of the fix, Safari presents additional authentication dialogs regardless of whether an earlier authentication
-                // dialog was dismissed. As a way to ameliorate the user experience where a person authenticated successfully using an
-                // earlier authentication dialog and cancelled the authentication dialog associated with the load for this queue, we call
-                // ourself so that we can schedule another load, which should complete successfully now that we have credentials.
-                this.update();
-                return;
+        }.bind(this));
+    },
+
+    loadAll: function(callback)
+    {
+        // FIXME: Don't load everything at once, do it incrementally as requested.
+        this._load(this.allIterationsURL, function(data) {
+            for (var idString in data) {
+                console.assert(typeof idString === "string");
+                iteration = new BuildbotIteration(this, data[idString]);
+                this.iterations.push(iteration);
+                this._knownIterations[iteration.id] = iteration;
             }
-            if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
-                this.buildbot.isAuthenticated = false;
-                this.dispatchEventToListeners(BuildbotQueue.Event.UnauthorizedAccess, { });
-            }
-        }.bind(this), {withCredentials: this.buildbot.needsAuthentication});
+
+            callback(this);
+        }.bind(this));
     },
 
     sortIterations: function()
