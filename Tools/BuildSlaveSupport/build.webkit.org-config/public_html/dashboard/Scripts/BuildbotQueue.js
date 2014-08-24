@@ -43,8 +43,6 @@ BuildbotQueue = function(buildbot, id, info)
 
     this.iterations = [];
     this._knownIterations = {};
-
-    this.update();
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueue);

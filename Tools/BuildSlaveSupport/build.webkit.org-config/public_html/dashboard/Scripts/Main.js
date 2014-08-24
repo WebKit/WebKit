@@ -230,4 +230,8 @@ function documentReady()
     }
 }
 
+webkitTrac.startPeriodicUpdates();
+if (typeof internalTrac !== "undefined")
+    internalTrac.startPeriodicUpdates();
+
 document.addEventListener("DOMContentLoaded", documentReady);

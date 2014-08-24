@@ -32,7 +32,7 @@ QueueView = function()
     this.element.__queueView = this;
 
     this.updateTimer = null;
-    this._updateHiddenState();
+    setTimeout(this._updateHiddenState.bind(this), 0); // Lets subclass constructor finish before calling _updateHiddenState.
     settings.addSettingListener("hiddenPlatforms", this._updateHiddenState.bind(this));
 };
 
@@ -71,9 +71,10 @@ QueueView.prototype = {
         var wasHidden = !this.updateTimer;
         var isHidden = hiddenPlatforms && hiddenPlatforms.contains(this.platform);
 
-        if (wasHidden && !isHidden)
+        if (wasHidden && !isHidden) {
+            this._updateQueues();
             this.updateTimer = setInterval(this._updateQueues.bind(this), QueueView.UpdateInterval);
-        else if (!wasHidden && isHidden) {
+        } else if (!wasHidden && isHidden) {
             clearInterval(this.updateTimer);
             this.updateTimer = null;
         }

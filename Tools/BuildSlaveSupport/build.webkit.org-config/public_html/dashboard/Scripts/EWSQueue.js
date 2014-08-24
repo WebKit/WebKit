@@ -35,8 +35,6 @@ EWSQueue = function(ews, id, info)
     this.title = info.title || "\xa0";
 
     this.platform = info.platform.name || "unknown";
-
-    this.update();
 };
 
 BaseObject.addConstructorFunctions(EWSQueue);

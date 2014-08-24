@@ -33,9 +33,6 @@ Trac = function(baseURL, options)
     this._needsAuthentication = (typeof options === "object") && options[Trac.NeedsAuthentication] === true;
 
     this.recordedCommits = []; // Will be sorted in ascending order.
-
-    this.update();
-    this.updateTimer = setInterval(this.update.bind(this), Trac.UpdateInterval);
 };
 
 BaseObject.addConstructorFunctions(Trac);
@@ -168,5 +165,11 @@ Trac.prototype = {
     update: function()
     {
         loadXML(this._xmlTimelineURL(), this._loaded.bind(this), this._needsAuthentication ? { withCredentials: true } : {});
+    },
+
+    startPeriodicUpdates: function()
+    {
+        this.update();
+        this.updateTimer = setInterval(this.update.bind(this), Trac.UpdateInterval);
     }
 };
