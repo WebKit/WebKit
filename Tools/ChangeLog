@@ -1,3 +1,23 @@
+2014-08-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        GenericHashTraits::peek() is producing copies of passed-in temporary values
+        https://bugs.webkit.org/show_bug.cgi?id=131461
+
+        Reviewed by Darin Adler.
+
+        Add a test case that checks the number of copies and moves of the mapped objects
+        when calling HashMap::get(). Exactly one copy of the mapped value should be
+        performed when there exists a value that is mapped to the specified key, and
+        exactly one move and no copies of the empty value should be performed when there
+        isn't any mapped value for the specified key.
+
+        * TestWebKitAPI/Tests/WTF/CopyMoveCounter.h: Added.
+        (CopyMoveCounter::TestingScope::TestingScope):
+        (CopyMoveCounter::CopyMoveCounter):
+        (CopyMoveCounter::operator=):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2014-08-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Introduce DEVELOPER_MODE

@@ -1,3 +1,15 @@
+2014-08-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        GenericHashTraits::peek() is producing copies of passed-in temporary values
+        https://bugs.webkit.org/show_bug.cgi?id=131461
+
+        Reviewed by Darin Adler.
+
+        * wtf/HashTraits.h:
+        (WTF::GenericHashTraits::peek): Make this method a template that passes through
+        the passed-in value without copying, achieved by using universal references and
+        std::forward<>().
+
 2014-08-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Disable ENABLE_IOS_{GESTURE, TOUCH}_EVENTS, and temporarily disable ENABLE_TOUCH_EVENTS
