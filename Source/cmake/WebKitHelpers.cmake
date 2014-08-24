@@ -18,12 +18,6 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             EXEC_PROGRAM("${CMAKE_CXX_COMPILER} -E -Wp,-dM - < /dev/null | grep '#define __VERSION__' | grep -E -o '[0-9]+\\.[0-9]+\\.?[0-9]+?'" OUTPUT_VARIABLE COMPILER_VERSION)
         endif ()
 
-        # For GTK+ we will rely on a linker script to deal with symbol visibility on
-        # production builds, we want all symbols visible for development builds.
-        if (NOT SHARED_CORE AND NOT ${PORT} STREQUAL "GTK")
-            set(OLD_COMPILE_FLAGS "-fvisibility=hidden ${OLD_COMPILE_FLAGS}")
-        endif ()
-
         get_target_property(TARGET_TYPE ${_target} TYPE)
         if (${TARGET_TYPE} STREQUAL "STATIC_LIBRARY") # -fPIC is automatically added to shared libraries
             set(OLD_COMPILE_FLAGS "-fPIC ${OLD_COMPILE_FLAGS}")

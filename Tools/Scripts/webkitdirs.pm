@@ -1942,7 +1942,7 @@ sub generateBuildSystemFromCMakeProject
     }
 
     # GTK+ has a production mode, but build-webkit should always use developer mode.
-    push @args, "-DDEVELOPER_MODE=ON" if isGtk();
+    push @args, "-DDEVELOPER_MODE=ON" if isEfl() || isGtk();
 
     # Don't warn variables which aren't used by cmake ports.
     push @args, "--no-warn-unused-cli";

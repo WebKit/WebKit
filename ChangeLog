@@ -1,3 +1,19 @@
+2014-08-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Introduce DEVELOPER_MODE
+        https://bugs.webkit.org/show_bug.cgi?id=135884
+
+        Reviewed by Gyuyoung Kim.
+
+        Like GTK port, DEVELOPER_MODE can be good solution for developing, debugging and testing
+        instead of SHARED_CORE.
+        SHARED_CORE can reduce link time and memory consumption but it is slightly different
+        from release binary.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitHelpers.cmake:
+        Moved fvisibility=hidden to OptionsEfl.cmake
+
 2014-08-22  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Turn on ENABLE_GAMEPAD_DEPRECATED option.
