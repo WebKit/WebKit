@@ -277,7 +277,9 @@
     <branch module="gst-plugins-base/gst-plugins-base-1.2.1.tar.xz" version="1.2.1"
             repo="gstreamer"
             hash="sha256:de2444a5c150d4e4b680364d7c0414cd8b015d95b305ff65d65a17683379532f"
-            md5sum="2e75fb03ed7e4d24d88601fcac4d57aa"/>
+            md5sum="2e75fb03ed7e4d24d88601fcac4d57aa">
+      <patch file="gst-plugins-base-fix-build-gcc-4.9-x86.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
