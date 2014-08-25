@@ -46,7 +46,7 @@ $ENV{'XDSTROOT'} = $XDSTROOT;
 my $TARGET_BUILD_DIR = File::Spec->catdir($XDSTROOT, "bin$ARGV[3]", 'WebKit.resources');
 $ENV{'TARGET_BUILD_DIR'} = $TARGET_BUILD_DIR;
 my ($JAVASCRIPTCORE_PRIVATE_HEADERS_DIR, $WEBCORE_PRIVATE_HEADERS_DIR);
-if ($ENV{'OFFICIAL_BUILD'} eq '1') {
+if ($ARGV[4] eq '1') {
     $ARGV[1] =~ s/^\"//;
     $ARGV[1] =~ s/\"$//;
     my $Internal = Cwd::realpath($ARGV[1]);;
@@ -59,6 +59,7 @@ if ($ENV{'OFFICIAL_BUILD'} eq '1') {
 
 $ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'} = $JAVASCRIPTCORE_PRIVATE_HEADERS_DIR;
 $ENV{'WEBCORE_PRIVATE_HEADERS_DIR'} = $WEBCORE_PRIVATE_HEADERS_DIR;
+
 my $DERIVED_SOURCES_DIR = File::Spec->catdir($XDSTROOT, "obj$ARGV[3]", 'WebInspectorUI', 'DerivedSources');
 $ENV{'DERIVED_SOURCES_DIR'} = $DERIVED_SOURCES_DIR;
 
@@ -67,6 +68,18 @@ $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'} = 'WebInspectorUI';
 if (($TARGET_BUILD_DIR =~ /Release/) || ($TARGET_BUILD_DIR =~ /Production/)) {
     $ENV{'COMBINE_INSPECTOR_RESOURCES'} = 'YES';
 } 
+
+my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'});
+my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');
+
+# Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
+my $jsFrom = File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorJSBackendCommands.js');
+my $jsTo = File::Spec->catfile($protocolDir, 'InspectorJSBackendCommands.js');
+print "Copying JavaScript bindings from $jsFrom to $jsTo\n";
+
+my $wcFrom = File::Spec->catfile($ENV{'WEBCORE_PRIVATE_HEADERS_DIR'}, 'InspectorWebBackendCommands.js');
+my $wcTo = File::Spec->catfile($protocolDir, 'InspectorWebBackendCommands.js');
+print "Copying WebCore bindings from $wcFrom to $wcTo\n";
 
 my $copyResourcesCommand = File::Spec->catfile($XSRCROOT, 'Scripts', 'copy-user-interface-resources.pl');
 do $copyResourcesCommand;
