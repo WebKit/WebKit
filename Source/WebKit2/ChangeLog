@@ -1,3 +1,17 @@
+2014-08-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not use GtkWindow:resize-grip-visible with recent GTK+ versions
+        https://bugs.webkit.org/show_bug.cgi?id=135699
+
+        Reviewed by Philippe Normand.
+
+        Resize grips support have been removed from GTK+ since 3.13.4, the
+        API has been deprecated and does nothing.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (resizeWebKitWebViewBaseFromAllocation):
+
 2014-08-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         WebKit2GTK - WebKitWebProcess assertion fails when dragging and dropping a file into the view
