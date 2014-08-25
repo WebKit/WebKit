@@ -1,3 +1,18 @@
+2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK] WebkitWebProcess crashing navigating away from ogg video element
+        https://bugs.webkit.org/show_bug.cgi?id=135348
+
+        Reviewed by Philippe Normand.
+
+        Let GraphicsLayerTextureMapper know it needs to detach the platform
+        layer when a MediaPlayerPrivateGStreamerBase is destroyed.
+
+        No new test since media/restore-from-page-cache.html covers it.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+
 2014-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

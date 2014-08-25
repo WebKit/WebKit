@@ -1,3 +1,17 @@
+2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK] WebkitWebProcess crashing navigating away from ogg video element
+        https://bugs.webkit.org/show_bug.cgi?id=135348
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations: Enable
+        media/restore-from-page-cache.html,
+        plugins/netscape-plugin-page-cache-works.html and
+        animations/resume-after-page-cache.html. They should pass correctly.
+        Skip compositing/iframes/page-cache-layer-tree.html since we disable
+        that optimization.
+
 2014-06-24  Jarek Czekalski  <jarekczek@poczta.onet.pl>
 
         [ATK] Extended the test for accessibility of text inside "span" block in "a" block

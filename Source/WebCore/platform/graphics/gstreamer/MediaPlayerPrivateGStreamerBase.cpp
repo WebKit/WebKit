@@ -153,6 +153,11 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
         g_signal_handler_disconnect(m_volumeElement.get(), m_muteSignalHandler);
         m_muteSignalHandler = 0;
     }
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+    if (client())
+        client()->platformLayerWillBeDestroyed();
+#endif
 }
 
 // Returns the size of the video
