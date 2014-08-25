@@ -60,16 +60,6 @@
     "description": "Test the generation of special behaviors that only apply to specific classes.",
     "types": [
         {
-            "id": "UnpleasantName",
-            "description": "This type should be renamed to HappyName",
-            "type": "object",
-            "members": [
-                { "name": "notes", "type": "string" },
-                { "name": "timestamp", "type": "number" },
-                { "name": "values", "type": "object" }
-            ]
-        },
-        {
             "id": "ParameterBundle",
             "type": "object",
             "properties": [
@@ -79,17 +69,6 @@
                 { "name": "values", "type": "object" },
                 { "name": "payload", "type": "any" },
                 { "name": "error", "$ref": "Database.Error" }
-            ]
-        }
-    ],
-    "commands": [
-        {
-            "name": "attemptCurse",
-            "parameters": [
-                { "name": "curse", "$ref": "UnpleasantName" }
-            ],
-            "returns": [
-                { "name": "censoredCurse", "type": "string", "optional": true }
             ]
         }
     ]

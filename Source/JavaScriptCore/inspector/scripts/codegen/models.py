@@ -55,14 +55,6 @@ _FRAMEWORK_CONFIG_MAP = {
 }
 
 
-# FIXME: These should be converted into JSON properties, or renamed.
-_TYPES_NEEDING_RENAME_WORKAROUNDS = {
-    'RGBA': 'Rgba', # RGBA is reported to be conflicting with a define name in Windows CE.
-    # For testing only.
-    'UnpleasantName': 'HappyName'
-}
-
-
 class ParseException(Exception):
     pass
 
@@ -110,7 +102,7 @@ class Frameworks:
 class TypeReference:
     def __init__(self, type_kind, referenced_type_name, enum_values, array_items):
         self.type_kind = type_kind
-        self.referenced_type_name = _TYPES_NEEDING_RENAME_WORKAROUNDS.get(referenced_type_name, referenced_type_name)
+        self.referenced_type_name = referenced_type_name
         self.enum_values = enum_values
         if array_items is None:
             self.array_type_ref = None
@@ -144,7 +136,7 @@ class Type:
         return self.qualified_name().__hash__()
 
     def raw_name(self):
-        return _TYPES_NEEDING_RENAME_WORKAROUNDS.get(self._name, self._name)
+        return self._name
 
     # These methods should be overridden by subclasses.
     def is_enum(self):
@@ -505,7 +497,7 @@ class Domains:
 
 class TypeDeclaration:
     def __init__(self, type_name, type_ref, description, type_members):
-        self.type_name = _TYPES_NEEDING_RENAME_WORKAROUNDS.get(type_name, type_name)
+        self.type_name = type_name
         self.type_ref = type_ref
         self.description = description
         self.type_members = type_members

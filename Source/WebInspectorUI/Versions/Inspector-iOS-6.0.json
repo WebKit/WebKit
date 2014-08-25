@@ -1105,7 +1105,7 @@
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
             },
             {
-                "id": "RGBA",
+                "id": "RGBAColor",
                 "type": "object",
                 "properties": [
                     { "name": "r", "type": "integer", "description": "The red component, in the [0-255] range." },
@@ -1120,10 +1120,10 @@
                 "type": "object",
                 "properties": [
                     { "name": "showInfo", "type": "boolean", "optional": true, "description": "Whether the node info tooltip should be shown (default: false)." },
-                    { "name": "contentColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
-                    { "name": "paddingColor", "$ref": "RGBA", "optional": true, "description": "The padding highlight fill color (default: transparent)." },
-                    { "name": "borderColor", "$ref": "RGBA", "optional": true, "description": "The border highlight fill color (default: transparent)." },
-                    { "name": "marginColor", "$ref": "RGBA", "optional": true, "description": "The margin highlight fill color (default: transparent)." }
+                    { "name": "contentColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
+                    { "name": "paddingColor", "$ref": "RGBAColor", "optional": true, "description": "The padding highlight fill color (default: transparent)." },
+                    { "name": "borderColor", "$ref": "RGBAColor", "optional": true, "description": "The border highlight fill color (default: transparent)." },
+                    { "name": "marginColor", "$ref": "RGBAColor", "optional": true, "description": "The margin highlight fill color (default: transparent)." }
                 ],
                 "description": "Configuration data for the highlighting of page elements."
             }
@@ -1300,8 +1300,8 @@
                     { "name": "y", "type": "integer", "description": "Y coordinate" },
                     { "name": "width", "type": "integer", "description": "Rectangle width" },
                     { "name": "height", "type": "integer", "description": "Rectangle height" },
-                    { "name": "color", "$ref": "RGBA", "optional": true, "description": "The highlight fill color (default: transparent)." },
-                    { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." }
+                    { "name": "color", "$ref": "RGBAColor", "optional": true, "description": "The highlight fill color (default: transparent)." },
+                    { "name": "outlineColor", "$ref": "RGBAColor", "optional": true, "description": "The highlight outline color (default: transparent)." }
                 ],
                 "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport."
             },
@@ -1321,8 +1321,8 @@
                 "name": "highlightFrame",
                 "parameters": [
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame to highlight." },
-                    { "name": "contentColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
-                    { "name": "contentOutlineColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight outline color (default: transparent)." }
+                    { "name": "contentColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
+                    { "name": "contentOutlineColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight outline color (default: transparent)." }
                 ],
                 "description": "Highlights owner element of the frame with given id."
             },

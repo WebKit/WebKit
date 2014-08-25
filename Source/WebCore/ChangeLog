@@ -1,3 +1,17 @@
+2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Rename DOM.RGBA and remove workarounds in the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=136025
+
+        Reviewed by Joseph Pecoraro.
+
+        Rename DOM.RGBA to DOM.RGBAColor to avoid name clashes with headers on Windows CE.
+        This workaround used to be special-cased in the bindings generator.
+
+        Type names are not used in protocol messages, so this does not introduce legacy issues.
+
+        * inspector/protocol/DOM.json:
+
 2014-08-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Toggle buttons visually broken with GTK+ 3.13.7

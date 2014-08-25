@@ -1,3 +1,19 @@
+2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Rename DOM.RGBA and remove workarounds in the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=136025
+
+        Reviewed by Joseph Pecoraro.
+
+        This workaround can be removed since it is no longer necessary.
+
+        * inspector/scripts/codegen/models.py:
+        (TypeReference.__init__):
+        (Type.raw_name):
+        (TypeDeclaration.__init__):
+        * inspector/scripts/tests/type-declaration-object-type.json: Remove related test input.
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result: Rebaseline.
+
 2014-08-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Do not copy large module source strings
