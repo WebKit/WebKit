@@ -101,22 +101,36 @@
 #endif /* MIPS */
 
 /* CPU(PPC) - PowerPC 32-bit */
-#if   defined(__ppc__)     \
-    || defined(__PPC__)     \
-    || defined(__powerpc__) \
-    || defined(__powerpc)   \
-    || defined(__POWERPC__) \
-    || defined(_M_PPC)      \
-    || defined(__PPC)
+#if (  defined(__ppc__)        \
+    || defined(__PPC__)        \
+    || defined(__powerpc__)    \
+    || defined(__powerpc)      \
+    || defined(__POWERPC__)    \
+    || defined(_M_PPC)         \
+    || defined(__PPC))         \
+    && defined(__BYTE_ORDER__) \
+    && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #define WTF_CPU_PPC 1
 #define WTF_CPU_BIG_ENDIAN 1
 #endif
 
-/* CPU(PPC64) - PowerPC 64-bit */
-#if   defined(__ppc64__) \
-    || defined(__PPC64__)
+/* CPU(PPC64) - PowerPC 64-bit Big Endian */
+#if (  defined(__ppc64__)      \
+    || defined(__PPC64__))     \
+    && defined(__BYTE_ORDER__) \
+    && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #define WTF_CPU_PPC64 1
 #define WTF_CPU_BIG_ENDIAN 1
+#endif
+
+/* CPU(PPC64) - PowerPC 64-bit Little Endian */
+#if (   defined(__ppc64__)     \
+    || defined(__PPC64__)      \
+    || defined(__ppc64le__)    \
+    || defined(__PPC64LE__))   \
+    && defined(__BYTE_ORDER__) \
+    && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#define WTF_CPU_PPC64LE 1
 #endif
 
 /* CPU(SH4) - SuperH SH-4 */
@@ -641,7 +655,8 @@
     || CPU(ALPHA) \
     || CPU(ARM64) \
     || CPU(S390X) \
-    || CPU(PPC64)
+    || CPU(PPC64) \
+    || CPU(PPC64LE)
 #define WTF_USE_JSVALUE64 1
 #else
 #define WTF_USE_JSVALUE32_64 1
