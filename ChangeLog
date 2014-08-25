@@ -1,5 +1,18 @@
 2014-08-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL] Move Efl specific code from Source/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=136206
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit/Efl only uses ENABLE_WERROR so it can be moved into OptionsEfl.cmake.
+        Inaddition, renamed ADDITIONAL_FLAGS to ADDITIONAL_COMPILER_FLAGS.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/OptionsEfl.cmake:
+
+2014-08-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL] Introduce DEVELOPER_MODE
         https://bugs.webkit.org/show_bug.cgi?id=135884
 

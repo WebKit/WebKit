@@ -8,6 +8,8 @@ add_definitions(-DBUILDING_EFL__=1)
 set(ENABLE_WEBKIT OFF)
 set(ENABLE_WEBKIT2 ON)
 
+set(ADDITIONAL_COMPILER_FLAGS ENABLE_WERROR)
+
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Sqlite REQUIRED)
