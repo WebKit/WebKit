@@ -1,3 +1,19 @@
+2014-08-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Remove PopupMenuGtk, SearchPopupMenuGtk
+        https://bugs.webkit.org/show_bug.cgi?id=136211
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the two classes from the codebase. They're not used anymore
+        after the WebKit1 layer of the GTK port was removed some time ago.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/PopupMenuGtk.cpp: Removed.
+        * platform/gtk/PopupMenuGtk.h: Removed.
+        * platform/gtk/SearchPopupMenuGtk.cpp: Removed.
+        * platform/gtk/SearchPopupMenuGtk.h: Removed.
+
 2014-08-25  Shivakumar JM  <shiva.jm@samsung.com>
 
         Web Core: Fix unused parameter build warning.

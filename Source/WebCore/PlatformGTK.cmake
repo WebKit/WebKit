@@ -237,7 +237,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PlatformMouseEventGtk.cpp
     platform/gtk/PlatformScreenGtk.cpp
     platform/gtk/PlatformWheelEventGtk.cpp
-    platform/gtk/PopupMenuGtk.cpp
     platform/gtk/RedirectedXCompositeWindow.cpp
     platform/gtk/RenderThemeGtk.cpp
     platform/gtk/RenderThemeGtk2.cpp
@@ -245,7 +244,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/ScrollbarThemeGtk.cpp
     platform/gtk/ScrollbarThemeGtk2.cpp
     platform/gtk/ScrollbarThemeGtk3.cpp
-    platform/gtk/SearchPopupMenuGtk.cpp
     platform/gtk/SharedBufferGtk.cpp
     platform/gtk/SharedTimerGtk.cpp
     platform/gtk/SoundGtk.cpp
