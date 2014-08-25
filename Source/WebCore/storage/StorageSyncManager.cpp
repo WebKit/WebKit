@@ -71,7 +71,7 @@ String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier
     return pathByAppendingComponent(m_path, databaseIdentifier + ".localstorage");
 }
 
-void StorageSyncManager::dispatch(const Function<void ()>& function)
+void StorageSyncManager::dispatch(const std::function<void ()>& function)
 {
     ASSERT(isMainThread());
     ASSERT(m_thread);

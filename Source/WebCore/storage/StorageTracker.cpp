@@ -37,7 +37,6 @@
 #include "StorageThread.h"
 #include "StorageTrackerClient.h"
 #include "TextEncoding.h"
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -170,7 +169,9 @@ void StorageTracker::importOriginIdentifiers()
     ASSERT(isMainThread());
     ASSERT(m_thread);
 
-    m_thread->dispatch(bind(&StorageTracker::syncImportOriginIdentifiers, this));
+    m_thread->dispatch([this] {
+        syncImportOriginIdentifiers();
+    });
 }
 
 void StorageTracker::finishedImportingOriginIdentifiers()
@@ -232,7 +233,9 @@ void StorageTracker::syncImportOriginIdentifiers()
         }
     }
 
-    callOnMainThread(bind(&StorageTracker::finishedImportingOriginIdentifiers, this));
+    callOnMainThread([this] {
+        finishedImportingOriginIdentifiers();
+    });
 }
     
 void StorageTracker::syncFileSystemAndTrackerDatabase()
@@ -281,7 +284,10 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
         if (foundOrigins.contains(originIdentifier))
             continue;
 
-        callOnMainThread(bind(&StorageTracker::deleteOriginWithIdentifier, this, originIdentifier.isolatedCopy()));
+        String originIdentifierCopy = originIdentifier.isolatedCopy();
+        callOnMainThread([this, originIdentifierCopy] {
+            deleteOriginWithIdentifier(originIdentifierCopy);
+        });
     }
 }
 
@@ -299,14 +305,20 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
         m_originSet.add(originIdentifier);
     }
 
-    Function<void ()> function = bind(&StorageTracker::syncSetOriginDetails, this, originIdentifier.isolatedCopy(), databaseFile.isolatedCopy());
+    String originIdentifierCopy = originIdentifier.isolatedCopy();
+    String databaseFileCopy = databaseFile.isolatedCopy();
+    auto function = [this, originIdentifierCopy, databaseFileCopy] {
+        syncSetOriginDetails(originIdentifierCopy, databaseFileCopy);
+    };
 
     if (isMainThread()) {
         ASSERT(m_thread);
         m_thread->dispatch(function);
     } else {
         // FIXME: This weird ping-ponging was done to fix a deadlock. We should figure out a cleaner way to avoid it instead.
-        callOnMainThread(bind(&StorageThread::dispatch, m_thread.get(), function));
+        callOnMainThread([this, function] {
+            m_thread->dispatch(function);
+        });
     }
 }
 
@@ -378,7 +390,9 @@ void StorageTracker::deleteAllOrigins()
 
     PageGroup::clearLocalStorageForAllOrigins();
 
-    m_thread->dispatch(bind(&StorageTracker::syncDeleteAllOrigins, this));
+    m_thread->dispatch([this] {
+        syncDeleteAllOrigins();
+    });
 }
     
 void StorageTracker::syncDeleteAllOrigins()
@@ -474,7 +488,10 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
         m_originSet.remove(originId);
     }
 
-    m_thread->dispatch(bind(&StorageTracker::syncDeleteOrigin, this, originId.isolatedCopy()));
+    String originIdCopy = originId.isolatedCopy();
+    m_thread->dispatch([this, originIdCopy] {
+        syncDeleteOrigin(originIdCopy);
+    });
 }
 
 void StorageTracker::syncDeleteOrigin(const String& originIdentifier)

@@ -26,6 +26,7 @@
 #ifndef StorageSyncManager_h
 #define StorageSyncManager_h
 
+#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,7 +42,7 @@ public:
     static PassRefPtr<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();
 
-    void dispatch(const Function<void ()>&);
+    void dispatch(const std::function<void ()>&);
     void close();
 
 private:

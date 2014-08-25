@@ -1,3 +1,34 @@
+2014-08-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move WebCore storage code to C++11 lambdas, std::function
+        https://bugs.webkit.org/show_bug.cgi?id=126435
+
+        Reviewed by Darin Adler.
+
+        Use C++11 lambdas instead of WTF::bind and std::function<void ()>
+        instead of WTF::Function<void ()> in StorageAreaSync, StorageSyncManager,
+        StorageThread and StorageTracker classes.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::dispatch):
+        * storage/StorageSyncManager.h:
+        * storage/StorageThread.cpp:
+        (WebCore::StorageThread::dispatch):
+        (WebCore::StorageThread::terminate):
+        (WebCore::StorageThread::releaseFastMallocFreeMemoryInAllThreads):
+        * storage/StorageThread.h:
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::importOriginIdentifiers):
+        (WebCore::StorageTracker::syncImportOriginIdentifiers):
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::deleteAllOrigins):
+        (WebCore::StorageTracker::deleteOrigin):
+
 2014-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         ASSERT(extractable()) when storing a non-extractable key in IndexedDB

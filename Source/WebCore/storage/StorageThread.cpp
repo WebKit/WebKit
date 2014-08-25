@@ -76,11 +76,11 @@ void StorageThread::threadEntryPoint()
     }
 }
 
-void StorageThread::dispatch(const Function<void ()>& function)
+void StorageThread::dispatch(const std::function<void ()>& function)
 {
     ASSERT(isMainThread());
     ASSERT(!m_queue.killed() && m_threadID);
-    m_queue.append(std::make_unique<Function<void ()>>(function));
+    m_queue.append(std::make_unique<std::function<void ()>>(function));
 }
 
 void StorageThread::terminate()
@@ -92,7 +92,9 @@ void StorageThread::terminate()
     if (!m_threadID)
         return;
 
-    m_queue.append(std::make_unique<Function<void ()>>(bind(&StorageThread::performTerminate, this)));
+    m_queue.append(std::make_unique<std::function<void ()>>([this] {
+        performTerminate();
+    }));
     waitForThreadCompletion(m_threadID);
     ASSERT(m_queue.killed());
     m_threadID = 0;
@@ -109,7 +111,7 @@ void StorageThread::releaseFastMallocFreeMemoryInAllThreads()
     HashSet<StorageThread*>& threads = activeStorageThreads();
 
     for (HashSet<StorageThread*>::iterator it = threads.begin(), end = threads.end(); it != end; ++it)
-        (*it)->dispatch(bind(WTF::releaseFastMallocFreeMemory));
+        (*it)->dispatch(WTF::releaseFastMallocFreeMemory);
 }
 
 }
