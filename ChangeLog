@@ -1,3 +1,15 @@
+2014-08-25  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Unify webkitgtk and webkit2gtk directories
+        https://bugs.webkit.org/show_bug.cgi?id=136209
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use webkit2gtk-X.X both for the process binaries and the injected
+        bundle.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-08-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move Efl specific code from Source/CMakeLists.txt
