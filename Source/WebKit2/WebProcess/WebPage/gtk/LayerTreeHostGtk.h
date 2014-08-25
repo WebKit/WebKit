@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-class LayerTreeHostGtk : public LayerTreeHost, WebCore::GraphicsLayerClient {
+class LayerTreeHostGtk final : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
     static PassRefPtr<LayerTreeHostGtk> create(WebPage*);
     virtual ~LayerTreeHostGtk();
@@ -52,36 +52,34 @@ protected:
 
     void initialize();
 
-    // LayerTreeHost.
-    virtual void invalidate();
-    virtual void sizeDidChange(const WebCore::IntSize& newSize);
-    virtual void deviceOrPageScaleFactorChanged();
-    virtual void forceRepaint();
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
-    virtual void scheduleLayerFlush();
-    virtual void setLayerFlushSchedulingEnabled(bool layerFlushingEnabled);
+    // LayerTreeHost
+    virtual void scheduleLayerFlush() override;
+    virtual void setLayerFlushSchedulingEnabled(bool layerFlushingEnabled) override;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    virtual void invalidate() override;
+
+    virtual void forceRepaint() override;
+    virtual void sizeDidChange(const WebCore::IntSize& newSize) override;
+    virtual void deviceOrPageScaleFactorChanged() override;
     virtual void pageBackgroundTransparencyChanged() override;
 
 private:
-    // LayerTreeHost.
-    virtual const LayerTreeContext& layerTreeContext();
-    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool);
+    // LayerTreeHost
+    virtual const LayerTreeContext& layerTreeContext() override;
+    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
 
     virtual void setNonCompositedContentsNeedDisplay() override;
     virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override;
-    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect);
+    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
 
     virtual void didInstallPageOverlay(PageOverlay*) override;
     virtual void didUninstallPageOverlay(PageOverlay*) override;
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) override;
 
-    virtual bool flushPendingLayerChanges();
-
     // GraphicsLayerClient
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect);
-    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const { }
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect) override;
+
+    bool flushPendingLayerChanges();
 
     void createPageOverlayLayer(PageOverlay*);
     void destroyPageOverlayLayer(PageOverlay*);

@@ -1,3 +1,29 @@
+2014-08-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Improve virtual method declarations in LayerTreeHostGtk
+        https://bugs.webkit.org/show_bug.cgi?id=136210
+
+        Reviewed by Carlos Garcia Campos.
+
+        Mark the LayerTreeHostGtk class as final in the virtual inheritance hierarchy.
+
+        Order the public and private virtual method overrides from the LayerTreeHost
+        and GraphicsLayerClient interfaces. Explicitly mark them as overriding the
+        base class methods.
+
+        Remove the overriding notifyAnimationStarted() and notifyFlushRequired()
+        methods since they are identical to the methods in the base class.
+
+        De-virtualize flushPendingLayerChanges(). It's not inherited and is not
+        overriden by anything (and nothing can inherit from LayerTreeHostGtk from
+        now on due to the final specifier).
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::notifyAnimationStarted): Deleted.
+        (WebKit::LayerTreeHostGtk::notifyFlushRequired): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        (WebKit::LayerTreeHostGtk::didCommitChangesForLayer): Deleted.
+
 2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
 
         Remove unused method declarations replaced by WebPage::setViewState
