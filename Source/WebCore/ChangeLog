@@ -1,3 +1,33 @@
+2014-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        HTML <sub> and <sup> elements do not work in some 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=135736
+
+        Reviewed by Tim Horton.
+        
+        RootInlineBox::verticalPositionForBox() had some implicit conversions between
+        LayoutUnit and int that caused overflow, and resulted in different comparison
+        behavior with an int constant in different architectures, since overflow behavior
+        is undefined.
+        
+        Specifically, VerticalPositionCache was written in terms of ints with a special
+        0x80000000 "not found" value. However, 0x80000000 was being assigned to
+        a LayoutUnit, which multiplies by 64 causing overflow. The result was then
+        compared again with 0x80000000 which could pass or fail depending on overflow
+        behavior.
+        
+        Fix by converting VerticalPositionCache to use LayoutUnits, and to have a bool
+        return value with a result out param, instead of a special return value.
+
+        Not easily testable, since the difference does not show in DRT output,
+        and a ref test would be flakey.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        * rendering/VerticalPositionCache.h:
+        (WebCore::VerticalPositionCache::get):
+        (WebCore::VerticalPositionCache::set):
+
 2014-08-12  Fabien Vallée  <fvallee@connected-labs.com>
 
         [GStreamer] playback rate is rounded to integer

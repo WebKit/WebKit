@@ -965,9 +965,9 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
     // Check the cache.
     bool isRenderInline = renderer->isRenderInline();
     if (isRenderInline && !firstLine) {
-        LayoutUnit verticalPosition = verticalPositionCache.get(renderer, baselineType());
-        if (verticalPosition != PositionUndefined)
-            return verticalPosition;
+        LayoutUnit cachedPosition;
+        if (verticalPositionCache.get(renderer, baselineType(), cachedPosition))
+            return cachedPosition;
     }
 
     LayoutUnit verticalPosition = 0;
