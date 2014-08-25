@@ -12,7 +12,7 @@ html { background-color:#fff; }
 .clear { clear: both; }
 .clearer { clear: both; display: block; margin: 0; padding: 0; height: 0; line-height: 1px; font-size: 1px; }
 .selfclear { zoom:1; }
-.selfclear:after { content:'.'; display:block; height:0; clear:both; visibility:hidden; }
+.selfclear::after { content:'.'; display:block; height:0; clear:both; visibility:hidden; }
 
 img, .search-wrapper .left, .search-wrapper .right, ul.sp-results li.viewall a, ul.sp-results li .replacementimg, 
 #globalfooter #breadcrumbs, #globalfooter #breadcrumbs span, #directorynav .capbottom, 
@@ -102,7 +102,7 @@ img.shadow { padding: 5px; background: #fff; margin-bottom: 2px; *border: 1px so
 
 p.last, ul.last, ol.last, li.last { _width: auto !important; _float: none !important; }
 
-#container:after, #content:after, .grid2col:after, .grid2cola:after, .grid2colb:after, .grid2colc:after, .grid2cold:after, .grid2cole:after, .grid2colf:after, .grid3col:after, .grid3cola:after, .grid4col:after, .grid5col:after, .grid6col:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+#container::after, #content::after, .grid2col::after, .grid2cola::after, .grid2colb::after, .grid2colc::after, .grid2cold::after, .grid2cole::after, .grid2colf::after, .grid3col::after, .grid3cola::after, .grid4col::after, .grid5col::after, .grid6col::after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 #container, #content, .grid2col, .grid2cola, .grid2colb, .grid2colc, .grid2cold, .grid2cole, .grid2colf, .grid3col, .grid3cola, .grid4col, .grid5col, .grid6col { zoom: 1; }
 
 /* TYPE */
@@ -203,7 +203,7 @@ body.specs #main { font-size: 11px; line-height: 16px; }
 
 /* PIPED LINKS */
 .piped { display: block; zoom: 1; }
-.piped:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.piped::after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .piped li { float: left; display: inline; }
 .piped a { border-left: 1px solid #797c80; padding: 0 0 0 0.75em; margin-left: 0.75em; }
 .piped a.first { border-left: 0 !important; padding-left: 0; margin-left: 0 !important; }
@@ -420,7 +420,7 @@ span.browsewebappss, span.businessstores, span.buyiphones, span.buynows, span.co
 /* promofooter */
 #promofooter { width:984px; margin:18px auto 0; padding-top:17px; background:url(http://images.apple.com/promos/images/promofooter_top.png) no-repeat; zoom:1; _background-image:url(http://images.apple.com/promos/images/promofooter_top.gif); }
 #promofooter #promos { width:980px; margin-bottom:0; padding:0 2px 4px; background:url(http://images.apple.com/promos/images/promofooter_bottom.png) no-repeat 0 100%; zoom:1; _background-image:url(http://images.apple.com/promos/images/promofooter_bottom.gif); }
-#promofooter #promos:after { content:'.'; display:block; height:0; clear:both; visibility:hidden; }
+#promofooter #promos::after { content:'.'; display:block; height:0; clear:both; visibility:hidden; }
 #promofooter #promos li.promo { position:relative; float:left; width:244px; min-height:15em; _height:15em; padding-right:1px; margin-top:-16px; }
 #promofooter #promos li.promo a { color:#777; }
 #promofooter #promos li.promo:hover a { color:#08c; text-decoration:none; }

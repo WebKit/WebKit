@@ -156,7 +156,7 @@ a.download:hover {
   width: 15.24em;
 }
 
-.clear:after {
+.clear::after {
   visibility: hidden;
   display: block;
   font-size: 0;

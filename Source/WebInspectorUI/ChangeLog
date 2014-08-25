@@ -1,3 +1,15 @@
+2014-08-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        The inspector should not use the "after" pseudo element with the compatibility syntax
+        https://bugs.webkit.org/show_bug.cgi?id=136204
+
+        Reviewed by Darin Adler.
+
+        We should only use hte proper pseudo element syntax inside WebKit.
+
+        * Tools/PrettyPrinting/codemirror-additions.css:
+        * Tools/PrettyPrinting/populate/apple.css:
+
 2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Rename DOM.RGBA and remove workarounds in the bindings generator
