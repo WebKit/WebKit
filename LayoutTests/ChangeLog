@@ -1,3 +1,17 @@
+2014-08-12  Fabien Vallée  <fvallee@connected-labs.com>
+
+        [GStreamer] playback rate is rounded to integer
+        https://bugs.webkit.org/show_bug.cgi?id=135802
+
+        Reviewed by Philippe Normand.
+
+        add test to ensure playback is actually working
+        in slow motion (playback rate = 0.5): Player
+        should reach EOS and dispatch ended event.
+
+        * media/video-ended-event-slow-motion-playback-expected.txt: Added.
+        * media/video-ended-event-slow-motion-playback.html: Added.
+
 2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] WebkitWebProcess crashing navigating away from ogg video element

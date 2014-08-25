@@ -891,7 +891,7 @@ void MediaPlayerPrivateGStreamer::newTextSample()
 void MediaPlayerPrivateGStreamer::setRate(float rate)
 {
     // Higher rate causes crash.
-    rate = clampTo(rate, -20, 20);
+    rate = clampTo(rate, -20.0, 20.0);
 
     // Avoid useless playback rate update.
     if (m_playbackRate == rate) {
