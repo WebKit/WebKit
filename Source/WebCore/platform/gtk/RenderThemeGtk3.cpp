@@ -253,7 +253,11 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
     if (theme->isIndeterminate(renderObject))
         flags |= GTK_STATE_FLAG_INCONSISTENT;
     else if (theme->isChecked(renderObject))
+#if GTK_CHECK_VERSION(3, 13, 7)
+        flags |= GTK_STATE_FLAG_CHECKED;
+#else
         flags |= GTK_STATE_FLAG_ACTIVE;
+#endif
     if (theme->isPressed(renderObject))
         flags |= GTK_STATE_FLAG_SELECTED;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
