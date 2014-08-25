@@ -146,7 +146,6 @@ endif ()
 
 set(WebKit2_SOURCES
     NetworkProcess/AsynchronousNetworkLoaderClient.cpp
-    NetworkProcess/HostRecord.cpp
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp

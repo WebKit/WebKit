@@ -31,17 +31,8 @@
 
 namespace WebKit {
 
-void NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost()
+void NetworkResourceLoadScheduler::platformInitializeNetworkSettings()
 {
-    // Soup has its own queue control; it wants to have all requests given to
-    // it, so that it is able to look ahead, and schedule them in a good way.
-    // See the comment in ResourceRequestSoup.cpp
-    static const unsigned unlimitedConnectionCount = 10000;
-
-    // FIXME: Take advantage of Web-platform specific knowledge that can help
-    // prioritization better than libsoup alone can do.
-    // See https://bugs.webkit.org/show_bug.cgi?id=110115#c13
-    m_maxRequestsInFlightPerHost = unlimitedConnectionCount;
 }
 
 } // namespace WebKit

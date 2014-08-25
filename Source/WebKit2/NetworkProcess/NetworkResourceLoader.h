@@ -28,9 +28,9 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "HostRecord.h"
 #include "MessageSender.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -129,9 +129,6 @@ public:
 
     bool isSynchronous() const;
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
-    
-    void setHostRecord(HostRecord* hostRecord) { ASSERT(RunLoop::isMain()); m_hostRecord = hostRecord; }
-    HostRecord* hostRecord() const { ASSERT(RunLoop::isMain()); return m_hostRecord.get(); }
 
     template<typename T>
     bool sendAbortingOnFailure(T&& message, unsigned messageSendFlags = 0)
@@ -197,7 +194,6 @@ private:
 
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     
-    RefPtr<HostRecord> m_hostRecord;
     RefPtr<WebCore::SharedBuffer> m_bufferedData;
 };
 

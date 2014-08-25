@@ -37,12 +37,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost()
+void NetworkResourceLoadScheduler::platformInitializeNetworkSettings()
 {
     static const unsigned preferredConnectionCount = 6;
-    static const unsigned unlimitedRequestCount = 10000;
 
-    unsigned maximumHTTPConnectionCountPerHost = WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+    WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
     Boolean keyExistsAndHasValidFormat = false;
     Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
@@ -52,10 +51,6 @@ void NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountP
     if (ResourceRequest::resourcePrioritiesEnabled()) {
         WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
         WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
-        m_maxRequestsInFlightPerHost = unlimitedRequestCount;
-    } else {
-        // Use WebKit scheduler when we can't use request priorities with CFNetwork.
-        m_maxRequestsInFlightPerHost = maximumHTTPConnectionCountPerHost;
     }
 }
 

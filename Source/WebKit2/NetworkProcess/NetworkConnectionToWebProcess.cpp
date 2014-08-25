@@ -145,9 +145,8 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
     loader->setDefersLoading(defers);
 }
 
-void NetworkConnectionToWebProcess::servePendingRequests(uint32_t resourceLoadPriority)
+void NetworkConnectionToWebProcess::servePendingRequests(uint32_t)
 {
-    NetworkProcess::shared().networkResourceLoadScheduler().servePendingRequests(static_cast<ResourceLoadPriority>(resourceLoadPriority));
 }
 
 void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)

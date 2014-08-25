@@ -1,3 +1,54 @@
+2014-08-25  Antti Koivisto  <antti@apple.com>
+
+        Remove load scheduling code from network process
+        https://bugs.webkit.org/show_bug.cgi?id=136199
+
+        Reviewed by Darin Adler.
+
+        Most platforms just flush resource loads directly to the networking layer by
+        making the parallel load count large. Also we always pass ResourceLoadPriorityHighest
+        to the scheduler so no actual scheduling happens. This is effectively dead code.
+
+        Keep basic support for serializing loads. This is only used for testing.
+
+        * NetworkProcess/HostRecord.cpp: Removed.
+        * NetworkProcess/HostRecord.h: Removed.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::servePendingRequests):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getNetworkProcessStatistics):
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::NetworkResourceLoadScheduler):
+        (WebKit::NetworkResourceLoadScheduler::scheduleLoader):
+        (WebKit::NetworkResourceLoadScheduler::removeLoader):
+        (WebKit::NetworkResourceLoadScheduler::loadsPendingCount):
+        (WebKit::NetworkResourceLoadScheduler::loadsActiveCount):
+        (WebKit::NetworkResourceLoadScheduler::scheduleServePendingRequests): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::requestTimerFired): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::hostForURL): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::receivedRedirect): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequests): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::removeScheduledLoaders): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::scheduleRemoveLoader): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::hostsPendingCount): Deleted.
+        (WebKit::NetworkResourceLoadScheduler::hostsActiveCount): Deleted.
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::isLoadingMainResource):
+        (WebKit::NetworkResourceLoader::setHostRecord): Deleted.
+        (WebKit::NetworkResourceLoader::hostRecord): Deleted.
+        * NetworkProcess/mac/NetworkResourceLoadSchedulerMac.mm:
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeNetworkSettings):
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost): Deleted.
+        * NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp:
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeNetworkSettings):
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Older versions of WebKit should use the plugins cache in read only mode
