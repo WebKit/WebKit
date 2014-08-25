@@ -1,3 +1,21 @@
+2014-08-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        Completed iterator can be revived by adding more than one new entry to the target object
+        https://bugs.webkit.org/show_bug.cgi?id=129993
+
+        Reviewed by Oliver Hunt.
+
+        Test a Map or Set iterator should remain dead after using it.
+
+        * js/basic-map-expected.txt:
+        * js/basic-set-expected.txt: 
+        * js/script-tests/basic-map.js: 
+        (set var):
+        (set map):
+        * js/script-tests/basic-set.js:
+        (keys.set keys):
+        (set add.set add):
+
 2014-08-12  Fabien Vallée  <fvallee@connected-labs.com>
 
         [GStreamer] playback rate is rounded to integer
