@@ -1,3 +1,18 @@
+2014-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] The plugins metadata cache doesn't work if the user cache directory doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=135834
+
+        Reviewed by Philippe Normand.
+
+        Make sure the user cache directory exists. If creating the
+        directory fails for whatever reason, do not try to save the cache
+        to disk.
+
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::PluginInfoCache):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+
 2014-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitVersion.h should be shared between UI and Web Process APIs
