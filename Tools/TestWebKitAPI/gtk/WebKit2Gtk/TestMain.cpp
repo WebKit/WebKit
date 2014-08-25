@@ -60,6 +60,8 @@ int main(int argc, char** argv)
     g_setenv("LC_ALL", "C", TRUE);
     g_setenv("GIO_USE_VFS", "local", TRUE);
     g_setenv("GSETTINGS_BACKEND", "memory", TRUE);
+    // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
+    g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
     g_test_bug_base("https://bugs.webkit.org/");
 
     registerGResource();

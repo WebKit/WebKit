@@ -1,3 +1,20 @@
+2014-07-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GLib tests fail with recent GTK+ due to runtime warning about deprecated properties
+        https://bugs.webkit.org/show_bug.cgi?id=135411
+
+        Reviewed by Sergio Villar Senin.
+
+        Recent versions of GTK+ now warn at runtime when a deprecated
+        property or signal is used. A diagnostic mode was added that is
+        enabled by default, but that can be disabled by setting
+        G_ENABLE_DIAGNOSTIC=0. Runtime warnings are considered test
+        failures by gtester, so we need to run the tests with the
+        diganostic mode disabled.
+
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp:
+        (main):
+
 2014-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Stable] Google Maps doesn't work with Version/X in the user agent
