@@ -580,6 +580,15 @@ webkit.org/b/109941 webkit.org/b/135197 webgl/conformance/textures/origin-clean-
 webkit.org/b/135498 css3/device-adapt/opera/constrain-009.xhtml [ Crash Timeout ]
 webkit.org/b/135498 css3/device-adapt/opera/constrain-023.xhtml [ Crash Timeout ]
 
+# Started to timeout after bumping EFL to 1.9
+webkit.org/b/136099 fast/animation/request-animation-frame-during-modal.html [ Crash Timeout ]
+webkit.org/b/136099 fast/dom/Window/open-window-min-size.html [ Crash Timeout ]
+webkit.org/b/136099 fast/events/show-modal-dialog-onblur-onfocus.html [ Crash Timeout ]
+webkit.org/b/136099 fast/events/scroll-event-during-modal-dialog.html [ Crash Timeout ]
+webkit.org/b/136099 fast/harness/show-modal-dialog.html [ Crash Timeout ]
+
+webkit.org/b/136227 mathml/very-large-stretchy-operators.html [ Crash Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1017,11 +1026,6 @@ Bug(EFL) fast/images/pdf-as-image-landscape.html
 Bug(EFL) fast/images/pdf-as-image.html
 Bug(EFL) fast/images/pdf-as-tiled-background.html
 Bug(EFL) fast/replaced/pdf-as-image.html
-
-# Missing showModalDialog implementation
-webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
-webkit.org/b/84589 fast/harness/show-modal-dialog.html [ Failure ]
-webkit.org/b/84589 fast/events/scroll-event-during-modal-dialog.html [ Failure ]
 
 # Quota API is not supported.
 webkit.org/b/106507 storage/storageinfo-missing-arguments.html
@@ -1685,8 +1689,6 @@ webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
-webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
-
 # New test introduced in r143073 that never passed on WK2 EFL.
 webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
 
@@ -1980,6 +1982,7 @@ webkit.org/b/131987 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlin
 webkit.org/b/131987 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
 webkit.org/b/131987 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
+webkit.org/b/131987 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/131987 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131987 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/131987 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
@@ -2055,3 +2058,26 @@ webkit.org/b/135564 fast/dom/Window/window-property-invalid-characters-ignored.h
 webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
 
 webkit.org/b/135609 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure ]
+
+# Failing since introduced in r172797
+webkit.org/b/136159 fast/borders/border-painting-dashed-at-all.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/border-painting-dotted-at-all.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
+
+# Tests failing since imported from W3C test suite
+webkit.org/b/136221 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+webkit.org/b/136221 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
+
+webkit.org/b/136223 fast/ruby/ruby-base-merge-block-children-crash-2.html [ Failure ]
+
+# Started failing after r172835
+webkit.org/b/136226 fast/events/constructors/mouse-event-constructor.html [ Failure ]
+webkit.org/b/136226 fast/events/constructors/wheel-event-constructor.html [ Failure ]

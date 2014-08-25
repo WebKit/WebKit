@@ -1,3 +1,10 @@
+2014-08-25  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        * platform/efl/TestExpectations: Added test expecations for failing and crashing tests.
+        * platform/efl/scrollbars/scrollbar-selectors-expected.txt: Rebaseline after r172220.
+
 2014-08-22  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: !trackSizes.isEmpty() in WebCore::createGridTrackList
