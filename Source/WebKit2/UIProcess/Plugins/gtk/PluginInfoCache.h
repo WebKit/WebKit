@@ -54,6 +54,7 @@ private:
     GUniquePtr<GKeyFile> m_cacheFile;
     GUniquePtr<char> m_cachePath;
     unsigned m_saveToFileIdleId;
+    bool m_readOnlyMode;
     std::mutex m_mutex;
 };
 
