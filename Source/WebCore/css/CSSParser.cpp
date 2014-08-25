@@ -5275,18 +5275,24 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     if (currentValue && currentValue->unit == CSSParserValue::ValueList)
         parseGridLineNames(*arguments, *repeatedValues);
 
+    bool sawTrackSize = false;
     while (arguments->current()) {
         RefPtr<CSSValue> trackSize = parseGridTrackSize(*arguments);
         if (!trackSize)
             return false;
 
         repeatedValues->append(trackSize.releaseNonNull());
+        sawTrackSize = true;
 
         // This takes care of any trailing <custom-ident>* in the grammar.
         currentValue = arguments->current();
         if (currentValue && currentValue->unit == CSSParserValue::ValueList)
             parseGridLineNames(*arguments, *repeatedValues);
     }
+
+    // We should have found at least one <track-size>, otherwise the declaration is invalid.
+    if (!sawTrackSize)
+        return false;
 
     for (size_t i = 0; i < repetitions; ++i) {
         for (size_t j = 0; j < repeatedValues->length(); ++j)

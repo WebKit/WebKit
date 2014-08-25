@@ -35,6 +35,9 @@ PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-templat
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS successfullyParsed is true
 
 TEST COMPLETE

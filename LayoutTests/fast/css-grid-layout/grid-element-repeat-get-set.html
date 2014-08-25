@@ -113,10 +113,10 @@
 
     debug("");
     debug("Test invalid repeat syntax.");
-    function testInvalidSyntax(gridColumn) {
+    function testInvalidSyntax(gridColumns) {
         element = document.createElement("div");
         document.body.appendChild(element);
-        element.style.gridColumns = gridColumn;
+        element.style.webkitGridTemplateColumns = gridColumns;
         shouldBeEqualToString("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns')", "none");
         document.body.removeChild(element);
     }
@@ -126,6 +126,9 @@
     testInvalidSyntax("repeat(3 , ,)");
     testInvalidSyntax("repeat(0, 15px)");
     testInvalidSyntax("repeat(-1, auto)");
+    testInvalidSyntax("repeat(1, (foo))");
+    testInvalidSyntax("repeat(1, )");
+    testInvalidSyntax("repeat(1)");
     // Nesting is no allowed.
     testInvalidSyntax("repeat(2, repeat(1, auto))");
 </script>
