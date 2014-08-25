@@ -1844,7 +1844,7 @@ void JIT_OPERATION lookupExceptionHandlerFromCallerFrame(VM* vm, ExecState* exec
     CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
     ASSERT(callerFrame);
 
-    NativeCallFrameTracer tracer(vm, callerFrame);
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
 
     JSValue exceptionValue = vm->exception();
     ASSERT(exceptionValue);
