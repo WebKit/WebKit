@@ -1102,6 +1102,9 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     if (!isValid())
         return;
 #if PLATFORM(GTK)
+    String url = dragData.asURL(nullptr);
+    if (!url.isEmpty())
+        m_process->assumeReadAccessToBaseURL(url);
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData), m_pageID);
 #else
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), dragStorageName, dragData.flags(), sandboxExtensionHandle, sandboxExtensionsForUpload), m_pageID);

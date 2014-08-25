@@ -1,3 +1,15 @@
+2014-08-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        WebKit2GTK - WebKitWebProcess assertion fails when dragging and dropping a file into the view
+        https://bugs.webkit.org/show_bug.cgi?id=127576
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction): Assume read access
+        to any file that has been dragged into the web view when compiling for
+        GTK, since we don't support sandbox extensions.
+
 2014-08-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] WebkitWebProcess crashing navigating away from ogg video element
