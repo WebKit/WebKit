@@ -240,11 +240,6 @@ BuildbotIteration.prototype = {
 
         this.branch = data.properties.findFirst(function(property) { return property[0] === "branch" })[1];
 
-        this.changes = [];
-        var changes = data.sourceStamp.changes;
-        for (var i = 0; i < changes.length; ++i)
-            this.changes[i] = { revisionNumber: parseInt(changes[i].revision, 10) }
-
         this.startTime = new Date(data.times[0] * 1000);
         this.endTime = new Date(data.times[1] * 1000);
 
