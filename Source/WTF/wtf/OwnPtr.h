@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #define WTF_OwnPtr_h
 
 #include <wtf/Assertions.h>
+#include <wtf/Atomics.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtrCommon.h>
 #include <algorithm>
@@ -72,6 +73,17 @@ namespace WTF {
         template<typename U> OwnPtr& operator=(OwnPtr<U>&&);
 
         void swap(OwnPtr& o) { std::swap(m_ptr, o.m_ptr); }
+        
+        // Construct an object to store into this OwnPtr, but only so long as this OwnPtr
+        // doesn't already point to an object. This will ensure that after you call this,
+        // the OwnPtr will point to an instance of T, even if called concurrently. This
+        // instance may or may not have been created by this call. Moreover, this call uses
+        // an opportunistic transaction, in that we may create an instance of T and then
+        // immediately throw it away, if in the process of creating that instance some
+        // other thread was doing the same thing and stored its instance into this pointer
+        // before we had a chance to do so.
+        template<typename... Args>
+        void createTransactionally(Args...);
 
     private:
         explicit OwnPtr(PtrType ptr) : m_ptr(ptr) { }
@@ -184,6 +196,28 @@ namespace WTF {
     template<typename T> inline typename OwnPtr<T>::PtrType getPtr(const OwnPtr<T>& p)
     {
         return p.get();
+    }
+
+    template<typename T> template<typename... Args> inline void OwnPtr<T>::createTransactionally(Args... args)
+    {
+        if (m_ptr) {
+            WTF::loadLoadFence();
+            return;
+        }
+        
+        T* newObject = new T(args...);
+        WTF::storeStoreFence();
+#if ENABLE(COMPARE_AND_SWAP)
+        do {
+            if (m_ptr) {
+                delete newObject;
+                WTF::loadLoadFence();
+                return;
+            }
+        } while (!WTF::weakCompareAndSwap(bitwise_cast<void*volatile*>(&m_ptr), nullptr, newObject));
+#else
+        m_ptr = newObject;
+#endif
     }
 
 } // namespace WTF

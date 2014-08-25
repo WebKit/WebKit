@@ -90,8 +90,10 @@ private:
                     node->children.setChild1(Edge());
                     break;
                 case Phantom:
-                    if (!node->child1())
+                    if (!node->child1()) {
+                        m_graph.m_allocator.free(node);
                         continue;
+                    }
                     switch (node->child1()->op()) {
                     case Phi:
                     case SetArgument:

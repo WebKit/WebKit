@@ -188,6 +188,8 @@ private:
         case GetDirectPname:
         case Call:
         case Construct:
+        case ProfiledCall:
+        case ProfiledConstruct:
         case NativeCall:
         case NativeConstruct:
         case GetGlobalVar:
@@ -196,7 +198,8 @@ private:
             break;
         }
             
-        case GetGetterSetterByOffset: {
+        case GetGetterSetterByOffset:
+        case GetExecutable: {
             changed |= setPrediction(SpecCellOther);
             break;
         }
@@ -642,8 +645,8 @@ private:
         case ForceOSRExit:
         case SetArgument:
         case CheckStructure:
-        case CheckExecutable:
-        case CheckFunction:
+        case CheckCell:
+        case CheckBadCell:
         case PutStructure:
         case TearOffActivation:
         case TearOffArguments:
@@ -663,6 +666,10 @@ private:
         case ConstantStoragePointer:
         case MovHint:
         case ZombieHint:
+            break;
+            
+        // This gets ignored because it only pretends to produce a value.
+        case BottomValue:
             break;
             
         // This gets ignored because it already has a prediction.

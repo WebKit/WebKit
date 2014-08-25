@@ -263,6 +263,13 @@
 		0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B3A251544C991003ED0FF /* DFGCFGSimplificationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3B3A2B15475000003ED0FF /* DFGValidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B3A2915474FF4003ED0FF /* DFGValidate.cpp */; };
 		0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B3A2A15474FF4003ED0FF /* DFGValidate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F3B7E2619A11B8000D9BC56 /* CallEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B7E2019A11B8000D9BC56 /* CallEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F3B7E2719A11B8000D9BC56 /* CallEdgeProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B7E2119A11B8000D9BC56 /* CallEdgeProfile.cpp */; };
+		0F3B7E2819A11B8000D9BC56 /* CallEdgeProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B7E2219A11B8000D9BC56 /* CallEdgeProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F3B7E2919A11B8000D9BC56 /* CallEdgeProfileInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B7E2319A11B8000D9BC56 /* CallEdgeProfileInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F3B7E2A19A11B8000D9BC56 /* CallVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B7E2419A11B8000D9BC56 /* CallVariant.cpp */; };
+		0F3B7E2B19A11B8000D9BC56 /* CallVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B7E2519A11B8000D9BC56 /* CallVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F3B7E2D19A12AAE00D9BC56 /* CallEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B7E2C19A12AAE00D9BC56 /* CallEdge.cpp */; };
 		0F3D0BBC194A414300FC9CF9 /* ConstantStructureCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3D0BBA194A414300FC9CF9 /* ConstantStructureCheck.cpp */; };
 		0F3D0BBD194A414300FC9CF9 /* ConstantStructureCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3D0BBB194A414300FC9CF9 /* ConstantStructureCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2169,6 +2176,13 @@
 		0F3B3A251544C991003ED0FF /* DFGCFGSimplificationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFGSimplificationPhase.h; path = dfg/DFGCFGSimplificationPhase.h; sourceTree = "<group>"; };
 		0F3B3A2915474FF4003ED0FF /* DFGValidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGValidate.cpp; path = dfg/DFGValidate.cpp; sourceTree = "<group>"; };
 		0F3B3A2A15474FF4003ED0FF /* DFGValidate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGValidate.h; path = dfg/DFGValidate.h; sourceTree = "<group>"; };
+		0F3B7E2019A11B8000D9BC56 /* CallEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdge.h; sourceTree = "<group>"; };
+		0F3B7E2119A11B8000D9BC56 /* CallEdgeProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallEdgeProfile.cpp; sourceTree = "<group>"; };
+		0F3B7E2219A11B8000D9BC56 /* CallEdgeProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdgeProfile.h; sourceTree = "<group>"; };
+		0F3B7E2319A11B8000D9BC56 /* CallEdgeProfileInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdgeProfileInlines.h; sourceTree = "<group>"; };
+		0F3B7E2419A11B8000D9BC56 /* CallVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallVariant.cpp; sourceTree = "<group>"; };
+		0F3B7E2519A11B8000D9BC56 /* CallVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallVariant.h; sourceTree = "<group>"; };
+		0F3B7E2C19A12AAE00D9BC56 /* CallEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallEdge.cpp; sourceTree = "<group>"; };
 		0F3D0BBA194A414300FC9CF9 /* ConstantStructureCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantStructureCheck.cpp; sourceTree = "<group>"; };
 		0F3D0BBB194A414300FC9CF9 /* ConstantStructureCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantStructureCheck.h; sourceTree = "<group>"; };
 		0F426A451460CBAB00131F8F /* ValueRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRecovery.h; sourceTree = "<group>"; };
@@ -5146,11 +5160,18 @@
 				0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */,
 				0F885E101849A3BE00F1E3FA /* BytecodeUseDef.h */,
 				0F8023E91613832300A0BA45 /* ByValInfo.h */,
+				0F3B7E2C19A12AAE00D9BC56 /* CallEdge.cpp */,
+				0F3B7E2019A11B8000D9BC56 /* CallEdge.h */,
+				0F3B7E2119A11B8000D9BC56 /* CallEdgeProfile.cpp */,
+				0F3B7E2219A11B8000D9BC56 /* CallEdgeProfile.h */,
+				0F3B7E2319A11B8000D9BC56 /* CallEdgeProfileInlines.h */,
 				0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */,
 				0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */,
 				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
 				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
 				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
+				0F3B7E2419A11B8000D9BC56 /* CallVariant.cpp */,
+				0F3B7E2519A11B8000D9BC56 /* CallVariant.h */,
 				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */,
@@ -5879,6 +5900,7 @@
 				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
 				0F2FC77316E12F740038D976 /* DFGDCEPhase.h in Headers */,
 				0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */,
+				0F3B7E2819A11B8000D9BC56 /* CallEdgeProfile.h in Headers */,
 				C2C0F7CE17BBFC5B00464FE4 /* DFGDesiredTransitions.h in Headers */,
 				0FE8534C1723CDA500B618F5 /* DFGDesiredWatchpoints.h in Headers */,
 				C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */,
@@ -6147,6 +6169,7 @@
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
 				14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */,
+				0F3B7E2B19A11B8000D9BC56 /* CallVariant.h in Headers */,
 				FEF6835E174343CC00A32E25 /* JITStubsARM.h in Headers */,
 				FEF6835F174343CC00A32E25 /* JITStubsARMv7.h in Headers */,
 				FEF68361174343CC00A32E25 /* JITStubsX86.h in Headers */,
@@ -6158,6 +6181,7 @@
 				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSActivation.h in Headers */,
 				840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */,
+				0F3B7E2919A11B8000D9BC56 /* CallEdgeProfileInlines.h in Headers */,
 				C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */,
 				A76140D2182982CB00750624 /* JSArgumentsIterator.h in Headers */,
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,
@@ -6473,6 +6497,7 @@
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
+				0F3B7E2619A11B8000D9BC56 /* CallEdge.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */,
@@ -7327,6 +7352,7 @@
 				0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */,
 				0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */,
 				0F235BDA17178E1C00690C7F /* FTLExitValue.cpp in Sources */,
+				0F3B7E2719A11B8000D9BC56 /* CallEdgeProfile.cpp in Sources */,
 				A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */,
 				0FD8A31917D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp in Sources */,
 				0F25F1AF181635F300522F39 /* FTLInlineCacheSize.cpp in Sources */,
@@ -7513,6 +7539,7 @@
 				0F4680D214BBD16500BFE272 /* LLIntData.cpp in Sources */,
 				0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */,
 				0F4680A814BA7FAB00BFE272 /* LLIntExceptions.cpp in Sources */,
+				0F3B7E2D19A12AAE00D9BC56 /* CallEdge.cpp in Sources */,
 				0F4680A414BA7F8D00BFE272 /* LLIntSlowPaths.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
 				0FCEFACD1805E75500472CE4 /* LLVMAPI.cpp in Sources */,
@@ -7674,6 +7701,7 @@
 				14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */,
 				2A4EC90B1860D6C20094F782 /* WriteBarrierBuffer.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
+				0F3B7E2A19A11B8000D9BC56 /* CallVariant.cpp in Sources */,
 				A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */,
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,

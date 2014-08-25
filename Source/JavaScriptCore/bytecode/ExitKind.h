@@ -31,7 +31,7 @@ namespace JSC {
 enum ExitKind : uint8_t {
     ExitKindUnset,
     BadType, // We exited because a type prediction was wrong.
-    BadFunction, // We exited because we made an incorrect assumption about what function we would see.
+    BadCell, // We exited because we made an incorrect assumption about what cell we would see. Usually used for function checks.
     BadExecutable, // We exited because we made an incorrect assumption about what executable we would see.
     BadCache, // We exited because an inline cache was wrong.
     BadConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.

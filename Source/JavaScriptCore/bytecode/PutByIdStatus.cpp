@@ -247,7 +247,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     std::unique_ptr<CallLinkStatus> callLinkStatus =
                         std::make_unique<CallLinkStatus>(
                             CallLinkStatus::computeFor(
-                                locker, *stub->m_callLinkInfo, callExitSiteData));
+                                locker, profiledBlock, *stub->m_callLinkInfo, callExitSiteData));
                     
                     variant = PutByIdVariant::setter(
                         structure, complexGetStatus.offset(), complexGetStatus.chain(),

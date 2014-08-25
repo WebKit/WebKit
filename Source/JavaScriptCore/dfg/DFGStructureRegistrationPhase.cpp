@@ -62,10 +62,6 @@ public:
                 Node* node = block->at(nodeIndex);
             
                 switch (node->op()) {
-                case CheckExecutable:
-                    registerStructure(node->executable()->structure());
-                    break;
-                
                 case CheckStructure:
                     registerStructures(node->structureSet());
                     break;

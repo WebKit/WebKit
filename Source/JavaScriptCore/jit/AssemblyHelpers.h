@@ -88,6 +88,31 @@ public:
 #endif
     }
     
+    void storeValue(JSValueRegs regs, void* address)
+    {
+#if USE(JSVALUE64)
+        store64(regs.gpr(), address);
+#else
+        store32(regs.payloadGPR(), bitwise_cast<void*>(bitwise_cast<uintptr_t>(address) + PayloadOffset));
+        store32(regs.tagGPR(), bitwise_cast<void*>(bitwise_cast<uintptr_t>(address) + TagOffset));
+#endif
+    }
+    
+    void loadValue(Address address, JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        load64(address, regs.gpr());
+#else
+        if (address.base == regs.payloadGPR()) {
+            load32(address.withOffset(TagOffset), regs.tagGPR());
+            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
+        } else {
+            load32(address.withOffset(PayloadOffset), regs.payloadGPR());
+            load32(address.withOffset(TagOffset), regs.tagGPR());
+        }
+#endif
+    }
+    
     void moveTrustedValue(JSValue value, JSValueRegs regs)
     {
 #if USE(JSVALUE64)

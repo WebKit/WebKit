@@ -389,6 +389,11 @@ private:
                 // then -0 and 0 are treated the same.
                 node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther);
                 break;
+            case SwitchCell:
+                // There is currently no point to being clever here since this is used for switching
+                // on objects.
+                mergeDefaultFlags(node);
+                break;
             }
             break;
         }

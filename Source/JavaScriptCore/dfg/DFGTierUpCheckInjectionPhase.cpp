@@ -50,13 +50,17 @@ public:
         if (!Options::useFTLJIT())
             return false;
         
-        if (m_graph.m_profiledBlock->m_didFailFTLCompilation)
+        if (m_graph.m_profiledBlock->m_didFailFTLCompilation) {
+            removeFTLProfiling();
             return false;
+        }
         
 #if ENABLE(FTL_JIT)
         FTL::CapabilityLevel level = FTL::canCompile(m_graph);
-        if (level == FTL::CannotCompile)
+        if (level == FTL::CannotCompile) {
+            removeFTLProfiling();
             return false;
+        }
         
         if (!Options::enableOSREntryToFTL())
             level = FTL::CanCompile;
@@ -117,6 +121,32 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
 #endif // ENABLE(FTL_JIT)
+    }
+
+private:
+    void removeFTLProfiling()
+    {
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+                switch (node->op()) {
+                case ProfiledCall:
+                    node->setOp(Call);
+                    break;
+                    
+                case ProfiledConstruct:
+                    node->setOp(Construct);
+                    break;
+                    
+                default:
+                    break;
+                }
+            }
+        }
     }
 };
 

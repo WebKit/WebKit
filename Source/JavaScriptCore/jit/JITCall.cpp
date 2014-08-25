@@ -212,6 +212,12 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 
     store64(regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
+    
+    CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
+
+    if (CallEdgeLog::isEnabled() && shouldEmitProfiling()
+        && Options::baselineDoesCallEdgeProfiling())
+        m_vm->ensureCallEdgeLog().emitLogCode(*this, info->callEdgeProfile, JSValueRegs(regT0));
 
     if (opcodeID == op_call_eval) {
         compileCallEval(instruction);
@@ -223,7 +229,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     addSlowCase(slowCase);
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
-    CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
     info->callType = CallLinkInfo::callTypeFor(opcodeID);
     info->codeOrigin = CodeOrigin(m_bytecodeOffset);
     info->calleeGPR = regT0;

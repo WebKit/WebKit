@@ -157,12 +157,6 @@ struct SwitchCase {
     BranchTarget target;
 };
 
-enum SwitchKind {
-    SwitchImm,
-    SwitchChar,
-    SwitchString
-};
-
 struct SwitchData {
     // Initializes most fields to obviously invalid values. Anyone
     // constructing this should make sure to initialize everything they
@@ -185,6 +179,7 @@ struct SwitchData {
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
 struct OpInfo {
+    OpInfo() : m_value(0) { }
     explicit OpInfo(int32_t value) : m_value(static_cast<uintptr_t>(value)) { }
     explicit OpInfo(uint32_t value) : m_value(static_cast<uintptr_t>(value)) { }
 #if OS(DARWIN) || USE(JSVALUE64)
@@ -1009,6 +1004,8 @@ struct Node {
         case GetMyArgumentByValSafe:
         case Call:
         case Construct:
+        case ProfiledCall:
+        case ProfiledConstruct:
         case NativeCall:
         case NativeConstruct:
         case GetByOffset:
@@ -1044,65 +1041,29 @@ struct Node {
         m_opInfo2 = prediction;
     }
     
-    bool canBeKnownFunction()
+    bool hasCellOperand()
     {
         switch (op()) {
-        case NativeConstruct:
-        case NativeCall:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    bool hasKnownFunction()
-    {
-        switch (op()) {
-        case NativeConstruct:
-        case NativeCall:
-            return (bool)m_opInfo;
-        default:
-            return false;
-        }
-    }
-    
-    JSFunction* knownFunction()
-    {
-        ASSERT(canBeKnownFunction());
-        return bitwise_cast<JSFunction*>(m_opInfo);
-    }
-
-    void giveKnownFunction(JSFunction* callData) 
-    {
-        ASSERT(canBeKnownFunction());
-        m_opInfo = bitwise_cast<uintptr_t>(callData);
-    }
-
-    bool hasFunction()
-    {
-        switch (op()) {
-        case CheckFunction:
         case AllocationProfileWatchpoint:
+        case CheckCell:
+        case NativeConstruct:
+        case NativeCall:
             return true;
         default:
             return false;
         }
     }
 
-    FrozenValue* function()
+    FrozenValue* cellOperand()
     {
-        ASSERT(hasFunction());
+        ASSERT(hasCellOperand());
         return reinterpret_cast<FrozenValue*>(m_opInfo);
     }
     
-    bool hasExecutable()
+    void setCellOperand(FrozenValue* value)
     {
-        return op() == CheckExecutable;
-    }
-    
-    ExecutableBase* executable()
-    {
-        return jsCast<ExecutableBase*>(reinterpret_cast<JSCell*>(m_opInfo));
+        ASSERT(hasCellOperand());
+        m_opInfo = bitwise_cast<uintptr_t>(value);
     }
     
     bool hasVariableWatchpointSet()
