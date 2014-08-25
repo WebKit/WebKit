@@ -2804,13 +2804,31 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
 }
 
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-static bool makeUniqueIfNecessaryAndTestIsPlaceholderShown(Element* element, const CheckingContext* checkingContext)
+static bool makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* element, const CheckingContext* checkingContext)
 {
-    if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle) {
-        if (RenderStyle* style = element->renderStyle())
-            style->setUnique();
+    if (isHTMLTextFormControlElement(*element)) {
+        if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
+            checkingContext->elementStyle->setUnique();
+        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
     }
-    return isPlaceholderShown(element);
+    return false;
+}
+
+static bool makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown(Element* element, const CheckingContext* checkingContext)
+{
+    if (isHTMLTextFormControlElement(*element)) {
+        if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle) {
+            if (RenderStyle* style = element->renderStyle())
+                style->setUnique();
+        }
+        return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
+    }
+    return false;
+}
+
+static bool isPlaceholderShown(Element* element)
+{
+    return isHTMLTextFormControlElement(*element) && toHTMLTextFormControlElement(*element).isPlaceholderVisible();
 }
 
 void SelectorCodeGenerator::generateElementHasPlaceholderShown(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -2823,28 +2841,17 @@ void SelectorCodeGenerator::generateElementHasPlaceholderShown(Assembler::JumpLi
         return;
     }
 
-    if (fragmentMatchesTheRightmostElement(m_selectorContext, fragment)) {
-        {
-            LocalRegister checkingContext(m_registerAllocator);
-            Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
-            addFlagsToElementStyleFromContext(checkingContext, RenderStyle::NonInheritedFlags::flagIsUnique());
-            notResolvingStyle.link(&m_assembler);
-        }
+    Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
+    loadCheckingContext(checkingContext);
+    m_registerAllocator.deallocateRegister(checkingContext);
 
-        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-        functionCall.setFunctionAddress(isPlaceholderShown);
-        functionCall.setOneArgument(elementAddressRegister);
-        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-    } else {
-        Assembler::RegisterID checkingContext = m_registerAllocator.allocateRegisterWithPreference(JSC::GPRInfo::argumentGPR1);
-        loadCheckingContext(checkingContext);
-        m_registerAllocator.deallocateRegister(checkingContext);
-
-        FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-        functionCall.setFunctionAddress(makeUniqueIfNecessaryAndTestIsPlaceholderShown);
-        functionCall.setTwoArguments(elementAddressRegister, checkingContext);
-        failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
-    }
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    if (fragmentMatchesTheRightmostElement(m_selectorContext, fragment))
+        functionCall.setFunctionAddress(makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown);
+    else
+        functionCall.setFunctionAddress(makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown);
+    functionCall.setTwoArguments(elementAddressRegister, checkingContext);
+    failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 #endif
 

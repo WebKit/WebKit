@@ -604,11 +604,14 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             break;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::PseudoClassPlaceholderShown:
-            if (m_mode == Mode::ResolvingStyle) {
-                if (RenderStyle* style = context.elementStyle ? context.elementStyle : element->renderStyle())
-                    style->setUnique();
+            if (isHTMLTextFormControlElement(*element)) {
+                if (m_mode == Mode::ResolvingStyle) {
+                    if (RenderStyle* style = context.elementStyle ? context.elementStyle : element->renderStyle())
+                        style->setUnique();
+                }
+                return toHTMLTextFormControlElement(*element).isPlaceholderVisible();
             }
-            return isPlaceholderShown(element);
+            return false;
 #endif
         case CSSSelector::PseudoClassNthChild:
             if (!selector->parseNth())

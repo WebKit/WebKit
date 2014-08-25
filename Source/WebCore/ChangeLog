@@ -1,3 +1,32 @@
+2014-08-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Reduce style marking when using the pseudo class :placeholder-shown
+        https://bugs.webkit.org/show_bug.cgi?id=136203
+
+        Reviewed by Darin Adler.
+
+        When the :placeholder-shown filter is hit, we were always marking the RenderStyle as unique.
+        As a result, if :placeholder-shown was used without a more restrictive filter (e.g. "*:placeholder-shown"
+        or simply ":placeholder-shown"), style sharing was disabled for the whole tree.
+
+        This patch rescope the tree marking to any element that can be affected by a placeholder:
+        any the subclass of HTMLTextFormControlElement. For other elements, any change in internal state
+        would be irrelevant for "isPlaceholderVisible".
+
+        Styling of :placeholder-shown is covered by the existing tests. Style sharing of :placeholder-shown
+        is covered by LayoutTests/fast/css/placeholder-shown-basics.html.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isPlaceholderShown): Deleted.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::isPlaceholderShown):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPlaceholderShown):
+        (WebCore::SelectorCompiler::makeUniqueIfNecessaryAndTestIsPlaceholderShown): Deleted.
+
 2014-08-25  Antti Koivisto  <antti@apple.com>
 
         Remove ResourceLoader::didChangePriority
