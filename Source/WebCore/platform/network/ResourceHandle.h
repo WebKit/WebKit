@@ -238,8 +238,6 @@ public:
 
     WEBCORE_EXPORT void setDefersLoading(bool);
 
-    void didChangePriority(ResourceLoadPriority);
-
     WEBCORE_EXPORT ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 

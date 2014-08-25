@@ -793,11 +793,7 @@ void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority)
 {
     if (loadPriority == ResourceLoadPriorityUnresolved)
         loadPriority = defaultPriorityForResourceType(type());
-    if (loadPriority == m_loadPriority)
-        return;
     m_loadPriority = loadPriority;
-    if (m_loader)
-        m_loader->didChangePriority(loadPriority);
 }
 
 CachedResource::CachedResourceCallback::CachedResourceCallback(CachedResource* resource, CachedResourceClient* client)

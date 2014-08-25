@@ -404,12 +404,6 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
         frameLoader()->notifier().didFailToLoad(this, error);
 }
 
-void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
-{
-    if (m_handle)
-        m_handle->didChangePriority(loadPriority);
-}
-
 void ResourceLoader::cancel()
 {
     cancel(ResourceError());
