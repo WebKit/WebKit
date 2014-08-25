@@ -1,3 +1,13 @@
+2014-08-25  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS DumpRenderTree build after <http://trac.webkit.org/changeset/172814/>
+        (https://bugs.webkit.org/show_bug.cgi?id=136108)
+
+        Use a similar approach as in TestWebKitAPI/config.h and define a stub for the macro define WEBCORE_EXPORT
+        so that we can compile DumpRenderTree for iOS.
+
+        * DumpRenderTree/config.h:
+
 2014-08-25  Alexey Proskuryakov  <ap@apple.com>
 
         Make build.webkit.org/dashboard work with changeset_show_files=location
