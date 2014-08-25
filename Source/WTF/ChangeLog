@@ -1,3 +1,13 @@
+2014-08-25  Tomas Popela  <tpopela@redhat.com>
+
+        Add support for little-endian PowerPC64
+        https://bugs.webkit.org/show_bug.cgi?id=135647
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/Platform.h:
+        * wtf/dtoa/utils.h:
+
 2014-08-24  Zan Dobersek  <zdobersek@igalia.com>
 
         GenericHashTraits::peek() is producing copies of passed-in temporary values
