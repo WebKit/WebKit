@@ -33,7 +33,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace Inspector { namespace TypeBuilder  { namespace Runtime {
+namespace Inspector { namespace Protocol  { namespace Runtime {
 class TypeDescription;
 }}}
 
@@ -95,7 +95,7 @@ enum TypeProfilerSearchDescriptor {
 class TypeProfiler {
 public:
     void logTypesForTypeLocation(TypeLocation*);
-    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>&);
+    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::Protocol::Runtime::TypeDescription>&);
     void insertNewLocation(TypeLocation*);
     FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }

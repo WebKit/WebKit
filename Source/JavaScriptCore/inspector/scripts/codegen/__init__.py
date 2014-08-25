@@ -8,5 +8,5 @@ from generate_backend_dispatcher_header import *
 from generate_backend_dispatcher_implementation import *
 from generate_frontend_dispatcher_header import *
 from generate_frontend_dispatcher_implementation import *
-from generate_type_builder_header import *
-from generate_type_builder_implementation import *
+from generate_protocol_types_header import *
+from generate_protocol_types_implementation import *

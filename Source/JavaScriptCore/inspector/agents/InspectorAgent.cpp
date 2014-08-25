@@ -87,7 +87,7 @@ void InspectorAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
+void InspectorAgent::inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
 {
     if (m_enabled && m_frontendDispatcher) {
         m_frontendDispatcher->inspect(objectToInspect, hints);

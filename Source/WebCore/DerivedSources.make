@@ -1172,8 +1172,8 @@ INSPECTOR_GENERATOR_SCRIPTS = \
     $(InspectorScripts)/generate_backend_dispatcher_implementation.py \
     $(InspectorScripts)/generate_frontend_dispatcher_header.py \
     $(InspectorScripts)/generate_frontend_dispatcher_implementation.py \
-    $(InspectorScripts)/generate_type_builder_header.py \
-    $(InspectorScripts)/generate_type_builder_implementation.py \
+    $(InspectorScripts)/generate_protocol_types_header.py \
+    $(InspectorScripts)/generate_protocol_types_implementation.py \
     $(InspectorScripts)/generator_templates.py \
     $(InspectorScripts)/generator.py \
     $(InspectorScripts)/generate-combined-inspector-json.py \

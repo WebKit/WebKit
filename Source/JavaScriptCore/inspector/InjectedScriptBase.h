@@ -35,7 +35,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorEnvironment.h"
-#include "InspectorJSTypeBuilders.h"
+#include "InspectorJSProtocolTypes.h"
 #include "bindings/ScriptObject.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -68,7 +68,7 @@ protected:
     const Deprecated::ScriptObject& injectedScriptObject() const;
     Deprecated::ScriptValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
     void makeCall(Deprecated::ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeEvalCall(ErrorString*, Deprecated::ScriptFunctionCall&, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
+    void makeEvalCall(ErrorString*, Deprecated::ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
 
 private:
     String m_name;

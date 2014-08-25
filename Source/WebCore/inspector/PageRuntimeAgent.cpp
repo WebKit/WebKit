@@ -47,7 +47,7 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 
-using Inspector::TypeBuilder::Runtime::ExecutionContextDescription;
+using Inspector::Protocol::Runtime::ExecutionContextDescription;
 
 using namespace Inspector;
 

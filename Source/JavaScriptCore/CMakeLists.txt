@@ -935,8 +935,8 @@ set(JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_implementation.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_header.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_implementation.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_type_builder_header.py
-    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_type_builder_implementation.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_header.py
+    ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_implementation.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator_templates.py
     ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/codegen/__init__.py
@@ -965,12 +965,12 @@ add_custom_command(
            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSBackendDispatchers.h
            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSFrontendDispatchers.cpp
            ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSFrontendDispatchers.h
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSTypeBuilders.cpp
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSTypeBuilders.h
+           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSProtocolTypes.cpp
+           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSProtocolTypes.h
            ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorJSBackendCommands.js
     MAIN_DEPENDENCY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json
     DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}" --framework JavaScriptCore ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json && mkdir -p ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSBackendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSBackendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSFrontendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSFrontendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSTypeBuilders.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSTypeBuilders.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && mkdir -p ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}" --framework JavaScriptCore ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJS.json && mkdir -p ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSBackendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSBackendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSFrontendDispatchers.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSFrontendDispatchers.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSProtocolTypes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSProtocolTypes.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector && mkdir -p ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol && cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InspectorJSBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol
     VERBATIM)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector)
 
@@ -986,14 +986,14 @@ add_custom_command(
 list(APPEND JavaScriptCore_SOURCES
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSBackendDispatchers.cpp
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSFrontendDispatchers.cpp
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSTypeBuilders.cpp
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSProtocolTypes.cpp
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp
 )
 
 list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSBackendDispatchers.h
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSFrontendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSTypeBuilders.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorJSProtocolTypes.h
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
 )
 

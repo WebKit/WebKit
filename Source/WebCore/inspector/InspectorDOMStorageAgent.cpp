@@ -94,7 +94,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>>& items)
+void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
 {
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
@@ -104,13 +104,13 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
         return;
     }
 
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>> storageItems = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>> storageItems = Inspector::Protocol::Array<Inspector::Protocol::Array<String>>::create();
 
     for (unsigned i = 0; i < storageArea->length(); ++i) {
         String key = storageArea->key(i);
         String value = storageArea->item(key);
 
-        RefPtr<Inspector::TypeBuilder::Array<String>> entry = Inspector::TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::Protocol::Array<String>> entry = Inspector::Protocol::Array<String>::create();
         entry->addItem(key);
         entry->addItem(value);
         storageItems->addItem(entry.release());
@@ -158,9 +158,9 @@ String InspectorDOMStorageAgent::storageId(Storage* storage)
     return storageId(securityOrigin.get(), isLocalStorage)->toJSONString();
 }
 
-PassRefPtr<Inspector::TypeBuilder::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
+PassRefPtr<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
 {
-    return Inspector::TypeBuilder::DOMStorage::StorageId::create()
+    return Inspector::Protocol::DOMStorage::StorageId::create()
         .setSecurityOrigin(securityOrigin->toRawString())
         .setIsLocalStorage(isLocalStorage).release();
 }
@@ -170,7 +170,7 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
     if (!m_frontendDispatcher || !m_enabled)
         return;
 
-    RefPtr<Inspector::TypeBuilder::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);
+    RefPtr<Inspector::Protocol::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);
 
     if (key.isNull())
         m_frontendDispatcher->domStorageItemsCleared(id);

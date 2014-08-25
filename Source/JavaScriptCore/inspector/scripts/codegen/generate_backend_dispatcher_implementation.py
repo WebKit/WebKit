@@ -148,7 +148,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                     out_parameter_assignments.append('    if (%(parameterName)s)' % param_args)
                     out_parameter_assignments.append('        jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterName)s);' % param_args)
             elif parameter.type.is_enum():
-                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::TypeBuilder::get%(frameworkPrefix)sEnumConstantValue(%(parameterName)s));' % param_args)
+                out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(%(parameterName)s));' % param_args)
             else:
                 out_parameter_assignments.append('    jsonMessage->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), %(parameterName)s);' % param_args)
 
@@ -215,7 +215,7 @@ class BackendDispatcherImplementationGenerator(Generator):
                         out_parameter_assignments.append('        if (out_%(parameterName)s)' % param_args)
                         out_parameter_assignments.append('            result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), out_%(parameterName)s);' % param_args)
                 elif parameter.type.is_enum():
-                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::TypeBuilder::get%(frameworkPrefix)sEnumConstantValue(out_%(parameterName)s));' % param_args)
+                    out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(out_%(parameterName)s));' % param_args)
                 else:
                     out_parameter_assignments.append('        result->%(keyedSetMethod)s(ASCIILiteral("%(parameterName)s"), out_%(parameterName)s);' % param_args)
 

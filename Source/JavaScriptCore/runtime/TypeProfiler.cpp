@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TypeProfiler.h"
 
-#include "InspectorJSTypeBuilders.h"
+#include "InspectorJSProtocolTypes.h"
 #include "TypeLocation.h"
 
 namespace JSC {
@@ -65,7 +65,7 @@ void TypeProfiler::insertNewLocation(TypeLocation* location)
     bucket.append(location);
 }
 
-void TypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::TypeBuilder::Runtime::TypeDescription>& description)
+void TypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::Protocol::Runtime::TypeDescription>& description)
 {
     TypeLocation* location = findLocation(divot, sourceID, descriptor);
     if (!location)

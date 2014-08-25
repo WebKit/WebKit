@@ -119,7 +119,7 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
         *result = InspectorString::create("Exception while making a call.");
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::ScriptFunctionCall& function, RefPtr<TypeBuilder::Runtime::RemoteObject>* objectResult, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown)
 {
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
@@ -147,7 +147,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::Scri
         return;
     }
 
-    *objectResult = BindingTraits<TypeBuilder::Runtime::RemoteObject>::runtimeCast(resultObj);
+    *objectResult = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObj);
     *wasThrown = wasThrownVal;
 }
 

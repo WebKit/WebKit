@@ -94,9 +94,9 @@ void InspectorApplicationCacheAgent::networkStateChanged()
     m_frontendDispatcher->networkStateUpdated(isNowOnline);
 }
 
-void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::FrameWithManifest>>& result)
+void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
 {
-    result = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::FrameWithManifest>::create();
+    result = Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
 
     Frame* mainFrame = m_pageAgent->mainFrame();
     for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext(mainFrame)) {
@@ -108,7 +108,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr
         ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
         String manifestURL = info.m_manifest.string();
         if (!manifestURL.isEmpty()) {
-            RefPtr<Inspector::TypeBuilder::ApplicationCache::FrameWithManifest> value = Inspector::TypeBuilder::ApplicationCache::FrameWithManifest::create()
+            RefPtr<Inspector::Protocol::ApplicationCache::FrameWithManifest> value = Inspector::Protocol::ApplicationCache::FrameWithManifest::create()
                 .setFrameId(m_pageAgent->frameId(frame))
                 .setManifestURL(manifestURL)
                 .setStatus(static_cast<int>(host->status()));
@@ -136,7 +136,7 @@ void InspectorApplicationCacheAgent::getManifestForFrame(ErrorString* errorStrin
     *manifestURL = info.m_manifest.string();
 }
 
-void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString* errorString, const String& frameId, RefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache>& applicationCache)
+void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString* errorString, const String& frameId, RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache>& applicationCache)
 {
     DocumentLoader* documentLoader = assertFrameWithDocumentLoader(errorString, frameId);
     if (!documentLoader)
@@ -151,9 +151,9 @@ void InspectorApplicationCacheAgent::getApplicationCacheForFrame(ErrorString* er
     applicationCache = buildObjectForApplicationCache(resources, info);
 }
 
-PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
+PassRefPtr<Inspector::Protocol::ApplicationCache::ApplicationCache> InspectorApplicationCacheAgent::buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources, const ApplicationCacheHost::CacheInfo& applicationCacheInfo)
 {
-    return Inspector::TypeBuilder::ApplicationCache::ApplicationCache::create()
+    return Inspector::Protocol::ApplicationCache::ApplicationCache::create()
         .setManifestURL(applicationCacheInfo.m_manifest.string())
         .setSize(applicationCacheInfo.m_size)
         .setCreationTime(applicationCacheInfo.m_creationTime)
@@ -162,9 +162,9 @@ PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache> Inspector
         .release();
 }
 
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource>> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)
 {
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource>> resources = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> resources = Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>::create();
 
     for (const auto& resourceInfo : applicationCacheResources)
         resources->addItem(buildObjectForApplicationCacheResource(resourceInfo));
@@ -172,7 +172,7 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCach
     return resources;
 }
 
-PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
+PassRefPtr<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)
 {
     StringBuilder types;
 
@@ -191,7 +191,7 @@ PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource> I
     if (resourceInfo.m_isExplicit)
         types.appendLiteral("Explicit ");
 
-    RefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource> value = Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource::create()
+    RefPtr<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> value = Inspector::Protocol::ApplicationCache::ApplicationCacheResource::create()
         .setUrl(resourceInfo.m_resource.string())
         .setSize(static_cast<int>(resourceInfo.m_size))
         .setType(types.toString());

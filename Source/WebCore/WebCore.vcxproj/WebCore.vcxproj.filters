@@ -5203,7 +5203,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebFrontendDispatchers.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebTypeBuilders.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebProtocolTypes.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.cpp">
@@ -12309,10 +12309,10 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSFrontendDispatchers.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSTypeBuilders.h">
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSProtocolTypes.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorTypeBuilder.h">
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolTypes.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h">
@@ -13130,7 +13130,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebFrontendDispatchers.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebTypeBuilders.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebProtocolTypes.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.h">

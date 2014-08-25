@@ -107,9 +107,9 @@ bool ScriptCallStack::isEqual(ScriptCallStack* o) const
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>> ScriptCallStack::buildInspectorArray() const
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> ScriptCallStack::buildInspectorArray() const
 {
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>> frames = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> frames = Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>::create();
     for (size_t i = 0; i < m_frames.size(); i++)
         frames->addItem(m_frames.at(i).buildInspectorObject());
     return frames;

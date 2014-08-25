@@ -33,7 +33,7 @@
 #include <wtf/Vector.h>
 
 namespace Inspector {
-namespace TypeBuilder  {
+namespace Protocol  {
 template<typename T> class Array;
 
 namespace Runtime {
@@ -70,7 +70,7 @@ public:
     void markAsFinal();
     void addProperty(RefPtr<StringImpl>);
     String stringRepresentation();
-    PassRefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> inspectorRepresentation();
+    PassRefPtr<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
     void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object" : name); }
     String constructorName() { return m_constructorName; }
     void setProto(PassRefPtr<StructureShape> shape) { m_proto = shape; }
@@ -94,8 +94,8 @@ public:
     static RuntimeType getRuntimeTypeForValue(JSValue);
     JS_EXPORT_PRIVATE String seenTypes() const;
     String displayName() const;
-    PassRefPtr<Inspector::TypeBuilder::Array<String>> allPrimitiveTypeNames() const;
-    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> allStructureRepresentations() const;
+    PassRefPtr<Inspector::Protocol::Array<String>> allPrimitiveTypeNames() const;
+    PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
 
 private:
     String leastCommonAncestor() const;

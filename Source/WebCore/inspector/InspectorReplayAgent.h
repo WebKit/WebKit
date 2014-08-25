@@ -101,13 +101,13 @@ public:
     virtual void cancelPlayback(ErrorString*) override;
 
     virtual void switchSession(ErrorString*, SessionIdentifier) override;
-    virtual void insertSessionSegment(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier, Inspector::TypeBuilder::Replay::SegmentIdentifier, int segmentIndex) override;
-    virtual void removeSessionSegment(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier, int segmentIndex) override;
+    virtual void insertSessionSegment(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier, Inspector::Protocol::Replay::SegmentIdentifier, int segmentIndex) override;
+    virtual void removeSessionSegment(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier, int segmentIndex) override;
 
-    virtual void currentReplayState(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier*, Inspector::TypeBuilder::OptOutput<Inspector::TypeBuilder::Replay::SegmentIdentifier>*, Inspector::TypeBuilder::Replay::SessionState*, Inspector::TypeBuilder::Replay::SegmentState* segmentState, RefPtr<Inspector::TypeBuilder::Replay::ReplayPosition>&) override;
-    virtual void getAvailableSessions(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Replay::SessionIdentifier>>&) override;
-    virtual void getSessionData(ErrorString*, Inspector::TypeBuilder::Replay::SessionIdentifier, RefPtr<Inspector::TypeBuilder::Replay::ReplaySession>&) override;
-    virtual void getSegmentData(ErrorString*, Inspector::TypeBuilder::Replay::SegmentIdentifier, RefPtr<Inspector::TypeBuilder::Replay::SessionSegment>&) override;
+    virtual void currentReplayState(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier*, Inspector::Protocol::OptOutput<Inspector::Protocol::Replay::SegmentIdentifier>*, Inspector::Protocol::Replay::SessionState*, Inspector::Protocol::Replay::SegmentState* segmentState, RefPtr<Inspector::Protocol::Replay::ReplayPosition>&) override;
+    virtual void getAvailableSessions(ErrorString*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::SessionIdentifier>>&) override;
+    virtual void getSessionData(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier, RefPtr<Inspector::Protocol::Replay::ReplaySession>&) override;
+    virtual void getSegmentData(ErrorString*, Inspector::Protocol::Replay::SegmentIdentifier, RefPtr<Inspector::Protocol::Replay::SessionSegment>&) override;
 
 private:
     PassRefPtr<ReplaySession> findSession(ErrorString*, SessionIdentifier);

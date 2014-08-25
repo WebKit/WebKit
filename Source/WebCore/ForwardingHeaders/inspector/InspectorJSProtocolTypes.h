@@ -1,0 +1,4 @@
+#ifndef WebCore_FWD_InspectorJSProtocolTypes_h
+#define WebCore_FWD_InspectorJSProtocolTypes_h
+#include <JavaScriptCore/InspectorJSProtocolTypes.h>
+#endif

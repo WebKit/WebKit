@@ -83,7 +83,7 @@ class FrontendDispatcherImplementationGenerator(Generator):
                 parameter_value = '*' + parameter_value
             if parameter.type.is_enum():
                 framework_prefix = self.model().framework.setting('prefix')
-                parameter_value = 'Inspector::TypeBuilder::get%sEnumConstantValue(%s)' % (framework_prefix, parameter_value)
+                parameter_value = 'Inspector::Protocol::get%sEnumConstantValue(%s)' % (framework_prefix, parameter_value)
 
             parameter_args = {
                 'parameterType': Generator.type_string_for_stack_out_parameter(parameter),

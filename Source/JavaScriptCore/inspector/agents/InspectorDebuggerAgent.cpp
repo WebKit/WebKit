@@ -175,19 +175,19 @@ static bool matches(const String& url, const String& pattern, bool isRegex)
 
 static bool breakpointActionTypeForString(const String& typeString, ScriptBreakpointActionType* output)
 {
-    if (typeString == Inspector::TypeBuilder::getJSEnumConstantValue(Inspector::TypeBuilder::Debugger::BreakpointAction::Type::Log)) {
+    if (typeString == Inspector::Protocol::getJSEnumConstantValue(Inspector::Protocol::Debugger::BreakpointAction::Type::Log)) {
         *output = ScriptBreakpointActionTypeLog;
         return true;
     }
-    if (typeString == Inspector::TypeBuilder::getJSEnumConstantValue(Inspector::TypeBuilder::Debugger::BreakpointAction::Type::Evaluate)) {
+    if (typeString == Inspector::Protocol::getJSEnumConstantValue(Inspector::Protocol::Debugger::BreakpointAction::Type::Evaluate)) {
         *output = ScriptBreakpointActionTypeEvaluate;
         return true;
     }
-    if (typeString == Inspector::TypeBuilder::getJSEnumConstantValue(Inspector::TypeBuilder::Debugger::BreakpointAction::Type::Sound)) {
+    if (typeString == Inspector::Protocol::getJSEnumConstantValue(Inspector::Protocol::Debugger::BreakpointAction::Type::Sound)) {
         *output = ScriptBreakpointActionTypeSound;
         return true;
     }
-    if (typeString == Inspector::TypeBuilder::getJSEnumConstantValue(Inspector::TypeBuilder::Debugger::BreakpointAction::Type::Probe)) {
+    if (typeString == Inspector::Protocol::getJSEnumConstantValue(Inspector::Protocol::Debugger::BreakpointAction::Type::Probe)) {
         *output = ScriptBreakpointActionTypeProbe;
         return true;
     }
@@ -239,9 +239,9 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString* errorStr
     return true;
 }
 
-void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const RefPtr<InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations)
+void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const RefPtr<InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations)
 {
-    locations = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>::create();
+    locations = Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>::create();
     if (!optionalURL == !optionalURLRegex) {
         *errorString = ASCIILiteral("Either url or urlRegex must be specified.");
         return;
@@ -278,7 +278,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
         if (!matches(scriptURL, url, isRegex))
             continue;
 
-        RefPtr<Inspector::TypeBuilder::Debugger::Location> location = resolveBreakpoint(breakpointIdentifier, it->key, breakpoint);
+        RefPtr<Inspector::Protocol::Debugger::Location> location = resolveBreakpoint(breakpointIdentifier, it->key, breakpoint);
         if (location)
             locations->addItem(location);
     }
@@ -300,7 +300,7 @@ static bool parseLocation(ErrorString* errorString, InspectorObject* location, J
     return true;
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const RefPtr<InspectorObject>& location, const RefPtr<InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation)
+void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const RefPtr<InspectorObject>& location, const RefPtr<InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation)
 {
     JSC::SourceID sourceID;
     unsigned lineNumber;
@@ -368,7 +368,7 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString* errorString, const 
     resume(errorString);
 }
 
-PassRefPtr<Inspector::TypeBuilder::Debugger::Location> InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID sourceID, const ScriptBreakpoint& breakpoint)
+PassRefPtr<Inspector::Protocol::Debugger::Location> InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID sourceID, const ScriptBreakpoint& breakpoint)
 {
     ScriptsMap::iterator scriptIterator = m_scripts.find(sourceID);
     if (scriptIterator == m_scripts.end())
@@ -388,14 +388,14 @@ PassRefPtr<Inspector::TypeBuilder::Debugger::Location> InspectorDebuggerAgent::r
         debugServerBreakpointIDsIterator = m_breakpointIdentifierToDebugServerBreakpointIDs.set(breakpointIdentifier, Vector<JSC::BreakpointID>()).iterator;
     debugServerBreakpointIDsIterator->value.append(debugServerBreakpointID);
 
-    RefPtr<Inspector::TypeBuilder::Debugger::Location> location = Inspector::TypeBuilder::Debugger::Location::create()
+    RefPtr<Inspector::Protocol::Debugger::Location> location = Inspector::Protocol::Debugger::Location::create()
         .setScriptId(String::number(sourceID))
         .setLineNumber(actualLineNumber);
     location->setColumnNumber(actualColumnNumber);
     return location;
 }
 
-void InspectorDebuggerAgent::searchInContent(ErrorString* error, const String& scriptIDStr, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>& results)
+void InspectorDebuggerAgent::searchInContent(ErrorString* error, const String& scriptIDStr, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -418,7 +418,7 @@ void InspectorDebuggerAgent::getScriptSource(ErrorString* error, const String& s
         *error = "No script for id: " + scriptIDStr;
 }
 
-void InspectorDebuggerAgent::getFunctionDetails(ErrorString* errorString, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>& details)
+void InspectorDebuggerAgent::getFunctionDetails(ErrorString* errorString, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& details)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(functionId);
     if (injectedScript.hasNoValue()) {
@@ -516,7 +516,7 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString* errorString, cons
         *errorString = ASCIILiteral("Internal error. Could not change pause on exceptions state");
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
     if (injectedScript.hasNoValue()) {
@@ -553,15 +553,15 @@ void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directive
     }
 }
 
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> InspectorDebuggerAgent::currentCallFrames()
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)
-        return Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>::create();
+        return Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>::create();
 
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(m_pausedScriptState);
     if (injectedScript.hasNoValue()) {
         ASSERT_NOT_REACHED();
-        return Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>::create();
+        return Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>::create();
     }
 
     return injectedScript.wrapCallFrames(m_currentCallStack);
@@ -612,7 +612,7 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
             continue;
         }
 
-        RefPtr<Inspector::TypeBuilder::Debugger::Location> location = resolveBreakpoint(it->key, sourceID, breakpoint);
+        RefPtr<Inspector::Protocol::Debugger::Location> location = resolveBreakpoint(it->key, sourceID, breakpoint);
         if (location)
             m_frontendDispatcher->breakpointResolved(it->key, location);
     }
@@ -660,8 +660,8 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, 
     int sampleId = m_nextProbeSampleId++;
 
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
-    RefPtr<TypeBuilder::Runtime::RemoteObject> payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action));
-    RefPtr<TypeBuilder::Debugger::ProbeSample> result = TypeBuilder::Debugger::ProbeSample::create()
+    RefPtr<Protocol::Runtime::RemoteObject> payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action));
+    RefPtr<Protocol::Debugger::ProbeSample> result = Protocol::Debugger::ProbeSample::create()
         .setProbeId(action.identifier)
         .setSampleId(sampleId)
         .setBatchId(hitCount)

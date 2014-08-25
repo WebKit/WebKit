@@ -61,7 +61,7 @@ namespace {
 
 void reportTransactionFailed(ExecuteSQLCallback* requestCallback, SQLError* error)
 {
-    RefPtr<Inspector::TypeBuilder::Database::Error> errorObject = Inspector::TypeBuilder::Database::Error::create()
+    RefPtr<Inspector::Protocol::Database::Error> errorObject = Inspector::Protocol::Database::Error::create()
         .setMessage(error->message())
         .setCode(error->code());
     requestCallback->sendSuccess(nullptr, nullptr, errorObject.release());
@@ -80,12 +80,12 @@ public:
     {
         SQLResultSetRowList* rowList = resultSet->rows();
 
-        RefPtr<Inspector::TypeBuilder::Array<String>> columnNames = Inspector::TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::Protocol::Array<String>> columnNames = Inspector::Protocol::Array<String>::create();
         const Vector<String>& columns = rowList->columnNames();
         for (size_t i = 0; i < columns.size(); ++i)
             columnNames->addItem(columns[i]);
 
-        RefPtr<Inspector::TypeBuilder::Array<InspectorValue>> values = Inspector::TypeBuilder::Array<InspectorValue>::create();
+        RefPtr<Inspector::Protocol::Array<InspectorValue>> values = Inspector::Protocol::Array<InspectorValue>::create();
         const Vector<SQLValue>& data = rowList->values();
         for (size_t i = 0; i < data.size(); ++i) {
             const SQLValue& value = rowList->values()[i];
@@ -254,14 +254,14 @@ void InspectorDatabaseAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<Inspector::TypeBuilder::Array<String>>& names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names)
 {
     if (!m_enabled) {
         *error = "Database agent is not enabled";
         return;
     }
 
-    names = Inspector::TypeBuilder::Array<String>::create();
+    names = Inspector::Protocol::Array<String>::create();
 
     Database* database = databaseForId(databaseId);
     if (database) {

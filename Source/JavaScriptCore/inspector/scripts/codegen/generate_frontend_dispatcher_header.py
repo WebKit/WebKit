@@ -49,7 +49,7 @@ class FrontendDispatcherHeaderGenerator(Generator):
 
     def generate_output(self):
         headers = [
-            '"Inspector%sTypeBuilders.h"' % self.model().framework.setting('prefix'),
+            '"Inspector%sProtocolTypes.h"' % self.model().framework.setting('prefix'),
             '<inspector/InspectorFrontendChannel.h>',
             '<inspector/InspectorValues.h>',
             '<wtf/PassRefPtr.h>',

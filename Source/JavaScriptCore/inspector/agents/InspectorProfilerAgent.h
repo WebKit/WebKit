@@ -68,11 +68,11 @@ public:
 
     virtual void clearProfiles(ErrorString*) override final { reset(); }
 
-    virtual void getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>>&) override final;
-    virtual void getCPUProfile(ErrorString*, int uid, RefPtr<TypeBuilder::Profiler::CPUProfile>&) override final;
+    virtual void getProfileHeaders(ErrorString*, RefPtr<Protocol::Array<Protocol::Profiler::ProfileHeader>>&) override final;
+    virtual void getCPUProfile(ErrorString*, int uid, RefPtr<Protocol::Profiler::CPUProfile>&) override final;
     virtual void removeProfile(ErrorString*, const String& type, int uid) override final;
 
-    static PassRefPtr<TypeBuilder::Profiler::CPUProfile> buildProfileInspectorObject(const JSC::Profile*);
+    static PassRefPtr<Protocol::Profiler::CPUProfile> buildProfileInspectorObject(const JSC::Profile*);
 
     enum ShouldRecompile { SkipRecompile, Recompile };
 
@@ -100,7 +100,7 @@ private:
 
     String getUserInitiatedProfileName();
 
-    PassRefPtr<TypeBuilder::Profiler::ProfileHeader> createProfileHeader(const JSC::Profile&);
+    PassRefPtr<Protocol::Profiler::ProfileHeader> createProfileHeader(const JSC::Profile&);
 
     std::unique_ptr<InspectorProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorProfilerBackendDispatcher> m_backendDispatcher;

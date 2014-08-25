@@ -206,7 +206,7 @@ private:
     InspectorFrontendChannel* m_inspectorFrontendChannel;
 };""")
 
-    TypeBuilderDeclarationPrelude = (
+    ProtocolObjectBuilderDeclarationPrelude = (
 """    template<int STATE>
     class Builder {
     private:
@@ -225,7 +225,7 @@ private:
         friend class ${objectType};
     public:""")
 
-    TypeBuilderDeclarationPostlude = (
+    ProtocolObjectBuilderDeclarationPostlude = (
 """
         operator RefPtr<${objectType}>& ()
         {
@@ -248,9 +248,9 @@ ${constructorExample}
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::TypeBuilder::StructItemTraits ItemTraits;""")
+    typedef Inspector::Protocol::StructItemTraits ItemTraits;""")
 
-    TypeBuilderObjectRuntimeCast = (
+    ProtocolObjectRuntimeCast = (
 """PassRefPtr<${objectType}> BindingTraits<${objectType}>::runtimeCast(PassRefPtr<Inspector::InspectorValue> value)
 {
     RefPtr<Inspector::InspectorObject> object;

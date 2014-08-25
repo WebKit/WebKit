@@ -55,8 +55,8 @@ except ImportError:
     from generate_backend_dispatcher_implementation import *
     from generate_frontend_dispatcher_header import *
     from generate_frontend_dispatcher_implementation import *
-    from generate_type_builder_header import *
-    from generate_type_builder_implementation import *
+    from generate_protocol_types_header import *
+    from generate_protocol_types_implementation import *
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.ERROR)
@@ -123,8 +123,8 @@ def generate_from_specification(primary_specification_filepath=None,
     generators.append(BackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
     generators.append(FrontendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
     generators.append(FrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-    generators.append(TypeBuilderHeaderGenerator(protocol, primary_specification_filepath))
-    generators.append(TypeBuilderImplementationGenerator(protocol, primary_specification_filepath))
+    generators.append(ProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
+    generators.append(ProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
 
     single_output_file_contents = []
 

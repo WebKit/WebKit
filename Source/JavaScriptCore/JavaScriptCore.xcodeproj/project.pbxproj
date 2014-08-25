@@ -1359,8 +1359,8 @@
 		A532438818568335002ED692 /* InspectorJSBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438218568317002ED692 /* InspectorJSBackendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A532438918568335002ED692 /* InspectorJSFrontendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A532438318568317002ED692 /* InspectorJSFrontendDispatchers.cpp */; };
 		A532438A18568335002ED692 /* InspectorJSFrontendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438418568317002ED692 /* InspectorJSFrontendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A532438B18568335002ED692 /* InspectorJSTypeBuilders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A532438518568317002ED692 /* InspectorJSTypeBuilders.cpp */; };
-		A532438C18568335002ED692 /* InspectorJSTypeBuilders.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438618568317002ED692 /* InspectorJSTypeBuilders.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A532438B18568335002ED692 /* InspectorJSProtocolTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A532438518568317002ED692 /* InspectorJSProtocolTypes.cpp */; };
+		A532438C18568335002ED692 /* InspectorJSProtocolTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438618568317002ED692 /* InspectorJSProtocolTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */ = {isa = PBXBuildFile; fileRef = A5324391185696E6002ED692 /* generate-combined-inspector-json.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53243981856A489002ED692 /* InspectorJS.json in Headers */ = {isa = PBXBuildFile; fileRef = A53243951856A475002ED692 /* InspectorJS.json */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */; };
@@ -1379,7 +1379,7 @@
 		A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55D93A5185012A800400DED /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */; };
 		A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93A4185012A800400DED /* ScriptFunctionCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A55D93AC18514F7900400DED /* InspectorTypeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A57D23E51890CEBF0031C7FA /* InspectorDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D23E31890CEBF0031C7FA /* InspectorDebuggerAgent.cpp */; };
 		A57D23E61890CEBF0031C7FA /* InspectorDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A57D23E41890CEBF0031C7FA /* InspectorDebuggerAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A57D23E91891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D23E71891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp */; };
@@ -1792,11 +1792,13 @@
 		C4703CD0192844CC0013FBEA /* generate_backend_dispatcher_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CC5192844CC0013FBEA /* generate_backend_dispatcher_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CD1192844CC0013FBEA /* generate_frontend_dispatcher_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CC6192844CC0013FBEA /* generate_frontend_dispatcher_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CD2192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CC7192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		C4703CD3192844CC0013FBEA /* generate_type_builder_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CC8192844CC0013FBEA /* generate_type_builder_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		C4703CD4192844CC0013FBEA /* generate_type_builder_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CC9192844CC0013FBEA /* generate_type_builder_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CD5192844CC0013FBEA /* generator_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CCA192844CC0013FBEA /* generator_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CD6192844CC0013FBEA /* generator.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CCB192844CC0013FBEA /* generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CD7192844CC0013FBEA /* models.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CCC192844CC0013FBEA /* models.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		C49FE4A919AAC83E00F40CE9 /* generate_protocol_types_header.py in Resources */ = {isa = PBXBuildFile; fileRef = C49FE4A719AAC83E00F40CE9 /* generate_protocol_types_header.py */; };
+		C49FE4AA19AAC83E00F40CE9 /* generate_protocol_types_implementation.py in Resources */ = {isa = PBXBuildFile; fileRef = C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */; };
+		C49FE4AB19AAC86100F40CE9 /* generate_protocol_types_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C49FE4A719AAC83E00F40CE9 /* generate_protocol_types_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		C49FE4AC19AAC86100F40CE9 /* generate_protocol_types_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E124A8F60E555775003091F1 /* OpaqueJSString.cpp */; };
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
@@ -3016,8 +3018,8 @@
 		A532438218568317002ED692 /* InspectorJSBackendDispatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorJSBackendDispatchers.h; sourceTree = "<group>"; };
 		A532438318568317002ED692 /* InspectorJSFrontendDispatchers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorJSFrontendDispatchers.cpp; sourceTree = "<group>"; };
 		A532438418568317002ED692 /* InspectorJSFrontendDispatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorJSFrontendDispatchers.h; sourceTree = "<group>"; };
-		A532438518568317002ED692 /* InspectorJSTypeBuilders.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorJSTypeBuilders.cpp; sourceTree = "<group>"; };
-		A532438618568317002ED692 /* InspectorJSTypeBuilders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorJSTypeBuilders.h; sourceTree = "<group>"; };
+		A532438518568317002ED692 /* InspectorJSProtocolTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorJSProtocolTypes.cpp; sourceTree = "<group>"; };
+		A532438618568317002ED692 /* InspectorJSProtocolTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorJSProtocolTypes.h; sourceTree = "<group>"; };
 		A532438D185696CA002ED692 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; path = protocol; sourceTree = "<group>"; };
 		A5324391185696E6002ED692 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-combined-inspector-json.py"; sourceTree = "<group>"; };
 		A53243951856A475002ED692 /* InspectorJS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InspectorJS.json; sourceTree = "<group>"; };
@@ -3036,7 +3038,7 @@
 		A54CF2F8184EAEDA00237F19 /* ScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptObject.h; sourceTree = "<group>"; };
 		A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		A55D93A4185012A800400DED /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
-		A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
+		A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProtocolTypes.h; sourceTree = "<group>"; };
 		A57D23E31890CEBF0031C7FA /* InspectorDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDebuggerAgent.cpp; sourceTree = "<group>"; };
 		A57D23E41890CEBF0031C7FA /* InspectorDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDebuggerAgent.h; sourceTree = "<group>"; };
 		A57D23E71891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectDebuggerAgent.cpp; sourceTree = "<group>"; };
@@ -3441,11 +3443,11 @@
 		C4703CC5192844CC0013FBEA /* generate_backend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_backend_dispatcher_implementation.py; sourceTree = "<group>"; };
 		C4703CC6192844CC0013FBEA /* generate_frontend_dispatcher_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_frontend_dispatcher_header.py; sourceTree = "<group>"; };
 		C4703CC7192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_frontend_dispatcher_implementation.py; sourceTree = "<group>"; };
-		C4703CC8192844CC0013FBEA /* generate_type_builder_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_type_builder_header.py; sourceTree = "<group>"; };
-		C4703CC9192844CC0013FBEA /* generate_type_builder_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_type_builder_implementation.py; sourceTree = "<group>"; };
 		C4703CCA192844CC0013FBEA /* generator_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generator_templates.py; sourceTree = "<group>"; };
 		C4703CCB192844CC0013FBEA /* generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generator.py; sourceTree = "<group>"; };
 		C4703CCC192844CC0013FBEA /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
+		C49FE4A719AAC83E00F40CE9 /* generate_protocol_types_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_protocol_types_header.py; sourceTree = "<group>"; };
+		C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_protocol_types_implementation.py; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		E124A8F50E555775003091F1 /* OpaqueJSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpaqueJSString.h; sourceTree = "<group>"; };
@@ -4230,8 +4232,8 @@
 				A532438218568317002ED692 /* InspectorJSBackendDispatchers.h */,
 				A532438318568317002ED692 /* InspectorJSFrontendDispatchers.cpp */,
 				A532438418568317002ED692 /* InspectorJSFrontendDispatchers.h */,
-				A532438518568317002ED692 /* InspectorJSTypeBuilders.cpp */,
-				A532438618568317002ED692 /* InspectorJSTypeBuilders.h */,
+				A532438518568317002ED692 /* InspectorJSProtocolTypes.cpp */,
+				A532438618568317002ED692 /* InspectorJSProtocolTypes.h */,
 				A7D801A61880D6A80026C39B /* JSCBuiltins.cpp */,
 				A7D801A71880D6A80026C39B /* JSCBuiltins.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
@@ -5352,7 +5354,7 @@
 				A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */,
 				A5D0A1BA1862301B00C7B496 /* InspectorEnvironment.h */,
 				A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */,
-				A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */,
+				A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */,
 				A593CF801840377100BFCE27 /* InspectorValues.cpp */,
 				A593CF811840377100BFCE27 /* InspectorValues.h */,
 				A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */,
@@ -5425,8 +5427,8 @@
 				C4703CC5192844CC0013FBEA /* generate_backend_dispatcher_implementation.py */,
 				C4703CC6192844CC0013FBEA /* generate_frontend_dispatcher_header.py */,
 				C4703CC7192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py */,
-				C4703CC8192844CC0013FBEA /* generate_type_builder_header.py */,
-				C4703CC9192844CC0013FBEA /* generate_type_builder_implementation.py */,
+				C49FE4A719AAC83E00F40CE9 /* generate_protocol_types_header.py */,
+				C49FE4A819AAC83E00F40CE9 /* generate_protocol_types_implementation.py */,
 				C4703CCA192844CC0013FBEA /* generator_templates.py */,
 				C4703CCB192844CC0013FBEA /* generator.py */,
 				C4703CCC192844CC0013FBEA /* models.py */,
@@ -5715,6 +5717,8 @@
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				C49FE4AB19AAC86100F40CE9 /* generate_protocol_types_header.py in Headers */,
+				C49FE4AC19AAC86100F40CE9 /* generate_protocol_types_implementation.py in Headers */,
 				658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */,
 				2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
@@ -5725,7 +5729,6 @@
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */,
 				A5840E27187C981E00843B10 /* cssmin.py in Headers */,
-				C4703CD3192844CC0013FBEA /* generate_type_builder_header.py in Headers */,
 				C4703CD2192844CC0013FBEA /* generate_frontend_dispatcher_implementation.py in Headers */,
 				C4703CD1192844CC0013FBEA /* generate_frontend_dispatcher_header.py in Headers */,
 				C4703CD5192844CC0013FBEA /* generator_templates.py in Headers */,
@@ -5734,7 +5737,6 @@
 				C4703CC0192844960013FBEA /* generate-inspector-protocol-bindings.py in Headers */,
 				C4703CD0192844CC0013FBEA /* generate_backend_dispatcher_implementation.py in Headers */,
 				C4703CCE192844CC0013FBEA /* generate_backend_commands.py in Headers */,
-				C4703CD4192844CC0013FBEA /* generate_type_builder_implementation.py in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
@@ -6117,10 +6119,10 @@
 				A532438818568335002ED692 /* InspectorJSBackendDispatchers.h in Headers */,
 				A532438A18568335002ED692 /* InspectorJSFrontendDispatchers.h in Headers */,
 				8606DDEA18DA44AB00A383D0 /* IdentifierInlines.h in Headers */,
-				A532438C18568335002ED692 /* InspectorJSTypeBuilders.h in Headers */,
+				A532438C18568335002ED692 /* InspectorJSProtocolTypes.h in Headers */,
 				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,
 				0FBFDD05196C92BF007A5BFA /* DFGPhantomRemovalPhase.h in Headers */,
-				A55D93AC18514F7900400DED /* InspectorTypeBuilder.h in Headers */,
+				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
 				A593CF831840377100BFCE27 /* InspectorValues.h in Headers */,
 				969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */,
 				A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */,
@@ -6767,7 +6769,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C49FE4A919AAC83E00F40CE9 /* generate_protocol_types_header.py in Resources */,
 				A53F1AC018C90F8F0072EB6D /* framework.sb in Resources */,
+				C49FE4AA19AAC83E00F40CE9 /* generate_protocol_types_implementation.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7386,7 +7390,7 @@
 				A57D23E51890CEBF0031C7FA /* InspectorDebuggerAgent.cpp in Sources */,
 				A532438718568335002ED692 /* InspectorJSBackendDispatchers.cpp in Sources */,
 				A532438918568335002ED692 /* InspectorJSFrontendDispatchers.cpp in Sources */,
-				A532438B18568335002ED692 /* InspectorJSTypeBuilders.cpp in Sources */,
+				A532438B18568335002ED692 /* InspectorJSProtocolTypes.cpp in Sources */,
 				A50E4B6118809DD50068A46D /* InspectorRuntimeAgent.cpp in Sources */,
 				A593CF821840377100BFCE27 /* InspectorValues.cpp in Sources */,
 				A78853F917972629001440E4 /* IntendedStructureChain.cpp in Sources */,

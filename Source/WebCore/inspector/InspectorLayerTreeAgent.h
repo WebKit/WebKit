@@ -34,7 +34,7 @@
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
 #include "InspectorWebFrontendDispatchers.h"
-#include "InspectorWebTypeBuilders.h"
+#include "InspectorWebProtocolTypes.h"
 #include "RenderLayer.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -63,19 +63,19 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
-    virtual void layersForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>&) override;
-    virtual void reasonsForCompositingLayer(ErrorString*, const String& layerId, RefPtr<Inspector::TypeBuilder::LayerTree::CompositingReasons>&) override;
+    virtual void layersForNode(ErrorString*, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&) override;
+    virtual void reasonsForCompositingLayer(ErrorString*, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
 
 private:
     // RenderLayer-related methods.
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    void gatherLayersUsingRenderObjectHierarchy(ErrorString*, RenderObject*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>&);
-    void gatherLayersUsingRenderLayerHierarchy(ErrorString*, RenderLayer*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderObjectHierarchy(ErrorString*, RenderObject*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderLayerHierarchy(ErrorString*, RenderLayer*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
 
-    PassRefPtr<Inspector::TypeBuilder::LayerTree::Layer> buildObjectForLayer(ErrorString*, RenderLayer*);
-    PassRefPtr<Inspector::TypeBuilder::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
+    PassRefPtr<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(ErrorString*, RenderLayer*);
+    PassRefPtr<Inspector::Protocol::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
 
     int idForNode(ErrorString*, Node*);
 

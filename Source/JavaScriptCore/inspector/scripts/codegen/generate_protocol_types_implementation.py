@@ -36,12 +36,12 @@ from models import AliasedType, ArrayType, EnumType, ObjectType
 log = logging.getLogger('global')
 
 
-class TypeBuilderImplementationGenerator(Generator):
+class ProtocolTypesImplementationGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sTypeBuilders.cpp" % self.model().framework.setting('prefix')
+        return "Inspector%sProtocolTypes.cpp" % self.model().framework.setting('prefix')
 
     def generate_output(self):
         domains = self.domains_to_generate()
@@ -50,7 +50,7 @@ class TypeBuilderImplementationGenerator(Generator):
         secondary_headers = ['<wtf/text/CString.h>']
 
         header_args = {
-            'primaryInclude': '"Inspector%sTypeBuilders.h"' % self.model().framework.setting('prefix'),
+            'primaryInclude': '"Inspector%sProtocolTypes.h"' % self.model().framework.setting('prefix'),
             'secondaryIncludes': "\n".join(['#include %s' % header for header in secondary_headers]),
             'inputFilename': self._input_filepath
         }
@@ -58,12 +58,12 @@ class TypeBuilderImplementationGenerator(Generator):
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(Templates.CppImplementationPrelude).substitute(None, **header_args))
-        sections.append('namespace TypeBuilder {')
+        sections.append('namespace Protocol {')
         sections.append(self._generate_enum_mapping())
         sections.append(self._generate_open_field_names())
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
-        sections.append('} // namespace TypeBuilder')
+        sections.append('} // namespace Protocol')
         sections.append(Template(Templates.CppImplementationPostlude).substitute(None, **header_args))
 
         return "\n\n".join(sections)
@@ -89,7 +89,7 @@ class TypeBuilderImplementationGenerator(Generator):
         for domain in self.domains_to_generate():
             for type_declaration in filter(lambda decl: Generator.type_has_open_fields(decl.type), domain.type_declarations):
                 for type_member in sorted(type_declaration.type_members, key=lambda member: member.member_name):
-                    field_name = '::'.join(['Inspector', 'TypeBuilder', domain.domain_name, ucfirst(type_declaration.type_name), ucfirst(type_member.member_name)])
+                    field_name = '::'.join(['Inspector', 'Protocol', domain.domain_name, ucfirst(type_declaration.type_name), ucfirst(type_member.member_name)])
                     lines.append('const char* %s = "%s";' % (field_name, type_member.member_name))
 
         return '\n'.join(lines)
@@ -112,9 +112,9 @@ class TypeBuilderImplementationGenerator(Generator):
 
     def _generate_runtime_cast_for_object_declaration(self, object_declaration):
         args = {
-            'objectType': Generator.type_builder_string_for_type(object_declaration.type)
+            'objectType': Generator.protocol_type_string_for_type(object_declaration.type)
         }
-        return Template(Templates.TypeBuilderObjectRuntimeCast).substitute(None, **args)
+        return Template(Templates.ProtocolObjectRuntimeCast).substitute(None, **args)
 
     def _generate_assertion_for_object_declaration(self, object_declaration):
         required_members = filter(lambda member: not member.is_optional, object_declaration.type_members)
@@ -123,7 +123,7 @@ class TypeBuilderImplementationGenerator(Generator):
         lines = []
 
         lines.append('#if !ASSERT_DISABLED')
-        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (Generator.type_builder_string_for_type(object_declaration.type)))
+        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (Generator.protocol_type_string_for_type(object_declaration.type)))
         lines.append("""{
     RefPtr<InspectorObject> object;
     bool castRes = value->asObject(&object);

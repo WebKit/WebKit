@@ -71,7 +71,7 @@ InspectorBackend.registerCommand("Database.executeNoOptionalParameters", [{"name
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorTestTypeBuilders.h"
+#include "InspectorTestProtocolTypes.h"
 #include <inspector/InspectorBackendDispatcher.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -96,8 +96,8 @@ public:
         Yellow = 5,
         Black = 6,
     }; // enum class PrintColor
-    virtual void executeAllOptionalParameters(ErrorString*, const RefPtr<Inspector::InspectorArray>* in_columnNames, const String* in_notes, const double* in_timestamp, const RefPtr<Inspector::InspectorObject>* in_values, const Inspector::InspectorValue* in_payload, const int* in_databaseId, const RefPtr<Inspector::InspectorObject>* in_sqlError, const String* in_screenColor, const String* in_printColor, RefPtr<Inspector::TypeBuilder::Array<String>>& opt_out_columnNames, Inspector::TypeBuilder::OptOutput<String>* opt_out_notes, Inspector::TypeBuilder::OptOutput<double>* opt_out_timestamp, Inspector::TypeBuilder::OptOutput<Inspector::InspectorObject>* opt_out_values, Inspector::TypeBuilder::OptOutput<Inspector::InspectorValue>* opt_out_payload, Inspector::TypeBuilder::OptOutput<int>* opt_out_databaseId, RefPtr<Inspector::TypeBuilder::Database::Error>& opt_out_sqlError, Inspector::TypeBuilder::Database::PrimaryColors* opt_out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
-    virtual void executeNoOptionalParameters(ErrorString*, const RefPtr<Inspector::InspectorArray>& in_columnNames, const String& in_notes, double in_timestamp, const RefPtr<Inspector::InspectorObject>& in_values, Inspector::InspectorValue in_payload, int in_databaseId, const RefPtr<Inspector::InspectorObject>& in_sqlError, const String& in_screenColor, const String& in_printColor, RefPtr<Inspector::TypeBuilder::Array<String>>& out_columnNames, String* out_notes, double* out_timestamp, Inspector::InspectorObject* out_values, Inspector::InspectorValue* out_payload, int* out_databaseId, RefPtr<Inspector::TypeBuilder::Database::Error>& out_sqlError, Inspector::TypeBuilder::Database::PrimaryColors* out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
+    virtual void executeAllOptionalParameters(ErrorString*, const RefPtr<Inspector::InspectorArray>* in_columnNames, const String* in_notes, const double* in_timestamp, const RefPtr<Inspector::InspectorObject>* in_values, const Inspector::InspectorValue* in_payload, const int* in_databaseId, const RefPtr<Inspector::InspectorObject>* in_sqlError, const String* in_screenColor, const String* in_printColor, RefPtr<Inspector::Protocol::Array<String>>& opt_out_columnNames, Inspector::Protocol::OptOutput<String>* opt_out_notes, Inspector::Protocol::OptOutput<double>* opt_out_timestamp, Inspector::Protocol::OptOutput<Inspector::InspectorObject>* opt_out_values, Inspector::Protocol::OptOutput<Inspector::InspectorValue>* opt_out_payload, Inspector::Protocol::OptOutput<int>* opt_out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& opt_out_sqlError, Inspector::Protocol::Database::PrimaryColors* opt_out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
+    virtual void executeNoOptionalParameters(ErrorString*, const RefPtr<Inspector::InspectorArray>& in_columnNames, const String& in_notes, double in_timestamp, const RefPtr<Inspector::InspectorObject>& in_values, Inspector::InspectorValue in_payload, int in_databaseId, const RefPtr<Inspector::InspectorObject>& in_sqlError, const String& in_screenColor, const String& in_printColor, RefPtr<Inspector::Protocol::Array<String>>& out_columnNames, String* out_notes, double* out_timestamp, Inspector::InspectorObject* out_values, Inspector::InspectorValue* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, Inspector::Protocol::Database::PrimaryColors* out_screenColor, InspectorDatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
 protected:
     virtual ~InspectorDatabaseBackendDispatcherHandler();
 };
@@ -206,7 +206,7 @@ void InspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long callI
     bool notes_valueFound = false;
     String in_notes = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("notes"), &notes_valueFound, protocolErrorsPtr);
     bool timestamp_valueFound = false;
-    Inspector::TypeBuilder::OptOutput<double> in_timestamp = InspectorBackendDispatcher::getNumber(paramsContainerPtr, ASCIILiteral("timestamp"), &timestamp_valueFound, protocolErrorsPtr);
+    Inspector::Protocol::OptOutput<double> in_timestamp = InspectorBackendDispatcher::getNumber(paramsContainerPtr, ASCIILiteral("timestamp"), &timestamp_valueFound, protocolErrorsPtr);
     bool values_valueFound = false;
     RefPtr<Inspector::InspectorObject> in_values = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("values"), &values_valueFound, protocolErrorsPtr);
     bool payload_valueFound = false;
@@ -227,14 +227,14 @@ void InspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long callI
 
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    RefPtr<Inspector::TypeBuilder::Array<String>> out_columnNames;
-    Inspector::TypeBuilder::OptOutput<String> out_notes;
-    Inspector::TypeBuilder::OptOutput<double> out_timestamp;
-    Inspector::TypeBuilder::OptOutput<Inspector::InspectorObject> out_values;
-    Inspector::TypeBuilder::OptOutput<Inspector::InspectorValue> out_payload;
-    Inspector::TypeBuilder::OptOutput<Inspector::TypeBuilder::Database::DatabaseId> out_databaseId;
-    RefPtr<Inspector::TypeBuilder::Database::Error> out_sqlError;
-    Inspector::TypeBuilder::Database::PrimaryColors out_screenColor;
+    RefPtr<Inspector::Protocol::Array<String>> out_columnNames;
+    Inspector::Protocol::OptOutput<String> out_notes;
+    Inspector::Protocol::OptOutput<double> out_timestamp;
+    Inspector::Protocol::OptOutput<Inspector::InspectorObject> out_values;
+    Inspector::Protocol::OptOutput<Inspector::InspectorValue> out_payload;
+    Inspector::Protocol::OptOutput<Inspector::Protocol::Database::DatabaseId> out_databaseId;
+    RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
+    Inspector::Protocol::Database::PrimaryColors out_screenColor;
     InspectorDatabaseBackendDispatcherHandler::PrintColor out_printColor;
     m_agent->executeAllOptionalParameters(&error, columnNames_valueFound ? &in_columnNames : nullptr, notes_valueFound ? &in_notes : nullptr, timestamp_valueFound ? &in_timestamp : nullptr, values_valueFound ? &in_values : nullptr, payload_valueFound ? &in_payload : nullptr, databaseId_valueFound ? &in_databaseId : nullptr, sqlError_valueFound ? &in_sqlError : nullptr, screenColor_valueFound ? &in_screenColor : nullptr, printColor_valueFound ? &in_printColor : nullptr, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, &out_printColor);
 
@@ -284,14 +284,14 @@ void InspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long callId
 
     ErrorString error;
     RefPtr<InspectorObject> result = InspectorObject::create();
-    RefPtr<Inspector::TypeBuilder::Array<String>> out_columnNames;
+    RefPtr<Inspector::Protocol::Array<String>> out_columnNames;
     String out_notes;
     double out_timestamp;
     Inspector::InspectorObject out_values;
     Inspector::InspectorValue out_payload;
-    Inspector::TypeBuilder::Database::DatabaseId out_databaseId;
-    RefPtr<Inspector::TypeBuilder::Database::Error> out_sqlError;
-    Inspector::TypeBuilder::Database::PrimaryColors out_screenColor;
+    Inspector::Protocol::Database::DatabaseId out_databaseId;
+    RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
+    Inspector::Protocol::Database::PrimaryColors out_screenColor;
     InspectorDatabaseBackendDispatcherHandler::PrintColor out_printColor;
     m_agent->executeNoOptionalParameters(&error, in_columnNames, in_notes, in_timestamp, in_values, in_payload, in_databaseId, in_sqlError, in_screenColor, in_printColor, out_columnNames, &out_notes, &out_timestamp, out_values, &out_payload, &out_databaseId, out_sqlError, &out_screenColor, &out_printColor);
 
@@ -303,8 +303,8 @@ void InspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long callId
         result->setValue(ASCIILiteral("payload"), out_payload);
         result->setNumber(ASCIILiteral("databaseId"), out_databaseId);
         result->setObject(ASCIILiteral("sqlError"), out_sqlError);
-        result->setString(ASCIILiteral("screenColor"), Inspector::TypeBuilder::getTestEnumConstantValue(out_screenColor));
-        result->setString(ASCIILiteral("printColor"), Inspector::TypeBuilder::getTestEnumConstantValue(out_printColor));
+        result->setString(ASCIILiteral("screenColor"), Inspector::Protocol::getTestEnumConstantValue(out_screenColor));
+        result->setString(ASCIILiteral("printColor"), Inspector::Protocol::getTestEnumConstantValue(out_printColor));
     }
     m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
@@ -352,7 +352,7 @@ void InspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long callId
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorTestTypeBuilders.h"
+#include "InspectorTestProtocolTypes.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/PassRefPtr.h>
@@ -415,7 +415,7 @@ namespace Inspector {
 
 ### End File: InspectorTestFrontendDispatchers.cpp
 
-### Begin File: InspectorTestTypeBuilders.h
+### Begin File: InspectorTestProtocolTypes.h
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
@@ -446,13 +446,13 @@ namespace Inspector {
 // DO NOT EDIT THIS FILE. It is automatically generated from commands-with-optional-call-return-parameters.json
 // by the script: Source/JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py
 
-#ifndef InspectorTestTypeBuilders_h
-#define InspectorTestTypeBuilders_h
+#ifndef InspectorTestProtocolTypes_h
+#define InspectorTestProtocolTypes_h
 
 #if ENABLE(INSPECTOR)
 
-#include <inspector/InspectorJSTypeBuilders.h>
-#include <inspector/InspectorTypeBuilder.h>
+#include <inspector/InspectorJSProtocolTypes.h>
+#include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
@@ -460,7 +460,7 @@ namespace Inspector {
 
 
 
-namespace TypeBuilder {
+namespace Protocol {
 
 // Forward declarations.
 #if ENABLE(SQL_DATABASE)
@@ -561,7 +561,7 @@ public:
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::TypeBuilder::StructItemTraits ItemTraits;
+    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 };
 
 } // Database
@@ -569,16 +569,16 @@ public:
 
 
 
-} // namespace TypeBuilder
+} // namespace Protocol
 
 } // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(InspectorTestTypeBuilders_h)
-### End File: InspectorTestTypeBuilders.h
+#endif // !defined(InspectorTestProtocolTypes_h)
+### End File: InspectorTestProtocolTypes.h
 
-### Begin File: InspectorTestTypeBuilders.cpp
+### Begin File: InspectorTestProtocolTypes.cpp
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
@@ -610,7 +610,7 @@ public:
 // by the script: Source/JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py
 
 #include "config.h"
-#include "InspectorTestTypeBuilders.h"
+#include "InspectorTestProtocolTypes.h"
 
 #if ENABLE(INSPECTOR)
 
@@ -618,7 +618,7 @@ public:
 
 namespace Inspector {
 
-namespace TypeBuilder {
+namespace Protocol {
 
 static const char* const enum_constant_values[] = {
     "red",
@@ -636,10 +636,10 @@ String getTestEnumConstantValue(int code) {
 
 
 
-} // namespace TypeBuilder
+} // namespace Protocol
 
 } // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 
-### End File: InspectorTestTypeBuilders.cpp
+### End File: InspectorTestProtocolTypes.cpp

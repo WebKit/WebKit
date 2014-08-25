@@ -90,9 +90,9 @@ public:
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const URL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const URL&);
-    static Inspector::TypeBuilder::Page::ResourceType resourceTypeJson(ResourceType);
+    static Inspector::Protocol::Page::ResourceType resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
-    static Inspector::TypeBuilder::Page::ResourceType cachedResourceTypeJson(const CachedResource&);
+    static Inspector::Protocol::Page::ResourceType cachedResourceTypeJson(const CachedResource&);
 
     // Page API for InspectorFrontend
     virtual void enable(ErrorString*) override;
@@ -101,12 +101,12 @@ public:
     virtual void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier) override;
     virtual void reload(ErrorString*, const bool* optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad) override;
     virtual void navigate(ErrorString*, const String& url) override;
-    virtual void getCookies(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>>& cookies) override;
+    virtual void getCookies(ErrorString*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>>& cookies) override;
     virtual void deleteCookie(ErrorString*, const String& cookieName, const String& url) override;
-    virtual void getResourceTree(ErrorString*, RefPtr<Inspector::TypeBuilder::Page::FrameResourceTree>&) override;
+    virtual void getResourceTree(ErrorString*, RefPtr<Inspector::Protocol::Page::FrameResourceTree>&) override;
     virtual void getResourceContent(ErrorString*, const String& frameId, const String& url, String* content, bool* base64Encoded) override;
-    virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&) override;
-    virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchResult>>&) override;
+    virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
+    virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>&) override;
     virtual void setDocumentContent(ErrorString*, const String& frameId, const String& html) override;
     virtual void setShowPaintRects(ErrorString*, bool show) override;
     virtual void canShowDebugBorders(ErrorString*, bool*) override;
@@ -170,8 +170,8 @@ private:
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
     static bool dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
-    PassRefPtr<Inspector::TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
-    PassRefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
+    PassRefPtr<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
+    PassRefPtr<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
     Page* m_page;
     InspectorClient* m_client;
     std::unique_ptr<Inspector::InspectorPageFrontendDispatcher> m_frontendDispatcher;

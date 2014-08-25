@@ -60,14 +60,14 @@ public:
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
 
-    void inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
+    void inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
     void evaluateForTestInFrontend(const String& script);
 
 private:
     std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
     Vector<String> m_pendingEvaluateTestCommands;
-    std::pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
+    std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
     bool m_enabled;
 };
 

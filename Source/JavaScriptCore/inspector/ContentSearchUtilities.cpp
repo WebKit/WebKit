@@ -31,7 +31,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorJSTypeBuilders.h"
+#include "InspectorJSProtocolTypes.h"
 #include "InspectorValues.h"
 #include "RegularExpression.h"
 #include "Yarr.h"
@@ -121,9 +121,9 @@ std::unique_ptr<Vector<size_t>> lineEndings(const String& text)
     return result;
 }
 
-static PassRefPtr<Inspector::TypeBuilder::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t lineNumber, const String& lineContent)
+static PassRefPtr<Inspector::Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t lineNumber, const String& lineContent)
 {
-    return Inspector::TypeBuilder::GenericTypes::SearchMatch::create()
+    return Inspector::Protocol::GenericTypes::SearchMatch::create()
         .setLineNumber(lineNumber)
         .setLineContent(lineContent)
         .release();
@@ -154,9 +154,9 @@ int countRegularExpressionMatches(const JSC::Yarr::RegularExpression& regex, con
     return result;
 }
 
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> result = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> result = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
     JSC::Yarr::RegularExpression regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
     Vector<std::pair<size_t, String>> matches = getRegularExpressionMatchesByLines(regex, text);

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TypeSet.h"
 
-#include "InspectorJSTypeBuilders.h"
+#include "InspectorJSProtocolTypes.h"
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
 #include <wtf/text/CString.h>
@@ -213,9 +213,9 @@ String TypeSet::displayName() const
     return "(many)";
 }
 
-PassRefPtr<Inspector::TypeBuilder::Array<String>> TypeSet::allPrimitiveTypeNames() const
+PassRefPtr<Inspector::Protocol::Array<String>> TypeSet::allPrimitiveTypeNames() const
 {
-    RefPtr<Inspector::TypeBuilder::Array<String>> seen = Inspector::TypeBuilder::Array<String>::create();
+    RefPtr<Inspector::Protocol::Array<String>> seen = Inspector::Protocol::Array<String>::create();
     if (m_seenTypes & TypeUndefined)
          seen->addItem("Undefined");
     if (m_seenTypes & TypeNull)
@@ -232,9 +232,9 @@ PassRefPtr<Inspector::TypeBuilder::Array<String>> TypeSet::allPrimitiveTypeNames
     return seen.release();
 }
 
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
 {
-    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>> description = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::StructureDescription>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> description = Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>::create();
 
     for (size_t i = 0; i < m_structureHistory.size(); i++)
         description->addItem(m_structureHistory.at(i)->inspectorRepresentation());
@@ -360,14 +360,14 @@ String StructureShape::stringRepresentation()
     return representation.toString();
 }
 
-PassRefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
+PassRefPtr<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
 {
-    RefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> base = Inspector::TypeBuilder::Runtime::StructureDescription::create();
-    RefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> currentObject = base;
+    RefPtr<Inspector::Protocol::Runtime::StructureDescription> base = Inspector::Protocol::Runtime::StructureDescription::create();
+    RefPtr<Inspector::Protocol::Runtime::StructureDescription> currentObject = base;
     RefPtr<StructureShape> currentShape = this;
 
     while (currentShape) {
-        auto fields = Inspector::TypeBuilder::Array<String>::create();
+        auto fields = Inspector::Protocol::Array<String>::create();
         for (auto it = currentShape->m_fields.begin(), end = currentShape->m_fields.end(); it != end; ++it)
             fields->addItem((*it).get());
 
@@ -375,7 +375,7 @@ PassRefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> StructureShape
         currentObject->setConstructorName(currentShape->m_constructorName);
 
         if (currentShape->m_proto) {
-            RefPtr<Inspector::TypeBuilder::Runtime::StructureDescription> nextObject = Inspector::TypeBuilder::Runtime::StructureDescription::create();
+            RefPtr<Inspector::Protocol::Runtime::StructureDescription> nextObject = Inspector::Protocol::Runtime::StructureDescription::create();
             currentObject->setPrototypeStructure(nextObject);
             currentObject = nextObject;
         }

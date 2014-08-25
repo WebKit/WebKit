@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorTypeBuilder_h
-#define InspectorTypeBuilder_h
+#ifndef InspectorProtocolTypes_h
+#define InspectorProtocolTypes_h
 
 #if ENABLE(INSPECTOR)
 
@@ -35,7 +35,7 @@
 
 namespace Inspector {
 
-namespace TypeBuilder {
+namespace Protocol {
 
 template<typename T>
 class OptOutput {
@@ -176,16 +176,16 @@ struct ArrayItemHelper<InspectorArray> {
 };
 
 template<typename T>
-struct ArrayItemHelper<TypeBuilder::Array<T>> {
+struct ArrayItemHelper<Protocol::Array<T>> {
     struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<TypeBuilder::Array<T>> value)
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<Protocol::Array<T>> value)
         {
             array->pushValue(value);
         }
     };
 };
 
-// Helper methods for TypeBuilder and other Inspector types are provided by
+// Helper methods for Protocol and other Inspector types are provided by
 // specializations of BindingTraits<T>. Some are generated for protocol types.
 
 template<typename T>
@@ -210,7 +210,7 @@ struct PrimitiveBindingTraits {
 };
 
 template<typename T>
-struct BindingTraits<TypeBuilder::Array<T>> {
+struct BindingTraits<Protocol::Array<T>> {
     static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
     {
         RefPtr<InspectorArray> array;
@@ -264,12 +264,12 @@ struct BindingTraits<int> {
 #endif // !ASSERT_DISABLED
 };
 
-} // namespace TypeBuilder
+} // namespace Protocol
 
-using TypeBuilder::BindingTraits;
+using Protocol::BindingTraits;
 
 } // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(InspectorTypeBuilder_h)
+#endif // !defined(InspectorProtocolTypes_h)

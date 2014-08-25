@@ -817,7 +817,7 @@
     <ClCompile Include="..\yarr\YarrSyntaxChecker.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSBackendDispatchers.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSFrontendDispatchers.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSProtocolTypes.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -831,7 +831,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InjectedScriptSource.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSBackendDispatchers.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSFrontendDispatchers.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSProtocolTypes.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSONObject.lut.h" />
@@ -1247,7 +1247,7 @@
     <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
     <ClInclude Include="..\inspector\InspectorEnvironment.h" />
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h" />
-    <ClInclude Include="..\inspector\InspectorTypeBuilder.h" />
+    <ClInclude Include="..\inspector\InspectorProtocolTypes.h" />
     <ClInclude Include="..\inspector\InspectorValues.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHost.h" />
     <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h" />
@@ -1620,8 +1620,8 @@
     <None Include="..\inspector\scripts\codegen\generate_backend_dispatcher_implementation.py" />
     <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_header.py" />
     <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_implementation.py" />
-    <None Include="..\inspector\scripts\codegen\generate_type_builder_header.py" />
-    <None Include="..\inspector\scripts\codegen\generate_type_builder_implementation.py" />
+    <None Include="..\inspector\scripts\codegen\generate_protocol_types_header.py" />
+    <None Include="..\inspector\scripts\codegen\generate_protocol_types_implementation.py" />
     <None Include="..\inspector\scripts\codegen\generator.py" />
     <None Include="..\inspector\scripts\codegen\generator_templates.py" />
     <None Include="..\inspector\scripts\codegen\models.py" />

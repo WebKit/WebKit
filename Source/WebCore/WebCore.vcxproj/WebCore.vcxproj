@@ -805,7 +805,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLNames.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebBackendDispatchers.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebFrontendDispatchers.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebTypeBuilders.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebProtocolTypes.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -18308,7 +18308,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorOverlayPage.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebBackendDispatchers.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebFrontendDispatchers.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebTypeBuilders.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebProtocolTypes.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAttr.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBarProp.h" />
@@ -18865,8 +18865,8 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendChannel.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSBackendDispatchers.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSFrontendDispatchers.h" />
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSTypeBuilders.h" />
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorTypeBuilder.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorJSProtocolTypes.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolTypes.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\ScriptArguments.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\ScriptBreakpoint.h" />

@@ -67,14 +67,14 @@
 #include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 
-using Inspector::TypeBuilder::Array;
-using Inspector::TypeBuilder::IndexedDB::DatabaseWithObjectStores;
-using Inspector::TypeBuilder::IndexedDB::DataEntry;
-using Inspector::TypeBuilder::IndexedDB::Key;
-using Inspector::TypeBuilder::IndexedDB::KeyPath;
-using Inspector::TypeBuilder::IndexedDB::KeyRange;
-using Inspector::TypeBuilder::IndexedDB::ObjectStore;
-using Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex;
+using Inspector::Protocol::Array;
+using Inspector::Protocol::IndexedDB::DatabaseWithObjectStores;
+using Inspector::Protocol::IndexedDB::DataEntry;
+using Inspector::Protocol::IndexedDB::Key;
+using Inspector::Protocol::IndexedDB::KeyPath;
+using Inspector::Protocol::IndexedDB::KeyRange;
+using Inspector::Protocol::IndexedDB::ObjectStore;
+using Inspector::Protocol::IndexedDB::ObjectStoreIndex;
 
 typedef Inspector::InspectorBackendDispatcher::CallbackBase RequestCallback;
 typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
@@ -125,7 +125,7 @@ public:
         }
 
         RefPtr<DOMStringList> databaseNamesList = requestResult->domStringList();
-        RefPtr<Inspector::TypeBuilder::Array<String>> databaseNames = Inspector::TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::Protocol::Array<String>> databaseNames = Inspector::Protocol::Array<String>::create();
         for (size_t i = 0; i < databaseNamesList->length(); ++i)
             databaseNames->addItem(databaseNamesList->item(i));
         m_requestCallback->sendSuccess(databaseNames.release());
@@ -251,7 +251,7 @@ static PassRefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
         break;
     case IDBKeyPath::ArrayType: {
         keyPath = KeyPath::create().setType(KeyPath::Type::Array);
-        RefPtr<Inspector::TypeBuilder::Array<String>> array = Inspector::TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::Protocol::Array<String>> array = Inspector::Protocol::Array<String>::create();
         const Vector<String>& stringArray = idbKeyPath.array();
         for (size_t i = 0; i < stringArray.size(); ++i)
             array->addItem(stringArray[i]);
@@ -282,10 +282,10 @@ public:
 
         const IDBDatabaseMetadata databaseMetadata = idbDatabase->metadata();
 
-        RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStore>> objectStores = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStore>::create();
+        RefPtr<Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStore>> objectStores = Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStore>::create();
 
         for (const IDBObjectStoreMetadata& objectStoreMetadata : databaseMetadata.objectStores.values()) {
-            RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex>> indexes = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex>::create();
+            RefPtr<Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStoreIndex>> indexes = Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStoreIndex>::create();
 
             for (const IDBIndexMetadata& indexMetadata : objectStoreMetadata.indexes.values()) {
                 RefPtr<ObjectStoreIndex> objectStoreIndex = ObjectStoreIndex::create()

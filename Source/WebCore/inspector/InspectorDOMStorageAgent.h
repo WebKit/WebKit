@@ -63,13 +63,13 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*) override;
     virtual void disable(ErrorString*) override;
-    virtual void getDOMStorageItems(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>>& items) override;
+    virtual void getDOMStorageItems(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items) override;
     virtual void setDOMStorageItem(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, const String& key, const String& value) override;
     virtual void removeDOMStorageItem(ErrorString*, const RefPtr<Inspector::InspectorObject>& storageId, const String& key) override;
 
     // Called from the injected script.
     String storageId(Storage*);
-    PassRefPtr<Inspector::TypeBuilder::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
+    PassRefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
 
     // Called from InspectorInstrumentation
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);

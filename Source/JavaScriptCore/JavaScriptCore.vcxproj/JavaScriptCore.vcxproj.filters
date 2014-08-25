@@ -1389,7 +1389,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSFrontendDispatchers.cpp">
       <Filter>Derived Sources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSProtocolTypes.cpp">
       <Filter>Derived Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp">
@@ -2180,7 +2180,7 @@
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\InspectorTypeBuilder.h">
+    <ClInclude Include="..\inspector\InspectorProtocolTypes.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorValues.h">
@@ -2934,7 +2934,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSFrontendDispatchers.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSProtocolTypes.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h">
@@ -4092,10 +4092,10 @@
     <None Include="..\inspector\scripts\codegen\generate_frontend_dispatcher_implementation.py">
       <Filter>inspector\scripts\codegen</Filter>
     </None>
-    <None Include="..\inspector\scripts\codegen\generate_type_builder_header.py">
+    <None Include="..\inspector\scripts\codegen\generate_protocol_types_header.py">
       <Filter>inspector\scripts\codegen</Filter>
     </None>
-    <None Include="..\inspector\scripts\codegen\generate_type_builder_implementation.py">
+    <None Include="..\inspector\scripts\codegen\generate_protocol_types_implementation.py">
       <Filter>inspector\scripts\codegen</Filter>
     </None>
     <None Include="..\inspector\scripts\codegen\generator.py">

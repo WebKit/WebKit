@@ -1,5 +1,129 @@
 2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: rename Inspector::TypeBuilder to Inspector::Protocol
+        https://bugs.webkit.org/show_bug.cgi?id=136031
+
+        Reviewed by Timothy Hatcher.
+
+        Rename TypeBuilder namespace to Protocol. Disambiguate where
+        necessary. Also rename InspectorTypeBuilder to ProtocolTypes.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::messageSourceValue):
+        (Inspector::messageTypeValue):
+        (Inspector::messageLevelValue):
+        (Inspector::ConsoleMessage::addToFrontend):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::buildObjectForSearchMatch):
+        (Inspector::ContentSearchUtilities::searchInTextByLines):
+        * inspector/ContentSearchUtilities.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::evaluate):
+        (Inspector::InjectedScript::callFunctionOn):
+        (Inspector::InjectedScript::evaluateOnCallFrame):
+        (Inspector::InjectedScript::getFunctionDetails):
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        (Inspector::InjectedScript::wrapCallFrames):
+        (Inspector::InjectedScript::wrapObject):
+        (Inspector::InjectedScript::wrapTable):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptBase.h:
+        * inspector/InspectorTypeBuilder.h: Removed.
+        * inspector/ScriptCallFrame.cpp:
+        (Inspector::ScriptCallFrame::buildInspectorObject):
+        * inspector/ScriptCallFrame.h:
+        * inspector/ScriptCallStack.cpp:
+        (Inspector::ScriptCallStack::buildInspectorArray):
+        * inspector/ScriptCallStack.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::inspect):
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::breakpointActionTypeForString):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::resolveBreakpoint):
+        (Inspector::InspectorDebuggerAgent::searchInContent):
+        (Inspector::InspectorDebuggerAgent::getFunctionDetails):
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (Inspector::InspectorDebuggerAgent::currentCallFrames):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorProfilerAgent.cpp:
+        (Inspector::InspectorProfilerAgent::createProfileHeader):
+        (Inspector::InspectorProfilerAgent::getProfileHeaders):
+        (Inspector::buildInspectorObject):
+        (Inspector::InspectorProfilerAgent::buildProfileInspectorObject):
+        (Inspector::InspectorProfilerAgent::getCPUProfile):
+        * inspector/agents/InspectorProfilerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::buildErrorRangeObject):
+        (Inspector::InspectorRuntimeAgent::parse):
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/scripts/codegen/__init__.py:
+        * inspector/scripts/codegen/generate_backend_dispatcher_header.py:
+        (BackendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_backend_dispatcher_implementation.py:
+        (BackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain):
+        (BackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_frontend_dispatcher_header.py:
+        (FrontendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_frontend_dispatcher_implementation.py:
+        (FrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_type_builder_header.py: Removed.
+        * inspector/scripts/codegen/generate_type_builder_implementation.py: Removed.
+        * inspector/scripts/codegen/generator.py:
+        (Generator.protocol_type_string_for_type):
+        (Generator.protocol_type_string_for_type_member):
+        (Generator.type_string_for_type_with_name):
+        (Generator.type_string_for_formal_out_parameter):
+        (Generator.type_string_for_formal_async_parameter):
+        (Generator.type_string_for_stack_in_parameter):
+        (Generator.type_string_for_stack_out_parameter):
+        (Generator.assertion_method_for_type_member.assertion_method_for_type):
+        (Generator.assertion_method_for_type_member):
+        (Generator.type_builder_string_for_type): Deleted.
+        (Generator.type_builder_string_for_type_member): Deleted.
+        * inspector/scripts/codegen/generator_templates.py:
+        (Inspector):
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * runtime/HighFidelityTypeProfiler.cpp:
+        (JSC::HighFidelityTypeProfiler::getTypesForVariableAtOffsetForInspector):
+        * runtime/HighFidelityTypeProfiler.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::allPrimitiveTypeNames):
+        (JSC::TypeSet::allStructureRepresentations):
+        (JSC::StructureShape::inspectorRepresentation):
+        * runtime/TypeSet.h:
+
+2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: Rename DOM.RGBA and remove workarounds in the bindings generator
         https://bugs.webkit.org/show_bug.cgi?id=136025
 

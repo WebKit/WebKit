@@ -267,22 +267,22 @@ class Generator:
 
     # Generate type representations for various situations.
     @staticmethod
-    def type_builder_string_for_type(_type):
+    def protocol_type_string_for_type(_type):
         if isinstance(_type, ObjectType) and len(_type.members) == 0:
             return 'Inspector::InspectorObject'
         if isinstance(_type, (ObjectType, AliasedType, EnumType)):
-            return 'Inspector::TypeBuilder::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+            return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
         if isinstance(_type, ArrayType):
-            return 'Inspector::TypeBuilder::Array<%s>' % Generator.type_builder_string_for_type(_type.element_type)
+            return 'Inspector::Protocol::Array<%s>' % Generator.protocol_type_string_for_type(_type.element_type)
         if isinstance(_type, PrimitiveType):
             return Generator.cpp_name_for_primitive_type(_type)
 
     @staticmethod
-    def type_builder_string_for_type_member(type_member, object_declaration):
+    def protocol_type_string_for_type_member(type_member, object_declaration):
         if isinstance(type_member.type, EnumType) and type_member.type.is_anonymous:
-            return '::'.join([Generator.type_builder_string_for_type(object_declaration.type), ucfirst(type_member.member_name)])
+            return '::'.join([Generator.protocol_type_string_for_type(object_declaration.type), ucfirst(type_member.member_name)])
         else:
-            return Generator.type_builder_string_for_type(type_member.type)
+            return Generator.protocol_type_string_for_type(type_member.type)
 
     @staticmethod
     def type_string_for_unchecked_formal_in_parameter(parameter):
@@ -321,9 +321,9 @@ class Generator:
     @staticmethod
     def type_string_for_type_with_name(_type, type_name, is_optional):
         if isinstance(_type, (ArrayType, ObjectType)):
-            return 'PassRefPtr<%s>' % Generator.type_builder_string_for_type(_type)
+            return 'PassRefPtr<%s>' % Generator.protocol_type_string_for_type(_type)
         if isinstance(_type, AliasedType):
-            builder_type = Generator.type_builder_string_for_type(_type)
+            builder_type = Generator.protocol_type_string_for_type(_type)
             if is_optional:
                 return 'const %s* const' % builder_type
             elif _type.aliased_type.qualified_name() in ['integer', 'number']:
@@ -348,7 +348,7 @@ class Generator:
             if _type.is_anonymous:
                 enum_type_name = ucfirst(type_name)
             else:
-                enum_type_name = 'Inspector::TypeBuilder::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+                enum_type_name = 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
 
             if is_optional:
                 return '%s*' % enum_type_name
@@ -363,18 +363,18 @@ class Generator:
             _type = _type.aliased_type  # Fall through.
 
         if isinstance(_type, (ObjectType, ArrayType)):
-            return 'RefPtr<%s>&' % Generator.type_builder_string_for_type(_type)
+            return 'RefPtr<%s>&' % Generator.protocol_type_string_for_type(_type)
         if isinstance(_type, PrimitiveType):
             cpp_name = Generator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return "Inspector::TypeBuilder::OptOutput<%s>*" % cpp_name
+                return "Inspector::Protocol::OptOutput<%s>*" % cpp_name
             else:
                 return '%s*' % cpp_name
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
                 return 'Inspector%sBackendDispatcherHandler::%s*' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
             else:
-                return 'Inspector::TypeBuilder::%s::%s*' % (_type.type_domain().domain_name, _type.raw_name())
+                return 'Inspector::Protocol::%s::%s*' % (_type.type_domain().domain_name, _type.raw_name())
 
         raise ValueError("unknown formal out parameter type.")
 
@@ -389,11 +389,11 @@ class Generator:
             _type = _type.primitive_type  # Fall through.
 
         if isinstance(_type, (ObjectType, ArrayType)):
-            return 'PassRefPtr<%s>' % Generator.type_builder_string_for_type(_type)
+            return 'PassRefPtr<%s>' % Generator.protocol_type_string_for_type(_type)
         if isinstance(_type, PrimitiveType):
             cpp_name = Generator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return "Inspector::TypeBuilder::OptOutput<%s>*" % cpp_name
+                return "Inspector::Protocol::OptOutput<%s>*" % cpp_name
             elif _type.qualified_name() in ['integer', 'number']:
                 return Generator.cpp_name_for_primitive_type(_type)
             elif _type.qualified_name() in ['string']:
@@ -425,7 +425,7 @@ class Generator:
             if _type.qualified_name() in ['any', 'object']:
                 return "RefPtr<%s>" % Generator.cpp_name_for_primitive_type(_type)
             elif parameter.is_optional and _type.qualified_name() not in ['boolean', 'string', 'integer']:
-                return "Inspector::TypeBuilder::OptOutput<%s>" % cpp_name
+                return "Inspector::Protocol::OptOutput<%s>" % cpp_name
             else:
                 return cpp_name
 
@@ -433,34 +433,34 @@ class Generator:
     def type_string_for_stack_out_parameter(parameter):
         _type = parameter.type
         if isinstance(_type, (ArrayType, ObjectType)):
-            return 'RefPtr<%s>' % Generator.type_builder_string_for_type(_type)
+            return 'RefPtr<%s>' % Generator.protocol_type_string_for_type(_type)
         if isinstance(_type, AliasedType):
-            builder_type = Generator.type_builder_string_for_type(_type)
+            builder_type = Generator.protocol_type_string_for_type(_type)
             if parameter.is_optional:
-                return "Inspector::TypeBuilder::OptOutput<%s>" % builder_type
+                return "Inspector::Protocol::OptOutput<%s>" % builder_type
             return '%s' % builder_type
         if isinstance(_type, PrimitiveType):
             cpp_name = Generator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return "Inspector::TypeBuilder::OptOutput<%s>" % cpp_name
+                return "Inspector::Protocol::OptOutput<%s>" % cpp_name
             else:
                 return cpp_name
         if isinstance(_type, EnumType):
             if _type.is_anonymous:
                 return 'Inspector%sBackendDispatcherHandler::%s' % (_type.type_domain().domain_name, ucfirst(parameter.parameter_name))
             else:
-                return 'Inspector::TypeBuilder::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
+                return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
 
     @staticmethod
     def assertion_method_for_type_member(type_member, object_declaration):
 
         def assertion_method_for_type(_type):
-            return 'BindingTraits<%s>::assertValueHasExpectedType' % Generator.type_builder_string_for_type(_type)
+            return 'BindingTraits<%s>::assertValueHasExpectedType' % Generator.protocol_type_string_for_type(_type)
 
         if isinstance(type_member.type, AliasedType):
             return assertion_method_for_type(type_member.type.aliased_type)
         if isinstance(type_member.type, EnumType) and type_member.type.is_anonymous:
-            return 'BindingTraits<%s>::assertValueHasExpectedType' % Generator.type_builder_string_for_type_member(type_member, object_declaration)
+            return 'BindingTraits<%s>::assertValueHasExpectedType' % Generator.protocol_type_string_for_type_member(type_member, object_declaration)
 
         return assertion_method_for_type(type_member.type)
 

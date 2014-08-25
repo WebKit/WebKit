@@ -37,7 +37,7 @@
 #include "FunctorInputCursor.h"
 #include "InspectorController.h"
 #include "InspectorPageAgent.h"
-#include "InspectorWebTypeBuilders.h"
+#include "InspectorWebProtocolTypes.h"
 #include "InstrumentingAgents.h"
 #include "Logging.h"
 #include "Page.h"
@@ -54,19 +54,19 @@ using namespace Inspector;
 
 namespace WebCore {
 
-static PassRefPtr<TypeBuilder::Replay::ReplayPosition> buildInspectorObjectForPosition(const ReplayPosition& position)
+static PassRefPtr<Inspector::Protocol::Replay::ReplayPosition> buildInspectorObjectForPosition(const ReplayPosition& position)
 {
-    RefPtr<TypeBuilder::Replay::ReplayPosition> positionObject = TypeBuilder::Replay::ReplayPosition::create()
+    RefPtr<Inspector::Protocol::Replay::ReplayPosition> positionObject = Inspector::Protocol::Replay::ReplayPosition::create()
         .setSegmentOffset(position.segmentOffset)
         .setInputOffset(position.inputOffset);
 
     return positionObject.release();
 }
 
-static PassRefPtr<TypeBuilder::Replay::ReplayInput> buildInspectorObjectForInput(const NondeterministicInputBase& input, size_t offset)
+static PassRefPtr<Inspector::Protocol::Replay::ReplayInput> buildInspectorObjectForInput(const NondeterministicInputBase& input, size_t offset)
 {
     EncodedValue encodedInput = EncodingTraits<NondeterministicInputBase>::encodeValue(input);
-    RefPtr<TypeBuilder::Replay::ReplayInput> inputObject = TypeBuilder::Replay::ReplayInput::create()
+    RefPtr<Inspector::Protocol::Replay::ReplayInput> inputObject = Inspector::Protocol::Replay::ReplayInput::create()
         .setType(input.type())
         .setOffset(offset)
         .setData(encodedInput.asObject());
@@ -74,15 +74,15 @@ static PassRefPtr<TypeBuilder::Replay::ReplayInput> buildInspectorObjectForInput
     return inputObject.release();
 }
 
-static PassRefPtr<TypeBuilder::Replay::ReplaySession> buildInspectorObjectForSession(PassRefPtr<ReplaySession> prpSession)
+static PassRefPtr<Inspector::Protocol::Replay::ReplaySession> buildInspectorObjectForSession(PassRefPtr<ReplaySession> prpSession)
 {
     RefPtr<ReplaySession> session = prpSession;
-    RefPtr<TypeBuilder::Array<SegmentIdentifier>> segments = TypeBuilder::Array<SegmentIdentifier>::create();
+    RefPtr<Inspector::Protocol::Array<SegmentIdentifier>> segments = Inspector::Protocol::Array<SegmentIdentifier>::create();
 
     for (auto it = session->begin(); it != session->end(); ++it)
         segments->addItem((*it)->identifier());
 
-    RefPtr<TypeBuilder::Replay::ReplaySession> sessionObject = TypeBuilder::Replay::ReplaySession::create()
+    RefPtr<Inspector::Protocol::Replay::ReplaySession> sessionObject = Inspector::Protocol::Replay::ReplaySession::create()
         .setId(session->identifier())
         .setTimestamp(session->timestamp())
         .setSegments(segments.release());
@@ -90,65 +90,65 @@ static PassRefPtr<TypeBuilder::Replay::ReplaySession> buildInspectorObjectForSes
     return sessionObject.release();
 }
 
-static TypeBuilder::Replay::SessionState buildInspectorObjectForSessionState(WebCore::SessionState sessionState)
+static Inspector::Protocol::Replay::SessionState buildInspectorObjectForSessionState(WebCore::SessionState sessionState)
 {
     switch (sessionState) {
-    case WebCore::SessionState::Capturing: return TypeBuilder::Replay::SessionState::Capturing;
-    case WebCore::SessionState::Inactive: return TypeBuilder::Replay::SessionState::Inactive;
-    case WebCore::SessionState::Replaying: return TypeBuilder::Replay::SessionState::Replaying;
+    case WebCore::SessionState::Capturing: return Inspector::Protocol::Replay::SessionState::Capturing;
+    case WebCore::SessionState::Inactive: return Inspector::Protocol::Replay::SessionState::Inactive;
+    case WebCore::SessionState::Replaying: return Inspector::Protocol::Replay::SessionState::Replaying;
     }
 }
 
-static TypeBuilder::Replay::SegmentState buildInspectorObjectForSegmentState(WebCore::SegmentState segmentState)
+static Inspector::Protocol::Replay::SegmentState buildInspectorObjectForSegmentState(WebCore::SegmentState segmentState)
 {
     switch (segmentState) {
-    case WebCore::SegmentState::Appending: return TypeBuilder::Replay::SegmentState::Appending;
-    case WebCore::SegmentState::Unloaded: return TypeBuilder::Replay::SegmentState::Unloaded;
-    case WebCore::SegmentState::Loaded: return TypeBuilder::Replay::SegmentState::Loaded;
-    case WebCore::SegmentState::Dispatching: return TypeBuilder::Replay::SegmentState::Dispatching;
+    case WebCore::SegmentState::Appending: return Inspector::Protocol::Replay::SegmentState::Appending;
+    case WebCore::SegmentState::Unloaded: return Inspector::Protocol::Replay::SegmentState::Unloaded;
+    case WebCore::SegmentState::Loaded: return Inspector::Protocol::Replay::SegmentState::Loaded;
+    case WebCore::SegmentState::Dispatching: return Inspector::Protocol::Replay::SegmentState::Dispatching;
     }
 }
 
 class SerializeInputToJSONFunctor {
 public:
-    typedef PassRefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> ReturnType;
+    typedef PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::ReplayInput>> ReturnType;
 
     SerializeInputToJSONFunctor()
-        : m_inputs(TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>::create()) { }
+        : m_inputs(Inspector::Protocol::Array<Inspector::Protocol::Replay::ReplayInput>::create()) { }
     ~SerializeInputToJSONFunctor() { }
 
     void operator()(size_t index, const NondeterministicInputBase* input)
     {
         LOG(WebReplay, "%-25s Writing %5zu: %s\n", "[SerializeInput]", index, input->type().string().ascii().data());
 
-        if (RefPtr<TypeBuilder::Replay::ReplayInput> serializedInput = buildInspectorObjectForInput(*input, index))
+        if (RefPtr<Inspector::Protocol::Replay::ReplayInput> serializedInput = buildInspectorObjectForInput(*input, index))
             m_inputs->addItem(serializedInput.release());
     }
 
     ReturnType returnValue() { return m_inputs.release(); }
 private:
-    RefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> m_inputs;
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::ReplayInput>> m_inputs;
 };
 
-static PassRefPtr<TypeBuilder::Replay::SessionSegment> buildInspectorObjectForSegment(PassRefPtr<ReplaySessionSegment> prpSegment)
+static PassRefPtr<Inspector::Protocol::Replay::SessionSegment> buildInspectorObjectForSegment(PassRefPtr<ReplaySessionSegment> prpSegment)
 {
     RefPtr<ReplaySessionSegment> segment = prpSegment;
-    RefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInputQueue>> queuesObject = TypeBuilder::Array<TypeBuilder::Replay::ReplayInputQueue>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::ReplayInputQueue>> queuesObject = Inspector::Protocol::Array<Inspector::Protocol::Replay::ReplayInputQueue>::create();
 
     for (size_t i = 0; i < static_cast<size_t>(InputQueue::Count); i++) {
         SerializeInputToJSONFunctor collector;
         InputQueue queue = static_cast<InputQueue>(i);
         RefPtr<FunctorInputCursor> functorCursor = FunctorInputCursor::create(segment);
-        RefPtr<TypeBuilder::Array<TypeBuilder::Replay::ReplayInput>> queueInputs = functorCursor->forEachInputInQueue(queue, collector);
+        RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Replay::ReplayInput>> queueInputs = functorCursor->forEachInputInQueue(queue, collector);
 
-        RefPtr<TypeBuilder::Replay::ReplayInputQueue> queueObject = TypeBuilder::Replay::ReplayInputQueue::create()
+        RefPtr<Inspector::Protocol::Replay::ReplayInputQueue> queueObject = Inspector::Protocol::Replay::ReplayInputQueue::create()
             .setType(EncodingTraits<InputQueue>::encodeValue(queue).convertTo<String>())
             .setInputs(queueInputs);
 
         queuesObject->addItem(queueObject.release());
     }
 
-    RefPtr<TypeBuilder::Replay::SessionSegment> segmentObject = TypeBuilder::Replay::SessionSegment::create()
+    RefPtr<Inspector::Protocol::Replay::SessionSegment> segmentObject = Inspector::Protocol::Replay::SessionSegment::create()
         .setId(segment->identifier())
         .setTimestamp(segment->timestamp())
         .setQueues(queuesObject.release());
@@ -388,7 +388,7 @@ void InspectorReplayAgent::cancelPlayback(ErrorString* errorString)
     m_page.replayController().cancelPlayback();
 }
 
-void InspectorReplayAgent::switchSession(ErrorString* errorString, TypeBuilder::Replay::SessionIdentifier identifier)
+void InspectorReplayAgent::switchSession(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier identifier)
 {
     ASSERT(identifier > 0);
 
@@ -404,7 +404,7 @@ void InspectorReplayAgent::switchSession(ErrorString* errorString, TypeBuilder::
     m_page.replayController().switchSession(session);
 }
 
-void InspectorReplayAgent::insertSessionSegment(ErrorString* errorString, TypeBuilder::Replay::SessionIdentifier sessionIdentifier, SegmentIdentifier segmentIdentifier, int segmentIndex)
+void InspectorReplayAgent::insertSessionSegment(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier sessionIdentifier, SegmentIdentifier segmentIdentifier, int segmentIndex)
 {
     ASSERT(sessionIdentifier > 0);
     ASSERT(segmentIdentifier > 0);
@@ -430,7 +430,7 @@ void InspectorReplayAgent::insertSessionSegment(ErrorString* errorString, TypeBu
     sessionModified(session);
 }
 
-void InspectorReplayAgent::removeSessionSegment(ErrorString* errorString, TypeBuilder::Replay::SessionIdentifier identifier, int segmentIndex)
+void InspectorReplayAgent::removeSessionSegment(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier identifier, int segmentIndex)
 {
     ASSERT(identifier > 0);
     ASSERT(segmentIndex >= 0);
@@ -480,7 +480,7 @@ PassRefPtr<ReplaySessionSegment> InspectorReplayAgent::findSegment(ErrorString* 
     return it->value;
 }
 
-void InspectorReplayAgent::currentReplayState(ErrorString*, TypeBuilder::Replay::SessionIdentifier* sessionIdentifier, TypeBuilder::OptOutput<TypeBuilder::Replay::SegmentIdentifier>* segmentIdentifier, TypeBuilder::Replay::SessionState* sessionState, TypeBuilder::Replay::SegmentState* segmentState, RefPtr<TypeBuilder::Replay::ReplayPosition>& replayPosition)
+void InspectorReplayAgent::currentReplayState(ErrorString*, Inspector::Protocol::Replay::SessionIdentifier* sessionIdentifier, Inspector::Protocol::OptOutput<Inspector::Protocol::Replay::SegmentIdentifier>* segmentIdentifier, Inspector::Protocol::Replay::SessionState* sessionState, Inspector::Protocol::Replay::SegmentState* segmentState, RefPtr<Inspector::Protocol::Replay::ReplayPosition>& replayPosition)
 {
     *sessionState = buildInspectorObjectForSessionState(m_page.replayController().sessionState());
     *segmentState = buildInspectorObjectForSegmentState(m_page.replayController().segmentState());
@@ -492,14 +492,14 @@ void InspectorReplayAgent::currentReplayState(ErrorString*, TypeBuilder::Replay:
     replayPosition = buildInspectorObjectForPosition(m_page.replayController().currentPosition());
 }
 
-void InspectorReplayAgent::getAvailableSessions(ErrorString*, RefPtr<TypeBuilder::Array<SessionIdentifier>>& sessionsList)
+void InspectorReplayAgent::getAvailableSessions(ErrorString*, RefPtr<Inspector::Protocol::Array<SessionIdentifier>>& sessionsList)
 {
-    sessionsList = TypeBuilder::Array<TypeBuilder::Replay::SessionIdentifier>::create();
+    sessionsList = Inspector::Protocol::Array<Inspector::Protocol::Replay::SessionIdentifier>::create();
     for (auto& pair : m_sessionsMap)
         sessionsList->addItem(pair.key);
 }
 
-void InspectorReplayAgent::getSessionData(ErrorString* errorString, TypeBuilder::Replay::SessionIdentifier identifier, RefPtr<TypeBuilder::Replay::ReplaySession>& serializedObject)
+void InspectorReplayAgent::getSessionData(ErrorString* errorString, Inspector::Protocol::Replay::SessionIdentifier identifier, RefPtr<Inspector::Protocol::Replay::ReplaySession>& serializedObject)
 {
     RefPtr<ReplaySession> session = findSession(errorString, identifier);
     if (!session) {
@@ -510,7 +510,7 @@ void InspectorReplayAgent::getSessionData(ErrorString* errorString, TypeBuilder:
     serializedObject = buildInspectorObjectForSession(session);
 }
 
-void InspectorReplayAgent::getSegmentData(ErrorString* errorString, TypeBuilder::Replay::SegmentIdentifier identifier, RefPtr<TypeBuilder::Replay::SessionSegment>& serializedObject)
+void InspectorReplayAgent::getSegmentData(ErrorString* errorString, Inspector::Protocol::Replay::SegmentIdentifier identifier, RefPtr<Inspector::Protocol::Replay::SessionSegment>& serializedObject)
 {
     RefPtr<ReplaySessionSegment> segment = findSegment(errorString, identifier);
     if (!segment) {

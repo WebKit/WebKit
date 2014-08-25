@@ -60,7 +60,7 @@ InspectorDatabaseResource::InspectorDatabaseResource(PassRefPtr<Database> databa
 
 void InspectorDatabaseResource::bind(InspectorDatabaseFrontendDispatcher* databaseFrontendDispatcher)
 {
-    RefPtr<Inspector::TypeBuilder::Database::Database> jsonObject = Inspector::TypeBuilder::Database::Database::create()
+    RefPtr<Inspector::Protocol::Database::Database> jsonObject = Inspector::Protocol::Database::Database::create()
         .setId(m_id)
         .setDomain(m_domain)
         .setName(m_name)

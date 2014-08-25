@@ -37,25 +37,25 @@ from models import EnumType, ObjectType, PrimitiveType, AliasedType, ArrayType, 
 log = logging.getLogger('global')
 
 
-class TypeBuilderHeaderGenerator(Generator):
+class ProtocolTypesHeaderGenerator(Generator):
     def __init__(self, model, input_filepath):
         Generator.__init__(self, model, input_filepath)
 
     def output_filename(self):
-        return "Inspector%sTypeBuilders.h" % self.model().framework.setting('prefix')
+        return "Inspector%sProtocolTypes.h" % self.model().framework.setting('prefix')
 
     def generate_output(self):
         domains = self.domains_to_generate()
         self.calculate_types_requiring_shape_assertions(domains)
 
         headers = set([
-            '<inspector/InspectorTypeBuilder.h>',
+            '<inspector/InspectorProtocolTypes.h>',
             '<wtf/Assertions.h>',
             '<wtf/PassRefPtr.h>'
         ])
 
         if self.model().framework is not Frameworks.JavaScriptCore:
-            headers.add('<inspector/InspectorJSTypeBuilders.h>')
+            headers.add('<inspector/InspectorJSProtocolTypes.h>')
 
         export_macro = self.model().framework.setting('export_macro', None)
         framework_prefix = self.model().framework.setting('prefix')
@@ -75,7 +75,7 @@ class TypeBuilderHeaderGenerator(Generator):
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(Templates.CppHeaderPrelude).substitute(None, **header_args))
-        sections.append('namespace TypeBuilder {')
+        sections.append('namespace Protocol {')
         sections.append(self._generate_forward_declarations(domains))
         sections.append(self._generate_typedefs(domains))
         sections.append('%s get%sEnumConstantValue(int code);' % (' '.join(return_type_with_export_macro), framework_prefix))
@@ -88,7 +88,7 @@ class TypeBuilderHeaderGenerator(Generator):
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
         sections.append(self._generate_forward_declarations_for_binding_traits())
-        sections.append('} // namespace TypeBuilder')
+        sections.append('} // namespace Protocol')
         sections.append(Template(Templates.CppHeaderPostlude).substitute(None, **header_args))
         return "\n\n".join(sections)
 
@@ -208,10 +208,10 @@ class TypeBuilderHeaderGenerator(Generator):
             'constructorExample': '\n'.join(constructor_example) + ';',
         }
 
-        lines.append(Template(Templates.TypeBuilderDeclarationPrelude).substitute(None, **builder_args))
+        lines.append(Template(Templates.ProtocolObjectBuilderDeclarationPrelude).substitute(None, **builder_args))
         for type_member in required_members:
             lines.append(self._generate_builder_setter_for_member(type_member, domain))
-        lines.append(Template(Templates.TypeBuilderDeclarationPostlude).substitute(None, **builder_args))
+        lines.append(Template(Templates.ProtocolObjectBuilderDeclarationPostlude).substitute(None, **builder_args))
         for member in optional_members:
             lines.append(self._generate_unchecked_setter_for_member(member, domain))
 
@@ -285,7 +285,7 @@ class TypeBuilderHeaderGenerator(Generator):
         lines.append('            COMPILE_ASSERT(!(STATE & %(camelName)sSet), property_%(name)s_already_set);' % setter_args)
 
         if isinstance(type_member.type, EnumType):
-            lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::TypeBuilder::get%(frameworkPrefix)sEnumConstantValue(static_cast<int>(value)));' % setter_args)
+            lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(static_cast<int>(value)));' % setter_args)
         else:
             lines.append('            m_result->%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
@@ -306,7 +306,7 @@ class TypeBuilderHeaderGenerator(Generator):
         lines.append('    void set%(camelName)s(%(parameterType)s value)' % setter_args)
         lines.append('    {')
         if isinstance(type_member.type, EnumType):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::TypeBuilder::get%(frameworkPrefix)sEnumConstantValue(static_cast<int>(value)));' % setter_args)
+            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::get%(frameworkPrefix)sEnumConstantValue(static_cast<int>(value)));' % setter_args)
         else:
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('    }')
@@ -322,10 +322,10 @@ class TypeBuilderHeaderGenerator(Generator):
             for type_declaration in declarations_to_generate:
                 for type_member in type_declaration.type_members:
                     if isinstance(type_member.type, EnumType):
-                        type_arguments.append((Generator.type_builder_string_for_type_member(type_member, type_declaration), False))
+                        type_arguments.append((Generator.protocol_type_string_for_type_member(type_member, type_declaration), False))
 
                 if isinstance(type_declaration.type, ObjectType):
-                    type_arguments.append((Generator.type_builder_string_for_type(type_declaration.type), Generator.type_needs_runtime_casts(type_declaration.type)))
+                    type_arguments.append((Generator.protocol_type_string_for_type(type_declaration.type), Generator.type_needs_runtime_casts(type_declaration.type)))
 
         struct_keywords = ['struct']
         function_keywords = ['static void']

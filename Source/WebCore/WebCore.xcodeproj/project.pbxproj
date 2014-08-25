@@ -2046,9 +2046,9 @@
 		53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		573D134714CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573D134514CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp */; };
+		573D134714CE39FF0057ABCA /* InspectorWebProtocolTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573D134514CE39FF0057ABCA /* InspectorWebProtocolTypes.cpp */; };
 		578DA20E1520EB8C006141C1 /* InspectorWebFrontendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4F5FFC11CBD30100A186BF /* InspectorWebFrontendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		578DA20F1520EBA3006141C1 /* InspectorWebTypeBuilders.h in Headers */ = {isa = PBXBuildFile; fileRef = 573D134614CE39FF0057ABCA /* InspectorWebTypeBuilders.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		578DA20F1520EBA3006141C1 /* InspectorWebProtocolTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 573D134614CE39FF0057ABCA /* InspectorWebProtocolTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57B791A314C6A62900F202D1 /* ContentDistributor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B7919F14C6A62900F202D1 /* ContentDistributor.cpp */; };
 		57B791A414C6A62900F202D1 /* ContentDistributor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A014C6A62900F202D1 /* ContentDistributor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57CF497414EE36D700ECFF14 /* InsertionPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */; };
@@ -9144,8 +9144,8 @@
 		53EF766A16530A61004CBE49 /* SettingsMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsMacros.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		573D134514CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWebTypeBuilders.cpp; sourceTree = "<group>"; };
-		573D134614CE39FF0057ABCA /* InspectorWebTypeBuilders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWebTypeBuilders.h; sourceTree = "<group>"; };
+		573D134514CE39FF0057ABCA /* InspectorWebProtocolTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWebProtocolTypes.cpp; sourceTree = "<group>"; };
+		573D134614CE39FF0057ABCA /* InspectorWebProtocolTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWebProtocolTypes.h; sourceTree = "<group>"; };
 		57B7919F14C6A62900F202D1 /* ContentDistributor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentDistributor.cpp; sourceTree = "<group>"; };
 		57B791A014C6A62900F202D1 /* ContentDistributor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentDistributor.h; sourceTree = "<group>"; };
 		57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertionPoint.cpp; sourceTree = "<group>"; };
@@ -15141,8 +15141,8 @@
 				4F707A9811EF679400ACDA69 /* InspectorWebBackendDispatchers.h */,
 				4F4F5FFA11CBD2D200A186BF /* InspectorWebFrontendDispatchers.cpp */,
 				4F4F5FFC11CBD30100A186BF /* InspectorWebFrontendDispatchers.h */,
-				573D134514CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp */,
-				573D134614CE39FF0057ABCA /* InspectorWebTypeBuilders.h */,
+				573D134514CE39FF0057ABCA /* InspectorWebProtocolTypes.cpp */,
+				573D134614CE39FF0057ABCA /* InspectorWebProtocolTypes.h */,
 				A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */,
 				A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */,
 				7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */,
@@ -24578,7 +24578,7 @@
 				A593CF8B1840535200BFCE27 /* InspectorWebAgentBase.h in Headers */,
 				4F707A9A11EF679400ACDA69 /* InspectorWebBackendDispatchers.h in Headers */,
 				578DA20E1520EB8C006141C1 /* InspectorWebFrontendDispatchers.h in Headers */,
-				578DA20F1520EBA3006141C1 /* InspectorWebTypeBuilders.h in Headers */,
+				578DA20F1520EBA3006141C1 /* InspectorWebProtocolTypes.h in Headers */,
 				F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */,
 				F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */,
 				F3ABFE0C130E9DA000E7F7D1 /* InstrumentingAgents.h in Headers */,
@@ -28003,7 +28003,7 @@
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				4F707A9911EF679400ACDA69 /* InspectorWebBackendDispatchers.cpp in Sources */,
 				4F4F5FFB11CBD2E100A186BF /* InspectorWebFrontendDispatchers.cpp in Sources */,
-				573D134714CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp in Sources */,
+				573D134714CE39FF0057ABCA /* InspectorWebProtocolTypes.cpp in Sources */,
 				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,
 				F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */,
 				2D46F04E17B96FBD005647F0 /* IntPoint.cpp in Sources */,

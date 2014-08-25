@@ -110,7 +110,7 @@ public:
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(Document*);
 
-    PassRefPtr<Inspector::TypeBuilder::Network::Initiator> buildInitiatorObject(Document*);
+    PassRefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
 
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const URL& requestURL);
@@ -153,7 +153,7 @@ private:
     typedef HashMap<ThreadableLoaderClient*, RefPtr<XHRReplayData>> PendingXHRReplayDataMap;
     PendingXHRReplayDataMap m_pendingXHRReplayData;
     // FIXME: InspectorResourceAgent should now be aware of style recalculation.
-    RefPtr<Inspector::TypeBuilder::Network::Initiator> m_styleRecalculationInitiator;
+    RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;
     bool m_isRecalculatingStyle;
 };
 

@@ -119,8 +119,8 @@ public:
 
     // Methods called from the frontend for DOM nodes inspection.
     virtual void querySelector(ErrorString*, int nodeId, const String& selectors, int* elementId) override;
-    virtual void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<Inspector::TypeBuilder::Array<int>>& result) override;
-    virtual void getDocument(ErrorString*, RefPtr<Inspector::TypeBuilder::DOM::Node>& root) override;
+    virtual void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<Inspector::Protocol::Array<int>>& result) override;
+    virtual void getDocument(ErrorString*, RefPtr<Inspector::Protocol::DOM::Node>& root) override;
     virtual void requestChildNodes(ErrorString*, int nodeId, const int* depth) override;
     virtual void setAttributeValue(ErrorString*, int elementId, const String& name, const String& value) override;
     virtual void setAttributesAsText(ErrorString*, int elementId, const String& text, const String* name) override;
@@ -130,13 +130,13 @@ public:
     virtual void getOuterHTML(ErrorString*, int nodeId, WTF::String* outerHTML) override;
     virtual void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML) override;
     virtual void setNodeValue(ErrorString*, int nodeId, const String& value) override;
-    virtual void getEventListenersForNode(ErrorString*, int nodeId, const WTF::String* objectGroup, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::EventListener>>& listenersArray) override;
-    virtual void getAccessibilityPropertiesForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties>& axProperties) override;
+    virtual void getEventListenersForNode(ErrorString*, int nodeId, const WTF::String* objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
+    virtual void getAccessibilityPropertiesForNode(ErrorString*, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
     virtual void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const RefPtr<Inspector::InspectorArray>* nodeIds, String* searchId, int* resultCount) override;
-    virtual void getSearchResults(ErrorString*, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::TypeBuilder::Array<int>>&) override;
+    virtual void getSearchResults(ErrorString*, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::Protocol::Array<int>>&) override;
     virtual void discardSearchResults(ErrorString*, const String& searchId) override;
-    virtual void resolveNode(ErrorString*, int nodeId, const String* objectGroup, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result) override;
-    virtual void getAttributes(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::Array<String>>& result) override;
+    virtual void resolveNode(ErrorString*, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
+    virtual void getAttributes(ErrorString*, int nodeId, RefPtr<Inspector::Protocol::Array<String>>& result) override;
     virtual void setInspectModeEnabled(ErrorString*, bool enabled, const RefPtr<Inspector::InspectorObject>* highlightConfig) override;
     virtual void requestNode(ErrorString*, const String& objectId, int* nodeId) override;
     virtual void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId) override;
@@ -183,7 +183,7 @@ public:
 
     static String documentURLString(Document*);
 
-    PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
+    PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
     bool handleTouchEvent(Node*);
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
@@ -230,12 +230,12 @@ private:
     void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
     void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, PassRefPtr<Inspector::InspectorObject> description);
 
-    PassRefPtr<Inspector::TypeBuilder::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
-    PassRefPtr<Inspector::TypeBuilder::Array<String>> buildArrayForElementAttributes(Element*);
-    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
-    PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
-    PassRefPtr<Inspector::TypeBuilder::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
-    void processAccessibilityChildren(PassRefPtr<AccessibilityObject>, RefPtr<Inspector::TypeBuilder::Array<int>>&);
+    PassRefPtr<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
+    PassRefPtr<Inspector::Protocol::Array<String>> buildArrayForElementAttributes(Element*);
+    PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
+    PassRefPtr<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
+    PassRefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
+    void processAccessibilityChildren(PassRefPtr<AccessibilityObject>, RefPtr<Inspector::Protocol::Array<int>>&);
     
     Node* nodeForPath(const String& path);
     Node* nodeForObjectId(const String& objectId);

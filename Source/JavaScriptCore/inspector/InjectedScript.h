@@ -35,7 +35,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InjectedScriptBase.h"
-#include "InspectorJSTypeBuilders.h"
+#include "InspectorJSProtocolTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
@@ -56,16 +56,16 @@ public:
     InjectedScript(Deprecated::ScriptObject, InspectorEnvironment*);
     virtual ~InjectedScript();
 
-    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
-    void callFunctionOn(ErrorString*, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
-    void evaluateOnCallFrame(ErrorString*, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
-    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>* result);
-    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor>>* result);
-    void getInternalProperties(ErrorString*, const String& objectId, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::InternalPropertyDescriptor>>* result);
+    void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
+    void callFunctionOn(ErrorString*, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
+    void evaluateOnCallFrame(ErrorString*, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
+    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>* result);
+    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
+    void getInternalProperties(ErrorString*, const String& objectId, RefPtr<Protocol::Array<Protocol::Runtime::InternalPropertyDescriptor>>* result);
 
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
-    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
-    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
+    PassRefPtr<Protocol::Array<Protocol::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
+    PassRefPtr<Protocol::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
+    PassRefPtr<Protocol::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
 
     Deprecated::ScriptValue findObjectById(const String& objectId) const;
     void inspectObject(Deprecated::ScriptValue);

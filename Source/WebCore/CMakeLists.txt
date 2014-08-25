@@ -792,8 +792,8 @@ set(WebCore_INSPECTOR_PROTOCOL_SCRIPTS
     ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_backend_dispatcher_implementation.py
     ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_header.py
     ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_frontend_dispatcher_implementation.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_type_builder_header.py
-    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_type_builder_implementation.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_header.py
+    ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generate_protocol_types_implementation.py
     ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator.py
     ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/generator_templates.py
     ${WebCore_INSPECTOR_SCRIPTS_DIR}/codegen/__init__.py
@@ -3219,8 +3219,8 @@ add_custom_command(
            ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.h
            ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebFrontendDispatchers.cpp
            ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebFrontendDispatchers.h
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebTypeBuilders.cpp
-           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebTypeBuilders.h
+           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebProtocolTypes.cpp
+           ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebProtocolTypes.h
            ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorWebBackendCommands.js
     MAIN_DEPENDENCY ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWeb.json
     DEPENDS ${WebCore_INSPECTOR_PROTOCOL_SCRIPTS}
@@ -3231,7 +3231,7 @@ add_custom_command(
 list(APPEND WebCore_SOURCES
     ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebBackendDispatchers.cpp
     ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebFrontendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebTypeBuilders.cpp
+    ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorWebProtocolTypes.cpp
 )
 
 

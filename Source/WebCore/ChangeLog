@@ -1,3 +1,167 @@
+2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: rename Inspector::TypeBuilder to Inspector::Protocol
+        https://bugs.webkit.org/show_bug.cgi?id=136031
+
+        Reviewed by Timothy Hatcher.
+
+        Rename TypeBuilder namespace to Protocol. Disambiguate where
+        necessary. Also rename InspectorTypeBuilder to ProtocolTypes.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * ForwardingHeaders/inspector/InspectorJSTypeBuilders.h: Removed.
+        * ForwardingHeaders/inspector/InspectorTypeBuilder.h: Removed.
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspectImpl):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCacheForFrame):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::getStyleSheet):
+        (WebCore::InspectorCSSAgent::setStyleText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::getAccessibilityPropertiesForNode):
+        (WebCore::InspectorDOMAgent::getSearchResults):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::getAttributes):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::processAccessibilityChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::didDispatchDOMStorageEvent):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::layersForNode):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForIntRect):
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::resourceTypeJson):
+        (WebCore::InspectorPageAgent::cachedResourceTypeJson):
+        (WebCore::buildObjectForCookie):
+        (WebCore::buildArrayForCookies):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::getResourceTree):
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::buildObjectForSearchResult):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::buildInspectorObjectForPosition):
+        (WebCore::buildInspectorObjectForInput):
+        (WebCore::buildInspectorObjectForSession):
+        (WebCore::buildInspectorObjectForSessionState):
+        (WebCore::buildInspectorObjectForSegmentState):
+        (WebCore::SerializeInputToJSONFunctor::SerializeInputToJSONFunctor):
+        (WebCore::SerializeInputToJSONFunctor::operator()):
+        (WebCore::buildInspectorObjectForSegment):
+        (WebCore::InspectorReplayAgent::switchSession):
+        (WebCore::InspectorReplayAgent::insertSessionSegment):
+        (WebCore::InspectorReplayAgent::removeSessionSegment):
+        (WebCore::InspectorReplayAgent::currentReplayState):
+        (WebCore::InspectorReplayAgent::getAvailableSessions):
+        (WebCore::InspectorReplayAgent::getSessionData):
+        (WebCore::InspectorReplayAgent::getSegmentData):
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForTiming):
+        (WebCore::buildObjectForResourceRequest):
+        (WebCore::buildObjectForResourceResponse):
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketFrame):
+        (WebCore::InspectorResourceAgent::didSendWebSocketFrame):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildSourceRangeObject):
+        (WebCore::buildMediaObject):
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyle::buildObjectForStyle):
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        (WebCore::InspectorStyle::styleWithProperties):
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorStyleSheet::canBind):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::sendEvent):
+        * inspector/PageRuntimeAgent.cpp:
+
 2014-08-25  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] ASSERT failure in WebKitWebSource in StreamingClient

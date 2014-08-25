@@ -131,57 +131,57 @@ void ConsoleMessage::autogenerateMetadata(JSC::ExecState* state)
     }
 }
 
-static Inspector::TypeBuilder::Console::ConsoleMessage::Source messageSourceValue(MessageSource source)
+static Inspector::Protocol::Console::ConsoleMessage::Source messageSourceValue(MessageSource source)
 {
     switch (source) {
-    case MessageSource::XML: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::XML;
-    case MessageSource::JS: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Javascript;
-    case MessageSource::Network: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Network;
-    case MessageSource::ConsoleAPI: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::ConsoleAPI;
-    case MessageSource::Storage: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Storage;
-    case MessageSource::AppCache: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Appcache;
-    case MessageSource::Rendering: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Rendering;
-    case MessageSource::CSS: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::CSS;
-    case MessageSource::Security: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Security;
-    case MessageSource::Other: return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Other;
+    case MessageSource::XML: return Inspector::Protocol::Console::ConsoleMessage::Source::XML;
+    case MessageSource::JS: return Inspector::Protocol::Console::ConsoleMessage::Source::Javascript;
+    case MessageSource::Network: return Inspector::Protocol::Console::ConsoleMessage::Source::Network;
+    case MessageSource::ConsoleAPI: return Inspector::Protocol::Console::ConsoleMessage::Source::ConsoleAPI;
+    case MessageSource::Storage: return Inspector::Protocol::Console::ConsoleMessage::Source::Storage;
+    case MessageSource::AppCache: return Inspector::Protocol::Console::ConsoleMessage::Source::Appcache;
+    case MessageSource::Rendering: return Inspector::Protocol::Console::ConsoleMessage::Source::Rendering;
+    case MessageSource::CSS: return Inspector::Protocol::Console::ConsoleMessage::Source::CSS;
+    case MessageSource::Security: return Inspector::Protocol::Console::ConsoleMessage::Source::Security;
+    case MessageSource::Other: return Inspector::Protocol::Console::ConsoleMessage::Source::Other;
     }
-    return Inspector::TypeBuilder::Console::ConsoleMessage::Source::Other;
+    return Inspector::Protocol::Console::ConsoleMessage::Source::Other;
 }
 
-static Inspector::TypeBuilder::Console::ConsoleMessage::Type messageTypeValue(MessageType type)
+static Inspector::Protocol::Console::ConsoleMessage::Type messageTypeValue(MessageType type)
 {
     switch (type) {
-    case MessageType::Log: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Log;
-    case MessageType::Clear: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Clear;
-    case MessageType::Dir: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Dir;
-    case MessageType::DirXML: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::DirXML;
-    case MessageType::Table: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Table;
-    case MessageType::Trace: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Trace;
-    case MessageType::StartGroup: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::StartGroup;
-    case MessageType::StartGroupCollapsed: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::StartGroupCollapsed;
-    case MessageType::EndGroup: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::EndGroup;
-    case MessageType::Assert: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Assert;
-    case MessageType::Timing: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Timing;
-    case MessageType::Profile: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Profile;
-    case MessageType::ProfileEnd: return Inspector::TypeBuilder::Console::ConsoleMessage::Type::ProfileEnd;
+    case MessageType::Log: return Inspector::Protocol::Console::ConsoleMessage::Type::Log;
+    case MessageType::Clear: return Inspector::Protocol::Console::ConsoleMessage::Type::Clear;
+    case MessageType::Dir: return Inspector::Protocol::Console::ConsoleMessage::Type::Dir;
+    case MessageType::DirXML: return Inspector::Protocol::Console::ConsoleMessage::Type::DirXML;
+    case MessageType::Table: return Inspector::Protocol::Console::ConsoleMessage::Type::Table;
+    case MessageType::Trace: return Inspector::Protocol::Console::ConsoleMessage::Type::Trace;
+    case MessageType::StartGroup: return Inspector::Protocol::Console::ConsoleMessage::Type::StartGroup;
+    case MessageType::StartGroupCollapsed: return Inspector::Protocol::Console::ConsoleMessage::Type::StartGroupCollapsed;
+    case MessageType::EndGroup: return Inspector::Protocol::Console::ConsoleMessage::Type::EndGroup;
+    case MessageType::Assert: return Inspector::Protocol::Console::ConsoleMessage::Type::Assert;
+    case MessageType::Timing: return Inspector::Protocol::Console::ConsoleMessage::Type::Timing;
+    case MessageType::Profile: return Inspector::Protocol::Console::ConsoleMessage::Type::Profile;
+    case MessageType::ProfileEnd: return Inspector::Protocol::Console::ConsoleMessage::Type::ProfileEnd;
     }
-    return Inspector::TypeBuilder::Console::ConsoleMessage::Type::Log;
+    return Inspector::Protocol::Console::ConsoleMessage::Type::Log;
 }
 
-static Inspector::TypeBuilder::Console::ConsoleMessage::Level messageLevelValue(MessageLevel level)
+static Inspector::Protocol::Console::ConsoleMessage::Level messageLevelValue(MessageLevel level)
 {
     switch (level) {
-    case MessageLevel::Log: return Inspector::TypeBuilder::Console::ConsoleMessage::Level::Log;
-    case MessageLevel::Warning: return Inspector::TypeBuilder::Console::ConsoleMessage::Level::Warning;
-    case MessageLevel::Error: return Inspector::TypeBuilder::Console::ConsoleMessage::Level::Error;
-    case MessageLevel::Debug: return Inspector::TypeBuilder::Console::ConsoleMessage::Level::Debug;
+    case MessageLevel::Log: return Inspector::Protocol::Console::ConsoleMessage::Level::Log;
+    case MessageLevel::Warning: return Inspector::Protocol::Console::ConsoleMessage::Level::Warning;
+    case MessageLevel::Error: return Inspector::Protocol::Console::ConsoleMessage::Level::Error;
+    case MessageLevel::Debug: return Inspector::Protocol::Console::ConsoleMessage::Level::Debug;
     }
-    return Inspector::TypeBuilder::Console::ConsoleMessage::Level::Log;
+    return Inspector::Protocol::Console::ConsoleMessage::Level::Log;
 }
 
 void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFrontendDispatcher, Inspector::InjectedScriptManager* injectedScriptManager, bool generatePreview)
 {
-    RefPtr<Inspector::TypeBuilder::Console::ConsoleMessage> jsonObj = Inspector::TypeBuilder::Console::ConsoleMessage::create()
+    RefPtr<Inspector::Protocol::Console::ConsoleMessage> jsonObj = Inspector::Protocol::Console::ConsoleMessage::create()
         .setSource(messageSourceValue(m_source))
         .setLevel(messageLevelValue(m_level))
         .setText(m_message);
@@ -199,11 +199,11 @@ void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFr
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
-            RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::RemoteObject>> jsonArgs = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::RemoteObject>::create();
+            RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::RemoteObject>> jsonArgs = Inspector::Protocol::Array<Inspector::Protocol::Runtime::RemoteObject>::create();
             if (m_type == MessageType::Table && generatePreview && m_arguments->argumentCount()) {
                 Deprecated::ScriptValue table = m_arguments->argumentAt(0);
                 Deprecated::ScriptValue columns = m_arguments->argumentCount() > 1 ? m_arguments->argumentAt(1) : Deprecated::ScriptValue();
-                RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapTable(table, columns);
+                RefPtr<Inspector::Protocol::Runtime::RemoteObject> inspectorValue = injectedScript.wrapTable(table, columns);
                 if (!inspectorValue) {
                     ASSERT_NOT_REACHED();
                     return;
@@ -211,7 +211,7 @@ void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFr
                 jsonArgs->addItem(inspectorValue);
             } else {
                 for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                    RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console", generatePreview);
+                    RefPtr<Inspector::Protocol::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console", generatePreview);
                     if (!inspectorValue) {
                         ASSERT_NOT_REACHED();
                         return;

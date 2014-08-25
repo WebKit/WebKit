@@ -84,10 +84,10 @@ void InspectorProfilerAgent::addProfile(PassRefPtr<JSC::Profile> prpProfile)
         m_frontendDispatcher->addProfileHeader(createProfileHeader(*profile));
 }
 
-PassRefPtr<TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAgent::createProfileHeader(const JSC::Profile& profile)
+PassRefPtr<Protocol::Profiler::ProfileHeader> InspectorProfilerAgent::createProfileHeader(const JSC::Profile& profile)
 {
-    return TypeBuilder::Profiler::ProfileHeader::create()
-        .setTypeId(TypeBuilder::Profiler::ProfileHeader::TypeId::CPU)
+    return Protocol::Profiler::ProfileHeader::create()
+        .setTypeId(Protocol::Profiler::ProfileHeader::TypeId::CPU)
         .setUid(profile.uid())
         .setTitle(profile.title())
         .release();
@@ -131,30 +131,30 @@ String InspectorProfilerAgent::getUserInitiatedProfileName()
     return makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedProfileNumber++));
 }
 
-void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>>& headers)
+void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<Protocol::Array<Protocol::Profiler::ProfileHeader>>& headers)
 {
     m_profileHeadersRequested = true;
-    headers = TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>::create();
+    headers = Protocol::Array<Protocol::Profiler::ProfileHeader>::create();
 
     for (auto& profile : m_profiles.values())
         headers->addItem(createProfileHeader(*profile.get()));
 }
 
-static PassRefPtr<TypeBuilder::Profiler::CPUProfileNodeCall> buildInspectorObject(const JSC::ProfileNode::Call& call)
+static PassRefPtr<Protocol::Profiler::CPUProfileNodeCall> buildInspectorObject(const JSC::ProfileNode::Call& call)
 {
-    RefPtr<TypeBuilder::Profiler::CPUProfileNodeCall> result = TypeBuilder::Profiler::CPUProfileNodeCall::create()
+    RefPtr<Protocol::Profiler::CPUProfileNodeCall> result = Protocol::Profiler::CPUProfileNodeCall::create()
         .setStartTime(call.startTime())
         .setTotalTime(call.totalTime());
     return result.release();
 }
 
-static PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
+static PassRefPtr<Protocol::Profiler::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNodeCall>> calls = TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNodeCall>::create();
+    RefPtr<Protocol::Array<Protocol::Profiler::CPUProfileNodeCall>> calls = Protocol::Array<Protocol::Profiler::CPUProfileNodeCall>::create();
     for (const JSC::ProfileNode::Call& call : node->calls())
         calls->addItem(buildInspectorObject(call));
 
-    RefPtr<TypeBuilder::Profiler::CPUProfileNode> result = TypeBuilder::Profiler::CPUProfileNode::create()
+    RefPtr<Protocol::Profiler::CPUProfileNode> result = Protocol::Profiler::CPUProfileNode::create()
         .setId(node->id())
         .setCalls(calls.release());
 
@@ -168,7 +168,7 @@ static PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObject(co
     }
 
     if (!node->children().isEmpty()) {
-        RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>> children = TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>::create();
+        RefPtr<Protocol::Array<Protocol::Profiler::CPUProfileNode>> children = Protocol::Array<Protocol::Profiler::CPUProfileNode>::create();
         for (RefPtr<JSC::ProfileNode> profileNode : node->children())
             children->addItem(buildInspectorObject(profileNode.get()));
         result->setChildren(children);
@@ -177,13 +177,13 @@ static PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObject(co
     return result.release();
 }
 
-PassRefPtr<TypeBuilder::Profiler::CPUProfile> InspectorProfilerAgent::buildProfileInspectorObject(const JSC::Profile* profile)
+PassRefPtr<Protocol::Profiler::CPUProfile> InspectorProfilerAgent::buildProfileInspectorObject(const JSC::Profile* profile)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>> rootNodes = TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>::create();
+    RefPtr<Protocol::Array<Protocol::Profiler::CPUProfileNode>> rootNodes = Protocol::Array<Protocol::Profiler::CPUProfileNode>::create();
     for (RefPtr<JSC::ProfileNode> profileNode : profile->head()->children())
         rootNodes->addItem(buildInspectorObject(profileNode.get()));
 
-    RefPtr<TypeBuilder::Profiler::CPUProfile> result = TypeBuilder::Profiler::CPUProfile::create()
+    RefPtr<Protocol::Profiler::CPUProfile> result = Protocol::Profiler::CPUProfile::create()
         .setRootNodes(rootNodes);
 
     if (profile->idleTime())
@@ -192,7 +192,7 @@ PassRefPtr<TypeBuilder::Profiler::CPUProfile> InspectorProfilerAgent::buildProfi
     return result.release();
 }
 
-void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid, RefPtr<TypeBuilder::Profiler::CPUProfile>& profileObject)
+void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid, RefPtr<Protocol::Profiler::CPUProfile>& profileObject)
 {
     unsigned uid = static_cast<unsigned>(rawUid);
     auto it = m_profiles.find(uid);

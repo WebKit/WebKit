@@ -36,7 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR)
-#include "InspectorJSTypeBuilders.h"
+#include "InspectorJSProtocolTypes.h"
 #endif
 
 namespace Inspector {
@@ -54,7 +54,7 @@ public:
     bool isEqual(const ScriptCallFrame&) const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<Inspector::TypeBuilder::Console::CallFrame> buildInspectorObject() const;
+    PassRefPtr<Inspector::Protocol::Console::CallFrame> buildInspectorObject() const;
 #endif
 
 private:
