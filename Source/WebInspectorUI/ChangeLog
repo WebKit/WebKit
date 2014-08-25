@@ -1,3 +1,19 @@
+2014-08-25  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172929
+
+    2014-08-25  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Pass OFFICIAL_BUILD flag to WebInspectorUI build process
+            https://bugs.webkit.org/show_bug.cgi?id=136229
+
+            Reviewed by Dean Jackson.
+
+            * WebInspectorUI.vcxproj/WebInspectorUI.make: Pass OFFICIAL_BUILD
+            flag to build-webinspectorui.pl.
+            * WebInspectorUI.vcxproj/build-webinspectorui.pl: Accept and use
+            the OFFICIAL_BUILD flag.
+
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
         Merge r172689. <rdar://problem/18040028>

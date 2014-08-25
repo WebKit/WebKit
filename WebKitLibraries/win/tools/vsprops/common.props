@@ -15,12 +15,14 @@ if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
+set OFFICIAL_BUILD=$(OFFICIAL_BUILD)
 nmake /nologo -f $(ProjectName).make</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set WEBKIT_LIBRARIES=$(WEBKIT_LIBRARIES)
+set OFFICIAL_BUILD=$(OFFICIAL_BUILD)
 nmake /nologo -f $(ProjectName).make clean
 nmake /nologo -f $(ProjectName).make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>%SystemDrive%\cygwin\bin\which.exe bash

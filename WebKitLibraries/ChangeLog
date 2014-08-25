@@ -1,3 +1,17 @@
+2014-08-25  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172929
+
+    2014-08-25  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Pass OFFICIAL_BUILD flag to WebInspectorUI build process
+            https://bugs.webkit.org/show_bug.cgi?id=136229
+
+            Reviewed by Dean Jackson.
+
+            * win/tools/vsprops/common.props: Pass OFFICIAL_BUILD argument
+            from VS to child Make processes.
+
 2014-08-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172661. <rdar://problem/18037766>
