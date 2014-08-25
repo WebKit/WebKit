@@ -1,5 +1,23 @@
 2014-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Older versions of WebKit should use the plugins cache in read only mode
+        https://bugs.webkit.org/show_bug.cgi?id=136215
+
+        Reviewed by Philippe Normand.
+
+        Now that WebKitGTK+ 2.4 and 2.5 are parallel installable, since
+        they use different versions of the plugins cache, apps using 2.4
+        might override the plugins cache file. We should prevent this from
+        happening by making older versions use the plugin cache, but not
+        downgrade it.
+
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::PluginInfoCache):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/Plugins/gtk/PluginInfoCache.h:
+
+2014-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Should check if a plugin mixes GTK+ symbols earlier
         https://bugs.webkit.org/show_bug.cgi?id=136214
 
