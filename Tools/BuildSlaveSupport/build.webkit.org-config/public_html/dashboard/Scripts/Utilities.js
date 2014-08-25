@@ -170,3 +170,8 @@ String.prototype.contains = function(substring)
 {
     return this.indexOf(substring) >= 0;
 };
+
+String.prototype.startsWith = function(substring)
+{
+    return this.lastIndexOf(substring, 0) === 0;
+}

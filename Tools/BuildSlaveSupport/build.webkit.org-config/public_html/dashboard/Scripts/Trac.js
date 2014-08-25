@@ -98,9 +98,17 @@ Trac.prototype = {
         date = new Date(Date.parse(date));
         var description = doc.evaluate("./description", commitElement, null, XPathResult.STRING_TYPE).stringValue;
 
-        // The feed contains a <title>, but it's not parsed as well as what we are getting from description.
         var parsedDescription = document.createElement("div");
         parsedDescription.innerHTML = description;
+
+        var location = "";
+        if (parsedDescription.firstChild.className === "changes") {
+            // We can extract branch information when trac.ini contains "changeset_show_files=location".
+            location = doc.evaluate("//strong", parsedDescription.firstChild, null, XPathResult.STRING_TYPE).stringValue
+            parsedDescription.removeChild(parsedDescription.firstChild);
+        }
+
+        // The feed contains a <title>, but it's not parsed as well as what we are getting from description.
         var title = document.createElement("div");
         var node = parsedDescription.firstChild.firstChild;
         while (node && node.tagName != "BR") {
@@ -112,14 +120,34 @@ Trac.prototype = {
         if (title.firstChild && title.firstChild.nodeType == Node.TEXT_NODE && title.firstChild.textContent.length > 0 && title.firstChild.textContent[0] == "\n")
             title.firstChild.textContent = title.firstChild.textContent.substring(1);
 
-        return {
+        var result = {
             revisionNumber: revisionNumber,
             link: link,
             title: title,
             author: author,
             date: date,
-            description: description
+            description: parsedDescription.innerHTML,
+            containsBranchLocation: location !== ""
         };
+
+        if (result.containsBranchLocation) {
+            console.assert(location[location.length - 1] !== "/");
+            location = location += "/";
+            if (location.startsWith("tags/"))
+                result.tag = location.substr(5, location.indexOf("/", 5) - 5);
+            else if (location.startsWith("branches/"))
+                result.branch = location.substr(9, location.indexOf("/", 9) - 9);
+            else if (location.startsWith("releases/"))
+                result.release = location.substr(9, location.indexOf("/", 9) - 9);
+            else if (location.startsWith("trunk/"))
+                result.branch = "trunk";
+            else {
+                console.assert(false);
+                result.containsBranchLocation = false;
+            }
+        }
+
+        return result;
     },
 
     _loaded: function(dataDocument)
