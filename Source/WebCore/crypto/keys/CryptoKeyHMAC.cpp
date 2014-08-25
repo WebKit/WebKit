@@ -80,7 +80,6 @@ void CryptoKeyHMAC::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&
 
 std::unique_ptr<CryptoKeyData> CryptoKeyHMAC::exportData() const
 {
-    ASSERT(extractable());
     return CryptoKeyDataOctetSequence::create(m_key);
 }
 

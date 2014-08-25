@@ -1,3 +1,19 @@
+2014-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERT(extractable()) when storing a non-extractable key in IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=136202
+        rdar://problem/17993967
+
+        Reviewed by Darin Adler.
+
+        Test: crypto/subtle/rsa-indexeddb-non-exportable.html
+
+        Removed the obsolete assertion.
+
+        * crypto/keys/CryptoKeyAES.cpp: (WebCore::CryptoKeyAES::exportData):
+        * crypto/keys/CryptoKeyHMAC.cpp: (WebCore::CryptoKeyHMAC::exportData):
+        * crypto/mac/CryptoKeyRSAMac.cpp: (WebCore::CryptoKeyRSA::exportData):
+
 2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Rename DOM.RGBA and remove workarounds in the bindings generator
