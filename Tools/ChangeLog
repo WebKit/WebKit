@@ -1,3 +1,23 @@
+2014-08-25  Tanay C  <tanay.c@samsung.com>
+
+        [EFL][WK2] Minibrowser : Enhance application to be able to support history list navigation
+        https://bugs.webkit.org/show_bug.cgi?id=135795
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Adding functionality for long press history list navigation
+        (history_list_hide): Hiding and dereferencing the history list and items
+        (on_key_down):
+        (on_mouse_down):
+        (on_back_button_clicked): Early return for longpress 
+        (on_forward_button_clicked): Early return for longpress 
+        (list_item_label_get): Populate item labels
+        (on_list_item_select): Navigates on selection from history list
+        (navigation_button_longpress_process): Populates the history list and displays it
+        (on_forward_button_longpress):
+        (on_back_button_longpress):
+        (window_create): Add the widget for history list
+
 2014-08-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] JHBuild module gst-plugins-base fails to build on x86 with GCC 4.9

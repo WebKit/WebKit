@@ -35,6 +35,8 @@ static const int SEARCH_BUTTON_SIZE = 30;
 static const int MAX_SEARCH_COUNT = 100;
 static const int DEFAULT_SEARCH_FLAGS = EWK_FIND_OPTIONS_SHOW_HIGHLIGHT | EWK_FIND_OPTIONS_CASE_INSENSITIVE | EWK_FIND_OPTIONS_WRAP_AROUND;
 static const double TOOLTIP_DELAY_SECONDS = 1.0;
+static const double LONGPRESS_INTERVAL_SECONDS = 1.5;
+static const double LIST_ITEM_HEIGHT = 24.35;
 
 #define info(format, args...)       \
     do {                            \
@@ -56,6 +58,7 @@ static Eina_Bool web_security_enabled = EINA_TRUE;
 static Eina_Bool touch_events_enabled = EINA_FALSE;
 static Eina_Bool fixed_layout_enabled = EINA_FALSE;
 static Eina_Bool separated_process_enabled = EINA_FALSE;
+static Eina_Bool longpress_enabled = EINA_FALSE;
 static int window_width = 800;
 static int window_height = 600;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
@@ -113,6 +116,11 @@ typedef struct _Browser_Window {
         Evas_Object *forward_button;
         Evas_Object *close_button;
     } search;
+    struct {
+        Evas_Object *history_box;
+        Evas_Object *history_list;
+        Eina_List *history_list_items;
+    } history;
     int current_zoom_level; 
     Tooltip_Information tooltip;
     Color_Selector color_selector;
@@ -398,6 +406,30 @@ search_box_hide(Browser_Window *window)
     evas_object_focus_set(window->ewk_view, EINA_TRUE);
 }
 
+static void 
+history_list_hide(Browser_Window *window)
+{
+    /* Hide history list */
+    evas_object_hide(window->history.history_box);
+    evas_object_hide(window->history.history_list);
+    
+    /* Dereference the list items and clear the history list */
+    void *data;    
+    EINA_LIST_FREE(window->history.history_list_items, data) {
+        ewk_object_unref(data);
+    }
+
+    elm_genlist_clear(window->history.history_list);
+    
+    /* Give focus back to the view */
+    elm_object_focus_set(window->history.history_box, EINA_FALSE);
+    elm_object_focus_set(window->history.history_list, EINA_FALSE);
+    evas_object_focus_set(window->ewk_view, EINA_TRUE);
+
+    /* Reset flags */
+    longpress_enabled = EINA_FALSE;
+} 
+
 static void save_page_contents_callback(Ewk_Page_Contents_Type type, const char *data, void *user_data)
 {
     Eet_File *ef;
@@ -505,6 +537,8 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (!strcmp(ev->key, "Escape")) {
         if (evas_object_visible_get(window->search.search_bar))
             search_box_hide(window);
+        else if (evas_object_visible_get(window->history.history_box))
+            history_list_hide(window);
         else if (elm_win_fullscreen_get(window->elm_window))
             ewk_view_fullscreen_exit(ewk_view);
     } else if (ctrlPressed && (!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract"))) {
@@ -563,6 +597,8 @@ on_mouse_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     /* Clear selection from the URL bar */
     elm_entry_select_none(window->url_bar);
 
+    if (longpress_enabled)
+        history_list_hide(window);
     if (ev->button == 1)
         view_focus_set(window, EINA_TRUE);
     else if (ev->button == 2)
@@ -1012,6 +1048,9 @@ on_search_field_clicked(void *user_data, Evas_Object *search_field, void *event_
 static void
 on_back_button_clicked(void *user_data, Evas_Object *back_button, void *event_info)
 {
+    if (longpress_enabled)
+        return;
+    
     Browser_Window *window = (Browser_Window *)user_data;
 
     ewk_view_back(window->ewk_view);
@@ -1022,6 +1061,9 @@ on_back_button_clicked(void *user_data, Evas_Object *back_button, void *event_in
 static void
 on_forward_button_clicked(void *user_data, Evas_Object *forward_button, void *event_info)
 {
+    if (longpress_enabled)
+        return;
+
     Browser_Window *window = (Browser_Window *)user_data;
 
     ewk_view_forward(window->ewk_view);
@@ -1080,6 +1122,110 @@ on_stop_button_clicked(void *user_data, Evas_Object *stop_button, void *event_in
 
     info("Stop was Pressed. Aborting load...");
     ewk_view_stop(window->ewk_view);
+}
+
+static char *
+list_item_label_get(void *data, Evas_Object *obj, const char *part)
+{
+    int len = strlen((char *)data);
+    char *buf = (char *)malloc(sizeof(char) * (len + 1));
+    snprintf(buf, len + 1, "%s", (char *)data);
+    return buf;
+}
+
+static void
+on_list_item_select(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Browser_Window *window = evas_object_data_get(obj, "Browser_Window");
+    ewk_view_navigate_to(window->ewk_view, user_data); 
+    history_list_hide(window);
+    evas_object_data_del(obj, "Browser_Window");
+}
+
+static void
+navigation_button_longpress_process(void *user_data, Eina_Bool forward_navigation_enabled)
+{
+    if (longpress_enabled)
+        return;
+
+    longpress_enabled = EINA_TRUE;
+    Browser_Window *window = (Browser_Window *)user_data;
+    
+    Ewk_Back_Forward_List *list = ewk_view_back_forward_list_get(window->ewk_view);
+    const Eina_List *l;
+    void *data;
+    static Elm_Genlist_Item_Class *list_item = NULL;
+    const char *title = NULL;
+    int item_count;
+    int x;
+    int y;
+    int width;
+    int height;
+    size_t index;
+    
+    evas_object_data_set(window->history.history_list, "Browser_Window", window);
+
+    if (forward_navigation_enabled)
+        window->history.history_list_items = ewk_back_forward_list_forward_items_copy(list); 
+    else
+        window->history.history_list_items = ewk_back_forward_list_back_items_copy(list);
+
+    if (!list_item) {
+        list_item = elm_genlist_item_class_new();
+        list_item->item_style = "default";
+        list_item->func.text_get = list_item_label_get;
+        list_item->func.content_get = NULL;
+        list_item->func.state_get = NULL;
+        list_item->func.del = NULL;
+    }
+
+    item_count = eina_list_count(window->history.history_list_items);
+    info("navigation_button_longpress_process : Item count = %d forward_navigation_enabled = %d", item_count, forward_navigation_enabled);
+
+    EINA_LIST_FOREACH(window->history.history_list_items, l, data) {
+        title = ewk_back_forward_list_item_title_get(data);
+        info(" title = %s", title);
+        elm_genlist_item_append(window->history.history_list, list_item, (void *)(title), NULL, ELM_GENLIST_ITEM_NONE, on_list_item_select, data);
+    }
+    
+    if (item_count > 0) {
+        evas_object_geometry_get(window->elm_window, &x, &y, &width, &height);
+        elm_list_go(window->history.history_list);
+        evas_object_resize(window->history.history_box , width / 3 , LIST_ITEM_HEIGHT * item_count);
+
+        if (forward_navigation_enabled) {
+            evas_object_move(window->history.history_box , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);
+            evas_object_move(window->history.history_list , x + TOOL_BAR_BUTTON_SIZE + 1, y + TOOL_BAR_BUTTON_SIZE);  
+        } else {
+            evas_object_move(window->history.history_box , x, y + TOOL_BAR_BUTTON_SIZE);
+            evas_object_move(window->history.history_list , x, y + TOOL_BAR_BUTTON_SIZE);  
+        }
+    
+        elm_genlist_mode_set(window->history.history_list, ELM_LIST_COMPRESS);
+        evas_object_show(window->history.history_box);
+        evas_object_show(window->history.history_list);
+        evas_object_focus_set(window->ewk_view, EINA_FALSE);
+        elm_object_focus_set(window->history.history_list, EINA_TRUE);
+    } else
+        longpress_enabled = EINA_FALSE;
+}
+
+static void
+on_forward_button_longpress(void *user_data, Evas_Object *forward_button, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    navigation_button_longpress_process(user_data, EINA_TRUE);
+    elm_object_disabled_set(forward_button, !ewk_view_back_possible(window->ewk_view));
+}
+
+static void
+on_back_button_longpress(void *user_data, Evas_Object *back_button, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    navigation_button_longpress_process(user_data, EINA_FALSE);
+    elm_object_disabled_set(back_button, !ewk_view_back_possible(window->ewk_view));
 }
 
 static void
@@ -1813,6 +1959,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Create Back button */
     window->back_button = create_toolbar_button(window->elm_window, "arrow_left");
     evas_object_smart_callback_add(window->back_button, "clicked", on_back_button_clicked, window);
+    evas_object_smart_callback_add(window->back_button, "repeated", on_back_button_longpress, window);
     elm_object_disabled_set(window->back_button, EINA_TRUE);
     evas_object_size_hint_weight_set(window->back_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->back_button, 0.0, 0.5);
@@ -1822,6 +1969,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Create Forward button */
     window->forward_button = create_toolbar_button(window->elm_window, "arrow_right");
     evas_object_smart_callback_add(window->forward_button, "clicked", on_forward_button_clicked, window);
+    evas_object_smart_callback_add(window->forward_button, "repeated", on_forward_button_longpress, window);
     elm_object_disabled_set(window->forward_button, EINA_TRUE);
     evas_object_size_hint_weight_set(window->forward_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->forward_button, 0.0, 0.5);
@@ -1923,6 +2071,18 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_size_hint_min_set(window->search.close_button, SEARCH_BUTTON_SIZE, SEARCH_BUTTON_SIZE);
     elm_box_pack_end(window->search.search_bar, window->search.close_button);
 
+    /* Create history box */
+    window->history.history_box = elm_box_add(window->elm_window);
+    evas_object_size_hint_aspect_set(window->history.history_box, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+    evas_object_size_hint_weight_set(window->history.history_box, EVAS_HINT_EXPAND , EVAS_HINT_EXPAND);
+
+    /* Create history list */
+    window->history.history_list = elm_genlist_add(window->elm_window);
+    evas_object_size_hint_weight_set(window->history.history_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(window->history.history_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_win_resize_object_add(window->history.history_list, window->history.history_box);
+    elm_box_pack_end(window->history.history_box, window->history.history_list);
+    
     /* Create ewk_view */
     Ewk_View_Smart_Class *ewkViewClass = miniBrowserViewSmartClass();
     ewkViewClass->run_javascript_alert = on_javascript_alert;
@@ -2015,6 +2175,11 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_OUT, on_mouse_out, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move, window);
     evas_object_event_callback_add(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize, window);
+    
+    elm_button_autorepeat_set(window->back_button, EINA_TRUE);
+    elm_button_autorepeat_set(window->forward_button, EINA_TRUE);
+    elm_button_autorepeat_initial_timeout_set(window->back_button, LONGPRESS_INTERVAL_SECONDS);
+    elm_button_autorepeat_initial_timeout_set(window->forward_button, LONGPRESS_INTERVAL_SECONDS);
 
     return window;
 }
