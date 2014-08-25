@@ -1,3 +1,13 @@
+2014-08-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Remove unused method declarations replaced by WebPage::setViewState
+        https://bugs.webkit.org/show_bug.cgi?id=136180
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.h:
+        Remove setFocused, setActive, setViewIsVisible. No longer used.
+
 2014-08-23  Byungseon Shin  <sun.shin@lge.com>
  
         Unify GraphicsLayer::setContentsToMedia and setContentsToCanvas
