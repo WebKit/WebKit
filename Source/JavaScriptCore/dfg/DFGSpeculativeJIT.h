@@ -1695,6 +1695,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
+    JITCompiler::Call callOperation(J_JITOperation_ECJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2Payload)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2Payload, MacroAssembler::TrustedImm32(JSValue::CellTag));
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
     JITCompiler::Call callOperation(J_JITOperation_ECJ operation, JSValueRegs result, GPRReg arg1, JSValueRegs arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR());

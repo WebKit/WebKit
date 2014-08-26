@@ -1,3 +1,22 @@
+2014-08-26  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r172794) + 32Bit build: for-in-base-reassigned-later-and-change-structure.js fail with NaN result
+        https://bugs.webkit.org/show_bug.cgi?id=136187
+
+        Reviewed by Mark Hahnenberg.
+
+        Added two arg version for 32 bit builds of callOperation(J_JITOperation_ECJ, ...) that
+        doesn't require a tag for the second argument, instead it fills in a CellTag.  This is
+        used for the slow case of the GetDirectPname case in SpeculativeJIT::compile since we
+        haven't set up a register with a tag and we know that argument 2 is a cell.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): New version with implicit CellTag.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Eliminated extraneous filling of the scratchGPR
+        with CellTag as it wasn't in the control flow for the slow path that needed the tag.
+        Instead changed to calling new version of callOperation with an implicit CellTag.
+
 2014-08-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r172940.

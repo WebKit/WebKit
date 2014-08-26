@@ -4771,8 +4771,7 @@ void SpeculativeJIT::compile(Node* node)
 
         done.link(&m_jit);
 
-        m_jit.move(MacroAssembler::TrustedImm32(JSValue::CellTag), scratchGPR);
-        addSlowPathGenerator(slowPathCall(wrongStructure, this, operationGetByValCell, resultTagGPR, resultPayloadGPR, baseGPR, scratchGPR, propertyGPR));
+        addSlowPathGenerator(slowPathCall(wrongStructure, this, operationGetByValCell, resultTagGPR, resultPayloadGPR, baseGPR, propertyGPR));
 #endif
 
         jsValueResult(resultTagGPR, resultPayloadGPR, node);
