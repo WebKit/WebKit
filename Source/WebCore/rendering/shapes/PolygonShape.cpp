@@ -97,7 +97,7 @@ static float circleXIntercept(float y, float radius)
 
 static FloatShapeInterval clippedCircleXRange(const FloatPoint& center, float radius, float y1, float y2)
 {
-    if (y1 > center.y() + radius || y2 < center.y() - radius)
+    if (y1 >= center.y() + radius || y2 <= center.y() - radius)
         return FloatShapeInterval();
 
     if (center.y() >= y1 && center.y() <= y2)
@@ -140,6 +140,7 @@ LineSegment PolygonShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit 
             excludedInterval.unite(OffsetPolygonEdge(edge, outwardEdgeNormal(edge) * shapeMargin()).clippedEdgeXRange(y1, y2));
             excludedInterval.unite(OffsetPolygonEdge(edge, inwardEdgeNormal(edge) * shapeMargin()).clippedEdgeXRange(y1, y2));
             excludedInterval.unite(clippedCircleXRange(edge.vertex1(), shapeMargin(), y1, y2));
+            excludedInterval.unite(clippedCircleXRange(edge.vertex2(), shapeMargin(), y1, y2));
         }
     }
 

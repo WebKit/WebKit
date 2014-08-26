@@ -1,3 +1,20 @@
+2014-08-26  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Positioned polygon reftests failing
+        https://bugs.webkit.org/show_bug.cgi?id=135925
+
+        Reviewed by David Hyatt.
+
+        We didn't respect the shape-margin before a positioned polygon, since we checked
+        the shape-margin for only 1 vertex for a polygon edge. This patch fixes the behavior,
+        removes the tests from the skipped list and updates 1 test, which was incorrect.
+
+        Updated existing test and removed tests from skipped list.
+
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::clippedCircleXRange):
+        (WebCore::PolygonShape::getExcludedInterval):
+
 2014-08-26  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Remove float to LayoutUnit ceil/round function wrappers.
