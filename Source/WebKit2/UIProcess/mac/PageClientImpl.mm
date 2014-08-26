@@ -732,6 +732,11 @@ void PageClientImpl::didFinishLoadForMainFrame()
     [m_wkView _didFinishLoadForMainFrame];
 }
 
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
+{
+    [m_wkView _didSameDocumentNavigationForMainFrame:type];
+}
+
 void PageClientImpl::removeNavigationGestureSnapshot()
 {
     [m_wkView _removeNavigationGestureSnapshot];

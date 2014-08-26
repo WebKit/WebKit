@@ -1,3 +1,81 @@
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172966. <rdar://problem/18107826>
+
+    2014-08-26  Tim Horton  <timothy_horton@apple.com>
+    
+            REGRESSION (r172771): Amazon product page becomes unresponsive after swiping back to it
+            https://bugs.webkit.org/show_bug.cgi?id=136260
+            <rdar://problem/18107826>
+    
+            Reviewed by Dan Bernstein.
+    
+            Previously, when a swipe ended up performing a same-document navigation,
+            we would never get didFinishLoadForMainFrame nor didFirstVisuallyNonEmptyLayoutForMainFrame
+            nor would we even get didHitRenderTreeSizeThreshold in all cases, so we would never
+            remove the swipe snapshot. Previous implementations removed the snapshot on
+            didSameDocumentNavigation for the main frame if the navigation type was Replace or Pop,
+            so we will match that behavior.
+    
+            Also, reinstate the watchdog that starts at swipe-end which would have prevented
+            this bug from forever breaking the view it was associated with.
+    
+            Also, defend against removing the snapshot before the swipe has finished (before
+            we have even caused the navigation that we're watching for the effects of).
+    
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _didSameDocumentNavigationForMainFrame:]):
+            * UIProcess/API/mac/WKViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+            Plumb main-frame same-document navigation notification from WebPageProxy
+            to ViewGestureControllerMac via PageClient and WKView.
+    
+            * UIProcess/mac/ViewGestureController.h:
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::ViewGestureController):
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            (WebKit::ViewGestureController::endSwipeGesture):
+            Keep track of whether a swipe is currently occurring. We can't use
+            activeGestureType for this because the swipe currently remains the "active"
+            gesture until the snapshot is removed.
+    
+            Reintroduce the old swipeWatchdogTimer (and rename the shorter timer that starts
+            when we get a visually non-empty layout) so that we will always remove the
+            snapshot after 5 seconds, even if we haven't committed the load.
+            This could lead to flashing back to the old content if we fail to get a single
+            byte for 5 seconds, but that is a rare case and should eventually get additional
+            special treatment (dropping the tiles until we do get content, or some such).
+    
+            (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold):
+            If a swipe is still in progress, we haven't done our navigation and thus
+            don't care about render tree size changes.
+    
+            (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame):
+            If a swipe is still in progress, we haven't done our navigation and thus
+            don't care about layouts.
+    
+            Stop the 5 second overall watchdog if we start the 3 second after-visuallyNonEmptyLayout
+            watchdog. This means that the snapshot could stay up for a maximum of 8 seconds
+            for a very, very slow load.
+    
+            (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+            If a swipe is still in progress, we haven't done our navigation and thus
+            don't care about loads that complete.
+    
+            (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+            Remove the swipe snapshot after painting if we do replaceState or popState.
+    
+            (WebKit::ViewGestureController::removeSwipeSnapshotAfterRepaint):
+            If a swipe is still in progress, we shouldn't remove the snapshot yet.
+    
 2014-08-19  Dana Burkart  <dburkart@apple.com>
 
         Merge r172643. <rdar://problem/18032571>

@@ -27,6 +27,7 @@
 #define ViewGestureController_h
 
 #include "MessageReceiver.h"
+#include "SameDocumentNavigationType.h"
 #include "WeakObjCPtr.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/RetainPtr.h>
@@ -107,6 +108,7 @@ public:
 
     void didFirstVisuallyNonEmptyLayoutForMainFrame();
     void didFinishLoadForMainFrame();
+    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType);
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
     void setAlternateBackForwardListSourceView(WKWebView *);
@@ -158,6 +160,8 @@ private:
 #endif
 
 #if PLATFORM(MAC)
+    RunLoop::Timer<ViewGestureController> m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer;
+
     double m_magnification;
     WebCore::FloatPoint m_magnificationOrigin;
 
@@ -190,6 +194,7 @@ private:
     bool m_swipeWaitingForVisuallyNonEmptyLayout;
     bool m_swipeWaitingForRenderTreeSizeThreshold;
     bool m_swipeWaitingForRepaint;
+    bool m_swipeInProgress;
 #else    
     UIView *m_liveSwipeView;
     RetainPtr<UIView> m_liveSwipeViewClippingView;

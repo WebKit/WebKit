@@ -2709,14 +2709,20 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t 
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (frame->isMainFrame())
+    bool isMainFrame = frame->isMainFrame();
+    if (isMainFrame)
         m_pageLoadState.didSameDocumentNavigation(transaction, url);
 
     m_pageLoadState.clearPendingAPIRequestURL(transaction);
     frame->didSameDocumentNavigation(url);
 
     m_pageLoadState.commitChanges();
-    m_loaderClient->didSameDocumentNavigationForFrame(this, frame, navigationID, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
+
+    SameDocumentNavigationType navigationType = static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType);
+    m_loaderClient->didSameDocumentNavigationForFrame(this, frame, navigationID, navigationType, userData.get());
+
+    if (isMainFrame)
+        m_pageClient.didSameDocumentNavigationForMainFrame(navigationType);
 }
 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, IPC::MessageDecoder& decoder)

@@ -177,6 +177,7 @@ private:
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
     virtual void didFinishLoadForMainFrame() override;
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
     WKContentView *m_contentView;
     WKWebView *m_webView;
