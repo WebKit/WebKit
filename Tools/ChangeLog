@@ -1,5 +1,14 @@
 2014-08-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove a little more accidentally landed code from r172891.
+
+        iteration.branch also wasn't meant to be landed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._parseData):
+
+2014-08-25  Alexey Proskuryakov  <ap@apple.com>
+
         REGRESSION (r172891): Internal dashboard is broken.
 
         Removing some accidentally landed code - I needed "changes" for another patch, but

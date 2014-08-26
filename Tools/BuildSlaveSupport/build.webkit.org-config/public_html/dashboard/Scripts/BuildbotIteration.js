@@ -238,8 +238,6 @@ BuildbotIteration.prototype = {
         var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
         this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
 
-        this.branch = data.properties.findFirst(function(property) { return property[0] === "branch" })[1];
-
         this.startTime = new Date(data.times[0] * 1000);
         this.endTime = new Date(data.times[1] * 1000);
 
