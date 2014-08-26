@@ -262,7 +262,6 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
     loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
     loadParameters.request = request;
-    loadParameters.priority = ResourceLoadPriorityHighest;
     loadParameters.contentSniffingPolicy = SniffContent;
     loadParameters.allowStoredCredentials = storedCredentials;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;

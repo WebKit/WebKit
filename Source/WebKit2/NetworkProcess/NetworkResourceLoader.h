@@ -71,7 +71,6 @@ public:
 
     NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
 
-    WebCore::ResourceLoadPriority priority() { return m_priority; }
     WebCore::ResourceRequest& request() { return m_request; }
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
@@ -179,7 +178,6 @@ private:
     WebCore::SessionID m_sessionID;
     WebCore::ResourceRequest m_request;
     WebCore::ResourceRequest m_deferredRequest;
-    WebCore::ResourceLoadPriority m_priority;
     WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     WebCore::StoredCredentials m_allowStoredCredentials;
     WebCore::ClientCredentialPolicy m_clientCredentialPolicy;

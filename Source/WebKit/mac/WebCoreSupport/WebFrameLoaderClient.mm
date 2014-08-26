@@ -346,6 +346,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
     NSURLRequest *currentURLRequest = request.nsURLRequest(UpdateHTTPBody);
     NSURLRequest *newURLRequest = currentURLRequest;
+    ResourceLoadPriority priority = request.priority();
 #if ENABLE(INSPECTOR)
     bool isHiddenFromInspector = request.hiddenFromInspector();
 #endif
@@ -366,6 +367,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
 #if PLATFORM(IOS)
     request.deprecatedSetMainResourceRequest(isMainResourceRequest);
 #endif
+    request.setPriority(priority);
 }
 
 bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader* loader, unsigned long identifier)

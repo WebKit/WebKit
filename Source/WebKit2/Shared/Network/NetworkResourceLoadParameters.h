@@ -57,7 +57,6 @@ public:
     WebCore::ResourceRequest request;
     SandboxExtension::HandleArray requestBodySandboxExtensions; // Created automatically for the sender.
     SandboxExtension::Handle resourceSandboxExtension; // Created automatically for the sender.
-    WebCore::ResourceLoadPriority priority;
     WebCore::ContentSniffingPolicy contentSniffingPolicy;
     WebCore::StoredCredentials allowStoredCredentials;
     WebCore::ClientCredentialPolicy clientCredentialPolicy;

@@ -112,11 +112,11 @@ ResourceLoadScheduler::~ResourceLoadScheduler()
 {
 }
 
-PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, ResourceLoadPriority priority, const ResourceLoaderOptions& options)
+PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
-        scheduleLoad(loader.get(), priority);
+        scheduleLoad(loader.get());
 #if PLATFORM(IOS)
     // Since we defer loader initialization until scheduling on iOS, the frame
     // load delegate that would be called in SubresourceLoader::create() on
@@ -133,14 +133,13 @@ PassRefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStre
 {
     PassRefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
-        scheduleLoad(loader.get(), ResourceLoadPriorityLow);
+        scheduleLoad(loader.get());
     return loader;
 }
 
-void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
+void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
-    ASSERT(priority != ResourceLoadPriorityUnresolved);
 
     LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
 
@@ -162,6 +161,9 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
 #else
     HostInformation* host = hostForURL(resourceLoader->url(), CreateIfNotFound);
 #endif
+
+    ResourceLoadPriority priority = resourceLoader->request().priority();
+    ASSERT(priority != ResourceLoadPriorityUnresolved);
 
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);

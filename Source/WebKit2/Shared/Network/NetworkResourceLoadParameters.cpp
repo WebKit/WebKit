@@ -41,7 +41,6 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , webPageID(0)
     , webFrameID(0)
     , sessionID(SessionID::emptySessionID())
-    , priority(ResourceLoadPriorityVeryLow)
     , contentSniffingPolicy(SniffContent)
     , allowStoredCredentials(DoNotAllowStoredCredentials)
     , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
@@ -90,7 +89,6 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
         encoder << requestSandboxExtension;
     }
 
-    encoder.encodeEnum(priority);
     encoder.encodeEnum(contentSniffingPolicy);
     encoder.encodeEnum(allowStoredCredentials);
     encoder.encodeEnum(clientCredentialPolicy);
@@ -136,8 +134,6 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
             return false;
     }
 
-    if (!decoder.decodeEnum(result.priority))
-        return false;
     if (!decoder.decodeEnum(result.contentSniffingPolicy))
         return false;
     if (!decoder.decodeEnum(result.allowStoredCredentials))

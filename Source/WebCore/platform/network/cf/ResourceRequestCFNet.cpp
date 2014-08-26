@@ -229,6 +229,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
 void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
 {
+    ResourceLoadPriority oldPriority = priority();
     RefPtr<FormData> oldHTTPBody = httpBody();
 #if ENABLE(INSPECTOR)
     bool isHiddenFromInspector = hiddenFromInspector();
@@ -236,6 +237,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 
     *this = delegateProvidedRequest;
 
+    setPriority(oldPriority);
     setHTTPBody(oldHTTPBody.release());
 #if ENABLE(INSPECTOR)
     setHiddenFromInspector(isHiddenFromInspector);

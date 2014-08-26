@@ -50,7 +50,7 @@ class ResourceLoadScheduler {
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
-    WEBCORE_EXPORT virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
+    WEBCORE_EXPORT virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&);
     WEBCORE_EXPORT virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     WEBCORE_EXPORT virtual void remove(ResourceLoader*);
     virtual void setDefersLoading(ResourceLoader*, bool);
@@ -82,7 +82,7 @@ protected:
 #endif
 
 private:
-    void scheduleLoad(ResourceLoader*, ResourceLoadPriority);
+    void scheduleLoad(ResourceLoader*);
     void scheduleServePendingRequests();
     void requestTimerFired(Timer<ResourceLoadScheduler>&);
 
