@@ -1,3 +1,15 @@
+2014-08-26  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-banding in overflow:scroll regions does not work correctly with 
+        direction:rtl
+        https://bugs.webkit.org/show_bug.cgi?id=136176
+
+        Reviewed by Tim Horton.
+
+        Small cleanup.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::visibleContentRectInternal):
+
 2014-08-26  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r172963
