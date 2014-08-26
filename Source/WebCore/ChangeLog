@@ -1,5 +1,68 @@
 2014-08-25  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel layout: remove roundedLayoutPoint/roundedLayoutSize functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136236
+
+        Reviewed by Simon Fraser.
+
+        These functions simply call LayoutPoint/LayoutSize c'tors. They don't round the input value at all.
+
+        Non change in functionality.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computePageLocation):
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * dom/Touch.cpp:
+        (WebCore::Touch::Touch):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * page/DragController.cpp:
+        (WebCore::elementUnderMouse):
+        * page/EventHandler.cpp:
+        (WebCore::selectionExtentRespectingEditingBoundary):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::roundedLayoutPoint): Deleted.
+        * platform/graphics/LayoutSize.h:
+        (WebCore::roundedLayoutSize): Deleted.
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isInUnavailablePluginIndicator):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::localCaretRect):
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::absoluteToContents):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::createShapeForImage):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::nodeAtFloatPoint):
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect):
+
+2014-08-25  Zalan Bujtas  <zalan@apple.com>
+
         Rename RenderObject::showTree() and showTreeForThis() to showNodeTree*().
         https://bugs.webkit.org/show_bug.cgi?id=136238
 

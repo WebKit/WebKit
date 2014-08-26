@@ -1847,7 +1847,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
 
     TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
     mapLocalToContainer(repaintContainer, transformState, ApplyContainerFlip | UseTransforms);
-    LayoutPoint offsetFromRepaintContainer = roundedLayoutPoint(transformState.mappedPoint()) - scrolledContentOffset();
+    LayoutPoint offsetFromRepaintContainer(transformState.mappedPoint() - scrolledContentOffset());
 
     LogicalSelectionOffsetCaches cache(*this);
     LayoutUnit lastTop = 0;

@@ -238,7 +238,7 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
         constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
     }
     
-    return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), roundedLayoutSize(contentsSize), displayedContentScale, false, StickToViewportBounds);
+    return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), LayoutSize(contentsSize), displayedContentScale, false, StickToViewportBounds);
 }
 
 void WebPageProxy::overflowScrollViewWillStartPanGesture()

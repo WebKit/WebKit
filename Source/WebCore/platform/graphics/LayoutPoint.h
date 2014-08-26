@@ -199,11 +199,6 @@ inline FloatPoint ceiledForPainting(const LayoutPoint& point, float pixelSnappin
     return FloatPoint(ceilToDevicePixel(point.x(), pixelSnappingFactor), ceilToDevicePixel(point.y(), pixelSnappingFactor));
 }
 
-inline LayoutPoint roundedLayoutPoint(const FloatPoint& p)
-{
-    return LayoutPoint(p);
-}
-
 } // namespace WebCore
 
 #endif // LayoutPoint_h

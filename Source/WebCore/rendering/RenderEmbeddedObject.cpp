@@ -578,7 +578,7 @@ bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, Scrol
 }
 
 
-bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const LayoutPoint& point) const
+bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const FloatPoint& point) const
 {
     FloatRect contentRect;
     FloatRect indicatorRect;
@@ -593,7 +593,7 @@ bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const LayoutPoint& poi
 
 bool RenderEmbeddedObject::isInUnavailablePluginIndicator(MouseEvent* event) const
 {
-    return isInUnavailablePluginIndicator(roundedLayoutPoint(absoluteToLocal(event->absoluteLocation(), UseTransforms)));
+    return isInUnavailablePluginIndicator(absoluteToLocal(event->absoluteLocation(), UseTransforms));
 }
 
 void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)

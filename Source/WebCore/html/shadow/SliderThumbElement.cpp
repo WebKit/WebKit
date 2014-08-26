@@ -268,7 +268,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     bool isVertical = hasVerticalAppearance(input.get());
     bool isLeftToRightDirection = renderBox()->style().isLeftToRightDirection();
     
-    LayoutPoint offset = roundedLayoutPoint(inputRenderer.absoluteToLocal(absolutePoint, UseTransforms));
+    LayoutPoint offset(inputRenderer.absoluteToLocal(absolutePoint, UseTransforms));
     FloatRect trackBoundingBox = trackRenderer.localToContainerQuad(FloatRect(0, 0, trackRenderer.width(), trackRenderer.height()), &inputRenderer).enclosingBoundingBox();
 
     LayoutUnit trackLength;

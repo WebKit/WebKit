@@ -1902,7 +1902,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (wasFixed)
         *wasFixed = mode & IsFixed;
     
-    LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
+    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint(transformState.mappedPoint()));
     
     bool preserve3D = mode & UseTransforms && (o->style().preserves3D() || style().preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {
@@ -2051,7 +2051,7 @@ void RenderBox::positionLineBox(InlineElementBox& box)
     }
 
     if (isReplaced()) {
-        setLocation(roundedLayoutPoint(box.topLeft()));
+        setLocation(LayoutPoint(box.topLeft()));
         setInlineBoxWrapper(&box);
     }
 }

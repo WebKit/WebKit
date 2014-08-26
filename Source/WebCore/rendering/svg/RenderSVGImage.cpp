@@ -191,7 +191,7 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
 
         if (hitRules.canHitFill) {
             if (m_objectBoundingBox.contains(localPoint)) {
-                updateHitTestResult(result, roundedLayoutPoint(localPoint));
+                updateHitTestResult(result, LayoutPoint(localPoint));
                 return true;
             }
         }

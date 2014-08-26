@@ -1647,10 +1647,10 @@ void RenderObject::mapLocalToContainer(const RenderLayerModelObject* repaintCont
         return;
 
     // FIXME: this should call offsetFromContainer to share code, but I'm not sure it's ever called.
-    LayoutPoint centerPoint = roundedLayoutPoint(transformState.mappedPoint());
+    LayoutPoint centerPoint(transformState.mappedPoint());
     if (mode & ApplyContainerFlip && o->isBox()) {
         if (o->style().isFlippedBlocksWritingMode())
-            transformState.move(toRenderBox(o)->flipForWritingMode(roundedLayoutPoint(transformState.mappedPoint())) - centerPoint);
+            transformState.move(toRenderBox(o)->flipForWritingMode(LayoutPoint(transformState.mappedPoint())) - centerPoint);
         mode &= ~ApplyContainerFlip;
     }
 

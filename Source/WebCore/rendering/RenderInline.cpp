@@ -263,7 +263,7 @@ LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, int, LayoutUnit* e
     LayoutRect caretRect = localCaretRectForEmptyElement(horizontalBorderAndPaddingExtent(), 0);
 
     if (InlineBox* firstBox = firstLineBox())
-        caretRect.moveBy(roundedLayoutPoint(firstBox->topLeft()));
+        caretRect.moveBy(LayoutPoint(firstBox->topLeft()));
 
     return caretRect;
 }
@@ -1234,13 +1234,13 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
 
     if (mode & ApplyContainerFlip && o->isBox()) {
         if (o->style().isFlippedBlocksWritingMode()) {
-            LayoutPoint centerPoint = roundedLayoutPoint(transformState.mappedPoint());
+            LayoutPoint centerPoint(transformState.mappedPoint());
             transformState.move(toRenderBox(o)->flipForWritingMode(centerPoint) - centerPoint);
         }
         mode &= ~ApplyContainerFlip;
     }
 
-    LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
+    LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint(transformState.mappedPoint()));
 
     bool preserve3D = mode & UseTransforms && (o->style().preserves3D() || style().preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {

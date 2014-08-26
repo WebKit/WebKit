@@ -898,7 +898,7 @@ void EventHandler::updateSelectionForMouseDrag()
 
 static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSelection& selection, const LayoutPoint& localPoint, Node* targetNode)
 {
-    LayoutPoint selectionEndPoint = localPoint;
+    FloatPoint selectionEndPoint = localPoint;
     Element* editableElement = selection.rootEditableElement();
 
     if (!targetNode->renderer())
@@ -909,11 +909,11 @@ static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSel
             return VisiblePosition();
 
         FloatPoint absolutePoint = targetNode->renderer()->localToAbsolute(FloatPoint(selectionEndPoint));
-        selectionEndPoint = roundedLayoutPoint(editableElement->renderer()->absoluteToLocal(absolutePoint));
+        selectionEndPoint = editableElement->renderer()->absoluteToLocal(absolutePoint);
         targetNode = editableElement;
     }
 
-    return targetNode->renderer()->positionForPoint(selectionEndPoint, nullptr);
+    return targetNode->renderer()->positionForPoint(LayoutPoint(selectionEndPoint), nullptr);
 }
 
 void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResult)

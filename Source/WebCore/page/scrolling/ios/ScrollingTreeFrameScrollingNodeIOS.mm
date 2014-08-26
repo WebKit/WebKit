@@ -148,7 +148,7 @@ void ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll(const Float
     ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
     FloatPoint scrollOffset = scrollPosition - toIntSize(scrollOrigin());
     FloatRect viewportRect(FloatPoint(), scrollableAreaSize());
-    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), roundedLayoutSize(totalContentsSize()), roundedLayoutPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
+    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), LayoutPoint(scrollOffset), scrollOrigin(), frameScaleFactor(), false, behaviorForFixed, headerHeight(), footerHeight());
 
     [m_counterScrollingLayer setPosition:FloatPoint(scrollOffsetForFixedChildren)];
 
@@ -158,7 +158,7 @@ void ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll(const Float
         // then we should recompute scrollOffsetForFixedChildren for the banner with a scale factor of 1.
         float horizontalScrollOffsetForBanner = scrollOffsetForFixedChildren.width();
         if (frameScaleFactor() != 1)
-            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), roundedLayoutSize(totalContentsSize()), roundedLayoutPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
+            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), LayoutPoint(scrollOffset), scrollOrigin(), 1, false, behaviorForFixed, headerHeight(), footerHeight()).width();
 
         if (m_headerLayer)
             [m_headerLayer setPosition:FloatPoint(horizontalScrollOffsetForBanner, 0)];

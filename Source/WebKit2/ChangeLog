@@ -1,3 +1,17 @@
+2014-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: remove roundedLayoutPoint/roundedLayoutSize functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136236
+
+        Reviewed by Simon Fraser.
+
+        These functions simply call LayoutPoint/LayoutSize c'tors. They don't round the input value at all.
+
+        Non change in functionality.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect):
+
 2014-08-25  Antti Koivisto  <antti@apple.com>
 
         Don't pass priority as parameter to ResourceLoadScheduler

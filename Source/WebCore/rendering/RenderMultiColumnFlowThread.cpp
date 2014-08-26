@@ -647,7 +647,7 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
 {
     // First get the transform state's point into the block flow thread's physical coordinate space.
     parent()->mapAbsoluteToLocalPoint(mode, transformState);
-    LayoutPoint transformPoint = roundedLayoutPoint(transformState.mappedPoint());
+    LayoutPoint transformPoint(transformState.mappedPoint());
     
     // Now walk through each region.
     const RenderMultiColumnSet* candidateColumnSet = nullptr;
