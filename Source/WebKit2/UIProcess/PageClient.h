@@ -305,6 +305,7 @@ public:
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
     virtual void didFinishLoadForMainFrame() = 0;
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 };
 
 } // namespace WebKit

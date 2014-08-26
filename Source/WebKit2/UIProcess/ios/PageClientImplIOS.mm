@@ -690,6 +690,10 @@ void PageClientImpl::didFinishLoadForMainFrame()
 {
 }
 
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType)
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

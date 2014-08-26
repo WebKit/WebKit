@@ -3610,6 +3610,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_gestureController->didFinishLoadForMainFrame();
 }
 
+- (void)_didSameDocumentNavigationForMainFrame:(SameDocumentNavigationType)type
+{
+    if (_data->_gestureController)
+        _data->_gestureController->didSameDocumentNavigationForMainFrame(type);
+}
+
 - (void)_removeNavigationGestureSnapshot
 {
     if (_data->_gestureController)
