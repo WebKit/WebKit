@@ -1,3 +1,31 @@
+2014-08-26  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Remove float to LayoutUnit ceil/round function wrappers.
+        https://bugs.webkit.org/show_bug.cgi?id=136253
+
+        Reviewed by Simon Fraser.
+
+        These functions wrap LayoutUnit::fromFloatCeil/fromFloatRound() functions to ceil/round float to LayoutUnit.
+        Their usage is limited and can easily be confused with the snapping functions (snap to css/device pixels).
+
+        No change in functionality.
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundedLayoutUnit): Deleted. : Callers use the more explicit LayoutUnit::fromFloatRound() function.
+        (WebCore::ceiledLayoutUnit): Deleted. : Callers use the more explicit LayoutUnit::fromFloatCeil() function.
+        * rendering/RenderBlock.cpp:
+        (WebCore::updatePreferredWidth):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::adjustFloatForSubPixelLayout): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetForInFlowPositionedInline):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth):
+
 2014-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Ensure that layout is up-to-date before hit testing

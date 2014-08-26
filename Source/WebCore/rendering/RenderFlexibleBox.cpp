@@ -948,7 +948,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
             else if (availableFreeSpace < 0 && totalWeightedFlexShrink > 0 && flexSign == NegativeFlexibility && std::isfinite(totalWeightedFlexShrink))
                 extraSpace = availableFreeSpace * child.style().flexShrink() * preferredChildSize / totalWeightedFlexShrink;
             if (std::isfinite(extraSpace))
-                childSize += roundedLayoutUnit(extraSpace);
+                childSize += LayoutUnit::fromFloatRound(extraSpace);
 
             LayoutUnit adjustedChildSize = adjustChildSizeForMinAndMax(child, childSize);
             childSizes.append(adjustedChildSize);

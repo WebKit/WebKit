@@ -2899,24 +2899,8 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin,
 
 static inline void updatePreferredWidth(LayoutUnit& preferredWidth, float& result)
 {
-    LayoutUnit snappedResult = ceiledLayoutUnit(result);
-    preferredWidth = std::max(snappedResult, preferredWidth);
+    preferredWidth = std::max(LayoutUnit::fromFloatCeil(result), preferredWidth);
 }
-
-// With sub-pixel enabled: When converting between floating point and LayoutUnits
-// we risk losing precision with each conversion. When this occurs while
-// accumulating our preferred widths, we can wind up with a line width that's
-// larger than our maxPreferredWidth due to pure float accumulation.
-//
-// With sub-pixel disabled: values from Lengths or the render tree aren't subject
-// to the same loss of precision, as they're always truncated and stored as
-// integers. We mirror that behavior here to prevent over-allocating our preferred
-// width.
-static inline LayoutUnit adjustFloatForSubPixelLayout(float value)
-{
-    return ceiledLayoutUnit(value);
-}
-
 
 void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth)
 {
@@ -3019,9 +3003,9 @@ void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidt
                     Length startMargin = childStyle.marginStart();
                     Length endMargin = childStyle.marginEnd();
                     if (startMargin.isFixed())
-                        margins += adjustFloatForSubPixelLayout(startMargin.value());
+                        margins += LayoutUnit::fromFloatCeil(startMargin.value());
                     if (endMargin.isFixed())
-                        margins += adjustFloatForSubPixelLayout(endMargin.value());
+                        margins += LayoutUnit::fromFloatCeil(endMargin.value());
                     childMin += margins.ceilToFloat();
                     childMax += margins.ceilToFloat();
                 }
@@ -3062,7 +3046,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidt
                     childMax += ceiledIndent;
 
                     if (childMin < 0)
-                        textIndent = adjustFloatForSubPixelLayout(childMin);
+                        textIndent = LayoutUnit::fromFloatCeil(childMin);
                     else
                         addedTextIndent = true;
                 }

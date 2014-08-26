@@ -912,16 +912,6 @@ inline float snapSizeToDevicePixel(LayoutUnit size, LayoutUnit location, float p
     return roundToDevicePixel(fraction + size, pixelSnappingFactor) - roundToDevicePixel(fraction, pixelSnappingFactor);
 }
 
-inline LayoutUnit roundedLayoutUnit(float value)
-{
-    return LayoutUnit::fromFloatRound(value);
-}
-
-inline LayoutUnit ceiledLayoutUnit(float value)
-{
-    return LayoutUnit::fromFloatCeil(value);
-}
-
 inline LayoutUnit absoluteValue(const LayoutUnit& value)
 {
     return value.abs();
