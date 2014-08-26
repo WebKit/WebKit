@@ -514,7 +514,7 @@ webkit.org/b/135051 fast/regions/repaint/region-painting-composited-element.html
 webkit.org/b/135051 fast/regions/repaint/region-painting-in-composited-view.html [ Crash Pass ]
 webkit.org/b/135051 fast/regions/repaint/region-painting-invalidation.html [ Crash Pass ]
 
-webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash ]
+webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -2047,8 +2047,8 @@ webkit.org/b/134976 media/video-fast-seek.html [ Failure ]
 webkit.org/b/134979 media/track/track-cue-mutable-text.html [ Failure ]
 webkit.org/b/134979 media/track/track-cue-nothing-to-render.html [ Failure ]
 webkit.org/b/134979 media/track/track-cue-rendering-mode-changed.html [ Failure ]
-webkit.org/b/134979 media/track/track-cue-rendering-rtl.html [ Failure ]
-webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
+webkit.org/b/134979 media/track/track-cue-rendering-rtl.html [ Failure Timeout ]
+webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Timeout ]
 webkit.org/b/134979 media/track/track-kind.html [ Failure ]
 
 webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure ]
@@ -2091,6 +2091,19 @@ webkit.org/b/132421 fast/multicol/fixed-stack.html [ Pass ]
 
 # The backing store is cleared when page cached in GTK
 webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
+
+webkit.org/b/136255 fast/block/float/overhanging-tall-block.html [ Failure ]
+
+webkit.org/b/136257 fast/css/placeholder-shown-basics.html [ ImageOnlyFailure ]
+webkit.org/b/136257 fast/forms/input-placeholder-visibility-1.html [ Failure ]
+webkit.org/b/136257 fast/forms/input-placeholder-visibility-3.html [ Failure ]
+webkit.org/b/136257 fast/forms/textarea-placeholder-visibility-1.html [ Failure ]
+webkit.org/b/136257 fast/forms/textarea-placeholder-visibility-2.html [ Failure ]
+
+webkit.org/b/136159 fast/borders/border-painting-dashed-at-all.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/border-painting-dotted-at-all.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

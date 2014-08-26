@@ -1,3 +1,14 @@
+2014-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures after r136159, r172826 and r172835.
+        * platform/gtk/fast/ruby/bopomofo-expected.txt: Added. Add baseline after r172861 and r172874.
+        * platform/gtk/fast/ruby/bopomofo-letter-spacing-expected.txt: Added. Add baseline after r172861 and r172874.
+        * platform/gtk/fast/ruby/bopomofo-rl-expected.txt: Added. Add baseline after r172861 and r172874.
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-2-expected.png: Removed. Rebaseline (use default baseline) after r172835 and r172847.
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-2-expected.txt: Removed. Rebaseline (use default baseline) after r172835 and r172847.
+
 2014-08-26  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Positioned polygon reftests failing
