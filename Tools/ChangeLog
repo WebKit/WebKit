@@ -1,3 +1,14 @@
+2014-08-26  Daniel Bates  <dabates@apple.com>
+
+        Only define WEBCORE_EXPORT when building DumpRenderTree for Windows and iOS
+
+        Rubber-stamped by Tim Horton.
+
+        The Windows and iOS ports are the only ports that make use of WebCore headers
+        in DumpRenderTree.
+
+        * DumpRenderTree/config.h:
+
 2014-08-26  Dan Bernstein  <mitz@apple.com>
 
         runSvnUpdateAndResolveChangeLogs() doesn’t work when invoked from a script outside Tools/Scripts

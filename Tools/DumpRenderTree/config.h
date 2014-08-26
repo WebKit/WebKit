@@ -28,8 +28,10 @@
 #include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 
+#if PLATFORM(WIN) || PLATFORM(IOS)
 // This is needed because we include WebCore's headers.
 #define WEBCORE_EXPORT
+#endif
 
 #ifdef __cplusplus
 #undef new
@@ -42,9 +44,6 @@
 #endif
 
 #if PLATFORM(WIN)
-// This is needed because we include WebCore's headers. 
-#define WEBCORE_EXPORT 
-
 #define WTF_USE_CF 1 
 #if PLATFORM(WIN_CAIRO)
 #define WTF_USE_CAIRO 1
