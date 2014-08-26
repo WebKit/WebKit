@@ -1,4 +1,24 @@
 =================
+WebKitGTK+  2.4.5
+=================
+
+What's new in WebKitGTK+ 2.4.5?
+
+  - Do not freeze the UI process while scanning plugins if there's a
+    GTK+ 3 plugin installed.
+  - Fix a crash when drag and drop to a WebKitWebView.
+  - Fix a crash when navigating away from a web page containing an ogg
+    video.
+  - Fix slow motion rendering problem in GStreamer media backend due
+    to integer rounding.
+  - Make sure the plugins cache is always used even if the cache
+    directory doesn’t exist.
+  - Fix toggle buttons rendering with recent GTK+ versions.
+  - Do not use GtkWindow:resize-grip-visible with recent GTK+
+    versions.
+  - Add support for little-endian PowerPC64.
+
+=================
 WebKitGTK+  2.4.4
 =================
 
