@@ -406,4 +406,8 @@ void PageClientImpl::didFinishLoadForMainFrame()
 {
 }
 
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
+{
+}
+
 } // namespace WebKit

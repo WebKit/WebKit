@@ -129,6 +129,7 @@ private:
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
     virtual void didFinishLoadForMainFrame() override;
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 
