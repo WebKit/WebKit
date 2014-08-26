@@ -748,7 +748,7 @@ if not C_LOOP
         if X86_64
             const entryFrame = t4
             const result = t0
-        elsif X86 or X86_WIN
+        elsif X86 or X86_WIN or X86_64_WIN
             const entryFrame = t2
             const result = t0
         else

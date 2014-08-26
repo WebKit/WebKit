@@ -1,3 +1,14 @@
+2014-08-26  Michael Saboff  <msaboff@apple.com>
+
+        [Win] 64-bit JavaScriptCore crashes on launch
+        https://bugs.webkit.org/show_bug.cgi?id=136241
+
+        Reviewed by Mark Lam.
+
+        * llint/LowLevelInterpreter.asm:
+        (vmEntryRecord): X86_64_WIN doesn't use "a0" (rax) for the first argument, it uses
+        "t2" (rcx).  Changed to get the input parameter using the correct register.
+
 2014-08-26  Saam Barati  <sbarati@apple.com>
 
         TypeSet caches structureIDs even after the corresponding Structure could be GCed
