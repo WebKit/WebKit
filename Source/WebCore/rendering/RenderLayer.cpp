@@ -2642,7 +2642,7 @@ IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScroll
         horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()) ? horizontalScrollbar()->height() : 0;
     }
     
-    return IntRect(IntPoint(scrollXOffset(), scrollYOffset()),
+    return IntRect(IntPoint(scrollPosition().x(), scrollPosition().y()),
                    IntSize(std::max(0, m_layerSize.width() - verticalScrollbarWidth),
                            std::max(0, m_layerSize.height() - horizontalScrollbarHeight)));
 }
