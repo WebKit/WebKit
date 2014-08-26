@@ -88,6 +88,7 @@ private:
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() override final { }
     virtual void didFinishLoadForMainFrame() override final { }
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override final { }
 
 private:
     EwkView* m_ewkView;

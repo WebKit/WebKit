@@ -1,3 +1,9 @@
+2014-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] URTBF after r172966.
+
+        * UIProcess/efl/WebViewEfl.h:
+
 2014-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r172966) [GTK] Build broken.
