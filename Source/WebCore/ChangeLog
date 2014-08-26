@@ -1,3 +1,26 @@
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172969. <rdar://problem/17435564>
+
+    2014-08-26  Simon Fraser  <simon.fraser@apple.com>
+    
+            Ensure that layout is up-to-date before hit testing
+            https://bugs.webkit.org/show_bug.cgi?id=136242
+            rdar://problem/17435564
+    
+            Reviewed by Tim Horton.
+            
+            Various code paths can call into RenderView::hitTest() but fail to
+            ensure that layout is up-to-date. This is a conservative change that
+            fixes the issue for callers of EventHandler::hitTestResultAtPoint(),
+            including WebPage::acceptsFirstMouse() and WebFrame::hitTest().
+            
+            This change is not general enough that we can ASSERT(!needsLayout())
+            in RenderView::hitTest() yet.
+            
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::hitTestResultAtPoint):
+    
 2014-08-22  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172854

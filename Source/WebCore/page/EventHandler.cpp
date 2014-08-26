@@ -1077,6 +1077,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
     if (!m_frame.contentRenderer())
         return result;
 
+    m_frame.document()->updateLayout();
+    
     // hitTestResultAtPoint is specifically used to hitTest into all frames, thus it always allows child frame content.
     HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
     m_frame.contentRenderer()->hitTest(request, result);
