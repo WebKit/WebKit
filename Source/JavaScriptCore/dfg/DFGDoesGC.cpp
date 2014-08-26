@@ -91,7 +91,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutByIdFlush:
     case PutByIdDirect:
     case CheckStructure:
-    case GetExecutable:
+    case CheckExecutable:
     case GetButterfly:
     case CheckArray:
     case GetScope:
@@ -104,7 +104,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutGlobalVar:
     case VariableWatchpoint:
     case VarInjectionWatchpoint:
-    case CheckCell:
+    case CheckFunction:
     case AllocationProfileWatchpoint:
     case RegExpExec:
     case RegExpTest:
@@ -119,8 +119,6 @@ bool doesGC(Graph& graph, Node* node)
     case Construct:
     case NativeCall:
     case NativeConstruct:
-    case ProfiledCall:
-    case ProfiledConstruct:
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
@@ -197,8 +195,6 @@ bool doesGC(Graph& graph, Node* node)
     case GetDirectPname:
     case FiatInt52:
     case BooleanToNumber:
-    case CheckBadCell:
-    case BottomValue:
         return false;
 
     case CreateActivation:

@@ -89,9 +89,6 @@ static CompilationResult compileImpl(
         vm.getCTIStub(virtualConstructThatPreservesRegsThunkGenerator);
     }
     
-    if (CallEdgeLog::isEnabled())
-        vm.ensureCallEdgeLog().processLog();
-    
     RefPtr<Plan> plan = adoptRef(
         new Plan(codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
     

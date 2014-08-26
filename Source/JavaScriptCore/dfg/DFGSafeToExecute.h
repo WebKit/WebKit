@@ -159,7 +159,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutByIdFlush:
     case PutByIdDirect:
     case CheckStructure:
-    case GetExecutable:
+    case CheckExecutable:
     case GetButterfly:
     case CheckArray:
     case Arrayify:
@@ -174,8 +174,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutGlobalVar:
     case VariableWatchpoint:
     case VarInjectionWatchpoint:
-    case CheckCell:
-    case CheckBadCell:
+    case CheckFunction:
     case AllocationProfileWatchpoint:
     case RegExpExec:
     case RegExpTest:
@@ -188,8 +187,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CompareStrictEq:
     case Call:
     case Construct:
-    case ProfiledCall:
-    case ProfiledConstruct:
     case NewObject:
     case NewArray:
     case NewArrayWithSize:
@@ -275,11 +272,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case NativeCall:
     case NativeConstruct:
         return false; // TODO: add a check for already checked.  https://bugs.webkit.org/show_bug.cgi?id=133769
-
-    case BottomValue:
-        // If in doubt, assume that this isn't safe to execute, just because we have no way of
-        // compiling this node.
-        return false;
 
     case GetByVal:
     case GetIndexedPropertyStorage:

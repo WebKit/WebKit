@@ -83,11 +83,6 @@ void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
     }
     if (!!lastSeenCallee && !Heap::isMarked(lastSeenCallee.get()))
         lastSeenCallee.clear();
-    
-    if (callEdgeProfile) {
-        WTF::loadLoadFence();
-        callEdgeProfile->visitWeak();
-    }
 }
 
 CallLinkInfo& CallLinkInfo::dummy()

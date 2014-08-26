@@ -1,3 +1,18 @@
+2014-08-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r172940.
+        https://bugs.webkit.org/show_bug.cgi?id=136256
+
+        Caused assertions on fast/storage/serialized-script-
+        value.html, and possibly flakiness on more tests (Requested by
+        ap on #webkit).
+
+        Reverted changeset:
+
+        "FTL should be able to do polymorphic call inlining"
+        https://bugs.webkit.org/show_bug.cgi?id=135145
+        http://trac.webkit.org/changeset/172940
+
 2014-08-26  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r172794) + 32Bit build: ASSERT failures in for-in-tests.js tests.

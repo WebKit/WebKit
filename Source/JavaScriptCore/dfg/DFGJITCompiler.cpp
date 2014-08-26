@@ -188,7 +188,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             table.ctiOffsets[j] = table.ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
             SwitchCase& myCase = data.cases[j];
-            table.ctiOffsets[myCase.value.switchLookupValue(data.kind) - table.min] =
+            table.ctiOffsets[myCase.value.switchLookupValue() - table.min] =
                 linkBuffer.locationOf(m_blockHeads[myCase.target.block->index]);
         }
     }

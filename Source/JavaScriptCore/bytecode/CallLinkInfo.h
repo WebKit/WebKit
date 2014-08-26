@@ -26,7 +26,6 @@
 #ifndef CallLinkInfo_h
 #define CallLinkInfo_h
 
-#include "CallEdgeProfile.h"
 #include "ClosureCallStubRoutine.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
@@ -34,7 +33,6 @@
 #include "JSFunction.h"
 #include "Opcode.h"
 #include "WriteBarrier.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {
@@ -90,7 +88,6 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     unsigned calleeGPR : 8;
     unsigned slowPathCount;
     CodeOrigin codeOrigin;
-    OwnPtr<CallEdgeProfile> callEdgeProfile;
 
     bool isLinked() { return stub || callee; }
     void unlink(RepatchBuffer&);

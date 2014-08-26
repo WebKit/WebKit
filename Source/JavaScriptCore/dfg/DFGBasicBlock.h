@@ -62,7 +62,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Node*& operator[](size_t i) { return at(i); }
     Node* operator[](size_t i) const { return at(i); }
     Node* last() const { return at(size() - 1); }
-    Node* takeLast() { return m_nodes.takeLast(); }
     void resize(size_t size) { m_nodes.resize(size); }
     void grow(size_t size) { m_nodes.grow(size); }
     
@@ -106,13 +105,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Node* appendNonTerminal(Graph&, SpeculatedType, Params...);
     
     void dump(PrintStream& out) const;
-    
-    void didLink()
-    {
-#if !ASSERT_DISABLED
-        isLinked = true;
-#endif
-    }
     
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
     // for other purposes due to inlining.

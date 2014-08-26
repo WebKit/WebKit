@@ -113,36 +113,6 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
     return FalseTriState;
 }
 
-uintptr_t LazyJSValue::switchLookupValue(SwitchKind kind) const
-{
-    // NB. Not every kind of JSValue will be able to give you a switch lookup
-    // value, and this method will assert, or do bad things, if you use it
-    // for a kind of value that can't.
-    switch (m_kind) {
-    case KnownValue:
-        switch (kind) {
-        case SwitchImm:
-            return value()->value().asInt32();
-        case SwitchCell:
-            return bitwise_cast<uintptr_t>(value()->value().asCell());
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return 0;
-        }
-    case SingleCharacterString:
-        switch (kind) {
-        case SwitchChar:
-            return character();
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return 0;
-        }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return 0;
-    }
-}
-
 void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     switch (m_kind) {

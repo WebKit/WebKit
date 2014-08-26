@@ -373,13 +373,6 @@ VM*& VM::sharedInstanceInternal()
     return sharedInstance;
 }
 
-CallEdgeLog& VM::ensureCallEdgeLog()
-{
-    if (!callEdgeLog)
-        callEdgeLog = std::make_unique<CallEdgeLog>();
-    return *callEdgeLog;
-}
-
 #if ENABLE(JIT)
 static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 {

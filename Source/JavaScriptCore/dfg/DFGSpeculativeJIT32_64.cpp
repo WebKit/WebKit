@@ -640,9 +640,9 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 
 void SpeculativeJIT::emitCall(Node* node)
 {
-    bool isCall = node->op() == Call || node->op() == ProfiledCall;
+    bool isCall = node->op() == Call;
     if (!isCall)
-        ASSERT(node->op() == Construct || node->op() == ProfiledConstruct);
+        ASSERT(node->op() == Construct);
 
     // For constructors, the this argument is not passed but we have to make space
     // for it.
@@ -689,13 +689,6 @@ void SpeculativeJIT::emitCall(Node* node)
 
     m_jit.emitStoreCodeOrigin(node->origin.semantic);
     
-    CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo();
-
-    if (node->op() == ProfiledCall || node->op() == ProfiledConstruct) {
-        m_jit.vm()->callEdgeLog->emitLogCode(
-            m_jit, info->callEdgeProfile, callee.jsValueRegs());
-    }
-    
     slowPath.append(branchNotCell(callee.jsValueRegs()));
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
     m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultPayloadGPR);
@@ -720,6 +713,7 @@ void SpeculativeJIT::emitCall(Node* node)
         m_jit.move(calleePayloadGPR, GPRInfo::regT0);
         m_jit.move(calleeTagGPR, GPRInfo::regT1);
     }
+    CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo();
     m_jit.move(MacroAssembler::TrustedImmPtr(info), GPRInfo::regT2);
     JITCompiler::Call slowCall = m_jit.nearCall();
 
@@ -3681,21 +3675,18 @@ void SpeculativeJIT::compile(Node* node)
         compileGetArrayLength(node);
         break;
         
-    case CheckCell: {
-        SpeculateCellOperand cell(this, node->child1());
-        speculationCheck(BadCell, JSValueSource::unboxedCell(cell.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, cell.gpr(), node->cellOperand()->value().asCell()));
+    case CheckFunction: {
+        SpeculateCellOperand function(this, node->child1());
+        speculationCheck(BadFunction, JSValueSource::unboxedCell(function.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, function.gpr(), node->function()->value().asCell()));
         noResult(node);
         break;
     }
 
-    case GetExecutable: {
+    case CheckExecutable: {
         SpeculateCellOperand function(this, node->child1());
-        GPRTemporary result(this, Reuse, function);
-        GPRReg functionGPR = function.gpr();
-        GPRReg resultGPR = result.gpr();
-        speculateCellType(node->child1(), functionGPR, SpecFunction, JSFunctionType);
-        m_jit.loadPtr(JITCompiler::Address(functionGPR, JSFunction::offsetOfExecutable()), resultGPR);
-        cellResult(resultGPR, node);
+        speculateCellType(node->child1(), function.gpr(), SpecFunction, JSFunctionType);
+        speculationCheck(BadExecutable, JSValueSource::unboxedCell(function.gpr()), node->child1(), m_jit.branchWeakPtr(JITCompiler::NotEqual, JITCompiler::Address(function.gpr(), JSFunction::offsetOfExecutable()), node->executable()));
+        noResult(node);
         break;
     }
         
@@ -4165,8 +4156,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case Call:
     case Construct:
-    case ProfiledCall:
-    case ProfiledConstruct:
         emitCall(node);
         break;
 
@@ -4913,8 +4902,6 @@ void SpeculativeJIT::compile(Node* node)
     case MultiPutByOffset:
     case NativeCall:
     case NativeConstruct:
-    case CheckBadCell:
-    case BottomValue:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

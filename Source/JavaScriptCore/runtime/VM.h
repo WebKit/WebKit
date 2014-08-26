@@ -72,7 +72,6 @@ namespace JSC {
 
     class ArityCheckFailReturnThunks;
     class BuiltinExecutables;
-    class CallEdgeLog;
     class CodeBlock;
     class CodeCache;
     class CommonIdentifiers;
@@ -234,9 +233,6 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
         OwnPtr<DFG::LongLivedState> dfgState;
 #endif // ENABLE(DFG_JIT)
-        
-        std::unique_ptr<CallEdgeLog> callEdgeLog;
-        CallEdgeLog& ensureCallEdgeLog();
 
         VMType vmType;
         ClientData* clientData;

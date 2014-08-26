@@ -314,11 +314,8 @@
     <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
     <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp" />
     <ClCompile Include="..\bytecode\BytecodeLivenessAnalysis.cpp" />
-    <ClCompile Include="..\bytecode\CallEdge.cpp" />
-    <ClCompile Include="..\bytecode\CallEdgeProfile.cpp" />
     <ClCompile Include="..\bytecode\CallLinkInfo.cpp" />
     <ClCompile Include="..\bytecode\CallLinkStatus.cpp" />
-    <ClCompile Include="..\bytecode\CallVariant.cpp" />
     <ClCompile Include="..\bytecode\CodeBlock.cpp" />
     <ClCompile Include="..\bytecode\CodeBlockHash.cpp" />
     <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp" />
@@ -908,13 +905,9 @@
     <ClInclude Include="..\bytecode\BytecodeBasicBlock.h" />
     <ClInclude Include="..\bytecode\BytecodeLivenessAnalysis.h" />
     <ClInclude Include="..\bytecode\BytecodeUseDef.h" />
-    <ClInclude Include="..\bytecode\CallEdge.h" />
-    <ClInclude Include="..\bytecode\CallEdgeProfile.h" />
-    <ClInclude Include="..\bytecode\CallEdgeProfileInlines.h" />
     <ClInclude Include="..\bytecode\CallLinkInfo.h" />
     <ClInclude Include="..\bytecode\CallLinkStatus.h" />
     <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h" />
-    <ClInclude Include="..\bytecode\CallVariant.h" />
     <ClInclude Include="..\bytecode\CodeBlock.h" />
     <ClInclude Include="..\bytecode\CodeBlockHash.h" />
     <ClInclude Include="..\bytecode\CodeBlockJettisoningWatchpoint.h" />

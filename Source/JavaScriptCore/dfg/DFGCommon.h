@@ -63,13 +63,6 @@ enum RefNodeMode {
     DontRefNode
 };
 
-enum SwitchKind {
-    SwitchImm,
-    SwitchChar,
-    SwitchString,
-    SwitchCell
-};
-
 inline bool verboseCompilationEnabled(CompilationMode mode = DFGMode)
 {
     return Options::verboseCompilation() || Options::dumpGraphAtEachPhase() || (isFTL(mode) && Options::verboseFTLCompilation());

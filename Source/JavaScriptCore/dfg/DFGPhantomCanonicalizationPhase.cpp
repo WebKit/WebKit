@@ -92,10 +92,8 @@ public:
                         node->children.removeEdge(i--);
                     }
                     
-                    if (node->children.isEmpty()) {
-                        m_graph.m_allocator.free(node);
+                    if (node->children.isEmpty())
                         continue;
-                    }
                     
                     node->convertToCheck();
                 }

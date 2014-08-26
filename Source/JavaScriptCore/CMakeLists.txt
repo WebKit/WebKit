@@ -65,11 +65,8 @@ set(JavaScriptCore_SOURCES
     bytecode/ArrayProfile.cpp
     bytecode/BytecodeBasicBlock.cpp
     bytecode/BytecodeLivenessAnalysis.cpp
-    bytecode/CallEdge.cpp
-    bytecode/CallEdgeProfile.cpp
     bytecode/CallLinkInfo.cpp
     bytecode/CallLinkStatus.cpp
-    bytecode/CallVariant.cpp
     bytecode/CodeBlock.cpp
     bytecode/CodeBlockHash.cpp
     bytecode/CodeBlockJettisoningWatchpoint.cpp

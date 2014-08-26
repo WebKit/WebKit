@@ -38,8 +38,8 @@ const char* exitKindToString(ExitKind kind)
         return "Unset";
     case BadType:
         return "BadType";
-    case BadCell:
-        return "BadCell";
+    case BadFunction:
+        return "BadFunction";
     case BadExecutable:
         return "BadExecutable";
     case BadCache:

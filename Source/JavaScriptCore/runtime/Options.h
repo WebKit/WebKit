@@ -167,13 +167,6 @@ typedef const char* optionString;
     v(bool, enableAccessInlining, true) \
     v(bool, enablePolyvariantDevirtualization, true) \
     v(bool, enablePolymorphicAccessInlining, true) \
-    v(bool, enablePolymorphicCallInlining, true) \
-    v(bool, callStatusShouldUseCallEdgeProfile, true) \
-    v(bool, callEdgeProfileReallyProcessesLog, true) \
-    v(bool, baselineDoesCallEdgeProfiling, false) \
-    v(bool, dfgDoesCallEdgeProfiling, true) \
-    v(bool, enableCallEdgeProfiling, true) \
-    v(unsigned, frequentCallThreshold, 2) \
     v(bool, optimizeNativeCalls, false) \
     \
     v(bool, enableConcurrentJIT, true) \

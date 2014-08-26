@@ -187,8 +187,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
                     AccessorCallJITStubRoutine* stub = static_cast<AccessorCallJITStubRoutine*>(
                         list->at(listIndex).stubRoutine());
                     callLinkStatus = std::make_unique<CallLinkStatus>(
-                        CallLinkStatus::computeFor(
-                            locker, profiledBlock, *stub->m_callLinkInfo, callExitSiteData));
+                        CallLinkStatus::computeFor(locker, *stub->m_callLinkInfo, callExitSiteData));
                     break;
                 }
                 case GetByIdAccess::CustomGetter:

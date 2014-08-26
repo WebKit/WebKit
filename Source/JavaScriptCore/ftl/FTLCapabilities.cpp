@@ -104,8 +104,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutClosureVar:
     case InvalidationPoint:
     case StringCharAt:
-    case CheckCell:
-    case CheckBadCell:
+    case CheckFunction:
     case StringCharCodeAt:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
@@ -127,7 +126,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ConstantStoragePointer:
     case Check:
     case CountExecution:
-    case GetExecutable:
+    case CheckExecutable:
     case GetScope:
     case AllocationProfileWatchpoint:
     case CheckArgumentsNotCreated:
@@ -167,13 +166,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetGenericPropertyEnumerator:
     case GetEnumeratorPname:
     case ToIndexString:
-    case BottomValue:
         // These are OK.
-        break;
-    case ProfiledCall:
-    case ProfiledConstruct:
-        // These are OK not because the FTL can support them, but because if the DFG sees one of
-        // these then the FTL will see a normal Call/Construct.
         break;
     case Identity:
         // No backend handles this because it will be optimized out. But we may check
@@ -333,7 +326,6 @@ inline CapabilityLevel canCompile(Node* node)
         switch (node->switchData()->kind) {
         case SwitchImm:
         case SwitchChar:
-        case SwitchCell:
             break;
         default:
             return CannotCompile;

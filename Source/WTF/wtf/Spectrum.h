@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,39 +32,28 @@
 
 namespace WTF {
 
-template<typename T, typename CounterType = unsigned>
+template<typename T>
 class Spectrum {
 public:
-    typedef typename HashMap<T, CounterType>::iterator iterator;
-    typedef typename HashMap<T, CounterType>::const_iterator const_iterator;
+    typedef typename HashMap<T, unsigned long>::iterator iterator;
+    typedef typename HashMap<T, unsigned long>::const_iterator const_iterator;
     
     Spectrum() { }
     
-    void add(const T& key, CounterType count = 1)
+    void add(const T& key, unsigned long count = 1)
     {
-        if (!count)
-            return;
-        typename HashMap<T, CounterType>::AddResult result = m_map.add(key, count);
+        typename HashMap<T, unsigned long>::AddResult result = m_map.add(key, count);
         if (!result.isNewEntry)
             result.iterator->value += count;
     }
     
-    template<typename U>
-    void addAll(const Spectrum<T, U>& otherSpectrum)
-    {
-        for (auto& entry : otherSpectrum)
-            add(entry.key, entry.count);
-    }
-    
-    CounterType get(const T& key) const
+    unsigned long get(const T& key) const
     {
         const_iterator iter = m_map.find(key);
         if (iter == m_map.end())
             return 0;
         return iter->value;
     }
-    
-    size_t size() const { return m_map.size(); }
     
     iterator begin() { return m_map.begin(); }
     iterator end() { return m_map.end(); }
@@ -74,7 +63,7 @@ public:
     struct KeyAndCount {
         KeyAndCount() { }
         
-        KeyAndCount(const T& key, CounterType count)
+        KeyAndCount(const T& key, unsigned long count)
             : key(key)
             , count(count)
         {
@@ -91,7 +80,7 @@ public:
         }
 
         T key;
-        CounterType count;
+        unsigned long count;
     };
     
     // Returns a list ordered from lowest-count to highest-count.
@@ -105,18 +94,8 @@ public:
         return list;
     }
     
-    void clear() { m_map.clear(); }
-    
-    template<typename Functor>
-    void removeIf(const Functor& functor)
-    {
-        m_map.removeIf([functor] (typename HashMap<T, CounterType>::KeyValuePairType& pair) {
-                return functor(KeyAndCount(pair.key, pair.value));
-            });
-    }
-    
 private:
-    HashMap<T, CounterType> m_map;
+    HashMap<T, unsigned long> m_map;
 };
 
 } // namespace WTF

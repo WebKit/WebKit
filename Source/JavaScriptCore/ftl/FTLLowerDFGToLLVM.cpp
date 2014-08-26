@@ -67,6 +67,7 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable()
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex)
 {
+    
     dataLog("Crashing in thought-to-be-unreachable FTL-generated code for ", pointerDump(codeBlock), " at basic block #", blockIndex);
     if (nodeIndex != UINT_MAX)
         dataLog(", node @", nodeIndex);
@@ -152,17 +153,11 @@ public:
         for (unsigned blockIndex = depthFirst.size(); blockIndex--; ) {
             BasicBlock* block = depthFirst[blockIndex];
             for (unsigned nodeIndex = block->size(); nodeIndex--; ) {
-                Node* node = block->at(nodeIndex);
-                switch (node->op()) {
-                case NativeCall:
-                case NativeConstruct: {
+                Node* m_node = block->at(nodeIndex);
+                if (m_node->hasKnownFunction()) {
                     int numArgs = m_node->numChildren();
                     if (numArgs > maxNumberOfArguments)
                         maxNumberOfArguments = numArgs;
-                    break;
-                }
-                default:
-                    break;
                 }
             }
         }
@@ -473,14 +468,11 @@ private:
         case CheckStructure:
             compileCheckStructure();
             break;
-        case CheckCell:
-            compileCheckCell();
+        case CheckFunction:
+            compileCheckFunction();
             break;
-        case CheckBadCell:
-            compileCheckBadCell();
-            break;
-        case GetExecutable:
-            compileGetExecutable();
+        case CheckExecutable:
+            compileCheckExecutable();
             break;
         case ArrayifyToStructure:
             compileArrayifyToStructure();
@@ -1751,25 +1743,26 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    void compileCheckCell()
+    void compileCheckFunction()
     {
         LValue cell = lowCell(m_node->child1());
         
         speculate(
-            BadCell, jsValueValue(cell), m_node->child1().node(),
-            m_out.notEqual(cell, weakPointer(m_node->cellOperand()->value().asCell())));
+            BadFunction, jsValueValue(cell), m_node->child1().node(),
+            m_out.notEqual(cell, weakPointer(m_node->function()->value().asCell())));
     }
     
-    void compileCheckBadCell()
-    {
-        terminate(BadCell);
-    }
-    
-    void compileGetExecutable()
+    void compileCheckExecutable()
     {
         LValue cell = lowCell(m_node->child1());
+        
         speculateFunction(m_node->child1(), cell);
-        setJSValue(m_out.loadPtr(cell, m_heaps.JSFunction_executable));
+        
+        speculate(
+            BadExecutable, jsValueValue(cell), m_node->child1().node(),
+            m_out.notEqual(
+                m_out.loadPtr(cell, m_heaps.JSFunction_executable),
+                weakPointer(m_node->executable())));
     }
     
     void compileArrayifyToStructure()
@@ -3680,7 +3673,9 @@ private:
         int numPassedArgs = m_node->numChildren() - 1;
         int numArgs = numPassedArgs + dummyThisArgument;
 
-        JSFunction* knownFunction = jsCast<JSFunction*>(m_node->cellOperand()->value().asCell());
+        ASSERT(m_node->hasKnownFunction());
+
+        JSFunction* knownFunction = m_node->knownFunction();
         NativeFunction function = knownFunction->nativeFunction();
 
         Dl_info info;
@@ -3923,37 +3918,10 @@ private:
             return;
         }
         
-        case SwitchString: {
+        case SwitchString:
             DFG_CRASH(m_graph, m_node, "Unimplemented");
-            return;
+            break;
         }
-            
-        case SwitchCell: {
-            LValue cell;
-            switch (m_node->child1().useKind()) {
-            case CellUse: {
-                cell = lowCell(m_node->child1());
-                break;
-            }
-                
-            case UntypedUse: {
-                LValue value = lowJSValue(m_node->child1());
-                LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("Switch/SwitchCell cell case"));
-                m_out.branch(
-                    isCell(value), unsure(cellCase), unsure(lowBlock(data->fallThrough.block)));
-                m_out.appendTo(cellCase);
-                cell = value;
-                break;
-            }
-                
-            default:
-                DFG_CRASH(m_graph, m_node, "Bad use kind");
-                return;
-            }
-            
-            buildSwitch(m_node->switchData(), m_out.intPtr, cell);
-            return;
-        } }
         
         DFG_CRASH(m_graph, m_node, "Bad switch kind");
     }
@@ -5218,7 +5186,7 @@ private:
         Vector<SwitchCase> cases;
         for (unsigned i = 0; i < data->cases.size(); ++i) {
             cases.append(SwitchCase(
-                constInt(type, data->cases[i].value.switchLookupValue(data->kind)),
+                constInt(type, data->cases[i].value.switchLookupValue()),
                 lowBlock(data->cases[i].target.block), Weight(data->cases[i].target.count)));
         }
         
