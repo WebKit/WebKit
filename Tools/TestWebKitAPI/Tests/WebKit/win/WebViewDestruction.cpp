@@ -80,12 +80,12 @@ void WebViewDestructionWithHostWindow::SetUp()
     WebViewDestruction::SetUp();
 
     EXPECT_TRUE(m_window.initialize());
-    EXPECT_HRESULT_SUCCEEDED(m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_window.window())));
+    EXPECT_HRESULT_SUCCEEDED(m_webView->setHostWindow(m_window.window()));
     EXPECT_HRESULT_SUCCEEDED(m_webView->initWithFrame(m_window.clientRect(), 0, 0));
 
     COMPtr<IWebViewPrivate> viewPrivate(Query, m_webView);
     ASSERT_NOT_NULL(viewPrivate);
-    EXPECT_HRESULT_SUCCEEDED(viewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_viewWindow)));
+    EXPECT_HRESULT_SUCCEEDED(viewPrivate->viewWindow(&m_viewWindow));
     EXPECT_TRUE(::IsWindow(m_viewWindow));
 }
 

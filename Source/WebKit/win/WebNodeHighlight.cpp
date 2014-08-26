@@ -57,7 +57,7 @@ WebNodeHighlight::WebNodeHighlight(WebView* webView)
     , m_showsWhileWebViewIsVisible(false)
 {
 #if ENABLE(INSPECTOR)
-    m_inspectedWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_inspectedWebViewWindow));
+    m_inspectedWebView->viewWindow(&m_inspectedWebViewWindow);
 #endif // ENABLE(INSPECTOR)
 }
 

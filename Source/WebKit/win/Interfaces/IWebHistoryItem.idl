@@ -121,5 +121,5 @@ interface IWebHistoryItem : IUnknown
         @result The icon associated with this item's URL.
         - (NSImage *)icon;
     */
-    HRESULT icon([out, retval] OLE_HANDLE* hBitmap);
+    HRESULT icon([out, retval] HBITMAP* hBitmap);
 }

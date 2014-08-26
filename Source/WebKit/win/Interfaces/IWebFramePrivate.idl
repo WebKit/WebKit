@@ -80,7 +80,7 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT unused3();
 
-    HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE deviceContext);
+    HRESULT paintDocumentRectToContext([in] RECT rect, [in] HDC deviceContext);
 
     HRESULT elementDoesAutoComplete([in] IDOMElement* element, [out, retval] BOOL* result);
 
@@ -106,7 +106,7 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT layerTreeAsText([out, retval] BSTR* result);
 
-    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE deviceContext);
+    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] HDC deviceContext);
 
     HRESULT renderTreeAsExternalRepresentation([in] BOOL forPrinting, [out, retval] BSTR* result);
 

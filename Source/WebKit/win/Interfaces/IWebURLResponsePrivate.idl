@@ -40,5 +40,5 @@ import "ocidl.idl";
 
 interface IWebURLResponsePrivate : IUnknown
 {
-    HRESULT sslPeerCertificate([out, retval] OLE_HANDLE* result);
+    HRESULT sslPeerCertificate([out, retval] ULONG_PTR* result);
 }

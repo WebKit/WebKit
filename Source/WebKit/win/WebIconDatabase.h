@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,15 +65,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE sharedIconDatabase( 
         /* [retval][out] */ IWebIconDatabase **result);
     
-    virtual HRESULT STDMETHODCALLTYPE iconForURL( 
-        /* [in] */ BSTR url,
-        /* [optional][in] */ LPSIZE size,
-        /* [optional][in] */ BOOL cache,
-        /* [retval][out] */ OLE_HANDLE *image);
-    
-    virtual HRESULT STDMETHODCALLTYPE defaultIconWithSize( 
-        /* [in] */ LPSIZE size,
-        /* [retval][out] */ OLE_HANDLE *result);
+    virtual HRESULT STDMETHODCALLTYPE iconForURL(BSTR url, LPSIZE, BOOL cache, HBITMAP* image);
+
+    virtual HRESULT STDMETHODCALLTYPE defaultIconWithSize(/* [in] */ LPSIZE size, /* [retval][out] */ HBITMAP* result);
     
     virtual HRESULT STDMETHODCALLTYPE retainIconForURL( 
         /* [in] */ BSTR url);

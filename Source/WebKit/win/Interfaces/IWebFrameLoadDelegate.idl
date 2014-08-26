@@ -121,7 +121,7 @@ interface IWebFrameLoadDelegate : IUnknown
         @param frame The frame for which a page icon has been received
         - (void)webView:(WebView *)sender didReceiveIcon:(NSImage *)image forFrame:(WebFrame *)frame;
     */
-    HRESULT didReceiveIcon([in] IWebView* webView, [in] OLE_HANDLE hBitmap, [in] IWebFrame* frame);
+    HRESULT didReceiveIcon([in] IWebView* webView, [in] HBITMAP hBitmap, [in] IWebFrame* frame);
 
     /*!
         @method webView:didFinishLoadForFrame:

@@ -54,7 +54,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE didReceiveTitle(IWebView*, BSTR title, IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didChangeIcons(IWebView*, IWebFrame*) { return S_OK; }
-    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon(IWebView*, OLE_HANDLE hBitmap, IWebFrame*) { return S_OK; }
+    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon(IWebView*, HBITMAP, IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame(IWebView*, IWebFrame*);   
     virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError(IWebView*, IWebError*, IWebFrame*) { return S_OK; }
     virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame(IWebView*, IWebFrame*) { return S_OK; }

@@ -400,8 +400,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::isAttachment(
 }
 
 
-HRESULT STDMETHODCALLTYPE WebURLResponse::sslPeerCertificate( 
-    /* [retval][out] */ OLE_HANDLE* result)
+HRESULT WebURLResponse::sslPeerCertificate(/* [retval][out] */ ULONG_PTR* result)
 {
     if (!result)
         return E_POINTER;
@@ -414,7 +413,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::sslPeerCertificate(
     void* data = wkGetSSLPeerCertificateDataBytePtr(dict);
     if (!data)
         return E_FAIL;
-    *result = (OLE_HANDLE)(ULONG64)data;
+    *result = reinterpret_cast<ULONG_PTR>(data);
 #endif
 
     return *result ? S_OK : E_FAIL;

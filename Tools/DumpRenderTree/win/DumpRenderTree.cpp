@@ -878,7 +878,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
         return;
 
     HWND viewWindow;
-    if (SUCCEEDED(webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))) && viewWindow)
+    if (SUCCEEDED(webViewPrivate->viewWindow(&viewWindow)) && viewWindow)
         SetFocus(viewWindow);
 
     webViewPrivate->clearMainFrameName();
@@ -1065,7 +1065,7 @@ static void runTest(const string& inputLine)
     WorkQueue::shared()->setFrozen(false);
 
     HWND hostWindow;
-    webView->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
+    webView->hostWindow(&hostWindow);
 
     COMPtr<IWebMutableURLRequest> request;
     HRESULT hr = WebKitCreateInstance(CLSID_WebMutableURLRequest, 0, IID_IWebMutableURLRequest, (void**)&request);
@@ -1151,7 +1151,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
         return 0;
     }
 
-    if (FAILED(webView->setHostWindow((OLE_HANDLE)(ULONG64)hostWindow)))
+    if (FAILED(webView->setHostWindow(hostWindow)))
         return 0;
 
     RECT clientRect;
@@ -1174,7 +1174,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
         return 0;
 
     HWND viewWindow;
-    if (FAILED(viewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+    if (FAILED(viewPrivate->viewWindow(&viewWindow)))
         return 0;
     if (webViewWindow)
         *webViewWindow = viewWindow;

@@ -206,7 +206,7 @@ HRESULT UIDelegate::hasCustomMenuImplementation(BOOL* hasCustomMenus)
     return S_OK;
 }
 
-HRESULT UIDelegate::trackCustomPopupMenu(IWebView* /*sender*/, OLE_HANDLE /*menu*/, LPPOINT /*point*/)
+HRESULT UIDelegate::trackCustomPopupMenu(IWebView* /*sender*/, HMENU /*menu*/, LPPOINT /*point*/)
 {
     // Do nothing
     return S_OK;
@@ -291,12 +291,12 @@ HRESULT UIDelegate::webViewFooterHeight(IWebView* /*webView*/, float* result)
     return E_NOTIMPL;
 }
 
-HRESULT UIDelegate::drawHeaderInRect(IWebView* /*webView*/, RECT* /*rect*/, OLE_HANDLE /*drawingContext*/)
+HRESULT UIDelegate::drawHeaderInRect(IWebView* /*webView*/, RECT* /*rect*/, ULONG_PTR /*drawingContext*/)
 {
     return E_NOTIMPL;
 }
 
-HRESULT UIDelegate::drawFooterInRect(IWebView* /*webView*/, RECT* /*rect*/, OLE_HANDLE /*drawingContext*/, UINT /*pageIndex*/, UINT /*pageCount*/)
+HRESULT UIDelegate::drawFooterInRect(IWebView* /*webView*/, RECT* /*rect*/, ULONG_PTR /*drawingContext*/, UINT /*pageIndex*/, UINT /*pageCount*/)
 {
     return E_NOTIMPL;
 }
@@ -452,7 +452,7 @@ HRESULT UIDelegate::createWebViewWithRequest(IWebView* /*sender*/, IWebURLReques
 HRESULT UIDelegate::webViewClose(IWebView* sender)
 {
     HWND hostWindow;
-    sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
+    sender->hostWindow(&hostWindow);
     DestroyWindow(hostWindow);
     return S_OK;
 }
@@ -460,7 +460,7 @@ HRESULT UIDelegate::webViewClose(IWebView* sender)
 HRESULT UIDelegate::webViewFocus(IWebView* sender)
 {
     HWND hostWindow;
-    sender->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow));
+    sender->hostWindow(&hostWindow);
     SetForegroundWindow(hostWindow);
     return S_OK; 
 }
@@ -540,7 +540,7 @@ HRESULT UIDelegate::webViewClosing(IWebView* /*sender*/)
     return E_NOTIMPL;
 }
 
-HRESULT UIDelegate::webViewSetCursor(IWebView* /*sender*/, OLE_HANDLE /*cursor*/)
+HRESULT UIDelegate::webViewSetCursor(IWebView* /*sender*/, HCURSOR /*cursor*/)
 {
     return E_NOTIMPL;
 }
@@ -568,7 +568,7 @@ HRESULT UIDelegate::createWebViewWithRequest(IWebView* /*sender*/, IWebURLReques
     return E_NOTIMPL;
 }
 
-HRESULT UIDelegate::drawBackground(IWebView* /*sender*/, OLE_HANDLE hdc, const RECT* dirtyRect)
+HRESULT UIDelegate::drawBackground(IWebView* /*sender*/, HDC /*hdc*/, const RECT* /*dirtyRect*/)
 {
     return E_NOTIMPL;
 }

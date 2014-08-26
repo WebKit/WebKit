@@ -314,9 +314,7 @@ HRESULT WebFrame::reloadFromOrigin()
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
-    /* [in] */ RECT rect,
-    /* [in] */ OLE_HANDLE deviceContext)
+HRESULT WebFrame::paintDocumentRectToContext(RECT rect, HDC deviceContext)
 {
     Frame* coreFrame = core(this);
     if (!coreFrame)
@@ -329,8 +327,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     // We can't paint with a layout still pending.
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    HDC dc = reinterpret_cast<HDC>(static_cast<ULONG64>(deviceContext));
-    GraphicsContext gc(dc);
+    GraphicsContext gc(deviceContext);
     gc.setShouldIncludeChildWindows(true);
     gc.save();
     LONG width = rect.right - rect.left;
@@ -346,10 +343,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebFrame::paintScrollViewRectToContextAtPoint(
-    /* [in] */ RECT rect,
-    /* [in] */ POINT pt,
-    /* [in] */ OLE_HANDLE deviceContext)
+HRESULT WebFrame::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, HDC deviceContext)
 {
     Frame* coreFrame = core(this);
     if (!coreFrame)
@@ -362,8 +356,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintScrollViewRectToContextAtPoint(
     // We can't paint with a layout still pending.
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    HDC dc = reinterpret_cast<HDC>(static_cast<ULONG64>(deviceContext));
-    GraphicsContext gc(dc);
+    GraphicsContext gc(deviceContext);
     gc.setShouldIncludeChildWindows(true);
     gc.save();
     IntRect dirtyRect(rect);
@@ -1053,7 +1046,7 @@ PassRefPtr<Frame> WebFrame::createSubframeWithOwnerElement(IWebView* webView, Pa
     webView->QueryInterface(&d->webView);
     d->webView->Release(); // don't hold the extra ref
 
-    OLE_HANDLE viewWindow;
+    HWND viewWindow;
     d->webView->viewWindow(&viewWindow);
 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
@@ -1067,7 +1060,7 @@ void WebFrame::initWithWebView(IWebView* webView, Page* page)
     webView->QueryInterface(&d->webView);
     d->webView->Release(); // don't hold the extra ref
 
-    OLE_HANDLE viewWindow;
+    HWND viewWindow;
     d->webView->viewWindow(&viewWindow);
 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
@@ -1584,7 +1577,7 @@ void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
     int x = pageRect.x();
     int y = 0;
     RECT headerRect = {x, y, x+pageRect.width(), y+static_cast<int>(headerHeight)};
-    ui->drawHeaderInRect(d->webView, &headerRect, static_cast<OLE_HANDLE>(reinterpret_cast<LONG64>(pctx)));
+    ui->drawHeaderInRect(d->webView, &headerRect, reinterpret_cast<ULONG_PTR>(pctx));
 }
 
 void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight)
@@ -1592,7 +1585,7 @@ void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
     int x = pageRect.x();
     int y = max((int)headerHeight+pageRect.height(), m_pageHeight-static_cast<int>(footerHeight));
     RECT footerRect = {x, y, x+pageRect.width(), y+static_cast<int>(footerHeight)};
-    ui->drawFooterInRect(d->webView, &footerRect, static_cast<OLE_HANDLE>(reinterpret_cast<LONG64>(pctx)), page+1, pageCount);
+    ui->drawFooterInRect(d->webView, &footerRect, reinterpret_cast<ULONG_PTR>(pctx), page + 1, pageCount);
 }
 
 void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
@@ -1663,7 +1656,7 @@ void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
     int y = 0;
     RECT headerRect = {x, y, x + pageRect.width(), y + static_cast<int>(headerHeight)};
 
-    ui->drawHeaderInRect(d->webView, &headerRect, static_cast<OLE_HANDLE>(reinterpret_cast<LONG64>(hdc)));
+    ui->drawHeaderInRect(d->webView, &headerRect, reinterpret_cast<ULONG_PTR>(hdc));
 }
 
 void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight)
@@ -1674,7 +1667,7 @@ void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, con
     int y = max(static_cast<int>(headerHeight) + pageRect.height(), m_pageHeight  -static_cast<int>(footerHeight));
     RECT footerRect = {x, y, x + pageRect.width(), y + static_cast<int>(footerHeight)};
 
-    ui->drawFooterInRect(d->webView, &footerRect, static_cast<OLE_HANDLE>(reinterpret_cast<LONG64>(hdc)), page+1, pageCount);
+    ui->drawFooterInRect(d->webView, &footerRect, reinterpret_cast<ULONG_PTR>(hdc), page+1, pageCount);
 }
 
 static XFORM buildXFORMFromCairo(HDC targetDC, cairo_t* previewContext)

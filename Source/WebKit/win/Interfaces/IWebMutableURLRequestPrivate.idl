@@ -47,7 +47,7 @@ cpp_quote("#endif")
 ]
 interface IWebMutableURLRequestPrivate : IUnknown
 {
-    HRESULT setClientCertificate([in] OLE_HANDLE cert);
+    HRESULT setClientCertificate([in] ULONG_PTR cert);
 
     [local] CFURLRequestRef cfRequest();
 }

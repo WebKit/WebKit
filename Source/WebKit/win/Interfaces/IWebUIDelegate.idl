@@ -253,7 +253,7 @@ interface IWebUIDelegate : IUnknown
         real first responder if some control not in the window has focus.
         - (NSResponder *)webViewFirstResponder:(WebView *)sender;
     */
-    HRESULT webViewFirstResponder([in] IWebView* sender, [out, retval] OLE_HANDLE* responderHWnd);
+    HRESULT webViewFirstResponder([in] IWebView* sender, [out, retval] HWND* responderHWnd);
 
     /*!
         @method webView:makeFirstResponder:
@@ -267,7 +267,7 @@ interface IWebUIDelegate : IUnknown
         elsewhere, or possibly ignore this call.
         - (void)webView:(WebView *)sender makeFirstResponder:(NSResponder *)responder;
     */
-    HRESULT makeFirstResponder([in] IWebView* sender, [in] OLE_HANDLE responderHWnd);
+    HRESULT makeFirstResponder([in] IWebView* sender, [in] HWND responderHWnd);
 
     /*!
         @method webView:setStatusText:
@@ -481,7 +481,7 @@ interface IWebUIDelegate : IUnknown
         @result An array of NSMenuItems to include in the contextual menu.
         - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
     */
-    HRESULT contextMenuItemsForElement([in] IWebView* sender, [in] IPropertyBag* element, [in] OLE_HANDLE defaultItemsHMenu, [out, retval] OLE_HANDLE* resultHMenu);
+    HRESULT contextMenuItemsForElement([in] IWebView* sender, [in] IPropertyBag* element, [in] HMENU defaultItemsHMenu, [out, retval] HMENU* resultHMenu);
 
     /*!
         @method webView:validateUserInterfaceItem:defaultValidation:
@@ -581,7 +581,7 @@ interface IWebUIDelegate : IUnknown
         @param menu The menu that we want to pop up.
         @param point The point associated with the context menu event in the coordinates of the WebView
     */
-    HRESULT trackCustomPopupMenu([in] IWebView* sender, [in] OLE_HANDLE hMenu, [in] LPPOINT point);
+    HRESULT trackCustomPopupMenu([in] IWebView* sender, [in] HMENU hMenu, [in] LPPOINT point);
 
     /*
         @method webView:measureCustomMenuItem
@@ -606,7 +606,7 @@ interface IWebUIDelegate : IUnknown
         @param menu The cutsom menu to clean up.
         @discussion This method is called for submenus as well.
     */
-    HRESULT addCustomMenuDrawingData([in] IWebView* sender, [in] OLE_HANDLE hMenu);
+    HRESULT addCustomMenuDrawingData([in] IWebView* sender, [in] HMENU hMenu);
 
     /*
         @method webView:cleanUpCustomMenuDrawingData
@@ -614,7 +614,7 @@ interface IWebUIDelegate : IUnknown
         @param sender The WebView sending the delegate method.
         @param menu The cutsom menu to clean up.
     */
-    HRESULT cleanUpCustomMenuDrawingData([in] IWebView* sender, [in] OLE_HANDLE hMenu);
+    HRESULT cleanUpCustomMenuDrawingData([in] IWebView* sender, [in] HMENU hMenu);
 
     /*!
         @method webView:canTakeFocus:
@@ -732,7 +732,7 @@ interface IWebUIDelegate : IUnknown
 
     - (void)webView:(WebView *)sender drawHeaderInRect:(NSRect)rect;
 */
-    HRESULT drawHeaderInRect([in] IWebView* webView, [in] RECT* rect, [in] OLE_HANDLE drawingContext);
+    HRESULT drawHeaderInRect([in] IWebView* webView, [in] RECT* rect, [in] ULONG_PTR drawingContext);
 
 /*!
     @method webView:drawFooterInRect:
@@ -742,7 +742,7 @@ interface IWebUIDelegate : IUnknown
 
     - (void)webView:(WebView *)sender drawFooterInRect:(NSRect)rect;
 */
-    HRESULT drawFooterInRect([in] IWebView* webView, [in] RECT* rect, [in] OLE_HANDLE drawingContext, [in] UINT pageIndex, [in] UINT pageCount);
+    HRESULT drawFooterInRect([in] IWebView* webView, [in] RECT* rect, [in] ULONG_PTR drawingContext, [in] UINT pageIndex, [in] UINT pageCount);
 
     HRESULT webViewPrintingMarginRect([in] IWebView* webView, [out, retval] RECT* rect);
 

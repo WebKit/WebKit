@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,11 +161,7 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::sharedIconDatabase(
     return S_OK;
 }
 
-HRESULT WebIconDatabase::iconForURL(
-        /* [in] */ BSTR url,
-        /* [optional][in] */ LPSIZE size,
-        /* [optional][in] */ BOOL /*cache*/,
-        /* [retval][out] */ OLE_HANDLE* bitmap)
+HRESULT WebIconDatabase::iconForURL(BSTR url, LPSIZE size, BOOL /*cache*/, HBITMAP* bitmap)
 {
     if (!size)
         return E_POINTER;
@@ -178,8 +174,8 @@ HRESULT WebIconDatabase::iconForURL(
 
     // Make sure we check for the case of an "empty image"
     if (icon && icon->width()) {
-        *bitmap = (OLE_HANDLE)(ULONG64)getOrCreateSharedBitmap(intSize);
-        if (!icon->getHBITMAPOfSize((HBITMAP)(ULONG64)*bitmap, &intSize)) {
+        *bitmap = getOrCreateSharedBitmap(intSize);
+        if (!icon->getHBITMAPOfSize(*bitmap, &intSize)) {
             LOG_ERROR("Failed to draw Image to HBITMAP");
             *bitmap = 0;
             return E_FAIL;
@@ -190,16 +186,14 @@ HRESULT WebIconDatabase::iconForURL(
     return defaultIconWithSize(size, bitmap);
 }
 
-HRESULT STDMETHODCALLTYPE WebIconDatabase::defaultIconWithSize(
-        /* [in] */ LPSIZE size,
-        /* [retval][out] */ OLE_HANDLE* result)
+HRESULT WebIconDatabase::defaultIconWithSize(LPSIZE size, HBITMAP* result)
 {
     if (!size)
         return E_POINTER;
 
     IntSize intSize(*size);
 
-    *result = (OLE_HANDLE)(ULONG64)getOrCreateDefaultIconBitmap(intSize);
+    *result = getOrCreateDefaultIconBitmap(intSize);
     return S_OK;
 }
 

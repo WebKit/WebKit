@@ -1184,7 +1184,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 
     COMPtr<IWebUIDelegatePrivate2> uiPrivate(Query, m_uiDelegate);
     if (uiPrivate)
-        uiPrivate->drawBackground(this, reinterpret_cast<OLE_HANDLE>(bitmapDC), &rect);
+        uiPrivate->drawBackground(this, bitmapDC, &rect);
 
     if (frameView && frameView->frame().contentRenderer()) {
         gc.clip(dirtyRect);
@@ -1392,7 +1392,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
         m_uiDelegate->hasCustomMenuImplementation(&hasCustomMenus);
 
     if (hasCustomMenus)
-        m_uiDelegate->trackCustomPopupMenu((IWebView*)this, (OLE_HANDLE)(ULONG64)coreMenu->platformContextMenu(), &point);
+        m_uiDelegate->trackCustomPopupMenu((IWebView*)this, coreMenu->platformContextMenu(), &point);
     else {
         // Surprisingly, TPM_RIGHTBUTTON means that items are selectable with either the right OR left mouse button
         UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL
@@ -1445,7 +1445,7 @@ bool WebView::onInitMenuPopup(WPARAM wParam, LPARAM /*lParam*/)
     if (!hasCustomMenus)
         return false;
 
-    m_uiDelegate->addCustomMenuDrawingData((IWebView*)this, (OLE_HANDLE)(ULONG64)menu);
+    m_uiDelegate->addCustomMenuDrawingData((IWebView*)this, menu);
     return true;
 }
 
@@ -1463,7 +1463,7 @@ bool WebView::onUninitMenuPopup(WPARAM wParam, LPARAM /*lParam*/)
     if (!hasCustomMenus)
         return false;
 
-    m_uiDelegate->cleanUpCustomMenuDrawingData((IWebView*)this, (OLE_HANDLE)(ULONG64)menu);
+    m_uiDelegate->cleanUpCustomMenuDrawingData((IWebView*)this, menu);
     return true;
 }
 
@@ -2312,7 +2312,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             HWND newFocusWnd = reinterpret_cast<HWND>(wParam);
             if (SUCCEEDED(webView->uiDelegate(&uiDelegate)) && uiDelegate
                 && SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
-                uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
+                uiDelegatePrivate->webViewLostFocus(webView, newFocusWnd);
 
             FocusController& focusController = webView->page()->focusController();
             Frame& frame = focusController.focusedOrMainFrame();
@@ -2920,7 +2920,7 @@ void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
             icon->getHBITMAPOfSize(hBitmap, &sz);
         }
 
-        HRESULT hr = m_frameLoadDelegate->didReceiveIcon(this, (OLE_HANDLE)hBitmap, frame);
+        HRESULT hr = m_frameLoadDelegate->didReceiveIcon(this, hBitmap, frame);
         if (hr == E_NOTIMPL)
             DeleteObject(hBitmap);
     }
@@ -3445,10 +3445,8 @@ void WebView::cancelDeleteBackingStoreSoon()
     KillTimer(m_viewWindow, DeleteBackingStoreTimer);
 }
 
-HRESULT STDMETHODCALLTYPE WebView::setHostWindow( 
-    /* [in] */ OLE_HANDLE oleWindow)
+HRESULT WebView::setHostWindow(/* [in] */ HWND window)
 {
-    HWND window = (HWND)(ULONG64)oleWindow;
     if (m_viewWindow) {
         if (window)
             SetParent(m_viewWindow, window);
@@ -3468,10 +3466,9 @@ HRESULT STDMETHODCALLTYPE WebView::setHostWindow(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::hostWindow( 
-    /* [retval][out] */ OLE_HANDLE* window)
+HRESULT WebView::hostWindow(/* [retval][out] */ HWND* window)
 {
-    *window = (OLE_HANDLE)(ULONG64)m_hostWindow;
+    *window = m_hostWindow;
     return S_OK;
 }
 
@@ -3594,14 +3591,14 @@ HRESULT STDMETHODCALLTYPE WebView::rectsForTextMatches(
     return createMatchEnumerator(&allRects, pmatches);
 }
 
-HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, OLE_HANDLE* hBitmap)
+HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, HBITMAP* hBitmap)
 {
     *hBitmap = 0;
 
     WebCore::Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     auto bitmap = imageFromSelection(&frame, forceWhiteText ? TRUE : FALSE);
-    *hBitmap = static_cast<OLE_HANDLE>(reinterpret_cast<ULONG64>(bitmap.leak()));
+    *hBitmap = bitmap.leak();
 
     return S_OK;
 }
@@ -3856,8 +3853,7 @@ HRESULT STDMETHODCALLTYPE WebView::mainFrameTitle(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebView::mainFrameIcon( 
-        /* [retval][out] */ OLE_HANDLE* /*hBitmap*/)
+HRESULT WebView::mainFrameIcon(/* [retval][out] */ HBITMAP* /*hBitmap*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -5128,10 +5124,9 @@ HRESULT STDMETHODCALLTYPE WebView::inViewSourceMode(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::viewWindow( 
-        /* [retval][out] */ OLE_HANDLE *window)
+HRESULT WebView::viewWindow(/* [retval][out] */ HWND* window)
 {
-    *window = (OLE_HANDLE)(ULONG64)m_viewWindow;
+    *window = m_viewWindow;
     return S_OK;
 }
 
@@ -5907,9 +5902,7 @@ HRESULT STDMETHODCALLTYPE WebView::windowAncestryDidChange()
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
-    /* [in] */ RECT rect,
-    /* [in] */ OLE_HANDLE deviceContext)
+HRESULT WebView::paintDocumentRectToContext(RECT rect, HDC deviceContext)
 {
     if (!deviceContext)
         return E_POINTER;
@@ -5920,10 +5913,7 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
     return m_mainFrame->paintDocumentRectToContext(rect, deviceContext);
 }
 
-HRESULT STDMETHODCALLTYPE WebView::paintScrollViewRectToContextAtPoint(
-    /* [in] */ RECT rect,
-    /* [in] */ POINT pt,
-    /* [in] */ OLE_HANDLE deviceContext)
+HRESULT WebView::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, HDC deviceContext)
 {
     if (!deviceContext)
         return E_POINTER;
@@ -5992,14 +5982,13 @@ HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerChunkSize(
     return E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::backingStore(
-    /* [out, retval] */ OLE_HANDLE* hBitmap)
+HRESULT WebView::backingStore(/* [out, retval] */ HBITMAP* hBitmap)
 {
     if (!hBitmap)
         return E_POINTER;
     if (!m_backingStoreBitmap)
         return E_FAIL;
-    *hBitmap = reinterpret_cast<OLE_HANDLE>(m_backingStoreBitmap->get());
+    *hBitmap = m_backingStoreBitmap->get();
     return S_OK;
 }
 
@@ -6927,7 +6916,7 @@ HWND WebView::fullScreenClientParentWindow() const
 
 void WebView::fullScreenClientSetParentWindow(HWND hostWindow)
 {
-    setHostWindow(reinterpret_cast<OLE_HANDLE>(hostWindow));
+    setHostWindow(hostWindow);
 }
 
 void WebView::fullScreenClientWillEnterFullScreen()

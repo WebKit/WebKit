@@ -86,7 +86,7 @@ HRESULT WinLauncher::prepareViews(HWND mainWnd, const RECT& clientRect, const BS
     if (!m_webView)
         return E_FAIL;
 
-    HRESULT hr = m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(mainWnd));
+    HRESULT hr = m_webView->setHostWindow(mainWnd);
     if (FAILED(hr))
         return hr;
 
@@ -111,7 +111,7 @@ HRESULT WinLauncher::prepareViews(HWND mainWnd, const RECT& clientRect, const BS
     if (FAILED(hr))
         return hr;
 
-    hr = m_webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewHwnd));
+    hr = m_webViewPrivate->viewWindow(&viewHwnd);
 
     return hr;
 }
