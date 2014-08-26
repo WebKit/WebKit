@@ -38,7 +38,6 @@ PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerCl
     : m_voiceListIsInitialized(false)
     , m_speechSynthesizerClient(client)
     , m_platformSpeechWrapper(std::make_unique<PlatformSpeechSynthesisProviderEfl>(this))
-
 {
 }
 
@@ -48,26 +47,31 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
+    ASSERT(m_platformSpeechWrapper);
     m_platformSpeechWrapper->initializeVoiceList(m_voiceList);
 }
 
 void PlatformSpeechSynthesizer::pause()
 {
+    ASSERT(m_platformSpeechWrapper);
     m_platformSpeechWrapper->pause();
 }
 
 void PlatformSpeechSynthesizer::resume()
 {
+    ASSERT(m_platformSpeechWrapper);
     m_platformSpeechWrapper->resume();
 }
 
 void PlatformSpeechSynthesizer::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
+    ASSERT(m_platformSpeechWrapper);
     m_platformSpeechWrapper->speak(utterance);
 }
 
 void PlatformSpeechSynthesizer::cancel()
 {
+    ASSERT(m_platformSpeechWrapper);
     m_platformSpeechWrapper->cancel();
 }
 

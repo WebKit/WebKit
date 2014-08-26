@@ -481,6 +481,12 @@ if (ENABLE_ACCESSIBILITY)
 endif ()
 
 if (ENABLE_SPEECH_SYNTHESIS)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${ESPEAK_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${ESPEAK_LIBRARIES}
+    )
     list(APPEND WebCore_SOURCES
         platform/efl/PlatformSpeechSynthesizerEfl.cpp
         platform/efl/PlatformSpeechSynthesisProviderEfl.cpp

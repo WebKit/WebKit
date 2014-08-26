@@ -312,6 +312,7 @@ else ()
 endif ()
 
 if (ENABLE_SPEECH_SYNTHESIS)
+    find_package(Espeak REQUIRED)
     add_definitions(-DENABLE_SPEECH_SYNTHESIS=1)
 endif ()
 
