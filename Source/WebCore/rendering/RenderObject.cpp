@@ -1410,7 +1410,7 @@ void RenderObject::computeFloatRectForRepaint(const RenderLayerModelObject*, Flo
 
 #ifndef NDEBUG
 
-void RenderObject::showTreeForThis() const
+void RenderObject::showNodeTreeForThis() const
 {
     if (node())
         node()->showTreeForThis();
@@ -2510,10 +2510,10 @@ RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
 
 #ifndef NDEBUG
 
-void showTree(const WebCore::RenderObject* object)
+void showNodeTree(const WebCore::RenderObject* object)
 {
     if (object)
-        object->showTreeForThis();
+        object->showNodeTreeForThis();
 }
 
 void showLineTree(const WebCore::RenderObject* object)

@@ -72,7 +72,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
 
 #ifndef NDEBUG
-    void showTreeForThis() const;
+    void showNodeTreeForThis() const;
     void showLineTreeForThis() const;
     
     virtual void showBox(int = 0) const;
@@ -441,7 +441,7 @@ inline void InlineBox::assertNotDeleted() const
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showTree(const WebCore::InlineBox*);
+void showNodeTree(const WebCore::InlineBox*);
 void showLineTree(const WebCore::InlineBox*);
 #endif
 

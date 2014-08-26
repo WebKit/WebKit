@@ -1,3 +1,27 @@
+2014-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        Rename RenderObject::showTree() and showTreeForThis() to showNodeTree*().
+        https://bugs.webkit.org/show_bug.cgi?id=136238
+
+        Reviewed by Simon Fraser.
+
+        showNodeTree()/showNodeTreeForThis() reflects the functionality better.
+
+        No change in functionality.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showNodeTreeForThis):
+        (showNodeTree):
+        (WebCore::InlineBox::showTreeForThis): Deleted.
+        (showTree): Deleted.
+        * rendering/InlineBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showNodeTreeForThis):
+        (showNodeTree):
+        (WebCore::RenderObject::showTreeForThis): Deleted.
+        (showTree): Deleted.
+        * rendering/RenderObject.h:
+
 2014-08-25  Antti Koivisto  <antti@apple.com>
 
         Don't pass priority as parameter to ResourceLoadScheduler

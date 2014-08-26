@@ -281,7 +281,7 @@ private:
 
 public:
 #ifndef NDEBUG
-    void showTreeForThis() const;
+    void showNodeTreeForThis() const;
     void showRenderTreeForThis() const;
     void showLineTreeForThis() const;
 
@@ -1139,7 +1139,7 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.
-void showTree(const WebCore::RenderObject*);
+void showNodeTree(const WebCore::RenderObject*);
 void showLineTree(const WebCore::RenderObject*);
 void showRenderTree(const WebCore::RenderObject* object1);
 // We don't make object2 an optional parameter so that showRenderTree

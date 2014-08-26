@@ -91,9 +91,9 @@ const char* InlineBox::boxName() const
     return "InlineBox";
 }
 
-void InlineBox::showTreeForThis() const
+void InlineBox::showNodeTreeForThis() const
 {
-    m_renderer.showTreeForThis();
+    m_renderer.showNodeTreeForThis();
 }
 
 void InlineBox::showLineTreeForThis() const
@@ -334,10 +334,10 @@ LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
 
 #ifndef NDEBUG
 
-void showTree(const WebCore::InlineBox* b)
+void showNodeTree(const WebCore::InlineBox* b)
 {
     if (b)
-        b->showTreeForThis();
+        b->showNodeTreeForThis();
 }
 
 void showLineTree(const WebCore::InlineBox* b)
