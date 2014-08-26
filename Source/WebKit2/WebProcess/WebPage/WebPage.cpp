@@ -4553,6 +4553,8 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
     ++m_numberOfPrimarySnapshotDetectionAttempts;
 
+    layoutIfNeeded();
+
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view())
         return;

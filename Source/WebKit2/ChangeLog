@@ -1,3 +1,17 @@
+2014-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Crashes in hit testing under WebPage::determinePrimarySnapshottedPlugIn()
+        https://bugs.webkit.org/show_bug.cgi?id=136240
+        rdar://problem/17231462
+
+        Reviewed by Darin Adler.
+        
+        determinePrimarySnapshottedPlugIn() does render tree hit testing, so needs
+        to ensure that layout is up-to-date.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+
 2014-08-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r172771): Amazon product page becomes unresponsive after swiping back to it
