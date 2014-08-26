@@ -1,3 +1,19 @@
+2014-08-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Some projects are incorrectly installed to $BUILT_PRODUCTS_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=136267
+
+        Reviewed by Dan Bernstein.
+
+        INSTALL_PATH was set to $BUILT_PRODUCTS_DIR for engineering configurations in r20225 as part of a build fix.
+        Not only is this no longer necessary to build, but it causes built products to be incorrectly installed in
+        engineering configurations.
+
+        Remove the setting of INSTALL_PATH from the pbxproj file so that the value specified in the xcconfig files is
+        used instead.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-08-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove HTMLInputElement's suggestedValue

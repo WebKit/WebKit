@@ -9813,7 +9813,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
@@ -9825,7 +9824,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
