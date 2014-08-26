@@ -1,3 +1,18 @@
+2014-08-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: put feature flags for Inspector domains in the protocol specification
+        https://bugs.webkit.org/show_bug.cgi?id=136027
+
+        Reviewed by Timothy Hatcher.
+
+        Add 'featureGuard' settings to wrap domains with ENABLE macros.
+
+        No new tests. No behavior was changed.
+
+        * inspector/protocol/Database.json:
+        * inspector/protocol/IndexedDB.json:
+        * inspector/protocol/Replay.json:
+
 2014-08-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Some projects are incorrectly installed to $BUILT_PRODUCTS_DIR

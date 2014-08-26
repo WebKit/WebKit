@@ -1,3 +1,27 @@
+2014-08-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: put feature flags for Inspector domains in the protocol specification
+        https://bugs.webkit.org/show_bug.cgi?id=136027
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the hardcoded map of domains to feature guards, and instead parse it from the specification.
+
+        Test: inspector/scripts/tests/generate-domains-with-feature-guards.json
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.wrap_with_guard_for_domain):
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_domain):
+        (Domain.__init__):
+        (Domains):
+        * inspector/scripts/tests/generate-domains-with-feature-guards.json: Added.
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+
 2014-08-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Some projects are incorrectly installed to $BUILT_PRODUCTS_DIR

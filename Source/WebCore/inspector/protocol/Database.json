@@ -1,5 +1,6 @@
 {
     "domain": "Database",
+    "featureGuard": "ENABLE(SQL_DATABASE)",
     "types": [
         {
             "id": "DatabaseId",

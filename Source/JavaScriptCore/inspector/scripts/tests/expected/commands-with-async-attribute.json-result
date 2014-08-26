@@ -83,7 +83,6 @@ namespace Inspector {
 
 typedef String ErrorString;
 
-#if ENABLE(SQL_DATABASE)
 class InspectorDatabaseBackendDispatcherHandler {
 public:
     // Named after parameter 'screenColor' while generating command/event executeSQLSyncOptionalReturnValues.
@@ -116,9 +115,7 @@ public:
 protected:
     virtual ~InspectorDatabaseBackendDispatcherHandler();
 };
-#endif // ENABLE(SQL_DATABASE)
 
-#if ENABLE(SQL_DATABASE)
 class InspectorDatabaseBackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
 public:
     static PassRefPtr<InspectorDatabaseBackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorDatabaseBackendDispatcherHandler*);
@@ -132,7 +129,6 @@ private:
     InspectorDatabaseBackendDispatcher(Inspector::InspectorBackendDispatcher*, InspectorDatabaseBackendDispatcherHandler*);
     InspectorDatabaseBackendDispatcherHandler* m_agent;
 };
-#endif // ENABLE(SQL_DATABASE)
 
 } // namespace Inspector
 
@@ -183,11 +179,8 @@ private:
 
 namespace Inspector {
 
-#if ENABLE(SQL_DATABASE)
 InspectorDatabaseBackendDispatcherHandler::~InspectorDatabaseBackendDispatcherHandler() { }
-#endif // ENABLE(SQL_DATABASE)
 
-#if ENABLE(SQL_DATABASE)
 PassRefPtr<InspectorDatabaseBackendDispatcher> InspectorDatabaseBackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorDatabaseBackendDispatcherHandler* agent)
 {
     return adoptRef(new InspectorDatabaseBackendDispatcher(backendDispatcher, agent));
@@ -401,7 +394,6 @@ void InspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, const Insp
         return;
     }
 }
-#endif // ENABLE(SQL_DATABASE)
 
 } // namespace Inspector
 
@@ -556,22 +548,18 @@ namespace Inspector {
 namespace Protocol {
 
 // Forward declarations.
-#if ENABLE(SQL_DATABASE)
 namespace Database {
 class Error;
 enum class PrimaryColors;
 } // Database
-#endif // ENABLE(SQL_DATABASE)
 // End of forward declarations.
 
 
 // Typedefs.
-#if ENABLE(SQL_DATABASE)
 namespace Database {
 /* Unique identifier of Database object. */
 typedef int DatabaseId;
 } // Database
-#endif // ENABLE(SQL_DATABASE)
 // End of typedefs.
 
 String getTestEnumConstantValue(int code);
@@ -581,7 +569,6 @@ template<typename T> String getTestEnumConstantValue(T enumValue)
     return getTestEnumConstantValue(static_cast<int>(enumValue));
 }
 
-#if ENABLE(SQL_DATABASE)
 namespace Database {
 /*  */
 enum class PrimaryColors {
@@ -658,7 +645,6 @@ public:
 };
 
 } // Database
-#endif // ENABLE(SQL_DATABASE)
 
 
 

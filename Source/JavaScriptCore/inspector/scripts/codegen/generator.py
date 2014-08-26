@@ -47,13 +47,6 @@ _PRIMITIVE_TO_CPP_NAME_MAP = {
     'any': 'Inspector::InspectorValue'
 }
 
-# FIXME: This should be converted into a property on the domain in JSON.
-_DOMAIN_TO_CPP_GUARD_MAP = {
-    'Database': "ENABLE(SQL_DATABASE)",
-    'IndexedDB': "ENABLE(INDEXED_DATABASE)",
-    'Replay': "ENABLE(WEB_REPLAY)",
-}
-
 _ALWAYS_UPPERCASED_ENUM_VALUE_SUBSTRINGS = set(['API', 'CSS', 'DOM', 'HTML', 'XHR', 'XML'])
 
 # These objects are built manually by creating and setting InspectorValues.
@@ -209,7 +202,7 @@ class Generator:
     # Miscellaneous text manipulation routines.
     @staticmethod
     def wrap_with_guard_for_domain(domain, text):
-        guard = _DOMAIN_TO_CPP_GUARD_MAP.get(domain.domain_name)
+        guard = domain.feature_guard
         if guard is not None:
             lines = [
                 '#if %s' % guard,

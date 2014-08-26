@@ -318,7 +318,7 @@ class Protocol:
                 raise ParseException("Malformed domain specification: events is not an array")
             events.extend([self.parse_event(event) for event in json['events']])
 
-        self.domains.append(Domain(json['domain'], json.get('description', ""), isSupplemental, types, commands, events))
+        self.domains.append(Domain(json['domain'], json.get('description', ""), json.get("featureGuard"), isSupplemental, types, commands, events))
 
     def parse_type_declaration(self, json):
         check_for_required_properties(['id', 'type'], json, "type")
@@ -469,9 +469,10 @@ class Protocol:
 
 
 class Domain:
-    def __init__(self, domain_name, description, isSupplemental, type_declarations, commands, events):
+    def __init__(self, domain_name, description, feature_guard, isSupplemental, type_declarations, commands, events):
         self.domain_name = domain_name
         self.description = description
+        self.feature_guard = feature_guard
         self.is_supplemental = isSupplemental
         self.type_declarations = type_declarations
         self.commands = commands
@@ -492,7 +493,7 @@ class Domain:
 
 
 class Domains:
-    GLOBAL = Domain("", "The global domain, in which primitive types are implicitly declared.", True, [], [], [])
+    GLOBAL = Domain("", "The global domain, in which primitive types are implicitly declared.", None, True, [], [], [])
 
 
 class TypeDeclaration:
