@@ -35,15 +35,15 @@ my @testCases =
     {
         'RC_ProjectSourceVersion' => '5300.4.3.2.1',
         'RC_PROJECTBUILDVERSION' => undef,
-        expectedVersionResult => '300.4003.2001',
-        expectedBuildVersionResult => 1,
+        'expectedVersionResult' => '5300.4003.2001',
+        'expectedBuildVersionResult' => 1,
     },
 
     {
         'RC_ProjectSourceVersion' => '5300.4.3.2.1',
         'RC_PROJECTBUILDVERSION' => 156,
-        expectedVersionResult => '300.4003.2001',
-        expectedBuildVersionResult => 156,
+        'expectedVersionResult' => '5300.4003.2001',
+        'expectedBuildVersionResult' => 156,
     },
 );
 

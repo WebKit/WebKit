@@ -1,3 +1,17 @@
+2014-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Version stamp should include package-level version
+        https://bugs.webkit.org/show_bug.cgi?id=136266
+        <rdar://problem/18134138>
+
+        Reviewed by David Kilzer.
+
+        * win/tools/scripts/auto-version.pl: Retain the full major build
+        version in addition to the three-digit value we use internally.
+        * win/tools/scripts/version-stamp.pl: Find and use the full 3+ digit
+        major build version when stamping the final output file.
+
+
 2014-08-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Pass OFFICIAL_BUILD flag to WebInspectorUI build process

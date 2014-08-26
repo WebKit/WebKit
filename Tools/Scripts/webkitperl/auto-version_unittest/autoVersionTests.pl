@@ -45,6 +45,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -61,6 +62,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '530',
         },
     },
 
@@ -77,6 +79,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '53',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '53',
         },
     },
 
@@ -93,6 +96,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '5',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5',
         },
     },
 
@@ -109,6 +113,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -125,6 +130,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '530',
         },
     },
 
@@ -141,6 +147,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '53',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '53',
         },
     },
 
@@ -157,6 +164,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '5',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5',
         },
     },
 
@@ -173,6 +181,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -189,6 +198,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '530',
         },
     },
 
@@ -205,6 +215,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '53',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '53',
         },
     },
 
@@ -221,6 +232,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '5',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5',
         },
     },
 
@@ -237,6 +249,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4000',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -253,6 +266,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '4000',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '530',
         },
     },
 
@@ -269,6 +283,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '53',
             '__BUILD_NUMBER_MINOR__' => '4000',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '53',
         },
     },
 
@@ -285,6 +300,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '5',
             '__BUILD_NUMBER_MINOR__' => '4000',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5',
         },
     },
 
@@ -301,6 +317,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -317,6 +334,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '530',
         },
     },
 
@@ -333,6 +351,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '1001',
             '__BUILD_NUMBER_VARIANT__' => '1000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '10530',
         },
     },
 
@@ -349,6 +368,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '30020',
             '__BUILD_NUMBER_VARIANT__' => '10000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '10530',
         },
     },
 
@@ -365,6 +385,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '64200',
             '__BUILD_NUMBER_VARIANT__' => '64000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '10530',
         },
     },
 
@@ -381,6 +402,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '64999',
             '__BUILD_NUMBER_VARIANT__' => '64000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '10530',
         },
     },
 
@@ -397,6 +419,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '530',
             '__BUILD_NUMBER_MINOR__' => '64099',
             '__BUILD_NUMBER_VARIANT__' => '10000',
+            '__FULL_BUILD_MAJOR_VERSION__' => '7530',
         },
     },
 
@@ -414,6 +437,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '53',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '53',
         },
     },
 
@@ -431,6 +455,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '5',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5',
         },
     },
 
@@ -448,6 +473,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '747',
             '__BUILD_NUMBER_MINOR__' => '64999',
             '__BUILD_NUMBER_VARIANT__' => '64999',
+            '__FULL_BUILD_MAJOR_VERSION__' => '214747',
         },
     },
 
@@ -465,6 +491,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '747',
             '__BUILD_NUMBER_MINOR__' => '64099',
             '__BUILD_NUMBER_VARIANT__' => '64099',
+            '__FULL_BUILD_MAJOR_VERSION__' => '214747',
         },
     },
 
@@ -482,6 +509,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '747',
             '__BUILD_NUMBER_MINOR__' => '64099',
             '__BUILD_NUMBER_VARIANT__' => '64099',
+            '__FULL_BUILD_MAJOR_VERSION__' => '214747',
         },
     },
 
@@ -499,6 +527,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '747',
             '__BUILD_NUMBER_MINOR__' => '64099',
             '__BUILD_NUMBER_VARIANT__' => '64099',
+            '__FULL_BUILD_MAJOR_VERSION__' => '214747',
         },
     },
 
@@ -518,6 +547,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '600',
             '__BUILD_NUMBER_MINOR__' => '1000',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '7600',
         },
     },
 
@@ -535,6 +565,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '27',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '27',
         },
     },
 
@@ -552,6 +583,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '27',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '27',
         },
     },
 
@@ -569,6 +601,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '27',
             '__BUILD_NUMBER_MINOR__' => '0',
             '__BUILD_NUMBER_VARIANT__' => '0',
+            '__FULL_BUILD_MAJOR_VERSION__' => '27',
         },
     },
 
@@ -586,6 +619,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -603,6 +637,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -620,6 +655,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 
@@ -637,6 +673,7 @@ my @testCases =
             '__BUILD_NUMBER_MAJOR__' => '300',
             '__BUILD_NUMBER_MINOR__' => '4003',
             '__BUILD_NUMBER_VARIANT__' => '2001',
+            '__FULL_BUILD_MAJOR_VERSION__' => '5300',
         },
     },
 );
@@ -648,7 +685,7 @@ if ($^O ne 'MSWin32' && $^O ne 'cygwin') {
     exit 0;    
 }
 
-my $testCasesCount = scalar(@testCases) * 10; # 10 expected results
+my $testCasesCount = scalar(@testCases) * 11; # 11 expected results
 plan(tests => $testCasesCount);
 
 foreach my $testCase (@testCases) {

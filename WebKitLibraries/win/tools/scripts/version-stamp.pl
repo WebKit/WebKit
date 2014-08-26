@@ -63,6 +63,7 @@ my %components =
     '__VERSION_MINOR__' => undef,
     '__VERSION_TINY__' => undef,
     '__VERSION_BUILD__' => undef,
+    '__FULL_BUILD_MAJOR_VERSION__' => undef,
 );
 
 my $VERSION_FILE = File::Spec->catfile(File::Spec->canonpath($intdir), 'include', 'autoversion.h');
@@ -90,7 +91,7 @@ my $TARGET_PATH = File::Spec->canonpath($target);
 
 print "Adjusting RC_PROJECTSOURCEVERSION and RC_ProjectSourceVersion to be safe for VersionStamper.\n";
 
-my $SAFE_PROJECT_VERSION = "$components{'__VERSION_MAJOR__'}.$components{'__VERSION_MINOR__'}.$components{'__VERSION_TINY__'}";
+my $SAFE_PROJECT_VERSION = "$components{'__FULL_BUILD_MAJOR_VERSION__'}.$components{'__VERSION_MINOR__'}.$components{'__VERSION_TINY__'}";
 my $SAFE_BUILD_VERSION = $ENV{RC_ProjectBuildVersion} || $ENV{RC_PROJECTBUILDVERSION} || $components{'__VERSION_BUILD__'};
 
 print "Using RC_PROJECTSOURCEVERSION=$SAFE_PROJECT_VERSION and RC_PROJECTBUILDVERSION=$SAFE_BUILD_VERSION\n";
@@ -99,9 +100,9 @@ print "Using RC_PROJECTSOURCEVERSION=$SAFE_PROJECT_VERSION and RC_PROJECTBUILDVE
 $ENV{RC_PROJECTSOURCEVERSION} = $SAFE_PROJECT_VERSION;
 $ENV{RC_ProjectSourceVersion} = $SAFE_PROJECT_VERSION;
 
-my $rc = system($VERSION_STAMPER, '--verbose', $TARGET_PATH, '--fileMajor', $components{'__VERSION_MAJOR__'},
+my $rc = system($VERSION_STAMPER, '--verbose', $TARGET_PATH, '--fileMajor', $components{'__FULL_BUILD_MAJOR_VERSION__'},
     '--fileMinor', $components{'__VERSION_MINOR__'}, '--fileRevision', $components{'__VERSION_TINY__'},
-    '--fileBuild', $SAFE_BUILD_VERSION, '--productMajor', $components{'__VERSION_MAJOR__'},
+    '--fileBuild', $SAFE_BUILD_VERSION, '--productMajor', $components{'__FULL_BUILD_MAJOR_VERSION__'},
     '--productMinor', $components{'__VERSION_MINOR__'}, '--productRevision', $components{'__VERSION_TINY__'},
     '--productBuild', $components{'__VERSION_BUILD__'}); 
 
