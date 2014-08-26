@@ -71,10 +71,9 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> sh
     m_seenTypes = m_seenTypes | type;
 
     if (id && shape && type != TypeString) {
-        ASSERT(m_structureIDHistory.isValidKey(id));
-        auto iter = m_structureIDHistory.find(id);
-        if (iter == m_structureIDHistory.end()) {
-            m_structureIDHistory.set(id, 1);
+        ASSERT(m_structureIDCache.isValidValue(id));
+        auto addResult = m_structureIDCache.add(id);
+        if (addResult.isNewEntry) {
             // Make one more pass making sure that we don't have the same shape. (Same shapes may have different StructureIDs).
             bool found = false;
             String hash = shape->propertyHash();
@@ -90,6 +89,11 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> sh
                 m_structureHistory.append(shape);
         }
     }
+}
+
+void TypeSet::invalidateCache()
+{
+    m_structureIDCache.clear();
 }
 
 String TypeSet::seenTypes() const

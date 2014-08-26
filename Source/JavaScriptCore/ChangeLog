@@ -1,3 +1,25 @@
+2014-08-26  Saam Barati  <sbarati@apple.com>
+
+        TypeSet caches structureIDs even after the corresponding Structure could be GCed
+        https://bugs.webkit.org/show_bug.cgi?id=136178
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, TypeSet will never remove StructureIDs from its cache,
+        even after the corresponding Structures could be garbage collected.
+        Now, when the Garbage Collector collects, and type profiling is 
+        enabled, the Garbage Collector will invalidate all TypeSet caches.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        (JSC::TypeSet::invalidateCache):
+        * runtime/TypeSet.h:
+        * runtime/VM.cpp:
+        (JSC::VM::invalidateTypeSetCache):
+        * runtime/VM.h:
+
 2014-08-26  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r172794) + 32Bit build: for-in-base-reassigned-later-and-change-structure.js fail with NaN result

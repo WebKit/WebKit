@@ -514,6 +514,7 @@ namespace JSC {
         TypeProfiler* typeProfiler() { return m_typeProfiler.get(); }
         TypeLocation* nextTypeLocation();
         JS_EXPORT_PRIVATE void dumpTypeProfilerData();
+        void invalidateTypeSetCache();
         GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
 
     private:

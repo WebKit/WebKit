@@ -27,7 +27,7 @@
 #define TypeSet_h
 
 #include "StructureIDTable.h"
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
@@ -92,6 +92,7 @@ public:
     TypeSet();
     void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, StructureID);
     static RuntimeType getRuntimeTypeForValue(JSValue);
+    void invalidateCache();
     JS_EXPORT_PRIVATE String seenTypes() const;
     String displayName() const;
     PassRefPtr<Inspector::Protocol::Array<String>> allPrimitiveTypeNames() const;
@@ -104,7 +105,7 @@ private:
 
     uint32_t m_seenTypes;
     Vector<RefPtr<StructureShape>> m_structureHistory;
-    HashMap<StructureID, uint8_t> m_structureIDHistory;
+    HashSet<StructureID> m_structureIDCache;
 };
 
 } //namespace JSC

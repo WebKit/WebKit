@@ -982,6 +982,7 @@ void Heap::collect(HeapOperation collectionType)
     if (vm()->typeProfiler()) {
         DeferGCForAWhile awhile(*this);
         vm()->typeProfilerLog()->processLogEntries(ASCIILiteral("GC"));
+        vm()->invalidateTypeSetCache();
     }
     
     RELEASE_ASSERT(!m_deferralDepth);

@@ -942,6 +942,18 @@ void VM::dumpTypeProfilerData()
     }
 }
 
+void VM::invalidateTypeSetCache()
+{
+    RELEASE_ASSERT(typeProfiler());
+
+    for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo->begin(); !!iter; ++iter) {
+        TypeLocation* location = *iter;
+        location->m_instructionTypeSet->invalidateCache();
+        if (location->m_globalTypeSet)
+            location->m_globalTypeSet->invalidateCache();
+    }
+}
+
 void sanitizeStackForVM(VM* vm)
 {
     logSanitizeStack(vm);
