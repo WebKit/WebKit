@@ -8,7 +8,10 @@ add_definitions(-DBUILDING_EFL__=1)
 set(ENABLE_WEBKIT OFF)
 set(ENABLE_WEBKIT2 ON)
 
-set(ADDITIONAL_COMPILER_FLAGS ENABLE_WERROR)
+# FIXME: Disable WERROR in clang build because of many warnings.
+if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(ADDITIONAL_COMPILER_FLAGS ENABLE_WERROR)
+endif ()
 
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)

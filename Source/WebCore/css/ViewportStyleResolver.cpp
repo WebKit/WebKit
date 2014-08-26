@@ -34,6 +34,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderView.h"
 #include "StyleProperties.h"

@@ -1,3 +1,12 @@
+2014-08-26  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break using clang
+        https://bugs.webkit.org/show_bug.cgi?id=136245
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: defines GTEST_HAS_RTTI=0
+
 2014-08-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: remove roundedLayoutPoint/roundedLayoutSize functions.

@@ -454,6 +454,7 @@ add_definitions(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DWEBPROCESSNAME=\"WebProcess\"
     -DPLUGINPROCESSNAME=\"PluginProcess\"
     -DNETWORKPROCESSNAME=\"NetworkProcess\"
+    -DGTEST_HAS_RTTI=0
 )
 
 add_library(ewk2UnitTestUtils
