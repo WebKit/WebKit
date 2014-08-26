@@ -1,3 +1,14 @@
+2014-08-26  Dan Bernstein  <mitz@apple.com>
+
+        runSvnUpdateAndResolveChangeLogs() doesn’t work when invoked from a script outside Tools/Scripts
+        https://bugs.webkit.org/show_bug.cgi?id=136254
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitdirs.pm:
+        (runSvnUpdateAndResolveChangeLogs): Locate resolve-ChangeLogs relative to the source tree,
+        not the invoking script.
+
 2014-08-26  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Utilize espeak as a synthesizer back-end for WebSpeech

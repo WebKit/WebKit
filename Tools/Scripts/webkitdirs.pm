@@ -2537,7 +2537,7 @@ sub runSvnUpdateAndResolveChangeLogs(@)
 
     if (@conflictedChangeLogs) {
         print "Attempting to merge conflicted ChangeLogs.\n";
-        my $resolveChangeLogsPath = File::Spec->catfile(dirname($0), "resolve-ChangeLogs");
+        my $resolveChangeLogsPath = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "resolve-ChangeLogs");
         (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
             or die "Could not open resolve-ChangeLogs script: $!.\n";
     }
