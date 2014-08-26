@@ -83,17 +83,7 @@ private:
     String m_name;
 };
 
-inline File* toFile(Blob* blob)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!blob || blob->isFile());
-    return static_cast<File*>(blob);
-}
-
-inline const File* toFile(const Blob* blob)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!blob || blob->isFile());
-    return static_cast<const File*>(blob);
-}
+BLOB_TYPE_CASTS(File, isFile())
 
 } // namespace WebCore
 

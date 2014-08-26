@@ -1,3 +1,16 @@
+2014-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toFile() instead of manual functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136207
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior changes.
+
+        * fileapi/Blob.h: Define BLOB_TYPE_CASTS.
+        * fileapi/File.h: Use BLOB_TYPE_CASTS to generate toFile().
+        (WebCore::toFile): Deleted.
+
 2014-08-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: remove roundedLayoutPoint/roundedLayoutSize functions.
