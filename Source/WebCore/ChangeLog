@@ -1,3 +1,9 @@
+2014-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r172951.
+
+        * fileapi/Blob.h: Give the argument the name that the predicates expect.
+
 2014-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toFile() instead of manual functions.

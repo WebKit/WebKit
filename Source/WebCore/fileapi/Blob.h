@@ -113,7 +113,7 @@ protected:
 };
 
 #define BLOB_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, Blob, object, blob->predicate, blob.predicate)
+    TYPE_CASTS_BASE(ToValueTypeName, Blob, blob, blob->predicate, blob.predicate)
 
 } // namespace WebCore
 
