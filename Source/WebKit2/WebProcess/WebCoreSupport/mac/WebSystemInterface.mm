@@ -40,7 +40,6 @@ void InitWebCoreSystemInterface(void)
         INIT(AdvanceDefaultButtonPulseAnimation);
 #endif
         INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
-        INIT(CopyCFLocalizationPreferredName);
         INIT(CGContextGetShouldSmoothFonts);
         INIT(CGPatternCreateWithImageAndTransform);
         INIT(CGContextResetClip);

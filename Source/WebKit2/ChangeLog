@@ -1,3 +1,19 @@
+2014-08-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace use of WKCopyCFLocalizationPreferredName with NSLocale public API
+        https://bugs.webkit.org/show_bug.cgi?id=136082
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService): Remove accidental leftover retrieval
+        of the localization.
+        (WebKit::createProcess): Get current localization name from
+        CFBundle API instead of using SPI.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Remove mention of WKCopyCFLocalizationPreferredName
+        * mac/WebKit2.order: ditto
+
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
         The UNUSED_PARAM macros in ServicesOverlayController.mm are causing ASan build failures.

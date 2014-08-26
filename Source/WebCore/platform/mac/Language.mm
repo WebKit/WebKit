@@ -27,7 +27,7 @@
 #import "Language.h"
 
 #import "BlockExceptions.h"
-#import "WebCoreSystemInterface.h"
+#import "WebCoreNSStringExtras.h"
 #import <mutex>
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
@@ -77,25 +77,9 @@ static Vector<String>& preferredLanguages()
 
 namespace WebCore {
 
-static String httpStyleLanguageCode(NSString *languageCode)
+static String httpStyleLanguageCode(NSString *language)
 {
-    // Look up the language code using CFBundle.
-    RetainPtr<CFStringRef> preferredLanguageCode = adoptCF(wkCopyCFLocalizationPreferredName((CFStringRef)languageCode));
-
-    if (preferredLanguageCode)
-        languageCode = (NSString *)preferredLanguageCode.get();
-
-    // Make the string lowercase.
-    NSString *lowercaseLanguageCode = [languageCode lowercaseString];
-
-    // Turn a '_' into a '-' if it appears after a 2-letter language code.
-    if ([lowercaseLanguageCode length] >= 3 && [lowercaseLanguageCode characterAtIndex:2] == '_') {
-        RetainPtr<NSMutableString> mutableLanguageCode = adoptNS([lowercaseLanguageCode mutableCopy]);
-        [mutableLanguageCode.get() replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
-        return mutableLanguageCode.get();
-    }
-
-    return lowercaseLanguageCode;
+    return [[NSLocale canonicalLanguageIdentifierFromString:canonicalLocaleName(language)] lowercaseString];
 }
 
 Vector<String> platformUserPreferredLanguages()

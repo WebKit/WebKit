@@ -35,7 +35,6 @@ void (*wkCGContextResetClip)(CGContextRef);
 bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 #endif
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);

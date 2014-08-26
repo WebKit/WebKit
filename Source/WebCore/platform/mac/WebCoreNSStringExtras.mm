@@ -28,6 +28,7 @@
 
 #import "config.h"
 #import "WebCoreNSStringExtras.h"
+#import "CFLocaleSPI.h"
 
 #import <wtf/RetainPtr.h>
 
@@ -127,3 +128,32 @@ CFStringEncoding stringEncodingForResource(Handle resource)
 #endif
 
 #endif // !PLATFORM(IOS)
+
+
+
+NSString *preferredBundleLocalizationName()
+{
+    // FIXME: Any use of this function to pass localizations to another
+    // process is likely not completely right, since it only considers
+    // one localization.
+    NSArray *preferredLocalizations = [[NSBundle mainBundle] preferredLocalizations];
+    if (!preferredLocalizations || ![preferredLocalizations count])
+        return @"en_US";
+
+    return canonicalLocaleName([preferredLocalizations objectAtIndex:0]);
+}
+
+NSString *canonicalLocaleName(NSString *language)
+{
+    // FIXME: <rdar://problem/18083880> Replace use of Script Manager
+    // to canonicalize locales with a custom Web-specific table
+    LangCode languageCode;
+    RegionCode regionCode;
+
+    Boolean success = CFLocaleGetLanguageRegionEncodingForLocaleIdentifier((CFStringRef)language, &languageCode, &regionCode, nullptr, nullptr);
+    if (!success)
+        return @"en_US";
+
+    RetainPtr<CFStringRef> code = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(0, languageCode, regionCode));
+    return (NSString *)code.autorelease();
+}
