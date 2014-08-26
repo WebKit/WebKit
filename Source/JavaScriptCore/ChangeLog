@@ -1,5 +1,29 @@
 2014-08-25  Saam Barati  <sbarati@apple.com>
 
+        TypeProfiler search breaks on return statements
+        https://bugs.webkit.org/show_bug.cgi?id=136201
+
+        Reviewed by Filip Pizlo.
+
+        Searching for return statements in the TypeProfiler currently 
+        breaks down because it expected to see the search descriptor 
+        TypeProfilerSearchDescriptorFunctionReturn when looking for 
+        return statements in the actual source code of the program. 
+        But, TypeProfilerSearchDescriptorFunctionReturn search descriptor 
+        is reserved for looking for return statements that aren't in the 
+        actual source code of the program, but when asking for the 
+        aggregate return type of a function. Now, searching for 
+        return statements in the actual source code of the program will 
+        work when passing in the search descriptor TypeProfilerSearchDescriptorNormal.  
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::findLocation):
+        (JSC::descriptorMatchesTypeLocation): Deleted.
+
+2014-08-25  Saam Barati  <sbarati@apple.com>
+
         Return statement TypeSet's might be duplicated
         https://bugs.webkit.org/show_bug.cgi?id=136200
 
