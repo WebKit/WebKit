@@ -40,6 +40,7 @@
 #include "RegisterPreservationMode.h"
 #include "SamplingTool.h"
 #include "SourceCode.h"
+#include "TypeSet.h"
 #include "UnlinkedCodeBlock.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -612,6 +613,14 @@ public:
     {
         return baselineCodeBlockFor(kind);
     }
+
+    RefPtr<TypeSet> returnStatementTypeSet() 
+    {
+        if (!m_returnStatementTypeSet)
+            m_returnStatementTypeSet = TypeSet::create();
+
+        return m_returnStatementTypeSet;
+    }
         
     FunctionMode functionMode() { return m_unlinkedExecutable->functionMode(); }
     bool isBuiltinFunction() const { return m_unlinkedExecutable->isBuiltinFunction(); }
@@ -659,6 +668,7 @@ private:
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     bool m_bodyIncludesBraces;
     bool m_didParseForTheFirstTime;
+    RefPtr<TypeSet> m_returnStatementTypeSet;
 };
 
 inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)

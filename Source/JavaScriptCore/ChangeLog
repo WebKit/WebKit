@@ -1,3 +1,28 @@
+2014-08-25  Saam Barati  <sbarati@apple.com>
+
+        Return statement TypeSet's might be duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=136200
+
+        Reviewed by Filip Pizlo.
+
+        Currently, the globalTypeSet that converges the types of all 
+        return statements in a function lives off of CodeBlock. It lives 
+        off CodeBlock because of a faulty assumption that CodeBlock 
+        will have a one to one mapping with a function in the source 
+        text of the program. (Currently, there isn't an actual bug 
+        with this design because TypeLocationCache will hash cons to 
+        the same TypeLocation, but this is still an incorrect design). 
+        In this patch, the globalTypeSet for function return statements  
+        is moved to the FunctionExecutable object which does have a one 
+        to one mapping with functions in the source text of a program.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::returnStatementTypeSet): Deleted.
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::returnStatementTypeSet):
+
 2014-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to do polymorphic call inlining

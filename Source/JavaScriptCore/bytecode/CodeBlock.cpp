@@ -1706,7 +1706,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
-    , m_returnStatementTypeSet(nullptr)
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
@@ -2043,7 +2042,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 break;
             }
             case ProfileTypeBytecodeFunctionReturnStatement: {
-                globalTypeSet = returnStatementTypeSet();
+                RELEASE_ASSERT(ownerExecutable->isFunctionExecutable());
+                globalTypeSet = jsCast<FunctionExecutable*>(ownerExecutable)->returnStatementTypeSet();
                 globalVariableID = TypeProfilerReturnStatement;
                 if (!shouldAnalyze) {
                     // Because some return statements are added implicitly (to return undefined at the end of a function), and these nodes don't emit expression ranges, give them some range.
