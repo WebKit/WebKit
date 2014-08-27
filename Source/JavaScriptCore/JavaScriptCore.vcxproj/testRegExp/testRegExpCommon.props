@@ -5,11 +5,11 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>_CONSOLE;__STD_C;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_CONSOLE_ENTRY_POINT;_CONSOLE;__STD_C;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\JavaScriptCore\DerivedSources;..\..\;..\..\assembler;..\..\API;..\..\parser;..\..\heap;..\..\runtime;..\..\bytecode;..\..\interpreter;..\..\debugger;..\..\bytecompiler;..\..\profiler;..\..\jit;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;winmm.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;winmm.lib;user32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

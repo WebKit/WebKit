@@ -1,3 +1,58 @@
+2014-08-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] testapi and testRegExp need to find support libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=136008.
+
+        Reviewed by Dean Jackson.
+
+        Revise the Windows build of jsc, testapi, and testRegExp so that they
+        find and use the proper runtime support libraries.
+
+        These locations vary between the Apple Windows build and WinCairo, and
+        are generally not in the system PATH environment setting. Consequently,
+        these applications fail on launch unless the user modifies their
+        PATH.
+
+        This patch revises these tools to work like WinLauncher and DumpRenderTree
+        so that they run reliably.
+
+        * API/tests/testapi.c:
+        (dllLauncherEntryPoint): Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.sln: Add new build projects and
+          provide proper dependencies with existing projects.
+        * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: Ditto.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Switch to build
+          a DLL, rather than an executable.
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props: Add shlwapi.lib
+          to the list of libraries needed at link-time, and to use
+          the DLL/Console combination entry point.
+        * JavaScriptCore.vcxproj/jsc/jscLauncher.vcxproj: Added.
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPostBuild.cmd: Copied from JavaScriptCore.vcxproj/jsc/jscPostBuild.cmd.
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPreBuild.cmd: Copied from JavaScriptCore.vcxproj/jsc/jscPreBuild.cmd.
+        * JavaScriptCore.vcxproj/jsc/jscLauncherPreLink.cmd: Copied from JavaScriptCore.vcxproj/jsc/jscPreLink.cmd.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Switch to build
+          a DLL, rather than an executable.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props: Add shlwapi.lib
+          to the list of libraries needed at link-time, and to use
+          the DLL/Console combination entry point.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncher.vcxproj: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPostBuild.cmd: Copied from JavaScriptCore.vcxproj/testRegExp/testRegExpPostBuild.cmd.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPreBuild.cmd: Copied from JavaScriptCore.vcxproj/testRegExp/testRegExpPreBuild.cmd.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncherPreLink.cmd: Copied from JavaScriptCore.vcxproj/testRegExp/testRegExpPreLink.cmd.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Switch to build
+          a DLL, rather than an executable.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncher.vcxproj: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props: Add shlwapi.lib
+          to the list of libraries needed at link-time, and to use
+          the DLL/Console combination entry point.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPostBuild.cmd: Copied from JavaScriptCore.vcxproj/testRegExp/testRegExpPostBuild.cmd.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPreBuild.cmd: Copied from JavaScriptCore.vcxproj/testRegExp/testRegExpPreBuild.cmd.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncherPreLink.cmd: Copied from JavaScriptCore.vcxproj/testRegExp/testRegExpPreLink.cmd.
+        * jsc.cpp:
+        (dllLauncherEntryPoint): Added.
+        * testRegExp.cpp:
+        (dllLauncherEntryPoint): Added.
+
 2014-08-27  Julien Brianceau   <jbriance@cisco.com>
 
         Take advantage of 3 parameters or32() calls

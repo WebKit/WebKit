@@ -2121,3 +2121,10 @@ static char* createStringWithContentsOfFile(const char* fileName)
     
     return buffer;
 }
+
+#if OS(WINDOWS)
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
+{
+    return main(argc, const_cast<char**>(argv));
+}
+#endif

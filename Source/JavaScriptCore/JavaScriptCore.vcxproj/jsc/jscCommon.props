@@ -8,11 +8,11 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\;..\..\tools\;..\..\runtime\;..\..\llint\;..\..\jit\;..\..\disassembler\;..\..\heap\;..\..\debugger\;..\..\assembler\;..\..\profiler\;..\..\interpreter\;..\..\bytecode\;..\..\dfg\;..\..\bytecompiler\;..\..\parser\;..\..\API\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\private\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\JavaScriptCore\DerivedSources\;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_CONSOLE_ENTRY_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>ICUVersion.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>

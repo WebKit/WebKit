@@ -1460,3 +1460,10 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
 
     return true;
 }
+
+#if OS(WINDOWS)
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
+{
+    return main(argc, const_cast<char**>(argv));
+}
+#endif
