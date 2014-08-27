@@ -1,3 +1,23 @@
+2014-08-27  Julien Brianceau   <jbriance@cisco.com>
+
+        Take advantage of 3 parameters or32() calls
+        https://bugs.webkit.org/show_bug.cgi?id=136287
+
+        Reviewed by Michael Saboff.
+
+        For specific architectures (arm and mips for instance), or32() calls
+        with 3 parameters are likely to produce a single instruction.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::branchIsOther):
+        (JSC::DFG::SpeculativeJIT::branchNotOther):
+
 2014-08-26  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: put feature flags for Inspector domains in the protocol specification
