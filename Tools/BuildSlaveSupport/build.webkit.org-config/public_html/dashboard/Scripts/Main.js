@@ -109,8 +109,11 @@ function updateHiddenPlatforms()
     for (var i = 0; i < platformRows.length; ++i)
         platformRows[i].classList.remove("hidden");
 
-    for (var i = 0; i < hiddenPlatforms.length; ++i)
-        document.querySelector("tr.platform." + hiddenPlatforms[i]).classList.add("hidden");
+    for (var i = 0; i < hiddenPlatforms.length; ++i) {
+        var platformRow = document.querySelector("tr.platform." + hiddenPlatforms[i]);
+        if (platformRow)
+            platformRow.classList.add("hidden");
+    }
 
     var unhideButton = document.querySelector("div.cellButton.unhide");
     if (hiddenPlatforms.length)
