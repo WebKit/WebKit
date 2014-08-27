@@ -34,11 +34,9 @@
 #import "SmartMagnificationController.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
-#import "WKGeolocationProviderIOS.h"
 #import "WKInspectorHighlightView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
-#import "WKProcessPoolInternal.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewInternal.h"
 #import "WebContext.h"
@@ -471,11 +469,6 @@ private:
         [subview removeFromSuperview];
 
     [_rootContentView addSubview:rootView];
-}
-
-- (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest
-{
-    [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
 }
 
 - (BOOL)_scrollToRect:(CGRect)targetRect withOrigin:(CGPoint)origin minimumScrollDistance:(CGFloat)minimumScrollDistance

@@ -1,3 +1,30 @@
+2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS WK2] Provide a delegate callback to skip Geolocation authorization per page for WebApp
+        https://bugs.webkit.org/show_bug.cgi?id=136243
+
+        Reviewed by Sam Weinig.
+
+        Just ask the UI if the authorization dialog needs to be skipped.
+
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _decidePolicyForGeolocationRequestFromOrigin:frame:request:]): Deleted.
+        The code in WKContentView only exists due to legacy. Instead, the PageClient dispatch the request
+        to the GeolocationProvider directly.
+
+        * UIProcess/ios/WKGeolocationProviderIOS.h:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:frame:request:view:]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WKGeolocationProviderIOS positionChanged:]):
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:frame:request:window:]): Deleted.
+
 2014-08-27  Beth Dakin  <bdakin@apple.com>
 
         overflow:scroll elements should not latch to the body if the body is 

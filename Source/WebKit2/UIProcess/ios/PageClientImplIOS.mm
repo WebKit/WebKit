@@ -38,6 +38,8 @@
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
+#import "WKGeolocationProviderIOS.h"
+#import "WKProcessPoolInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WKWebViewInternal.h"
@@ -228,7 +230,7 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
 
 bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, WebSecurityOrigin& origin, GeolocationPermissionRequestProxy& request)
 {
-    [m_contentView _decidePolicyForGeolocationRequestFromOrigin:origin frame:frame request:request];
+    [[wrapper(m_webView->_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin.securityOrigin() frame:frame request:request view:m_webView];
     return true;
 }
 
