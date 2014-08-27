@@ -261,7 +261,8 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
 
     _mouseEntered: function(event)
     {
-        this._startTracking();
+        if (!this._tracking)
+            this._startTracking();
     },
 
     _mouseLeft: function(event)
