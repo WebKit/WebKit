@@ -1653,7 +1653,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& plaformMouseE
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(plaformMouseEvent);
     if (defaultPrevented)
         return true;
 #endif

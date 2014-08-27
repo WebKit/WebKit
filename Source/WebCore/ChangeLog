@@ -1,3 +1,10 @@
+2014-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2014-08-27  Andreas Kling  <akling@apple.com>
 
         Drawing text in an SVG font causes load events to be fired.
