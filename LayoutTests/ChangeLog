@@ -1,3 +1,12 @@
+2014-08-27  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Add expectations for flaky svg layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=130592
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2014-08-27  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Share fast/speechsynthesis/ with other ports

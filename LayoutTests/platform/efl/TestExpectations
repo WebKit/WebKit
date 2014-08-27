@@ -2077,3 +2077,6 @@ webkit.org/b/136223 fast/ruby/ruby-base-merge-block-children-crash-2.html [ Fail
 # Started failing after r172835
 webkit.org/b/136226 fast/events/constructors/mouse-event-constructor.html [ Failure ]
 webkit.org/b/136226 fast/events/constructors/wheel-event-constructor.html [ Failure ]
+
+# Tests that sometimes fail on the bot
+webkit.org/b/130591 svg/dom/svg-root-lengths.html [ Pass Failure ]
