@@ -1,5 +1,25 @@
 2014-08-26  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard: Poor performance when there are broken builds at initial load time
+        https://bugs.webkit.org/show_bug.cgi?id=136281
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        Track and expose whether the itertion is being loaded. Made update() a no-op if
+        the iteration is already being loaded.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus): Instead of
+        loading everything at once, ask the queue to load a little more. We can always repeat
+        if we still don't have enough data.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.loadMoreHistoricalIterations): Added a function that loads
+        10 more iterations intelligently.
+
+2014-08-26  Alexey Proskuryakov  <ap@apple.com>
+
         build.webkit.org/dashboard raises an exception when Trac RSS fails to load
         https://bugs.webkit.org/show_bug.cgi?id=136283
 

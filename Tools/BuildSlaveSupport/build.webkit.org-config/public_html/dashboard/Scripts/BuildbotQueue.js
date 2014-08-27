@@ -152,6 +152,32 @@ BuildbotQueue.prototype = {
         );
     },
 
+    loadMoreHistoricalIterations: function()
+    {
+        var indexOfFirstNewlyLoadingIteration;
+        for (var i = 0; i < this.iterations.length; ++i) {
+            if (indexOfFirstNewlyLoadingIteration !== undefined && i >= indexOfFirstNewlyLoadingIteration + BuildbotQueue.RecentIterationsToLoad)
+                return;
+            var iteration = this.iterations[i];
+            if (!iteration.finished)
+                continue;
+            if (iteration.isLoading) {
+                // Caller lacks visibility into loading, so it is likely to call this function too often.
+                // Give it a chance to analyze everything that's been already requested first, and then it can decide whether it needs more.
+                return;
+            }
+            if (iteration.loaded && indexOfFirstNewlyLoadingIteration !== undefined) {
+                // There was a gap between loaded iterations, which we've closed now.
+                return;
+            }
+            if (!iteration.loaded) {
+                if (indexOfFirstNewlyLoadingIteration === undefined)
+                    indexOfFirstNewlyLoadingIteration = i;
+                iteration.update();
+            }
+        }
+    },
+
     update: function()
     {
         this._load(this.baseURL, function(data) {

@@ -40,6 +40,7 @@ BuildbotIteration = function(queue, dataOrID, finished)
     this.id = dataOrID;
 
     this.loaded = false;
+    this.isLoading = false;
 
     this.openSourceRevision = null;
     this.internalRevision = null;
@@ -295,7 +296,13 @@ BuildbotIteration.prototype = {
         if (this.queue.buildbot.needsAuthentication && this.queue.buildbot.authenticationStatus === Buildbot.AuthenticationStatus.InvalidCredentials)
             return;
 
+        if (this.isLoading)
+            return;
+
+        this.isLoading = true;
+
         JSON.load(this.queue.baseURL + "/builds/" + this.id, function(data) {
+            this.isLoading = false;
             this.queue.buildbot.isAuthenticated = true;
             if (!data || !data.properties)
                 return;
@@ -303,6 +310,7 @@ BuildbotIteration.prototype = {
             this._updateWithData(data);
         }.bind(this),
         function(data) {
+            this.isLoading = false;
             if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
                 this.queue.buildbot.isAuthenticated = false;
                 this.dispatchEventToListeners(BuildbotIteration.Event.UnauthorizedAccess);
