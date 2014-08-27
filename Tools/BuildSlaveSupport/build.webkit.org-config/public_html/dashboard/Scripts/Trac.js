@@ -152,6 +152,9 @@ Trac.prototype = {
 
     _loaded: function(dataDocument)
     {
+        if (!dataDocument)
+            return;
+
         var recordedRevisionNumbers = this.recordedCommits.reduce(function(previousResult, commit) {
             previousResult[commit.revisionNumber] = commit;
             return previousResult;
