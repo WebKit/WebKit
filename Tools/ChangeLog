@@ -1,3 +1,52 @@
+2014-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Add a metrics page with overall bot performance results
+        https://bugs.webkit.org/show_bug.cgi?id=136196
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/daterangepicker.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/jquery-1.11.1.min.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/jquery.daterangepicker.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/moment.min.js: Added.
+        A date range picker control with dependencies.
+        There are a few modifications from upstream at <https://github.com/longbill/jquery-date-range-picker>:
+        - Fixed a bug where selected dates were not at midnight the first time a range was chosen
+        (it didn't happen again upon re-opening the picker).
+        - Made made style tweaks to match Dashboard UI.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        Don't create objects that are not needed by the given app, and thus are not loaded at all.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js: Added.
+        Math to count all the things. Only supports open source tree and trunk at the moment,
+        but written with internal tree and branches in mind.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js: Added.
+        Like dashboard Main.js, draws the UI and creates all necessary objects.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsView.js: Added.
+        A view for table cells.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Settings.js:
+        (Settings.prototype.toggleSettingsDisplay): Added an event for entering settings.
+        Metrics page has individual platforms initially scrolled away form the view, so 
+        it needs to scroll down to reveal what's being configured.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        Added Array.prototype.average and Array.prototype.median.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        Made gear icon fixed instead of absolute, so that it's visible on metrics page when
+        in settings mode.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Metrics.css:
+        Additional style rules.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/metrics.html:
+        The metrics page.
+
 2014-08-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove networkinfo watch category in watchlist

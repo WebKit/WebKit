@@ -23,12 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var settings = new Settings;
-var buildbots = [ new WebKitBuildbot ];
-var webkitTrac = new Trac("http://trac.webkit.org/");
-if (typeof Bugzilla !== "undefined")
-    var bugzilla = new Bugzilla;
-if (typeof EWS !== "undefined")
-    var ews = new EWS;
-if (typeof TestHistory !== "undefined")
-    var testHistory = new TestHistory;
+body {
+    margin-top: 15px;
+}
+
+#range-picker {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 14px;
+    color: rgb(145, 135, 95);
+    cursor: pointer;
+}
+
+.queue-view .result-line {
+    text-align: left;
+    padding: 2px 0;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    color: rgb(145, 135, 95);
+    -webkit-user-select: auto;
+    cursor: text;
+}
+
+table.aggregate-grid tr.headers th {
+    font-size: 36px;
+}
+
+.aggregate-queue-view .result-line {
+    font-size: 14px;
+    text-align: center;
+    text-transform: lowercase;
+}
+
+.queue-view .queueLabel + .result-line,
+.queue-view .error-line + .result-line,
+.result-line:first-child
+{
+    padding: 10px 0 6px 0;
+    font-weight: bold;
+}
+
+.queue-view .error-line {
+    color: rgb(191, 67, 41);
+}
+
+.metrics-loading-indicator {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 14px;
+    color: rgb(145, 135, 95);
+    height: 100px;
+    line-height: 100px;
+    visibility: hidden;
+}
+
+.tables-divider {
+    height: 60px;
+}

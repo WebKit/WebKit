@@ -79,6 +79,8 @@ Settings.prototype = {
 
     toggleSettingsDisplay: function()
     {
+        if (!document.body.classList.contains("settings-visible"))
+            this.fireSettingListener("enteredSettings");
         document.body.classList.toggle("settings-visible");
     },
 

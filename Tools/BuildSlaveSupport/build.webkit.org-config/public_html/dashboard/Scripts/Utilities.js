@@ -166,6 +166,28 @@ Array.prototype.findFirst = function(predicate)
     return null;
 };
 
+Array.prototype.average = function()
+{
+    var sum = 0;
+    var count = this.length;
+    for (var i = 0; i < count; ++i)
+        sum += this[i];
+    return sum / count;
+};
+
+Array.prototype.median = function()
+{
+    var array = this.slice(); // Make a copy to avoid modifying the object.
+    array.sort(function(a, b) { return a - b; });
+
+    var half = Math.floor(array.length / 2);
+
+    if (array.length % 2)
+        return array[half];
+    else
+        return (array[half - 1] + array[half]) / 2;
+};
+
 String.prototype.contains = function(substring)
 {
     return this.indexOf(substring) >= 0;

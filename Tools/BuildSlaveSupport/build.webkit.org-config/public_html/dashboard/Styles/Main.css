@@ -69,7 +69,7 @@ div.cellButton.unhide {
 }
 
 .settings {
-    position: absolute;
+    position: fixed;
     top: 5px;
     left: 5px;
     width: 35px;
