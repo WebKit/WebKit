@@ -360,7 +360,6 @@ webkit.org/b/86623 fast/forms/search-cancel-button-mouseup.html
 webkit.org/b/86623 fast/forms/textfield-drag-into-disabled.html
 webkit.org/b/86623 fast/lists/drag-into-marker.html
 webkit.org/b/86623 http/tests/local/drag-over-remote-content.html
-webkit.org/b/86623 http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
 webkit.org/b/86623 http/tests/misc/bubble-drag-events.html
 webkit.org/b/86623 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 webkit.org/b/86623 http/tests/security/dataTransfer-set-data-file-url.html
@@ -968,8 +967,6 @@ webkit.org/b/84333 fast/forms/file/input-file-write-files.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/recover-file-input-in-unposted-form.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/selected-files-from-history-state.html [ Failure ]
 webkit.org/b/84333 http/tests/local/blob/send-hybrid-blob.html [ Failure ]
-webkit.org/b/84333 http/tests/local/fileapi/file-last-modified.html [ Failure ]
-webkit.org/b/84333 http/tests/local/fileapi/send-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/form-data-with-unknown-file-extension.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata/send-form-data-constructed-from-form.html [ Failure ]
