@@ -1,3 +1,16 @@
+2014-08-26  Matt Lilek  <mrl@apple.com>
+
+        Add WebKit SPI to control the navigator.standalone property
+        https://bugs.webkit.org/show_bug.cgi?id=136189
+
+        Reviewed by Andy Estes.
+
+        Add API test for WKPreferences
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Preferences.mm:
+        (TEST):
+
 2014-08-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove ENABLE_DRT environment variable to enable SHARED_CORE

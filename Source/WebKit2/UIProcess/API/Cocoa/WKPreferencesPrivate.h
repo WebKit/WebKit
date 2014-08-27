@@ -49,6 +49,8 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 
 @property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled;
 
+@property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone;
+
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;

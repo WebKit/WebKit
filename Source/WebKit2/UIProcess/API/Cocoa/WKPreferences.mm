@@ -213,6 +213,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setDeveloperExtrasEnabled(developerExtrasEnabled);
 }
 
+- (BOOL)_isStandalone
+{
+    return _preferences->standalone();
+}
+
+- (void)_setStandalone:(BOOL)standalone
+{
+    _preferences->setStandalone(standalone);
+}
+
 @end
 
 #endif // WK_API_ENABLED
