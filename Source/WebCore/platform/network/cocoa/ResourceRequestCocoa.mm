@@ -78,8 +78,11 @@ void ResourceRequest::doUpdateResourceRequest()
         m_httpMethod = method;
     m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
 
-    if (ResourceRequest::resourcePrioritiesEnabled())
-        m_priority = toResourceLoadPriority(wkGetHTTPRequestPriority([m_nsRequest.get() _CFURLRequest]));
+    if (resourcePrioritiesEnabled()) {
+        auto priority = toResourceLoadPriority(wkGetHTTPRequestPriority([m_nsRequest.get() _CFURLRequest]));
+        if (priority > ResourceLoadPriorityUnresolved)
+            m_priority = priority;
+    }
 
     NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
     NSEnumerator *e = [headers keyEnumerator];

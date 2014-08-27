@@ -277,8 +277,11 @@ void ResourceRequest::doUpdateResourceRequest()
     }
     m_allowCookies = CFURLRequestShouldHandleHTTPCookies(m_cfRequest.get());
 
-    if (resourcePrioritiesEnabled())
-        m_priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
+    if (resourcePrioritiesEnabled()) {
+        auto priority = toResourceLoadPriority(wkGetHTTPRequestPriority(m_cfRequest.get()));
+        if (priority > ResourceLoadPriorityUnresolved)
+            m_priority = priority;
+    }
 
     m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {

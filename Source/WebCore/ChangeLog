@@ -1,3 +1,17 @@
+2014-08-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r172946): Plugin tests asserting on Yosemite debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=136301
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't pull the priority from the platform request if it is not defined.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+
 2014-08-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Crash when you open Web Inspector in a private window (due to IndexedDB)
