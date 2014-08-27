@@ -196,8 +196,9 @@ WebInspector.Popover.prototype = {
             this._preferredSize = new WebInspector.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
         }
 
+        const titleBarOffset = WebInspector.Platform.name === "mac" && !WebInspector.Platform.isLegacyMacOS ? 22 : 0;
+        var containerFrame = new WebInspector.Rect(0, titleBarOffset, window.innerWidth, window.innerHeight - titleBarOffset);
         // The frame of the window with a little inset to make sure we have room for shadows.
-        var containerFrame = new WebInspector.Rect(0, 0, window.innerWidth, window.innerHeight);
         containerFrame = containerFrame.inset(WebInspector.Popover.ShadowEdgeInsets);
 
         // Work out the metrics for all edges.
