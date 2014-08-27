@@ -1,3 +1,16 @@
+2014-08-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove ENABLE_DRT environment variable to enable SHARED_CORE
+        https://bugs.webkit.org/show_bug.cgi?id=136205
+
+        Reviewed by Andrei Bucur.
+
+        EFL port doesn't need to enable SHARED_CORE since r172894. Thus, we don't need to
+        use ENABLE_DRT enviroment variable, which enables SHARED_CORE.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2014-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Version stamp should include package-level version
