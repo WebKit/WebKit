@@ -1,3 +1,30 @@
+2014-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Some EventHandler naming cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=136303
+
+        Reviewed by Beth Dakin.
+
+        Rename PlatformMouseEvent variables from "mouseEvent" to "platformMouseEvent"
+        so that a later patch can rename "mev" to "mouseEvent".
+        
+        0 => nullptr.
+        
+        No behavior change.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::invalidateClick):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handlePasteGlobalSelection):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::dispatchSyntheticTouchEventIfEnabled):
+
 2014-08-27  Beth Dakin  <bdakin@apple.com>
 
         Make isScrollableOrRubberbandable() a virtual function on RenderLayerModelObject

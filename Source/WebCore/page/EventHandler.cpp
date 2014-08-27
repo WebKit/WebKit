@@ -457,15 +457,15 @@ void EventHandler::clear()
     cancelAutoHideCursorTimer();
 #endif
     clearLongMousePressState();
-    m_resizeLayer = 0;
+    m_resizeLayer = nullptr;
     m_elementUnderMouse = nullptr;
     m_lastElementUnderMouse = nullptr;
-    m_instanceUnderMouse = 0;
-    m_lastInstanceUnderMouse = 0;
-    m_lastMouseMoveEventSubframe = 0;
-    m_lastScrollbarUnderMouse = 0;
+    m_instanceUnderMouse = nullptr;
+    m_lastInstanceUnderMouse = nullptr;
+    m_lastMouseMoveEventSubframe = nullptr;
+    m_lastScrollbarUnderMouse = nullptr;
     m_clickCount = 0;
-    m_clickNode = 0;
+    m_clickNode = nullptr;
 #if ENABLE(IOS_GESTURE_EVENTS)
     m_gestureInitialDiameter = GestureUnknown;
     m_gestureLastDiameter = GestureUnknown;
@@ -476,11 +476,11 @@ void EventHandler::clear()
 #if ENABLE(IOS_TOUCH_EVENTS)
     m_touches.clear();
     m_firstTouchID = InvalidTouchIdentifier;
-    m_touchEventTargetSubframe = 0;
+    m_touchEventTargetSubframe = nullptr;
 #endif
-    m_frameSetBeingResized = 0;
+    m_frameSetBeingResized = nullptr;
 #if ENABLE(DRAG_SUPPORT)
-    m_dragTarget = 0;
+    m_dragTarget = nullptr;
     m_shouldOnlyFireDragOverEvent = false;
 #endif
     m_mousePositionIsUnknown = true;
@@ -731,7 +731,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 {
 #if ENABLE(DRAG_SUPPORT)
     // Reset drag state.
-    dragState().source = 0;
+    dragState().source = nullptr;
 #endif
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
@@ -1643,7 +1643,7 @@ static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& win
     return view ? view->windowToContents(windowPoint) : windowPoint;
 }
 
-bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
+bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& plaformMouseEvent)
 {
     RefPtr<FrameView> protector(m_frame.view());
 
@@ -1668,15 +1668,15 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 #endif
     m_mousePressed = true;
     m_capturesDragging = true;
-    setLastKnownMousePosition(mouseEvent);
-    m_mouseDownTimestamp = mouseEvent.timestamp();
+    setLastKnownMousePosition(plaformMouseEvent);
+    m_mouseDownTimestamp = plaformMouseEvent.timestamp();
 #if ENABLE(DRAG_SUPPORT)
     m_mouseDownMayStartDrag = false;
 #endif
     m_mouseDownMayStartSelect = false;
     m_mouseDownMayStartAutoscroll = false;
     if (FrameView* view = m_frame.view())
-        m_mouseDownPos = view->windowToContents(mouseEvent.position());
+        m_mouseDownPos = view->windowToContents(plaformMouseEvent.position());
     else {
         invalidateClick();
         return false;
@@ -1686,8 +1686,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     // Save the document point we generate in case the window coordinate is invalidated by what happens
     // when we dispatch the event.
-    LayoutPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.position());
-    MouseEventWithHitTestResults mev = m_frame.document()->prepareMouseEvent(request, documentPoint, mouseEvent);
+    LayoutPoint documentPoint = documentPointForWindowPoint(m_frame, plaformMouseEvent.position());
+    MouseEventWithHitTestResults mev = m_frame.document()->prepareMouseEvent(request, documentPoint, plaformMouseEvent);
 
     if (!mev.targetNode()) {
         invalidateClick();
@@ -1722,7 +1722,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     }
 #endif
 
-    m_clickCount = mouseEvent.clickCount();
+    m_clickCount = plaformMouseEvent.clickCount();
     m_clickNode = mev.targetNode();
 
     if (!m_clickNode) {
@@ -1732,7 +1732,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     if (FrameView* view = m_frame.view()) {
         RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : 0;
-        IntPoint p = view->windowToContents(mouseEvent.position());
+        IntPoint p = view->windowToContents(plaformMouseEvent.position());
         if (layer && layer->isPointInResizeControl(p)) {
             layer->setInResizeMode(true);
             m_resizeLayer = layer;
@@ -1744,7 +1744,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     m_frame.selection().setCaretBlinkingSuspended(true);
 
-    bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+    bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mev.targetNode(), true, m_clickCount, plaformMouseEvent, true);
     m_capturesDragging = !swallowEvent || mev.scrollbar();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
@@ -1752,9 +1752,9 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     if (mev.scrollbar()) {
         const bool wasLastScrollBar = mev.scrollbar() == m_lastScrollbarUnderMouse.get();
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
-        mev = m_frame.document()->prepareMouseEvent(request, documentPoint, mouseEvent);
+        mev = m_frame.document()->prepareMouseEvent(request, documentPoint, plaformMouseEvent);
         if (wasLastScrollBar && mev.scrollbar() != m_lastScrollbarUnderMouse.get())
-            m_lastScrollbarUnderMouse = 0;
+            m_lastScrollbarUnderMouse = nullptr;
     }
 
     if (swallowEvent) {
@@ -1772,11 +1772,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         // event target node can't still be the shadow node.
         if (mev.targetNode()->isShadowRoot() && isHTMLInputElement(toShadowRoot(mev.targetNode())->hostElement())) {
             HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
-            mev = m_frame.document()->prepareMouseEvent(request, documentPoint, mouseEvent);
+            mev = m_frame.document()->prepareMouseEvent(request, documentPoint, plaformMouseEvent);
         }
 
         FrameView* view = m_frame.view();
-        Scrollbar* scrollbar = view ? view->scrollbarAtPoint(mouseEvent.position()) : 0;
+        Scrollbar* scrollbar = view ? view->scrollbarAtPoint(plaformMouseEvent.position()) : 0;
         if (!scrollbar)
             scrollbar = mev.scrollbar();
 
@@ -1792,7 +1792,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 }
 
 // This method only exists for platforms that don't know how to deliver 
-bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent)
+bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& plaformMouseEvent)
 {
     RefPtr<FrameView> protector(m_frame.view());
 
@@ -1802,23 +1802,23 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
-    setLastKnownMousePosition(mouseEvent);
+    setLastKnownMousePosition(plaformMouseEvent);
 
     HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
-    MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
+    MouseEventWithHitTestResults mev = prepareMouseEvent(request, plaformMouseEvent);
     Frame* subframe = subframeForHitTestResult(mev);
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
         m_capturingMouseEventsElement = nullptr;
     if (subframe && passMousePressEventToSubframe(mev, subframe))
         return true;
 
-    m_clickCount = mouseEvent.clickCount();
-    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
+    m_clickCount = plaformMouseEvent.clickCount();
+    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, plaformMouseEvent, false);
 
-    bool swallowClickEvent = mouseEvent.button() != RightButton && mev.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+    bool swallowClickEvent = plaformMouseEvent.button() != RightButton && mev.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, plaformMouseEvent, true);
 
     if (m_lastScrollbarUnderMouse)
-        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(mouseEvent);
+        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(plaformMouseEvent);
 
     bool swallowMouseReleaseEvent = !swallowMouseUpEvent && handleMouseReleaseEvent(mev);
 
@@ -1877,20 +1877,20 @@ bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& eve
     return handleMouseMoveEvent(event, &hoveredNode, true);
 }
 
-bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, HitTestResult* hoveredNode, bool onlyUpdateScrollbars)
+bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& plaformMouseEvent, HitTestResult* hoveredNode, bool onlyUpdateScrollbars)
 {
 #if ENABLE(TOUCH_EVENTS)
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(plaformMouseEvent);
     if (defaultPrevented)
         return true;
 #endif
 
-    if (handleLongMousePressMouseMovedEvent(mouseEvent))
+    if (handleLongMousePressMouseMovedEvent(plaformMouseEvent))
         return true;
 
     RefPtr<FrameView> protector(m_frame.view());
     
-    setLastKnownMousePosition(mouseEvent);
+    setLastKnownMousePosition(plaformMouseEvent);
 
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
@@ -1909,13 +1909,13 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     }
 
     if (m_frameSetBeingResized)
-        return !dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), false, 0, mouseEvent, false);
+        return !dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), false, 0, plaformMouseEvent, false);
 
     // On iOS, our scrollbars are managed by UIKit.
 #if !PLATFORM(IOS)
     // Send events right to a scrollbar if the mouse is pressed.
     if (m_lastScrollbarUnderMouse && m_mousePressed)
-        return m_lastScrollbarUnderMouse->mouseMoved(mouseEvent);
+        return m_lastScrollbarUnderMouse->mouseMoved(plaformMouseEvent);
 #endif
 
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::Move | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowFrameScrollbars;
@@ -1935,12 +1935,12 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         hitType |= HitTestRequest::Active | HitTestRequest::ReadOnly;
 #endif
     HitTestRequest request(hitType);
-    MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
+    MouseEventWithHitTestResults mev = prepareMouseEvent(request, plaformMouseEvent);
     if (hoveredNode)
         *hoveredNode = mev.hitTestResult();
 
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
-        m_resizeLayer->resize(mouseEvent, m_offsetFromResizeCorner);
+        m_resizeLayer->resize(plaformMouseEvent, m_offsetFromResizeCorner);
     else {
         Scrollbar* scrollbar = mev.scrollbar();
         updateLastScrollbarUnderMouse(scrollbar, !m_mousePressed);
@@ -1948,7 +1948,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         // On iOS, our scrollbars are managed by UIKit.
 #if !PLATFORM(IOS)
         if (!m_mousePressed && scrollbar)
-            scrollbar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
+            scrollbar->mouseMoved(plaformMouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
 #endif
         if (onlyUpdateScrollbars)
             return true;
@@ -1963,7 +1963,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 
     if (newSubframe) {
         // Update over/out state before passing the event to the subframe.
-        updateMouseEventTargetNode(mev.targetNode(), mouseEvent, true);
+        updateMouseEventTargetNode(mev.targetNode(), plaformMouseEvent, true);
         
         // Event dispatch in updateMouseEventTargetNode may have caused the subframe of the target
         // node to be detached from its FrameView, in which case the event should not be passed.
@@ -1972,7 +1972,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 #if ENABLE(CURSOR_SUPPORT)
     } else {
         if (FrameView* view = m_frame.view()) {
-            OptionalCursor optionalCursor = selectCursor(mev.hitTestResult(), mouseEvent.shiftKey());
+            OptionalCursor optionalCursor = selectCursor(mev.hitTestResult(), plaformMouseEvent.shiftKey());
             if (optionalCursor.isCursorChange()) {
                 m_currentMouseCursor = optionalCursor.cursor();
                 view->setCursor(m_currentMouseCursor);
@@ -1986,7 +1986,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     if (swallowEvent)
         return true;
     
-    swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
+    swallowEvent = !dispatchMouseEvent(eventNames().mousemoveEvent, mev.targetNode(), false, 0, plaformMouseEvent, true);
 #if ENABLE(DRAG_SUPPORT)
     if (!swallowEvent)
         swallowEvent = handleMouseDraggedEvent(mev);
@@ -1998,7 +1998,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 void EventHandler::invalidateClick()
 {
     m_clickCount = 0;
-    m_clickNode = 0;
+    m_clickNode = nullptr;
 }
 
 inline static bool mouseIsReleasedOnPressedElement(Node* targetNode, Node* clickNode)
@@ -2025,14 +2025,14 @@ inline static bool mouseIsReleasedOnPressedElement(Node* targetNode, Node* click
     return adjustedTargetNode == adjustedClickNode;
 }
 
-bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
+bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& plaformMouseEvent)
 {
     RefPtr<FrameView> protector(m_frame.view());
 
     m_frame.selection().setCaretBlinkingSuspended(false);
 
 #if ENABLE(TOUCH_EVENTS)
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(plaformMouseEvent);
     if (defaultPrevented)
         return true;
 #endif
@@ -2040,11 +2040,11 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
 #if ENABLE(PAN_SCROLLING)
-    m_autoscrollController->handleMouseReleaseEvent(mouseEvent);
+    m_autoscrollController->handleMouseReleaseEvent(plaformMouseEvent);
 #endif
 
     m_mousePressed = false;
-    setLastKnownMousePosition(mouseEvent);
+    setLastKnownMousePosition(plaformMouseEvent);
 
     if (m_svgPan) {
         m_svgPan = false;
@@ -2053,33 +2053,33 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     }
 
     if (m_frameSetBeingResized)
-        return !dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, mouseEvent, false);
+        return !dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, plaformMouseEvent, false);
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();
-        m_lastScrollbarUnderMouse->mouseUp(mouseEvent);
+        m_lastScrollbarUnderMouse->mouseUp(plaformMouseEvent);
         bool cancelable = true;
         bool setUnder = false;
-        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), cancelable, m_clickCount, mouseEvent, setUnder);
+        return !dispatchMouseEvent(eventNames().mouseupEvent, m_lastElementUnderMouse.get(), cancelable, m_clickCount, plaformMouseEvent, setUnder);
     }
 
     HitTestRequest request(HitTestRequest::Release | HitTestRequest::DisallowShadowContent);
-    MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
+    MouseEventWithHitTestResults mev = prepareMouseEvent(request, plaformMouseEvent);
     Frame* subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mev);
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
         m_capturingMouseEventsElement = nullptr;
     if (subframe && passMouseReleaseEventToSubframe(mev, subframe))
         return true;
 
-    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
+    bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, plaformMouseEvent, false);
 
-    bool contextMenuEvent = mouseEvent.button() == RightButton;
+    bool contextMenuEvent = plaformMouseEvent.button() == RightButton;
 
-    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && mouseIsReleasedOnPressedElement(mev.targetNode(), m_clickNode.get()) && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && mouseIsReleasedOnPressedElement(mev.targetNode(), m_clickNode.get()) && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, plaformMouseEvent, true);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);
-        m_resizeLayer = 0;
+        m_resizeLayer = nullptr;
     }
 
     bool swallowMouseReleaseEvent = false;
@@ -2091,7 +2091,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     return swallowMouseUpEvent || swallowClickEvent || swallowMouseReleaseEvent;
 }
 
-bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& mouseEvent)
+bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& plaformMouseEvent)
 {
     // If the event was a middle click, attempt to copy global selection in after
     // the newly set caret position.
@@ -2110,10 +2110,10 @@ bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& mouseEve
     // clears the text box. So it's important this happens after the event
     // handlers have been fired.
 #if PLATFORM(GTK)
-    if (mouseEvent.type() != PlatformEvent::MousePressed)
+    if (plaformMouseEvent.type() != PlatformEvent::MousePressed)
         return false;
 #else
-    if (mouseEvent.type() != PlatformEvent::MouseReleased)
+    if (plaformMouseEvent.type() != PlatformEvent::MouseReleased)
         return false;
 #endif
 
@@ -2401,7 +2401,7 @@ static bool hierarchyHasCapturingEventListeners(Element* element, const AtomicSt
     return false;
 }
 
-void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& mouseEvent, bool fireMouseOverOut)
+void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& plaformMouseEvent, bool fireMouseOverOut)
 {
     Element* targetElement = nullptr;
     
@@ -2490,8 +2490,8 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
         if (m_lastElementUnderMouse && &m_lastElementUnderMouse->document() != m_frame.document()) {
             m_lastElementUnderMouse = nullptr;
-            m_lastScrollbarUnderMouse = 0;
-            m_lastInstanceUnderMouse = 0;
+            m_lastScrollbarUnderMouse = nullptr;
+            m_lastInstanceUnderMouse = nullptr;
         }
 
         if (m_lastElementUnderMouse != m_elementUnderMouse) {
@@ -2530,22 +2530,22 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
 
             // Send mouseout event to the old node.
             if (m_lastElementUnderMouse)
-                m_lastElementUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoutEvent, 0, m_elementUnderMouse.get());
+                m_lastElementUnderMouse->dispatchMouseEvent(plaformMouseEvent, eventNames().mouseoutEvent, 0, m_elementUnderMouse.get());
 
             // Send mouseleave to the node hierarchy no longer under the mouse.
             for (size_t i = 0; i < leftElementsChain.size(); ++i) {
                 if (hasCapturingMouseLeaveListener || leftElementsChain[i]->hasEventListeners(eventNames().mouseleaveEvent))
-                    leftElementsChain[i]->dispatchMouseEvent(mouseEvent, eventNames().mouseleaveEvent, 0, m_elementUnderMouse.get());
+                    leftElementsChain[i]->dispatchMouseEvent(plaformMouseEvent, eventNames().mouseleaveEvent, 0, m_elementUnderMouse.get());
             }
 
             // Send mouseover event to the new node.
             if (m_elementUnderMouse)
-                m_elementUnderMouse->dispatchMouseEvent(mouseEvent, eventNames().mouseoverEvent, 0, m_lastElementUnderMouse.get());
+                m_elementUnderMouse->dispatchMouseEvent(plaformMouseEvent, eventNames().mouseoverEvent, 0, m_lastElementUnderMouse.get());
 
             // Send mouseleave event to the nodes hierarchy under the mouse.
             for (size_t i = 0, size = enteredElementsChain.size(); i < size; ++i) {
                 if (hasCapturingMouseEnterListener || enteredElementsChain[i]->hasEventListeners(eventNames().mouseenterEvent))
-                    enteredElementsChain[i]->dispatchMouseEvent(mouseEvent, eventNames().mouseenterEvent, 0, m_lastElementUnderMouse.get());
+                    enteredElementsChain[i]->dispatchMouseEvent(plaformMouseEvent, eventNames().mouseenterEvent, 0, m_lastElementUnderMouse.get());
             }
         }
         m_lastElementUnderMouse = m_elementUnderMouse;
@@ -2553,23 +2553,23 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     }
 }
 
-bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& mouseEvent, bool setUnder)
+bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool /*cancelable*/, int clickCount, const PlatformMouseEvent& plaformMouseEvent, bool setUnder)
 {
     if (FrameView* view = m_frame.view())
         view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
-    updateMouseEventTargetNode(targetNode, mouseEvent, setUnder);
+    updateMouseEventTargetNode(targetNode, plaformMouseEvent, setUnder);
 
     bool swallowEvent = false;
 
     if (m_elementUnderMouse)
-        swallowEvent = !(m_elementUnderMouse->dispatchMouseEvent(mouseEvent, eventType, clickCount));
+        swallowEvent = !(m_elementUnderMouse->dispatchMouseEvent(plaformMouseEvent, eventType, clickCount));
 
     if (!swallowEvent && eventType == eventNames().mousedownEvent) {
 
         // If clicking on a frame scrollbar, do not mess up with content focus.
         if (FrameView* view = m_frame.view()) {
-            if (view->scrollbarAtPoint(mouseEvent.position()))
+            if (view->scrollbarAtPoint(plaformMouseEvent.position()))
                 return true;
         }
 
@@ -2600,7 +2600,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
         }
 
         // Only change the focus when clicking scrollbars if it can transfered to a mouse focusable node.
-        if ((!element || !element->isMouseFocusable()) && isInsideScrollbar(mouseEvent.position()))
+        if ((!element || !element->isMouseFocusable()) && isInsideScrollbar(plaformMouseEvent.position()))
             return false;
 
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
@@ -2878,9 +2878,9 @@ bool EventHandler::sendContextMenuEventForKey()
     PlatformEvent::Type eventType = PlatformEvent::MousePressed;
 #endif
 
-    PlatformMouseEvent mouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
+    PlatformMouseEvent plaformMouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
 
-    return !dispatchMouseEvent(eventNames().contextmenuEvent, targetNode, true, 0, mouseEvent, false);
+    return !dispatchMouseEvent(eventNames().contextmenuEvent, targetNode, true, 0, plaformMouseEvent, false);
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -3980,21 +3980,21 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 #endif // ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
 
 #if ENABLE(TOUCH_EVENTS)
-bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& event)
+bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& plaformMouseEvent)
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    UNUSED_PARAM(event);
+    UNUSED_PARAM(plaformMouseEvent);
     return false;
 #else
     if (!m_frame.settings().isTouchEventEmulationEnabled())
         return false;
 
-    PlatformEvent::Type eventType = event.type();
+    PlatformEvent::Type eventType = plaformMouseEvent.type();
     if (eventType != PlatformEvent::MouseMoved && eventType != PlatformEvent::MousePressed && eventType != PlatformEvent::MouseReleased)
         return false;
 
     HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
-    MouseEventWithHitTestResults mev = prepareMouseEvent(request, event);
+    MouseEventWithHitTestResults mev = prepareMouseEvent(request, plaformMouseEvent);
     if (mev.scrollbar() || subframeForHitTestResult(mev))
         return false;
 
@@ -4002,7 +4002,7 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
     if (eventType == PlatformEvent::MouseMoved && !m_touchPressed)
         return true;
 
-    SyntheticSingleTouchEvent touchEvent(event);
+    SyntheticSingleTouchEvent touchEvent(plaformMouseEvent);
     return handleTouchEvent(touchEvent);
 #endif
 }
