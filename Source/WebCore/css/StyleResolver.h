@@ -214,7 +214,7 @@ public:
 
     bool hasSelectorForId(const AtomicString&) const;
     bool hasSelectorForClass(const AtomicString&) const;
-    bool hasSelectorForAttribute(const AtomicString&) const;
+    bool hasSelectorForAttribute(const Element&, const AtomicString&) const;
 
     CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -547,10 +547,12 @@ private:
     friend bool operator!=(const MatchRanges&, const MatchRanges&);
 };
 
-inline bool StyleResolver::hasSelectorForAttribute(const AtomicString &attributeName) const
+inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const AtomicString &attributeName) const
 {
     ASSERT(!attributeName.isEmpty());
-    return m_ruleSets.features().attrsInRules.contains(attributeName.impl());
+    if (element.isHTMLElement())
+        return m_ruleSets.features().attributeCanonicalLocalNamesInRules.contains(attributeName.impl());
+    return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName.impl());
 }
 
 inline bool StyleResolver::hasSelectorForClass(const AtomicString& classValue) const

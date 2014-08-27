@@ -39,9 +39,10 @@ void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
         idsInRules.add(selector->value().impl());
     else if (selector->m_match == CSSSelector::Class)
         classesInRules.add(selector->value().impl());
-    else if (selector->isAttributeSelector())
-        attrsInRules.add(selector->attribute().localName().impl());
-    else if (selector->m_match == CSSSelector::PseudoElement) {
+    else if (selector->isAttributeSelector()) {
+        attributeCanonicalLocalNamesInRules.add(selector->attributeCanonicalLocalName().impl());
+        attributeLocalNamesInRules.add(selector->attribute().localName().impl());
+    } else if (selector->m_match == CSSSelector::PseudoElement) {
         switch (selector->pseudoElementType()) {
         case CSSSelector::PseudoElementFirstLine:
             usesFirstLineRules = true;
@@ -61,15 +62,10 @@ void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
 {
-    HashSet<AtomicStringImpl*>::const_iterator end = other.idsInRules.end();
-    for (HashSet<AtomicStringImpl*>::const_iterator it = other.idsInRules.begin(); it != end; ++it)
-        idsInRules.add(*it);
-    end = other.classesInRules.end();
-    for (HashSet<AtomicStringImpl*>::const_iterator it = other.classesInRules.begin(); it != end; ++it)
-        classesInRules.add(*it);
-    end = other.attrsInRules.end();
-    for (HashSet<AtomicStringImpl*>::const_iterator it = other.attrsInRules.begin(); it != end; ++it)
-        attrsInRules.add(*it);
+    idsInRules.add(other.idsInRules.begin(), other.idsInRules.end());
+    classesInRules.add(other.classesInRules.begin(), other.classesInRules.end());
+    attributeCanonicalLocalNamesInRules.add(other.attributeCanonicalLocalNamesInRules.begin(), other.attributeCanonicalLocalNamesInRules.end());
+    attributeLocalNamesInRules.add(other.attributeLocalNamesInRules.begin(), other.attributeLocalNamesInRules.end());
     siblingRules.appendVector(other.siblingRules);
     uncommonAttributeRules.appendVector(other.uncommonAttributeRules);
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
@@ -81,7 +77,8 @@ void RuleFeatureSet::clear()
 {
     idsInRules.clear();
     classesInRules.clear();
-    attrsInRules.clear();
+    attributeCanonicalLocalNamesInRules.clear();
+    attributeLocalNamesInRules.clear();
     siblingRules.clear();
     uncommonAttributeRules.clear();
     usesFirstLineRules = false;

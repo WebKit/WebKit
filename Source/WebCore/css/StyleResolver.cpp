@@ -2147,7 +2147,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                     state.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
                     didSet = true;
                     // Register the fact that the attribute value affects the style.
-                    m_ruleSets.features().attrsInRules.add(attr.localName().impl());
+                    m_ruleSets.features().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
+                    m_ruleSets.features().attributeLocalNamesInRules.add(attr.localName().impl());
                 } else if (contentValue->isCounter()) {
                     Counter* counterValue = contentValue->getCounterValue();
                     EListStyleType listStyleType = NoneListStyle;
@@ -2202,7 +2203,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 state.style()->setContentAltText(value.isNull() ? emptyAtom : value.impl());
                 didSet = true;
                 // Register the fact that the attribute value affects the style.
-                m_ruleSets.features().attrsInRules.add(attr.localName().impl());
+                m_ruleSets.features().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
+                m_ruleSets.features().attributeLocalNamesInRules.add(attr.localName().impl());
             }
             if (!didSet)
                 state.style()->setContentAltText(emptyAtom);

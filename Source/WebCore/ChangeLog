@@ -1,5 +1,47 @@
 2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
 
+        Updating attributes on HTML elements do not invalidate the style correctly unless the attribute name is lowercase in the stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=136270
+
+        Reviewed by Andreas Kling.
+
+        In HTML, WebKit treats every attribute name lowercase to implement case-insensitive matching.
+        When invalidating style, the StyleResolver was ignoring HTML and always using the XML names.
+
+        This patch split the names on RuleFeatureSet in two sets: one for XML, one for HTML.
+        In StyleResolver, the name used depends on the type of the element being updated.
+
+        This patch also adds nodeNeedsStyleRecalc() to Internals to test the optimization and various cases
+        of style update.
+
+        Tests: fast/css/attribute-for-content-property-style-update-html.html
+               fast/css/attribute-for-content-property-style-update-xhtml.xhtml
+               fast/css/attribute-style-invalidation-optimization-html.html
+               fast/css/attribute-style-invalidation-optimization-xhtml.xhtml
+               fast/css/attribute-style-update-html.html
+               fast/selectors/attribute-style-update-html.html
+               fast/selectors/attribute-style-update-svg-in-html.html
+               fast/selectors/attribute-style-update-xhtml.xhtml
+
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector):
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        * css/RuleFeature.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::hasSelectorForAttribute):
+        * dom/Element.cpp:
+        (WebCore::Element::willModifyAttribute):
+        * testing/Internals.cpp:
+        (WebCore::Internals::address):
+        (WebCore::Internals::nodeNeedsStyleRecalc):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
+
         Update the CSS Grammar selector names to get closer to the latest terminology
         https://bugs.webkit.org/show_bug.cgi?id=136277
 

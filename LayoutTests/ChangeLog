@@ -1,3 +1,30 @@
+2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Updating attributes on HTML elements do not invalidate the style correctly unless the attribute name is lowercase in the stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=136270
+        rdar://problem/16190617
+
+        Reviewed by Andreas Kling.
+
+        The test coverage for attribute update was abysmal. This adds the basic cases for HTML and XML.
+
+        * fast/css/attribute-for-content-property-style-update-html-expected.html: Added.
+        * fast/css/attribute-for-content-property-style-update-html.html: Added.
+        * fast/css/attribute-for-content-property-style-update-xhtml-expected.html: Added.
+        * fast/css/attribute-for-content-property-style-update-xhtml.xhtml: Added.
+        * fast/css/attribute-style-invalidation-optimization-html-expected.txt: Added.
+        * fast/css/attribute-style-invalidation-optimization-html.html: Added.
+        * fast/css/attribute-style-invalidation-optimization-xhtml-expected.txt: Added.
+        * fast/css/attribute-style-invalidation-optimization-xhtml.xhtml: Added.
+        * fast/css/attribute-style-update-html-expected.html: Added.
+        * fast/css/attribute-style-update-html.html: Added.
+        * fast/selectors/attribute-style-update-html-expected.txt: Added.
+        * fast/selectors/attribute-style-update-html.html: Added.
+        * fast/selectors/attribute-style-update-svg-in-html-expected.txt: Added.
+        * fast/selectors/attribute-style-update-svg-in-html.html: Added.
+        * fast/selectors/attribute-style-update-xhtml-expected.txt: Added.
+        * fast/selectors/attribute-style-update-xhtml.xhtml: Added.
+
 2014-08-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Move generated content tests into fast/regions/generated-content

@@ -2707,7 +2707,7 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
 
     if (oldValue != newValue) {
         auto styleResolver = document().styleResolverIfExists();
-        if (styleResolver && styleResolver->hasSelectorForAttribute(name.localName()))
+        if (styleResolver && styleResolver->hasSelectorForAttribute(*this, name.localName()))
             setNeedsStyleRecalc();
     }
 

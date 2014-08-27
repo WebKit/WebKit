@@ -347,10 +347,17 @@ unsigned Internals::workerThreadCount() const
 
 String Internals::address(Node* node)
 {
-    char buf[32];
-    sprintf(buf, "%p", node);
+    return String::format("%p", node);
+}
 
-    return String(buf);
+bool Internals::nodeNeedsStyleRecalc(Node* node, ExceptionCode& exception)
+{
+    if (!node) {
+        exception = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return node->needsStyleRecalc();
 }
 
 String Internals::description(Deprecated::ScriptValue value)

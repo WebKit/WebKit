@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.valid::before {
+    content: "WebKit!"
+}
+</style>
+</head>
+<body>
+    <p>This test checks the styling and style update of attributes that are only used by the "content" propery of a rule. HTML should match the attribute regardless of the case.</p>
+    <div id="initial">
+        <target>No attribute</target>
+
+        <target class="valid">CamelCase initial attribute</target>
+        <target class="valid">camelcase initial attribute</target>
+        <target class="valid">CAMELCASE initial attribute</target>
+    </div>
+    <div id="dynamic">
+        <target>No attribute</target>
+
+        <target class="valid">CamelCase initial attribute</target>
+        <target class="valid">camelcase initial attribute</target>
+        <target class="valid">CAMELCASE initial attribute</target>
+    </div>
+</body>
+</html>

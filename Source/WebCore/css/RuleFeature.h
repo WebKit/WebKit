@@ -58,7 +58,8 @@ struct RuleFeatureSet {
 
     HashSet<AtomicStringImpl*> idsInRules;
     HashSet<AtomicStringImpl*> classesInRules;
-    HashSet<AtomicStringImpl*> attrsInRules;
+    HashSet<AtomicStringImpl*> attributeCanonicalLocalNamesInRules;
+    HashSet<AtomicStringImpl*> attributeLocalNamesInRules;
     Vector<RuleFeature> siblingRules;
     Vector<RuleFeature> uncommonAttributeRules;
     bool usesFirstLineRules;
