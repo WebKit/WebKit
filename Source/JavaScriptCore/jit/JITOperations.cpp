@@ -611,6 +611,7 @@ EncodedJSValue JIT_OPERATION operationCallEval(ExecState* exec, ExecState* execC
 
     execCallee->setScope(exec->scope());
     execCallee->setCodeBlock(0);
+    execCallee->setCallerFrame(exec);
 
     if (!isHostFunction(execCallee->calleeAsValue(), globalFuncEval))
         return JSValue::encode(JSValue());
