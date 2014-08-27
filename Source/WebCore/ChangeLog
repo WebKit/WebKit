@@ -1,3 +1,62 @@
+2014-08-27  Beth Dakin  <bdakin@apple.com>
+
+        overflow:scroll elements should not latch to the body if the body is 
+        overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=136273
+
+        Reviewed by Darin Adler.
+
+        This patch adds an optional parameter to isScrollable(). The Scrollability 
+        parameter that allows the caller to define what they mean by 'scrollable.' Most 
+        callers are interested in the default value, Scrollability::Scrollable, which 
+        means that there is actually content to scroll to, and a scrollbar that will allow 
+        you to access it. In some cases, such as this latching case, callers want to know 
+        if the FrameView is allowed to rubber-band, which the main frame might be allowed 
+        to do even if there is no content to scroll to. In that case, callers use 
+        Scrollability::ScrollableOrRubberbandable.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollable):
+        (WebCore::FrameView::hasScrollableOrRubberbandableAncestor):
+
+        New virtual function on ScrollableArea answers whether a ScrollableArea has any 
+        scrollable or rubber-bandable ancestor.
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+
+        Events should only be allowed to prevent stretching if there is some ancestor 
+        ScrollableArea that will be able to make use of the event. 
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching):
+
+        New ScrollableArea virtual function.
+        * platform/win/PopupMenuWin.h:
+
+        New RenderBox isScrollableOrRubberbandable() returns just 
+        canBeScrolledAndHasScrollableArea() for most RenderBox, but will be overridden by 
+        RenderView.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isScrollableOrRubberbandable):
+        * rendering/RenderBox.h:
+
+        Recurse up the parent chain to find out if anything is scrollable or just rubber-
+        bandable.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasScrollableOrRubberbandableAncestor):
+        * rendering/RenderLayer.h:
+
+        Call into RenderLayer.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::hasScrollableOrRubberbandableAncestor):
+        * rendering/RenderListBox.h:
+
+        Override isScrollableOrRubberbandable() to handle the main frame case where the 
+        main frame is typically allowed to rubber-band even if there is no content to 
+        scroll to.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::isScrollableOrRubberbandable):
+        * rendering/RenderView.h:
+
 2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
 
         Updating attributes on HTML elements do not invalidate the style correctly unless the attribute name is lowercase in the stylesheet

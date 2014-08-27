@@ -3065,6 +3065,16 @@ ScrollableArea* RenderLayer::enclosingScrollableArea() const
     return 0;
 }
 
+bool RenderLayer::hasScrollableOrRubberbandableAncestor()
+{
+    for (RenderLayer* nextLayer = parentLayerCrossFrame(this); nextLayer; nextLayer = parentLayerCrossFrame(nextLayer)) {
+        if (nextLayer->renderer().isBox() && toRenderBox(nextLayer->renderer()).isScrollableOrRubberbandable())
+            return true;
+    }
+
+    return false;
+}
+
 #if ENABLE(CSS_SCROLL_SNAP)
 void RenderLayer::updateSnapOffsets()
 {

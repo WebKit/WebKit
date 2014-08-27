@@ -3265,7 +3265,7 @@ IntRect FrameView::scrollableAreaBoundingBox() const
     return ownerRenderer->absoluteContentQuad().enclosingBoundingBox();
 }
 
-bool FrameView::isScrollable()
+bool FrameView::isScrollable(Scrollability definitionOfScrollable)
 {
     // Check for:
     // 1) If there an actual overflow.
@@ -3273,11 +3273,18 @@ bool FrameView::isScrollable()
     // 3) overflow{-x,-y}: hidden;
     // 4) scrolling: no;
 
+    bool requiresActualOverflowToBeConsideredScrollable = !frame().isMainFrame() || definitionOfScrollable != Scrollability::ScrollableOrRubberbandable;
+#if !ENABLE(RUBBER_BANDING)
+    requiresActualOverflowToBeConsideredScrollable = true;
+#endif
+
     // Covers #1
-    IntSize totalContentsSize = this->totalContentsSize();
-    IntSize visibleContentSize = visibleContentRect(LegacyIOSDocumentVisibleRect).size();
-    if ((totalContentsSize.height() <= visibleContentSize.height() && totalContentsSize.width() <= visibleContentSize.width()))
-        return false;
+    if (requiresActualOverflowToBeConsideredScrollable) {
+        IntSize totalContentsSize = this->totalContentsSize();
+        IntSize visibleContentSize = visibleContentRect(LegacyIOSDocumentVisibleRect).size();
+        if ((totalContentsSize.height() <= visibleContentSize.height() && totalContentsSize.width() <= visibleContentSize.width()))
+            return false;
+    }
 
     // Covers #2.
     HTMLFrameOwnerElement* owner = frame().ownerElement();
@@ -3292,6 +3299,23 @@ bool FrameView::isScrollable()
         return false;
 
     return true;
+}
+
+bool FrameView::hasScrollableOrRubberbandableAncestor()
+{
+    if (frame().isMainFrame())
+        return isScrollable(Scrollability::ScrollableOrRubberbandable);
+
+    FrameView* parentFrameView = this->parentFrameView();
+    if (!parentFrameView)
+        return false;
+
+    RenderView* parentRenderView = parentFrameView->renderView();
+    if (!parentRenderView)
+        return false;
+
+    RenderLayer* enclosingLayer = parentRenderView->enclosingLayer();
+    return enclosingLayer && enclosingLayer->hasScrollableOrRubberbandableAncestor();
 }
 
 void FrameView::updateScrollableAreaSet()

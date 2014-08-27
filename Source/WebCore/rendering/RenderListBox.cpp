@@ -787,6 +787,11 @@ ScrollableArea* RenderListBox::enclosingScrollableArea() const
     return 0;
 }
 
+bool RenderListBox::hasScrollableOrRubberbandableAncestor()
+{
+    return enclosingLayer() && enclosingLayer()->hasScrollableOrRubberbandableAncestor();
+}
+
 IntRect RenderListBox::scrollableAreaBoundingBox() const
 {
     return absoluteBoundingBoxRect();

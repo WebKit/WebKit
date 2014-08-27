@@ -710,6 +710,14 @@ void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintCont
         rect = LayoutRect(layer()->transform()->mapRect(pixelSnappedForPainting(rect, document().deviceScaleFactor())));
 }
 
+bool RenderView::isScrollableOrRubberbandable() const
+{
+    // The main frame might be allowed to rubber-band even if there is no content to scroll to. This is unique to
+    // the main frame; subframes and overflow areas have to have content that can be scrolled to in order to rubber-band.
+    FrameView::Scrollability defineScrollable = frame().ownerElement() ? FrameView::Scrollability::Scrollable : FrameView::Scrollability::ScrollableOrRubberbandable;
+    return frameView().isScrollable(defineScrollable);
+}
+
 void RenderView::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     rects.append(pixelSnappedIntRect(accumulatedOffset, layer()->size()));

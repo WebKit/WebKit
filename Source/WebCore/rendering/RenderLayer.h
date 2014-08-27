@@ -439,6 +439,7 @@ public:
     virtual Scrollbar* horizontalScrollbar() const override { return m_hBar.get(); }
     virtual Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
     virtual ScrollableArea* enclosingScrollableArea() const override;
+    virtual bool hasScrollableOrRubberbandableAncestor() override;
 #if ENABLE(CSS_SCROLL_SNAP)
     virtual void updateSnapOffsets() override;
 #endif

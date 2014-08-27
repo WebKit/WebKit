@@ -175,6 +175,7 @@ private:
     // ScrollableArea functions.
     virtual WebCore::IntRect scrollCornerRect() const override;
     virtual WebCore::ScrollableArea* enclosingScrollableArea() const override;
+    virtual bool hasScrollableOrRubberbandableAncestor() override { return true; }
     virtual WebCore::IntRect scrollableAreaBoundingBox() const override;
     virtual void setScrollOffset(const WebCore::IntPoint&) override;
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) override;

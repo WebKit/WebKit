@@ -396,7 +396,14 @@ public:
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
 
-    bool isScrollable();
+    // isScrollable() takes an optional Scrollability parameter that allows the caller to define what they mean by 'scrollable.'
+    // Most callers are interested in the default value, Scrollability::Scrollable, which means that there is actually content
+    // to scroll to, and a scrollbar that will allow you to access it. In some cases, callers want to know if the FrameView is allowed
+    // to rubber-band, which the main frame might be allowed to do even if there is no content to scroll to. In that case,
+    // callers use Scrollability::ScrollableOrRubberbandable.
+    enum class Scrollability { Scrollable, ScrollableOrRubberbandable };
+    bool isScrollable(Scrollability definitionOfScrollable = Scrollability::Scrollable);
+    virtual bool hasScrollableOrRubberbandableAncestor() override;
 
     enum ScrollbarModesCalculationStrategy { RulesFromWebContentOnly, AnyRule };
     void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode, ScrollbarModesCalculationStrategy = AnyRule);

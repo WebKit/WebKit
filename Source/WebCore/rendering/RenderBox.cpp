@@ -835,7 +835,12 @@ bool RenderBox::canBeScrolledAndHasScrollableArea() const
 {
     return canBeProgramaticallyScrolled() && (scrollHeight() != clientHeight() || scrollWidth() != clientWidth());
 }
-    
+
+bool RenderBox::isScrollableOrRubberbandable() const
+{
+    return canBeScrolledAndHasScrollableArea();
+}
+
 bool RenderBox::canBeProgramaticallyScrolled() const
 {
     if (isRenderView())
