@@ -1,3 +1,25 @@
+2014-08-27  Conrad Shultz  <conrad_shultz@apple.com>
+
+        webkit.org is inconsistent in uses of "OS X" vs. "Mac OS X"
+        https://bugs.webkit.org/show_bug.cgi?id=136315
+
+        Reviewed by Mark Rowe.
+
+        * building/checkout.html:
+        * building/debug-mac-uiprocess.html:
+        * building/debug.html:
+        * building/run.html:
+        * building/tools.html:
+        * contact.html:
+        * index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * quality/bugwriting.html:
+        * quality/crashlogs.html:
+        * quality/leakhunting.html:
+        * quality/lifecycle.html:
+        * quality/testing.html:
+
 2014-08-27  László Langó  <llango.u-szeged@partner.samsung.com>
 
         http://webkit.org/coding/coding-style.html should mention check-webkit-style.
