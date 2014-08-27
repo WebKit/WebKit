@@ -1,5 +1,22 @@
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172982. <rdar://problem/18141695>
+
+    2014-08-26  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] Version stamp should include package-level version
+            https://bugs.webkit.org/show_bug.cgi?id=136266
+            <rdar://problem/18134138>
+    
+            Reviewed by David Kilzer.
+    
+            * Scripts/webkitperl/auto-version_unittest/autoVersionTests.pl: Add
+            tests for the full 3+ digit version.
+            * Scripts/webkitperl/auto-version_unittest/versionStampTests.pl:
+            Confirm that the final output DLL uses the 3+ digit version.
+    
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
         Merge r172977. <rdar://problem/18141703>
 
     2014-08-26  Brent Fulgham  <bfulgham@apple.com>
