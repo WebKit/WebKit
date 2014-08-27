@@ -462,7 +462,6 @@ public:
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint());
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0);
     bool canBeScrolledAndHasScrollableArea() const;
-    virtual bool isScrollableOrRubberbandable() const;
     virtual bool canBeProgramaticallyScrolled() const;
     virtual void autoscroll(const IntPoint&);
     bool canAutoscroll() const;
@@ -666,6 +665,8 @@ private:
 
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;
+
+    virtual bool isScrollableOrRubberbandable() const override;
 
     // Returns true if we did a full repaint
     bool repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground);

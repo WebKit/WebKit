@@ -1,3 +1,29 @@
+2014-08-27  Beth Dakin  <bdakin@apple.com>
+
+        Make isScrollableOrRubberbandable() a virtual function on RenderLayerModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=136307
+
+        Reviewed by Simon Fraser.
+
+        Remove extra parentheses. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollable):
+
+        Mark isScrollableOrRubberbandable() as override now that the root implementation 
+        is moving to RenderLayerModelObject. It can also be private now.
+        * rendering/RenderBox.h:
+
+        isBox() check and cast are no longer necessary.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasScrollableOrRubberbandableAncestor):
+
+        Base implementation should return false.
+        * rendering/RenderLayerModelObject.h:
+        (WebCore::RenderLayerModelObject::isScrollableOrRubberbandable):
+
+        Mark as override.
+        * rendering/RenderView.h:
+
 2014-08-27  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r172946): Plugin tests asserting on Yosemite debug bot

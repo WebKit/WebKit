@@ -3282,7 +3282,7 @@ bool FrameView::isScrollable(Scrollability definitionOfScrollable)
     if (requiresActualOverflowToBeConsideredScrollable) {
         IntSize totalContentsSize = this->totalContentsSize();
         IntSize visibleContentSize = visibleContentRect(LegacyIOSDocumentVisibleRect).size();
-        if ((totalContentsSize.height() <= visibleContentSize.height() && totalContentsSize.width() <= visibleContentSize.width()))
+        if (totalContentsSize.height() <= visibleContentSize.height() && totalContentsSize.width() <= visibleContentSize.width())
             return false;
     }
 
