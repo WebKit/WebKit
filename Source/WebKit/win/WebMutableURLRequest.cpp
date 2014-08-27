@@ -366,13 +366,12 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setAllowsAnyHTTPSCertificate(voi
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setClientCertificate(
-    /* [in] */ OLE_HANDLE cert)
+HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setClientCertificate(/* [in] */ ULONG_PTR cert)
 {
     if (!cert)
         return E_POINTER;
 
-    PCCERT_CONTEXT certContext = reinterpret_cast<PCCERT_CONTEXT>((ULONG64)cert);
+    PCCERT_CONTEXT certContext = reinterpret_cast<PCCERT_CONTEXT>(cert);
     RetainPtr<CFDataRef> certData = WebCore::copyCertificateToData(certContext);
     ResourceHandle::setClientCertificate(m_request.url().host(), certData.get());
     return S_OK;

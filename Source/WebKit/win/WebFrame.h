@@ -236,14 +236,9 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE reloadFromOrigin();
 
-    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(
-        /* [in] */ RECT rect,
-        /* [in] */ OLE_HANDLE deviceContext);
+    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(/* [in] */ RECT rect, /* [in] */ HDC deviceContext);
 
-    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(
-        /* [in] */ RECT rect,
-        /* [in] */ POINT pt,
-        /* [in] */ OLE_HANDLE deviceContext);
+    virtual HRESULT STDMETHODCALLTYPE paintScrollViewRectToContextAtPoint(/* [in] */ RECT rect, /* [in] */ POINT pt, /* [in] */ HDC deviceContext);
 
     virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete(
         /* [in] */ IDOMElement* element, 

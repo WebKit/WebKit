@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,7 +97,7 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
 
     COMPtr<WebView> frontendWebView(AdoptCOM, WebView::createInstance());
 
-    if (FAILED(frontendWebView->setHostWindow((OLE_HANDLE)(ULONG64)frontendHwnd)))
+    if (FAILED(frontendWebView->setHostWindow(frontendHwnd)))
         return 0;
 
     RECT rect;
@@ -154,7 +154,7 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
     frontendWebView->setProhibitsMainFrameScrolling(TRUE);
 
     HWND frontendWebViewHwnd;
-    if (FAILED(frontendWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&frontendWebViewHwnd))))
+    if (FAILED(frontendWebView->viewWindow(&frontendWebViewHwnd)))
         return 0;
 
     COMPtr<WebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance());
@@ -171,10 +171,10 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
         return 0;
 
     m_frontendPage = core(frontendWebView.get());
-    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, reinterpret_cast<HWND>(m_inspectedWebViewHandle), frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
+    auto frontendClient = std::make_unique<WebInspectorFrontendClient>(m_inspectedWebView, m_inspectedWebViewHandle, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings());
     m_frontendClient = frontendClient.get();
     m_frontendPage->inspectorController().setInspectorFrontendClient(WTF::move(frontendClient));
-    m_frontendHandle = reinterpret_cast<OLE_HANDLE>(frontendHwnd);
+    m_frontendHandle = frontendHwnd;
     return this;
 }
 
@@ -201,8 +201,8 @@ void WebInspectorClient::highlight()
     else
         m_highlight->setShowsWhileWebViewIsVisible(true);
 
-    if (creatingHighlight && IsWindowVisible((HWND)m_frontendHandle))
-        m_highlight->placeBehindWindow(reinterpret_cast<HWND>(m_frontendHandle));
+    if (creatingHighlight && IsWindowVisible(m_frontendHandle))
+        m_highlight->placeBehindWindow(m_frontendHandle);
 }
 
 void WebInspectorClient::hideHighlight()
@@ -313,12 +313,12 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
     if (!m_attached)
         return;
 
-    OLE_HANDLE hostWindow;
+    HWND hostWindow;
     if (!SUCCEEDED(m_inspectedWebView->hostWindow(&hostWindow)))
         return;
 
     RECT hostWindowRect;
-    GetClientRect(reinterpret_cast<HWND>(hostWindow), &hostWindowRect);
+    GetClientRect(hostWindow, &hostWindowRect);
 
     RECT inspectedRect;
     GetClientRect(m_inspectedWebViewHwnd, &inspectedRect);
@@ -371,12 +371,12 @@ void WebInspectorFrontendClient::closeWindowWithoutNotifications()
 
     m_attached = false;
 
-    m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_frontendHwnd));
+    m_frontendWebView->setHostWindow(m_frontendHwnd);
 
     // Make sure everything has the right size/position.
-    OLE_HANDLE hostWindow;
+    HWND hostWindow;
     if (SUCCEEDED(m_inspectedWebView->hostWindow(&hostWindow)))
-        SendMessage(reinterpret_cast<HWND>(hostWindow), WM_SIZE, 0, 0);
+        SendMessage(hostWindow, WM_SIZE, 0, 0);
 }
 
 void WebInspectorFrontendClient::showWindowWithoutNotifications()
@@ -401,7 +401,7 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
 
     if (!shouldAttach) {
         // Put the Inspector's WebView inside our window and show it.
-        m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_frontendHwnd));
+        m_frontendWebView->setHostWindow(m_frontendHwnd);
         SendMessage(m_frontendHwnd, WM_SIZE, 0, 0);
         updateWindowTitle();
 
@@ -413,10 +413,10 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
     WindowMessageBroadcaster::addListener(m_inspectedWebViewHwnd, this);
 
     HWND hostWindow;
-    if (FAILED(m_inspectedWebView->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow))))
+    if (FAILED(m_inspectedWebView->hostWindow(&hostWindow)))
         return;
 
-    m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(hostWindow));
+    m_frontendWebView->setHostWindow(hostWindow);
 
     // Then hide our own window.
     ShowWindow(m_frontendHwnd, SW_HIDE);

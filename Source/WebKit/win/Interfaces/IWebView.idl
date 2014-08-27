@@ -545,14 +545,14 @@ interface IWebView : IUnknown
         not in an actual window.
         - (void)setHostWindow:(NSWindow *)hostWindow;
     */
-    HRESULT setHostWindow([in] OLE_HANDLE window);
+    HRESULT setHostWindow([in] HWND window);
 
     /*!
         @method hostWindow
         @result The host window for the web view.
         - (NSWindow *)hostWindow;
     */
-    HRESULT hostWindow([out, retval] OLE_HANDLE* window);
+    HRESULT hostWindow([out, retval] HWND* window);
 
     /*!
         @method searchFor:direction:caseSensitive:
@@ -735,7 +735,7 @@ interface IWebView : IUnknown
         @result Returns the main frame's icon if any, otherwise nil.
         - (NSImage *)mainFrameIcon;
     */
-    HRESULT mainFrameIcon([out, retval] OLE_HANDLE* hBitmap);
+    HRESULT mainFrameIcon([out, retval] HBITMAP* hBitmap);
 
     /*!
         @method registerURLSchemeAsLocal

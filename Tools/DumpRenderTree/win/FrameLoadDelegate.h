@@ -78,10 +78,7 @@ public:
         /* [in] */ IWebView *webView,
         /* [in] */ IWebFrame *frame);
 
-    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ OLE_HANDLE image,
-        /* [in] */ IWebFrame *frame) { return E_NOTIMPL; } 
+    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon(/* [in] */ IWebView*, /* [in] */ HBITMAP, /* [in] */ IWebFrame*) { return E_NOTIMPL; } 
 
     virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
         /* [in] */ IWebView *webView,

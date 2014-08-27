@@ -164,14 +164,14 @@ AccessibilityUIElement AccessibilityController::rootElement()
     if (!viewPrivate)
         return 0;
 
-    OLE_HANDLE webViewWindow;
+    HWND webViewWindow;
     if (FAILED(viewPrivate->viewWindow(&webViewWindow)))
         return 0;
 
     // Get the root accessible object by querying for the accessible object for the
     // WebView's window.
     COMPtr<IAccessible> rootAccessible;
-    if (FAILED(AccessibleObjectFromWindow(reinterpret_cast<HWND>(webViewWindow), static_cast<DWORD>(OBJID_CLIENT), __uuidof(IAccessible), reinterpret_cast<void**>(&rootAccessible))))
+    if (FAILED(AccessibleObjectFromWindow(webViewWindow, static_cast<DWORD>(OBJID_CLIENT), __uuidof(IAccessible), reinterpret_cast<void**>(&rootAccessible))))
         return 0;
 
     return rootAccessible;

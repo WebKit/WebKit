@@ -1,5 +1,27 @@
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172977. <rdar://problem/18141703>
+
+    2014-08-26  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] WebKit IDL incorrectly passes HWND as OLE_HANDLE
+            https://bugs.webkit.org/show_bug.cgi?id=136258
+            <rdar://problem/18134138>
+    
+            Reviewed by Tim Horton.
+    
+            Avoid 32/64-bit truncation by preventing 64-bit HWND (and other)
+            values from passing through the 32-bit OLE_HANDLE data type.
+    
+            * platform/win/WindowMessageBroadcaster.cpp:
+            (WebCore::WindowMessageBroadcaster::addListener):
+            (WebCore::WindowMessageBroadcaster::removeListener):
+            (WebCore::WindowMessageBroadcaster::destroy):
+            (WebCore::WindowMessageBroadcaster::unsubclassWindow):
+            (WebCore::WindowMessageBroadcaster::SubclassedWndProc):
+    
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
         Merge r172969. <rdar://problem/17435564>
 
     2014-08-26  Simon Fraser  <simon.fraser@apple.com>

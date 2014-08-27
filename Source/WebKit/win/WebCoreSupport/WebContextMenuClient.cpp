@@ -63,17 +63,17 @@ PassOwnPtr<ContextMenu> WebContextMenuClient::customizeMenu(PassOwnPtr<ContextMe
 
     ASSERT(uiDelegate);
 
-    OLE_HANDLE nativeMenu = reinterpret_cast<OLE_HANDLE>(menu->platformContextMenu());
+    HMENU nativeMenu = menu->platformContextMenu();
     COMPtr<WebElementPropertyBag> propertyBag;
     propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController().hitTestResult()));
     // FIXME: We need to decide whether to do the default before calling this delegate method
     if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), nativeMenu, &nativeMenu))) {
-        ::DestroyMenu(reinterpret_cast<HMENU>(nativeMenu));
+        ::DestroyMenu(nativeMenu);
         return menu.release();
     }
     
-    OwnPtr<ContextMenu> customizedMenu = adoptPtr(new ContextMenu(reinterpret_cast<HMENU>(nativeMenu)));
-    ::DestroyMenu(reinterpret_cast<HMENU>(nativeMenu));
+    OwnPtr<ContextMenu> customizedMenu = adoptPtr(new ContextMenu(nativeMenu));
+    ::DestroyMenu(nativeMenu);
 
     return customizedMenu.release();
 }

@@ -1167,11 +1167,11 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize,
             COMPtr<IWebEmbeddedView> view;
             HRESULT result = uiPrivate->embeddedViewWithArguments(webView, m_webFrame, argumentsBag.get(), &view);
             if (SUCCEEDED(result)) {
-                OLE_HANDLE parentWindow;
+                HWND parentWindow;
                 HRESULT hr = webView->viewWindow(&parentWindow);
                 ASSERT(SUCCEEDED(hr));
 
-                return EmbeddedWidget::create(view.get(), element, reinterpret_cast<HWND>(parentWindow), pluginSize);
+                return EmbeddedWidget::create(view.get(), element, parentWindow, pluginSize);
             }
         }
     }

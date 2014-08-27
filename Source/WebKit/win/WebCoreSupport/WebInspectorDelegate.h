@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,13 +65,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE webViewUnfocus( 
         /* [in] */ IWebView*) { return E_NOTIMPL; }
 
-    virtual HRESULT STDMETHODCALLTYPE webViewFirstResponder( 
-        /* [in] */ IWebView*,
-        /* [retval][out] */ OLE_HANDLE*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE webViewFirstResponder(IWebView*, HWND*) { return E_NOTIMPL; }
 
-    virtual HRESULT STDMETHODCALLTYPE makeFirstResponder( 
-        /* [in] */ IWebView*,
-        /* [in] */ OLE_HANDLE) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE makeFirstResponder(IWebView*, HWND) { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE setStatusText( 
         /* [in] */ IWebView*,
@@ -150,11 +147,7 @@ public:
         /* [in] */ IPropertyBag*,
         /* [in] */ UINT /*modifierFlags*/) { return E_NOTIMPL; }
 
-    virtual HRESULT STDMETHODCALLTYPE contextMenuItemsForElement( 
-        /* [in] */ IWebView*,
-        /* [in] */ IPropertyBag*,
-        /* [in] */ OLE_HANDLE,
-        /* [retval][out] */ OLE_HANDLE*) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE contextMenuItemsForElement(IWebView*, IPropertyBag*, HMENU, HMENU*) { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE validateUserInterfaceItem( 
         /* [in] */ IWebView*,
@@ -192,10 +185,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE hasCustomMenuImplementation( 
         /* [retval][out] */ BOOL*) { return E_NOTIMPL; }
 
-    virtual HRESULT STDMETHODCALLTYPE trackCustomPopupMenu( 
-        /* [in] */ IWebView*,
-        /* [in] */ OLE_HANDLE,
-        /* [in] */ LPPOINT) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE trackCustomPopupMenu(/* [in] */ IWebView*, /* [in] */ HMENU, /* [in] */ LPPOINT) { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE measureCustomMenuItem( 
         /* [in] */ IWebView*,
@@ -205,13 +195,9 @@ public:
         /* [in] */ IWebView*,
         /* [in] */ void*  /*drawItem*/) { return E_NOTIMPL; }
 
-    virtual HRESULT STDMETHODCALLTYPE addCustomMenuDrawingData( 
-        /* [in] */ IWebView*,
-        /* [in] */ OLE_HANDLE) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE addCustomMenuDrawingData(/* [in] */ IWebView*, /* [in] */ HMENU) { return E_NOTIMPL; }
 
-    virtual HRESULT STDMETHODCALLTYPE cleanUpCustomMenuDrawingData( 
-        /* [in] */ IWebView*,
-        /* [in] */ OLE_HANDLE) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE cleanUpCustomMenuDrawingData(/* [in] */ IWebView*, /* [in] */ HMENU) { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE canTakeFocus( 
         /* [in] */ IWebView*,
@@ -259,17 +245,9 @@ public:
         /* [in] */ IWebView *webView,
         /* [retval][out] */ float *result) { return E_NOTIMPL; }
     
-    virtual HRESULT STDMETHODCALLTYPE drawHeaderInRect( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ RECT *rect,
-        /* [in] */ OLE_HANDLE drawingContext) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE drawHeaderInRect(IWebView*, RECT*, ULONG_PTR) { return E_NOTIMPL; }
     
-    virtual HRESULT STDMETHODCALLTYPE drawFooterInRect( 
-        /* [in] */ IWebView *webView,
-        /* [in] */ RECT *rect,
-        /* [in] */ OLE_HANDLE drawingContext,
-        /* [in] */ UINT pageIndex,
-        /* [in] */ UINT pageCount) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE drawFooterInRect(IWebView*, RECT*, ULONG_PTR, UINT, UINT) { return E_NOTIMPL; }
     
     virtual HRESULT STDMETHODCALLTYPE webViewPrintingMarginRect( 
         /* [in] */ IWebView *webView,

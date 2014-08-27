@@ -708,11 +708,11 @@ void TestRunner::setWindowIsKey(bool flag)
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
-    OLE_HANDLE webViewWindow;
+    HWND webViewWindow;
     if (FAILED(viewPrivate->viewWindow(&webViewWindow)))
         return;
 
-    ::SendMessage(reinterpret_cast<HWND>(webViewWindow), flag ? WM_SETFOCUS : WM_KILLFOCUS, (WPARAM)::GetDesktopWindow(), 0);
+    ::SendMessage(webViewWindow, flag ? WM_SETFOCUS : WM_KILLFOCUS, (WPARAM)::GetDesktopWindow(), 0);
 }
 
 static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;

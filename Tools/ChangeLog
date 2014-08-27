@@ -1,3 +1,60 @@
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172977. <rdar://problem/18141703>
+
+    2014-08-26  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] WebKit IDL incorrectly passes HWND as OLE_HANDLE
+            https://bugs.webkit.org/show_bug.cgi?id=136258
+            <rdar://problem/18134138>
+    
+            Reviewed by Tim Horton.
+    
+            Avoid 32/64-bit truncation by preventing 64-bit HWND (and other)
+            values from passing through the 32-bit OLE_HANDLE data type.
+    
+            * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+            (AccessibilityController::rootElement):
+            * DumpRenderTree/win/DumpRenderTree.cpp:
+            (resetWebViewToConsistentStateBeforeTesting):
+            (runTest):
+            (createWebViewAndOffscreenWindow):
+            * DumpRenderTree/win/FrameLoadDelegate.h:
+            (FrameLoadDelegate::didReceiveIcon):
+            * DumpRenderTree/win/TestRunnerWin.cpp:
+            (TestRunner::setWindowIsKey):
+            * DumpRenderTree/win/UIDelegate.cpp:
+            (UIDelegate::trackCustomPopupMenu):
+            (UIDelegate::drawHeaderInRect):
+            (UIDelegate::drawFooterInRect):
+            (UIDelegate::webViewClose):
+            (UIDelegate::webViewFocus):
+            (UIDelegate::webViewSetCursor):
+            (UIDelegate::drawBackground):
+            * DumpRenderTree/win/UIDelegate.h:
+            (UIDelegate::webViewFirstResponder):
+            (UIDelegate::makeFirstResponder):
+            (UIDelegate::contextMenuItemsForElement):
+            (UIDelegate::addCustomMenuDrawingData):
+            (UIDelegate::cleanUpCustomMenuDrawingData):
+            (UIDelegate::webViewLostFocus):
+            * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp:
+            (TestWebKitAPI::WebViewDestructionWithHostWindow::SetUp):
+            * WinLauncher/PrintWebUIDelegate.cpp:
+            (PrintWebUIDelegate::drawHeaderInRect):
+            (PrintWebUIDelegate::drawFooterInRect):
+            * WinLauncher/PrintWebUIDelegate.h:
+            (PrintWebUIDelegate::webViewFirstResponder):
+            (PrintWebUIDelegate::makeFirstResponder):
+            (PrintWebUIDelegate::contextMenuItemsForElement):
+            (PrintWebUIDelegate::trackCustomPopupMenu):
+            (PrintWebUIDelegate::addCustomMenuDrawingData):
+            (PrintWebUIDelegate::cleanUpCustomMenuDrawingData):
+            * WinLauncher/WinLauncher.cpp:
+            (WinLauncher::prepareViews):
+            * WinLauncher/WinLauncherWebHost.h:
+            (WinLauncherWebHost::didReceiveIcon):
+    
 2014-08-18  Dana Burkart  <dburkart@apple.com>
 
         Merge r172680

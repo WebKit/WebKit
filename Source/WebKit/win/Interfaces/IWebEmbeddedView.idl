@@ -37,7 +37,7 @@ import "ocidl.idl";
 ]
 interface IWebEmbeddedView : IUnknown
 {
-    HRESULT createViewWindow([in] OLE_HANDLE parentWindow, [in] LPSIZE pluginSize, [out, retval] OLE_HANDLE* window);
+    HRESULT createViewWindow([in] HWND parentWindow, [in] LPSIZE pluginSize, [out, retval] HWND* window);
 
     HRESULT didReceiveResponse([in] IWebURLResponse* response);
     HRESULT didReceiveData([in] IStream* data);

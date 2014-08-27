@@ -487,8 +487,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::alternateTitle(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistoryItem::icon( 
-    /* [out, retval] */ OLE_HANDLE* /*hBitmap*/)
+HRESULT STDMETHODCALLTYPE WebHistoryItem::icon(/* [out, retval] */ HBITMAP* /*hBitmap*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;

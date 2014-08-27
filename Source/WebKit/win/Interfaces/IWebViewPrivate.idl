@@ -72,7 +72,7 @@ interface IWebViewPrivate : IUnknown
       */
     HRESULT inViewSourceMode([out, retval] BOOL* flag);
 
-    HRESULT viewWindow([out, retval] OLE_HANDLE* window);
+    HRESULT viewWindow([out, retval] HWND* window);
 
     // May well become public
     //- (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
@@ -96,7 +96,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT unmarkAllTextMatches();
     HRESULT rectsForTextMatches([out]IEnumTextMatches** pmatches);
     HRESULT selectionRect([in, out] RECT* rc);
-    HRESULT generateSelectionImage(BOOL forceWhiteText, [out, retval] OLE_HANDLE* hBitmap);
+    HRESULT generateSelectionImage(BOOL forceWhiteText, [out, retval] HBITMAP* hBitmap);
 
     HRESULT canHandleRequest([in] IWebURLRequest* request, [out, retval] BOOL* result);
 
@@ -137,7 +137,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT windowAncestryDidChange();
 
-    HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE dc);
+    HRESULT paintDocumentRectToContext([in] RECT rect, [in] HDC dc);
 
     HRESULT setDefersCallbacks([in] BOOL defersCallbacks);
     HRESULT defersCallbacks([out, retval] BOOL* defersCallbacks);
@@ -147,7 +147,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT setCustomHTMLTokenizerTimeDelay([in] double timeDelay);
     HRESULT setCustomHTMLTokenizerChunkSize([in] int chunkSize);
 
-    HRESULT backingStore([out, retval] OLE_HANDLE* hBitmap);
+    HRESULT backingStore([out, retval] HBITMAP* hBitmap);
 
     HRESULT setTransparent([in] BOOL transparent);
     HRESULT transparent([out, retval] BOOL* transparent);
@@ -233,7 +233,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT nextDisplayIsSynchronous();
 
-    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] OLE_HANDLE dc);
+    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] HDC dc);
 
     [local] HRESULT reportException([in] JSContextRef context, [in] JSValueRef exception);
 

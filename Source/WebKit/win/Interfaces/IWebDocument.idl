@@ -86,7 +86,7 @@ interface IWebDocumentView : IUnknown
         @abstract Called before the host window is set on the parent web view.
         - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
     */
-    HRESULT viewWillMoveToHostWindow([in] OLE_HANDLE hwnd);
+    HRESULT viewWillMoveToHostWindow([in] HWND hwnd);
 
     /*!
         @method viewDidMoveToHostWindow

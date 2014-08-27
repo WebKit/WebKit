@@ -56,7 +56,7 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT webViewAddMessageToConsole([in] IWebView* sender, [in] BSTR message, [in] int lineNumber, [in] BSTR url, [in] BOOL isError);
     HRESULT webViewShouldInterruptJavaScript([in] IWebView* sender, [out, retval] BOOL* result);
     HRESULT webViewReceivedFocus([in] IWebView* sender);
-    HRESULT webViewLostFocus([in] IWebView* sender, [in] OLE_HANDLE loseFocusToHWnd);
+    HRESULT webViewLostFocus([in] IWebView* sender, [in] HWND loseFocusToHWnd);
     HRESULT doDragDrop([in] IWebView* sender, [in] IDataObject* dataObject, [in] IDropSource* dropSource, [in] DWORD okEffect, [out, retval] DWORD* performedEffect);
     HRESULT webViewGetDlgCode([in] IWebView* sender, [in] UINT keyCode, [out, retval] LONG_PTR* code);
     HRESULT webViewPainted([in] IWebView* sender);
@@ -64,7 +64,7 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
     HRESULT unused3();
     HRESULT webViewClosing([in] IWebView* sender);
-    HRESULT webViewSetCursor([in] IWebView* sender, [in] OLE_HANDLE cursor);
+    HRESULT webViewSetCursor([in] IWebView* sender, [in] HCURSOR cursor);
     HRESULT webViewDidInvalidate([in] IWebView* sender);
 }
 
@@ -95,7 +95,7 @@ interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
     // strings above.
     HRESULT createWebViewWithRequest([in] IWebView* sender, [in] IWebURLRequest* request, [in] IPropertyBag* windowFeatures, [out, retval] IWebView** newWebView);
 
-    HRESULT drawBackground([in] IWebView* sender, [in] OLE_HANDLE hdc, [in] const RECT* dirtyRect);
+    HRESULT drawBackground([in] IWebView* sender, [in] HDC hdc, [in] const RECT* dirtyRect);
 
     HRESULT decidePolicyForGeolocationRequest([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] IWebGeolocationPolicyListener* listener);
 }

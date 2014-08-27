@@ -1,3 +1,107 @@
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172977. <rdar://problem/18141703>
+
+    2014-08-26  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] WebKit IDL incorrectly passes HWND as OLE_HANDLE
+            https://bugs.webkit.org/show_bug.cgi?id=136258
+            <rdar://problem/18134138>
+    
+            Reviewed by Tim Horton.
+    
+            Avoid 32/64-bit truncation by preventing 64-bit HWND (and other)
+            values from passing through the 32-bit OLE_HANDLE data type.
+    
+            * Interfaces/IWebDocument.idl:
+            * Interfaces/IWebEmbeddedView.idl:
+            * Interfaces/IWebErrorPrivate.idl:
+            * Interfaces/IWebFrameLoadDelegate.idl:
+            * Interfaces/IWebFramePrivate.idl:
+            * Interfaces/IWebHistoryItem.idl:
+            * Interfaces/IWebIconDatabase.idl:
+            * Interfaces/IWebMutableURLRequestPrivate.idl:
+            * Interfaces/IWebUIDelegate.idl:
+            * Interfaces/IWebUIDelegatePrivate.idl:
+            * Interfaces/IWebURLResponsePrivate.idl:
+            * Interfaces/IWebView.idl:
+            * Interfaces/IWebViewPrivate.idl:
+            * WebCoreSupport/EmbeddedWidget.cpp:
+            (EmbeddedWidget::createWindow):
+            * WebCoreSupport/WebChromeClient.cpp:
+            (WebChromeClient::rootViewToScreen):
+            (WebChromeClient::screenToRootView):
+            (WebChromeClient::platformPageClient):
+            (WebChromeClient::runOpenPanel):
+            (WebChromeClient::setCursor):
+            * WebCoreSupport/WebContextMenuClient.cpp:
+            (WebContextMenuClient::customizeMenu):
+            * WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebFrameLoaderClient::createPlugin):
+            * WebCoreSupport/WebInspectorClient.cpp:
+            (WebInspectorClient::openInspectorFrontend):
+            (WebInspectorClient::highlight):
+            (WebInspectorFrontendClient::setAttachedWindowHeight):
+            (WebInspectorFrontendClient::closeWindowWithoutNotifications):
+            (WebInspectorFrontendClient::showWindowWithoutNotifications):
+            * WebCoreSupport/WebInspectorClient.h:
+            * WebCoreSupport/WebInspectorDelegate.cpp:
+            * WebCoreSupport/WebInspectorDelegate.h:
+            (WebInspectorDelegate::webViewFirstResponder):
+            (WebInspectorDelegate::makeFirstResponder):
+            (WebInspectorDelegate::contextMenuItemsForElement):
+            (WebInspectorDelegate::trackCustomPopupMenu):
+            (WebInspectorDelegate::addCustomMenuDrawingData):
+            (WebInspectorDelegate::cleanUpCustomMenuDrawingData):
+            (WebInspectorDelegate::drawHeaderInRect):
+            (WebInspectorDelegate::drawFooterInRect):
+            * WebDropSource.cpp:
+            (generateMouseEvent):
+            (WebDropSource::GiveFeedback):
+            * WebError.cpp:
+            (WebError::sslPeerCertificate):
+            * WebError.h:
+            * WebFrame.cpp:
+            (WebFrame::paintDocumentRectToContext):
+            (WebFrame::paintScrollViewRectToContextAtPoint):
+            (WebFrame::createSubframeWithOwnerElement):
+            (WebFrame::initWithWebView):
+            (WebFrame::drawHeader):
+            (WebFrame::drawFooter):
+            * WebFrame.h:
+            * WebHistoryItem.cpp:
+            (WebHistoryItem::icon):
+            * WebHistoryItem.h:
+            * WebIconDatabase.cpp:
+            (WebIconDatabase::iconForURL):
+            (WebIconDatabase::defaultIconWithSize):
+            * WebIconDatabase.h:
+            * WebMutableURLRequest.cpp:
+            (WebMutableURLRequest::setClientCertificate):
+            * WebMutableURLRequest.h:
+            * WebNodeHighlight.cpp:
+            (WebNodeHighlight::WebNodeHighlight):
+            * WebURLResponse.cpp:
+            (WebURLResponse::sslPeerCertificate):
+            * WebURLResponse.h:
+            * WebView.cpp:
+            (WebView::paintIntoBackingStore):
+            (WebView::handleContextMenuEvent):
+            (WebView::onInitMenuPopup):
+            (WebView::onUninitMenuPopup):
+            (WebView::WebViewWndProc):
+            (WebView::dispatchDidReceiveIconFromWebFrame):
+            (WebView::setHostWindow):
+            (WebView::hostWindow):
+            (WebView::generateSelectionImage):
+            (WebView::mainFrameIcon):
+            (WebView::viewWindow):
+            (WebView::paintDocumentRectToContext):
+            (WebView::paintScrollViewRectToContextAtPoint):
+            (WebView::backingStore):
+            (WebView::fullScreenClientSetParentWindow):
+            * WebView.h:
+    
 2014-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r171403

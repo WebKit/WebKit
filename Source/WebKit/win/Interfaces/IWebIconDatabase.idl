@@ -91,14 +91,14 @@ interface IWebIconDatabase : IUnknown
         @param URL
         - (NSString *)iconURLForURL:(NSString *)URL;
     */
-    HRESULT iconForURL([in] BSTR url, [in] LPSIZE size, [in] BOOL cache, [out, retval] OLE_HANDLE* hBitmap);
+    HRESULT iconForURL([in] BSTR url, [in] LPSIZE size, [in] BOOL cache, [out, retval] HBITMAP* hBitmap);
 
     /*!
         @method defaultIconWithSize:
         @param size
         - (NSImage *)defaultIconWithSize:(NSSize)size;
     */
-    HRESULT defaultIconWithSize([in] LPSIZE size, [out, retval] OLE_HANDLE* hBitmap);
+    HRESULT defaultIconWithSize([in] LPSIZE size, [out, retval] HBITMAP* hBitmap);
 
     /*!
         @method retainIconForURL:
