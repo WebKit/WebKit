@@ -2380,14 +2380,16 @@ void Document::implicitClose()
     if (f) {
         f->loader().icon().startLoader();
         f->animation().startAnimationsIfNotSuspended(this);
+
+        // FIXME: We shouldn't be dispatching pending events globally on all Documents here.
+        // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
+        // below SVG font parsing, for example. <https://webkit.org/b/136269>
+        ImageLoader::dispatchPendingBeforeLoadEvents();
+        ImageLoader::dispatchPendingLoadEvents();
+        ImageLoader::dispatchPendingErrorEvents();
+        HTMLLinkElement::dispatchPendingLoadEvents();
+        HTMLStyleElement::dispatchPendingLoadEvents();
     }
-
-    ImageLoader::dispatchPendingBeforeLoadEvents();
-    ImageLoader::dispatchPendingLoadEvents();
-    ImageLoader::dispatchPendingErrorEvents();
-
-    HTMLLinkElement::dispatchPendingLoadEvents();
-    HTMLStyleElement::dispatchPendingLoadEvents();
 
     // To align the HTML load event and the SVGLoad event for the outermost <svg> element, fire it from
     // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",

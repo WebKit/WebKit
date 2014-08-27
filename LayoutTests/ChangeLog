@@ -1,3 +1,14 @@
+2014-08-27  Andreas Kling  <akling@apple.com>
+
+        Drawing text in an SVG font causes load events to be fired.
+        <https://webkit.org/b/136269>
+        <rdar://problem/15724915>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/svg-font-trigger-load-event-expected.txt: Added.
+        * fast/text/svg-font-trigger-load-event.html: Added.
+
 2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
 
         Updating attributes on HTML elements do not invalidate the style correctly unless the attribute name is lowercase in the stylesheet
