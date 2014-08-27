@@ -70,14 +70,29 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\jsc\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING jscLauncher...                                  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\jsclauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING testRegExp...                                   >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\testRegExp\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING testRegExpLauncher...                           >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\testRegExpLauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING testapi...                                      >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\testapi\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING testapiLauncher...                              >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\testapiLauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 if not exist "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebKitQuartzCoreAdditions\BuildLog.htm" GOTO SkipInternalProjects
 
