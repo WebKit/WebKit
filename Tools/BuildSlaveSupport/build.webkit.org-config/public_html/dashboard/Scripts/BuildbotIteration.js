@@ -41,6 +41,7 @@ BuildbotIteration = function(queue, dataOrID, finished)
 
     this.loaded = false;
     this.isLoading = false;
+    this._productive = false;
 
     this.openSourceRevision = null;
     this.internalRevision = null;
@@ -65,6 +66,20 @@ BuildbotIteration.FAILURE = 2;
 BuildbotIteration.SKIPPED = 3;
 BuildbotIteration.EXCEPTION = 4;
 BuildbotIteration.RETRY = 5;
+
+// If none of these steps ran, then we didn't get any real results, and the iteration was not productive.
+BuildbotIteration.ProductiveSteps = {
+    "compile-webkit": 1,
+    "build archive": 1,
+    "Build" : 1,
+    "layout-test": 1,
+    "jscore-test": 1,
+    "run-api-tests": 1,
+    "API tests": 1,
+    "webkitpy-test": 1,
+    "webkitperl-test": 1,
+    "bindings-generation-tests": 1,
+};
 
 BuildbotIteration.Event = {
     Updated: "updated",
@@ -106,7 +121,7 @@ BuildbotIteration.prototype = {
 
     get productive()
     {
-        return this.loaded && this._finished && this._result !== BuildbotIteration.EXCEPTION && this._result !== BuildbotIteration.RETRY;
+        return this._productive;
     },
 
     // It is not a real failure if Buildbot itself failed with codes like EXCEPTION or RETRY.
@@ -172,7 +187,7 @@ BuildbotIteration.prototype = {
             var testResults = {};
 
             if (!testStep.isFinished) {
-                // The step never even ran, or hasn't finish running.
+                // The step never even ran, or hasn't finished running.
                 testResults.finished = false;
                 return testResults;
             }
@@ -274,6 +289,21 @@ BuildbotIteration.prototype = {
 
         if (!data.currentStep)
             this.finished = true;
+
+        this._productive = this._finished && this._result !== BuildbotIteration.EXCEPTION && this._result !== BuildbotIteration.RETRY;
+        if (this._productive) {
+            var finishedAnyProductiveStep = false;
+            for (var i = 0; i < data.steps.length; ++i) {
+                var step = data.steps[i];
+                if (!step.isFinished)
+                    break;
+                if (step.name in BuildbotIteration.ProductiveSteps) {
+                    finishedAnyProductiveStep = true;
+                    break;
+                }
+            }
+            this._productive = finishedAnyProductiveStep;
+        }
 
         // Update the sorting since it is based on the revisions we just loaded.
         this.queue.sortIterations();

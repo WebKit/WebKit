@@ -1,3 +1,21 @@
+2014-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=136317
+        Dashboard metrics page sometimes shows 0 for best time
+
+        Reviewed by Tim Horton.
+
+        This also affects regular dashboard display in a good way - iterations that failed
+        due to infrastructure misbehavior will more reliably show up as yellow and not red.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration): Added a list of steps that we actually care about. It will need to be
+        updated if we rename steps.
+        (BuildbotIteration.prototype.get productive): Now that computation is more involved,
+        do it once.
+        (BuildbotIteration.prototype._parseData): Tweak computation of "productive" - builds
+        that failed e.g. at downloading built archive step are not productive.
+
 2014-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.
