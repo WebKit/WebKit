@@ -228,8 +228,14 @@ public:
     void setWebkitImageSmoothingEnabled(bool);
 
 private:
+    enum class Direction {
+        Inherit,
+        RTL,
+        LTR
+    };
+
     struct State : FontSelectorClient {
-        explicit State(TextDirection = LTR);
+        State();
         virtual ~State();
 
         State(const State&);
@@ -260,7 +266,7 @@ private:
         // Text state.
         TextAlign m_textAlign;
         TextBaseline m_textBaseline;
-        TextDirection m_direction;
+        Direction m_direction;
 
         String m_unparsedFont;
         Font m_font;
@@ -339,6 +345,7 @@ private:
     virtual bool isAccelerated() const override;
 
     virtual bool hasInvertibleTransform() const override { return state().m_hasInvertibleTransform; }
+    TextDirection toTextDirection(Direction, RenderStyle** computedStyle = nullptr) const;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     virtual PlatformLayer* platformLayer() const override;

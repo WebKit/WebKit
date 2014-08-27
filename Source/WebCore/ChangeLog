@@ -1,3 +1,27 @@
+2014-08-26  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Canvas direction should reflect change in dir attribute and also across save/restore operations
+        https://bugs.webkit.org/show_bug.cgi?id=136098
+
+        Reviewed by Darin Adler.
+
+        Changed State.m_direction type from TextDirection to Direction enum to accomodate 'inherit'
+        as a separate value. Modified the getter to compute the 'live' value for the direction attribute.
+        Removed explicit passing of direction to CanvasRenderingContext2D::State constructor.
+
+        Updated existing canvas-direction.html with additional cases to reflect this change.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::toTextDirection):
+        (WebCore::CanvasRenderingContext2D::direction):
+        (WebCore::CanvasRenderingContext2D::setDirection):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        (WebCore::inheritedDirection): Deleted.
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2014-08-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Minor style tweak on StyleResolveTree

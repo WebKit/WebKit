@@ -46,6 +46,18 @@
 <span>Tests that context.reset sets the direction as rtl<span id="result8"></span></span><br>
 <canvas id="canvas8" width=400 height=20 style="border:1px solid black"></canvas>
 </div>
+<div>
+<span>Tests that change in element's dir attribute is reflected in context.direction as rtl: <span id="result9"></span></span><br>
+<canvas id="canvas9" width=400 height=20 style="border:1px solid black"></canvas>
+</div>
+<div dir="rtl">
+<span>Tests that change in element's dir attribute is reflected in context.direction as ltr: <span id="result10"></span></span><br>
+<canvas id="canvas10" width=400 height=20 style="border:1px solid black"></canvas>
+</div>
+<div>
+<span>Tests that context.direction reflects the valid direction after save/restore context operations: <span id="result11"></span></span><br>
+<canvas id="canvas11" style="border:1px solid black"></canvas>
+</div>
 <div id="results">
 </div>
 <script>
@@ -123,6 +135,57 @@ function verifyDirectionAfterReset(canvasId, text, direction, expectedDirection)
     document.body.removeChild(canvasElement.parentElement);
 }
 
+function verifyDirectionAfterAttributeChange(canvasId, resultId, text, newDirection, forParentElement)
+{
+    var canvasElement = document.getElementById(canvasId);
+    var resultElement = document.getElementById(resultId);
+    var ctx = canvasElement.getContext('2d');
+    var width = canvasElement.width/2;
+    var height = canvasElement.height;
+
+    if (forParentElement)
+        canvasElement.parentElement.dir = newDirection;
+    else
+        canvasElement.dir = newDirection;
+    resultElement.textContent = ctx.direction == newDirection ? 'PASS' : 'FAIL';
+    resultElement.className = ctx.direction == newDirection ? 'pass' : 'fail';
+    ctx.moveTo(width, 0);
+    ctx.lineTo(width, height);
+    ctx.stroke();
+    ctx.font = fontSettings;
+    ctx.fillText(text, width, height/2);
+}
+
+function verifyDirectionAcrossSaveRestores(canvasId, resultId, testVector)
+{
+    var canvasElement = document.getElementById(canvasId);
+    var resultElement = document.getElementById(resultId);
+    var ctx = canvasElement.getContext('2d');
+    var width = canvasElement.width/2;
+    var height = 0;
+    ctx.moveTo(width, 0);
+    ctx.lineTo(width, canvasElement.height);
+    ctx.stroke();
+    ctx.font = fontSettings;
+    var testVectorLength = testVector.length;
+    var i = 0;
+    for (; i < testVector.length; ++i) {
+        height += 20;
+        ctx.direction = testVector[i].direction;
+        ctx.fillText(testVector[i].text, width, height);
+        if (i != testVectorLength - 1)
+            ctx.save();
+    }
+    var validDirectionCount = 0;
+    for (--i; i > 0; --i) {
+        ctx.restore();
+        if (ctx.direction == testVector[i - 1].direction)
+            validDirectionCount++;
+    }
+    resultElement.textContent = validDirectionCount == testVectorLength - 1 ? 'PASS' : 'FAIL';
+    resultElement.className = validDirectionCount == testVectorLength - 1 ? 'pass' : 'fail';
+}
+
 function verifyInvalidDirection(direction)
 {
     var ctx = document.createElement('canvas').getContext('2d');
@@ -143,6 +206,18 @@ verifyDrawTextWithSpecifiedDirection('canvas6', 'result6', 'Right-to-Left text',
 
 verifyDirectionAfterReset('canvas7', 'Right-to-Left', 'rtl', 'ltr');
 verifyDirectionAfterReset('canvas8', 'Right-to-Left', 'ltr', 'rtl');
+
+verifyDirectionAfterAttributeChange('canvas9', 'result9', 'Right-to-Left text', 'rtl', true);
+verifyDirectionAfterAttributeChange('canvas10', 'result10', 'Left-to-Right text', 'ltr', false);
+
+verifyDirectionAcrossSaveRestores('canvas11',
+                                  'result11',
+                                  [{ text: 'Left-to-Right text', direction: 'ltr' },
+                                   { text: 'Right-to-Left text', direction: 'rtl' },
+                                   { text: 'Right-to-Left text', direction: 'rtl' },
+                                   { text: 'Left-to-Right text', direction: 'ltr' },
+                                   { text: 'Right-to-Left text', direction: 'rtl' },
+                                   { text: 'Right-to-Left text', direction: 'rtl' }]);
 
 verifyInvalidDirection('RTL');
 verifyInvalidDirection('LTR');
