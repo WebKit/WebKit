@@ -1,3 +1,13 @@
+2014-08-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Build 'fix' after r173018.
+
+        The new launcher applications were not getting build when driven
+        by WebKit.sln. This adds the missing project links and dependencies.
+
+        * WebKit.vcxproj/WebKit.sln: Update to include jscLauncher,
+        testapiLauncher, and testRegExpLauncher.
+
 2014-08-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Some projects are incorrectly installed to $BUILT_PRODUCTS_DIR
