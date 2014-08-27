@@ -527,7 +527,7 @@ webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/close-in-worker.html
 webkit.org/b/116587 http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Skip ]
 webkit.org/b/116587 http/tests/websocket/tests/hybi/zero-length-text.html [ Skip ]
 
-webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Pass ]
+webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Timeout Pass ]
 
 # EFL media control has broken since r166395.
 webkit.org/b/131044 media [ Skip ]
@@ -547,7 +547,7 @@ webkit.org/b/135194 webgl/1.0.2/conformance/textures/texture-size-cube-maps.html
 # Tests crashing with common backtrace ending in GraphicsContext3D::mappedSymbolName
 webkit.org/b/127277 webkit.org/b/135196 fast/canvas/webgl/glsl-conformance.html [ Crash Timeout ]
 webkit.org/b/105029 webkit.org/b/135196 fast/canvas/webgl/webgl-composite-modes.html [ Crash Failure Timeout ]
-webkit.org/b/105029 webkit.org/b/135196 fast/canvas/webgl/webgl-composite-modes-repaint.html [ Crash Timeout ]
+webkit.org/b/105029 webkit.org/b/135196 fast/canvas/webgl/webgl-composite-modes-repaint.html [ Crash Timeout Failure ]
 webkit.org/b/135196 webgl/1.0.2/conformance/attribs/gl-vertex-attrib-render.html [ Crash Failure Timeout ]
 webkit.org/b/135196 webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Crash Timeout ]
 webkit.org/b/135196 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Crash Timeout ]
@@ -614,6 +614,8 @@ webkit.org/b/103445 http/tests/css/shared-stylesheet-mutation-preconstruct.html 
 
 # These ref tests are flaky with coordinated graphics (missing purple corners).
 webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure Pass ]
+webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure Pass ]
+webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure Pass ]
 
 # Flaky websocket tests.
 Bug(EFL) http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html [ Failure Pass ]
@@ -812,7 +814,7 @@ webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 # Started to crash after r160991
 webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float-with-image.html [ Failure Crash ]
 webkit.org/b/127914 fast/canvas/webgl/oes-texture-half-float.html [ Crash Pass ]
-webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
+webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Timeout Pass ]
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas.html [ Crash Pass ]
 webkit.org/b/127914 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Crash Pass ]
@@ -825,18 +827,18 @@ webkit.org/b/127914 webgl/1.0.1/conformance/rendering/gl-drawelements.html [ Cra
 webkit.org/b/127914 webgl/1.0.1/conformance/textures/gl-pixelstorei.html [ Crash Failure ]
 webkit.org/b/127914 webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.1/conformance/textures/tex-image-and-sub-image-2d-with-image.html [ Crash Pass ]
-webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-data.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/extensions/oes-texture-float-with-image-data.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/extensions/webgl-debug-renderer-info.html [ Crash Failure ]
 webkit.org/b/127914 webgl/1.0.2/conformance/rendering/gl-drawelements.html [ Crash Failure ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/gl-get-tex-parameter.html [ Crash Pass ]
-webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
+webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Timeout Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba4444.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Crash Pass ]
+webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-data.html [ Crash Timeout Pass ]
 webkit.org/b/127914 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-image-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/extensions/oes-texture-float-with-image-data.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/extensions/webgl-debug-renderer-info.html [ Crash Failure ]
@@ -846,7 +848,7 @@ webkit.org/b/127914 webgl/conformance/textures/gl-get-tex-parameter.html [ Crash
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba4444.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Crash Pass ]
-webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html [ Crash Pass ]
+webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-canvas.html [ Crash Timeout Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Crash Pass ]
 webkit.org/b/127914 webgl/conformance/textures/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Crash Pass ]

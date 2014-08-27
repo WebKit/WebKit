@@ -1,3 +1,14 @@
+2014-08-27  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        * platform/efl/TestExpectations: Add test expectations for failing and crashin tests.
+        * platform/efl/fast/css/viewport-units-dynamic-expected.txt: Added after r171567.
+        * platform/efl/fast/multicol/pagination/RightToLeft-max-width-expected.txt: Added after r171609.
+        * platform/efl/fast/ruby/bopomofo-expected.txt: Added after r172874.
+        * platform/efl/fast/ruby/bopomofo-letter-spacing-expected.txt: Ditto.
+        * platform/efl/fast/ruby/bopomofo-rl-expected.txt: Added after r172861.
+
 2014-08-27  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Add expectations for flaky svg layout test.
