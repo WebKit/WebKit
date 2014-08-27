@@ -1,5 +1,24 @@
 2014-08-27  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Build fix after last commit.
+
+        Check in new DLLLauncherMain.cpp file.
+
+        * JavaScriptCore.vcxproj/jsc/DLLLauncherMain.cpp: Added.
+        (enableTerminationOnHeapCorruption):
+        (getStringValue):
+        (applePathFromRegistry):
+        (appleApplicationSupportDirectory):
+        (copyEnvironmentVariable):
+        (prependPath):
+        (fatalError):
+        (directoryExists):
+        (modifyPath):
+        (getLastErrorString):
+        (wWinMain):
+
+2014-08-27  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] testapi and testRegExp need to find support libraries.
         https://bugs.webkit.org/show_bug.cgi?id=136008.
 
