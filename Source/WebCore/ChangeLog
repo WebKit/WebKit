@@ -1,3 +1,16 @@
+2014-08-27  Brian J. Burg  <burg@cs.washington.edu>
+
+        Enums in ScrollTypes and PlatformWheelEvent should not use uint64_t storage
+        https://bugs.webkit.org/show_bug.cgi?id=136318
+
+        Reviewed by Simon Fraser.
+
+        This regressed in a replay-related patch. Revert back to uint8_t storage size.
+
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollTypes.h:
+        * replay/WebInputs.json:
+
 2014-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Speling is hard.

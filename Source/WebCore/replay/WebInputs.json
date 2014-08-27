@@ -67,13 +67,13 @@
                 "header": "platform/PlatformWheelEvent.h"
             },
             {
-                "name": "PlatformWheelEventGranularity", "mode": "SCALAR", "storage": "uint64_t",
+                "name": "PlatformWheelEventGranularity", "mode": "SCALAR", "storage": "uint8_t",
                 "flags": ["ENUM"],
                 "values": ["ScrollByPageWheelEvent", "ScrollByPixelWheelEvent"],
                 "header": "platform/PlatformWheelEvent.h"
             },
             {
-                "name": "PlatformWheelEventPhase", "mode": "SCALAR", "storage": "uint64_t",
+                "name": "PlatformWheelEventPhase", "mode": "SCALAR", "storage": "uint8_t",
                 "flags": ["ENUM"],
                 "guard": "PLATFORM(COCOA)",
                 "values": [
@@ -92,13 +92,13 @@
                 "header": "plugins/PluginData.h"
             },
             {
-                "name": "ScrollDirection", "mode": "SCALAR", "storage": "uint64_t",
+                "name": "ScrollDirection", "mode": "SCALAR", "storage": "uint8_t",
                 "flags": ["ENUM"],
                 "values": ["ScrollUp", "ScrollDown", "ScrollLeft", "ScrollRight"],
                 "header": "platform/ScrollTypes.h"
             },
             {
-                "name": "ScrollGranularity", "mode": "SCALAR", "storage": "uint64_t",
+                "name": "ScrollGranularity", "mode": "SCALAR", "storage": "uint8_t",
                 "flags": ["ENUM"],
                 "values": [
                     "ScrollByLine",
@@ -110,7 +110,7 @@
                 "header": "platform/ScrollTypes.h"
             },
             {
-                "name": "ScrollLogicalDirection", "mode": "SCALAR", "storage": "uint64_t",
+                "name": "ScrollLogicalDirection", "mode": "SCALAR", "storage": "uint8_t",
                 "flags": ["ENUM"],
                 "values": [
                     "ScrollBlockDirectionBackward",
