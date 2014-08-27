@@ -931,8 +931,8 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
         bool forceCheckOfNextElementSibling = false;
         bool forceCheckOfAnyElementSibling = false;
         for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-            if (child->renderer())
-                childRenderTreePosition.invalidateNextSibling(*child->renderer());
+            if (RenderObject* childRenderer = child->renderer())
+                childRenderTreePosition.invalidateNextSibling(*childRenderer);
             if (child->isTextNode() && child->needsStyleRecalc()) {
                 resolveTextNode(*toText(child), childRenderTreePosition);
                 continue;
