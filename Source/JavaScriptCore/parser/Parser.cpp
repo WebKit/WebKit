@@ -498,12 +498,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             varDecls = context.combineCommaNodes(location, varDecls, node);
     } while (match(COMMA));
     if (lastIdent)
-        lastPattern = createBindingPattern(context, DeconstructToVariables, *lastIdent, 0);
+        lastPattern = createBindingPattern(context, DeconstructToVariables, *lastIdent, 0, m_token);
     return varDecls;
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DeconstructionKind kind, const Identifier& name, int depth)
+template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DeconstructionKind kind, const Identifier& name, int depth, JSToken token)
 {
     ASSERT(!name.isEmpty());
     ASSERT(!name.isNull());
@@ -552,7 +552,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::create
             }
         }
     }
-    return context.createBindingLocation(m_token.m_location, name, m_token.m_startPosition, m_token.m_endPosition);
+    return context.createBindingLocation(token.m_location, name, token.m_startPosition, token.m_endPosition);
 }
 
 template <typename LexerType>
@@ -610,11 +610,12 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
             JSTokenLocation location = m_token.m_location;
             if (match(IDENT)) {
                 propertyName = *m_token.m_data.ident;
+                JSToken identifierToken = m_token;
                 next();
                 if (consume(COLON))
                     innerPattern = parseDeconstructionPattern(context, kind, depth + 1);
                 else
-                    innerPattern = createBindingPattern(context, kind, propertyName, depth);
+                    innerPattern = createBindingPattern(context, kind, propertyName, depth, identifierToken);
             } else {
                 JSTokenType tokenType = m_token.m_type;
                 switch (m_token.m_type) {
@@ -665,7 +666,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
             semanticFailureDueToKeyword("variable name");
             failWithMessage("Expected a parameter pattern or a ')' in parameter list");
         }
-        pattern = createBindingPattern(context, kind, *m_token.m_data.ident, depth);
+        pattern = createBindingPattern(context, kind, *m_token.m_data.ident, depth, m_token);
         next();
         break;
     }

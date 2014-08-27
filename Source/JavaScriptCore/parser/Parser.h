@@ -727,7 +727,7 @@ private:
     template <class TreeBuilder> TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd);
     template <class TreeBuilder> NEVER_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
 
-    template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, DeconstructionKind, const Identifier&, int depth);
+    template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, DeconstructionKind, const Identifier&, int depth, JSToken);
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, DeconstructionKind, int depth = 0);
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern tryParseDeconstructionPatternExpression(TreeBuilder&);
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);

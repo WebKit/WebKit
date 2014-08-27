@@ -1,3 +1,23 @@
+2014-08-27  Saam Barati  <sbarati@apple.com>
+
+        Deconstruction object pattern node emits the wrong start/end text positions
+        https://bugs.webkit.org/show_bug.cgi?id=136304
+
+        Reviewed by Geoffrey Garen.
+
+        Object pattern nodes that used the syntactic sugar binding: 
+        'var {foo} = {foo:20}' instead of 'var {foo:foo} = {foo:20}' 
+        would get the wrong text position for variable 'foo'. The position 
+        would be placed on the comma(s)/closing brace instead of the identifier. 
+        This patch fixes this bug by caching the identifier's JSToken before 
+        trying to parse an optional colon.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseDeconstructionPattern):
+        * parser/Parser.h:
+
 2014-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after last commit.
