@@ -1,3 +1,14 @@
+2014-08-27  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Link error.
+        https://bugs.webkit.org/show_bug.cgi?id=136286
+
+        Reviewed by Darin Adler.
+
+        Link with the dynamic runtime libraries, since the WinCairo libraries link with these.
+
+        * win/tools/vsprops/common.props:
+
 2014-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Version stamp should include package-level version
