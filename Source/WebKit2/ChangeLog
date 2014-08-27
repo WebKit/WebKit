@@ -1,5 +1,37 @@
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
+        Merge r172988. <rdar://problem/17923694>
+
+    2014-08-26  Tim Horton  <timothy_horton@apple.com>
+    
+            Crashes in ViewGestureController::beginSwipeGesture when swiping in rapid succession
+            https://bugs.webkit.org/show_bug.cgi?id=136271
+            <rdar://problem/17923694>
+    
+            Reviewed by Simon Fraser.
+    
+            It was possible to get into trackSwipeGesture while another swipe was still
+            occurring, because the guard against this happening depended on m_pendingSwipeReason
+            never being set while a swipe was occurring. However, if the very first scroll event
+            had sufficient magnitude, we would still set m_pendingSwipeReason to InsufficientMagnitude,
+            and then *never clear it*, leading to a path around the guard against multiple live swipes.
+            This in turn allowed stale layers in m_liveSwipeLayers, which lead to the crash.
+    
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::handleScrollWheelEvent):
+            Don't unset m_pendingSwipeReason before calling trackSwipeGesture;
+            trackSwipeGesture will do it itself.
+    
+            Don't set m_pendingSwipeReason to InsufficientMagnitude
+            if the event actually *has* sufficient magnitude to start a swipe.
+    
+            (WebKit::ViewGestureController::trackSwipeGesture):
+            Assert that we don't have an active gesture while starting a swipe.
+    
+            Reset m_pendingSwipeReason, because the swipe is no longer pending!
+    
+2014-08-26  Dana Burkart  <dburkart@apple.com>
+
         Merge r172966. <rdar://problem/18107826>
 
     2014-08-26  Tim Horton  <timothy_horton@apple.com>

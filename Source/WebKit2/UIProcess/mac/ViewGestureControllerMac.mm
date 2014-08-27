@@ -324,7 +324,6 @@ bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
 
     if (m_pendingSwipeReason == PendingSwipeReason::InsufficientMagnitude) {
         if (deltaIsSufficientToBeginSwipe(event)) {
-            m_pendingSwipeReason = PendingSwipeReason::None;
             trackSwipeGesture(event, m_pendingSwipeDirection);
             return true;
         }
@@ -343,8 +342,8 @@ bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
         return false;
     }
 
-    m_pendingSwipeReason = PendingSwipeReason::InsufficientMagnitude;
     if (!deltaIsSufficientToBeginSwipe(event)) {
+        m_pendingSwipeReason = PendingSwipeReason::InsufficientMagnitude;
         m_pendingSwipeDirection = direction;
         return true;
     }
@@ -375,6 +374,9 @@ void ViewGestureController::wheelEventWasNotHandledByWebCore(NSEvent *event)
 
 void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection direction)
 {
+    ASSERT(m_activeGestureType == ViewGestureType::None);
+    m_pendingSwipeReason = PendingSwipeReason::None;
+
     m_webPageProxy.recordNavigationSnapshot();
 
     CGFloat maxProgress = (direction == SwipeDirection::Left) ? 1 : 0;
