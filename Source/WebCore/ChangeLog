@@ -1,3 +1,13 @@
+2014-08-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Unskip compositing test
+        https://bugs.webkit.org/show_bug.cgi?id=136151
+
+        Reviewed by Csaba Osztrogonác.
+
+        * rendering/RenderLayerBacking.cpp: Set true to setContentsOpaque() to support compositing test.
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+
 2014-08-26  Vivek Galatage  <vivek.vg@samsung.com>
 
         Canvas direction should reflect change in dir attribute and also across save/restore operations
