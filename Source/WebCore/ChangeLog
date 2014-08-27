@@ -1,5 +1,22 @@
 2014-08-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Speling is hard.
+
+        Reviewed by Tim Horton.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handlePasteGlobalSelection):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::dispatchSyntheticTouchEventIfEnabled):
+
+2014-08-27  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the iOS build.
 
         * page/EventHandler.cpp:
