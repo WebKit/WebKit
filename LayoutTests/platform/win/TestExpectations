@@ -2816,3 +2816,6 @@ webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
+
+# Missing WebSpeech implementation
+webkit.org/b/136224 fast/speechsynthesis [ Skip ]

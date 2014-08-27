@@ -1,3 +1,38 @@
+2014-08-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Share fast/speechsynthesis/ with other ports
+        https://bugs.webkit.org/show_bug.cgi?id=136224
+
+        Reviewed by Chris Fleizach.
+
+        Share fast/speechsynthesis tests with EFL after r172956.
+        Skipped them for GTK and Win.
+
+        * fast/speechsynthesis/speech-synthesis-boundary-events-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-boundary-events-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-boundary-events.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-boundary-events.html.
+        * fast/speechsynthesis/speech-synthesis-cancel-crash-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-cancel-crash-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-cancel-crash.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-cancel-crash.html.
+        * fast/speechsynthesis/speech-synthesis-cancel-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-cancel-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-cancel.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-cancel.html.
+        * fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-crash-on-bad-utterance.html.
+        * fast/speechsynthesis/speech-synthesis-elapsed-time-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-elapsed-time-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-elapsed-time.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-elapsed-time.html.
+        * fast/speechsynthesis/speech-synthesis-gc-utterance-crash-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-gc-utterance-crash-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-gc-utterance-crash.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-gc-utterance-crash.html.
+        * fast/speechsynthesis/speech-synthesis-pause-resume-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-pause-resume-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-pause-resume.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-pause-resume.html.
+        * fast/speechsynthesis/speech-synthesis-speak-empty-string-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-speak-empty-string-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-speak-empty-string.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-speak-empty-string.html.
+        * fast/speechsynthesis/speech-synthesis-speak-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-speak-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-speak.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-speak.html.
+        * fast/speechsynthesis/speech-synthesis-utterance-uses-voice-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-utterance-uses-voice-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-utterance-uses-voice.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-utterance-uses-voice.html.
+        * fast/speechsynthesis/speech-synthesis-voices-expected.txt: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-voices-expected.txt.
+        * fast/speechsynthesis/speech-synthesis-voices.html: Renamed from LayoutTests/platform/mac/fast/speechsynthesis/speech-synthesis-voices.html.
+        * platform/gtk/TestExpectations: Skipped for GTK
+        * platform/win/TestExpectations: Skipped for Win
+
 2014-08-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Unskip compositing test

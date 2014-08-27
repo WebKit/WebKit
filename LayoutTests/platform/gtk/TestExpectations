@@ -67,6 +67,7 @@ Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 
+
 # Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
 Bug(GTK) fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 
@@ -341,6 +342,9 @@ webkit.org/b/110735 fast/dom/custom [ Skip ]
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
+
+# Missing WebSpeech implementation
+webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 
 # Skip the perf/ tests in debug builds
 Bug(GTK) [ Debug ] perf [ Skip ]
