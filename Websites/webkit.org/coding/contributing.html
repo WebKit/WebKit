@@ -91,8 +91,9 @@ If you are modifying such code, it is generally best to clean it up
 to comply with the current guidelines. An exception is legacy components,
 which should not be cleaned up.</p>
 
-<p>Your patch will be automatically checked for style compliance when you
-upload it to the bug tracker.</p>
+<p>Your patch will be automatically checked for style compliance before uploading if you use <code>webkit-patch upload</code>.
+You can check style manually by running the <code>Tools/Scripts/check-webkit-style</code> script. Style will also be checked on each patch after it is uploaded by the <a href="http://trac.webkit.org/wiki/EWS">WebKit Early Warning System</a>.
+</p>
 
 <h3>Regression tests</h3>
 <p>Once you have made your changes, you need to run the regression tests, which is done via the <code>run-webkit-tests</code> script.

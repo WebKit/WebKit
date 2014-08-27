@@ -1,3 +1,15 @@
+2014-08-27  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        http://webkit.org/coding/coding-style.html should mention check-webkit-style.
+        https://bugs.webkit.org/show_bug.cgi?id=31993
+
+        Reviewed by Darin Adler.
+
+        Based on patch by Peter Szanka <h868064@stud.u-szeged.hu>
+
+        * coding/contributing.html:
+        Extend the description of code style guidelines with check-webkit-style in the contributing.html.
+
 2014-08-18  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Remove people that have left Adobe from Security Contact list
