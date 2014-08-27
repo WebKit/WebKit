@@ -275,8 +275,8 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %type <id> property
 
 %union { CSSParserSelector* selector; }
-%type <selector> attrib class page_selector pseudo pseudo_page selector selector_with_trailing_whitespace simple_selector specifier specifier_list
-%destructor { delete $$; } attrib class page_selector pseudo pseudo_page selector selector_with_trailing_whitespace simple_selector specifier specifier_list
+%type <selector> attrib class page_selector pseudo pseudo_page complex_selector complex_selector_with_trailing_whitespace compound_selector specifier specifier_list
+%destructor { delete $$; } attrib class page_selector pseudo pseudo_page complex_selector complex_selector_with_trailing_whitespace compound_selector specifier specifier_list
 
 %union { Vector<std::unique_ptr<CSSParserSelector>>* selectorList; }
 %type <selectorList> selector_list simple_selector_list
@@ -1037,7 +1037,7 @@ ruleset:
 before_selector_group_item: { parser->markSelectorStart(); } ;
 
 selector_list:
-    selector %prec UNIMPORTANT_TOK {
+    complex_selector %prec UNIMPORTANT_TOK {
         $$ = nullptr;
         if ($1) {
             $$ = parser->createSelectorVector().release();
@@ -1045,7 +1045,7 @@ selector_list:
             parser->updateLastSelectorLineAndPosition();
         }
     }
-    | selector_list at_selector_end ',' maybe_space before_selector_group_item selector %prec UNIMPORTANT_TOK {
+    | selector_list at_selector_end ',' maybe_space before_selector_group_item complex_selector %prec UNIMPORTANT_TOK {
         std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> selectorList($1);
         std::unique_ptr<CSSParserSelector> selector($6);
         $$ = nullptr;
@@ -1061,13 +1061,13 @@ selector_list:
     }
    ;
 
-selector_with_trailing_whitespace:
-    selector WHITESPACE;
+complex_selector_with_trailing_whitespace:
+    complex_selector WHITESPACE;
 
-selector:
-    simple_selector
-    | selector_with_trailing_whitespace
-    | selector_with_trailing_whitespace simple_selector {
+complex_selector:
+    compound_selector
+    | complex_selector_with_trailing_whitespace
+    | complex_selector_with_trailing_whitespace compound_selector {
         std::unique_ptr<CSSParserSelector> left($1);
         std::unique_ptr<CSSParserSelector> right($2);
         $$ = nullptr;
@@ -1076,7 +1076,7 @@ selector:
             $$ = right.release();
         }
     }
-    | selector combinator simple_selector {
+    | complex_selector combinator compound_selector {
         std::unique_ptr<CSSParserSelector> left($1);
         std::unique_ptr<CSSParserSelector> right($3);
         $$ = nullptr;
@@ -1085,7 +1085,7 @@ selector:
             $$ = right.release();
         }
     }
-    | selector error {
+    | complex_selector error {
         $$ = nullptr;
         delete $1;
     }
@@ -1097,7 +1097,7 @@ namespace_selector:
     | IDENT '|'
 ;
 
-simple_selector:
+compound_selector:
     element_name {
         $$ = new CSSParserSelector(QualifiedName(nullAtom, $1, parser->m_defaultNamespace));
     }
@@ -1127,14 +1127,14 @@ simple_selector:
   ;
 
 simple_selector_list:
-    simple_selector %prec UNIMPORTANT_TOK {
+    compound_selector %prec UNIMPORTANT_TOK {
         $$ = nullptr;
         if ($1) {
             $$ = parser->createSelectorVector().release();
             $$->append(std::unique_ptr<CSSParserSelector>($1));
         }
     }
-    | simple_selector_list maybe_space ',' maybe_space simple_selector %prec UNIMPORTANT_TOK {
+    | simple_selector_list maybe_space ',' maybe_space compound_selector %prec UNIMPORTANT_TOK {
         std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> list($1);
         std::unique_ptr<CSSParserSelector> selector($5);
         $$ = nullptr;
@@ -1331,7 +1331,7 @@ pseudo:
         $$ = selector.release();
     }
     // used by :not
-    | ':' NOTFUNCTION maybe_space simple_selector maybe_space ')' {
+    | ':' NOTFUNCTION maybe_space compound_selector maybe_space ')' {
         std::unique_ptr<CSSParserSelector> selector($4);
         $$ = nullptr;
         if (selector && selector->isSimple()) {

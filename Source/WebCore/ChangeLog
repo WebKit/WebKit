@@ -1,3 +1,19 @@
+2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update the CSS Grammar selector names to get closer to the latest terminology
+        https://bugs.webkit.org/show_bug.cgi?id=136277
+
+        Reviewed by Andreas Kling.
+
+        CSS Selector Level 4 gives useful definitions for various parts of a selector
+        (see http://dev.w3.org/csswg/selectors4/#structure). This patch updates our names to be closer
+        to that spec.
+
+        Stricto sensu, our definition of "simple selector list" is wrong. I did not attempt to fix this
+        because updates of CSS Selector Level 4 and WebVTT will eventually make that whole concept useless.
+
+        * css/CSSGrammar.y.in:
+
 2014-08-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Unskip compositing test
