@@ -1,3 +1,10 @@
+2014-08-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r173047.
+
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp:
+        (webkitAccessibleImageGetImagePosition):
+
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Cleanup snapSizeToPixel/snapSizeToDevicePixel.

@@ -54,7 +54,7 @@ static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint
     g_return_if_fail(ATK_IMAGE(image));
     returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(image));
 
-    IntRect rect = pixelSnappedIntRect(core(image)->elementRect());
+    IntRect rect = snappedIntRect(core(image)->elementRect());
     contentsRelativeToAtkCoordinateType(core(image), coordType, rect, x, y);
 }
 
