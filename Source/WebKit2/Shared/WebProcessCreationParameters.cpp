@@ -141,6 +141,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if ENABLE(SERVICE_CONTROLS)
     encoder << hasImageServices;
     encoder << hasSelectionServices;
+    encoder << hasRichContentServices;
 #endif
 }
 
@@ -295,6 +296,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.hasImageServices))
         return false;
     if (!decoder.decode(parameters.hasSelectionServices))
+        return false;
+    if (!decoder.decode(parameters.hasRichContentServices))
         return false;
 #endif
 
