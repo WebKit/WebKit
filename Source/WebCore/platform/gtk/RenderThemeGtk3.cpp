@@ -41,6 +41,7 @@
 #include <cmath>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
 

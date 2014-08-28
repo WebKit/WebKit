@@ -50,11 +50,81 @@
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+PassRefPtr<RenderTheme> RenderThemeGtk::create()
+{
+    return adoptRef(new RenderThemeGtk());
+}
+
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
+{
+    static RenderTheme* rt = RenderThemeGtk::create().leakRef();
+    return rt;
+}
+
+static double getScreenDPI()
+{
+    // FIXME: Really this should be the widget's screen.
+    GdkScreen* screen = gdk_screen_get_default();
+    if (!screen)
+        return 96; // Default to 96 DPI.
+
+    float dpi = gdk_screen_get_resolution(screen);
+    if (dpi <= 0)
+        return 96;
+    return dpi;
+}
+
+void RenderThemeGtk::systemFont(CSSValueID, FontDescription& fontDescription) const
+{
+    GtkSettings* settings = gtk_settings_get_default();
+    if (!settings)
+        return;
+
+    // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
+    GUniqueOutPtr<gchar> fontName;
+    g_object_get(settings, "gtk-font-name", &fontName.outPtr(), NULL);
+
+    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
+    if (!pangoDescription)
+        return;
+
+    fontDescription.setOneFamily(pango_font_description_get_family(pangoDescription));
+
+    int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
+    // If the size of the font is in points, we need to convert it to pixels.
+    if (!pango_font_description_get_size_is_absolute(pangoDescription))
+        size = size * (getScreenDPI() / 72.0);
+
+    fontDescription.setSpecifiedSize(size);
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setGenericFamily(FontDescription::NoFamily);
+    fontDescription.setWeight(FontWeightNormal);
+    fontDescription.setItalic(false);
+    pango_font_description_free(pangoDescription);
+}
+
+#if ENABLE(DATALIST_ELEMENT)
+IntSize RenderThemeGtk::sliderTickSize() const
+{
+    // FIXME: We need to set this to the size of one tick mark.
+    return IntSize(0, 0);
+}
+
+int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
+{
+    // FIXME: We need to set this to the position of the tick marks.
+    return 0;
+}
+#endif
+
+#ifndef GTK_API_VERSION_2
 
 // This would be a static method, except that forward declaring GType is tricky, since its
 // definition depends on including glib.h, negating the benefit of using a forward declaration.
@@ -121,17 +191,6 @@ static bool nodeHasClass(Node* node, const char* className)
     return element->classNames().contains(className);
 }
 
-PassRefPtr<RenderTheme> RenderThemeGtk::create()
-{
-    return adoptRef(new RenderThemeGtk());
-}
-
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
-{
-    static RenderTheme* rt = RenderThemeGtk::create().leakRef();
-    return rt;
-}
-
 RenderThemeGtk::RenderThemeGtk()
     : m_panelColor(Color::white)
     , m_sliderColor(Color::white)
@@ -190,7 +249,7 @@ int RenderThemeGtk::baselinePosition(const RenderObject& o) const
     return RenderTheme::baselinePosition(o);
 }
 
-// This is used in RenderThemeGtk2 and RenderThemeGtk3. Normally, it would be in
+// This is used in RenderThemeGtk3. Normally, it would be in
 // the RenderThemeGtk header (perhaps as a static method), but we want to avoid
 // having to include GTK+ headers only for the GtkTextDirection enum.
 GtkTextDirection gtkTextDirection(TextDirection direction)
@@ -435,48 +494,6 @@ double RenderThemeGtk::caretBlinkInterval() const
         return 0;
 
     return time / 2000.;
-}
-
-double RenderThemeGtk::getScreenDPI()
-{
-    // FIXME: Really this should be the widget's screen.
-    GdkScreen* screen = gdk_screen_get_default();
-    if (!screen)
-        return 96; // Default to 96 DPI.
-
-    float dpi = gdk_screen_get_resolution(screen);
-    if (dpi <= 0)
-        return 96;
-    return dpi;
-}
-
-void RenderThemeGtk::systemFont(CSSValueID, FontDescription& fontDescription) const
-{
-    GtkSettings* settings = gtk_settings_get_default();
-    if (!settings)
-        return;
-
-    // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
-    GUniqueOutPtr<gchar> fontName;
-    g_object_get(settings, "gtk-font-name", &fontName.outPtr(), NULL);
-
-    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
-    if (!pangoDescription)
-        return;
-
-    fontDescription.setOneFamily(pango_font_description_get_family(pangoDescription));
-
-    int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
-    // If the size of the font is in points, we need to convert it to pixels.
-    if (!pango_font_description_get_size_is_absolute(pangoDescription))
-        size = size * (getScreenDPI() / 72.0);
-
-    fontDescription.setSpecifiedSize(size);
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setGenericFamily(FontDescription::NoFamily);
-    fontDescription.setWeight(FontWeightNormal);
-    fontDescription.setItalic(false);
-    pango_font_description_free(pangoDescription);
 }
 
 void RenderThemeGtk::platformColorsDidChange()
@@ -739,20 +756,6 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
 
-#if ENABLE(DATALIST_ELEMENT)
-IntSize RenderThemeGtk::sliderTickSize() const
-{
-    // FIXME: We need to set this to the size of one tick mark.
-    return IntSize(0, 0);
-}
-
-int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
-{
-    // FIXME: We need to set this to the position of the tick marks.
-    return 0;
-}
-#endif
-
 String RenderThemeGtk::mediaControlsScript()
 {
     StringBuilder scriptBuilder;
@@ -761,4 +764,6 @@ String RenderThemeGtk::mediaControlsScript()
     scriptBuilder.append(mediaControlsGtkJavaScript, sizeof(mediaControlsGtkJavaScript));
     return scriptBuilder.toString();
 }
+
+#endif // GTK_API_VERSION_2
 }

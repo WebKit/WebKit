@@ -1,3 +1,41 @@
+2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove support for GTK+2 theme rendering
+        https://bugs.webkit.org/show_bug.cgi?id=136285
+
+        Reviewed by Philippe Normand.
+
+        GTK+2 is only used by the plugin process that doesn't need to
+        render html controls themed. Since the theme files are still
+        built for WebCorePlatformGTK2, we need to provide dummy
+        implementations for the pure virtual methods when
+        GTK_API_VERSION_2 is defined.
+
+        * PlatformGTK.cmake: Remove deleted files from compilation.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::getScreenDPI):
+        (WebCore::RenderThemeGtk::systemFont):
+        (WebCore::RenderThemeGtk::sliderTickSize):
+        (WebCore::RenderThemeGtk::sliderTickOffsetFromTrackCenter):
+        (WebCore::RenderThemeGtk::getScreenDPI): Deleted.
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp: Removed.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::hasThumb):
+        (WebCore::ScrollbarThemeGtk::backButtonRect):
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect):
+        (WebCore::ScrollbarThemeGtk::trackRect):
+        (WebCore::ScrollbarThemeGtk::registerScrollbar):
+        (WebCore::ScrollbarThemeGtk::unregisterScrollbar):
+        (WebCore::ScrollbarThemeGtk::updateScrollbarsFrameThickness):
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/gtk/ScrollbarThemeGtk2.cpp: Removed.
+        * platform/gtk/WidgetRenderingContext.cpp: Removed.
+        * platform/gtk/WidgetRenderingContext.h: Removed.
+
 2014-08-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix for the Wayland windowing target after r173052.

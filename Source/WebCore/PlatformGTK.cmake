@@ -239,10 +239,8 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PlatformWheelEventGtk.cpp
     platform/gtk/RedirectedXCompositeWindow.cpp
     platform/gtk/RenderThemeGtk.cpp
-    platform/gtk/RenderThemeGtk2.cpp
     platform/gtk/RenderThemeGtk3.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/ScrollbarThemeGtk2.cpp
     platform/gtk/ScrollbarThemeGtk3.cpp
     platform/gtk/SharedBufferGtk.cpp
     platform/gtk/SharedTimerGtk.cpp
@@ -252,7 +250,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/WebKitAuthenticationWidget.cpp
     platform/gtk/WidgetBackingStoreGtkX11.cpp
     platform/gtk/WidgetGtk.cpp
-    platform/gtk/WidgetRenderingContext.cpp
 )
 
 if (WTF_USE_GEOCLUE2)
