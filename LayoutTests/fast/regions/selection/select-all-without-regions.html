@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style id="style">
+            #content-for-region {
+                -webkit-flow-into: flow;
+                height: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="content-for-region"></div>
+        "PASS"
+        <div></div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+            document.execCommand("SelectAll");
+            var elem = document.getElementById("style");
+            elem.innerHTML="X";
+        </script>
+    </body>
+</html>
