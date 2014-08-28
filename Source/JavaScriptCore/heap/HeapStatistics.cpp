@@ -233,25 +233,26 @@ void HeapStatistics::showObjectStatistics(Heap* heap)
     dataLogF("\n=== Heap Statistics: ===\n");
     dataLogF("size: %ldkB\n", static_cast<long>(heap->m_sizeAfterLastCollect / KB));
     dataLogF("capacity: %ldkB\n", static_cast<long>(heap->capacity() / KB));
-    dataLogF("pause time: %lfms\n\n", heap->m_lastFullGCLength);
+    dataLogF("pause time: %lfs\n\n", heap->m_lastFullGCLength);
 
     StorageStatistics storageStatistics;
     {
         HeapIterationScope iterationScope(*heap);
         heap->m_objectSpace.forEachLiveCell(iterationScope, storageStatistics);
     }
-    dataLogF("wasted .property storage: %ldkB (%ld%%)\n",
-        static_cast<long>(
-            (storageStatistics.storageCapacity() - storageStatistics.storageSize()) / KB),
-        static_cast<long>(
-            (storageStatistics.storageCapacity() - storageStatistics.storageSize()) * 100
-                / storageStatistics.storageCapacity()));
-    dataLogF("objects with out-of-line .property storage: %ld (%ld%%)\n",
-        static_cast<long>(
-            storageStatistics.objectWithOutOfLineStorageCount()),
-        static_cast<long>(
-            storageStatistics.objectWithOutOfLineStorageCount() * 100
-                / storageStatistics.objectCount()));
+    long wastedPropertyStorageBytes = 0;
+    long wastedPropertyStoragePercent = 0;
+    long objectWithOutOfLineStorageCount = 0;
+    long objectsWithOutOfLineStoragePercent = 0;
+    if ((storageStatistics.storageCapacity() > 0) && (storageStatistics.objectCount() > 0)) {
+        wastedPropertyStorageBytes = static_cast<long>((storageStatistics.storageCapacity() - storageStatistics.storageSize()) / KB);
+        wastedPropertyStoragePercent = static_cast<long>(
+            (storageStatistics.storageCapacity() - storageStatistics.storageSize()) * 100 / storageStatistics.storageCapacity());
+        objectWithOutOfLineStorageCount = static_cast<long>(storageStatistics.objectWithOutOfLineStorageCount());
+        objectsWithOutOfLineStoragePercent = objectWithOutOfLineStorageCount * 100 / storageStatistics.objectCount();
+    }
+    dataLogF("wasted .property storage: %ldkB (%ld%%)\n", wastedPropertyStorageBytes, wastedPropertyStoragePercent);
+    dataLogF("objects with out-of-line .property storage: %ld (%ld%%)\n", objectWithOutOfLineStorageCount, objectsWithOutOfLineStoragePercent);
 }
 
 } // namespace JSC

@@ -1,3 +1,13 @@
+2014-08-28  Julien Brianceau   <jbriance@cisco.com>
+
+        Correct GC length unit and prevent division by 0 in showObjectStatistics.
+        https://bugs.webkit.org/show_bug.cgi?id=136340
+
+        Reviewed by Mark Hahnenberg.
+
+        * heap/HeapStatistics.cpp:
+        (JSC::HeapStatistics::showObjectStatistics):
+
 2014-08-27  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Ensure that the call frame passed from JIT code via JSC::operationCallEval to JSC::eval always contains the valid scope chain.
