@@ -1,3 +1,37 @@
+2014-08-28  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add WaylandEventSource
+        https://bugs.webkit.org/show_bug.cgi?id=136213
+
+        Reviewed by Martin Robinson.
+
+        Add the WaylandEventSource class. Its static method, createEventSource(),
+        creates a new GSource object that is attached to the main context and
+        enables handling Wayland display events through the GLib's main loop.
+
+        The method will be called by the nested Wayland compositor during its
+        initialization, which will also take the control over the ownership and
+        will be tasked with properly removing the GSource from the main context.
+
+        GLibSource is a GSource-based struct that additionally holds a GPollFD object
+        and the pointer to the wl_display object whose event loop we'll be
+        dispatching during the GSource dispatch. This is the type that g_source_new
+        uses when allocating the new GSource object.
+
+        The GSource is assigned the default priorty, can recurse, and is attached
+        to the main context.
+
+        * PlatformGTK.cmake:
+        * platform/graphics/wayland/WaylandEventSource.cpp: Added.
+        (WebCore::GLibSource::initialize):
+        (WebCore::GLibSource::check):
+        (WebCore::GLibSource::dispatch):
+        (WebCore::prepareCallback):
+        (WebCore::checkCallback):
+        (WebCore::dispatchCallback):
+        (WebCore::WaylandEventSource::createDisplayEventSource):
+        * platform/graphics/wayland/WaylandEventSource.h: Added.
+
 2014-08-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Safari at com.apple.WebCore: WebCore::AXObjectCache::clearTextMarkerNodesInUse
