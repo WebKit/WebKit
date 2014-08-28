@@ -185,7 +185,6 @@ inline IntSize snappedIntSize(const LayoutSize& size, const LayoutPoint& locatio
         LayoutUnit fraction = b.fraction();
         return roundToInt(fraction + a) - roundToInt(fraction);
     };
-
     return IntSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 
@@ -210,7 +209,6 @@ inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint
         LayoutUnit fraction = b.fraction();
         return roundToDevicePixel(fraction + a, pixelSnappingFactor) - roundToDevicePixel(fraction, pixelSnappingFactor);
     };
-
     return FloatSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 

@@ -68,9 +68,6 @@ public:
     LayoutUnit width() const { return m_frameRect.width(); }
     LayoutUnit height() const { return m_frameRect.height(); }
 
-    int pixelSnappedWidth() const { return m_frameRect.pixelSnappedWidth(); }
-    int pixelSnappedHeight() const { return m_frameRect.pixelSnappedHeight(); }
-
     // These represent your location relative to your container as a physical offset.
     // In layout related methods you almost always want the logical location (e.g. x() and y()).
     LayoutUnit top() const { return topLeftLocation().y(); }
@@ -92,8 +89,8 @@ public:
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit) const;
 
-    int pixelSnappedLogicalHeight() const { return style().isHorizontalWritingMode() ? pixelSnappedHeight() : pixelSnappedWidth(); }
-    int pixelSnappedLogicalWidth() const { return style().isHorizontalWritingMode() ? pixelSnappedWidth() : pixelSnappedHeight(); }
+    int pixelSnappedLogicalHeight() const { return style().isHorizontalWritingMode() ? pixelSnappedSize().height() : pixelSnappedSize().width(); }
+    int pixelSnappedLogicalWidth() const { return style().isHorizontalWritingMode() ? pixelSnappedSize().width() : pixelSnappedSize().height(); }
 
     void setLogicalLeft(LayoutUnit left)
     {
@@ -149,7 +146,6 @@ public:
     void move(LayoutUnit dx, LayoutUnit dy) { m_frameRect.move(dx, dy); }
 
     LayoutRect frameRect() const { return m_frameRect; }
-    IntRect pixelSnappedFrameRect() const { return snappedIntRect(m_frameRect); }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
     LayoutRect marginBoxRect() const
@@ -160,7 +156,7 @@ public:
     }
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     LayoutRect paddingBoxRect() const { return LayoutRect(borderLeft(), borderTop(), contentWidth() + paddingLeft() + paddingRight(), contentHeight() + paddingTop() + paddingBottom()); }
-    IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), m_frameRect.pixelSnappedSize()); }
+    IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), pixelSnappedSize()); }
     virtual IntRect borderBoundingBox() const override final { return pixelSnappedBorderBoxRect(); }
 
     WEBCORE_EXPORT RoundedRect::Radii borderRadii() const;

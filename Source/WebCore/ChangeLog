@@ -1,3 +1,65 @@
+2014-08-28  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Remove unused pixel snapping functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136341
+
+        Reviewed by Simon Fraser.
+
+        Let's not encourage integral snapping by having these functions around.
+        
+        No change in functionality.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::pixelSnappedElementRect): Deleted.
+        (WebCore::AccessibilityObject::pixelSnappedSize): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::snappedIntSize):
+        (WebCore::snapSizeToDevicePixel):
+        * platform/graphics/LayoutRect.h:
+        (WebCore::LayoutRect::pixelSnappedLocation): Deleted.
+        (WebCore::LayoutRect::pixelSnappedX): Deleted.
+        (WebCore::LayoutRect::pixelSnappedY): Deleted.
+        (WebCore::LayoutRect::pixelSnappedWidth): Deleted.
+        (WebCore::LayoutRect::pixelSnappedHeight): Deleted.
+        (WebCore::LayoutRect::pixelSnappedMaxX): Deleted.
+        (WebCore::LayoutRect::pixelSnappedMaxY): Deleted.
+        (WebCore::snappedIntRectFromEdges): Deleted.
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalTopForFloat): Deleted.
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalBottomForFloat): Deleted.
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalLeftForFloat): Deleted.
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalRightForFloat): Deleted.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::pixelSnappedLogicalHeight):
+        (WebCore::RenderBox::pixelSnappedLogicalWidth):
+        (WebCore::RenderBox::pixelSnappedBorderBoxRect):
+        (WebCore::RenderBox::pixelSnappedWidth): Deleted.
+        (WebCore::RenderBox::pixelSnappedHeight): Deleted.
+        (WebCore::RenderBox::pixelSnappedFrameRect): Deleted.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::nodeWidth):
+        (WebCore::nodeHeight):
+        (WebCore::RenderFileUploadControl::maxFilenameWidth):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::buttonRect):
+        * rendering/RenderView.h:
+
 2014-08-27  Enrica Casucci  <enrica@apple.com>
 
         textStylingAtPosition returns incorrect values after executing toggleBold, toggleItalic and toggleUnderline.

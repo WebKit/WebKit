@@ -1226,7 +1226,7 @@ bool RenderLayer::updateLayerPosition()
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
         // FIXME: Is snapping the size really needed here for the RenderBox case?
-        setSize(snappedIntSize(box->size(), box->location()));
+        setSize(box->pixelSnappedSize());
         localPoint += box->topLeftLocationOffset();
     }
 
@@ -3558,7 +3558,7 @@ bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
 
     IntPoint localPoint = roundedIntPoint(absoluteToContents(absolutePoint));
 
-    IntRect localBounds(0, 0, box->pixelSnappedWidth(), box->pixelSnappedHeight());
+    IntRect localBounds(IntPoint(), box->pixelSnappedSize());
     return resizerCornerRect(this, localBounds).contains(localPoint);
 }
 

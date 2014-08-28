@@ -218,8 +218,6 @@ public:
     void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); m_renderCounterCount--; }
     bool hasRenderCounters() { return m_renderCounterCount; }
     
-    IntRect pixelSnappedLayoutOverflowRect() const { return snappedIntRect(layoutOverflowRect()); }
-
     ImageQualityController& imageQualityController();
 
 #if ENABLE(CSS_FILTERS)

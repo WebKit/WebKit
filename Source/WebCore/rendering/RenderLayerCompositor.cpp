@@ -3241,7 +3241,7 @@ void RenderLayerCompositor::ensureRootLayer()
 #ifndef NDEBUG
         m_rootContentLayer->setName("content root");
 #endif
-        IntRect overflowRect = m_renderView.pixelSnappedLayoutOverflowRect();
+        IntRect overflowRect = snappedIntRect(m_renderView.layoutOverflowRect());
         m_rootContentLayer->setSize(FloatSize(overflowRect.maxX(), overflowRect.maxY()));
         m_rootContentLayer->setPosition(FloatPoint());
 

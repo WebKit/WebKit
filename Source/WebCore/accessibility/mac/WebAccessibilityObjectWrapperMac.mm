@@ -2494,7 +2494,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool: m_object->isEnabled()];
     
     if ([attributeName isEqualToString: NSAccessibilitySizeAttribute]) {
-        IntSize s = m_object->pixelSnappedSize();
+        IntSize s = m_object->elementRect().pixelSnappedSize();
         return [NSValue valueWithSize: NSMakeSize(s.width(), s.height())];
     }
     

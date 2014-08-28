@@ -614,7 +614,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
                 LayoutUnit ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleThickness : ruleLeft + contentWidth();
                 LayoutUnit ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd;
                 LayoutUnit ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleThickness;
-                IntRect pixelSnappedRuleRect = snappedIntRectFromEdges(ruleLeft, ruleTop, ruleRight, ruleBottom);
+                IntRect pixelSnappedRuleRect = snappedIntRect(ruleLeft, ruleTop, ruleRight - ruleLeft, ruleBottom - ruleTop);
                 drawLineForBoxSide(paintInfo.context, pixelSnappedRuleRect.x(), pixelSnappedRuleRect.y(), pixelSnappedRuleRect.maxX(), pixelSnappedRuleRect.maxY(), boxSide, ruleColor, ruleStyle, 0, 0, antialias);
             }
             

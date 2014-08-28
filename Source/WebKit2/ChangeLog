@@ -1,3 +1,17 @@
+2014-08-28  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Remove unused pixel snapping functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136341
+
+        Reviewed by Simon Fraser.
+
+        Let's not encourage integral snapping by having these functions around.
+        
+        No change in functionality.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+
 2014-08-27  Enrica Casucci  <enrica@apple.com>
 
         textStylingAtPosition returns incorrect values after executing toggleBold, toggleItalic and toggleUnderline.

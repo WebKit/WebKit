@@ -3871,7 +3871,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
 
     // Require the document to grow a bit.
     static const int documentHeightThreshold = 200;
-    if (documentElement->renderBox()->layoutOverflowRect().pixelSnappedHeight() < documentHeightThreshold)
+    if (documentElement->renderBox()->layoutOverflowRect().pixelSnappedSize().height() < documentHeightThreshold)
         return false;
 
     // The first few hundred characters rarely contain the interesting content of the page.

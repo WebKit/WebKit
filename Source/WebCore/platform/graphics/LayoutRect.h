@@ -55,7 +55,6 @@ public:
     LayoutPoint location() const { return m_location; }
     LayoutSize size() const { return m_size; }
 
-    IntPoint pixelSnappedLocation() const { return roundedIntPoint(m_location); }
     IntSize pixelSnappedSize() const { return snappedIntSize(m_size, m_location); }
 
     void setLocation(const LayoutPoint& location) { m_location = location; }
@@ -67,13 +66,6 @@ public:
     LayoutUnit maxY() const { return y() + height(); }
     LayoutUnit width() const { return m_size.width(); }
     LayoutUnit height() const { return m_size.height(); }
-
-    int pixelSnappedX() const { return x().round(); }
-    int pixelSnappedY() const { return y().round(); }
-    int pixelSnappedWidth() const { return snappedIntSize(m_size, m_location).width(); }
-    int pixelSnappedHeight() const { return snappedIntSize(m_size, m_location).height(); }
-    int pixelSnappedMaxX() const { return (m_location.x() + m_size.width()).round(); }
-    int pixelSnappedMaxY() const { return (m_location.y() + m_size.height()).round(); }
 
     void setX(LayoutUnit x) { m_location.setX(x); }
     void setY(LayoutUnit y) { m_location.setY(y); }
@@ -201,9 +193,7 @@ inline bool operator!=(const LayoutRect& a, const LayoutRect& b)
     return a.location() != b.location() || a.size() != b.size();
 }
 
-WEBCORE_EXPORT IntRect enclosingIntRect(const LayoutRect&);
-WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
-
+// Integral snapping functions.
 inline IntRect snappedIntRect(const LayoutRect& rect)
 {
     return IntRect(roundedIntPoint(rect.location()), snappedIntSize(rect.size(), rect.location()));
@@ -214,18 +204,15 @@ inline IntRect snappedIntRect(LayoutUnit left, LayoutUnit top, LayoutUnit width,
     return IntRect(IntPoint(left.round(), top.round()), snappedIntSize(LayoutSize(width, height), LayoutPoint(left, top)));
 }
 
-inline IntRect snappedIntRectFromEdges(LayoutUnit left, LayoutUnit top, LayoutUnit right, LayoutUnit bottom)
-{
-    return IntRect(IntPoint(left.round(), top.round()), snappedIntSize(LayoutSize(right - left, bottom - top), LayoutPoint(left, top)));
-}
-
 inline IntRect snappedIntRect(LayoutPoint location, LayoutSize size)
 {
     return IntRect(roundedIntPoint(location), snappedIntSize(size, location));
 }
 
-FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
+WEBCORE_EXPORT IntRect enclosingIntRect(const LayoutRect&);
+WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
 
+// Device pixel snapping functions.
 inline FloatRect snapRectToDevicePixels(const LayoutRect& rect, float pixelSnappingFactor)
 {
     return FloatRect(FloatPoint(roundToDevicePixel(rect.x(), pixelSnappingFactor), roundToDevicePixel(rect.y(), pixelSnappingFactor)), snapSizeToDevicePixel(rect.size(), rect.location(), pixelSnappingFactor));
@@ -246,6 +233,8 @@ inline FloatRect snapRectToDevicePixelsWithWritingDirection(const LayoutRect& re
     }
     return snapRectToDevicePixels(rect, deviceScaleFactor);
 }
+
+FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
 
 } // namespace WebCore
 
