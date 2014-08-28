@@ -1,5 +1,20 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173016
+
+    2014-08-27  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Crash when you open Web Inspector in a private window (due to IndexedDB)
+            https://bugs.webkit.org/show_bug.cgi?id=136293
+
+            Reviewed by Joseph Pecoraro.
+
+            * inspector/InspectorIndexedDBAgent.cpp:
+            (WebCore::InspectorIndexedDBAgent::requestDatabaseNames): Null check idbRequest from
+            IDBFactory::getDatabaseNames, which can return null now after r172603 in private browsing.
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172871
 
     2014-08-22  Dean Jackson  <dino@apple.com>
