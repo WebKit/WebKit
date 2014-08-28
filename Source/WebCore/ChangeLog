@@ -1,3 +1,10 @@
+2014-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix for the Wayland windowing target after r173052.
+
+        * platform/graphics/wayland/WaylandSurface.cpp: Include the IntSize header.
+        * platform/graphics/wayland/WaylandSurface.h: Forward-declare IntSize.
+
 2014-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF after r173047.

@@ -29,6 +29,7 @@
 #if PLATFORM(WAYLAND)
 
 #include "GLContextEGL.h"
+#include "IntSize.h"
 #include "WaylandDisplay.h"
 #include <EGL/egl.h>
 

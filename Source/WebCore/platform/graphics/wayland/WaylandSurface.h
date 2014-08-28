@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class GLContextEGL;
+class IntSize;
 
 class WaylandSurface {
 public:
