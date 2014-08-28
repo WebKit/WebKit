@@ -1,3 +1,17 @@
+2014-08-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update placeholder-shown-basics.html for GTK
+
+        GTK does not support the color input type. This was causing placeholder-shown-basics.html
+        to fail when testing the non-support of placeholder by input[type=color].
+
+        Since this is a minor part of the test, it is more valuable getting the test running everywhere
+        than skipping it. I removed the subtest causing troubles.
+
+        * fast/css/placeholder-shown-basics-expected.html:
+        * fast/css/placeholder-shown-basics.html:
+        * platform/gtk/TestExpectations:
+
 2014-08-27  Andreas Kling  <akling@apple.com>
 
         Drawing text in an SVG font causes load events to be fired.

@@ -2098,7 +2098,6 @@ webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
 
 webkit.org/b/136255 fast/block/float/overhanging-tall-block.html [ Failure ]
 
-webkit.org/b/136257 fast/css/placeholder-shown-basics.html [ ImageOnlyFailure ]
 webkit.org/b/136257 fast/forms/input-placeholder-visibility-1.html [ Failure ]
 webkit.org/b/136257 fast/forms/input-placeholder-visibility-3.html [ Failure ]
 webkit.org/b/136257 fast/forms/textarea-placeholder-visibility-1.html [ Failure ]
