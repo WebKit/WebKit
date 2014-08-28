@@ -131,7 +131,7 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
     contentLocation.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
 
     LayoutRect rect(contentLocation, contentSize);
-    IntRect alignedRect = pixelSnappedIntRect(rect);
+    IntRect alignedRect = snappedIntRect(rect);
     if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return;
 

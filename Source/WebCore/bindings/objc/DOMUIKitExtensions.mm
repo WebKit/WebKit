@@ -414,7 +414,7 @@ using WebCore::VisiblePosition;
 - (CGRect)boundingBoxWithOwner:(DOMNode *)anOwner
 {
     // ignores transforms
-    return anOwner ? pixelSnappedIntRect(core(self)->computeRect(core(anOwner)->renderer())) : CGRectZero;
+    return anOwner ? snappedIntRect(core(self)->computeRect(core(anOwner)->renderer())) : CGRectZero;
 }
 
 - (WKQuad)absoluteQuadWithOwner:(DOMNode *)anOwner
@@ -422,7 +422,7 @@ using WebCore::VisiblePosition;
     if (anOwner) {
         // FIXME: ECLAIR
         //WebCore::FloatQuad theQuad = core(self)->getAbsoluteQuad(core(anOwner)->renderer());
-        WebCore::IntRect rect = pixelSnappedIntRect(core(self)->computeRect(core(anOwner)->renderer()));
+        WebCore::IntRect rect = snappedIntRect(core(self)->computeRect(core(anOwner)->renderer()));
         WKQuad quad;
         quad.p1 = CGPointMake(rect.x(), rect.y());
         quad.p2 = CGPointMake(rect.maxX(), rect.y());

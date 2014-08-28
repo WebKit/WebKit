@@ -3333,7 +3333,7 @@ void GraphicsLayerCA::computePixelAlignment(float pageScale, const FloatPoint& p
     // Scale by the page scale factor to compute the screen-relative bounds.
     scaledBounds.scale(contentsScale);
     // Round to integer boundaries.
-    FloatRect alignedBounds = enclosingRectForPainting(LayoutRect(scaledBounds), deviceScaleFactor());
+    FloatRect alignedBounds = encloseRectToDevicePixels(LayoutRect(scaledBounds), deviceScaleFactor());
     
     // Convert back to layer coordinates.
     alignedBounds.scale(1 / contentsScale);

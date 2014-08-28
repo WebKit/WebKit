@@ -364,7 +364,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
         RenderBox& renderBox = toRenderBox(renderer());
-        style.applyTransform(t, pixelSnappedForPainting(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
+        style.applyTransform(t, snapRectToDevicePixels(renderBox.borderBoxRect(), deviceScaleFactor()), RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     
@@ -714,7 +714,7 @@ void RenderLayerBacking::updateGeometry()
     offsetFromParent = offsetFromParent + (compAncestor ? compAncestor->backing()->devicePixelFractionFromRenderer() : LayoutSize());
     relativeCompositingBounds.moveBy(offsetFromParent);
 
-    LayoutRect enclosingRelativeCompositingBounds = LayoutRect(enclosingRectForPainting(relativeCompositingBounds, deviceScaleFactor));
+    LayoutRect enclosingRelativeCompositingBounds = LayoutRect(encloseRectToDevicePixels(relativeCompositingBounds, deviceScaleFactor));
     LayoutSize subpixelOffsetAdjustment = enclosingRelativeCompositingBounds.location() - relativeCompositingBounds.location();
     LayoutSize rendererOffsetFromGraphicsLayer =  toLayoutSize(localCompositingBounds.location()) + subpixelOffsetAdjustment;
 
@@ -1084,14 +1084,14 @@ void RenderLayerBacking::updateInternalHierarchy()
 
 void RenderLayerBacking::resetContentsRect()
 {
-    m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
+    m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
     
     LayoutRect contentsClippingRect;
     if (renderer().isBox())
         contentsClippingRect = toRenderBox(renderer()).contentBoxRect();
 
     contentsClippingRect.move(contentOffsetInCompostingLayer());
-    m_graphicsLayer->setContentsClippingRect(pixelSnappedIntRect(contentsClippingRect));
+    m_graphicsLayer->setContentsClippingRect(snappedIntRect(contentsClippingRect));
 
     m_graphicsLayer->setContentsTileSize(IntSize());
     m_graphicsLayer->setContentsTilePhase(IntPoint());
@@ -1884,11 +1884,11 @@ void RenderLayerBacking::updateImageContents()
         return;
 
     // This is a no-op if the layer doesn't have an inner layer for the image.
-    m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
+    m_graphicsLayer->setContentsRect(snappedIntRect(contentsBox()));
 
     LayoutRect contentsClippingRect = imageRenderer.contentBoxRect();
     contentsClippingRect.move(contentOffsetInCompostingLayer());
-    m_graphicsLayer->setContentsClippingRect(pixelSnappedIntRect(contentsClippingRect));
+    m_graphicsLayer->setContentsClippingRect(snappedIntRect(contentsClippingRect));
 
     m_graphicsLayer->setContentsToImage(image);
     bool isSimpleContainer = false;
@@ -1965,7 +1965,7 @@ FloatRect RenderLayerBacking::backgroundBoxForPainting() const
 
     LayoutRect backgroundBox = backgroundRectForBox(toRenderBox(renderer()));
     backgroundBox.move(contentOffsetInCompostingLayer());
-    return pixelSnappedForPainting(backgroundBox, deviceScaleFactor());
+    return snapRectToDevicePixels(backgroundBox, deviceScaleFactor());
 }
 
 GraphicsLayer* RenderLayerBacking::parentForSublayers() const
@@ -2061,7 +2061,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 {
     ASSERT(!paintsIntoCompositedAncestor());
 
-    FloatRect pixelSnappedRectForPainting = pixelSnappedForPainting(r, deviceScaleFactor());
+    FloatRect pixelSnappedRectForPainting = snapRectToDevicePixels(r, deviceScaleFactor());
     FrameView& frameView = owningLayer().renderer().view().frameView();
     if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
         frameView.addTrackedRepaintRect(pixelSnappedRectForPainting);
@@ -2209,7 +2209,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
         LayoutRect transformedClip = LayoutRect(clip);
         transformedClip.moveBy(scrollCornerAndResizer.location());
-        m_owningLayer.paintScrollCorner(&context, IntPoint(), pixelSnappedIntRect(transformedClip));
+        m_owningLayer.paintScrollCorner(&context, IntPoint(), snappedIntRect(transformedClip));
         m_owningLayer.paintResizer(&context, IntPoint(), transformedClip);
         context.restore();
     }

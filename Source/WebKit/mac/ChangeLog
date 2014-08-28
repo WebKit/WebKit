@@ -1,3 +1,19 @@
+2014-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Rename LayoutRect's device pixel snapping functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136319
+
+        Reviewed by Simon Fraser.
+
+        From pixelSnappedForPainting() to snapRectToDevicePixels() and 
+        pixelSnappedIntRect*() to snappedIntRect*().
+
+        No change in functionality.
+
+        * WebView/WebView.mm:
+        (-[WebView _dashboardRegions]):
+        (-[WebView trackedRepaintRects]):
+
 2014-08-25  Maciej Stachowiak  <mjs@apple.com>
 
         Replace use of WKCopyCFLocalizationPreferredName with NSLocale public API

@@ -635,7 +635,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         return;
     }
 
-    frameView().addTrackedRepaintRect(pixelSnappedForPainting(repaintRect, document().deviceScaleFactor()));
+    frameView().addTrackedRepaintRect(snapRectToDevicePixels(repaintRect, document().deviceScaleFactor()));
 
     // FIXME: convert all repaint rect dependencies to FloatRect.
     IntRect enclosingRect = enclosingIntRect(repaintRect);
@@ -707,7 +707,7 @@ void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintCont
         
     // Apply our transform if we have one (because of full page zooming).
     if (!repaintContainer && layer() && layer()->transform())
-        rect = LayoutRect(layer()->transform()->mapRect(pixelSnappedForPainting(rect, document().deviceScaleFactor())));
+        rect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(rect, document().deviceScaleFactor())));
 }
 
 bool RenderView::isScrollableOrRubberbandable() const
@@ -720,7 +720,7 @@ bool RenderView::isScrollableOrRubberbandable() const
 
 void RenderView::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(pixelSnappedIntRect(accumulatedOffset, layer()->size()));
+    rects.append(snappedIntRect(accumulatedOffset, layer()->size()));
 }
 
 void RenderView::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
@@ -750,7 +750,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
         }
     }
 
-    return pixelSnappedIntRect(selRect);
+    return snappedIntRect(selRect);
 }
 
 LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, bool clipToVisibleContent) const
@@ -1130,7 +1130,7 @@ IntRect RenderView::unscaledDocumentRect() const
 {
     LayoutRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
-    return pixelSnappedIntRect(overflowRect);
+    return snappedIntRect(overflowRect);
 }
 
 bool RenderView::rootBackgroundIsEntirelyFixed() const

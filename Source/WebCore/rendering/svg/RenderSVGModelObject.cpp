@@ -74,7 +74,7 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
     adjustRectForOutlineAndShadow(box);
 
     FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
-    return LayoutRect(pixelSnappedForPainting(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
+    return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
 }
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const

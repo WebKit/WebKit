@@ -144,7 +144,7 @@ LayoutRect enclosingLayoutRect(const FloatRect& rect)
     return LayoutRect(location, maxPoint - location);
 }
 
-FloatRect enclosingRectForPainting(const LayoutRect& rect, float pixelSnappingFactor)
+FloatRect encloseRectToDevicePixels(const LayoutRect& rect, float pixelSnappingFactor)
 {
     FloatPoint location = floorPointToDevicePixels(rect.minXMinYCorner(), pixelSnappingFactor);
     FloatPoint maxPoint = ceilPointToDevicePixels(rect.maxXMaxYCorner(), pixelSnappingFactor);

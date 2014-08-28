@@ -892,7 +892,7 @@ void InspectorPageAgent::didPaint(RenderObject* renderer, const LayoutRect& rect
     
     LayoutRect rootRect = absoluteRect;
     if (!view->frame().isMainFrame()) {
-        IntRect rootViewRect = view->contentsToRootView(pixelSnappedIntRect(absoluteRect));
+        IntRect rootViewRect = view->contentsToRootView(snappedIntRect(absoluteRect));
         rootRect = view->frame().mainFrame().view()->rootViewToContents(rootViewRect);
     }
     

@@ -144,7 +144,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             toRenderElement(child)->paint(paintInfo, adjustedPaintOffset);
             xPos += m_cols.m_sizes[c];
             if (borderThickness && m_cols.m_allowBorder[c + 1]) {
-                paintColumnBorder(paintInfo, pixelSnappedIntRect(LayoutRect(adjustedPaintOffset.x() + xPos, adjustedPaintOffset.y() + yPos, borderThickness, height())));
+                paintColumnBorder(paintInfo, snappedIntRect(LayoutRect(adjustedPaintOffset.x() + xPos, adjustedPaintOffset.y() + yPos, borderThickness, height())));
                 xPos += borderThickness;
             }
             child = child->nextSibling();
@@ -153,7 +153,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
         yPos += m_rows.m_sizes[r];
         if (borderThickness && m_rows.m_allowBorder[r + 1]) {
-            paintRowBorder(paintInfo, pixelSnappedIntRect(LayoutRect(adjustedPaintOffset.x(), adjustedPaintOffset.y() + yPos, width(), borderThickness)));
+            paintRowBorder(paintInfo, snappedIntRect(LayoutRect(adjustedPaintOffset.x(), adjustedPaintOffset.y() + yPos, width(), borderThickness)));
             yPos += borderThickness;
         }
     }
@@ -483,10 +483,10 @@ void RenderFrameSet::layout()
     updateLayerTransform();
 
     if (doFullRepaint) {
-        repaintUsingContainer(repaintContainer, pixelSnappedIntRect(oldBounds));
+        repaintUsingContainer(repaintContainer, snappedIntRect(oldBounds));
         LayoutRect newBounds = clippedOverflowRectForRepaint(repaintContainer);
         if (newBounds != oldBounds)
-            repaintUsingContainer(repaintContainer, pixelSnappedIntRect(newBounds));
+            repaintUsingContainer(repaintContainer, snappedIntRect(newBounds));
     }
 
     clearNeedsLayout();
@@ -559,7 +559,7 @@ void RenderFrameSet::positionFramesWithFlattening()
         int height = m_rows.m_sizes[r];
 
         for (int c = 0; c < cols; c++) {
-            IntRect oldFrameRect = pixelSnappedIntRect(child->frameRect());
+            IntRect oldFrameRect = snappedIntRect(child->frameRect());
 
             int width = m_cols.m_sizes[c];
 
@@ -607,7 +607,7 @@ void RenderFrameSet::positionFramesWithFlattening()
         xPos = 0;
         for (int c = 0; c < cols; c++) {
             // ensure the rows and columns are filled
-            IntRect oldRect = pixelSnappedIntRect(child->frameRect());
+            IntRect oldRect = snappedIntRect(child->frameRect());
 
             child->setLocation(IntPoint(xPos, yPos));
             child->setHeight(m_rows.m_sizes[r]);

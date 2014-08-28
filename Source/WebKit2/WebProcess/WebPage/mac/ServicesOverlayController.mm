@@ -528,7 +528,7 @@ void ServicesOverlayController::buildSelectionHighlight()
         FrameView* viewForRange = selectionRange->ownerDocument().view();
 
         for (auto& rect : m_currentSelectionRects) {
-            IntRect currentRect = pixelSnappedIntRect(rect);
+            IntRect currentRect = snappedIntRect(rect);
             currentRect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(currentRect.location())));
             cgRects.append((CGRect)currentRect);
         }

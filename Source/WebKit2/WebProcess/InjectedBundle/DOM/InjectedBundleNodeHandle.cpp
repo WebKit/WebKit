@@ -179,7 +179,7 @@ PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions opt
         return 0;
 
     LayoutRect topLevelRect;
-    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+    IntRect paintingRect = snappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     frameView->setNodeToDraw(m_node.get());
     RefPtr<WebImage> image = imageForRect(frameView, paintingRect, options);

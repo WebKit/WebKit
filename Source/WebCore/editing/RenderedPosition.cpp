@@ -227,7 +227,7 @@ IntRect RenderedPosition::absoluteRect(LayoutUnit* extraWidthToEndOfLine) const
     if (isNull())
         return IntRect();
 
-    IntRect localRect = pixelSnappedIntRect(m_renderer->localCaretRect(m_inlineBox, m_offset, extraWidthToEndOfLine));
+    IntRect localRect = snappedIntRect(m_renderer->localCaretRect(m_inlineBox, m_offset, extraWidthToEndOfLine));
     return localRect == IntRect() ? IntRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 

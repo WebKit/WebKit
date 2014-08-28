@@ -190,12 +190,12 @@ DragImageRef createDragImageForImage(Frame& frame, Node& node, IntRect& imageRec
 
     // Calculate image and element metrics for the client, then create drag image.
     LayoutRect topLevelRect;
-    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+    IntRect paintingRect = snappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     if (paintingRect.isEmpty())
         return nullptr;
 
-    elementRect = pixelSnappedIntRect(topLevelRect);
+    elementRect = snappedIntRect(topLevelRect);
     imageRect = paintingRect;
 
     return createDragImageFromSnapshot(snapshotNode(frame, node), &node);

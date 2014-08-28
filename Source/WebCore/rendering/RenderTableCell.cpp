@@ -1169,7 +1169,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     int leftWidth = leftVal.width();
     int rightWidth = rightVal.width();
 
-    IntRect borderRect = pixelSnappedIntRect(paintRect.x() - leftWidth / 2,
+    IntRect borderRect = snappedIntRect(paintRect.x() - leftWidth / 2,
         paintRect.y() - topWidth / 2,
         paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2,
         paintRect.height() + topWidth / 2 + (bottomWidth + 1) / 2);

@@ -1543,11 +1543,11 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
     LayoutRect box(LayoutPoint(paintOffset.x() + thisline.x() - offset, paintOffset.y() + thisline.y() - offset),
         LayoutSize(thisline.width() + offset, thisline.height() + offset));
 
-    IntRect pixelSnappedBox = pixelSnappedIntRect(box);
+    IntRect pixelSnappedBox = snappedIntRect(box);
     if (pixelSnappedBox.isEmpty())
         return;
-    IntRect pixelSnappedLastLine = pixelSnappedIntRect(paintOffset.x() + lastline.x(), 0, lastline.width(), 0);
-    IntRect pixelSnappedNextLine = pixelSnappedIntRect(paintOffset.x() + nextline.x(), 0, nextline.width(), 0);
+    IntRect pixelSnappedLastLine = snappedIntRect(paintOffset.x() + lastline.x(), 0, lastline.width(), 0);
+    IntRect pixelSnappedNextLine = snappedIntRect(paintOffset.x() + nextline.x(), 0, nextline.width(), 0);
     
     // left edge
     drawLineForBoxSide(graphicsContext,

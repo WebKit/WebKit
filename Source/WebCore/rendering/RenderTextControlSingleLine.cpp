@@ -84,7 +84,7 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint&
 
         // Convert the rect into the coords used for painting the content
         contentsRect.moveBy(paintOffset + location());
-        theme().paintCapsLockIndicator(*this, paintInfo, pixelSnappedIntRect(contentsRect));
+        theme().paintCapsLockIndicator(*this, paintInfo, snappedIntRect(contentsRect));
     }
 }
 

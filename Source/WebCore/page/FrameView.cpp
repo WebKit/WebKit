@@ -1791,7 +1791,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             return false;
         }
 #endif
-        IntRect updateRect = pixelSnappedIntRect(layer->repaintRectIncludingNonCompositingDescendants());
+        IntRect updateRect = snappedIntRect(layer->repaintRectIncludingNonCompositingDescendants());
         updateRect = contentsToRootView(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
@@ -2723,11 +2723,11 @@ IntRect FrameView::extendedBackgroundRectForPainting() const
     
     LayoutRect extendedRect = renderView->unextendedBackgroundRect(renderView);
     if (!tiledBacking->hasMargins())
-        return pixelSnappedIntRect(extendedRect);
+        return snappedIntRect(extendedRect);
     
     extendedRect.moveBy(LayoutPoint(-tiledBacking->leftMarginWidth(), -tiledBacking->topMarginHeight()));
     extendedRect.expand(LayoutSize(tiledBacking->leftMarginWidth() + tiledBacking->rightMarginWidth(), tiledBacking->topMarginHeight() + tiledBacking->bottomMarginHeight()));
-    return pixelSnappedIntRect(extendedRect);
+    return snappedIntRect(extendedRect);
 }
 
 bool FrameView::shouldUpdateWhileOffscreen() const
@@ -3180,9 +3180,9 @@ IntRect FrameView::windowClipRectForFrameOwner(const HTMLFrameOwnerElement* owne
     // Apply the clip from the layer.
     IntRect clipRect;
     if (clipToLayerContents)
-        clipRect = pixelSnappedIntRect(enclosingLayer->childrenClipRect());
+        clipRect = snappedIntRect(enclosingLayer->childrenClipRect());
     else
-        clipRect = pixelSnappedIntRect(enclosingLayer->selfClipRect());
+        clipRect = snappedIntRect(enclosingLayer->selfClipRect());
     clipRect = contentsToWindow(clipRect); 
     return intersection(clipRect, windowClipRect());
 }
@@ -3997,7 +3997,7 @@ void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float
 
 IntRect FrameView::convertFromRendererToContainingView(const RenderElement* renderer, const IntRect& rendererRect) const
 {
-    IntRect rect = pixelSnappedIntRect(enclosingLayoutRect(renderer->localToAbsoluteQuad(FloatRect(rendererRect)).boundingBox()));
+    IntRect rect = snappedIntRect(enclosingLayoutRect(renderer->localToAbsoluteQuad(FloatRect(rendererRect)).boundingBox()));
 
     // Convert from page ("absolute") to FrameView coordinates.
     if (!delegatesScrolling())

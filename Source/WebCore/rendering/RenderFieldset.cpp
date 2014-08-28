@@ -186,7 +186,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
         clipRect.setWidth(std::max<LayoutUnit>(style().borderLeftWidth(), legend->width()));
         clipRect.setHeight(legend->height());
     }
-    graphicsContext->clipOut(pixelSnappedForPainting(clipRect, document().deviceScaleFactor()));
+    graphicsContext->clipOut(snapRectToDevicePixels(clipRect, document().deviceScaleFactor()));
 
     paintBorder(paintInfo, paintRect, style());
 }

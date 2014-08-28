@@ -130,7 +130,7 @@ void RenderSearchField::showPopup()
         m_searchPopup->saveRecentSearches(name, m_recentSearches);
     }
 
-    m_searchPopup->popupMenu()->show(pixelSnappedIntRect(absoluteBoundingBoxRect()), &view().frameView(), -1);
+    m_searchPopup->popupMenu()->show(snappedIntRect(absoluteBoundingBoxRect()), &view().frameView(), -1);
 }
 
 void RenderSearchField::hidePopup()

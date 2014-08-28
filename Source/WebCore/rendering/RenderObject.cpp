@@ -807,13 +807,13 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
                 switch (side) {
                     case BSTop:
                     case BSBottom:
-                        graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, length, thirdOfThickness, deviceScaleFactor));
-                        graphicsContext->drawRect(pixelSnappedForPainting(x1, y2 - thirdOfThickness, length, thirdOfThickness, deviceScaleFactor));
+                        graphicsContext->drawRect(snapRectToDevicePixels(x1, y1, length, thirdOfThickness, deviceScaleFactor));
+                        graphicsContext->drawRect(snapRectToDevicePixels(x1, y2 - thirdOfThickness, length, thirdOfThickness, deviceScaleFactor));
                         break;
                     case BSLeft:
                     case BSRight:
-                        graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, thirdOfThickness, length, deviceScaleFactor));
-                        graphicsContext->drawRect(pixelSnappedForPainting(x2 - thirdOfThickness, y1, thirdOfThickness, length, deviceScaleFactor));
+                        graphicsContext->drawRect(snapRectToDevicePixels(x1, y1, thirdOfThickness, length, deviceScaleFactor));
+                        graphicsContext->drawRect(snapRectToDevicePixels(x2 - thirdOfThickness, y1, thirdOfThickness, length, deviceScaleFactor));
                         break;
                 }
 
@@ -834,38 +834,38 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
                 FloatRect paintBorderRect;
                 switch (side) {
                     case BSTop:
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x1 + mitreOffset1, y1, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset1, y1, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
 
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x1 + mitreOffset2, y2 - thirdOfThickness, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset2, y2 - thirdOfThickness, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     case BSLeft:
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x1, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x1, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
 
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     case BSBottom:
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x1 + mitreOffset2, y1, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset2, y1, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
 
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x1 + mitreOffset1, y2 - thirdOfThickness, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset1, y2 - thirdOfThickness, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
                     case BSRight:
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x1, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x1, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
 
-                        paintBorderRect = pixelSnappedForPainting(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
+                        paintBorderRect = snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
                         drawLineForBoxSide(graphicsContext, paintBorderRect.x(), paintBorderRect.y(), paintBorderRect.maxX(), paintBorderRect.maxY(), side, color, SOLID,
                             adjacent1BigThird, adjacent2BigThird, antialias);
                         break;
@@ -959,7 +959,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
                 graphicsContext->setFillColor(color, style.colorSpace());
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 graphicsContext->setShouldAntialias(antialias);
-                graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, x2 - x1, y2 - y1, deviceScaleFactor));
+                graphicsContext->drawRect(snapRectToDevicePixels(x1, y1, x2 - x1, y2 - y1, deviceScaleFactor));
                 graphicsContext->setShouldAntialias(wasAntialiased);
                 graphicsContext->setStrokeStyle(oldStrokeStyle);
                 return;
@@ -1038,7 +1038,7 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
     const AtomicString& href = toElement(n)->getAttribute(hrefAttr);
     if (href.isNull())
         return;
-    paintInfo.context->setURLForRect(n->document().completeURL(href), pixelSnappedIntRect(urlRect));
+    paintInfo.context->setURLForRect(n->document().completeURL(href), snappedIntRect(urlRect));
 }
 
 void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRect)
@@ -1061,10 +1061,10 @@ void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRec
     if (styleToUse.outlineStyleIsAuto() || styleToUse.outlineStyle() == BNONE)
         return;
 
-    IntRect inner = pixelSnappedIntRect(paintRect);
+    IntRect inner = snappedIntRect(paintRect);
     inner.inflate(outlineOffset);
 
-    IntRect outer = pixelSnappedIntRect(inner);
+    IntRect outer = snappedIntRect(inner);
     outer.inflate(outlineWidth);
 
     // FIXME: This prevents outlines from painting inside the object. See bug 12042
@@ -1166,7 +1166,7 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
     LayoutRect result = rects[0];
     for (size_t i = 1; i < n; ++i)
         result.unite(rects[i]);
-    return pixelSnappedIntRect(result);
+    return snappedIntRect(result);
 }
 
 void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
@@ -1288,7 +1288,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         ASSERT(repaintContainer == &v);
         bool viewHasCompositedLayer = v.hasLayer() && v.layer()->isComposited();
         if (!viewHasCompositedLayer || v.layer()->backing()->paintsIntoWindow()) {
-            v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? LayoutRect(v.layer()->transform()->mapRect(pixelSnappedForPainting(r, document().deviceScaleFactor()))) : r);
+            v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? LayoutRect(v.layer()->transform()->mapRect(snapRectToDevicePixels(r, document().deviceScaleFactor()))) : r);
             return;
         }
     }
@@ -1356,16 +1356,16 @@ void RenderObject::repaintSlowRepaintObject() const
     // there is, then we should not allow painting to clip to the layer size.
     if (isRoot() || isBody()) {
         shouldClipToLayer = !view->frameView().hasExtendedBackgroundRectForPainting();
-        repaintRect = pixelSnappedIntRect(view->backgroundRect(view));
+        repaintRect = snappedIntRect(view->backgroundRect(view));
     } else
-        repaintRect = pixelSnappedIntRect(clippedOverflowRectForRepaint(repaintContainer));
+        repaintRect = snappedIntRect(clippedOverflowRectForRepaint(repaintContainer));
 
     repaintUsingContainer(repaintContainer, repaintRect, shouldClipToLayer);
 }
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
 {
-    return pixelSnappedIntRect(absoluteClippedOverflowRect());
+    return snappedIntRect(absoluteClippedOverflowRect());
 }
 
 bool RenderObject::checkForRepaintDuringLayout() const

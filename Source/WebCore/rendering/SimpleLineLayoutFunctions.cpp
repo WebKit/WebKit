@@ -49,7 +49,7 @@ namespace SimpleLineLayout {
 static void paintDebugBorders(GraphicsContext& context, LayoutRect borderRect, const LayoutPoint& paintOffset)
 {
     borderRect.moveBy(paintOffset);
-    IntRect snappedRect = pixelSnappedIntRect(borderRect);
+    IntRect snappedRect = snappedIntRect(borderRect);
     if (snappedRect.isEmpty())
         return;
     GraphicsContextStateSaver stateSaver(context);

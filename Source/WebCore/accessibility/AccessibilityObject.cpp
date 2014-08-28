@@ -766,7 +766,7 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
             result.unite(r);
         }
     }
-    return pixelSnappedIntRect(LayoutRect(result));
+    return snappedIntRect(LayoutRect(result));
 }
     
 bool AccessibilityObject::press()
@@ -2218,8 +2218,8 @@ bool AccessibilityObject::isOnscreen() const
         const AccessibilityObject* outer = objects[i];
         const AccessibilityObject* inner = objects[i - 1];
         // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
-        const IntRect outerRect = i < levels ? pixelSnappedIntRect(outer->boundingBoxRect()) : outer->getScrollableAreaIfScrollable()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-        const IntRect innerRect = pixelSnappedIntRect(inner->isAccessibilityScrollView() ? inner->parentObject()->boundingBoxRect() : inner->boundingBoxRect());
+        const IntRect outerRect = i < levels ? snappedIntRect(outer->boundingBoxRect()) : outer->getScrollableAreaIfScrollable()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+        const IntRect innerRect = snappedIntRect(inner->isAccessibilityScrollView() ? inner->parentObject()->boundingBoxRect() : inner->boundingBoxRect());
         
         if (!outerRect.intersects(innerRect)) {
             isOnscreen = false;
@@ -2232,7 +2232,7 @@ bool AccessibilityObject::isOnscreen() const
 
 void AccessibilityObject::scrollToMakeVisible() const
 {
-    IntRect objectRect = pixelSnappedIntRect(boundingBoxRect());
+    IntRect objectRect = snappedIntRect(boundingBoxRect());
     objectRect.setLocation(IntPoint());
     scrollToMakeVisibleWithSubFocus(objectRect);
 }

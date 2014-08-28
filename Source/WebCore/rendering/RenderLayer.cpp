@@ -855,7 +855,7 @@ void RenderLayer::updateTransform()
         RenderBox* box = renderBox();
         ASSERT(box);
         m_transform->makeIdentity();
-        box->style().applyTransform(*m_transform, pixelSnappedForPainting(box->borderBoxRect(), box->document().deviceScaleFactor()), RenderStyle::IncludeTransformOrigin);
+        box->style().applyTransform(*m_transform, snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor()), RenderStyle::IncludeTransformOrigin);
         makeMatrixRenderable(*m_transform, canRender3DTransforms());
     }
 
@@ -870,7 +870,7 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
 
     RenderBox* box = renderBox();
     ASSERT(box);
-    FloatRect pixelSnappedBorderRect = pixelSnappedForPainting(box->borderBoxRect(), box->document().deviceScaleFactor());
+    FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
     if (renderer().style().isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
         RefPtr<RenderStyle> style = renderer().animation().getAnimatedStyleForRenderer(&renderer());
@@ -1698,7 +1698,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const LayerP
         context->save();
         LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior);
         adjustedClipRect.move(paintingInfo.subpixelAccumulation);
-        FloatRect pixelSnappedClipRect = pixelSnappedForPainting(adjustedClipRect, renderer().document().deviceScaleFactor());
+        FloatRect pixelSnappedClipRect = snapRectToDevicePixels(adjustedClipRect, renderer().document().deviceScaleFactor());
         context->clip(pixelSnappedClipRect);
 
 #if ENABLE(CSS_COMPOSITING)
@@ -2421,7 +2421,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
             // that put web views into scrolling containers, such as Mac OS X Mail.
             // The canAutoscroll function in EventHandler also knows about this.
             if (Page* page = frameView.frame().page())
-                page->chrome().scrollRectIntoView(pixelSnappedIntRect(rect));
+                page->chrome().scrollRectIntoView(snappedIntRect(rect));
         }
     }
     
@@ -2718,7 +2718,7 @@ IntRect RenderLayer::scrollCornerRect() const
     bool hasVerticalBar = verticalScrollbar();
     bool hasResizer = renderer().style().resize() != RESIZE_NONE;
     if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
-        return pixelSnappedIntRect(cornerRect(this, renderBox()->borderBoxRect()));
+        return snappedIntRect(cornerRect(this, renderBox()->borderBoxRect()));
     return IntRect();
 }
 
@@ -3503,7 +3503,7 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, const Layou
         context->restore();
         return;
     }
-    FloatRect imageRect = pixelSnappedForPainting(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), renderer().document().deviceScaleFactor());
+    FloatRect imageRect = snapRectToDevicePixels(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), renderer().document().deviceScaleFactor());
     context->drawImage(resizeCornerImage.get(), renderer().style().colorSpace(), imageRect);
 }
 
@@ -3542,7 +3542,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& pain
         context->setStrokeColor(Color(makeRGB(217, 217, 217)), ColorSpaceDeviceRGB);
         context->setStrokeThickness(1.0f);
         context->setFillColor(Color::transparent, ColorSpaceDeviceRGB);
-        context->drawRect(pixelSnappedIntRect(largerCorner));
+        context->drawRect(snappedIntRect(largerCorner));
     }
 }
 
@@ -3570,7 +3570,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
     
     IntRect resizeControlRect;
     if (renderer().style().resize() != RESIZE_NONE) {
-        resizeControlRect = pixelSnappedIntRect(resizerCornerRect(this, box->borderBoxRect()));
+        resizeControlRect = snappedIntRect(resizerCornerRect(this, box->borderBoxRect()));
         if (resizeControlRect.contains(localPoint))
             return true;
     }
@@ -3670,7 +3670,7 @@ void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsCont
         context->save();
         LayoutRect adjustedClipRect = clipRect.rect();
         adjustedClipRect.move(paintingInfo.subpixelAccumulation);
-        context->clip(pixelSnappedForPainting(adjustedClipRect, deviceScaleFactor));
+        context->clip(snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor));
     }
 }
 
@@ -4223,7 +4223,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
 
     // Now do a paint with the root layer shifted to be us.
     LayoutSize adjustedSubpixelAccumulation = offsetForThisLayer - LayoutSize(devicePixelSnappedOffsetForThisLayer);
-    LayerPaintingInfo transformedPaintingInfo(this, LayoutRect(enclosingRectForPainting(transform.inverse().mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor)),
+    LayerPaintingInfo transformedPaintingInfo(this, LayoutRect(encloseRectToDevicePixels(transform.inverse().mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor)),
         paintingInfo.paintBehavior, adjustedSubpixelAccumulation, paintingInfo.subtreePaintRoot, paintingInfo.overlapTestRequests);
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 }
@@ -4611,7 +4611,7 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
         const LayerFragment& fragment = layerFragments.at(i);
         clipToRect(localPaintingInfo, context, fragment.backgroundRect);
         paintOverflowControls(context, roundedIntPoint(toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelAccumulation)),
-            pixelSnappedIntRect(fragment.backgroundRect.rect()), true);
+            snappedIntRect(fragment.backgroundRect.rect()), true);
         restoreClip(context, localPaintingInfo.paintDirtyRect, fragment.backgroundRect);
     }
 }
@@ -5028,7 +5028,7 @@ bool RenderLayer::hitTestResizerInFragments(const LayerFragments& layerFragments
 
     for (int i = layerFragments.size() - 1; i >= 0; --i) {
         const LayerFragment& fragment = layerFragments.at(i);
-        if (fragment.backgroundRect.intersects(hitTestLocation) && resizerCornerRect(this, pixelSnappedIntRect(fragment.layerBounds)).contains(hitTestLocation.roundedPoint()))
+        if (fragment.backgroundRect.intersects(hitTestLocation) && resizerCornerRect(this, snappedIntRect(fragment.layerBounds)).contains(hitTestLocation.roundedPoint()))
             return true;
     }
     
@@ -5686,13 +5686,13 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
 IntRect RenderLayer::absoluteBoundingBox() const
 {
     const RenderLayer* rootLayer = root();
-    return pixelSnappedIntRect(boundingBox(rootLayer, offsetFromAncestor(rootLayer)));
+    return snappedIntRect(boundingBox(rootLayer, offsetFromAncestor(rootLayer)));
 }
 
 FloatRect RenderLayer::absoluteBoundingBoxForPainting() const
 {
     const RenderLayer* rootLayer = root();
-    return pixelSnappedForPainting(boundingBox(rootLayer, offsetFromAncestor(rootLayer)), renderer().document().deviceScaleFactor());
+    return snapRectToDevicePixels(boundingBox(rootLayer, offsetFromAncestor(rootLayer)), renderer().document().deviceScaleFactor());
 }
 
 LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, CalculateLayerBoundsFlags flags) const

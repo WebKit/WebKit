@@ -688,9 +688,9 @@ public:
     virtual Element* anchorElement() const { return nullptr; }
     virtual Element* actionElement() const { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
-    IntRect pixelSnappedBoundingBoxRect() const { return pixelSnappedIntRect(boundingBoxRect()); }
+    IntRect pixelSnappedBoundingBoxRect() const { return snappedIntRect(boundingBoxRect()); }
     virtual LayoutRect elementRect() const = 0;
-    IntRect pixelSnappedElementRect() const { return pixelSnappedIntRect(elementRect()); }
+    IntRect pixelSnappedElementRect() const { return snappedIntRect(elementRect()); }
     LayoutSize size() const { return elementRect().size(); }
     IntSize pixelSnappedSize() const { return elementRect().pixelSnappedSize(); }
     virtual IntPoint clickPoint();

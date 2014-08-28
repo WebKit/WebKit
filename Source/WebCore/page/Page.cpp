@@ -1436,10 +1436,10 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     LayoutRect relevantRect = relevantViewRect(&object->view());
 
     // The objects are only relevant if they are being painted within the viewRect().
-    if (!objectPaintRect.intersects(pixelSnappedIntRect(relevantRect)))
+    if (!objectPaintRect.intersects(snappedIntRect(relevantRect)))
         return;
 
-    IntRect snappedPaintRect = pixelSnappedIntRect(objectPaintRect);
+    IntRect snappedPaintRect = snappedIntRect(objectPaintRect);
 
     // If this object was previously counted as an unpainted object, remove it from that HashSet
     // and corresponding Region. FIXME: This doesn't do the right thing if the objects overlap.
@@ -1457,11 +1457,11 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     // If the rect straddles both Regions, split it appropriately.
     if (topRelevantRect.intersects(snappedPaintRect) && bottomRelevantRect.intersects(snappedPaintRect)) {
         IntRect topIntersection = snappedPaintRect;
-        topIntersection.intersect(pixelSnappedIntRect(topRelevantRect));
+        topIntersection.intersect(snappedIntRect(topRelevantRect));
         m_topRelevantPaintedRegion.unite(topIntersection);
 
         IntRect bottomIntersection = snappedPaintRect;
-        bottomIntersection.intersect(pixelSnappedIntRect(bottomRelevantRect));
+        bottomIntersection.intersect(snappedIntRect(bottomRelevantRect));
         m_bottomRelevantPaintedRegion.unite(bottomIntersection);
     } else if (topRelevantRect.intersects(snappedPaintRect))
         m_topRelevantPaintedRegion.unite(snappedPaintRect);
@@ -1491,11 +1491,11 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
         return;
 
     // The objects are only relevant if they are being painted within the relevantViewRect().
-    if (!objectPaintRect.intersects(pixelSnappedIntRect(relevantViewRect(&object->view()))))
+    if (!objectPaintRect.intersects(snappedIntRect(relevantViewRect(&object->view()))))
         return;
 
     m_relevantUnpaintedRenderObjects.add(object);
-    m_relevantUnpaintedRegion.unite(pixelSnappedIntRect(objectPaintRect));
+    m_relevantUnpaintedRegion.unite(snappedIntRect(objectPaintRect));
 }
 
 void Page::suspendActiveDOMObjectsAndAnimations()

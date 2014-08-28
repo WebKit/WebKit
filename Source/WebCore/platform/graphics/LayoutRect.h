@@ -201,44 +201,44 @@ inline bool operator!=(const LayoutRect& a, const LayoutRect& b)
     return a.location() != b.location() || a.size() != b.size();
 }
 
-inline IntRect pixelSnappedIntRect(const LayoutRect& rect)
-{
-    return IntRect(roundedIntPoint(rect.location()), IntSize(snapSizeToPixel(rect.width(), rect.x()), snapSizeToPixel(rect.height(), rect.y())));
-
-}
-
 WEBCORE_EXPORT IntRect enclosingIntRect(const LayoutRect&);
 WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
-FloatRect enclosingRectForPainting(const LayoutRect&, float pixelSnappingFactor);
 
-inline IntRect pixelSnappedIntRect(LayoutUnit left, LayoutUnit top, LayoutUnit width, LayoutUnit height)
+inline IntRect snappedIntRect(const LayoutRect& rect)
+{
+    return IntRect(roundedIntPoint(rect.location()), IntSize(snapSizeToPixel(rect.width(), rect.x()), snapSizeToPixel(rect.height(), rect.y())));
+}
+
+inline IntRect snappedIntRect(LayoutUnit left, LayoutUnit top, LayoutUnit width, LayoutUnit height)
 {
     return IntRect(left.round(), top.round(), snapSizeToPixel(width, left), snapSizeToPixel(height, top));
 }
 
-inline IntRect pixelSnappedIntRectFromEdges(LayoutUnit left, LayoutUnit top, LayoutUnit right, LayoutUnit bottom)
+inline IntRect snappedIntRectFromEdges(LayoutUnit left, LayoutUnit top, LayoutUnit right, LayoutUnit bottom)
 {
     return IntRect(left.round(), top.round(), snapSizeToPixel(right - left, left), snapSizeToPixel(bottom - top, top));
 }
 
-inline IntRect pixelSnappedIntRect(LayoutPoint location, LayoutSize size)
+inline IntRect snappedIntRect(LayoutPoint location, LayoutSize size)
 {
     return IntRect(roundedIntPoint(location), pixelSnappedIntSize(size, location));
 }
 
-inline FloatRect pixelSnappedForPainting(const LayoutRect& rect, float pixelSnappingFactor)
+FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
+
+inline FloatRect snapRectToDevicePixels(const LayoutRect& rect, float pixelSnappingFactor)
 {
     return FloatRect(roundToDevicePixel(rect.x(), pixelSnappingFactor), roundToDevicePixel(rect.y(), pixelSnappingFactor),
         snapSizeToDevicePixel(rect.width(), rect.x(), pixelSnappingFactor), snapSizeToDevicePixel(rect.height(), rect.y(), pixelSnappingFactor));
 }
 
-inline FloatRect pixelSnappedForPainting(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height, float pixelSnappingFactor)
+inline FloatRect snapRectToDevicePixels(LayoutUnit x, LayoutUnit y, LayoutUnit width, LayoutUnit height, float pixelSnappingFactor)
 {
-    return pixelSnappedForPainting(LayoutRect(x, y, width, height), pixelSnappingFactor);
+    return snapRectToDevicePixels(LayoutRect(x, y, width, height), pixelSnappingFactor);
 }
 
 // FIXME: This needs to take vertical centering into account too.
-inline FloatRect directionalPixelSnappedForPainting(const LayoutRect& rect, float deviceScaleFactor, bool ltr)
+inline FloatRect snapRectToDevicePixelsWithWritingDirection(const LayoutRect& rect, float deviceScaleFactor, bool ltr)
 {
     if (!ltr) {
         FloatPoint snappedTopRight = roundPointToDevicePixels(rect.maxXMinYCorner(), deviceScaleFactor, ltr);
@@ -246,7 +246,7 @@ inline FloatRect directionalPixelSnappedForPainting(const LayoutRect& rect, floa
         float snappedHeight = snapSizeToDevicePixel(rect.height(), rect.y(), deviceScaleFactor);
         return FloatRect(snappedTopRight.x() - snappedWidth, snappedTopRight.y(), snappedWidth, snappedHeight);
     }
-    return pixelSnappedForPainting(rect, deviceScaleFactor);
+    return snapRectToDevicePixels(rect, deviceScaleFactor);
 }
 
 } // namespace WebCore

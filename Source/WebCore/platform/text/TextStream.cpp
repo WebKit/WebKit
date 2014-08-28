@@ -165,7 +165,7 @@ TextStream& TextStream::operator<<(const LayoutPoint& p)
 TextStream& TextStream::operator<<(const LayoutRect& r)
 {
     // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
-    return *this << pixelSnappedIntRect(r);
+    return *this << snappedIntRect(r);
 }
 
 String TextStream::release()

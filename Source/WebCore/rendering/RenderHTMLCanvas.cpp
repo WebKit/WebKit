@@ -77,7 +77,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     bool clip = !contentRect.contains(paintRect);
     GraphicsContextStateSaver stateSaver(*paintInfo.context, clip);
     if (clip)
-        paintInfo.context->clip(pixelSnappedIntRect(contentRect));
+        paintInfo.context->clip(snappedIntRect(contentRect));
 
     if (Page* page = frame().page()) {
         if (paintInfo.phase == PaintPhaseForeground)

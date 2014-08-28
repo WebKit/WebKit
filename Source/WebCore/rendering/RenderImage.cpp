@@ -409,7 +409,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             context->setStrokeStyle(SolidStroke);
             context->setStrokeColor(Color::lightGray, style().colorSpace());
             context->setFillColor(Color::transparent, style().colorSpace());
-            context->drawRect(pixelSnappedForPainting(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight), deviceScaleFactor), borderWidth);
+            context->drawRect(snapRectToDevicePixels(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight), deviceScaleFactor), borderWidth);
 
             bool errorPictureDrawn = false;
             LayoutSize imageOffset;
@@ -439,7 +439,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 #if ENABLE(CSS_IMAGE_ORIENTATION)
                 orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-                context->drawImage(image.get(), style().colorSpace(), pixelSnappedForPainting(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
+                context->drawImage(image.get(), style().colorSpace(), snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
                 errorPictureDrawn = true;
             }
 
@@ -480,7 +480,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (clip)
             context->clip(contentRect);
 
-        paintIntoRect(context, pixelSnappedForPainting(paintRect, deviceScaleFactor));
+        paintIntoRect(context, snapRectToDevicePixels(paintRect, deviceScaleFactor));
         
         if (cachedImage() && page && paintInfo.phase == PaintPhaseForeground) {
             // For now, count images as unpainted if they are still progressively loading. We may want 

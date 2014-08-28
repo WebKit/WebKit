@@ -120,7 +120,7 @@ std::unique_ptr<ImageBuffer> snapshotNode(Frame& frame, Node& node)
     frame.view()->setNodeToDraw(&node);
 
     LayoutRect topLevelRect;
-    return snapshotFrameRect(frame, pixelSnappedIntRect(node.renderer()->paintingRootRect(topLevelRect)));
+    return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)));
 }
 
 } // namespace WebCore

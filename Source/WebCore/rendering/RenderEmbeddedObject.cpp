@@ -210,7 +210,7 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
     contentLocation.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
 
     LayoutRect rect(contentLocation, contentSize);
-    IntRect alignedRect = pixelSnappedIntRect(rect);
+    IntRect alignedRect = snappedIntRect(rect);
     if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return;
 
@@ -423,7 +423,7 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     if (!rootRenderView)
         return true;
 
-    IntRect rootViewRect = view().frameView().convertToRootView(pixelSnappedIntRect(rect));
+    IntRect rootViewRect = view().frameView().convertToRootView(snappedIntRect(rect));
     
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
     HitTestResult result;

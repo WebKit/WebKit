@@ -321,7 +321,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     // Focus the last selected item.
     int selectedItem = selectElement().activeSelectionEndListIndex();
     if (selectedItem >= 0) {
-        rects.append(pixelSnappedIntRect(itemBoundingBoxRect(additionalOffset, selectedItem)));
+        rects.append(snappedIntRect(itemBoundingBoxRect(additionalOffset, selectedItem)));
         return;
     }
 
@@ -332,7 +332,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
         HTMLElement* element = listItems[i];
         if (isHTMLOptionElement(element) && !element->isDisabledFormControl()) {
             selectElement().setActiveSelectionEndIndex(i);
-            rects.append(pixelSnappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
+            rects.append(snappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
             return;
         }
     }
@@ -341,12 +341,12 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
 void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (m_vBar) {
-        IntRect scrollRect = pixelSnappedIntRect(paintOffset.x() + width() - borderRight() - m_vBar->width(),
+        IntRect scrollRect = snappedIntRect(paintOffset.x() + width() - borderRight() - m_vBar->width(),
             paintOffset.y() + borderTop(),
             m_vBar->width(),
             height() - (borderTop() + borderBottom()));
         m_vBar->setFrameRect(scrollRect);
-        m_vBar->paint(paintInfo.context, pixelSnappedIntRect(paintInfo.rect));
+        m_vBar->paint(paintInfo.context, snappedIntRect(paintInfo.rect));
     }
 }
 
@@ -439,7 +439,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         ColorSpace colorSpace = listItemElement->renderStyle() ? listItemElement->renderStyle()->colorSpace() : style().colorSpace();
         LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
         itemRect.intersect(controlClipRect(paintOffset));
-        paintInfo.context->fillRect(pixelSnappedIntRect(itemRect), backColor, colorSpace);
+        paintInfo.context->fillRect(snappedIntRect(itemRect), backColor, colorSpace);
     }
 }
 

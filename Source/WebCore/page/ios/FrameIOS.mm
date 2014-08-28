@@ -352,7 +352,7 @@ static Node* ancestorRespondingToClickEvents(const HitTestResult& hitTestResult,
             if (nodeBounds) {
                 // This is a check to see whether this node is an area element.  The only way this can happen is if this is the first check.
                 if (node == hitTestResult.innerNode() && node != hitTestResult.innerNonSharedNode() && node->hasTagName(HTMLNames::areaTag))
-                    *nodeBounds = pixelSnappedIntRect(toHTMLAreaElement(node)->computeRect(hitTestResult.innerNonSharedNode()->renderer()));
+                    *nodeBounds = snappedIntRect(toHTMLAreaElement(node)->computeRect(hitTestResult.innerNonSharedNode()->renderer()));
                 else if (node && node->renderer())
                     *nodeBounds = node->renderer()->absoluteBoundingBoxRect(true);
             }

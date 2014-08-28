@@ -1185,7 +1185,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
 
-    if (!paintInfo.rect.intersects(pixelSnappedIntRect(overflowRect)))
+    if (!paintInfo.rect.intersects(snappedIntRect(overflowRect)))
         return;
 
     LayoutRect box(boxOrigin, size());
@@ -1200,7 +1200,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
-            context->fillRect(pixelSnappedIntRect(selRect), selectionBackgroundColor(), style().colorSpace());
+            context->fillRect(snappedIntRect(selRect), selectionBackgroundColor(), style().colorSpace());
         }
         return;
     }
@@ -1208,7 +1208,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (selectionState() != SelectionNone) {
         LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
-        context->fillRect(pixelSnappedIntRect(selRect), selectionBackgroundColor(), style().colorSpace());
+        context->fillRect(snappedIntRect(selRect), selectionBackgroundColor(), style().colorSpace());
     }
 
     const Color color(style().visitedDependentColor(CSSPropertyColor));

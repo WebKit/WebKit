@@ -129,7 +129,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     LayoutRect selectionRect = LayoutRect(textOrigin, LayoutSize(0, fragment.height * scalingFactor));
     TextRun run = constructTextRun(style, fragment);
     scaledFont.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
-    FloatRect snappedSelectionRect = directionalPixelSnappedForPainting(selectionRect, renderer().document().deviceScaleFactor(), run.ltr());
+    FloatRect snappedSelectionRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr());
     if (scalingFactor == 1)
         return snappedSelectionRect;
 

@@ -66,7 +66,7 @@ void RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit l
         frame.setHeight(computedValues.m_extent);
     else
         frame.setWidth(computedValues.m_extent);
-    IntSize frameSize = theme().progressBarRectForBounds(*this, pixelSnappedIntRect(frame)).size();
+    IntSize frameSize = theme().progressBarRectForBounds(*this, snappedIntRect(frame)).size();
     computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
 }
 

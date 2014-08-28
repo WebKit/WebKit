@@ -3060,7 +3060,7 @@ static inline IMP getMethod(id o, SEL s)
             [regionValues release];
         }
 
-        WebDashboardRegion *webRegion = [[WebDashboardRegion alloc] initWithRect:pixelSnappedIntRect(region.bounds) clip:pixelSnappedIntRect(region.clip) type:type];
+        WebDashboardRegion *webRegion = [[WebDashboardRegion alloc] initWithRect:snappedIntRect(region.bounds) clip:snappedIntRect(region.clip) type:type];
         [regionValues addObject:webRegion];
         [webRegion release];
     }
@@ -3913,7 +3913,7 @@ static inline IMP getMethod(id o, SEL s)
     NSMutableArray* rectsArray = [[NSMutableArray alloc] initWithCapacity:repaintRects.size()];
     
     for (unsigned i = 0; i < repaintRects.size(); ++i)
-        [rectsArray addObject:[NSValue valueWithRect:pixelSnappedIntRect(LayoutRect(repaintRects[i]))]];
+        [rectsArray addObject:[NSValue valueWithRect:snappedIntRect(LayoutRect(repaintRects[i]))]];
 
     return [rectsArray autorelease];
 }

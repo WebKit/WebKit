@@ -1209,7 +1209,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return CGPointZero;
     
-    IntRect rect = pixelSnappedIntRect(m_object->boundingBoxRect());
+    IntRect rect = snappedIntRect(m_object->boundingBoxRect());
     CGRect cgRect = [self convertRectToScreenSpace:rect];
     return CGPointMake(CGRectGetMidX(cgRect), CGRectGetMidY(cgRect));
 }
@@ -1219,7 +1219,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return CGRectZero;
     
-    IntRect rect = pixelSnappedIntRect(m_object->elementRect());
+    IntRect rect = snappedIntRect(m_object->elementRect());
     return [self convertRectToScreenSpace:rect];
 }
 

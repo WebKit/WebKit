@@ -1,3 +1,233 @@
+2014-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Rename LayoutRect's device pixel snapping functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136319
+
+        Reviewed by Simon Fraser.
+
+        From pixelSnappedForPainting() to snapRectToDevicePixels() and 
+        pixelSnappedIntRect*() to snappedIntRect*().
+
+        No change in functionality.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxForQuads):
+        (WebCore::AccessibilityObject::isOnscreen):
+        (WebCore::AccessibilityObject::scrollToMakeVisible):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::pixelSnappedBoundingBoxRect):
+        (WebCore::AccessibilityObject::pixelSnappedElementRect):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityActivationPoint]):
+        (-[WebAccessibilityObjectWrapper accessibilityFrame]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper position]):
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        * bindings/objc/DOMUIKitExtensions.mm:
+        (-[DOMHTMLAreaElement boundingBoxWithOwner:]):
+        (-[DOMHTMLAreaElement absoluteQuadWithOwner:]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+        * dom/Node.h:
+        (WebCore::Node::pixelSnappedBoundingBox):
+        (WebCore::Node::pixelSnappedRenderRect):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::absoluteRect):
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didPaint):
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotNode):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::extendedBackgroundRectForPainting):
+        (WebCore::FrameView::windowClipRectForFrameOwner):
+        (WebCore::FrameView::convertFromRendererToContainingView):
+        * page/Page.cpp:
+        (WebCore::Page::addRelevantRepaintedObject):
+        (WebCore::Page::addRelevantUnpaintedObject):
+        * page/ios/FrameIOS.mm:
+        (WebCore::ancestorRespondingToClickEvents):
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForImage):
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::enclosingRectToDevicePixels):
+        (WebCore::enclosingRectForPainting): Deleted.
+        * platform/graphics/LayoutRect.h:
+        (WebCore::snappedIntRect):
+        (WebCore::snappedIntRectFromEdges):
+        (WebCore::snapRectToDevicePixels):
+        (WebCore::snapRectToDevicePixelsWithWritingDirection):
+        (WebCore::pixelSnappedIntRect): Deleted.
+        (WebCore::pixelSnappedIntRectFromEdges): Deleted.
+        (WebCore::pixelSnappedForPainting): Deleted.
+        (WebCore::directionalPixelSnappedForPainting): Deleted.
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::pixelSnappedRoundedRectForPainting):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computePixelAlignment):
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addVisualOverflowFromTheme):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::blockSelectionGap):
+        (WebCore::RenderBlock::logicalLeftSelectionGap):
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+        (WebCore::RenderBlock::absoluteRects):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clipOutFloatingObjects):
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteRects):
+        (WebCore::RenderBox::absoluteContentBox):
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+        (WebCore::RenderBox::addFocusRingRects):
+        (WebCore::RenderBox::getBackgroundPaintedExtent):
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::pixelSnappedFrameRect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addRegionsVisualOverflowFromTheme):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        (WebCore::RenderFrameSet::layout):
+        (WebCore::RenderFrameSet::positionFramesWithFlattening):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::currentTransform):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::scrollCornerRect):
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::paintOverflowControlsForFragments):
+        (WebCore::RenderLayer::hitTestResizerInFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateTransform):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::resetContentsRect):
+        (WebCore::RenderLayerBacking::updateImageContents):
+        (WebCore::RenderLayerBacking::backgroundBoxForPainting):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame):
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::updateLogicalWidth):
+        (WebCore::RenderMeter::computeLogicalHeight):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::addPDFURLRect):
+        (WebCore::RenderObject::paintOutline):
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaintSlowRepaintObject):
+        (WebCore::RenderObject::pixelSnappedAbsoluteClippedOverflowRect):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::computeLogicalHeight):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::showPopup):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::addFocusRingRects):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::paint):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoBox):
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::computeRectForRepaint):
+        (WebCore::RenderView::absoluteRects):
+        (WebCore::RenderView::selectionBounds):
+        (WebCore::RenderView::unscaledDocumentRect):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents):
+        (WebCore::RenderWidget::paint):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintDebugBorders):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::outlineBoundsForRepaint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRectForTextFragment):
+
 2014-08-27  Daniel Bates  <dabates@apple.com>
 
         Scrollbar corner can be drawn outside containing frame

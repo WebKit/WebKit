@@ -1705,7 +1705,7 @@ PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions 
         return nullptr;
 
     LayoutRect topLevelRect;
-    IntRect snapshotRect = pixelSnappedIntRect(node.renderer()->paintingRootRect(topLevelRect));
+    IntRect snapshotRect = snappedIntRect(node.renderer()->paintingRootRect(topLevelRect));
 
     double scaleFactor = 1;
     IntSize snapshotSize = snapshotRect.size();

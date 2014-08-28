@@ -1838,7 +1838,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const 
     contentLocation.move(renderBlock.borderLeft() + renderBlock.paddingLeft(), renderBlock.borderTop() + renderBlock.paddingTop());
 
     LayoutRect rect(contentLocation, contentSize);
-    IntRect alignedRect = pixelSnappedIntRect(rect);
+    IntRect alignedRect = snappedIntRect(rect);
     if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return true;
 
@@ -1884,7 +1884,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& o, const 
 
     LayoutSize pluginSize(plugInRenderer->contentWidth(), plugInRenderer->contentHeight());
     LayoutRect pluginRect(snapshotAbsPos, pluginSize);
-    IntRect alignedPluginRect = pixelSnappedIntRect(pluginRect);
+    IntRect alignedPluginRect = snappedIntRect(pluginRect);
 
     if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
         return true;

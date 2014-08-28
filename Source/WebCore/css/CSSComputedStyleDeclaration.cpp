@@ -842,7 +842,7 @@ static PassRef<CSSValue> computedTransform(RenderObject* renderer, const RenderS
 
     FloatRect pixelSnappedRect;
     if (renderer->isBox())
-        pixelSnappedRect = pixelSnappedForPainting(toRenderBox(renderer)->borderBoxRect(), renderer->document().deviceScaleFactor());
+        pixelSnappedRect = snapRectToDevicePixels(toRenderBox(renderer)->borderBoxRect(), renderer->document().deviceScaleFactor());
 
     TransformationMatrix transform;
     style->applyTransform(transform, pixelSnappedRect, RenderStyle::ExcludeTransformOrigin);

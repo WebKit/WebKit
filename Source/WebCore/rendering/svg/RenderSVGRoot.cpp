@@ -264,7 +264,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
 
     // Apply initial viewport clip
     if (shouldApplyViewportClip())
-        childPaintInfo.context->clip(pixelSnappedIntRect(overflowClipRect(paintOffset, currentRenderNamedFlowFragment())));
+        childPaintInfo.context->clip(snappedIntRect(overflowClipRect(paintOffset, currentRenderNamedFlowFragment())));
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.

@@ -233,7 +233,7 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
         paintInfo.context->translate(widgetPaintOffset);
         paintRect.move(-widgetPaintOffset);
     }
-    m_widget->paint(paintInfo.context, pixelSnappedIntRect(paintRect));
+    m_widget->paint(paintInfo.context, snappedIntRect(paintRect));
 
     if (!widgetPaintOffset.isZero())
         paintInfo.context->translate(-widgetPaintOffset);
@@ -291,7 +291,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document().printing()) {
         // FIXME: selectionRect() is in absolute, not painting coordinates.
-        paintInfo.context->fillRect(pixelSnappedIntRect(selectionRect()), selectionBackgroundColor(), style().colorSpace());
+        paintInfo.context->fillRect(snappedIntRect(selectionRect()), selectionBackgroundColor(), style().colorSpace());
     }
 
     if (hasLayer() && layer()->canResize())
