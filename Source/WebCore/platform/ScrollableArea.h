@@ -261,6 +261,7 @@ protected:
     void setScrollOrigin(const IntPoint&);
     void resetScrollOriginChanged() { m_scrollOriginChanged = false; }
 
+    virtual float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 

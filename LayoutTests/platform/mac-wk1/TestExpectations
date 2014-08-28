@@ -54,5 +54,15 @@ plugins/snapshotting
 [ MountainLion Mavericks ] platform/mac/fast/scrolling/scroll-select-bottom-test.html [ Skip ]
 [ MountainLion Mavericks ] platform/mac-wk1/fast/backgrounds/top-content-inset-fixed-attachment.html [ Skip ]
 
+# WK1 uses the native scrollview for scrolling by page.
+scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html
+scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html
+scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html
+scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html
+scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html
+scrollbars/scrolling-by-page-on-keyboard-spacebar.html
+
 ### END OF (2) Failures without bug reports
 ########################################

@@ -45,6 +45,7 @@ protected:
     
     virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
     virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+    virtual int maxOverlapBetweenPages() { return 40; }
     
 private:
     virtual bool isMockTheme() const { return true; }

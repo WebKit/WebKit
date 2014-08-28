@@ -1,3 +1,31 @@
+2014-08-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        Scrolling with spacebar on a page with fixed header breaks reading flow
+        https://bugs.webkit.org/show_bug.cgi?id=135506
+
+        Reviewed by Simon Fraser.
+
+        There was pretty much no test coverage for scrolling by page, add some tests.
+
+        * fast/events/scrollbar-double-click-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-backward-by-page-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html: Added.
+        * scrollbars/scrolling-by-page-on-keyboard-spacebar-expected.txt: Added.
+        * scrollbars/scrolling-by-page-on-keyboard-spacebar.html: Added.
+
 2014-08-27  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to do polymorphic call inlining

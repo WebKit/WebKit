@@ -509,6 +509,8 @@ public:
     virtual void updateSnapOffsets() override;
 #endif
 
+    virtual float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity) override;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) override;

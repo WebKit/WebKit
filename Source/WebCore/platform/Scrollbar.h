@@ -97,9 +97,10 @@ public:
     void offsetDidChange();
 
     static int pixelsPerLineStep() { return 40; }
-    static float minFractionToStepWhenPaging() { return 0.875f; }
+    static float minFractionToStepWhenPaging() { return 0.8; }
     WEBCORE_EXPORT static int maxOverlapBetweenPages();
-    static int pageStep(int widthOrHeight) { return std::max(std::max<int>(lroundf(widthOrHeight * Scrollbar::minFractionToStepWhenPaging()), lroundf(widthOrHeight - Scrollbar::maxOverlapBetweenPages())), 1); }
+    static int pageStep(int viewWidthOrHeight, int contentWidthOrHeight) { return std::max(std::max<int>(lroundf(viewWidthOrHeight * Scrollbar::minFractionToStepWhenPaging()), lroundf(contentWidthOrHeight - Scrollbar::maxOverlapBetweenPages())), 1); }
+    static int pageStep(int viewWidthOrHeight) { return pageStep(viewWidthOrHeight, viewWidthOrHeight); }
     static float pageStepDelta(int widthOrHeight) { return std::max(std::max(static_cast<float>(widthOrHeight) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(widthOrHeight) - Scrollbar::maxOverlapBetweenPages()), 1.0f); }
 
     void disconnectFromScrollableArea() { m_scrollableArea = 0; }

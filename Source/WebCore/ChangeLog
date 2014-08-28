@@ -1,3 +1,31 @@
+2014-08-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        Scrolling with spacebar on a page with fixed header breaks reading flow
+        https://bugs.webkit.org/show_bug.cgi?id=135506
+
+        Reviewed by Simon Fraser.
+
+        When scrolling by page, find the height of any bar that is obscuring the top or bottom of the page,
+        and substract that height from the step to scroll.
+
+        Tests: scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html
+               scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html
+               scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html
+               scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html
+               scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html
+               scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html
+               scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html
+               scrollbars/scrolling-by-page-on-keyboard-spacebar.html
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustScrollStepForFixedContent):
+        * page/FrameView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::adjustScrollStepForFixedContent):
+        (WebCore::ScrollableArea::scroll):
+        * platform/ScrollableArea.h:
+
 2014-08-28  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Remove unused pixel snapping functions.

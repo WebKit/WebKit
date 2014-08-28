@@ -3219,6 +3219,45 @@ void FrameView::scrollTo(const IntSize& newOffset)
     frame().loader().client().didChangeScrollOffset();
 }
 
+float FrameView::adjustScrollStepForFixedContent(float step, ScrollbarOrientation orientation, ScrollGranularity granularity)
+{
+    if (granularity != ScrollByPage || orientation == HorizontalScrollbar)
+        return step;
+
+    TrackedRendererListHashSet* positionedObjects = nullptr;
+    if (RenderView* root = m_frame->contentRenderer()) {
+        if (!root->hasPositionedObjects())
+            return step;
+        positionedObjects = root->positionedObjects();
+    }
+
+    FloatRect unobscuredContentRect = this->unobscuredContentRect();
+    float topObscuredArea = 0;
+    float bottomObscuredArea = 0;
+    for (const auto& positionedObject : *positionedObjects) {
+        const RenderStyle& style = positionedObject->style();
+        if (style.position() != FixedPosition || style.visibility() == HIDDEN || !style.opacity())
+            continue;
+
+        FloatQuad contentQuad = positionedObject->absoluteContentQuad();
+        if (!contentQuad.isRectilinear())
+            continue;
+
+        FloatRect contentBoundingBox = contentQuad.boundingBox();
+        FloatRect fixedRectInView = intersection(unobscuredContentRect, contentBoundingBox);
+
+        if (fixedRectInView.width() < unobscuredContentRect.width())
+            continue;
+
+        if (fixedRectInView.y() == unobscuredContentRect.y())
+            topObscuredArea = std::max(topObscuredArea, fixedRectInView.height());
+        else if (fixedRectInView.maxY() == unobscuredContentRect.maxY())
+            bottomObscuredArea = std::max(bottomObscuredArea, fixedRectInView.height());
+    }
+
+    return Scrollbar::pageStep(unobscuredContentRect.height(), unobscuredContentRect.height() - topObscuredArea - bottomObscuredArea);
+}
+
 void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     // Add in our offset within the FrameView.
