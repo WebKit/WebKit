@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAnalysis_h
-#define DFGAnalysis_h
+#include "config.h"
+#include "DFGBlockWorklist.h"
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGBasicBlock.h"
+
 namespace JSC { namespace DFG {
 
-class Graph;
+BlockWorklist::BlockWorklist()
+{
+}
 
-// Use this as a mixin for DFG analyses. The analysis itself implements a public
-// compute(Graph&) method. Clients call computeIfNecessary() when they want
-// results.
+BlockWorklist::~BlockWorklist()
+{
+}
 
-template<typename T>
-class Analysis {
-public:
-    Analysis()
-        : m_valid(false)
-    {
-    }
+bool BlockWorklist::push(BasicBlock* block)
+{
+    if (!m_seen.add(block))
+        return false;
     
-    void invalidate()
-    {
-        m_valid = false;
-    }
-    
-    void computeIfNecessary(Graph& graph)
-    {
-        if (m_valid)
-            return;
-        // It's best to run dependent analyses from this method.
-        static_cast<T*>(this)->computeDependencies(graph);
-        // Set to true early, since the analysis may choose to call its own methods in
-        // compute() and it may want to ASSERT() validity in those methods.
-        m_valid = true;
-        static_cast<T*>(this)->compute(graph);
-    }
-    
-    bool isValid() const { return m_valid; }
+    m_stack.append(block);
+    return true;
+}
 
-    // Override this to compute any dependent analyses. See
-    // NaturalLoops::computeDependencies(Graph&) for an example. This isn't strictly necessary but
-    // it makes debug dumps in cases of error work a bit better because this analysis wouldn't yet
-    // be pretending to be valid.
-    void computeDependencies(Graph&) { }
+BasicBlock* BlockWorklist::pop()
+{
+    if (m_stack.isEmpty())
+        return nullptr;
+    
+    return m_stack.takeLast();
+}
 
-private:
-    bool m_valid;
-};
+PostOrderBlockWorklist::PostOrderBlockWorklist()
+{
+}
+
+PostOrderBlockWorklist::~PostOrderBlockWorklist()
+{
+}
+
+bool PostOrderBlockWorklist::pushPre(BasicBlock* block)
+{
+    return m_worklist.push(block, PreOrder);
+}
+
+void PostOrderBlockWorklist::pushPost(BasicBlock* block)
+{
+    m_worklist.forcePush(block, PostOrder);
+}
+
+BlockWithOrder PostOrderBlockWorklist::pop()
+{
+    BlockWith<VisitOrder> result = m_worklist.pop();
+    return BlockWithOrder(result.block, result.data);
+}
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGAnalysis_h
-

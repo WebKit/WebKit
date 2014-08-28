@@ -1,5 +1,22 @@
 2014-08-27  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should compute immediate dominators using the O(n log n) form of Lengauer and Tarjan's "A Fast Algorithm for Finding Dominators in a Flowgraph"
+        https://bugs.webkit.org/show_bug.cgi?id=93361
+
+        Reviewed by Mark Hahnenberg.
+        
+        Make BitVector operations return the previous value of the bit you're changing. This is
+        useful for the kinds of set operations that are commonplace in compiler graph searches.
+
+        * wtf/BitVector.h:
+        (WTF::BitVector::quickSet):
+        (WTF::BitVector::quickClear):
+        (WTF::BitVector::set):
+        (WTF::BitVector::ensureSizeAndSet):
+        (WTF::BitVector::clear):
+
+2014-08-27  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should be able to do polymorphic call inlining
         https://bugs.webkit.org/show_bug.cgi?id=135145
 

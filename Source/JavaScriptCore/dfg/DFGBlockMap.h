@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAnalysis_h
-#define DFGAnalysis_h
+#ifndef DFGBlockMap_h
+#define DFGBlockMap_h
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGBasicBlock.h"
 
 namespace JSC { namespace DFG {
 
 class Graph;
 
-// Use this as a mixin for DFG analyses. The analysis itself implements a public
-// compute(Graph&) method. Clients call computeIfNecessary() when they want
-// results.
-
 template<typename T>
-class Analysis {
+class BlockMap {
 public:
-    Analysis()
-        : m_valid(false)
+    BlockMap()
     {
     }
     
-    void invalidate()
+    BlockMap(Graph&);
+    
+    BlockIndex size() const
     {
-        m_valid = false;
+        return m_vector.size();
     }
     
-    void computeIfNecessary(Graph& graph)
+    T& atIndex(BlockIndex blockIndex)
     {
-        if (m_valid)
-            return;
-        // It's best to run dependent analyses from this method.
-        static_cast<T*>(this)->computeDependencies(graph);
-        // Set to true early, since the analysis may choose to call its own methods in
-        // compute() and it may want to ASSERT() validity in those methods.
-        m_valid = true;
-        static_cast<T*>(this)->compute(graph);
+        return m_vector[blockIndex];
     }
     
-    bool isValid() const { return m_valid; }
-
-    // Override this to compute any dependent analyses. See
-    // NaturalLoops::computeDependencies(Graph&) for an example. This isn't strictly necessary but
-    // it makes debug dumps in cases of error work a bit better because this analysis wouldn't yet
-    // be pretending to be valid.
-    void computeDependencies(Graph&) { }
+    const T& atIndex(BlockIndex blockIndex) const
+    {
+        return m_vector[blockIndex];
+    }
+    
+    T& operator[](BlockIndex blockIndex)
+    {
+        return m_vector[blockIndex];
+    }
+    
+    const T& operator[](BlockIndex blockIndex) const
+    {
+        return m_vector[blockIndex];
+    }
+    
+    T& operator[](BasicBlock* block)
+    {
+        return m_vector[block->index];
+    }
+    
+    const T& operator[](BasicBlock* block) const
+    {
+        return m_vector[block->index];
+    }
 
 private:
-    bool m_valid;
+    Vector<T> m_vector;
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGAnalysis_h
+#endif // DFGBlockMap_h
 

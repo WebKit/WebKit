@@ -45,6 +45,11 @@ void NaturalLoop::dump(PrintStream& out) const
 NaturalLoops::NaturalLoops() { }
 NaturalLoops::~NaturalLoops() { }
 
+void NaturalLoops::computeDependencies(Graph& graph)
+{
+    graph.m_dominators.computeIfNecessary(graph);
+}
+
 void NaturalLoops::compute(Graph& graph)
 {
     // Implement the classic dominator-based natural loop finder. The first
@@ -57,11 +62,9 @@ void NaturalLoops::compute(Graph& graph)
     
     static const bool verbose = false;
     
-    graph.m_dominators.computeIfNecessary(graph);
-    
     if (verbose) {
         dataLog("Dominators:\n");
-        graph.m_dominators.dump(graph, WTF::dataFile());
+        graph.m_dominators.dump(WTF::dataFile());
     }
     
     m_loops.resize(0);

@@ -1,5 +1,88 @@
 2014-08-27  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should compute immediate dominators using the O(n log n) form of Lengauer and Tarjan's "A Fast Algorithm for Finding Dominators in a Flowgraph"
+        https://bugs.webkit.org/show_bug.cgi?id=93361
+
+        Reviewed by Mark Hahnenberg.
+        
+        This patch also adds some new utilities for reasoning about block-keyed maps, block sets,
+        and block worklists. It changes preexisting code to use these abstractions.
+        
+        The main effect of this code is that all current clients of dominators end up using the
+        results of the new idom calculation. We convert the dom tree to a dominance test using
+        Dietz's pre/post number range check trick.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAnalysis.h:
+        (JSC::DFG::Analysis::computeIfNecessary):
+        (JSC::DFG::Analysis::computeDependencies):
+        * dfg/DFGBlockMap.h: Added.
+        (JSC::DFG::BlockMap::BlockMap):
+        (JSC::DFG::BlockMap::size):
+        (JSC::DFG::BlockMap::atIndex):
+        (JSC::DFG::BlockMap::operator[]):
+        * dfg/DFGBlockMapInlines.h: Added.
+        (JSC::DFG::BlockMap<T>::BlockMap):
+        * dfg/DFGBlockSet.h: Added.
+        (JSC::DFG::BlockSet::BlockSet):
+        (JSC::DFG::BlockSet::add):
+        (JSC::DFG::BlockSet::contains):
+        * dfg/DFGBlockWorklist.cpp: Added.
+        (JSC::DFG::BlockWorklist::BlockWorklist):
+        (JSC::DFG::BlockWorklist::~BlockWorklist):
+        (JSC::DFG::BlockWorklist::push):
+        (JSC::DFG::BlockWorklist::pop):
+        (JSC::DFG::PostOrderBlockWorklist::PostOrderBlockWorklist):
+        (JSC::DFG::PostOrderBlockWorklist::~PostOrderBlockWorklist):
+        (JSC::DFG::PostOrderBlockWorklist::pushPre):
+        (JSC::DFG::PostOrderBlockWorklist::pushPost):
+        (JSC::DFG::PostOrderBlockWorklist::pop):
+        * dfg/DFGBlockWorklist.h: Added.
+        (JSC::DFG::BlockWorklist::notEmpty):
+        (JSC::DFG::BlockWith::BlockWith):
+        (JSC::DFG::BlockWith::operator UnspecifiedBoolType*):
+        (JSC::DFG::ExtendedBlockWorklist::ExtendedBlockWorklist):
+        (JSC::DFG::ExtendedBlockWorklist::forcePush):
+        (JSC::DFG::ExtendedBlockWorklist::push):
+        (JSC::DFG::ExtendedBlockWorklist::notEmpty):
+        (JSC::DFG::ExtendedBlockWorklist::pop):
+        (JSC::DFG::BlockWithOrder::BlockWithOrder):
+        (JSC::DFG::BlockWithOrder::operator UnspecifiedBoolType*):
+        (JSC::DFG::PostOrderBlockWorklist::push):
+        (JSC::DFG::PostOrderBlockWorklist::notEmpty):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::compute):
+        (JSC::DFG::Dominators::naiveDominates):
+        (JSC::DFG::Dominators::dump):
+        (JSC::DFG::Dominators::pruneDominators): Deleted.
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::strictlyDominates):
+        (JSC::DFG::Dominators::dominates):
+        (JSC::DFG::Dominators::BlockData::BlockData):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::getBlocksInPreOrder):
+        (JSC::DFG::Graph::getBlocksInPostOrder):
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        (JSC::DFG::InvalidationPointInjectionPhase::run):
+        * dfg/DFGNaiveDominators.cpp: Added.
+        (JSC::DFG::NaiveDominators::NaiveDominators):
+        (JSC::DFG::NaiveDominators::~NaiveDominators):
+        (JSC::DFG::NaiveDominators::compute):
+        (JSC::DFG::NaiveDominators::pruneDominators):
+        (JSC::DFG::NaiveDominators::dump):
+        * dfg/DFGNaiveDominators.h: Added.
+        (JSC::DFG::NaiveDominators::dominates):
+        * dfg/DFGNaturalLoops.cpp:
+        (JSC::DFG::NaturalLoops::computeDependencies):
+        (JSC::DFG::NaturalLoops::compute):
+        * dfg/DFGNaturalLoops.h:
+
+2014-08-27  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should be able to do polymorphic call inlining
         https://bugs.webkit.org/show_bug.cgi?id=135145
 

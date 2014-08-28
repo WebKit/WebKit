@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "DFGAnalysis.h"
 #include "DFGBasicBlock.h"
+#include "DFGBlockMap.h"
 #include "DFGCommon.h"
 #include <wtf/FastBitVector.h>
 
@@ -44,24 +45,39 @@ public:
     
     void compute(Graph&);
     
-    bool dominates(BlockIndex from, BlockIndex to) const
+    bool strictlyDominates(BasicBlock* from, BasicBlock* to) const
     {
         ASSERT(isValid());
-        return m_results[to].get(from);
+        return m_data[to].preNumber > m_data[from].preNumber
+            && m_data[to].postNumber < m_data[from].postNumber;
     }
     
     bool dominates(BasicBlock* from, BasicBlock* to) const
     {
-        return dominates(from->index, to->index);
+        return from == to || strictlyDominates(from, to);
     }
     
-    void dump(Graph&, PrintStream&) const;
+    void dump(PrintStream&) const;
     
 private:
-    bool pruneDominators(Graph&, BlockIndex);
+    bool naiveDominates(BasicBlock* from, BasicBlock* to) const;
     
-    Vector<FastBitVector> m_results; // For each block, the bitvector of blocks that dominate it.
-    FastBitVector m_scratch; // A temporary bitvector with bit for each block. We recycle this to save new/deletes.
+    struct BlockData {
+        BlockData()
+            : idomParent(nullptr)
+            , preNumber(UINT_MAX)
+            , postNumber(UINT_MAX)
+        {
+        }
+        
+        Vector<BasicBlock*> idomKids;
+        BasicBlock* idomParent;
+        
+        unsigned preNumber;
+        unsigned postNumber;
+    };
+    
+    BlockMap<BlockData> m_data;
 };
 
 } } // namespace JSC::DFG

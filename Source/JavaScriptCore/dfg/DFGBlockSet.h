@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAnalysis_h
-#define DFGAnalysis_h
+#ifndef DFGBlockSet_h
+#define DFGBlockSet_h
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGBasicBlock.h"
+
 namespace JSC { namespace DFG {
 
-class Graph;
-
-// Use this as a mixin for DFG analyses. The analysis itself implements a public
-// compute(Graph&) method. Clients call computeIfNecessary() when they want
-// results.
-
-template<typename T>
-class Analysis {
+class BlockSet {
 public:
-    Analysis()
-        : m_valid(false)
+    BlockSet() { }
+    
+    // Return true if the block was added, false if it was already present.
+    bool add(BasicBlock* block)
     {
+        return !m_set.set(block->index);
     }
     
-    void invalidate()
+    bool contains(BasicBlock* block) const
     {
-        m_valid = false;
+        if (!block)
+            return false;
+        return m_set.get(block->index);
     }
     
-    void computeIfNecessary(Graph& graph)
-    {
-        if (m_valid)
-            return;
-        // It's best to run dependent analyses from this method.
-        static_cast<T*>(this)->computeDependencies(graph);
-        // Set to true early, since the analysis may choose to call its own methods in
-        // compute() and it may want to ASSERT() validity in those methods.
-        m_valid = true;
-        static_cast<T*>(this)->compute(graph);
-    }
-    
-    bool isValid() const { return m_valid; }
-
-    // Override this to compute any dependent analyses. See
-    // NaturalLoops::computeDependencies(Graph&) for an example. This isn't strictly necessary but
-    // it makes debug dumps in cases of error work a bit better because this analysis wouldn't yet
-    // be pretending to be valid.
-    void computeDependencies(Graph&) { }
-
 private:
-    bool m_valid;
+    BitVector m_set;
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGAnalysis_h
+#endif // DFGBlockSet_h
 

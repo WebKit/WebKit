@@ -372,6 +372,7 @@
     <ClCompile Include="..\dfg\DFGBasicBlock.cpp" />
     <ClCompile Include="..\dfg\DFGBinarySwitch.cpp" />
     <ClCompile Include="..\dfg\DFGBlockInsertionSet.cpp" />
+    <ClCompile Include="..\dfg\DFGBlockWorklist.cpp" />
     <ClCompile Include="..\dfg\DFGByteCodeParser.cpp" />
     <ClCompile Include="..\dfg\DFGCapabilities.cpp" />
     <ClCompile Include="..\dfg\DFGCFAPhase.cpp" />
@@ -421,6 +422,7 @@
     <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGMayExit.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
+    <ClCompile Include="..\dfg\DFGNaiveDominators.cpp" />
     <ClCompile Include="..\dfg\DFGNaturalLoops.cpp" />
     <ClCompile Include="..\dfg\DFGNode.cpp" />
     <ClCompile Include="..\dfg\DFGNodeFlags.cpp" />
@@ -993,6 +995,10 @@
     <ClInclude Include="..\dfg\DFGBasicBlockInlines.h" />
     <ClInclude Include="..\dfg\DFGBinarySwitch.h" />
     <ClInclude Include="..\dfg\DFGBlockInsertionSet.h" />
+    <ClInclude Include="..\dfg\DFGBlockMap.h" />
+    <ClInclude Include="..\dfg\DFGBlockMapInlines.h" />
+    <ClInclude Include="..\dfg\DFGBlockWorklist.h" />
+    <ClInclude Include="..\dfg\DFGBlockSet.h" />
     <ClInclude Include="..\dfg\DFGBranchDirection.h" />
     <ClInclude Include="..\dfg\DFGByteCodeParser.h" />
     <ClInclude Include="..\dfg\DFGCallArrayAllocatorSlowPathGenerator.h" />
@@ -1056,6 +1062,7 @@
     <ClInclude Include="..\dfg\DFGMinifiedGraph.h" />
     <ClInclude Include="..\dfg\DFGMinifiedID.h" />
     <ClInclude Include="..\dfg\DFGMinifiedNode.h" />
+    <ClInclude Include="..\dfg\DFGNaiveDominators.h" />
     <ClInclude Include="..\dfg\DFGNaturalLoops.h" />
     <ClInclude Include="..\dfg\DFGNode.h" />
     <ClInclude Include="..\dfg\DFGNodeAllocator.h" />

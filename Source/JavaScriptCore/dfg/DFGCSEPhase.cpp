@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractHeap.h"
+#include "DFGBlockMapInlines.h"
 #include "DFGClobberSet.h"
 #include "DFGClobberize.h"
 #include "DFGEdgeUsesStructure.h"
@@ -364,6 +365,7 @@ class GlobalCSEPhase : public Phase {
 public:
     GlobalCSEPhase(Graph& graph)
         : Phase(graph, "global common subexpression elimination")
+        , m_impureDataMap(graph)
     {
     }
     
@@ -377,13 +379,11 @@ public:
         
         m_graph.getBlocksInPreOrder(m_preOrder);
         
-        m_impureDataMap.resize(m_graph.numBlocks());
-        
         // First figure out what gets clobbered by blocks. Node that this uses the preOrder list
         // for convenience only.
         for (unsigned i = m_preOrder.size(); i--;) {
             m_block = m_preOrder[i];
-            m_impureData = &m_impureDataMap[m_block->index];
+            m_impureData = &m_impureDataMap[m_block];
             for (unsigned nodeIndex = m_block->size(); nodeIndex--;)
                 addWrites(m_graph, m_block->at(nodeIndex), m_impureData->writes);
         }
@@ -407,7 +407,7 @@ public:
     {
         m_pureValues.clear();
         
-        for (unsigned i = m_impureDataMap.size(); i--;) {
+        for (BlockIndex i = m_impureDataMap.size(); i--;) {
             m_impureDataMap[i].availableAtTail.clear();
             m_impureDataMap[i].didVisit = false;
         }
@@ -423,7 +423,7 @@ public:
         
         for (unsigned i = 0; i < m_preOrder.size(); ++i) {
             m_block = m_preOrder[i];
-            m_impureData = &m_impureDataMap[m_block->index];
+            m_impureData = &m_impureDataMap[m_block];
             m_writesSoFar.clear();
             
             if (verbose)
@@ -562,12 +562,12 @@ public:
             
             if (verbose)
                 dataLog("      Searching in block ", *block, "\n");
-            ImpureBlockData& data = m_impureDataMap[block->index];
+            ImpureBlockData& data = m_impureDataMap[block];
             
             // We require strict domination because this would only see things in our own block if
             // they came *after* our position in the block. Clearly, while our block dominates
             // itself, the things in the block after us don't dominate us.
-            if (m_graph.m_dominators.dominates(block, m_block) && block != m_block) {
+            if (m_graph.m_dominators.strictlyDominates(block, m_block)) {
                 if (verbose)
                     dataLog("        It strictly dominates.\n");
                 DFG_ASSERT(m_graph, m_node, data.didVisit);
@@ -612,7 +612,7 @@ public:
         // the reduction in compile time would warrant the increase in complexity, though.
         // https://bugs.webkit.org/show_bug.cgi?id=134876
         for (BasicBlock* block : seenList)
-            m_impureDataMap[block->index].availableAtTail.add(location, match);
+            m_impureDataMap[block].availableAtTail.add(location, match);
         m_impureData->availableAtTail.add(location, match);
         
         return match;
@@ -654,7 +654,7 @@ public:
     Vector<BasicBlock*> m_preOrder;
 
     PureMultiMap m_pureValues;
-    Vector<ImpureBlockData> m_impureDataMap;
+    BlockMap<ImpureBlockData> m_impureDataMap;
     
     BasicBlock* m_block;
     Node* m_node;

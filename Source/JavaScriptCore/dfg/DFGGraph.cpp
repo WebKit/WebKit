@@ -31,6 +31,7 @@
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
+#include "DFGBlockWorklist.h"
 #include "DFGClobberSet.h"
 #include "DFGJITCode.h"
 #include "DFGVariableAccessDataDump.h"
@@ -370,14 +371,18 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
     if (m_dominators.isValid()) {
         out.print(prefix, "  Dominated by:");
         for (size_t i = 0; i < m_blocks.size(); ++i) {
-            if (!m_dominators.dominates(i, block->index))
+            if (!this->block(i))
+                continue;
+            if (!m_dominators.dominates(this->block(i), block))
                 continue;
             out.print(" #", i);
         }
         out.print("\n");
         out.print(prefix, "  Dominates:");
         for (size_t i = 0; i < m_blocks.size(); ++i) {
-            if (!m_dominators.dominates(block->index, i))
+            if (!this->block(i))
+                continue;
+            if (!m_dominators.dominates(block, this->block(i)))
                 continue;
             out.print(" #", i);
         }
@@ -635,73 +640,30 @@ void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, Va
     }
 }
 
-// Utilities for pre- and post-order traversals.
-namespace {
-
-inline void addForPreOrder(Vector<BasicBlock*>& result, Vector<BasicBlock*, 16>& worklist, BitVector& seen, BasicBlock* block)
-{
-    if (seen.get(block->index))
-        return;
-    
-    result.append(block);
-    worklist.append(block);
-    seen.set(block->index);
-}
-
-enum PostOrderTaskKind {
-    PostOrderFirstVisit,
-    PostOrderAddToResult
-};
-
-struct PostOrderTask {
-    PostOrderTask(BasicBlock* block = nullptr, PostOrderTaskKind kind = PostOrderFirstVisit)
-        : m_block(block)
-        , m_kind(kind)
-    {
-    }
-    
-    BasicBlock* m_block;
-    PostOrderTaskKind m_kind;
-};
-
-inline void addForPostOrder(Vector<PostOrderTask, 16>& worklist, BitVector& seen, BasicBlock* block)
-{
-    if (seen.get(block->index))
-        return;
-    
-    worklist.append(PostOrderTask(block, PostOrderFirstVisit));
-    seen.set(block->index);
-}
-
-} // anonymous namespace
-
 void Graph::getBlocksInPreOrder(Vector<BasicBlock*>& result)
 {
-    Vector<BasicBlock*, 16> worklist;
-    BitVector seen;
-    addForPreOrder(result, worklist, seen, block(0));
-    while (!worklist.isEmpty()) {
-        BasicBlock* block = worklist.takeLast();
+    BlockWorklist worklist;
+    worklist.push(block(0));
+    while (BasicBlock* block = worklist.pop()) {
+        result.append(block);
         for (unsigned i = block->numSuccessors(); i--;)
-            addForPreOrder(result, worklist, seen, block->successor(i));
+            worklist.push(block->successor(i));
     }
 }
 
 void Graph::getBlocksInPostOrder(Vector<BasicBlock*>& result)
 {
-    Vector<PostOrderTask, 16> worklist;
-    BitVector seen;
-    addForPostOrder(worklist, seen, block(0));
-    while (!worklist.isEmpty()) {
-        PostOrderTask task = worklist.takeLast();
-        switch (task.m_kind) {
-        case PostOrderFirstVisit:
-            worklist.append(PostOrderTask(task.m_block, PostOrderAddToResult));
-            for (unsigned i = task.m_block->numSuccessors(); i--;)
-                addForPostOrder(worklist, seen, task.m_block->successor(i));
+    PostOrderBlockWorklist worklist;
+    worklist.push(block(0));
+    while (BlockWithOrder item = worklist.pop()) {
+        switch (item.order) {
+        case PreOrder:
+            worklist.pushPost(item.block);
+            for (unsigned i = item.block->numSuccessors(); i--;)
+                worklist.push(item.block->successor(i));
             break;
-        case PostOrderAddToResult:
-            result.append(task.m_block);
+        case PostOrder:
+            result.append(item.block);
             break;
         }
     }

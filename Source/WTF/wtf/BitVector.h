@@ -117,24 +117,31 @@ public:
         return !!(bits()[bit / bitsInPointer()] & (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1))));
     }
     
-    void quickSet(size_t bit)
+    bool quickSet(size_t bit)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(bit < size());
-        bits()[bit / bitsInPointer()] |= (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
+        uintptr_t& word = bits()[bit / bitsInPointer()];
+        uintptr_t mask = static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1));
+        bool result = !!(word & mask);
+        word |= mask;
+        return result;
     }
     
-    void quickClear(size_t bit)
+    bool quickClear(size_t bit)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(bit < size());
-        bits()[bit / bitsInPointer()] &= ~(static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
+        uintptr_t& word = bits()[bit / bitsInPointer()];
+        uintptr_t mask = static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1));
+        bool result = !!(word & mask);
+        word &= ~mask;
+        return result;
     }
     
-    void quickSet(size_t bit, bool value)
+    bool quickSet(size_t bit, bool value)
     {
         if (value)
-            quickSet(bit);
-        else
-            quickClear(bit);
+            return quickSet(bit);
+        return quickClear(bit);
     }
     
     bool get(size_t bit) const
@@ -144,31 +151,30 @@ public:
         return quickGet(bit);
     }
     
-    void set(size_t bit)
+    bool set(size_t bit)
     {
         ensureSize(bit + 1);
-        quickSet(bit);
+        return quickSet(bit);
     }
 
-    void ensureSizeAndSet(size_t bit, size_t size)
+    bool ensureSizeAndSet(size_t bit, size_t size)
     {
         ensureSize(size);
-        quickSet(bit);
+        return quickSet(bit);
     }
 
-    void clear(size_t bit)
+    bool clear(size_t bit)
     {
         if (bit >= size())
-            return;
-        quickClear(bit);
+            return false;
+        return quickClear(bit);
     }
     
-    void set(size_t bit, bool value)
+    bool set(size_t bit, bool value)
     {
         if (value)
-            set(bit);
-        else
-            clear(bit);
+            return set(bit);
+        return clear(bit);
     }
     
     void merge(const BitVector& other)

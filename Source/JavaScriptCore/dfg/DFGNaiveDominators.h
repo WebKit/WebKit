@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAnalysis_h
-#define DFGAnalysis_h
+#ifndef DFGNaiveDominators_h
+#define DFGNaiveDominators_h
 
 #if ENABLE(DFG_JIT)
+
+#include "DFGBasicBlock.h"
+#include "DFGCommon.h"
+#include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {
 
 class Graph;
 
-// Use this as a mixin for DFG analyses. The analysis itself implements a public
-// compute(Graph&) method. Clients call computeIfNecessary() when they want
-// results.
+// This class is only used for validating the real dominators implementation.
 
-template<typename T>
-class Analysis {
+class NaiveDominators {
 public:
-    Analysis()
-        : m_valid(false)
+    NaiveDominators();
+    ~NaiveDominators();
+    
+    void compute(Graph&);
+    
+    bool dominates(BlockIndex from, BlockIndex to) const
     {
+        return m_results[to].get(from);
     }
     
-    void invalidate()
+    bool dominates(BasicBlock* from, BasicBlock* to) const
     {
-        m_valid = false;
+        return dominates(from->index, to->index);
     }
     
-    void computeIfNecessary(Graph& graph)
-    {
-        if (m_valid)
-            return;
-        // It's best to run dependent analyses from this method.
-        static_cast<T*>(this)->computeDependencies(graph);
-        // Set to true early, since the analysis may choose to call its own methods in
-        // compute() and it may want to ASSERT() validity in those methods.
-        m_valid = true;
-        static_cast<T*>(this)->compute(graph);
-    }
+    void dump(Graph&, PrintStream&) const;
     
-    bool isValid() const { return m_valid; }
-
-    // Override this to compute any dependent analyses. See
-    // NaturalLoops::computeDependencies(Graph&) for an example. This isn't strictly necessary but
-    // it makes debug dumps in cases of error work a bit better because this analysis wouldn't yet
-    // be pretending to be valid.
-    void computeDependencies(Graph&) { }
-
 private:
-    bool m_valid;
+    bool pruneDominators(Graph&, BlockIndex);
+    
+    Vector<FastBitVector> m_results; // For each block, the bitvector of blocks that dominate it.
+    FastBitVector m_scratch; // A temporary bitvector with bit for each block. We recycle this to save new/deletes.
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGAnalysis_h
-
+#endif // DFGNaiveDominators_h
