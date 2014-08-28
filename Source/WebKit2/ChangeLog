@@ -1,3 +1,18 @@
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172939
+
+    2014-08-25  Brady Eidson  <beidson@apple.com>
+
+            Don't crash when the DataDetectors framework is unavailable.
+            <rdar://problem/18106066> and https://bugs.webkit.org/show_bug.cgi?id=136234
+
+            Reviewed by Tim Horton.
+
+            * WebProcess/WebPage/mac/ServicesOverlayController.mm:
+            (WebKit::ServicesOverlayController::buildPhoneNumberHighlights): Bail if DD.framework didn’t soft link.
+            (WebKit::ServicesOverlayController::buildSelectionHighlight): Ditto.
+
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
         Merge r172988. <rdar://problem/17923694>

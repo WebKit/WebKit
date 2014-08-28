@@ -475,6 +475,9 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(Highlight::Ty
 
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
+    if (!DataDetectorsLibrary())
+        return;
+
     HashSet<RefPtr<Highlight>> newPotentialHighlights;
 
     Frame* mainFrame = m_webPage.mainFrame();
@@ -510,6 +513,9 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
 void ServicesOverlayController::buildSelectionHighlight()
 {
+    if (!DataDetectorsLibrary())
+        return;
+
     HashSet<RefPtr<Highlight>> newPotentialHighlights;
 
     Vector<CGRect> cgRects;
