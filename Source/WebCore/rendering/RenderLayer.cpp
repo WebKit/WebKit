@@ -4212,7 +4212,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
     // Add the subpixel accumulation to the current layer's offset so that we can always snap the translateRight value to where the renderer() is supposed to be painting.
     LayoutSize offsetForThisLayer = offsetFromParent + paintingInfo.subpixelAccumulation;
-    FloatSize devicePixelSnappedOffsetForThisLayer = toFloatSize(roundedForPainting(toLayoutPoint(offsetForThisLayer), deviceScaleFactor));
+    FloatSize devicePixelSnappedOffsetForThisLayer = toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), deviceScaleFactor));
     // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
     // all we need to do is add the delta to the accumulated pixels coming from ancestor layers.
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
@@ -6751,7 +6751,7 @@ void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, Ren
     region->setRegionObjectsRegionStyle();
 
     LayoutSize moveOffset = region->flowThreadPortionLocation() - (paintOffset + regionContentBox.location()) + region->fragmentContainer().scrolledContentOffset();
-    FloatPoint adjustedPaintOffset = roundedForPainting(toLayoutPoint(moveOffset), renderer().document().deviceScaleFactor());
+    FloatPoint adjustedPaintOffset = roundPointToDevicePixels(toLayoutPoint(moveOffset), renderer().document().deviceScaleFactor());
     context->save();
     context->translate(-adjustedPaintOffset.x(), -adjustedPaintOffset.y());
 

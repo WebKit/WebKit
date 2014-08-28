@@ -819,7 +819,7 @@ void RenderLayerBacking::updateGeometry()
         // Update properties that depend on layer dimensions.
         FloatPoint3D transformOrigin = computeTransformOriginForPainting(toRenderBox(renderer()).borderBoxRect());
         // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
-        FloatPoint layerOffset = roundedForPainting(offsetFromParent, deviceScaleFactor);
+        FloatPoint layerOffset = roundPointToDevicePixels(offsetFromParent, deviceScaleFactor);
         // Compute the anchor point, which is in the center of the renderer box unless transform-origin is set.
         FloatPoint3D anchor(enclosingRelativeCompositingBounds.width() ? ((layerOffset.x() - enclosingRelativeCompositingBounds.x()) + transformOrigin.x())
             / enclosingRelativeCompositingBounds.width() : 0.5, enclosingRelativeCompositingBounds.height() ? ((layerOffset.y() - enclosingRelativeCompositingBounds.y())

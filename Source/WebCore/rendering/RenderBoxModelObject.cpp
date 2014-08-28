@@ -1074,9 +1074,9 @@ void RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting(Backgroun
     // FIXME: We need a better rounding strategy to round/space out tiles.
     geometry.setTileSize(LayoutSize(pixelSnappedForPainting(LayoutRect(geometry.destRect().location(), geometry.tileSize()), deviceScaleFactor).size()));
     geometry.setSpaceSize(LayoutSize(pixelSnappedForPainting(LayoutRect(LayoutPoint(), geometry.spaceSize()), deviceScaleFactor).size()));
-    geometry.setDestOrigin(LayoutPoint(roundedForPainting(geometry.destOrigin(), deviceScaleFactor)));
+    geometry.setDestOrigin(LayoutPoint(roundPointToDevicePixels(geometry.destOrigin(), deviceScaleFactor)));
     geometry.setDestRect(LayoutRect(pixelSnappedForPainting(geometry.destRect(), deviceScaleFactor)));
-    geometry.setPhase(LayoutPoint(roundedForPainting(geometry.phase(), deviceScaleFactor)));
+    geometry.setPhase(LayoutPoint(roundPointToDevicePixels(geometry.phase(), deviceScaleFactor)));
 }
 
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer* fillLayer, const LayoutRect& paintRect,

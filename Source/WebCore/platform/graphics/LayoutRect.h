@@ -241,7 +241,7 @@ inline FloatRect pixelSnappedForPainting(LayoutUnit x, LayoutUnit y, LayoutUnit 
 inline FloatRect directionalPixelSnappedForPainting(const LayoutRect& rect, float deviceScaleFactor, bool ltr)
 {
     if (!ltr) {
-        FloatPoint snappedTopRight = roundedForPainting(rect.maxXMinYCorner(), deviceScaleFactor, ltr);
+        FloatPoint snappedTopRight = roundPointToDevicePixels(rect.maxXMinYCorner(), deviceScaleFactor, ltr);
         float snappedWidth = snapSizeToDevicePixel(rect.width(), rect.maxX(), deviceScaleFactor);
         float snappedHeight = snapSizeToDevicePixel(rect.height(), rect.y(), deviceScaleFactor);
         return FloatRect(snappedTopRight.x() - snappedWidth, snappedTopRight.y(), snappedWidth, snappedHeight);

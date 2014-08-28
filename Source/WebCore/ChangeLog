@@ -1,5 +1,35 @@
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel layout: Rename LayoutPoint's device pixel snapping functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136306
+
+        Reviewed by Simon Fraser.
+
+        From *edForPainting() to *PointToDevicePixels() (* = floor/round/ceil)
+
+        No change in functionality.
+
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::roundPointToDevicePixels):
+        (WebCore::floorPointToDevicePixels):
+        (WebCore::ceilPointToDevicePixels):
+        (WebCore::roundedForPainting): Deleted.
+        (WebCore::flooredForPainting): Deleted.
+        (WebCore::ceiledForPainting): Deleted.
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::enclosingRectForPainting):
+        * platform/graphics/LayoutRect.h:
+        (WebCore::directionalPixelSnappedForPainting):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::pixelSnapBackgroundImageGeometryForPainting):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
+2014-08-27  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel layout: Rename LayoutSize's device pixel snapping functions.
         https://bugs.webkit.org/show_bug.cgi?id=136310
 

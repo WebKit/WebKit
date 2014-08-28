@@ -184,17 +184,17 @@ inline IntSize pixelSnappedIntSize(const LayoutSize& s, const LayoutPoint& p)
     return IntSize(snapSizeToPixel(s.width(), p.x()), snapSizeToPixel(s.height(), p.y()));
 }
 
-inline FloatPoint roundedForPainting(const LayoutPoint& point, float pixelSnappingFactor, bool directionalRoundingToRight = true, bool directionalRoundingToBottom = true)
+inline FloatPoint roundPointToDevicePixels(const LayoutPoint& point, float pixelSnappingFactor, bool directionalRoundingToRight = true, bool directionalRoundingToBottom = true)
 {
     return FloatPoint(roundToDevicePixel(point.x(), pixelSnappingFactor, !directionalRoundingToRight), roundToDevicePixel(point.y(), pixelSnappingFactor, !directionalRoundingToBottom));
 }
 
-inline FloatPoint flooredForPainting(const LayoutPoint& point, float pixelSnappingFactor)
+inline FloatPoint floorPointToDevicePixels(const LayoutPoint& point, float pixelSnappingFactor)
 {
     return FloatPoint(floorToDevicePixel(point.x(), pixelSnappingFactor), floorToDevicePixel(point.y(), pixelSnappingFactor));
 }
 
-inline FloatPoint ceiledForPainting(const LayoutPoint& point, float pixelSnappingFactor)
+inline FloatPoint ceilPointToDevicePixels(const LayoutPoint& point, float pixelSnappingFactor)
 {
     return FloatPoint(ceilToDevicePixel(point.x(), pixelSnappingFactor), ceilToDevicePixel(point.y(), pixelSnappingFactor));
 }
