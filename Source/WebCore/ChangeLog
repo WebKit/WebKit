@@ -1,3 +1,9 @@
+2014-08-28  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * WebCore.exp.in: Updated symbol.
+
 2014-08-28  Benjamin Poulain  <bpoulain@apple.com>
 
         Scrolling with spacebar on a page with fixed header breaks reading flow
