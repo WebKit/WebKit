@@ -231,6 +231,8 @@ public:
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
     virtual void removeNavigationGestureSnapshot() = 0;
 
+    virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
+
     virtual ColorSpaceData colorSpace() = 0;
 
 #if USE(APPKIT)

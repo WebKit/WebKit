@@ -742,6 +742,14 @@ void PageClientImpl::removeNavigationGestureSnapshot()
     [m_wkView _removeNavigationGestureSnapshot];
 }
 
+CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer) const
+{
+    CALayer *windowContentLayer = static_cast<NSView *>(m_wkView.window.contentView).layer;
+    ASSERT(windowContentLayer);
+
+    return [windowContentLayer convertRect:layer.bounds fromLayer:layer];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -106,6 +106,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_swipeTransitionStyle(SwipeTransitionStyle::Overlap)
     , m_customSwipeViewsTopContentInset(0)
     , m_pendingSwipeReason(PendingSwipeReason::None)
+    , m_didMoveSwipeSnapshotCallback(nullptr)
     , m_shouldIgnorePinnedState(false)
     , m_swipeWaitingForVisuallyNonEmptyLayout(false)
     , m_swipeWaitingForRenderTreeSizeThreshold(false)
@@ -122,6 +123,11 @@ ViewGestureController::~ViewGestureController()
 
     if (m_activeGestureType == ViewGestureType::Swipe)
         removeSwipeSnapshot();
+
+    if (m_didMoveSwipeSnapshotCallback) {
+        Block_release(m_didMoveSwipeSnapshotCallback);
+        m_didMoveSwipeSnapshotCallback = nullptr;
+    }
 
     m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID());
 }
@@ -313,6 +319,13 @@ bool ViewGestureController::deltaIsSufficientToBeginSwipe(NSEvent *event)
         return false;
 
     return true;
+}
+
+void ViewGestureController::setDidMoveSwipeSnapshotCallback(void(^callback)(CGRect))
+{
+    if (m_didMoveSwipeSnapshotCallback)
+        Block_release(m_didMoveSwipeSnapshotCallback);
+    m_didMoveSwipeSnapshotCallback = Block_copy(callback);
 }
 
 bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
@@ -595,6 +608,8 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() below:layerAdjacentToSnapshot];
     else
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() above:layerAdjacentToSnapshot];
+
+    didMoveSwipeSnapshotLayer();
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection direction)
@@ -613,8 +628,10 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     double swipingLayerOffset = floor(width * progress);
 
     if (m_swipeTransitionStyle == SwipeTransitionStyle::Overlap) {
-        if (direction == SwipeDirection::Right)
+        if (direction == SwipeDirection::Right) {
             [m_swipeLayer setTransform:CATransform3DMakeTranslation(width + swipingLayerOffset, 0, 0)];
+            didMoveSwipeSnapshotLayer();
+        }
     } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
         [m_swipeLayer setTransform:CATransform3DMakeTranslation((direction == SwipeDirection::Left ? -width : width) + swipingLayerOffset, 0, 0)];
 
@@ -625,6 +642,14 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
         } else if (m_swipeTransitionStyle == SwipeTransitionStyle::Push)
             [layer setTransform:CATransform3DMakeTranslation(swipingLayerOffset, 0, 0)];
     }
+}
+
+void ViewGestureController::didMoveSwipeSnapshotLayer()
+{
+    if (!m_didMoveSwipeSnapshotCallback)
+        return;
+
+    m_didMoveSwipeSnapshotCallback(m_webPageProxy.boundsOfLayerInLayerBackedWindowCoordinates(m_swipeLayer.get()));
 }
 
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled)

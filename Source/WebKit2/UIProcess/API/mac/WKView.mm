@@ -4080,6 +4080,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return handledEvent;
 }
 
+- (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback
+{
+    if (!_data->_allowsBackForwardNavigationGestures)
+        return;
+
+    [self _ensureGestureController];
+    _data->_gestureController->setDidMoveSwipeSnapshotCallback(callback);
+}
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets

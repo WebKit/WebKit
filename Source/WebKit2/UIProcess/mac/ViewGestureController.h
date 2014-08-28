@@ -100,6 +100,7 @@ public:
     void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
+    void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));
 
     void endActiveGesture();
 
@@ -148,6 +149,7 @@ private:
     CALayer *determineSnapshotLayerParent() const;
     CALayer *determineLayerAdjacentToSnapshotForParent(SwipeDirection, CALayer *snapshotLayerParent) const;
     void applyDebuggingPropertiesToSwipeViews();
+    void didMoveSwipeSnapshotLayer();
 #endif
 
     WebPageProxy& m_webPageProxy;
@@ -188,6 +190,8 @@ private:
     PendingSwipeReason m_pendingSwipeReason;
     SwipeDirection m_pendingSwipeDirection;
     WebCore::FloatSize m_cumulativeDeltaForPendingSwipe;
+
+    void (^m_didMoveSwipeSnapshotCallback)(CGRect);
 
     bool m_shouldIgnorePinnedState;
 

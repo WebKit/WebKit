@@ -663,6 +663,11 @@ void WebPageProxy::showSelectionServiceMenu(const IPC::DataReference& selectionA
 }
 #endif
 
+CGRect WebPageProxy::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer) const
+{
+    return m_pageClient.boundsOfLayerInLayerBackedWindowCoordinates(layer);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

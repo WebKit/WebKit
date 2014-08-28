@@ -509,6 +509,7 @@ public:
 
     WKView* wkView() const;
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
+    CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;
 #endif
 #endif // PLATFORM(COCOA)
 #if PLATFORM(EFL)
