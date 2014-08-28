@@ -1,5 +1,23 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173015
+
+    2014-08-27  Saam Barati  <sbarati@apple.com>
+
+            Web Inspector: Layout issues for popover on not legacy OS
+            https://bugs.webkit.org/show_bug.cgi?id=136268
+
+            Reviewed by Joseph Pecoraro.
+
+            On the latest OS, popovers invade the title bar's space which will
+            cause layout issues because the title bar will render above
+            the popover. Fix this by providing some padding for popovers on 
+            not legacy OSs.
+
+            * UserInterface/Views/Popover.js:
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173010
 
     2014-08-27  Timothy Hatcher  <timothy@apple.com>
