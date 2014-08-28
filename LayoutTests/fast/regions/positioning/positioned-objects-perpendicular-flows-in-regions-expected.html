@@ -1,16 +1,14 @@
 <!doctype html>
-
+<html style="direction:rtl">
+<head>
  <style>
- 
-    #greenBox {	
-        position:relative;
-        margin-left:10%;
-        margin-right:10%;
-        width:160px;
-        height:100%;
-        background-color:green;
+    #first-box {
+        height: 100%;
+        width: 50%;
+        background-color: green;
+        float: left;
     }
-    
+
     #region1, #region2, #region3 {
         border: 1px solid black;
     }
@@ -30,17 +28,15 @@
         height: 120px;
     }
 </style>
-
+</head>
 <body>
-<p>The green positioned object should only be as tall as the first region it
-is contained in. It should be centered in the first region, and no red
-should be visible.</p>
+    <p style="direction:ltr">The green positioned object should only be as tall as the first region it is contained in. It should fill the left half of the first region.</p>
 
-<div id="container">
     <div id="region1">
-        <div id="greenBox">
+        <div id="first-box">
         </div>
     </div>
     <div id="region2"></div>
     <div id="region3"></div>
-</div>
+</body>
+</html>

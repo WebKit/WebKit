@@ -1,3 +1,82 @@
+2014-08-28  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Move positioning tests into fast/regions/positioning
+        https://bugs.webkit.org/show_bug.cgi?id=136302
+
+        Reviewed by Andrei Bucur.
+
+        Moved tests, clean up tests, adjust TestExpectations files where needed.
+
+        * fast/regions/positioned-objects-block-static-in-regions-expected.html: Removed.
+        * fast/regions/positioned-objects-block-static-in-regions.html: Removed.
+        * fast/regions/positioned-objects-block-static-in-rtl-regions-expected.html: Removed.
+        * fast/regions/positioned-objects-block-static-in-rtl-regions.html: Removed.
+        * fast/regions/positioned-objects-clipped-spanning-regions-expected.html: Removed.
+        * fast/regions/positioned-objects-in-regions.html: Removed.
+        * fast/regions/positioned-objects-inline-static-spanning-regions-expected.html: Removed.
+        * fast/regions/positioning/fixed-element-transformed-parent-expected.txt: Renamed from LayoutTests/fast/regions/fixed-element-transformed-parent-expected.txt.
+        * fast/regions/positioning/fixed-element-transformed-parent.html: Renamed from LayoutTests/fast/regions/fixed-element-transformed-parent.html.
+        * fast/regions/positioning/fixed-in-named-flow-position-changed-expected.html: Renamed from LayoutTests/fast/regions/fixed-in-named-flow-position-changed-expected.html.
+        * fast/regions/positioning/fixed-in-named-flow-position-changed.html: Renamed from LayoutTests/fast/regions/fixed-in-named-flow-position-changed.html.
+        * fast/regions/positioning/fixed-inside-fixed-in-named-flow-expected.html: Renamed from LayoutTests/fast/regions/fixed-inside-fixed-in-named-flow-expected.html.
+        * fast/regions/positioning/fixed-inside-fixed-in-named-flow.html: Renamed from LayoutTests/fast/regions/fixed-inside-fixed-in-named-flow.html.
+        * fast/regions/positioning/fixed-inside-named-flow-zIndex-expected.html: Renamed from LayoutTests/fast/regions/fixed-inside-named-flow-zIndex-expected.html.
+        * fast/regions/positioning/fixed-inside-named-flow-zIndex.html: Renamed from LayoutTests/fast/regions/fixed-inside-named-flow-zIndex.html.
+        * fast/regions/positioning/fixed-pos-content-fragmented-expected.html: Renamed from LayoutTests/fast/regions/fixed-pos-content-fragmented-expected.html.
+        * fast/regions/positioning/fixed-pos-content-fragmented.html: Renamed from LayoutTests/fast/regions/fixed-pos-content-fragmented.html.
+        * fast/regions/positioning/fixed-pos-elem-in-named-flow-expected.txt: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-named-flow-expected.txt.
+        * fast/regions/positioning/fixed-pos-elem-in-named-flow.html: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-named-flow.html.
+        * fast/regions/positioning/fixed-pos-elem-in-named-flow2-expected.txt: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-named-flow2-expected.txt.
+        * fast/regions/positioning/fixed-pos-elem-in-named-flow2.html: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-named-flow2.html.
+        * fast/regions/positioning/fixed-pos-elem-in-namedflow-noregions-expected.html: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-namedflow-noregions-expected.html.
+        * fast/regions/positioning/fixed-pos-elem-in-namedflow-noregions.html: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-namedflow-noregions.html.
+        * fast/regions/positioning/fixed-pos-elem-in-region-expected.html: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-region-expected.html.
+        * fast/regions/positioning/fixed-pos-elem-in-region.html: Renamed from LayoutTests/fast/regions/fixed-pos-elem-in-region.html.
+        * fast/regions/positioning/fixed-pos-region-in-nested-flow-expected.html: Renamed from LayoutTests/fast/regions/fixed-pos-region-in-nested-flow-expected.html.
+        * fast/regions/positioning/fixed-pos-region-in-nested-flow.html: Renamed from LayoutTests/fast/regions/fixed-pos-region-in-nested-flow.html.
+        * fast/regions/positioning/fixed-pos-region-overflow-content-expected.html: Renamed from LayoutTests/fast/regions/fixed-pos-region-overflow-content-expected.html.
+        * fast/regions/positioning/fixed-pos-region-overflow-content.html: Renamed from LayoutTests/fast/regions/fixed-pos-region-overflow-content.html.
+        * fast/regions/positioning/positioned-fragmented-content-expected.html: Renamed from LayoutTests/fast/regions/positioned-fragmented-content-expected.html.
+        * fast/regions/positioning/positioned-fragmented-content.html: Renamed from LayoutTests/fast/regions/positioned-fragmented-content.html.
+        * fast/regions/positioning/positioned-object-inline-cb-crash-expected.txt: Renamed from LayoutTests/fast/regions/positioned-object-inline-cb-crash-expected.txt.
+        * fast/regions/positioning/positioned-object-inline-cb-crash.html: Renamed from LayoutTests/fast/regions/positioned-object-inline-cb-crash.html.
+        * fast/regions/positioning/positioned-objects-block-static-in-regions-expected.html: Added.
+        * fast/regions/positioning/positioned-objects-block-static-in-regions.html: Added.
+        * fast/regions/positioning/positioned-objects-block-static-in-rtl-regions-expected.html: Added.
+        * fast/regions/positioning/positioned-objects-block-static-in-rtl-regions.html: Added.
+        * fast/regions/positioning/positioned-objects-block-static-spanning-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-block-static-spanning-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-block-static-spanning-regions-rtl-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-block-static-spanning-regions-rtl-expected.html.
+        * fast/regions/positioning/positioned-objects-block-static-spanning-regions-rtl.html: Renamed from LayoutTests/fast/regions/positioned-objects-block-static-spanning-regions-rtl.html.
+        * fast/regions/positioning/positioned-objects-block-static-spanning-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-block-static-spanning-regions.html.
+        * fast/regions/positioning/positioned-objects-clipped-spanning-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-in-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-clipped-spanning-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-clipped-spanning-regions.html.
+        * fast/regions/positioning/positioned-objects-in-regions-expected.html: Added.
+        * fast/regions/positioning/positioned-objects-in-regions.html: Added.
+        * fast/regions/positioning/positioned-objects-in-rtl-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-in-rtl-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-in-rtl-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-in-rtl-regions.html.
+        * fast/regions/positioning/positioned-objects-inline-static-in-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-in-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-inline-static-in-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-in-regions.html.
+        * fast/regions/positioning/positioned-objects-inline-static-in-rtl-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-in-rtl-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-inline-static-in-rtl-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-in-rtl-regions.html.
+        * fast/regions/positioning/positioned-objects-inline-static-spanning-regions-expected.html: Added.
+        * fast/regions/positioning/positioned-objects-inline-static-spanning-regions-rtl-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-spanning-regions-rtl-expected.html.
+        * fast/regions/positioning/positioned-objects-inline-static-spanning-regions-rtl.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-spanning-regions-rtl.html.
+        * fast/regions/positioning/positioned-objects-inline-static-spanning-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-inline-static-spanning-regions.html.
+        * fast/regions/positioning/positioned-objects-perpendicular-flows-in-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-perpendicular-flows-in-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-perpendicular-flows-in-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-perpendicular-flows-in-regions.html.
+        * fast/regions/positioning/positioned-objects-spanning-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-objects-spanning-regions-expected.html.
+        * fast/regions/positioning/positioned-objects-spanning-regions.html: Renamed from LayoutTests/fast/regions/positioned-objects-spanning-regions.html.
+        * fast/regions/positioning/positioned-slider-in-regions-expected.html: Renamed from LayoutTests/fast/regions/positioned-slider-in-regions-expected.html.
+        * fast/regions/positioning/positioned-slider-in-regions.html: Renamed from LayoutTests/fast/regions/positioned-slider-in-regions.html.
+        * fast/regions/positioning/positioned-vrl-in-named-flow-expected.txt: Renamed from LayoutTests/fast/regions/positioned-vrl-in-named-flow-expected.txt.
+        * fast/regions/positioning/positioned-vrl-in-named-flow.html: Renamed from LayoutTests/fast/regions/positioned-vrl-in-named-flow.html.
+        * fast/regions/positioning/positioned-vrl-in-parent-named-flow-expected.txt: Renamed from LayoutTests/fast/regions/positioned-vrl-in-parent-named-flow-expected.txt.
+        * fast/regions/positioning/positioned-vrl-in-parent-named-flow.html: Renamed from LayoutTests/fast/regions/positioned-vrl-in-parent-named-flow.html.
+        * fast/regions/positioning/positioned-with-vrl-parent-in-named-flow-expected.txt: Renamed from LayoutTests/fast/regions/positioned-with-vrl-parent-in-named-flow-expected.txt.
+        * fast/regions/positioning/positioned-with-vrl-parent-in-named-flow.html: Renamed from LayoutTests/fast/regions/positioned-with-vrl-parent-in-named-flow.html.
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2014-08-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Move writing mode tests into fast/regions/writing-mode

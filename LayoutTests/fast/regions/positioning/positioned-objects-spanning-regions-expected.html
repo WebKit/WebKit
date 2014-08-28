@@ -1,26 +1,26 @@
 <!doctype html>
-
- <style>
-
+<html>
+<head>
+<style>
     #first-box, #second-box, #third-box {
         background-color: green;
     }
-    
+
     #first-box {
         height:100%;
         width:50%;
     }
-    
+
     #second-box {
         height:100%;
         width:50%;
     }
-    
+
     #third-box {
         height:100%;
         width:50%;
     }
-    
+
     #region1, #region2, #region3 {
         border: 1px solid black;
     }
@@ -29,20 +29,20 @@
         width: 200px;
         height: 150px;
     }
-    
+
     #region2 {
         width: 300px;
         height: 180px;
     }
-    
+
     #region3 {
         width: 120px;
         height: 120px;
     }
 </style>
-
+</head>
 <body>
-<p>The green positioned object should span all the regions. It should fill the left half of every region.</p>
+    <p>The green positioned object should span all the regions. It should fill the left half of every region.</p>
 
     <div id="region1">
         <div id="first-box">
@@ -56,4 +56,5 @@
          <div id="third-box">
         </div>
     </div>
-
+</body>
+</html>
