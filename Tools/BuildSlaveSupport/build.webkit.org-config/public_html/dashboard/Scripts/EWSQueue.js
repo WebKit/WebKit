@@ -132,7 +132,7 @@ EWSQueue.prototype = {
                 });
             }
 
-            console.assert(this._statusPageURL === data.status_page);
+            console.assert(this.statusPageURL === data.status_page);
             this._chartsPageURL = data.charts_page;
 
             this._loadedDetailedStatus = true;

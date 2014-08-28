@@ -1,3 +1,11 @@
+2014-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        EWS status link at build.webkit.org/dashboard is incorrect until EWS pop-up is opened
+        https://bugs.webkit.org/show_bug.cgi?id=131668
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js:
+        (EWSQueue.prototype.loadDetailedStatus): Fixed a typo in assertion.
+
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Cleanup snapSizeToPixel/snapSizeToDevicePixel.
