@@ -1,5 +1,32 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173028
+
+    2014-08-27  Andreas Kling  <akling@apple.com>
+
+            Drawing text in an SVG font causes load events to be fired.
+            <https://webkit.org/b/136269>
+            <rdar://problem/15724915>
+
+            Don't flush pending load events in Document::implicitClose() for frameless documents.
+            This is a targeted fix for an issue where parsing SVG fonts during layout would cause
+            event dispatch to happen in the main document, leading to arbitrary JS execution.
+
+            Note that the testcase only works in DRT/WTR, since once the SVG font is in cached
+            by WebCore, we won't reparse it again. Caches are cleared between tests, so it will
+            correctly fail if this should regress.
+
+            Longer-term, we should clean this up and get rid of the global dispatch entirely.
+
+            Reviewed by Simon Fraser.
+
+            Test: fast/text/svg-font-trigger-load-event.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::implicitClose):
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173016
 
     2014-08-27  Timothy Hatcher  <timothy@apple.com>
