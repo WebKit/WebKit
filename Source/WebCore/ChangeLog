@@ -1,3 +1,26 @@
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r172871
+
+    2014-08-22  Dean Jackson  <dino@apple.com>
+
+            Google Canvas2D maps are too slow and uncontrollable with Safari with full screen mode
+            https://bugs.webkit.org/show_bug.cgi?id=136168
+
+            Reviewed by Tim Horton.
+
+            When Google maps are using their 2D "lite" fallback and you're drawing in a huge
+            window such as fullscreen 4K, we would drop back to unaccelerated mode, thinking
+            that we'd exceeded the maximum IOSurface size.
+
+            Remove the hardcoded limit on IOSurface sizes, and instead ask the system
+            what it believe the maximum to be. This was significantly higher than our
+            limit on the systems I tested.
+
+            * platform/graphics/cg/ImageBufferCG.cpp:
+            (WebCore::ImageBuffer::ImageBuffer): Include our IOSurface wrapper, which
+            has a query for maximum size, and use that instead.
+
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
         Merge r172977. <rdar://problem/18141703>
