@@ -1,3 +1,13 @@
+2014-08-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Clients that include WebCoreThread.h fail to build after <http://trac.webkit.org/changeset/172814/>
+        (https://bugs.webkit.org/show_bug.cgi?id=136108)
+
+        Define WEBCORE_EXPORT (if its not already defined) in WebCoreThread.h so as to fix the
+        build for clients that include this header.
+
+        * platform/ios/wak/WebCoreThread.h:
+
 2014-08-28  Pratik Solanki  <psolanki@apple.com>
 
         WebContent hangs under SharedBuffer::duplicateDataBufferIfNecessary() while browsing some websites
