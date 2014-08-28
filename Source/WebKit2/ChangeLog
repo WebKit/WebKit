@@ -1,3 +1,21 @@
+2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_uri_response_get_http_headers to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=136248
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add webkit_uri_response_get_http_headers() that returns the HTTP
+        headers as a SoupMessageHeaders* like webkit_uri_request_get_http_headers().
+
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkitURIResponseGetProperty): Add http-headers property getter.
+        (webkit_uri_response_class_init): Add http-headers property.
+        (webkit_uri_response_get_http_headers): Return the HTTP headers as
+        a SoupMessageHeaders* or NULL for non HTTP responses.
+        * UIProcess/API/gtk/WebKitURIResponse.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Rename LayoutRect's device pixel snapping functions.

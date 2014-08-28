@@ -396,6 +396,27 @@ static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
     g_assert(!strncmp(mainResourceData, "1", mainResourceDataSize));
 }
 
+static void testURIResponseHTTPHeaders(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body>No HTTP headers</body></html>", "file:///");
+    test->waitUntilLoadFinished();
+    WebKitWebResource* resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(WEBKIT_IS_WEB_RESOURCE(resource));
+    WebKitURIResponse* response = webkit_web_resource_get_response(resource);
+    g_assert(WEBKIT_IS_URI_RESPONSE(response));
+    g_assert(!webkit_uri_response_get_http_headers(response));
+
+    test->loadURI(kServer->getURIForPath("/headers").data());
+    test->waitUntilLoadFinished();
+    resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(WEBKIT_IS_WEB_RESOURCE(resource));
+    response = webkit_web_resource_get_response(resource);
+    g_assert(WEBKIT_IS_URI_RESPONSE(response));
+    SoupMessageHeaders* headers = webkit_uri_response_get_http_headers(response);
+    g_assert(headers);
+    g_assert_cmpstr(soup_message_headers_get_one(headers, "Foo"), ==, "bar");
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     static const char* responseString = "<html><body>Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -433,6 +454,9 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         else
             soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kDNTHeaderNotPresent, strlen(kDNTHeaderNotPresent));
         soup_message_set_status(message, SOUP_STATUS_OK);
+    } else if (g_str_equal(path, "/headers")) {
+        soup_message_headers_append(message->response_headers, "Foo", "bar");
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 
@@ -469,6 +493,7 @@ void beforeAll()
     ViewIsLoadingTest::add("WebKitWebView", "is-loading", testWebViewIsLoading);
     WebPageURITest::add("WebKitWebPage", "get-uri", testWebPageURI);
     WebViewTest::add("WebKitURIRequest", "http-headers", testURIRequestHTTPHeaders);
+    WebViewTest::add("WebKitURIResponse", "http-headers", testURIResponseHTTPHeaders);
 }
 
 void afterAll()

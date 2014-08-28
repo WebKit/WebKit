@@ -468,6 +468,7 @@ webkit_uri_response_get_status_code
 webkit_uri_response_get_content_length
 webkit_uri_response_get_mime_type
 webkit_uri_response_get_suggested_filename
+webkit_uri_response_get_http_headers
 
 <SUBSECTION Standard>
 WebKitURIResponseClass

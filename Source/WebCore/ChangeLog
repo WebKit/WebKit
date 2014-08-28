@@ -1,5 +1,20 @@
 2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add webkit_uri_response_get_http_headers to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=136248
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move the code to update the SoupMessageHeaders to a new public
+        method.
+
+        * platform/network/soup/ResourceResponse.h:
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateSoupMessageHeaders):
+        (WebCore::ResourceResponse::toSoupMessage):
+
+2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove support for GTK+2 theme rendering
         https://bugs.webkit.org/show_bug.cgi?id=136285
 

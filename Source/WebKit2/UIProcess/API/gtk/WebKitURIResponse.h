@@ -25,6 +25,7 @@
 #define WebKitURIResponse_h
 
 #include <gio/gio.h>
+#include <libsoup/soup.h>
 #include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -73,6 +74,9 @@ webkit_uri_response_get_mime_type          (WebKitURIResponse    *response);
 
 WEBKIT_API const gchar *
 webkit_uri_response_get_suggested_filename (WebKitURIResponse    *response);
+
+WEBKIT_API SoupMessageHeaders *
+webkit_uri_response_get_http_headers       (WebKitURIResponse    *response);
 
 G_END_DECLS
 

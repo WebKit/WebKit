@@ -22,6 +22,7 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitURIResponsePrivate.h"
+#include <WebCore/GUniquePtrSoup.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
@@ -46,7 +47,8 @@ enum {
     PROP_STATUS_CODE,
     PROP_CONTENT_LENGTH,
     PROP_MIME_TYPE,
-    PROP_SUGGESTED_FILENAME
+    PROP_SUGGESTED_FILENAME,
+    PROP_HTTP_HEADERS
 };
 
 struct _WebKitURIResponsePrivate {
@@ -54,6 +56,7 @@ struct _WebKitURIResponsePrivate {
     CString uri;
     CString mimeType;
     CString suggestedFilename;
+    GUniquePtr<SoupMessageHeaders> httpHeaders;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURIResponse, webkit_uri_response, G_TYPE_OBJECT)
@@ -77,6 +80,9 @@ static void webkitURIResponseGetProperty(GObject* object, guint propId, GValue* 
         break;
     case PROP_SUGGESTED_FILENAME:
         g_value_set_string(value, webkit_uri_response_get_suggested_filename(response));
+        break;
+    case PROP_HTTP_HEADERS:
+        g_value_set_boxed(value, webkit_uri_response_get_http_headers(response));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -151,6 +157,23 @@ static void webkit_uri_response_class_init(WebKitURIResponseClass* responseClass
                                                         _("The suggested filename for the URI response"),
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitURIResponse:http-headers:
+     *
+     * The HTTP headers of the response, or %NULL if the response is not an HTTP response.
+     *
+     * Since: 2.6
+     */
+    g_object_class_install_property(
+        objectClass,
+        PROP_HTTP_HEADERS,
+        g_param_spec_boxed(
+            "http-headers",
+            _("HTTP Headers"),
+            _("The The HTTP headers of the response"),
+            SOUP_TYPE_MESSAGE_HEADERS,
+            WEBKIT_PARAM_READABLE));
 }
 
 /**
@@ -235,6 +258,31 @@ const gchar* webkit_uri_response_get_suggested_filename(WebKitURIResponse* respo
 
     response->priv->suggestedFilename = response->priv->resourceResponse.suggestedFilename().utf8();
     return response->priv->suggestedFilename.data();
+}
+
+/**
+ * webkit_uri_response_get_http_headers:
+ * @response: a #WebKitURIResponse
+ *
+ * Get the HTTP headers of a #WebKitURIResponse as a #SoupMessageHeaders.
+ *
+ * Returns: (transfer none): a #SoupMessageHeaders with the HTTP headers of @response
+ *    or %NULL if @response is not an HTTP response.
+ * Since: 2.6
+ */
+SoupMessageHeaders* webkit_uri_response_get_http_headers(WebKitURIResponse* response)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), nullptr);
+
+    if (response->priv->httpHeaders)
+        return response->priv->httpHeaders.get();
+
+    if (!response->priv->resourceResponse.url().protocolIsInHTTPFamily())
+        return nullptr;
+
+    response->priv->httpHeaders.reset(soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE));
+    response->priv->resourceResponse.updateSoupMessageHeaders(response->priv->httpHeaders.get());
+    return response->priv->httpHeaders.get();
 }
 
 WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse& resourceResponse)
