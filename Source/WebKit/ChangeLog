@@ -1,3 +1,10 @@
+2014-08-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Adjust build order to reduce flakiness.
+
+        * WebKit.vcxproj/WebKit.sln: Make sure WebCoreGenerated doesn't
+          start until the last JSC tool has finished building.
+
 2014-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed Build 'fix' after r173018.
