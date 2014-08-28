@@ -1,5 +1,27 @@
 2014-08-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSS Regions] Move writing mode tests into fast/regions/writing-mode
+        https://bugs.webkit.org/show_bug.cgi?id=136298
+
+        Reviewed by Andrei Bucur.
+
+        * fast/regions/writing-mode/changing-writing-mode-2-expected.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-2-expected.html.
+        * fast/regions/writing-mode/changing-writing-mode-2.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-2.html.
+        * fast/regions/writing-mode/changing-writing-mode-3-expected.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-3-expected.html.
+        * fast/regions/writing-mode/changing-writing-mode-3.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-3.html.
+        * fast/regions/writing-mode/changing-writing-mode-4-expected.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-4-expected.html.
+        * fast/regions/writing-mode/changing-writing-mode-4.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-4.html.
+        * fast/regions/writing-mode/changing-writing-mode-5-expected.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-5-expected.html.
+        * fast/regions/writing-mode/changing-writing-mode-5.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-5.html.
+        * fast/regions/writing-mode/changing-writing-mode-expected.html: Renamed from LayoutTests/fast/regions/changing-writing-mode-expected.html.
+        * fast/regions/writing-mode/changing-writing-mode.html: Renamed from LayoutTests/fast/regions/changing-writing-mode.html.
+        * fast/regions/writing-mode/invalid-first-region-with-writing-mode-2-expected.html: Renamed from LayoutTests/fast/regions/invalid-first-region-with-writing-mode-2-expected.html.
+        * fast/regions/writing-mode/invalid-first-region-with-writing-mode-2.html: Renamed from LayoutTests/fast/regions/invalid-first-region-with-writing-mode-2.html.
+        * fast/regions/writing-mode/invalid-first-region-with-writing-mode-expected.html: Renamed from LayoutTests/fast/regions/invalid-first-region-with-writing-mode-expected.html.
+        * fast/regions/writing-mode/invalid-first-region-with-writing-mode.html: Renamed from LayoutTests/fast/regions/invalid-first-region-with-writing-mode.html.
+
+2014-08-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSS Regions] Move more multicol tests in fast/regions/multicol
         https://bugs.webkit.org/show_bug.cgi?id=136295
 
