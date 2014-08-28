@@ -12,7 +12,7 @@
         * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
         (webkitAccessibleComponentGetExtents):
 
-2014-08-27  Zan Dobersek  <zdobersek@igalia.com>
+2014-08-27  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WaylandSurface
         https://bugs.webkit.org/show_bug.cgi?id=136220
@@ -2222,7 +2222,7 @@
 
         * Configurations/FeatureDefines.xcconfig: Add ENABLE(RUBBER_BANDING).
 
-2014-08-22  Zan Dobersek  <zdobersek@igalia.com>
+2014-08-22  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add the Wayland protocol extension
         https://bugs.webkit.org/show_bug.cgi?id=136102
