@@ -1,3 +1,33 @@
+2014-08-28  Andreas Kling  <akling@apple.com>
+
+        Use JSString::toIdentifier() in more places.
+        <https://webkit.org/b/136348>
+
+        Call sites that grab the WTF::String from a JSString using value() can
+        use the more efficient toIdentifier() if the string is going to be used
+        to construct an Identifier.
+
+        If the JSString is a rope that resolves to something that is already
+        present in the VM's Identifier table, using toIdentifier() can avoid
+        allocating a new StringImpl.
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+
 2014-08-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should compute immediate dominators using the O(n log n) form of Lengauer and Tarjan's "A Fast Algorithm for Finding Dominators in a Flowgraph"

@@ -480,7 +480,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
         PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
         baseObject->putDirect(callFrame->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
-        Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
+        Identifier property = subscript.toString(callFrame)->toIdentifier(callFrame);
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
             baseObject->putDirect(callFrame->vm(), property, value, slot);
@@ -920,7 +920,7 @@ size_t JIT_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSC
 
 size_t JIT_OPERATION operationHasProperty(ExecState* exec, JSObject* base, JSString* property)
 {
-    int result = base->hasProperty(exec, Identifier(exec, property->value(exec)));
+    int result = base->hasProperty(exec, property->toIdentifier(exec));
     return result;
 }
     

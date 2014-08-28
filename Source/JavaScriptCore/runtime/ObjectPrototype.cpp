@@ -182,7 +182,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec)
 {
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    Identifier propertyName(exec, exec->argument(0).toString(exec)->value(exec));
+    Identifier propertyName = exec->argument(0).toString(exec)->toIdentifier(exec);
 
     PropertyDescriptor descriptor;
     bool enumerable = thisObject->getOwnPropertyDescriptor(exec, propertyName, descriptor) && descriptor.enumerable();
