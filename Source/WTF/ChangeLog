@@ -1,3 +1,16 @@
+2014-08-27  Nico Weber  <thakis@chromium.org>
+
+        Delete a MSVS2010 workaround.
+        https://bugs.webkit.org/show_bug.cgi?id=136321
+
+        Reviewed by Benjamin Poulain.
+
+        Ports https://codereview.chromium.org/512923004/ by the talented
+        Nico Weber from Blink. No intended behavior change.
+
+        * wtf/Vector.h:
+        (WTF::=):
+
 2014-08-27  Mark Rowe  <mrowe@apple.com>
 
         JavaScriptCore is missing debug info for WTF because libWTF.a is stripped.
