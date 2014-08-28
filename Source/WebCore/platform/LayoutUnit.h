@@ -866,12 +866,6 @@ inline float& operator/=(float& a, const LayoutUnit& b)
     return a;
 }
 
-inline int snapSizeToPixel(LayoutUnit size, LayoutUnit location) 
-{
-    LayoutUnit fraction = location.fraction();
-    return (fraction + size).round() - fraction.round();
-}
-
 inline int roundToInt(LayoutUnit value)
 {
     return value.round();
@@ -904,12 +898,6 @@ inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
 inline float ceilToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
 {
     return ceilf((value.rawValue() * pixelSnappingFactor) / kEffectiveFixedPointDenominator) / pixelSnappingFactor;
-}
-
-inline float snapSizeToDevicePixel(LayoutUnit size, LayoutUnit location, float pixelSnappingFactor)
-{
-    LayoutUnit fraction = location.fraction();
-    return roundToDevicePixel(fraction + size, pixelSnappingFactor) - roundToDevicePixel(fraction, pixelSnappingFactor);
 }
 
 inline LayoutUnit absoluteValue(const LayoutUnit& value)

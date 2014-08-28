@@ -494,12 +494,14 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
 
 int RenderBoxModelObject::pixelSnappedOffsetWidth() const
 {
-    return snapSizeToPixel(offsetWidth(), offsetLeft());
+    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
+    return roundToInt(offsetWidth());
 }
 
 int RenderBoxModelObject::pixelSnappedOffsetHeight() const
 {
-    return snapSizeToPixel(offsetHeight(), offsetTop());
+    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
+    return roundToInt(offsetHeight());
 }
 
 LayoutUnit RenderBoxModelObject::computedCSSPadding(const Length& padding) const

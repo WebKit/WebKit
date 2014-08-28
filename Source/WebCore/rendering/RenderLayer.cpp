@@ -1226,7 +1226,7 @@ bool RenderLayer::updateLayerPosition()
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
         // FIXME: Is snapping the size really needed here for the RenderBox case?
-        setSize(pixelSnappedIntSize(box->size(), box->location()));
+        setSize(snappedIntSize(box->size(), box->location()));
         localPoint += box->topLeftLocationOffset();
     }
 
@@ -3162,7 +3162,8 @@ int RenderLayer::scrollWidth() const
     ASSERT(renderBox());
     if (m_scrollDimensionsDirty)
         const_cast<RenderLayer*>(this)->computeScrollDimensions();
-    return snapSizeToPixel(m_scrollSize.width(), renderBox()->clientLeft() + renderBox()->x());
+    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
+    return roundToInt(m_scrollSize.width());
 }
 
 int RenderLayer::scrollHeight() const
@@ -3170,7 +3171,8 @@ int RenderLayer::scrollHeight() const
     ASSERT(renderBox());
     if (m_scrollDimensionsDirty)
         const_cast<RenderLayer*>(this)->computeScrollDimensions();
-    return snapSizeToPixel(m_scrollSize.height(), renderBox()->clientTop() + renderBox()->y());
+    // FIXME: This should use snappedIntSize() instead with absolute coordinates.
+    return roundToInt(m_scrollSize.height());
 }
 
 LayoutUnit RenderLayer::overflowTop() const

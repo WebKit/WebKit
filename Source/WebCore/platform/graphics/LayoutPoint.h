@@ -179,9 +179,14 @@ inline LayoutPoint ceiledLayoutPoint(const FloatPoint& p)
     return LayoutPoint(LayoutUnit::fromFloatCeil(p.x()), LayoutUnit::fromFloatCeil(p.y()));
 }
 
-inline IntSize pixelSnappedIntSize(const LayoutSize& s, const LayoutPoint& p)
+inline IntSize snappedIntSize(const LayoutSize& size, const LayoutPoint& location)
 {
-    return IntSize(snapSizeToPixel(s.width(), p.x()), snapSizeToPixel(s.height(), p.y()));
+    auto snap = [] (LayoutUnit a, LayoutUnit b) {
+        LayoutUnit fraction = b.fraction();
+        return roundToInt(fraction + a) - roundToInt(fraction);
+    };
+
+    return IntSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 
 inline FloatPoint roundPointToDevicePixels(const LayoutPoint& point, float pixelSnappingFactor, bool directionalRoundingToRight = true, bool directionalRoundingToBottom = true)
@@ -197,6 +202,16 @@ inline FloatPoint floorPointToDevicePixels(const LayoutPoint& point, float pixel
 inline FloatPoint ceilPointToDevicePixels(const LayoutPoint& point, float pixelSnappingFactor)
 {
     return FloatPoint(ceilToDevicePixel(point.x(), pixelSnappingFactor), ceilToDevicePixel(point.y(), pixelSnappingFactor));
+}
+
+inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint& location, float pixelSnappingFactor)
+{
+    auto snap = [&] (LayoutUnit a, LayoutUnit b) {
+        LayoutUnit fraction = b.fraction();
+        return roundToDevicePixel(fraction + a, pixelSnappingFactor) - roundToDevicePixel(fraction, pixelSnappingFactor);
+    };
+
+    return FloatSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 
 } // namespace WebCore

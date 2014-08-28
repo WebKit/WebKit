@@ -103,28 +103,6 @@ TEST(WebCoreLayoutUnit, LayoutUnitRounding)
     ASSERT_EQ(LayoutUnit::fromFloatRound(1.51f).round(), 2);
 }
 
-TEST(WebCoreLayoutUnit, LayoutUnitSnapSizeToPixel)
-{
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1), LayoutUnit(0)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1), LayoutUnit(0.5)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(0)), 2);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(0.49)), 2);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(0.5)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(0.75)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(0.99)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(1)), 2);
-    
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(0.5), LayoutUnit(1.5)), 0);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(0.99), LayoutUnit(1.5)), 0);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.0), LayoutUnit(1.5)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.49), LayoutUnit(1.5)), 1);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(1.5), LayoutUnit(1.5)), 1);
-    
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(100.5), LayoutUnit(100)), 101);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(intMaxForLayoutUnit), LayoutUnit(0.3)), intMaxForLayoutUnit);
-    ASSERT_EQ(snapSizeToPixel(LayoutUnit(intMinForLayoutUnit), LayoutUnit(-0.3)), intMinForLayoutUnit);
-}
-
 TEST(WebCoreLayoutUnit, LayoutUnitMultiplication)
 {
     ASSERT_EQ((LayoutUnit(1) * LayoutUnit(1)).toInt(), 1);

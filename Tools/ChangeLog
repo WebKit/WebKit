@@ -1,3 +1,19 @@
+2014-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel layout: Cleanup snapSizeToPixel/snapSizeToDevicePixel.
+        https://bugs.webkit.org/show_bug.cgi?id=136264
+
+        Reviewed by Simon Fraser.
+        
+        1. Align snapSizeToPixel()/snapSizeToDevicePixel() function names with the rest of snapping
+        functions. ->snappedIntSize()/snapSizeToDevicePixel().
+        2. Operate on LayoutSize/LayoutPoint instead of LayoutUnit/LayoutUnit to reflect functionality.
+
+        Covered by existing tests.
+
+        * TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp:
+        (TestWebKitAPI::TEST): Deleted.
+
 2014-08-27  Alexey Proskuryakov  <ap@apple.com>
 
         EWS status link at build.webkit.org/dashboard is incorrect until EWS pop-up is opened

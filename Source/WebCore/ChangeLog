@@ -1,5 +1,50 @@
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel layout: Cleanup snapSizeToPixel/snapSizeToDevicePixel.
+        https://bugs.webkit.org/show_bug.cgi?id=136264
+
+        Reviewed by Simon Fraser.
+        
+        1. Align snapSizeToPixel()/snapSizeToDevicePixel() function names with the rest of snapping
+        functions. ->snappedIntSize()/snapSizeToDevicePixel().
+        2. Operate on LayoutSize/LayoutPoint instead of LayoutUnit/LayoutUnit to reflect functionality.
+
+        Covered by existing tests.
+
+        * platform/LayoutUnit.h:
+        (WebCore::snapSizeToPixel): Deleted.
+        (WebCore::snapSizeToDevicePixel): Deleted.
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::snappedIntSize):
+        (WebCore::snapSizeToDevicePixel):
+        (WebCore::pixelSnappedIntSize): Deleted.
+        * platform/graphics/LayoutRect.h:
+        (WebCore::LayoutRect::pixelSnappedSize):
+        (WebCore::LayoutRect::pixelSnappedWidth):
+        (WebCore::LayoutRect::pixelSnappedHeight):
+        (WebCore::pixelSnappedIntRect):
+        (WebCore::pixelSnappedIntRectFromEdges):
+        (WebCore::pixelSnappedForPainting):
+        (WebCore::directionalPixelSnappedForPainting):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pixelSnappedClientWidth):
+        (WebCore::RenderBox::pixelSnappedClientHeight):
+        (WebCore::RenderBox::pixelSnappedOffsetWidth):
+        (WebCore::RenderBox::pixelSnappedOffsetHeight):
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::pixelSnappedOffsetWidth):
+        (WebCore::RenderBoxModelObject::pixelSnappedOffsetHeight):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::scrollWidth):
+        (WebCore::RenderLayer::scrollHeight):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
+2014-08-27  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel layout: Rename LayoutRect's device pixel snapping functions.
         https://bugs.webkit.org/show_bug.cgi?id=136319
 
