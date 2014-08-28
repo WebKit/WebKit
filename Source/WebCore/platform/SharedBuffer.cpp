@@ -27,6 +27,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include <algorithm>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -351,11 +352,13 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 
 void SharedBuffer::duplicateDataBufferIfNecessary() const
 {
-    if (m_buffer->hasOneRef() || m_size <= m_buffer->data.capacity())
+    size_t currentCapacity = m_buffer->data.capacity();
+    if (m_buffer->hasOneRef() || m_size <= currentCapacity)
         return;
 
+    size_t newCapacity = std::max(static_cast<size_t>(m_size), currentCapacity * 2);
     RefPtr<DataBuffer> newBuffer = adoptRef(new DataBuffer);
-    newBuffer->data.reserveInitialCapacity(m_size);
+    newBuffer->data.reserveInitialCapacity(newCapacity);
     newBuffer->data = m_buffer->data;
     m_buffer = newBuffer.release();
 }
