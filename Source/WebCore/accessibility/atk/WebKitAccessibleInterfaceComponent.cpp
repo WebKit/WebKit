@@ -85,7 +85,7 @@ static void webkitAccessibleComponentGetExtents(AtkComponent* component, gint* x
     g_return_if_fail(ATK_IS_COMPONENT(component));
     returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component));
 
-    IntRect rect = pixelSnappedIntRect(core(component)->elementRect());
+    IntRect rect = snappedIntRect(core(component)->elementRect());
     contentsRelativeToAtkCoordinateType(core(component), coordType, rect, x, y, width, height);
 }
 

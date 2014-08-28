@@ -1,3 +1,10 @@
+2014-08-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more URTBF after r173047.
+
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        (webkitAccessibleComponentGetExtents):
+
 2014-08-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WaylandSurface
