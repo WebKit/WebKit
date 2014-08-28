@@ -49,7 +49,7 @@ EWSQueue.prototype = {
 
     get statusPageURL()
     {
-        return this._statusPageURL;
+        return this.ews.queueStatusURL(this.id);
     },
 
     get chartsPageURL()
@@ -132,7 +132,7 @@ EWSQueue.prototype = {
                 });
             }
 
-            this._statusPageURL = data.status_page;
+            console.assert(this._statusPageURL === data.status_page);
             this._chartsPageURL = data.charts_page;
 
             this._loadedDetailedStatus = true;

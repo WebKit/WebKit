@@ -57,4 +57,9 @@ EWS.prototype = {
     {
         return this.baseURL + "queue-status-json/" + encodeURIComponent(queueID) + "-ews";
     },
+
+    queueStatusURL: function(queueID)
+    {
+        return this.baseURL + "queue-status/" + encodeURIComponent(queueID) + "-ews";
+    },
 };

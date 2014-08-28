@@ -1,5 +1,27 @@
 2014-08-27  Alexey Proskuryakov  <ap@apple.com>
 
+        EWS status link at build.webkit.org/dashboard is incorrect until EWS pop-up is opened
+        https://bugs.webkit.org/show_bug.cgi?id=131668
+
+        Reviewed by Daniel Bates.
+
+        We used to fetch the URL from EWS detailed status JSON, but there isn't much reason
+        to not just hardcode.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js:
+        (EWS.prototype.queueStatusURL): Added.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js:
+        (EWSQueue.prototype.get statusPageURL): Use the above function.
+        (EWSQueue.prototype.loadDetailedStatus): Changed assignment to an assertion.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueueView.js:
+        (EWSQueueView.prototype.update): While at it, made a popover show up even if there
+        are no patches in the queue. The popover has other useful information, such as charts
+        link and bot status.
+
+2014-08-27  Alexey Proskuryakov  <ap@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=136317
         Dashboard metrics page sometimes shows 0 for best time
 
