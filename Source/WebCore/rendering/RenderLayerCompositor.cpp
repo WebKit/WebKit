@@ -646,6 +646,11 @@ bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer& 
     return m_compositedLayerCount > (rootLayer.isComposited() ? 1 : 0);
 }
 
+void RenderLayerCompositor::cancelCompositingLayerUpdate()
+{
+    m_updateCompositingLayersTimer.stop();
+}
+
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     m_updateCompositingLayersTimer.stop();

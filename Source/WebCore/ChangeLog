@@ -1,3 +1,19 @@
+2014-08-28  Andreas Kling  <akling@apple.com>
+
+        ASSERTION FAILED: !m_renderView.document().inPageCache() in compositing/iframes/resources/page-cache-helper.html
+        <https://webkit.org/b/136329>
+
+        Cancel any pending compositing layer updates when moving a document
+        into the page cache.
+
+        Reviewed by Zalan Bujtas.
+
+        * dom/Document.cpp:
+        (WebCore::Document::documentWillSuspendForPageCache):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cancelCompositingLayerUpdate):
+        * rendering/RenderLayerCompositor.h:
+
 2014-08-28  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect selection clearing on a document without regions

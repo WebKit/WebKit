@@ -4139,6 +4139,11 @@ void Document::documentWillSuspendForPageCache()
     // is dispatched, after the document is restored from the page cache.
     m_didDispatchViewportPropertiesChanged = false;
 #endif
+
+    if (RenderView* view = renderView()) {
+        if (view->usesCompositing())
+            view->compositor().cancelCompositingLayerUpdate();
+    }
 }
 
 void Document::documentDidResumeFromPageCache() 
