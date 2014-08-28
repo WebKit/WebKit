@@ -1,3 +1,18 @@
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173010
+
+    2014-08-27  Timothy Hatcher  <timothy@apple.com>
+
+            REGRESSION: Web Inspector: Legacy toolbar has two different colors in unfocused windowed mode
+            https://bugs.webkit.org/show_bug.cgi?id=136289
+
+            Reviewed by Darin Adler.
+
+            * UserInterface/Views/Toolbar.css:
+            (body.mac-platform.legacy .toolbar): Override the background-color as transparent. Non-legacy
+            uses a solid color instead of a gradient for window-inactive.
+
 2014-08-25  Lucas Forschler  <lforschler@apple.com>
 
         Merge r172929
