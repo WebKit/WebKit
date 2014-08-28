@@ -1,5 +1,22 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173029
+
+    2014-08-27  Tim Horton  <timothy_horton@apple.com>
+
+            Occasional crashes in commitTransientZoom's transaction completion block
+            https://bugs.webkit.org/show_bug.cgi?id=136309
+            <rdar://problem/17215064>
+
+            Reviewed by Dan Bernstein.
+
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+            Hold a reference to zoomLayer and the WebPage. It's possible that either
+            of these things could have gone away by the time the transaction is committed.
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172939
 
     2014-08-25  Brady Eidson  <beidson@apple.com>
