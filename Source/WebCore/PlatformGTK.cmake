@@ -434,6 +434,8 @@ add_custom_command(
 
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebCorePlatformGTK_SOURCES
+        platform/graphics/wayland/WaylandSurface.cpp
+
         ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
     )
 endif ()
