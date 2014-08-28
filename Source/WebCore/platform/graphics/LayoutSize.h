@@ -183,7 +183,7 @@ inline IntSize roundedIntSize(const LayoutSize& s)
     return IntSize(s.width().round(), s.height().round());
 }
 
-inline FloatSize flooredForPainting(const LayoutSize& size, float pixelSnappingFactor)
+inline FloatSize floorSizeToDevicePixels(const LayoutSize& size, float pixelSnappingFactor)
 {
     return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
 }
