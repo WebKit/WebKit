@@ -105,6 +105,24 @@ Analyzer.prototype = {
         return true;
     },
 
+    _updateStretchOfRedCounters: function(topIterationByQueue, currentTime, stretchOfRedCounters)
+    {
+        var isRedNow = false;
+        for (queueID in topIterationByQueue) {
+            if (!topIterationByQueue[queueID].successful) {
+                isRedNow = true;
+                break;
+            }
+        }
+        if (isRedNow) {
+            if (stretchOfRedCounters.currentStretchOfRedStart === undefined)
+                stretchOfRedCounters.currentStretchOfRedStart = currentTime;
+        } else if (stretchOfRedCounters.currentStretchOfRedStart !== undefined) {
+            stretchOfRedCounters.longestStretchOfRed = Math.max(stretchOfRedCounters.longestStretchOfRed, currentTime - stretchOfRedCounters.currentStretchOfRedStart);
+            stretchOfRedCounters.currentStretchOfRedStart = undefined;
+        }
+    },
+
     _countPercentageOfGreen: function(queues, result)
     {
         var topIterationByQueue = {};
@@ -131,9 +149,14 @@ Analyzer.prototype = {
         // Go forward in time, ignoring out of order iterations that didn't affect queue color.
         var currentTime = this._rangeStartTime;
         var greenTime = 0;
+        var stretchOfRedCounters = {
+            longestStretchOfRed: 0,
+            currentStretchOfRedStart: undefined
+        };
         var earliestTimeInRangeWhereAllQueuesHaveResults;
         if (this._allQueuesAreSuccessful(topIterationByQueue, queues) !== undefined)
             earliestTimeInRangeWhereAllQueuesHaveResults = this._rangeStartTime;
+        this._updateStretchOfRedCounters(topIterationByQueue, this._rangeStartTime, stretchOfRedCounters);
         for (var i = iterations.length - 1; i >= 0; --i) {
             if (iterations[i].endTime <= this._rangeStartTime) {
                 console.assert(iterations[i].queue.id in topIterationByQueue);
@@ -146,6 +169,7 @@ Analyzer.prototype = {
                     currentTime = iterations[i].endTime;
                     earliestTimeInRangeWhereAllQueuesHaveResults = currentTime;
                 }
+                this._updateStretchOfRedCounters(topIterationByQueue, currentTime, stretchOfRedCounters);
                 continue;
             }
             if (iterations[i].openSourceRevision <= topIterationByQueue[iterations[i].queue.id].openSourceRevision)
@@ -158,10 +182,16 @@ Analyzer.prototype = {
                 greenTime += iterations[i].endTime - currentTime;
 
             currentTime = iterations[i].endTime;
+            this._updateStretchOfRedCounters(topIterationByQueue, currentTime, stretchOfRedCounters);
         }
 
         if (this._allQueuesAreSuccessful(topIterationByQueue, queues) === true)
             greenTime += this._rangeEndTime - currentTime;
+
+        if (stretchOfRedCounters.currentStretchOfRedStart !== undefined)
+            stretchOfRedCounters.longestStretchOfRed = Math.max(stretchOfRedCounters.longestStretchOfRed, this._rangeEndTime - stretchOfRedCounters.currentStretchOfRedStart);
+
+        result.longestStretchOfRed = stretchOfRedCounters.longestStretchOfRed / 1000;
 
         if (earliestTimeInRangeWhereAllQueuesHaveResults === this._rangeStartTime)
             result.percentageOfGreen = greenTime / (this._rangeEndTime - this._rangeStartTime) * 100;

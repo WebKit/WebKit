@@ -90,6 +90,13 @@ MetricsView.prototype = {
             element.lastChild.classList.add("error-line");
         }
 
+        function addDivider(element)
+        {
+            var divider = document.createElement("div");
+            divider.classList.add("divider");
+            element.appendChild(divider);
+        }
+
         function appendQueueResults(queue)
         {
             if (!(queue.id in this._results))
@@ -97,13 +104,21 @@ MetricsView.prototype = {
 
             var result = this._results[queue.id];
 
-            if (result.buildbotRangeError && -1 === this._aggregatePseudoQueues.indexOf(queue))
+            var isAggregateQueue = -1 !== this._aggregatePseudoQueues.indexOf(queue);
+
+            if (result.buildbotRangeError && !isAggregateQueue)
                 addError(this.element, result.buildbotRangeErrorText);
 
             if ("percentageOfGreen" in result)
                 addLine(this.element, "Green " + Math.round(result.percentageOfGreen * 100) / 100 + "% of time");
 
-            if (queue.builder || -1 !== this._aggregatePseudoQueues.indexOf(queue)) {
+            if (isAggregateQueue && result.longestStretchOfRed) {
+                addLine(this.element, "Longest red: " + Math.round(result.longestStretchOfRed / 60) + " minutes");
+                addDivider(this.element);
+            } else if ("percentageOfGreen" in result)
+                addDivider(this.element);
+
+            if (queue.builder || isAggregateQueue) {
                 addLine(this.element, "Time from commit: ");
                 addLine(this.element, "Average: " + Math.round(result.averageSecondsFromCommit / 60) + " minutes");
                 addLine(this.element, "Median: " + Math.round(result.medianSecondsFromCommit / 60) + " minutes");

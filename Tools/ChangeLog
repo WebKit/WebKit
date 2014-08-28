@@ -1,3 +1,24 @@
+2014-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Dashboard metrics page could show longest stretch of red
+        https://bugs.webkit.org/show_bug.cgi?id=136334
+
+        Reviewed by Sam Weinig.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js:
+        (Analyzer.prototype._updateStretchOfRedCounters):
+        (Analyzer.prototype._countPercentageOfGreen):
+        When counting percentage of green, also keep track of how long the page was red.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsView.js:
+        (MetricsView.prototype._update.addDivider):
+        (MetricsView.prototype._update.appendQueueResults):
+        Show it in aggregate queues (can't think of a reason to have it in individual ones).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Metrics.css:
+        Changed to use an explicit divider element between green time and performance groups,
+        as there are too many combinations to easily express in CSS.
+
 2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_uri_response_get_http_headers to WebKit2 GTK+ API

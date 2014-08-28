@@ -58,12 +58,20 @@ table.aggregate-grid tr.headers th {
 .queue-view .error-line + .result-line,
 .result-line:first-child
 {
-    padding: 10px 0 6px 0;
+    padding: 10px 0 2px 0;
     font-weight: bold;
 }
 
 .queue-view .error-line {
     color: rgb(191, 67, 41);
+}
+
+.queue-view .divider {
+    height: 6px;
+}
+
+table.aggregate-grid .queue-view .divider {
+    height: 10px;
 }
 
 .metrics-loading-indicator {
