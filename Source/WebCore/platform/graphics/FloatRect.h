@@ -246,12 +246,8 @@ inline bool FloatRect::isInfinite() const
     return *this == infiniteRect();
 }
 
-WEBCORE_EXPORT FloatRect enclosingRectExtendedToDevicePixels(const FloatRect&, float deviceScaleFactor);
+WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float deviceScaleFactor);
 WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
-
-// Returns a valid IntRect contained within the given FloatRect.
-IntRect enclosedIntRect(const FloatRect&);
-
 WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
 
 }

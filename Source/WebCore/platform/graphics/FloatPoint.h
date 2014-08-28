@@ -210,6 +210,11 @@ inline float operator*(const FloatPoint& a, const FloatPoint& b)
     return a.dot(b);
 }
 
+inline IntSize flooredIntSize(const FloatPoint& p)
+{
+    return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+}
+
 inline IntPoint roundedIntPoint(const FloatPoint& p)
 {
     return IntPoint(clampToInteger(roundf(p.x())), clampToInteger(roundf(p.y())));
@@ -220,24 +225,19 @@ inline IntPoint flooredIntPoint(const FloatPoint& p)
     return IntPoint(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
 }
 
-inline FloatPoint flooredToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
-{
-    return FloatPoint(floorf(p.x() * deviceScaleFactor)  / deviceScaleFactor, floorf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
-}
-
 inline IntPoint ceiledIntPoint(const FloatPoint& p)
 {
     return IntPoint(clampToInteger(ceilf(p.x())), clampToInteger(ceilf(p.y())));
 }
 
-inline FloatPoint ceiledToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
+inline FloatPoint floorPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
 {
-    return FloatPoint(ceilf(p.x() * deviceScaleFactor)  / deviceScaleFactor, ceilf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
+    return FloatPoint(floorf(p.x() * deviceScaleFactor)  / deviceScaleFactor, floorf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
 }
 
-inline IntSize flooredIntSize(const FloatPoint& p)
+inline FloatPoint ceilPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
 {
-    return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+    return FloatPoint(ceilf(p.x() * deviceScaleFactor)  / deviceScaleFactor, ceilf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
 }
 
 inline FloatSize toFloatSize(const FloatPoint& a)

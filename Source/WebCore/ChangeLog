@@ -1,5 +1,32 @@
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel layout: Rename FloatPoint/FloatRect device pixel snapping functions.
+        https://bugs.webkit.org/show_bug.cgi?id=136314
+
+        Reviewed by Simon Fraser.
+
+        From *edToDevicePixels() to *PointToDevicePixels() (* = floor/round/ceil)
+
+        EnclosedIntRect -> enclosingIntRect() changes functionality for InspectorOverlay painting,
+        but currently untestable.
+
+        * WebCore.exp.in:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::showPaintRect):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::flooredIntSize):
+        (WebCore::floorPointToDevicePixels):
+        (WebCore::ceilPointToDevicePixels):
+        (WebCore::flooredToDevicePixels): Deleted.
+        (WebCore::ceiledToDevicePixels): Deleted.
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingRectToDevicePixels):
+        (WebCore::enclosingRectExtendedToDevicePixels): Deleted. Renamed.
+        (WebCore::enclosedIntRect): Deleted. Not needed.
+        * platform/graphics/FloatRect.h:
+
+2014-08-27  Zalan Bujtas  <zalan@apple.com>
+
         Subpixel layout: Rename LayoutPoint's device pixel snapping functions.
         https://bugs.webkit.org/show_bug.cgi?id=136306
 
