@@ -36,17 +36,35 @@
 #if __has_include(<AppKit/NSSharingService_Private.h>)
 #import <AppKit/NSSharingService_Private.h>
 #else
-typedef enum {
+typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
     NSSharingServicePickerStyleMenu = 0,
     NSSharingServicePickerStyleRollover = 1,
     NSSharingServicePickerStyleTextSelection = 2,
     NSSharingServicePickerStyleDataDetector = 3
-} NSSharingServicePickerStyle;
+} NS_ENUM_AVAILABLE_MAC(10_10);
+
+typedef NS_ENUM(NSInteger, NSSharingServiceType) {
+    NSSharingServiceTypeShare = 0,
+    NSSharingServiceTypeViewer = 1,
+    NSSharingServiceTypeEditor = 2
+} NS_ENUM_AVAILABLE_MAC(10_10);
+
+typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
+    NSSharingServiceMaskShare = (1 << NSSharingServiceTypeShare),
+    NSSharingServiceMaskViewer = (1 << NSSharingServiceTypeViewer),
+    NSSharingServiceMaskEditor = (1 << NSSharingServiceTypeEditor),
+
+    NSSharingServiceMaskAllTypes = 0xFFFF
+} NS_ENUM_AVAILABLE_MAC(10_10);
 #endif
 
-@interface NSSharingServicePicker (Details)
+@interface NSSharingServicePicker (WKDetails)
 @property NSSharingServicePickerStyle style;
 - (NSMenu *)menu;
+@end
+
+@interface NSSharingService (WKDetails)
++ (NSArray *)sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)maskForFiltering;
 @end
 
 #ifdef __LP64__
@@ -57,7 +75,7 @@ typedef enum {
 @end
 #endif
 
-@interface NSExtension (Details)
+@interface NSExtension (WKDetails)
 + (id)beginMatchingExtensionsWithAttributes:(NSDictionary *)attributes completion:(void (^)(NSArray *matchingExtensions, NSError *error))handler;
 @end
 #endif // __LP64__
@@ -92,6 +110,11 @@ ServicesController::ServicesController()
 #endif // __LP64__
 }
 
+static bool hasCompatibleServicesForItems(NSArray *items)
+{
+    return [NSSharingService sharingServicesForItems:items mask:NSSharingServiceMaskViewer | NSSharingServiceMaskEditor].count;
+}
+
 void ServicesController::refreshExistingServices(bool refreshImmediately)
 {
     if (m_hasPendingRefresh)
@@ -102,16 +125,10 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
     auto refreshTime = dispatch_time(DISPATCH_TIME_NOW, refreshImmediately ? 0 : (int64_t)(1 * NSEC_PER_SEC));
     dispatch_after(refreshTime, m_refreshQueue, ^{
         static NeverDestroyed<NSImage *> image([[NSImage alloc] init]);
-        RetainPtr<NSSharingServicePicker>  picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ image ]]);
-        [picker setStyle:NSSharingServicePickerStyleRollover];
-
-        bool hasImageServices = picker.get().menu;
+        bool hasImageServices = hasCompatibleServicesForItems(@[ image ]);
 
         static NeverDestroyed<NSAttributedString *> attributedString([[NSAttributedString alloc] initWithString:@"a"]);
-        picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ attributedString ]]);
-        [picker setStyle:NSSharingServicePickerStyleTextSelection];
-
-        bool hasSelectionServices = picker.get().menu;
+        bool hasSelectionServices = hasCompatibleServicesForItems(@[ attributedString ]);
 
         static NSAttributedString *attributedStringWithRichContent;
         if (!attributedStringWithRichContent) {
@@ -123,10 +140,7 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
             attributedStringWithRichContent = [richString retain];
         }
 
-        picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:@[ attributedStringWithRichContent ]]);
-        [picker setStyle:NSSharingServicePickerStyleTextSelection];
-
-        bool hasRichContentServices = picker.get().menu;
+        bool hasRichContentServices = hasCompatibleServicesForItems(@[ attributedStringWithRichContent ]);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             bool availableServicesChanged = (hasImageServices != m_hasImageServices) || (hasSelectionServices != m_hasSelectionServices) || (hasRichContentServices != m_hasRichContentServices);
