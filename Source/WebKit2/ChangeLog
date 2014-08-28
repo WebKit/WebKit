@@ -1,3 +1,21 @@
+2014-08-27  Enrica Casucci  <enrica@apple.com>
+
+        textStylingAtPosition returns incorrect values after executing toggleBold, toggleItalic and toggleUnderline.
+        https://bugs.webkit.org/show_bug.cgi?id=136323
+        rdar://problem/18141964
+
+        Reviewed by Antti Koivisto.
+
+        For underline style we need to check typingStyle first and use that information to populate
+        the dictionary. If there is no typing style we can use the render style.
+        We also need to update the editor state for the toggle commands to reflect the state in the UIProcess
+        even for commands that don't change the selection.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::executeEditCommandWithCallback):
+
 2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_uri_response_get_http_headers to WebKit2 GTK+ API
