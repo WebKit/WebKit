@@ -100,7 +100,7 @@ Usage: $programName [options] [options to pass to build system]
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
   --wince                           Build the WinCE port
 
-  --inspector-frontend              Copy changes to the inspector front-end files to the build directory
+  --inspector-frontend              Copy Web Inspector user interface resources to the build directory
 
   --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
   --makeargs=<arguments>            Optional Makefile flags
@@ -241,8 +241,7 @@ if (isAppleMacWebKit()) {
 my $result = 0;
 
 if (isInspectorFrontend()) {
-    $result = copyInspectorFrontendFiles();
-    exit exitStatus($result) if exitStatus($result);
+    die "The --inspector-frontend option is not supported for CMake-based builds." if isCMakeBuild();
     @projects = ("Source/WebInspectorUI");
 }
 

@@ -1,3 +1,17 @@
+2014-08-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        build-webkit --inspector-frontend tries to copy files from old inspector path
+        https://bugs.webkit.org/show_bug.cgi?id=136346
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the old code path for copying inspector resources. It doesn't work.
+        Complain if this option is passed to CMake-based builds.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (copyInspectorFrontendFiles): Deleted.
+
 2014-08-28  Alexey Proskuryakov  <ap@apple.com>
 
         Dashboard metrics page could show longest stretch of red

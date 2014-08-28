@@ -1674,65 +1674,6 @@ sub dieIfWindowsPlatformSDKNotInstalled
     die;
 }
 
-sub copyInspectorFrontendFiles
-{
-    my $productDir = productDir();
-    my $sourceInspectorPath = sourceDir() . "/Source/WebCore/inspector/front-end/";
-    my $inspectorResourcesDirPath = $ENV{"WEBKITINSPECTORRESOURCESDIR"};
-
-    if (!defined($inspectorResourcesDirPath)) {
-        $inspectorResourcesDirPath = "";
-    }
-
-    if (isAppleMacWebKit()) {
-        if (isIOSWebKit()) {
-            $inspectorResourcesDirPath = $productDir . "/WebCore.framework/inspector";
-        } else {
-            $inspectorResourcesDirPath = $productDir . "/WebCore.framework/Resources/inspector";
-        }
-    } elsif (isAppleWinWebKit() || isWinCairo()) {
-        $inspectorResourcesDirPath = $productDir . "/WebKit.resources/inspector";
-    } elsif (isGtk()) {
-        my $prefix = $ENV{"WebKitInstallationPrefix"};
-        $inspectorResourcesDirPath = (defined($prefix) ? $prefix : "/usr/share") . "/webkit-1.0/webinspector";
-    } elsif (isEfl()) {
-        my $prefix = $ENV{"WebKitInstallationPrefix"};
-        $inspectorResourcesDirPath = (defined($prefix) ? $prefix : "/usr/share") . "/ewebkit/webinspector";
-    }
-
-    if (! -d $inspectorResourcesDirPath) {
-        print "*************************************************************\n";
-        print "Cannot find '$inspectorResourcesDirPath'.\n" if (defined($inspectorResourcesDirPath));
-        print "Make sure that you have built WebKit first.\n" if (! -d $productDir || defined($inspectorResourcesDirPath));
-        print "Optionally, set the environment variable 'WebKitInspectorResourcesDir'\n";
-        print "to point to the directory that contains the WebKit Inspector front-end\n";
-        print "files for the built WebCore framework.\n";
-        print "*************************************************************\n";
-        die;
-    }
-
-    if (isAppleMacWebKit()) {
-        my $sourceLocalizedStrings = sourceDir() . "/Source/WebCore/English.lproj/localizedStrings.js";
-        my $destinationLocalizedStrings;
-        if (isIOSWebKit()) {
-            $destinationLocalizedStrings = $productDir . "/WebCore.framework/English.lproj/localizedStrings.js";
-        } else {
-            $destinationLocalizedStrings = $productDir . "/WebCore.framework/Resources/English.lproj/localizedStrings.js";
-        }
-        system "ditto", $sourceLocalizedStrings, $destinationLocalizedStrings;
-    }
-
-    my $exitStatus = system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=*.re2js", "--exclude=.svn/", $sourceInspectorPath, $inspectorResourcesDirPath;
-    return $exitStatus if $exitStatus;
-
-    if (isIOSWebKit()) {
-        chdir($productDir . "/WebCore.framework");
-        return system "zip", "--quiet", "--exclude=*.qrc", "-r", "inspector-remote.zip", "inspector";
-    }
-
-    return 0; # Success; did copy files.
-}
-
 sub buildXCodeProject($$@)
 {
     my ($project, $clean, @extraOptions) = @_;
