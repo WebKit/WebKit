@@ -1392,4 +1392,90 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pas
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
 
 # These features have been disabled on the branch.
+
+# ENABLE_CSS_GRID_LAYOUT
 fast/css-grid-layout [ Skip ]
+ietestcenter/css3/grid/grid-items-003.htm [ Skip ]
+ietestcenter/css3/grid/grid-items-002.htm [ Skip ]
+ietestcenter/css3/grid/grid-column-002.htm [ Skip ]
+fast/css/getComputedStyle/computed-style-without-renderer.html [ Skip ]
+fast/css/getComputedStyle/computed-style.html [ Skip ]
+svg/css/getComputedStyle-basic.xhtml [ Skip ]
+
+# ENABLE_INPUT_TYPE_COLOR
+accessibility/color-well.html [ Skip ]
+accessibility/roles-exposed.html [ Skip ]
+fast/forms/color/color-setrangetext.html [ Skip ]
+fast/forms/color/input-appearance-color.html [ Skip ]
+fast/forms/color/input-value-sanitization-color.html [ Skip ]
+
+# ENABLE_CSS3_CONDITIONAL_RULES 
+css3/supports-cssom.html [ Skip ]
+css3/supports-dom-api.html [ Skip ]
+css3/supports.html [ Skip ]
+
+# ENABLE_PICTURE_SIZES
+fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Skip ]
+fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Skip ]
+fast/dom/HTMLImageElement/sizes/image-sizes-1x.html [ Skip ]
+
+# ENABLE_WILL_REVEAL_EDGE_EVENTS
+fast/events/will-reveal-edge-on-div.html [ Skip ]
+fast/events/will-reveal-edges-body-attributes.html [ Skip ]
+fast/events/will-reveal-edges-event-listeners.html [ Skip ]
+fast/events/will-reveal-edges-window-attributes.html [ Skip ]
+
+# ENABLE_NAVIGATOR_HWCONCURRENCY
+fast/dom/navigator-hardwareConcurrency.html [ Skip ]
+fast/dom/navigator-detached-no-crash.html [ Skip ]
+
+# ENABLE_CANVAS_PATH
+fast/canvas/canvas-path-addPath.html [ Skip ]
+
+# ENABLE_INDIE_UI
+indieui/uiactions.html [ Skip ]
+indieui/create-uirequestevent.html [ Skip ]
+
+# ENABLE_SHARED_WORKERS
+fast/workers/shared-worker-constructor.html [ Skip ]
+fast/workers/shared-worker-context-gc.html [ Skip ]
+fast/workers/shared-worker-event-listener.html [ Skip ]
+fast/workers/shared-worker-exception.html [ Skip ]
+fast/workers/shared-worker-frame-lifecycle.html [ Skip ]
+fast/workers/shared-worker-gc.html [ Skip ]
+fast/workers/shared-worker-in-iframe.html [ Skip ]
+fast/workers/shared-worker-lifecycle.html [ Skip ]
+fast/workers/shared-worker-load-error.html [ Skip ]
+fast/workers/shared-worker-location.html [ Skip ]
+fast/workers/shared-worker-messageevent-source.html [ Skip ]
+fast/workers/shared-worker-name.html [ Skip ]
+fast/workers/shared-worker-navigator.html [ Skip ]
+fast/workers/shared-worker-replace-global-constructor.html [ Skip ]
+fast/workers/shared-worker-replace-self.html [ Skip ]
+fast/workers/shared-worker-script-error.html [ Skip ]
+fast/workers/shared-worker-shared.html [ Skip ]
+fast/workers/shared-worker-simple.html [ Skip ]
+fast/workers/shared-worker-storagequota-query-usage.html [ Skip ]
+fast/workers/worker-crash-with-invalid-location.html [ Skip ]
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Skip ]
+http/tests/security/cross-origin-shared-worker-allowed.html [ Skip ]
+http/tests/security/cross-origin-shared-worker.html [ Skip ]
+http/tests/security/same-origin-shared-worker-blocked.html [ Skip ]
+http/tests/security/storage-blocking-loosened-shared-worker.html [ Skip ]
+http/tests/security/storage-blocking-strengthened-shared-worker.html [ Skip ]
+http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ Skip ]
+http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ Skip ]
+http/tests/workers/shared-worker-importScripts.html [ Skip ]
+http/tests/workers/shared-worker-invalid-url.html [ Skip ]
+http/tests/workers/shared-worker-redirect.html [ Skip ]
+http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ Skip ]
+http/tests/xmlhttprequest/workers/shared-worker-close.html [ Skip ]
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ Skip ]
+http/tests/xmlhttprequest/workers/shared-worker-methods.html [ Skip ]
+http/tests/xmlhttprequest/workers/shared-worker-referer.html [ Skip ]
+http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ Skip ]
+js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
+fast/dom/call-a-constructor-as-a-function.html [ Failure ]
+js/dom/constructor-length.html [ Failure ]
+js/dom/global-constructors-attributes.html [ Failure ]
