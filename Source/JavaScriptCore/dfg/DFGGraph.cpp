@@ -222,24 +222,23 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, inContext(*node->structure(), context));
     if (node->hasTransition())
         out.print(comma, pointerDumpInContext(node->transition(), context));
-    if (node->hasFunction()) {
-        out.print(comma, "function(", pointerDump(node->function()), ", ");
-        if (node->function()->value().isCell()
-            && node->function()->value().asCell()->inherits(JSFunction::info())) {
-            JSFunction* function = jsCast<JSFunction*>(node->function()->value().asCell());
-            if (function->isHostFunction())
-                out.print("<host function>");
-            else
-                out.print(FunctionExecutableDump(function->jsExecutable()));
-        } else
-            out.print("<not JSFunction>");
-        out.print(")");
-    }
-    if (node->hasExecutable()) {
-        if (node->executable()->inherits(FunctionExecutable::info()))
-            out.print(comma, "executable(", FunctionExecutableDump(jsCast<FunctionExecutable*>(node->executable())), ")");
-        else
-            out.print(comma, "executable(not function: ", RawPointer(node->executable()), ")");
+    if (node->hasCellOperand()) {
+        if (!node->cellOperand()->value() || !node->cellOperand()->value().isCell())
+            out.print(comma, "invalid cell operand: ", node->cellOperand()->value());
+        else {
+            out.print(comma, pointerDump(node->cellOperand()->value().asCell()));
+            if (node->cellOperand()->value().isCell()) {
+                CallVariant variant(node->cellOperand()->value().asCell());
+                if (ExecutableBase* executable = variant.executable()) {
+                    if (executable->isHostFunction())
+                        out.print(comma, "<host function>");
+                    else if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable))
+                        out.print(comma, FunctionExecutableDump(functionExecutable));
+                    else
+                        out.print(comma, "<non-function executable>");
+                }
+            }
+        }
     }
     if (node->hasFunctionDeclIndex()) {
         FunctionExecutable* executable = m_codeBlock->functionDecl(node->functionDeclIndex());
@@ -985,10 +984,6 @@ void Graph::visitChildren(SlotVisitor& visitor)
             Node* node = block->at(nodeIndex);
             
             switch (node->op()) {
-            case CheckExecutable:
-                visitor.appendUnbarrieredReadOnlyPointer(node->executable());
-                break;
-                
             case CheckStructure:
                 for (unsigned i = node->structureSet().size(); i--;)
                     visitor.appendUnbarrieredReadOnlyPointer(node->structureSet()[i]);

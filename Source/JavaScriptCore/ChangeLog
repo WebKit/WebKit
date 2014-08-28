@@ -1,3 +1,269 @@
+2014-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to do polymorphic call inlining
+        https://bugs.webkit.org/show_bug.cgi?id=135145
+
+        Reviewed by Geoffrey Garen.
+        
+        Added a log-based high-fidelity call edge profiler that runs in DFG JIT (and optionally
+        baseline JIT) code. Used it to do precise polymorphic inlining in the FTL. Potential
+        inlining sites use the call edge profile if it is available, but they will still fall back
+        on the call inline cache and rare case counts if it's not. Polymorphic inlining means that
+        multiple possible callees can be inlined with a switch to guard them. The slow path may
+        either be an OSR exit or a virtual call.
+        
+        The call edge profiling added in this patch is very precise - it will tell you about every
+        call that has ever happened. It took some effort to reduce the overhead of this profiling.
+        This mostly involved ensuring that we don't do it unnecessarily. For example, we avoid it
+        in the baseline JIT (you can conditionally enable it but it's off by default) and we only do
+        it in the DFG JIT if we know that the regular inline cache profiling wasn't precise enough.
+        I also experimented with reducing the precision of the profiling. This led to a significant
+        reduction in the speed-up, so I avoided this approach. I also explored making log processing
+        concurrent, but that didn't help. Also, I tested the overhead of the log processing and
+        found that most of the overhead of this profiling is actually in putting things into the log
+        rather than in processing the log - that part appears to be surprisingly cheap.
+        
+        Polymorphic inlining could be enabled in the DFG if we enabled baseline call edge profiling,
+        and if we guarded such inlining sites with some profiling mechanism to detect
+        polyvariant monomorphisation opportunities (where the callsite being inlined reveals that
+        it's actually monomorphic).
+        
+        This is a ~28% speed-up on deltablue and a ~7% speed-up on richards, with small speed-ups on
+        other programs as well. It's about a 2% speed-up on Octane version 2, and never a regression
+        on anything we care about. Some aggregates, like V8Spider, see a regression. This is
+        highlighting the increase in profiling overhead. But since this doesn't show up on any major
+        score (code-load or SunSpider), it's probably not relevant.
+        
+        Relanding after fixing debug assertions in fast/storage/serialized-script-value.html.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallEdge.cpp: Added.
+        (JSC::CallEdge::dump):
+        * bytecode/CallEdge.h: Added.
+        (JSC::CallEdge::operator!):
+        (JSC::CallEdge::callee):
+        (JSC::CallEdge::count):
+        (JSC::CallEdge::despecifiedClosure):
+        (JSC::CallEdge::CallEdge):
+        * bytecode/CallEdgeProfile.cpp: Added.
+        (JSC::CallEdgeProfile::callEdges):
+        (JSC::CallEdgeProfile::numCallsToKnownCells):
+        (JSC::worthDespecifying):
+        (JSC::CallEdgeProfile::worthDespecifying):
+        (JSC::CallEdgeProfile::visitWeak):
+        (JSC::CallEdgeProfile::addSlow):
+        (JSC::CallEdgeProfile::mergeBack):
+        (JSC::CallEdgeProfile::fadeByHalf):
+        (JSC::CallEdgeLog::CallEdgeLog):
+        (JSC::CallEdgeLog::~CallEdgeLog):
+        (JSC::CallEdgeLog::isEnabled):
+        (JSC::operationProcessCallEdgeLog):
+        (JSC::CallEdgeLog::emitLogCode):
+        (JSC::CallEdgeLog::processLog):
+        * bytecode/CallEdgeProfile.h: Added.
+        (JSC::CallEdgeProfile::numCallsToNotCell):
+        (JSC::CallEdgeProfile::numCallsToUnknownCell):
+        (JSC::CallEdgeProfile::totalCalls):
+        * bytecode/CallEdgeProfileInlines.h: Added.
+        (JSC::CallEdgeProfile::CallEdgeProfile):
+        (JSC::CallEdgeProfile::add):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        (JSC::CallLinkStatus::computeFromCallEdgeProfile):
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        (JSC::CallLinkStatus::isClosureCall):
+        (JSC::CallLinkStatus::makeClosureCall):
+        (JSC::CallLinkStatus::dump):
+        (JSC::CallLinkStatus::function): Deleted.
+        (JSC::CallLinkStatus::internalFunction): Deleted.
+        (JSC::CallLinkStatus::intrinsicFor): Deleted.
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::isSet):
+        (JSC::CallLinkStatus::couldTakeSlowPath):
+        (JSC::CallLinkStatus::edges):
+        (JSC::CallLinkStatus::size):
+        (JSC::CallLinkStatus::at):
+        (JSC::CallLinkStatus::operator[]):
+        (JSC::CallLinkStatus::canOptimize):
+        (JSC::CallLinkStatus::canTrustCounts):
+        (JSC::CallLinkStatus::isClosureCall): Deleted.
+        (JSC::CallLinkStatus::callTarget): Deleted.
+        (JSC::CallLinkStatus::executable): Deleted.
+        (JSC::CallLinkStatus::makeClosureCall): Deleted.
+        * bytecode/CallVariant.cpp: Added.
+        (JSC::CallVariant::dump):
+        * bytecode/CallVariant.h: Added.
+        (JSC::CallVariant::CallVariant):
+        (JSC::CallVariant::operator!):
+        (JSC::CallVariant::despecifiedClosure):
+        (JSC::CallVariant::rawCalleeCell):
+        (JSC::CallVariant::internalFunction):
+        (JSC::CallVariant::function):
+        (JSC::CallVariant::isClosureCall):
+        (JSC::CallVariant::executable):
+        (JSC::CallVariant::nonExecutableCallee):
+        (JSC::CallVariant::intrinsicFor):
+        (JSC::CallVariant::functionExecutable):
+        (JSC::CallVariant::isHashTableDeletedValue):
+        (JSC::CallVariant::operator==):
+        (JSC::CallVariant::operator!=):
+        (JSC::CallVariant::operator<):
+        (JSC::CallVariant::operator>):
+        (JSC::CallVariant::operator<=):
+        (JSC::CallVariant::operator>=):
+        (JSC::CallVariant::hash):
+        (JSC::CallVariant::deletedToken):
+        (JSC::CallVariantHash::hash):
+        (JSC::CallVariantHash::equal):
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::isNormalCall):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::~BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::takeLast):
+        (JSC::DFG::BasicBlock::didLink):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::processSetLocalQueue):
+        (JSC::DFG::ByteCodeParser::removeLastNodeFromGraph):
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        (JSC::DFG::ByteCodeParser::undoFunctionChecks):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::cancelLinkingForBlock):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::prepareToParseBlock):
+        (JSC::DFG::ByteCodeParser::clearCaches):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::linkBlocks):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::getBlocksInPreOrder):
+        (JSC::DFG::Graph::visitChildren):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::switchLookupValue):
+        * dfg/DFGLazyJSValue.h:
+        (JSC::DFG::LazyJSValue::switchLookupValue): Deleted.
+        * dfg/DFGNode.cpp:
+        (WTF::printInternal):
+        * dfg/DFGNode.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::cellOperand):
+        (JSC::DFG::Node::setCellOperand):
+        (JSC::DFG::Node::canBeKnownFunction): Deleted.
+        (JSC::DFG::Node::hasKnownFunction): Deleted.
+        (JSC::DFG::Node::knownFunction): Deleted.
+        (JSC::DFG::Node::giveKnownFunction): Deleted.
+        (JSC::DFG::Node::hasFunction): Deleted.
+        (JSC::DFG::Node::function): Deleted.
+        (JSC::DFG::Node::hasExecutable): Deleted.
+        (JSC::DFG::Node::executable): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPhantomCanonicalizationPhase.cpp:
+        (JSC::DFG::PhantomCanonicalizationPhase::run):
+        * dfg/DFGPhantomRemovalPhase.cpp:
+        (JSC::DFG::PhantomRemovalPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitch):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::removeFTLProfiling):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::ftlUnreachable):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckCell):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckBadCell):
+        (JSC::FTL::LowerDFGToLLVM::compileGetExecutable):
+        (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::buildSwitch):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckFunction): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileCheckExecutable): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeValue):
+        (JSC::AssemblyHelpers::loadValue):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments):
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::uses):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::ensureCallEdgeLog):
+        * runtime/VM.h:
+        * tests/stress/fold-profiled-call-to-call.js: Added. This test pinpoints the problem we saw in fast/storage/serialized-script-value.html.
+        * tests/stress/new-array-then-exit.js: Added.
+        * tests/stress/poly-call-exit-this.js: Added.
+        * tests/stress/poly-call-exit.js: Added.
+
 2014-08-28  Julien Brianceau   <jbriance@cisco.com>
 
         Correct GC length unit and prevent division by 0 in showObjectStatistics.

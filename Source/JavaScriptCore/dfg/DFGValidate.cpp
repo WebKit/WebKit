@@ -200,7 +200,8 @@ public:
                 
                 VALIDATE((node), !mayExit(m_graph, node) || node->origin.forExit.isSet());
                 VALIDATE((node), !node->hasStructure() || !!node->structure());
-                VALIDATE((node), !node->hasFunction() || node->function()->value().isFunction());
+                VALIDATE((node), !node->hasCellOperand() || node->cellOperand()->value().isCell());
+                VALIDATE((node), !node->hasCellOperand() || !!node->cellOperand()->value());
                  
                 if (!(node->flags() & NodeHasVarArgs)) {
                     if (!node->child2())

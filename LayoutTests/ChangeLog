@@ -1,3 +1,17 @@
+2014-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to do polymorphic call inlining
+        https://bugs.webkit.org/show_bug.cgi?id=135145
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/script-tests/simple-poly-call-nested.js: Added.
+        * js/regress/script-tests/simple-poly-call.js: Added.
+        * js/regress/simple-poly-call-expected.txt: Added.
+        * js/regress/simple-poly-call-nested-expected.txt: Added.
+        * js/regress/simple-poly-call-nested.html: Added.
+        * js/regress/simple-poly-call.html: Added.
+
 2014-08-28  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect selection clearing on a document without regions

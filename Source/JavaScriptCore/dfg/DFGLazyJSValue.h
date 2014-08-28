@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGCommon.h"
 #include "DFGFrozenValue.h"
 #include <wtf/text/StringImpl.h>
 
@@ -95,21 +96,7 @@ public:
     
     TriState strictEqual(const LazyJSValue& other) const;
     
-    unsigned switchLookupValue() const
-    {
-        // NB. Not every kind of JSValue will be able to give you a switch lookup
-        // value, and this method will assert, or do bad things, if you use it
-        // for a kind of value that can't.
-        switch (m_kind) {
-        case KnownValue:
-            return value()->value().asInt32();
-        case SingleCharacterString:
-            return character();
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return 0;
-        }
-    }
+    uintptr_t switchLookupValue(SwitchKind) const;
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

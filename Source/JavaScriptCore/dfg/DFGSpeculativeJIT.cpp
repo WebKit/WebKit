@@ -5354,6 +5354,10 @@ void SpeculativeJIT::emitSwitch(Node* node)
     case SwitchString: {
         emitSwitchString(node, data);
         return;
+    }
+    case SwitchCell: {
+        DFG_CRASH(m_jit.graph(), node, "Bad switch kind");
+        return;
     } }
     RELEASE_ASSERT_NOT_REACHED();
 }

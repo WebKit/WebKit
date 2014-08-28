@@ -58,7 +58,9 @@ BasicBlock::BasicBlock(
 {
 }
 
-BasicBlock::~BasicBlock() { }
+BasicBlock::~BasicBlock()
+{
+}
 
 void BasicBlock::ensureLocals(unsigned newNumLocals)
 {

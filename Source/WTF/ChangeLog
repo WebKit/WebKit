@@ -1,3 +1,23 @@
+2014-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to do polymorphic call inlining
+        https://bugs.webkit.org/show_bug.cgi?id=135145
+
+        Reviewed by Geoffrey Garen.
+        
+        Add some power that I need for call edge profiling.
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr<T>::createTransactionally):
+        * wtf/Spectrum.h:
+        (WTF::Spectrum::add):
+        (WTF::Spectrum::addAll):
+        (WTF::Spectrum::get):
+        (WTF::Spectrum::size):
+        (WTF::Spectrum::KeyAndCount::KeyAndCount):
+        (WTF::Spectrum::clear):
+        (WTF::Spectrum::removeIf):
+
 2014-08-27  Nico Weber  <thakis@chromium.org>
 
         Delete a MSVS2010 workaround.

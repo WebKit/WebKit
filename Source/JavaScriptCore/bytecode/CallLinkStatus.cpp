@@ -32,54 +32,22 @@
 #include "LLIntCallLinkInfo.h"
 #include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/ListDump.h>
 
 namespace JSC {
 
 static const bool verbose = false;
 
 CallLinkStatus::CallLinkStatus(JSValue value)
-    : m_callTarget(value)
-    , m_executable(0)
-    , m_couldTakeSlowPath(false)
+    : m_couldTakeSlowPath(false)
     , m_isProved(false)
 {
-    if (!value || !value.isCell())
+    if (!value || !value.isCell()) {
+        m_couldTakeSlowPath = true;
         return;
+    }
     
-    if (!value.asCell()->inherits(JSFunction::info()))
-        return;
-    
-    m_executable = jsCast<JSFunction*>(value.asCell())->executable();
-}
-
-JSFunction* CallLinkStatus::function() const
-{
-    if (!m_callTarget || !m_callTarget.isCell())
-        return 0;
-    
-    if (!m_callTarget.asCell()->inherits(JSFunction::info()))
-        return 0;
-    
-    return jsCast<JSFunction*>(m_callTarget.asCell());
-}
-
-InternalFunction* CallLinkStatus::internalFunction() const
-{
-    if (!m_callTarget || !m_callTarget.isCell())
-        return 0;
-    
-    if (!m_callTarget.asCell()->inherits(InternalFunction::info()))
-        return 0;
-    
-    return jsCast<InternalFunction*>(m_callTarget.asCell());
-}
-
-Intrinsic CallLinkStatus::intrinsicFor(CodeSpecializationKind kind) const
-{
-    if (!m_executable)
-        return NoIntrinsic;
-    
-    return m_executable->intrinsicFor(kind);
+    m_edges.append(CallEdge(CallVariant(value.asCell()), 1));
 }
 
 CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
@@ -87,7 +55,7 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJITLocker& locke
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(DFG_JIT)
-    if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction))) {
+    if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell))) {
         // We could force this to be a closure call, but instead we'll just assume that it
         // takes slow path.
         return takesSlowPath();
@@ -125,7 +93,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     if (!callLinkInfo)
         return computeFromLLInt(locker, profiledBlock, bytecodeIndex);
     
-    return computeFor(locker, *callLinkInfo, exitSiteData);
+    return computeFor(locker, profiledBlock, *callLinkInfo, exitSiteData);
 #else
     return CallLinkStatus();
 #endif
@@ -139,10 +107,10 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
     
 #if ENABLE(DFG_JIT)
     exitSiteData.m_takesSlowPath =
-        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitingJITType))
+        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType, exitingJITType))
         || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable, exitingJITType));
     exitSiteData.m_badFunction =
-        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadFunction, exitingJITType));
+        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell, exitingJITType));
 #else
     UNUSED_PARAM(locker);
     UNUSED_PARAM(profiledBlock);
@@ -154,7 +122,34 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
 }
 
 #if ENABLE(JIT)
-CallLinkStatus CallLinkStatus::computeFor(const ConcurrentJITLocker&, CallLinkInfo& callLinkInfo)
+CallLinkStatus CallLinkStatus::computeFor(
+    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, CallLinkInfo& callLinkInfo)
+{
+    // We don't really need this, but anytime we have to debug this code, it becomes indispensable.
+    UNUSED_PARAM(profiledBlock);
+    
+    if (Options::callStatusShouldUseCallEdgeProfile()) {
+        // Always trust the call edge profile over anything else since this has precise counts.
+        // It can make the best possible decision because it never "forgets" what happened for any
+        // call, with the exception of fading out the counts of old calls (for example if the
+        // counter type is 16-bit then calls that happened more than 2^16 calls ago are given half
+        // weight, and this compounds for every 2^15 [sic] calls after that). The combination of
+        // high fidelity for recent calls and fading for older calls makes this the most useful
+        // mechamism of choosing how to optimize future calls.
+        CallEdgeProfile* edgeProfile = callLinkInfo.callEdgeProfile.get();
+        WTF::loadLoadFence();
+        if (edgeProfile) {
+            CallLinkStatus result = computeFromCallEdgeProfile(edgeProfile);
+            if (!!result)
+                return result;
+        }
+    }
+    
+    return computeFromCallLinkInfo(locker, callLinkInfo);
+}
+
+CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
+    const ConcurrentJITLocker&, CallLinkInfo& callLinkInfo)
 {
     // Note that despite requiring that the locker is held, this code is racy with respect
     // to the CallLinkInfo: it may get cleared while this code runs! This is because
@@ -177,7 +172,7 @@ CallLinkStatus CallLinkStatus::computeFor(const ConcurrentJITLocker&, CallLinkIn
     
     JSFunction* target = callLinkInfo.lastSeenCallee.get();
     if (!target)
-        return CallLinkStatus();
+        return takesSlowPath();
     
     if (callLinkInfo.hasSeenClosure)
         return CallLinkStatus(target->executable());
@@ -185,15 +180,43 @@ CallLinkStatus CallLinkStatus::computeFor(const ConcurrentJITLocker&, CallLinkIn
     return CallLinkStatus(target);
 }
 
-CallLinkStatus CallLinkStatus::computeFor(
-    const ConcurrentJITLocker& locker, CallLinkInfo& callLinkInfo, ExitSiteData exitSiteData)
+CallLinkStatus CallLinkStatus::computeFromCallEdgeProfile(CallEdgeProfile* edgeProfile)
 {
-    if (exitSiteData.m_takesSlowPath)
+    // In cases where the call edge profile saw nothing, use the CallLinkInfo instead.
+    if (!edgeProfile->totalCalls())
+        return CallLinkStatus();
+    
+    // To do anything meaningful, we require that the majority of calls are to something we
+    // know how to handle.
+    unsigned numCallsToKnown = edgeProfile->numCallsToKnownCells();
+    unsigned numCallsToUnknown = edgeProfile->numCallsToNotCell() + edgeProfile->numCallsToUnknownCell();
+    
+    // We require that the majority of calls were to something that we could possibly inline.
+    if (numCallsToKnown <= numCallsToUnknown)
         return takesSlowPath();
     
-    CallLinkStatus result = computeFor(locker, callLinkInfo);
+    // We require that the number of such calls is greater than some minimal threshold, so that we
+    // avoid inlining completely cold calls.
+    if (numCallsToKnown < Options::frequentCallThreshold())
+        return takesSlowPath();
+    
+    CallLinkStatus result;
+    result.m_edges = edgeProfile->callEdges();
+    result.m_couldTakeSlowPath = !!numCallsToUnknown;
+    result.m_canTrustCounts = true;
+    
+    return result;
+}
+
+CallLinkStatus CallLinkStatus::computeFor(
+    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, CallLinkInfo& callLinkInfo,
+    ExitSiteData exitSiteData)
+{
+    CallLinkStatus result = computeFor(locker, profiledBlock, callLinkInfo);
     if (exitSiteData.m_badFunction)
         result.makeClosureCall();
+    if (exitSiteData.m_takesSlowPath)
+        result.m_couldTakeSlowPath = true;
     
     return result;
 }
@@ -227,7 +250,7 @@ void CallLinkStatus::computeDFGStatuses(
         
         {
             ConcurrentJITLocker locker(dfgCodeBlock->m_lock);
-            map.add(info.codeOrigin, computeFor(locker, info, exitSiteData));
+            map.add(info.codeOrigin, computeFor(locker, dfgCodeBlock, info, exitSiteData));
         }
     }
 #else
@@ -256,6 +279,31 @@ CallLinkStatus CallLinkStatus::computeFor(
     return computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap);
 }
 
+bool CallLinkStatus::isClosureCall() const
+{
+    for (unsigned i = m_edges.size(); i--;) {
+        if (m_edges[i].callee().isClosureCall())
+            return true;
+    }
+    return false;
+}
+
+void CallLinkStatus::makeClosureCall()
+{
+    ASSERT(!m_isProved);
+    for (unsigned i = m_edges.size(); i--;)
+        m_edges[i] = m_edges[i].despecifiedClosure();
+    
+    if (!ASSERT_DISABLED) {
+        // Doing this should not have created duplicates, because the CallEdgeProfile
+        // should despecify closures if doing so would reduce the number of known callees.
+        for (unsigned i = 0; i < m_edges.size(); ++i) {
+            for (unsigned j = i + 1; j < m_edges.size(); ++j)
+                ASSERT(m_edges[i].callee() != m_edges[j].callee());
+        }
+    }
+}
+
 void CallLinkStatus::dump(PrintStream& out) const
 {
     if (!isSet()) {
@@ -271,14 +319,7 @@ void CallLinkStatus::dump(PrintStream& out) const
     if (m_couldTakeSlowPath)
         out.print(comma, "Could Take Slow Path");
     
-    if (m_callTarget)
-        out.print(comma, "Known target: ", m_callTarget);
-    
-    if (m_executable) {
-        out.print(comma, "Executable/CallHash: ", RawPointer(m_executable));
-        if (!isCompilationThread())
-            out.print("/", m_executable->hashFor(CodeForCall));
-    }
+    out.print(listDump(m_edges));
 }
 
 } // namespace JSC

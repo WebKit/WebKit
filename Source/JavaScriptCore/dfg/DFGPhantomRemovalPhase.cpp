@@ -125,6 +125,7 @@ public:
                     }
                     
                     if (node->children.isEmpty()) {
+                        m_graph.m_allocator.free(node);
                         changed = true;
                         continue;
                     }
@@ -142,6 +143,7 @@ public:
                         changed = true;
                     }
                     if (node->children.isEmpty()) {
+                        m_graph.m_allocator.free(node);
                         changed = true;
                         continue;
                     }
@@ -149,8 +151,10 @@ public:
                 }
                     
                 case HardPhantom: {
-                    if (node->children.isEmpty())
+                    if (node->children.isEmpty()) {
+                        m_graph.m_allocator.free(node);
                         continue;
+                    }
                     break;
                 }
                     

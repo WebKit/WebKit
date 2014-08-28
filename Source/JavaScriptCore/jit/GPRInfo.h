@@ -60,6 +60,8 @@ public:
     GPRReg tagGPR() const { return InvalidGPRReg; }
     GPRReg payloadGPR() const { return m_gpr; }
     
+    bool uses(GPRReg gpr) const { return m_gpr == gpr; }
+    
 private:
     GPRReg m_gpr;
 };
@@ -169,6 +171,8 @@ public:
         return tagGPR();
     }
 
+    bool uses(GPRReg gpr) const { return m_tagGPR == gpr || m_payloadGPR == gpr; }
+    
 private:
     int8_t m_tagGPR;
     int8_t m_payloadGPR;

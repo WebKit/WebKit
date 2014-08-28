@@ -154,6 +154,17 @@ struct InlineCallFrame {
         return CodeForCall;
     }
     
+    static bool isNormalCall(Kind kind)
+    {
+        switch (kind) {
+        case Call:
+        case Construct:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     Vector<ValueRecovery> arguments; // Includes 'this'.
     WriteBarrier<ScriptExecutable> executable;
     ValueRecovery calleeRecovery;
