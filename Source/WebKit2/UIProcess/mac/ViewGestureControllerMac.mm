@@ -608,8 +608,6 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() below:layerAdjacentToSnapshot];
     else
         [snapshotLayerParent insertSublayer:m_swipeLayer.get() above:layerAdjacentToSnapshot];
-
-    didMoveSwipeSnapshotLayer();
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetItem, double progress, SwipeDirection direction)

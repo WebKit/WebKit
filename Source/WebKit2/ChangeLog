@@ -1,5 +1,25 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173093
+
+    2014-08-28  Tim Horton  <timothy_horton@apple.com>
+
+            _setDidMoveSwipeSnapshotCallback's block should only be called if the snapshot is going to move
+            https://bugs.webkit.org/show_bug.cgi?id=136354
+            <rdar://problem/18167791>
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Update the comment to note the new behavior.
+
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            Don't call the block until the snapshot is actually moving (if the snapshot
+            never moves because it's behind the live view, don't call the block at all).
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173092
 
     2014-08-28  Tim Horton  <timothy_horton@apple.com>
