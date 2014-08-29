@@ -1,3 +1,18 @@
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173097
+
+    2014-08-28  Enrica Casucci  <enrica@apple.com>
+
+            Can't hit tab key more than 3 times continuously.
+            https://bugs.webkit.org/show_bug.cgi?id=136357
+            rdar://problem/17927266
+
+            Reviewed by Dean Jackson.
+
+            * fast/css/multiple-tabs-expected.html: Added.
+            * fast/css/multiple-tabs.html: Added.
+
 2014-08-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Skip all fast/forms/color tests. <input type=color> is disabled on the

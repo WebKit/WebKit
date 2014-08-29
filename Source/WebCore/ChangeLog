@@ -1,5 +1,25 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173097
+
+    2014-08-28  Enrica Casucci  <enrica@apple.com>
+
+            Can't hit tab key more than 3 times continuously.
+            https://bugs.webkit.org/show_bug.cgi?id=136357
+            rdar://problem/17927266
+
+            Reviewed by Dean Jackson.
+
+            Test: fast/css/multiple-tabs.html
+
+            When computing the tabWidth disregard increments of less than half the size of the space character
+            for the given font.
+
+            * platform/graphics/Font.h:
+            (WebCore::Font::tabWidth):
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173080
 
     2014-08-28  Pratik Solanki  <psolanki@apple.com>

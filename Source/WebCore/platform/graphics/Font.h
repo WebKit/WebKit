@@ -384,7 +384,8 @@ inline float Font::tabWidth(const SimpleFontData& fontData, unsigned tabSize, fl
     if (!tabSize)
         return letterSpacing();
     float tabWidth = tabSize * fontData.spaceWidth() + letterSpacing();
-    return tabWidth - fmodf(position, tabWidth);
+    float tabDeltaWidth = tabWidth - fmodf(position, tabWidth);
+    return (tabDeltaWidth < fontData.spaceWidth() / 2) ? tabWidth : tabDeltaWidth;
 }
 
 }
