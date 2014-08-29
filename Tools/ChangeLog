@@ -1,3 +1,15 @@
+2014-08-28  Daniel Bates  <dabates@apple.com>
+
+        [Win] update-webkit should update auxiliary libs by default
+
+        Reviewed by Dan Bernstein.
+
+        The change set <http://trac.webkit.org/changeset/172795> inadvertently prevented update-webkit
+        from updating the Windows auxiliary libs by default. We should make update-webkit update the
+        Windows auxiliary libs by default. This will make its behavior match its usage text.
+
+        * Scripts/update-webkit:
+
 2014-08-28  Brian J. Burg  <burg@cs.washington.edu>
 
         build-webkit --inspector-frontend tries to copy files from old inspector path

@@ -47,7 +47,7 @@ determineIsWinCairo();
 
 chdirWebKit();
 
-my $auxiliaryLibs;
+my $auxiliaryLibs = 1;
 my $internal;
 
 my $getOptionsResult = GetOptions(
