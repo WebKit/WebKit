@@ -204,6 +204,11 @@ public:
         m_offset = offset;
     }
 
+    void setThisValue(JSValue thisValue)
+    {
+        m_thisValue = thisValue;
+    }
+
     void setUndefined()
     {
         m_data.value = JSValue::encode(jsUndefined());
@@ -235,7 +240,7 @@ private:
 
     PropertyType m_propertyType;
     PropertyOffset m_offset;
-    const JSValue m_thisValue;
+    JSValue m_thisValue;
     JSObject* m_slotBase;
     WatchpointSet* m_watchpointSet;
     CacheabilityType m_cacheability;

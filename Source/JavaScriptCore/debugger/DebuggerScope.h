@@ -30,15 +30,18 @@
 
 namespace JSC {
 
+class DebuggerCallFrame;
+class JSScope;
+
 class DebuggerScope : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static DebuggerScope* create(VM& vm, JSObject* object)
+    static DebuggerScope* create(VM& vm, JSScope* scope)
     {
-        DebuggerScope* activation = new (NotNull, allocateCell<DebuggerScope>(vm.heap)) DebuggerScope(vm);
-        activation->finishCreation(vm, object);
-        return activation;
+        DebuggerScope* debuggerScope = new (NotNull, allocateCell<DebuggerScope>(vm.heap)) DebuggerScope(vm, scope);
+        debuggerScope->finishCreation(vm);
+        return debuggerScope;
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -51,20 +54,63 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) 
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, jsNull(), TypeInfo(ObjectType, StructureFlags), info()); 
     }
 
-protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
+    class iterator {
+    public:
+        iterator(DebuggerScope* node)
+            : m_node(node)
+        {
+        }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* activation);
+        DebuggerScope* get() { return m_node; }
+        iterator& operator++() { m_node = m_node->next(); return *this; }
+        // postfix ++ intentionally omitted
+
+        bool operator==(const iterator& other) const { return m_node == other.m_node; }
+        bool operator!=(const iterator& other) const { return m_node != other.m_node; }
+
+    private:
+        DebuggerScope* m_node;
+    };
+
+    iterator begin();
+    iterator end();
+    DebuggerScope* next();
+
+    void invalidateChain();
+    bool isValid() const { return !!m_scope; }
+
+    bool isWithScope() const;
+    bool isGlobalScope() const;
+    bool isFunctionOrEvalScope() const;
 
 private:
-    JS_EXPORT_PRIVATE DebuggerScope(VM&);
-    WriteBarrier<JSActivation> m_activation;
+    JS_EXPORT_PRIVATE DebuggerScope(VM&, JSScope*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
+
+    JSScope* jsScope() const { return m_scope.get(); }
+
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
+
+    WriteBarrier<JSScope> m_scope;
+    WriteBarrier<DebuggerScope> m_next;
+
+    friend class DebuggerCallFrame;
 };
+
+inline DebuggerScope::iterator DebuggerScope::begin()
+{
+    return iterator(this); 
+}
+
+inline DebuggerScope::iterator DebuggerScope::end()
+{ 
+    return iterator(0); 
+}
 
 } // namespace JSC
 

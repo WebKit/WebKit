@@ -1,3 +1,18 @@
+2014-08-28  Mark Lam  <mark.lam@apple.com>
+
+        DebuggerCallFrame::scope() should return a DebuggerScope.
+        <https://webkit.org/b/134420>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Rolling back in r170680 with the fix for <https://webkit.org/b/135656>.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::attachDebugger):
+        - We should acquire the JSLock before modifying a JS global object.
+
 2014-08-28  Enrica Casucci  <enrica@apple.com>
 
         Can't hit tab key more than 3 times continuously.

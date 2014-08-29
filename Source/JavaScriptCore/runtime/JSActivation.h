@@ -81,7 +81,7 @@ public:
         
     DECLARE_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(ActivationObjectType, StructureFlags), info()); }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(ActivationObjectType, StructureFlags), info()); }
 
     WriteBarrierBase<Unknown>& registerAt(int) const;
     bool isValidIndex(int) const;

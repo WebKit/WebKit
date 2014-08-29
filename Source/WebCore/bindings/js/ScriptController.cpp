@@ -307,6 +307,7 @@ void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* de
         return;
 
     JSDOMWindow* globalObject = shell->window();
+    JSLockHolder lock(globalObject->vm());
     if (debugger)
         debugger->attach(globalObject);
     else if (JSC::Debugger* currentDebugger = globalObject->debugger())

@@ -2782,5 +2782,4 @@ void JSObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Proper
     }
 }
 
-
 } // namespace JSC

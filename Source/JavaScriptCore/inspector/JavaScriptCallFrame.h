@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013-2014 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ public:
 
     String functionName() const { return m_debuggerCallFrame->functionName(); }
     JSC::DebuggerCallFrame::Type type() const { return m_debuggerCallFrame->type(); }
-    JSC::JSScope* scopeChain() const { return m_debuggerCallFrame->scope(); }
+    JSC::DebuggerScope* scopeChain() const { return m_debuggerCallFrame->scope(); }
     JSC::JSGlobalObject* vmEntryGlobalObject() const { return m_debuggerCallFrame->vmEntryGlobalObject(); }
 
     JSC::JSValue thisValue() const { return m_debuggerCallFrame->thisValue(); }

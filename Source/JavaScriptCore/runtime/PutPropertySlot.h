@@ -80,6 +80,11 @@ namespace JSC {
             m_offset = offset;
         }
 
+        void setThisValue(JSValue thisValue)
+        {
+            m_thisValue = thisValue;
+        }
+
         PutValueFunc customSetter() const { return m_putFunction; }
 
         Context context() const { return static_cast<Context>(m_context); }

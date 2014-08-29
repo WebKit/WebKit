@@ -1,3 +1,141 @@
+2014-08-28  Mark Lam  <mark.lam@apple.com>
+
+        DebuggerCallFrame::scope() should return a DebuggerScope.
+        <https://webkit.org/b/134420>
+
+        Reviewed by Geoffrey Garen.
+
+        Rolling back in r170680 with the fix for <https://webkit.org/b/135656>.
+
+        Previously, DebuggerCallFrame::scope() returns a JSActivation (and relevant
+        peers) which the WebInspector will use to introspect CallFrame variables.
+        Instead, we should be returning a DebuggerScope as an abstraction layer that
+        provides the introspection functionality that the WebInspector needs.  This
+        is the first step towards not forcing every frame to have a JSActivation
+        object just because the debugger is enabled.
+
+        1. Instantiate the debuggerScopeStructure as a member of the JSGlobalObject
+           instead of the VM.  This allows JSObject::globalObject() to be able to
+           return the global object for the DebuggerScope.
+
+        2. On the DebuggerScope's life-cycle management:
+
+           The DebuggerCallFrame is designed to be "valid" only during a debugging session
+           (while the debugger is broken) through the use of a DebuggerCallFrameScope in
+           Debugger::pauseIfNeeded().  Once the debugger resumes from the break, the
+           DebuggerCallFrameScope destructs, and the DebuggerCallFrame will be invalidated.
+           We can't guarantee (from this code alone) that the Inspector code isn't still
+           holding a ref to the DebuggerCallFrame (though they shouldn't), but by contract,
+           the frame will be invalidated, and any attempt to query it will return null values.
+           This is pre-existing behavior.
+
+           Now, we're adding the DebuggerScope into the picture.  While a single debugger
+           pause session is in progress, the Inspector may request the scope from the
+           DebuggerCallFrame.  While the DebuggerCallFrame is still valid, we want
+           DebuggerCallFrame::scope() to always return the same DebuggerScope object.
+           This is why we hold on to the DebuggerScope with a strong ref.
+
+           If we use a weak ref instead, the following cooky behavior can manifest:
+           1. The Inspector calls Debugger::scope() to get the top scope.
+           2. The Inspector iterates down the scope chain and is now only holding a
+              reference to a parent scope.  It is no longer referencing the top scope.
+           3. A GC occurs, and the DebuggerCallFrame's weak m_scope ref to the top scope
+              gets cleared.
+           4. The Inspector calls DebuggerCallFrame::scope() to get the top scope again but gets
+              a different DebuggerScope instance.
+           5. The Inspector iterates down the scope chain but never sees the parent scope
+              instance that retained a ref to in step 2 above.  This is because when iterating
+              this new DebuggerScope instance (which has no knowledge of the previous parent
+              DebuggerScope instance), a new DebuggerScope instance will get created for the
+              same parent scope. 
+
+           Since the DebuggerScope is a JSObject, its liveness is determined by its reachability.
+           However, its "validity" is determined by the life-cycle of its owner DebuggerCallFrame.
+           When the owner DebuggerCallFrame gets invalidated, its debugger scope chain (if
+           instantiated) will also get invalidated.  This is why we need the
+           DebuggerScope::invalidateChain() method.  The Inspector should not be using the
+           DebuggerScope instance after its owner DebuggerCallFrame is invalidated.  If it does,
+           those methods will do nothing or returned a failed status.
+
+        Fix for <https://webkit.org/b/135656>:
+        3. DebuggerScope::getOwnPropertySlot() and DebuggerScope::put() need to set
+           m_thisValue in the returned slot to the wrapped scope object.  Previously,
+           it was pointing to the DebuggerScope though the rest of the fields in the
+           returned slot will be set to data pertaining the wrapped scope object.
+
+        4. DebuggerScope::getOwnPropertySlot() will invoke getPropertySlot() on its
+           wrapped scope.  This is because JSObject::getPropertySlot() cannot be
+           overridden, and when called on a DebuggerScope, will not know to look in
+           the ptototype chain of the DebuggerScope's wrapped scope.  Hence, we'll
+           treat all properties in the wrapped scope as own properties in the
+           DebuggerScope.  This is fine because the WebInspector does not presently
+           care about where in the prototype chain the scope property comes from.
+
+           Note that the DebuggerScope and the JSActivation objects that it wraps do
+           not have prototypes.  They are always jsNull().  This works perfectly with
+           the above change to use getPropertySlot() instead of getOwnPropertySlot().
+           To make this an explicit invariant, I also changed DebuggerScope::createStructure()
+           and JSActivation::createStructure() to not take a prototype argument, and
+           to always use jsNull() for their prototype value.
+
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::evaluate):
+        (JSC::DebuggerCallFrame::invalidate):
+        * debugger/DebuggerCallFrame.h:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::DebuggerScope):
+        (JSC::DebuggerScope::finishCreation):
+        (JSC::DebuggerScope::visitChildren):
+        (JSC::DebuggerScope::className):
+        (JSC::DebuggerScope::getOwnPropertySlot):
+        (JSC::DebuggerScope::put):
+        (JSC::DebuggerScope::deleteProperty):
+        (JSC::DebuggerScope::getOwnPropertyNames):
+        (JSC::DebuggerScope::defineOwnProperty):
+        (JSC::DebuggerScope::next):
+        (JSC::DebuggerScope::invalidateChain):
+        (JSC::DebuggerScope::isWithScope):
+        (JSC::DebuggerScope::isGlobalScope):
+        (JSC::DebuggerScope::isFunctionOrEvalScope):
+        * debugger/DebuggerScope.h:
+        (JSC::DebuggerScope::create):
+        (JSC::DebuggerScope::createStructure):
+        (JSC::DebuggerScope::iterator::iterator):
+        (JSC::DebuggerScope::iterator::get):
+        (JSC::DebuggerScope::iterator::operator++):
+        (JSC::DebuggerScope::iterator::operator==):
+        (JSC::DebuggerScope::iterator::operator!=):
+        (JSC::DebuggerScope::isValid):
+        (JSC::DebuggerScope::jsScope):
+        (JSC::DebuggerScope::begin):
+        (JSC::DebuggerScope::end):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        (Inspector::JSJavaScriptCallFrame::scopeChain):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::scopeChain):
+        * inspector/ScriptDebugServer.cpp:
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::debuggerScopeStructure):
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::isWithScope):
+        * runtime/JSScope.h:
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setThisValue):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setThisValue):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2014-08-28  Andreas Kling  <akling@apple.com>
 
         Use JSString::toIdentifier() in more places.
