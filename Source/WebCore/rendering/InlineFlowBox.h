@@ -71,7 +71,7 @@ public:
 #endif
 
 #ifndef NDEBUG
-    virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const override;
+    virtual void showLineTreeAndMark(const InlineBox* markedBox, int depth) const override;
     virtual const char* boxName() const override;
 #endif
 

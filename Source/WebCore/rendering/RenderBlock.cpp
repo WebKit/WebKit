@@ -4188,11 +4188,6 @@ void RenderBlock::checkPositionedObjectsNeedLayout()
     }
 }
 
-void RenderBlock::showLineTreeAndMark(const InlineBox*, const char*, const InlineBox*, const char*, const RenderObject*) const
-{
-    showRenderObject();
-}
-
 #endif
 
 } // namespace WebCore

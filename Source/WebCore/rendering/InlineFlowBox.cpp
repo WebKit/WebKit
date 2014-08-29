@@ -1645,11 +1645,11 @@ const char* InlineFlowBox::boxName() const
     return "InlineFlowBox";
 }
 
-void InlineFlowBox::showLineTreeAndMark(const InlineBox* markedBox1, const char* markedLabel1, const InlineBox* markedBox2, const char* markedLabel2, const RenderObject* obj, int depth) const
+void InlineFlowBox::showLineTreeAndMark(const InlineBox* markedBox, int depth) const
 {
-    InlineBox::showLineTreeAndMark(markedBox1, markedLabel1, markedBox2, markedLabel2, obj, depth);
+    InlineBox::showLineTreeAndMark(markedBox, depth);
     for (const InlineBox* box = firstChild(); box; box = box->nextOnLine())
-        box->showLineTreeAndMark(markedBox1, markedLabel1, markedBox2, markedLabel2, obj, depth + 1);
+        box->showLineTreeAndMark(markedBox, depth + 1);
 }
 
 void InlineFlowBox::checkConsistency() const

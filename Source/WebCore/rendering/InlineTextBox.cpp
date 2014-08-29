@@ -1438,20 +1438,23 @@ const char* InlineTextBox::boxName() const
     return "InlineTextBox";
 }
 
-void InlineTextBox::showBox(int printedCharacters) const
+void InlineTextBox::showLineBox(bool mark, int depth) const
 {
+    fprintf(stderr, "------- --");
+
+    int printedCharacters = 0;
+    if (mark) {
+        fprintf(stderr, "*");
+        ++printedCharacters;
+    }
+    while (++printedCharacters <= depth * 2)
+        fputc(' ', stderr);
+
     String value = renderer().text();
     value = value.substring(start(), len());
     value.replaceWithLiteral('\\', "\\\\");
     value.replaceWithLiteral('\n', "\\n");
-    printedCharacters += fprintf(stderr, "%s\t%p", boxName(), this);
-    for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
-        fputc(' ', stderr);
-    printedCharacters = fprintf(stderr, "\t%s %p", renderer().renderName(), &renderer());
-    const int rendererCharacterOffset = 24;
-    for (; printedCharacters < rendererCharacterOffset; printedCharacters++)
-        fputc(' ', stderr);
-    fprintf(stderr, "(%d,%d) \"%s\"\n", start(), start() + len(), value.utf8().data());
+    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) run(%d, %d) \"%s\"\n", boxName(), x(), y(), width(), height(), this, start(), start() + len(), value.utf8().data());
 }
 
 #endif

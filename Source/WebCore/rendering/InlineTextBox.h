@@ -95,8 +95,8 @@ public:
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
 
 #ifndef NDEBUG
-    virtual void showBox(int = 0) const;
-    virtual const char* boxName() const;
+    virtual void showLineBox(bool mark, int depth) const override final;
+    virtual const char* boxName() const override final;
 #endif
 
 private:

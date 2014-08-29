@@ -1,3 +1,50 @@
+2014-08-29  Zalan Bujtas  <zalan@apple.com>
+
+        Improve showRenderTree() output.
+        https://bugs.webkit.org/show_bug.cgi?id=136244
+
+        Reviewed by Darin Adler.
+
+        Add more debugging information to showRenderTree().
+
+        Not testable.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showLineTreeForThis):
+        (WebCore::InlineBox::showLineTreeAndMark):
+        (WebCore::InlineBox::showLineBox):
+        (showNodeTree):
+        (showLineTree):
+        (WebCore::InlineBox::showBox): Deleted.
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::showLineTreeAndMark):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::showLineBox):
+        (WebCore::InlineTextBox::showBox): Deleted.
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::showLineTreeAndMark): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::showLineTreeAndMark):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::showRenderTreeLegend):
+        (WebCore::RenderObject::showNodeTreeForThis):
+        (WebCore::RenderObject::showRenderTreeForThis):
+        (WebCore::RenderObject::showLineTreeForThis):
+        (WebCore::RenderObject::showRegionsInformation):
+        (WebCore::RenderObject::showRenderObject):
+        (WebCore::RenderObject::showRenderSubTreeAndMark):
+        (showNodeTree):
+        (showLineTree):
+        (showRenderTree):
+        (WebCore::RenderObject::showRenderTreeAndMark): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RootInlineBox.h:
+
 2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviwed, remove empty directories.

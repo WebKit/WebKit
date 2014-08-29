@@ -285,12 +285,9 @@ public:
     void showRenderTreeForThis() const;
     void showLineTreeForThis() const;
 
-    void showRenderObject() const;
-    // We don't make printedCharacters an optional parameter so that
-    // showRenderObject can be called from gdb easily.
-    void showRenderObject(int) const;
-    void showRenderTreeAndMark(const RenderObject* = 0, const char* = 0, const RenderObject* = 0, const char* = 0, int = 0) const;
-    void showRegionsInformation(int&) const;
+    void showRenderObject(bool mark, int depth) const;
+    void showRenderSubTreeAndMark(const RenderObject* markedObject, int depth) const;
+    void showRegionsInformation() const;
 #endif
 
 public:
@@ -1141,10 +1138,7 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
 // Outside the WebCore namespace for ease of invocation from gdb.
 void showNodeTree(const WebCore::RenderObject*);
 void showLineTree(const WebCore::RenderObject*);
-void showRenderTree(const WebCore::RenderObject* object1);
-// We don't make object2 an optional parameter so that showRenderTree
-// can be called from gdb easily.
-void showRenderTree(const WebCore::RenderObject* object1, const WebCore::RenderObject* object2);
+void showRenderTree(const WebCore::RenderObject*);
 #endif
 
 #endif // RenderObject_h

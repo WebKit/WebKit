@@ -300,7 +300,6 @@ public:
 
 #ifndef NDEBUG
     void checkPositionedObjectsNeedLayout();
-    virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const;
 #endif
 
 

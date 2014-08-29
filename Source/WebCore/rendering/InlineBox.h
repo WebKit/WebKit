@@ -75,8 +75,8 @@ public:
     void showNodeTreeForThis() const;
     void showLineTreeForThis() const;
     
-    virtual void showBox(int = 0) const;
-    virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const;
+    virtual void showLineTreeAndMark(const InlineBox* markedBox, int depth) const;
+    virtual void showLineBox(bool mark, int depth) const;
     virtual const char* boxName() const;
 #endif
 

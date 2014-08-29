@@ -1410,29 +1410,37 @@ void RenderObject::computeFloatRectForRepaint(const RenderLayerModelObject*, Flo
 
 #ifndef NDEBUG
 
+static void showRenderTreeLegend()
+{
+    fprintf(stderr, "\n(R)elative/A(B)solute/Fi(X)ed/Stick(Y) positioned, (O)verflow clipping, (A)nonymous, (G)enerated, (F)loating, has(L)ayer, (C)omposited, (D)irty layout, Dirty (S)tyle\n");
+}
+
 void RenderObject::showNodeTreeForThis() const
 {
-    if (node())
-        node()->showTreeForThis();
+    if (!node())
+        return;
+    node()->showTreeForThis();
 }
 
 void RenderObject::showRenderTreeForThis() const
 {
-    showRenderTree(this, 0);
+    const WebCore::RenderObject* root = this;
+    while (root->parent())
+        root = root->parent();
+    showRenderTreeLegend();
+    root->showRenderSubTreeAndMark(this, 1);
 }
 
 void RenderObject::showLineTreeForThis() const
 {
-    if (containingBlock())
-        containingBlock()->showLineTreeAndMark(0, 0, 0, 0, this);
+    if (!isRenderBlockFlow())
+        return;
+    showRenderTreeLegend();
+    showRenderObject(false, 1);
+    toRenderBlockFlow(this)->showLineTreeAndMark(nullptr, 2);
 }
 
-void RenderObject::showRenderObject() const
-{
-    showRenderObject(0);
-}
-
-void RenderObject::showRegionsInformation(int& printedCharacters) const
+void RenderObject::showRegionsInformation() const
 {
     CurrentRenderFlowThreadDisabler flowThreadDisabler(&view());
 
@@ -1442,49 +1450,126 @@ void RenderObject::showRegionsInformation(int& printedCharacters) const
             RenderRegion* startRegion = nullptr;
             RenderRegion* endRegion = nullptr;
             flowThread->getRegionRangeForBox(box, startRegion, endRegion);
-            printedCharacters += fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
+            fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
         }
     }
 }
 
-void RenderObject::showRenderObject(int printedCharacters) const
+void RenderObject::showRenderObject(bool mark, int depth) const
 {
-    // As this function is intended to be used when debugging, the
-    // this pointer may be 0.
+    // As this function is intended to be used when debugging, the this pointer may be 0.
     if (!this) {
-        fputs("(null)\n", stderr);
+        fprintf(stderr, "(null)\n");
         return;
     }
 
-    printedCharacters += fprintf(stderr, "%s %p", renderName(), this);
-    showRegionsInformation(printedCharacters);
-
-    if (node()) {
-        if (printedCharacters)
-            for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
-                fputc(' ', stderr);
-        fputc('\t', stderr);
-        node()->showNode();
+    if (isPositioned()) {
+        if (isRelPositioned())
+            fputc('R', stderr);
+        else if (isStickyPositioned())
+            fputc('Y', stderr);
+        else if (isOutOfFlowPositioned()) {
+            if (style().position() == AbsolutePosition)
+                fputc('B', stderr);
+            else
+                fputc('X', stderr);
+        }
     } else
-        fputc('\n', stderr);
-}
+        fputc('-', stderr);
 
-void RenderObject::showRenderTreeAndMark(const RenderObject* markedObject1, const char* markedLabel1, const RenderObject* markedObject2, const char* markedLabel2, int depth) const
-{
+    if (hasOverflowClip())
+        fputc('O', stderr);
+    else
+        fputc('-', stderr);
+
+    if (isAnonymousBlock())
+        fputc('A', stderr);
+    else
+        fputc('-', stderr);
+
+    if (isPseudoElement() || isAnonymous())
+        fputc('G', stderr);
+    else
+        fputc('-', stderr);
+
+    if (isFloating())
+        fputc('F', stderr);
+    else
+        fputc('-', stderr);
+
+    if (hasLayer())
+        fputc('L', stderr);
+    else
+        fputc('-', stderr);
+
+    if (isComposited())
+        fputc('C', stderr);
+    else
+        fputc('-', stderr);
+
+    fputc(' ', stderr);
+
+    if (needsLayout())
+        fputc('D', stderr);
+    else
+        fputc('-', stderr);
+
+    if (node() && node()->needsStyleRecalc())
+        fputc('S', stderr);
+    else
+        fputc('-', stderr);
+
     int printedCharacters = 0;
-    if (markedObject1 == this && markedLabel1)
-        printedCharacters += fprintf(stderr, "%s", markedLabel1);
-    if (markedObject2 == this && markedLabel2)
-        printedCharacters += fprintf(stderr, "%s", markedLabel2);
-    for (; printedCharacters < depth * 2; printedCharacters++)
+    if (mark) {
+        fprintf(stderr, "*");
+        ++printedCharacters;
+    }
+
+    while (++printedCharacters <= depth * 2)
         fputc(' ', stderr);
 
-    showRenderObject(printedCharacters);
+    if (node())
+        fprintf(stderr, "%s ", node()->nodeName().utf8().data());
+
+    String name = renderName();
+    // FIXME: Renderer's name should not include property value listing.
+    int pos = name.find('(');
+    if (pos > 0)
+        fprintf(stderr, "%s", name.left(pos - 1).utf8().data());
+    else
+        fprintf(stderr, "%s", name.utf8().data());
+
+    if (isBox()) {
+        const RenderBox* box = toRenderBox(this);
+        fprintf(stderr, "  (%.2f, %.2f) (%.2f, %.2f)", box->x().toFloat(), box->y().toFloat(), box->width().toFloat(), box->height().toFloat());
+    }
+
+    fprintf(stderr, " renderer->(%p)", this);
+    if (node()) {
+        fprintf(stderr, " node->(%p)", node());
+        if (node()->isTextNode()) {
+            String value = node()->nodeValue();
+            value.replaceWithLiteral('\\', "\\\\");
+            value.replaceWithLiteral('\n', "\\n");
+            fprintf(stderr, " \"%s\"", value.utf8().data());
+        }
+    }
+
+    showRegionsInformation();
+    fprintf(stderr, "\n");
+}
+
+void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, int depth) const
+{
     if (!this)
         return;
 
+    showRenderObject(markedObject == this, depth);
+    if (isRenderBlockFlow())
+        toRenderBlockFlow(this)->showLineTreeAndMark(nullptr, depth + 1);
+
     for (const RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
-        child->showRenderTreeAndMark(markedObject1, markedLabel1, markedObject2, markedLabel2, depth + 1);
+        child->showRenderSubTreeAndMark(markedObject, depth + 1);
 }
 
 #endif // NDEBUG
@@ -2516,29 +2601,23 @@ RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
 
 void showNodeTree(const WebCore::RenderObject* object)
 {
-    if (object)
-        object->showNodeTreeForThis();
+    if (!object)
+        return;
+    object->showNodeTreeForThis();
 }
 
 void showLineTree(const WebCore::RenderObject* object)
 {
-    if (object)
-        object->showLineTreeForThis();
+    if (!object)
+        return;
+    object->showLineTreeForThis();
 }
 
-void showRenderTree(const WebCore::RenderObject* object1)
+void showRenderTree(const WebCore::RenderObject* object)
 {
-    showRenderTree(object1, 0);
-}
-
-void showRenderTree(const WebCore::RenderObject* object1, const WebCore::RenderObject* object2)
-{
-    if (object1) {
-        const WebCore::RenderObject* root = object1;
-        while (root->parent())
-            root = root->parent();
-        root->showRenderTreeAndMark(object1, "*", object2, "-", 0);
-    }
+    if (!object)
+        return;
+    object->showRenderTreeForThis();
 }
 
 #endif
