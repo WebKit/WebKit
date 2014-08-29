@@ -98,9 +98,9 @@ ServicesController::ServicesController()
     refreshExistingServices();
 
 #ifdef __LP64__
-    auto refreshCallback = [](NSArray *, NSError *) {
+    auto refreshCallback = [this](NSArray *, NSError *) {
         // We coalese refreshes from the notification callbacks because they can come in small batches.
-        ServicesController::shared().refreshExistingServices(false);
+        refreshExistingServices(false);
     };
 
     auto extensionAttributes = @{ @"NSExtensionPointName" : @"com.apple.services" };
