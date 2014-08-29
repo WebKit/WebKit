@@ -1,5 +1,55 @@
 2014-08-29  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173121
+
+    2014-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+            Crashes in IPC code under VisitedLinkProvider::pendingVisitedLinksTimerFired
+            https://bugs.webkit.org/show_bug.cgi?id=136384
+            rdar://problem/16991213
+
+            Reviewed by Sam Weinig.
+
+            VisitedLinkProvider process tracking relied on a combination of WebPageProxy process
+            lifecycle notifications and checking process state. As evidenced by multiple FIXMEs,
+            these are not yet as reliable as they should be.
+
+            Changed to unregister a process when it closes, not when it no longer has any pages
+            using the particular VisitedLinkProvider or WebUserContentControllerProxy. This
+            is a deoptimization that should not matter in practice.
+
+            * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+            (WebKit::WebUserContentControllerProxy::~WebUserContentControllerProxy):
+            (WebKit::WebUserContentControllerProxy::removeProcess):
+            (WebKit::WebUserContentControllerProxy::addUserScript):
+            (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+            (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+            (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+            (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+            (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+            * UIProcess/UserContent/WebUserContentControllerProxy.h:
+            * UIProcess/VisitedLinkProvider.cpp:
+            (WebKit::VisitedLinkProvider::~VisitedLinkProvider):
+            (WebKit::VisitedLinkProvider::removeProcess):
+            (WebKit::VisitedLinkProvider::removeAll):
+            (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired):
+            (WebKit::VisitedLinkProvider::resizeTable):
+            * UIProcess/VisitedLinkProvider.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            (WebKit::WebPageProxy::close):
+            (WebKit::WebPageProxy::processDidFinishLaunching):
+            (WebKit::WebPageProxy::resetStateAfterProcessExited):
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::disconnect):
+            (WebKit::WebProcessProxy::addVisitedLinkProvider):
+            (WebKit::WebProcessProxy::addWebUserContentControllerProxy):
+            (WebKit::WebProcessProxy::didDestroyVisitedLinkProvider):
+            (WebKit::WebProcessProxy::didDestroyWebUserContentControllerProxy):
+            * UIProcess/WebProcessProxy.h:
+
+2014-08-29  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173118
 
     2014-08-29  Alexey Proskuryakov  <ap@apple.com>

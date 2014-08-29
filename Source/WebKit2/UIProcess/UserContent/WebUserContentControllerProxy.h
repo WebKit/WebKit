@@ -28,10 +28,11 @@
 
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace IPC {
 class DataReference;
@@ -76,7 +77,7 @@ private:
     void didPostMessage(IPC::Connection*, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference&);
 
     uint64_t m_identifier;
-    HashCountedSet<WebProcessProxy*> m_processes;
+    HashSet<WebProcessProxy*> m_processes;
 
     Vector<WebCore::UserScript> m_userScripts;
     Vector<WebCore::UserStyleSheet> m_userStyleSheets;

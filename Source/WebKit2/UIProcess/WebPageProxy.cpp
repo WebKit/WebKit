@@ -373,8 +373,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 {
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
-            m_userContentController->addProcess(m_process.get());
-        m_visitedLinkProvider->addProcess(m_process.get());
+            m_process->addWebUserContentControllerProxy(*m_userContentController);
+        m_process->addVisitedLinkProvider(m_visitedLinkProvider.get());
     }
 
     updateViewState();
@@ -661,12 +661,6 @@ void WebPageProxy::close()
         return;
 
     m_isClosed = true;
-
-    if (m_process->state() == WebProcessProxy::State::Running) {
-        if (m_userContentController)
-            m_userContentController->removeProcess(m_process.get());
-        m_visitedLinkProvider->removeProcess(m_process.get());
-    }
 
     m_backForwardList->pageClosed();
     m_pageClient.pageClosed();
@@ -3108,8 +3102,8 @@ void WebPageProxy::processDidFinishLaunching()
     ASSERT(m_process->state() == WebProcessProxy::State::Running);
 
     if (m_userContentController)
-        m_userContentController->addProcess(m_process.get());
-    m_visitedLinkProvider->addProcess(m_process.get());
+        m_process->addWebUserContentControllerProxy(*m_userContentController);
+    m_process->addVisitedLinkProvider(m_visitedLinkProvider.get());
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -4426,12 +4420,6 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     // FIXME: It's weird that resetStateAfterProcessExited() is called even though the process is launching.
     ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);
-
-    if (m_process->state() == WebProcessProxy::State::Terminated) {
-        if (m_userContentController)
-            m_userContentController->removeProcess(m_process.get());
-        m_visitedLinkProvider->removeProcess(m_process.get());
-    }
 
 #if PLATFORM(IOS)
     m_activityToken = nullptr;
