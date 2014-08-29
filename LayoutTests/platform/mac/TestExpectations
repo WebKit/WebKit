@@ -1405,9 +1405,7 @@ svg/css/getComputedStyle-basic.xhtml [ Skip ]
 # ENABLE_INPUT_TYPE_COLOR
 accessibility/color-well.html [ Skip ]
 accessibility/roles-exposed.html [ Skip ]
-fast/forms/color/color-setrangetext.html [ Skip ]
-fast/forms/color/input-appearance-color.html [ Skip ]
-fast/forms/color/input-value-sanitization-color.html [ Skip ]
+fast/forms/color/ [ Skip ]
 
 # ENABLE_CSS3_CONDITIONAL_RULES 
 css3/supports-cssom.html [ Skip ]

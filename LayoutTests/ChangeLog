@@ -1,3 +1,12 @@
+2014-08-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Skip all fast/forms/color tests. <input type=color> is disabled on the
+        branch.
+
+        Rubber-stamped by Andreas Kling.
+
+        * platform/mac/TestExpectations:
+
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173028
