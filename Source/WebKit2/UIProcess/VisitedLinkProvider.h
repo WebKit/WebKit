@@ -30,7 +30,6 @@
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -67,7 +66,7 @@ private:
     void resizeTable(unsigned newTableSize);
     void sendTable(WebProcessProxy&);
 
-    HashCountedSet<WebProcessProxy*> m_processes;
+    HashSet<WebProcessProxy*> m_processes;
 
     uint64_t m_identifier;
 
