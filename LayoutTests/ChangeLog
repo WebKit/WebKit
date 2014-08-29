@@ -1,5 +1,17 @@
 2014-08-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Merge r171595, which updates a media test's expected result.
+
+        Rubber-stamped by Andreas Kling.
+
+    2014-07-25  Zalan Bujtas  <zalan@apple.com>
+
+            Unreviewed media test gardening after r171593.
+
+            * platform/mac/http/tests/media/hls/video-controls-live-stream-expected.txt:
+
+2014-08-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Add an expected failure for a test that relies on a feature disabled on
         the branch.
 
