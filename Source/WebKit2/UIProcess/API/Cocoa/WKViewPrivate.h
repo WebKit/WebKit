@@ -113,6 +113,8 @@
 // The top content inset is applied in the window's coordinate space, to the union of the custom swipe view's frames.
 - (void)_setCustomSwipeViewsTopContentInset:(float)topContentInset;
 - (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState;
+// The rect returned is always that of the snapshot, not necessarily the swiping layer. This only works for layer-backed windows.
+- (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect swipeSnapshotRectInWindowCoordinates))callback;
 
 #endif
 

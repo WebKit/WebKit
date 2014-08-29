@@ -1,5 +1,47 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173040
+
+    2014-08-27  Tim Horton  <timothy_horton@apple.com>
+
+            WebKit2 swipe gesture should report the position of the snapshot to the client
+            https://bugs.webkit.org/show_bug.cgi?id=136308
+            rdar://problem/18105827
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setDidMoveSwipeSnapshotCallback:]):
+            Add _setDidMoveSwipeSnapshotCallback, and plumb it to ViewGestureController.
+            Callers provide a block which is called whenever ViewGestureController moves the
+            swipe *snapshot* layer around.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates):
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::boundsOfLayerInLayerBackedWindowCoordinates):
+            Expose a Mac-only way to get the bounds of a given CALayer in window coordinates,
+            respecting transforms. This only works for layer-backed windows because
+            it uses CA in order to do the mapping respecting transforms.
+
+            * UIProcess/mac/ViewGestureController.h:
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::ViewGestureController):
+            (WebKit::ViewGestureController::~ViewGestureController):
+            (WebKit::ViewGestureController::setDidMoveSwipeSnapshotCallback):
+            Do the Block_copy and Block_release dance to keep our copy of the callback block.
+
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            (WebKit::ViewGestureController::handleSwipeGesture):
+            (WebKit::ViewGestureController::didMoveSwipeSnapshotLayer):
+            When the swipe snapshot layer moves around, call the block.
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173029
 
     2014-08-27  Tim Horton  <timothy_horton@apple.com>
