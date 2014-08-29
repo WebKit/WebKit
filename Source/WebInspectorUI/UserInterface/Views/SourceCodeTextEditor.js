@@ -1144,8 +1144,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         var bounds = WebInspector.Rect.unionOfRects(rects);
 
         this._popover = this._popover || new WebInspector.Popover(this);
-        this._popover.content = content;
-        this._popover.present(bounds.pad(5), [WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X]);
+        this._popover.presentNewContentWithFrame(content, bounds.pad(5), [WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X]);
 
         this._trackPopoverEvents();
 
@@ -1278,17 +1277,22 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         this._popover.dismiss();
 
-        if (this._popoverEventListeners)
+        if (this._popoverEventListeners && this._popoverEventListenersAreRegistered) {
+            this._popoverEventListenersAreRegistered = false;
             this._popoverEventListeners.unregister();
+        }
     },
 
     _trackPopoverEvents: function()
     {
         if (!this._popoverEventListeners) 
             this._popoverEventListeners = new WebInspector.EventListenerSet(this, "Popover listeners");
-        this._popoverEventListeners.register(this._popover.element, "mouseover", this._popoverMouseover);
-        this._popoverEventListeners.register(this._popover.element, "mouseout", this._popoverMouseout);
-        this._popoverEventListeners.install();
+        if (!this._popoverEventListenersAreRegistered) {
+            this._popoverEventListenersAreRegistered = true;
+            this._popoverEventListeners.register(this._popover.element, "mouseover", this._popoverMouseover);
+            this._popoverEventListeners.register(this._popover.element, "mouseout", this._popoverMouseout);
+            this._popoverEventListeners.install();
+        }
     },
 
     _popoverMouseover: function(event)
