@@ -1,3 +1,17 @@
+2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviwed, remove empty directories.
+
+        * Modules/networkinfo: Removed.
+        * inspector/front-end: Removed.
+        * inspector/front-end/Images: Removed.
+        * inspector/front-end/UglifyJS: Removed.
+        * inspector/front-end/ace: Removed.
+        * inspector/front-end/cm: Removed.
+        * platform/audio/ffmpeg: Removed.
+        * platform/audio/ipp: Removed.
+        * platform/graphics/gpu/opencl: Removed.
+
 2014-08-29  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Remove non Coordinated Graphics code path from cmake build system after r142169

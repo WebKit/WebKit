@@ -1,3 +1,22 @@
+2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviwed, remove empty directories.
+
+        * efl: Removed.
+        * efl/DefaultTheme: Removed.
+        * efl/DefaultTheme/widget: Removed.
+        * efl/WebCoreSupport: Removed.
+        * efl/ewk: Removed.
+        * efl/tests: Removed.
+        * efl/tests/UnitTestUtils: Removed.
+        * efl/tests/resources: Removed.
+        * gtk: Removed.
+        * gtk/WebCoreSupport: Removed.
+        * gtk/docs: Removed.
+        * gtk/gdom: Removed.
+        * gtk/resources: Removed.
+        * gtk/webkit: Removed.
+
 2014-08-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Adjust build order to reduce flakiness.

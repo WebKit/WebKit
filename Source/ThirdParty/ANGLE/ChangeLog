@@ -1,3 +1,12 @@
+2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviwed, remove empty directories.
+
+        * src/compiler/depgraph: Removed.
+        * src/compiler/timing: Removed.
+        * src/libGLESv2/renderer/shaders: Removed.
+        * src/libGLESv2/renderer/shaders/compiled: Removed.
+
 2014-08-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Get rid of iOS.xcconfig

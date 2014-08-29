@@ -1,3 +1,9 @@
+2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviwed, remove empty directories.
+
+        * ForwardingHeaders/wtf: Removed.
+
 2014-08-27  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Rename LayoutRect's device pixel snapping functions.

@@ -1,3 +1,43 @@
+2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviwed, remove empty directories.
+
+        * PluginProcess/qt: Removed.
+        * Shared/API/c/qt: Removed.
+        * Shared/Downloads/qt: Removed.
+        * Shared/FileAPI: Removed.
+        * Shared/qt: Removed.
+        * UIProcess/API/C/qt: Removed.
+        * UIProcess/API/cpp/qt: Removed.
+        * UIProcess/API/qt: Removed.
+        * UIProcess/API/qt/raw: Removed.
+        * UIProcess/API/qt/tests: Removed.
+        * UIProcess/API/qt/tests/html: Removed.
+        * UIProcess/API/qt/tests/html/resources: Removed.
+        * UIProcess/API/qt/tests/inspectorserver: Removed.
+        * UIProcess/API/qt/tests/publicapi: Removed.
+        * UIProcess/API/qt/tests/qmltests: Removed.
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior: Removed.
+        * UIProcess/API/qt/tests/qmltests/WebView: Removed.
+        * UIProcess/API/qt/tests/qmltests/common: Removed.
+        * UIProcess/API/qt/tests/qquickwebview: Removed.
+        * UIProcess/API/qt/tests/qrawwebview: Removed.
+        * UIProcess/InspectorServer/qt: Removed.
+        * UIProcess/Launcher/qt: Removed.
+        * UIProcess/Plugins/qt: Removed.
+        * UIProcess/SharedWorkers: Removed.
+        * UIProcess/qt: Removed.
+        * WebProcess/Cookies/qt: Removed.
+        * WebProcess/Downloads: Removed.
+        * WebProcess/IndexedDB: Removed.
+        * WebProcess/InjectedBundle/qt: Removed.
+        * WebProcess/NetworkInfo: Removed.
+        * WebProcess/Plugins/Netscape/qt: Removed.
+        * WebProcess/WebCoreSupport/qt: Removed.
+        * WebProcess/WebPage/qt: Removed.
+        * WebProcess/qt: Removed.
+        * qt: Removed.
+
 2014-08-28  Tim Horton  <timothy_horton@apple.com>
 
         _setDidMoveSwipeSnapshotCallback's block should only be called if the snapshot is going to move
