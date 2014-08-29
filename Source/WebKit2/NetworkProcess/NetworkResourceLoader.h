@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,11 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -51,7 +53,6 @@ class ResourceRequest;
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
-class NetworkLoaderClient;
 class NetworkResourceLoadParameters;
 class RemoteNetworkingContext;
 class SandboxExtension;
@@ -145,6 +146,8 @@ public:
 
     WebCore::SharedBuffer* bufferedData() const { return m_bufferedData.get(); }
 
+    struct SynchronousLoadData;
+
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
@@ -158,6 +161,8 @@ private:
     
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
+    void sendBuffer(WebCore::SharedBuffer*, int encodedDataLength);
+
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
@@ -170,7 +175,8 @@ private:
     uint64_t m_bytesReceived;
 
     bool m_handleConvertedToDownload;
-    std::unique_ptr<NetworkLoaderClient> m_networkLoaderClient;
+
+    std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
 
     ResourceLoadIdentifier m_identifier;
     uint64_t m_webPageID;

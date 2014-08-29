@@ -994,11 +994,6 @@
 		51FA2D7415212DF100C1BA0B /* InjectedBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */; };
 		51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */; };
 		51FB08FF1639DE1A00EC324A /* WebResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF65616392F1500132A7A /* WebResourceLoadScheduler.cpp */; };
-		51FCB18517BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCB18017BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp */; };
-		51FCB18617BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FCB18117BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h */; };
-		51FCB18717BBFE0300394CD8 /* NetworkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FCB18217BBFE0300394CD8 /* NetworkLoaderClient.h */; };
-		51FCB18817BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCB18317BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp */; };
-		51FCB18917BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FCB18417BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h */; };
 		51FD18B51651FBAD00DBE1CE /* NetworkResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */; };
 		51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */; };
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
@@ -3034,11 +3029,6 @@
 		51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleDOMWindowExtension.cpp; sourceTree = "<group>"; };
 		51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleDOMWindowExtension.cpp; sourceTree = "<group>"; };
 		51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkProcessConnection.messages.in; path = Network/NetworkProcessConnection.messages.in; sourceTree = "<group>"; };
-		51FCB18017BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AsynchronousNetworkLoaderClient.cpp; path = NetworkProcess/AsynchronousNetworkLoaderClient.cpp; sourceTree = "<group>"; };
-		51FCB18117BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsynchronousNetworkLoaderClient.h; path = NetworkProcess/AsynchronousNetworkLoaderClient.h; sourceTree = "<group>"; };
-		51FCB18217BBFE0300394CD8 /* NetworkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoaderClient.h; path = NetworkProcess/NetworkLoaderClient.h; sourceTree = "<group>"; };
-		51FCB18317BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SynchronousNetworkLoaderClient.cpp; path = NetworkProcess/SynchronousNetworkLoaderClient.cpp; sourceTree = "<group>"; };
-		51FCB18417BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SynchronousNetworkLoaderClient.h; path = NetworkProcess/SynchronousNetworkLoaderClient.h; sourceTree = "<group>"; };
 		51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoader.cpp; path = NetworkProcess/NetworkResourceLoader.cpp; sourceTree = "<group>"; };
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoader.h; path = NetworkProcess/NetworkResourceLoader.h; sourceTree = "<group>"; };
 		5272B2881406985D0096A5D0 /* StatisticsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsData.cpp; sourceTree = "<group>"; };
@@ -5176,12 +5166,9 @@
 				BC82837C16B45DA500A278FE /* EntryPoint */,
 				E1798C7616E6815500240139 /* FileAPI */,
 				510CC7DC16138E2900D03ED3 /* mac */,
-				51FCB18017BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp */,
-				51FCB18117BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h */,
 				513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */,
 				513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */,
 				513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */,
-				51FCB18217BBFE0300394CD8 /* NetworkLoaderClient.h */,
 				510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */,
 				510CC7E016138E2900D03ED3 /* NetworkProcess.h */,
 				51A8A6171627F5BB000D90E9 /* NetworkProcess.messages.in */,
@@ -5193,8 +5180,6 @@
 				51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */,
 				51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
-				51FCB18317BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp */,
-				51FCB18417BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h */,
 			);
 			name = NetworkProcess;
 			sourceTree = "<group>";
@@ -7217,7 +7202,6 @@
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				1A232903162C867300D82F7A /* MessageDecoder.h in Headers */,
-				51FCB18617BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h in Headers */,
 				1A3CC16918907EB0001E6ED8 /* WKProcessPoolInternal.h in Headers */,
 				2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */,
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
@@ -7288,7 +7272,6 @@
 				1A90C23712650717003E44D4 /* PageOverlay.h in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
 				E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */,
-				51FCB18917BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h in Headers */,
 				1AE00D4F182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h in Headers */,
 				BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */,
 				BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */,
@@ -7764,7 +7747,6 @@
 				BCE17B7E1381F1170012A641 /* WKPagePrivateMac.h in Headers */,
 				A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */,
 				370F34A51829BEA3009027C8 /* WKNavigationDataInternal.h in Headers */,
-				51FCB18717BBFE0300394CD8 /* NetworkLoaderClient.h in Headers */,
 				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
 				1AC86FF4130B46D3002C1257 /* WKPluginSiteDataManager.h in Headers */,
 				BCD597D0112B56AC00EC8C23 /* WKPreferencesRef.h in Headers */,
@@ -9309,7 +9291,6 @@
 				518353DE1887128B00D9FE44 /* KeyedDecoder.cpp in Sources */,
 				BC90A1D3122DD55E00CC8C50 /* APIURLResponse.cpp in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
-				51FCB18517BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp in Sources */,
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm in Sources */,
 				1AC7537F183BE50F0072CB15 /* DataReference.cpp in Sources */,
 				0FCB4E4718BBE044000FCFC9 /* PageClientImplIOS.mm in Sources */,
@@ -9416,7 +9397,6 @@
 				1ABC3DF51899E437004F0626 /* NavigationState.mm in Sources */,
 				BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,
-				51FCB18817BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp in Sources */,
 				3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				3F889D171887859300FEADAF /* WebVideoFullscreenManager.mm in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "AsynchronousNetworkLoaderClient.h"
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "Logging.h"
@@ -40,20 +39,49 @@
 #include "RemoteNetworkingContext.h"
 #include "ShareableResource.h"
 #include "SharedMemory.h"
-#include "SynchronousNetworkLoaderClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/BlobDataFileReference.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SynchronousLoaderClient.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+struct NetworkResourceLoader::SynchronousLoadData {
+        SynchronousLoadData(WebCore::ResourceRequest& request, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+        : m_originalRequest(request)
+        , m_delayedReply(reply)
+    {
+        ASSERT(m_delayedReply);
+    }
+    WebCore::ResourceRequest m_originalRequest;
+    WebCore::ResourceRequest m_currentRequest;
+    RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
+    WebCore::ResourceResponse m_response;
+    WebCore::ResourceError m_error;
+};
+
+static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, WebCore::SharedBuffer* buffer)
+{
+    ASSERT(data.m_delayedReply);
+    ASSERT(!data.m_response.isNull() || !data.m_error.isNull());
+
+    Vector<char> responseBuffer;
+    if (buffer && buffer->size())
+        responseBuffer.append(buffer->data(), buffer->size());
+
+    data.m_delayedReply->send(data.m_error, data.m_response, responseBuffer);
+    data.m_delayedReply = nullptr;
+}
 
 NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
     : m_bytesReceived(0)
@@ -103,20 +131,19 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
         m_bufferedData = WebCore::SharedBuffer::create();
 
     if (reply)
-        m_networkLoaderClient = std::make_unique<SynchronousNetworkLoaderClient>(m_request, reply);
-    else
-        m_networkLoaderClient = std::make_unique<AsynchronousNetworkLoaderClient>();
+        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(m_request, reply);
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_handle);
+    ASSERT(!isSynchronous() || !m_synchronousLoadData->m_delayedReply);
 }
 
 bool NetworkResourceLoader::isSynchronous() const
 {
-    return m_networkLoaderClient->isSynchronous();
+    return !!m_synchronousLoadData;
 }
 
 void NetworkResourceLoader::start()
@@ -189,9 +216,12 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    m_networkLoaderClient->didReceiveResponse(this, response);
+    if (isSynchronous())
+        m_synchronousLoadData->m_response = response;
+    else
+        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, CertificateInfo(response), isLoadingMainResource()));
 
-    // m_handle will be 0 if the request got aborted above.
+    // m_handle will be null if the request got aborted above.
     if (!m_handle)
         return;
 
@@ -212,25 +242,25 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    // FIXME (NetworkProcess): For the memory cache we'll also need to cache the response data here.
-    // Such buffering will need to be thread safe, as this callback is happening on a background thread.
-    
     m_bytesReceived += buffer->size();
-    if (m_bufferedData)
+    if (m_bufferedData) {
         m_bufferedData->append(buffer.get());
-    else
-        m_networkLoaderClient->didReceiveBuffer(this, buffer.get(), encodedDataLength);
+        return;
+    }
+    sendBuffer(buffer.get(), encodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    // Send the full resource data if we were buffering it.
-    if (m_bufferedData && m_bufferedData->size())
-        m_networkLoaderClient->didReceiveBuffer(this, m_bufferedData.get(), m_bufferedData->size());
-
-    m_networkLoaderClient->didFinishLoading(this, finishTime);
+    if (isSynchronous())
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
+    else {
+        if (m_bufferedData && m_bufferedData->size())
+            sendBuffer(m_bufferedData.get(), m_bufferedData->size());
+        send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
+    }
 
     cleanup();
 }
@@ -239,7 +269,11 @@ void NetworkResourceLoader::didFail(ResourceHandle* handle, const ResourceError&
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    m_networkLoaderClient->didFail(this, error);
+    if (isSynchronous()) {
+        m_synchronousLoadData->m_error = error;
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
+    } else
+        send(Messages::WebResourceLoader::DidFailResourceLoad(error));
 
     cleanup();
 }
@@ -252,10 +286,22 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
 
-    ResourceRequest proposedRequest = request;
     m_suggestedRequestForWillSendRequest = request;
 
-    m_networkLoaderClient->willSendRequest(this, proposedRequest, redirectResponse);
+    if (isSynchronous()) {
+        // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
+        // This includes at least updating host records, and comparing the current request instead of the original request here.
+        if (protocolHostAndPortAreEqual(m_synchronousLoadData->m_originalRequest.url(), request.url()))
+            m_synchronousLoadData->m_currentRequest = request;
+        else {
+            ASSERT(m_synchronousLoadData->m_error.isNull());
+            m_synchronousLoadData->m_error = SynchronousLoaderClient::platformBadResponseError();
+            m_synchronousLoadData->m_currentRequest = ResourceRequest();
+        }
+        continueWillSendRequest(m_synchronousLoadData->m_currentRequest);
+        return;
+    }
+    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse));
 }
 
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
@@ -292,7 +338,8 @@ void NetworkResourceLoader::didSendData(ResourceHandle* handle, unsigned long lo
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    m_networkLoaderClient->didSendData(this, bytesSent, totalBytesToBeSent);
+    if (!isSynchronous())
+        send(Messages::WebResourceLoader::DidSendData(bytesSent, totalBytesToBeSent));
 }
 
 void NetworkResourceLoader::wasBlocked(ResourceHandle* handle)
@@ -352,6 +399,24 @@ void NetworkResourceLoader::receivedCancellation(ResourceHandle* handle, const A
     didFail(m_handle.get(), cancelledError(m_request));
 }
 
+void NetworkResourceLoader::sendBuffer(WebCore::SharedBuffer* buffer, int encodedDataLength)
+{
+    ASSERT(!isSynchronous());
+
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
+    ShareableResource::Handle shareableResourceHandle;
+    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
+    if (!shareableResourceHandle.isNull()) {
+        // Since we're delivering this resource by ourselves all at once and don't need anymore data or callbacks from the network layer, abort the loader.
+        abort();
+        send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
+        return;
+    }
+#endif
+    IPC::SharedBufferDataReference dataReference(buffer);
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
+}
+
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 {
     return connectionToWebProcess()->connection();
@@ -395,14 +460,20 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceH
     ASSERT(RunLoop::isMain());
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    m_networkLoaderClient->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+    if (isSynchronous()) {
+        // FIXME: We should ask the WebProcess like the asynchronous case below does.
+        // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.
+        // It's possible that we can jump straight to the UI process to resolve this.
+        continueCanAuthenticateAgainstProtectionSpace(true);
+        return;
+    }
+    sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace));
 }
 
 void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
     m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
 }
-
 #endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)

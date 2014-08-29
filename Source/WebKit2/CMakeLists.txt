@@ -145,13 +145,11 @@ if (WTF_USE_3D_GRAPHICS)
 endif ()
 
 set(WebKit2_SOURCES
-    NetworkProcess/AsynchronousNetworkLoaderClient.cpp
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp
     NetworkProcess/NetworkResourceLoadScheduler.cpp
     NetworkProcess/NetworkResourceLoader.cpp
-    NetworkProcess/SynchronousNetworkLoaderClient.cpp
 
     NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
