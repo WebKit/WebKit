@@ -1,5 +1,17 @@
 2014-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        RenderThemeGtk depends on classes outside of platform
+        https://bugs.webkit.org/show_bug.cgi?id=22176
+
+        Reviewed by Martin Robinson.
+
+        Move RenderThemeGtk.cpp from platform to rendering.
+
+        * PlatformGTK.cmake:
+        * rendering/RenderThemeGtk.cpp: Renamed from Source/WebCore/platform/gtk/RenderThemeGtk.cpp.
+
+2014-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] ScrollbarThemeGtk should not depend on RenderThemeGtk
         https://bugs.webkit.org/show_bug.cgi?id=136338
 

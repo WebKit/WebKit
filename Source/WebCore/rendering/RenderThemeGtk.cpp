@@ -916,8 +916,7 @@ static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, cons
     GRefPtr<GdkPixbuf> scaledIcon;
     if (iconRect.size() != iconSize) {
         // We could use cairo_scale() here but cairo/pixman downscale quality is quite bad.
-        scaledIcon = adoptGRef(gdk_pixbuf_scale_simple(icon, iconRect.width(), iconRect.height(),
-                                                       GDK_INTERP_BILINEAR));
+        scaledIcon = adoptGRef(gdk_pixbuf_scale_simple(icon, iconRect.width(), iconRect.height(), GDK_INTERP_BILINEAR));
         icon = scaledIcon.get();
     }
 
@@ -1066,9 +1065,10 @@ bool RenderThemeGtk::paintCapsLockIndicator(const RenderObject& renderObject, co
 
     // GTK+ locates the icon right aligned in the entry. The given rectangle is already
     // centered vertically by RenderTextControlSingleLine.
-    IntRect iconRect(rect.x() + rect.width() - iconSize,
-                     rect.y() + (rect.height() - iconSize) / 2,
-                     iconSize, iconSize);
+    IntRect iconRect(
+        rect.x() + rect.width() - iconSize,
+        rect.y() + (rect.height() - iconSize) / 2,
+        iconSize, iconSize);
     paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return true;
 }
@@ -1492,9 +1492,10 @@ bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(const RenderObject& re
         m_mediaIconSize, m_mediaIconSize);
     GRefPtr<GdkPixbuf> icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, "media-view-subtitles-symbolic", nullptr,
         gtkTextDirection(renderObject.style().direction()), gtkIconState(this, renderObject), iconRect.width());
-    if (!icon)
+    if (!icon) {
         icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, "user-invisible-symbolic", GTK_STOCK_JUSTIFY_FILL,
             gtkTextDirection(renderObject.style().direction()), gtkIconState(this, renderObject), iconRect.width());
+    }
     paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
     return true;
 }
