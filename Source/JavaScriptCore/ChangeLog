@@ -1,3 +1,15 @@
+2014-08-29  Saam Barati  <sbarati@apple.com>
+
+        emit op_profile_type for deconstruction assignments
+        https://bugs.webkit.org/show_bug.cgi?id=136274
+
+        Reviewed by Filip Pizlo.
+
+        Enable type profiling for ES6 deconstruction expressions.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BindingNode::bindValue):
+
 2014-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         JavaScriptCore: Use ASCIILiteral where possible

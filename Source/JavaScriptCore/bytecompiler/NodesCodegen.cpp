@@ -2816,6 +2816,8 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
             return;
         }
         generator.emitMove(local.get(), value);
+        if (generator.vm()->typeProfiler())
+            generator.emitTypeProfilerExpressionInfo(divotStart(), divotEnd());
         return;
     }
     if (generator.isStrictMode())
@@ -2823,6 +2825,10 @@ void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) con
     RegisterID* scope = generator.emitResolveScope(generator.newTemporary(), m_boundProperty);
     generator.emitExpressionInfo(divotEnd(), divotStart(), divotEnd());
     generator.emitPutToScope(scope, m_boundProperty, value, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
+    if (generator.vm()->typeProfiler()) {
+        generator.emitProfileType(value, ProfileTypeBytecodePutToScope, &m_boundProperty);
+        generator.emitTypeProfilerExpressionInfo(divotStart(), divotEnd());
+    }
     return;
 }
 
