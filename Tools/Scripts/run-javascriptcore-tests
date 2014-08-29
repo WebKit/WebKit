@@ -54,11 +54,6 @@ my @testsToSkip = (
     # ecma_3/Date/15.9.5.7.js fails on Mac (but not Windows) https://bugs.webkit.org/show_bug.cgi?id=25161
     "ecma_3/Date/15.9.5.6.js",
     "ecma_3/Date/15.9.5.7.js",
-    # These three fail on Linux in certain time zones, at certain times
-    # of the year (!): https://bugs.webkit.org/show_bug.cgi?id=71371
-    "ecma/Date/15.9.5.14.js",
-    "ecma/Date/15.9.5.31-1.js",
-    "ecma/Date/15.9.5.34-1.js",
 );
 
 my $jsDriverArgs = "-L " . join(" ", @testsToSkip);
@@ -149,6 +144,7 @@ if (!defined($root) && $buildJSC) {
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 $ENV{JSC_timeout} = 60 unless $ENV{JSC_timeout}; # Set a 60 second timeout on all jsc tests (if environment variable not defined already).
+$ENV{TZ}="US/Pacific"; # Some tests fail if the time zone is not set to US/Pacific (<https://webkit.org/b/136363>)
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
 sub testapiPath($)

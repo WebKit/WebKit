@@ -1,3 +1,13 @@
+2014-08-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [JSC] Some JSC tests are dependent on the machine time zone.
+        https://bugs.webkit.org/show_bug.cgi?id=136363
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-javascriptcore-tests: Export TZ environment variable to US/Pacific.
+        Unskip the tests that were skipped on r99580.
+
 2014-08-29  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         [EFL] Remove non Coordinated Graphics code path from cmake build system after r142169
