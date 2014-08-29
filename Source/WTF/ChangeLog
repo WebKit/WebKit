@@ -1,3 +1,9 @@
+2014-08-28  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix. Specify which version of cygwin python to use.
+
+        * WTF.vcxproj/WTFGenerated.make:
+
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173036
