@@ -1,3 +1,20 @@
+2014-08-28  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: Write tests for ScriptSyntaxTree and fix bugs in the data structure
+        https://bugs.webkit.org/show_bug.cgi?id=136272
+
+        Reviewed by Joseph Pecoraro.
+
+        Include the necessary files in Test.html to test ScriptSyntaxTree.
+        Also, ScriptSyntaxTree had a couple of errors for two of its nodes
+        where they simply ignored one of the properties on the node.
+        These errors were found while writing the tests and are fixed
+        in this patch.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        * UserInterface/Test.html:
+
 2014-08-27  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Layout issues for popover on not legacy OS

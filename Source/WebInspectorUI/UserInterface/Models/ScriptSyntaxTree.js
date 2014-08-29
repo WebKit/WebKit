@@ -639,14 +639,16 @@ WebInspector.ScriptSyntaxTree.prototype = {
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.LogicalExpression,
                 left: this._createInternalSyntaxTree(node.left),
-                right: this._createInternalSyntaxTree(node.right)
+                right: this._createInternalSyntaxTree(node.right),
+                operator: node.operator
             };
             break;
         case "MemberExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.MemberExpression,
                 object: this._createInternalSyntaxTree(node.object),
-                property: this._createInternalSyntaxTree(node.property)
+                property: this._createInternalSyntaxTree(node.property),
+                computed: node.computed
             };
             break;
         case "NewExpression":

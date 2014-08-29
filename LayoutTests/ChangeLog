@@ -1,3 +1,19 @@
+2014-08-28  Saam Barati  <sbarati@apple.com>
+
+        Web Inspector: Write tests for ScriptSyntaxTree and fix bugs in the data structure
+        https://bugs.webkit.org/show_bug.cgi?id=136272
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch tests all nodes in the WebInspecor's Abstract Syntax Tree.
+        These tests don't test every aspect of the data structure, but focus
+        on having it parse all JavaScript expressions successfully and to also
+        make sure nodes in the tree are of the correct type.
+
+        * inspector/model: Added.
+        * inspector/model/parse-script-syntax-tree-expected.txt: Added.
+        * inspector/model/parse-script-syntax-tree.html: Added.
+
 2014-08-28  Enrica Casucci  <enrica@apple.com>
 
         Can't hit tab key more than 3 times continuously.

@@ -1,0 +1,407 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    function makeNode(text, isExpression)
+    {
+        var script = new WebInspector.Script(1, WebInspector.TextRange(0, text.length));
+        var scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(text, script);
+        var syntaxTree = scriptSyntaxTree._syntaxTree;
+
+        InspectorTest.assert(scriptSyntaxTree.parsedSuccessfully, "ScriptSyntaxTree should be able to parse: \"" + text + "\"");
+        InspectorTest.assert(syntaxTree.type === WebInspector.ScriptSyntaxTree.NodeType.Program, "Should be program.");
+        InspectorTest.assert(syntaxTree.body.length === 1, "Calling makeNode should return one node in the program.");
+        if (isExpression) {
+            InspectorTest.assert(syntaxTree.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+            return syntaxTree.body[0].expression;
+        } else
+            return syntaxTree.body[0];
+    }
+
+    var node = null;
+
+    node = makeNode("x = 20;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.AssignmentExpression);
+    InspectorTest.assert(node.left);
+    InspectorTest.assert(node.left.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.right);
+    InspectorTest.assert(node.right.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.operator === "=");
+    node = makeNode("x += 20;", true);
+    InspectorTest.assert(node.operator === "+=");
+    node = makeNode("x -= 20;", true);
+    InspectorTest.assert(node.operator === "-=");
+    InspectorTest.log("passed AssignmentExpression");
+
+    node = makeNode("[1, 2]", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression);
+    InspectorTest.assert(Array.isArray(node.elements));
+    InspectorTest.assert(node.elements.length === 2);
+    InspectorTest.assert(node.elements[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.elements[1].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.log("passed ArrayExpression");
+    
+    node = makeNode("{foo();}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.length === 1);
+    InspectorTest.assert(node.body[0].expression.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression);
+    InspectorTest.log("passed BlockStatement");
+
+    node = makeNode("2 + 2", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.BinaryExpression);
+    InspectorTest.assert(node.left);
+    InspectorTest.assert(node.right);
+    InspectorTest.assert(node.operator === "+");
+    node = makeNode("2 - 2", true);
+    InspectorTest.assert(node.operator === "-");
+    node = makeNode("2 * 2", true);
+    InspectorTest.assert(node.operator === "*");
+    node = makeNode("2 / 2", true);
+    InspectorTest.assert(node.operator === "/");
+    node = makeNode("2 % 2", true);
+    InspectorTest.assert(node.operator === "%");
+    node = makeNode("2 | 2", true);
+    InspectorTest.assert(node.operator === "|");
+    node = makeNode("2 ^ 2", true);
+    InspectorTest.assert(node.operator === "^");
+    node = makeNode("2 == 2", true);
+    InspectorTest.assert(node.operator === "==");
+    node = makeNode("2 === 2", true);
+    InspectorTest.assert(node.operator === "===");
+    InspectorTest.log("passed BinaryExpression");
+
+    node = makeNode("label:while(true) {break label;}", false);
+    InspectorTest.assert(node.body.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.BreakStatement);
+    InspectorTest.assert(node.body.body.body[0].label.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body.body.body[0].label.name === "label");
+    InspectorTest.log("passed BreakStatement");
+
+    node = makeNode("foo(20, 25)", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression);
+    InspectorTest.assert(node.arguments);
+    InspectorTest.assert(node.arguments.length === 2);
+    InspectorTest.assert(node.arguments[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.arguments[1].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.log("passed CallExpression");
+
+    node = makeNode("try {} catch(e) {} ", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.TryStatement);
+    InspectorTest.log("passed TryStatement");
+    InspectorTest.assert(node.handlers.length === 1);
+    InspectorTest.assert(node.handlers[0].type === WebInspector.ScriptSyntaxTree.NodeType.CatchClause);
+    InspectorTest.log("passed CatchClause");
+
+    node = makeNode("foo ? bar : baz;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ConditionalExpression);
+    InspectorTest.assert(node.test);
+    InspectorTest.assert(node.consequent);
+    InspectorTest.assert(node.alternate);
+    InspectorTest.assert(node.test.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.consequent.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.alternate.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.log("passed ConditionalExpression");
+    
+    node = makeNode("label:while(true) {continue label;}", false);
+    InspectorTest.assert(node.body.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ContinueStatement);
+    InspectorTest.assert(node.body.body.body[0].label.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body.body.body[0].label.name === "label");
+    InspectorTest.log("passed ContinueStatement");
+
+    node = makeNode("do{}while(true);", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.DoWhileStatement);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(node.body.body.length === 0);
+    InspectorTest.assert(node.test);
+    InspectorTest.assert(node.test.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.log("passed DoWhileStatement");
+
+    node = makeNode("debugger;", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.DebuggerStatement);
+    InspectorTest.log("passed DebuggerStatement");
+
+    node = makeNode(";", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement);
+    InspectorTest.log("passed EmptyStatement");
+
+    node = makeNode("2 + 2", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.expression);
+    InspectorTest.assert(node.expression.type === WebInspector.ScriptSyntaxTree.NodeType.BinaryExpression);
+    InspectorTest.log("passed ExpressionStatement");
+
+    node = makeNode("for(x = 0;x < 20;x++){}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ForStatement);
+    InspectorTest.assert(node.init);
+    InspectorTest.assert(node.init.type === WebInspector.ScriptSyntaxTree.NodeType.AssignmentExpression);
+    InspectorTest.assert(node.test);
+    InspectorTest.assert(node.test.type === WebInspector.ScriptSyntaxTree.NodeType.BinaryExpression);
+    InspectorTest.assert(node.update);
+    InspectorTest.assert(node.update.type === WebInspector.ScriptSyntaxTree.NodeType.UpdateExpression);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    node = makeNode("for(x = 0;x < 20;x++);", false);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement);
+    InspectorTest.log("passed ForStatement");
+
+    node = makeNode("for(var x in {}){}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ForInStatement);
+    InspectorTest.assert(node.left);
+    InspectorTest.assert(node.left.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.right);
+    InspectorTest.assert(node.right.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    node = makeNode("for(var x in {});", false);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement);
+    InspectorTest.log("passed ForInStatement");
+
+    node = makeNode("function foo(x,y){}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(node.params);
+    InspectorTest.assert(node.params.length === 2);
+    InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[1].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(!node.isGetterOrSetter);
+    node = makeNode("x = {get foo(){return 20}}", true);
+    InspectorTest.assert(node.right.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.right.properties[0].value.isGetterOrSetter);
+    node = makeNode("x = {set foo(x){return 20}}", true);
+    InspectorTest.assert(node.right.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.right.properties[0].value.isGetterOrSetter);
+    InspectorTest.log("passed FunctionDeclaration");
+
+    node = makeNode("foo(function(x,y){})", true);
+    InspectorTest.assert(node.arguments[0].type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.arguments[0].params);
+    InspectorTest.assert(node.arguments[0].params.length === 2);
+    InspectorTest.assert(node.arguments[0].params[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.arguments[0].params[1].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.arguments[0].body);
+    InspectorTest.assert(node.arguments[0].body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.log("passed FunctionExpression");
+
+    node = makeNode("foo;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.name);
+    InspectorTest.assert(node.name === "foo");
+    InspectorTest.log("passed Identifier");
+
+    node = makeNode("if (true) baz; else bar;", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.IfStatement);
+    InspectorTest.assert(node.test);
+    InspectorTest.assert(node.test.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.consequent);
+    InspectorTest.assert(node.consequent.type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.alternate);
+    InspectorTest.assert(node.alternate.type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.log("passed IfStatement");
+
+    node = makeNode("true;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.value === true);
+    InspectorTest.assert(node.raw === "true");
+    node = makeNode("false;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.value === false);
+    InspectorTest.assert(node.raw === "false");
+    node = makeNode("20;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.value === 20);
+    InspectorTest.assert(node.raw === "20");
+    node = makeNode("'20';", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.value === '20');
+    InspectorTest.assert(node.raw === "'20'");
+    node = makeNode("null;", true);
+    InspectorTest.assert(node.value === null);
+    InspectorTest.assert(node.raw === "null");
+    node = makeNode("/regex/gi;", true);
+    InspectorTest.assert(node.value instanceof RegExp);
+    InspectorTest.assert(node.value.toString() === "/regex/gi");
+    InspectorTest.assert(node.raw === "/regex/gi");
+    node = makeNode("0x10", true);
+    InspectorTest.assert(node.value === 0x10);
+    InspectorTest.assert(node.raw === "0x10");
+    node = makeNode("0777", true);
+    InspectorTest.assert(node.value === 0777);
+    InspectorTest.assert(node.raw === "0777");
+    node = makeNode("\"a\"", true);
+    InspectorTest.assert(node.value === "a");
+    InspectorTest.assert(node.raw === "\"a\"");
+    InspectorTest.log("passed Literal");
+
+    node = makeNode("label:while(true)20;", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.LabeledStatement);
+    InspectorTest.assert(node.label);
+    InspectorTest.assert(node.label.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.label.name === "label");
+    InspectorTest.log("passed LabeledStatement");
+
+    node = makeNode("x && 20", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.LogicalExpression);
+    InspectorTest.assert(node.left);
+    InspectorTest.assert(node.left.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.right);
+    InspectorTest.assert(node.right.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    //InspectorTest.assert(node.operator === "&&");
+    node = makeNode("x || 20", true);
+    InspectorTest.assert(node.operator === "||");
+    InspectorTest.log("passed LogicalExpression");
+
+    node = makeNode("foo[20]", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.MemberExpression);
+    InspectorTest.assert(node.computed);
+    InspectorTest.assert(node.object);
+    InspectorTest.assert(node.object.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.property);
+    InspectorTest.assert(node.property.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    node = makeNode("foo.bar", true);
+    InspectorTest.assert(!node.computed);
+    InspectorTest.assert(node.property.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.log("passed MemberExpression");
+
+    node = makeNode("new Foo(20)", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.NewExpression);
+    InspectorTest.assert(node.callee);
+    InspectorTest.assert(node.callee.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.arguments);
+    InspectorTest.assert(node.arguments.length === 1);
+    node = makeNode("new Foo", true);
+    InspectorTest.assert(node.arguments);
+    InspectorTest.assert(node.arguments.length === 0);
+    InspectorTest.log("passed NewExpression");
+
+    node = makeNode("x = {foo:bar};", true);
+    InspectorTest.assert(node.right.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression);
+    InspectorTest.assert(node.right.properties);
+    InspectorTest.assert(node.right.properties.length === 1);
+    InspectorTest.log("passed ObjectExpression");
+
+    // Program is tested in makeNode
+
+    node = makeNode("x = {foo:20};", true);
+    InspectorTest.assert(node.right.properties[0].type === WebInspector.ScriptSyntaxTree.NodeType.Property);
+    InspectorTest.assert(node.right.properties[0].key);
+    InspectorTest.assert(node.right.properties[0].key.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.right.properties[0].value);
+    InspectorTest.assert(node.right.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    node = makeNode("x = {'foo':20};", true);
+    InspectorTest.assert(node.right.properties[0].key);
+    InspectorTest.assert(node.right.properties[0].key.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.log("passed Property");
+
+    node = makeNode("function foo() { return 20; }", false);
+    InspectorTest.assert(node.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ReturnStatement);
+    InspectorTest.assert(node.body.body[0].argument.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    node = makeNode("function foo() { return; }", false);
+    InspectorTest.assert(node.body.body[0].argument === null);
+    InspectorTest.log("passed ReturnStatement");
+
+    node = makeNode("(x, y)", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.SequenceExpression);
+    InspectorTest.assert(node.expressions);
+    InspectorTest.assert(node.expressions.length === 2);
+    InspectorTest.assert(node.expressions[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.expressions[1].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.log("passed SequenceExpression");
+
+    node = makeNode("switch(x){case y:break;}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.SwitchStatement);
+    InspectorTest.assert(node.discriminant.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.log("passed SwitchStatement");
+    InspectorTest.assert(node.cases[0].type === WebInspector.ScriptSyntaxTree.NodeType.SwitchCase);
+    InspectorTest.assert(node.cases[0].test.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.cases[0].consequent);
+    InspectorTest.assert(Array.isArray(node.cases[0].consequent));
+    InspectorTest.assert(node.cases[0].consequent.length === 1);
+    InspectorTest.log("passed SwitchCase");
+
+    node = makeNode("this;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ThisExpression);
+    InspectorTest.log("passed ThisExpression");
+
+    node = makeNode("throw new Error;", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ThrowStatement);
+    InspectorTest.assert(node.argument);
+    InspectorTest.assert(node.argument.type === WebInspector.ScriptSyntaxTree.NodeType.NewExpression);
+    InspectorTest.log("passed ThrowStatement");
+
+    node = makeNode("!foo;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.UnaryExpression);
+    InspectorTest.assert(node.argument);
+    InspectorTest.assert(node.argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.operator === "!");
+    node = makeNode("~foo;", true);
+    InspectorTest.assert(node.operator === "~");
+    node = makeNode("-foo;", true);
+    InspectorTest.assert(node.operator === "-");
+    InspectorTest.log("passed UnaryExpression");
+
+    node = makeNode("foo++;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.UpdateExpression);
+    InspectorTest.assert(node.argument);
+    InspectorTest.assert(node.argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.operator === "++");
+    InspectorTest.assert(node.prefix === false);
+    node = makeNode("++foo;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.UpdateExpression);
+    InspectorTest.assert(node.argument);
+    InspectorTest.assert(node.argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.prefix === true);
+    InspectorTest.assert(node.operator === "++");
+    node = makeNode("--foo;", true);
+    InspectorTest.assert(node.operator === "--");
+    node = makeNode("foo--;", true);
+    InspectorTest.assert(node.operator === "--");
+    InspectorTest.log("passed UpdateExpression");
+
+    node = makeNode("var foo = 20;", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.declarations);
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.log("passed VariableDeclaration");
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].id);
+    InspectorTest.assert(node.declarations[0].id.type);
+    InspectorTest.assert(node.declarations[0].id.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.declarations[0].init);
+    InspectorTest.assert(node.declarations[0].init.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    node = makeNode("var foo;", false);
+    InspectorTest.assert(node.declarations[0].init === null);
+    InspectorTest.log("passed VariableDeclarator");
+
+    node = makeNode("while(true)boo;", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.WhileStatement);
+    InspectorTest.assert(node.test);
+    InspectorTest.assert(node.test.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    node = makeNode("while(true){}", false);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.log("passed WhileStatement");
+
+    node = makeNode("with(o) {}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.WithStatement);
+    InspectorTest.assert(node.object);
+    InspectorTest.assert(node.object.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.body);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.log("passed WithStatement");
+
+    InspectorTest.log("passed ALL TESTS");
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>
