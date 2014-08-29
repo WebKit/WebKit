@@ -221,50 +221,39 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     endif ()
 endif ()
 
-if (WTF_USE_TILED_BACKING_STORE)
-    add_definitions(-DWTF_USE_COORDINATED_GRAPHICS=1)
+add_definitions(-DWTF_USE_COORDINATED_GRAPHICS=1)
 
-    set(WTF_USE_TEXTURE_MAPPER 1)
-    add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
+add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
 
-    set(WTF_USE_3D_GRAPHICS 1)
-    add_definitions(-DWTF_USE_3D_GRAPHICS=1)
+set(WTF_USE_3D_GRAPHICS 1)
+add_definitions(-DWTF_USE_3D_GRAPHICS=1)
 
-    set(ENABLE_3D_RENDERING 1)
-    add_definitions(-DENABLE_3D_RENDERING=1)
+set(ENABLE_3D_RENDERING 1)
+add_definitions(-DENABLE_3D_RENDERING=1)
+
+add_definitions(-DWTF_USE_GRAPHICS_SURFACE=1)
+
+option(ENABLE_GLES2 "Enable GLES Support")
+if (ENABLE_GLES2)
+    find_package(GLES REQUIRED)
+
+    set(WTF_USE_OPENGL_ES_2 1)
+    add_definitions(-DWTF_USE_OPENGL_ES_2=1)
 else ()
-    # Disable 3D graphics and WEBGL if tiled backing is disabled
-    set(ENABLE_WEBGL 0)
-    set(WTF_USE_3D_GRAPHICS 0)
-    add_definitions(-DWTF_USE_3D_GRAPHICS=0)
+    find_package(OpenGL REQUIRED)
+
+    set(WTF_USE_OPENGL 1)
+    add_definitions(-DWTF_USE_OPENGL=1)
 endif ()
 
-if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
-    set(USE_GRAPHICS_SURFACE 1)
-    add_definitions(-DWTF_USE_GRAPHICS_SURFACE=1)
-
-    option(ENABLE_GLES2 "Enable GLES Support")
-    if (ENABLE_GLES2)
-        find_package(GLES REQUIRED)
-
-        set(WTF_USE_OPENGL_ES_2 1)
-        add_definitions(-DWTF_USE_OPENGL_ES_2=1)
-    else ()
-        find_package(OpenGL REQUIRED)
-
-        set(WTF_USE_OPENGL 1)
-        add_definitions(-DWTF_USE_OPENGL=1)
-    endif ()
-
-    option(ENABLE_EGL "Enable EGL Support")
-    if (ENABLE_EGL)
-        find_package(EGL REQUIRED)
-        set(WTF_USE_EGL 1)
-        add_definitions(-DWTF_USE_EGL=1)
-    else ()
-        CHECK_INCLUDE_FILES("GL/glx.h" OPENGLX_FOUND)
-        add_definitions(-DWTF_USE_GLX=1)
-    endif ()
+option(ENABLE_EGL "Enable EGL Support")
+if (ENABLE_EGL)
+    find_package(EGL REQUIRED)
+    set(WTF_USE_EGL 1)
+    add_definitions(-DWTF_USE_EGL=1)
+else ()
+    CHECK_INCLUDE_FILES("GL/glx.h" OPENGLX_FOUND)
+    add_definitions(-DWTF_USE_GLX=1)
 endif ()
 
 if (ENABLE_WEBGL AND OPENGLX_FOUND)

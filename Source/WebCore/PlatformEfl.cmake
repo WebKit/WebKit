@@ -10,7 +10,12 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
+    "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
+    "${WEBCORE_DIR}/platform/graphics/surfaces"
+    "${WEBCORE_DIR}/platform/graphics/surfaces/efl"
+    "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
+    "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
@@ -106,6 +111,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/cairo/BitmapImageCairo.cpp
     platform/graphics/cairo/CairoUtilities.cpp
+    platform/graphics/cairo/DrawingBufferCairo.cpp
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
     platform/graphics/cairo/GradientCairo.cpp
@@ -122,6 +128,10 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 
     platform/graphics/efl/CairoUtilitiesEfl.cpp
+    platform/graphics/efl/EvasGLContext.cpp
+    platform/graphics/efl/EvasGLSurface.cpp
+    platform/graphics/efl/GraphicsContext3DEfl.cpp
+    platform/graphics/efl/GraphicsContext3DPrivate.cpp
     platform/graphics/efl/IconEfl.cpp
     platform/graphics/efl/ImageEfl.cpp
     platform/graphics/efl/IntPointEfl.cpp
@@ -154,7 +164,24 @@ list(APPEND WebCore_SOURCES
     platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzShaper.cpp
 
+    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+    platform/graphics/opengl/GLPlatformContext.cpp
+    platform/graphics/opengl/GLPlatformSurface.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+
     platform/graphics/opentype/OpenTypeVerticalData.cpp
+
+    platform/graphics/surfaces/GLTransportSurface.cpp
+    platform/graphics/surfaces/GraphicsSurface.cpp
+
+    platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp
+
+    platform/graphics/surfaces/glx/X11Helper.cpp
+
+    platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+    platform/graphics/texmap/TextureMapperGL.cpp
+    platform/graphics/texmap/TextureMapperShaderProgram.cpp
 
     platform/graphics/texmap/coordinated/AreaAllocator.cpp
     platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
@@ -254,12 +281,6 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.css
 )
 
-if (WTF_USE_TEXTURE_MAPPER)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
-    )
-endif ()
-
 set(WebCore_USER_AGENT_SCRIPTS
     ${WEBCORE_DIR}/English.lproj/mediaControlsLocalizedStrings.js
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js
@@ -291,6 +312,7 @@ list(APPEND WebCore_LIBRARIES
     ${LIBXSLT_LIBRARIES}
     ${PNG_LIBRARIES}
     ${SQLITE_LIBRARIES}
+    ${X11_X11_LIB}
     ${ZLIB_LIBRARIES}
 )
 
@@ -358,90 +380,51 @@ if (ENABLE_VIDEO)
     endif ()
 endif ()
 
-if (WTF_USE_3D_GRAPHICS)
+if (WTF_USE_EGL)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/opengl"
-        "${WEBCORE_DIR}/platform/graphics/surfaces"
-        "${WEBCORE_DIR}/platform/graphics/surfaces/efl"
-        "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
-        "${WEBCORE_DIR}/platform/graphics/texmap"
+        ${EGL_INCLUDE_DIR}
+        "${WEBCORE_DIR}/platform/graphics/surfaces/egl"
     )
+endif ()
 
-    if (WTF_USE_EGL)
-        list(APPEND WebCore_INCLUDE_DIRECTORIES
-            ${EGL_INCLUDE_DIR}
-            "${WEBCORE_DIR}/platform/graphics/surfaces/egl"
-    )
-    endif ()
-
+if (WTF_USE_EGL)
     list(APPEND WebCore_SOURCES
-        platform/graphics/cairo/DrawingBufferCairo.cpp
-
-        platform/graphics/efl/EvasGLContext.cpp
-        platform/graphics/efl/EvasGLSurface.cpp
-        platform/graphics/efl/GraphicsContext3DEfl.cpp
-        platform/graphics/efl/GraphicsContext3DPrivate.cpp
-
-        platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-        platform/graphics/opengl/GLPlatformContext.cpp
-        platform/graphics/opengl/GLPlatformSurface.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
-        platform/graphics/surfaces/GLTransportSurface.cpp
-        platform/graphics/surfaces/GraphicsSurface.cpp
-
-        platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp
-
-        platform/graphics/surfaces/glx/X11Helper.cpp
-
-        platform/graphics/texmap/TextureMapperGL.cpp
-        platform/graphics/texmap/TextureMapperShaderProgram.cpp
+        platform/graphics/surfaces/egl/EGLConfigSelector.cpp
+        platform/graphics/surfaces/egl/EGLContext.cpp
+        platform/graphics/surfaces/egl/EGLHelper.cpp
+        platform/graphics/surfaces/egl/EGLSurface.cpp
+        platform/graphics/surfaces/egl/EGLXSurface.cpp
     )
+else ()
+    list(APPEND WebCore_SOURCES
+        platform/graphics/surfaces/glx/GLXContext.cpp
+        platform/graphics/surfaces/glx/GLXSurface.cpp
+    )
+endif ()
 
-    if (WTF_USE_EGL)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/surfaces/egl/EGLConfigSelector.cpp
-            platform/graphics/surfaces/egl/EGLContext.cpp
-            platform/graphics/surfaces/egl/EGLHelper.cpp
-            platform/graphics/surfaces/egl/EGLSurface.cpp
-            platform/graphics/surfaces/egl/EGLXSurface.cpp
-        )
-    else ()
-        list(APPEND WebCore_SOURCES
-            platform/graphics/surfaces/glx/GLXContext.cpp
-            platform/graphics/surfaces/glx/GLXSurface.cpp
-        )
-    endif ()
+if (WTF_USE_OPENGL_ES_2)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/opengl/Extensions3DOpenGLES.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+    )
+else ()
+    list(APPEND WebCore_SOURCES
+        platform/graphics/OpenGLShims.cpp
 
-    if (WTF_USE_OPENGL_ES_2)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/opengl/Extensions3DOpenGLES.cpp
-            platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
-        )
-    else ()
-        list(APPEND WebCore_SOURCES
-            platform/graphics/OpenGLShims.cpp
+        platform/graphics/opengl/Extensions3DOpenGL.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    )
+endif ()
 
-            platform/graphics/opengl/Extensions3DOpenGL.cpp
-            platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
-        )
-    endif ()
-
+if (WTF_USE_EGL)
     list(APPEND WebCore_LIBRARIES
-        ${X11_X11_LIB}
+        ${EGL_LIBRARY}
     )
-
-    if (WTF_USE_EGL)
-        list(APPEND WebCore_LIBRARIES
-            ${EGL_LIBRARY}
-        )
-    elseif (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
-        list(APPEND WebCore_LIBRARIES
-            ${X11_Xcomposite_LIB}
-            ${X11_Xrender_LIB}
-        )
-    endif ()
+elseif (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
+    list(APPEND WebCore_LIBRARIES
+        ${X11_Xcomposite_LIB}
+        ${X11_Xrender_LIB}
+    )
 endif ()
 
 if (ENABLE_WEB_AUDIO)

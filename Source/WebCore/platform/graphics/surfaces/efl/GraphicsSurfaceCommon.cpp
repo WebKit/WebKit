@@ -25,9 +25,6 @@
 
 #include "config.h"
 #include "GraphicsSurface.h"
-
-#if USE(GRAPHICS_SURFACE)
-
 #include "GLPlatformContext.h"
 #include "GLTransportSurface.h"
 #include "NotImplemented.h"
@@ -267,4 +264,3 @@ PassRefPtr<Image> GraphicsSurface::createReadOnlyImage(const IntRect&)
 
 }
 
-#endif

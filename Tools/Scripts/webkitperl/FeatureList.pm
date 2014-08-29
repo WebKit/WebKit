@@ -394,9 +394,6 @@ my @features = (
     { option => "text-autosizing", desc => "Toggle Text Autosizing support",
       define => "ENABLE_TEXT_AUTOSIZING", default => 0, value => \$textAutosizingSupport },
 
-    { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
-      define => "WTF_USE_TILED_BACKING_STORE", default => isEfl(), value => \$tiledBackingStoreSupport },
-
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => (isIOSWebKit() || isEfl() || isGtk()), value => \$touchEventsSupport },
 
