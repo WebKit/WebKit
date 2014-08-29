@@ -425,6 +425,12 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
 WebPageProxy::~WebPageProxy()
 {
+    ASSERT(m_process->webPage(m_pageID) != this);
+#if !ASSERT_DISABLED
+    for (WebPageProxy* page : m_process->pages())
+        ASSERT(page != this);
+#endif
+
     if (!m_isClosed)
         close();
 
@@ -546,6 +552,7 @@ void WebPageProxy::reattachToWebProcess()
 
     m_isValid = true;
     m_process->removeWebPage(m_pageID);
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
         m_process = m_process->context().ensureSharedWebProcess();
@@ -650,7 +657,7 @@ bool WebPageProxy::isProcessSuppressible() const
 
 void WebPageProxy::close()
 {
-    if (!isValid())
+    if (m_isClosed)
         return;
 
     m_isClosed = true;
@@ -3098,6 +3105,8 @@ void WebPageProxy::connectionWillClose(IPC::Connection* connection)
 
 void WebPageProxy::processDidFinishLaunching()
 {
+    ASSERT(m_process->state() == WebProcessProxy::State::Running);
+
     if (m_userContentController)
         m_userContentController->addProcess(m_process.get());
     m_visitedLinkProvider->addProcess(m_process.get());
@@ -4423,8 +4432,6 @@ void WebPageProxy::resetStateAfterProcessExited()
             m_userContentController->removeProcess(m_process.get());
         m_visitedLinkProvider->removeProcess(m_process.get());
     }
-
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
 #if PLATFORM(IOS)
     m_activityToken = nullptr;

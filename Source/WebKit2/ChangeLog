@@ -1,3 +1,33 @@
+2014-08-29  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173118
+
+    2014-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+            WebPageProxy::close() is a no-op for terminated processes
+            https://bugs.webkit.org/show_bug.cgi?id=136378
+            Related to <rdar://problem/16991213> and to <rdar://problem/17095600>
+
+            Reviewed by Brady Eidson.
+
+            Also fixes issues that got uncovered after making close() work.
+
+            * UIProcess/WebInspectorProxy.cpp: (WebKit::WebInspectorProxy::invalidate): Don't
+            close the page, because it makes no sense, and causes an assertion now. Previosly,
+            this was OK because the page was invalid already, and close() was a no-op.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::~WebPageProxy): Added some assertions to catch invalidation
+            issues earlier.
+            (WebKit::WebPageProxy::reattachToWebProcess): Make it an invariant that a page's
+            process always has a message receiver for it, until close() removes it.
+            (WebKit::WebPageProxy::close): Make this function work for all open pages, whether
+            they have a page or not.
+            (WebKit::WebPageProxy::processDidFinishLaunching): Added an asserion that process
+            agrees about its state.
+            (WebKit::WebPageProxy::resetStateAfterProcessExited): Don't remove a message receiver,
+            we now only do this in reattach or close.
+
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173093
