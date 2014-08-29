@@ -1433,6 +1433,7 @@ fast/canvas/canvas-path-addPath.html [ Skip ]
 # ENABLE_INDIE_UI
 indieui/uiactions.html [ Skip ]
 indieui/create-uirequestevent.html [ Skip ]
+js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
 # ENABLE_SHARED_WORKERS
 fast/workers/shared-worker-constructor.html [ Skip ]
