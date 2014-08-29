@@ -1,5 +1,24 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173067
+
+    2014-08-28  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Safari at com.apple.WebCore: WebCore::AXObjectCache::clearTextMarkerNodesInUse
+            https://bugs.webkit.org/show_bug.cgi?id=136333
+
+            Reviewed by David Kilzer.
+
+            If a Node is asked for it's Document when it's not actually in a document, it can lead to an assert/crash.
+            We can avoid this by checking that the node is in a document before asking for its document.
+
+            I was not able to make a test case.      
+
+            * accessibility/AXObjectCache.cpp:
+            (WebCore::AXObjectCache::clearTextMarkerNodesInUse):
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173028
 
     2014-08-27  Andreas Kling  <akling@apple.com>
