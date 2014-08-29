@@ -100,8 +100,6 @@ public:
 #endif
 #endif
 
-    GtkStyleContext* gtkScrollbarStyle();
-
 private:
     RenderThemeGtk();
     virtual ~RenderThemeGtk();

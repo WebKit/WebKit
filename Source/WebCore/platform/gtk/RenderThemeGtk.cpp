@@ -43,6 +43,7 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderProgress.h"
+#include "ScrollbarThemeGtk.h"
 #include "StringTruncator.h"
 #include "TimeRanges.h"
 #include "UserAgentScripts.h"
@@ -140,6 +141,7 @@ static void gtkStyleChangedCallback(GObject*, GParamSpec*)
 {
     for (const auto& styleContext : styleContextMap())
         gtk_style_context_invalidate(styleContext.value.get());
+    static_cast<ScrollbarThemeGtk*>(ScrollbarTheme::theme())->themeChanged();
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
@@ -165,9 +167,7 @@ static GtkStyleContext* getStyleContext(GType widgetType)
     GtkWidgetPath* path = gtk_widget_path_new();
     gtk_widget_path_append_type(path, widgetType);
 
-    if (widgetType == GTK_TYPE_SCROLLBAR)
-        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SCROLLBAR);
-    else if (widgetType == GTK_TYPE_ENTRY)
+    if (widgetType == GTK_TYPE_ENTRY)
         gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_ENTRY);
     else if (widgetType == GTK_TYPE_ARROW)
         gtk_widget_path_iter_add_class(path, 0, "arrow");
@@ -195,11 +195,6 @@ static GtkStyleContext* getStyleContext(GType widgetType)
 
     result.iterator->value = context;
     return context.get();
-}
-
-GtkStyleContext* RenderThemeGtk::gtkScrollbarStyle()
-{
-    return getStyleContext(GTK_TYPE_SCROLLBAR);
 }
 
 static GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)

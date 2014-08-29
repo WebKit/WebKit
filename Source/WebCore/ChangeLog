@@ -1,3 +1,34 @@
+2014-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ScrollbarThemeGtk should not depend on RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=136338
+
+        Reviewed by Philippe Normand.
+
+        Remove the dependency by creating the GtkStyleContext for the
+        scrollbars in ScrollbarThemeGtk.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::gtkStyleChangedCallback): Call ScrollbarThemeGtk::themeChanged().
+        (WebCore::getStyleContext): Remove the scrollbar style context support.
+        * platform/gtk/RenderThemeGtk.h: Remove gtkScrollbarStyle().
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarStyleContext::ScrollbarStyleContext): Helper
+        class to create the global GtkStyleContext for scrollbars.
+        (WebCore::ScrollbarStyleContext::~ScrollbarStyleContext):
+        (WebCore::ScrollbarStyleContext::context):
+        (WebCore::gtkScrollbarStyleContext):
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk): Remove m_context initialization.
+        (WebCore::ScrollbarThemeGtk::themeChanged): Invalidate the
+        GtkStylecontext and call updateThemeProperties().
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Use the
+        global style context.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintThumb): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintButton): Ditto.
+        * platform/gtk/ScrollbarThemeGtk.h:
+
 2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Merge RenderThemeGtk3.cpp into RenderThemeGtk.cpp and ScrollbarThemeGtk3.cpp intoScrollbarThemeGtk.cpp
