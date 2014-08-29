@@ -122,7 +122,7 @@ JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
     
 JSObject* createError(ExecState* exec, ErrorFactory errorFactory, JSValue value, const String& message)
 {
-    String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), " ", message);
+    String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
     JSObject* exception = errorFactory(exec, errorMessage);
     ASSERT(exception->isErrorInstance());
     static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
@@ -131,27 +131,27 @@ JSObject* createError(ExecState* exec, ErrorFactory errorFactory, JSValue value,
 
 JSObject* createInvalidParameterError(ExecState* exec, const char* op, JSValue value)
 {
-    return createError(exec, createTypeError, value, makeString("is not a valid argument for '", op, "'"));
+    return createError(exec, createTypeError, value, makeString("is not a valid argument for '", op, '\''));
 }
 
 JSObject* createNotAConstructorError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, "is not a constructor");
+    return createError(exec, createTypeError, value, ASCIILiteral("is not a constructor"));
 }
 
 JSObject* createNotAFunctionError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, "is not a function");
+    return createError(exec, createTypeError, value, ASCIILiteral("is not a function"));
 }
 
 JSObject* createNotAnObjectError(ExecState* exec, JSValue value)
 {
-    return createError(exec, createTypeError, value, "is not an object");
+    return createError(exec, createTypeError, value, ASCIILiteral("is not an object"));
 }
 
 JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const String& propertyName)
 {
-    return createReferenceError(exec, makeString("Strict mode forbids implicit creation of global property '", propertyName, "'"));
+    return createReferenceError(exec, makeString("Strict mode forbids implicit creation of global property '", propertyName, '\''));
 }
 
 JSObject* createOutOfMemoryError(JSGlobalObject* globalObject)

@@ -1,3 +1,103 @@
+2014-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JavaScriptCore: Use ASCIILiteral where possible
+        https://bugs.webkit.org/show_bug.cgi?id=136179
+
+        Reviewed by Michael Saboff.
+
+        General string / character related changes. Use ASCIILiteral where
+        possible, jsNontrivialString where possible, and replace string
+        literals with character literals in some places.
+
+        No new tests, no changes to functionality.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::nameForRegister):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitBytecode):
+        (JSC::PrefixNode::emitBytecode):
+        (JSC::AssignErrorNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::ObjectPatternNode::toString):
+        * dfg/DFGFunctionWhitelist.cpp:
+        (JSC::DFG::FunctionWhitelist::contains):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithSize):
+        (JSC::DFG::newTypedArrayWithOneArgument):
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::InspectorBackendDispatcher::dispatch):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::extractSourceInformationFromException):
+        * inspector/scripts/codegen/generator_templates.py:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::functionName):
+        (JSC::StackVisitor::Frame::sourceURL):
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        (functionDescribeArray):
+        (functionRun):
+        (functionLoad):
+        (functionReadFile):
+        (functionCheckSyntax):
+        (functionTransferArrayBuffer):
+        (runWithScripts):
+        (runInteractive):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::invalidCharacterMessage):
+        (JSC::Lexer<T>::parseString):
+        (JSC::Lexer<T>::parseStringSlowCase):
+        (JSC::Lexer<T>::lex):
+        * profiler/Profile.cpp:
+        (JSC::Profile::Profile):
+        * runtime/Arguments.cpp:
+        (JSC::argumentsFuncIterator):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::performSlowSort):
+        (JSC::arrayProtoFuncSort):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        (JSC::createInvalidParameterError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        (JSC::createErrorForInvalidGlobalAssignment):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::insertSemicolonIfNeeded):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::create):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::finishCreation):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        (JSC::LiteralParser<CharType>::Lexer::lexString):
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::getErrorMessage):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::seenTypes):
+        (JSC::TypeSet::displayName):
+        (JSC::TypeSet::allPrimitiveTypeNames):
+        (JSC::StructureShape::propertyHash):
+        (JSC::StructureShape::stringRepresentation):
+
 2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviwed, remove empty directories.

@@ -85,7 +85,7 @@ CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 static inline void insertSemicolonIfNeeded(String& functionBody, bool bodyIncludesBraces)
 {
     if (!bodyIncludesBraces)
-        functionBody = makeString("{ ", functionBody, "}");
+        functionBody = makeString("{ ", functionBody, '}');
 
     ASSERT(functionBody[0] == '{');
     ASSERT(functionBody[functionBody.length() - 1] == '}');
@@ -94,7 +94,7 @@ static inline void insertSemicolonIfNeeded(String& functionBody, bool bodyInclud
         UChar ch = functionBody[i];
         if (!Lexer<UChar>::isWhiteSpace(ch) && !Lexer<UChar>::isLineTerminator(ch)) {
             if (ch != ';' && ch != '}')
-                functionBody = makeString(functionBody.substringSharingImpl(0, i + 1), ";", functionBody.substringSharingImpl(i + 1, functionBody.length() - (i + 1)));
+                functionBody = makeString(functionBody.substringSharingImpl(0, i + 1), ';', functionBody.substringSharingImpl(i + 1, functionBody.length() - (i + 1)));
             return;
         }
     }

@@ -124,7 +124,7 @@ static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "column"));
     *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
     JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
-    *sourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : String("undefined");
+    *sourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
     exec->clearException();
 }
 

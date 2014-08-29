@@ -85,7 +85,7 @@ JSPromiseConstructor::JSPromiseConstructor(VM& vm, Structure* structure)
 
 void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePrototype)
 {
-    Base::finishCreation(vm, "Promise");
+    Base::finishCreation(vm, ASCIILiteral("Promise"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }

@@ -891,8 +891,8 @@ RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
         return emitDot(generator, dst);
 
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
-        ? "Postfix ++ operator applied to value that is not a reference."
-        : "Postfix -- operator applied to value that is not a reference.");
+        ? ASCIILiteral("Postfix ++ operator applied to value that is not a reference.")
+        : ASCIILiteral("Postfix -- operator applied to value that is not a reference."));
 }
 
 // ------------------------------ DeleteResolveNode -----------------------------------
@@ -1074,8 +1074,8 @@ RegisterID* PrefixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         return emitDot(generator, dst);
 
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
-        ? "Prefix ++ operator applied to value that is not a reference."
-        : "Prefix -- operator applied to value that is not a reference.");
+        ? ASCIILiteral("Prefix ++ operator applied to value that is not a reference.")
+        : ASCIILiteral("Prefix -- operator applied to value that is not a reference."));
 }
 
 // ------------------------------ Unary Operation Nodes -----------------------------------
@@ -1613,7 +1613,7 @@ RegisterID* ReadModifyDotNode::emitBytecode(BytecodeGenerator& generator, Regist
 
 RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    return emitThrowReferenceError(generator, "Left side of assignment is not a reference.");
+    return emitThrowReferenceError(generator, ASCIILiteral("Left side of assignment is not a reference."));
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------
@@ -2035,7 +2035,7 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
 void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (!m_lexpr->isAssignmentLocation()) {
-        emitThrowReferenceError(generator, "Left side of for-in statement is not a reference.");
+        emitThrowReferenceError(generator, ASCIILiteral("Left side of for-in statement is not a reference."));
         return;
     }
 
@@ -2167,7 +2167,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (!m_lexpr->isAssignmentLocation()) {
-        emitThrowReferenceError(generator, "Left side of for-of statement is not a reference.");
+        emitThrowReferenceError(generator, ASCIILiteral("Left side of for-of statement is not a reference."));
         return;
     }
     
@@ -2784,7 +2784,7 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
             builder.append('"');
         } else
             builder.append(m_targetPatterns[i].propertyName.string());
-        builder.append(":");
+        builder.append(':');
         m_targetPatterns[i].pattern->toString(builder);
         if (i < m_targetPatterns.size() - 1)
             builder.append(',');

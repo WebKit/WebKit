@@ -802,7 +802,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
     if (!thisObject->setPrototypeWithCycleCheck(exec, value))
-        exec->vm().throwException(exec, createError(exec, "cyclic __proto__ value"));
+        exec->vm().throwException(exec, createError(exec, ASCIILiteral("cyclic __proto__ value")));
     return JSValue::encode(jsUndefined());
 }
     

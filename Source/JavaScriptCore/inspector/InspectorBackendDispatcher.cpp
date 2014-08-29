@@ -90,7 +90,7 @@ void InspectorBackendDispatcher::dispatch(const String& message)
         return;
     }
 
-    RefPtr<InspectorValue> callIdValue = messageObject->get("id");
+    RefPtr<InspectorValue> callIdValue = messageObject->get(ASCIILiteral("id"));
     if (!callIdValue) {
         reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("'id' property was not found"));
         return;
@@ -102,7 +102,7 @@ void InspectorBackendDispatcher::dispatch(const String& message)
         return;
     }
 
-    RefPtr<InspectorValue> methodValue = messageObject->get("method");
+    RefPtr<InspectorValue> methodValue = messageObject->get(ASCIILiteral("method"));
     if (!methodValue) {
         reportProtocolError(&callId, InvalidRequest, ASCIILiteral("'method' property wasn't found"));
         return;

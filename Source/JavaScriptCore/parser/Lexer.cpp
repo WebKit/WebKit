@@ -506,21 +506,21 @@ String Lexer<T>::invalidCharacterMessage() const
 {
     switch (m_current) {
     case 0:
-        return "Invalid character: '\\0'";
+        return ASCIILiteral("Invalid character: '\\0'");
     case 10:
-        return "Invalid character: '\\n'";
+        return ASCIILiteral("Invalid character: '\\n'");
     case 11:
-        return "Invalid character: '\\v'";
+        return ASCIILiteral("Invalid character: '\\v'");
     case 13:
-        return "Invalid character: '\\r'";
+        return ASCIILiteral("Invalid character: '\\r'");
     case 35:
-        return "Invalid character: '#'";
+        return ASCIILiteral("Invalid character: '#'");
     case 64:
-        return "Invalid character: '@'";
+        return ASCIILiteral("Invalid character: '@'");
     case 96:
-        return "Invalid character: '`'";
+        return ASCIILiteral("Invalid character: '`'");
     default:
-        return String::format("Invalid character '\\u%04u'", static_cast<unsigned>(m_current)).impl();
+        return String::format("Invalid character '\\u%04u'", static_cast<unsigned>(m_current));
     }
 }
 
@@ -1026,7 +1026,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
             else if (m_current == 'x') {
                 shift();
                 if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(peek(1))) {
-                    m_lexErrorMessage = "\\x can only be followed by a hex character sequence";
+                    m_lexErrorMessage = ASCIILiteral("\\x can only be followed by a hex character sequence");
                     return (atEnd() || (isASCIIHexDigit(m_current) && (m_code + 1 == m_codeEnd))) ? StringUnterminated : StringCannotBeParsed;
                 }
                 T prev = m_current;
@@ -1091,7 +1091,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
             else if (m_current == 'x') {
                 shift();
                 if (!isASCIIHexDigit(m_current) || !isASCIIHexDigit(peek(1))) {
-                    m_lexErrorMessage = "\\x can only be followed by a hex character sequence";
+                    m_lexErrorMessage = ASCIILiteral("\\x can only be followed by a hex character sequence");
                     return StringCannotBeParsed;
                 }
                 T prev = m_current;
@@ -1109,7 +1109,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
                     if (shouldBuildStrings)
                         record16('u');
                 } else {
-                    m_lexErrorMessage = "\\u can only be followed by a Unicode character sequence";
+                    m_lexErrorMessage = ASCIILiteral("\\u can only be followed by a Unicode character sequence");
                     return character.valueType() == UnicodeHexValue::IncompleteHex ? StringUnterminated : StringCannotBeParsed;
                 }
             } else if (strictMode && isASCIIDigit(m_current)) {
@@ -1117,7 +1117,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
                 int character1 = m_current;
                 shift();
                 if (character1 != '0' || isASCIIDigit(m_current)) {
-                    m_lexErrorMessage = "The only valid numeric escape in strict mode is '\\0'";
+                    m_lexErrorMessage = ASCIILiteral("The only valid numeric escape in strict mode is '\\0'");
                     return StringCannotBeParsed;
                 }
                 if (shouldBuildStrings)
@@ -1147,7 +1147,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
                     record16(m_current);
                 shift();
             } else {
-                m_lexErrorMessage = "Unterminated string constant";
+                m_lexErrorMessage = ASCIILiteral("Unterminated string constant");
                 return StringUnterminated;
             }
 
@@ -1160,7 +1160,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
         if (UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000))) {
             // New-line or end of input is not allowed
             if (atEnd() || isLineTerminator(m_current)) {
-                m_lexErrorMessage = "Unexpected EOF";
+                m_lexErrorMessage = ASCIILiteral("Unexpected EOF");
                 return atEnd() ? StringUnterminated : StringCannotBeParsed;
             }
             // Anything else is just a normal character
@@ -1522,7 +1522,7 @@ start:
             shift();
             if (parseMultilineComment())
                 goto start;
-            m_lexErrorMessage = "Multiline comment was not closed properly";
+            m_lexErrorMessage = ASCIILiteral("Multiline comment was not closed properly");
             token = UNTERMINATED_MULTILINE_COMMENT_ERRORTOK;
             goto returnError;
         }
@@ -1648,13 +1648,13 @@ start:
         shift();
         if ((m_current | 0x20) == 'x') {
             if (!isASCIIHexDigit(peek(1))) {
-                m_lexErrorMessage = "No hexadecimal digits after '0x'";
+                m_lexErrorMessage = ASCIILiteral("No hexadecimal digits after '0x'");
                 token = INVALID_HEX_NUMBER_ERRORTOK;
                 goto returnError;
             }
             parseHex(tokenData->doubleValue);
             if (isIdentStart(m_current)) {
-                m_lexErrorMessage = "No space between hexadecimal literal and identifier";
+                m_lexErrorMessage = ASCIILiteral("No space between hexadecimal literal and identifier");
                 token = INVALID_HEX_NUMBER_ERRORTOK;
                 goto returnError;
             }
@@ -1665,7 +1665,7 @@ start:
 
         record8('0');
         if (strictMode && isASCIIDigit(m_current)) {
-            m_lexErrorMessage = "Decimal integer literals with a leading zero are forbidden in strict mode";
+            m_lexErrorMessage = ASCIILiteral("Decimal integer literals with a leading zero are forbidden in strict mode");
             token = INVALID_OCTAL_NUMBER_ERRORTOK;
             goto returnError;
         }
@@ -1685,7 +1685,7 @@ inNumberAfterDecimalPoint:
                 }
                 if ((m_current | 0x20) == 'e') {
                     if (!parseNumberAfterExponentIndicator()) {
-                        m_lexErrorMessage = "Non-number found after exponent indicator";
+                        m_lexErrorMessage = ASCIILiteral("Non-number found after exponent indicator");
                         token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
                         goto returnError;
                     }
@@ -1698,7 +1698,7 @@ inNumberAfterDecimalPoint:
 
         // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
         if (UNLIKELY(isIdentStart(m_current))) {
-            m_lexErrorMessage = "At least one digit must occur after a decimal point";
+            m_lexErrorMessage = ASCIILiteral("At least one digit must occur after a decimal point");
             token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
             goto returnError;
         }
@@ -1749,7 +1749,7 @@ inNumberAfterDecimalPoint:
         goto returnError;
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        m_lexErrorMessage = "Internal Error";
+        m_lexErrorMessage = ASCIILiteral("Internal Error");
         token = ERRORTOK;
         goto returnError;
     }

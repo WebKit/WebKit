@@ -196,7 +196,7 @@ String StackVisitor::Frame::functionName()
 
     switch (codeType()) {
     case CodeType::Eval:
-        traceLine = "eval code";
+        traceLine = ASCIILiteral("eval code");
         break;
     case CodeType::Native:
         if (callee)
@@ -206,7 +206,7 @@ String StackVisitor::Frame::functionName()
         traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
     case CodeType::Global:
-        traceLine = "global code";
+        traceLine = ASCIILiteral("global code");
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;
@@ -226,7 +226,7 @@ String StackVisitor::Frame::sourceURL()
         break;
     }
     case CodeType::Native:
-        traceLine = "[native code]";
+        traceLine = ASCIILiteral("[native code]");
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;

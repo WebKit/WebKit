@@ -969,7 +969,7 @@ EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     NativeCallFrameTracer tracer(&vm, exec);
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     if (!regexp->isValid()) {
-        vm.throwException(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+        vm.throwException(exec, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
         return JSValue::encode(jsUndefined());
     }
 
@@ -1615,7 +1615,7 @@ EncodedJSValue JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue
     bool couldDelete = baseObj->methodTable(vm)->deleteProperty(baseObj, exec, *identifier);
     JSValue result = jsBoolean(couldDelete);
     if (!couldDelete && exec->codeBlock()->isStrictMode())
-        vm.throwException(exec, createTypeError(exec, "Unable to delete property."));
+        vm.throwException(exec, createTypeError(exec, ASCIILiteral("Unable to delete property.")));
     return JSValue::encode(result);
 }
 

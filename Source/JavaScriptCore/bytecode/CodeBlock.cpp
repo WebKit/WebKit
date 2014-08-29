@@ -3845,7 +3845,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
             return ASCIILiteral("real arguments");
     }
     if (virtualRegister.isArgument())
-        return String::format("arguments[%3d]", virtualRegister.toArgument()).impl();
+        return String::format("arguments[%3d]", virtualRegister.toArgument());
 
     return "";
 }

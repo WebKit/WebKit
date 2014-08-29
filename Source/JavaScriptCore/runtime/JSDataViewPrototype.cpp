@@ -119,10 +119,10 @@ EncodedJSValue getData(ExecState* exec)
 {
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
-        return throwVMError(exec, createTypeError(exec, "Receiver of DataView method must be a DataView"));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Receiver of DataView method must be a DataView")));
     
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Need at least one argument (the byteOffset)"));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Need at least one argument (the byteOffset)")));
     
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
     if (exec->hadException())
@@ -138,7 +138,7 @@ EncodedJSValue getData(ExecState* exec)
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, createRangeError(exec, "Out of bounds access"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("Out of bounds access")));
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
     union {
@@ -164,10 +164,10 @@ EncodedJSValue setData(ExecState* exec)
 {
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
-        return throwVMError(exec, createTypeError(exec, "Receiver of DataView method must be a DataView"));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Receiver of DataView method must be a DataView")));
     
     if (exec->argumentCount() < 2)
-        return throwVMError(exec, createTypeError(exec, "Need at least two argument (the byteOffset and value)"));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Need at least two argument (the byteOffset and value)")));
     
     unsigned byteOffset = exec->uncheckedArgument(0).toUInt32(exec);
     if (exec->hadException())
@@ -193,7 +193,7 @@ EncodedJSValue setData(ExecState* exec)
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, createRangeError(exec, "Out of bounds access"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("Out of bounds access")));
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 

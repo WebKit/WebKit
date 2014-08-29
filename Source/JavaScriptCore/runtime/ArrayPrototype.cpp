@@ -694,7 +694,7 @@ static bool performSlowSort(ExecState* exec, JSObject* thisObj, unsigned length,
                 if (exec->hadException())
                     return false;
             } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, i)) {
-                throwTypeError(exec, "Unable to delete property.");
+                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
                 return false;
             }
             if (iObj) {
@@ -702,7 +702,7 @@ static bool performSlowSort(ExecState* exec, JSObject* thisObj, unsigned length,
                 if (exec->hadException())
                     return false;
             } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, themin)) {
-                throwTypeError(exec, "Unable to delete property.");
+                throwTypeError(exec, ASCIILiteral("Unable to delete property."));
                 return false;
             }
         }
@@ -767,7 +767,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
             continue;
         
         if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, index)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
     }

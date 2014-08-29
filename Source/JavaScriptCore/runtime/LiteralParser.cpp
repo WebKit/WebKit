@@ -281,7 +281,7 @@ template <ParserMode mode> TokenType LiteralParser<CharType>::Lexer::lex(Literal
             return lexString<mode, '\''>(token);
         }
     }
-    m_lexErrorMessage = String::format("Unrecognized token '%c'", *m_ptr).impl();
+    m_lexErrorMessage = String::format("Unrecognized token '%c'", *m_ptr);
     return TokError;
 }
 
@@ -406,7 +406,7 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
                     } // uNNNN == 5 characters
                     for (int i = 1; i < 5; i++) {
                         if (!isASCIIHexDigit(m_ptr[i])) {
-                            m_lexErrorMessage = String::format("\"\\%s\" is not a valid unicode escape", String(m_ptr, 5).ascii().data()).impl();
+                            m_lexErrorMessage = String::format("\"\\%s\" is not a valid unicode escape", String(m_ptr, 5).ascii().data());
                             return TokError;
                         }
                     }
@@ -420,7 +420,7 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
                         m_ptr++;
                         break;
                     }
-                    m_lexErrorMessage = String::format("Invalid escape character %c", *m_ptr).impl();
+                    m_lexErrorMessage = String::format("Invalid escape character %c", *m_ptr);
                     return TokError;
             }
         }
@@ -711,9 +711,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     case TokIdentifier: {
                         const LiteralParserToken<CharType>& token = m_lexer.currentToken();
                         if (token.stringIs8Bit)
-                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", String(m_lexer.currentToken().stringToken8, m_lexer.currentToken().stringLength).ascii().data()).impl();
+                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", String(m_lexer.currentToken().stringToken8, m_lexer.currentToken().stringLength).ascii().data());
                         else
-                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", String(m_lexer.currentToken().stringToken16, m_lexer.currentToken().stringLength).ascii().data()).impl();
+                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", String(m_lexer.currentToken().stringToken16, m_lexer.currentToken().stringLength).ascii().data());
                         return JSValue();
                     }
                     case TokColon:

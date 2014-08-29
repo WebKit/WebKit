@@ -48,11 +48,11 @@ JSDataView* JSDataView::create(
 {
     RefPtr<ArrayBuffer> buffer = passedBuffer;
     if (!ArrayBufferView::verifySubRangeLength(buffer, byteOffset, byteLength, sizeof(uint8_t))) {
-        throwVMError(exec, createRangeError(exec, "Length out of range of buffer"));
+        throwVMError(exec, createRangeError(exec, ASCIILiteral("Length out of range of buffer")));
         return nullptr;
     }
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, sizeof(uint8_t))) {
-        exec->vm().throwException(exec, createRangeError(exec, "Byte offset is not aligned"));
+        exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Byte offset is not aligned")));
         return nullptr;
     }
     VM& vm = exec->vm();

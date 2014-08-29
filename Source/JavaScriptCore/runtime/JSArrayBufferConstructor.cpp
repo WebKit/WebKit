@@ -49,7 +49,7 @@ JSArrayBufferConstructor::JSArrayBufferConstructor(VM& vm, Structure* structure)
 
 void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* prototype)
 {
-    Base::finishCreation(vm, "ArrayBuffer");
+    Base::finishCreation(vm, ASCIILiteral("ArrayBuffer"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
 

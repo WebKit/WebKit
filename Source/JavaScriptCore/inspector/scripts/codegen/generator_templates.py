@@ -129,7 +129,7 @@ private:
 
 ${dispatchCases}
     else
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, String("'") + "${domainName}" + '.' + method + "' was not found");
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\\'', "${domainName}", '.', method, "' was not found"));
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (
@@ -154,7 +154,7 @@ ${dispatchCases}
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
     if (it == dispatchMap.end()) {
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, String("'") + "${domainName}" + '.' + method + "' was not found");
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\\'', "${domainName}", '.', method, "' was not found"));
         return;
     }
 

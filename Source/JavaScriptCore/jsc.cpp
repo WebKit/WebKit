@@ -714,8 +714,8 @@ EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState* exec)
         return JSValue::encode(jsUndefined());
     JSObject* object = jsDynamicCast<JSObject*>(exec->argument(0));
     if (!object)
-        return JSValue::encode(jsString(exec, "<not object>"));
-    return JSValue::encode(jsString(exec, toString("<Public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
+        return JSValue::encode(jsNontrivialString(exec, ASCIILiteral("<not object>")));
+    return JSValue::encode(jsNontrivialString(exec, toString("<Public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
 }
 
 class FunctionJSCStackFunctor {
@@ -869,7 +869,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
 
@@ -898,7 +898,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
@@ -914,7 +914,7 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     return JSValue::encode(jsString(exec, stringFromUTF(script.data())));
 }
@@ -924,7 +924,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
@@ -1011,11 +1011,11 @@ EncodedJSValue JSC_HOST_CALL functionReoptimizationRetryCount(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Not enough arguments")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Not enough arguments"))));
     
     JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(0));
     if (!buffer)
-        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Expected an array buffer")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Expected an array buffer"))));
     
     ArrayBufferContents dummyContents;
     buffer->impl()->transfer(dummyContents);
@@ -1186,7 +1186,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             script = scriptBuffer.data();
         } else {
             script = scripts[i].argument;
-            fileName = "[Command Line]";
+            fileName = ASCIILiteral("[Command Line]");
         }
 
         vm.startSampling();
@@ -1228,7 +1228,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
 static void runInteractive(GlobalObject* globalObject)
 {
-    String interpreterName("Interpreter");
+    String interpreterName(ASCIILiteral("Interpreter"));
     
     bool shouldQuit = false;
     while (!shouldQuit) {

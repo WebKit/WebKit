@@ -211,7 +211,7 @@ void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFr
                 jsonArgs->addItem(inspectorValue);
             } else {
                 for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                    RefPtr<Inspector::Protocol::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console", generatePreview);
+                    RefPtr<Inspector::Protocol::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), ASCIILiteral("console"), generatePreview);
                     if (!inspectorValue) {
                         ASSERT_NOT_REACHED();
                         return;

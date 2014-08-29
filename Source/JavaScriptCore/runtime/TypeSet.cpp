@@ -99,7 +99,7 @@ void TypeSet::invalidateCache()
 String TypeSet::seenTypes() const
 {
     if (m_seenTypes == TypeNothing)
-        return "(Unreached Statement)";
+        return ASCIILiteral("(Unreached Statement)");
 
     StringBuilder seen;
 
@@ -123,17 +123,17 @@ String TypeSet::seenTypes() const
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         RefPtr<StructureShape> shape = m_structureHistory.at(i);
         seen.append(shape->m_constructorName);
-        seen.append(" ");
+        seen.append(' ');
     }
 
     if (m_structureHistory.size()) 
         seen.append("\nStructures:[ ");
     for (size_t i = 0; i < m_structureHistory.size(); i++) {
         seen.append(m_structureHistory.at(i)->stringRepresentation());
-        seen.append(" ");
+        seen.append(' ');
     }
     if (m_structureHistory.size())
-        seen.append("]");
+        seen.append(']');
 
     if (m_structureHistory.size()) {
         seen.append("\nLeast Common Ancestor: ");
@@ -166,72 +166,72 @@ bool TypeSet::doesTypeConformTo(uint32_t test) const
 String TypeSet::displayName() const
 {
     if (m_seenTypes == TypeNothing)
-        return "";
+        return emptyString();
 
     if (m_structureHistory.size() && doesTypeConformTo(TypeObject | TypeNull | TypeUndefined)) {
         String ctorName = leastCommonAncestor(); 
 
         if (doesTypeConformTo(TypeObject))
             return ctorName;
-        else if (doesTypeConformTo(TypeObject | TypeNull | TypeUndefined))
-            return ctorName + "?";
+        if (doesTypeConformTo(TypeObject | TypeNull | TypeUndefined))
+            return ctorName + '?';
     }
 
     // The order of these checks are important. For example, if a value is only a function, it conforms to TypeFunction, but it also conforms to TypeFunction | TypeNull.
     // Therefore, more specific types must be checked first.
 
     if (doesTypeConformTo(TypeFunction))
-        return "Function";
+        return ASCIILiteral("Function");
     if (doesTypeConformTo(TypeUndefined))
-        return "Undefined";
+        return ASCIILiteral("Undefined");
     if (doesTypeConformTo(TypeNull))
-        return "Null";
+        return ASCIILiteral("Null");
     if (doesTypeConformTo(TypeBoolean))
-        return "Boolean";
+        return ASCIILiteral("Boolean");
     if (doesTypeConformTo(TypeMachineInt))
-        return "Integer";
+        return ASCIILiteral("Integer");
     if (doesTypeConformTo(TypeNumber | TypeMachineInt))
-        return "Number";
+        return ASCIILiteral("Number");
     if (doesTypeConformTo(TypeString))
-        return "String";
+        return ASCIILiteral("String");
 
     if (doesTypeConformTo(TypeNull | TypeUndefined))
-        return "(?)";
+        return ASCIILiteral("(?)");
 
     if (doesTypeConformTo(TypeFunction | TypeNull | TypeUndefined))
-        return "Function?";
+        return ASCIILiteral("Function?");
     if (doesTypeConformTo(TypeBoolean | TypeNull | TypeUndefined))
-        return "Boolean?";
+        return ASCIILiteral("Boolean?");
     if (doesTypeConformTo(TypeMachineInt | TypeNull | TypeUndefined))
-        return "Integer?";
+        return ASCIILiteral("Integer?");
     if (doesTypeConformTo(TypeNumber | TypeMachineInt | TypeNull | TypeUndefined))
-        return "Number?";
+        return ASCIILiteral("Number?");
     if (doesTypeConformTo(TypeString | TypeNull | TypeUndefined))
-        return "String?";
+        return ASCIILiteral("String?");
    
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString))
-        return "Object";
+        return ASCIILiteral("Object");
     if (doesTypeConformTo(TypeObject | TypeFunction | TypeString | TypeNull | TypeUndefined))
-        return "Object?";
+        return ASCIILiteral("Object?");
 
-    return "(many)";
+    return ASCIILiteral("(many)");
 }
 
 PassRefPtr<Inspector::Protocol::Array<String>> TypeSet::allPrimitiveTypeNames() const
 {
     RefPtr<Inspector::Protocol::Array<String>> seen = Inspector::Protocol::Array<String>::create();
     if (m_seenTypes & TypeUndefined)
-         seen->addItem("Undefined");
+        seen->addItem(ASCIILiteral("Undefined"));
     if (m_seenTypes & TypeNull)
-         seen->addItem("Null");
+        seen->addItem(ASCIILiteral("Null"));
     if (m_seenTypes & TypeBoolean)
-         seen->addItem("Boolean");
+        seen->addItem(ASCIILiteral("Boolean"));
     if (m_seenTypes & TypeMachineInt)
-         seen->addItem("Integer");
+        seen->addItem(ASCIILiteral("Integer"));
     if (m_seenTypes & TypeNumber)
-         seen->addItem("Number");
+        seen->addItem(ASCIILiteral("Number"));
     if (m_seenTypes & TypeString)
-         seen->addItem("String");
+        seen->addItem(ASCIILiteral("String"));
 
     return seen.release();
 }
@@ -282,9 +282,9 @@ String StructureShape::propertyHash()
         return *m_propertyHash;
 
     StringBuilder builder;
-    builder.append(":");
+    builder.append(':');
     builder.append(m_constructorName);
-    builder.append(":");
+    builder.append(':');
     
     for (auto iter = m_fields.begin(), end = m_fields.end(); iter != end; ++iter) {
         String property = String((*iter));
@@ -293,7 +293,7 @@ String StructureShape::propertyHash()
     }
 
     if (m_proto) {
-        builder.append(":");
+        builder.append(':');
         builder.append("__proto__");
         builder.append(m_proto->propertyHash());
     }
@@ -339,7 +339,7 @@ String StructureShape::stringRepresentation()
     StringBuilder representation;
     RefPtr<StructureShape> curShape = this;
 
-    representation.append("{");
+    representation.append('{');
     while (curShape) {
         for (auto it = curShape->m_fields.begin(), end = curShape->m_fields.end(); it != end; ++it) {
             String prop((*it).get());
@@ -348,7 +348,7 @@ String StructureShape::stringRepresentation()
         }
 
         if (curShape->m_proto) {
-            String prot = String("__proto__") + String(" [") + curShape->m_proto->m_constructorName + String("]");
+            String prot = makeString("__proto__ [", curShape->m_proto->m_constructorName, ']');
             representation.append(prot);
             representation.append(", ");
         }
@@ -359,7 +359,7 @@ String StructureShape::stringRepresentation()
     if (representation.length() >= 3)
         representation.resize(representation.length() - 2);
 
-    representation.append("}");
+    representation.append('}');
 
     return representation.toString();
 }
