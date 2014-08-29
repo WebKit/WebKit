@@ -43,8 +43,14 @@
 ;; enough access to make it possible.
 
 ;; Disallow networking process from reading any bundles, even with the read extension
-(deny file-read* (subpath "/Applications") (extension "com.apple.app-sandbox.read"))
-(deny file-read* (subpath "/private/var/mobile/Containers/Bundle/Application") (extension "com.apple.app-sandbox.read"))
+(deny file-read*
+    (require-all
+        (subpath "/Applications")
+        (extension "com.apple.app-sandbox.read")))
+(deny file-read*
+    (require-all
+        (subpath "/private/var/mobile/Containers/Bundle/Application")
+        (extension "com.apple.app-sandbox.read")))
 
 ;; Allow the networking process to read directories inside the bundle directories
 ;; that we may have killed off above
