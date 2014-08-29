@@ -1,5 +1,25 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173080
+
+    2014-08-28  Pratik Solanki  <psolanki@apple.com>
+
+            WebContent hangs under SharedBuffer::duplicateDataBufferIfNecessary() while browsing some websites
+            https://bugs.webkit.org/show_bug.cgi?id=136347
+            <rdar://problem/18073745>
+
+            Reviewed by Andreas Kling.
+
+            When passing data to ImageIO, we create a copy if we have to reallocate the buffer. We would
+            set the size of the new buffer to be the size of the SharedBuffer data. This causes memory
+            churn since we would create a new buffer for every data chunk we get. Fix this by at least
+            doubling the capacity of the buffer when we duplicate it.
+
+            * platform/SharedBuffer.cpp:
+            (WebCore::SharedBuffer::duplicateDataBufferIfNecessary):
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173067
 
     2014-08-28  Chris Fleizach  <cfleizach@apple.com>
