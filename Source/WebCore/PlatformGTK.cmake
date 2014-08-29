@@ -239,9 +239,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/PlatformWheelEventGtk.cpp
     platform/gtk/RedirectedXCompositeWindow.cpp
     platform/gtk/RenderThemeGtk.cpp
-    platform/gtk/RenderThemeGtk3.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/ScrollbarThemeGtk3.cpp
     platform/gtk/SharedBufferGtk.cpp
     platform/gtk/SharedTimerGtk.cpp
     platform/gtk/SoundGtk.cpp

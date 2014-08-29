@@ -1,3 +1,20 @@
+2014-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Merge RenderThemeGtk3.cpp into RenderThemeGtk.cpp and ScrollbarThemeGtk3.cpp intoScrollbarThemeGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=136336
+
+        Reviewed by Philippe Normand.
+
+        There's no reason to have two files now that there's no GTK+2
+        support. Also fix coding style issues and compile warnings.
+
+        * PlatformGTK.cmake:
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk3.cpp: Removed.
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        * platform/gtk/ScrollbarThemeGtk3.cpp: Removed.
+
 2014-08-28  Mark Lam  <mark.lam@apple.com>
 
         DebuggerCallFrame::scope() should return a DebuggerScope.

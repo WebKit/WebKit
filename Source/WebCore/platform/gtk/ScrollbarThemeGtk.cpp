@@ -26,10 +26,13 @@
 #include "config.h"
 #include "ScrollbarThemeGtk.h"
 
+#include "PlatformContextCairo.h"
 #include "PlatformMouseEvent.h"
 #include "RenderThemeGtk.h"
 #include "ScrollView.h"
 #include "Scrollbar.h"
+#include <gtk/gtk.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -50,6 +53,7 @@ bool ScrollbarThemeGtk::hasThumb(ScrollbarThemeClient* scrollbar)
     // painting the thumb can be skipped.  We don't have to be exact here.
     return thumbLength(scrollbar) > 0;
 #else
+    UNUSED_PARAM(scrollbar);
     return false;
 #endif
 }
@@ -75,6 +79,8 @@ IntRect ScrollbarThemeGtk::backButtonRect(ScrollbarThemeClient* scrollbar, Scrol
     // VerticalScrollbar alternate button
     return IntRect(x, scrollbar->y() + scrollbar->height() - m_troughBorderWidth - (2 * size.height()), size.width(), size.height());
 #else
+    UNUSED_PARAM(scrollbar);
+    UNUSED_PARAM(part);
     return IntRect();
 #endif
 }
@@ -105,6 +111,8 @@ IntRect ScrollbarThemeGtk::forwardButtonRect(ScrollbarThemeClient* scrollbar, Sc
     // ForwardButtonStartPart (alternate button)
     return IntRect(x, scrollbar->y() + m_troughBorderWidth + size.height(), size.width(), size.height());
 #else
+    UNUSED_PARAM(scrollbar);
+    UNUSED_PARAM(part);
     return IntRect();
 #endif
 }
@@ -149,41 +157,69 @@ IntRect ScrollbarThemeGtk::trackRect(ScrollbarThemeClient* scrollbar, bool)
     return IntRect(scrollbar->x(), scrollbar->y() + movementAxisPadding + startButtonsOffset,
                    thickness, scrollbar->height() - (2 * movementAxisPadding) - buttonsWidth);
 #else
+    UNUSED_PARAM(scrollbar);
     return IntRect();
 #endif
 }
 
 #ifndef GTK_API_VERSION_2
-static HashSet<ScrollbarThemeClient*>* gScrollbars;
+static void gtkStyleChangedCallback(GtkWidget*, ScrollbarThemeGtk* scrollbarTheme)
+{
+    scrollbarTheme->updateThemeProperties();
+}
+
+ScrollbarThemeGtk::ScrollbarThemeGtk()
+    : m_context(static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkScrollbarStyle())
+{
+    updateThemeProperties();
+    g_signal_connect(m_context, "changed", G_CALLBACK(gtkStyleChangedCallback), this);
+}
+
+void ScrollbarThemeGtk::updateThemeProperties()
+{
+    gtk_style_context_get_style(
+        m_context,
+        "min-slider-length", &m_minThumbLength,
+        "slider-width", &m_thumbFatness,
+        "trough-border", &m_troughBorderWidth,
+        "stepper-size", &m_stepperSize,
+        "stepper-spacing", &m_stepperSpacing,
+        "trough-under-steppers", &m_troughUnderSteppers,
+        "has-backward-stepper", &m_hasBackButtonStartPart,
+        "has-forward-stepper", &m_hasForwardButtonEndPart,
+        "has-secondary-backward-stepper", &m_hasBackButtonEndPart,
+        "has-secondary-forward-stepper", &m_hasForwardButtonStartPart,
+        nullptr);
+    updateScrollbarsFrameThickness();
+}
+
+typedef HashSet<ScrollbarThemeClient*> ScrollbarMap;
+
+static ScrollbarMap& scrollbarMap()
+{
+    static NeverDestroyed<ScrollbarMap> map;
+    return map;
+}
 
 void ScrollbarThemeGtk::registerScrollbar(ScrollbarThemeClient* scrollbar)
 {
-    if (!gScrollbars)
-        gScrollbars = new HashSet<ScrollbarThemeClient*>;
-    gScrollbars->add(scrollbar);
+    scrollbarMap().add(scrollbar);
 }
 
 void ScrollbarThemeGtk::unregisterScrollbar(ScrollbarThemeClient* scrollbar)
 {
-    gScrollbars->remove(scrollbar);
-    if (gScrollbars->isEmpty()) {
-        delete gScrollbars;
-        gScrollbars = 0;
-    }
+    scrollbarMap().remove(scrollbar);
 }
 
 void ScrollbarThemeGtk::updateScrollbarsFrameThickness()
 {
-    if (!gScrollbars)
+    if (scrollbarMap().isEmpty())
         return;
 
     // Update the thickness of every interior frame scrollbar widget. The
     // platform-independent scrollbar them code isn't yet smart enough to get
     // this information when it paints.
-    HashSet<ScrollbarThemeClient*>::iterator end = gScrollbars->end();
-    for (HashSet<ScrollbarThemeClient*>::iterator it = gScrollbars->begin(); it != end; ++it) {
-        ScrollbarThemeClient* scrollbar = (*it);
-
+    for (const auto& scrollbar : scrollbarMap()) {
         // Top-level scrollbar i.e. scrollbars who have a parent ScrollView
         // with no parent are native, and thus do not need to be resized.
         if (!scrollbar->parent() || !scrollbar->parent()->parent())
@@ -206,6 +242,113 @@ IntRect ScrollbarThemeGtk::thumbRect(ScrollbarThemeClient* scrollbar, const IntR
 
     // VerticalScrollbar
     return IntRect(trackRect.x() + (trackRect.width() - m_thumbFatness) / 2, trackRect.y() + thumbPos, m_thumbFatness, thumbLength(scrollbar));
+}
+
+static void applyScrollbarStyleContextClasses(GtkStyleContext* context, ScrollbarOrientation orientation)
+{
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCROLLBAR);
+    gtk_style_context_add_class(context, orientation == VerticalScrollbar ?  GTK_STYLE_CLASS_VERTICAL : GTK_STYLE_CLASS_HORIZONTAL);
+}
+
+void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
+{
+    // Paint the track background. If the trough-under-steppers property is true, this
+    // should be the full size of the scrollbar, but if is false, it should only be the
+    // track rect.
+    IntRect fullScrollbarRect(rect);
+    if (m_troughUnderSteppers)
+        fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
+
+    gtk_style_context_save(m_context);
+
+    applyScrollbarStyleContextClasses(m_context, scrollbar->orientation());
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_TROUGH);
+
+    gtk_render_background(m_context, context->platformContext()->cr(), fullScrollbarRect.x(), fullScrollbarRect.y(), fullScrollbarRect.width(), fullScrollbarRect.height());
+    gtk_render_frame(m_context, context->platformContext()->cr(), fullScrollbarRect.x(), fullScrollbarRect.y(), fullScrollbarRect.width(), fullScrollbarRect.height());
+
+    gtk_style_context_restore(m_context);
+}
+
+void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
+{
+    gtk_style_context_save(m_context);
+
+    applyScrollbarStyleContextClasses(m_context, scrollbar->orientation());
+    gtk_style_context_add_class(m_context, "scrolled-window");
+    gtk_render_frame(m_context, context->platformContext()->cr(), scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
+
+    gtk_style_context_restore(m_context);
+}
+
+void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
+{
+    gtk_style_context_save(m_context);
+
+    ScrollbarOrientation orientation = scrollbar->orientation();
+    applyScrollbarStyleContextClasses(m_context, orientation);
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_SLIDER);
+
+    guint flags = 0;
+    if (scrollbar->pressedPart() == ThumbPart)
+        flags |= GTK_STATE_FLAG_ACTIVE;
+    if (scrollbar->hoveredPart() == ThumbPart)
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    gtk_style_context_set_state(m_context, static_cast<GtkStateFlags>(flags));
+
+    gtk_render_slider(m_context, context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height(),
+        orientation == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL);
+
+    gtk_style_context_restore(m_context);
+}
+
+void ScrollbarThemeGtk::paintButton(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
+{
+    gtk_style_context_save(m_context);
+
+    ScrollbarOrientation orientation = scrollbar->orientation();
+    applyScrollbarStyleContextClasses(m_context, orientation);
+
+    guint flags = 0;
+    if ((BackButtonStartPart == part && scrollbar->currentPos())
+        || (BackButtonEndPart == part && scrollbar->currentPos())
+        || (ForwardButtonEndPart == part && scrollbar->currentPos() != scrollbar->maximum())
+        || (ForwardButtonStartPart == part && scrollbar->currentPos() != scrollbar->maximum())) {
+        if (part == scrollbar->pressedPart())
+            flags |= GTK_STATE_FLAG_ACTIVE;
+        if (part == scrollbar->hoveredPart())
+            flags |= GTK_STATE_FLAG_PRELIGHT;
+    } else
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    gtk_style_context_set_state(m_context, static_cast<GtkStateFlags>(flags));
+
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_BUTTON);
+    gtk_render_background(m_context, context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(m_context, context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+
+    gfloat arrowScaling;
+    gtk_style_context_get_style(m_context, "arrow-scaling", &arrowScaling, nullptr);
+
+    double arrowSize = std::min(rect.width(), rect.height()) * arrowScaling;
+    FloatPoint arrowPoint(
+        rect.x() + (rect.width() - arrowSize) / 2,
+        rect.y() + (rect.height() - arrowSize) / 2);
+
+    if (flags & GTK_STATE_FLAG_ACTIVE) {
+        gint arrowDisplacementX, arrowDisplacementY;
+        gtk_style_context_get_style(m_context, "arrow-displacement-x", &arrowDisplacementX, "arrow-displacement-y", &arrowDisplacementY, nullptr);
+        arrowPoint.move(arrowDisplacementX, arrowDisplacementY);
+    }
+
+    gdouble angle;
+    if (orientation == VerticalScrollbar)
+        angle = (part == ForwardButtonEndPart || part == ForwardButtonStartPart) ? G_PI : 0;
+    else
+        angle = (part == ForwardButtonEndPart || part == ForwardButtonStartPart) ? G_PI / 2 : 3 * (G_PI / 2);
+
+    gtk_render_arrow(m_context, context->platformContext()->cr(), angle, arrowPoint.x(), arrowPoint.y(), arrowSize);
+
+    gtk_style_context_restore(m_context);
 }
 
 bool ScrollbarThemeGtk::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
@@ -254,8 +397,7 @@ bool ScrollbarThemeGtk::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* 
             scrollMask |= ThumbPart;
     }
 
-    ScrollbarControlPartMask allButtons = BackButtonStartPart | BackButtonEndPart
-                                         | ForwardButtonStartPart | ForwardButtonEndPart;
+    ScrollbarControlPartMask allButtons = BackButtonStartPart | BackButtonEndPart | ForwardButtonStartPart | ForwardButtonEndPart;
     if (scrollMask & TrackBGPart || scrollMask & ThumbPart || scrollMask & allButtons)
         paintScrollbarBackground(graphicsContext, scrollbar);
         paintTrackBackground(graphicsContext, scrollbar, trackPaintRect);

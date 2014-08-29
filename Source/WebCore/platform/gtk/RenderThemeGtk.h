@@ -184,7 +184,6 @@ private:
 
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const override;
 
-    void platformInit();
     static void setTextInputBorders(RenderStyle&);
 
 #if ENABLE(VIDEO)
