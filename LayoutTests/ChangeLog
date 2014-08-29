@@ -1,4 +1,19 @@
-2014-08-28  Lucas Forschler  <lforschler@apple.com>
+2014-08-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Merge r172800, which just updates TestExpectations to fix a failing
+        test on the branch.
+
+        Rubber-stamped by Andreas Kling.
+
+    2014-08-20  Alexey Proskuryakov  <ap@apple.com>
+
+            fast/multicol/mixed-opacity-fixed-test.html fails in compositing mode
+            https://bugs.webkit.org/show_bug.cgi?id=136109
+
+            * platform/mac-wk2/TestExpectations: Updated test expectations to a non-flaky failure,
+            and to point to the new bug.
+
+2014-08-20  Zalan Bujtas  <zalan@apple.com>
 
         Merge r173097
 
