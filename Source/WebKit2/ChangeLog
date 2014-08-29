@@ -1,5 +1,26 @@
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173092
+
+    2014-08-28  Tim Horton  <timothy_horton@apple.com>
+
+            Occasional thread-safety-related crashes on the ServicesController queue
+            https://bugs.webkit.org/show_bug.cgi?id=136356
+            <rdar://problem/18045685>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/mac/ServicesController.mm:
+            (WebKit::hasCompatibleServicesForItems):
+            Added. Check directly with NSSharingService if we have any services for the given items.
+            We should eventually check Viewer and Editor services separately so the Web process can
+            be smarter about when it shows the overlay, but for now this maintains the existing behavior.
+
+            (WebKit::ServicesController::refreshExistingServices):
+            Make use of hasCompatibleServicesForItems instead of having NSSharingServicePicker construct NSMenus.
+
+2014-08-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r172989
 
     2014-08-26  Joseph Pecoraro  <pecoraro@apple.com>
