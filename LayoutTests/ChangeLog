@@ -1,5 +1,13 @@
 2014-08-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Skip some tests that test features disabled on the branch.
+
+        Rubber-stamped by Andreas Kling.
+
+        * platform/mac/TestExpectations:
+
+2014-08-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Merge r171595, which updates a media test's expected result.
 
         Rubber-stamped by Andreas Kling.

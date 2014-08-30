@@ -1416,6 +1416,8 @@ css3/supports.html [ Skip ]
 fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Skip ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Skip ]
 fast/dom/HTMLImageElement/sizes/image-sizes-1x.html [ Skip ]
+http/tests/loading/sizes/preload-image-sizes-2x.html [ Skip ]
+http/tests/loading/sizes/preload-image-sizes.html [ Skip ]
 
 # ENABLE_WILL_REVEAL_EDGE_EVENTS
 fast/events/will-reveal-edge-on-div.html [ Skip ]
