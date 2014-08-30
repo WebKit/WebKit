@@ -367,9 +367,9 @@ end
 
 macro makeHostFunctionCall(entry, temp1, temp2)
     move entry, temp1
+    storep cfr, [sp]
     if C_LOOP
         move sp, a0
-        storep cfr, [sp]
         storep lr, PtrSize[sp]
         cloopCallNative temp1
     else
@@ -377,7 +377,6 @@ macro makeHostFunctionCall(entry, temp1, temp2)
             # Put callee frame pointer on stack as arg0, also put it in ecx for "fastcall" targets
             move 0, temp2
             move temp2, 4[sp] # put 0 in ReturnPC
-            move cfr, [sp] # put caller frame pointer into callee frame since callee prologue can't
             move sp, t2 # t2 is ecx
             push temp2 # Push dummy arg1
             push t2

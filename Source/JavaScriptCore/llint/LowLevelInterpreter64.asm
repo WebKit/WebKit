@@ -311,16 +311,11 @@ macro makeHostFunctionCall(entry, temp)
     elsif ARM64 or C_LOOP
         move sp, a0
     end
+    storep cfr, [sp]
     if C_LOOP
-        storep cfr, [sp]
         storep lr, 8[sp]
         cloopCallNative temp
     elsif X86_64_WIN
-        # For a host function call, JIT relies on that the CallerFrame (frame pointer) is put on the stack,
-        # On Win64 we need to manually copy the frame pointer to the stack, since MSVC may not maintain a frame pointer on 64-bit.
-        # See http://msdn.microsoft.com/en-us/library/9z1stfyw.aspx where it's stated that rbp MAY be used as a frame pointer.
-        storep cfr, [sp]
-
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
         call temp
