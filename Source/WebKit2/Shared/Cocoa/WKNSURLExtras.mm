@@ -40,7 +40,7 @@ static inline NSURL *urlWithWTFString(const String& string, NSURL *baseURL = nil
         return nil;
 
     CString buffer = string.utf8();
-    return CFBridgingRelease(createCFURLFromBuffer(buffer.data(), buffer.length(), (CFURLRef)baseURL).leakRef());
+    return (NSURL *)createCFURLFromBuffer(buffer.data(), buffer.length(), (CFURLRef)baseURL).autorelease();
 }
 
 + (instancetype)_web_URLWithWTFString:(const String&)string

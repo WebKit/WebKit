@@ -767,9 +767,9 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return nil;
     }
 
-    NSString *stringNS = CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
+    RetainPtr<CFStringRef> stringCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
     JSStringRelease(jsstring);
-    return stringNS;
+    return (NSString *)stringCF.autorelease();
 }
 
 id valueToDate(JSGlobalContextRef context, JSValueRef value, JSValueRef* exception)

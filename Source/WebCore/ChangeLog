@@ -1,3 +1,14 @@
+2014-08-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Use RetainPtr::autorelease in some places where it seems appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=136280
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/URLMac.mm:
+        (WebCore::URL::operator NSURL *): Use autorelease() instead of
+        CFBridgingRelease(leakRef())
+
 2014-08-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS: Refactor :visited handling in SelectorChecker

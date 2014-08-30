@@ -1,3 +1,16 @@
+2014-08-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Use RetainPtr::autorelease in some places where it seems appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=136280
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebHTMLView.mm:
+        (imageFromRect): Use RetainPtr in this function.
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation convertPostScriptDataSourceToPDF:]): Use RetainPtr
+        in this method.
+
 2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviwed, remove empty directories.

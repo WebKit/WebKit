@@ -6631,12 +6631,12 @@ static CGImageRef imageFromRect(Frame* frame, CGRect rect)
     
     CGContextRestoreGState(contextRef);
     
-    CGImageRef resultImage = CGBitmapContextCreateImage(contextRef);
+    RetainPtr<CGImageRef> resultImage = adoptCF(CGBitmapContextCreateImage(contextRef));
     
     WKSetCurrentGraphicsContext(oldContext);
     frame->view()->setPaintBehavior(oldPaintBehavior);
     
-    return (CGImageRef)CFBridgingRelease(resultImage);
+    return resultImage.autorelease();
     
     END_BLOCK_OBJC_EXCEPTIONS;
 
