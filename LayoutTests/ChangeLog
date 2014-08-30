@@ -1,3 +1,9 @@
+2014-08-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Mark some compositing tests as "failure" since r172999
+
+        * platform/efl/TestExpectations:
+
 2014-08-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS: Refactor :visited handling in SelectorChecker
