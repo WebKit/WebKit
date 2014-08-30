@@ -2358,7 +2358,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
         // FIXME: Using host-only URL is a very heavy-handed approach. We should attempt to provide the actual page where the download was initiated from, as a reminder to the user.
         String hostOnlyURLString;
         if (port)
-            hostOnlyURLString = makeString(originalURL.protocol(), "://", originalURL.host(), ":", String::number(port));
+            hostOnlyURLString = makeString(originalURL.protocol(), "://", originalURL.host(), ':', String::number(port));
         else
             hostOnlyURLString = makeString(originalURL.protocol(), "://", originalURL.host());
 
