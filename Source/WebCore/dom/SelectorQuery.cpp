@@ -121,8 +121,8 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
         return selectorCheckerFastPath.matches();
     }
 
-    SelectorChecker selectorChecker(element.document(), SelectorChecker::Mode::QueryingRules);
-    SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, &element, SelectorChecker::VisitedMatchDisabled);
+    SelectorChecker selectorChecker(element.document());
+    SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, &element, SelectorChecker::Mode::QueryingRules);
     selectorCheckingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
     return selectorChecker.match(selectorCheckingContext);
 }

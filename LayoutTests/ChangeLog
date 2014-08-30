@@ -1,3 +1,21 @@
+2014-08-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS: Refactor :visited handling in SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=135639
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/history/link-inside-any-expected.txt: Added.
+        * fast/history/link-inside-any.html: Added.
+        * fast/history/link-inside-not-expected.txt: Added.
+        * fast/history/link-inside-not.html: Added.
+        * fast/history/nested-visited-test-override-expected.txt: Added.
+        * fast/history/nested-visited-test-override.html: Added.
+        * fast/history/visited-inside-any-expected.txt: Added.
+        * fast/history/visited-inside-any.html: Added.
+        * fast/history/visited-inside-not-expected.txt: Added.
+        * fast/history/visited-inside-not.html: Added.
+
 2014-08-28  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Write tests for ScriptSyntaxTree and fix bugs in the data structure

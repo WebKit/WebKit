@@ -1,3 +1,59 @@
+2014-08-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS: Refactor :visited handling in SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=135639
+
+        Reviewed by Benjamin Poulain.
+
+        :visited is specially handled in the SelectorChecker and style resolution
+        because of security issues. That is nested links and adjacent combinators.
+        Since we propagate linkState from the ancestors,
+
+            1. linkStates of ancestors from the target node are only used to calculate
+            the linkState of the current node.
+            This is why adjacent combinators disable :visited.
+
+            2. linkState is overrides by the closest link element in the ancestors.
+            This is why :visited is effective on the closest link element.
+
+        In this patch, we fix 3 things.
+
+            1. Simplify SelectorChecker. Move m_mode to CheckingContext and it makes
+            CheckingContext more similar to SelectorCompiler::CheckingContext in CSS JIT.
+            And hide visitedMatchType parameter from the caller of SelectorChecker.
+
+            2. Disable :visited inside :-webkit-any. Currently, :-webkit-any provides MatchAll
+            link match type. So considering visited match type in the matching phase of :visited
+            provides inconsistency. In this patch, :-webkit-any(:visited) never matches.
+            And :-webkit-any(:link) acts like a :-webkit-any(:any-link). This behavior represents
+            that visited match type is always considered as disabled inside :-webkit-any.
+            This behavior may be changed when Selector Level4 is implemented.
+
+            3. Fix the issue when traversing the descendant element,
+            first encountered link check is missing.
+
+        Tests: fast/history/link-inside-any.html
+               fast/history/link-inside-not.html
+               fast/history/nested-visited-test-override.html
+               fast/history/visited-inside-any.html
+               fast/history/visited-inside-not.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::SelectorChecker):
+        (WebCore::SelectorChecker::match):
+        (WebCore::hasScrollbarPseudoElement):
+        (WebCore::checkingContextForParent):
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        * css/StyleResolver.h:
+        (WebCore::checkRegionSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches):
+
 2014-08-29  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel layout: Remove LayoutUnit's kEffectiveFixedPointDenominator.

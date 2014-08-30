@@ -51,15 +51,16 @@ public:
         ResolvingStyle = 0, CollectingRules, CollectingRulesIgnoringVirtualPseudoElements, QueryingRules
     };
 
-    SelectorChecker(Document&, Mode);
+    SelectorChecker(Document&);
 
     struct SelectorCheckingContext {
         // Initial selector constructor
-        SelectorCheckingContext(const CSSSelector* selector, Element* element, VisitedMatchType visitedMatchType)
+        SelectorCheckingContext(const CSSSelector* selector, Element* element, Mode resolvingMode)
             : selector(selector)
+            , resolvingMode(resolvingMode)
             , element(element)
             , scope(nullptr)
-            , visitedMatchType(visitedMatchType)
+            , visitedMatchType(resolvingMode == Mode::QueryingRules ? VisitedMatchDisabled : VisitedMatchEnabled)
             , pseudoId(NOPSEUDO)
             , elementStyle(nullptr)
             , scrollbar(nullptr)
@@ -71,6 +72,7 @@ public:
         { }
 
         const CSSSelector* selector;
+        Mode resolvingMode;
         Element* element;
         const ContainerNode* scope;
         VisitedMatchType visitedMatchType;
@@ -102,7 +104,6 @@ private:
 
     bool m_strictParsing;
     bool m_documentIsHTML;
-    Mode m_mode;
 };
 
 inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* selector)

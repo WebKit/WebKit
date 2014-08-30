@@ -320,8 +320,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     // Slow path.
-    SelectorChecker selectorChecker(m_element.document(), m_mode);
-    SelectorChecker::SelectorCheckingContext context(ruleData.selector(), &m_element, SelectorChecker::VisitedMatchEnabled);
+    SelectorChecker selectorChecker(m_element.document());
+    SelectorChecker::SelectorCheckingContext context(ruleData.selector(), &m_element, m_mode);
     context.elementStyle = m_style;
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
