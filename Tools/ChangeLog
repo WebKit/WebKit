@@ -1,3 +1,22 @@
+2014-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        [RJST] eager-no-cjit should really mean eager
+        https://bugs.webkit.org/show_bug.cgi?id=136407
+
+        Reviewed by Mark Hahnenberg.
+        
+        At some point we made NO_CJIT_OPTIONS force threshold settings to something reasonable
+        and well-known. But the way we appended options was such that NO_CJIT_OPTIONS came in
+        after EAGER_OPTIONS. The whole point of "eager" was to use eager tier-up thresholds. This
+        all meant that NO_CJIT_OPTIONS was overriding the eagerness of EAGER_OPTIONS, for the one
+        threshold setting that NO_CJIT_OPTIONS was currently setting
+        (thresholdForJITAfterWarmUp). The solution is to make sure that we always append
+        NO_CJIT_OPTIONS before we append EAGER_OPTIONS.
+        
+        Luckily, no tests regressed during the time that we lost eager-no-cjit coverage.
+
+        * Scripts/run-jsc-stress-tests:
+
 2014-08-29  Daniel Bates  <dabates@apple.com>
 
         [iOS] Configure Xcode to build a command line tool for the iOS Simulator

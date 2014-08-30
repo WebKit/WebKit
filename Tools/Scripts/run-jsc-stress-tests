@@ -613,7 +613,7 @@ def runDFGEager
 end
 
 def runDFGEagerNoCJITValidate
-    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(EAGER_OPTIONS + NO_CJIT_OPTIONS))
+    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def runFTLEager
@@ -621,11 +621,11 @@ def runFTLEager
 end
 
 def runFTLEagerNoCJITValidate
-    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
 end
 
 def runFTLEagerNoCJITOSRValidation
-    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
 end
 
 def runAlwaysTriggerCopyPhase
@@ -740,7 +740,7 @@ def runLayoutTestNoCJIT
 end
 
 def runLayoutTestDFGEagerNoCJIT
-    runLayoutTest("dfg-eager-no-cjit", *(EAGER_OPTIONS + NO_CJIT_OPTIONS))
+    runLayoutTest("dfg-eager-no-cjit", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def runLayoutTestDefaultFTL
@@ -752,7 +752,7 @@ def runLayoutTestFTLNoCJIT
 end
 
 def runLayoutTestFTLEagerNoCJIT
-    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
 end
 
 def noFTLRunLayoutTest
@@ -835,11 +835,11 @@ def runMozillaTestBaselineJIT(mode, *extraFiles)
 end
 
 def runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
-    runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(EAGER_OPTIONS + NO_CJIT_OPTIONS))
+    runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
 end
 
 def runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
-    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + EAGER_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
 end
 
 def defaultRunMozillaTest(mode, *extraFiles)
