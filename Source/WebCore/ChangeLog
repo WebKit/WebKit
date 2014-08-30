@@ -1,5 +1,42 @@
 2014-08-29  Zalan Bujtas  <zalan@apple.com>
 
+        Subpixel layout: Remove LayoutUnit's kEffectiveFixedPointDenominator.
+        https://bugs.webkit.org/show_bug.cgi?id=136383.
+
+        Reviewed by Simon Fraser.
+
+        There's only one subpixel denominator now.
+
+        No change in functionality.
+
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::LayoutUnit):
+        (WebCore::LayoutUnit::fromFloatCeil):
+        (WebCore::LayoutUnit::fromFloatFloor):
+        (WebCore::LayoutUnit::toInt):
+        (WebCore::LayoutUnit::toFloat):
+        (WebCore::LayoutUnit::toDouble):
+        (WebCore::LayoutUnit::operator++):
+        (WebCore::LayoutUnit::ceil):
+        (WebCore::LayoutUnit::round):
+        (WebCore::LayoutUnit::floor):
+        (WebCore::LayoutUnit::ceilToFloat):
+        (WebCore::LayoutUnit::fraction):
+        (WebCore::LayoutUnit::epsilon):
+        (WebCore::LayoutUnit::nearlyMax):
+        (WebCore::LayoutUnit::nearlyMin):
+        (WebCore::LayoutUnit::isInBounds):
+        (WebCore::LayoutUnit::setValue):
+        (WebCore::boundedMultiply):
+        (WebCore::operator*):
+        (WebCore::operator/):
+        (WebCore::operator%):
+        (WebCore::roundToDevicePixel):
+        (WebCore::floorToDevicePixel):
+        (WebCore::ceilToDevicePixel):
+
+2014-08-29  Zalan Bujtas  <zalan@apple.com>
+
         Rename updatePreferredWidth to make it more explicit.
         https://bugs.webkit.org/show_bug.cgi?id=136389
 
