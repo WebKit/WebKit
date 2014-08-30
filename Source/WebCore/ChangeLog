@@ -1,3 +1,17 @@
+2014-08-29  Zalan Bujtas  <zalan@apple.com>
+
+        Rename updatePreferredWidth to make it more explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=136389
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::preferredWidth):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::updatePreferredWidth): Deleted.
+
 2014-08-29  Gavin Barraclough  <barraclough@apple.com>
 
         Make timerNestingLevel threadsafe
