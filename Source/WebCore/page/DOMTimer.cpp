@@ -49,8 +49,6 @@ static const int maxIntervalForUserGestureForwarding = 1000; // One second match
 static const int maxTimerNestingLevel = 5;
 static const double oneMillisecond = 0.001;
 
-static int timerNestingLevel = 0;
-    
 static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 {
     return UserGestureIndicator::processingUserGesture()
@@ -60,7 +58,7 @@ static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 
 DOMTimer::DOMTimer(ScriptExecutionContext* context, std::unique_ptr<ScheduledAction> action, int interval, bool singleShot)
     : SuspendableTimer(context)
-    , m_nestingLevel(timerNestingLevel)
+    , m_nestingLevel(context->timerNestingLevel())
     , m_action(WTF::move(action))
     , m_originalInterval(interval)
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
@@ -130,7 +128,7 @@ void DOMTimer::fired()
         ASSERT(!document->frame()->timersPaused());
     }
 #endif
-    timerNestingLevel = std::min(m_nestingLevel + 1, maxTimerNestingLevel);
+    context->setTimerNestingLevel(std::min(m_nestingLevel + 1, maxTimerNestingLevel));
 
     ASSERT(!isSuspended());
     ASSERT(!context->activeDOMObjectsAreSuspended());
@@ -192,7 +190,7 @@ void DOMTimer::fired()
 
     InspectorInstrumentation::didFireTimer(cookie);
 
-    timerNestingLevel = 0;
+    context->setTimerNestingLevel(0);
 }
 
 void DOMTimer::didStop()
