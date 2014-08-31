@@ -1,3 +1,21 @@
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
+        SVGImage::drawPatternForContainer creates a buffer without respecting the destination's acceleration setting
+        https://bugs.webkit.org/show_bug.cgi?id=136408
+        <rdar://problem/12013317>
+
+        Reviewed by Dan Bernstein.
+
+        No new tests required, just a performance improvement.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer):
+        Use ImageBuffer::createCompatibleBuffer, which passes the destination's
+        acceleration setting through to the ImageBuffer constructor.
+
+        I didn't use GraphicsContext::createCompatibleBuffer because adjusting
+        how this function applies the destination's CTM is outside the scope of this patch.
+
 2014-08-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Convert string literals to character literals in makeString usage
