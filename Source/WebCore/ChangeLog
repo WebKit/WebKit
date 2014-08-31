@@ -1,5 +1,20 @@
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
+        Use SinkDocument instead of PDFDocument; get rid of PDFDocument
+        https://bugs.webkit.org/show_bug.cgi?id=136414
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        * pdf/ios/PDFDocument.cpp: Removed.
+        * pdf/ios/PDFDocument.h: Removed.
+        Use the generic SinkDocument, which ignores all incoming data just like PDFDocument.
+        Delete the unnecessary and iOS-specific PDFDocument.cpp/h
+
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
         Adjust an antique comment in Image::drawPattern
         https://bugs.webkit.org/show_bug.cgi?id=136411
 
