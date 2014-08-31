@@ -1,5 +1,16 @@
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
+        Adjust an antique comment in Image::drawPattern
+        https://bugs.webkit.org/show_bug.cgi?id=136411
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+        Reword the comment.
+
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
         SVGImage::drawPatternForContainer creates a buffer without respecting the destination's acceleration setting
         https://bugs.webkit.org/show_bug.cgi?id=136408
         <rdar://problem/12013317>
