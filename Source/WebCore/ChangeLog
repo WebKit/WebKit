@@ -1,5 +1,31 @@
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
+        Remove duplicate implementation of drawEllipse and some related PLATFORM(IOS) ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=136413
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, just cleanup.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawRaisedEllipse):
+        There's nothing iOS specific about this function.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        Un-ifdef drawRaisedEllipse; delete the reimplementation of drawEllipse that takes
+        a FloatRect and make the normal one take a FloatRect instead.
+
+        (WebCore::GraphicsContext::platformInit):
+        Make sure that the CGContext's line width starts out in sync with GraphicsContext's.
+        By default, CGContext has a line width of 1 and GraphicsContext 0, so they could previously
+        have been out of sync until someone set the width explicitly.
+
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
         Fix a harmless mismerge in BitmapImage::destroyDecodedDataIfNecessary
         https://bugs.webkit.org/show_bug.cgi?id=136412
 

@@ -309,11 +309,8 @@ namespace WebCore {
         void drawJoinedLines(CGPoint points[], unsigned count, bool antialias, CGLineCap = kCGLineCapButt);
 #endif
 
-        void drawEllipse(const IntRect&);
-#if PLATFORM(IOS)
         void drawEllipse(const FloatRect&);
         void drawRaisedEllipse(const FloatRect&, const Color& ellipseColor, ColorSpace ellipseColorSpace, const Color& shadowColor, ColorSpace shadowColorSpace);
-#endif
         void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
 
         WEBCORE_EXPORT void fillPath(const Path&);

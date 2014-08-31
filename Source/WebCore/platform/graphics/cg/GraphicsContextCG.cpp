@@ -134,6 +134,7 @@ void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContext
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
+        setPlatformStrokeThickness(strokeThickness());
 #if PLATFORM(IOS)
         }
 #endif
@@ -456,8 +457,7 @@ void GraphicsContext::drawJoinedLines(CGPoint points[], unsigned count, bool ant
 }
 #endif
 
-// This method is only used to draw the little circles used in lists.
-void GraphicsContext::drawEllipse(const IntRect& rect)
+void GraphicsContext::drawEllipse(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
@@ -466,31 +466,6 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     path.addEllipse(rect);
     drawPath(path);
 }
-
-#if PLATFORM(IOS)
-void GraphicsContext::drawEllipse(const FloatRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    CGContextRef context(platformContext());
-
-    CGContextSaveGState(context);
-
-    setCGFillColor(context, fillColor(), fillColorSpace());
-    setCGStrokeColor(context, strokeColor(), strokeColorSpace());
-
-    CGContextSetLineWidth(context, strokeThickness());
-    
-    CGContextBeginPath(context);
-    CGContextAddEllipseInRect(context, rect);
-
-    CGContextFillPath(context);
-    CGContextStrokePath(context);
-    
-    CGContextRestoreGState(context);
-}
-#endif
 
 static void addConvexPolygonToPath(Path& path, size_t numberOfPoints, const FloatPoint* points)
 {
