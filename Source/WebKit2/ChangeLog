@@ -1,3 +1,15 @@
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
+        Occasional crashes (null deref) under ViewGestureController::endMagnificationGesture
+        https://bugs.webkit.org/show_bug.cgi?id=136409
+        <rdar://problem/18104748>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        Null-check DrawingArea.
+
 2014-08-26  Maciej Stachowiak  <mjs@apple.com>
 
         Use RetainPtr::autorelease in some places where it seems appropriate

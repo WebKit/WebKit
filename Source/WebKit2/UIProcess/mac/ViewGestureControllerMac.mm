@@ -208,8 +208,10 @@ void ViewGestureController::endMagnificationGesture()
 
     if (m_frameHandlesMagnificationGesture)
         m_webPageProxy.scalePage(newMagnification, roundedIntPoint(m_magnificationOrigin));
-    else
-        m_webPageProxy.drawingArea()->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
+    else {
+        if (auto drawingArea = m_webPageProxy.drawingArea())
+            drawingArea->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
+    }
 
     m_activeGestureType = ViewGestureType::None;
 }
