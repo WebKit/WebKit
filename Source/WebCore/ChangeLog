@@ -1,5 +1,20 @@
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
+        Fix a harmless mismerge in BitmapImage::destroyDecodedDataIfNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=136412
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, just cleanup.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+        Drop the leading 'c' and the 'static' on the cutoff parameter.
+        Remove the duplicated early return (seems like it happened in the merge).
+        Remove reference to the exact size in the comment, since it's different on iOS.
+
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
         Use SinkDocument instead of PDFDocument; get rid of PDFDocument
         https://bugs.webkit.org/show_bug.cgi?id=136414
 
