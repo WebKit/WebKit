@@ -104,14 +104,6 @@ CGColorSpaceRef sRGBColorSpaceRef()
 #endif // PLATFORM(IOS)
 }
 
-#if PLATFORM(IOS)
-void setStrokeAndFillColor(CGContextRef context, CGColorRef color)
-{
-    CGContextSetStrokeColorWithColor(context, color);
-    CGContextSetFillColorWithColor(context, color);
-}
-#endif // PLATFORM(IOS)
-
 #if PLATFORM(WIN) || PLATFORM(IOS)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {

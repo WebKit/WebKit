@@ -1,3 +1,16 @@
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unnecessary (and unnecessarily iOS-specific) setStrokeAndFillColor
+        https://bugs.webkit.org/show_bug.cgi?id=136416
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebPDFViewIOS.mm:
+        (-[WebPDFView drawPage:]):
+        (-[WebPDFView drawRect:]):
+        * WebView/WebPlainWhiteView.mm:
+        We only end up filling, so only set the fill color.
+
 2014-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         Implement paint flashing in the WK1 InspectorOverlay page

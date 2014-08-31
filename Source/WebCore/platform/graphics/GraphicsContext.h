@@ -189,10 +189,6 @@ namespace WebCore {
         bool drawLuminanceMask : 1;
     };
 
-#if PLATFORM(IOS)
-    WEBCORE_EXPORT void setStrokeAndFillColor(PlatformGraphicsContext*, CGColorRef);
-#endif
-
     struct ImagePaintingOptions {
         ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false)
             : m_compositeOperator(compositeOperator)

@@ -113,7 +113,7 @@ static const float PAGE_HEIGHT_INSET    = 4.0 * 2.0;
     CGContextSaveGState(context);
     CGFloat height = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_FLIPPED_SHADOWS) ? 2.0f : -2.0f;
     CGContextSetShadowWithColor(context, CGSizeMake(0.0f, height), 3.0f, [[self class] shadowColor]);
-    setStrokeAndFillColor(context, cachedCGColor(Color::white, ColorSpaceDeviceRGB));
+    CGContextSetFillColorWithColor(context, cachedCGColor(Color::white, ColorSpaceDeviceRGB));
     CGContextFillRect(context, pageRect);
     CGContextRestoreGState(context);    
     
@@ -173,7 +173,7 @@ static const float PAGE_HEIGHT_INSET    = 4.0 * 2.0;
 
     // Draw Background.
     CGContextSaveGState(context);
-    setStrokeAndFillColor(context, [[self class] backgroundColor]);
+    CGContextSetFillColorWithColor(context, [[self class] backgroundColor]);
     CGContextFillRect(context, aRect);
     CGContextRestoreGState(context);
 

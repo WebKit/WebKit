@@ -1,5 +1,18 @@
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
+        Remove unnecessary (and unnecessarily iOS-specific) setStrokeAndFillColor
+        https://bugs.webkit.org/show_bug.cgi?id=136416
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::setStrokeAndFillColor): Deleted.
+        Remove.
+
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
         Remove duplicate implementation of drawEllipse and some related PLATFORM(IOS) ifdefs
         https://bugs.webkit.org/show_bug.cgi?id=136413
 
