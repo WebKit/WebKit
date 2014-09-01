@@ -1,3 +1,10 @@
+2014-08-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, fix build break on EFL and GTK since r173152.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::platformInit): Remove a bool parameter because it was removed from function's declaration.
+
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
         Remove GraphicsContext constructor that takes shouldUseContextColors

@@ -181,7 +181,7 @@ GraphicsContext::GraphicsContext(cairo_t* cr)
     m_data = new GraphicsContextPlatformPrivateToplevel(new PlatformContextCairo(cr));
 }
 
-void GraphicsContext::platformInit(PlatformContextCairo* platformContext, bool)
+void GraphicsContext::platformInit(PlatformContextCairo* platformContext)
 {
     m_data = new GraphicsContextPlatformPrivate(platformContext);
     if (platformContext)
