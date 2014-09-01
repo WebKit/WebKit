@@ -1096,7 +1096,6 @@ add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADE
 target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
 set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")
 set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
-set_target_properties(JavaScriptCore PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
 if (JavaScriptCore_OUTPUT_NAME)
     set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME ${JavaScriptCore_OUTPUT_NAME})

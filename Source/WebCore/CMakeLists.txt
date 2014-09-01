@@ -3528,7 +3528,6 @@ include_directories(${WebCore_INCLUDE_DIRECTORIES} ${WebCoreTestSupport_INCLUDE_
 add_library(WebCore ${WebCore_LIBRARY_TYPE} ${WebCore_SOURCES})
 set_target_properties(WebCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_WebCore")
 set_target_properties(WebCore PROPERTIES FOLDER "WebCore")
-set_target_properties(WebCore PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
 if (WebCore_OUTPUT_NAME)
     set_target_properties(WebCore PROPERTIES OUTPUT_NAME ${WebCore_OUTPUT_NAME})
