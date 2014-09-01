@@ -112,24 +112,15 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 }
 #endif
 
-void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContextColors)
+void GraphicsContext::platformInit(CGContextRef cgContext)
 {
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     setPaintingDisabled(!cgContext);
     if (cgContext) {
-#if PLATFORM(IOS)
-        m_state.shouldUseContextColors = shouldUseContextColors;
-        if (shouldUseContextColors) {
-#else
-        UNUSED_PARAM(shouldUseContextColors);
-#endif
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
         setPlatformStrokeThickness(strokeThickness());
-#if PLATFORM(IOS)
-        }
-#endif
     }
 }
 
@@ -1362,19 +1353,13 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
             dashBounds.append(CGRectMake(bounds.x() + widths[i], bounds.y() + 2 * bounds.height(), widths[i+1] - widths[i], bounds.height()));
     }
 
-#if PLATFORM(IOS)
-    if (m_state.shouldUseContextColors)
-#endif
-        if (fillColorIsNotEqualToStrokeColor)
-            setCGFillColor(platformContext(), localStrokeColor, strokeColorSpace());
+    if (fillColorIsNotEqualToStrokeColor)
+        setCGFillColor(platformContext(), localStrokeColor, strokeColorSpace());
 
     CGContextFillRects(platformContext(), dashBounds.data(), dashBounds.size());
 
-#if PLATFORM(IOS)
-    if (m_state.shouldUseContextColors)
-#endif
-        if (fillColorIsNotEqualToStrokeColor)
-            setCGFillColor(platformContext(), fillColor(), fillColorSpace());
+    if (fillColorIsNotEqualToStrokeColor)
+        setCGFillColor(platformContext(), fillColor(), fillColorSpace());
 }
 
 void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)

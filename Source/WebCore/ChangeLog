@@ -1,5 +1,23 @@
 2014-08-31  Tim Horton  <timothy_horton@apple.com>
 
+        Remove GraphicsContext constructor that takes shouldUseContextColors
+        https://bugs.webkit.org/show_bug.cgi?id=136421
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::drawLinesForText):
+        As far as I can tell, the last user of this constructor died with WebNSStringDrawing.
+        Adjust all code to assume shouldUseContextColors=true.
+
+2014-08-31  Tim Horton  <timothy_horton@apple.com>
+
         Remove unused ARMv6-specific #if branches in WebCore::canHyphenate
         https://bugs.webkit.org/show_bug.cgi?id=136420
 

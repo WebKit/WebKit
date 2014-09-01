@@ -100,21 +100,12 @@ private:
     bool m_interpolationQualityChanged;
 };
 
-#if !PLATFORM(IOS)
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
     : m_updatingControlTints(false)
     , m_transparencyCount(0)
 {
     platformInit(platformGraphicsContext);
 }
-#else
-GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext, bool shouldUseContextColors)
-    : m_updatingControlTints(false)
-    , m_transparencyCount(0)
-{
-    platformInit(platformGraphicsContext, shouldUseContextColors);
-}
-#endif
 
 GraphicsContext::~GraphicsContext()
 {

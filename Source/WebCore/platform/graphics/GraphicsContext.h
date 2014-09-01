@@ -131,7 +131,6 @@ namespace WebCore {
             , blendMode(BlendModeNormal)
 #if PLATFORM(IOS)
             , emojiDrawingEnabled(true)
-            , shouldUseContextColors(true)
 #endif
             , shouldAntialias(true)
             , shouldSmoothFonts(true)
@@ -176,7 +175,6 @@ namespace WebCore {
 
 #if PLATFORM(IOS)
         bool emojiDrawingEnabled : 1;
-        bool shouldUseContextColors : 1;
 #endif
         bool shouldAntialias : 1;
         bool shouldSmoothFonts : 1;
@@ -223,11 +221,7 @@ namespace WebCore {
     class GraphicsContext {
         WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
     public:
-#if !PLATFORM(IOS)
         WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*);
-#else
-        WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*, bool shouldUseContextColors = true);
-#endif
         WEBCORE_EXPORT ~GraphicsContext();
 
         WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
@@ -550,7 +544,7 @@ namespace WebCore {
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     private:
-        void platformInit(PlatformGraphicsContext*, bool shouldUseContextColors = false);
+        void platformInit(PlatformGraphicsContext*);
         void platformDestroy();
 
 #if PLATFORM(WIN) && !USE(WINGDI)
