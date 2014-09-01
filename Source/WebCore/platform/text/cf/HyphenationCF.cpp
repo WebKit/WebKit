@@ -40,7 +40,7 @@ RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>::create
 {
     // CF hyphenation functions use locale (regional formats) language, which doesn't necessarily match primary UI language,
     // so we can't use default locale here. See <rdar://problem/14897664>.
-    RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(0, defaultLanguage().createCFString().get()));
+    RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
 
     return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : 0;
 }
@@ -61,17 +61,7 @@ static AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>& cfLocaleCache()
 
 bool canHyphenate(const AtomicString& localeIdentifier)
 {
-#if !PLATFORM(IOS)
     return cfLocaleCache().get(localeIdentifier);
-#else
-#if !(defined(WTF_ARM_ARCH_VERSION) && WTF_ARM_ARCH_VERSION == 6)
-    return cfLocaleCache().get(localeIdentifier);
-#else
-    // Hyphenation is not available on devices with ARMv6 processors. See <rdar://8352570>.
-    UNUSED_PARAM(localeIdentifier);
-    return false;
-#endif
-#endif // PLATFORM(IOS)
 }
 
 size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomicString& localeIdentifier)
