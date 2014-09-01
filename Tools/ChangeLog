@@ -1,3 +1,12 @@
+2014-09-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] install-dependencies don't installs dbus-launch that is needed for the API tests.
+        https://bugs.webkit.org/show_bug.cgi?id=136425
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies: Add dbus-x11 to the list of packages needed for running the tests.
+
 2014-09-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Update my list of email addresses in contributors.json

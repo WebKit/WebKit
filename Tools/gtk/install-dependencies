@@ -86,6 +86,7 @@ function installDependenciesWithApt {
     apt-get install \
         apache2 \
         curl \
+        dbus-x11 \
         libapache2-mod-bw \
         libapache2-mod-php5 \
         libgpg-error-dev \
@@ -185,6 +186,7 @@ function installDependenciesWithYum {
     # These are dependencies necessary for running tests.
     yum install \
         curl \
+        dbus-x11 \
         httpd \
         libgpg-error-devel \
         mod_bw \
