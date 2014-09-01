@@ -111,7 +111,7 @@ void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentif
     if (JAVASCRIPTCORE_PROFILE_WILL_EXECUTE_ENABLED()) {
         CString name = callIdentifier.functionName().utf8();
         CString url = callIdentifier.url().utf8();
-        JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.lineNumber());
+        JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.lineNumber(), callIdentifier.columnNumber());
     }
 
     if (!m_origin)
@@ -126,7 +126,7 @@ void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifi
     if (JAVASCRIPTCORE_PROFILE_DID_EXECUTE_ENABLED()) {
         CString name = callIdentifier.functionName().utf8();
         CString url = callIdentifier.url().utf8();
-        JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.lineNumber());
+        JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.data()), const_cast<char*>(url.data()), callIdentifier.lineNumber(), callIdentifier.columnNumber());
     }
 
     if (!m_origin)

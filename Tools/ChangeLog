@@ -1,3 +1,15 @@
+2014-09-01  Brian J. Burg  <burg@cs.washington.edu>
+
+        Provide column numbers to DTrace willExecute/didExecute probes
+        https://bugs.webkit.org/show_bug.cgi?id=136434
+
+        Reviewed by Antti Koivisto.
+
+        Create a directory for DTrace scripts. Add an example script that
+        shows how to use static probes provided by JavaScriptCore's profiler.
+
+        * Scripts/dtrace/jsc-trace-profiler-events.d: Added.
+
 2014-09-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [JHBuild] Cyclic dependency between cairo and librsvg.
