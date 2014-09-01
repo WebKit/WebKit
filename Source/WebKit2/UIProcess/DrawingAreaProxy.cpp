@@ -35,20 +35,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPageProxy)
+DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy)
     : m_type(type)
     , m_webPageProxy(webPageProxy)
-    , m_size(webPageProxy->viewSize())
+    , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
     , m_exposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::exposedRectChangedTimerFired)
 #endif
 {
-    m_webPageProxy->process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), *this);
+    m_webPageProxy.process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
-    m_webPageProxy->process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
+    m_webPageProxy.process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
 }
 
 void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition, const IntSize& scrollOffset)
@@ -65,7 +65,7 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition
 #if PLATFORM(MAC)
 void DrawingAreaProxy::setExposedRect(const FloatRect& exposedRect)
 {
-    if (!m_webPageProxy->isValid())
+    if (!m_webPageProxy.isValid())
         return;
 
     m_exposedRect = exposedRect;
@@ -76,13 +76,13 @@ void DrawingAreaProxy::setExposedRect(const FloatRect& exposedRect)
 
 void DrawingAreaProxy::exposedRectChangedTimerFired()
 {
-    if (!m_webPageProxy->isValid())
+    if (!m_webPageProxy.isValid())
         return;
 
     if (m_exposedRect == m_lastSentExposedRect)
         return;
 
-    m_webPageProxy->process().send(Messages::DrawingArea::SetExposedRect(m_exposedRect), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::SetExposedRect(m_exposedRect), m_webPageProxy.pageID());
     m_lastSentExposedRect = m_exposedRect;
 }
 #endif // PLATFORM(MAC)

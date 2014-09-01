@@ -91,10 +91,10 @@ public:
     virtual void hideContentUntilNextUpdate() { ASSERT_NOT_REACHED(); }
 
 protected:
-    explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
+    explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 
     DrawingAreaType m_type;
-    WebPageProxy* m_webPageProxy;
+    WebPageProxy& m_webPageProxy;
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_layerPosition;

@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy* webPageProxy)
+TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeTiledCoreAnimation, webPageProxy)
     , m_isWaitingForDidUpdateGeometry(false)
 {
@@ -52,12 +52,12 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    m_webPageProxy->process().send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_webPageProxy.pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 {
-    if (!m_webPageProxy->isValid())
+    if (!m_webPageProxy.isValid())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -73,20 +73,20 @@ void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(std::chro
     if (!m_isWaitingForDidUpdateGeometry)
         return;
 
-    if (m_webPageProxy->process().state() != WebProcessProxy::State::Running)
+    if (m_webPageProxy.process().state() != WebProcessProxy::State::Running)
         return;
 
-    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy->pageID(), timeout);
+    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy.pageID(), timeout);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
 {
-    m_webPageProxy->process().send(Messages::DrawingArea::SetColorSpace(m_webPageProxy->colorSpace()), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()), m_webPageProxy.pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::minimumLayoutSizeDidChange()
 {
-    if (!m_webPageProxy->isValid())
+    if (!m_webPageProxy.isValid())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -99,7 +99,7 @@ void TiledCoreAnimationDrawingAreaProxy::minimumLayoutSizeDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
-    m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+    m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&)
@@ -110,7 +110,7 @@ void TiledCoreAnimationDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t
 
 void TiledCoreAnimationDrawingAreaProxy::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
-    m_webPageProxy->updateAcceleratedCompositingMode(layerTreeContext);
+    m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
@@ -119,7 +119,7 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 
     m_isWaitingForDidUpdateGeometry = false;
 
-    IntSize minimumLayoutSize = m_webPageProxy->minimumLayoutSize();
+    IntSize minimumLayoutSize = m_webPageProxy.minimumLayoutSize();
 
     // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
     // we need to resend the new size here.
@@ -130,34 +130,34 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateViewState()
 {
     auto viewStateUpdateTimeout = std::chrono::milliseconds(250);
-    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_webPageProxy->pageID(), viewStateUpdateTimeout, InterruptWaitingIfSyncMessageArrives);
+    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_webPageProxy.pageID(), viewStateUpdateTimeout, InterruptWaitingIfSyncMessageArrives);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange(const IntSize& newIntrinsicContentSize)
 {
-    if (m_webPageProxy->minimumLayoutSize().width() > 0)
-        m_webPageProxy->intrinsicContentSizeDidChange(newIntrinsicContentSize);
+    if (m_webPageProxy.minimumLayoutSize().width() > 0)
+        m_webPageProxy.intrinsicContentSizeDidChange(newIntrinsicContentSize);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 {
     ASSERT(!m_isWaitingForDidUpdateGeometry);
 
-    m_lastSentMinimumLayoutSize = m_webPageProxy->minimumLayoutSize();
+    m_lastSentMinimumLayoutSize = m_webPageProxy.minimumLayoutSize();
     m_lastSentSize = m_size;
     m_lastSentLayerPosition = m_layerPosition;
-    m_webPageProxy->process().send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition), m_webPageProxy.pageID());
     m_isWaitingForDidUpdateGeometry = true;
 }
 
 void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)
 {
-    m_webPageProxy->process().send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_webPageProxy.pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, FloatPoint origin)
 {
-    m_webPageProxy->process().send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_webPageProxy.pageID());
 }
 
 } // namespace WebKit

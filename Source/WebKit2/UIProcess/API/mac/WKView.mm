@@ -2794,9 +2794,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
-        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_data->_page.get());
+        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(*_data->_page);
 
-    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
+    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(*_data->_page);
 }
 
 - (BOOL)_isFocused
