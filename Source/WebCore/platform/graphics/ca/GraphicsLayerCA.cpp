@@ -1712,10 +1712,6 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         return;
     }
 
-#if PLATFORM(IOS)
-    RefPtr<PlatformCALayer> oldPrimaryLayer = m_structuralLayer ? m_structuralLayer.get() : m_layer.get();
-#endif
-
     bool structuralLayerChanged = false;
     
     if (purpose == StructuralLayerForPreserves3D) {

@@ -1,3 +1,15 @@
+2014-09-01  Tim Horton  <timothy_horton@apple.com>
+
+        Remove an unnecessary local in GraphicsLayerCA::ensureStructuralLayer
+        https://bugs.webkit.org/show_bug.cgi?id=136426
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        This was here so that we could call PlatformCALayerClient::platformLayerChanged,
+        but that no longer exists!
+
 2014-08-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Resolved value of grid-template-* must include every track listed
