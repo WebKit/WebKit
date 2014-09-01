@@ -625,11 +625,13 @@ set(LLINT_ASM
 
 set(OFFLINE_ASM
     offlineasm/arm.rb
+    offlineasm/arm64.rb
     offlineasm/ast.rb
     offlineasm/backends.rb
     offlineasm/cloop.rb
     offlineasm/config.rb
     offlineasm/instructions.rb
+    offlineasm/mips.rb
     offlineasm/offsets.rb
     offlineasm/opt.rb
     offlineasm/parser.rb
@@ -637,6 +639,7 @@ set(OFFLINE_ASM
     offlineasm/risc.rb
     offlineasm/self_hash.rb
     offlineasm/settings.rb
+    offlineasm/sh4.rb
     offlineasm/transform.rb
     offlineasm/x86.rb
 )
