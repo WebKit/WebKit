@@ -1,5 +1,15 @@
 2014-09-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] [JHBuild] Cyclic dependency between cairo and librsvg.
+        https://bugs.webkit.org/show_bug.cgi?id=136431
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules: Disable cairo SVG testsuite.
+        Add missing dependencies for librsvg (glib and cairo).
+
+2014-09-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] install-dependencies don't installs dbus-launch that is needed for the API tests.
         https://bugs.webkit.org/show_bug.cgi?id=136425
 

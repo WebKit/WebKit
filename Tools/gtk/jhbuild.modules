@@ -60,7 +60,7 @@
 
 
   <autotools id="cairo" autogen-sh="configure"
-             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes"
+             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no"
              makeargs="CFLAGS=-fno-lto CXXFLAGS=-fno-lto LDFLAGS=-fno-lto">
     <dependencies>
       <dep package="fontconfig"/>
@@ -128,6 +128,8 @@
              autogenargs="--disable-introspection --enable-pixbuf-loader --disable-gtk-theme">
     <dependencies>
       <dep package="gdk-pixbuf"/>
+      <dep package="glib"/>
+      <dep package="cairo"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/librsvg/2.36/librsvg-2.36.1.tar.xz" version="2.36.1"
             repo="ftp.gnome.org"
