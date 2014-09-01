@@ -1,3 +1,19 @@
+2014-08-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Resolved value of grid-template-* must include every track listed
+        https://bugs.webkit.org/show_bug.cgi?id=136362
+
+        Reviewed by Darin Adler.
+
+        Added new test cases to verify that both explicit and implicit
+        tracks are listed in grid-template-* resolved values. Also
+        refactored a testing function to improve the readability of the test.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/resources/grid-definitions-parsing-utils.js:
+        (testGridAutoDefinitionsValues):
+
 2014-08-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Mark some compositing tests as "failure" since r172999

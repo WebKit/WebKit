@@ -17,28 +17,50 @@
     -webkit-grid-auto-rows: -webkit-min-content;
     -webkit-grid-auto-columns: -webkit-max-content;
 }
+
+
+.gridAutoFixedFixedWithFixedFixed {
+    -webkit-grid-auto-rows: 30px;
+    -webkit-grid-auto-columns: 40px;
+    -webkit-grid-template-rows: 15px;
+    -webkit-grid-template-columns: 20px;
+}
+
 </style>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="resources/grid-definitions-parsing-utils.js"></script>
 </head>
 <body>
 <div class="grid gridAutoFixedFixed" id="gridAutoFixedFixed"></div>
 <div class="grid gridAutoMinMax" id="gridAutoMinMax"></div>
 <div class="grid gridAutoMinMaxContent" id="gridAutoMinMaxContent"></div>
+<div class="grid gridAutoFixedFixed" id="gridAutoFixedFixedWithChildren">
+    <div class="sizedToGridArea firstRowFirstColumn"></div>
+</div>
+<div class="grid gridAutoFixedFixedWithFixedFixed" id="gridAutoFixedFixedWithFixedFixedWithChildren">
+    <div class="sizedToGridArea thirdRowAutoColumn"></div>
+    <div class="sizedToGridArea autoRowThirdColumn"></div>
+</div>
 <script>
 description('Test that setting and getting grid-auto-columns and grid-auto-rows works as expected');
 
 debug("Test getting -webkit-grid-auto-columns and -webkit-grid-auto-rows set through CSS");
-var gridAutoFixedFixed = document.getElementById("gridAutoFixedFixed");
-shouldBe("getComputedStyle(gridAutoFixedFixed, '').getPropertyValue('-webkit-grid-auto-rows')", "'30px'");
-shouldBe("getComputedStyle(gridAutoFixedFixed, '').getPropertyValue('-webkit-grid-auto-columns')", "'50px'");
+testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixed"), "30px", "50px");
+testGridAutoDefinitionsValues(document.getElementById("gridAutoMinMax"), "minmax(10%, 15px)", "minmax(30%, 100px)");
+testGridAutoDefinitionsValues(document.getElementById("gridAutoMinMaxContent"), "-webkit-min-content", "-webkit-max-content");
 
-var gridAutoMinMax = document.getElementById("gridAutoMinMax");
-shouldBe("getComputedStyle(gridAutoMinMax, '').getPropertyValue('-webkit-grid-auto-rows')", "'minmax(10%, 15px)'");
-shouldBe("getComputedStyle(gridAutoMinMax, '').getPropertyValue('-webkit-grid-auto-columns')", "'minmax(30%, 100px)'");
+debug("");
+debug("Test that getting grid-template-columns and grid-template-rows set through CSS lists every track listed whether implicitly or explicitly created");
+testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixedWithChildren"), "30px", "50px");
+testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithChildren"), "50px", "30px");
+testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "30px", "40px");
+testGridTemplatesValues(document.getElementById("gridAutoFixedFixedWithFixedFixedWithChildren"), "20px", "15px", "20px 40px 40px", "15px 30px 30px");
 
-var gridAutoMinMaxContent = document.getElementById("gridAutoMinMaxContent");
-shouldBe("getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('-webkit-grid-auto-rows')", "'-webkit-min-content'");
-shouldBe("getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('-webkit-grid-auto-columns')", "'-webkit-max-content'");
+debug("");
+debug("Test that grid-template-* definitions are not affected by grid-auto-* definitions");
+testGridTemplatesValues(document.getElementById("gridAutoFixedFixed"), "none", "none");
+testGridTemplatesValues(document.getElementById("gridAutoMinMax"), "none", "none");
+testGridTemplatesValues(document.getElementById("gridAutoMinMaxContent"), "none", "none");
 
 debug("");
 debug("Test the initial value");

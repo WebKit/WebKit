@@ -1017,21 +1017,30 @@ static PassRef<CSSValue> valueForGridTrackList(GridTrackSizingDirection directio
 {
     const Vector<GridTrackSize>& trackSizes = direction == ForColumns ? style->gridColumns() : style->gridRows();
     const OrderedNamedGridLinesMap& orderedNamedGridLines = direction == ForColumns ? style->orderedNamedGridColumnLines() : style->orderedNamedGridRowLines();
+    bool isRenderGrid = renderer && renderer->isRenderGrid();
 
-    // Handle the 'none' case here.
-    if (!trackSizes.size()) {
+    // Handle the 'none' case.
+    bool trackListIsEmpty = trackSizes.isEmpty();
+    if (isRenderGrid && trackListIsEmpty) {
+        // For grids we should consider every listed track, whether implicitly or explicitly created. If we don't have
+        // any explicit track and there are no children then there are no implicit tracks. We cannot simply check the
+        // number of rows/columns in our internal grid representation because it's always at least 1x1 (see r143331).
+        trackListIsEmpty = !toRenderBlock(renderer)->firstChild();
+    }
+
+    if (trackListIsEmpty) {
         ASSERT(orderedNamedGridLines.isEmpty());
         return cssValuePool().createIdentifierValue(CSSValueNone);
     }
 
     auto list = CSSValueList::createSpaceSeparated();
-    if (renderer && renderer->isRenderGrid()) {
+    if (isRenderGrid) {
         const Vector<LayoutUnit>& trackPositions = direction == ForColumns ? toRenderGrid(renderer)->columnPositions() : toRenderGrid(renderer)->rowPositions();
         // There are at least #tracks + 1 grid lines (trackPositions). Apart from that, the grid container can generate implicit grid tracks,
         // so we'll have more trackPositions than trackSizes as the latter only contain the explicit grid.
         ASSERT(trackPositions.size() - 1 >= trackSizes.size());
 
-        for (unsigned i = 0; i < trackSizes.size(); ++i) {
+        for (unsigned i = 0; i < trackPositions.size() - 1; ++i) {
             addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
             list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i], style));
         }

@@ -1,3 +1,18 @@
+2014-08-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Resolved value of grid-template-* must include every track listed
+        https://bugs.webkit.org/show_bug.cgi?id=136362
+
+        Reviewed by Darin Adler.
+
+        Section 5.1.5 of the specs clearly states that the resolved value
+        for grid-template-* must include every listed track, whether
+        explicitly or implicitly created. We were only listing the
+        explicit grid tracks.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+
 2014-09-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Build warning by INTERFACE_LINK_LIBRARIES
