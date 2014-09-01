@@ -1,5 +1,17 @@
 2014-09-01  Tim Horton  <timothy_horton@apple.com>
 
+        RenderThemeMac::paintProgressBar creates a buffer without respecting the destination's acceleration setting
+        https://bugs.webkit.org/show_bug.cgi?id=136427
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, just a performance improvement.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+
+2014-09-01  Tim Horton  <timothy_horton@apple.com>
+
         Remove an unnecessary local in GraphicsLayerCA::ensureStructuralLayer
         https://bugs.webkit.org/show_bug.cgi?id=136426
 

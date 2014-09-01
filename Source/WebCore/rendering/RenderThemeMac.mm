@@ -1134,7 +1134,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     trackInfo.reserved = 0;
     trackInfo.filler1 = 0;
 
-    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(inflatedRect.size(), deviceScaleFactor);
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB, paintInfo.context, true);
     if (!imageBuffer)
         return true;
 
