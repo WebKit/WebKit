@@ -1,3 +1,18 @@
+2014-09-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Exclude touch and gesture files when building without ENABLE_TOUCH_EVENTS
+        and ENABLE_IOS_GESTURE_EVENTS, respectively
+        https://bugs.webkit.org/show_bug.cgi?id=136456
+
+        Reviewed by Andy Estes.
+
+        It's sufficient to exclude the touch and gesture files when building without
+        ENABLE_TOUCH_EVENTS and ENABLE_IOS_GESTURE_EVENTS, respectively. Currently we
+        exclude these files when building without the Apple Internal SDK, which is
+        heavy handed.
+
+        * Configurations/WebCore.xcconfig:
+
 2014-09-02  Simon Fraser  <simon.fraser@apple.com>
 
         Fix an assertion sometimes seen under RenderLayerCompositor::detachRootLayer()
