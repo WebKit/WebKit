@@ -29,6 +29,14 @@ function checkInstaller {
         exit 0
     fi
 
+    # pacman - Arch Linux
+    # pacman --version and pacman --help both return non-0
+    pacman -Ss &> /dev/null
+    if [ $? -eq 0 ]; then
+        installDependenciesWithPacman
+        exit 0
+    fi
+
     printNotSupportedMessageAndExit
 }
 
@@ -138,6 +146,130 @@ function installDependenciesWithApt {
     # ninja is a faster build system than GNU make, but it doesn't
     # exist on Ubuntu 12.04
     apt-get install ninja-build || true
+}
+
+function installDependenciesWithPacman {
+    # These are dependencies necessary for building WebKitGTK+.
+    packages=" \
+        autoconf \
+        automake \
+        bison \
+        cmake \
+        file \
+        findutils \
+        flex \
+        gawk \
+        gcc \
+        gettext \
+        gnome-common \
+        gperf \
+        grep \
+        groff \
+        gzip \
+        libtool \
+        m4 \
+        make \
+        patch \
+        pkg-config \
+        sed \
+        texinfo \
+        util-linux \
+        which \
+        gtk-doc \
+        intltool \
+        itstool \
+        atk \
+        enchant \
+        faad2 \
+        geoclue \
+        gobject-introspection \
+        mesa \
+        mesa-libgl \
+        gnutls \
+        gtk2 \
+        gtk3 \
+        libsystemd \
+        harfbuzz \
+        harfbuzz-icu \
+        icu \
+        libjpeg-turbo \
+        mpg123 \
+        opus \
+        pango \
+        libpng \
+        libpulse \
+        librsvg \
+        libsecret \
+        libsoup \
+        sqlite \
+        libtheora \
+        libtool \
+        libvorbis \
+        libwebp \
+        libxcomposite \
+        libxslt \
+        libxt \
+        libxtst \
+        ninja \
+        ruby \
+        xorg-font-utils"
+
+    # These are dependencies necessary for running tests.
+    # Note: apache-mod_bw is available in the AUR, but the main repos
+    #       could not find ruby-json
+    packages="$packages \
+        apache \
+        curl \
+        php-apache \
+        libgpg-error \
+        pulseaudio \
+        python-gobject \
+        ruby \
+        ruby-highline \
+        xorg-server-xvfb"
+
+    # These are dependencies necessary for building the jhbuild.
+    # Note: Could not find libegl-mesa
+    packages="$packages \
+        git \
+        gobject-introspection \
+        icon-naming-utils \
+        libcroco \
+        libgcrypt \
+        libgpg-error \
+        p11-kit \
+        libpciaccess \
+        libtiff \
+        libxfixes \
+        libxfont \
+        libxkbfile \
+        llvm \
+        python2 \
+        python2-lxml \
+        ragel \
+        bigreqsproto \
+        compositeproto \
+        glproto \
+        inputproto \
+        randrproto \
+        resourceproto \
+        scrnsaverproto \
+        videoproto \
+        xcmiscproto \
+        xf86driproto \
+        xorg-font-utils \
+        xorg-util-macros \
+        xtrans \
+        xorg-utils"
+
+    # These are dependencies necessary for using webkit-patch
+    packages="$packages \
+        svn"
+    pacman -S --needed $packages
+
+    echo "You will also need to follow the instructions on the Arch Wiki to make"
+    echo "'python' call python2 in the webkit folder"
+    echo "https://wiki.archlinux.org/index.php?python#Dealing_with_version_problem_in_build_scripts"
 }
 
 function installDependenciesWithYum {
