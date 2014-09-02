@@ -73,9 +73,9 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 {
     if (!m_backingStore)
 #if PLATFORM(EFL)
-        m_backingStore = WidgetBackingStoreCairo::create(EwkView::toEvasObject(toAPI(m_webPageProxy)), size(), deviceScaleFactor());
+        m_backingStore = WidgetBackingStoreCairo::create(EwkView::toEvasObject(toAPI(&m_webPageProxy)), size(), deviceScaleFactor());
 #else
-        m_backingStore = createBackingStoreForGTK(m_webPageProxy->viewWidget(), size(), deviceScaleFactor());
+        m_backingStore = createBackingStoreForGTK(m_webPageProxy.viewWidget(), size(), deviceScaleFactor());
 #endif
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);

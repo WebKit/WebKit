@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-BackingStore::BackingStore(const IntSize& size, float deviceScaleFactor, WebPageProxy* webPageProxy)
+BackingStore::BackingStore(const IntSize& size, float deviceScaleFactor, WebPageProxy& webPageProxy)
     : m_size(size)
     , m_deviceScaleFactor(deviceScaleFactor)
     , m_webPageProxy(webPageProxy)

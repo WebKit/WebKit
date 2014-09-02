@@ -286,7 +286,7 @@ WebCore::FloatSize WebView::visibleContentsSize() const
 
 std::unique_ptr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
 {
-    return std::make_unique<CoordinatedDrawingAreaProxy>(page());
+    return std::make_unique<CoordinatedDrawingAreaProxy>(*m_page);
 }
 
 void WebView::setViewNeedsDisplay(const WebCore::IntRect& area)

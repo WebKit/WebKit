@@ -45,7 +45,7 @@ class CoordinatedLayerTreeHostProxy;
 
 class CoordinatedDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    explicit CoordinatedDrawingAreaProxy(WebPageProxy*);
+    explicit CoordinatedDrawingAreaProxy(WebPageProxy&);
     virtual ~CoordinatedDrawingAreaProxy();
 
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
@@ -63,7 +63,7 @@ public:
     WebCore::IntRect contentsRect() const;
     void updateViewport();
 
-    WebPageProxy* page() { return m_webPageProxy; }
+    WebPageProxy& page() { return m_webPageProxy; }
 private:
     // DrawingAreaProxy
     virtual void sizeDidChange();

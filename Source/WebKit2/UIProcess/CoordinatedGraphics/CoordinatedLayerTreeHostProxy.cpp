@@ -38,12 +38,12 @@ CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(CoordinatedDrawingA
     : m_drawingAreaProxy(drawingAreaProxy)
     , m_scene(adoptRef(new CoordinatedGraphicsScene(this)))
 {
-    m_drawingAreaProxy->page()->process().addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page()->pageID(), *this);
+    m_drawingAreaProxy->page().process().addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page().pageID(), *this);
 }
 
 CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy()
 {
-    m_drawingAreaProxy->page()->process().removeMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page().process().removeMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page().pageID());
     m_scene->detach();
 }
 
@@ -66,7 +66,7 @@ void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const Coordin
 
     updateViewport();
 #if USE(TILED_BACKING_STORE)
-    m_drawingAreaProxy->page()->didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
+    m_drawingAreaProxy->page().didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
 #endif
 }
 
@@ -82,19 +82,19 @@ void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect
     if (rect == m_lastSentVisibleRect && trajectoryVector == m_lastSentTrajectoryVector)
         return;
 
-    m_drawingAreaProxy->page()->process().send(Messages::CoordinatedLayerTreeHost::SetVisibleContentsRect(rect, trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::SetVisibleContentsRect(rect, trajectoryVector), m_drawingAreaProxy->page().pageID());
     m_lastSentVisibleRect = rect;
     m_lastSentTrajectoryVector = trajectoryVector;
 }
 
 void CoordinatedLayerTreeHostProxy::renderNextFrame()
 {
-    m_drawingAreaProxy->page()->process().send(Messages::CoordinatedLayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page().pageID());
 }
 
 void CoordinatedLayerTreeHostProxy::purgeBackingStores()
 {
-    m_drawingAreaProxy->page()->process().send(Messages::CoordinatedLayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page().pageID());
 }
 
 void CoordinatedLayerTreeHostProxy::setBackgroundColor(const Color& color)
@@ -107,7 +107,7 @@ void CoordinatedLayerTreeHostProxy::setBackgroundColor(const Color& color)
 
 void CoordinatedLayerTreeHostProxy::commitScrollOffset(uint32_t layerID, const IntSize& offset)
 {
-    m_drawingAreaProxy->page()->process().send(Messages::CoordinatedLayerTreeHost::CommitScrollOffset(layerID, offset), m_drawingAreaProxy->page()->pageID());
+    m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::CommitScrollOffset(layerID, offset), m_drawingAreaProxy->page().pageID());
 }
 
 }

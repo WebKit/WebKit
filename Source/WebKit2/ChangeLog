@@ -1,3 +1,40 @@
+2014-09-01  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        Build break on the EFL port since r173163
+        https://bugs.webkit.org/show_bug.cgi?id=136443
+
+        Unreviewed build fix.
+
+        * UIProcess/BackingStore.cpp:
+        (WebKit::BackingStore::BackingStore):
+        * UIProcess/BackingStore.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy):
+        (WebKit::CoordinatedDrawingAreaProxy::updateViewport):
+        (WebKit::CoordinatedDrawingAreaProxy::contentsRect):
+        (WebKit::CoordinatedDrawingAreaProxy::update):
+        (WebKit::CoordinatedDrawingAreaProxy::didUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::incorporateUpdate):
+        (WebKit::CoordinatedDrawingAreaProxy::sendUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode):
+        (WebKit::CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode):
+        (WebKit::CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h:
+        (WebKit::CoordinatedDrawingAreaProxy::page):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState):
+        (WebKit::CoordinatedLayerTreeHostProxy::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHostProxy::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHostProxy::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHostProxy::commitScrollOffset):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createDrawingAreaProxy):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+
 2014-09-01  Tim Horton  <timothy_horton@apple.com>
 
         Remove two unused WebKit2 PDF-related preferences
