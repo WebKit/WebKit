@@ -456,7 +456,7 @@ void CachedImage::responseReceived(const ResourceResponse& response)
 void CachedImage::destroyDecodedData()
 {
     bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());
-    if (canDeleteImage && !isLoading()) {
+    if (canDeleteImage && !isLoading() && !hasClients()) {
         m_image = 0;
         setDecodedSize(0);
     } else if (m_image && !errorOccurred())

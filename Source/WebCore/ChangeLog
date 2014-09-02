@@ -1,3 +1,19 @@
+2014-09-02  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Prevent decoded images from being destroyed when they're in use.
+        https://bugs.webkit.org/show_bug.cgi?id=136259.
+
+        Reviewed by Darin Adler.
+
+        Try to fix a regression introduced by r172790. Before the patch,
+        CachedImage does not release its Image object if it still has clients.
+        However this behavior was changed due to removal of CachedResource::isSafeToMakePurgeable(),
+        which implied a call to CachedResource::hasClients(). This patch restores
+        the behavior by adding a check to hasClients() in CachedImage::destroyDecodedData().
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::destroyDecodedData):
+
 2014-09-01  Tim Horton  <timothy_horton@apple.com>
 
         RenderThemeMac::paintProgressBar creates a buffer without respecting the destination's acceleration setting
