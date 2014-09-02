@@ -62,6 +62,9 @@ protected:
     RefPtr<CSSPrimitiveValue> m_referenceBox;
 };
 
+#define CSS_BASIC_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, CSSBasicShape, basicShape, basicShape->type() == predicate, basicShape.type() == predicate) 
+
 class CSSBasicShapeInset : public CSSBasicShape {
 public:
     static PassRefPtr<CSSBasicShapeInset> create() { return adoptRef(new CSSBasicShapeInset); }
@@ -127,6 +130,8 @@ private:
     RefPtr<CSSPrimitiveValue> m_bottomLeftRadius;
 };
 
+CSS_BASIC_TYPE_CASTS(CSSBasicShapeInset, CSSBasicShapeInsetType)
+
 class CSSBasicShapeCircle : public CSSBasicShape {
 public:
     static PassRefPtr<CSSBasicShapeCircle> create() { return adoptRef(new CSSBasicShapeCircle); }
@@ -150,6 +155,8 @@ private:
     RefPtr<CSSPrimitiveValue> m_centerY;
     RefPtr<CSSPrimitiveValue> m_radius;
 };
+
+CSS_BASIC_TYPE_CASTS(CSSBasicShapeCircle, CSSBasicShapeCircleType)
 
 class CSSBasicShapeEllipse : public CSSBasicShape {
 public:
@@ -177,6 +184,8 @@ private:
     RefPtr<CSSPrimitiveValue> m_radiusX;
     RefPtr<CSSPrimitiveValue> m_radiusY;
 };
+
+CSS_BASIC_TYPE_CASTS(CSSBasicShapeEllipse, CSSBasicShapeEllipseType)
 
 class CSSBasicShapePolygon : public CSSBasicShape {
 public:
@@ -208,6 +217,8 @@ private:
     Vector<RefPtr<CSSPrimitiveValue>> m_values;
     WindRule m_windRule;
 };
+
+CSS_BASIC_TYPE_CASTS(CSSBasicShapePolygon, CSSBasicShapePolygonType)
 
 } // namespace WebCore
 

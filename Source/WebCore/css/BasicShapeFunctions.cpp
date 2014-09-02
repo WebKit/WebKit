@@ -205,7 +205,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conve
 
     switch (basicShapeValue->type()) {
     case CSSBasicShape::CSSBasicShapeCircleType: {
-        const CSSBasicShapeCircle* circleValue = static_cast<const CSSBasicShapeCircle *>(basicShapeValue);
+        const CSSBasicShapeCircle* circleValue = toCSSBasicShapeCircle(basicShapeValue);
         RefPtr<BasicShapeCircle> circle = BasicShapeCircle::create();
 
         circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue->centerX()));
@@ -216,7 +216,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conve
         break;
     }
     case CSSBasicShape::CSSBasicShapeEllipseType: {
-        const CSSBasicShapeEllipse* ellipseValue = static_cast<const CSSBasicShapeEllipse *>(basicShapeValue);
+        const CSSBasicShapeEllipse* ellipseValue = toCSSBasicShapeEllipse(basicShapeValue);
         RefPtr<BasicShapeEllipse> ellipse = BasicShapeEllipse::create();
 
         ellipse->setCenterX(convertToCenterCoordinate(conversionData, ellipseValue->centerX()));
@@ -229,7 +229,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conve
         break;
     }
     case CSSBasicShape::CSSBasicShapePolygonType: {
-        const CSSBasicShapePolygon* polygonValue = static_cast<const CSSBasicShapePolygon *>(basicShapeValue);
+        const CSSBasicShapePolygon* polygonValue = toCSSBasicShapePolygon(basicShapeValue);
         RefPtr<BasicShapePolygon> polygon = BasicShapePolygon::create();
 
         polygon->setWindRule(polygonValue->windRule());
@@ -241,7 +241,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conve
         break;
     }
     case CSSBasicShape::CSSBasicShapeInsetType: {
-        const CSSBasicShapeInset* rectValue = static_cast<const CSSBasicShapeInset* >(basicShapeValue);
+        const CSSBasicShapeInset* rectValue = toCSSBasicShapeInset(basicShapeValue);
         RefPtr<BasicShapeInset> rect = BasicShapeInset::create();
 
         rect->setTop(convertToLength(conversionData, rectValue->top()));

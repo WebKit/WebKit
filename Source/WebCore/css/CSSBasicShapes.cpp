@@ -128,7 +128,7 @@ bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
     if (shape.type() != CSSBasicShapeCircleType)
         return false;
 
-    const CSSBasicShapeCircle& other = static_cast<const CSSBasicShapeCircle&>(shape);
+    const CSSBasicShapeCircle& other = toCSSBasicShapeCircle(shape);
     return compareCSSValuePtr(m_centerX, other.m_centerX)
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radius, other.m_radius)
@@ -201,7 +201,7 @@ bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
     if (shape.type() != CSSBasicShapeEllipseType)
         return false;
 
-    const CSSBasicShapeEllipse& other = static_cast<const CSSBasicShapeEllipse&>(shape);
+    const CSSBasicShapeEllipse& other = toCSSBasicShapeEllipse(shape);
     return compareCSSValuePtr(m_centerX, other.m_centerX)
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
@@ -272,7 +272,7 @@ bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
     if (shape.type() != CSSBasicShapePolygonType)
         return false;
 
-    const CSSBasicShapePolygon& rhs = static_cast<const CSSBasicShapePolygon&>(shape);
+    const CSSBasicShapePolygon& rhs = toCSSBasicShapePolygon(shape);
     return compareCSSValuePtr(m_referenceBox, rhs.m_referenceBox)
         && compareCSSValueVector<CSSPrimitiveValue>(m_values, rhs.m_values);
 }
@@ -407,7 +407,7 @@ bool CSSBasicShapeInset::equals(const CSSBasicShape& shape) const
     if (shape.type() != CSSBasicShapeInsetType)
         return false;
 
-    const CSSBasicShapeInset& other = static_cast<const CSSBasicShapeInset&>(shape);
+    const CSSBasicShapeInset& other = toCSSBasicShapeInset(shape);
     return compareCSSValuePtr(m_top, other.m_top)
         && compareCSSValuePtr(m_right, other.m_right)
         && compareCSSValuePtr(m_bottom, other.m_bottom)
