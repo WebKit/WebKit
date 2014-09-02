@@ -942,7 +942,7 @@ public:
     void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
-            m_assembler.cmp(0, reg);
+            m_assembler.tst(reg, reg);
         else
             m_assembler.tst(reg, m_assembler.getImm(mask.m_value, ARMRegisters::S0));
         m_assembler.mov(dest, ARMAssembler::getOp2Byte(0));
