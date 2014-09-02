@@ -96,8 +96,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestCustomNamedGetter*)
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCustomNamedGetter*);
-TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCustomNamedGetter*);
+WEBCORE_EXPORT TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue);
 
 
 } // namespace WebCore

@@ -92,8 +92,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestTypedefs*)
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestTypedefs*);
-TestTypedefs* toTestTypedefs(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestTypedefs*);
+WEBCORE_EXPORT TestTypedefs* toTestTypedefs(JSC::JSValue);
 
 
 } // namespace WebCore

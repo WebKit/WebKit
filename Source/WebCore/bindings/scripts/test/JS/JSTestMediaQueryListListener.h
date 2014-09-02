@@ -90,8 +90,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestMediaQueryListListener*)
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);
-TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);
+WEBCORE_EXPORT TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue);
 
 
 } // namespace WebCore

@@ -30,5 +30,5 @@ namespace WebCore {
 class readonly;
 }
 
-WebCore::readonly* core(DOMreadonly *);
-DOMreadonly *kit(WebCore::readonly*);
+WEBCORE_EXPORT WebCore::readonly* core(DOMreadonly *);
+WEBCORE_EXPORT DOMreadonly *kit(WebCore::readonly*);

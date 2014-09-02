@@ -30,5 +30,5 @@ namespace WebCore {
 class TestActiveDOMObject;
 }
 
-WebCore::TestActiveDOMObject* core(DOMTestActiveDOMObject *);
-DOMTestActiveDOMObject *kit(WebCore::TestActiveDOMObject*);
+WEBCORE_EXPORT WebCore::TestActiveDOMObject* core(DOMTestActiveDOMObject *);
+WEBCORE_EXPORT DOMTestActiveDOMObject *kit(WebCore::TestActiveDOMObject*);

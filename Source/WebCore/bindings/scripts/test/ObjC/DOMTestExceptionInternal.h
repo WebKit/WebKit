@@ -30,5 +30,5 @@ namespace WebCore {
 class TestException;
 }
 
-WebCore::TestException* core(DOMTestException *);
-DOMTestException *kit(WebCore::TestException*);
+WEBCORE_EXPORT WebCore::TestException* core(DOMTestException *);
+WEBCORE_EXPORT DOMTestException *kit(WebCore::TestException*);

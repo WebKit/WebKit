@@ -32,7 +32,7 @@ namespace WebCore {
 class Float64Array;
 }
 
-WebCore::Float64Array* core(DOMFloat64Array *);
-DOMFloat64Array *kit(WebCore::Float64Array*);
+WEBCORE_EXPORT WebCore::Float64Array* core(DOMFloat64Array *);
+WEBCORE_EXPORT DOMFloat64Array *kit(WebCore::Float64Array*);
 
 #endif

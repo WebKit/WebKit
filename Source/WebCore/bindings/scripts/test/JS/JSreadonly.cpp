@@ -101,7 +101,7 @@ static const HashTableValue JSreadonlyPrototypeTableValues[] =
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsreadonlyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
+WEBCORE_EXPORT const ClassInfo JSreadonlyPrototype::s_info = { "readonlyPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyPrototype) };
 
 void JSreadonlyPrototype::finishCreation(VM& vm)
 {
@@ -109,7 +109,7 @@ void JSreadonlyPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSreadonlyPrototypeTableValues, *this);
 }
 
-const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonly) };
+WEBCORE_EXPORT const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonly) };
 
 JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<readonly> impl)
     : JSDOMWrapper(structure, globalObject)

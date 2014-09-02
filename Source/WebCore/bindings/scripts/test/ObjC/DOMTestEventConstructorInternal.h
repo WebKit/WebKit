@@ -30,5 +30,5 @@ namespace WebCore {
 class TestEventConstructor;
 }
 
-WebCore::TestEventConstructor* core(DOMTestEventConstructor *);
-DOMTestEventConstructor *kit(WebCore::TestEventConstructor*);
+WEBCORE_EXPORT WebCore::TestEventConstructor* core(DOMTestEventConstructor *);
+WEBCORE_EXPORT DOMTestEventConstructor *kit(WebCore::TestEventConstructor*);

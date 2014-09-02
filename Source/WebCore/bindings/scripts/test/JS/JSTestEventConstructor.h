@@ -92,8 +92,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestEventConstructor*)
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
-TestEventConstructor* toTestEventConstructor(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
+WEBCORE_EXPORT TestEventConstructor* toTestEventConstructor(JSC::JSValue);
 
 bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
 

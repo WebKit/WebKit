@@ -96,8 +96,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestSerializedScriptValueInt
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
-TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
+WEBCORE_EXPORT TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);
 
 
 } // namespace WebCore

@@ -30,5 +30,5 @@ namespace WebCore {
 class TestGenerateIsReachable;
 }
 
-WebCore::TestGenerateIsReachable* core(DOMTestGenerateIsReachable *);
-DOMTestGenerateIsReachable *kit(WebCore::TestGenerateIsReachable*);
+WEBCORE_EXPORT WebCore::TestGenerateIsReachable* core(DOMTestGenerateIsReachable *);
+WEBCORE_EXPORT DOMTestGenerateIsReachable *kit(WebCore::TestGenerateIsReachable*);

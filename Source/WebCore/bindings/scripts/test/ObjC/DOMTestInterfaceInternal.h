@@ -30,5 +30,5 @@ namespace WebCore {
 class TestInterface;
 }
 
-WebCore::TestInterface* core(DOMTestInterface *);
-DOMTestInterface *kit(WebCore::TestInterface*);
+WEBCORE_EXPORT WebCore::TestInterface* core(DOMTestInterface *);
+WEBCORE_EXPORT DOMTestInterface *kit(WebCore::TestInterface*);

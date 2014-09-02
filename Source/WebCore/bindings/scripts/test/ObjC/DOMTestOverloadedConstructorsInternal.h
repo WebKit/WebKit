@@ -30,5 +30,5 @@ namespace WebCore {
 class TestOverloadedConstructors;
 }
 
-WebCore::TestOverloadedConstructors* core(DOMTestOverloadedConstructors *);
-DOMTestOverloadedConstructors *kit(WebCore::TestOverloadedConstructors*);
+WEBCORE_EXPORT WebCore::TestOverloadedConstructors* core(DOMTestOverloadedConstructors *);
+WEBCORE_EXPORT DOMTestOverloadedConstructors *kit(WebCore::TestOverloadedConstructors*);

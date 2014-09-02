@@ -106,7 +106,7 @@ static const HashTableValue JSattributePrototypeTableValues[] =
     { "readonly", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsattributeReadonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) },
 };
 
-const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
+WEBCORE_EXPORT const ClassInfo JSattributePrototype::s_info = { "attributePrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributePrototype) };
 
 void JSattributePrototype::finishCreation(VM& vm)
 {
@@ -114,7 +114,7 @@ void JSattributePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSattributePrototypeTableValues, *this);
 }
 
-const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattribute) };
+WEBCORE_EXPORT const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattribute) };
 
 JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<attribute> impl)
     : JSDOMWrapper(structure, globalObject)

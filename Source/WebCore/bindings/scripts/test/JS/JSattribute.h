@@ -91,8 +91,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, attribute*)
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
-attribute* toattribute(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
+WEBCORE_EXPORT attribute* toattribute(JSC::JSValue);
 
 
 } // namespace WebCore

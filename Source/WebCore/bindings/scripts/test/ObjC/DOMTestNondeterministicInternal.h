@@ -30,5 +30,5 @@ namespace WebCore {
 class TestNondeterministic;
 }
 
-WebCore::TestNondeterministic* core(DOMTestNondeterministic *);
-DOMTestNondeterministic *kit(WebCore::TestNondeterministic*);
+WEBCORE_EXPORT WebCore::TestNondeterministic* core(DOMTestNondeterministic *);
+WEBCORE_EXPORT DOMTestNondeterministic *kit(WebCore::TestNondeterministic*);

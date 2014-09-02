@@ -30,5 +30,5 @@ namespace WebCore {
 class TestEventTarget;
 }
 
-WebCore::TestEventTarget* core(DOMTestEventTarget *);
-DOMTestEventTarget *kit(WebCore::TestEventTarget*);
+WEBCORE_EXPORT WebCore::TestEventTarget* core(DOMTestEventTarget *);
+WEBCORE_EXPORT DOMTestEventTarget *kit(WebCore::TestEventTarget*);

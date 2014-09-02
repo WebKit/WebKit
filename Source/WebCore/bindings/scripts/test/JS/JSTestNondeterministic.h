@@ -90,8 +90,8 @@ inline void* wrapperContext(DOMWrapperWorld& world, TestNondeterministic*)
     return &world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestNondeterministic*);
-TestNondeterministic* toTestNondeterministic(JSC::JSValue);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestNondeterministic*);
+WEBCORE_EXPORT TestNondeterministic* toTestNondeterministic(JSC::JSValue);
 
 
 } // namespace WebCore

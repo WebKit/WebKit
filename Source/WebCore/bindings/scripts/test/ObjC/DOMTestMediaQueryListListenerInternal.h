@@ -30,5 +30,5 @@ namespace WebCore {
 class TestMediaQueryListListener;
 }
 
-WebCore::TestMediaQueryListListener* core(DOMTestMediaQueryListListener *);
-DOMTestMediaQueryListListener *kit(WebCore::TestMediaQueryListListener*);
+WEBCORE_EXPORT WebCore::TestMediaQueryListListener* core(DOMTestMediaQueryListListener *);
+WEBCORE_EXPORT DOMTestMediaQueryListListener *kit(WebCore::TestMediaQueryListListener*);
