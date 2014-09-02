@@ -1,3 +1,18 @@
+2014-09-02  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173036.
+
+    2014-08-27  Mark Rowe  <mrowe@apple.com>
+
+            JavaScriptCore is missing debug info for WTF because libWTF.a is stripped.
+            <https://webkit.org/b/136320> / <rdar://problem/18148776>
+
+            Reviewed by Dan Bernstein.
+
+            * Configurations/WTF.xcconfig: Set STRIP_INSTALLED_PRODUCT = NO for the target
+            that produces libWTF.a so that the debug symbols will be linked into JavaScriptCore
+            and end up in its dSYM file.
+
 2014-07-17  Dean Jackson  <dino@apple.com>
 
         <rdar://problem/17675068> Disable some features on this branch.
