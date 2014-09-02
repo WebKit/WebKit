@@ -3434,12 +3434,6 @@ void RenderLayerCompositor::updateRootLayerAttachment()
 
 void RenderLayerCompositor::rootLayerAttachmentChanged()
 {
-    // The attachment can affect whether the RenderView layer's paintsIntoWindow() behavior,
-    // so call updateDrawsContent() to update that.
-    RenderLayer* layer = m_renderView.layer();
-    if (RenderLayerBacking* backing = layer ? layer->backing() : 0)
-        backing->updateDrawsContent();
-
     // The document-relative page overlay layer (which is pinned to the main frame's layer tree)
     // is moved between different RenderLayerCompositors' layer trees, and needs to be
     // reattached whenever we swap in a new RenderLayerCompositor.
@@ -3450,6 +3444,12 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     Page* page = frame.page();
     if (!page)
         return;
+
+    // The attachment can affect whether the RenderView layer's paintsIntoWindow() behavior,
+    // so call updateDrawsContent() to update that.
+    RenderLayer* layer = m_renderView.layer();
+    if (RenderLayerBacking* backing = layer ? layer->backing() : nullptr)
+        backing->updateDrawsContent();
 
     if (GraphicsLayer* overlayLayer = page->chrome().client().documentOverlayLayerForFrame(frame))
         m_rootContentLayer->addChild(overlayLayer);
