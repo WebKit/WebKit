@@ -1,3 +1,19 @@
+2014-09-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Pass the resource identifier in willSendRequest callback.
+        https://bugs.webkit.org/show_bug.cgi?id=136325
+
+        Reviewed by Dan Bernstein.
+
+        Add two new delegate methods webProcessPlugInBrowserContextController:frame:willSendRequestForResource:request:redirectResponse:
+        and webProcessPlugInBrowserContextController:frame:didInitiateLoadForResource:request:pageIsProvisionallyLoading:. We will remove
+        the old willSendRequest and didInitiateLoadForResource when clients adopt the new methods.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (willSendRequestForFrame):
+        (didInitiateLoadForResource):
+
 2014-09-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r173163.
