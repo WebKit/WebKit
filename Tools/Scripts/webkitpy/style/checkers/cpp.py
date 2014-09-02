@@ -3683,6 +3683,13 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error):
                   'Add #include ' + required_header_unstripped + ' for ' + template)
 
 
+def check_platformh_comments(lines, error):
+    for line_number, line in enumerate(lines):
+        if line_number not in (0, len(lines) - 1):
+            if line.find("//") != -1:
+                error(line_number, 'build/cpp_comment', 5, 'CPP comments are not allowed in Platform.h, '
+                                                           'please use C comments /* ... */')
+
 def process_line(filename, file_extension,
                  clean_lines, line, include_state, function_state,
                  class_state, file_state, enum_state, asm_state, error):
@@ -3765,6 +3772,8 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
 
     if file_extension == 'h':
         check_for_header_guard(filename, lines, error)
+        if filename == 'Source/WTF/wtf/Platform.h':
+            check_platformh_comments(lines, error)
 
     remove_multi_line_comments(lines, error)
     clean_lines = CleansedLines(lines)
@@ -3811,6 +3820,7 @@ class CppChecker(object):
         'build/storage_class',
         'build/using_std',
         'build/using_namespace',
+        'build/cpp_comment',
         'legal/copyright',
         'readability/braces',
         'readability/casting',

@@ -1141,6 +1141,44 @@ class CppStyleTest(CppStyleTestBase):
             2,  # One per line.
             error_collector.result_list().count(multiline_string_error_message))
 
+    def test_platformh_comments(self):
+        check_platformh_message = (
+            'CPP comments are not allowed in Platform.h, '
+            'please use C comments /* ... */  [build/cpp_comment] [5]')
+
+        platformh_file_path = 'Source/WTF/wtf/Platform.h'
+
+        # CPP comment are not allowed in Platform.h header file.
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data(platformh_file_path, 'h',
+                               ['// This is a cpp comment.'],
+                               error_collector)
+        self.assertEqual(
+            1,
+            error_collector.result_list().count(check_platformh_message))
+
+        # C comments are allowed in Platform.h
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data(platformh_file_path, 'h',
+                               ['/* This is a C comment.*/'],
+                               error_collector)
+        self.assertEqual(
+            0,
+            error_collector.result_list().count(check_platformh_message))
+
+        platformh_file_path = 'Source/WTF/wtf/platform.h'
+
+        # CPP comment are allowed in other header files.
+        error_collector = ErrorCollector(self.assertTrue)
+        self.process_file_data(platformh_file_path, 'h',
+                               ['// This is a cpp comment.'
+                                '// The filepath is not'
+                                '// Source/WTF/wtf/Platform.h'],
+                               error_collector)
+        self.assertEqual(
+            0,
+            error_collector.result_list().count(check_platformh_message))
+
     # Test non-explicit single-argument constructors
     def test_explicit_single_argument_constructors(self):
         # missing explicit is bad

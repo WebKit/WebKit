@@ -1,3 +1,17 @@
+2014-09-02  Renato Nagy  <rnagy@inf.u-szeged.hu>
+
+        check-webkit-style should complain about C++ comments in Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=133802
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_platformh_comments):
+        (_process_lines):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_platformh_comment):
+
 2014-09-02  Brendan Long  <self@brendanlong.com>
 
         [Gtk] Make install-dependencies work on Arch Linux
