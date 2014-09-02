@@ -146,6 +146,18 @@ static std::chrono::milliseconds deadDecodedDataDeletionIntervalForResourceType(
     return memoryCache()->deadDecodedDataDeletionInterval();
 }
 
+static double currentAge(const ResourceResponse& response, double responseTimestamp)
+{
+    // RFC2616 13.2.3
+    // No compensation for latency as that is not terribly important in practice
+    double dateValue = response.date();
+    double apparentAge = std::isfinite(dateValue) ? std::max(0., responseTimestamp - dateValue) : 0;
+    double ageValue = response.age();
+    double correctedReceivedAge = std::isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
+    double residentTime = currentTime() - responseTimestamp;
+    return correctedReceivedAge + residentTime;
+}
+
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(const ResourceRequest& request, Type type, SessionID sessionID)
@@ -180,6 +192,8 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_owningCachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
+    , m_redirectChainCacheStatus(NoRedirection)
+    , m_redirectChainEndOfValidity(std::numeric_limits<double>::max())
 {
     ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
     ASSERT(sessionID.isValid());
@@ -386,47 +400,55 @@ bool CachedResource::isExpired() const
     if (m_response.isNull())
         return false;
 
-    return currentAge() > freshnessLifetime();
+    return currentAge(m_response, m_responseTimestamp) > freshnessLifetime(m_response);
 }
 
-double CachedResource::currentAge() const
+double CachedResource::freshnessLifetime(const ResourceResponse& response) const
 {
-    // RFC2616 13.2.3
-    // No compensation for latency as that is not terribly important in practice
-    double dateValue = m_response.date();
-    double apparentAge = std::isfinite(dateValue) ? std::max(0., m_responseTimestamp - dateValue) : 0;
-    double ageValue = m_response.age();
-    double correctedReceivedAge = std::isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
-    double residentTime = currentTime() - m_responseTimestamp;
-    return correctedReceivedAge + residentTime;
-}
-
-double CachedResource::freshnessLifetime() const
-{
-    if (!m_response.url().protocolIsInHTTPFamily()) {
+    if (!response.url().protocolIsInHTTPFamily()) {
         // Don't cache non-HTTP main resources since we can't check for freshness.
         // FIXME: We should not cache subresources either, but when we tried this
         // it caused performance and flakiness issues in our test infrastructure.
-        if (m_type == MainResource && !SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(m_response.url().protocol()))
+        if (m_type == MainResource && !SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(response.url().protocol()))
             return 0;
 
         return std::numeric_limits<double>::max();
     }
 
     // RFC2616 13.2.4
-    double maxAgeValue = m_response.cacheControlMaxAge();
+    double maxAgeValue = response.cacheControlMaxAge();
     if (std::isfinite(maxAgeValue))
         return maxAgeValue;
-    double expiresValue = m_response.expires();
-    double dateValue = m_response.date();
+    double expiresValue = response.expires();
+    double dateValue = response.date();
     double creationTime = std::isfinite(dateValue) ? dateValue : m_responseTimestamp;
     if (std::isfinite(expiresValue))
         return expiresValue - creationTime;
-    double lastModifiedValue = m_response.lastModified();
+    double lastModifiedValue = response.lastModified();
     if (std::isfinite(lastModifiedValue))
         return (creationTime - lastModifiedValue) * 0.1;
     // If no cache headers are present, the specification leaves the decision to the UA. Other browsers seem to opt for 0.
     return 0;
+}
+
+void CachedResource::willSendRequest(ResourceRequest&, const ResourceResponse& response)
+{
+    m_requestedFromNetworkingLayer = true;
+    if (response.isNull())
+        return;
+    if (m_redirectChainCacheStatus == NotCachedRedirection)
+        return;
+    if (response.cacheControlContainsNoStore()
+        || response.cacheControlContainsNoCache()
+        || response.cacheControlContainsMustRevalidate())
+        m_redirectChainCacheStatus = NotCachedRedirection;
+    else {
+        m_redirectChainCacheStatus = CachedRedirection;
+        double responseTimestamp = currentTime();
+        // Store the nearest end of cache validity date
+        m_redirectChainEndOfValidity = std::min(m_redirectChainEndOfValidity, 
+            responseTimestamp + freshnessLifetime(response) - currentAge(response, responseTimestamp));
+    }
 }
 
 void CachedResource::responseReceived(const ResourceResponse& response)
@@ -781,6 +803,19 @@ bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) co
     }
 
     return false;
+}
+
+bool CachedResource::redirectChainAllowsReuse() const
+{
+    switch (m_redirectChainCacheStatus) {
+    case NoRedirection:
+        return true;
+    case NotCachedRedirection:
+        return false;
+    case CachedRedirection:
+        return currentTime() <= m_redirectChainEndOfValidity;
+    }
+    return true;
 }
 
 unsigned CachedResource::overheadSize() const

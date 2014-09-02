@@ -594,6 +594,12 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
+    // Validate the redirect chain
+    if (!existingResource->redirectChainAllowsReuse()) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to not cached or expired redirections.");
+        return Reload;
+    }
+
     // If credentials were sent with the previous request and won't be
     // with this one, or vice versa, re-fetch the resource.
     //

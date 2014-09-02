@@ -88,6 +88,12 @@ public:
         DecodeError
     };
 
+    enum RedirectChainCacheStatus {
+        NoRedirection,
+        NotCachedRedirection,
+        CachedRedirection
+    };
+
     CachedResource(const ResourceRequest&, Type, SessionID);
     virtual ~CachedResource();
 
@@ -188,7 +194,7 @@ public:
 
     ResourceBuffer* resourceBuffer() const { return m_data.get(); }
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) { m_requestedFromNetworkingLayer = true; }
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
     virtual void responseReceived(const ResourceResponse&);
     void setResponse(const ResourceResponse& response) { m_response = response; }
     const ResourceResponse& response() const { return m_response; }
@@ -225,6 +231,7 @@ public:
     bool canUseCacheValidator() const;
 
     virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+    bool redirectChainAllowsReuse() const;
 
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
@@ -299,8 +306,7 @@ private:
 
     virtual bool mayTryReplaceEncodedData() const { return false; }
 
-    double currentAge() const;
-    double freshnessLifetime() const;
+    double freshnessLifetime(const ResourceResponse&) const;
 
     void addAdditionalRequestHeaders(CachedResourceLoader*);
     void failBeforeStarting();
@@ -355,6 +361,9 @@ private:
 
     // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
+
+    RedirectChainCacheStatus m_redirectChainCacheStatus;
+    double m_redirectChainEndOfValidity;
 };
 
 #define CACHED_RESOURCE_TYPE_CASTS(ToClassName, FromClassName, CachedResourceType) \

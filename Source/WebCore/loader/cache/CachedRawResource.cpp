@@ -255,11 +255,6 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
             return false;
     }
 
-    for (size_t i = 0; i < m_redirectChain.size(); i++) {
-        if (m_redirectChain[i].m_redirectResponse.cacheControlContainsNoStore())
-            return false;
-    }
-
     return true;
 }
 

@@ -1,3 +1,29 @@
+2014-09-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        CachedResourceLoader should check redirections to reuse or not cached resources
+        https://bugs.webkit.org/show_bug.cgi?id=131757
+
+        Reviewed by Antti Koivisto.
+
+        Added cache-control redirection check to properly determine revalidation policy.
+        Tightened redirection cache-control header check by testing for no-cache and must-revalidate directives.
+        Added redirection freshness check.
+
+        Test: http/tests/cache/cache-redirections.html
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::canReuse): Removed redirection check (now handled by CachedResource::redirectChainAllowsReuse).
+        * loader/cache/CachedResource.cpp:
+        (WebCore::currentAge): Moved from WebCore::CachedResource::currentAge method to static function. Added response and responseTimestamp as parameters.
+        (WebCore::CachedResource::CachedResource): Initialized redirection chain status (no redirection and expiracy date set to never).
+        (WebCore::CachedResource::isExpired): Updated according new currentAge/freshnessLifetime method parameters.
+        (WebCore::CachedResource::freshnessLifetime): Added response as parameter.
+        (WebCore::CachedResource::willSendRequest): Computes whether a redirection can be cached, and if cached for how long it will remain fresh.
+        (WebCore::CachedResource::redirectChainAllowsReuse): Return false if any of the redirection in the redirection chain cannot be cached or expired. 
+        * loader/cache/CachedResource.h: Added cache chain member that stores whether the redirection chain can be cached and if so when it will be expired.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Added check of the redirection chain.
+
 2014-09-02  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         Prevent decoded images from being destroyed when they're in use.

@@ -1,3 +1,17 @@
+2014-09-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        CachedResourceLoader should check redirections to reuse or not cached resources
+        https://bugs.webkit.org/show_bug.cgi?id=131757
+
+        Reviewed by Antti Koivisto.
+
+        Added test checks that fresh redirections allow reuse of cached resoure and expired or not cacheable redirections trigger reloading of resources.
+
+        * http/tests/cache/cache-redirections-expected.txt: Added.
+        * http/tests/cache/cache-redirections.html: Added.
+        * http/tests/cache/resources/cache-control-redirect.php: Added.
+        * http/tests/cache/resources/cacheable-random-text.php: Added.
+
 2014-09-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Test coverage for first-line pseudo-element
