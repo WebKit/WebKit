@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
+DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
     , m_currentBackingStoreStateID(0)
     , m_nextBackingStoreStateID(0)
@@ -137,7 +137,7 @@ void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo
     // FIXME: Handle the case where the view is hidden.
 
     incorporateUpdate(updateInfo);
-    m_webPageProxy->process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy.pageID());
 }
 
 void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
@@ -149,7 +149,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     m_isWaitingForDidUpdateBackingStoreState = false;
 
     // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
-    m_webPageProxy->process().responsivenessTimer()->stop();
+    m_webPageProxy.process().responsivenessTimer()->stop();
 
     if (layerTreeContext != m_layerTreeContext) {
         if (!m_layerTreeContext.isEmpty()) {
@@ -223,17 +223,17 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
     bool shouldScroll = !updateInfo.scrollRect.isEmpty();
 
     if (shouldScroll)
-        m_webPageProxy->scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
+        m_webPageProxy.scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
     
-    if (shouldScroll && !m_webPageProxy->canScrollView())
-        m_webPageProxy->setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy->viewSize()));
+    if (shouldScroll && !m_webPageProxy.canScrollView())
+        m_webPageProxy.setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy.viewSize()));
     else {
         for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
-            m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
+            m_webPageProxy.setViewNeedsDisplay(updateInfo.updateRects[i]);
     }
 
     if (shouldScroll)
-        m_webPageProxy->displayView();
+        m_webPageProxy.displayView();
 }
 
 void DrawingAreaProxyImpl::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)
@@ -246,24 +246,24 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
 {
     ASSERT(m_currentBackingStoreStateID < m_nextBackingStoreStateID);
 
-    if (!m_webPageProxy->isValid())
+    if (!m_webPageProxy.isValid())
         return;
 
     if (m_isWaitingForDidUpdateBackingStoreState)
         return;
 
-    if (m_webPageProxy->viewSize().isEmpty() && !m_webPageProxy->useFixedLayout())
+    if (m_webPageProxy.viewSize().isEmpty() && !m_webPageProxy.useFixedLayout())
         return;
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
 
-    m_webPageProxy->process().send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy->deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy.pageID());
     m_scrollOffset = IntSize();
 
     if (m_isWaitingForDidUpdateBackingStoreState) {
         // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
         // in didUpdateBackingStoreState.
-        m_webPageProxy->process().responsivenessTimer()->start();
+        m_webPageProxy.process().responsivenessTimer()->start();
     }
 
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
@@ -277,9 +277,9 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 {
     ASSERT(m_isWaitingForDidUpdateBackingStoreState);
 
-    if (!m_webPageProxy->isValid())
+    if (!m_webPageProxy.isValid())
         return;
-    if (m_webPageProxy->process().state() == WebProcessProxy::State::Launching)
+    if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
         return;
 
     // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
@@ -288,7 +288,7 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
     // choose the most recent one, or the one that is closest to our current size.
 
     // The timeout we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint is 500 milliseconds.
-    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), std::chrono::milliseconds(500));
+    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy.pageID(), std::chrono::milliseconds(500));
 }
 
 void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -297,7 +297,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
 
     m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
-    m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+    m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
 }
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
@@ -305,7 +305,7 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
     ASSERT(isInAcceleratedCompositingMode());
 
     m_layerTreeContext = LayerTreeContext();    
-    m_webPageProxy->exitAcceleratedCompositingMode();
+    m_webPageProxy.exitAcceleratedCompositingMode();
 }
 
 void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -313,7 +313,7 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeConte
     ASSERT(isInAcceleratedCompositingMode());
 
     m_layerTreeContext = layerTreeContext;
-    m_webPageProxy->updateAcceleratedCompositingMode(layerTreeContext);
+    m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
 void DrawingAreaProxyImpl::discardBackingStoreSoon()
