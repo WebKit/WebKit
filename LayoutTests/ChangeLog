@@ -1,3 +1,21 @@
+2014-09-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Test coverage for first-line pseudo-element
+        https://bugs.webkit.org/show_bug.cgi?id=135770
+
+        Reviewed by Zoltan Horvath.
+
+        According to the spec the ::first-line pseudo-element do not apply to
+        grid containers.
+
+        This was already working as expected but we were missing some tests
+        checking it, so we are adding new tests to have coverage.
+
+        * fast/css-grid-layout/grid-container-ignore-first-line-expected.txt: Added.
+        * fast/css-grid-layout/grid-container-ignore-first-line.html: Added.
+        * fast/css-grid-layout/grid-item-first-line-valid-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-first-line-valid.html: Added.
+
 2014-08-29  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Resolved value of grid-template-* must include every track listed
