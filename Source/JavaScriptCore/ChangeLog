@@ -1,3 +1,26 @@
+2014-09-02  Michael Saboff  <msaboff@apple.com>
+
+        Out of bounds write in vmEntryToJavaScript / JSC::JITCode::execute
+        https://bugs.webkit.org/show_bug.cgi?id=136305
+
+        Reviewed by Filip Pizlo.
+
+        While preparing the callee's CallFrame, ProtoCallFrame fixes any arity mismatch
+        and then JITCode::execute() calls the normal entrypoint.  This is incompatible
+        with the expectation of FTL generated functions.  Changed ProtoCallFrame to not 
+        perform the arity fix, but just flag an arity mismatch.  now JITCode::execute()
+        uses that arity mismatch condition to select the normal or arity check
+        entrypoint.  The entrypoint selection is only done for functions, programs
+        and eval always have one parameter.
+
+        * interpreter/ProtoCallFrame.cpp:
+        (JSC::ProtoCallFrame::init): Changed to flag arity mismatch instead of fixing it.
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::needArityCheck): New boolean to signify what entrypoint
+        should be called.
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute): Select normal or arity check entrypoint as appropriate.
+
 2014-09-02  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] testapi.exe is not built.

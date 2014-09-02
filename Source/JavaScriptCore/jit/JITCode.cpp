@@ -28,6 +28,7 @@
 
 #include "LLIntThunks.h"
 #include "JSCInlines.h"
+#include "ProtoCallFrame.h"
 #include "RegisterPreservationWrapperGenerator.h"
 #include <wtf/PrintStream.h>
 
@@ -44,7 +45,15 @@ JITCode::~JITCode()
 
 JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
-    JSValue result = JSValue::decode(vmEntryToJavaScript(executableAddress(), vm, protoCallFrame));
+    void* entryAddress;
+    JSFunction* function = jsCast<JSFunction*>(protoCallFrame->callee());
+
+    if (!function || !protoCallFrame->needArityCheck()) {
+        ASSERT(!protoCallFrame->needArityCheck());
+        entryAddress = executableAddress();
+    } else
+        entryAddress = addressForCall(*vm, function->executable(), MustCheckArity, RegisterPreservationNotRequired).executableAddress();
+    JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));
     return vm->exception() ? jsNull() : result;
 }
 
