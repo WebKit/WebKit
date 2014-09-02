@@ -260,7 +260,6 @@ public:
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 
     PropertyOffset get(VM&, PropertyName);
-    PropertyOffset get(VM&, const WTF::String& name);
     PropertyOffset get(VM&, PropertyName, unsigned& attributes);
 
     PropertyOffset getConcurrently(VM&, StringImpl* uid);

@@ -171,7 +171,6 @@ public:
 
     // Find a value in the table.
     find_iterator find(const KeyType&);
-    find_iterator findWithString(const KeyType&);
     ValueType* get(const KeyType&);
     // Add a value to the table
     enum EffectOnPropertyOffset { PropertyOffsetMayChange, PropertyOffsetMustNotChange };
@@ -338,35 +337,6 @@ inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
             return nullptr;
         if (key == table()[entryIndex - 1].key)
             return &table()[entryIndex - 1];
-
-#if DUMP_PROPERTYMAP_STATS
-        ++propertyMapHashTableStats->numLookupProbing;
-#endif
-
-        if (!step)
-            step = WTF::doubleHash(key->existingHash()) | 1;
-        hash += step;
-    }
-}
-
-inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType& key)
-{
-    ASSERT(key);
-    ASSERT(!key->isAtomic() && !key->hasHash());
-    unsigned hash = key->hash();
-    unsigned step = 0;
-
-#if DUMP_PROPERTYMAP_STATS
-    ++propertyMapHashTableStats->numLookups;
-#endif
-
-    while (true) {
-        unsigned entryIndex = m_index[hash & m_indexMask];
-        if (entryIndex == EmptyEntryIndex)
-            return std::make_pair((ValueType*)0, hash & m_indexMask);
-        const KeyType& keyInMap = table()[entryIndex - 1].key;
-        if (equal(key, keyInMap) && keyInMap->isAtomic())
-            return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
 #if DUMP_PROPERTYMAP_STATS
         ++propertyMapHashTableStats->numLookupProbing;

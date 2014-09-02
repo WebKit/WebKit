@@ -39,6 +39,7 @@ namespace JSC {
 
 class CopyVisitor;
 class ExecState;
+class Identifier;
 class JSArrayBufferView;
 class JSDestructibleObject;
 class JSGlobalObject;
@@ -141,7 +142,7 @@ public:
     bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
     static bool canUseFastGetOwnProperty(const Structure&);
-    JSValue fastGetOwnProperty(VM&, Structure&, const String&);
+    JSValue fastGetOwnProperty(VM&, Structure&, PropertyName);
 
     enum GCData : uint8_t {
         Marked = 0,

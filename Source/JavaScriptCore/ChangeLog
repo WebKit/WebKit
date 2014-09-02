@@ -1,3 +1,56 @@
+2014-09-02  Andreas Kling  <akling@apple.com>
+
+        Optimize own property GetByVals with rope string subscripts.
+        <https://webkit.org/b/136458>
+
+        For simple JSObjects that don't override getOwnPropertySlot to implement
+        custom properties, we have a fast path that grabs directly at the object
+        property storage.
+
+        Make this fast path even faster when the property name is an unresolved
+        rope string by using JSString::toExistingAtomicString(). This is faster
+        because it avoids allocating a new StringImpl if the string is already
+        a known Identifier, which is guaranteed to be the case if it's present
+        as an own property on the object.)
+
+        ~10% speed-up on Dromaeo/dom-attr.html
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+
+            When using the fastGetOwnProperty() optimization, get the String
+            out of JSString by using toExistingAtomicString(). This avoids
+            StringImpl allocation and lets us bypass the PropertyTable lookup
+            entirely if no AtomicString is found.
+
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::fastGetOwnProperty):
+
+            Make fastGetOwnProperty() take a PropertyName instead of a String.
+            This avoids churning the ref count, since we don't need to create
+            a temporary wrapper around the AtomicStringImpl* found in GetByVal.
+
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+
+            Add constructor: PropertyName(AtomicStringImpl*)
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::get):
+        (JSC::PropertyTable::findWithString): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+
+            Remove code for querying a PropertyTable with an unhashed string key
+            since the only client is now gone.
+
 2014-09-02  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [ARM] MacroAssembler generating incorrect code on ARM32 Traditional

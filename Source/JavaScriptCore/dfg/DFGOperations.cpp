@@ -297,8 +297,10 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         } else if (property.isString()) {
             Structure& structure = *base->structure(vm);
             if (JSCell::canUseFastGetOwnProperty(structure)) {
-                if (JSValue result = base->fastGetOwnProperty(vm, structure, asString(property)->value(exec)))
-                    return JSValue::encode(result);
+                if (AtomicStringImpl* existingAtomicString = asString(property)->toExistingAtomicString(exec)) {
+                    if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomicString))
+                        return JSValue::encode(result);
+                }
             }
         }
     }
@@ -327,8 +329,10 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
     } else if (property.isString()) {
         Structure& structure = *base->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            if (JSValue result = base->fastGetOwnProperty(vm, structure, asString(property)->value(exec)))
-                return JSValue::encode(result);
+            if (AtomicStringImpl* existingAtomicString = asString(property)->toExistingAtomicString(exec)) {
+                if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomicString))
+                    return JSValue::encode(result);
+            }
         }
     }
 

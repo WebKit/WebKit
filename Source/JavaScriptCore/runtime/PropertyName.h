@@ -78,10 +78,15 @@ ALWAYS_INLINE uint32_t toUInt32FromStringImpl(StringImpl* impl)
 
 class PropertyName {
 public:
-    PropertyName(const Identifier& propertyName)
-        : m_impl(static_cast<AtomicStringImpl*>(propertyName.impl()))
+    PropertyName(AtomicStringImpl* propertyName)
+        : m_impl(propertyName)
     {
         ASSERT(!m_impl || m_impl->isAtomic());
+    }
+
+    PropertyName(const Identifier& propertyName)
+        : PropertyName(static_cast<AtomicStringImpl*>(propertyName.impl()))
+    {
     }
 
     PropertyName(const PrivateName& propertyName)
