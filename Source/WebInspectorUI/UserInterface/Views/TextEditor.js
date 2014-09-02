@@ -167,7 +167,7 @@ WebInspector.TextEditor.prototype = {
             return;
 
         this._ignoreCodeMirrorContentDidChangeEvent++;
-        this._prettyPrint(formatted);
+        this.prettyPrint(formatted);
         this._ignoreCodeMirrorContentDidChangeEvent--;
         console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
 
@@ -196,6 +196,11 @@ WebInspector.TextEditor.prototype = {
     {
         // Can be overriden by subclasses.
         return this.hasFormatter();
+    },
+
+    canShowTypeAnnotations: function()
+    {
+        return false;
     },
 
     get selectedTextRange()
@@ -637,6 +642,173 @@ WebInspector.TextEditor.prototype = {
         default:
             return new WebInspector.CodeMirrorEditingController(this._codeMirror, editableMarker);
         }
+    },
+
+    visibleRangeOffsets: function()
+    {
+        var startOffset = null;
+        var endOffset = null;
+        var visibleRange = this._codeMirror.getViewport();
+
+        if (this._formatterSourceMap) {
+            startOffset = this._formatterSourceMap.formattedToOriginalOffset(Math.max(visibleRange.from - 1, 0), 0);
+            endOffset = this._formatterSourceMap.formattedToOriginalOffset(visibleRange.to - 1, 0);
+        } else {
+            startOffset = this._codeMirror.getDoc().indexFromPos({line: visibleRange.from, ch: 0});
+            endOffset = this._codeMirror.getDoc().indexFromPos({line: visibleRange.to, ch: 0});
+        }
+
+        return {startOffset: startOffset, endOffset: endOffset};
+    },
+
+    originalOffsetToCurrentPosition: function(offset)
+    {
+        var position = null;
+        if (this._formatterSourceMap) {
+            var location = this._formatterSourceMap.originalPositionToFormatted(offset);
+            position = {line: location.lineNumber, ch: location.columnNumber};
+        } else
+            position = this._codeMirror.getDoc().posFromIndex(offset);
+
+        return position;
+    },
+
+    currentOffsetToCurrentPosition: function(offset)
+    {
+        return this._codeMirror.getDoc().posFromIndex(offset);
+    },
+
+    currentPositionToOriginalOffset: function(position)
+    {
+        var offset = null;
+        if (this._formatterSourceMap)
+            offset = this._formatterSourceMap.formattedToOriginalOffset(position.line, position.ch);
+        else
+            offset = this.tokenTrackingController._codeMirror.getDoc().indexFromPos(position);
+
+        return offset;
+    },
+
+    currentPositionToCurrentOffset: function(position)
+    {
+        return this._codeMirror.getDoc().indexFromPos(position);
+    },
+
+    setInlineWidget: function(position, inlineElement)
+    {
+        return this._codeMirror.setUniqueBookmark(position, {widget: inlineElement});
+    },
+
+    addScrollHandler: function(handler)
+    {
+        this._codeMirror.on("scroll", handler);
+    },
+
+    removeScrollHandler: function(handler)
+    {
+        this._codeMirror.off("scroll", handler);
+    },
+
+    // Protected
+
+    prettyPrint: function(pretty)
+    {
+        function prettyPrintAndUpdateEditor()
+        {
+            const start = {line: 0, ch: 0};
+            const end = {line: this._codeMirror.lineCount() - 1};
+
+            var oldSelectionAnchor = this._codeMirror.getCursor("anchor");
+            var oldSelectionHead = this._codeMirror.getCursor("head");
+            var newSelectionAnchor, newSelectionHead;
+            var newExecutionLocation = null;
+
+            if (pretty) {
+                // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+                const indentString = "    ";
+                var originalLineEndings = [];
+                var formattedLineEndings = [];
+                var mapping = {original: [0], formatted: [0]};
+                var builder = new FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+                var formatter = new Formatter(this._codeMirror, builder);
+                formatter.format(start, end);
+
+                this._formatterSourceMap = WebInspector.FormatterSourceMap.fromBuilder(builder);
+
+                this._codeMirror.setValue(builder.formattedContent);
+
+                if (this._positionToReveal) {
+                    var newRevealPosition = this._formatterSourceMap.originalToFormatted(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
+                    this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
+                }
+
+                if (this._textRangeToSelect) {
+                    var mappedRevealSelectionStart = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
+                    var mappedRevealSelectionEnd = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
+                    this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
+                }
+
+                if (!isNaN(this._executionLineNumber)) {
+                    console.assert(!isNaN(this._executionColumnNumber));
+                    newExecutionLocation = this._formatterSourceMap.originalToFormatted(this._executionLineNumber, this._executionColumnNumber);
+                }
+
+                var mappedAnchorLocation = this._formatterSourceMap.originalToFormatted(oldSelectionAnchor.line, oldSelectionAnchor.ch);
+                var mappedHeadLocation = this._formatterSourceMap.originalToFormatted(oldSelectionHead.line, oldSelectionHead.ch);
+                newSelectionAnchor = {line:mappedAnchorLocation.lineNumber, ch:mappedAnchorLocation.columnNumber};
+                newSelectionHead = {line:mappedHeadLocation.lineNumber, ch:mappedHeadLocation.columnNumber};
+            } else {
+                this._codeMirror.undo();
+
+                if (this._positionToReveal) {
+                    var newRevealPosition = this._formatterSourceMap.formattedToOriginal(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
+                    this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
+                }
+
+                if (this._textRangeToSelect) {
+                    var mappedRevealSelectionStart = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
+                    var mappedRevealSelectionEnd = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
+                    this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
+                }
+
+                if (!isNaN(this._executionLineNumber)) {
+                    console.assert(!isNaN(this._executionColumnNumber));
+                    newExecutionLocation = this._formatterSourceMap.formattedToOriginal(this._executionLineNumber, this._executionColumnNumber);
+                }
+
+                var mappedAnchorLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionAnchor.line, oldSelectionAnchor.ch);
+                var mappedHeadLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionHead.line, oldSelectionHead.ch);
+                newSelectionAnchor = {line:mappedAnchorLocation.lineNumber, ch:mappedAnchorLocation.columnNumber};
+                newSelectionHead = {line:mappedHeadLocation.lineNumber, ch:mappedHeadLocation.columnNumber};
+
+                this._formatterSourceMap = null;
+            }
+
+            this._scrollIntoViewCentered(newSelectionAnchor);
+            this._codeMirror.setSelection(newSelectionAnchor, newSelectionHead);
+
+            if (newExecutionLocation) {
+                delete this._executionLineHandle;
+                this.executionColumnNumber = newExecutionLocation.columnNumber;
+                this.executionLineNumber = newExecutionLocation.lineNumber;
+            }
+
+            // FIXME: <rdar://problem/13129955> FindBanner: New searches should not lose search position (start from current selection/caret)
+            if (this.currentSearchQuery) {
+                var searchQuery = this.currentSearchQuery;
+                this.searchCleared();
+                // Set timeout so that this happens after the current CodeMirror operation.
+                // The editor has to update for the value and selection changes.
+                setTimeout(function(query) {
+                    this.performSearch(searchQuery);
+                }.bind(this), 0);
+            }
+
+            if (this._delegate && typeof this._delegate.textEditorUpdatedFormatting === "function")
+                this._delegate.textEditorUpdatedFormatting(this);
+        }
+
+        this._codeMirror.operation(prettyPrintAndUpdateEditor.bind(this));
     },
 
     // Private
@@ -1235,106 +1407,6 @@ WebInspector.TextEditor.prototype = {
         var lineHeight = Math.ceil(this._codeMirror.defaultTextHeight());
         var margin = Math.floor((scrollInfo.clientHeight - lineHeight) / 2);
         this._codeMirror.scrollIntoView(position, margin);
-    },
-
-    _prettyPrint: function(pretty)
-    {
-        function prettyPrintAndUpdateEditor()
-        {
-            const start = {line: 0, ch: 0};
-            const end = {line: this._codeMirror.lineCount() - 1};
-
-            var oldSelectionAnchor = this._codeMirror.getCursor("anchor");
-            var oldSelectionHead = this._codeMirror.getCursor("head");
-            var newSelectionAnchor, newSelectionHead;
-            var newExecutionLocation = null;
-
-            if (pretty) {
-                // <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
-                const indentString = "    ";
-                var originalLineEndings = [];
-                var formattedLineEndings = [];
-                var mapping = {original: [0], formatted: [0]};
-                var builder = new FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
-                var formatter = new Formatter(this._codeMirror, builder);
-                formatter.format(start, end);
-
-                this._formatterSourceMap = WebInspector.FormatterSourceMap.fromBuilder(builder);
-
-                this._codeMirror.setValue(builder.formattedContent);
-
-                if (this._positionToReveal) {
-                    var newRevealPosition = this._formatterSourceMap.originalToFormatted(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
-                    this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
-                }
-
-                if (this._textRangeToSelect) {
-                    var mappedRevealSelectionStart = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
-                    var mappedRevealSelectionEnd = this._formatterSourceMap.originalToFormatted(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
-                    this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
-                }
-
-                if (!isNaN(this._executionLineNumber)) {
-                    console.assert(!isNaN(this._executionColumnNumber));
-                    newExecutionLocation = this._formatterSourceMap.originalToFormatted(this._executionLineNumber, this._executionColumnNumber);
-                }
-
-                var mappedAnchorLocation = this._formatterSourceMap.originalToFormatted(oldSelectionAnchor.line, oldSelectionAnchor.ch);
-                var mappedHeadLocation = this._formatterSourceMap.originalToFormatted(oldSelectionHead.line, oldSelectionHead.ch);
-                newSelectionAnchor = {line:mappedAnchorLocation.lineNumber, ch:mappedAnchorLocation.columnNumber};
-                newSelectionHead = {line:mappedHeadLocation.lineNumber, ch:mappedHeadLocation.columnNumber};
-            } else {
-                this._codeMirror.undo();
-
-                if (this._positionToReveal) {
-                    var newRevealPosition = this._formatterSourceMap.formattedToOriginal(this._positionToReveal.lineNumber, this._positionToReveal.columnNumber);
-                    this._positionToReveal = new WebInspector.SourceCodePosition(newRevealPosition.lineNumber, newRevealPosition.columnNumber);
-                }
-
-                if (this._textRangeToSelect) {
-                    var mappedRevealSelectionStart = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.startLine, this._textRangeToSelect.startColumn);
-                    var mappedRevealSelectionEnd = this._formatterSourceMap.formattedToOriginal(this._textRangeToSelect.endLine, this._textRangeToSelect.endColumn);
-                    this._textRangeToSelect = new WebInspector.TextRange(mappedRevealSelectionStart.lineNumber, mappedRevealSelectionStart.columnNumber, mappedRevealSelectionEnd.lineNumber, mappedRevealSelectionEnd.columnNumber);
-                }
-
-                if (!isNaN(this._executionLineNumber)) {
-                    console.assert(!isNaN(this._executionColumnNumber));
-                    newExecutionLocation = this._formatterSourceMap.formattedToOriginal(this._executionLineNumber, this._executionColumnNumber);
-                }
-
-                var mappedAnchorLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionAnchor.line, oldSelectionAnchor.ch);
-                var mappedHeadLocation = this._formatterSourceMap.formattedToOriginal(oldSelectionHead.line, oldSelectionHead.ch);
-                newSelectionAnchor = {line:mappedAnchorLocation.lineNumber, ch:mappedAnchorLocation.columnNumber};
-                newSelectionHead = {line:mappedHeadLocation.lineNumber, ch:mappedHeadLocation.columnNumber};
-
-                this._formatterSourceMap = null;
-            }
-
-            this._scrollIntoViewCentered(newSelectionAnchor);
-            this._codeMirror.setSelection(newSelectionAnchor, newSelectionHead);
-
-            if (newExecutionLocation) {
-                delete this._executionLineHandle;
-                this.executionColumnNumber = newExecutionLocation.columnNumber;
-                this.executionLineNumber = newExecutionLocation.lineNumber;
-            }
-
-            // FIXME: <rdar://problem/13129955> FindBanner: New searches should not lose search position (start from current selection/caret)
-            if (this.currentSearchQuery) {
-                var searchQuery = this.currentSearchQuery;
-                this.searchCleared();
-                // Set timeout so that this happens after the current CodeMirror operation.
-                // The editor has to update for the value and selection changes.
-                setTimeout(function(query) {
-                    this.performSearch(searchQuery);
-                }.bind(this), 0);
-            }
-
-            if (this._delegate && typeof this._delegate.textEditorUpdatedFormatting === "function")
-                this._delegate.textEditorUpdatedFormatting(this);
-        }
-
-        this._codeMirror.operation(prettyPrintAndUpdateEditor.bind(this));
     }
 };
 

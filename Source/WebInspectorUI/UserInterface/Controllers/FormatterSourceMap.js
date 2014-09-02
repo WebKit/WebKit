@@ -45,15 +45,27 @@ WebInspector.FormatterSourceMap.prototype = {
     originalToFormatted: function(lineNumber, columnNumber)
     {
         var originalPosition = this._locationToPosition(this._originalLineEndings, lineNumber || 0, columnNumber || 0);
+        return this.originalPositionToFormatted(originalPosition);
+    },
+
+    originalPositionToFormatted: function(originalPosition)
+    {
         var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
         return this._positionToLocation(this._formattedLineEndings, formattedPosition);
     },
 
+
     formattedToOriginal: function(lineNumber, columnNumber)
+    {
+        var originalPosition = this.formattedToOriginalOffset(lineNumber, columnNumber);
+        return this._positionToLocation(this._originalLineEndings, originalPosition);
+    },
+
+    formattedToOriginalOffset: function(lineNumber, columnNumber)
     {
         var formattedPosition = this._locationToPosition(this._formattedLineEndings, lineNumber || 0, columnNumber || 0);
         var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
-        return this._positionToLocation(this._originalLineEndings, originalPosition);
+        return originalPosition;
     },
 
     // Private

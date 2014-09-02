@@ -50,6 +50,12 @@ WebInspector.TextContentView = function(string, mimeType)
     this._prettyPrintButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, curleyBracesImage.src, curleyBracesImage.width, curleyBracesImage.height);
     this._prettyPrintButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
     this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
+
+    var showTypesImageSize = WebInspector.Platform.isLegacyMacOS ? 15 : 16;
+    var toolTipTypes = WebInspector.UIString("Show type information");
+    var activatedToolTipTypes = WebInspector.UIString("Hide type information");
+    this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", showTypesImageSize, showTypesImageSize);
+    this._showTypesButtonNavigationItem.enabled = false;
 };
 
 WebInspector.TextContentView.StyleClassName = "text";
@@ -66,7 +72,7 @@ WebInspector.TextContentView.prototype = {
 
     get navigationItems()
     {
-        return [this._prettyPrintButtonNavigationItem];
+        return [this._prettyPrintButtonNavigationItem, this._showTypesButtonNavigationItem];
     },
 
     revealPosition: function(position, textRangeToSelect, forceUnformatted)

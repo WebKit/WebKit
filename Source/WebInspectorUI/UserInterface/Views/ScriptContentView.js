@@ -59,6 +59,15 @@ WebInspector.ScriptContentView = function(script)
     this._prettyPrintButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, curleyBracesImage.src, curleyBracesImage.width, curleyBracesImage.height);
     this._prettyPrintButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
     this._prettyPrintButtonNavigationItem.enabled = false; // Enabled when the text editor is populated with content.
+
+    var showTypesImageSize = WebInspector.Platform.isLegacyMacOS ? 15 : 16;
+    var toolTipTypes = WebInspector.UIString("Show type information");
+    var activatedToolTipTypes = WebInspector.UIString("Hide type information");
+    this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", showTypesImageSize, showTypesImageSize);
+    this._showTypesButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleTypeAnnotations, this);
+    this._showTypesButtonNavigationItem.enabled = false;
+
+    WebInspector.showJavaScriptTypeInformationSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
 };
 
 WebInspector.ScriptContentView.StyleClassName = "script";
@@ -70,7 +79,7 @@ WebInspector.ScriptContentView.prototype = {
 
     get navigationItems()
     {
-        return [this._prettyPrintButtonNavigationItem];
+        return [this._prettyPrintButtonNavigationItem, this._showTypesButtonNavigationItem];
     },
 
     get script()
@@ -204,12 +213,24 @@ WebInspector.ScriptContentView.prototype = {
     _contentDidPopulate: function(event)
     {
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
+        this._showTypesButtonNavigationItem.enabled = this._textEditor.canShowTypeAnnotations();
+        this._showTypesButtonNavigationItem.activated = WebInspector.showJavaScriptTypeInformationSetting.value;
     },
 
     _togglePrettyPrint: function(event)
     {
         var activated = !this._prettyPrintButtonNavigationItem.activated;
         this._textEditor.formatted = activated;
+    },
+
+    _toggleTypeAnnotations: function(event)
+    {
+        this._textEditor.toggleTypeAnnotations();
+    },
+
+    _showJavaScriptTypeInformationSettingChanged: function(event)
+    {
+        this._showTypesButtonNavigationItem.activated = WebInspector.showJavaScriptTypeInformationSetting.value;
     },
 
     _textEditorFormattingDidChange: function(event)

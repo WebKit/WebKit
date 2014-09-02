@@ -1,3 +1,131 @@
+2014-08-29  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Create a UI for displaying JavaScript type information
+        https://bugs.webkit.org/show_bug.cgi?id=135142
+
+        Reviewed by Joseph Pecoraro.
+
+        JavaScriptCore now has a type profiler. This patch provides a frontend
+        user interface for displaying this type information in the Web Inspector.
+        The user interface works by placing inline "type tokens" next to important
+        JavaScript expressions: function arguments, function return types, and 
+        variable declarations. Type information can also be seen for almost every
+        JavaScipt expression just by hovering over it while viewing a JavaScript file.
+
+        Currently, turning on the type profiler is expensive, so the inspector
+        ensures to never turn on type profiling until the user specifically asks 
+        for type information to be turned on.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._startTracking):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processNewHoveredToken):
+        Added a new type profiling mode.
+
+        * UserInterface/Controllers/FormatterSourceMap.js:
+        (WebInspector.FormatterSourceMap.prototype.originalToFormatted):
+        (WebInspector.FormatterSourceMap.prototype.originalPositionToFormatted):
+        (WebInspector.FormatterSourceMap.prototype.formattedToOriginal):
+        (WebInspector.FormatterSourceMap.prototype.formattedToOriginalOffset):
+        * UserInterface/Controllers/TypeTokenAnnotator.js: Added.
+        (WebInspector.TypeTokenAnnotator):
+        (WebInspector.TypeTokenAnnotator.prototype.get isActive):
+        (WebInspector.TypeTokenAnnotator.prototype.get sourceCodeTextEditor):
+        (WebInspector.TypeTokenAnnotator.prototype.pause):
+        (WebInspector.TypeTokenAnnotator.prototype.resume):
+        (WebInspector.TypeTokenAnnotator.prototype.refresh):
+        (WebInspector.TypeTokenAnnotator.prototype.reset):
+        (WebInspector.TypeTokenAnnotator.prototype.toggleTypeAnnotations):
+        (WebInspector.TypeTokenAnnotator.prototype._insertAnnotations.):
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeTokensForEachNode):
+        (WebInspector.TypeTokenAnnotator.prototype._insertToken):
+        (WebInspector.TypeTokenAnnotator.prototype.isLineTerminator):
+        (WebInspector.TypeTokenAnnotator.prototype._translateToOffsetAfterFunctionParameterList):
+        (WebInspector.TypeTokenAnnotator.prototype._clearTimeoutIfNeeded):
+        This class is responsible for producing the inline "type token" annotations.
+
+        * UserInterface/Images/NavigationItemTypes.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.get scriptSyntaxTree):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement):
+        (WebInspector.ScriptSyntaxTree.prototype.):
+        (WebInspector.ScriptSyntaxTree.prototype.updateTypes):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView):
+        (WebInspector.ScriptContentView.prototype.get navigationItems):
+        (WebInspector.ScriptContentView.prototype._contentDidPopulate):
+        (WebInspector.ScriptContentView.prototype._toggleTypeAnnotations):
+        (WebInspector.ScriptContentView.prototype._showJavaScriptTypeInformationSettingChanged):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.shown):
+        (WebInspector.SourceCodeTextEditor.prototype.hidden):
+        (WebInspector.SourceCodeTextEditor.prototype.canShowTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.showPopoverForTypes):
+        (WebInspector.SourceCodeTextEditor.prototype.prettyPrint):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithContent):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidPause):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidResume):
+        (WebInspector.SourceCodeTextEditor.prototype._updateTokenTrackingControllerState):
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerNewHighlightCandidate):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation.handler):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopover):
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidFinishEditing):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._enableScrollEventsForTypeTokenAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._disableScrollEventsForTypeTokenAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenScrollEventHandler.scrollHandler):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenScrollEventHandler):
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView.prototype.get navigationItems):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.set formatted):
+        (WebInspector.TextEditor.prototype.canShowTypeAnnotations):
+        (WebInspector.TextEditor.prototype.visibleRangeOffsets):
+        (WebInspector.TextEditor.prototype.originalOffsetToCurrentPosition):
+        (WebInspector.TextEditor.prototype.currentOffsetToCurrentPosition):
+        (WebInspector.TextEditor.prototype.currentPositionToOriginalOffset):
+        (WebInspector.TextEditor.prototype.currentPositionToCurrentOffset):
+        (WebInspector.TextEditor.prototype.setInlineWidget):
+        (WebInspector.TextEditor.prototype.addScrollHandler):
+        (WebInspector.TextEditor.prototype.removeScrollHandler):
+        (WebInspector.TextEditor.prototype._scrollIntoViewCentered):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView):
+        (WebInspector.TextResourceContentView.prototype.get navigationItems):
+        (WebInspector.TextResourceContentView.prototype._contentDidPopulate):
+        (WebInspector.TextResourceContentView.prototype._toggleTypeAnnotations):
+        (WebInspector.TextResourceContentView.prototype._showJavaScriptTypeInformationSettingChanged):
+        * UserInterface/Views/TypePropertiesSection.js: Added.
+        (WebInspector.TypePropertiesSection):
+        (WebInspector.TypePropertiesSection.prototype.onpopulate):
+        (WebInspector.TypePropertiesSection.PropertyComparator):
+        (WebInspector.TypePropertyTreeElement):
+        (WebInspector.TypePropertyTreeElement.prototype.onpopulate):
+        * UserInterface/Views/TypeTokenView.css: Added.
+        (.type-token):
+        (.type-token-left-spacing):
+        (.type-token-right-spacing):
+        (.type-token-function, .type-token-boolean):
+        (.type-token-number):
+        (.type-token-string):
+        (.type-token-default):
+        (.type-token-empty):
+        (.type-token-many):
+        * UserInterface/Views/TypeTokenView.js: Added.
+        (WebInspector.TypeTokenView):
+        (WebInspector.TypeTokenView.titleForPopover):
+        (WebInspector.TypeTokenView.prototype.update):
+        (WebInspector.TypeTokenView.prototype._setUpMouseoverHandlers):
+        (WebInspector.TypeTokenView.prototype._shouldShowPopover):
+        The inline "type token" view.
+
 2014-08-29  Saam Barati  <sbarati@apple.com>
 
         Web Inspector: Fix how Popover animates

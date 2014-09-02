@@ -105,6 +105,11 @@ WebInspector.Script.prototype = {
         return this._resource;
     },
 
+    get scriptSyntaxTree()
+    {
+        return this._scriptSyntaxTree;
+    },
+
     canRequestContentFromBackend: function()
     {
         // We can request content if we have an id.

@@ -172,8 +172,8 @@ WebInspector.ScriptSyntaxTree.prototype = {
         if (!this._parsedSuccessfully)
             return false;
 
-        if (startNode._attachments._hasNonEmptyReturnStatement !== undefined)
-            return startNode._attachments._hasNonEmptyReturnStatement;
+        if (startNode.attachments._hasNonEmptyReturnStatement !== undefined)
+            return startNode.attachments._hasNonEmptyReturnStatement;
 
         function removeFunctionsFilter(node)
         {
@@ -191,19 +191,22 @@ WebInspector.ScriptSyntaxTree.prototype = {
             }
         }
          
-        startNode._attachments._hasNonEmptyReturnStatement = hasNonEmptyReturnStatement;
+        startNode.attachments._hasNonEmptyReturnStatement = hasNonEmptyReturnStatement;
 
         return hasNonEmptyReturnStatement;
     },
 
-    updateTypes: function(sourceID, nodesToUpdate, callback) 
+    updateTypes: function(nodesToUpdate, callback)
     {
+        console.assert(RuntimeAgent.getRuntimeTypesForVariablesAtOffsets);
         console.assert(Array.isArray(nodesToUpdate) && this._parsedSuccessfully);
+
         if (!this._parsedSuccessfully)
             return;
 
         var allRequests = [];
         var allRequestNodes = [];
+        var sourceID = this._script.id;
 
         for (var node of nodesToUpdate) {
             switch (node.type) {
@@ -249,9 +252,9 @@ WebInspector.ScriptSyntaxTree.prototype = {
                 var node = allRequestNodes[i];
                 var typeInformation = typeInformationArray[i];
                 if (allRequests[i].typeInformationDescriptor === WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn)
-                    node._attachments._returnTypes = typeInformation;
+                    node.attachments.returnTypes = typeInformation;
                 else
-                    node._attachments._types = typeInformation;
+                    node.attachments.types = typeInformation;
             }
 
             callback();
@@ -777,7 +780,7 @@ WebInspector.ScriptSyntaxTree.prototype = {
         
         result.range = node.range;
         // This is an object for which you can add fields to an AST node without worrying about polluting the syntax-related fields of the node.
-        result._attachments = {}; 
+        result.attachments = {};
 
         return result;
     }

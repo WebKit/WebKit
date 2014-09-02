@@ -162,6 +162,10 @@ WebInspector.loaded = function()
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
     this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
+    this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
+    if (this.showJavaScriptTypeInformationSetting.value)
+        RuntimeAgent.enableTypeProfiler();
+
     this.mouseCoords = {
         x: 0,
         y: 0
