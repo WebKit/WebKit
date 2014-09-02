@@ -5,11 +5,11 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>CFLite.lib;JavaScriptCore$(DebugSuffix).lib;WTF$(DebugSuffix).lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CFLite.lib;JavaScriptCore$(DebugSuffix).lib;WTF$(DebugSuffix).lib;libicuin.lib;libicuuc.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>NOMINMAX;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN_CAIRO;NOMINMAX;USE_CONSOLE_ENTRY_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\API;$(ConfigurationBuildDir)\include\JavaScriptCore;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>

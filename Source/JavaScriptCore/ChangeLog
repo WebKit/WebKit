@@ -1,3 +1,17 @@
+2014-09-02  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] testapi.exe is not built.
+        https://bugs.webkit.org/show_bug.cgi?id=136369
+
+        Reviewed by Alex Christensen.
+
+        The testapi project should be of type Application.
+
+        * JavaScriptCore.vcxproj/jsc/jscLauncher.vcxproj: Change project type to Application.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncher.vcxproj: Ditto.
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props: Compile and link fix.
+        * JavaScriptCore.vcxproj/testapi/testapiLauncher.vcxproj: Change project type to Application.
+
 2014-09-01  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         [CMAKE] Add missing offlineasm dependencies
