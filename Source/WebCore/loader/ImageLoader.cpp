@@ -105,17 +105,17 @@ ImageLoader::~ImageLoader()
     if (m_image)
         m_image->removeClient(this);
 
-    ASSERT(m_hasPendingBeforeLoadEvent || !beforeLoadEventSender().hasPendingEvents(this));
+    ASSERT(m_hasPendingBeforeLoadEvent || !beforeLoadEventSender().hasPendingEvents(*this));
     if (m_hasPendingBeforeLoadEvent)
-        beforeLoadEventSender().cancelEvent(this);
+        beforeLoadEventSender().cancelEvent(*this);
 
-    ASSERT(m_hasPendingLoadEvent || !loadEventSender().hasPendingEvents(this));
+    ASSERT(m_hasPendingLoadEvent || !loadEventSender().hasPendingEvents(*this));
     if (m_hasPendingLoadEvent)
-        loadEventSender().cancelEvent(this);
+        loadEventSender().cancelEvent(*this);
 
-    ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(this));
+    ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(*this));
     if (m_hasPendingErrorEvent)
-        errorEventSender().cancelEvent(this);
+        errorEventSender().cancelEvent(*this);
 
     // If the ImageLoader is being destroyed but it is still protecting its image-loading Element,
     // remove that protection here.
@@ -139,15 +139,15 @@ void ImageLoader::setImageWithoutConsideringPendingLoadEvent(CachedImage* newIma
     if (newImage != oldImage) {
         m_image = newImage;
         if (m_hasPendingBeforeLoadEvent) {
-            beforeLoadEventSender().cancelEvent(this);
+            beforeLoadEventSender().cancelEvent(*this);
             m_hasPendingBeforeLoadEvent = false;
         }
         if (m_hasPendingLoadEvent) {
-            loadEventSender().cancelEvent(this);
+            loadEventSender().cancelEvent(*this);
             m_hasPendingLoadEvent = false;
         }
         if (m_hasPendingErrorEvent) {
-            errorEventSender().cancelEvent(this);
+            errorEventSender().cancelEvent(*this);
             m_hasPendingErrorEvent = false;
         }
         m_imageComplete = true;
@@ -205,24 +205,24 @@ void ImageLoader::updateFromElement()
         if (!newImage && !pageIsBeingDismissed(document)) {
             m_failedLoadURL = attr;
             m_hasPendingErrorEvent = true;
-            errorEventSender().dispatchEventSoon(this);
+            errorEventSender().dispatchEventSoon(*this);
         } else
             clearFailedLoadURL();
     } else if (!attr.isNull()) {
         // Fire an error event if the url is empty.
         m_failedLoadURL = attr;
         m_hasPendingErrorEvent = true;
-        errorEventSender().dispatchEventSoon(this);
+        errorEventSender().dispatchEventSoon(*this);
     }
     
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
         if (m_hasPendingBeforeLoadEvent) {
-            beforeLoadEventSender().cancelEvent(this);
+            beforeLoadEventSender().cancelEvent(*this);
             m_hasPendingBeforeLoadEvent = false;
         }
         if (m_hasPendingLoadEvent) {
-            loadEventSender().cancelEvent(this);
+            loadEventSender().cancelEvent(*this);
             m_hasPendingLoadEvent = false;
         }
 
@@ -231,7 +231,7 @@ void ImageLoader::updateFromElement()
         // this load and we should not cancel the event.
         // FIXME: If both previous load and this one got blocked with an error, we can receive one error event instead of two.
         if (m_hasPendingErrorEvent && newImage) {
-            errorEventSender().cancelEvent(this);
+            errorEventSender().cancelEvent(*this);
             m_hasPendingErrorEvent = false;
         }
 
@@ -245,7 +245,7 @@ void ImageLoader::updateFromElement()
                 if (!document.hasListenerType(Document::BEFORELOAD_LISTENER))
                     dispatchPendingBeforeLoadEvent();
                 else
-                    beforeLoadEventSender().dispatchEventSoon(this);
+                    beforeLoadEventSender().dispatchEventSoon(*this);
             } else
                 updateRenderer();
 
@@ -291,7 +291,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         setImageWithoutConsideringPendingLoadEvent(0);
 
         m_hasPendingErrorEvent = true;
-        errorEventSender().dispatchEventSoon(this);
+        errorEventSender().dispatchEventSoon(*this);
 
         DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin image load denied by Cross-Origin Resource Sharing policy.")));
         element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
@@ -312,7 +312,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         return;
     }
 
-    loadEventSender().dispatchEventSoon(this);
+    loadEventSender().dispatchEventSoon(*this);
 }
 
 RenderImageResource* ImageLoader::renderImageResource()
@@ -409,7 +409,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         m_image = 0;
     }
 
-    loadEventSender().cancelEvent(this);
+    loadEventSender().cancelEvent(*this);
     m_hasPendingLoadEvent = false;
     
     if (isHTMLObjectElement(element()))

@@ -94,7 +94,7 @@ HTMLLinkElement::~HTMLLinkElement()
     if (inDocument())
         document().styleSheetCollection().removeStyleSheetCandidateNode(*this);
 
-    linkLoadEventSender().cancelEvent(this);
+    linkLoadEventSender().cancelEvent(*this);
 }
 
 void HTMLLinkElement::setDisabledState(bool disabled)
@@ -380,7 +380,7 @@ void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccu
     if (m_firedLoad)
         return;
     m_loadedSheet = !errorOccurred;
-    linkLoadEventSender().dispatchEventSoon(this);
+    linkLoadEventSender().dispatchEventSoon(*this);
     m_firedLoad = true;
 }
 

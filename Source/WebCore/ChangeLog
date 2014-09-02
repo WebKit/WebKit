@@ -1,3 +1,32 @@
+2014-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use references in public EventSender functions
+        https://bugs.webkit.org/show_bug.cgi?id=136463
+
+        Reviewed by Dan Bates.
+
+        Passing nullptr to EventSender shouldn't be allowed.
+
+        No new tests because there is no behavior change.
+
+        * dom/EventSender.h:
+        (WebCore::EventSender::hasPendingEvents):
+        (WebCore::EventSender<T>::dispatchEventSoon):
+        (WebCore::EventSender<T>::cancelEvent):
+        (WebCore::EventSender<T>::dispatchPendingEvents):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::~HTMLStyleElement):
+        (WebCore::HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::setImageWithoutConsideringPendingLoadEvent):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+
 2014-09-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Exclude touch and gesture files when building without ENABLE_TOUCH_EVENTS

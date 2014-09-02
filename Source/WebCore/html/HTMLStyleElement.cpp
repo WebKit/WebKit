@@ -60,7 +60,7 @@ HTMLStyleElement::~HTMLStyleElement()
     // Therefore we can't ASSERT(m_scopedStyleRegistrationState == NotRegistered).
     m_styleSheetOwner.clearDocumentData(document(), *this);
 
-    styleLoadEventSender().cancelEvent(this);
+    styleLoadEventSender().cancelEvent(*this);
 }
 
 PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
@@ -133,7 +133,7 @@ void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOcc
     if (m_firedLoad)
         return;
     m_loadedSheet = !errorOccurred;
-    styleLoadEventSender().dispatchEventSoon(this);
+    styleLoadEventSender().dispatchEventSoon(*this);
     m_firedLoad = true;
 }
 

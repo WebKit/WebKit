@@ -37,14 +37,14 @@ public:
     explicit EventSender(const AtomicString& eventType);
 
     const AtomicString& eventType() const { return m_eventType; }
-    void dispatchEventSoon(T*);
-    void cancelEvent(T*);
+    void dispatchEventSoon(T&);
+    void cancelEvent(T&);
     void dispatchPendingEvents();
 
 #ifndef NDEBUG
-    bool hasPendingEvents(T* sender) const
+    bool hasPendingEvents(T& sender) const
     {
-        return m_dispatchSoonList.find(sender) != notFound || m_dispatchingList.find(sender) != notFound;
+        return m_dispatchSoonList.find(&sender) != notFound || m_dispatchingList.find(&sender) != notFound;
     }
 #endif
 
@@ -63,26 +63,24 @@ template<typename T> EventSender<T>::EventSender(const AtomicString& eventType)
 {
 }
 
-template<typename T> void EventSender<T>::dispatchEventSoon(T* sender)
+template<typename T> void EventSender<T>::dispatchEventSoon(T& sender)
 {
-    m_dispatchSoonList.append(sender);
+    m_dispatchSoonList.append(&sender);
     if (!m_timer.isActive())
         m_timer.startOneShot(0);
 }
 
-template<typename T> void EventSender<T>::cancelEvent(T* sender)
+template<typename T> void EventSender<T>::cancelEvent(T& sender)
 {
     // Remove instances of this sender from both lists.
     // Use loops because we allow multiple instances to get into the lists.
-    size_t size = m_dispatchSoonList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_dispatchSoonList[i] == sender)
-            m_dispatchSoonList[i] = 0;
+    for (auto& event : m_dispatchSoonList) {
+        if (event == &sender)
+            event = nullptr;
     }
-    size = m_dispatchingList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (m_dispatchingList[i] == sender)
-            m_dispatchingList[i] = 0;
+    for (auto& event : m_dispatchingList) {
+        if (event == &sender)
+            event = nullptr;
     }
 }
 
@@ -99,10 +97,9 @@ template<typename T> void EventSender<T>::dispatchPendingEvents()
     m_dispatchSoonList.checkConsistency();
 
     m_dispatchingList.swap(m_dispatchSoonList);
-    size_t size = m_dispatchingList.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (T* sender = m_dispatchingList[i]) {
-            m_dispatchingList[i] = 0;
+    for (auto& event : m_dispatchingList) {
+        if (T* sender = event) {
+            event = nullptr;
             sender->dispatchPendingEvent(this);
         }
     }
