@@ -1,3 +1,11 @@
+2014-09-01  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the iOS build.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _createDrawingAreaProxy]):
+        Whoops.
+
 2014-09-01  Ryuan Choi  <ryuan.choi@gmail.com>
 
         Build break on the EFL port since r173163

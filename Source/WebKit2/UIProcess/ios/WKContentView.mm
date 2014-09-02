@@ -420,7 +420,7 @@ private:
 
 - (std::unique_ptr<DrawingAreaProxy>)_createDrawingAreaProxy
 {
-    return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_page.get());
+    return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(*_page);
 }
 
 - (void)_processDidExit
