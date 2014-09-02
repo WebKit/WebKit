@@ -59,8 +59,8 @@ namespace WebCore {
 #if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);
 
-    FloatRect toUserSpace(const NSRect&, NSWindow *destination);
-    NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
+    WEBCORE_EXPORT FloatRect toUserSpace(const NSRect&, NSWindow *destination);
+    WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
     NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 #endif

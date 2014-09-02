@@ -30,7 +30,7 @@
 
 #import <wtf/RetainPtr.h>
 
-@interface WebCoreFullScreenPlaceholderView : NSView {
+WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
     RetainPtr<NSView> _exitWarning;
     NSObject* _target;
     SEL _action;

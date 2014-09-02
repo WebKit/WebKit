@@ -351,7 +351,7 @@ public:
 
     Node* findEventTargetFrom(const VisibleSelection& selection) const;
 
-    String selectedText() const;
+    WEBCORE_EXPORT String selectedText() const;
     String selectedTextForDataTransfer() const;
     WEBCORE_EXPORT bool findString(const String&, FindOptions);
 

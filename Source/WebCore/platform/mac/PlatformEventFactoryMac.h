@@ -34,9 +34,9 @@ namespace WebCore {
 
 class PlatformEventFactory {
 public:
-    static PlatformMouseEvent createPlatformMouseEvent(NSEvent *, NSView *windowView);
+    WEBCORE_EXPORT static PlatformMouseEvent createPlatformMouseEvent(NSEvent *, NSView *windowView);
     static PlatformWheelEvent createPlatformWheelEvent(NSEvent *, NSView *windowView);
-    static PlatformKeyboardEvent createPlatformKeyboardEvent(NSEvent *);
+    WEBCORE_EXPORT static PlatformKeyboardEvent createPlatformKeyboardEvent(NSEvent *);
 };
 
 #if PLATFORM(COCOA) && defined(__OBJC__)

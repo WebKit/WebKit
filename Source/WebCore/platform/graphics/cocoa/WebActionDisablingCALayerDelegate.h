@@ -26,7 +26,7 @@
 #ifndef WebActionDisablingCALayerDelegate_h
 #define WebActionDisablingCALayerDelegate_h
 
-@interface WebActionDisablingCALayerDelegate : NSObject
+WEBCORE_EXPORT @interface WebActionDisablingCALayerDelegate : NSObject
 
 + (instancetype)shared;
 

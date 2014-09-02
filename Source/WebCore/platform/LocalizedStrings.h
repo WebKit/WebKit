@@ -88,7 +88,7 @@ namespace WebCore {
     String contextMenuItemTagLearnSpelling();
     String contextMenuItemTagSearchWeb();
     String contextMenuItemTagLookUpInDictionary(const String& selectedString);
-    String contextMenuItemTagOpenLink();
+    WEBCORE_EXPORT String contextMenuItemTagOpenLink();
     WEBCORE_EXPORT String contextMenuItemTagIgnoreGrammar();
     WEBCORE_EXPORT String contextMenuItemTagSpellingMenu();
     WEBCORE_EXPORT String contextMenuItemTagShowSpellingPanel(bool show);

@@ -120,7 +120,7 @@ if (length($fontNamesIn)) {
     print F StaticString::GenerateStrings(\%parameters);
 
     for my $name (sort keys %parameters) {
-        print F "DEFINE_GLOBAL(AtomicString, $name)\n";
+        print F "WEBCORE_EXPORT DEFINE_GLOBAL(AtomicString, $name)\n";
     }
 
     printInit($F, 0);
@@ -568,7 +568,7 @@ sub printInit
     my ($F, $isDefinition) = @_;
 
     if ($isDefinition) {
-        print F "\nvoid init();\n\n";
+        print F "\nWEBCORE_EXPORT void init();\n\n";
         print F "} }\n\n";
         print F "#endif\n\n";
         return;
@@ -751,14 +751,14 @@ sub printNamesCppFile
     
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
-    print F "DEFINE_GLOBAL(AtomicString, ${lowercaseNamespacePrefix}NamespaceURI)\n\n";
+    print F "WEBCORE_EXPORT DEFINE_GLOBAL(AtomicString, ${lowercaseNamespacePrefix}NamespaceURI)\n\n";
 
     print F StaticString::GenerateStrings(\%allStrings);
 
     if (keys %allTags) {
         print F "// Tags\n";
         for my $name (sort keys %allTags) {
-            print F "DEFINE_GLOBAL($parameters{namespace}QualifiedName, ", $name, "Tag)\n";
+            print F "WEBCORE_EXPORT DEFINE_GLOBAL($parameters{namespace}QualifiedName, ", $name, "Tag)\n";
         }
         
         print F "\n\nconst WebCore::$parameters{namespace}QualifiedName* const* get$parameters{namespace}Tags()\n";
@@ -774,7 +774,7 @@ sub printNamesCppFile
     if (keys %allAttrs) {
         print F "\n// Attributes\n";
         for my $name (sort keys %allAttrs) {
-            print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr)\n";
+            print F "WEBCORE_EXPORT DEFINE_GLOBAL(QualifiedName, ", $name, "Attr)\n";
         }
         print F "\n\nconst WebCore::QualifiedName* const* get$parameters{namespace}Attrs()\n";
         print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";

@@ -49,7 +49,7 @@ public:
 
     virtual ~InspectorFrontendClient() { }
 
-    virtual void windowObjectCleared() = 0;
+    WEBCORE_EXPORT virtual void windowObjectCleared() = 0;
     virtual void frontendLoaded() = 0;
 
     virtual void moveWindowBy(float x, float y) = 0;
@@ -59,13 +59,13 @@ public:
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;
 
-    virtual void requestSetDockSide(DockSide) = 0;
-    virtual void changeAttachedWindowHeight(unsigned) = 0;
-    virtual void changeAttachedWindowWidth(unsigned) = 0;
+    WEBCORE_EXPORT virtual void requestSetDockSide(DockSide) = 0;
+    WEBCORE_EXPORT virtual void changeAttachedWindowHeight(unsigned) = 0;
+    WEBCORE_EXPORT virtual void changeAttachedWindowWidth(unsigned) = 0;
 
     virtual void setToolbarHeight(unsigned) = 0;
 
-    virtual void openInNewTab(const String& url) = 0;
+    WEBCORE_EXPORT virtual void openInNewTab(const String& url) = 0;
 
     virtual bool canSave() = 0;
     virtual void save(const WTF::String& url, const WTF::String& content, bool base64Encoded, bool forceSaveAs) = 0;
@@ -73,9 +73,9 @@ public:
 
     virtual void inspectedURLChanged(const String&) = 0;
 
-    virtual void sendMessageToBackend(const String&) = 0;
+    WEBCORE_EXPORT virtual void sendMessageToBackend(const String&) = 0;
 
-    virtual bool isUnderTest() = 0;
+    WEBCORE_EXPORT virtual bool isUnderTest() = 0;
 };
 
 } // namespace WebCore

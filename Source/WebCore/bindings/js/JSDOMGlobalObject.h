@@ -54,7 +54,7 @@ namespace WebCore {
         JSDOMStructureMap& structures() { return m_structures; }
         JSDOMConstructorMap& constructors() { return m_constructors; }
 
-        ScriptExecutionContext* scriptExecutionContext() const;
+        WEBCORE_EXPORT ScriptExecutionContext* scriptExecutionContext() const;
 
         // Make binding code generation easier.
         JSDOMGlobalObject* globalObject() { return this; }

@@ -33,5 +33,5 @@ class String;
 }
 
 extern "C" {
-NSString *suggestedFilenameWithMIMEType(NSURL *, const WTF::String& MIMEType);
+WEBCORE_EXPORT NSString *suggestedFilenameWithMIMEType(NSURL *, const WTF::String& MIMEType);
 }

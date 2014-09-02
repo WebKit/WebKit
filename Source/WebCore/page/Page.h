@@ -210,7 +210,7 @@ public:
 #endif
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient; }
 
-    ScrollingCoordinator* scrollingCoordinator();
+    WEBCORE_EXPORT ScrollingCoordinator* scrollingCoordinator();
 
     WEBCORE_EXPORT String scrollingStateTreeAsText();
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();

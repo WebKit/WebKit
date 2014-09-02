@@ -1164,7 +1164,7 @@ sub GenerateHeader
         push(@headerContent, "\n");
     }
     if (ShouldGenerateToJSDeclaration($hasParent, $interface)) {
-        push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+        push(@headerContent, "WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
     if (!$hasParent || $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($interfaceName eq "NodeFilter") {
@@ -1172,7 +1172,7 @@ sub GenerateHeader
         } elsif ($interfaceName eq "DOMStringList") {
             push(@headerContent, "PassRefPtr<DOMStringList> toDOMStringList(JSC::ExecState*, JSC::JSValue);\n");
         } else {
-            push(@headerContent, "$implType* to${interfaceName}(JSC::JSValue);\n");
+            push(@headerContent, "WEBCORE_EXPORT $implType* to${interfaceName}(JSC::JSValue);\n");
         }
     }
     if ($usesToJSNewlyCreated{$interfaceName}) {
@@ -1964,9 +1964,9 @@ sub GenerateImplementation
                                \%conditionals, $justGenerateValueArray);
 
     if ($justGenerateValueArray) {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "WEBCORE_EXPORT const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
-        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        push(@implContent, "WEBCORE_EXPORT const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
 
     if (PrototypeOverridesGetOwnPropertySlot($interface)) {
@@ -2027,7 +2027,7 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
+    push(@implContent, "WEBCORE_EXPORT const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
     if ($numInstanceAttributes > 0) {
         push(@implContent, "&${className}Table");

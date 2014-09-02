@@ -71,10 +71,10 @@ public:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     const Vector<float>& horizontalSnapOffsets() const { return m_horizontalSnapOffsets; }
-    void setHorizontalSnapOffsets(const Vector<float>&);
+    WEBCORE_EXPORT void setHorizontalSnapOffsets(const Vector<float>&);
 
     const Vector<float>& verticalSnapOffsets() const { return m_verticalSnapOffsets; }
-    void setVerticalSnapOffsets(const Vector<float>&);
+    WEBCORE_EXPORT void setVerticalSnapOffsets(const Vector<float>&);
 #endif
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }

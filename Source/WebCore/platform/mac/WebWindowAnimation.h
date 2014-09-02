@@ -25,7 +25,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface WebWindowScaleAnimation : NSAnimation {
+WEBCORE_EXPORT @interface WebWindowScaleAnimation : NSAnimation {
 @private
     NSRect _initialFrame, _finalFrame, _realFrame;
     NSWindow *_window; // (assign)
@@ -43,7 +43,7 @@
 @end
 
 
-@interface WebWindowFadeAnimation : NSAnimation {
+WEBCORE_EXPORT @interface WebWindowFadeAnimation : NSAnimation {
 @private
     CGFloat _initialAlpha, _finalAlpha;
     NSWindow *_window; // (assign)

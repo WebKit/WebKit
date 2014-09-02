@@ -68,7 +68,7 @@ namespace WebCore {
             bool ignored;
             return decode(str, length, false, ignored);
         }
-        String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
+        WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
         CString encode(StringView, UnencodableHandling) const;
 
         UChar backslashAsCurrencySymbol() const;

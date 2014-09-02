@@ -1,3 +1,78 @@
+2014-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        More use of WEBCORE_EXPORT.
+
+        Reviewed by Darin Adler.
+
+        These changes from a patch attached to https://bugs.webkit.org/show_bug.cgi?id=136172
+        contain more deployment of the WEBCORE_EXPORT macro. As of this writing, the macro is
+        defined to do nothing, so landing these is a harmless way to get closer to be the point
+        where we can throw the switch to use these instead of explicit export files on OS X,
+        iOS, and Windows.
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader):
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_object.cpp:
+        * dom/Document.h:
+        * dom/Element.h:
+        * dom/Position.h:
+        * dom/Range.h:
+        * dom/StaticNodeList.h:
+        * dom/make_names.pl:
+        (printInit):
+        (printNamesCppFile):
+        * editing/Editor.h:
+        * editing/FrameSelection.h:
+        * editing/TextIterator.h:
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/cache/MemoryCache.h:
+        * loader/cocoa/DiskCacheMonitorCocoa.h:
+        * loader/mac/LoaderNSURLExtras.h:
+        * page/Page.h:
+        * page/PageGroup.h:
+        * page/SecurityPolicy.h:
+        * page/Settings.h:
+        * page/make_settings.pl:
+        (printGetterAndSetter):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * platform/CrossThreadCopier.h:
+        * platform/LocalizedStrings.h:
+        * platform/MemoryPressureHandler.cpp:
+        * platform/PlatformScreen.h:
+        * platform/PublicSuffix.h:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h:
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/WebCoreFullScreenPlaceholderView.h:
+        * platform/mac/WebCoreFullScreenWindow.h:
+        * platform/mac/WebCoreNSStringExtras.h:
+        * platform/mac/WebCoreObjCExtras.h:
+        * platform/mac/WebFontCache.h:
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebWindowAnimation.h:
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/CredentialStorage.h:
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/ProxyServer.h:
+        * platform/sql/SQLiteStatement.h:
+        * platform/text/TextEncoding.h:
+        * rendering/HitTestResult.h:
+        * rendering/RenderTreeAsText.h:
+        * testing/Internals.h:
+        Add many more correct uses of WEBCORE_EXPORT; remove a few incorrect ones.
+
 2014-09-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce CSS_BASIC_TYPE_CASTS, and use it

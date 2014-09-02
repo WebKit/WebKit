@@ -126,7 +126,7 @@ namespace WebCore {
         static Type copy(const URL&);
     };
 
-    template<> struct CrossThreadCopierBase<false, false, String> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, String> {
         typedef String Type;
         static Type copy(const String&);
     };
@@ -168,37 +168,37 @@ namespace WebCore {
     };
 
     struct IDBDatabaseMetadata;
-    template<> struct CrossThreadCopierBase<false, false, IDBDatabaseMetadata> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseMetadata> {
         typedef IDBDatabaseMetadata Type;
         static Type copy(const IDBDatabaseMetadata&);
     };
 
     struct IDBGetResult;
-    template<> struct CrossThreadCopierBase<false, false, IDBGetResult> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBGetResult> {
         typedef IDBGetResult Type;
         static Type copy(const IDBGetResult&);
     };
 
     struct IDBIndexMetadata;
-    template<> struct CrossThreadCopierBase<false, false, IDBIndexMetadata> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBIndexMetadata> {
         typedef IDBIndexMetadata Type;
         static Type copy(const IDBIndexMetadata&);
     };
 
     struct IDBKeyData;
-    template<> struct CrossThreadCopierBase<false, false, IDBKeyData> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyData> {
         typedef IDBKeyData Type;
         static Type copy(const IDBKeyData&);
     };
 
     struct IDBKeyRangeData;
-    template<> struct CrossThreadCopierBase<false, false, IDBKeyRangeData> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBKeyRangeData> {
         typedef IDBKeyRangeData Type;
         static Type copy(const IDBKeyRangeData&);
     };
 
     struct IDBObjectStoreMetadata;
-    template<> struct CrossThreadCopierBase<false, false, IDBObjectStoreMetadata> {
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBObjectStoreMetadata> {
         typedef IDBObjectStoreMetadata Type;
         static Type copy(const IDBObjectStoreMetadata&);
     };

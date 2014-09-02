@@ -36,14 +36,14 @@ namespace WebCore {
 
 class SharedBuffer;
 
-class DiskCacheMonitor {
+class WEBCORE_EXPORT DiskCacheMonitor {
 public:
     static void monitorFileBackingStoreCreation(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
     static PassRefPtr<SharedBuffer> tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef);
     virtual ~DiskCacheMonitor() { }
 
 protected:
-    DiskCacheMonitor(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
+    WEBCORE_EXPORT DiskCacheMonitor(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
 
     virtual void resourceBecameFileBacked(PassRefPtr<SharedBuffer>);
 

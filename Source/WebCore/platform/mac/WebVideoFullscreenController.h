@@ -40,7 +40,7 @@ namespace WebCore {
 @class WebWindowFadeAnimation;
 @class CALayer;
 
-@interface WebVideoFullscreenController : NSWindowController {
+WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
 @private
     RefPtr<WebCore::HTMLMediaElement> _mediaElement; // (retain)
     id <WebVideoFullscreenControllerDelegate> _delegate; // (assign)

@@ -69,7 +69,7 @@ namespace WebCore {
 
         struct ColorStop;
         WEBCORE_EXPORT void addColorStop(const ColorStop&);
-        void addColorStop(float, const Color&);
+        WEBCORE_EXPORT void addColorStop(float, const Color&);
 
         bool hasAlpha() const;
 

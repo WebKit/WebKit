@@ -32,7 +32,7 @@
 
 OBJC_CLASS UIView;
 
-@interface WebVideoFullscreenController : NSObject
+WEBCORE_EXPORT @interface WebVideoFullscreenController : NSObject
 - (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement;
 - (WebCore::HTMLMediaElement*)mediaElement;
 - (void)enterFullscreen:(UIView *)view;

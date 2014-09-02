@@ -28,7 +28,7 @@
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
 
-@interface WebCoreFullScreenWindow : NSWindow
+WEBCORE_EXPORT @interface WebCoreFullScreenWindow : NSWindow
 @end
 
 #endif // ENABLE(FULLSCREEN_API)

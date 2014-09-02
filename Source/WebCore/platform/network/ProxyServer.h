@@ -72,7 +72,7 @@ WEBCORE_EXPORT Vector<ProxyServer> proxyServersForURL(const URL&, const Networki
 
 // Converts the given vector of proxy servers to a PAC string, as described in
 // http://web.archive.org/web/20060424005037/wp.netscape.com/eng/mozilla/2.0/relnotes/demo/proxy-live.html
-String toString(const Vector<ProxyServer>&);
+WEBCORE_EXPORT String toString(const Vector<ProxyServer>&);
     
 } // namespace WebCore
 

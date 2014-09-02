@@ -146,7 +146,7 @@ public:
     WEBCORE_EXPORT void setSelection(const VisibleSelection&, SetSelectionOptions = defaultSetSelectionOptions(), CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity);
     WEBCORE_EXPORT bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     WEBCORE_EXPORT void selectAll();
-    void clear();
+    WEBCORE_EXPORT void clear();
     void prepareForDestruction();
 
     void didLayout();

@@ -119,7 +119,7 @@ public:
 
     void changeLocation(SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes,
         LockBackForwardList = LockBackForwardList::Yes, bool refresh = false, AllowNavigationToInvalidURL = AllowNavigationToInvalidURL::Yes);
-    void urlSelected(const URL&, const String& target, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer);
+    WEBCORE_EXPORT void urlSelected(const URL&, const String& target, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer);
     void submitForm(PassRefPtr<FormSubmission>);
 
     WEBCORE_EXPORT void reload(bool endToEndReload = false);

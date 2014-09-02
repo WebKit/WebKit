@@ -68,7 +68,7 @@ String quoteAndEscapeNonPrintables(const String&);
 
 WEBCORE_EXPORT String counterValueForElement(Element*);
 
-String markerTextForListItem(Element*);
+WEBCORE_EXPORT String markerTextForListItem(Element*);
 
 } // namespace WebCore
 

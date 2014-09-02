@@ -39,13 +39,13 @@ typedef struct NSString NSString;
 extern "C" {
 #endif
 
-BOOL stringIsCaseInsensitiveEqualToString(NSString *first, NSString *second);
-BOOL hasCaseInsensitiveSuffix(NSString *, NSString *suffix);
-BOOL hasCaseInsensitivePrefix(NSString *, NSString *prefix);
-BOOL hasCaseInsensitiveSubstring(NSString *, NSString *substring);
-NSString *filenameByFixingIllegalCharacters(NSString *);
+WEBCORE_EXPORT BOOL stringIsCaseInsensitiveEqualToString(NSString *first, NSString *second);
+WEBCORE_EXPORT BOOL hasCaseInsensitiveSuffix(NSString *, NSString *suffix);
+WEBCORE_EXPORT BOOL hasCaseInsensitivePrefix(NSString *, NSString *prefix);
+WEBCORE_EXPORT BOOL hasCaseInsensitiveSubstring(NSString *, NSString *substring);
+WEBCORE_EXPORT NSString *filenameByFixingIllegalCharacters(NSString *);
 #if !PLATFORM(IOS)
-CFStringEncoding stringEncodingForResource(Handle resource);
+WEBCORE_EXPORT CFStringEncoding stringEncodingForResource(Handle resource);
 #endif
 
 NSString *preferredBundleLocalizationName();

@@ -60,7 +60,7 @@ public:
     // prepares, steps, and finalizes the query.
     // returns true if all 3 steps succeed with step() returning SQLITE_DONE
     // returns false otherwise  
-    bool executeCommand();
+    WEBCORE_EXPORT bool executeCommand();
     
     // prepares, steps, and finalizes.  
     // returns true is step() returns SQLITE_ROW
@@ -77,13 +77,13 @@ public:
     WEBCORE_EXPORT bool isColumnDeclaredAsBlob(int col);
     String getColumnName(int col);
     SQLValue getColumnValue(int col);
-    String getColumnText(int col);
+    WEBCORE_EXPORT String getColumnText(int col);
     double getColumnDouble(int col);
-    int getColumnInt(int col);
-    int64_t getColumnInt64(int col);
-    String getColumnBlobAsString(int col);
-    void getColumnBlobAsVector(int col, Vector<char>&);
-    void getColumnBlobAsVector(int col, Vector<uint8_t>&);
+    WEBCORE_EXPORT int getColumnInt(int col);
+    WEBCORE_EXPORT int64_t getColumnInt64(int col);
+    WEBCORE_EXPORT String getColumnBlobAsString(int col);
+    WEBCORE_EXPORT void getColumnBlobAsVector(int col, Vector<char>&);
+    WEBCORE_EXPORT void getColumnBlobAsVector(int col, Vector<uint8_t>&);
 
     bool returnTextResults(int col, Vector<String>&);
     bool returnIntResults(int col, Vector<int>&);

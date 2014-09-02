@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT void advance();
 
     StringView text() const { ASSERT(!atEnd()); return m_text; }
-    PassRefPtr<Range> range() const;
+    WEBCORE_EXPORT PassRefPtr<Range> range() const;
     WEBCORE_EXPORT Node* node() const;
 
     const TextIteratorCopyableText& copyableText() const { ASSERT(!atEnd()); return m_copyableText; }

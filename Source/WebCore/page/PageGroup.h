@@ -53,7 +53,7 @@ namespace WebCore {
     class PageGroup : public Supplementable<PageGroup> {
         WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
-        explicit PageGroup(const String& name);
+        WEBCORE_EXPORT explicit PageGroup(const String& name);
         explicit PageGroup(Page&);
         ~PageGroup();
 
@@ -77,7 +77,7 @@ namespace WebCore {
         WEBCORE_EXPORT bool isLinkVisited(LinkHash);
 
         void addVisitedLink(const URL&);
-        void addVisitedLink(const UChar*, size_t);
+        WEBCORE_EXPORT void addVisitedLink(const UChar*, size_t);
         WEBCORE_EXPORT void addVisitedLinkHash(LinkHash);
         WEBCORE_EXPORT void removeVisitedLink(const URL&);
         void removeVisitedLinks();
@@ -105,7 +105,7 @@ namespace WebCore {
 
 #if ENABLE(VIDEO_TRACK)
         WEBCORE_EXPORT void captionPreferencesChanged();
-        CaptionUserPreferences* captionPreferences();
+        WEBCORE_EXPORT CaptionUserPreferences* captionPreferences();
 #endif
 
     private:

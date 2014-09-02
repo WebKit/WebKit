@@ -47,7 +47,7 @@ class Page;
 class InspectorFrontendClientLocal : public InspectorFrontendClient {
     WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal); WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Settings {
+    class WEBCORE_EXPORT Settings {
     public:
         Settings() { }
         virtual ~Settings() { }

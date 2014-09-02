@@ -69,10 +69,10 @@ public:
     WEBCORE_EXPORT Node* endContainer() const { return m_end.container(); }
     WEBCORE_EXPORT int endOffset() const { return m_end.offset(); }
 
-    Node* startContainer(ExceptionCode&) const;
-    int startOffset(ExceptionCode&) const;
-    Node* endContainer(ExceptionCode&) const;
-    int endOffset(ExceptionCode&) const;
+    WEBCORE_EXPORT Node* startContainer(ExceptionCode&) const;
+    WEBCORE_EXPORT int startOffset(ExceptionCode&) const;
+    WEBCORE_EXPORT Node* endContainer(ExceptionCode&) const;
+    WEBCORE_EXPORT int endOffset(ExceptionCode&) const;
     WEBCORE_EXPORT bool collapsed(ExceptionCode&) const;
 
     WEBCORE_EXPORT Node* commonAncestorContainer(ExceptionCode&) const;
@@ -129,11 +129,11 @@ public:
     };
 
     // Not transform-friendly
-    void textRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
+    WEBCORE_EXPORT void textRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
     WEBCORE_EXPORT IntRect boundingBox() const;
 
     // Transform-friendly
-    WEBCORE_EXPORT void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
+    WEBCORE_EXPORT void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
     void getBorderAndTextQuads(Vector<FloatQuad>&) const;
     WEBCORE_EXPORT FloatRect boundingRect() const;
 #if PLATFORM(IOS)

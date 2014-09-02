@@ -47,7 +47,7 @@ public:
     // Returns the referrer modified according to the referrer policy for a
     // navigation to a given URL. If the referrer returned is empty, the
     // referrer header should be omitted.
-    static String generateReferrerHeader(ReferrerPolicy, const URL&, const String& referrer);
+    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const URL&, const String& referrer);
 
     enum LocalLoadPolicy {
         AllowLocalLoadsForAll, // No restriction on local loads.

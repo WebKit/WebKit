@@ -300,14 +300,14 @@ enum IntegerConversionConfiguration {
     // FIXME: Implement Clamp
 };
 
-int32_t toInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
-uint32_t toUInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
+WEBCORE_EXPORT int32_t toInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
+WEBCORE_EXPORT uint32_t toUInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
 
-int8_t toInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-uint8_t toUInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT int8_t toInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT uint8_t toUInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
 
-int16_t toInt16(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-uint16_t toUInt16(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT int16_t toInt16(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT uint16_t toUInt16(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
 
 /*
     Convert a value to an integer as per <http://www.w3.org/TR/WebIDL/>.
@@ -329,8 +329,8 @@ inline uint32_t toUInt32(JSC::ExecState* exec, JSC::JSValue value, IntegerConver
     return value.toUInt32(exec);
 }
 
-int64_t toInt64(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
-uint64_t toUInt64(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT int64_t toInt64(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+WEBCORE_EXPORT uint64_t toUInt64(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
 
 // Returns a Date instance for the specified value, or null if the value is NaN or infinity.
 JSC::JSValue jsDateOrNull(JSC::ExecState*, double);

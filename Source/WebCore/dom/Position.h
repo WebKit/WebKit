@@ -83,7 +83,7 @@ public:
     WEBCORE_EXPORT Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset);
 
     // For creating before/after positions:
-    Position(PassRefPtr<Node> anchorNode, AnchorType);
+    WEBCORE_EXPORT Position(PassRefPtr<Node> anchorNode, AnchorType);
     Position(PassRefPtr<Text> textNode, unsigned offset);
 
     // For creating offset positions:

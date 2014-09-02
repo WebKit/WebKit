@@ -170,7 +170,7 @@ public:
 
     double domTimerAlignmentInterval() const;
 
-    void setLayoutInterval(std::chrono::milliseconds);
+    WEBCORE_EXPORT void setLayoutInterval(std::chrono::milliseconds);
     std::chrono::milliseconds layoutInterval() const { return m_layoutInterval; }
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)

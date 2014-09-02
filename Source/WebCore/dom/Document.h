@@ -433,7 +433,7 @@ public:
     PassRefPtr<Node> importNode(Node* importedNode, ExceptionCode& ec) { return importNode(importedNode, true, ec); }
     PassRefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
     WEBCORE_EXPORT PassRefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
-    PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
+    WEBCORE_EXPORT PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
 
     bool cssRegionsEnabled() const;
     bool cssCompositingEnabled() const;
@@ -994,7 +994,7 @@ public:
     void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
     WEBCORE_EXPORT const Vector<IconURL>& shortcutIconURLs();
-    const Vector<IconURL>& iconURLs(int iconTypesMask);
+    WEBCORE_EXPORT const Vector<IconURL>& iconURLs(int iconTypesMask);
     void addIconURL(const String& url, const String& mimeType, const String& size, IconType);
 
     void updateFocusAppearanceSoon(bool restorePreviousSelection);
@@ -1079,7 +1079,7 @@ public:
     bool annotatedRegionsDirty() const { return m_annotatedRegionsDirty; }
     bool hasAnnotatedRegions () const { return m_hasAnnotatedRegions; }
     void setHasAnnotatedRegions(bool f) { m_hasAnnotatedRegions = f; }
-    const Vector<AnnotatedRegionValue>& annotatedRegions() const;
+    WEBCORE_EXPORT const Vector<AnnotatedRegionValue>& annotatedRegions() const;
     void setAnnotatedRegions(const Vector<AnnotatedRegionValue>&);
 #endif
 

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class StaticNodeList final : public NodeList {
+class WEBCORE_EXPORT StaticNodeList final : public NodeList {
 public:
     static PassRefPtr<StaticNodeList> adopt(Vector<Ref<Node>>& nodes)
     {

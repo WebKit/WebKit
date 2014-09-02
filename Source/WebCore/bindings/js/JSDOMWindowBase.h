@@ -71,7 +71,7 @@ namespace WebCore {
 
         JSDOMWindowShell* shell() const;
 
-        static JSC::VM& commonVM();
+        WEBCORE_EXPORT static JSC::VM& commonVM();
         static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
     protected:
@@ -85,12 +85,12 @@ namespace WebCore {
     // Returns a JSDOMWindow or jsNull()
     // JSDOMGlobalObject* is ignored, accessing a window in any context will
     // use that DOMWindow's prototype chain.
-    JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow*);
+    WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow*);
     JSC::JSValue toJS(JSC::ExecState*, DOMWindow*);
 
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*, DOMWrapperWorld&);
-    JSDOMWindow* toJSDOMWindow(JSC::JSValue);
+    WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::JSValue);
 
 } // namespace WebCore
 

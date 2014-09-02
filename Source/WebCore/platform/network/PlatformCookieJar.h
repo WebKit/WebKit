@@ -41,10 +41,10 @@ struct Cookie;
 
 WEBCORE_EXPORT String cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&);
 WEBCORE_EXPORT void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&);
-bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&);
-String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&);
-bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&);
-void deleteCookie(const NetworkStorageSession&, const URL&, const String&);
+WEBCORE_EXPORT bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&);
+WEBCORE_EXPORT String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&);
+WEBCORE_EXPORT bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&);
+WEBCORE_EXPORT void deleteCookie(const NetworkStorageSession&, const URL&, const String&);
 WEBCORE_EXPORT void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
 WEBCORE_EXPORT void deleteCookiesForHostname(const NetworkStorageSession&, const String& hostname);
 WEBCORE_EXPORT void deleteAllCookies(const NetworkStorageSession&);

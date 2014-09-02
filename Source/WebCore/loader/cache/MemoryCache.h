@@ -113,7 +113,7 @@ public:
 
     WEBCORE_EXPORT CachedResource* resourceForURL(const URL&);
     WEBCORE_EXPORT CachedResource* resourceForURL(const URL&, SessionID);
-    CachedResource* resourceForRequest(const ResourceRequest&, SessionID);
+    WEBCORE_EXPORT CachedResource* resourceForRequest(const ResourceRequest&, SessionID);
 
     bool add(CachedResource*);
     void remove(CachedResource* resource) { evict(resource); }

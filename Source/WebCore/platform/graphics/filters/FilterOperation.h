@@ -119,7 +119,7 @@ protected:
 #define FILTEROPERATION_TYPE_CASTS(ToValueTypeName, predicate) \
     TYPE_CASTS_BASE(ToValueTypeName, WebCore::FilterOperation, value, value->predicate, value.predicate)
 
-class DefaultFilterOperation : public FilterOperation {
+class WEBCORE_EXPORT DefaultFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<DefaultFilterOperation> create(OperationType representedType)
     {
@@ -216,7 +216,7 @@ FILTEROPERATION_TYPE_CASTS(ReferenceFilterOperation, type() == FilterOperation::
 
 // GRAYSCALE, SEPIA, SATURATE and HUE_ROTATE are variations on a basic color matrix effect.
 // For HUE_ROTATE, the angle of rotation is stored in m_amount.
-class BasicColorMatrixFilterOperation : public FilterOperation {
+class WEBCORE_EXPORT BasicColorMatrixFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BasicColorMatrixFilterOperation> create(double amount, OperationType type)
     {
@@ -249,7 +249,7 @@ private:
 FILTEROPERATION_TYPE_CASTS(BasicColorMatrixFilterOperation, isBasicColorMatrixFilterOperation());
 
 // INVERT, BRIGHTNESS, CONTRAST and OPACITY are variations on a basic component transfer effect.
-class BasicComponentTransferFilterOperation : public FilterOperation {
+class WEBCORE_EXPORT BasicComponentTransferFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BasicComponentTransferFilterOperation> create(double amount, OperationType type)
     {
@@ -283,7 +283,7 @@ private:
 
 FILTEROPERATION_TYPE_CASTS(BasicComponentTransferFilterOperation, isBasicComponentTransferFilterOperation());
 
-class BlurFilterOperation : public FilterOperation {
+class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BlurFilterOperation> create(Length stdDeviation)
     {
@@ -316,7 +316,7 @@ private:
 
 FILTEROPERATION_TYPE_CASTS(BlurFilterOperation, type() == FilterOperation::BLUR);
 
-class DropShadowFilterOperation : public FilterOperation {
+class WEBCORE_EXPORT DropShadowFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<DropShadowFilterOperation> create(const IntPoint& location, int stdDeviation, Color color)
     {

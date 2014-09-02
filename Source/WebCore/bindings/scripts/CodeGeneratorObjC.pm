@@ -1118,8 +1118,8 @@ sub GenerateHeader
         }
         push(@internalHeaderContent, "}\n\n");
 
-        push(@internalHeaderContent, "$implType* core($className *);\n");
-        push(@internalHeaderContent, "$className *kit($implType*);\n");
+        push(@internalHeaderContent, "WEBCORE_EXPORT $implType* core($className *);\n");
+        push(@internalHeaderContent, "WEBCORE_EXPORT $className *kit($implType*);\n");
 
         if ($interface->extendedAttributes->{"ObjCPolymorphic"}) {
             push(@internalHeaderContent, "Class kitClass($implType*);\n");

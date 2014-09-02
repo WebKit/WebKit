@@ -50,11 +50,11 @@ public:
     typedef ListHashSet<RefPtr<Node>> NodeSet;
 
     HitTestResult();
-    explicit HitTestResult(const LayoutPoint&);
+    WEBCORE_EXPORT explicit HitTestResult(const LayoutPoint&);
     // Pass non-negative padding values to perform a rect-based hit test.
-    HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    WEBCORE_EXPORT HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     explicit HitTestResult(const HitTestLocation&);
-    HitTestResult(const HitTestResult&);
+    WEBCORE_EXPORT HitTestResult(const HitTestResult&);
     WEBCORE_EXPORT ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);
 
