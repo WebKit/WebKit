@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2013 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006-2014 Apple, Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -501,12 +501,13 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
             cfurlCacheDirectory = WebCore::localUserSpecificStorageDirectory().createCFString();
     }
     cacheDirectory = String(cfurlCacheDirectory);
+    CFIndex cacheMemoryCapacity = 0;
+    CFIndex cacheDiskCapacity = 0;
 #elif USE(CURL)
     cacheDirectory = CurlCacheManager::getInstance().cacheDirectory();
-#endif
-
     long cacheMemoryCapacity = 0;
     long cacheDiskCapacity = 0;
+#endif
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
     // count doesn't align exactly to a megabyte boundary.
