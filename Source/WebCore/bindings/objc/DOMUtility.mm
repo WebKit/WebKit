@@ -32,9 +32,9 @@
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMCounterInternal.h"
+#import "DOMDOMImplementationInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMHTMLCollectionInternal.h"
-#import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "DOMMediaListInternal.h"
 #import "DOMNamedNodeMapInternal.h"
@@ -75,9 +75,6 @@
 #import "JSXPathResult.h"
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
-
-// FIXME: Couldn't get an include of "DOMDOMImplementationInternal.h" to work here.
-DOMImplementation *kit(WebCore::DOMImplementationFront*);
 
 // This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what
 // headers are included and what namespaces we use to avoid naming conflicts.
@@ -127,7 +124,7 @@ static inline id createDOMWrapper(JSC::JSObject* object)
         return kit(&static_cast<WebCore::JSDOMWindowShell*>(object)->impl());
 
     if (object->inherits(WebCore::JSDOMImplementation::info()))
-        return kit(implementationFront(static_cast<WebCore::JSDOMImplementation*>(object)));
+        return kit(&static_cast<WebCore::JSDOMImplementation*>(object)->impl());
 
     return nil;
 }

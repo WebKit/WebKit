@@ -420,7 +420,6 @@ sub GetImplClassName
 {
     my $name = shift;
 
-    return "DOMImplementationFront" if $name eq "DOMImplementation";
     return "DOMWindow" if $name eq "AbstractView";
     return $name;
 }
@@ -677,12 +676,6 @@ sub AddIncludesForType
     if ($type eq "DOMWindow") {
         $implIncludes{"DOMAbstractViewInternal.h"} = 1;
         $implIncludes{"DOMWindow.h"} = 1;
-        return;
-    }
-
-    if ($type eq "DOMImplementation") {
-        $implIncludes{"DOMDOMImplementationInternal.h"} = 1;
-        $implIncludes{"DOMImplementationFront.h"} = 1;
         return;
     }
 
@@ -1101,7 +1094,8 @@ sub GenerateHeader
             @internalHeaderContent = split("\r", $implementationLicenseTemplate);
         }
 
-        push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n\n");
+        my $classHeaderName = GetClassHeaderName($className);
+        push(@internalHeaderContent, "\n#import <WebCore/$classHeaderName.h>\n\n");
 
         if ($interfaceName eq "Node") {
             push(@internalHeaderContent, "\@protocol DOMEventTarget;\n\n");
@@ -1303,11 +1297,7 @@ sub GenerateImplementation
 
             # Special cases
             my @customGetterContent = (); 
-            if ($attributeTypeSansPtr eq "DOMImplementation") {
-                # FIXME: We have to special case DOMImplementation until DOMImplementationFront is removed
-                $getterContentHead = "kit(implementationFront(IMPL";
-                $getterContentTail .= ")";
-            } elsif ($attributeName =~ /(\w+)DisplayString$/) {
+            if ($attributeName =~ /(\w+)DisplayString$/) {
                 my $attributeToDisplay = $1;
                 $getterContentHead = "WebCore::displayString(IMPL->$attributeToDisplay(), core(self)";
                 $implIncludes{"HitTestResult.h"} = 1;

@@ -1,3 +1,35 @@
+2014-09-03  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of DOMImplementationFront
+        https://bugs.webkit.org/show_bug.cgi?id=136495
+
+        Reviewed by Andreas Kling.
+
+        DOMImplementationFront was used in a workaround for a GCC bug, and since we're building with clang
+        on Mac this is no longer an issue.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMImplementationFront.cpp: Removed.
+        * bindings/objc/DOMImplementationFront.h: Removed.
+        Remove files.
+
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper):
+        Remove call to implementationFront.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GetImplClassName):
+        Remove DOMImplementation special case
+
+        (AddIncludesForType):
+        Ditto.
+
+        (GenerateHeader):
+        Use the class header name in the #import in the internal header.
+
+        (GenerateImplementation):
+        Remove DOMImplementation special case.
+
 2014-09-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Improper release of unretained AVCFAssetResourceLoaderRef
