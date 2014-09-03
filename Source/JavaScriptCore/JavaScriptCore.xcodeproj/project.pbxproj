@@ -959,7 +959,6 @@
 		5540772018DA58AD00EFF7F2 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
 		5540772118DA58AD00EFF7F2 /* JSArrayBufferViewInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BC17B6B5AB00A7AE3F /* JSArrayBufferViewInlines.h */; };
 		5540772218DA58AD00EFF7F2 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7BDAEC517F4EA1400F6140C /* JSArrayIterator.h */; };
-		5540772518DA58AD00EFF7F2 /* (null) in Headers */ = {isa = PBXBuildFile; };
 		5540772B18DA58AD00EFF7F2 /* JSCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1167D80E19BCC9008066DD /* JSCell.h */; };
 		5540772C18DA58AD00EFF7F2 /* JSCellInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F97496F1687ADE200A4FF6A /* JSCellInlines.h */; };
 		5540772D18DA58AD00EFF7F2 /* JSCInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1DD84918A945BE0026F3FA /* JSCInlines.h */; };
@@ -5514,7 +5513,6 @@
 				5540771818DA58AD00EFF7F2 /* JSActivation.h in Headers */,
 				5540771B18DA58AD00EFF7F2 /* JSArgumentsIterator.h in Headers */,
 				5540772218DA58AD00EFF7F2 /* JSArrayIterator.h in Headers */,
-				5540772518DA58AD00EFF7F2 /* (null) in Headers */,
 				5540774818DA58AD00EFF7F2 /* JSGlobalObjectDebuggable.h in Headers */,
 				5540774A18DA58AD00EFF7F2 /* JSGlobalObjectFunctions.h in Headers */,
 				5540775918DA58AD00EFF7F2 /* JSMapIterator.h in Headers */,
