@@ -342,9 +342,6 @@
     <ClCompile Include="..\inspector\agents\InspectorDebuggerAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\agents\InspectorProfilerAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -2190,9 +2187,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\agents\InspectorDebuggerAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\agents\InspectorProfilerAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h">

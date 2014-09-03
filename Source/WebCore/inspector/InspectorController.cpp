@@ -64,7 +64,6 @@
 #include "Page.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
-#include "PageProfilerAgent.h"
 #include "PageRuntimeAgent.h"
 #include "PageScriptDebugServer.h"
 #include "Settings.h"
@@ -154,10 +153,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_domDebuggerAgent = domDebuggerAgentPtr.get();
     m_agents.append(WTF::move(domDebuggerAgentPtr));
 
-    auto profilerAgentPtr = std::make_unique<PageProfilerAgent>(m_instrumentingAgents.get(), &page);
-    m_profilerAgent = profilerAgentPtr.get();
-    m_agents.append(WTF::move(profilerAgentPtr));
-
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(m_instrumentingAgents.get(), pageAgent));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(m_instrumentingAgents.get()));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(m_instrumentingAgents.get()));
@@ -176,7 +171,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
     m_timelineAgent->setPageScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
-    m_profilerAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
 }
 
 InspectorController::~InspectorController()

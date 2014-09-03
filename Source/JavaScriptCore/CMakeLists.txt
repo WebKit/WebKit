@@ -300,11 +300,9 @@ set(JavaScriptCore_SOURCES
     inspector/agents/InspectorAgent.cpp
     inspector/agents/InspectorConsoleAgent.cpp
     inspector/agents/InspectorDebuggerAgent.cpp
-    inspector/agents/InspectorProfilerAgent.cpp
     inspector/agents/InspectorRuntimeAgent.cpp
     inspector/agents/JSGlobalObjectConsoleAgent.cpp
     inspector/agents/JSGlobalObjectDebuggerAgent.cpp
-    inspector/agents/JSGlobalObjectProfilerAgent.cpp
     inspector/agents/JSGlobalObjectRuntimeAgent.cpp
 
     interpreter/AbstractPC.cpp
@@ -956,7 +954,6 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Debugger.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/GenericTypes.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/InspectorDomain.json
-    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Profiler.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Runtime.json
 )
 

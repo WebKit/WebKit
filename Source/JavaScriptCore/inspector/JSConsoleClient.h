@@ -31,12 +31,11 @@
 namespace Inspector {
 
 class InspectorConsoleAgent;
-class InspectorProfilerAgent;
 
 class JSConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit JSConsoleClient(InspectorConsoleAgent*, InspectorProfilerAgent*);
+    explicit JSConsoleClient(InspectorConsoleAgent*);
     virtual ~JSConsoleClient() { }
 
     static bool logToSystemConsole();
@@ -57,7 +56,6 @@ private:
     void internalAddMessage(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<ScriptArguments>);
 
     InspectorConsoleAgent* m_consoleAgent;
-    InspectorProfilerAgent* m_profilerAgent;
 };
 
 }

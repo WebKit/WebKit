@@ -1,3 +1,33 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove ProfilerAgent and legacy profiler files in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=136462
+
+        Reviewed by Timothy Hatcher.
+
+        It's not used by the frontend anymore.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * inspector/JSConsoleClient.cpp:
+        (Inspector::JSConsoleClient::JSConsoleClient): Stub out console.profile/profileEnd
+        methods since they didn't work for JSContexts anyway.
+        (Inspector::JSConsoleClient::profile):
+        (Inspector::JSConsoleClient::profileEnd):
+        * inspector/JSConsoleClient.h:
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        * inspector/agents/InspectorProfilerAgent.cpp: Removed.
+        * inspector/agents/InspectorProfilerAgent.h: Removed.
+        * inspector/agents/JSGlobalObjectProfilerAgent.cpp: Removed.
+        * inspector/agents/JSGlobalObjectProfilerAgent.h: Removed.
+        * inspector/protocol/Profiler.json: Removed.
+
 2014-09-02  Andreas Kling  <akling@apple.com>
 
         Optimize own property GetByVals with rope string subscripts.

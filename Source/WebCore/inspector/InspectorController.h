@@ -47,7 +47,6 @@ namespace Inspector {
 class InspectorAgent;
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
-class InspectorProfilerAgent;
 class InspectorObject;
 }
 
@@ -144,7 +143,6 @@ private:
     InspectorPageAgent* m_pageAgent;
     PageDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
-    Inspector::InspectorProfilerAgent* m_profilerAgent;
     InspectorTimelineAgent* m_timelineAgent;
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;

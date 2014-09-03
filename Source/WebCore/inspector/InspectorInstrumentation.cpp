@@ -70,7 +70,6 @@
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/agents/InspectorDebuggerAgent.h>
-#include <inspector/agents/InspectorProfilerAgent.h>
 #include <profiler/Profile.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/StdLibExtras.h>
@@ -768,9 +767,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
 
         if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
             resourceAgent->mainFrameNavigated(loader);
-
-        if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent())
-            profilerAgent->reset();
 
         if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
             cssAgent->reset();

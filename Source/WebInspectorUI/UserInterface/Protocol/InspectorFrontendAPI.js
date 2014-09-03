@@ -68,22 +68,6 @@ InspectorFrontendAPI = {
         }
     },
 
-    isProfilingJavaScript: function()
-    {
-        return WebInspector.legacyProfileManager.isProfilingJavaScript();
-    },
-
-    startProfilingJavaScript: function()
-    {
-        WebInspector.legacyProfileManager.startProfilingJavaScript();
-    },
-
-    stopProfilingJavaScript: function()
-    {
-        WebInspector.timelineSidebarPanel.show();
-        WebInspector.legacyProfileManager.stopProfilingJavaScript();
-    },
-
     setDockSide: function(side)
     {
         WebInspector.updateDockedState(side);

@@ -49,7 +49,6 @@
         "Map": true,
         "NetworkAgent": true,
         "PageAgent": true,
-        "ProfilerAgent": true,
         "ReplayAgent": true,
         "RuntimeAgent": true,
         "TimelineAgent": true,

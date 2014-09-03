@@ -1,3 +1,38 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove ProfilerAgent and legacy profiler files in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=136462
+
+        Reviewed by Timothy Hatcher.
+
+        The legacy profiler manager didn't do anything, and its views and models
+        have been superseded by new views and models based on the Timeline classes.
+
+        * .eslintrc:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.openURL): Remove profile URL handling code.
+        * UserInterface/Controllers/LegacyProfileManager.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.isProfilingJavaScript): Deleted.
+        (InspectorFrontendAPI.startProfilingJavaScript): Deleted.
+        (InspectorFrontendAPI.stopProfilingJavaScript): Deleted.
+        * UserInterface/Protocol/LegacyProfilerObserver.js: Removed.
+        * UserInterface/Views/LegacyBottomUpProfileDataGridTree.js: Removed.
+        * UserInterface/Views/LegacyJavaScriptProfileObject.js: Removed.
+        * UserInterface/Views/LegacyJavaScriptProfileType.js: Removed.
+        * UserInterface/Views/LegacyJavaScriptProfileView.css: Removed.
+        * UserInterface/Views/LegacyJavaScriptProfileView.js: Removed.
+        * UserInterface/Views/LegacyProfileDataGridTree.js: Removed.
+        * UserInterface/Views/LegacyProfileObject.js: Removed.
+        * UserInterface/Views/LegacyProfileType.js: Removed.
+        * UserInterface/Views/LegacyProfileView.css: Removed.
+        * UserInterface/Views/LegacyProfileView.js: Removed.
+        * UserInterface/Views/LegacyTopDownProfileDataGridTree.js: Removed.
+
 2014-08-29  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Create a UI for displaying JavaScript type information

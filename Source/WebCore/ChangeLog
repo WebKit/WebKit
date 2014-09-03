@@ -1,3 +1,46 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove ProfilerAgent and legacy profiler files in the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=136462
+
+        Reviewed by Timothy Hatcher.
+
+        It's not used by the frontend anymore.
+
+        No new tests, no behavior changed.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/inspector/agents/InspectorProfilerAgent.h: Removed.
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorProfilerAgent): Deleted.
+        (WebCore::InstrumentingAgents::setInspectorProfilerAgent): Deleted.
+        * inspector/PageProfilerAgent.cpp: Removed.
+        * inspector/PageProfilerAgent.h: Removed.
+        * inspector/TimelineRecordFactory.cpp: Moved these builders to their only callsite.
+        (WebCore::buildInspectorObject):
+        (WebCore::buildProfileInspectorObject):
+        (WebCore::TimelineRecordFactory::appendProfile):
+        * inspector/WebProfilerAgent.cpp: Removed.
+        * inspector/WebProfilerAgent.h: Removed.
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * inspector/WorkerProfilerAgent.cpp: Removed.
+        * inspector/WorkerProfilerAgent.h: Removed.
+        * inspector/protocol/Timeline.json:
+
 2014-09-02  Jer Noble  <jer.noble@apple.com>
 
         [EME][Mac] Refactor CDMPrivateMediaSourceAVFObjC to allow sessions to be created without being attached to an AVStreamDataParser.

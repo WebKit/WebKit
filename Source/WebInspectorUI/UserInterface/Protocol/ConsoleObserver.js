@@ -38,13 +38,6 @@ WebInspector.ConsoleObserver.prototype = {
         if (message.level === "warning" || message.level === "error")
             WebInspector.issueManager.issueWasAdded(message.source, message.level, message.text, message.url, message.line, message.column || 0, message.parameters);
 
-        if (message.url === "[native code]") {
-            if (message.type === "profile")
-                WebInspector.legacyProfileManager.profileWasStartedFromConsole(message.text);
-            else if (message.type === "profileEnd")
-                WebInspector.legacyProfileManager.profileWasEndedFromConsole();
-        }
-
         if (message.source === "console-api" && message.type === "clear")
             return;
 

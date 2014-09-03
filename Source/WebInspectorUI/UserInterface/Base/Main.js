@@ -76,8 +76,6 @@ WebInspector.loaded = function()
         InspectorBackend.registerApplicationCacheDispatcher(new WebInspector.ApplicationCacheObserver);
     if (InspectorBackend.registerTimelineDispatcher)
         InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
-    if (InspectorBackend.registerProfilerDispatcher)
-        InspectorBackend.registerProfilerDispatcher(new WebInspector.LegacyProfilerObserver);
     if (InspectorBackend.registerCSSDispatcher)
         InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     if (InspectorBackend.registerLayerTreeDispatcher)
@@ -111,7 +109,6 @@ WebInspector.loaded = function()
     this.runtimeManager = new WebInspector.RuntimeManager;
     this.applicationCacheManager = new WebInspector.ApplicationCacheManager;
     this.timelineManager = new WebInspector.TimelineManager;
-    this.legacyProfileManager = new WebInspector.LegacyProfileManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.sourceMapManager = new WebInspector.SourceMapManager;
     this.layerTreeManager = new WebInspector.LayerTreeManager;
@@ -499,20 +496,6 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
 
     if (alwaysOpenExternally) {
         InspectorFrontendHost.openInNewTab(url);
-        return;
-    }
-
-    var parsedURL = parseURL(url);
-    if (parsedURL.scheme === WebInspector.LegacyProfileType.ProfileScheme) {
-        var profileType = parsedURL.host.toUpperCase();
-        var profileTitle = parsedURL.path;
-
-        // The path of of the profile URL starts with a slash, remove it, so
-        // we can get the actual title.
-        console.assert(profileTitle[0] === "/");
-        profileTitle = profileTitle.substring(1);
-
-        this.timelineSidebarPanel.showProfile(profileType, profileTitle);
         return;
     }
 

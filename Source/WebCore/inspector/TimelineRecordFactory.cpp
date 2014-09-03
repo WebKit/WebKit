@@ -37,16 +37,15 @@
 
 #include "Event.h"
 #include "FloatQuad.h"
+#include "InspectorWebProtocolTypes.h"
 #include "IntRect.h"
 #include "JSMainThreadExecState.h"
 #include "LayoutRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include <inspector/InspectorValues.h>
 #include <inspector/ScriptBreakpoint.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
-#include <inspector/agents/InspectorProfilerAgent.h>
 #include <profiler/Profile.h>
 #include <wtf/CurrentTime.h>
 
@@ -271,9 +270,61 @@ void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQ
     data->setArray("root", createQuad(quad));
 }
 
+static PassRefPtr<Protocol::Timeline::CPUProfileNodeCall> buildInspectorObject(const JSC::ProfileNode::Call& call)
+{
+    RefPtr<Protocol::Timeline::CPUProfileNodeCall> result = Protocol::Timeline::CPUProfileNodeCall::create()
+        .setStartTime(call.startTime())
+        .setTotalTime(call.totalTime());
+    return result.release();
+}
+
+static PassRefPtr<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
+{
+    RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNodeCall>> calls = Protocol::Array<Protocol::Timeline::CPUProfileNodeCall>::create();
+    for (const JSC::ProfileNode::Call& call : node->calls())
+        calls->addItem(buildInspectorObject(call));
+
+    RefPtr<Protocol::Timeline::CPUProfileNode> result = Protocol::Timeline::CPUProfileNode::create()
+        .setId(node->id())
+        .setCalls(calls.release());
+
+    if (!node->functionName().isEmpty())
+        result->setFunctionName(node->functionName());
+
+    if (!node->url().isEmpty()) {
+        result->setUrl(node->url());
+        result->setLineNumber(node->lineNumber());
+        result->setColumnNumber(node->columnNumber());
+    }
+
+    if (!node->children().isEmpty()) {
+        RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNode>> children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
+        for (RefPtr<JSC::ProfileNode> profileNode : node->children())
+            children->addItem(buildInspectorObject(profileNode.get()));
+        result->setChildren(children);
+    }
+
+    return result.release();
+}
+
+static PassRefPtr<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)
+{
+    RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNode>> rootNodes = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
+    for (RefPtr<JSC::ProfileNode> profileNode : profile->head()->children())
+        rootNodes->addItem(buildInspectorObject(profileNode.get()));
+
+    RefPtr<Protocol::Timeline::CPUProfile> result = Protocol::Timeline::CPUProfile::create()
+        .setRootNodes(rootNodes);
+
+    if (profile->idleTime())
+        result->setIdleTime(profile->idleTime());
+
+    return result.release();
+}
+
 void TimelineRecordFactory::appendProfile(InspectorObject* data, PassRefPtr<JSC::Profile> profile)
 {
-    data->setValue(ASCIILiteral("profile"), InspectorProfilerAgent::buildProfileInspectorObject(profile.get()));
+    data->setValue(ASCIILiteral("profile"), buildProfileInspectorObject(profile.get()));
 }
 
 } // namespace WebCore
