@@ -43,7 +43,6 @@ css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
 
 # Remove from list after enabling CANVAS_PATH
-fast/canvas/canvas-currentPath.html
 fast/canvas/canvas-path-constructors.html
 
 # Needs rebaseline now that bug 97217 is fixed
@@ -1485,7 +1484,6 @@ webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/onremovetrack.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
@@ -2232,7 +2230,6 @@ webkit.org/b/121509 media/track/track-load-from-element-readyState.html	[ Skip ]
 webkit.org/b/121509 media/track/track-cue-rendering-on-resize.html	[ Skip ]
 webkit.org/b/121509 media/track/track-cue-rendering.html	[ Skip ]
 webkit.org/b/121509 media/track/track-add-remove-cue.html	[ Skip ]
-webkit.org/b/121509 media/track/track-word-breaking.html	[ Skip ]
 webkit.org/b/121509 media/track/track-cues-sorted-before-dispatch.html	[ Skip ]
 webkit.org/b/121509 media/track/track-in-band-duplicate-tracks-when-source-changes.html	[ Skip ]
 webkit.org/b/121509 media/track/track-webvtt-tc010-no-timings.html	[ Skip ]
@@ -2284,8 +2281,8 @@ fast/events/wheelevent-constructor.html [ Failure ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
 fast/loader/file-protocol-fragment.html [ Failure ]
 js/dom/exception-sequencing.html [ Failure ]
-media/track/track-in-band-legacy-api.html [ Failure ]
-media/track/track-in-band-mode.html [ Failure ]
+media/track/track-in-band-legacy-api.html [ Crash ]
+media/track/track-in-band-mode.html [ Crash ]
 security/block-test-no-port.html [ Failure ]
 svg/dom/SVGViewSpec.html [ Failure ]
 editing/selection/caret-rtl-2-left.html [ Failure ]
@@ -2312,7 +2309,6 @@ fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
 fast/media/mq-transform-02.html [ Pass ImageOnlyFailure ]
 fast/media/mq-transform-03.html [ Pass ImageOnlyFailure ]
-svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
 
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
@@ -2392,20 +2388,10 @@ webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failu
 
 webkit.org/b/128722 svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Crash Pass ]
 
-# isProtocolHandlerRegistered() isn't supported yet.
-webkit.org/b/92749 fast/dom/is-protocol-handler-registered.html [ Skip ] 
-
-# Times out:
-webkit.org/b/128726 [ Release ] js/regress/emscripten-memops.html [ Skip ]
-
 webkit.org/b/128789 [ Debug ] js/regress/Int16Array-bubble-sort-with-byteLength.html [ Pass Timeout ]
 webkit.org/b/128789 [ Debug ] js/regress/Int16Array-bubble-sort.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/chain-custom-getter.html [ Pass Timeout ]
 webkit.org/b/128789 [ Debug ] js/regress/chain-getter-access.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/marsaglia.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/proto-custom-getter.html [ Pass Timeout ]
 webkit.org/b/128789 [ Debug ] js/regress/proto-getter-access.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/simple-custom-getter.html [ Pass Timeout ]
 webkit.org/b/128789 [ Debug ] js/regress/simple-getter-access.html [ Pass Timeout ]
 
 # Some very small image differences (~0.01-0.05%)
@@ -2596,7 +2582,6 @@ css2.1/t010403-shand-border-00-c.html [ Pass Timeout ]
 css2.1/t170602-bdr-conflct-w-87-d.html [ Pass Timeout ]
 css3/images/cross-fade-invalidation.html [ Pass Timeout ]
 canvas/philip/tests [ Pass Failure Timeout ]
-csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-002.html [ Pass Failure ]
 dom/svg/level3/xpath/Conformance_hasFeature_null.svg [ Pass Timeout ]
 dom/svg/level3/xpath/XPathExpression_evaluate_NOT_SUPPORTED_ERR.svg [ Pass Timeout ]
 dom/svg/level3/xpath/XPathEvaluator_evaluate_NOT_SUPPORTED_ERR.svg [ Pass Timeout ]
@@ -2795,16 +2780,12 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 # Media tests are unhappy. Disable for now
 media [ Skip ]
 
-platform/win/plugins/iframe-inside-overflow.html [ Failure ]
-
 # DataCue.value not enabled
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 media/track/track-datacue-value.html [ Skip ]
 
 # CRASHES
 ietestcenter/Javascript/15.2.3.3-4-18.html [ Crash ]
-media/track/track-in-band-legacy-api.html [ Crash ]
-media/track/track-in-band-mode.html	 [ Crash ]
 fast/canvas/canvas-path-addPath.html [ Crash ]
 
 # Missing references on Windows
