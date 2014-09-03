@@ -3453,6 +3453,44 @@ RenderBlock* RenderBlock::firstLineBlock() const
 static RenderStyle* styleForFirstLetter(RenderObject* firstLetterBlock, RenderObject* firstLetterContainer)
 {
     RenderStyle* pseudoStyle = firstLetterBlock->getCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer->firstLineStyle());
+    
+    // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
+    if (pseudoStyle->initialLetterDrop() >= 1 && !pseudoStyle->isFloating())
+        pseudoStyle->setFloating(pseudoStyle->isLeftToRightDirection() ? LeftFloat : RightFloat);
+
+    // We have to compute the correct font-size for the first-letter if it has an initial letter height set.
+    RenderObject* paragraph = firstLetterContainer->isRenderBlockFlow() ? firstLetterContainer : firstLetterContainer->containingBlock();
+    if (pseudoStyle->initialLetterHeight() >= 1 && pseudoStyle->fontMetrics().hasCapHeight() && paragraph->style().fontMetrics().hasCapHeight()) {
+        // FIXME: For ideographic baselines, we want to go from line edge to line edge. This is equivalent to (N-1)*line-height + the font height.
+        // We don't yet support ideographic baselines.
+        // For an N-line first-letter and for alphabetic baselines, the cap-height of the first letter needs to equal (N-1)*line-height of paragraph lines + cap-height of the paragraph
+        // Mathematically we can't rely on font-size, since font().height() doesn't necessarily match. For reliability, the best approach is simply to
+        // compare the final measured cap-heights of the two fonts in order to get to the closest possible value.
+        pseudoStyle->setLineBoxContain(LineBoxContainInitialLetter);
+        int lineHeight = paragraph->style().computedLineHeight();
+        
+        // Set the font to be one line too big and then ratchet back to get to a precise fit. We can't just set the desired font size based off font height metrics
+        // because many fonts bake ascent into the font metrics. Therefore we have to look at actual measured cap height values in order to know when we have a good fit.
+        FontDescription newFontDescription = pseudoStyle->fontDescription();
+        float capRatio = pseudoStyle->fontMetrics().floatCapHeight() / pseudoStyle->fontSize();
+        float startingFontSize = ((pseudoStyle->initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight()) / capRatio;
+        newFontDescription.setSpecifiedSize(startingFontSize);
+        newFontDescription.setComputedSize(startingFontSize);
+        pseudoStyle->setFontDescription(newFontDescription);
+        pseudoStyle->font().update(pseudoStyle->font().fontSelector());
+        
+        int desiredCapHeight = (pseudoStyle->initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight();
+        int actualCapHeight = pseudoStyle->fontMetrics().capHeight();
+        while (actualCapHeight > desiredCapHeight) {
+            FontDescription newFontDescription = pseudoStyle->fontDescription();
+            newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
+            newFontDescription.setComputedSize(newFontDescription.computedSize() -1);
+            pseudoStyle->setFontDescription(newFontDescription);
+            pseudoStyle->font().update(pseudoStyle->font().fontSelector());
+            actualCapHeight = pseudoStyle->fontMetrics().capHeight();
+        }
+    }
+    
     // Force inline display (except for floating first-letters).
     pseudoStyle->setDisplay(pseudoStyle->isFloating() ? BLOCK : INLINE);
     // CSS2 says first-letter can't be positioned.

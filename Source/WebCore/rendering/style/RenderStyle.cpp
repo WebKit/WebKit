@@ -434,6 +434,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             || rareNonInheritedData->marginBeforeCollapse != other->rareNonInheritedData->marginBeforeCollapse
             || rareNonInheritedData->marginAfterCollapse != other->rareNonInheritedData->marginAfterCollapse
             || rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp
+            || rareNonInheritedData->m_initialLetter != other->rareNonInheritedData->m_initialLetter
             || rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
             return true;
 

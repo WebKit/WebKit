@@ -1082,6 +1082,10 @@ public:
 
     LineBoxContain lineBoxContain() const { return rareInheritedData->m_lineBoxContain; }
     const LineClampValue& lineClamp() const { return rareNonInheritedData->lineClamp; }
+    const IntSize& initialLetter() const { return rareNonInheritedData->m_initialLetter; }
+    int initialLetterDrop() const { return initialLetter().width(); }
+    int initialLetterHeight() const { return initialLetter().height(); }
+
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType() const { return static_cast<ScrollSnapType>(rareNonInheritedData->m_scrollSnapType); }
     Vector<Length> scrollSnapOffsetsX() const { return rareNonInheritedData->m_scrollSnapPoints->offsetsX; }
@@ -1612,6 +1616,9 @@ public:
 
     void setLineBoxContain(LineBoxContain c) { SET_VAR(rareInheritedData, m_lineBoxContain, c); }
     void setLineClamp(LineClampValue c) { SET_VAR(rareNonInheritedData, lineClamp, c); }
+    
+    void setInitialLetter(const IntSize& size) { SET_VAR(rareNonInheritedData, m_initialLetter, size); }
+    
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(ScrollSnapType type) { SET_VAR(rareNonInheritedData, m_scrollSnapType, type); }
     void setScrollSnapOffsetsX(Vector<Length>& offsets) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, offsetsX, offsets); }
@@ -1982,6 +1989,7 @@ public:
     static RegionFragment initialRegionFragment() { return AutoRegionFragment; }
 
     // Keep these at the end.
+    static IntSize initialInitialLetter() { return IntSize(); }
     static LineClampValue initialLineClamp() { return LineClampValue(); }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
 #if ENABLE(IOS_TEXT_AUTOSIZING)

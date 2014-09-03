@@ -2290,7 +2290,7 @@ LayoutUnit RenderBlockFlow::logicalRightOffsetForPositioningFloat(LayoutUnit log
     return adjustLogicalRightOffsetForLine(offset, applyTextIndent);
 }
 
-LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject* floatingObject, LayoutUnit logicalTopOffset) const
+LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject* floatingObject, LayoutUnit logicalTopOffset)
 {
     RenderBox& childBox = floatingObject->renderer();
     LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
@@ -2335,6 +2335,34 @@ LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject
         // |floatLogicalWidth| was capped to the available line width. See
         // fast/block/float/clamped-right-float.html.
         floatLogicalLeft -= logicalWidthForFloat(floatingObject);
+    }
+    
+    if (childBox.style().styleType() == FIRST_LETTER && childBox.style().initialLetterDrop() > 0) {
+        const RenderStyle& style = firstLineStyle();
+        const FontMetrics& fontMetrics = style.fontMetrics();
+        if (fontMetrics.hasCapHeight()) {
+            LayoutUnit heightOfLine = lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+            LayoutUnit beforeMarginBorderPadding = childBox.borderAndPaddingBefore() + childBox.marginBefore();
+            
+            // Make an adjustment to align with the cap height of a theoretical block line.
+            LayoutUnit adjustment = fontMetrics.ascent() + (heightOfLine - fontMetrics.height()) / 2 - fontMetrics.capHeight() - beforeMarginBorderPadding;
+            logicalTopOffset += adjustment;
+           
+            // For sunken and raised caps, we have to make some adjustments. Test if we're sunken or raised (dropHeightDelta will be
+            // positive for raised and negative for sunken).
+            int dropHeightDelta = childBox.style().initialLetterHeight() - childBox.style().initialLetterDrop();
+            
+            // If we're sunken, the float needs to shift down but lines still need to avoid it. In order to do that we increase the float's margin.
+            if (dropHeightDelta < 0) {
+                LayoutUnit marginTopIncrease = -dropHeightDelta * heightOfLine;
+                childBox.setMarginBefore(childBox.marginTop() + marginTopIncrease);
+            }
+            
+            // If we're raised, then we actually have to grow the height of the block, since the lines have to be pushed down as though we're placing
+            // empty lines beside the first letter.
+            if (dropHeightDelta > 0)
+                setLogicalHeight(logicalHeight() + dropHeightDelta * heightOfLine);
+        }
     }
     
     return LayoutPoint(floatLogicalLeft, logicalTopOffset);

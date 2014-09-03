@@ -75,6 +75,7 @@ void SimpleFontData::platformInit()
     unsigned unitsPerEm;
     float ascent;
     float descent;
+    float capHeight;
     float lineGap;
     float lineSpacing;
     float xHeight;
@@ -86,6 +87,7 @@ void SimpleFontData::platformInit()
         lineSpacing = fontService.lineSpacing();
         lineGap = fontService.lineGap();
         xHeight = fontService.xHeight();
+        capHeight = fontService.capHeight();
         unitsPerEm = fontService.unitsPerEm();
         familyName = adoptCF(CTFontCopyFamilyName(ctFont));
     } else {
@@ -98,6 +100,7 @@ void SimpleFontData::platformInit()
         descent = lroundf(-scaleEmToUnits(-abs(CGFontGetDescent(cgFont)), unitsPerEm) * pointSize);
         lineGap = lroundf(scaleEmToUnits(CGFontGetLeading(cgFont), unitsPerEm) * pointSize);
         xHeight = scaleEmToUnits(CGFontGetXHeight(cgFont), unitsPerEm) * pointSize;
+        capHeight = scaleEmToUnits(CGFontGetCapHeight(cgFont), unitsPerEm) * pointSize;
 
         lineSpacing = ascent + descent + lineGap;
         familyName = adoptCF(CGFontCopyFamilyName(cgFont));
@@ -109,6 +112,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setLineSpacing(lineSpacing);
     m_fontMetrics.setXHeight(xHeight);
+    m_fontMetrics.setCapHeight(capHeight);
     m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 
     if (platformData().orientation() == Vertical && !isTextOrientationFallback())

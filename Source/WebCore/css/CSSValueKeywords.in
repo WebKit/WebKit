@@ -971,6 +971,7 @@ vertical-right
 font
 glyphs
 inline-box
+initial-letter
 replaced
 
 // -webkit-font-feature-settings

@@ -1,3 +1,26 @@
+2014-09-03  David Hyatt  <hyatt@apple.com>
+
+        Add support for the initial-letter CSS property to first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=136484
+
+        Reviewed by Dean Jackson.
+
+        * fast/css-generated-content/initial-letter-basic.html: Added.
+        * fast/css-generated-content/initial-letter-border-padding.html: Added.
+        * fast/css-generated-content/initial-letter-descender.html: Added.
+        * fast/css-generated-content/initial-letter-raised.html: Added.
+        * fast/css-generated-content/initial-letter-sunken.html: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-basic-expected.png: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-basic-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-border-padding-expected.png: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-border-padding-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-descender-expected.png: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-descender-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-raised-expected.png: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-raised-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-sunken-expected.png: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-sunken-expected.txt: Added.
+
 2014-09-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test gardening.

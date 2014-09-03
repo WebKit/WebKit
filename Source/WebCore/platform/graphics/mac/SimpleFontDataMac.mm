@@ -186,18 +186,22 @@ void SimpleFontData::platformInit()
     
     int iAscent;
     int iDescent;
+    int iCapHeight;
     int iLineGap;
     unsigned unitsPerEm;
     iAscent = CGFontGetAscent(m_platformData.cgFont());
     // Some fonts erroneously specify a positive descender value. We follow Core Text in assuming that
     // such fonts meant the same distance, but in the reverse direction.
     iDescent = -abs(CGFontGetDescent(m_platformData.cgFont()));
+    iCapHeight = CGFontGetCapHeight(m_platformData.cgFont());
     iLineGap = CGFontGetLeading(m_platformData.cgFont());
     unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
 
     float pointSize = m_platformData.m_size;
     float ascent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
     float descent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+    float capHeight = scaleEmToUnits(iCapHeight, unitsPerEm) * pointSize;
+    
     float lineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
@@ -239,6 +243,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setCapHeight(capHeight);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setXHeight(xHeight);
 }

@@ -2414,6 +2414,30 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return false;
         }
         break;
+    case CSSPropertyWebkitInitialLetter: {
+        if (id == CSSValueNormal)
+            validPrimitive = true;
+        else {
+            if (num != 1 && num != 2)
+                return false;
+            validPrimitive = validUnit(value, FPositiveInteger);
+            if (!validPrimitive)
+                return false;
+            RefPtr<CSSPrimitiveValue> parsedValue1 = createPrimitiveNumericValue(value);
+            RefPtr<CSSPrimitiveValue> parsedValue2;
+            if (num == 2) {
+                value = m_valueList->next();
+                validPrimitive = validUnit(value, FPositiveInteger);
+                if (!validPrimitive)
+                    return false;
+                parsedValue2 = createPrimitiveNumericValue(value);
+            } else
+                parsedValue2 = parsedValue1;
+            addProperty(propId, createPrimitiveValuePair(parsedValue1.release(), parsedValue2.release()), important);
+            return true;
+        }
+        break;
+    }
     case CSSPropertyWebkitBoxReflect:
         if (id == CSSValueNone)
             validPrimitive = true;
@@ -9836,6 +9860,10 @@ bool CSSParser::parseLineBoxContain(bool important)
             if (lineBoxContain & LineBoxContainInlineBox)
                 return false;
             lineBoxContain |= LineBoxContainInlineBox;
+        } else if (value->id == CSSValueInitialLetter) {
+            if (lineBoxContain & LineBoxContainInitialLetter)
+                return false;
+            lineBoxContain |= LineBoxContainInitialLetter;
         } else
             return false;
     }

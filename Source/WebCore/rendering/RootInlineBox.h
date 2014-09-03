@@ -195,6 +195,7 @@ private:
     bool includeLeadingForBox(InlineBox&) const;
     bool includeFontForBox(InlineBox&) const;
     bool includeGlyphsForBox(InlineBox&) const;
+    bool includeInitialLetterForBox(InlineBox&) const;
     bool includeMarginForBox(InlineBox&) const;
 
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;

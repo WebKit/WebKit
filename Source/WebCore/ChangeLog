@@ -1,3 +1,90 @@
+2014-09-03  David Hyatt  <hyatt@apple.com>
+
+        Add support for the initial-letter CSS property to first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=136484
+
+        Reviewed by Dean Jackson.
+        
+        New tests in fast/css-generated-content/initial-letter-*.html
+
+        This patch add support for the CSS initial-letter property, enabling
+        better drop caps support in WebKit. Letters size to a specified number of
+        paragraph lines, and align to the cap-height of the first line and the baseline
+        of the last line.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        Add -webkit-initial-letter to the list.
+
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::customCSSText):
+        * css/CSSLineBoxContainValue.h:
+        Add support for a new value of line-box-contain, initial-letter, that causes
+        lines to use cap-height above the baseline and the glyph bounds below the
+        baseline.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        Add support for parsing of initial-letter.
+
+        (WebCore::CSSParser::parseLineBoxContain):
+        Add the new line-box-contain value for first-letters with initial-letter set.
+
+        * css/CSSPropertyNames.in:
+        Add the new initial-letter property.
+
+        * css/CSSValueKeywords.in:
+        Add the new initial-letter line-box-contain value.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        Map initial-letter into the RenderStyle.
+
+        * platform/graphics/FontMetrics.h:
+        (WebCore::FontMetrics::hasCapHeight):
+        (WebCore::FontMetrics::floatCapHeight):
+        (WebCore::FontMetrics::setCapHeight):
+        (WebCore::FontMetrics::capHeight):
+        * platform/graphics/ios/SimpleFontDataIOS.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        Add support for cap-height to the font system. iOS and Mac have been patched.
+        Other platforms will need to add support for cap-height to get this feature.
+        hasCapHeight() will return false for unsupported platforms for graceful
+        degradation.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::styleForFirstLetter):
+        Modified to check for initialLetterDrop/Height and to adjust the style
+        accordingly (e.g., to apply float when needed).
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        Code to adjust the float's position and margin to do cap-height alignment
+        and sunken letters.
+
+        * rendering/RenderBlockFlow.h:
+        Remove the const from computeLogicalLocationForFloat, since the margin of the
+        float can now be modified dynamically for sunken first-letters.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        Add support for initial-letter line-box-contain value.
+
+        * rendering/RootInlineBox.h:
+        Add the includeInitialLetterForBox method to support the new line-box-contain value.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        Normal maintenance stuff for addition of a new CSS property (making sure it is diffed
+        properly for layout changes and copied on assignment, etc.)
+
 2014-09-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Prevent double-release on AVCFURLAssetRef

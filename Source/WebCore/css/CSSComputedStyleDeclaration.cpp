@@ -316,6 +316,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitHyphenateLimitBefore,
     CSSPropertyWebkitHyphenateLimitLines,
     CSSPropertyWebkitHyphens,
+    CSSPropertyWebkitInitialLetter,
     CSSPropertyWebkitLineAlign,
     CSSPropertyWebkitLineBoxContain,
     CSSPropertyWebkitLineBreak,
@@ -2709,6 +2710,11 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitFontSizeDelta:
             // Not a real style property -- used by the editing engine -- so has no computed value.
             break;
+        case CSSPropertyWebkitInitialLetter: {
+            RefPtr<CSSPrimitiveValue> drop = !style->initialLetterDrop() ? cssValuePool().createIdentifierValue(CSSValueNormal) : cssValuePool().createValue(style->initialLetterDrop(), CSSPrimitiveValue::CSS_NUMBER);
+            RefPtr<CSSPrimitiveValue> size = !style->initialLetterHeight() ? cssValuePool().createIdentifierValue(CSSValueNormal) : cssValuePool().createValue(style->initialLetterHeight(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool().createValue(Pair::create(drop.release(), size.release()));
+        }
         case CSSPropertyWebkitMarginBottomCollapse:
         case CSSPropertyWebkitMarginAfterCollapse:
             return cssValuePool().createValue(style->marginAfterCollapse());
