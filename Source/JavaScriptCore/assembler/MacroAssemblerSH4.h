@@ -931,6 +931,19 @@ public:
         releaseScratch(srcval);
     }
 
+    void store8(TrustedImm32 imm, Address address)
+    {
+        ASSERT((imm.m_value >= -128) && (imm.m_value <= 127));
+        RegisterID dstptr = claimScratch();
+        move(address.base, dstptr);
+        add32(TrustedImm32(address.offset), dstptr);
+        RegisterID srcval = claimScratch();
+        move(imm, srcval);
+        m_assembler.movbRegMem(srcval, dstptr);
+        releaseScratch(dstptr);
+        releaseScratch(srcval);
+    }
+
     void store16(RegisterID src, BaseIndex address)
     {
         RegisterID scr = claimScratch();
@@ -1733,6 +1746,14 @@ public:
         return dataLabel;
     }
 
+    DataLabel32 moveWithPatch(TrustedImm32 initialValue, RegisterID dest)
+    {
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize, sizeof(uint32_t));
+        DataLabel32 dataLabel(this);
+        m_assembler.loadConstantUnReusable(static_cast<uint32_t>(initialValue.m_value), dest);
+        return dataLabel;
+    }
+
     void move(RegisterID src, RegisterID dest)
     {
         if (src != dest)
@@ -2140,6 +2161,29 @@ public:
         return result ? branchTrue() : branchFalse();
     }
 
+    Jump branchAdd32(ResultCondition cond, Address src, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
+
+        if (cond == Overflow) {
+            RegisterID srcVal = claimScratch();
+            load32(src, srcVal);
+            m_assembler.addvlRegReg(srcVal, dest);
+            releaseScratch(srcVal);
+            return branchTrue();
+        }
+
+        add32(src, dest);
+
+        if ((cond == Signed) || (cond == PositiveOrZero)) {
+            m_assembler.cmppz(dest);
+            return (cond == Signed) ? branchFalse() : branchTrue();
+        }
+
+        compare32(0, dest, Equal);
+        return (cond == NonZero) ? branchFalse() : branchTrue();
+    }
+
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
@@ -2419,6 +2463,23 @@ public:
         return branchTrue();
     }
 
+    Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        RegisterID scr = claimScratch();
+
+        m_assembler.loadConstant(left.offset, scr);
+        m_assembler.addlRegReg(left.base, scr);
+        m_assembler.movlMemReg(scr, scr);
+        RegisterID scr1 = claimScratch();
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize + 10, 2 * sizeof(uint32_t));
+        dataLabel = moveWithPatch(initialRightValue, scr1);
+        m_assembler.cmplRegReg(scr1, scr, SH4Condition(cond));
+        releaseScratch(scr);
+        releaseScratch(scr1);
+
+        return (cond == NotEqual) ? branchFalse() : branchTrue();
+    }
+
     void ret()
     {
         m_assembler.ret();
@@ -2468,6 +2529,18 @@ public:
         m_assembler.synco();
     }
 
+    void abortWithReason(AbortReason reason)
+    {
+        move(TrustedImm32(reason), SH4Registers::r0);
+        breakpoint();
+    }
+
+    void abortWithReason(AbortReason reason, intptr_t misc)
+    {
+        move(TrustedImm32(misc), SH4Registers::r1);
+        abortWithReason(reason);
+    }
+
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         return FunctionPtr(reinterpret_cast<void(*)()>(SH4Assembler::readCallTarget(call.dataLocation())));
@@ -2485,6 +2558,8 @@ public:
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
 
+    static bool canJumpReplacePatchableBranch32WithPatch() { return false; }
+
     static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
         return label.labelAtOffset(0);
@@ -2501,7 +2576,18 @@ public:
         return CodeLocationLabel();
     }
 
+    static CodeLocationLabel startOfPatchableBranch32WithPatchOnAddress(CodeLocationDataLabel32)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
+    }
+
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel, Address, void*)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    static void revertJumpReplacementToPatchableBranch32WithPatch(CodeLocationLabel, Address, int32_t)
     {
         UNREACHABLE_FOR_PLATFORM();
     }

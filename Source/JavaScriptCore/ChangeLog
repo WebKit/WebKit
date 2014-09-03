@@ -1,3 +1,23 @@
+2014-09-03  Julien Brianceau   <jbriance@cisco.com>
+
+        Add missing implementations to fix build for sh4 architecture
+        https://bugs.webkit.org/show_bug.cgi?id=136455
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::store8):
+        (JSC::MacroAssemblerSH4::moveWithPatch):
+        (JSC::MacroAssemblerSH4::branchAdd32):
+        (JSC::MacroAssemblerSH4::branch32WithPatch):
+        (JSC::MacroAssemblerSH4::abortWithReason):
+        (JSC::MacroAssemblerSH4::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerSH4::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerSH4::revertJumpReplacementToPatchableBranch32WithPatch):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitFunctionPrologue):
+        (JSC::AssemblyHelpers::emitFunctionEpilogue):
+
 2014-09-03  Dan Bernstein  <mitz@apple.com>
 
         Get rid of HIGH_DPI_CANVAS leftovers

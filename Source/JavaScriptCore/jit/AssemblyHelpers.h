@@ -223,6 +223,20 @@ public:
         return 2 * sizeof(void*);
     }
 
+    void emitFunctionPrologue()
+    {
+        push(linkRegister);
+        push(framePointerRegister);
+        move(stackPointerRegister, framePointerRegister);
+    }
+
+    void emitFunctionEpilogue()
+    {
+        move(framePointerRegister, stackPointerRegister);
+        pop(framePointerRegister);
+        pop(linkRegister);
+    }
+
     ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
     {
         m_assembler.stspr(reg);
