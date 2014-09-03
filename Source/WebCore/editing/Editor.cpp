@@ -104,7 +104,6 @@
 
 namespace WebCore {
 
-#if PLATFORM(IOS)
 class ClearTextCommand : public DeleteSelectionCommand {
 public:
     ClearTextCommand(Document& document);
@@ -138,7 +137,6 @@ void ClearTextCommand::CreateAndApply(const RefPtr<Frame> frame)
     clearCommand->setStartingSelection(oldSelection);
     applyCommand(clearCommand.release());
 }
-#endif
 
 using namespace HTMLNames;
 using namespace WTF;
@@ -442,12 +440,12 @@ void Editor::deleteSelectionWithSmartDelete(bool smartDelete)
     applyCommand(DeleteSelectionCommand::create(document(), smartDelete));
 }
 
-#if PLATFORM(IOS)
 void Editor::clearText()
 {
     ClearTextCommand::CreateAndApply(&m_frame);
 }
 
+#if PLATFORM(IOS)
 void Editor::insertDictationPhrases(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata)
 {
     if (m_frame.selection().isNone())

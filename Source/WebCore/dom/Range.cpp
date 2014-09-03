@@ -109,14 +109,12 @@ PassRefPtr<Range> Range::create(ScriptExecutionContext& context)
     return adoptRef(new Range(toDocument(context)));
 }
 
-#if PLATFORM(IOS)
 PassRefPtr<Range> Range::create(Document& ownerDocument, const VisiblePosition& visibleStart, const VisiblePosition& visibleEnd)
 {
     Position start = visibleStart.deepEquivalent().parentAnchoredEquivalent();
     Position end = visibleEnd.deepEquivalent().parentAnchoredEquivalent();
     return adoptRef(new Range(ownerDocument, start.anchorNode(), start.deprecatedEditingOffset(), end.anchorNode(), end.deprecatedEditingOffset()));
 }
-#endif
 
 Range::~Range()
 {

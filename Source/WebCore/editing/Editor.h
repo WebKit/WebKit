@@ -175,8 +175,8 @@ public:
 
     WEBCORE_EXPORT bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
     WEBCORE_EXPORT void deleteSelectionWithSmartDelete(bool smartDelete);
-#if PLATFORM(IOS)
     void clearText();
+#if PLATFORM(IOS)
     WEBCORE_EXPORT void removeUnchangeableStyles();
 #endif
     

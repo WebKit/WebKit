@@ -96,7 +96,6 @@ WEBCORE_EXPORT VisiblePosition startOfEditableContent(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition endOfEditableContent(const VisiblePosition&);
 WEBCORE_EXPORT bool isEndOfEditableOrNonEditableContent(const VisiblePosition&);
 
-#if PLATFORM(IOS)
 WEBCORE_EXPORT bool atBoundaryOfGranularity(const VisiblePosition&, TextGranularity, SelectionDirection);
 WEBCORE_EXPORT bool withinTextUnitOfGranularity(const VisiblePosition&, TextGranularity, SelectionDirection);
 WEBCORE_EXPORT VisiblePosition positionOfNextBoundaryOfGranularity(const VisiblePosition&, TextGranularity, SelectionDirection);
@@ -105,7 +104,6 @@ WEBCORE_EXPORT int distanceBetweenPositions(const VisiblePosition&, const Visibl
 WEBCORE_EXPORT PassRefPtr<Range> wordRangeFromPosition(const VisiblePosition& position);
 WEBCORE_EXPORT VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
 WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
-#endif
 } // namespace WebCore
 
 #endif // VisibleUnits_h
