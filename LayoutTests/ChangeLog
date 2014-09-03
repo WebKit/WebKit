@@ -1,3 +1,17 @@
+2014-09-03  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Enable Page Caching
+        https://bugs.webkit.org/show_bug.cgi?id=136044
+
+        Reviewed by Andreas Kling.
+
+        Adding test that loads a font then navigates away and back.
+        Test must also be disabled while feature is turned off.
+
+        * TestExpectations: Skip test.
+        * fast/css/fontloader-page-cache-expected.txt: Added.
+        * fast/css/fontloader-page-cache.html: Added.
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         LegacyProfiler: remove redundant ProfileNode members and other cleanup

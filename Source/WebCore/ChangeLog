@@ -1,3 +1,37 @@
+2014-09-03  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Enable Page Caching
+        https://bugs.webkit.org/show_bug.cgi?id=136044
+
+        Reviewed by Andreas Kling.
+
+        Modifying FontLoader to track fonts loaded via the loadFont
+        method as well as via CSS rules. Fonts loaded via loadFont are
+        tracked in m_numLoadingFromJS, while fonts loaded via CSS rules
+        are tracked in m_numLoadingFromCSS. The page is cacheable when no
+        fonts are currently loading.
+
+        Added fast/css/fontloader-page-cache.html
+
+        * css/FontLoader.cpp:
+        (WebCore::LoadFontCallback::create): Modified to take and store
+        the number of fonts it will be loading.
+        (WebCore::LoadFontCallback::createFromParams): Ditto.
+        (WebCore::LoadFontCallback::familyCount): Getter for number of
+        fonts loaded via this callback.
+        (WebCore::LoadFontCallback::LoadFontCallback):
+        (WebCore::LoadFontCallback::notifyLoaded): Callback the FontLoader
+        to let it update its count when all the fonts have finished loading.
+        (WebCore::FontLoader::loadFontDone): Ditto.
+        (WebCore::FontLoader::FontLoader):
+        (WebCore::FontLoader::beginFontLoading): Track the number of fonts
+        loading.
+        (WebCore::FontLoader::fontLoaded): Ditto.
+        (WebCore::FontLoader::loadError): Ditto.
+        (WebCore::FontLoader::loadFont):
+        * css/FontLoader.h:
+        (WebCore::FontLoader::loading):
+
 2014-08-29  Gavin Barraclough  <barraclough@apple.com>
 
         Simplify DOMTimer::adjustMinimumTimerInterval -> updateTimerIntervalIfNecessary

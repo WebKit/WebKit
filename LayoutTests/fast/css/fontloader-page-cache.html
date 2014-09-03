@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<style>
+@font-face {
+    font-family: TestFont;
+    src: url(../../resources/Ahem.ttf);
+}
+</style>
+<script>
+var timeoutValue = 100; //ms
+
+var timestamp;
+function verify() {
+    document.getElementById("result").innerHTML =
+        document.fonts.checkFont("10px TestFont") ? 'PASS' : 'FAIL with TestFont missing';
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+    document.fonts.loadFont({ font: '10px TestFont', onsuccess: onsuccess, onerror: onerror });
+}
+
+function onsuccess() {
+    window.setTimeout(verify, timeoutValue);
+    window.setTimeout(function() {
+    window.location.href = "data:text/html,<body onload='history.back()'></body>";
+}, 0);
+}
+
+function onerror() {
+    document.getElementById("result").innerHTML = "FAIL with font load error";
+    testRunner.notifyDone();
+}
+
+</script>
+<body onload='runTest()'>
+This test verifies that the page cache preserves pages with fonts loaded via the document.fonts API. The test loads a font, then navigates away and back, confirming that the font remains loaded. If successful, it outputs 'PASS' below.
+<div id="result"></div>
+</body>
+</html>

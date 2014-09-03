@@ -140,6 +140,7 @@ webkit.org/b/135390 fast/css/fontloader-loadingdone.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-multiple-faces-download-error.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-multiple-faces.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-multiple-families.html [ Skip ]
+webkit.org/b/135390 fast/css/fontloader-page-cache.html [ Skip ]
 webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Skip ]
 
 # Various failures from the W3C CSS Shapes test suite import
