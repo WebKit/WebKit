@@ -1,3 +1,42 @@
+2014-09-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Support using Foundation networking code
+        https://bugs.webkit.org/show_bug.cgi?id=136467
+
+        Reviewed by Pratik Solanki.
+
+        We should support building iOS WebKit with the Foundation networking code
+        (i.e. !USE(CFNETWORK)).
+
+        Additionally, disable USE(CFNETWORK) and use the Foundation networking code
+        by default when building iOS WebKit without the Apple Internal SDK.
+
+        * Configurations/WebCore.xcconfig: Remove file WebCoreURLResponse.mm from the list of excluded files
+        so that we compile an implementation for function WebCore::synthesizeRedirectResponseIfNecessary when
+        building without USE(CFNETWORK).
+        * WebCore.exp.in: Add symbols for WebCore::synthesizeRedirectResponseIfNecessary() and WebCore::ResourceHandleClient::willCacheResponseAsync().
+        * WebCore.xcodeproj/project.pbxproj: Add new files CFNetworkConnectionCacheSPI.h and CFURLRequestSPI.h.
+        Also move group platform/spi such that it appears in alphabetical order in the platform group.
+        * platform/cf/URLCF.cpp: Remove unnecessary header <CoreFoundation/CFPriv.h>.
+        * platform/network/ResourceHandle.h: Declare iOS-specific variant of ResourceHandle::createNSURLConnection().
+        * platform/network/ResourceHandleClient.h: Always include header <wtf/RetainPtr.h> when building for iOS.
+        (WebCore::ResourceHandleClient::connectionProperties): Add PLATFORM(IOS)-guard around declaration.
+        * platform/network/cf/ResourceRequestCFNet.cpp: Substitute header CFNetworkConnectionCacheSPI.h for
+        <CFNetwork/CFNetworkConnectionCachePriv.h>.
+        * platform/network/mac/CredentialStorageMac.mm:
+        (WebCore::CredentialStorage::saveToPersistentStorage): Use Credential::nsCredential() and ProtectionSpace::nsSpace()
+        instead of WebCore::mac(const {Credential, ProtectionSpace}&) as the latter were removed in <http://trac.webkit.org/changeset/171801>
+        and <http://trac.webkit.org/changeset/171540>, respectively.
+        * platform/network/mac/ResourceErrorMac.mm: Add USE(CFNETWORK)-guard around <CFNetwork/CFSocketStreamPriv.h>.
+        * platform/network/mac/ResourceHandleMac.mm: Substitute header CFURLRequestSPI.h for <CFNetwork/CFURLRequest.h>.
+        (WebCore::ResourceHandle::start): Modified to use ResourceHandle::makeDelegate() instead of d->m_proxy, which 
+        was removed in <http://trac.webkit.org/changeset/147476>.
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Ditto.
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::synthesizeRedirectResponseIfNecessary): Add !USE(CFNETWORK)- and PLATFORM(IOS)- guards.
+        * platform/spi/cf/CFNetworkConnectionCacheSPI.h: Added.
+        * platform/spi/cf/CFURLRequestSPI.h: Added.
+
 2014-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use references in public EventSender functions

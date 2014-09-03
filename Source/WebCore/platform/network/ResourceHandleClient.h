@@ -32,6 +32,9 @@
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
+#endif
+
+#if PLATFORM(IOS) || USE(CFNETWORK)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -115,9 +118,12 @@ namespace WebCore {
 #endif
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
+#if PLATFORM(IOS)
+        virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
+#endif
+
 #if USE(CFNETWORK)
         virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
-        virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
 #if PLATFORM(WIN)
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif // PLATFORM(WIN)

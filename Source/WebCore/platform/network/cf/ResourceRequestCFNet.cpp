@@ -38,9 +38,10 @@
 #include "FormDataStreamCFNet.h"
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <wtf/text/CString.h>
-#if PLATFORM(IOS)
-#include <CFNetwork/CFNetworkConnectionCachePriv.h>
 #endif
+
+#if PLATFORM(IOS)
+#include "CFNetworkConnectionCacheSPI.h"
 #endif
 
 #if PLATFORM(COCOA)

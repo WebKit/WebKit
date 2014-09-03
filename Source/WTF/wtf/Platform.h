@@ -451,6 +451,12 @@
 #define WTF_PLATFORM_COCOA 1
 #endif
 
+#if PLATFORM(COCOA)
+#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
+#define WTF_USE_APPLE_INTERNAL_SDK 1
+#endif
+#endif
+
 /* Graphics engines */
 
 /* USE(CG) and PLATFORM(CI) */
@@ -508,7 +514,9 @@
 
 #define DONT_FINALIZE_ON_MAIN_THREAD 1
 #define HAVE_READLINE 1
+#if USE(APPLE_INTERNAL_SDK)
 #define WTF_USE_CFNETWORK 1
+#endif
 #define WTF_USE_UIKIT_EDITING 1
 #define WTF_USE_WEB_THREAD 1
 #define WTF_USE_QUICK_LOOK 1
@@ -1052,12 +1060,6 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #define WTF_USE_ASYNC_NSTEXTINPUTCLIENT 1
-#endif
-
-#if PLATFORM(COCOA)
-#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
-#define WTF_USE_APPLE_INTERNAL_SDK 1
-#endif
 #endif
 
 #if (OS(DARWIN) && USE(CG)) || USE(FREETYPE) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))

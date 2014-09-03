@@ -31,9 +31,8 @@
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && USE(CFNETWORK)
 #import <CFNetwork/CFSocketStreamPriv.h>
-#import <Foundation/NSURLError.h>
 #endif
 
 @interface NSError (WebExtras)

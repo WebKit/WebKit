@@ -290,8 +290,12 @@ private:
     void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior, CFDictionaryRef clientProperties);
 #endif
 
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
+#if PLATFORM(MAC) && !USE(CFNETWORK)
     void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior);
+#endif
+
+#if PLATFORM(IOS) && !USE(CFNETWORK)
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior, NSDictionary *connectionProperties);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_TIMING)

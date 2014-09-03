@@ -75,8 +75,7 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 #endif
 
 #if PLATFORM(IOS)
-#import <CFNetwork/CFURLRequest.h>
-
+#import "CFURLRequestSPI.h"
 #import "RuntimeApplicationChecksIOS.h"
 #import "WebCoreThreadRun.h"
 
@@ -106,6 +105,7 @@ static void applyBasicAuthorizationHeader(ResourceRequest& request, const Creden
     request.setHTTPHeaderField(HTTPHeaderName::Authorization, authenticationHeader);
 }
 
+#if !PLATFORM(IOS)
 static NSOperationQueue *operationQueueForAsyncClients()
 {
     static NSOperationQueue *queue;
@@ -116,6 +116,7 @@ static NSOperationQueue *operationQueueForAsyncClients()
     }
     return queue;
 }
+#endif
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -252,11 +253,11 @@ bool ResourceHandle::start()
         SchedulingBehavior::Asynchronous);
 #else
     createNSURLConnection(
-        d->m_proxy.get(),
+        ResourceHandle::makeDelegate(shouldUseCredentialStorage),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
         SchedulingBehavior::Asynchronous,
-        (NSDictionary *)client()->connectionProperties(this));
+        (NSDictionary *)client()->connectionProperties(this).get());
 #endif
 
 #if PLATFORM(IOS)
@@ -409,8 +410,8 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         return;
     }
 
-#if !PLATFORM(IOS)
     bool shouldUseCredentialStorage = storedCredentials == AllowStoredCredentials;
+#if !PLATFORM(IOS)
     handle->createNSURLConnection(
         handle->makeDelegate(shouldUseCredentialStorage),
         shouldUseCredentialStorage,
@@ -418,11 +419,11 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         SchedulingBehavior::Synchronous);
 #else
     handle->createNSURLConnection(
-        handle->delegate(), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
-        storedCredentials == AllowStoredCredentials,
+        handle->makeDelegate(shouldUseCredentialStorage), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
+        shouldUseCredentialStorage,
         handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()),
         SchedulingBehavior::Synchronous,
-        (NSDictionary *)handle->client()->connectionProperties(handle.get()));
+        (NSDictionary *)handle->client()->connectionProperties(handle.get()).get());
 #endif
 
     [handle->connection() scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:(NSString *)synchronousLoadRunLoopMode()];

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "URL.h"
+#ifndef CFURLRequestSPI_h
+#define CFURLRequestSPI_h
 
-#include "CFURLExtras.h"
-#include <CoreFoundation/CFURL.h>
-#include <wtf/text/CString.h>
-
-#if PLATFORM(IOS)
-#include "RuntimeApplicationChecksIOS.h"
-#endif
-
-namespace WebCore {
-
-URL::URL(CFURLRef url)
-{
-    if (!url) {
-        invalidate();
-        return;
-    }
-
-    // FIXME: Why is it OK to ignore base URL here?
-    CString urlBytes;
-    getURLBytes(url, urlBytes);
-    parse(urlBytes.data());
-}
-
-#if !USE(FOUNDATION)
-RetainPtr<CFURLRef> URL::createCFURL() const
-{
-    // FIXME: What should this return for invalid URLs?
-    // Currently it throws away the high bytes of the characters in the string in that case,
-    // which is clearly wrong.
-    URLCharBuffer buffer;
-    copyToBuffer(buffer);
-    return createCFURLFromBuffer(buffer.data(), buffer.size());
-}
-#endif
-
-String URL::fileSystemPath() const
-{
-    RetainPtr<CFURLRef> cfURL = createCFURL();
-    if (!cfURL)
-        return String();
-
-#if PLATFORM(WIN)
-    CFURLPathStyle pathStyle = kCFURLWindowsPathStyle;
+#if USE(APPLE_INTERNAL_SDK)
+#include <CFNetwork/CFURLRequest.h>
 #else
-    CFURLPathStyle pathStyle = kCFURLPOSIXPathStyle;
+#include <CoreFoundation/CFBase.h>
+typedef const struct _CFURLRequest *CFURLRequestRef;
 #endif
-    return adoptCF(CFURLCopyFileSystemPath(cfURL.get(), pathStyle)).get();
-}
 
-}
+extern "C" void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
+
+#endif
