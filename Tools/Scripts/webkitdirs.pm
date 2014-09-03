@@ -762,61 +762,41 @@ sub safariPathFromSafariBundle
 {
     my ($safariBundle) = @_;
 
-    if (isAppleMacWebKit()) {
-        my $safariPath = "$safariBundle/Contents/MacOS/Safari";
-        return $safariPath if skipSafariExecutableEntitlementChecks();
+    die "Safari path is only relevant on Apple Mac platform\n" unless isAppleMacWebKit();
 
-        my $safariForWebKitDevelopmentPath = "$safariBundle/Contents/MacOS/SafariForWebKitDevelopment";
-        return $safariForWebKitDevelopmentPath if -f $safariForWebKitDevelopmentPath && executableHasEntitlements($safariPath);
+    my $safariPath = "$safariBundle/Contents/MacOS/Safari";
+    return $safariPath if skipSafariExecutableEntitlementChecks();
 
-        return $safariPath;
-    }
-    return $safariBundle if isAppleWinWebKit();
+    my $safariForWebKitDevelopmentPath = "$safariBundle/Contents/MacOS/SafariForWebKitDevelopment";
+    return $safariForWebKitDevelopmentPath if -f $safariForWebKitDevelopmentPath && executableHasEntitlements($safariPath);
+
+    return $safariPath;
 }
 
 sub installedSafariPath
 {
-    my $safariBundle;
-
-    if (isAppleMacWebKit()) {
-        $safariBundle = "/Applications/Safari.app";
-    } elsif (isAppleWinWebKit()) {
-        $safariBundle = readRegistryString("/HKLM/SOFTWARE/Apple Inc./Safari/InstallDir");
-        $safariBundle =~ s/[\r\n]+$//;
-        $safariBundle = `cygpath -u '$safariBundle'` if isCygwin();
-        $safariBundle =~ s/[\r\n]+$//;
-        $safariBundle .= "Safari.exe";
-    }
-
-    return safariPathFromSafariBundle($safariBundle);
+    return safariPathFromSafariBundle("/Applications/Safari.app");
 }
 
 # Locate Safari.
 sub safariPath
 {
+    die "Safari path is only relevant on Apple Mac platform\n" unless isAppleMacWebKit();
+
     # Use WEBKIT_SAFARI environment variable if present.
     my $safariBundle = $ENV{WEBKIT_SAFARI};
     if (!$safariBundle) {
         determineConfigurationProductDir();
         # Use Safari.app in product directory if present (good for Safari development team).
-        if (isAppleMacWebKit() && -d "$configurationProductDir/Safari.app") {
+        if (-d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
-        } elsif (isAppleWinWebKit()) {
-            my $path = "$configurationProductDir/Safari.exe";
-            my $debugPath = "$configurationProductDir/Safari_debug.exe";
-
-            if (configuration() eq "Debug_All" && -x $debugPath) {
-                $safariBundle = $debugPath;
-            } elsif (-x $path) {
-                $safariBundle = $path;
-            }
         }
         if (!$safariBundle) {
             return installedSafariPath();
         }
     }
     my $safariPath = safariPathFromSafariBundle($safariBundle);
-    die "Can't find executable at $safariPath.\n" if isAppleMacWebKit() && !-x $safariPath;
+    die "Can't find executable at $safariPath.\n" if !-x $safariPath;
     return $safariPath;
 }
 
@@ -1997,11 +1977,6 @@ sub promptUser
 
 sub appleApplicationSupportPath
 {
-    if (isWin64()) {
-        # FIXME (125180): Remove the following once official 64-bit Windows support is available.
-        return $ENV{"WEBKIT_64_SUPPORT"}, "\n" if isWin64();
-    }
-
     open INSTALL_DIR, "</proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Apple\ Inc./Apple\ Application\ Support/InstallDir";
     my $path = <INSTALL_DIR>;
     $path =~ s/[\r\n\x00].*//;
@@ -2017,7 +1992,7 @@ sub setPathForRunningWebKitApp
     my ($env) = @_;
 
     if (isAppleWinWebKit()) {
-        $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
+        $env->{PATH} = join(':', productDir(), appleApplicationSupportPath(), $env->{PATH} || "");
     } elsif (isWinCairo()) {
         my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
         my $gstreamerBin = isWin64() ? $ENV{"GSTREAMER_1_0_ROOT_X86_64"} . "bin" : $ENV{"GSTREAMER_1_0_ROOT_X86"} . "bin";

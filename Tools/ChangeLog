@@ -1,3 +1,27 @@
+2014-09-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Revise test environment for Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=136486
+
+        Reviewed by David Kilzer.
+
+        The various calls to get the Safari path really only have
+        meaning on the Mac. Other ports get access to the build
+        and test environment separately, so remove the various
+        checks in the Safari-specific code to simplify things.
+
+        Remove some 64-bit hacks used on Windows now that the
+        various tools know how to find the 64-bit runtime environment.
+
+        * Scripts/run-javascriptcore-tests: 
+        * Scripts/webkitdirs.pm:
+        (safariPathFromSafariBundle): Revise to expect Mac.
+        (installedSafariPath): Ditto.
+        (safariPath): Ditto.
+        (appleApplicationSupportPath): Get rid of 64-bit Windows hack.
+        (setPathForRunningWebKitApp): Get rid of unused SafariPath
+        argument for Windows runs.
+
 2014-09-03  Dana Burkart  <dburkart@apple.com>
 
         Dashboard should show performance bots.
