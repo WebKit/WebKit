@@ -1,9 +1,9 @@
-Test style update caused by class changes on a sibling. This test does not use any sibling "~" combinator to avoid its more generic marking.
+Test style update caused by id changes on a direct adjacent. This test does not use any sibling "~" combinator to avoid its more generic marking.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Initial state does not match, the class is not there.
+Initial state does not match, there is no id defined.
 PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
@@ -12,7 +12,7 @@ PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rg
 PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(0, 0, 0)"
-Adding the class, the extra rules should match.
+Adding the id, we should have a match.
 PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(1, 2, 3)"
 PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(1, 2, 3)"
@@ -21,7 +21,16 @@ PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rg
 PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(4, 5, 6)"
 PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
 PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(4, 5, 6)"
-Removing the class, we should be back to the original state.
+Removing the id, we should not longer match.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(0, 0, 0)"
+Setting the id to a different value, we should not match.
 PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
 PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"

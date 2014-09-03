@@ -6154,12 +6154,17 @@ static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
     if (node.needsStyleRecalc())
         return true;
 
-    for (const Element* ancestor = node.parentOrShadowHostElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+    const Node* currentNode = &node;
+    const Element* ancestor = currentNode->parentOrShadowHostElement();
+    while (ancestor) {
         if (ancestor->needsStyleRecalc())
             return true;
 
-        if (ancestor->directChildNeedsStyleRecalc() && (ancestor->childrenAffectedByDirectAdjacentRules() || ancestor->childrenAffectedByForwardPositionalRules()))
+        if (ancestor->directChildNeedsStyleRecalc() && currentNode->styleIsAffectedByPreviousSibling())
             return true;
+
+        currentNode = ancestor;
+        ancestor = currentNode->parentOrShadowHostElement();
     }
     return false;
 }

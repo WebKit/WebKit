@@ -88,7 +88,7 @@ public:
     bool hasDirectionAuto() const;
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
-    bool isHTMLUnknownElement() const { return getFlag(IsHTMLUnknownElementFlag); }
+    virtual bool isHTMLUnknownElement() const { return false; }
     virtual bool isTextControlInnerTextElement() const { return false; }
 
     virtual bool willRespondToMouseMoveEvents() override;

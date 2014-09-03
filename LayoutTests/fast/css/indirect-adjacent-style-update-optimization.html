@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: rgb(255, 254, 253);
+}
+source.property ~ target {
+    background-color: rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+    <div class="test-case">
+        <padding></padding>
+        <source class="foo property bar"></source>
+        <intermediary></intermediary>
+        <target></target>
+        <padding></padding>
+    </div>
+    <div class="test-case" style="display:none;">
+        <padding></padding>
+        <source class="foo property bar"></source>
+        <intermediary></intermediary>
+        <target></target>
+        <padding></padding>
+    </div>
+</body>
+<script>
+description('This test checks the style invalidation does not dirty elements that cannot be affected by the changes.');
+
+function testColor(expectedMatch)
+{
+    var others = document.querySelectorAll(".test-case, .test-case :not(target)");
+    for (var i = 0; i < others.length; ++i)
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[' + i + ']).backgroundColor', 'rgb(255, 254, 253)');
+    var targets = document.querySelectorAll("target");
+    for (var i = 0; i < targets.length; ++i)
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[' + i + ']).backgroundColor', expectedMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 254, 253)');
+}
+
+function elementsWithTagnameNeedsStyleRecalc(expectedTagnameNeedingStyleRecalc)
+{
+    // We cannot modify the DOM here or we could cause a style recalculation.
+    var allContent = document.querySelectorAll(".test-case, .test-case *");
+    for (var i = 0; i < allContent.length; ++i) {
+        var expected = expectedTagnameNeedingStyleRecalc.indexOf(allContent[i].tagName) >= 0;
+        if (internals.nodeNeedsStyleRecalc(allContent[i]) != expected) {
+            debug("Expected &lt;" + allContent[i].tagName + "&gt; to be " + expected + ", it wasn't :(");
+            return false;
+        }
+    }
+    return true;
+}
+
+debug("Initially, we should have a match. After getting the style, nothing should require a style recalc.");
+testColor(true);
+shouldBeTrue('elementsWithTagnameNeedsStyleRecalc([])');
+
+debug("Let's remove the class \"property\".");
+var allSources = document.querySelectorAll("source");
+for (var i = 0; i < allSources.length; ++i)
+    allSources[i].classList.remove("property");
+
+debug("Source should require a style recalc.");
+shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["SOURCE"])');
+
+debug("We should no longer have a match. Let's add back the class \"property\". Then we get the style of everything except &lt;source&gt; and &lt;target&gt;. Since none of the style touched above are related to the dirty elements, &lt;source&gt; should still require a style recalc.");
+
+// This should clear the dirty style.
+testColor(false);
+
+// Add the class without touching anything else
+var allSources = document.querySelectorAll("source");
+for (var i = 0; i < allSources.length; ++i)
+    allSources[i].classList.add("property");
+
+var others = document.querySelectorAll(".test-case, .test-case :not(target):not(source)");
+for (var i = 0; i < others.length; ++i) {
+    if (getComputedStyle(others[i]).backgroundColor != 'rgb(255, 254, 253)')
+        debug("Something horribly wrong is happening.");
+}
+
+shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["SOURCE"])');
+
+debug("We should match again now that property is back.");
+testColor(true);
+
+debug("Removing the &lt;source&gt; should invalidate the &lt;target&gt;, and nothing else.");
+for (var i = 0; i < allSources.length; ++i)
+    allSources[i].parentElement.removeChild(allSources[i]);
+shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["TARGET"])');
+
+debug("We should no longer match.");
+testColor(false);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

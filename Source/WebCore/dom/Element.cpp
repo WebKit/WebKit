@@ -1540,8 +1540,8 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
 {
     // :empty selector.
     checkForEmptyStyleChange(*parent);
-    
-    if (parent->needsStyleRecalc() && parent->childrenAffectedByPositionalRules())
+
+    if (parent->styleChangeType() >= FullStyleChange)
         return;
 
     // :first-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
@@ -1588,20 +1588,26 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
         }
     }
 
-    // The + selector.  We need to invalidate the first element following the insertion point.  It is the only possible element
-    // that could be affected by this DOM change.
-    if (parent->childrenAffectedByDirectAdjacentRules() && elementAfterChange)
-        elementAfterChange->setNeedsStyleRecalc();
+    if (elementAfterChange) {
+        if (elementAfterChange->styleIsAffectedByPreviousSibling())
+            elementAfterChange->setNeedsStyleRecalc();
+        else if (elementAfterChange->affectsNextSiblingElementStyle()) {
+            Element* elementToInvalidate = elementAfterChange;
+            do {
+                elementToInvalidate = elementToInvalidate->nextElementSibling();
+            } while (elementToInvalidate && !elementToInvalidate->styleIsAffectedByPreviousSibling());
 
-    // Forward positional selectors include the ~ selector, nth-child, nth-of-type, first-of-type and only-of-type.
+            if (elementToInvalidate)
+                elementToInvalidate->setNeedsStyleRecalc();
+        }
+    }
+
     // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
     // We have to invalidate everything following the insertion point in the forward case, and everything before the insertion point in the
     // backward case.
     // |afterChange| is 0 in the parser callback case, so we won't do any work for the forward case if we don't have to.
     // For performance reasons we just mark the parent node as changed, since we don't want to make childrenChanged O(n^2) by crawling all our kids
     // here.  recalcStyle will then force a walk of the children when it sees that this has happened.
-    if (parent->childrenAffectedByForwardPositionalRules() && elementAfterChange)
-        parent->setNeedsStyleRecalc();
     if (parent->childrenAffectedByBackwardPositionalRules() && elementBeforeChange)
         parent->setNeedsStyleRecalc();
 }
@@ -2108,11 +2114,6 @@ void Element::setChildrenAffectedByDrag()
     ensureElementRareData().setChildrenAffectedByDrag(true);
 }
 
-void Element::setChildrenAffectedByForwardPositionalRules(Element* element)
-{
-    element->ensureElementRareData().setChildrenAffectedByForwardPositionalRules(true);
-}
-
 void Element::setChildrenAffectedByBackwardPositionalRules()
 {
     ensureElementRareData().setChildrenAffectedByBackwardPositionalRules(true);
@@ -2128,14 +2129,13 @@ void Element::setChildIndex(unsigned index)
 
 bool Element::hasFlagsSetDuringStylingOfChildren() const
 {
-    if (childrenAffectedByHover() || childrenAffectedByFirstChildRules() || childrenAffectedByLastChildRules() || childrenAffectedByDirectAdjacentRules())
+    if (childrenAffectedByHover() || childrenAffectedByFirstChildRules() || childrenAffectedByLastChildRules())
         return true;
 
     if (!hasRareData())
         return false;
     return rareDataChildrenAffectedByActive()
         || rareDataChildrenAffectedByDrag()
-        || rareDataChildrenAffectedByForwardPositionalRules()
         || rareDataChildrenAffectedByBackwardPositionalRules();
 }
 
@@ -2155,12 +2155,6 @@ bool Element::rareDataChildrenAffectedByDrag() const
 {
     ASSERT(hasRareData());
     return elementRareData()->childrenAffectedByDrag();
-}
-
-bool Element::rareDataChildrenAffectedByForwardPositionalRules() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->childrenAffectedByForwardPositionalRules();
 }
 
 bool Element::rareDataChildrenAffectedByBackwardPositionalRules() const

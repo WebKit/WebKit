@@ -68,9 +68,11 @@ static inline bool isLastChildElement(const Element* element)
     return !ElementTraversal::nextSibling(element);
 }
 
-static inline bool isFirstOfType(const Element* element, const QualifiedName& type)
+static inline bool isFirstOfType(Element* element, const QualifiedName& type, bool isResolvingStyle)
 {
-    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+        if (isResolvingStyle)
+            sibling->setAffectsNextSiblingElementStyle();
         if (sibling->hasTagName(type))
             return false;
     }
@@ -86,10 +88,13 @@ static inline bool isLastOfType(const Element* element, const QualifiedName& typ
     return true;
 }
 
-static inline int countElementsBefore(const Element* element)
+static inline int countElementsBefore(Element* element, bool isResolvingStyle)
 {
     int count = 0;
-    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+        if (isResolvingStyle)
+            sibling->setAffectsNextSiblingElementStyle();
+
         unsigned index = sibling->childIndex();
         if (index) {
             count += index;
@@ -100,10 +105,13 @@ static inline int countElementsBefore(const Element* element)
     return count;
 }
 
-static inline int countElementsOfTypeBefore(const Element* element, const QualifiedName& type)
+static inline int countElementsOfTypeBefore(Element* element, const QualifiedName& type, bool isResolvingStyle)
 {
     int count = 0;
-    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+        if (isResolvingStyle)
+            sibling->setAffectsNextSiblingElementStyle();
+
         if (sibling->hasTagName(type))
             ++count;
     }
@@ -152,7 +160,7 @@ bool SelectorChecker::match(const SelectorCheckingContext& context) const
     return true;
 }
 
-inline static bool hasScrollbarPseudoElement(const SelectorChecker::SelectorCheckingContext& context, PseudoId& dynamicPseudo)
+inline static bool hasScrollbarPseudoElement(PseudoId& dynamicPseudo)
 {
     if (dynamicPseudo == SCROLLBAR
         || dynamicPseudo == SCROLLBAR_THUMB
@@ -160,7 +168,6 @@ inline static bool hasScrollbarPseudoElement(const SelectorChecker::SelectorChec
         || dynamicPseudo == SCROLLBAR_TRACK
         || dynamicPseudo == SCROLLBAR_TRACK_PIECE
         || dynamicPseudo == SCROLLBAR_CORNER) {
-        ASSERT_UNUSED(context, context.scrollbar);
         return true;
     }
 
@@ -266,26 +273,30 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         }
 
     case CSSSelector::DirectAdjacent:
-        if (context.resolvingMode == Mode::ResolvingStyle) {
-            if (Element* parentElement = context.element->parentElement())
-                parentElement->setChildrenAffectedByDirectAdjacentRules();
-        }
-        nextContext.element = context.element->previousElementSibling();
-        if (!nextContext.element)
-            return SelectorFailsAllSiblings;
-        nextContext.firstSelectorOfTheFragment = nextContext.selector;
-        nextContext.elementStyle = 0;
-        return matchRecursively(nextContext, ignoreDynamicPseudo);
+        {
+            if (context.resolvingMode == Mode::ResolvingStyle)
+                context.element->setStyleIsAffectedByPreviousSibling();
 
-    case CSSSelector::IndirectAdjacent:
-        if (context.resolvingMode == Mode::ResolvingStyle) {
-            if (Element* parentElement = context.element->parentElement())
-                parentElement->setChildrenAffectedByForwardPositionalRules();
+            Element* previousElement = context.element->previousElementSibling();
+            if (!previousElement)
+                return SelectorFailsAllSiblings;
+            if (context.resolvingMode == Mode::ResolvingStyle)
+                previousElement->setAffectsNextSiblingElementStyle();
+            nextContext.element = previousElement;
+            nextContext.firstSelectorOfTheFragment = nextContext.selector;
+            nextContext.elementStyle = 0;
+            return matchRecursively(nextContext, ignoreDynamicPseudo);
         }
+    case CSSSelector::IndirectAdjacent:
+        if (context.resolvingMode == Mode::ResolvingStyle)
+            context.element->setStyleIsAffectedByPreviousSibling();
         nextContext.element = context.element->previousElementSibling();
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.elementStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
+            if (context.resolvingMode == Mode::ResolvingStyle)
+                context.element->setAffectsNextSiblingElementStyle();
+
             Match match = this->matchRecursively(nextContext, ignoreDynamicPseudo);
             if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
                 return match;
@@ -296,7 +307,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        nextContext.hasScrollbarPseudo = hasScrollbarPseudoElement(context, dynamicPseudo);
+        nextContext.hasScrollbarPseudo = hasScrollbarPseudoElement(dynamicPseudo);
         nextContext.hasSelectionPseudo = dynamicPseudo == SELECTION;
         if ((context.elementStyle || context.resolvingMode == Mode::CollectingRules) && dynamicPseudo != NOPSEUDO
             && !nextContext.hasSelectionPseudo
@@ -553,11 +564,11 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             break;
         case CSSSelector::PseudoClassFirstOfType:
             // first-of-type matches the first element of its type
-            if (Element* parentElement = element->parentElement()) {
-                bool result = isFirstOfType(element, element->tagQName());
+            if (element->parentElement()) {
                 if (context.resolvingMode == Mode::ResolvingStyle)
-                    parentElement->setChildrenAffectedByForwardPositionalRules();
-                return result;
+                    element->setStyleIsAffectedByPreviousSibling();
+
+                return isFirstOfType(element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
             }
             break;
         case CSSSelector::PseudoClassLastChild:
@@ -603,12 +614,12 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             // FIXME: This selector is very slow.
             if (Element* parentElement = element->parentElement()) {
                 if (context.resolvingMode == Mode::ResolvingStyle) {
-                    parentElement->setChildrenAffectedByForwardPositionalRules();
+                    element->setStyleIsAffectedByPreviousSibling();
                     parentElement->setChildrenAffectedByBackwardPositionalRules();
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                return isFirstOfType(element, element->tagQName()) && isLastOfType(element, element->tagQName());
+                return isFirstOfType(element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle) && isLastOfType(element, element->tagQName());
             }
             break;
 #if ENABLE(CSS_SELECTORS_LEVEL4)
@@ -625,14 +636,16 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoClassNthChild:
             if (!selector->parseNth())
                 break;
-            if (Element* parentElement = element->parentElement()) {
-                int count = 1 + countElementsBefore(element);
+            if (element->parentElement()) {
+                if (context.resolvingMode == Mode::ResolvingStyle)
+                    element->setStyleIsAffectedByPreviousSibling();
+
+                int count = 1 + countElementsBefore(element, context.resolvingMode == Mode::ResolvingStyle);
                 if (context.resolvingMode == Mode::ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     element->setChildIndex(count);
                     if (childStyle)
                         childStyle->setUnique();
-                    parentElement->setChildrenAffectedByForwardPositionalRules();
                 }
 
                 if (selector->matchNth(count))
@@ -642,11 +655,12 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoClassNthOfType:
             if (!selector->parseNth())
                 break;
-            if (Element* parentElement = element->parentElement()) {
-                int count = 1 + countElementsOfTypeBefore(element, element->tagQName());
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    parentElement->setChildrenAffectedByForwardPositionalRules();
 
+            if (element->parentElement()) {
+                if (context.resolvingMode == Mode::ResolvingStyle)
+                    element->setStyleIsAffectedByPreviousSibling();
+
+                int count = 1 + countElementsOfTypeBefore(element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
                 if (selector->matchNth(count))
                     return true;
             }

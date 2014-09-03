@@ -1,5 +1,39 @@
 2014-09-03  Benjamin Poulain  <benjamin@webkit.org>
 
+        Fix style invalidation of elements with multiple siblings dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=136472
+
+        Reviewed by Andreas Kling.
+
+        The test coverage was pretty bad. :(
+        I tried to cover the most obvious problems.
+
+        * fast/css/direct-adjacent-style-update-optimization-expected.txt: Added.
+        * fast/css/direct-adjacent-style-update-optimization.html: Added.
+        * fast/css/indirect-adjacent-style-update-optimization-expected.txt: Added.
+        * fast/css/indirect-adjacent-style-update-optimization.html: Added.
+        * fast/css/non-matching-adjacent-style-update-expected.txt: Added.
+        * fast/css/non-matching-adjacent-style-update.html: Added.
+        * fast/selectors/attribute-direct-adjacent-style-update-expected.txt:
+        * fast/selectors/class-direct-adjacent-style-update-expected.txt:
+        * fast/selectors/first-child-direct-adjacent-style-update-expected.txt:
+        * fast/selectors/first-of-type-direct-adjacent-style-update-expected.txt: Copied from LayoutTests/fast/selectors/attribute-direct-adjacent-style-update-expected.txt.
+        * fast/selectors/first-of-type-direct-adjacent-style-update.html: Added.
+        * fast/selectors/first-of-type-sibling-style-update-expected.txt: Added.
+        * fast/selectors/first-of-type-sibling-style-update.html: Added.
+        * fast/selectors/id-direct-adjacent-style-update-expected.txt: Copied from LayoutTests/fast/selectors/attribute-direct-adjacent-style-update-expected.txt.
+        * fast/selectors/id-direct-adjacent-style-update.html: Added.
+        * fast/selectors/id-sibling-style-update-expected.txt: Added.
+        * fast/selectors/id-sibling-style-update.html: Added.
+        * fast/selectors/nth-child-as-first-simple-selector-style-update-expected.txt: Added.
+        * fast/selectors/nth-child-as-first-simple-selector-style-update.html: Added.
+        * fast/selectors/nth-child-direct-adjacent-style-update-expected.txt: Copied from LayoutTests/fast/selectors/attribute-direct-adjacent-style-update-expected.txt.
+        * fast/selectors/nth-child-direct-adjacent-style-update.html: Added.
+        * fast/selectors/nth-child-style-update-expected.txt: Added.
+        * fast/selectors/nth-child-style-update.html: Added.
+
+2014-09-03  Benjamin Poulain  <benjamin@webkit.org>
+
         Add a test case for Element.matches() with :scope
         https://bugs.webkit.org/show_bug.cgi?id=136475
 

@@ -552,13 +552,21 @@ static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
 static void resetStyleForNonRenderedDescendants(Element& current)
 {
     ASSERT(!current.renderer());
-    bool shouldInvalidateDirectChildren = current.directChildNeedsStyleRecalc() && (current.childrenAffectedByDirectAdjacentRules() || current.childrenAffectedByForwardPositionalRules());
+    bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
     for (auto& child : childrenOfType<Element>(current)) {
         ASSERT(!child.renderer());
-        if (shouldInvalidateDirectChildren || child.needsStyleRecalc()) {
+        if (elementNeedingStyleRecalcAffectsNextSiblingElementStyle) {
+            if (child.styleIsAffectedByPreviousSibling())
+                child.setNeedsStyleRecalc();
+            elementNeedingStyleRecalcAffectsNextSiblingElementStyle = child.affectsNextSiblingElementStyle();
+        }
+
+        if (child.needsStyleRecalc()) {
             child.resetComputedStyle();
             child.clearNeedsStyleRecalc();
+            elementNeedingStyleRecalcAffectsNextSiblingElementStyle = child.affectsNextSiblingElementStyle();
         }
+
         if (child.childNeedsStyleRecalc()) {
             resetStyleForNonRenderedDescendants(child);
             child.clearChildNeedsStyleRecalc();
@@ -897,9 +905,6 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
             return;
     }
 
-    bool hasDirectAdjacentRules = current.childrenAffectedByDirectAdjacentRules();
-    bool hasIndirectAdjacentRules = current.childrenAffectedByForwardPositionalRules();
-
 #if PLATFORM(IOS)
     CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&current, current.renderStyle());
 #endif
@@ -925,11 +930,7 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
         RenderTreePosition childRenderTreePosition(*renderer);
         updateBeforeOrAfterPseudoElement(current, change, BEFORE, childRenderTreePosition);
 
-        // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
-        // For now we will just worry about the common case, since it's a lot trickier to get the second case right
-        // without doing way too much re-resolution.
-        bool forceCheckOfNextElementSibling = false;
-        bool forceCheckOfAnyElementSibling = false;
+        bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
         for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
             if (RenderObject* childRenderer = child->renderer())
                 childRenderTreePosition.invalidateNextSibling(*childRenderer);
@@ -939,16 +940,18 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
             }
             if (!child->isElementNode())
                 continue;
+
             Element* childElement = toElement(child);
-            bool childRulesChanged = childElement->needsStyleRecalc() && childElement->styleChangeType() == FullStyleChange;
-            if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling))
-                childElement->setNeedsStyleRecalc();
+            if (elementNeedingStyleRecalcAffectsNextSiblingElementStyle) {
+                if (childElement->styleIsAffectedByPreviousSibling())
+                    childElement->setNeedsStyleRecalc();
+                elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement->affectsNextSiblingElementStyle();
+            } else if (childElement->styleChangeType() >= FullStyleChange)
+                elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement->affectsNextSiblingElementStyle();
             if (change >= Inherit || childElement->childNeedsStyleRecalc() || childElement->needsStyleRecalc()) {
                 parentPusher.push();
                 resolveTree(*childElement, renderer->style(), childRenderTreePosition, change);
             }
-            forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
-            forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
         }
 
         updateBeforeOrAfterPseudoElement(current, change, AFTER, childRenderTreePosition);

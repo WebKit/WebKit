@@ -624,6 +624,8 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->additionalPresentationAttributeStyle() != state.styledElement()->additionalPresentationAttributeStyle())
         return false;
+    if (element->affectsNextSiblingElementStyle() || element->styleIsAffectedByPreviousSibling())
+        return false;
 
     if (element->hasID() && m_ruleSets.features().idsInRules.contains(element->idForStyleResolution().impl()))
         return false;

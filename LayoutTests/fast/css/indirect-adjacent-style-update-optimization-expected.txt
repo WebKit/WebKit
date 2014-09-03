@@ -1,0 +1,66 @@
+This test checks the style invalidation does not dirty elements that cannot be affected by the changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initially, we should have a match. After getting the style, nothing should require a style recalc.
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[0]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[1]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[2]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[3]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[4]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[5]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[6]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[7]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[8]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[9]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+PASS elementsWithTagnameNeedsStyleRecalc([]) is true
+Let's remove the class "property".
+Source should require a style recalc.
+PASS elementsWithTagnameNeedsStyleRecalc(["SOURCE"]) is true
+We should no longer have a match. Let's add back the class "property". Then we get the style of everything except <source> and <target>. Since none of the style touched above are related to the dirty elements, <source> should still require a style recalc.
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[0]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[1]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[2]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[3]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[4]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[5]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[6]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[7]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[8]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[9]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(255, 254, 253)"
+PASS elementsWithTagnameNeedsStyleRecalc(["SOURCE"]) is true
+We should match again now that property is back.
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[0]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[1]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[2]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[3]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[4]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[5]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[6]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[7]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[8]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[9]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(1, 2, 3)"
+Removing the <source> should invalidate the <target>, and nothing else.
+PASS elementsWithTagnameNeedsStyleRecalc(["TARGET"]) is true
+We should no longer match.
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[0]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[1]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[2]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[3]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[4]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[5]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[6]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll(".test-case, .test-case :not(target)")[7]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll("target")[0]).backgroundColor is "rgb(255, 254, 253)"
+PASS getComputedStyle(document.querySelectorAll("target")[1]).backgroundColor is "rgb(255, 254, 253)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

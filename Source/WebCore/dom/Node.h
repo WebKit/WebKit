@@ -325,6 +325,7 @@ public:
     bool needsStyleRecalc() const { return styleChangeType() != NoStyleChange; }
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_nodeFlags & StyleChangeMask); }
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
+    bool styleIsAffectedByPreviousSibling() const { return getFlag(StyleIsAffectedByPreviousSibling); }
     bool isLink() const { return getFlag(IsLinkFlag); }
     bool isEditingText() const { return getFlag(IsEditingTextFlag); }
 
@@ -578,7 +579,9 @@ public:
     static int32_t flagIsParsingChildrenFinished() { return IsParsingChildrenFinishedFlag; }
     static int32_t flagChildrenAffectedByFirstChildRulesFlag() { return ChildrenAffectedByFirstChildRulesFlag; }
     static int32_t flagChildrenAffectedByLastChildRulesFlag() { return ChildrenAffectedByLastChildRulesFlag; }
-    static int32_t flagChildrenAffectedByDirectAdjacentRulesFlag() { return ChildrenAffectedByDirectAdjacentRulesFlag; }
+
+    static int32_t flagAffectsNextSiblingElementStyle() { return AffectsNextSiblingElementStyle; }
+    static int32_t flagStyleIsAffectedByPreviousSibling() { return StyleIsAffectedByPreviousSibling; }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
 protected:
@@ -612,13 +615,13 @@ protected:
 
         ChildrenAffectedByFirstChildRulesFlag = 1 << 25,
         ChildrenAffectedByLastChildRulesFlag = 1 << 26,
-        ChildrenAffectedByDirectAdjacentRulesFlag = 1 << 27,
-        ChildrenAffectedByHoverRulesFlag = 1 << 28,
-        DirectChildNeedsStyleRecalcFlag = 1 << 29,
+        ChildrenAffectedByHoverRulesFlag = 1 << 27,
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 30,
+        DirectChildNeedsStyleRecalcFlag = 1 << 28,
+        AffectsNextSiblingElementStyle = 1 << 29,
+        StyleIsAffectedByPreviousSibling = 1 << 30,
 
-        IsHTMLUnknownElementFlag = 1 << 31,
+        SelfOrAncestorHasDirAutoFlag = 1 << 31,
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
@@ -642,8 +645,7 @@ protected:
         CreateDocument = CreateContainer | InDocumentFlag,
         CreateInsertionPoint = CreateHTMLElement | NeedsNodeRenderingTraversalSlowPathFlag,
         CreateEditingText = CreateText | IsEditingTextFlag,
-        CreateMathMLElement = CreateStyledElement | IsMathMLFlag,
-        CreateHTMLUnknownElement = CreateHTMLElement | IsHTMLUnknownElementFlag,
+        CreateMathMLElement = CreateStyledElement | IsMathMLFlag
     };
     Node(Document&, ConstructionType);
 

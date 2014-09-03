@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+    color: black;
+    fill-opacity: 1;
+    min-width: 0px;
+}
+foo:first-of-type+padding+padding+padding+bar {
+    background-color: rgb(1, 2, 3);
+}
+foo:first-of-type+padding+padding+padding+bar baz {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div>
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-with-renderer">
+            <baz id="baz-with-renderer"></baz>
+        </bar>
+    </div>
+    <div style="display:none;">
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-without-renderer">
+            <baz id="baz-without-renderer"></baz>
+        </bar>
+    </div>
+</body>
+<script>
+description('Test style update caused by tree changes with the selector :first-of-type. This test does not use any sibling "~" combinator to avoid its more generic marking.');
+
+function testColor(expectMatch) {
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+}
+
+function addElementAsFirstChild(tagName, className)
+{
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i) {
+        var newElement = document.createElement(tagName);
+        newElement.className = className;
+        allFoos[i].parentElement.insertBefore(newElement, allFoos[i]);
+    }
+}
+
+debug("Initialy, &lt;foo&gt; is the first of its type, the style should match.");
+testColor(true);
+
+debug("Adding a few elements that are not &lt;foo&gt; do not invalidate the :first-of-type.");
+addElementAsFirstChild("notfoo");
+addElementAsFirstChild("notfoo");
+addElementAsFirstChild("notfoo");
+addElementAsFirstChild("notfoo");
+testColor(true);
+
+debug("Adding a second &lt;foo&gt;. This should breat the rules because the new foo does not match \"+ padding\".");
+addElementAsFirstChild("foo", "extra-foo");
+testColor(false);
+
+debug("Adding a few elements that are not &lt;foo&gt;, we should still not match because of the previously added &lt;foo&gt;.");
+addElementAsFirstChild("notfoo");
+addElementAsFirstChild("notfoo");
+addElementAsFirstChild("notfoo");
+addElementAsFirstChild("notfoo");
+testColor(false);
+
+debug("Removing the &lt;foo&gt; blocking foo:first-of-type+padding.");
+var extraFoos = document.querySelectorAll(".extra-foo");
+for (var i = 0; i < extraFoos.length; ++i)
+    extraFoos[i].parentElement.removeChild(extraFoos[i]);
+testColor(true);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

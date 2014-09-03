@@ -41,9 +41,11 @@ public:
         return adoptRef(new HTMLUnknownElement(tagName, document));
     }
 
+    virtual bool isHTMLUnknownElement() const override { return true; }
+
 private:
     HTMLUnknownElement(const QualifiedName& tagName, Document& document)
-        : HTMLElement(tagName, document, CreateHTMLUnknownElement)
+        : HTMLElement(tagName, document, CreateHTMLElement)
     {
     }
 };

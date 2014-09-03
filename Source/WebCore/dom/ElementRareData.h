@@ -75,8 +75,6 @@ public:
 
     bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
     void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
-    bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
-    void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
     bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
     void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
 
@@ -132,7 +130,6 @@ private:
     // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
     // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
     unsigned m_childrenAffectedByLastChildRules : 1;
-    unsigned m_childrenAffectedByForwardPositionalRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
 
     RegionOversetState m_regionOversetState;
@@ -173,7 +170,6 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByActive(false)
     , m_childrenAffectedByDrag(false)
     , m_childrenAffectedByLastChildRules(false)
-    , m_childrenAffectedByForwardPositionalRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
     , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
@@ -211,7 +207,6 @@ inline void ElementRareData::resetDynamicRestyleObservations()
     setChildrenAffectedByActive(false);
     setChildrenAffectedByDrag(false);
     setChildrenAffectedByLastChildRules(false);
-    setChildrenAffectedByForwardPositionalRules(false);
     setChildrenAffectedByBackwardPositionalRules(false);
 }
 

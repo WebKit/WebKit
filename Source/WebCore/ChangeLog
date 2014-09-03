@@ -1,3 +1,140 @@
+2014-09-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix style invalidation of elements with multiple siblings dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=136472
+
+        Reviewed by Andreas Kling.
+
+        Previously, style invalidation of siblings was driven by a pair of flags:
+        -ChildrenAffectedByDirectAdjacentRules.
+        -ChildrenAffectedByForwardPositionalRules.
+
+        When ChildrenAffectedByDirectAdjacentRules was set, the element after an element
+        with "needsStyleRecalc" was also recomputed. While this work for pair of elements:
+            a + b
+        It does not work for more than that. For example, with
+            a.propery + b + c
+        When the state of <a> changes, the style of <b> was updated, which is useless. The style
+        of <c> was untouched, which is incorrect.
+
+        When ChildrenAffectedByForwardPositionalRules, all elements after one with "needsStyleRecalc"
+        were invalidated. While more correct, it caused avalanche of style recalc and was not a very
+        useful "optimization".
+
+ 
+        To fix the correctness issues (e.g. "a + b + c"), I could have gone two ways:
+        1) Invalidate the parent of a, b, c. The children would always get a correct style
+           when their parent's style would be resolved.
+        2) Create invalidation relations to enforce that the right siblings are invalidated.
+
+        I have decided for a weak version of (2). The reason is that most DOM trees are very
+        shallow while being very wide. Invalidating the parent generally causes massive style
+        recalculation.
+
+        To keep things simple for now, there is no explicit dependency list between siblings.
+        Instead, each element has a pair of flag:
+        1) The element's style depends on the state of a previous sibling.
+        2) The element's state affects following siblings.
+
+        With the notation "<-" for (1), "->" for (2), the selector "a + b + c" create this kind
+        of marking:
+            a  +  b  +  c
+            ->    ->
+                       <-
+
+        When <a> is invalidated, the style resolver will go through the chain of dependent elements
+        and invalidate any element that can be affected by a prior invalidation, here <c>.
+
+        Overlaps are possible. For example with the two selector, "a + b + c", "b ~ d"
+        the marking would be
+            a  +  b  +  c  +  d
+            ->    ->    ->
+                       <-    <-
+
+        A change in <a> would invalidate both <c> and <d>. This is overkill, but the end result
+        is correct and it is a net improvement over the previous flags.
+
+
+        As usual, the CSS JIT makes an effort at compile time to reduce tree marking. SelectorChecker
+        marks everything as usual.
+
+        Tests: fast/css/direct-adjacent-style-update-optimization.html
+               fast/css/indirect-adjacent-style-update-optimization.html
+               fast/css/non-matching-adjacent-style-update.html
+               fast/selectors/first-of-type-direct-adjacent-style-update.html
+               fast/selectors/first-of-type-sibling-style-update.html
+               fast/selectors/id-direct-adjacent-style-update.html
+               fast/selectors/id-sibling-style-update.html
+               fast/selectors/nth-child-as-first-simple-selector-style-update.html
+               fast/selectors/nth-child-direct-adjacent-style-update.html
+               fast/selectors/nth-child-style-update.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::isFirstOfType):
+        (WebCore::countElementsBefore):
+        (WebCore::countElementsOfTypeBefore):
+        Counting selectors are not unlike adjacent combinators, they are handled the exact same way.
+        For example a :nth-child(4) would generate somewhat similar marking as
+            :first-child + * + * + *
+
+        Everything prior to the element with the counter affects the style of the element.
+
+        (WebCore::hasScrollbarPseudoElement):
+        The assertion was incorrect. You can get an scrollbar pseudo ID on an element without scrollbar.
+        It will never match, but such case is possible.
+
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        Previously, any subtree affected by sibling selectors were unshareable. That was done by checking
+        for Element::hasFlagsSetDuringStylingOfChildren().
+
+        Now that sibling relation are local, they no longer prevent sharing of all children. Instead, we can
+        test locally for subgroup with sibling relations.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::isAdjacentRelation):
+        (WebCore::SelectorCompiler::shouldMarkStyleIsAffectedByPreviousSibling):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateIndirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markElementIfResolvingStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markParentElementIfResolvingStyle): Deleted.
+        * dom/Document.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        * dom/Element.cpp:
+        (WebCore::checkForSiblingStyleChanges):
+        (WebCore::Element::hasFlagsSetDuringStylingOfChildren):
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules): Deleted.
+        (WebCore::Element::rareDataChildrenAffectedByForwardPositionalRules): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::affectsNextSiblingElementStyle):
+        (WebCore::Element::setAffectsNextSiblingElementStyle):
+        (WebCore::Element::setStyleIsAffectedByPreviousSibling):
+        (WebCore::Element::childrenAffectedByPositionalRules): Deleted.
+        (WebCore::Element::childrenAffectedByDirectAdjacentRules): Deleted.
+        (WebCore::Element::childrenAffectedByForwardPositionalRules): Deleted.
+        (WebCore::Element::setChildrenAffectedByDirectAdjacentRules): Deleted.
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules): Deleted.
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::resetDynamicRestyleObservations):
+        (WebCore::ElementRareData::childrenAffectedByForwardPositionalRules): Deleted.
+        (WebCore::ElementRareData::setChildrenAffectedByForwardPositionalRules): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::styleIsAffectedByPreviousSibling):
+        (WebCore::Node::flagAffectsNextSiblingElementStyle):
+        (WebCore::Node::flagStyleIsAffectedByPreviousSibling):
+        (WebCore::Node::flagChildrenAffectedByDirectAdjacentRulesFlag): Deleted.
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::isHTMLUnknownElement):
+        * html/HTMLUnknownElement.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::resolveTree):
+
 2014-09-03  Simon Fraser  <simon.fraser@apple.com>
 
         Dump SimpleLineLayout info in showRenderTree() output
