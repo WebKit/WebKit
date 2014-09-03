@@ -350,11 +350,7 @@ void HTMLCanvasElement::reset()
 
 float HTMLCanvasElement::targetDeviceScaleFactor() const
 {
-#if ENABLE(HIGH_DPI_CANVAS)
-    return document().frame() ? document().frame()->page()->deviceScaleFactor() : 1;
-#else
     return 1;
-#endif
 }
 
 bool HTMLCanvasElement::paintsIntoCanvasBuffer() const

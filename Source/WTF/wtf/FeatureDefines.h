@@ -472,10 +472,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_HIDDEN_PAGE_DOM_TIMER_THROTTLING 0
 #endif
 
-#if !defined(ENABLE_HIGH_DPI_CANVAS)
-#define ENABLE_HIGH_DPI_CANVAS 0
-#endif
-
 #if !defined(ENABLE_ICONDATABASE)
 #define ENABLE_ICONDATABASE 1
 #endif

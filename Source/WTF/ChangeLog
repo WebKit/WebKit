@@ -1,3 +1,12 @@
+2014-09-03  Dan Bernstein  <mitz@apple.com>
+
+        Get rid of HIGH_DPI_CANVAS leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=136491
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/FeatureDefines.h: Removed definition of ENABLE_HIGH_DPI_CANVAS.
+
 2014-09-03  Zan Dobersek  <zdobersek@igalia.com>
 
         GMainLoopSource is exposed to race conditions
