@@ -369,7 +369,7 @@ def emitARM64MoveImmediate(value, target)
     [48, 32, 16, 0].each {
         | shift |
         currentValue = (value >> shift) & 0xffff
-        next if currentValue == (isNegative ? 0xffff : 0) and shift != 0
+        next if currentValue == (isNegative ? 0xffff : 0) and (shift != 0 or !first)
         if first
             if isNegative
                 $asm.puts "movn #{target.arm64Operand(:ptr)}, \##{(~currentValue) & 0xffff}, lsl \##{shift}"

@@ -1,3 +1,21 @@
+2014-09-03  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Don't generate superfluous mov instructions for move immediate on ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=136435
+
+        Reviewed by Michael Saboff.
+
+        On ARM64, the size of an immediate operand for a mov instruction is 16
+        bits. Thus, a move immediate offlineasm instruction may potentially be
+        split up to several machine level instructions. The current
+        implementation always emits a mov for the least significant 16 bits of
+        the value. However, if any of the bits 63:16 are significant then the
+        first emitted mov already filled bits 15:0 with zeroes (or ones, for
+        negative values). So, if bits 15:0 of the value are all zeroes (or ones)
+        then the last mov does not need to be emitted.
+
+        * offlineasm/arm64.rb:
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         LegacyProfiler: remove redundant ProfileNode members and other cleanup
