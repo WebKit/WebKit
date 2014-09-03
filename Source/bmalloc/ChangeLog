@@ -1,3 +1,60 @@
+2014-09-02  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc crashes on the EWS bots (due to bad large object allocation)
+        https://bugs.webkit.org/show_bug.cgi?id=136469
+
+        Reviewed by Andreas Kling.
+
+        It's possible to convince bmalloc to perform a bad large object allocation,
+        through these steps:
+
+        (1) Insert object A into freelist F0.
+
+        (2) Split, merge and split again A's neighbors such that object B is
+        inserted into freelist F0, with boundary tag and size equal to object A,
+        but pointer not completely equal to object A. Put object B at the head of F0.
+
+        (3) Allocate some other object from F0, swapping its position in the
+        freelist with object B, such that object A is now ahead of object B.
+
+        --> Now, the next allocation for size A/B will allocate object A, which
+        has a slightly wrong idea about where the object actually begins.
+        Immediately, you'll corrupt a little memory, and over time, you'll also
+        corrupt boundary tag metadata.
+
+        The solution is to store the begin pointer in the boundary tag. Luckily,
+        this doesn't make the tag any bigger, and it's not a noticeable slowdown
+        on MallocBench.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::rightShift):
+        * bmalloc/BeginTag.h:
+        (bmalloc::BeginTag::isInFreeList): This is the bug fix. Make sure to
+        validate the start pointer when popping off the free list. Through a
+        very uncommon set of steps, it is possible to have an item in the free
+        list that is valid by all accounts except for its start pointer.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::compactBegin):
+        (bmalloc::BoundaryTag::setRange):
+        (bmalloc::BoundaryTag::setSize): Deleted. Record a compact version of the
+        start pointer. We don't need the whole pointer -- just the offset, in
+        largeAlignment increments, into the relevant boundary tag bucket.
+
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::validateNext):
+        (bmalloc::BoundaryTag::init):
+        (bmalloc::BoundaryTag::mergeLarge):
+        (bmalloc::BoundaryTag::splitLarge):
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::insert):
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take): Provide the whole range instead of
+        the size when establishing a boundary tag, as required by the new
+        interface.
+
+        * bmalloc/Sizes.h:
+
 2014-08-14  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a bmalloc crash seen on the EWS bot

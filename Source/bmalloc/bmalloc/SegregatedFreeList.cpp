@@ -39,7 +39,7 @@ void SegregatedFreeList::insert(const Range& range)
 {
 IF_DEBUG(
     BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-    BASSERT(beginTag->isInFreeList(range.size()));
+    BASSERT(beginTag->isInFreeList(range));
 )
 
     auto& list = select(range.size());
@@ -66,7 +66,7 @@ Range SegregatedFreeList::takeGreedy(List& list, size_t minimum)
         // We don't eagerly remove items when we merge and/or split ranges,
         // so we need to validate each free list entry before using it.
         BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-        if (!beginTag->isInFreeList(range.size())) {
+        if (!beginTag->isInFreeList(range)) {
             list.pop(i);
             continue;
         }
@@ -114,7 +114,7 @@ INLINE Range SegregatedFreeList::take(List& list, size_t minimum)
         // We don't eagerly remove items when we merge and/or split ranges, so
         // we need to validate each free list entry before using it.
         BeginTag* beginTag = LargeChunk::beginTag(range.begin());
-        if (!beginTag->isInFreeList(range.size())) {
+        if (!beginTag->isInFreeList(range)) {
             list.pop(i);
             continue;
         }
