@@ -118,7 +118,7 @@ namespace WebCore {
 #endif
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || USE(CFNETWORK)
         virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
 #endif
 

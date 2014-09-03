@@ -1,5 +1,14 @@
 2014-09-02  Daniel Bates  <dabates@apple.com>
 
+        [Win] Attempt to fix the Windows build after <http://trac.webkit.org/changeset/173192>
+        (https://bugs.webkit.org/show_bug.cgi?id=136467)
+
+        Declare ResourceHandleClient::connectionProperties() when building for iOS or when USE(CFNETWORK).
+
+        * platform/network/ResourceHandleClient.h:
+
+2014-09-02  Daniel Bates  <dabates@apple.com>
+
         [iOS] Support using Foundation networking code
         https://bugs.webkit.org/show_bug.cgi?id=136467
 
