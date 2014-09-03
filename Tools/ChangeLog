@@ -1,3 +1,10 @@
+2014-09-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test fix.
+
+        * Scripts/webkitperl/auto-version_unittest/versionStampTests.pl: Don't fail
+        test if user doesn't have the VersionStamp.exe program.
+
 2014-09-03  Dana Burkart  <dburkart@apple.com>
 
         Unreviewed. Add myself as a committer.
