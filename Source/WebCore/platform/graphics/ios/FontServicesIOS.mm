@@ -68,18 +68,22 @@ FontServicesIOS::FontServicesIOS(CTFontRef font)
     CGFloat lineGap;
     CGFloat ascent;
     CGFloat descent;
+    CGFloat capHeight;
     static bool isiOS7OrLater = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_7_0;
     if (isiOS7OrLater) {
         // Use CoreText API in iOS 7.
         ascent = CTFontGetAscent(font);
         descent = CTFontGetDescent(font);
         lineGap = CTFontGetLeading(font);
+        capHeight = CTFontGetCapHeight(font);
     } else {
         float pointSize = CTFontGetSize(font);
         const CGFontHMetrics *metrics = CGFontGetHMetrics(cgFont.get());
         unsigned unitsPerEm = CGFontGetUnitsPerEm(cgFont.get());
+        unsigned capHeightInGlyphSpace = CGFontGetCapHeight(cgFont.get());
 
         lineGap = (dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_3_0) ? scaleEmToUnits(metrics->lineGap, unitsPerEm) * pointSize : 0.0;
+        capHeight = scaleEmToUnits(capHeightInGlyphSpace, unitsPerEm) * pointSize;
 
         bool isiOS6OrLater = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_6_0;
         if (!isiOS6OrLater || !isCourier(font)) {
@@ -98,6 +102,7 @@ FontServicesIOS::FontServicesIOS(CTFontRef font)
     m_descent = descent;
     m_lineGap = ceilf(lineGap);
     m_lineSpacing = ceil(ascent) + adjustment + ceil(descent) + m_lineGap;
+    m_capHeight = capHeight;
 }
 
 

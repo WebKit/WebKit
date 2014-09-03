@@ -1,3 +1,13 @@
+2014-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        iOS build fix after r173217 
+
+        * platform/graphics/ios/FontServicesIOS.h:
+        (WebCore::FontServicesIOS::capHeight):
+        * platform/graphics/ios/FontServicesIOS.mm:
+        (WebCore::FontServicesIOS::FontServicesIOS):
+        This fixes the build, but I don't know if it's completely correct.
+
 2014-09-03  Anders Carlsson  <andersca@apple.com>
 
         Get rid of DOMImplementationFront

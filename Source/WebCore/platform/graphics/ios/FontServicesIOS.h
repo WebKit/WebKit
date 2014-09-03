@@ -36,6 +36,7 @@ public:
     CGFloat lineGap() { return m_lineGap; }
     CGFloat lineSpacing() { return m_lineSpacing; }
     CGFloat xHeight() { return m_xHeight; }
+    CGFloat capHeight() { return m_capHeight; }
     unsigned unitsPerEm() { return m_unitsPerEm; }
 
 private:
@@ -44,6 +45,7 @@ private:
     CGFloat m_lineGap;
     CGFloat m_lineSpacing;
     CGFloat m_xHeight;
+    CGFloat m_capHeight;
     unsigned m_unitsPerEm;
 };
 
