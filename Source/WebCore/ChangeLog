@@ -1,3 +1,17 @@
+2014-09-03  Daniel Bates  <dabates@apple.com>
+
+        [XSLT] Make WebKit build when XSLT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=136471
+
+        Reviewed by Simon Fraser.
+
+        Fixes a Clang compiler warning that file-static function WebCore::hasNoStyleInformation is unused.
+        This function is only called from ENABLE(XSLT)-guarded code. So, add a ENABLE(XSLT)-guard around
+        WebCore::hasNoStyleInformation().
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::hasNoStyleInformation):
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         LegacyProfiler: remove redundant ProfileNode members and other cleanup

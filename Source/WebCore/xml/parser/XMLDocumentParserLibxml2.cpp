@@ -72,14 +72,15 @@
 
 namespace WebCore {
 
+#if ENABLE(XSLT)
 static inline bool hasNoStyleInformation(Document* document)
 {
     if (document->sawElementsInKnownNamespaces())
         return false;
-#if ENABLE(XSLT)
+
     if (document->transformSourceDocument())
         return false;
-#endif
+
     if (!document->frame() || !document->frame()->page())
         return false;
 
@@ -91,6 +92,7 @@ static inline bool hasNoStyleInformation(Document* document)
 
     return true;
 }
+#endif
 
 class PendingCallbacks {
     WTF_MAKE_NONCOPYABLE(PendingCallbacks); WTF_MAKE_FAST_ALLOCATED;
