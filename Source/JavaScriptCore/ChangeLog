@@ -1,3 +1,15 @@
+2014-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL In implementation sets callReturnLocation incorrectly leading to crashes beneath repatchCall()
+        https://bugs.webkit.org/show_bug.cgi?id=136488
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::generateCheckInICFastPath): The call is in the slow path.
+        * tests/stress/ftl-in-overflow.js: Added. This used to crash with 100% with FTL enabled.
+        (foo):
+
 2014-09-03  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Don't generate superfluous mov instructions for move immediate on ARM64.

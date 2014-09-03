@@ -213,7 +213,7 @@ static void generateCheckInICFastPath(
         CodeLocationLabel slowPathBeginLoc = slowPath.locationOf(slowPathBegin);
         fastPath.link(jump, slowPathBeginLoc);
 
-        CodeLocationCall callReturnLocation = fastPath.locationOf(call);
+        CodeLocationCall callReturnLocation = slowPath.locationOf(call);
 
         stubInfo.patch.deltaCallToDone = MacroAssembler::differenceBetweenCodePtr(
             callReturnLocation, fastPath.locationOf(done));
