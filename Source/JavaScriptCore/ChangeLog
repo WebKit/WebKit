@@ -1,3 +1,15 @@
+2014-09-03  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [MIPS] Wrong register usage in LLInt op_catch.
+        https://bugs.webkit.org/show_bug.cgi?id=125168
+
+        Reviewed by Geoffrey Garen.
+
+        Fix register usage and add PIC header to all the ops in LLInt.
+
+        * offlineasm/instructions.rb:
+        * offlineasm/mips.rb:
+
 2014-09-03  Saam Barati  <saambarati1@gmail.com>
 
         Create tests for type profiling

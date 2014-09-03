@@ -62,7 +62,6 @@ MIPS_TEMP_GPRS = [SpecialRegister.new("$t5"), SpecialRegister.new("$t6"), Specia
 MIPS_ZERO_REG = SpecialRegister.new("$zero")
 MIPS_GP_REG = SpecialRegister.new("$gp")
 MIPS_GPSAVE_REG = SpecialRegister.new("$s4")
-MIPS_JUMP_REG = SpecialRegister.new("$ra")
 MIPS_CALL_REG = SpecialRegister.new("$t9")
 MIPS_TEMP_FPRS = [SpecialRegister.new("$f16")]
 MIPS_SCRATCH_FPR = SpecialRegister.new("$f18")
@@ -159,6 +158,70 @@ class AbsoluteAddress
     def mipsOperand
         raise "Unconverted absolute address at #{codeOriginString}"
     end
+end
+
+#
+# Negate condition of branches to labels.
+#
+
+class Instruction
+    def mipsNegateCondition(list)
+        /^(b(add|sub|or|mul|t)?)([ipb])/.match(opcode)
+        case $~.post_match
+        when "eq"
+            op = "neq"
+        when "neq"
+            op = "eq"
+        when "z"
+            op = "nz"
+        when "nz"
+            op = "z"
+        when "gt"
+            op = "lteq"
+        when "gteq"
+            op = "lt"
+        when "lt"
+            op = "gteq"
+        when "lteq"
+            op = "gt"
+        when "a"
+            op = "beq"
+        when "b"
+            op = "aeq"
+        when "aeq"
+            op = "b"
+        when "beq"
+            op = "a"
+        else
+            raise "Can't negate #{opcode} branch."
+        end
+        noBranch = LocalLabel.unique("nobranch")
+        noBranchRef = LocalLabelReference.new(codeOrigin, noBranch)
+        toRef = operands[-1]
+        list << Instruction.new(codeOrigin, "#{$1}#{$3}#{op}", operands[0..-2].push(noBranchRef), annotation)
+        list << Instruction.new(codeOrigin, "la", [toRef, MIPS_CALL_REG])
+        list << Instruction.new(codeOrigin, "jmp", [MIPS_CALL_REG])
+        list << noBranch
+    end
+end
+
+def mipsLowerFarBranchOps(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            annotation = node.annotation
+            case node.opcode
+            when /^b(add|sub|or|mul|t)?([ipb])/
+                if node.operands[-1].is_a? LabelReference
+                    node.mipsNegateCondition(newList)
+                    next
+                end
+            end
+        end
+        newList << node
+    }
+    newList
 end
 
 #
@@ -445,6 +508,30 @@ end
 # Specialization of lowering of misplaced addresses.
 #
 
+class LocalLabelReference
+    def register?
+        false
+    end
+end
+
+def mipsAsRegister(preList, postList, operand, needRestore)
+    tmp = MIPS_CALL_REG
+    if operand.address?
+        preList << Instruction.new(operand.codeOrigin, "loadp", [operand, MIPS_CALL_REG])
+    elsif operand.is_a? LabelReference
+        preList << Instruction.new(operand.codeOrigin, "la", [operand, MIPS_CALL_REG])
+    elsif operand.register? and operand != MIPS_CALL_REG
+        preList << Instruction.new(operand.codeOrigin, "move", [operand, MIPS_CALL_REG])
+    else
+        needRestore = false
+        tmp = operand
+    end
+    if needRestore
+        postList << Instruction.new(operand.codeOrigin, "move", [MIPS_GPSAVE_REG, MIPS_GP_REG])
+    end
+    tmp
+end
+
 def mipsLowerMisplacedAddresses(list)
     newList = []
     list.each {
@@ -454,33 +541,13 @@ def mipsLowerMisplacedAddresses(list)
             annotation = node.annotation
             case node.opcode
             when "jmp"
-                if node.operands[0].address?
-                    newList << Instruction.new(node.operands[0].codeOrigin, "loadi", [node.operands[0], MIPS_JUMP_REG])
-                    newList << Instruction.new(node.codeOrigin, node.opcode, [MIPS_JUMP_REG])
-                else
-                    newList << Instruction.new(node.codeOrigin,
-                                               node.opcode,
-                                               [riscAsRegister(newList, postInstructions, node.operands[0], "p", false)])
-                end
+                newList << Instruction.new(node.codeOrigin,
+                                           node.opcode,
+                                           [mipsAsRegister(newList, [], node.operands[0], false)])
             when "call"
-                restoreGP = false;
-                tmp = MIPS_CALL_REG
-                if node.operands[0].address?
-                    newList << Instruction.new(node.operands[0].codeOrigin, "loadp", [node.operands[0], MIPS_CALL_REG])
-                    restoreGP = true;
-                elsif node.operands[0].is_a? LabelReference
-                    tmp = node.operands[0]
-                    restoreGP = true;
-                elsif node.operands[0].register?
-                    newList << Instruction.new(node.operands[0].codeOrigin, "move", [node.operands[0], MIPS_CALL_REG])
-                    restoreGP = true;
-                else
-                    tmp = node.operands[0]
-                end
-                newList << Instruction.new(node.codeOrigin, node.opcode, [tmp])
-                if restoreGP
-                    newList << Instruction.new(node.codeOrigin, "move", [MIPS_GPSAVE_REG, MIPS_GP_REG])
-                end
+                newList << Instruction.new(node.codeOrigin,
+                                           node.opcode,
+                                           [mipsAsRegister(newList, postInstructions, node.operands[0], true)])
             when "slt", "sltu"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
@@ -565,7 +632,7 @@ class Address
 end
 
 #
-# Add PIC compatible header code to prologue/entry rutins.
+# Add PIC compatible header code to all the LLInt rutins.
 #
 
 def mipsAddPICCode(list)
@@ -574,13 +641,7 @@ def mipsAddPICCode(list)
         | node |
         myList << node
         if node.is_a? Label
-            if /_prologue$/.match(node.name) || /^_llint_function_/.match(node.name)
-                # Functions called from trampoline/JIT codes.
-                myList << Instruction.new(node.codeOrigin, "pichdr", [])
-            elsif /_llint_op_catch/.match(node.name)
-                # Exception cactcher entry point function.
-                myList << Instruction.new(node.codeOrigin, "pichdrra", [])
-            end
+            myList << Instruction.new(node.codeOrigin, "pichdr", [])
         end
     }
     myList
@@ -606,6 +667,7 @@ class Sequence
         }
 
         result = mipsAddPICCode(result)
+        result = mipsLowerFarBranchOps(result)
         result = mipsLowerSimpleBranchOps(result)
         result = riscLowerSimpleBranchOps(result)
         result = riscLowerHardBranchOps(result)
@@ -714,6 +776,16 @@ def emitMIPSDoubleBranch(branchOpcode, neg, operands)
     end
 end
 
+def emitMIPSJumpOrCall(opcode, operand)
+    if operand.label?
+        raise "Direct call/jump to a not local label." unless operand.is_a? LocalLabelReference
+        $asm.puts "#{opcode} #{operand.asmLabel}"
+    else
+        raise "Invalid call/jump register." unless operand == MIPS_CALL_REG
+        $asm.puts "#{opcode}r #{MIPS_CALL_REG.mipsOperand}"
+    end
+end
+
 class Instruction
     def lowerMIPS
         $asm.comment codeOriginString
@@ -784,6 +856,8 @@ class Instruction
             $asm.puts "ldc1 #{mipsFlippedOperands(operands)}"
         when "stored"
             $asm.puts "sdc1 #{mipsOperands(operands)}"
+        when "la"
+            $asm.puts "la #{operands[1].mipsOperand}, #{operands[0].asmLabel}"
         when "addd"
             emitMIPS("add.d", operands)
         when "divd"
@@ -871,17 +945,9 @@ class Instruction
         when "bilteq", "bplteq", "bblteq"
             $asm.puts "ble #{mipsOperands(operands[0..1])}, #{operands[2].asmLabel}"
         when "jmp"
-            if operands[0].label?
-                $asm.puts "j #{operands[0].asmLabel}"
-            else
-                $asm.puts "jr #{operands[0].mipsOperand}"
-            end
+            emitMIPSJumpOrCall("j", operands[0])
         when "call"
-            if operands[0].label?
-                $asm.puts "jal #{operands[0].asmLabel}"
-            else
-                $asm.puts "jalr #{operands[0].mipsOperand}"
-            end
+            emitMIPSJumpOrCall("jal", operands[0])
         when "break"
             $asm.puts "break"
         when "ret"
@@ -940,11 +1006,8 @@ class Instruction
         when "sltu", "sltub"
             $asm.puts "sltu #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].mipsOperand}"
         when "pichdr"
-            $asm.putStr("OFFLINE_ASM_CPLOAD($25)")
-            $asm.puts "move $s4, $gp"
-        when "pichdrra"
-            $asm.putStr("OFFLINE_ASM_CPLOAD($31)")
-            $asm.puts "move $s4, $gp"
+            $asm.putStr("OFFLINE_ASM_CPLOAD(#{MIPS_CALL_REG.mipsOperand})")
+            $asm.puts "move #{MIPS_GPSAVE_REG.mipsOperand}, #{MIPS_GP_REG.mipsOperand}"
         when "memfence"
             $asm.puts "sync"
         else
