@@ -200,5 +200,33 @@ Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText& textRenderer, const
     return quads;
 }
 
+#ifndef NDEBUG
+static void printPrefix(int& printedCharacters, int depth)
+{
+    fprintf(stderr, "------- --");
+    printedCharacters = 0;
+    while (++printedCharacters <= depth * 2)
+        fputc(' ', stderr);
+}
+
+void showLineLayoutForFlow(const RenderBlockFlow& flow, const Layout& layout, int depth)
+{
+    int printedCharacters = 0;
+    printPrefix(printedCharacters, depth);
+
+    fprintf(stderr, "SimpleLineLayout (%u lines, %u runs) (%p)\n", layout.lineCount(), layout.runCount(), &layout);
+    ++depth;
+
+    auto resolver = runResolver(flow, layout);
+    for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
+        const auto& run = *it;
+        LayoutRect r = run.rect();
+        printPrefix(printedCharacters, depth);
+        fprintf(stderr, "line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
+            r.x().toFloat(), r.y().toFloat(), r.width().toFloat(), r.height().toFloat(), run.text().utf8().data());
+    }
+}
+#endif
+
 }
 }

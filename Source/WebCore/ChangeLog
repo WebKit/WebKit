@@ -1,3 +1,24 @@
+2014-09-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Dump SimpleLineLayout info in showRenderTree() output
+        https://bugs.webkit.org/show_bug.cgi?id=136489
+
+        Reviewed by Zalan Bujtas.
+        
+        Include info about SimpleLineLayout to showRenderTree() output.
+        
+        Also show RenderText length, and truncate the RenderText contents
+        to 80 chars (since the string is replicated in inline boxes or simple line layout output).
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::showLineTreeAndMark):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderObject):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::printPrefix):
+        (WebCore::SimpleLineLayout::showLineTreeForFlow):
+        * rendering/SimpleLineLayoutFunctions.h:
+
 2014-09-03  Tim Horton  <timothy_horton@apple.com>
 
         iOS build fix after r173217 

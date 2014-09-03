@@ -3507,6 +3507,9 @@ void RenderBlockFlow::showLineTreeAndMark(const InlineBox* markedBox, int depth)
 {
     for (const RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
         root->showLineTreeAndMark(markedBox, depth);
+
+    if (auto simpleLineLayout = this->simpleLineLayout())
+        SimpleLineLayout::showLineLayoutForFlow(*this, *simpleLineLayout, depth);
 }
 #endif
 

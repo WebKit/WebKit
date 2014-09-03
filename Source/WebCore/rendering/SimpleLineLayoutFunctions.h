@@ -63,6 +63,10 @@ Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText&, const Layout&, boo
 LayoutUnit lineHeightFromFlow(const RenderBlockFlow&);
 LayoutUnit baselineFromFlow(const RenderBlockFlow&);
 
+#ifndef NDEBUG
+void showLineLayoutForFlow(const RenderBlockFlow&, const Layout&, int depth);
+#endif
+
 }
 
 namespace SimpleLineLayout {

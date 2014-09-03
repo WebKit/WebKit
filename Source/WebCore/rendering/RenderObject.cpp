@@ -1549,9 +1549,17 @@ void RenderObject::showRenderObject(bool mark, int depth) const
         fprintf(stderr, " node->(%p)", node());
         if (node()->isTextNode()) {
             String value = node()->nodeValue();
+            fprintf(stderr, " length->(%u)", value.length());
+
             value.replaceWithLiteral('\\', "\\\\");
             value.replaceWithLiteral('\n', "\\n");
-            fprintf(stderr, " \"%s\"", value.utf8().data());
+            
+            const int maxPrintedLength = 80;
+            if (value.length() > maxPrintedLength) {
+                String substring = value.substring(0, maxPrintedLength);
+                fprintf(stderr, " \"%s\"...", substring.utf8().data());
+            } else
+                fprintf(stderr, " \"%s\"", value.utf8().data());
         }
     }
 
