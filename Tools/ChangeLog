@@ -1,3 +1,9 @@
+2014-09-03  Dana Burkart  <dburkart@apple.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard performance popover is unstyled
