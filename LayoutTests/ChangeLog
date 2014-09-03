@@ -1,3 +1,15 @@
+2014-09-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a test case for Element.matches() with :scope
+        https://bugs.webkit.org/show_bug.cgi?id=136475
+
+        Reviewed by Andreas Kling.
+
+        There was not test for this use case. Looks like everything works fine.
+
+        * fast/selectors/matches-scope-expected.txt: Added.
+        * fast/selectors/matches-scope.html: Added.
+
 2014-09-03  David Hyatt  <hyatt@apple.com>
 
         Add support for the initial-letter CSS property to first-letter
