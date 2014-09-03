@@ -1,3 +1,18 @@
+2014-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove unnecessary function from TextPainter
+        https://bugs.webkit.org/show_bug.cgi?id=136497
+
+        Reviewed by Simon Fraser.
+
+        Function is never called.
+
+        No new tests because there is no behavior change.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextInContext): Deleted.
+        * rendering/TextPainter.h:
+
 2014-09-03  Anders Carlsson  <andersca@apple.com>
 
         Don't use DEPRECATED_DEFINE_STATIC_LOCAL for mutexes

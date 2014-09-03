@@ -168,22 +168,6 @@ void TextPainter::paintText()
     }
 }
 
-void TextPainter::paintTextInContext(GraphicsContext& context, float amountToIncreaseStrokeWidthBy)
-{
-    SavedDrawingStateForMask savedDrawingStateForMask = m_savedDrawingStateForMask;
-    
-    ASSERT(m_savedDrawingStateForMask.m_textPaintStyle);
-    ASSERT(m_savedDrawingStateForMask.m_selectionPaintStyle);
-    m_savedDrawingStateForMask.m_context = &context;
-    m_savedDrawingStateForMask.m_textPaintStyle->strokeWidth += amountToIncreaseStrokeWidthBy;
-    m_savedDrawingStateForMask.m_selectionPaintStyle->strokeWidth += amountToIncreaseStrokeWidthBy;
-    m_savedDrawingStateForMask.m_textShadow = nullptr;
-    m_savedDrawingStateForMask.m_selectionShadow = nullptr;
-    paintText();
-
-    m_savedDrawingStateForMask = savedDrawingStateForMask;
-}
-
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
 DashArray TextPainter::dashesForIntersectionsWithRect(const FloatRect& lineExtents)
 {

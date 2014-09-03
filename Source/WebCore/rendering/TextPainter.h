@@ -66,7 +66,6 @@ public:
     bool textBoxIsHorizontal, TextPaintStyle& nonSelectionPaintStyle, TextPaintStyle& selectionPaintStyle);
     
     void paintText();
-    void paintTextInContext(GraphicsContext&, float amountToIncreaseStrokeWidthBy);
 
     DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents);
 
