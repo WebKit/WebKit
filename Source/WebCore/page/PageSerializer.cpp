@@ -136,9 +136,9 @@ void SerializerMarkupAccumulator::appendElement(StringBuilder& out, const Elemen
         MarkupAccumulator::appendElement(out, element, namespaces);
 
     if (element.hasTagName(HTMLNames::headTag)) {
-        out.append("<meta charset=\"");
+        out.appendLiteral("<meta charset=\"");
         out.append(m_document.charset());
-        out.append("\">");
+        out.appendLiteral("\">");
     }
 
     // FIXME: For object (plugins) tags and video tag we could replace them by an image of their current contents.

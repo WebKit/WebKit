@@ -477,7 +477,7 @@ String SecurityOrigin::toRawString() const
     StringBuilder result;
     result.reserveCapacity(m_protocol.length() + m_host.length() + 10);
     result.append(m_protocol);
-    result.append("://");
+    result.appendLiteral("://");
     result.append(m_host);
 
     if (m_port) {

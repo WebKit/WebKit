@@ -517,15 +517,15 @@ static void logThreadedScrollingMode(unsigned synchronousScrollingReasons)
         StringBuilder reasonsDescription;
 
         if (synchronousScrollingReasons & ScrollingCoordinator::ForcedOnMainThread)
-            reasonsDescription.append("forced,");
+            reasonsDescription.appendLiteral("forced,");
         if (synchronousScrollingReasons & ScrollingCoordinator::HasSlowRepaintObjects)
-            reasonsDescription.append("slow-repaint objects,");
+            reasonsDescription.appendLiteral("slow-repaint objects,");
         if (synchronousScrollingReasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
-            reasonsDescription.append("viewport-constrained objects,");
+            reasonsDescription.appendLiteral("viewport-constrained objects,");
         if (synchronousScrollingReasons & ScrollingCoordinator::HasNonLayerViewportConstrainedObjects)
-            reasonsDescription.append("non-layer viewport-constrained objects,");
+            reasonsDescription.appendLiteral("non-layer viewport-constrained objects,");
         if (synchronousScrollingReasons & ScrollingCoordinator::IsImageDocument)
-            reasonsDescription.append("image document,");
+            reasonsDescription.appendLiteral("image document,");
 
         // Strip the trailing comma.
         String reasonsDescriptionTrimmed = reasonsDescription.toString().left(reasonsDescription.length() - 1);

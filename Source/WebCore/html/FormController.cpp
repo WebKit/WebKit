@@ -302,7 +302,7 @@ static inline void recordFormStructure(const HTMLFormElement& form, StringBuilde
     // 2 is enough to distinguish forms in webkit.org/b/91209#c0
     const size_t namedControlsToBeRecorded = 2;
     const Vector<FormAssociatedElement*>& controls = form.associatedElements();
-    builder.append(" [");
+    builder.appendLiteral(" [");
     for (size_t i = 0, namedControls = 0; i < controls.size() && namedControls < namedControlsToBeRecorded; ++i) {
         if (!controls[i]->isFormControlElementWithState())
             continue;
@@ -314,9 +314,9 @@ static inline void recordFormStructure(const HTMLFormElement& form, StringBuilde
             continue;
         namedControls++;
         builder.append(name);
-        builder.append(" ");
+        builder.append(' ');
     }
-    builder.append("]");
+    builder.append(']');
 }
 
 static inline String formSignature(const HTMLFormElement& form)

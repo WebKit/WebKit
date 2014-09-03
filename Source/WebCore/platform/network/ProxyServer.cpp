@@ -34,14 +34,14 @@ static void appendProxyServerString(StringBuilder& builder, const ProxyServer& p
 {
     switch (proxyServer.type()) {
     case ProxyServer::Direct:
-        builder.append("DIRECT");
+        builder.appendLiteral("DIRECT");
         return;
     case ProxyServer::HTTP:
     case ProxyServer::HTTPS:
-        builder.append("PROXY");
+        builder.appendLiteral("PROXY");
         break;
     case ProxyServer::SOCKS:
-        builder.append("SOCKS");
+        builder.appendLiteral("SOCKS");
         break;
     }
     
@@ -63,7 +63,7 @@ String toString(const Vector<ProxyServer>& proxyServers)
     StringBuilder stringBuilder;
     for (size_t i = 0; i < proxyServers.size(); ++i) {
         if (i)
-            stringBuilder.append("; ");
+            stringBuilder.appendLiteral("; ");
 
         appendProxyServerString(stringBuilder, proxyServers[i]);
     }

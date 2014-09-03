@@ -102,7 +102,7 @@ String EmailInputType::sanitizeValue(const String& proposedValue) const
     StringBuilder strippedValue;
     for (unsigned i = 0; i < addresses.size(); ++i) {
         if (i > 0)
-            strippedValue.append(",");
+            strippedValue.append(',');
         strippedValue.append(stripLeadingAndTrailingHTMLSpaces(addresses[i]));
     }
     return strippedValue.toString();

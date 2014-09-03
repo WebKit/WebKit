@@ -349,7 +349,7 @@ WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line)
         return recoverCue(line);
     }
     if (!m_currentContent.isEmpty())
-        m_currentContent.append("\n");
+        m_currentContent.append('\n');
     m_currentContent.append(line);
 
     return CueText;

@@ -792,10 +792,10 @@ private:
     {
         StringBuilder builder;
         for (int i = 0; i < indentation; i++)
-            builder.append(" ");
-        builder.append("-");
+            builder.append(' ');
+        builder.append('-');
         if (node) {
-            builder.append(" ");
+            builder.append(' ');
             builder.append(ValueToString<T>::string(node->data()));
             builder.append((node->color() == Black) ? " (black)" : " (red)");
         }

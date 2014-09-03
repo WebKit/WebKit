@@ -644,7 +644,7 @@ String listMarkerText(EListStyleType type, int value)
                 break;
             }
             if (value < 0) {
-                builder.append("-0");
+                builder.appendLiteral("-0");
                 builder.appendNumber(-value); // -01 to -09
                 break;
             }

@@ -125,7 +125,7 @@ String CSSSelectorList::selectorsText() const
 
     for (const CSSSelector* s = first(); s; s = next(s)) {
         if (s != first())
-            result.append(", ");
+            result.appendLiteral(", ");
         result.append(s->selectorText());
     }
 

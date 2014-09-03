@@ -493,7 +493,7 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
     StringBuilder builder;
     do {
         builder.clear();
-        builder.append("NS");
+        builder.appendLiteral("NS");
         builder.appendNumber(++m_prefixLevel);
         const AtomicString& name = builder.toAtomicString();
         if (!namespaces.get(name.impl())) {

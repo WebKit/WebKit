@@ -172,7 +172,7 @@ String WebSocketHandshake::clientLocation() const
 {
     StringBuilder builder;
     builder.append(m_secure ? "wss" : "ws");
-    builder.append("://");
+    builder.appendLiteral("://");
     builder.append(hostName(m_url, m_secure));
     builder.append(resourceName(m_url));
     return builder.toString();
@@ -183,9 +183,9 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     // Keep the following consistent with clientHandshakeRequest().
     StringBuilder builder;
 
-    builder.append("GET ");
+    builder.appendLiteral("GET ");
     builder.append(resourceName(m_url));
-    builder.append(" HTTP/1.1\r\n");
+    builder.appendLiteral(" HTTP/1.1\r\n");
 
     Vector<String> fields;
     fields.append("Upgrade: websocket");
@@ -226,10 +226,10 @@ CString WebSocketHandshake::clientHandshakeMessage() const
 
     for (size_t i = 0; i < fields.size(); i++) {
         builder.append(fields[i]);
-        builder.append("\r\n");
+        builder.appendLiteral("\r\n");
     }
 
-    builder.append("\r\n");
+    builder.appendLiteral("\r\n");
 
     return builder.toString().utf8();
 }

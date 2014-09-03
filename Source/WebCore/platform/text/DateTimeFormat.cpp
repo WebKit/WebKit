@@ -257,9 +257,9 @@ void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder&
     }
     
     if (literal.find('\'') == notFound) {
-        buffer.append("'");
+        buffer.append('\'');
         buffer.append(literal);
-        buffer.append("'");
+        buffer.append('\'');
         return;
     }
 
@@ -268,10 +268,10 @@ void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder&
             buffer.append("''");
         else {
             String escaped = literal.substring(i);
-            escaped.replace(ASCIILiteral("'"), ASCIILiteral("''"));
-            buffer.append("'");
+            escaped.replace('\'', "''");
+            buffer.append('\'');
             buffer.append(escaped);
-            buffer.append("'");
+            buffer.append('\'');
             return;
         }
     }

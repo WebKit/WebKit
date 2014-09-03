@@ -266,9 +266,9 @@ String IDBKeyData::loggingString() const
             for (size_t i = 0; i < arrayValue.size(); ++i) {
                 result.append(arrayValue[i].loggingString());
                 if (i < arrayValue.size() - 1)
-                    result.append(", ");
+                    result.appendLiteral(", ");
             }
-            result.append(" }");
+            result.appendLiteral(" }");
             return result.toString();
         }
     case IDBKey::StringType:

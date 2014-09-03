@@ -53,20 +53,20 @@ XSSAuditorDelegate::XSSAuditorDelegate(Document& document)
 static inline String buildConsoleError(const XSSInfo& xssInfo)
 {
     StringBuilder message;
-    message.append("The XSS Auditor ");
+    message.appendLiteral("The XSS Auditor ");
     message.append(xssInfo.m_didBlockEntirePage ? "blocked access to" : "refused to execute a script in");
-    message.append(" '");
+    message.appendLiteral(" '");
     message.append(xssInfo.m_originalURL);
-    message.append("' because ");
+    message.appendLiteral("' because ");
     message.append(xssInfo.m_didBlockEntirePage ? "the source code of a script" : "its source code");
-    message.append(" was found within the request.");
+    message.appendLiteral(" was found within the request.");
 
     if (xssInfo.m_didSendCSPHeader)
-        message.append(" The server sent a 'Content-Security-Policy' header requesting this behavior.");
+        message.appendLiteral(" The server sent a 'Content-Security-Policy' header requesting this behavior.");
     else if (xssInfo.m_didSendXSSProtectionHeader)
-        message.append(" The server sent an 'X-XSS-Protection' header requesting this behavior.");
+        message.appendLiteral(" The server sent an 'X-XSS-Protection' header requesting this behavior.");
     else
-        message.append(" The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.");
+        message.appendLiteral(" The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.");
 
     return message.toString();
 }

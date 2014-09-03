@@ -97,7 +97,7 @@ static String encodeProtocolString(const String& protocol)
         if (protocol[i] < 0x20 || protocol[i] > 0x7E)
             builder.append(String::format("\\u%04X", protocol[i]));
         else if (protocol[i] == 0x5c)
-            builder.append("\\\\");
+            builder.appendLiteral("\\\\");
         else
             builder.append(protocol[i]);
     }

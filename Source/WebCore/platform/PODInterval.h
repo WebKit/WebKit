@@ -144,7 +144,7 @@ public:
         builder.append(ValueToString<UserData>::string(data()));
         builder.append(", maxHigh=");
         builder.append(ValueToString<T>::string(maxHigh()));
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 #endif

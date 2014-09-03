@@ -46,14 +46,14 @@ String createCanonicalUUIDString()
     StringBuilder builder;
     builder.reserveCapacity(36);
     appendUnsignedAsHexFixedSize(randomData[0], builder, 8, Lowercase);
-    builder.append("-");
+    builder.append('-');
     appendUnsignedAsHexFixedSize(randomData[1] >> 16, builder, 4, Lowercase);
-    builder.append("-4");
+    builder.appendLiteral("-4");
     appendUnsignedAsHexFixedSize(randomData[1] & 0x00000fff, builder, 3, Lowercase);
-    builder.append("-");
+    builder.append('-');
     appendUnsignedAsHexFixedSize((randomData[2] >> 30) | 0x8, builder, 1, Lowercase);
     appendUnsignedAsHexFixedSize((randomData[2] >> 16) & 0x00000fff, builder, 3, Lowercase);
-    builder.append("-");
+    builder.append('-');
     appendUnsignedAsHexFixedSize(randomData[2] & 0x0000ffff, builder, 4, Lowercase);
     appendUnsignedAsHexFixedSize(randomData[3], builder, 8, Lowercase);
     return builder.toString();

@@ -1,3 +1,78 @@
+2014-09-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use StringBuilder append(char) and appendLiteral in more places
+        https://bugs.webkit.org/show_bug.cgi?id=136470
+
+        Reviewed by Andreas Kling.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::encodeProtocolString):
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::createHeaderValue):
+        (WebCore::WebSocketExtensionDispatcher::appendAcceptedExtension):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientLocation):
+        (WebCore::WebSocketHandshake::clientHandshakeMessage):
+        * css/CSSCalculationValue.cpp:
+        (WebCore::buildCssText):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::cssText):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::cssText):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::selectorsText):
+        * css/CSSSupportsRule.cpp:
+        (WebCore::CSSSupportsRule::cssText):
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::serialize):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::generateUniquePrefix):
+        * editing/markup.cpp:
+        (WebCore::urlToMarkup):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::convertToDataURL):
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::sanitizeValue):
+        * html/FormController.cpp:
+        (WebCore::recordFormStructure):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::buildConsoleError):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::collectCueText):
+        * mathml/MathMLMencloseElement.cpp:
+        (WebCore::MathMLMencloseElement::longDivLeftPadding):
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::appendElement):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toRawString):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::logThreadedScrollingMode):
+        * platform/PODInterval.h:
+        (WebCore::PODInterval::toString):
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::dumpFromNode):
+        * platform/UUID.cpp:
+        (WebCore::createCanonicalUUIDString):
+        * platform/network/ProxyServer.cpp:
+        (WebCore::appendProxyServerString):
+        (WebCore::toString):
+        * platform/text/DateTimeFormat.cpp:
+        (WebCore::DateTimeFormat::quoteAndAppendLiteral):
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::DateTimeStringBuilder::zeroPadString):
+        (WebCore::Locale::convertFromLocalizedNumber):
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::listMarkerText):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+        (WebCore::Internals::getCurrentCursorInfo):
+
 2014-09-03  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Enable Page Caching
