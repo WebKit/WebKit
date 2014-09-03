@@ -38,8 +38,10 @@ BuildbotQueue = function(buildbot, id, info)
     this.debug = info.debug || false;
     this.builder = info.builder || false;
     this.tester = info.tester || false;
+    this.performance = info.performance || false;
     this.architecture = info.architecture || null;
     this.testCategory = info.testCategory || null;
+    this.performanceTestName = info.performanceTestName || null;
 
     this.iterations = [];
     this._knownIterations = {};

@@ -79,6 +79,10 @@ BuildbotIteration.ProductiveSteps = {
     "webkitpy-test": 1,
     "webkitperl-test": 1,
     "bindings-generation-tests": 1,
+    "run Membuster OS Memory": 1,
+    "run scrollperf": 1,
+    "run PLT3": 1,
+    "perf-test": 1
 };
 
 BuildbotIteration.Event = {
@@ -194,7 +198,7 @@ BuildbotIteration.prototype = {
 
             testResults.finished = true;
 
-            if (!testStep.results || !testStep.results[0]) {
+            if (!testStep.results || testStep.results[0] === BuildbotIteration.SUCCESS) {
                 // All tests passed.
                 testResults.allPassed = true;
                 return testResults;

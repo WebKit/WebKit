@@ -89,7 +89,7 @@ div.cellButton.unhide {
 body {
     background-color: rgb(233, 231, 223);
     text-align: center;
-    margin: 50px;
+    margin: 50px 25px 50px 25px;
 }
 
 table.queue-grid {
