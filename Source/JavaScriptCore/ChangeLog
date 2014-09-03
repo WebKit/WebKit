@@ -1,3 +1,10 @@
+2014-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Temporarily disable call edge profiling. It is causing crashes and I'm still investigating
+        them.
+
+        * runtime/Options.h:
+
 2014-09-03  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         [MIPS] Wrong register usage in LLInt op_catch.
