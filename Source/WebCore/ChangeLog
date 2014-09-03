@@ -1,3 +1,37 @@
+2014-09-03  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of some uses of OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=136503
+
+        Reviewed by Sam Weinig.
+
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::create): Deleted.
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::create): Deleted.
+        * dom/MutationObserverRegistration.h:
+        * dom/Node.cpp:
+        (WebCore::Node::materializeRareData):
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::eventTargetDataMap):
+        (WebCore::Node::eventTargetData):
+        (WebCore::Node::ensureEventTargetData):
+        (WebCore::Node::mutationObserverRegistry):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::unregisterMutationObserver):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::clearNodeLists):
+        (WebCore::NodeRareData::ensureNodeLists):
+        (WebCore::NodeRareData::ensureMutationObserverData):
+        (WebCore::NodeListsNodeData::create): Deleted.
+        (WebCore::NodeMutationObserverData::create): Deleted.
+        (WebCore::NodeRareData::create): Deleted.
+
 2014-09-02  Maciej Stachowiak  <mjs@apple.com>
 
         Clean up naming for and slightly refactor legacy video fullscreen support

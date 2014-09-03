@@ -693,7 +693,7 @@ private:
     void trackForDebugging();
     void materializeRareData();
 
-    Vector<OwnPtr<MutationObserverRegistration>>* mutationObserverRegistry();
+    Vector<std::unique_ptr<MutationObserverRegistration>>* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
 
     mutable uint32_t m_nodeFlags;

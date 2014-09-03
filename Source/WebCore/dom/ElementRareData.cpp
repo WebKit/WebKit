@@ -42,6 +42,6 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* pointers[7];
 };
 
-COMPILE_ASSERT(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), ElementRareDataShouldStaySmall);
+static_assert(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), "ElementRareData should stay small");
 
 } // namespace WebCore

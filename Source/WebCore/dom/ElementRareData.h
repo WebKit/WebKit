@@ -36,8 +36,7 @@ namespace WebCore {
 
 class ElementRareData : public NodeRareData {
 public:
-    static PassOwnPtr<ElementRareData> create(RenderElement* renderer) { return adoptPtr(new ElementRareData(renderer)); }
-
+    explicit ElementRareData(RenderElement*);
     ~ElementRareData();
 
     void setBeforePseudoElement(PassRefPtr<PseudoElement>);
@@ -146,7 +145,6 @@ private:
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
 
-    explicit ElementRareData(RenderElement*);
     void releasePseudoElement(PseudoElement*);
 };
 
