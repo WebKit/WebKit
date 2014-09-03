@@ -62,23 +62,19 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 
 namespace WebCore {
 
-CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(SourceBufferPrivateAVFObjC* parent)
-    : m_parent(parent)
-    , m_client(nullptr)
+CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC()
+    : m_client(nullptr)
     , m_sessionId(createCanonicalUUIDString())
 {
-    ASSERT(parent);
-    parent->registerForErrorNotifications(this);
 }
 
 CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
 {
     if (m_streamSession) {
-        [m_streamSession removeStreamDataParser:m_parent->parser()];
+        for (auto& sourceBuffer : m_sourceBuffers)
+            [m_streamSession removeStreamDataParser:sourceBuffer->parser()];
         m_streamSession = nil;
     }
-    m_parent->unregisterForErrorNotifications(this);
-    m_client = nullptr;
 }
 
 PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
@@ -134,18 +130,33 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         m_certificate = key;
     }
 
+    RefPtr<SourceBufferPrivateAVFObjC> protectedSourceBuffer;
+    for (auto& sourceBuffer : m_sourceBuffers) {
+        if (sourceBuffer->protectedTrackID() != -1) {
+            protectedSourceBuffer = sourceBuffer;
+            break;
+        }
+    }
+
     if (shouldGenerateKeyRequest) {
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
         if (getAVStreamSessionClass()) {
             m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithAppIdentifier:certificateData.get()]);
-            [m_streamSession addStreamDataParser:m_parent->parser()];
+            for (auto& sourceBuffer : m_sourceBuffers)
+                [m_streamSession addStreamDataParser:sourceBuffer->parser()];
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - created stream session %p", this, m_streamSession.get());
         }
+
+        if (m_sourceBuffers.isEmpty())
+            return true;
+
+        if (!protectedSourceBuffer)
+            return true;
 
         RetainPtr<NSData> initData = adoptNS([[NSData alloc] initWithBytes:m_initData->data() length:m_initData->length()]);
 
         NSError* error = nil;
-        RetainPtr<NSData> request = [m_parent->parser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:m_parent->protectedTrackID() options:nil error:&error];
+        RetainPtr<NSData> request = [protectedSourceBuffer->parser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:protectedSourceBuffer->protectedTrackID() options:nil error:&error];
 
         if (error) {
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - error:%@", this, [error description]);
@@ -159,11 +170,12 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         return false;
     }
 
+    ASSERT(!m_sourceBuffers.isEmpty());
     LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - key data", this);
     errorCode = MediaPlayer::NoError;
     systemCode = 0;
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->data() length:key->length()]);
-    [m_parent->parser() processContentKeyResponseData:keyData.get() forTrackID:m_parent->protectedTrackID()];
+    [protectedSourceBuffer->parser() processContentKeyResponseData:keyData.get() forTrackID:protectedSourceBuffer->protectedTrackID()];
     return true;
 }
 
@@ -181,6 +193,30 @@ void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRe
         return;
 
     m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, abs([error code]));
+}
+
+void CDMSessionMediaSourceAVFObjC::addSourceBuffer(SourceBufferPrivateAVFObjC* sourceBuffer)
+{
+    ASSERT(!m_sourceBuffers.contains(sourceBuffer));
+    ASSERT(sourceBuffer);
+
+    m_sourceBuffers.append(sourceBuffer);
+    sourceBuffer->registerForErrorNotifications(this);
+
+    if (m_streamSession)
+        [m_streamSession addStreamDataParser:sourceBuffer->parser()];
+}
+
+void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC* sourceBuffer)
+{
+    ASSERT(m_sourceBuffers.contains(sourceBuffer));
+    ASSERT(sourceBuffer);
+
+    if (m_streamSession)
+        [m_streamSession removeStreamDataParser:sourceBuffer->parser()];
+
+    sourceBuffer->unregisterForErrorNotifications(this);
+    m_sourceBuffers.remove(m_sourceBuffers.find(sourceBuffer));
 }
 
 }

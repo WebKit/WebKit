@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
-#import "CDMSession.h"
+#import "CDMSessionMediaSourceAVFObjC.h"
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
@@ -136,6 +136,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_weakPtrFactory(this)
     , m_synchronizer(adoptNS([[getAVSampleBufferRenderSynchronizerClass() alloc] init]))
     , m_seekTimer(this, &MediaPlayerPrivateMediaSourceAVFObjC::seekTimerFired)
+    , m_session(nullptr)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_rate(1)
@@ -194,7 +195,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-        registrar(create, getSupportedTypes, supportsType, 0, 0, 0, supportsKeySystem);
+        registrar(create, getSupportedTypes, supportsType, 0, 0, 0, 0);
 }
 
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateMediaSourceAVFObjC::create(MediaPlayer* player)
@@ -233,20 +234,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& ty
     types = mimeTypeCache();
 }
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
-static bool keySystemIsSupported(const String& keySystem)
-{
-    return equalIgnoringCase(keySystem, "com.apple.fps.2_0");
-}
-#endif
-
 MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
-#if ENABLE(ENCRYPTED_MEDIA_V2)
-    if (!parameters.keySystem.isEmpty() && !keySystemIsSupported(parameters.keySystem))
-            return MediaPlayer::IsNotSupported;
-#endif
-
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)
         return MediaPlayer::IsNotSupported;
@@ -261,28 +250,6 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
 
     NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)parameters.type, (NSString *)parameters.codecs];
     return [getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
-}
-
-bool MediaPlayerPrivateMediaSourceAVFObjC::supportsKeySystem(const String& keySystem, const String& mimeType)
-{
-#if ENABLE(ENCRYPTED_MEDIA_V2)
-    if (!wkQueryDecoderAvailability())
-        return false;
-
-    if (!keySystem.isEmpty()) {
-        if (!keySystemIsSupported(keySystem))
-            return false;
-
-        if (!mimeType.isEmpty() && !mimeTypeCache().contains(mimeType))
-            return false;
-
-        return true;
-    }
-#else
-    UNUSED_PARAM(keySystem);
-    UNUSED_PARAM(mimeType);
-#endif
-    return false;
 }
 
 #pragma mark -
@@ -692,12 +659,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-std::unique_ptr<CDMSession> MediaPlayerPrivateMediaSourceAVFObjC::createSession(const String& keySystem)
+void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(CDMSession* session)
 {
-    if (!m_mediaSourcePrivate)
-        return nullptr;
+    if (m_session) {
+        for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
+            m_session->removeSourceBuffer(sourceBuffer.get());
+        m_session = nullptr;
+    }
 
-    return m_mediaSourcePrivate->createSession(keySystem);
+    m_session = toCDMSessionMediaSourceAVFObjC(session);
+
+    if (m_session) {
+        for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
+            m_session->addSourceBuffer(sourceBuffer.get());
+    }
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
