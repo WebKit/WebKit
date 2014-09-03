@@ -1,3 +1,19 @@
+2014-09-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Prevent double-release on AVCFURLAssetRef
+        https://bugs.webkit.org/show_bug.cgi?id=136492
+        <rdar://problem/18206746>
+
+        Reviewed by Eric Carlson.
+
+        The AVFWrapper::setAsset method needs to retain the passed argument, since it
+        originates from AVCFPlayerItemGetAsset, which does not increment the
+        reference count of its return value as expected by Cocoa Get/Create/Copy
+        semantics.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::setAsset): Retain the passed argument.
+
 2014-09-03  Dan Bernstein  <mitz@apple.com>
 
         Get rid of HIGH_DPI_CANVAS leftovers
