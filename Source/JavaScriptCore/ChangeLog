@@ -1,3 +1,54 @@
+2014-09-03  Saam Barati  <saambarati1@gmail.com>
+
+        Create tests for type profiling
+        https://bugs.webkit.org/show_bug.cgi?id=136161
+
+        Reviewed by Geoffrey Garen.
+
+        The type profiler is now being tested. These are basic tests that don't 
+        check every edge case, but will catch any major failures in the type profiler. 
+        These tests cover:
+        - The basic, inheritance-based type system in TypeSet.
+        - Function return types.
+        - Correct merging of types for multiple assignments to one variable.
+
+        This patch also provides an API for writing new tests for
+        the type profiler. The API works by passing in a function and a 
+        unique substring of an expression contained in that function, and 
+        returns an object representing type information for that expression.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionFindTypeForExpression):
+        (functionReturnTypeFor):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset):
+        * runtime/TypeProfiler.h:
+        * runtime/TypeProfilerLog.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::toJSONString):
+        (JSC::StructureShape::toJSONString):
+        * runtime/TypeSet.h:
+        * tests/typeProfiler: Added.
+        * tests/typeProfiler.yaml: Added.
+        * tests/typeProfiler/basic.js: Added.
+        (wrapper.foo):
+        (wrapper):
+        * tests/typeProfiler/captured.js: Added.
+        (wrapper.changeFoo):
+        (wrapper):
+        * tests/typeProfiler/driver: Added.
+        * tests/typeProfiler/driver/driver.js: Added.
+        (assert):
+        * tests/typeProfiler/inheritance.js: Added.
+        (wrapper.A):
+        (wrapper.B):
+        (wrapper.C):
+        (wrapper):
+        * tests/typeProfiler/return.js: Added.
+        (foo):
+        (Ctor):
+
 2014-09-03  Julien Brianceau   <jbriance@cisco.com>
 
         Add missing implementations to fix build for sh4 architecture

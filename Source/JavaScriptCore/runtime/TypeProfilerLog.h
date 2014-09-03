@@ -74,7 +74,7 @@ public:
             processLogEntries(ASCIILiteral("Log Full"));
     }
 
-    void processLogEntries(String);
+    JS_EXPORT_PRIVATE void processLogEntries(String);
     LogEntry* logEndPtr() const { return m_logEndPtr; }
 
     static ptrdiff_t logStartOffset() { return OBJECT_OFFSETOF(TypeProfilerLog, m_logStartPtr); }

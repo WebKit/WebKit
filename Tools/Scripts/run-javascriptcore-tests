@@ -242,7 +242,8 @@ if ($runJSCStress) {
         "Source/JavaScriptCore/tests/stress",
         "LayoutTests/js/regress/script-tests",
         "PerformanceTests/SunSpider/profiler-test.yaml",
-        "LayoutTests/jsc-layout-tests.yaml"
+        "LayoutTests/jsc-layout-tests.yaml",
+        "Source/JavaScriptCore/tests/typeProfiler.yaml"
     );
     if ($enableFTL) {
         push(@jscStressDriverCmd, "--ftl-jit");

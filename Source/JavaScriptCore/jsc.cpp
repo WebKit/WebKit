@@ -37,6 +37,7 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSLock.h"
+#include "JSONObject.h"
 #include "JSProxy.h"
 #include "JSString.h"
 #include "ProfilerDatabase.h"
@@ -45,6 +46,7 @@
 #include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
 #include "TestRunnerUtils.h"
+#include "TypeProfilerLog.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -476,7 +478,9 @@ static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIdentity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables (ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -627,7 +631,10 @@ protected:
 
         addFunction(vm, "createImpureGetter", functionCreateImpureGetter, 1);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
-        addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 4);
+
+        addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
+        addFunction(vm, "findTypeForExpression", functionFindTypeForExpression, 2);
+        addFunction(vm, "returnTypeFor", functionReturnTypeFor, 1);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1063,6 +1070,38 @@ EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState* exec)
 {
     exec->vm().dumpTypeProfilerData();
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->vm().typeProfiler());
+    exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("jsc Testing API: functionFindTypeForExpression"));
+
+    JSValue functionValue = exec->argument(0);
+    RELEASE_ASSERT(functionValue.isFunction());
+    FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
+
+    RELEASE_ASSERT(exec->argument(1).isString());
+    String substring = exec->argument(1).getString(exec);
+    String sourceCodeText = executable->source().toString();
+    unsigned offset = static_cast<unsigned>(sourceCodeText.find(substring) + executable->source().startOffset());
+    
+    String jsonString = exec->vm().typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorNormal, offset, executable->sourceID());
+    return JSValue::encode(JSONParse(exec, jsonString));
+}
+
+EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->vm().typeProfiler());
+    exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("jsc Testing API: functionReturnTypeFor"));
+
+    JSValue functionValue = exec->argument(0);
+    RELEASE_ASSERT(functionValue.isFunction());
+    FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
+
+    unsigned offset = executable->source().startOffset();
+    String jsonString = exec->vm().typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID());
+    return JSValue::encode(JSONParse(exec, jsonString));
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

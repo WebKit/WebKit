@@ -708,6 +708,14 @@ def runExceptionFuzz
     addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
+def runTypeProfiler
+    if $enableFTL
+        run("ftl-no-cjit-type-profiler", "--enableTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    else
+       run("no-cjit-type-profiler", "--enableTypeProfiler=true", *NO_CJIT_OPTIONS)
+    end
+end
+
 def runLayoutTest(kind, *options)
     raise unless $benchmark.to_s =~ /\.js$/
     testName = $~.pre_match

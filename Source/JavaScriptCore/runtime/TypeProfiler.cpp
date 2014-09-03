@@ -82,6 +82,34 @@ void TypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDes
     description->setLocalStructures(location->m_instructionTypeSet->allStructureRepresentations());
 }
 
+String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor descriptor, unsigned offset, intptr_t sourceID)
+{
+    // This returns a JSON string representing an Object with the following properties:
+    //     globalTypeSet: 'JSON<TypeSet> | null'
+    //     instructionTypeSet: 'JSON<TypeSet>'
+
+    TypeLocation* location = findLocation(offset, sourceID, descriptor);
+    ASSERT(location);
+
+    StringBuilder json;  
+
+    json.append("{");
+
+    json.append("\"globalTypeSet\":");
+    if (location->m_globalTypeSet && location->m_globalVariableID != TypeProfilerNoGlobalIDExists)
+        json.append(location->m_globalTypeSet->toJSONString());
+    else
+        json.append("null");
+    json.append(",");
+
+    json.append("\"instructionTypeSet\":");
+    json.append(location->m_instructionTypeSet->toJSONString());
+
+    json.append("}");
+    
+    return json.toString();
+}
+
 TypeLocation* TypeProfiler::findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor descriptor)
 {
     QueryKey queryKey(sourceID, divot);

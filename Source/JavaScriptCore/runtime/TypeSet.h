@@ -70,6 +70,7 @@ public:
     void markAsFinal();
     void addProperty(RefPtr<StringImpl>);
     String stringRepresentation();
+    String toJSONString() const;
     PassRefPtr<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
     void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object" : name); }
     String constructorName() { return m_constructorName; }
@@ -97,6 +98,7 @@ public:
     String displayName() const;
     PassRefPtr<Inspector::Protocol::Array<String>> allPrimitiveTypeNames() const;
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
+    String toJSONString() const;
 
 private:
     String leastCommonAncestor() const;

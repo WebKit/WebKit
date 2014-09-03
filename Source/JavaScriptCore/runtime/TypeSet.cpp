@@ -251,6 +251,78 @@ String TypeSet::leastCommonAncestor() const
     return StructureShape::leastCommonAncestor(m_structureHistory);
 }
 
+String TypeSet::toJSONString() const
+{
+    // This returns a JSON string representing an Object with the following properties:
+    //     displayTypeName: 'String'
+    //     primitiveTypeNames: 'Array<String>'
+    //     structures: 'Array<JSON<StructureShape>>'
+
+    StringBuilder json;
+    json.append("{");
+
+    json.append("\"displayTypeName\":");
+    json.append("\"");
+    json.append(displayName());
+    json.append("\"");
+    json.append(",");
+
+    json.append("\"primitiveTypeNames\":");
+    json.append("[");
+    bool hasAnItem = false;
+    if (m_seenTypes & TypeUndefined) {
+        hasAnItem = true;
+        json.append("\"Undefined\"");
+    }
+    if (m_seenTypes & TypeNull) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append("\"Null\"");
+    }
+    if (m_seenTypes & TypeBoolean) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append("\"Boolean\"");
+    }
+    if (m_seenTypes & TypeMachineInt) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append("\"Integer\"");
+    }
+    if (m_seenTypes & TypeNumber) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append("\"Number\"");
+    }
+    if (m_seenTypes & TypeString) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append("\"String\"");
+    }
+    json.append("]");
+
+    json.append(",");
+
+    json.append("\"structures\":");
+    json.append("[");
+    hasAnItem = false;
+    for (size_t i = 0; i < m_structureHistory.size(); i++) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+        json.append(m_structureHistory[i]->toJSONString());
+    }
+    json.append("]");
+
+    json.append("}");
+    return json.toString();
+}
+
 void TypeSet::dumpSeenTypes()
 {
     dataLog(seenTypes(), "\n");
@@ -362,6 +434,49 @@ String StructureShape::stringRepresentation()
     representation.append('}');
 
     return representation.toString();
+}
+
+String StructureShape::toJSONString() const
+{
+    // This returns a JSON string representing an Object with the following properties:
+    //     constructorName: 'String'
+    //     fields: 'Array<String>'
+    //     proto: 'JSON<StructureShape> | null'
+
+    StringBuilder json;
+    json.append("{");
+
+    json.append("\"constructorName\":");
+    json.append("\"");
+    json.append(m_constructorName);
+    json.append("\"");
+    json.append(",");
+
+    json.append("\"fields\":");
+    json.append("[");
+    bool hasAnItem = false;
+    for (auto it = m_fields.begin(), end = m_fields.end(); it != end; ++it) {
+        if (hasAnItem)
+            json.append(",");
+        hasAnItem = true;
+
+        String fieldName((*it).get());
+        json.append("\"");
+        json.append(fieldName);
+        json.append("\"");
+    }
+    json.append("]");
+    json.append(",");
+
+    json.append("\"proto\":");
+    if (m_proto)
+        json.append(m_proto->toJSONString());
+    else
+        json.append("null");
+
+    json.append("}");
+
+    return json.toString();
 }
 
 PassRefPtr<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
