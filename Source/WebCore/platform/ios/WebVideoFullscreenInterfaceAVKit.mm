@@ -48,6 +48,7 @@
 #import <WebCore/WebCoreThreadRun.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

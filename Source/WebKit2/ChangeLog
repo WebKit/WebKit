@@ -1,3 +1,41 @@
+2014-09-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Clean up naming for and slightly refactor legacy video fullscreen support
+        https://bugs.webkit.org/show_bug.cgi?id=136446
+
+        Reviewed by Jer Noble.
+
+        Key changes:
+        supportsFullscreenForNode(Node*) --> supportsVideoFullscreen()
+        enterFullscreenForNode(Node*) --> enterVideoFullscreenForVideoElement(HTMLVideoElement*)
+        exitFullscreenForNode(Node*) --> exitVideoFullscreen()
+        
+        The old versions had unnecessary parameters, did not clearly distinguish their purpose
+        from enterFullscreenForElement and friends, and wrongly claimed generality to all Nodes.
+        Also changed many other places to use HTMLVideoElement* instead of Node* or 
+        HTMLMediaElement* when they were in fact only used for video elements and would only
+        work for such.
+
+        Legacy video fullscreen in WebKit2 is only supported on iOS (for other ports that support
+        it, it's WK1 only).
+        
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsVideoFullscreen): Adjust for renames as
+        mentioned.
+        (WebKit::WebChromeClient::enterVideoFullscreenForVideoElement): ditto
+        (WebKit::WebChromeClient::exitVideoFullscreen): ditto
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::clientRectForElement): No need to be generic to node.
+        (WebKit::WebVideoFullscreenManager::supportsVideoFullscreen): Adjust for the
+        main refactoring. Also change m_node to m_videoElement with appropriate type change.
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement): ditto
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreen): ditto
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen): ditto 
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen): ditto
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen): ditto
+
 2014-09-03  Dan Bernstein  <mitz@apple.com>
 
         Get rid of HIGH_DPI_CANVAS leftovers

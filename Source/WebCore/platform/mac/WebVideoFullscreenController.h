@@ -32,7 +32,7 @@
 
 namespace WebCore {
     class DisplaySleepDisabler;
-    class HTMLMediaElement;
+    class HTMLVideoElement;
 }
 
 @protocol WebVideoFullscreenControllerDelegate;
@@ -42,7 +42,7 @@ namespace WebCore {
 
 WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
 @private
-    RefPtr<WebCore::HTMLMediaElement> _mediaElement; // (retain)
+    RefPtr<WebCore::HTMLVideoElement> _videoElement; // (retain)
     id <WebVideoFullscreenControllerDelegate> _delegate; // (assign)
 
     NSWindow *_backgroundFullscreenWindow; // (retain)
@@ -60,8 +60,8 @@ WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
 - (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate;
 
 - (void)setupVideoOverlay:(CALayer*)layer;
-- (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement;
-- (WebCore::HTMLMediaElement*)mediaElement;
+- (void)setVideoElement:(WebCore::HTMLVideoElement*)videoElement;
+- (WebCore::HTMLVideoElement*)videoElement;
 
 - (void)enterFullscreen:(NSScreen *)screen;
 - (void)exitFullscreen;

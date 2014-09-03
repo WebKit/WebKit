@@ -30,7 +30,7 @@
 
 #include "MediaPlayerPrivateFullscreenWindow.h"
 
-#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Image.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
@@ -107,8 +107,8 @@ public:
     FullscreenVideoController();
     virtual ~FullscreenVideoController();
 
-    void setMediaElement(WebCore::HTMLMediaElement*);
-    WebCore::HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
+    void setVideoElement(WebCore::HTMLVideoElement*);
+    WebCore::HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
 
     void enterFullscreen();
     void exitFullscreen();
@@ -149,7 +149,7 @@ private:
     void onMouseUp(const WebCore::IntPoint&);
     void onKeyDown(int virtualKey);
 
-    RefPtr<WebCore::HTMLMediaElement> m_mediaElement;
+    RefPtr<WebCore::HTMLVideoElement> m_videoElement;
 
     HWND m_hudWindow;
     GDIObject<HBITMAP> m_bitmap;

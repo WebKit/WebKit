@@ -31,7 +31,7 @@
 #include <WebCore/EventListener.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
-#include <WebCore/WebVideoFullscreenModelMediaElement.h>
+#include <WebCore/WebVideoFullscreenModelVideoElement.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -50,16 +50,16 @@ namespace WebKit {
 class LayerHostingContext;
 class WebPage;
 
-class WebVideoFullscreenManager : public WebCore::WebVideoFullscreenModelMediaElement, public WebCore::WebVideoFullscreenInterface, private IPC::MessageReceiver {
+class WebVideoFullscreenManager : public WebCore::WebVideoFullscreenModelVideoElement, public WebCore::WebVideoFullscreenInterface, private IPC::MessageReceiver {
 public:
     static PassRefPtr<WebVideoFullscreenManager> create(PassRefPtr<WebPage>);
     virtual ~WebVideoFullscreenManager();
     
     void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
     
-    bool supportsFullscreen(const WebCore::Node*) const;
-    void enterFullscreenForNode(WebCore::Node*);
-    void exitFullscreenForNode(WebCore::Node*);
+    bool supportsVideoFullscreen() const;
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
+    void exitVideoFullscreen();
     
 protected:
     explicit WebVideoFullscreenManager(PassRefPtr<WebPage>);
@@ -85,7 +85,7 @@ protected:
     virtual void setVideoLayerGravityEnum(unsigned);
     
     WebPage* m_page;
-    RefPtr<WebCore::Node> m_node;
+    RefPtr<WebCore::HTMLVideoElement> m_videoElement;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     
     bool m_isAnimating;

@@ -53,7 +53,7 @@ class URL;
 class KeyboardEvent;
 class Page;
 class RenderBox;
-class Node;
+class HTMLVideoElement;
 struct DictationAlternative;
 }
 #endif
@@ -233,8 +233,8 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_preferencesChanged:(WebPreferences *)preferences;
 
 #if ENABLE(VIDEO) && defined(__cplusplus)
-- (void)_enterFullscreenForNode:(WebCore::Node*)node;
-- (void)_exitFullscreen;
+- (void)_enterVideoFullscreenForVideoElement:(WebCore::HTMLVideoElement*)videoElement;
+- (void)_exitVideoFullscreen;
 #endif
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS) && defined(__cplusplus)

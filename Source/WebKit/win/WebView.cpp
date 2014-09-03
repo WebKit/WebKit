@@ -101,8 +101,8 @@
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLNames.h>
+#include <WebCore/HTMLVideoElement.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
@@ -6281,38 +6281,31 @@ HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
     return S_OK;
 }
 
-void WebView::enterFullscreenForNode(Node* node)
+void WebView::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement)
 {
 #if ENABLE(VIDEO) && !USE(GSTREAMER) && !USE(MEDIA_FOUNDATION)
-    if (!isHTMLVideoElement(node) || !node->isElementNode())
-        return;
-
-    if (!toElement(node)->isMediaElement())
-        return;
-    HTMLMediaElement* videoElement = toHTMLMediaElement(node);
-
     if (m_fullScreenVideoController) {
-        if (m_fullScreenVideoController->mediaElement() == videoElement) {
+        if (m_fullScreenVideoController->videoElement() == videoElement) {
             // The backend may just warn us that the underlaying plaftormMovie()
             // has changed. Just force an update.
-            m_fullScreenVideoController->setMediaElement(videoElement);
+            m_fullScreenVideoController->setVideoElement(videoElement);
             return; // No more to do.
         }
 
-        // First exit Fullscreen for the old mediaElement.
-        m_fullScreenVideoController->mediaElement()->exitFullscreen();
+        // First exit Fullscreen for the old videoElement.
+        m_fullScreenVideoController->videoElement()->exitFullscreen();
         // This previous call has to trigger exitFullscreen,
         // which has to clear m_fullScreenVideoController.
         ASSERT(!m_fullScreenVideoController);
     }
 
     m_fullScreenVideoController = std::make_unique<FullscreenVideoController>();
-    m_fullScreenVideoController->setMediaElement(videoElement);
+    m_fullScreenVideoController->setVideoElement(videoElement);
     m_fullScreenVideoController->enterFullscreen();
 #endif
 }
 
-void WebView::exitFullscreen()
+void WebView::exitVideoFullscreen()
 {
 #if ENABLE(VIDEO) && !USE(GSTREAMER) && !USE(MEDIA_FOUNDATION)
     if (!m_fullScreenVideoController)

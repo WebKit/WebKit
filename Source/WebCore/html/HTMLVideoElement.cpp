@@ -157,7 +157,7 @@ bool HTMLVideoElement::supportsFullscreen() const
     if (!player()->hasVideo())
         return false;
 
-    return page->chrome().client().supportsFullscreenForNode(this);
+    return page->chrome().client().supportsVideoFullscreen();
 #endif // PLATFORM(IOS)
 }
 

@@ -940,26 +940,26 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 
 #if ENABLE(VIDEO)
 
-bool WebChromeClient::supportsFullscreenForNode(const Node* node)
+bool WebChromeClient::supportsVideoFullscreen()
 {
 #if PLATFORM(IOS)
     if (!Settings::avKitEnabled())
         return false;
 #endif
-    return isHTMLVideoElement(node);
+    return true;
 }
 
-void WebChromeClient::enterFullscreenForNode(Node* node)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _enterFullscreenForNode:node];
+    [m_webView _enterVideoFullscreenForVideoElement:videoElement];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::exitFullscreenForNode(Node*)
+void WebChromeClient::exitVideoFullscreen()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_webView _exitFullscreen];
+    [m_webView _exitVideoFullscreen];
     END_BLOCK_OBJC_EXCEPTIONS;    
 }
 

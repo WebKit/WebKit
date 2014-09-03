@@ -339,9 +339,9 @@ public:
     virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
-    virtual bool supportsFullscreenForNode(const Node*) { return false; }
-    virtual void enterFullscreenForNode(Node*) { }
-    virtual void exitFullscreenForNode(Node*) { }
+    virtual bool supportsVideoFullscreen() { return false; }
+    virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement*) { }
+    virtual void exitVideoFullscreen() { }
     virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 
 #if ENABLE(FULLSCREEN_API)

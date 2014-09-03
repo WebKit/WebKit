@@ -30,7 +30,6 @@
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
 
 #include <WebCore/EventListener.h>
-#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +43,12 @@ OBJC_CLASS UIView;
 OBJC_CLASS CALayer;
 OBJC_CLASS WebAVVideoLayer;
 
+namespace WTF {
+class String;
+}
+
 namespace WebCore {
+class IntRect;
 class WebVideoFullscreenModel;
     
 class WebVideoFullscreenChangeObserver {
@@ -55,7 +59,7 @@ public:
     virtual void didExitFullscreen() = 0;
     virtual void didCleanupFullscreen() = 0;
 };
-    
+
 class WebVideoFullscreenInterfaceAVKit
     : public WebVideoFullscreenInterface
     , public RefCounted<WebVideoFullscreenInterfaceAVKit> {
@@ -88,13 +92,13 @@ public:
     WEBCORE_EXPORT virtual void setVideoDimensions(bool hasVideo, float width, float height) override;
     WEBCORE_EXPORT virtual void setSeekableRanges(const TimeRanges&) override;
     WEBCORE_EXPORT virtual void setCanPlayFastReverse(bool) override;
-    WEBCORE_EXPORT virtual void setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) override;
+    WEBCORE_EXPORT virtual void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
+    WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
+    WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
 
-    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, WebCore::IntRect initialRect, UIView *);
+    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, IntRect initialRect, UIView *);
     WEBCORE_EXPORT virtual void enterFullscreen();
-    WEBCORE_EXPORT virtual void exitFullscreen(WebCore::IntRect finalRect);
+    WEBCORE_EXPORT virtual void exitFullscreen(IntRect finalRect);
     WEBCORE_EXPORT virtual void cleanupFullscreen();
     WEBCORE_EXPORT virtual void invalidate();
     WEBCORE_EXPORT virtual void requestHideAndExitFullscreen();

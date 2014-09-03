@@ -1357,8 +1357,6 @@
 		3F42B31E1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */; };
 		3FBC4AEA189880EF0046EE38 /* WebVideoFullscreenModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AE9189880EF0046EE38 /* WebVideoFullscreenModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FBC4AEC1898810E0046EE38 /* WebVideoFullscreenInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AEB1898810E0046EE38 /* WebVideoFullscreenInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3FBC4AEF189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AED189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm */; };
-		3FBC4AF0189881380046EE38 /* WebVideoFullscreenModelMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AEE189881380046EE38 /* WebVideoFullscreenModelMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */; };
 		3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */; };
@@ -2203,6 +2201,8 @@
 		65DF323C09D1DE65001BE325 /* JSCanvasProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323609D1DE65001BE325 /* JSCanvasProxy.h */; };
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65E0E9441133C89F00B4CB10 /* JSDOMWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65FD466519B596F0001E2B4D /* WebVideoFullscreenModelVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6586FE3C19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65FD466619B596F6001E2B4D /* WebVideoFullscreenModelVideoElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6586FE3D19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.mm */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C638895A96CCEE50C8C946C /* CachedResourceRequestInitiators.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8356,8 +8356,6 @@
 		3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenControllerAVKit.mm; path = ios/WebVideoFullscreenControllerAVKit.mm; sourceTree = "<group>"; };
 		3FBC4AE9189880EF0046EE38 /* WebVideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenModel.h; path = ios/WebVideoFullscreenModel.h; sourceTree = "<group>"; };
 		3FBC4AEB1898810E0046EE38 /* WebVideoFullscreenInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenInterface.h; path = ios/WebVideoFullscreenInterface.h; sourceTree = "<group>"; };
-		3FBC4AED189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenModelMediaElement.mm; path = ios/WebVideoFullscreenModelMediaElement.mm; sourceTree = "<group>"; };
-		3FBC4AEE189881380046EE38 /* WebVideoFullscreenModelMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenModelMediaElement.h; path = ios/WebVideoFullscreenModelMediaElement.h; sourceTree = "<group>"; };
 		3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenInterfaceAVKit.mm; path = ios/WebVideoFullscreenInterfaceAVKit.mm; sourceTree = "<group>"; };
 		3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenInterfaceAVKit.h; path = ios/WebVideoFullscreenInterfaceAVKit.h; sourceTree = "<group>"; };
 		3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
@@ -9266,6 +9264,8 @@
 		657EDA061385CB97004E0645 /* MemoryPressureHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryPressureHandler.cpp; sourceTree = "<group>"; };
 		657EDA071385CB97004E0645 /* MemoryPressureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryPressureHandler.h; sourceTree = "<group>"; };
 		658436850AE01B7400E53753 /* FrameLoadRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadRequest.h; sourceTree = "<group>"; };
+		6586FE3C19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVideoFullscreenModelVideoElement.h; path = ios/WebVideoFullscreenModelVideoElement.h; sourceTree = "<group>"; };
+		6586FE3D19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebVideoFullscreenModelVideoElement.mm; path = ios/WebVideoFullscreenModelVideoElement.mm; sourceTree = "<group>"; };
 		6593923509AE4346002C531F /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		6593923609AE4346002C531F /* URL.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
 		6593923909AE435C002C531F /* URLMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = URLMac.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -18460,8 +18460,8 @@
 				3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */,
 				3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */,
 				3FBC4AE9189880EF0046EE38 /* WebVideoFullscreenModel.h */,
-				3FBC4AEE189881380046EE38 /* WebVideoFullscreenModelMediaElement.h */,
-				3FBC4AED189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm */,
+				6586FE3C19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.h */,
+				6586FE3D19B548BD005C3C82 /* WebVideoFullscreenModelVideoElement.mm */,
 				E453903C0EAFD637003695C8 /* WidgetIOS.mm */,
 			);
 			name = ios;
@@ -25599,6 +25599,7 @@
 				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
 				D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */,
 				BCE93F451517C567008CCF74 /* RenderRegionSet.h in Headers */,
+				65FD466519B596F0001E2B4D /* WebVideoFullscreenModelVideoElement.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
 				1479FAEE109AE37500DED655 /* RenderRuby.h in Headers */,
@@ -26530,7 +26531,6 @@
 				3FBC4AEC1898810E0046EE38 /* WebVideoFullscreenInterface.h in Headers */,
 				3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */,
 				3FBC4AEA189880EF0046EE38 /* WebVideoFullscreenModel.h in Headers */,
-				3FBC4AF0189881380046EE38 /* WebVideoFullscreenModelMediaElement.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
@@ -27560,6 +27560,7 @@
 				FD1762E3176686EA00D836A8 /* DownSampler.cpp in Sources */,
 				A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */,
 				A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */,
+				65FD466619B596F6001E2B4D /* WebVideoFullscreenModelVideoElement.mm in Sources */,
 				A79546430B5C4CB4007B438F /* DragData.cpp in Sources */,
 				A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */,
 				A7CFB3D10B7ED10A0070C32D /* DragImage.cpp in Sources */,
@@ -29806,7 +29807,6 @@
 				CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				7C73FB0C191EF5A8007DE061 /* JSUserMessageHandlersNamespace.cpp in Sources */,
 				3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */,
-				3FBC4AEF189881380046EE38 /* WebVideoFullscreenModelMediaElement.mm in Sources */,
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,

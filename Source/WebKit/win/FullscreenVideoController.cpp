@@ -205,18 +205,18 @@ void FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLay
 {
     ASSERT_ARG(layer, layer == m_parent->m_rootChild);
 
-    HTMLMediaElement* mediaElement = m_parent->m_mediaElement.get();
-    if (!mediaElement)
+    HTMLVideoElement* videoElement = m_parent->m_videoElement.get();
+    if (!videoElement)
         return;
 
 
-    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(mediaElement->platformLayer());
+    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(videoElement->platformLayer());
     if (!videoLayer || videoLayer->superlayer() != layer)
         return;
 
     FloatRect layerBounds = layer->bounds();
 
-    FloatSize videoSize = mediaElement->player()->naturalSize();
+    FloatSize videoSize = videoElement->player()->naturalSize();
     float scaleFactor;
     if (videoSize.aspectRatio() > layerBounds.size().aspectRatio())
         scaleFactor = layerBounds.width() / videoSize.width();
@@ -257,13 +257,13 @@ FullscreenVideoController::~FullscreenVideoController()
     m_rootChild->setOwner(0);
 }
 
-void FullscreenVideoController::setMediaElement(HTMLMediaElement* mediaElement)
+void FullscreenVideoController::setVideoElement(HTMLVideoElement* videoElement)
 {
-    if (mediaElement == m_mediaElement)
+    if (videoElement == m_videoElement)
         return;
 
-    m_mediaElement = mediaElement;
-    if (!m_mediaElement) {
+    m_videoElement = videoElement;
+    if (!m_videoElement) {
         // Can't do full-screen, just get out
         exitFullscreen();
     }
@@ -271,17 +271,17 @@ void FullscreenVideoController::setMediaElement(HTMLMediaElement* mediaElement)
 
 void FullscreenVideoController::enterFullscreen()
 {
-    if (!m_mediaElement)
+    if (!m_videoElement)
         return;
 
-    WebView* webView = kit(m_mediaElement->document().page());
+    WebView* webView = kit(m_videoElement->document().page());
     HWND parentHwnd = webView ? webView->viewWindow() : 0;
 
     m_fullscreenWindow->createWindow(parentHwnd);
     ::ShowWindow(m_fullscreenWindow->hwnd(), SW_SHOW);
     m_fullscreenWindow->setRootChildLayer(m_rootChild);
 
-    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_mediaElement->platformLayer());
+    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_videoElement->platformLayer());
     m_rootChild->appendSublayer(videoLayer);
     m_rootChild->setNeedsLayout();
     m_rootChild->setGeometryFlipped(1);
@@ -304,7 +304,7 @@ void FullscreenVideoController::exitFullscreen()
     ASSERT(!IsWindow(m_hudWindow));
     m_hudWindow = 0;
 
-    // We previously ripped the mediaElement's platform layer out
+    // We previously ripped the videoElement's platform layer out
     // of its orginial layer tree to display it in our fullscreen
     // window.  Now, we need to get the layer back in its original
     // tree.
@@ -312,66 +312,66 @@ void FullscreenVideoController::exitFullscreen()
     // As a side effect of setting the player to invisible/visible,
     // the player's layer will be recreated, and will be picked up 
     // the next time the layer tree is synched.
-    m_mediaElement->player()->setVisible(0);
-    m_mediaElement->player()->setVisible(1);
+    m_videoElement->player()->setVisible(0);
+    m_videoElement->player()->setVisible(1);
 }
 
 bool FullscreenVideoController::canPlay() const
 {
-    return m_mediaElement && m_mediaElement->canPlay();
+    return m_videoElement && m_videoElement->canPlay();
 }
 
 void FullscreenVideoController::play()
 {
-    if (m_mediaElement)
-        m_mediaElement->play();
+    if (m_videoElement)
+        m_videoElement->play();
 }
 
 void FullscreenVideoController::pause()
 {
-    if (m_mediaElement)
-        m_mediaElement->pause();
+    if (m_videoElement)
+        m_videoElement->pause();
 }
 
 float FullscreenVideoController::volume() const
 {
-    return m_mediaElement ? m_mediaElement->volume() : 0;
+    return m_videoElement ? m_videoElement->volume() : 0;
 }
 
 void FullscreenVideoController::setVolume(float volume)
 {
-    if (m_mediaElement) {
+    if (m_videoElement) {
         ExceptionCode ec;
-        m_mediaElement->setVolume(volume, ec);
+        m_videoElement->setVolume(volume, ec);
     }
 }
 
 float FullscreenVideoController::currentTime() const
 {
-    return m_mediaElement ? m_mediaElement->currentTime() : 0;
+    return m_videoElement ? m_videoElement->currentTime() : 0;
 }
 
 void FullscreenVideoController::setCurrentTime(float value)
 {
-    if (m_mediaElement)
-        m_mediaElement->setCurrentTime(value);
+    if (m_videoElement)
+        m_videoElement->setCurrentTime(value);
 }
 
 float FullscreenVideoController::duration() const
 {
-    return m_mediaElement ? m_mediaElement->duration() : 0;
+    return m_videoElement ? m_videoElement->duration() : 0;
 }
 
 void FullscreenVideoController::beginScrubbing()
 {
-    if (m_mediaElement) 
-        m_mediaElement->beginScrubbing();
+    if (m_videoElement) 
+        m_videoElement->beginScrubbing();
 }
 
 void FullscreenVideoController::endScrubbing()
 {
-    if (m_mediaElement) 
-        m_mediaElement->endScrubbing();
+    if (m_videoElement) 
+        m_videoElement->endScrubbing();
 }
 
 LRESULT FullscreenVideoController::fullscreenClientWndProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -580,8 +580,8 @@ LRESULT FullscreenVideoController::hudWndProc(HWND wnd, UINT message, WPARAM wPa
 void FullscreenVideoController::onChar(int c)
 {
     if (c == VK_ESCAPE) {
-        if (m_mediaElement)
-            m_mediaElement->exitFullscreen();
+        if (m_videoElement)
+            m_videoElement->exitFullscreen();
     } else if (c == VK_SPACE)
         togglePlay();
 }
@@ -589,8 +589,8 @@ void FullscreenVideoController::onChar(int c)
 void FullscreenVideoController::onKeyDown(int virtualKey)
 {
     if (virtualKey == VK_ESCAPE) {
-        if (m_mediaElement)
-            m_mediaElement->exitFullscreen();
+        if (m_videoElement)
+            m_videoElement->exitFullscreen();
     }
 }
 
@@ -673,8 +673,8 @@ void FullscreenVideoController::onMouseUp(const IntPoint& point)
             endScrubbing();
         else if (m_hitWidget == &m_exitFullscreenButton && m_exitFullscreenButton.hitTest(convertedPoint)) {
             m_hitWidget = 0;
-            if (m_mediaElement)
-                m_mediaElement->exitFullscreen();
+            if (m_videoElement)
+                m_videoElement->exitFullscreen();
             return;
         }
     }

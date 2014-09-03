@@ -1,3 +1,34 @@
+2014-09-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Clean up naming for and slightly refactor legacy video fullscreen support
+        https://bugs.webkit.org/show_bug.cgi?id=136446
+
+        Reviewed by Jer Noble.
+
+        Key changes:
+        supportsFullscreenForNode(Node*) --> supportsVideoFullscreen()
+        enterFullscreenForNode(Node*) --> enterVideoFullscreenForVideoElement(HTMLVideoElement*)
+        exitFullscreenForNode(Node*) --> exitVideoFullscreen()
+        
+        The old versions had unnecessary parameters, did not clearly distinguish their purpose
+        from enterFullscreenForElement and friends, and wrongly claimed generality to all Nodes.
+        Also changed many other places to use HTMLVideoElement* instead of Node* or 
+        HTMLMediaElement* when they were in fact only used for video elements and would only
+        work for such.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::supportsVideoFullscreen): Adjust for main refactoring.
+        Also no more need to check for video elementness.
+        (WebChromeClient::enterVideoFullscreenForVideoElement): Adjust for main refactoring.
+        (WebChromeClient::exitVideoFullscreen): ditto
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:]): Adjust for main
+        refactoring.
+        (-[WebView _exitVideoFullscreen]): ditto
+        (-[WebView _close]): ditto
+        * WebView/WebViewInternal.h:
+
 2014-09-03  Dan Bernstein  <mitz@apple.com>
 
         Get rid of HIGH_DPI_CANVAS leftovers

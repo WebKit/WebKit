@@ -1,3 +1,100 @@
+2014-09-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Clean up naming for and slightly refactor legacy video fullscreen support
+        https://bugs.webkit.org/show_bug.cgi?id=136446
+
+        Reviewed by Jer Noble.
+
+        Key changes:
+        supportsFullscreenForNode(Node*) --> supportsVideoFullscreen()
+        enterFullscreenForNode(Node*) --> enterVideoFullscreenForVideoElement(HTMLVideoElement*)
+        exitFullscreenForNode(Node*) --> exitVideoFullscreen()
+        
+        The old versions had unnecessary parameters, did not clearly distinguish their purpose
+        from enterFullscreenForElement and friends, and wrongly claimed generality to all Nodes.
+        Also changed many other places to use HTMLVideoElement* instead of Node* or 
+        HTMLMediaElement* when they were in fact only used for video elements and would only
+        work for such.
+
+        The implications of this include a bunch of renaming in some iOS fullscreen code.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Rename m_isFullscreen flag to 
+        m_isInVideoFullscreen, since it only covers the case of legacy video fullscreen,
+        not element fullscreen.
+        (WebCore::HTMLMediaElement::stop): ditto
+        (WebCore::HTMLMediaElement::requiresTextTrackRepresentation): ditto
+        (WebCore::HTMLMediaElement::isFullscreen): ditto
+        (WebCore::HTMLMediaElement::enterFullscreen): Rename m_isFullscreen flag to
+        m_isInVideoFullscreen. Hoist video element check here from all supportsFullscrenForNode
+        clients. Adjust for relevant ChromeClient refactorings.
+        (WebCore::HTMLMediaElement::enterFullscreen): ditto above
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen): Adjust for relevant ChromeClient 
+        refactorings.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::supportsVideoFullscreen): Renamed from 
+        supportsFullscreenForNode, and removed Node* parameter.
+        (WebCore::ChromeClient::enterVideoFullscreenForVideoElement): Renamed from
+        enterFulscreenForNode and changed Node* parameter to HTMLVideoElement*.
+        (WebCore::ChromeClient::exitVideoFullscreen): Renamed from 
+        exitFullscreenForNode, and removed Node* parameter.
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController videoElement]): Renamed from mediaElement;
+        return a video element and not just a media element.
+        (-[WebVideoFullscreenController dealloc]): Renamed _mediaElement data member
+        to _videoElement and changed type accordingly.
+        (-[WebVideoFullscreenController setVideoElement:]): Renamed from setMediaElement:
+        and adjust parameter type accordingly.
+        (-[WebVideoFullscreenController enterFullscreen:]): Video elements, not media
+        elements.
+        (-[WebVideoFullscreenController exitFullscreen]): ditto
+        (-[WebVideoFullscreenController didCleanupFullscreen]): ditto
+        * platform/ios/WebVideoFullscreenInterface.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h: Remove gratuitous HTMLMEdiaElement.h include
+        and fix declarations accordingly.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Include WTFString.h
+        * platform/ios/WebVideoFullscreenModelVideoElement.h: Renamed from Source/WebCore/platform/ios/WebVideoFullscreenModelMediaElement.h.
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm: Renamed from Source/WebCore/platform/ios/WebVideoFullscreenModelMediaElement.mm.
+        (WebVideoFullscreenModelVideoElement) Renamed from WebVideoFullscreenModelMediaElement
+        (WebVideoFullscreenModelVideoElement::setVideoElement): Renamed from setMediaElement and
+        change param type accordingly. Also no need to check for actual videoness of the element.
+        (WebVideoFullscreenModelVideoElement::updateForEventName): Rename data member from m_mediaElement
+        to m_videoElement and change type accordingly.
+        (WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer): ditto
+        (WebVideoFullscreenModelVideoElement::play): ditto
+        (WebVideoFullscreenModelVideoElement::pause): ditto
+        (WebVideoFullscreenModelVideoElement::togglePlayState): ditto
+        (WebVideoFullscreenModelVideoElement::beginScrubbing): ditto
+        (WebVideoFullscreenModelVideoElement::endScrubbing): ditto
+        (WebVideoFullscreenModelVideoElement::seekToTime): ditto
+        (WebVideoFullscreenModelVideoElement::fastSeek): ditto
+        (WebVideoFullscreenModelVideoElement::beginScanningForward): ditto
+        (WebVideoFullscreenModelVideoElement::beginScanningBackward): ditto
+        (WebVideoFullscreenModelVideoElement::endScanning): ditto
+        (WebVideoFullscreenModelVideoElement::requestExitFullscreen): ditto
+        (WebVideoFullscreenModelVideoElement::setVideoLayerFrame): ditto
+        (WebVideoFullscreenModelVideoElement::setVideoLayerGravity): ditto
+        (WebVideoFullscreenModelVideoElement::updateLegibleOptions): ditto
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController videoElement]): Renamed from mediaElement
+        and update return type accordingly.
+        (-[WebVideoFullscreenController setVideoElement:]): Renamed from 
+        setMediaElement and update return type accordingly.
+        (-[WebVideoFullscreenController videoElementRect]): Renamed
+        from mediaElementRect.
+        (-[WebVideoFullscreenController enterFullscreen:]): Update for
+        rename.
+        (-[WebVideoFullscreenController exitFullscreen]): ditto
+        (-[WebVideoFullscreenController updatePowerAssertions]): Rename
+        member from _mediaElement to _videoElement
+        (-[WebVideoFullscreenController _requestExit]): ditto
+        * WebCore.exp.in: Adjust for function and class renames.
+        * WebCore.xcodeproj/project.pbxproj: Adjust for file renames.
+
 2014-09-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix style invalidation of elements with multiple siblings dependencies

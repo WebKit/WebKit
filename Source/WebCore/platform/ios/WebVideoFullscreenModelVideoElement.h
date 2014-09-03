@@ -24,8 +24,8 @@
  */
 
 
-#ifndef WebVideoFullscreenModelMediaElement_h
-#define WebVideoFullscreenModelMediaElement_h
+#ifndef WebVideoFullscreenModelVideoElement_h
+#define WebVideoFullscreenModelVideoElement_h
 
 #if PLATFORM(IOS)
 
@@ -38,16 +38,16 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class HTMLMediaElement;
+class HTMLVideoElement;
 class TextTrack;
 class WebVideoFullscreenInterface;
 
-class WebVideoFullscreenModelMediaElement : public WebVideoFullscreenModel, public EventListener {
+class WebVideoFullscreenModelVideoElement : public WebVideoFullscreenModel, public EventListener {
 public:
-    WEBCORE_EXPORT WebVideoFullscreenModelMediaElement();
-    WEBCORE_EXPORT virtual ~WebVideoFullscreenModelMediaElement();
+    WEBCORE_EXPORT WebVideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT virtual ~WebVideoFullscreenModelVideoElement();
     void setWebVideoFullscreenInterface(WebVideoFullscreenInterface* interface) {m_videoFullscreenInterface = interface;}
-    WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
+    WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*);
     
     WEBCORE_EXPORT virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
@@ -75,7 +75,7 @@ private:
     static const Vector<WTF::AtomicString>& observedEventNames();
     const WTF::AtomicString& eventNameAll();
     
-    RefPtr<HTMLMediaElement> m_mediaElement;
+    RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening;
     WebVideoFullscreenInterface* m_videoFullscreenInterface;

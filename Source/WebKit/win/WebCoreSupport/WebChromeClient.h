@@ -148,9 +148,9 @@ public:
     virtual void scrollRectIntoView(const WebCore::IntRect&) const { }
 
 #if ENABLE(VIDEO)
-    virtual bool supportsFullscreenForNode(const WebCore::Node*);
-    virtual void enterFullscreenForNode(WebCore::Node*);
-    virtual void exitFullscreenForNode(WebCore::Node*);
+    virtual bool supportsVideoFullscreen();
+    virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
+    virtual void exitVideoFullscreen();
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

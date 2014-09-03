@@ -55,6 +55,7 @@ namespace WebCore {
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     struct GraphicsDeviceAdapter;
 #endif
+    class HTMLVideoElement;
 }
 
 namespace WebCore {
@@ -940,8 +941,8 @@ public:
     WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
 #endif
 
-    void enterFullscreenForNode(WebCore::Node*);
-    void exitFullscreen();
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement*);
+    void exitVideoFullscreen();
 
     void setLastCursor(HCURSOR cursor) { m_lastSetCursor = cursor; }
 

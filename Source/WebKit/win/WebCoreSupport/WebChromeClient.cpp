@@ -773,19 +773,19 @@ COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
 
 #if ENABLE(VIDEO)
 
-bool WebChromeClient::supportsFullscreenForNode(const Node* node)
+bool WebChromeClient::supportsVideoFullscreen()
 {
-    return isHTMLVideoElement(node);
+    return true;
 }
 
-void WebChromeClient::enterFullscreenForNode(Node* node)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement* videoElement)
 {
-    m_webView->enterFullscreenForNode(node);
+    m_webView->enterVideoFullscreenForVideoElement(videoElement);
 }
 
-void WebChromeClient::exitFullscreenForNode(Node*)
+void WebChromeClient::exitVideoFullscreen()
 {
-    m_webView->exitFullscreen();
+    m_webView->exitVideoFullscreen();
 }
 
 #endif

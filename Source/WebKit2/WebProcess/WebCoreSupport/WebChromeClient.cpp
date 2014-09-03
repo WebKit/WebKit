@@ -902,19 +902,19 @@ PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Pag
 #endif
 
 #if PLATFORM(IOS)
-bool WebChromeClient::supportsFullscreenForNode(const WebCore::Node* node)
+bool WebChromeClient::supportsVideoFullscreen()
 {
-    return m_page->videoFullscreenManager()->supportsFullscreen(node);
+    return m_page->videoFullscreenManager()->supportsVideoFullscreen();
 }
 
-void WebChromeClient::enterFullscreenForNode(WebCore::Node* node)
+void WebChromeClient::enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement* videoElement)
 {
-    m_page->videoFullscreenManager()->enterFullscreenForNode(node);
+    m_page->videoFullscreenManager()->enterVideoFullscreenForVideoElement(videoElement);
 }
 
-void WebChromeClient::exitFullscreenForNode(WebCore::Node* node)
+void WebChromeClient::exitVideoFullscreen()
 {
-    m_page->videoFullscreenManager()->exitFullscreenForNode(node);
+    m_page->videoFullscreenManager()->exitVideoFullscreen();
 }
 #endif
     
