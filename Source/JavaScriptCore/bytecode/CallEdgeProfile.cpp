@@ -135,11 +135,17 @@ void CallEdgeProfile::visitWeak()
         m_primaryCallee = list.last().key;
         m_numCallsToPrimary = list.last().count;
         
-        ASSERT(!!m_otherCallees == (list.size() >= 2));
         if (m_otherCallees) {
             m_otherCallees->m_processed.clear();
-            for (unsigned i = list.size() - 1; i--;)
-                m_otherCallees->m_processed.append(CallEdge(list[i].key, list[i].count));
+
+            // We could have a situation where the GC clears the primary and then log processing
+            // reinstates it without ever doing an addSlow and subsequent mergeBack. In such a case
+            // the primary could duplicate an entry in otherCallees, which means that even though we
+            // had an otherCallees object, the list size is just 1.
+            if (list.size() >= 2) {
+                for (unsigned i = list.size() - 1; i--;)
+                    m_otherCallees->m_processed.append(CallEdge(list[i].key, list[i].count));
+            }
         }
         
         m_closuresAreDespecified = true;
