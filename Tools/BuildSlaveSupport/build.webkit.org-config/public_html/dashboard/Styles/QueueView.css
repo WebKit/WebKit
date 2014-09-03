@@ -120,7 +120,8 @@
     padding-left: 7px;
 }
 
-.ews-popover {
+.ews-popover,
+.performance-popover {
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);
     font-size: 12px;
@@ -145,4 +146,9 @@
 .ews-popover .bugzilla-link,
 .ews-popover .bot-status-description {
     padding-left: 7px;
+}
+
+/* Styling the performance dashboard link as visited doesn't make much sense in the context of bot watcher's dashboard. */
+.performance-popover .dashboard-link {
+    color: blue;
 }
