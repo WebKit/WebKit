@@ -1617,6 +1617,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return nil;
 }
 
+- (NSString *)_userAgent
+{
+    return _page->userAgent();
+}
+
 - (NSString *)_applicationNameForUserAgent
 {
     return _page->applicationNameForUserAgent();

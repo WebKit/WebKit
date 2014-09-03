@@ -78,6 +78,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @property (nonatomic, readonly) NSArray *_certificateChain;
 @property (nonatomic, readonly) NSURL *_committedURL;
 @property (nonatomic, readonly) NSString *_MIMEType;
+@property (nonatomic, readonly) NSString *_userAgent;
 
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
 @property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
