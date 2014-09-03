@@ -29,9 +29,9 @@
 #ifndef WebKitSystemBits_h
 #define WebKitSystemBits_h
 
-typedef const struct __CFString* CFStringRef;
+#include <wtf/text/WTFString.h>
 
 unsigned long long WebMemorySize();
-unsigned long long WebVolumeFreeSize(CFStringRef path);
+unsigned long long WebVolumeFreeSize(const String& path);
 
 #endif // WebKitSystemBits_h

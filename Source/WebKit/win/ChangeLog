@@ -1,3 +1,18 @@
+2014-09-02  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Memory cache capacity is not set.
+        https://bugs.webkit.org/show_bug.cgi?id=136432
+
+        Reviewed by Alex Christensen.
+
+        Reuse code from AppleWin to set memory and disk cache capacity.
+
+        * WebKitSystemBits.cpp:
+        (WebVolumeFreeSize):
+        * WebKitSystemBits.h:
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2014-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] WebKit IDL incorrectly passes HWND as OLE_HANDLE
