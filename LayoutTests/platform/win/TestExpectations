@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2007-2014 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -252,7 +252,6 @@ editing/pasteboard/file-input-files-access.html
 fast/files
 http/tests/fileapi
 fast/dom/DOMURL/check-instanceof-domurl-functions.html
-fast/dom/window-domurl-crash.html [ Failure ]
 fast/forms/file/recover-file-input-in-unposted-form.html
 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html
 fast/workers/worker-domurl.html
@@ -695,9 +694,7 @@ accessibility/render-counter-text.html
 accessibility/color-well.html
 
 # Failing Windows-only accessibility tests
-webkit.org/b/127485 platform/win/accessibility/option-element-selection-and-focus-events.html [ Failure ]
 webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
-webkit.org/b/127485 platform/win/accessibility/select-element-valuechange-event.html [ Failure ]
 
 # Skipping on windows, missing implementation.
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
@@ -784,9 +781,6 @@ webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ P
 webkit.org/b/24810 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
 webkit.org/b/24810 plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
 webkit.org/b/24810 security/block-test.html [ Failure ]
-webkit.org/b/24810 svg/W3C-SVG-1.1/animate-elem-30-t.svg [ Failure ]
-webkit.org/b/24810 svg/W3C-SVG-1.1/coords-viewattr-02-b.svg [ Failure ]
-webkit.org/b/24810 svg/W3C-SVG-1.1/render-elems-03-t.svg [ Failure ]
 webkit.org/b/24810 svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
 webkit.org/b/24810 tables/mozilla/core/bloomberg.html [ Failure ]
 webkit.org/b/24810 transforms/2d/zoom-menulist.html [ Failure ]
@@ -909,9 +903,6 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 # This test has never passed on Windows (https://bugs.webkit.org/show_bug.cgi?id=30234)
 platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
 
-# Needs rebaseline
-js/dom/constructor-length.html [ Failure ]
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 
@@ -1006,7 +997,6 @@ fast/media/print-restores-previous-mediatype.html
 webkit.org/b/35973 fast/multicol/hit-test-above-or-below.html [ Failure ]
 
 # Needs progress element support
-webkit.org/b/49769 fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html [ Failure ]
 webkit.org/b/49769 fast/dom/HTMLProgressElement [ Pass Failure ]
 webkit.org/b/49769 fast/forms/form-attribute.html [ Pass Failure ]
 
@@ -1042,13 +1032,11 @@ webkit.org/b/128981 canvas/philip/tests/2d.gradient.radial.inside2.html [ Failur
 webkit.org/b/128981 canvas/philip/tests/2d.gradient.radial.inside3.html [ Failure ]
 webkit.org/b/128981 [ Release ] canvas/philip/tests/2d.gradient.radial.outside1.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.line.cap.closed.html [ Failure ]
-webkit.org/b/128981 canvas/philip/tests/2d.line.miter.lineedge.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.path.arcTo.collinear.2.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.path.arcTo.collinear.3.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.shadow.enable.blur.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.shadow.enable.x.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.shadow.enable.y.html [ Failure ]
-webkit.org/b/128981 canvas/philip/tests/2d.strokeRect.zero.4.html [ Failure ]
 
 # Need to dump context menu items on eventSender.contextClick(true).
 webkit.org/b/39104 editing/spelling/context-menu-suggestions.html [ Failure ]
@@ -1761,8 +1749,6 @@ http/tests/security/referrer-policy-https-origin.html [ Failure ]
 # As usual, DRT on Windows has problems knowing how to continue a test when focus moves to a popup window, in this case the file chooser
 webkit.org/b/87469 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Pass Failure Timeout ]
 
-webkit.org/b/95795 editing/style/apply-style-atomic.html [ Failure ]
-
 # Flaky http/tests/security tests
 webkit.org/b/95803 http/tests/security/local-image-from-remote-whitelisted.html [ Pass Failure ]
 webkit.org/b/95803 http/tests/security/object-literals.html [ Pass Failure ]
@@ -1846,7 +1832,6 @@ webkit.org/b/85262 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
 webkit.org/b/97026 editing/selection/select-from-textfield-outwards.html [ Failure ]
 webkit.org/b/97026 editing/spelling/grammar-edit-word.html [ Failure ]
 webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
-webkit.org/b/97026 fast/html/progress-user-modify.html [ Failure ]
 webkit.org/b/97026 media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/97026 media/audio-repaint.html [ Failure ]
 webkit.org/b/97026 media/controls-styling-strict.html [ Failure ]
@@ -1976,7 +1961,6 @@ svg/W3C-SVG-1.1-SE/painting-control-04-f.svg [ Failure ]
 svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
 svg/W3C-SVG-1.1-SE/text-intro-09-b.svg [ Failure ]
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg [ Failure ]
-svg/batik/text/longTextOnPath.svg [ Failure ]
 svg/text/bidi-text-anchor-direction.svg [ Failure ]
 svg/text/font-size-below-point-five.svg [ Failure ]
 tables/mozilla/bugs/bug1188.html [ Failure ]
@@ -2016,7 +2000,6 @@ webkit.org/b/108370 editing/spelling/spelling-attribute-change.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-backspace-between-lines.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-hasspellingmarker.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spelling-linebreak.html [ Failure ]
-webkit.org/b/108370 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 # Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom [ Skip ]
@@ -2111,7 +2094,6 @@ webkit.org/b/116564 compositing/contents-opaque/filter.html [ Failure ]
 webkit.org/b/116564 compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
 webkit.org/b/116564 editing/pasteboard/copy-without-selection.html [ Failure ]
 webkit.org/b/116564 editing/pasteboard/get-data-text-plain-paste.html [ Pass Failure ]
-webkit.org/b/116564 editing/pasteboard/onpaste-text-html.html [ Failure ]
 webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html [ Failure ]
 webkit.org/b/116564 editing/style/block-style-005.html [ Pass Failure ]
 webkit.org/b/116564 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Pass Failure ]
@@ -2278,9 +2260,7 @@ fast/css/image-set-setting.html [ Failure ]
 fast/css/image-set-value-not-removed-crash.html [ Failure ]
 fast/events/wheelevent-basic.html [ Failure ]
 fast/events/wheelevent-constructor.html [ Failure ]
-fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
 fast/loader/file-protocol-fragment.html [ Failure ]
-js/dom/exception-sequencing.html [ Failure ]
 media/track/track-in-band-legacy-api.html [ Crash ]
 media/track/track-in-band-mode.html [ Crash ]
 security/block-test-no-port.html [ Failure ]
@@ -2352,9 +2332,6 @@ media/media-source [ Failure ]
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
 
 # Subpixel failures
-# Subpixel: off-by-1 pixel rendering on mathml
-webkit.org/b/126897 mathml/presentation/bug95015.html [ ImageOnlyFailure ]
-
 # Subpixel: misplaced zoomed svg content.
 webkit.org/b/126900 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
@@ -2367,7 +2344,6 @@ webkit.org/b/127492 js/dom/date-big-constructor.html [ Failure ]
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 css1/units/length_units.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
-webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001.htm [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ Failure ]
@@ -2395,12 +2371,10 @@ webkit.org/b/128789 [ Debug ] js/regress/proto-getter-access.html [ Pass Timeout
 webkit.org/b/128789 [ Debug ] js/regress/simple-getter-access.html [ Pass Timeout ]
 
 # Some very small image differences (~0.01-0.05%)
-fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
 webkit.org/b/128855 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ] 
-webkit.org/b/128855 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure ] 
 
 # Some region tests fail:
 webkit.org/b/128855 fast/regions/subtree-with-vert-rl.html [ Pass Crash ] 
@@ -2610,7 +2584,6 @@ editing/execCommand/4917055.html [ Pass Timeout ]
 editing/inserting/insert-after-delete-001.html [ Pass Failure ImageOnlyFailure ]
 editing/inserting/insert-at-end-02.html [ Pass Timeout ]
 editing/inserting/insert-br-quoted-001.html [ Pass Timeout ]
-editing/inserting/insert-paste-bidi-control.html [ Failure ]
 editing/inserting/insert-space-in-empty-doc.html [ Pass Timeout ]
 editing/inserting/insert-tab-001.html [ Pass Failure ]
 editing/inserting/typing-002.html [ Pass Timeout ]
@@ -2692,9 +2665,6 @@ html5lib/generated/run-tests4-data.html [ Pass Timeout ]
 ietestcenter/css3/bordersbackgrounds [ Pass Failure Timeout ]
 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
-ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
-ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
-ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
@@ -2715,11 +2685,9 @@ js/dfg-inline-arguments-use-from-all-the-places.html [ Pass Timeout ]
 js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.html [ Pass Timeout ]
 js/dom/const.html [ Pass Timeout ]
 js/dom/dfg-patchable-get-by-id-after-watchpoint.html [ Pass Timeout ]
-js/dom/dfg-cross-global-object-inline-new-array.html [ Failure ]
 js/dom/global-constructors-attributes-shared-worker.html [ Pass Timeout ]
 js/kde/comment-1.html [ Pass Timeout ]
 js/math.html [ Pass Failure ]
-js/mozilla/strict/strict-this-is-not-truthy.html [ Failure ]
 js/mozilla/strict/this-for-function-expression-recursion.html [ Pass Timeout ]
 js/regress/for-of-iterate-array-keys.html [ Pass Failure Timeout ]
 imported/w3c/html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-html.html [ Pass Timeout ]
@@ -2746,7 +2714,6 @@ svg/foreignObject/no-crash-with-svg-content-in-html-document.svg [ Pass Failure 
 [ Debug ] fast/selectors/querySelector-id-with-multiple-elements-with-same-id.html [ Crash ]
 
 # Reporting DRT output instead of text dump. Investigate!
-editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
 [ Debug ] ietestcenter/Javascript/15.2.3.2-2-4.html [ Failure ]
 fast/canvas/canvas-isPointInPath-winding.html [ Pass Failure ]
 fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html [ Pass Failure ]
@@ -2771,9 +2738,7 @@ fast/replaced/width100percent-textarea.html [ Pass Timeout ImageOnlyFailure ]
 fast/table/border-collapsing/cached-change-row-border-color.html [ Pass Timeout ImageOnlyFailure ]
 
 # Regressions in svg/clip-path
-webkit.org/b/128499 svg/clip-path/clip-path-content-use-005.svg [ ImageOnlyFailure ]
 webkit.org/b/128499 svg/clip-path/clip-path-precision-001.svg [ ImageOnlyFailure ]
-webkit.org/b/128499 svg/clip-path/clip-path-content-use-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
@@ -2785,7 +2750,6 @@ http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 media/track/track-datacue-value.html [ Skip ]
 
 # CRASHES
-ietestcenter/Javascript/15.2.3.3-4-18.html [ Crash ]
 fast/canvas/canvas-path-addPath.html [ Crash ]
 
 # Missing references on Windows
@@ -2793,7 +2757,6 @@ webkit.org/b/130322 mathml/opentype/large-operators.html [ Failure ]
 webkit.org/b/130322 mathml/opentype/opentype-stretchy.html [ Failure ]
 webkit.org/b/130322 mathml/opentype/vertical.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
-webkit.org/b/72828 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]

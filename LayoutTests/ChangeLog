@@ -1,3 +1,10 @@
+2014-09-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Mark a number of passing tests.
+
+        * platform/win/TestExpectations: Update expectations based on passes
+        on multiple test bots.
+
 2014-09-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix style invalidation of elements with multiple siblings dependencies
