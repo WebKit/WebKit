@@ -310,14 +310,11 @@ static PassRefPtr<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const
 static PassRefPtr<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)
 {
     RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNode>> rootNodes = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
-    for (RefPtr<JSC::ProfileNode> profileNode : profile->head()->children())
+    for (RefPtr<JSC::ProfileNode> profileNode : profile->rootNode()->children())
         rootNodes->addItem(buildInspectorObject(profileNode.get()));
 
     RefPtr<Protocol::Timeline::CPUProfile> result = Protocol::Timeline::CPUProfile::create()
         .setRootNodes(rootNodes);
-
-    if (profile->idleTime())
-        result->setIdleTime(profile->idleTime());
 
     return result.release();
 }

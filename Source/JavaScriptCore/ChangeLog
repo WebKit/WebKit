@@ -1,5 +1,81 @@
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
+        LegacyProfiler: remove redundant ProfileNode members and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=136380
+
+        Reviewed by Timothy Hatcher.
+
+        ProfileNode's selfTime and totalTime members are redundant and only used
+        for dumping profile data from debug-only code. Remove the members and compute
+        the same data on-demand when necessary using a postorder traversal functor.
+
+        Remove ProfileNode.head since it is only used to calculate percentages for
+        dumped profile data. This can be explicitly passed around when needed.
+
+        Rename Profile.head to Profile.rootNode, and other various renamings.
+
+        Rearrange some header includes so that touching LegacyProfiler-related headers
+        will no longer cause a full rebuild.
+
+        * inspector/JSConsoleClient.cpp: Add header include.
+        * inspector/agents/InspectorProfilerAgent.cpp:
+        (Inspector::InspectorProfilerAgent::buildProfileInspectorObject):
+        * inspector/protocol/Profiler.json: Remove unused Profile.idleTime member.
+        * jit/JIT.h: Remove header include.
+        * jit/JITCode.h: Remove header include.
+        * jit/JITOperations.cpp: Sort and add header include.
+        * llint/LLIntSlowPaths.cpp: Sort and add header include.
+        * profiler/Profile.cpp: Rename the debug dumping functions. Move the node
+        postorder traversal code to ProfileNode so we can traverse any subtree.
+        (JSC::Profile::Profile):
+        (JSC::Profile::debugPrint):
+        (JSC::Profile::debugPrintSampleStyle):
+        (JSC::Profile::forEach): Deleted.
+        (JSC::Profile::debugPrintData): Deleted.
+        (JSC::Profile::debugPrintDataSampleStyle): Deleted.
+        * profiler/Profile.h:
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::AddParentForConsoleStartFunctor::AddParentForConsoleStartFunctor):
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        (JSC::ProfileGenerator::didExecute):
+        (JSC::StopProfilingFunctor::operator()):
+        (JSC::ProfileGenerator::stopProfiling):
+        (JSC::ProfileGenerator::removeProfileStart):
+        (JSC::ProfileGenerator::removeProfileEnd):
+        * profiler/ProfileGenerator.h:
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::ProfileNode):
+        (JSC::ProfileNode::willExecute):
+        (JSC::ProfileNode::removeChild):
+        (JSC::ProfileNode::stopProfiling):
+        (JSC::ProfileNode::endAndRecordCall):
+        (JSC::ProfileNode::debugPrint):
+        (JSC::ProfileNode::debugPrintSampleStyle):
+        (JSC::ProfileNode::debugPrintRecursively):
+        (JSC::ProfileNode::debugPrintSampleStyleRecursively):
+        (JSC::ProfileNode::debugPrintData): Deleted.
+        (JSC::ProfileNode::debugPrintDataSampleStyle): Deleted.
+        * profiler/ProfileNode.h: Calculate per-node self and total times using a postorder traversal.
+        The forEachNodePostorder functor traverses the subtree rooted at |this|.
+        (JSC::ProfileNode::create):
+        (JSC::ProfileNode::calls):
+        (JSC::ProfileNode::forEachNodePostorder):
+        (JSC::CalculateProfileSubtreeDataFunctor::returnValue):
+        (JSC::CalculateProfileSubtreeDataFunctor::operator()):
+        (JSC::ProfileNode::head): Deleted.
+        (JSC::ProfileNode::setHead): Deleted.
+        (JSC::ProfileNode::totalTime): Deleted.
+        (JSC::ProfileNode::setTotalTime): Deleted.
+        (JSC::ProfileNode::selfTime): Deleted.
+        (JSC::ProfileNode::setSelfTime): Deleted.
+        (JSC::ProfileNode::totalPercent): Deleted.
+        (JSC::ProfileNode::selfPercent): Deleted.
+        * runtime/ConsoleClient.h: Remove header include.
+
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: remove ProfilerAgent and legacy profiler files in the frontend
         https://bugs.webkit.org/show_bug.cgi?id=136462
 

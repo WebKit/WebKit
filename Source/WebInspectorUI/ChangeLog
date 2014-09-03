@@ -1,5 +1,19 @@
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
+        LegacyProfiler: remove redundant ProfileNode members and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=136380
+
+        Reviewed by Timothy Hatcher.
+
+        Remove unused Profile.idleTime member.
+
+        * UserInterface/Models/Profile.js:
+        (WebInspector.Profile.prototype.get idleTime): Deleted.
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload):
+
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: remove ProfilerAgent and legacy profiler files in the frontend
         https://bugs.webkit.org/show_bug.cgi?id=136462
 

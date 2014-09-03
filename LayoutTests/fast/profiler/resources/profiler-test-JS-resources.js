@@ -52,7 +52,7 @@ function printHeavyProfilesDataWithoutTime()
     var profiles = internals.consoleProfiles;
     for (var i = 0; i < profiles.length; ++i) {
         preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
-        printProfileNodeWithoutTime(preElement, profiles[i].heavyProfile.head, 0);
+        printProfileNodeWithoutTime(preElement, profiles[i].heavyProfile.rootNode, 0);
         preElement.appendChild(document.createTextNode("\n"));
     }
 
@@ -67,7 +67,7 @@ function printProfilesDataWithoutTime()
     var profiles = internals.consoleProfiles;
     for (var i = 0; i < profiles.length; ++i) {
         preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
-        printProfileNodeWithoutTime(preElement, profiles[i].head, 0);
+        printProfileNodeWithoutTime(preElement, profiles[i].rootNode, 0);
         preElement.appendChild(document.createTextNode("\n"));
     }
 

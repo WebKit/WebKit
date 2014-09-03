@@ -44,14 +44,14 @@ namespace JSC {
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<ProfileNode> create(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
+        static PassRefPtr<ProfileNode> create(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* parentNode)
         {
-            return adoptRef(new ProfileNode(callerCallFrame, callIdentifier, headNode, parentNode));
+            return adoptRef(new ProfileNode(callerCallFrame, callIdentifier, parentNode));
         }
 
-        static PassRefPtr<ProfileNode> create(ExecState* callerCallFrame, ProfileNode* headNode, ProfileNode* node)
+        static PassRefPtr<ProfileNode> create(ExecState* callerCallFrame, ProfileNode* node)
         {
-            return adoptRef(new ProfileNode(callerCallFrame, headNode, node));
+            return adoptRef(new ProfileNode(callerCallFrame, node));
         }
 
         struct Call {
@@ -90,26 +90,13 @@ namespace JSC {
         unsigned columnNumber() const { return m_callIdentifier.columnNumber(); }
 
         // Relationships
-        ProfileNode* head() const { return m_head; }
-        void setHead(ProfileNode* head) { m_head = head; }
-
         ProfileNode* parent() const { return m_parent; }
         void setParent(ProfileNode* parent) { m_parent = parent; }
 
         ProfileNode* nextSibling() const { return m_nextSibling; }
         void setNextSibling(ProfileNode* nextSibling) { m_nextSibling = nextSibling; }
 
-        // Time members
-        double totalTime() const { return m_totalTime; }
-        void setTotalTime(double time) { m_totalTime = time; }
-
-        double selfTime() const { return m_selfTime; }
-        void setSelfTime(double time) { m_selfTime = time; }
-
-        double totalPercent() const { return (m_totalTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
-        double selfPercent() const { return (m_selfTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
-
-        Vector<Call> calls() const { return m_calls; }
+        const Vector<Call>& calls() const { return m_calls; }
         Call& lastCall() { ASSERT(!m_calls.isEmpty()); return m_calls.last(); }
         size_t numberOfCalls() const { return m_calls.size(); }
 
@@ -121,36 +108,84 @@ namespace JSC {
         void addChild(PassRefPtr<ProfileNode> prpChild);
         void insertNode(PassRefPtr<ProfileNode> prpNode);
 
-        ProfileNode* traverseNextNodePostOrder() const;
+        template <typename Functor> void forEachNodePostorder(Functor&);
 
 #ifndef NDEBUG
+        struct ProfileSubtreeData {
+            HashMap<ProfileNode*, std::pair<double, double>> selfAndTotalTimes;
+            double rootTotalTime;
+        };
+
         const char* c_str() const { return m_callIdentifier; }
-        void debugPrintData(int indentLevel) const;
-        double debugPrintDataSampleStyle(int indentLevel, FunctionCallHashCount&) const;
+        // Use these functions to dump the subtree rooted at this node.
+        void debugPrint();
+        void debugPrintSampleStyle();
+
+        // These are used to recursively print entire subtrees using precomputed self and total times.
+        void debugPrintRecursively(int indentLevel, const ProfileSubtreeData&);
+        double debugPrintSampleStyleRecursively(int indentLevel, FunctionCallHashCount&, const ProfileSubtreeData&);
 #endif
 
     private:
         typedef Vector<RefPtr<ProfileNode>>::const_iterator StackIterator;
 
-        ProfileNode(ExecState* callerCallFrame, const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
-        ProfileNode(ExecState* callerCallFrame, ProfileNode* headNode, ProfileNode* nodeToCopy);
+        ProfileNode(ExecState* callerCallFrame, const CallIdentifier&, ProfileNode* parentNode);
+        ProfileNode(ExecState* callerCallFrame, ProfileNode* nodeToCopy);
 
         void startTimer();
         void resetChildrensSiblings();
         void endAndRecordCall();
+        ProfileNode* traverseNextNodePostOrder() const;
 
         ExecState* m_callerCallFrame;
         CallIdentifier m_callIdentifier;
-        ProfileNode* m_head;
         ProfileNode* m_parent;
         ProfileNode* m_nextSibling;
 
-        double m_totalTime;
-        double m_selfTime;
-
-        Vector<Call, 1> m_calls;
+        Vector<Call> m_calls;
         Vector<RefPtr<ProfileNode>> m_children;
     };
+
+    template <typename Functor> inline void ProfileNode::forEachNodePostorder(Functor& functor)
+    {
+        ProfileNode* currentNode = this;
+        // Go down to the first node of the traversal, and slowly walk back up.
+        for (ProfileNode* nextNode = currentNode; nextNode; nextNode = nextNode->firstChild())
+            currentNode = nextNode;
+
+        ProfileNode* endNode = this;
+        while (currentNode && currentNode != endNode) {
+            functor(currentNode);
+            currentNode = currentNode->traverseNextNodePostOrder();
+        }
+
+        functor(endNode);
+    }
+
+#ifndef NDEBUG
+    struct CalculateProfileSubtreeDataFunctor {
+        void operator()(ProfileNode* node)
+        {
+            double selfTime = 0.0;
+            for (const ProfileNode::Call& call : node->calls())
+                selfTime += call.totalTime();
+
+            double totalTime = selfTime;
+            for (RefPtr<ProfileNode> child : node->children()) {
+                auto it = m_data.selfAndTotalTimes.find(child.get());
+                if (it != m_data.selfAndTotalTimes.end())
+                    totalTime += it->value.second;
+            }
+
+            ASSERT(node);
+            m_data.selfAndTotalTimes.set(node, std::make_pair(selfTime, totalTime));
+        }
+
+        ProfileNode::ProfileSubtreeData returnValue() { return WTF::move(m_data); }
+
+        ProfileNode::ProfileSubtreeData m_data;
+    };
+#endif
 
 } // namespace JSC
 

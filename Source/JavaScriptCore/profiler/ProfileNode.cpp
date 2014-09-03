@@ -38,26 +38,20 @@ using namespace WTF;
 
 namespace JSC {
 
-ProfileNode::ProfileNode(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
+ProfileNode::ProfileNode(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* parentNode)
     : m_callerCallFrame(callerCallFrame)
     , m_callIdentifier(callIdentifier)
-    , m_head(headNode)
     , m_parent(parentNode)
     , m_nextSibling(nullptr)
-    , m_totalTime(0)
-    , m_selfTime(0)
 {
     startTimer();
 }
 
-ProfileNode::ProfileNode(ExecState* callerCallFrame, ProfileNode* headNode, ProfileNode* nodeToCopy)
+ProfileNode::ProfileNode(ExecState* callerCallFrame, ProfileNode* nodeToCopy)
     : m_callerCallFrame(callerCallFrame)
     , m_callIdentifier(nodeToCopy->callIdentifier())
-    , m_head(headNode)
     , m_parent(nodeToCopy->parent())
-    , m_nextSibling(0)
-    , m_totalTime(nodeToCopy->totalTime())
-    , m_selfTime(nodeToCopy->selfTime())
+    , m_nextSibling(nullptr)
     , m_calls(nodeToCopy->calls())
 {
 }
@@ -71,7 +65,7 @@ ProfileNode* ProfileNode::willExecute(ExecState* callerCallFrame, const CallIden
         }
     }
 
-    RefPtr<ProfileNode> newChild = ProfileNode::create(callerCallFrame, callIdentifier, m_head ? m_head : this, this); // If this ProfileNode has no head it is the head.
+    RefPtr<ProfileNode> newChild = ProfileNode::create(callerCallFrame, callIdentifier, this);
     if (m_children.size())
         m_children.last()->setNextSibling(newChild.get());
     m_children.append(newChild.release());
@@ -104,7 +98,7 @@ void ProfileNode::removeChild(ProfileNode* node)
             break;
         }
     }
-    
+
     resetChildrensSiblings();
 }
 
@@ -125,13 +119,6 @@ void ProfileNode::stopProfiling()
 
     if (isnan(m_calls.last().totalTime()))
         endAndRecordCall();
-
-    // Because we iterate in post order all of our children have been stopped before us.
-    for (unsigned i = 0; i < m_children.size(); ++i)
-        m_selfTime += m_children[i]->totalTime();
-
-    ASSERT(m_selfTime <= m_totalTime);
-    m_selfTime = m_totalTime - m_selfTime;
 }
 
 ProfileNode* ProfileNode::traverseNextNodePostOrder() const
@@ -150,8 +137,6 @@ void ProfileNode::endAndRecordCall()
     ASSERT(isnan(last.totalTime()));
 
     last.setTotalTime(currentTime() - last.startTime());
-
-    m_totalTime += last.totalTime();
 }
 
 void ProfileNode::startTimer()
@@ -167,32 +152,63 @@ void ProfileNode::resetChildrensSiblings()
 }
 
 #ifndef NDEBUG
-void ProfileNode::debugPrintData(int indentLevel) const
+void ProfileNode::debugPrint()
+{
+    CalculateProfileSubtreeDataFunctor functor;
+    forEachNodePostorder(functor);
+    ProfileNode::ProfileSubtreeData data = functor.returnValue();
+
+    debugPrintRecursively(0, data);
+}
+
+void ProfileNode::debugPrintSampleStyle()
+{
+    FunctionCallHashCount countedFunctions;
+
+    CalculateProfileSubtreeDataFunctor functor;
+    forEachNodePostorder(functor);
+    ProfileNode::ProfileSubtreeData data = functor.returnValue();
+
+    debugPrintSampleStyleRecursively(0, countedFunctions, data);
+}
+
+void ProfileNode::debugPrintRecursively(int indentLevel, const ProfileSubtreeData& data)
 {
     // Print function names
     for (int i = 0; i < indentLevel; ++i)
         dataLogF("  ");
 
+    auto it = data.selfAndTotalTimes.find(this);
+    ASSERT(it != data.selfAndTotalTimes.end());
+
+    double nodeSelfTime = it->value.first;
+    double nodeTotalTime = it->value.second;
+    double rootTotalTime = data.rootTotalTime;
+
     dataLogF("Function Name %s %zu SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Next Sibling %s\n",
         functionName().utf8().data(),
-        numberOfCalls(), m_selfTime, selfPercent(), m_totalTime, totalPercent(),
+        numberOfCalls(), nodeSelfTime, nodeSelfTime / rootTotalTime * 100.0, nodeTotalTime, nodeTotalTime / rootTotalTime * 100.0,
         m_nextSibling ? m_nextSibling->functionName().utf8().data() : "");
 
     ++indentLevel;
 
     // Print children's names and information
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        (*currentChild)->debugPrintData(indentLevel);
+        (*currentChild)->debugPrintRecursively(indentLevel, data);
 }
 
 // print the profiled data in a format that matches the tool sample's output.
-double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
+double ProfileNode::debugPrintSampleStyleRecursively(int indentLevel, FunctionCallHashCount& countedFunctions, const ProfileSubtreeData& data)
 {
     dataLogF("    ");
 
+    auto it = data.selfAndTotalTimes.find(this);
+    ASSERT(it != data.selfAndTotalTimes.end());
+    double nodeTotalTime = it->value.second;
+
     // Print function names
     const char* name = functionName().utf8().data();
-    double sampleCount = m_totalTime * 1000;
+    double sampleCount = nodeTotalTime * 1000;
     if (indentLevel) {
         for (int i = 0; i < indentLevel; ++i)
             dataLogF("  ");
@@ -208,7 +224,7 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
     // Print children's names and information
     double sumOfChildrensCount = 0.0;
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        sumOfChildrensCount += (*currentChild)->debugPrintDataSampleStyle(indentLevel, countedFunctions);
+        sumOfChildrensCount += (*currentChild)->debugPrintSampleStyleRecursively(indentLevel, countedFunctions, data);
 
     sumOfChildrensCount *= 1000;    //
     // Print remainder of samples to match sample's output
@@ -220,7 +236,7 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
         dataLogF("%.0f %s\n", sampleCount - sumOfChildrensCount, functionName().utf8().data());
     }
 
-    return m_totalTime;
+    return nodeTotalTime;
 }
 #endif
 

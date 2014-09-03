@@ -346,7 +346,7 @@ WebInspector.ScriptTimelineRecord.prototype = {
             }
         }
 
-        this._profile = new WebInspector.Profile(rootNodes, payload.idleTime);
+        this._profile = new WebInspector.Profile(rootNodes);
     }
 };
 

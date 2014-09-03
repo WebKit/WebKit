@@ -44,7 +44,6 @@
 #include "JITDisassembler.h"
 #include "JITInlineCacheGenerator.h"
 #include "JSInterfaceJIT.h"
-#include "LegacyProfiler.h"
 #include "Opcode.h"
 #include "ResultType.h"
 #include "SamplingTool.h"

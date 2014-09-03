@@ -1,5 +1,20 @@
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
+        LegacyProfiler: remove redundant ProfileNode members and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=136380
+
+        Reviewed by Timothy Hatcher.
+
+        Remove Profile.idleTime, rename head to rootNode, and remove ProfileNode members.
+
+        Covered by existing tests.
+
+        * inspector/ScriptProfile.idl:
+        * inspector/ScriptProfileNode.idl:
+        * inspector/TimelineRecordFactory.cpp:
+
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: remove ProfilerAgent and legacy profiler files in the frontend
         https://bugs.webkit.org/show_bug.cgi?id=136462
 

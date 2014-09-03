@@ -27,7 +27,6 @@
 #define ConsoleClient_h
 
 #include "ConsoleTypes.h"
-#include "Profile.h"
 #include <wtf/Forward.h>
 
 namespace Inspector {

@@ -1,3 +1,16 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        LegacyProfiler: remove redundant ProfileNode members and other cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=136380
+
+        Reviewed by Timothy Hatcher.
+
+        Renamed Profile.head to Profile.rootNode.
+
+        * fast/profiler/resources/profiler-test-JS-resources.js:
+        (printHeavyProfilesDataWithoutTime):
+        (printProfilesDataWithoutTime):
+
 2014-09-02  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store allocation with some combinations of replaced elements, masking and visibility:hidden

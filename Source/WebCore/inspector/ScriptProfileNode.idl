@@ -36,9 +36,6 @@
     readonly attribute unsigned long lineNumber;
     readonly attribute unsigned long columnNumber;
 
-    readonly attribute unrestricted double totalTime;
-    readonly attribute unrestricted double selfTime;
-
     readonly attribute unsigned long numberOfCalls;
 
     sequence<ScriptProfileNode> children();
