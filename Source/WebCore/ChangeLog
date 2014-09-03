@@ -1,3 +1,28 @@
+2014-09-03  Anders Carlsson  <andersca@apple.com>
+
+        Don't use DEPRECATED_DEFINE_STATIC_LOCAL for mutexes
+        https://bugs.webkit.org/show_bug.cgi?id=136510
+
+        Reviewed by Andreas Kling.
+
+        Mutexes are intended to be used from multiple threads, and DEPRECATED_DEFINE_STATIC_LOCAL is not thread safe.
+
+        * bindings/objc/DOMInternal.mm:
+        (wrapperCacheLock):
+        (getDOMWrapper):
+        (addDOMWrapper):
+        (removeDOMWrapper):
+        Use LazyNeverDestroyed + std::call_once, and switch the mutex over to an std::mutex.
+
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::assertNoActiveIterators):
+        (WebCore::EventListenerIterator::EventListenerIterator):
+        (WebCore::EventListenerIterator::~EventListenerIterator):
+        (WebCore::activeIteratorCountMutex):
+        (WebCore::EventListenerMap::EventListenerMap): Deleted.
+        * dom/EventListenerMap.h:
+        Use an std::atomic<int> instead of a mutex here.
+
 2014-09-03  Enrica Casucci  <enrica@apple.com>
 
         Remove PLATFORM(IOS) from WebCore/editing (Part 1).

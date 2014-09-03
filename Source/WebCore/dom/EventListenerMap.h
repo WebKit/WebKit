@@ -69,7 +69,7 @@ private:
     Vector<std::pair<AtomicString, std::unique_ptr<EventListenerVector>>, 2> m_entries;
 
 #ifndef NDEBUG
-    int m_activeIteratorCount;
+    std::atomic<int> m_activeIteratorCount { 0 };
 #endif
 };
 

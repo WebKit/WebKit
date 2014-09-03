@@ -32,6 +32,7 @@
 #import "ScriptController.h"
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
+#import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
 #define NEEDS_WRAPPER_CACHE_LOCK 1
@@ -43,10 +44,15 @@
 static NSMapTable* DOMWrapperCache;
     
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-static Mutex& wrapperCacheLock()
+static std::mutex& wrapperCacheLock()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, wrapperCacheMutex, ());
-    return wrapperCacheMutex;
+    static std::once_flag onceFlag;
+    static LazyNeverDestroyed<std::mutex> mutex;
+
+    std::call_once(onceFlag, [] {
+        mutex.construct();
+    });
+    return mutex;
 }
 #endif
 
@@ -70,7 +76,7 @@ NSMapTable* createWrapperCache()
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    MutexLocker locker(wrapperCacheLock());
+    std::lock_guard<std::mutex> lock(wrapperCacheLock());
 #endif
     if (!DOMWrapperCache)
         return nil;
@@ -80,7 +86,7 @@ NSObject* getDOMWrapper(DOMObjectInternal* impl)
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    MutexLocker locker(wrapperCacheLock());
+    std::lock_guard<std::mutex> lock(wrapperCacheLock());
 #endif
     if (!DOMWrapperCache)
         DOMWrapperCache = createWrapperCache();
@@ -90,7 +96,7 @@ void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 void removeDOMWrapper(DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    MutexLocker locker(wrapperCacheLock());
+    std::lock_guard<std::mutex> lock(wrapperCacheLock());
 #endif
     if (!DOMWrapperCache)
         return;

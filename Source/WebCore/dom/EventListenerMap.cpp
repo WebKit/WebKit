@@ -37,35 +37,22 @@
 #include "EventException.h"
 #include "EventTarget.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-
-#ifndef NDEBUG
-#include <wtf/Threading.h>
-#endif
 
 using namespace WTF;
 
 namespace WebCore {
 
 #ifndef NDEBUG
-static Mutex& activeIteratorCountMutex()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
-    return mutex;
-}
-
 void EventListenerMap::assertNoActiveIterators()
 {
-    MutexLocker locker(activeIteratorCountMutex());
     ASSERT(!m_activeIteratorCount);
 }
 #endif
 
 EventListenerMap::EventListenerMap()
-#ifndef NDEBUG
-    : m_activeIteratorCount(0)
-#endif
 {
 }
 
@@ -240,20 +227,15 @@ EventListenerIterator::EventListenerIterator(EventTarget* target)
     m_map = &data->eventListenerMap;
 
 #ifndef NDEBUG
-    {
-        MutexLocker locker(activeIteratorCountMutex());
-        m_map->m_activeIteratorCount++;
-    }
+    m_map->m_activeIteratorCount++;
 #endif
 }
 
 #ifndef NDEBUG
 EventListenerIterator::~EventListenerIterator()
 {
-    if (m_map) {
-        MutexLocker locker(activeIteratorCountMutex());
+    if (m_map)
         m_map->m_activeIteratorCount--;
-    }
 }
 #endif
 
