@@ -40,18 +40,33 @@
 
 #if __has_include(<xpc/xpc.h>)
 #import <xpc/xpc.h>
-#else
+#endif
 extern "C" {
     xpc_connection_t xpc_connection_create_mach_service(const char* name, dispatch_queue_t, uint64_t flags);
     void xpc_release(xpc_object_t);
 }
+
+#if __has_include(<sandbox/private.h>)
+#import <sandbox/private.h>
+#else
+enum sandbox_filter_type {
+    SANDBOX_FILTER_GLOBAL_NAME,
+};
 #endif
+extern "C" {
+    int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
+}
 
 #if PLATFORM(IOS)
 #import <wtf/ios/WebCoreThread.h>
 #endif
 
 namespace Inspector {
+
+static bool canAccessWebInspectorMachPort()
+{
+    return sandbox_check(getpid(), "mach-lookup", SANDBOX_FILTER_GLOBAL_NAME, WIRXPCMachPortName) == 0;
+}
 
 static void dispatchAsyncOnQueueSafeForAnyDebuggable(void (^block)())
 {
@@ -78,9 +93,11 @@ RemoteInspector& RemoteInspector::shared()
 
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        JSC::initializeThreading();
-        if (RemoteInspector::startEnabled)
-            shared.get().start();
+        if (canAccessWebInspectorMachPort()) {
+            JSC::initializeThreading();
+            if (RemoteInspector::startEnabled)
+                shared.get().start();
+        }
     });
 
     return shared;

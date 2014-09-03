@@ -1,3 +1,17 @@
+2014-09-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Avoid warning if a process does not have access to com.apple.webinspector
+        https://bugs.webkit.org/show_bug.cgi?id=136473
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pre-check for access to the mach port to avoid emitting warnings
+        in syslog for processes that do not have access.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::canAccessWebInspectorMachPort):
+        (Inspector::RemoteInspector::shared):
+
 2014-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         Temporarily disable call edge profiling. It is causing crashes and I'm still investigating
