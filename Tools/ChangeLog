@@ -1,3 +1,32 @@
+2014-09-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        GMainLoopSource is exposed to race conditions
+        https://bugs.webkit.org/show_bug.cgi?id=135800
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a unit test for GMainLoopSource that tests different
+        types of rescheduling tasks on already-active sources.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WTF/gobject/GMainLoopSource.cpp: Added.
+        (GMainLoopSourceTest::GMainLoopSourceTest):
+        (GMainLoopSourceTest::~GMainLoopSourceTest):
+        (GMainLoopSourceTest::runLoop):
+        (GMainLoopSourceTest::finish):
+        (GMainLoopSourceTest::source):
+        (testGMainLoopSourceBasicRescheduling):
+        (testGMainLoopSourceReentrantRescheduling):
+        (testGMainLoopSourceDifferentThreadRescheduling):
+        (beforeAll):
+        (afterAll):
+        (TestWebKitAPI::GMainLoopSourceTest::GMainLoopSourceTest):
+        (TestWebKitAPI::GMainLoopSourceTest::~GMainLoopSourceTest):
+        (TestWebKitAPI::GMainLoopSourceTest::runLoop):
+        (TestWebKitAPI::GMainLoopSourceTest::finish):
+        (TestWebKitAPI::GMainLoopSourceTest::source):
+        (TestWebKitAPI::TEST):
+
 2014-09-02  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure WK1 prefs are initialized in MiniBrowser
