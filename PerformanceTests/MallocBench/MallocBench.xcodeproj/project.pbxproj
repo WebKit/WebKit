@@ -35,6 +35,7 @@
 		14CC393F18EA8184004AFE34 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CC391C18EA6759004AFE34 /* mbmalloc.cpp */; };
 		14CE4A6017BD355800288DAA /* big.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CE4A5E17BD355800288DAA /* big.cpp */; };
 		14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E11930177ECC8B003A8D15 /* CPUCount.cpp */; };
+		14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FCA35F19A7C917001CFDA9 /* stress.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -105,6 +106,8 @@
 		14E11930177ECC8B003A8D15 /* CPUCount.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUCount.cpp; sourceTree = "<group>"; };
 		14E11931177ECC8B003A8D15 /* CPUCount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUCount.h; sourceTree = "<group>"; };
 		14E11934177F5219003A8D15 /* mbmalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mbmalloc.h; path = MallocBench/mbmalloc.h; sourceTree = "<group>"; };
+		14FCA35F19A7C917001CFDA9 /* stress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stress.cpp; path = MallocBench/stress.cpp; sourceTree = "<group>"; };
+		14FCA36019A7C917001CFDA9 /* stress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stress.h; path = MallocBench/stress.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +213,8 @@
 				1447AE8A18FB584200B3D7FF /* reddit.cpp */,
 				1447AE8B18FB584200B3D7FF /* reddit.h */,
 				1447AE8C18FB584200B3D7FF /* reddit.ops */,
+				14FCA35F19A7C917001CFDA9 /* stress.cpp */,
+				14FCA36019A7C917001CFDA9 /* stress.h */,
 				1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */,
 				1447AE8D18FB584200B3D7FF /* theverge.cpp */,
 				1447AE8E18FB584200B3D7FF /* theverge.h */,
@@ -304,6 +309,7 @@
 				1444AE96177E8DF200F8030A /* message.cpp in Sources */,
 				14452CEF177D47110097E057 /* churn.cpp in Sources */,
 				14452CB0177D24460097E057 /* main.cpp in Sources */,
+				14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */,
 				14C5008D184016CF007A531D /* facebook.cpp in Sources */,
 				1447AE9018FB584200B3D7FF /* flickr.cpp in Sources */,
 				14976EC8177E3649006B819A /* list.cpp in Sources */,

@@ -1,3 +1,26 @@
+2014-09-02  Geoffrey Garen  <ggaren@apple.com>
+
+        MallocBench should have a stress test for correctness
+        https://bugs.webkit.org/show_bug.cgi?id=136468
+
+        Reviewed by Andreas Kling.
+
+        Added a stress test that allocates randomized sizes of randomized
+        lifetimes in randomized order.
+
+        This version of the test reproduces the EWS crash seen in bmalloc
+        (<https://bugs.webkit.org/show_bug.cgi?id=132629>).
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp: Sort!
+        * MallocBench/MallocBench/stress.cpp: Added.
+        (Object::Object):
+        (SizeStream::SizeStream):
+        (SizeStream::next):
+        (benchmark_stress): Usually, we random(0). Surprisingly, though, only
+        random(1) reproduces the bug I was looking for.
+        * MallocBench/MallocBench/stress.h: Added.
+
 2014-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename DoYouEvenBench 0.17 to Speedometer 1.0 and add a new look.
