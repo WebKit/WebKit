@@ -1,5 +1,11 @@
 2014-09-04  Beth Dakin  <bdakin@apple.com>
 
+        Another speculative fix for the bots.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/root-overflow-with-mousewheel.html:
+
+2014-09-04  Beth Dakin  <bdakin@apple.com>
+
         Speculative fix for a test failing on the bot.
 
         * platform/mac-wk2/tiled-drawing/scrolling/root-overflow-with-mousewheel.html:
