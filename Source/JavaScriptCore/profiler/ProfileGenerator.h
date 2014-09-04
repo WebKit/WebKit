@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+    class DebuggerCallFrame;
     class ExecState;
     class JSGlobalObject;
     class Profile;
@@ -52,6 +53,9 @@ namespace JSC {
         void willExecute(ExecState* callerCallFrame, const CallIdentifier&);
         void didExecute(ExecState* callerCallFrame, const CallIdentifier&);
         void exceptionUnwind(ExecState* handlerCallFrame, const CallIdentifier&);
+
+        void didPause(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&) { m_debuggerPaused = true; }
+        void didContinue(PassRefPtr<DebuggerCallFrame>, const CallIdentifier&) { m_debuggerPaused = false; }
 
         void stopProfiling();
 
@@ -73,6 +77,7 @@ namespace JSC {
         RefPtr<ProfileNode> m_rootNode;
         RefPtr<ProfileNode> m_currentNode;
         bool m_foundConsoleStartParent;
+        bool m_debuggerPaused;
     };
 
 } // namespace JSC

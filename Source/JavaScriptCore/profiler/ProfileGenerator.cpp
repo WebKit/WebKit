@@ -28,6 +28,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "Debugger.h"
 #include "JSGlobalObject.h"
 #include "JSStringRef.h"
 #include "JSFunction.h"
@@ -48,7 +49,11 @@ ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigne
     : m_origin(exec ? exec->lexicalGlobalObject() : nullptr)
     , m_profileGroup(exec ? exec->lexicalGlobalObject()->profileGroup() : 0)
     , m_foundConsoleStartParent(false)
+    , m_debuggerPaused(false)
 {
+    if (Debugger* debugger = exec->lexicalGlobalObject()->debugger())
+        m_debuggerPaused = debugger->isPaused();
+
     m_profile = Profile::create(title, uid);
     m_currentNode = m_rootNode = m_profile->rootNode();
     if (exec)
@@ -123,7 +128,7 @@ void ProfileGenerator::endCallEntry(ProfileNode* node)
     ProfileNode::Call& last = node->lastCall();
     ASSERT(isnan(last.totalTime()));
 
-    last.setTotalTime(currentTime() - last.startTime());
+    last.setTotalTime(m_debuggerPaused ? 0.0 : currentTime() - last.startTime());
 }
 
 void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentifier& callIdentifier)

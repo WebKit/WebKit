@@ -36,6 +36,7 @@
 
 namespace JSC {
 
+class DebuggerCallFrame;
 class ExecState;
 class VM;
 class JSGlobalObject;
@@ -60,6 +61,9 @@ public:
     void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, unsigned startingLineNumber, unsigned startingColumnNumber);
 
     void exceptionUnwind(ExecState* handlerCallFrame);
+
+    void didPause(PassRefPtr<DebuggerCallFrame>);
+    void didContinue(PassRefPtr<DebuggerCallFrame>);
 
     const Vector<RefPtr<ProfileGenerator>>& currentProfiles() { return m_currentProfiles; };
 
