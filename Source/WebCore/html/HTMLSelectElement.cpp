@@ -1260,17 +1260,14 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 #if !PLATFORM(IOS)
         if (renderer() && renderer()->isMenuList()) {
             auto& menuList = toRenderMenuList(*renderer());
-            if (menuList.popupIsVisible())
-                menuList.hidePopup();
-            else {
-                // Save the selection so it can be compared to the new
-                // selection when we call onChange during selectOption,
-                // which gets called from RenderMenuList::valueChanged,
-                // which gets called after the user makes a selection from
-                // the menu.
-                saveLastSelection();
-                    menuList.showPopup();
-            }
+            ASSERT(!menuList.popupIsVisible());
+            // Save the selection so it can be compared to the new
+            // selection when we call onChange during selectOption,
+            // which gets called from RenderMenuList::valueChanged,
+            // which gets called after the user makes a selection from
+            // the menu.
+            saveLastSelection();
+            menuList.showPopup();
         }
 #endif
         event->setDefaultHandled();

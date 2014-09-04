@@ -1,3 +1,16 @@
+2014-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Clicking on a select element should never hide the popup menu.
+        https://bugs.webkit.org/show_bug.cgi?id=136548.
+        <rdar://problem/10215926>
+
+        Reviewed by Simon Fraser.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        Never call hidePopup as a result of a click on a select element.
+        The only way you can properly hide a popup is to click again or lose focus on the popup itself.
+
 2014-09-04  Enrica Casucci  <enrica@apple.com>
 
         Remove PLATFORM(IOS) from WebCore/editing (Part 2).
