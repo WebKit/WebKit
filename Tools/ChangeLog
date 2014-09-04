@@ -1,3 +1,14 @@
+2014-09-03  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Some WebKitLegacy headers migrated from WebCore incorrectly contain WEBCORE_EXPORT
+        https://bugs.webkit.org/show_bug.cgi?id=136521
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/config.h: Included <WebCore/PlatformExportMacros.h> instead of defining WEBCORE_EXPORT.
+        * TestWebKitAPI/config.h: Ditto.
+        * WebKitTestRunner/config.h: Ditto.
+
 2014-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: Dashboard metrics page aggregation counts performance bots

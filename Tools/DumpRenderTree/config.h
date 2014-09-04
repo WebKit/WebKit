@@ -24,14 +24,10 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <WebCore/PlatformExportMacros.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
-
-#if PLATFORM(WIN) || PLATFORM(IOS)
-// This is needed because we include WebCore's headers.
-#define WEBCORE_EXPORT
-#endif
 
 #ifdef __cplusplus
 #undef new

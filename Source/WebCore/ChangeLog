@@ -1,3 +1,12 @@
+2014-09-03  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Some WebKitLegacy headers migrated from WebCore incorrectly contain WEBCORE_EXPORT
+        https://bugs.webkit.org/show_bug.cgi?id=136521
+
+        Reviewed by Anders Carlsson.
+
+        * platform/ios/wak/WebCoreThread.h: Stopped defining WEBCORE_EXPORT.
+
 2014-09-03  David Hyatt  <hyatt@apple.com>
 
         Initial letters should clear one another.

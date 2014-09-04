@@ -27,12 +27,10 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <WebCore/PlatformExportMacros.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
-
-// This is needed because we include WebCore's headers.
-#define WEBCORE_EXPORT
 
 #if defined(__APPLE__) && __APPLE__
 

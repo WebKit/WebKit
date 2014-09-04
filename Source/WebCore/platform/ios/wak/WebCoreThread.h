@@ -30,11 +30,6 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 
-/* For a project that uses WebCore but has no config.h, we need to explicitly set the export define here. */
-#ifndef WEBCORE_EXPORT
-#define WEBCORE_EXPORT
-#endif
-
 #if defined(__cplusplus)
 extern "C" {
 #endif    
