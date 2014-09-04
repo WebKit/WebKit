@@ -60,20 +60,16 @@ void InitWebCoreSystemInterface(void)
     INIT(CopyCONNECTProxyResponse);
     INIT(CopyNSURLResponseStatusLine);
     INIT(CopyNSURLResponseCertificateChain);
-    INIT(CreateCustomCFReadStream);
 #if !PLATFORM(IOS)
     INIT(DrawCapsLockIndicator);
     INIT(DrawBezeledTextArea);
-    INIT(DrawBezeledTextFieldCell);
     INIT(DrawFocusRing);
     INIT(DrawFocusRingAtTime);
     INIT(DrawCellFocusRingWithFrameAtTime);
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
-    INIT(DrawTextFieldCellFocusRing);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
-    INIT(GetGlyphTransformedAdvances);
 #endif
     INIT(GetHTTPRequestPriority);
     INIT(GetNSURLResponseLastModifiedDate);
@@ -92,7 +88,6 @@ void InitWebCoreSystemInterface(void)
     INIT(WindowSetAlpha);
     INIT(WindowSetScaledFrame);
     INIT(PopupMenu);
-    INIT(PopupMenuWithSize);
     INIT(SetCGFontRenderingMode);
 #endif
     INIT(SetBaseCTM);
@@ -111,12 +106,8 @@ void InitWebCoreSystemInterface(void)
     INIT(CGContextIsPDFContext);
     INIT(GetUserToBaseCTM);
     INIT(SetUpFontCache);
-    INIT(SignalCFReadStreamEnd);
-    INIT(SignalCFReadStreamError);
-    INIT(SignalCFReadStreamHasBytes);
 #if ENABLE(VIDEO) && !PLATFORM(IOS)
     INIT(QTIncludeOnlyModernMediaFileTypes);
-    INIT(QTMovieDataRate);
     INIT(QTMovieDisableComponent);
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieMaxTimeLoadedChangeNotification);
@@ -153,9 +144,6 @@ void InitWebCoreSystemInterface(void)
 #endif
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
     INIT(CTRunGetInitialAdvance);
-#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
-    INIT(SetCrashReportApplicationSpecificInformation);
-#endif
 #if !PLATFORM(IOS)
     INIT(RecommendedScrollerStyle);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);

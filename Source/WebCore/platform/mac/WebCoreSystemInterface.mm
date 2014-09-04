@@ -40,8 +40,6 @@ CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
 NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);
-void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
-void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
 void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
@@ -49,7 +47,6 @@ bool (*wkDrawFocusRingAtTime)(CGContextRef, NSTimeInterval);
 bool (*wkDrawCellFocusRingWithFrameAtTime)(NSCell*, NSRect, NSView*, NSTimeInterval);
 NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
-BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
 void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
     float duration, unsigned state);
 BOOL (*wkHitTestMediaUIPart)(int part, CGRect bounds, CGPoint point);
@@ -66,9 +63,7 @@ BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
-void (*wkPopupMenuWithSize)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
-int (*wkQTMovieDataRate)(QTMovie*);
 void (*wkQTMovieDisableComponent)(uint32_t[5]);
 float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
@@ -90,18 +85,6 @@ void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 bool (*wkCGContextIsPDFContext)(CGContextRef);
 void (*wkSetUpFontCache)();
-void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
-void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
-void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
-CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 
-    void (*formFinalize)(CFReadStreamRef, void *), 
-    Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
-    CFIndex (*formRead)(CFReadStreamRef, UInt8 *, CFIndex, CFStreamError *, Boolean *, void *), 
-    Boolean (*formCanRead)(CFReadStreamRef, void *), 
-    void (*formClose)(CFReadStreamRef, void *), 
-    void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
-    void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
-    void *context);
 void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
@@ -143,7 +126,6 @@ int (*wkRecommendedScrollerStyle)(void);
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
-void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 
 NSCursor *(*wkCursor)(const char*);
 

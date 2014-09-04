@@ -47,7 +47,6 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGPattern *CGPatternRef;
 typedef struct CGPath *CGMutablePathRef;
 typedef unsigned short CGGlyph;
-typedef struct __CFReadStream * CFReadStreamRef;
 typedef struct __CFRunLoop * CFRunLoopRef;
 typedef struct __CFHTTPMessage *CFHTTPMessageRef;
 typedef struct _CFURLResponse *CFURLResponseRef;
@@ -140,21 +139,10 @@ extern void (*wkCGContextResetClip)(CGContextRef);
 extern bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 #endif
 extern CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-extern CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 
-    void (*formFinalize)(CFReadStreamRef, void *), 
-    Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
-    CFIndex (*formRead)(CFReadStreamRef, UInt8 *, CFIndex, CFStreamError *, Boolean *, void *), 
-    Boolean (*formCanRead)(CFReadStreamRef, void *), 
-    void (*formClose)(CFReadStreamRef, void *), 
-    void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
-    void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
-    void *context);
 extern NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 extern CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 extern CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 #if !PLATFORM(IOS)
-extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
-extern void (*wkDrawTextFieldCellFocusRing)(NSTextFieldCell*, NSRect);
 extern void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
@@ -163,7 +151,6 @@ extern bool (*wkDrawCellFocusRingWithFrameAtTime)(NSCell *cell, NSRect cellFrame
 
 extern NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
 extern NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
-extern BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
 #endif
 #if !PLATFORM(IOS)
 extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
@@ -201,11 +188,9 @@ extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 
 #if defined(__OBJC__)
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool hideArrows);
-extern void (*wkPopupMenuWithSize)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize);
 #endif
 
 extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
-extern int (*wkQTMovieDataRate)(QTMovie*);
 extern void (*wkQTMovieDisableComponent)(uint32_t[5]);
 extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 extern NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
@@ -230,9 +215,6 @@ extern void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint);
 extern CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 extern bool (*wkCGContextIsPDFContext)(CGContextRef);
 extern void (*wkSetUpFontCache)();
-extern void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
-extern void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);
-extern void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
 extern unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
 extern int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
 extern void (*wkSetHTTPRequestMaximumPriority)(int maximumPriority);
@@ -272,10 +254,6 @@ extern CGSize (*wkCTRunGetInitialAdvance)(CTRunRef);
 #if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
 extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
 extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
-extern void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 #endif
 
 #if !PLATFORM(IOS)

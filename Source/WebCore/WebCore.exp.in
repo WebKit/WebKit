@@ -2099,7 +2099,6 @@ _wkCopyNSURLResponseStatusLine
 _wkCopyRequestWithStorageSession
 _wkCreateCTLineWithUniCharProvider
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
-_wkCreateCustomCFReadStream
 _wkCreatePrivateStorageSession
 _wkDeleteAllHTTPCookies
 _wkDeleteHTTPCookie
@@ -2132,9 +2131,6 @@ _wkSetNSURLConnectionDefersCallbacks
 _wkSetNSURLRequestShouldContentSniff
 _wkSetPatternPhaseInUserSpace
 _wkSetUpFontCache
-_wkSignalCFReadStreamEnd
-_wkSignalCFReadStreamError
-_wkSignalCFReadStreamHasBytes
 
 #if !defined(NDEBUG)
 __ZN7WebCore14SQLiteDatabase22disableThreadingChecksEv
@@ -2375,21 +2371,18 @@ _wkCreateURLPasteboardFlavorTypeName
 _wkCreateVMPressureDispatchOnMainQueue
 _wkCursor
 _wkDrawBezeledTextArea
-_wkDrawBezeledTextFieldCell
 _wkDrawCapsLockIndicator
 _wkDrawCellFocusRingWithFrameAtTime
 _wkDrawFocusRing
 _wkDrawFocusRingAtTime
 _wkDrawMediaSliderTrack
 _wkDrawMediaUIPart
-_wkDrawTextFieldCellFocusRing
 _wkExecutableWasLinkedOnOrBeforeSnowLeopard
 _wkGetAXTextMarkerRangeTypeID
 _wkGetAXTextMarkerTypeID
 _wkGetBytesFromAXTextMarker
 _wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
-_wkGetGlyphTransformedAdvances
 _wkGetGlyphsForCharacters
 _wkGetHyphenationLocationBeforeIndex
 _wkGetNSEventKeyChar
@@ -2400,12 +2393,10 @@ _wkGetWheelEventDeltas
 _wkHitTestMediaUIPart
 _wkMeasureMediaUIPart
 _wkPopupMenu
-_wkPopupMenuWithSize
 _wkQTClearMediaDownloadCache
 _wkQTClearMediaDownloadCacheForSite
 _wkQTGetSitesInMediaDownloadCache
 _wkQTIncludeOnlyModernMediaFileTypes
-_wkQTMovieDataRate
 _wkQTMovieDisableComponent
 _wkQTMovieGetType
 _wkQTMovieHasClosedCaptions
@@ -2455,10 +2446,6 @@ _wkNSReboundDeltaForElasticDelta
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 _wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
-_wkSetCrashReportApplicationSpecificInformation
 #endif
 
 #if PLATFORM(IOS)

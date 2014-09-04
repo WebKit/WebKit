@@ -1,3 +1,16 @@
+2014-09-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove WebCoreSystemInterface glue for otherwise unused WKSI calls
+        https://bugs.webkit.org/show_bug.cgi?id=136527
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2014-09-04  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r172832): Poor 2-finger scrolling performance at theverge.com articles 
