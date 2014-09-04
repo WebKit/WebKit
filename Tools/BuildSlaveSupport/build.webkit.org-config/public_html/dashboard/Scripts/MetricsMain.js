@@ -327,7 +327,10 @@ function documentReady()
             return;
 
         var endDate = new Date(new Date(obj.date2).setDate(obj.date2.getDate() + 1));
-        analyzer.analyze(unhiddenQueues(), obj.date1, endDate);
+
+        // FIXME: Support performance bots.
+        var queues = unhiddenQueues().filter(function(queue) { return queue.builder || queue.tester; });
+        analyzer.analyze(queues, obj.date1, endDate);
     });
 
     var loadingIndicator = document.createElement("div");

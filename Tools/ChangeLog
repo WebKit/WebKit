@@ -1,3 +1,12 @@
+2014-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Dashboard metrics page aggregation counts performance bots
+        https://bugs.webkit.org/show_bug.cgi?id=136539
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js:
+
 2014-09-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Perl test fix.
