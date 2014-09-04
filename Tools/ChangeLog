@@ -1,3 +1,10 @@
+2014-09-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Perl test fix.
+
+        * Scripts/webkitperl/auto-version_unittest/versionStampTests.pl: Correct test to check for
+        VersionStamp.exe tool, not just the driver script.
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

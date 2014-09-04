@@ -57,9 +57,10 @@ if ($^O ne 'MSWin32' && $^O ne 'cygwin') {
 my $TOOLS_PATH = $ENV{'WEBKIT_LIBRARIES'};
 my $AUTO_VERSION_SCRIPT = File::Spec->catfile($TOOLS_PATH, 'tools', 'scripts', 'auto-version.pl');
 my $VERSION_STAMP_SCRIPT = File::Spec->catfile($TOOLS_PATH, 'tools', 'scripts', 'version-stamp.pl');
+my $VERSION_STAMP_EXEC = File::Spec->catfile($TOOLS_PATH, 'tools', 'VersionStamper', 'VersionStamper.exe');
 
 # Test can only be run if VersionStamper.exe exists
-unless (-e $VERSION_STAMP_SCRIPT) {
+unless (-e $VERSION_STAMP_EXEC) {
     plan(tests => 1);
     is(1, 1, 'do nothing for Windows builds lacking the VersionStamp.exe utility.');
     exit 0;    
