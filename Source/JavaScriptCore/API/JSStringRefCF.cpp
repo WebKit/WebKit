@@ -57,7 +57,7 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
 
 CFStringRef JSStringCopyCFString(CFAllocatorRef allocator, JSStringRef string)
 {
-    if (!string->length())
+    if (!string || !string->length())
         return CFSTR("");
 
     if (string->is8Bit())

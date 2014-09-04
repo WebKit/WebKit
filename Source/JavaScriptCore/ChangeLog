@@ -1,3 +1,45 @@
+2014-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        JavaScriptCore should build with newer clang
+        <http://webkit.org/b/136002>
+        <rdar://problem/18020616>
+
+        Reviewed by Geoffrey Garen.
+
+        Other than the JSC::SourceProvider::asID() change (which simply
+        removes code that the optimizing compiler would have discarded
+        in Release builds), we move the |this| checks in OpaqueJSString
+        to NULL checks in to JSBase, JSScriptRef, JSStringRef{CF} and
+        JSValueRef.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript): Use String() in case |script| or |sourceURL|
+        are NULL.
+        * API/JSScriptRef.cpp:
+        (JSScriptCreateReferencingImmortalASCIIText): Use String() in
+        case |url| is NULL.
+        * API/JSStringRef.cpp:
+        (JSStringGetLength): Return early if NULL pointer is passed in.
+        (JSStringGetCharactersPtr): Ditto.
+        (JSStringGetUTF8CString): Ditto.  Also check |buffer| parameter.
+        * API/JSStringRefCF.cpp:
+        (JSStringCopyCFString): Ditto.
+        * API/JSValueRef.cpp:
+        (JSValueMakeString): Use String() in case |string| is NULL.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::string): Remove code that checks |this|.
+        (OpaqueJSString::identifier): Ditto.
+        (OpaqueJSString::characters): Ditto.
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::is8Bit): Remove code that checks |this|.
+        (OpaqueJSString::characters8): Ditto.
+        (OpaqueJSString::characters16): Ditto.
+        (OpaqueJSString::length): Ditto.
+
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::asID): Remove code that checks |this|.
+
 2014-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         CallEdgeProfile::visitWeak() shouldn't attempt to despecify empty profiles
