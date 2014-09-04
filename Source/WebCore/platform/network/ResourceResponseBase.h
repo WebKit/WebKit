@@ -67,11 +67,6 @@ public:
     WEBCORE_EXPORT const String& textEncodingName() const;
     WEBCORE_EXPORT void setTextEncodingName(const String& name);
 
-    // FIXME: Should compute this on the fly.
-    // There should not be a setter exposed, as suggested file name is determined based on other headers in a manner that WebCore does not necessarily know about.
-    WEBCORE_EXPORT const String& suggestedFilename() const;
-    WEBCORE_EXPORT void setSuggestedFilename(const String&);
-
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
     
@@ -95,6 +90,7 @@ public:
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
     WEBCORE_EXPORT bool isAttachment() const;
+    WEBCORE_EXPORT String suggestedFilename() const;
     
     // These functions return parsed values of the corresponding response headers.
     // NaN means that the header was not present or had invalid value.
@@ -132,17 +128,17 @@ protected:
     enum InitLevel {
         Uninitialized,
         CommonFieldsOnly,
-        CommonAndUncommonFields,
         AllFields
     };
 
     WEBCORE_EXPORT ResourceResponseBase();
-    ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename);
+    ResourceResponseBase(const URL&, const String& mimeType, long long expectedLength, const String& textEncodingName);
 
     void lazyInit(InitLevel) const;
 
     // The ResourceResponse subclass may "shadow" this method to lazily initialize platform specific fields
     void platformLazyInit(InitLevel) { }
+    String platformSuggestedFileName() { return String(); }
 
     // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
@@ -151,7 +147,6 @@ protected:
     AtomicString m_mimeType;
     long long m_expectedContentLength;
     AtomicString m_textEncodingName;
-    String m_suggestedFilename;
     AtomicString m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     mutable ResourceLoadTiming m_resourceLoadTiming;
@@ -199,7 +194,6 @@ public:
     String m_mimeType;
     long long m_expectedContentLength;
     String m_textEncodingName;
-    String m_suggestedFilename;
     int m_httpStatusCode;
     String m_httpStatusText;
     std::unique_ptr<CrossThreadHTTPHeaderMapData> m_httpHeaders;

@@ -1,3 +1,21 @@
+2014-09-04  Antti Koivisto  <antti@apple.com>
+
+        Remove ResourceResponse::m_suggestedFilename
+        https://bugs.webkit.org/show_bug.cgi?id=136534
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceResponse>::encode):
+        (IPC::ArgumentCoder<ResourceResponse>::decode):
+
+            No more m_suggestedFilename.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::addArchiveResource):
+
+            Fake the suggested filename by using the Content-Disposition header.
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

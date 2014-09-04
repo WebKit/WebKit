@@ -699,7 +699,6 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const Res
         encoder << resourceResponse.textEncodingName();
         encoder << static_cast<int64_t>(resourceResponse.expectedContentLength());
         encoder << resourceResponse.httpStatusText();
-        encoder << resourceResponse.suggestedFilename();
     }
     
 #if ENABLE(WEB_TIMING)
@@ -773,11 +772,6 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
         if (!decoder.decode(httpStatusText))
             return false;
         response.setHTTPStatusText(httpStatusText);
-
-        String suggestedFilename;
-        if (!decoder.decode(suggestedFilename))
-            return false;
-        response.setSuggestedFilename(suggestedFilename);
     }
     
 #if ENABLE(WEB_TIMING)

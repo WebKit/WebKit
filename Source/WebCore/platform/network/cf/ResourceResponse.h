@@ -40,7 +40,7 @@ namespace WebCore {
 class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
-        : m_initLevel(CommonAndUncommonFields)
+        : m_initLevel(AllFields)
         , m_platformResponseIsUpToDate(true)
     {
     }
@@ -66,9 +66,9 @@ public:
     }
 #endif
 
-    ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
-        , m_initLevel(CommonAndUncommonFields)
+    ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
+        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName)
+        , m_initLevel(AllFields)
         , m_platformResponseIsUpToDate(false)
     {
     }
@@ -103,6 +103,7 @@ private:
     friend class ResourceResponseBase;
 
     void platformLazyInit(InitLevel);
+    String platformSuggestedFilename() const;
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
 #if PLATFORM(COCOA)

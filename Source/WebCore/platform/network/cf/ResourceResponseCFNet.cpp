@@ -92,7 +92,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             m_httpStatusCode = 0;
     }
 
-    if (m_initLevel < CommonAndUncommonFields && initLevel >= CommonAndUncommonFields) {
+    if (m_initLevel < AllFields) {
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
             RetainPtr<CFStringRef> statusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(httpResponse));
@@ -107,15 +107,16 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
                 m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
         }
     }
-    
-    if (m_initLevel < AllFields && initLevel >= AllFields) {
-        RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(m_cfResponse.get()));
-        m_suggestedFilename = suggestedFilename.get();
-    }
 
     m_initLevel = initLevel;
 }
-    
+
+String ResourceResponse::platformSuggestedFilename() const
+{
+    RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(m_cfResponse.get()));
+    return suggestedFilename.get();
+}
+
 bool ResourceResponse::platformCompare(const ResourceResponse& a, const ResourceResponse& b)
 {
     // CFEqual crashes if you pass it 0 so do an early check before calling it.

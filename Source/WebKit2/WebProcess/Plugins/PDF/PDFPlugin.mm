@@ -809,10 +809,9 @@ void PDFPlugin::addArchiveResource()
     // FIXME: It's a hack to force add a resource to DocumentLoader. PDF documents should just be fetched as CachedResources.
 
     // Add just enough data for context menu handling and web archives to work.
-    ResourceResponse synthesizedResponse;
-    synthesizedResponse.setSuggestedFilename(m_suggestedFilename);
-    synthesizedResponse.setURL(m_sourceURL); // Needs to match the HitTestResult::absolutePDFURL.
-    synthesizedResponse.setMimeType("application/pdf");
+    NSDictionary* headers = @{ @"Content-Disposition": (NSString *)m_suggestedFilename, @"Content-Type" : @"application/pdf" };
+    RetainPtr<NSURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_sourceURL statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers]);
+    ResourceResponse synthesizedResponse(response.get());
 
     RefPtr<ArchiveResource> resource = ArchiveResource::create(SharedBuffer::wrapCFData(m_data.get()), m_sourceURL, "application/pdf", String(), String(), synthesizedResponse);
     pluginView()->frame()->document()->loader()->addArchiveResource(resource.release());

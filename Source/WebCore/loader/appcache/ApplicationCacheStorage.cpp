@@ -1159,7 +1159,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         String mimeType = cacheStatement.getColumnText(3);
         String textEncodingName = cacheStatement.getColumnText(4);
         
-        ResourceResponse response(url, mimeType, size, textEncodingName, "");
+        ResourceResponse response(url, mimeType, size, textEncodingName);
         response.setHTTPStatusCode(httpStatusCode);
 
         String headers = cacheStatement.getColumnText(5);

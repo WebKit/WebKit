@@ -49,7 +49,7 @@ PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> dat
     if (response.isNull()) {
         unsigned dataSize = data->size();
         return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName,
-            ResourceResponse(url, mimeType, dataSize, textEncoding, String())));
+            ResourceResponse(url, mimeType, dataSize, textEncoding)));
     }
     return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName, response));
 }

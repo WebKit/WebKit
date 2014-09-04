@@ -67,12 +67,11 @@ ResourceResponseBase::ResourceResponseBase()
 {
 }
 
-ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
+ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
     : m_url(url)
     , m_mimeType(mimeType)
     , m_expectedContentLength(expectedLength)
     , m_textEncodingName(textEncodingName)
-    , m_suggestedFilename(filename)
     , m_httpStatusCode(0)
     , m_connectionID(0)
     , m_cacheControlMaxAge(0)
@@ -101,12 +100,11 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
     response->setMimeType(data->m_mimeType);
     response->setExpectedContentLength(data->m_expectedContentLength);
     response->setTextEncodingName(data->m_textEncodingName);
-    response->setSuggestedFilename(data->m_suggestedFilename);
 
     response->setHTTPStatusCode(data->m_httpStatusCode);
     response->setHTTPStatusText(data->m_httpStatusText);
 
-    response->lazyInit(CommonAndUncommonFields);
+    response->lazyInit(AllFields);
     response->m_httpHeaderFields.adopt(WTF::move(data->m_httpHeaders));
     response->m_resourceLoadTiming = data->m_resourceLoadTiming;
     response->doPlatformAdopt(data);
@@ -120,7 +118,6 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
     data->m_mimeType = mimeType().isolatedCopy();
     data->m_expectedContentLength = expectedContentLength();
     data->m_textEncodingName = textEncodingName().isolatedCopy();
-    data->m_suggestedFilename = suggestedFilename().isolatedCopy();
     data->m_httpStatusCode = httpStatusCode();
     data->m_httpStatusText = httpStatusText().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
@@ -209,22 +206,9 @@ void ResourceResponseBase::setTextEncodingName(const String& encodingName)
 }
 
 // FIXME should compute this on the fly
-const String& ResourceResponseBase::suggestedFilename() const
+String ResourceResponseBase::suggestedFilename() const
 {
-    lazyInit(AllFields);
-
-    return m_suggestedFilename;
-}
-
-void ResourceResponseBase::setSuggestedFilename(const String& suggestedName)
-{
-    lazyInit(AllFields);
-    m_isNull = false;
-
-    // FIXME: Suggested file name is calculated based on other headers. There should not be a setter for it.
-    m_suggestedFilename = suggestedName; 
-
-    // FIXME: Should invalidate or update platform response if present.
+    return static_cast<const ResourceResponse*>(this)->platformSuggestedFilename();
 }
 
 int ResourceResponseBase::httpStatusCode() const
@@ -245,14 +229,14 @@ void ResourceResponseBase::setHTTPStatusCode(int statusCode)
 
 const String& ResourceResponseBase::httpStatusText() const 
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_httpStatusText; 
 }
 
 void ResourceResponseBase::setHTTPStatusText(const String& statusText) 
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     m_httpStatusText = statusText; 
 
@@ -268,7 +252,7 @@ String ResourceResponseBase::httpHeaderField(const String& name) const
     if (!value.isEmpty())        
         return value;
 
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_httpHeaderFields.get(name); 
 }
@@ -282,7 +266,7 @@ String ResourceResponseBase::httpHeaderField(HTTPHeaderName name) const
     if (!value.isEmpty())
         return value;
 
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_httpHeaderFields.get(name); 
 }
@@ -318,7 +302,7 @@ void ResourceResponseBase::updateHeaderParsedState(HTTPHeaderName name)
 
 void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& value)
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -331,7 +315,7 @@ void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& 
 
 void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     updateHeaderParsedState(name);
 
@@ -342,7 +326,7 @@ void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String&
 
 void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& value)
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -353,7 +337,7 @@ void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& 
 
 const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_httpHeaderFields;
 }
@@ -508,7 +492,7 @@ double ResourceResponseBase::lastModified() const
 
 bool ResourceResponseBase::isAttachment() const
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     String value = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
     size_t loc = value.find(';');
@@ -521,7 +505,7 @@ bool ResourceResponseBase::isAttachment() const
   
 bool ResourceResponseBase::wasCached() const
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_wasCached;
 }
@@ -533,28 +517,28 @@ void ResourceResponseBase::setWasCached(bool value)
 
 bool ResourceResponseBase::connectionReused() const
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_connectionReused;
 }
 
 void ResourceResponseBase::setConnectionReused(bool connectionReused)
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     m_connectionReused = connectionReused;
 }
 
 unsigned ResourceResponseBase::connectionID() const
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     return m_connectionID;
 }
 
 void ResourceResponseBase::setConnectionID(unsigned connectionID)
 {
-    lazyInit(CommonAndUncommonFields);
+    lazyInit(AllFields);
 
     m_connectionID = connectionID;
 }

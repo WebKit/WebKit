@@ -1,3 +1,75 @@
+2014-09-04  Antti Koivisto  <antti@apple.com>
+
+        Remove ResourceResponse::m_suggestedFilename
+        https://bugs.webkit.org/show_bug.cgi?id=136534
+
+        Reviewed by Alexey Proskuryakov.
+
+        This will simplify things.
+
+        * WebCore.exp.in:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::handleSubstituteDataLoadNow):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCache):
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::create):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+        (WebCore::BlobResourceHandle::notifyResponseOnError):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusText):
+        (WebCore::ResourceResponseBase::setHTTPStatusText):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::addHTTPHeaderField):
+        (WebCore::ResourceResponseBase::httpHeaderFields):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::wasCached):
+        (WebCore::ResourceResponseBase::connectionReused):
+        (WebCore::ResourceResponseBase::setConnectionReused):
+        (WebCore::ResourceResponseBase::connectionID):
+        (WebCore::ResourceResponseBase::setConnectionID):
+
+            Remove AllFields initialization. It was only used to get m_suggestedFilename.
+            Rename CommonAndUncommonFields to AllFields
+
+        (WebCore::ResourceResponseBase::setSuggestedFilename): Deleted.
+
+            No more setter.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::platformSuggestedFileName):
+
+            Get the suggested filename from the platform class on-demand.
+
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+
+            Remove never-used file name constructor parameter.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::initNSURLResponse):
+
+            Synthesize HTTP response properly so it can hold Content-Disposition for file name (and other headers).
+
+        (WebCore::ResourceResponse::platformLazyInit):
+
+            Don't pull the suggested filename anymore.
+
+        (WebCore::ResourceResponse::platformSuggestedFilename):
+
+            Get the suggested name from the (possibly synthetic) NSURLRequest.
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

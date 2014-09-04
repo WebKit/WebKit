@@ -45,18 +45,24 @@ namespace WebCore {
 
 void ResourceResponse::initNSURLResponse() const
 {
-    // Work around a mistake in the NSURLResponse class - <rdar://problem/6875219>.
-    // The init function takes an NSInteger, even though the accessor returns a long long.
-    // For values that won't fit in an NSInteger, pass -1 instead.
-    NSInteger expectedContentLength;
-    if (m_expectedContentLength < 0 || m_expectedContentLength > std::numeric_limits<NSInteger>::max())
-        expectedContentLength = -1;
-    else
-        expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
+    if (!m_httpStatusCode) {
+        // Work around a mistake in the NSURLResponse class - <rdar://problem/6875219>.
+        // The init function takes an NSInteger, even though the accessor returns a long long.
+        // For values that won't fit in an NSInteger, pass -1 instead.
+        NSInteger expectedContentLength;
+        if (m_expectedContentLength < 0 || m_expectedContentLength > std::numeric_limits<NSInteger>::max())
+            expectedContentLength = -1;
+        else
+            expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
 
-    // FIXME: This creates a very incomplete NSURLResponse, which does not even have a status code.
+        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:-1 textEncodingName:m_textEncodingName]);
+        return;
+    }
+    NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
+    for (auto& header : m_httpHeaderFields)
+        [headerDictionary setObject:(NSString *)header.value forKey:(NSString *)header.key];
 
-    m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
+    m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary]);
 }
 
 #if USE(CFNETWORK)
@@ -139,7 +145,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         [pool drain];
     }
 
-    if (m_initLevel < CommonAndUncommonFields && initLevel >= CommonAndUncommonFields) {
+    if (m_initLevel < AllFields) {
         if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
             NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -159,14 +165,15 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             [pool drain];
         }
     }
-     
-    if (m_initLevel < AllFields && initLevel >= AllFields)
-        m_suggestedFilename = [m_nsResponse.get() suggestedFilename];
 
     m_initLevel = initLevel;
 }
 
-    
+String ResourceResponse::platformSuggestedFilename() const
+{
+    return [nsURLResponse() suggestedFilename];
+}
+
 bool ResourceResponse::platformCompare(const ResourceResponse& a, const ResourceResponse& b)
 {
     return a.nsURLResponse() == b.nsURLResponse();

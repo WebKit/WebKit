@@ -389,7 +389,7 @@ void PluginStream::deliverData()
 
 void PluginStream::sendJavaScriptStream(const URL& requestURL, const CString& resultString)
 {
-    didReceiveResponse(0, ResourceResponse(requestURL, "text/plain", resultString.length(), "", ""));
+    didReceiveResponse(0, ResourceResponse(requestURL, "text/plain", resultString.length(), ""));
 
     if (m_streamState == StreamStopped)
         return;
