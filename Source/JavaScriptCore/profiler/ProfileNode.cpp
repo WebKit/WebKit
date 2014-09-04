@@ -42,48 +42,31 @@ ProfileNode::ProfileNode(ExecState* callerCallFrame, const CallIdentifier& callI
     : m_callerCallFrame(callerCallFrame)
     , m_callIdentifier(callIdentifier)
     , m_parent(parentNode)
+#ifndef NDEBUG
     , m_nextSibling(nullptr)
+#endif
 {
-    startTimer();
 }
 
 ProfileNode::ProfileNode(ExecState* callerCallFrame, ProfileNode* nodeToCopy)
     : m_callerCallFrame(callerCallFrame)
     , m_callIdentifier(nodeToCopy->callIdentifier())
     , m_parent(nodeToCopy->parent())
-    , m_nextSibling(nullptr)
     , m_calls(nodeToCopy->calls())
+#ifndef NDEBUG
+    , m_nextSibling(nullptr)
+#endif
 {
-}
-
-ProfileNode* ProfileNode::willExecute(ExecState* callerCallFrame, const CallIdentifier& callIdentifier)
-{
-    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
-        if ((*currentChild)->callIdentifier() == callIdentifier) {
-            (*currentChild)->startTimer();
-            return (*currentChild).get();
-        }
-    }
-
-    RefPtr<ProfileNode> newChild = ProfileNode::create(callerCallFrame, callIdentifier, this);
-    if (m_children.size())
-        m_children.last()->setNextSibling(newChild.get());
-    m_children.append(newChild.release());
-    return m_children.last().get();
-}
-
-ProfileNode* ProfileNode::didExecute()
-{
-    endAndRecordCall();
-    return m_parent;
 }
 
 void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
 {
     RefPtr<ProfileNode> child = prpChild;
     child->setParent(this);
+#ifndef NDEBUG
     if (m_children.size())
         m_children.last()->setNextSibling(child.get());
+#endif
     m_children.append(child.release());
 }
 
@@ -99,10 +82,14 @@ void ProfileNode::removeChild(ProfileNode* node)
         }
     }
 
-    resetChildrensSiblings();
+#ifndef NDEBUG
+    size_t size = m_children.size();
+    for (size_t i = 0; i < size; ++i)
+        m_children[i]->setNextSibling(i + 1 == size ? nullptr : m_children[i + 1].get());
+#endif
 }
 
-void ProfileNode::insertNode(PassRefPtr<ProfileNode> prpNode)
+void ProfileNode::spliceNode(PassRefPtr<ProfileNode> prpNode)
 {
     RefPtr<ProfileNode> node = prpNode;
 
@@ -113,14 +100,7 @@ void ProfileNode::insertNode(PassRefPtr<ProfileNode> prpNode)
     m_children.append(node.release());
 }
 
-void ProfileNode::stopProfiling()
-{
-    ASSERT(!m_calls.isEmpty());
-
-    if (isnan(m_calls.last().totalTime()))
-        endAndRecordCall();
-}
-
+#ifndef NDEBUG
 ProfileNode* ProfileNode::traverseNextNodePostOrder() const
 {
     ProfileNode* next = m_nextSibling;
@@ -131,27 +111,6 @@ ProfileNode* ProfileNode::traverseNextNodePostOrder() const
     return next;
 }
 
-void ProfileNode::endAndRecordCall()
-{
-    Call& last = lastCall();
-    ASSERT(isnan(last.totalTime()));
-
-    last.setTotalTime(currentTime() - last.startTime());
-}
-
-void ProfileNode::startTimer()
-{
-    m_calls.append(Call(currentTime()));
-}
-
-void ProfileNode::resetChildrensSiblings()
-{
-    unsigned size = m_children.size();
-    for (unsigned i = 0; i < size; ++i)
-        m_children[i]->setNextSibling(i + 1 == size ? 0 : m_children[i + 1].get());
-}
-
-#ifndef NDEBUG
 void ProfileNode::debugPrint()
 {
     CalculateProfileSubtreeDataFunctor functor;
@@ -187,7 +146,7 @@ void ProfileNode::debugPrintRecursively(int indentLevel, const ProfileSubtreeDat
 
     dataLogF("Function Name %s %zu SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% Next Sibling %s\n",
         functionName().utf8().data(),
-        numberOfCalls(), nodeSelfTime, nodeSelfTime / rootTotalTime * 100.0, nodeTotalTime, nodeTotalTime / rootTotalTime * 100.0,
+        m_calls.size(), nodeSelfTime, nodeSelfTime / rootTotalTime * 100.0, nodeTotalTime, nodeTotalTime / rootTotalTime * 100.0,
         m_nextSibling ? m_nextSibling->functionName().utf8().data() : "");
 
     ++indentLevel;

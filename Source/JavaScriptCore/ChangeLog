@@ -1,3 +1,53 @@
+2014-09-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        LegacyProfiler: ProfileNodes should be used more like structs
+        https://bugs.webkit.org/show_bug.cgi?id=136381
+
+        Reviewed by Timothy Hatcher.
+
+        Previously, both the profile generator and individual profile nodes
+        were collectively responsible for creating new Call entries and
+        maintaining data structure invariants. This complexity is unnecessary.
+
+        This patch centralizes profile data creation inside the profile generator.
+        The profile nodes manage nextSibling and parent pointers, but do not
+        collect the current time or create new Call entries themselves.
+
+        Since ProfileNode::nextSibling and its callers are only used within
+        debug printing code, it should be compiled out for release builds.
+
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        (JSC::ProfileGenerator::beginCallEntry): create a new Call entry.
+        (JSC::ProfileGenerator::endCallEntry): finish the last Call entry.
+        (JSC::ProfileGenerator::willExecute): inline ProfileNode::willExecute()
+        (JSC::ProfileGenerator::didExecute): inline ProfileNode::didExecute()
+        (JSC::ProfileGenerator::stopProfiling): Only walk up the spine.
+        (JSC::ProfileGenerator::removeProfileStart):
+        (JSC::ProfileGenerator::removeProfileEnd):
+        * profiler/ProfileGenerator.h:
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::ProfileNode):
+        (JSC::ProfileNode::addChild):
+        (JSC::ProfileNode::removeChild):
+        (JSC::ProfileNode::spliceNode): Renamed from insertNode.
+        (JSC::ProfileNode::debugPrintRecursively):
+        (JSC::ProfileNode::willExecute): Deleted.
+        (JSC::ProfileNode::insertNode): Deleted.
+        (JSC::ProfileNode::stopProfiling): Deleted.
+        (JSC::ProfileNode::traverseNextNodePostOrder):
+        (JSC::ProfileNode::endAndRecordCall): Deleted.
+        (JSC::ProfileNode::debugPrintDataSampleStyle):
+        * profiler/ProfileNode.h:
+        (JSC::ProfileNode::Call::setStartTime):
+        (JSC::ProfileNode::Call::setTotalTime):
+        (JSC::ProfileNode::appendCall):
+        (JSC::ProfileNode::firstChild):
+        (JSC::ProfileNode::lastChild):
+        (JSC::ProfileNode::nextSibling):
+        (JSC::ProfileNode::setNextSibling):
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient

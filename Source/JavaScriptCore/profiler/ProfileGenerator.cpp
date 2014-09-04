@@ -45,7 +45,7 @@ PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const Str
 }
 
 ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigned uid)
-    : m_origin(exec ? exec->lexicalGlobalObject() : 0)
+    : m_origin(exec ? exec->lexicalGlobalObject() : nullptr)
     , m_profileGroup(exec ? exec->lexicalGlobalObject()->profileGroup() : 0)
     , m_foundConsoleStartParent(false)
 {
@@ -79,7 +79,8 @@ public:
         unsigned column = 0;
         visitor->computeLineAndColumn(line, column);
         m_currentNode = ProfileNode::create(m_exec, LegacyProfiler::createCallIdentifier(m_exec, visitor->callee(), visitor->sourceURL(), line, column), m_rootNode.get());
-        m_rootNode->insertNode(m_currentNode.get());
+        m_currentNode->appendCall(ProfileNode::Call(currentTime()));
+        m_rootNode->spliceNode(m_currentNode.get());
 
         m_foundParent = true;
         return StackVisitor::Done;
@@ -106,6 +107,25 @@ const String& ProfileGenerator::title() const
     return m_profile->title();
 }
 
+void ProfileGenerator::beginCallEntry(ProfileNode* node, double startTime)
+{
+    ASSERT_ARG(node, node);
+
+    if (isnan(startTime))
+        startTime = currentTime();
+    node->appendCall(ProfileNode::Call(startTime));
+}
+
+void ProfileGenerator::endCallEntry(ProfileNode* node)
+{
+    ASSERT_ARG(node, node);
+
+    ProfileNode::Call& last = node->lastCall();
+    ASSERT(isnan(last.totalTime()));
+
+    last.setTotalTime(currentTime() - last.startTime());
+}
+
 void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentifier& callIdentifier)
 {
     if (JAVASCRIPTCORE_PROFILE_WILL_EXECUTE_ENABLED()) {
@@ -117,8 +137,21 @@ void ProfileGenerator::willExecute(ExecState* callerCallFrame, const CallIdentif
     if (!m_origin)
         return;
 
-    ASSERT(m_currentNode);
-    m_currentNode = m_currentNode->willExecute(callerCallFrame, callIdentifier);
+    RefPtr<ProfileNode> calleeNode = nullptr;
+
+    // Find or create a node for the callee call frame.
+    for (const RefPtr<ProfileNode>& child : m_currentNode->children()) {
+        if (child->callIdentifier() == callIdentifier)
+            calleeNode = child;
+    }
+
+    if (!calleeNode) {
+        calleeNode = ProfileNode::create(callerCallFrame, callIdentifier, m_currentNode.get());
+        m_currentNode->addChild(calleeNode);
+    }
+
+    m_currentNode = calleeNode;
+    beginCallEntry(calleeNode.get());
 }
 
 void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifier& callIdentifier)
@@ -132,16 +165,19 @@ void ProfileGenerator::didExecute(ExecState* callerCallFrame, const CallIdentifi
     if (!m_origin)
         return;
 
+    // Make a new node if the caller node has never seen this callee call frame before.
+    // This can happen if |console.profile()| is called several frames deep in the call stack.
     ASSERT(m_currentNode);
     if (m_currentNode->callIdentifier() != callIdentifier) {
-        RefPtr<ProfileNode> returningNode = ProfileNode::create(callerCallFrame, callIdentifier, m_currentNode.get());
-        returningNode->lastCall().setStartTime(m_currentNode->lastCall().startTime());
-        returningNode->didExecute();
-        m_currentNode->insertNode(returningNode.release());
+        RefPtr<ProfileNode> calleeNode = ProfileNode::create(callerCallFrame, callIdentifier, m_currentNode.get());
+        beginCallEntry(calleeNode.get(), m_currentNode->lastCall().startTime());
+        endCallEntry(calleeNode.get());
+        m_currentNode->spliceNode(calleeNode.release());
         return;
     }
 
-    m_currentNode = m_currentNode->didExecute();
+    endCallEntry(m_currentNode.get());
+    m_currentNode = m_currentNode->parent();
 }
 
 void ProfileGenerator::exceptionUnwind(ExecState* handlerCallFrame, const CallIdentifier&)
@@ -155,16 +191,10 @@ void ProfileGenerator::exceptionUnwind(ExecState* handlerCallFrame, const CallId
     }
 }
 
-struct StopProfilingFunctor {
-    void operator()(ProfileNode* node) { node->stopProfiling(); }
-};
-
 void ProfileGenerator::stopProfiling()
 {
-    // FIXME: we shouldn't need a full traversal here, since only the spine from
-    // m_currentNode to m_rootNode should have any nodes currently accruing time.
-    StopProfilingFunctor functor;
-    m_profile->rootNode()->forEachNodePostorder(functor);
+    for (ProfileNode* node = m_currentNode.get(); node != m_profile->rootNode(); node = node->parent())
+        endCallEntry(node);
 
     if (m_foundConsoleStartParent) {
         removeProfileStart();
@@ -181,7 +211,7 @@ void ProfileGenerator::stopProfiling()
 // The console.profile that started this ProfileGenerator will be the first child.
 void ProfileGenerator::removeProfileStart()
 {
-    ProfileNode* currentNode = 0;
+    ProfileNode* currentNode = nullptr;
     for (ProfileNode* next = m_rootNode.get(); next; next = next->firstChild())
         currentNode = next;
 
@@ -194,7 +224,7 @@ void ProfileGenerator::removeProfileStart()
 // The console.profileEnd that stopped this ProfileGenerator will be the last child.
 void ProfileGenerator::removeProfileEnd()
 {
-    ProfileNode* currentNode = 0;
+    ProfileNode* currentNode = nullptr;
     for (ProfileNode* next = m_rootNode.get(); next; next = next->lastChild())
         currentNode = next;
 

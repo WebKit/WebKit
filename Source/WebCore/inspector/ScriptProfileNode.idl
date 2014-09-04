@@ -36,7 +36,5 @@
     readonly attribute unsigned long lineNumber;
     readonly attribute unsigned long columnNumber;
 
-    readonly attribute unsigned long numberOfCalls;
-
     sequence<ScriptProfileNode> children();
 };

@@ -26,10 +26,10 @@
 #ifndef ProfileGenerator_h
 #define ProfileGenerator_h
 
-#include "Profile.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -49,13 +49,10 @@ namespace JSC {
         JSGlobalObject* origin() const { return m_origin; }
         unsigned profileGroup() const { return m_profileGroup; }
 
-        // Collecting
         void willExecute(ExecState* callerCallFrame, const CallIdentifier&);
         void didExecute(ExecState* callerCallFrame, const CallIdentifier&);
-
         void exceptionUnwind(ExecState* handlerCallFrame, const CallIdentifier&);
 
-        // Stopping Profiling
         void stopProfiling();
 
         typedef void (ProfileGenerator::*ProfileFunction)(ExecState* callerOrHandlerCallFrame, const CallIdentifier& callIdentifier);
@@ -66,6 +63,9 @@ namespace JSC {
 
         void removeProfileStart();
         void removeProfileEnd();
+
+        void beginCallEntry(ProfileNode*, double startTime = NAN);
+        void endCallEntry(ProfileNode*);
 
         RefPtr<Profile> m_profile;
         JSGlobalObject* m_origin;
