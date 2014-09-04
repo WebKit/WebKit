@@ -1,3 +1,28 @@
+2014-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        Make images work with patches created using svn 1.7
+        <http://webkit.org/b/136507>
+
+        Reviewed by Darin Adler.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.prettify): Delete redundant patches that claim
+        newly added images are actually removed.
+        (PrettyPatch.SVN_BINARY_FILE_MARKER_FORMAT): Rename from
+        BINARY_FILE_MARKER_FORMAT.
+        (PrettyPatch.SVN_IMAGE_FILE_MARKER_FORMAT): Rename from
+        IMAGE_FILE_MARKER_FORMAT.
+        (PrettyPatch.SVN_PROPERTY_CHANGES_FORMAT): Add. Used to find
+        and ignore property changes in svn 1.7 patches.
+        (PrettyPatch.SVN_START_OF_BINARY_DATA_FORMAT): Rename from
+        START_OF_BINARY_DATA_FORMAT.
+        (FileDiff.filename): Add read-only accessor.
+        (FileDiff.image): Add read-only accessor.
+        (FileDiff.image_url): Add read-only accessor.
+        (FileDiff.initialize): Add special case for svn-1.7 image
+        patches that add a file.  Update various regex constants per
+        above.
+
 2014-02-25  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
 
         PrettyPatch.rb should be more descriptive for "git diff -M" styled patches

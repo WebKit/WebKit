@@ -32,6 +32,16 @@ public
 
         fileDiffs = FileDiff.parse(string)
 
+        # Newly added images get two diffs with svn 1.7; toss the first one.
+        deleteIndices = []
+        for i in 1...fileDiffs.length
+            prev = i - 1
+            if fileDiffs[prev].image and not fileDiffs[prev].image_url and fileDiffs[i].image and fileDiffs[i].image_url and fileDiffs[prev].filename == fileDiffs[i].filename
+                deleteIndices.unshift(prev)
+            end
+        end
+        deleteIndices.each{ |i| fileDiffs.delete_at(i) }
+
         $last_prettify_file_count = fileDiffs.length
         str << fileDiffs.collect{ |diff| diff.to_html }.join
         str << "</body></html>"
@@ -63,9 +73,11 @@ private
 
     RENAME_FROM = /^rename from (.*)/
 
-    BINARY_FILE_MARKER_FORMAT = /^Cannot display: file marked as a binary type.$/
+    SVN_BINARY_FILE_MARKER_FORMAT = /^Cannot display: file marked as a binary type.$/
 
-    IMAGE_FILE_MARKER_FORMAT = /^svn:mime-type = image\/png$/
+    SVN_IMAGE_FILE_MARKER_FORMAT = /^svn:mime-type = image\/png$/
+
+    SVN_PROPERTY_CHANGES_FORMAT = /^Property changes on: (.*)/
 
     GIT_INDEX_MARKER_FORMAT = /^index ([0-9a-f]{40})\.\.([0-9a-f]{40})/
 
@@ -77,7 +89,7 @@ private
 
     GIT_DELTA_FORMAT = /^delta \d+$/
 
-    START_OF_BINARY_DATA_FORMAT = /^[0-9a-zA-Z\+\/=]{20,}/ # Assume 20 chars without a space is base64 binary data.
+    SVN_START_OF_BINARY_DATA_FORMAT = /^[0-9a-zA-Z\+\/=]{20,}/ # Assume 20 chars without a space is base64 binary data.
 
     START_OF_SECTION_FORMAT = /^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@\s*(.*)/
 
@@ -530,6 +542,10 @@ EOF
     end
 
     class FileDiff
+        attr_reader :filename
+        attr_reader :image
+        attr_reader :image_url
+
         def initialize(lines)
             @filename = PrettyPatch.filename_from_diff_header(lines[0].chomp)
             startOfSections = 1
@@ -541,15 +557,29 @@ EOF
                     @filename = PrettyPatch.filename_from_diff_header(lines[i].chomp) if @filename.nil?
                     @to = PrettyPatch.revisionOrDescription(lines[i])
                     startOfSections = i + 1
+
+                    # Check for 'property' patch, then image data, since svn 1.7 creates a fake patch for property changes.
+                    if /^$/.match(lines[startOfSections]) and SVN_PROPERTY_CHANGES_FORMAT.match(lines[startOfSections + 1]) then
+                        startOfSections += 2
+                        for x in startOfSections...lines.length
+                            next if not /^$/.match(lines[x])
+                            if SVN_START_OF_BINARY_DATA_FORMAT.match(lines[x + 1]) then
+                                startOfSections = x + 1
+                                @binary = true
+                                @image = true
+                                break
+                            end
+                        end
+                    end
                     break
-                when BINARY_FILE_MARKER_FORMAT
+                when SVN_BINARY_FILE_MARKER_FORMAT
                     @binary = true
-                    if (IMAGE_FILE_MARKER_FORMAT.match(lines[i + 1]) or PrettyPatch.has_image_suffix(@filename)) then
+                    if (SVN_IMAGE_FILE_MARKER_FORMAT.match(lines[i + 1]) or PrettyPatch.has_image_suffix(@filename)) then
                         @image = true
                         startOfSections = i + 2
                         for x in startOfSections...lines.length
                             # Binary diffs often have property changes listed before the actual binary data.  Skip them.
-                            if START_OF_BINARY_DATA_FORMAT.match(lines[x]) then
+                            if SVN_START_OF_BINARY_DATA_FORMAT.match(lines[x]) then
                                 startOfSections = x
                                 break
                             end
