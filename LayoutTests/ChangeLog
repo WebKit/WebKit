@@ -1,3 +1,14 @@
+2014-09-03  David Hyatt  <hyatt@apple.com>
+
+        Initial letters should clear one another.
+        https://bugs.webkit.org/show_bug.cgi?id=136514
+
+        Reviewed by Simon Fraser.
+
+        * fast/css-generated-content/initial-letter-clearance.html: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-clearance-expected.png: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-clearance-expected.txt: Added.
+
 2014-09-04  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r172832): Poor 2-finger scrolling performance at theverge.com articles 

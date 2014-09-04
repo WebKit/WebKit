@@ -2301,7 +2301,16 @@ LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject
     LayoutUnit floatLogicalLeft;
 
     bool insideFlowThread = flowThreadContainingBlock();
-
+    bool isInitialLetter = childBox.style().styleType() == FIRST_LETTER && childBox.style().initialLetterDrop() > 0;
+    
+    if (isInitialLetter) {
+        int letterClearance = lowestInitialLetterLogicalBottom() - logicalTopOffset;
+        if (letterClearance > 0) {
+            logicalTopOffset += letterClearance;
+            setLogicalHeight(logicalHeight() + letterClearance);
+        }
+    }
+    
     if (childBox.style().floating() == LeftFloat) {
         LayoutUnit heightRemainingLeft = 1;
         LayoutUnit heightRemainingRight = 1;
@@ -2337,7 +2346,7 @@ LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject
         floatLogicalLeft -= logicalWidthForFloat(floatingObject);
     }
     
-    if (childBox.style().styleType() == FIRST_LETTER && childBox.style().initialLetterDrop() > 0) {
+    if (isInitialLetter) {
         const RenderStyle& style = firstLineStyle();
         const FontMetrics& fontMetrics = style.fontMetrics();
         if (fontMetrics.hasCapHeight()) {
@@ -2554,6 +2563,21 @@ LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatT
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* floatingObject = it->get();
         if (floatingObject->isPlaced() && floatingObject->type() & floatType)
+            lowestFloatBottom = std::max(lowestFloatBottom, logicalBottomForFloat(floatingObject));
+    }
+    return lowestFloatBottom;
+}
+
+LayoutUnit RenderBlockFlow::lowestInitialLetterLogicalBottom() const
+{
+    if (!m_floatingObjects)
+        return 0;
+    LayoutUnit lowestFloatBottom = 0;
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    auto end = floatingObjectSet.end();
+    for (auto it = floatingObjectSet.begin(); it != end; ++it) {
+        FloatingObject* floatingObject = it->get();
+        if (floatingObject->isPlaced() && floatingObject->renderer().style().styleType() == FIRST_LETTER && floatingObject->renderer().style().initialLetterDrop() > 0)
             lowestFloatBottom = std::max(lowestFloatBottom, logicalBottomForFloat(floatingObject));
     }
     return lowestFloatBottom;

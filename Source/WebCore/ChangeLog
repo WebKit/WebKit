@@ -1,3 +1,21 @@
+2014-09-03  David Hyatt  <hyatt@apple.com>
+
+        Initial letters should clear one another.
+        https://bugs.webkit.org/show_bug.cgi?id=136514
+
+        Reviewed by Simon Fraser.
+
+        Added fast/css-generated-content/initial-letter-clearance.html.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        Compute the required clearance and add it both to the block's logical height
+        and to the logical top offset of the float.
+
+        (WebCore::RenderBlockFlow::lowestInitialLetterLogicalBottom):
+        * rendering/RenderBlockFlow.h:
+        A new method for determining the lowest floating initial letter.
+
 2014-09-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Use WTFString::find(char) in more places
