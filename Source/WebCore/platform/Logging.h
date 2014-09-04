@@ -42,7 +42,6 @@ namespace WebCore {
     M(Archives) \
     M(BackForward) \
     M(Compositing) \
-    M(DiskImageCache) \
     M(Editing) \
     M(Events) \
     M(FTP) \

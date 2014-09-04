@@ -112,17 +112,6 @@ static inline WebDataSourcePrivate* toPrivate(void* privateAttribute)
     return reinterpret_cast<WebDataSourcePrivate*>(privateAttribute);
 }
 
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-static void BufferMemoryMapped(PassRefPtr<SharedBuffer> buffer, SharedBuffer::CompletionStatus mapStatus, SharedBuffer::MemoryMappedNotifyCallbackData data)
-{
-    NSObject<WebDataSourcePrivateDelegate> *delegate = [(WebDataSource *)data dataSourceDelegate];
-    if (mapStatus == SharedBuffer::Succeeded)
-        [delegate dataSourceMemoryMapped];
-    else
-        [delegate dataSourceMemoryMapFailed];
-}
-#endif
-
 @interface WebDataSource (WebFileInternal)
 @end
 
@@ -234,50 +223,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)_setAllowToBeMemoryMapped
 {
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-    RefPtr<ResourceBuffer> mainResourceBuffer = toPrivate(_private)->loader->mainResourceData();
-    if (!mainResourceBuffer)
-        return;
-
-    RefPtr<SharedBuffer> mainResourceData = mainResourceBuffer->sharedBuffer();
-    if (!mainResourceData)
-        return;
-
-    if (mainResourceData->memoryMappedNotificationCallback() != BufferMemoryMapped) {
-        ASSERT(!mainResourceData->memoryMappedNotificationCallback() && !mainResourceData->memoryMappedNotificationCallbackData());
-        mainResourceData->setMemoryMappedNotificationCallback(BufferMemoryMapped, self);
-    }
-
-    switch (mainResourceData->allowToBeMemoryMapped()) {
-    case SharedBuffer::SuccessAlreadyMapped:
-        [[self dataSourceDelegate] dataSourceMemoryMapped];
-        return;
-    case SharedBuffer::PreviouslyQueuedForMapping:
-    case SharedBuffer::QueuedForMapping:
-        return;
-    case SharedBuffer::FailureCacheFull:
-        [[self dataSourceDelegate] dataSourceMemoryMapFailed];
-        return;
-    }
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 - (void)setDataSourceDelegate:(NSObject<WebDataSourcePrivateDelegate> *)delegate
 {
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-    ASSERT(!toPrivate(_private)->_dataSourceDelegate);
-    toPrivate(_private)->_dataSourceDelegate = delegate;
-#endif
 }
 
 - (NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate
 {
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-    return toPrivate(_private)->_dataSourceDelegate;
-#else
     return nullptr;
-#endif
 }
 
 @end
@@ -480,24 +434,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (toPrivate(_private) && toPrivate(_private)->includedInWebKitStatistics)
         --WebDataSourceCount;
 
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-    // The code to remove memory mapped notification is only needed when we are viewing a PDF file.
-    // In such a case, WebPDFViewPlaceholder sets itself as the dataSourceDelegate. Guard the access
-    // to mainResourceData with this nil check so that we avoid assertions due to the resource being
-    // made purgeable.
-    if (_private && [self dataSourceDelegate]) {
-        RefPtr<ResourceBuffer> mainResourceBuffer = toPrivate(_private)->loader->mainResourceData();
-        if (mainResourceBuffer) {
-            RefPtr<SharedBuffer> mainResourceData = mainResourceBuffer->sharedBuffer();
-            if (mainResourceData && 
-                mainResourceData->memoryMappedNotificationCallbackData() == self &&
-                mainResourceData->memoryMappedNotificationCallback() == BufferMemoryMapped) {
-                mainResourceData->setMemoryMappedNotificationCallback(nullptr, nullptr);
-            }
-        }
-    }
-#endif
-    
 #if USE(QUICK_LOOK)
     // Added in -[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:].
     if (NSURL *url = [[self response] URL])

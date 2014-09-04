@@ -358,8 +358,6 @@
 		A10C1D631820300E0036883A /* WebCaretChangeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D491820300E0036883A /* WebCaretChangeListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D641820300E0036883A /* WebChromeClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D4A1820300E0036883A /* WebChromeClientIOS.h */; };
 		A10C1D651820300E0036883A /* WebChromeClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D4B1820300E0036883A /* WebChromeClientIOS.mm */; };
-		A10C1D661820300E0036883A /* WebDiskImageCacheClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D4C1820300E0036883A /* WebDiskImageCacheClientIOS.h */; };
-		A10C1D671820300E0036883A /* WebDiskImageCacheClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D4D1820300E0036883A /* WebDiskImageCacheClientIOS.mm */; };
 		A10C1D681820300E0036883A /* WebFixedPositionContent.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D4E1820300E0036883A /* WebFixedPositionContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D691820300E0036883A /* WebFixedPositionContent.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D4F1820300E0036883A /* WebFixedPositionContent.mm */; };
 		A10C1D6A1820300E0036883A /* WebFixedPositionContentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D501820300E0036883A /* WebFixedPositionContentInternal.h */; };
@@ -744,8 +742,6 @@
 		A10C1D491820300E0036883A /* WebCaretChangeListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCaretChangeListener.h; path = ios/WebCoreSupport/WebCaretChangeListener.h; sourceTree = SOURCE_ROOT; };
 		A10C1D4A1820300E0036883A /* WebChromeClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebChromeClientIOS.h; path = ios/WebCoreSupport/WebChromeClientIOS.h; sourceTree = SOURCE_ROOT; };
 		A10C1D4B1820300E0036883A /* WebChromeClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebChromeClientIOS.mm; path = ios/WebCoreSupport/WebChromeClientIOS.mm; sourceTree = SOURCE_ROOT; };
-		A10C1D4C1820300E0036883A /* WebDiskImageCacheClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDiskImageCacheClientIOS.h; path = ios/WebCoreSupport/WebDiskImageCacheClientIOS.h; sourceTree = SOURCE_ROOT; };
-		A10C1D4D1820300E0036883A /* WebDiskImageCacheClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDiskImageCacheClientIOS.mm; path = ios/WebCoreSupport/WebDiskImageCacheClientIOS.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D4E1820300E0036883A /* WebFixedPositionContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFixedPositionContent.h; path = ios/WebCoreSupport/WebFixedPositionContent.h; sourceTree = SOURCE_ROOT; };
 		A10C1D4F1820300E0036883A /* WebFixedPositionContent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebFixedPositionContent.mm; path = ios/WebCoreSupport/WebFixedPositionContent.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D501820300E0036883A /* WebFixedPositionContentInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFixedPositionContentInternal.h; path = ios/WebCoreSupport/WebFixedPositionContentInternal.h; sourceTree = SOURCE_ROOT; };
@@ -1440,8 +1436,6 @@
 				A10C1D491820300E0036883A /* WebCaretChangeListener.h */,
 				A10C1D4A1820300E0036883A /* WebChromeClientIOS.h */,
 				A10C1D4B1820300E0036883A /* WebChromeClientIOS.mm */,
-				A10C1D4C1820300E0036883A /* WebDiskImageCacheClientIOS.h */,
-				A10C1D4D1820300E0036883A /* WebDiskImageCacheClientIOS.mm */,
 				A10C1D4E1820300E0036883A /* WebFixedPositionContent.h */,
 				A10C1D4F1820300E0036883A /* WebFixedPositionContent.mm */,
 				A10C1D501820300E0036883A /* WebFixedPositionContentInternal.h */,
@@ -1688,7 +1682,6 @@
 				7C01CB85173435C900C5D807 /* PopupMenuMac.h in Headers */,
 				A10C1D1E18202F9C0036883A /* WebDefaultUIKitDelegate.h in Headers */,
 				1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */,
-				A10C1D661820300E0036883A /* WebDiskImageCacheClientIOS.h in Headers */,
 				E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */,
 				7C01CB87173435C900C5D807 /* SearchPopupMenuMac.h in Headers */,
 				A10C1D6F1820300E0036883A /* WebGeolocationInternal.h in Headers */,
@@ -2192,7 +2185,6 @@
 				939811130824BF01008DF038 /* WebHistory.mm in Sources */,
 				939810BD0824BF01008DF038 /* WebHistoryItem.mm in Sources */,
 				1AAF5FC00EDE3A92008D883D /* WebHostedNetscapePluginView.mm in Sources */,
-				A10C1D671820300E0036883A /* WebDiskImageCacheClientIOS.mm in Sources */,
 				939810F30824BF01008DF038 /* WebHTMLRepresentation.mm in Sources */,
 				939810F40824BF01008DF038 /* WebHTMLView.mm in Sources */,
 				A10C1D7F1820303D0036883A /* WebFrameViewWAKCompatibility.m in Sources */,

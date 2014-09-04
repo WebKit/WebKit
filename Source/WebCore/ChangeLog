@@ -1,3 +1,62 @@
+2014-09-04  Pratik Solanki  <psolanki@apple.com>
+
+        Remove iOS specific disk image cache
+        https://bugs.webkit.org/show_bug.cgi?id=136517
+
+        Reviewed by Antti Koivisto.
+
+        Disk image cache code unnecessarily complicates SharedBuffer implementation. We can remove
+        this now since we don't enable it in WebKit2 on iOS.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::isUsingDiskImageCache): Deleted.
+        * loader/ResourceBuffer.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::canUseDiskImageCache): Deleted.
+        (WebCore::CachedImage::useDiskImageCache): Deleted.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::isUsingDiskImageCache): Deleted.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::canUseDiskImageCache): Deleted.
+        (WebCore::CachedResource::useDiskImageCache): Deleted.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::TypeStatistic::addResource):
+        (WebCore::MemoryCache::dumpStats):
+        (WebCore::MemoryCache::dumpLRULists):
+        (WebCore::MemoryCache::flushCachedImagesToDisk): Deleted.
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::TypeStatistic::TypeStatistic):
+        * loader/ios/DiskImageCacheClientIOS.h: Removed.
+        * loader/ios/DiskImageCacheIOS.h: Removed.
+        * loader/ios/DiskImageCacheIOS.mm: Removed.
+        * platform/Logging.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::~SharedBuffer):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::buffer):
+        (WebCore::SharedBuffer::getSomeData):
+        (WebCore::SharedBuffer::isAllowedToBeMemoryMapped): Deleted.
+        (WebCore::SharedBuffer::allowToBeMemoryMapped): Deleted.
+        (WebCore::SharedBuffer::failedMemoryMap): Deleted.
+        (WebCore::SharedBuffer::markAsMemoryMapped): Deleted.
+        (WebCore::SharedBuffer::memoryMappedNotificationCallbackData): Deleted.
+        (WebCore::SharedBuffer::memoryMappedNotificationCallback): Deleted.
+        (WebCore::SharedBuffer::setMemoryMappedNotificationCallback): Deleted.
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::isMemoryMapped): Deleted.
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/mac/SharedBufferMac.mm:
+        (-[WebCoreSharedBufferData length]):
+        (-[WebCoreSharedBufferData bytes]):
+        (WebCore::SharedBuffer::createCFData):
+        (-[WebCoreSharedBufferData initWithMemoryMappedSharedBuffer:]): Deleted.
+
 2014-09-04  Brian J. Burg  <burg@cs.washington.edu>
 
         LegacyProfiler: ProfileNodes should be used more like structs

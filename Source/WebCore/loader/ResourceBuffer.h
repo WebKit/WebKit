@@ -74,9 +74,6 @@ public:
 #if USE(CF)
     RetainPtr<CFDataRef> createCFData();
 #endif
-#if ENABLE(DISK_IMAGE_CACHE)
-    bool isUsingDiskImageCache() const;
-#endif
 
 protected:
     WEBCORE_EXPORT ResourceBuffer();

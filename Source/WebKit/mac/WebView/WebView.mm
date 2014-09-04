@@ -254,11 +254,6 @@
 #import <WebKitLegacy/WebDashboardRegion.h>
 #endif
 
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-#import "WebDiskImageCacheClientIOS.h"
-#import <WebCore/DiskImageCacheIOS.h>
-#endif
-
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
 #if PLATFORM(IOS)
@@ -276,11 +271,6 @@
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #import <WebCore/WebEventRegion.h>
-#endif
-
-#if ENABLE(DISK_IMAGE_CACHE)
-#import "WebDiskImageCacheClientIOS.h"
-#import <WebCore/DiskImageCacheIOS.h>
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -903,9 +893,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
         WebKitInitializeStorageIfNecessary();
         WebKitInitializeApplicationCachePathIfNecessary();
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-        WebKitInitializeWebDiskImageCache();
-#endif
 #if ENABLE(GAMEPAD)
         WebKitInitializeGamepadProviderIfNecessary();
 #endif
@@ -1229,13 +1216,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         return;
 
     tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
-
-#if ENABLE(DISK_IMAGE_CACHE)
-    {
-        WebKit::MemoryMeasure measurer("Memory warning: flushing images to disk.");
-        WebCore::memoryCache()->flushCachedImagesToDisk();
-    }
-#endif
 
     [WebStorageManager closeIdleLocalStorageDatabases];
 
@@ -2408,13 +2388,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     BOOL zoomsTextOnly = [preferences zoomsTextOnly];
     if (_private->zoomsTextOnly != zoomsTextOnly)
         [self _setZoomMultiplier:_private->zoomMultiplier isTextOnly:zoomsTextOnly];
-
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-    DiskImageCache& diskImageCache = WebCore::diskImageCache();
-    diskImageCache.setEnabled([preferences diskImageCacheEnabled]);
-    diskImageCache.setMinimumImageSize([preferences diskImageCacheMinimumImageSize]);
-    diskImageCache.setMaximumCacheSize([preferences diskImageCacheMaximumCacheSize]);
-#endif
 
 #if PLATFORM(IOS)
     [[self window] setTileBordersVisible:[preferences showDebugBorders]];

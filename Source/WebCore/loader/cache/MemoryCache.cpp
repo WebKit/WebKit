@@ -49,11 +49,6 @@
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(DISK_IMAGE_CACHE)
-#include "DiskImageCacheIOS.h"
-#include "ResourceBuffer.h"
-#endif
-
 namespace WebCore {
 
 static const int cDefaultCacheCapacity = 8192 * 1024;
@@ -448,45 +443,6 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
     }
 }
 
-#if ENABLE(DISK_IMAGE_CACHE)
-void MemoryCache::flushCachedImagesToDisk()
-{
-    if (!diskImageCache().isEnabled())
-        return;
-
-#ifndef NDEBUG
-    double start = WTF::currentTimeMS();
-    unsigned resourceCount = 0;
-    unsigned cachedSize = 0;
-#endif
-
-    for (size_t i = m_allResources.size(); i; ) {
-        --i;
-        CachedResource* current = m_allResources[i].m_tail;
-        while (current) {
-            CachedResource* previous = current->m_prevInAllResourcesList;
-
-            if (!current->isUsingDiskImageCache() && current->canUseDiskImageCache()) {
-                current->useDiskImageCache();
-                current->destroyDecodedData();
-#ifndef NDEBUG
-                LOG(DiskImageCache, "Cache::diskCacheResources(): attempting to save (%d) bytes", current->resourceBuffer()->sharedBuffer()->size());
-                ++resourceCount;
-                cachedSize += current->resourceBuffer()->sharedBuffer()->size();
-#endif
-            }
-
-            current = previous;
-        }
-    }
-
-#ifndef NDEBUG
-    double end = WTF::currentTimeMS();
-    LOG(DiskImageCache, "DiskImageCache: took (%f) ms to cache (%d) bytes for (%d) resources", end - start, cachedSize, resourceCount);
-#endif
-}
-#endif // ENABLE(DISK_IMAGE_CACHE)
-
 void MemoryCache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes)
 {
     ASSERT(minDeadBytes <= maxDeadBytes);
@@ -845,10 +801,6 @@ void MemoryCache::TypeStatistic::addResource(CachedResource* o)
     size += o->size();
     liveSize += o->hasClients() ? o->size() : 0;
     decodedSize += o->decodedSize();
-#if ENABLE(DISK_IMAGE_CACHE)
-    // Only the data inside the resource was mapped, not the entire resource.
-    mappedSize += o->isUsingDiskImageCache() ? o->resourceBuffer()->sharedBuffer()->size() : 0;
-#endif
 }
 
 MemoryCache::Statistics MemoryCache::getStatistics()
@@ -944,15 +896,9 @@ void MemoryCache::pruneToPercentage(float targetPercentLive)
 void MemoryCache::dumpStats()
 {
     Statistics s = getStatistics();
-#if ENABLE(DISK_IMAGE_CACHE)
-    printf("%-13s %-13s %-13s %-13s %-13s %-13s %-13s\n", "", "Count", "Size", "LiveSize", "DecodedSize", "Mapped", "\"Real\"");
-    printf("%-13s %-13s %-13s %-13s %-13s %-13s %-13s\n", "-------------", "-------------", "-------------", "-------------", "-------------", "-------------", "-------------");
-    printf("%-13s %13d %13d %13d %13d %13d %13d\n", "Images", s.images.count, s.images.size, s.images.liveSize, s.images.decodedSize, s.images.mappedSize, s.images.size - s.images.mappedSize);
-#else
     printf("%-13s %-13s %-13s %-13s %-13s\n", "", "Count", "Size", "LiveSize", "DecodedSize");
     printf("%-13s %-13s %-13s %-13s %-13s\n", "-------------", "-------------", "-------------", "-------------", "-------------");
     printf("%-13s %13d %13d %13d %13d\n", "Images", s.images.count, s.images.size, s.images.liveSize, s.images.decodedSize);
-#endif
     printf("%-13s %13d %13d %13d %13d\n", "CSS", s.cssStyleSheets.count, s.cssStyleSheets.size, s.cssStyleSheets.liveSize, s.cssStyleSheets.decodedSize);
 #if ENABLE(XSLT)
     printf("%-13s %13d %13d %13d %13d\n", "XSL", s.xslStyleSheets.count, s.xslStyleSheets.size, s.xslStyleSheets.liveSize, s.xslStyleSheets.decodedSize);
@@ -964,11 +910,7 @@ void MemoryCache::dumpStats()
 
 void MemoryCache::dumpLRULists(bool includeLive) const
 {
-#if ENABLE(DISK_IMAGE_CACHE)
-    printf("LRU-SP lists in eviction order (Kilobytes decoded, Kilobytes encoded, Access count, Referenced, isMemoryMapped):\n");
-#else
     printf("LRU-SP lists in eviction order (Kilobytes decoded, Kilobytes encoded, Access count, Referenced):\n");
-#endif
 
     int size = m_allResources.size();
     for (int i = size - 1; i >= 0; i--) {
@@ -977,11 +919,7 @@ void MemoryCache::dumpLRULists(bool includeLive) const
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (includeLive || !current->hasClients())
-#if ENABLE(DISK_IMAGE_CACHE)
-                printf("(%.1fK, %.1fK, %uA, %dR, %d); ", current->decodedSize() / 1024.0f, (current->encodedSize() + current->overheadSize()) / 1024.0f, current->accessCount(), current->hasClients(), current->isUsingDiskImageCache());
-#else
                 printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, (current->encodedSize() + current->overheadSize()) / 1024.0f, current->accessCount(), current->hasClients());
-#endif
 
             current = prev;
         }

@@ -119,12 +119,4 @@ RetainPtr<CFDataRef> ResourceBuffer::createCFData()
 }
 #endif
 
-#if ENABLE(DISK_IMAGE_CACHE)
-bool ResourceBuffer::isUsingDiskImageCache() const
-{
-    ASSERT(m_sharedBuffer);
-    return m_sharedBuffer && m_sharedBuffer->isAllowedToBeMemoryMapped();
-}
-#endif
-
 } // namespace WebCore

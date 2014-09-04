@@ -187,9 +187,4 @@
 #define WebKitNetworkInterfaceNamePreferenceKey @"WebKitNetworkInterfaceNamePreferenceKey"
 #endif
 
-#define WebKitDiskImageCacheEnabledPreferenceKey @"WebKitDiskImageCacheEnabled"
-#define WebKitDiskImageCacheMinimumImageSizePreferenceKey @"WebKitDiskImageCacheMinimumImageSize"
-#define WebKitDiskImageCacheMaximumCacheSizePreferenceKey @"WebKitDiskImageCacheMaximumCacheSize"
-#define WebKitDiskImageCacheSavedCacheDirectoryKey @"WebKitDiskImageCacheSavedCacheDirectory"
-
 #define WebKitEnableInheritURIQueryComponentPreferenceKey @"WebKitEnableInheritURIQueryComponent"

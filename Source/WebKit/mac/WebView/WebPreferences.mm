@@ -565,11 +565,6 @@ public:
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         [NSNumber numberWithFloat:WKGetMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
 #endif
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-        [NSNumber numberWithBool:YES], WebKitDiskImageCacheEnabledPreferenceKey,
-        [NSNumber numberWithUnsignedInt:(100 * 1024)], WebKitDiskImageCacheMinimumImageSizePreferenceKey,
-        [NSNumber numberWithUnsignedInt:(100 * 1024 * 1024)], WebKitDiskImageCacheMaximumCacheSizePreferenceKey,
-#endif
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         [NSNumber numberWithBool:YES],  WebKitQTKitEnabledPreferenceKey,
@@ -1908,48 +1903,6 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:enabled forKey:WebKitAccelerated2dCanvasEnabledPreferenceKey];
 }
-
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
-- (BOOL)diskImageCacheEnabled
-{
-    return [self _boolValueForKey:WebKitDiskImageCacheEnabledPreferenceKey];
-}
-
-- (void)setDiskImageCacheEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitDiskImageCacheEnabledPreferenceKey];
-}
-
-- (unsigned)diskImageCacheMinimumImageSize
-{
-    return [self _integerValueForKey:WebKitDiskImageCacheMinimumImageSizePreferenceKey];
-}
-
-- (void)setDiskImageCacheMinimumImageSize:(unsigned)minimumSize
-{
-    [self _setIntegerValue:minimumSize forKey:WebKitDiskImageCacheMinimumImageSizePreferenceKey];
-}
-
-- (unsigned)diskImageCacheMaximumCacheSize
-{
-    return [self _integerValueForKey:WebKitDiskImageCacheMaximumCacheSizePreferenceKey];
-}
-
-- (void)setDiskImageCacheMaximumCacheSize:(unsigned)maximumSize
-{
-    [self _setIntegerValue:maximumSize forKey:WebKitDiskImageCacheMaximumCacheSizePreferenceKey];
-}
-
-- (NSString *)_diskImageCacheSavedCacheDirectory
-{
-    return [[self _stringValueForKey:WebKitDiskImageCacheSavedCacheDirectoryKey] stringByStandardizingPath];
-}
-
-- (void)_setDiskImageCacheSavedCacheDirectory:(NSString *)path
-{
-    [self _setStringValue:[path stringByStandardizingPath] forKey:WebKitDiskImageCacheSavedCacheDirectoryKey];
-}
-#endif // ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
 
 - (BOOL)isFrameFlatteningEnabled
 {

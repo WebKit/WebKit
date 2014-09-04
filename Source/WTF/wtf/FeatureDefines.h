@@ -70,10 +70,6 @@
 #define ENABLE_CURSOR_SUPPORT 0
 #endif
 
-#if !defined(ENABLE_DISK_IMAGE_CACHE)
-#define ENABLE_DISK_IMAGE_CACHE 1
-#endif
-
 #if !defined(ENABLE_DRAG_SUPPORT)
 #define ENABLE_DRAG_SUPPORT 0
 #endif

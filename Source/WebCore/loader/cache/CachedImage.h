@@ -85,11 +85,6 @@ public:
     bool isManuallyCached() const { return m_isManuallyCached; }
     virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
 
-#if ENABLE(DISK_IMAGE_CACHE)
-    virtual bool canUseDiskImageCache() const override;
-    virtual void useDiskImageCache() override;
-#endif
-
     bool isOriginClean(SecurityOrigin*);
 
 private:

@@ -850,13 +850,6 @@ void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCall
     m_resource->didAddClient(m_client);
 }
 
-#if ENABLE(DISK_IMAGE_CACHE)
-bool CachedResource::isUsingDiskImageCache() const
-{
-    return m_data && m_data->isUsingDiskImageCache();
-}
-#endif
-
 #if USE(FOUNDATION)
 void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)
 {

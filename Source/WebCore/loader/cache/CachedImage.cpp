@@ -56,10 +56,6 @@
 #include "PDFDocumentImage.h"
 #endif
 
-#if ENABLE(DISK_IMAGE_CACHE)
-#include "DiskImageCacheIOS.h"
-#endif
-
 namespace WebCore {
 
 CachedImage::CachedImage(const ResourceRequest& resourceRequest, SessionID sessionID)
@@ -504,40 +500,6 @@ bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
     Image* image = imageForRenderer(renderer);
     return image->currentFrameKnownToBeOpaque();
 }
-
-#if ENABLE(DISK_IMAGE_CACHE)
-bool CachedImage::canUseDiskImageCache() const
-{
-    if (isLoading() || errorOccurred())
-        return false;
-
-    if (!m_data)
-        return false;
-
-    if (m_data->size() < diskImageCache().minimumImageSize())
-        return false;
-
-    // "Cache-Control: no-store" resources may be marked as such because they may
-    // contain sensitive information. We should not write these resources to disk.
-    if (m_response.cacheControlContainsNoStore())
-        return false;
-
-    // Testing shows that PDF images did not work when memory mapped.
-    // However, SVG images and Bitmap images were fine. See:
-    // <rdar://problem/8591834> Disk Image Cache should support PDF Images
-    if (m_response.mimeType() == "application/pdf")
-        return false;
-
-    return true;
-}
-
-void CachedImage::useDiskImageCache()
-{
-    ASSERT(canUseDiskImageCache());
-    ASSERT(!isUsingDiskImageCache());
-    m_data->sharedBuffer()->allowToBeMemoryMapped();
-}
-#endif
 
 bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
 {

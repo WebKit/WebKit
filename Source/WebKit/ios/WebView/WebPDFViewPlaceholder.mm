@@ -249,32 +249,6 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 {
 }
 
-#pragma mark WebDataSourcePrivateDelegate protocol
-
-#if ENABLE(DISK_IMAGE_CACHE)
-- (void)dataSourceMemoryMapped
-{
-    _didFinishLoadAndMemoryMap = YES;
-
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)[_dataSource data]);
-    if (!provider)
-        return;
-
-    _document = CGPDFDocumentCreateWithProvider(provider);
-
-    // Dump the data provider as soon as possible since the CGPDFDocument will not hold onto it.
-    CGDataProviderRelease(provider);
-
-    [self _doPostLoadOrUnlockTasks];
-}
-
-- (void)dataSourceMemoryMapFailed
-{
-    // Nothing we can do about this, just do what we would normally do in memory.
-    [self dataSourceMemoryMapped];
-}
-#endif
-
 #pragma mark WebDocumentRepresentation protocol
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
@@ -302,13 +276,6 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     [self dataSourceUpdated:dataSource];
-
-#if ENABLE(DISK_IMAGE_CACHE)
-    [dataSource setDataSourceDelegate:(NSObject<WebDataSourcePrivateDelegate> *)self];
-    [dataSource _setAllowToBeMemoryMapped];
-#else
-    [self dataSourceMemoryMapped];
-#endif
 }
 
 - (BOOL)canProvideDocumentSource

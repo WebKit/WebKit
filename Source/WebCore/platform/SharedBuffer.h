@@ -118,30 +118,6 @@ public:
     //      }
     WEBCORE_EXPORT unsigned getSomeData(const char*& data, unsigned position = 0) const;
 
-#if ENABLE(DISK_IMAGE_CACHE)
-    enum MemoryMappingState { QueuedForMapping, PreviouslyQueuedForMapping, SuccessAlreadyMapped, FailureCacheFull };
-
-    // Calling this will cause this buffer to be memory mapped.
-    WEBCORE_EXPORT MemoryMappingState allowToBeMemoryMapped();
-    WEBCORE_EXPORT bool isAllowedToBeMemoryMapped() const;
-
-    // This is called to indicate that the memory mapping failed.
-    void failedMemoryMap();
-
-    // This is called only once the buffer has been completely memory mapped.
-    void markAsMemoryMapped();
-    bool isMemoryMapped() const { return m_isMemoryMapped; }
-
-    // This callback function will be called when either the buffer has been memory mapped or failed to be memory mapped.
-    enum CompletionStatus { Failed, Succeeded };
-    typedef void* MemoryMappedNotifyCallbackData;
-    typedef void (*MemoryMappedNotifyCallback)(PassRefPtr<SharedBuffer>, CompletionStatus, MemoryMappedNotifyCallbackData);
-
-    WEBCORE_EXPORT MemoryMappedNotifyCallbackData memoryMappedNotificationCallbackData() const;
-    WEBCORE_EXPORT MemoryMappedNotifyCallback memoryMappedNotificationCallback() const;
-    WEBCORE_EXPORT void setMemoryMappedNotificationCallback(MemoryMappedNotifyCallback, MemoryMappedNotifyCallbackData);
-#endif
-
     void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
     WEBCORE_EXPORT bool hasPlatformData() const;
 
@@ -181,12 +157,6 @@ private:
     bool maybeAppendDataArray(SharedBuffer*);
 #else
     mutable Vector<char*> m_segments;
-#endif
-#if ENABLE(DISK_IMAGE_CACHE)
-    bool m_isMemoryMapped;
-    unsigned m_diskImageCacheId; // DiskImageCacheId is unsigned.
-    MemoryMappedNotifyCallback m_notifyMemoryMappedCallback;
-    MemoryMappedNotifyCallbackData m_notifyMemoryMappedCallbackData;
 #endif
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);

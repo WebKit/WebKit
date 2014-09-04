@@ -37,15 +37,9 @@ using namespace WebCore;
 @interface WebCoreSharedBufferData : NSData
 {
     RefPtr<SharedBuffer::DataBuffer> sharedBufferDataBuffer;
-#if ENABLE(DISK_IMAGE_CACHE)
-    RefPtr<SharedBuffer> sharedBuffer;
-#endif
 }
 
 - (id)initWithSharedBufferDataBuffer:(SharedBuffer::DataBuffer*)dataBuffer;
-#if ENABLE(DISK_IMAGE_CACHE)
-- (id)initWithMemoryMappedSharedBuffer:(SharedBuffer&)memoryMappedSharedBuffer;
-#endif
 @end
 
 @implementation WebCoreSharedBufferData
@@ -82,35 +76,13 @@ using namespace WebCore;
     return self;
 }
 
-#if ENABLE(DISK_IMAGE_CACHE)
-- (id)initWithMemoryMappedSharedBuffer:(SharedBuffer&)memoryMappedSharedBuffer
-{
-    ASSERT(memoryMappedSharedBuffer.isMemoryMapped());
-    self = [super init];
-
-    if (!self)
-        return nil;
-
-    sharedBuffer = &memoryMappedSharedBuffer;
-    return self;
-}
-#endif
-
 - (NSUInteger)length
 {
-#if ENABLE(DISK_IMAGE_CACHE)
-    if (sharedBuffer)
-        return sharedBuffer->size();
-#endif
     return sharedBufferDataBuffer->data.size();
 }
 
 - (const void *)bytes
 {
-#if ENABLE(DISK_IMAGE_CACHE)
-    if (sharedBuffer)
-        return sharedBuffer->data();
-#endif
     return sharedBufferDataBuffer->data.data();
 }
 
@@ -145,11 +117,6 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
 {
     if (CFDataRef cfData = existingCFData())
         return cfData;
-
-#if ENABLE(DISK_IMAGE_CACHE)
-    if (isMemoryMapped())
-        return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithMemoryMappedSharedBuffer:*this]).leakRef());
-#endif
 
     data(); // Force data into m_buffer from segments or data array.
     return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.get()]).leakRef());

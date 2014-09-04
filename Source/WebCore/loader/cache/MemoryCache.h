@@ -85,19 +85,13 @@ public:
         int size;
         int liveSize;
         int decodedSize;
-#if ENABLE(DISK_IMAGE_CACHE)
-        int mappedSize;
-#endif
 
         TypeStatistic()
             : count(0)
             , size(0)
             , liveSize(0)
             , decodedSize(0)
-#if ENABLE(DISK_IMAGE_CACHE)
-            , mappedSize(0)
-#endif
-        {
+        { 
         }
 
         void addResource(CachedResource*);
@@ -157,10 +151,6 @@ public:
 
     void addToLiveResourcesSize(CachedResource*);
     void removeFromLiveResourcesSize(CachedResource*);
-
-#if ENABLE(DISK_IMAGE_CACHE)
-    WEBCORE_EXPORT void flushCachedImagesToDisk(); // Flush encoded data from resources still referenced by web pages.
-#endif
 
     static void removeUrlFromCache(ScriptExecutionContext*, const String& urlString, SessionID);
     static void removeRequestFromCache(ScriptExecutionContext*, const ResourceRequest&, SessionID);
