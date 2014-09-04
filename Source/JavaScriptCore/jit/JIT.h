@@ -718,6 +718,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_EC, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_ECC, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_ECICC, RegisterID, const Identifier*, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(J_JITOperation_EE, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EIdJZ, const Identifier*, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID);
 #if USE(JSVALUE64)
@@ -738,7 +739,6 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_EPc, Instruction*);
         MacroAssembler::Call callOperation(V_JITOperation_EZ, int32_t);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(J_JITOperation_E);
-        MacroAssembler::Call callOperationNoExceptionCheck(J_JITOperation_EE, RegisterID);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
 #if USE(JSVALUE32_64)

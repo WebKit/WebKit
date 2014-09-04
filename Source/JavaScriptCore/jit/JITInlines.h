@@ -317,6 +317,13 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECC operati
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EE operation, RegisterID regOp)
+{
+    setupArgumentsWithExecState(regOp);
+    updateTopCallFrame();
+    return appendCallWithExceptionCheck(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EPc operation, Instruction* bytecodePC)
 {
     setupArgumentsWithExecState(TrustedImmPtr(bytecodePC));
@@ -333,13 +340,6 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnExce
 {
     setupArgumentsExecState();
     return appendCallWithCallFrameRollbackOnException(operation);
-}
-
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperationNoExceptionCheck(J_JITOperation_EE operation, RegisterID regOp)
-{
-    setupArgumentsWithExecState(regOp);
-    updateTopCallFrame();
-    return appendCall(operation);
 }
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb operation, CodeBlock* pointer)

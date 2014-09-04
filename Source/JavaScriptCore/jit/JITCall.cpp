@@ -136,17 +136,14 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 void JIT::compileCallEval(Instruction* instruction)
 {
     addPtr(TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), stackPointerRegister, regT1);
-    callOperationNoExceptionCheck(operationCallEval, regT1);
-
-    Jump noException = emitExceptionCheck(InvertedExceptionCheck);
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);    
-    exceptionCheck(jump());
-
-    noException.link(this);
-    addSlowCase(branch64(Equal, regT0, TrustedImm64(JSValue::encode(JSValue()))));
+    storePtr(callFrameRegister, Address(regT1, CallFrame::callerFrameOffset()));
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
+
+    callOperation(operationCallEval, regT1);
+
+    addSlowCase(branch64(Equal, regT0, TrustedImm64(JSValue::encode(JSValue()))));
 
     sampleCodeBlock(m_codeBlock);
     
@@ -156,6 +153,9 @@ void JIT::compileCallEval(Instruction* instruction)
 void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
+    int registerOffset = -instruction[4].u.operand;
+
+    addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     load64(Address(stackPointerRegister, sizeof(Register) * JSStack::Callee - sizeof(CallerFrameAndPC)), regT0);
     move(TrustedImmPtr(&CallLinkInfo::dummy()), regT2);
