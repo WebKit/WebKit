@@ -2023,11 +2023,6 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
 
     buffer->putByteArray(Unmultiplied, data->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset), coordinateSystem);
 
-    if (coordinateSystem == ImageBuffer::BackingStoreCoordinateSystem) {
-        FloatRect dirtyRect = destRect;
-        dirtyRect.scale(1 / canvas()->deviceScaleFactor());
-        destRect = enclosingIntRect(dirtyRect);
-    }
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
 

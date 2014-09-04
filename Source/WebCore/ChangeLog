@@ -1,3 +1,32 @@
+2014-09-04  Dan Bernstein  <mitz@apple.com>
+
+        Get rid of HIGH_DPI_CANVAS leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=136491
+
+        Reviewed by Benjamin Poulain.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Removed m_deviceScaleFactor initializer.
+        (WebCore::HTMLCanvasElement::reset): Removed checking if the scale factor has changed and
+        updating m_deviceScaleFactor.
+        (WebCore::HTMLCanvasElement::convertLogicalToDevice): Removed scaling by the device scale
+        factor.
+        (WebCore::HTMLCanvasElement::convertDeviceToLogical): Ditto.
+        (WebCore::HTMLCanvasElement::createImageBuffer): Replaced m_deviceScaleFactor with a literal
+        1.
+        (WebCore::HTMLCanvasElement::targetDeviceScaleFactor): Deleted.
+        * html/HTMLCanvasElement.h: Removed m_deviceScaleFactor member variable and its getter.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::putImageData): Removed scaling by the device scale
+        factor.
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::webkitBackingStorePixelRatio): Changed to return 1.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2D): Replaced deviceScaleFactor() with 1.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Ditto.
+
 2014-09-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         XMLHttpRequest always defaults Content-Type to application/xml, while it should depend on data type

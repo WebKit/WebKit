@@ -199,7 +199,7 @@ public:
 
     void drawFocusIfNeeded(Element*);
 
-    float webkitBackingStorePixelRatio() const { return canvas()->deviceScaleFactor(); }
+    float webkitBackingStorePixelRatio() const { return 1; }
 
     void reset();
 

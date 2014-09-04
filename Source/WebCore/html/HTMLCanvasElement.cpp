@@ -79,7 +79,6 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     , m_size(DefaultWidth, DefaultHeight)
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
-    , m_deviceScaleFactor(targetDeviceScaleFactor())
     , m_originClean(true)
     , m_hasCreatedImageBuffer(false)
     , m_didClearImageBuffer(false)
@@ -313,17 +312,13 @@ void HTMLCanvasElement::reset()
 
     IntSize oldSize = size();
     IntSize newSize(w, h);
-    float newDeviceScaleFactor = targetDeviceScaleFactor();
-
     // If the size of an existing buffer matches, we can just clear it instead of reallocating.
     // This optimization is only done for 2D canvases for now.
-    if (m_hasCreatedImageBuffer && oldSize == newSize && m_deviceScaleFactor == newDeviceScaleFactor && m_context && m_context->is2d()) {
+    if (m_hasCreatedImageBuffer && oldSize == newSize && m_context && m_context->is2d()) {
         if (!m_didClearImageBuffer)
             clearImageBuffer();
         return;
     }
-
-    m_deviceScaleFactor = newDeviceScaleFactor;
 
     setSurfaceSize(newSize);
 
@@ -346,11 +341,6 @@ void HTMLCanvasElement::reset()
 
     for (auto it = m_observers.begin(), end = m_observers.end(); it != end; ++it)
         (*it)->canvasResized(*this);
-}
-
-float HTMLCanvasElement::targetDeviceScaleFactor() const
-{
-    return 1;
 }
 
 bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
@@ -493,7 +483,6 @@ PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
 FloatRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
     FloatRect deviceRect(logicalRect);
-    deviceRect.scale(m_deviceScaleFactor);
 
     float x = floorf(deviceRect.x());
     float y = floorf(deviceRect.y());
@@ -509,15 +498,15 @@ FloatRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect
 
 FloatSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
 {
-    float width = ceilf(logicalSize.width() * m_deviceScaleFactor);
-    float height = ceilf(logicalSize.height() * m_deviceScaleFactor);
+    float width = ceilf(logicalSize.width());
+    float height = ceilf(logicalSize.height());
     return FloatSize(width, height);
 }
 
 FloatSize HTMLCanvasElement::convertDeviceToLogical(const FloatSize& deviceSize) const
 {
-    float width = ceilf(deviceSize.width() / m_deviceScaleFactor);
-    float height = ceilf(deviceSize.height() / m_deviceScaleFactor);
+    float width = ceilf(deviceSize.width());
+    float height = ceilf(deviceSize.height());
     return FloatSize(width, height);
 }
 
@@ -570,7 +559,7 @@ void HTMLCanvasElement::createImageBuffer() const
         return;
 
     RenderingMode renderingMode = shouldAccelerate(bufferSize) ? Accelerated : Unaccelerated;
-    m_imageBuffer = ImageBuffer::create(size(), m_deviceScaleFactor, ColorSpaceDeviceRGB, renderingMode);
+    m_imageBuffer = ImageBuffer::create(size(), 1, ColorSpaceDeviceRGB, renderingMode);
     if (!m_imageBuffer)
         return;
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
