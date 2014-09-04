@@ -34,6 +34,7 @@
 #define EventListenerMap_h
 
 #include "RegisteredEventListener.h"
+#include <atomic>
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/text/AtomicString.h>

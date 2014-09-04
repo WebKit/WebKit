@@ -1,3 +1,11 @@
+2014-09-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r173240) [GTK] Debug build broken.
+
+        Unreviewed build fix after r173240.
+
+        * dom/EventListenerMap.h: Add missing include.
+
 2014-09-04  Dan Bernstein  <mitz@apple.com>
 
         Get rid of HIGH_DPI_CANVAS leftovers
