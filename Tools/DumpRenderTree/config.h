@@ -25,8 +25,6 @@
 #endif
 
 #include <WebCore/PlatformExportMacros.h>
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 
 #ifdef __cplusplus

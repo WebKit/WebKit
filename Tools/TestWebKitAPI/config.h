@@ -28,8 +28,6 @@
 #endif
 
 #include <WebCore/PlatformExportMacros.h>
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 
 #if defined(__APPLE__) && __APPLE__

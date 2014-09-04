@@ -31,8 +31,6 @@
 
 #include <WebCore/PlatformExportMacros.h>
 #include <WebKit/WebKit2_C.h>
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 
 #endif

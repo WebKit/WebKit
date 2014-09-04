@@ -9,7 +9,7 @@
 
             s/(^ *)WEBCORE_EXPORT /\1/g
 
-        This removes WEBCORE_EXPORT and a single following space character but preserves preceeding whitespace.
+        This removes WEBCORE_EXPORT and a single following space character but preserves preceeding spaces.
 
         * MigrateHeaders.make:
 
