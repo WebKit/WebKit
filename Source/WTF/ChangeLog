@@ -1,3 +1,13 @@
+2014-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Beef up the DFG's CFG analyses to include iterated dominance frontiers and more user-friendly BlockSets
+        https://bugs.webkit.org/show_bug.cgi?id=136520
+
+        Fix bug found in Geoff's review but not landed in previous commit.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::equalsSlowCaseFast): return true.
+
 2014-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         Beef up the DFG's CFG analyses to include iterated dominance frontiers and more user-friendly BlockSets

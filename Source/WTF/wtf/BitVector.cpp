@@ -222,7 +222,7 @@ bool BitVector::equalsSlowCaseFast(const BitVector& other) const
             return false;
     }
 
-    return false;
+    return true;
 }
 
 bool BitVector::equalsSlowCaseSimple(const BitVector& other) const
