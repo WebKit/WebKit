@@ -18,7 +18,7 @@ XMLHttpRequest should force to send content-type as charset equals UTF-8.</p>
         req.send("");
 
         document.getElementById("result1").firstChild.data = "Test1 (setRequestHeader was not called):";
-        if (req.responseText == "application/xml\n")
+        if (req.responseText == "text/plain;charset=UTF-8\n")
             document.getElementById("result1").firstChild.data += " SUCCESS";
         else
             document.getElementById("result1").firstChild.data += " FAILURE: '" + req.responseText + "'";

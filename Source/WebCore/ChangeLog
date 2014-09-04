@@ -1,3 +1,18 @@
+2014-09-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        XMLHttpRequest always defaults Content-Type to application/xml, while it should depend on data type
+        https://bugs.webkit.org/show_bug.cgi?id=11049
+
+        Reviewed by Darin Adler.
+
+        Updated default mime type when sending text (changed from application/xml to text/plain;charset=UTF-8)
+        Updated default mime type when sending document (set to application/xml;charset=UTF-8 for XML documents and text/html;charset=UTF-8 for HTML documents)
+
+        Test: http/tests/xmlhttprequest/post-content-type-document.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send): updating default Content-Type valuess.
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient

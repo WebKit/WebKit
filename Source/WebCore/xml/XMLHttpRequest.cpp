@@ -593,16 +593,14 @@ void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
             else
 #endif
                 // FIXME: this should include the charset used for encoding.
-                setRequestHeaderInternal("Content-Type", "application/xml");
+                setRequestHeaderInternal("Content-Type", document->isHTMLDocument() ? "text/html;charset=UTF-8":"application/xml;charset=UTF-8");
         }
 
         // FIXME: According to XMLHttpRequest Level 2, this should use the Document.innerHTML algorithm
         // from the HTML5 specification to serialize the document.
         String body = createMarkup(*document);
 
-        // FIXME: this should use value of document.inputEncoding to determine the encoding to use.
-        TextEncoding encoding = UTF8Encoding();
-        m_requestEntityBody = FormData::create(encoding.encode(body, EntitiesForUnencodables));
+        m_requestEntityBody = FormData::create(UTF8Encoding().encode(body, EntitiesForUnencodables));
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -623,7 +621,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
                 setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
             else
 #endif
-                setRequestHeaderInternal("Content-Type", "application/xml");
+                setRequestHeaderInternal("Content-Type", "text/plain;charset=UTF-8");
         } else {
             replaceCharsetInMediaType(contentType, "UTF-8");
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
