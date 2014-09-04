@@ -1,3 +1,23 @@
+2014-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Buildbot metrics page gives wrong results after a new bot gets added
+        https://bugs.webkit.org/show_bug.cgi?id=136516
+
+        Part 1: Fix red/green counters. Dashboard is considered green at a given time
+        if all the bots that ever had results before this time are green.
+
+        This doesn't (and cannot) address situations where the bot gets removed and then
+        re-added. It also gives wrong results after a bot gets removed, because it doesn't
+        know that it was ever displayed on the dashboard.
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js:
+        (Analyzer.prototype._dashboardIsAllGreen):
+        (Analyzer.prototype._updateStretchOfRedCounters):
+        (Analyzer.prototype._countPercentageOfGreen):
+        (Analyzer.prototype._allQueuesAreSuccessful): Deleted.
+
 2014-09-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix.

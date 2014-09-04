@@ -91,15 +91,14 @@ Analyzer.prototype = {
         return result;
     },
 
-    _allQueuesAreSuccessful: function(topIterationByQueue, queues)
+    _dashboardIsAllGreen: function(topIterationByQueue)
     {
         var countOfQueuesWithKnownColor = Object.keys(topIterationByQueue).length;
-        console.assert(countOfQueuesWithKnownColor <= queues.length);
-        if (countOfQueuesWithKnownColor !== queues.length)
+        if (countOfQueuesWithKnownColor === 0)
             return undefined;
 
-        for (var i = queues.length - 1; i >= 0; --i) {
-            if (!topIterationByQueue[queues[i].id].successful)
+        for (var queueID in topIterationByQueue) {
+            if (!topIterationByQueue[queueID].successful)
                 return false;
         }
         return true;
@@ -107,19 +106,22 @@ Analyzer.prototype = {
 
     _updateStretchOfRedCounters: function(topIterationByQueue, currentTime, stretchOfRedCounters)
     {
-        var isRedNow = false;
-        for (queueID in topIterationByQueue) {
-            if (!topIterationByQueue[queueID].successful) {
-                isRedNow = true;
-                break;
-            }
+        var dashboardIsAllGreen = this._dashboardIsAllGreen(topIterationByQueue);
+
+        if (dashboardIsAllGreen === undefined) {
+            console.assert(stretchOfRedCounters.currentStretchOfRedStart === undefined);
+            console.assert(stretchOfRedCounters.longestStretchOfRed === 0);
+            return;
         }
-        if (isRedNow) {
+
+        if (dashboardIsAllGreen) {
+            if (stretchOfRedCounters.currentStretchOfRedStart !== undefined) {
+                stretchOfRedCounters.longestStretchOfRed = Math.max(stretchOfRedCounters.longestStretchOfRed, currentTime - stretchOfRedCounters.currentStretchOfRedStart);
+                stretchOfRedCounters.currentStretchOfRedStart = undefined;
+            }
+        } else {
             if (stretchOfRedCounters.currentStretchOfRedStart === undefined)
                 stretchOfRedCounters.currentStretchOfRedStart = currentTime;
-        } else if (stretchOfRedCounters.currentStretchOfRedStart !== undefined) {
-            stretchOfRedCounters.longestStretchOfRed = Math.max(stretchOfRedCounters.longestStretchOfRed, currentTime - stretchOfRedCounters.currentStretchOfRedStart);
-            stretchOfRedCounters.currentStretchOfRedStart = undefined;
         }
     },
 
@@ -153,9 +155,9 @@ Analyzer.prototype = {
             longestStretchOfRed: 0,
             currentStretchOfRedStart: undefined
         };
-        var earliestTimeInRangeWhereAllQueuesHaveResults;
-        if (this._allQueuesAreSuccessful(topIterationByQueue, queues) !== undefined)
-            earliestTimeInRangeWhereAllQueuesHaveResults = this._rangeStartTime;
+        var earliestTimeInRangeWithColor;
+        if (this._dashboardIsAllGreen(topIterationByQueue) !== undefined)
+            earliestTimeInRangeWithColor = this._rangeStartTime;
         this._updateStretchOfRedCounters(topIterationByQueue, this._rangeStartTime, stretchOfRedCounters);
         for (var i = iterations.length - 1; i >= 0; --i) {
             if (iterations[i].endTime <= this._rangeStartTime) {
@@ -163,11 +165,10 @@ Analyzer.prototype = {
                 continue;
             }
             if (!(iterations[i].queue.id in topIterationByQueue)) {
-                console.assert(earliestTimeInRangeWhereAllQueuesHaveResults === undefined);
                 topIterationByQueue[iterations[i].queue.id] = iterations[i];
-                if (this._allQueuesAreSuccessful(topIterationByQueue, queues) !== undefined) {
+                if (earliestTimeInRangeWithColor === undefined) {
                     currentTime = iterations[i].endTime;
-                    earliestTimeInRangeWhereAllQueuesHaveResults = currentTime;
+                    earliestTimeInRangeWithColor = currentTime;
                 }
                 this._updateStretchOfRedCounters(topIterationByQueue, currentTime, stretchOfRedCounters);
                 continue;
@@ -175,17 +176,18 @@ Analyzer.prototype = {
             if (iterations[i].openSourceRevision <= topIterationByQueue[iterations[i].queue.id].openSourceRevision)
                 continue;
 
-            var allQueuesWereSuccessful = this._allQueuesAreSuccessful(topIterationByQueue, queues);
+            var dashboardWasAllGreen = this._dashboardIsAllGreen(topIterationByQueue);
+            console.assert(dashboardWasAllGreen !== undefined);
             topIterationByQueue[iterations[i].queue.id] = iterations[i];
 
-            if (allQueuesWereSuccessful === true)
+            if (dashboardWasAllGreen === true)
                 greenTime += iterations[i].endTime - currentTime;
 
             currentTime = iterations[i].endTime;
             this._updateStretchOfRedCounters(topIterationByQueue, currentTime, stretchOfRedCounters);
         }
 
-        if (this._allQueuesAreSuccessful(topIterationByQueue, queues) === true)
+        if (this._dashboardIsAllGreen(topIterationByQueue) === true)
             greenTime += this._rangeEndTime - currentTime;
 
         if (stretchOfRedCounters.currentStretchOfRedStart !== undefined)
@@ -193,13 +195,13 @@ Analyzer.prototype = {
 
         result.longestStretchOfRed = stretchOfRedCounters.longestStretchOfRed / 1000;
 
-        if (earliestTimeInRangeWhereAllQueuesHaveResults === this._rangeStartTime)
+        if (earliestTimeInRangeWithColor === this._rangeStartTime)
             result.percentageOfGreen = greenTime / (this._rangeEndTime - this._rangeStartTime) * 100;
         else {
             result.buildbotRangeError = true;
-            if (earliestTimeInRangeWhereAllQueuesHaveResults !== undefined) {
-                result.buildbotRangeErrorText = "Queue only has results starting " + earliestTimeInRangeWhereAllQueuesHaveResults;
-                result.percentageOfGreen = greenTime / (this._rangeEndTime - earliestTimeInRangeWhereAllQueuesHaveResults) * 100;
+            if (earliestTimeInRangeWithColor !== undefined) {
+                result.buildbotRangeErrorText = "Queue only has results starting " + earliestTimeInRangeWithColor;
+                result.percentageOfGreen = greenTime / (this._rangeEndTime - earliestTimeInRangeWithColor) * 100;
             } else
                 result.buildbotRangeErrorText = "Queue has no results in this range";
         }
