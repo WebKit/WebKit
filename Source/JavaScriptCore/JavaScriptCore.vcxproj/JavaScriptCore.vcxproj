@@ -372,6 +372,7 @@
     <ClCompile Include="..\dfg\DFGBasicBlock.cpp" />
     <ClCompile Include="..\dfg\DFGBinarySwitch.cpp" />
     <ClCompile Include="..\dfg\DFGBlockInsertionSet.cpp" />
+    <ClCompile Include="..\dfg\DFGBlockSet.cpp" />
     <ClCompile Include="..\dfg\DFGBlockWorklist.cpp" />
     <ClCompile Include="..\dfg\DFGByteCodeParser.cpp" />
     <ClCompile Include="..\dfg\DFGCapabilities.cpp" />
@@ -998,6 +999,7 @@
     <ClInclude Include="..\dfg\DFGBlockMapInlines.h" />
     <ClInclude Include="..\dfg\DFGBlockWorklist.h" />
     <ClInclude Include="..\dfg\DFGBlockSet.h" />
+    <ClInclude Include="..\dfg\DFGBlockSetInlines.h" />
     <ClInclude Include="..\dfg\DFGBranchDirection.h" />
     <ClInclude Include="..\dfg\DFGByteCodeParser.h" />
     <ClInclude Include="..\dfg\DFGCallArrayAllocatorSlowPathGenerator.h" />

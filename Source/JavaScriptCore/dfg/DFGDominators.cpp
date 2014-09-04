@@ -400,6 +400,48 @@ void Dominators::compute(Graph& graph)
     }
 }
 
+BlockSet Dominators::strictDominatorsOf(BasicBlock* to) const
+{
+    BlockSet result;
+    forAllStrictDominatorsOf(to, BlockAdder(result));
+    return result;
+}
+
+BlockSet Dominators::dominatorsOf(BasicBlock* to) const
+{
+    BlockSet result;
+    forAllDominatorsOf(to, BlockAdder(result));
+    return result;
+}
+
+BlockSet Dominators::blocksStrictlyDominatedBy(BasicBlock* from) const
+{
+    BlockSet result;
+    forAllBlocksStrictlyDominatedBy(from, BlockAdder(result));
+    return result;
+}
+
+BlockSet Dominators::blocksDominatedBy(BasicBlock* from) const
+{
+    BlockSet result;
+    forAllBlocksDominatedBy(from, BlockAdder(result));
+    return result;
+}
+
+BlockSet Dominators::dominanceFrontierOf(BasicBlock* from) const
+{
+    BlockSet result;
+    forAllBlocksInDominanceFrontierOfImpl(from, BlockAdder(result));
+    return result;
+}
+
+BlockSet Dominators::iteratedDominanceFrontierOf(const BlockList& from) const
+{
+    BlockSet result;
+    forAllBlocksInIteratedDominanceFrontierOfImpl(from, BlockAdder(result));
+    return result;
+}
+
 bool Dominators::naiveDominates(BasicBlock* from, BasicBlock* to) const
 {
     for (BasicBlock* block = to; block; block = m_data[block].idomParent) {

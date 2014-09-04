@@ -31,8 +31,8 @@
 #include "DFGAnalysis.h"
 #include "DFGBasicBlock.h"
 #include "DFGBlockMap.h"
+#include "DFGBlockSet.h"
 #include "DFGCommon.h"
-#include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {
 
@@ -57,10 +57,125 @@ public:
         return from == to || strictlyDominates(from, to);
     }
     
+    template<typename Functor>
+    void forAllStrictDominatorsOf(BasicBlock* to, const Functor& functor) const
+    {
+        for (BasicBlock* block = m_data[to].idomParent; block; block = m_data[block].idomParent)
+            functor(block);
+    }
+    
+    template<typename Functor>
+    void forAllDominatorsOf(BasicBlock* to, const Functor& functor) const
+    {
+        for (BasicBlock* block = to; block; block = m_data[block].idomParent)
+            functor(block);
+    }
+    
+    template<typename Functor>
+    void forAllBlocksStrictlyDominatedBy(BasicBlock* from, const Functor& functor) const
+    {
+        Vector<BasicBlock*, 16> worklist;
+        worklist.appendVector(m_data[from].idomKids);
+        while (!worklist.isEmpty()) {
+            BasicBlock* block = worklist.takeLast();
+            functor(block);
+            worklist.appendVector(m_data[block].idomKids);
+        }
+    }
+    
+    template<typename Functor>
+    void forAllBlocksDominatedBy(BasicBlock* from, const Functor& functor) const
+    {
+        Vector<BasicBlock*, 16> worklist;
+        worklist.append(from);
+        while (!worklist.isEmpty()) {
+            BasicBlock* block = worklist.takeLast();
+            functor(block);
+            worklist.appendVector(m_data[block].idomKids);
+        }
+    }
+    
+    BlockSet strictDominatorsOf(BasicBlock* to) const;
+    BlockSet dominatorsOf(BasicBlock* to) const;
+    BlockSet blocksStrictlyDominatedBy(BasicBlock* from) const;
+    BlockSet blocksDominatedBy(BasicBlock* from) const;
+    
+    template<typename Functor>
+    void forAllBlocksInDominanceFrontierOf(
+        BasicBlock* from, const Functor& functor) const
+    {
+        BlockSet set;
+        forAllBlocksInDominanceFrontierOfImpl(
+            from,
+            [&] (BasicBlock* block) {
+                if (set.add(block))
+                    functor(block);
+            });
+    }
+    
+    BlockSet dominanceFrontierOf(BasicBlock* from) const;
+    
+    template<typename Functor>
+    void forAllBlocksInIteratedDominanceFrontierOf(
+        const BlockList& from, const Functor& functor)
+    {
+        BlockSet set;
+        forAllBlocksInIteratedDominanceFrontierOfImpl(
+            from,
+            [&] (BasicBlock* block) -> bool {
+                if (!set.add(block))
+                    return false;
+                functor(block);
+                return true;
+            });
+    }
+    
+    BlockSet iteratedDominanceFrontierOf(const BlockList& from) const;
+    
     void dump(PrintStream&) const;
     
 private:
     bool naiveDominates(BasicBlock* from, BasicBlock* to) const;
+    
+    template<typename Functor>
+    void forAllBlocksInDominanceFrontierOfImpl(
+        BasicBlock* from, const Functor& functor) const
+    {
+        // Paraphrasing from http://en.wikipedia.org/wiki/Dominator_(graph_theory):
+        //     "The dominance frontier of a block 'from' is the set of all blocks 'to' such that
+        //     'from' dominates an immediate predecessor of 'to', but 'from' does not strictly
+        //     dominate 'to'."
+        //
+        // A useful corner case to remember: a block may be in its own dominance frontier if it has
+        // a loop edge to itself, since it dominates itself and so it dominates its own immediate
+        // predecessor, and a block never strictly dominates itself.
+        
+        forAllBlocksDominatedBy(
+            from,
+            [&] (BasicBlock* block) {
+                for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
+                    BasicBlock* to = block->successor(successorIndex);
+                    if (!strictlyDominates(from, to))
+                        functor(to);
+                }
+            });
+    }
+    
+    template<typename Functor>
+    void forAllBlocksInIteratedDominanceFrontierOfImpl(
+        const BlockList& from, const Functor& functor) const
+    {
+        BlockList worklist = from;
+        while (!worklist.isEmpty()) {
+            BasicBlock* block = worklist.takeLast();
+            forAllBlocksInDominanceFrontierOfImpl(
+                block,
+                [&] (BasicBlock* otherBlock) {
+                    if (functor(otherBlock))
+                        worklist.append(otherBlock);
+                });
+        }
+    }
     
     struct BlockData {
         BlockData()

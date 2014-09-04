@@ -1,3 +1,53 @@
+2014-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Beef up the DFG's CFG analyses to include iterated dominance frontiers and more user-friendly BlockSets
+        https://bugs.webkit.org/show_bug.cgi?id=136520
+
+        Reviewed by Geoffrey Garen.
+        
+        Add code to compute iterated dominance frontiers. This involves using BlockSet a lot, so
+        this patch also makes BlockSet a lot more user-friendly.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGBlockSet.cpp: Added.
+        (JSC::DFG::BlockSet::dump):
+        * dfg/DFGBlockSet.h:
+        (JSC::DFG::BlockSet::iterator::iterator):
+        (JSC::DFG::BlockSet::iterator::operator++):
+        (JSC::DFG::BlockSet::iterator::operator==):
+        (JSC::DFG::BlockSet::iterator::operator!=):
+        (JSC::DFG::BlockSet::Iterable::Iterable):
+        (JSC::DFG::BlockSet::Iterable::begin):
+        (JSC::DFG::BlockSet::Iterable::end):
+        (JSC::DFG::BlockSet::iterable):
+        (JSC::DFG::BlockAdder::BlockAdder):
+        (JSC::DFG::BlockAdder::operator()):
+        * dfg/DFGBlockSetInlines.h: Added.
+        (JSC::DFG::BlockSet::iterator::operator*):
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::strictDominatorsOf):
+        (JSC::DFG::Dominators::dominatorsOf):
+        (JSC::DFG::Dominators::blocksStrictlyDominatedBy):
+        (JSC::DFG::Dominators::blocksDominatedBy):
+        (JSC::DFG::Dominators::dominanceFrontierOf):
+        (JSC::DFG::Dominators::iteratedDominanceFrontierOf):
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::forAllStrictDominatorsOf):
+        (JSC::DFG::Dominators::forAllDominatorsOf):
+        (JSC::DFG::Dominators::forAllBlocksStrictlyDominatedBy):
+        (JSC::DFG::Dominators::forAllBlocksDominatedBy):
+        (JSC::DFG::Dominators::forAllBlocksInDominanceFrontierOf):
+        (JSC::DFG::Dominators::forAllBlocksInIteratedDominanceFrontierOf):
+        (JSC::DFG::Dominators::forAllBlocksInDominanceFrontierOfImpl):
+        (JSC::DFG::Dominators::forAllBlocksInIteratedDominanceFrontierOfImpl):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGInvalidationPointInjectionPhase.cpp:
+        (JSC::DFG::InvalidationPointInjectionPhase::run):
+
 2014-09-04  Mark Lam  <mark.lam@apple.com>
 
         Fixed indentations and some style warnings in JavaScriptCore/runtime.

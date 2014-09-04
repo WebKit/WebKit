@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBlockSet.h"
+#include "DFGBlockSetInlines.h"
 #include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
@@ -69,13 +69,8 @@ public:
             
             m_insertionSet.execute(block);
         }
-        
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
 
-            if (!blocksThatNeedInvalidationPoints.contains(block))
-                continue;
-            
+        for (BasicBlock* block : blocksThatNeedInvalidationPoints.iterable(m_graph)) {
             insertInvalidationCheck(0, block->at(0));
             m_insertionSet.execute(block);
         }

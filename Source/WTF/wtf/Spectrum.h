@@ -110,7 +110,7 @@ public:
     template<typename Functor>
     void removeIf(const Functor& functor)
     {
-        m_map.removeIf([functor] (typename HashMap<T, CounterType>::KeyValuePairType& pair) {
+        m_map.removeIf([&functor] (typename HashMap<T, CounterType>::KeyValuePairType& pair) {
                 return functor(KeyAndCount(pair.key, pair.value));
             });
     }

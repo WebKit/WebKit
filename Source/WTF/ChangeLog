@@ -1,3 +1,25 @@
+2014-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Beef up the DFG's CFG analyses to include iterated dominance frontiers and more user-friendly BlockSets
+        https://bugs.webkit.org/show_bug.cgi?id=136520
+
+        Reviewed by Geoffrey Garen.
+        
+        Give BitVector a way to quickly find the next set (or unset) bit. Make BitVector equality
+        faster. Fix a minor closure goof in Spectrum.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::equalsSlowCase):
+        (WTF::BitVector::equalsSlowCaseFast):
+        (WTF::BitVector::equalsSlowCaseSimple):
+        * wtf/BitVector.h:
+        (WTF::BitVector::findBit):
+        (WTF::BitVector::findBitFast):
+        (WTF::BitVector::findBitSimple):
+        (WTF::BitVector::findBitInWord):
+        * wtf/Spectrum.h:
+        (WTF::Spectrum::removeIf):
+
 2014-09-04  Anders Carlsson  <andersca@apple.com>
 
         Make hash table classes final

@@ -186,6 +186,8 @@ private:
     Vector<Node*, 8> m_nodes;
 };
 
+typedef Vector<BasicBlock*, 5> BlockList;
+
 struct UnlinkedBlock {
     BasicBlock* m_block;
     bool m_needsNormalLinking;

@@ -369,24 +369,10 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
         out.print(" ", *block->predecessors[i]);
     out.print("\n");
     if (m_dominators.isValid()) {
-        out.print(prefix, "  Dominated by:");
-        for (size_t i = 0; i < m_blocks.size(); ++i) {
-            if (!this->block(i))
-                continue;
-            if (!m_dominators.dominates(this->block(i), block))
-                continue;
-            out.print(" #", i);
-        }
-        out.print("\n");
-        out.print(prefix, "  Dominates:");
-        for (size_t i = 0; i < m_blocks.size(); ++i) {
-            if (!this->block(i))
-                continue;
-            if (!m_dominators.dominates(block, this->block(i)))
-                continue;
-            out.print(" #", i);
-        }
-        out.print("\n");
+        out.print(prefix, "  Dominated by: ", m_dominators.dominatorsOf(block), "\n");
+        out.print(prefix, "  Dominates: ", m_dominators.blocksDominatedBy(block), "\n");
+        out.print(prefix, "  Dominance Frontier: ", m_dominators.dominanceFrontierOf(block), "\n");
+        out.print(prefix, "  Iterated Dominance Frontier: ", m_dominators.iteratedDominanceFrontierOf(BlockList(1, block)), "\n");
     }
     if (m_naturalLoops.isValid()) {
         if (const NaturalLoop* loop = m_naturalLoops.headerOf(block)) {

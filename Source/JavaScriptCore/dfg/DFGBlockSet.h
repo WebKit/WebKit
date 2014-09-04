@@ -32,6 +32,8 @@
 
 namespace JSC { namespace DFG {
 
+class Graph;
+
 class BlockSet {
 public:
     BlockSet() { }
@@ -49,8 +51,96 @@ public:
         return m_set.get(block->index);
     }
     
+    class iterator {
+    public:
+        iterator()
+            : m_graph(nullptr)
+            , m_set(nullptr)
+            , m_index(0)
+        {
+        }
+        
+        iterator& operator++()
+        {
+            m_index = m_set->m_set.findBit(m_index + 1, true);
+            return *this;
+        }
+        
+        BasicBlock* operator*() const;
+        
+        bool operator==(const iterator& other) const
+        {
+            return m_index == other.m_index;
+        }
+        
+        bool operator!=(const iterator& other) const
+        {
+            return !(*this == other);
+        }
+        
+    private:
+        friend class BlockSet;
+        
+        Graph* m_graph;
+        const BlockSet* m_set;
+        size_t m_index;
+    };
+    
+    class Iterable {
+    public:
+        Iterable(Graph& graph, const BlockSet& set)
+            : m_graph(graph)
+            , m_set(set)
+        {
+        }
+        
+        iterator begin() const
+        {
+            iterator result;
+            result.m_graph = &m_graph;
+            result.m_set = &m_set;
+            result.m_index = m_set.m_set.findBit(0, true);
+            return result;
+        }
+        
+        iterator end() const
+        {
+            iterator result;
+            result.m_graph = &m_graph;
+            result.m_set = &m_set;
+            result.m_index = m_set.m_set.size();
+            return result;
+        }
+        
+    private:
+        Graph& m_graph;
+        const BlockSet& m_set;
+    };
+    
+    Iterable iterable(Graph& graph) const
+    {
+        return Iterable(graph, *this);
+    }
+    
+    void dump(PrintStream&) const;
+    
 private:
     BitVector m_set;
+};
+
+class BlockAdder {
+public:
+    BlockAdder(BlockSet& set)
+        : m_set(set)
+    {
+    }
+    
+    bool operator()(BasicBlock* block) const
+    {
+        return m_set.add(block);
+    }
+private:
+    BlockSet& m_set;
 };
 
 } } // namespace JSC::DFG

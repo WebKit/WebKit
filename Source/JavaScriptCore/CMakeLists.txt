@@ -126,6 +126,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGBasicBlock.cpp
     dfg/DFGBinarySwitch.cpp
     dfg/DFGBlockInsertionSet.cpp
+    dfg/DFGBlockSet.cpp
     dfg/DFGBlockWorklist.cpp
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCFAPhase.cpp

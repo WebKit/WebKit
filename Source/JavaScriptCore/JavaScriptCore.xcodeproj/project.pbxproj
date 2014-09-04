@@ -481,6 +481,8 @@
 		0FBE0F7516C1DB0B0082C5E8 /* DFGPredictionInjectionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBE0F6E16C1DB010082C5E8 /* DFGPredictionInjectionPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBE0F7616C1DB0F0082C5E8 /* DFGUnificationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBE0F6F16C1DB010082C5E8 /* DFGUnificationPhase.cpp */; };
 		0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBE0F7016C1DB010082C5E8 /* DFGUnificationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FBF158C19B7A53100695DD0 /* DFGBlockSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBF158A19B7A53100695DD0 /* DFGBlockSet.cpp */; };
+		0FBF158D19B7A53100695DD0 /* DFGBlockSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBF158B19B7A53100695DD0 /* DFGBlockSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBFDD04196C92BF007A5BFA /* DFGPhantomRemovalPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBFDD02196C92BF007A5BFA /* DFGPhantomRemovalPhase.cpp */; };
 		0FBFDD05196C92BF007A5BFA /* DFGPhantomRemovalPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBFDD03196C92BF007A5BFA /* DFGPhantomRemovalPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC097681468A6EF00CF2442 /* DFGOSRExit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2405,6 +2407,8 @@
 		0FBE0F6E16C1DB010082C5E8 /* DFGPredictionInjectionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPredictionInjectionPhase.h; path = dfg/DFGPredictionInjectionPhase.h; sourceTree = "<group>"; };
 		0FBE0F6F16C1DB010082C5E8 /* DFGUnificationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUnificationPhase.cpp; path = dfg/DFGUnificationPhase.cpp; sourceTree = "<group>"; };
 		0FBE0F7016C1DB010082C5E8 /* DFGUnificationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUnificationPhase.h; path = dfg/DFGUnificationPhase.h; sourceTree = "<group>"; };
+		0FBF158A19B7A53100695DD0 /* DFGBlockSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBlockSet.cpp; path = dfg/DFGBlockSet.cpp; sourceTree = "<group>"; };
+		0FBF158B19B7A53100695DD0 /* DFGBlockSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockSetInlines.h; path = dfg/DFGBlockSetInlines.h; sourceTree = "<group>"; };
 		0FBFDD02196C92BF007A5BFA /* DFGPhantomRemovalPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPhantomRemovalPhase.cpp; path = dfg/DFGPhantomRemovalPhase.cpp; sourceTree = "<group>"; };
 		0FBFDD03196C92BF007A5BFA /* DFGPhantomRemovalPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPhantomRemovalPhase.h; path = dfg/DFGPhantomRemovalPhase.h; sourceTree = "<group>"; };
 		0FC097681468A6EF00CF2442 /* DFGOSRExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExit.h; path = dfg/DFGOSRExit.h; sourceTree = "<group>"; };
@@ -4826,7 +4830,9 @@
 				A7D89CE517A0B8CC00773AD8 /* DFGBlockInsertionSet.h */,
 				0FC3CCF519ADA410006AC72A /* DFGBlockMap.h */,
 				0FC3CCF619ADA410006AC72A /* DFGBlockMapInlines.h */,
+				0FBF158A19B7A53100695DD0 /* DFGBlockSet.cpp */,
 				0FC3CCF719ADA410006AC72A /* DFGBlockSet.h */,
+				0FBF158B19B7A53100695DD0 /* DFGBlockSetInlines.h */,
 				0FC3CCF819ADA410006AC72A /* DFGBlockWorklist.cpp */,
 				0FC3CCF919ADA410006AC72A /* DFGBlockWorklist.h */,
 				0F8364B5164B0C0E0053329A /* DFGBranchDirection.h */,
@@ -5919,6 +5925,7 @@
 				0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */,
 				0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */,
 				A7D9A29617A0BC7400EE2618 /* DFGEdgeDominates.h in Headers */,
+				0FBF158D19B7A53100695DD0 /* DFGBlockSetInlines.h in Headers */,
 				A7986D5717A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h in Headers */,
 				0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */,
 				A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */,
@@ -7414,6 +7421,7 @@
 				0F13E04E16164A1F00DC8DE7 /* IndexingType.cpp in Sources */,
 				0FCEFACA1805E75500472CE4 /* InitializeLLVM.cpp in Sources */,
 				A513E5B7185B8BD3007E95AD /* InjectedScript.cpp in Sources */,
+				0FBF158C19B7A53100695DD0 /* DFGBlockSet.cpp in Sources */,
 				A514B2C2185A684400F3C7CB /* InjectedScriptBase.cpp in Sources */,
 				A58E35911860DECF001F24FE /* InjectedScriptHost.cpp in Sources */,
 				A513E5CA185F9624007E95AD /* InjectedScriptManager.cpp in Sources */,

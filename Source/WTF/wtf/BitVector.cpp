@@ -183,6 +183,50 @@ size_t BitVector::bitCountSlow() const
 
 bool BitVector::equalsSlowCase(const BitVector& other) const
 {
+    bool result = equalsSlowCaseFast(other);
+    ASSERT(result == equalsSlowCaseSimple(other));
+    return result;
+}
+
+bool BitVector::equalsSlowCaseFast(const BitVector& other) const
+{
+    if (isInline() != other.isInline())
+        return equalsSlowCaseSimple(other);
+    
+    const OutOfLineBits* myBits = outOfLineBits();
+    const OutOfLineBits* otherBits = other.outOfLineBits();
+    
+    size_t myNumWords = myBits->numWords();
+    size_t otherNumWords = otherBits->numWords();
+    size_t minNumWords;
+    size_t maxNumWords;
+    
+    const OutOfLineBits* longerBits;
+    if (myNumWords < otherNumWords) {
+        minNumWords = myNumWords;
+        maxNumWords = otherNumWords;
+        longerBits = otherBits;
+    } else {
+        minNumWords = otherNumWords;
+        maxNumWords = myNumWords;
+        longerBits = myBits;
+    }
+    
+    for (size_t i = minNumWords; i < maxNumWords; ++i) {
+        if (longerBits->bits()[i])
+            return false;
+    }
+    
+    for (size_t i = minNumWords; i--;) {
+        if (myBits->bits()[i] != otherBits->bits()[i])
+            return false;
+    }
+
+    return false;
+}
+
+bool BitVector::equalsSlowCaseSimple(const BitVector& other) const
+{
     // This is really cheesy, but probably good enough for now.
     for (unsigned i = std::max(size(), other.size()); i--;) {
         if (get(i) != other.get(i))
