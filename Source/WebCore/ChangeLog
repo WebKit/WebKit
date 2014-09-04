@@ -1,3 +1,10 @@
+2014-09-04  Antti Koivisto  <antti@apple.com>
+
+        Try to fix iOS build.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::initForSynthesizedDocument):
+
 2014-09-04  Maciej Stachowiak  <mjs@apple.com>
 
         Remove WebCoreSystemInterface glue for otherwise unused WKSI calls

@@ -285,7 +285,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
 
     RefPtr<DocumentLoader> loader = m_client.createDocumentLoader(ResourceRequest(URL(ParsedURLString, emptyString())), SubstituteData());
     loader->setFrame(&m_frame);
-    loader->setResponse(ResourceResponse(URL(), ASCIILiteral("text/html"), 0, String(), String()));
+    loader->setResponse(ResourceResponse(URL(), ASCIILiteral("text/html"), 0, String()));
     loader->setCommitted(true);
     setDocumentLoader(loader.get());
 
