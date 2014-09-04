@@ -78,15 +78,11 @@ void JSStringRelease(JSStringRef string)
 
 size_t JSStringGetLength(JSStringRef string)
 {
-    if (!string)
-        return 0;
     return string->length();
 }
 
 const JSChar* JSStringGetCharactersPtr(JSStringRef string)
 {
-    if (!string)
-        return nullptr;
     return string->characters();
 }
 
@@ -98,7 +94,7 @@ size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string)
 
 size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSize)
 {
-    if (!string || !buffer || !bufferSize)
+    if (!bufferSize)
         return 0;
 
     char* destination = buffer;

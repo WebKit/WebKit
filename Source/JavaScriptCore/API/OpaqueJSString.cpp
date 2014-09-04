@@ -56,13 +56,16 @@ OpaqueJSString::~OpaqueJSString()
 
 String OpaqueJSString::string() const
 {
+    if (!this)
+        return String();
+
     // Return a copy of the wrapped string, because the caller may make it an Identifier.
     return m_string.isolatedCopy();
 }
 
 Identifier OpaqueJSString::identifier(VM* vm) const
 {
-    if (m_string.isNull())
+    if (!this || m_string.isNull())
         return Identifier();
 
     if (m_string.isEmpty())
@@ -76,6 +79,9 @@ Identifier OpaqueJSString::identifier(VM* vm) const
 
 const UChar* OpaqueJSString::characters()
 {
+    if (!this)
+        return nullptr;
+
     // m_characters is put in a local here to avoid an extra atomic load.
     UChar* characters = m_characters;
     if (characters)

@@ -55,10 +55,10 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
 
     JS_EXPORT_PRIVATE ~OpaqueJSString();
 
-    bool is8Bit() { return m_string.is8Bit(); }
-    const LChar* characters8() { return m_string.characters8(); }
-    const UChar* characters16() { return m_string.characters16(); }
-    unsigned length() { return m_string.length(); }
+    bool is8Bit() { return this ? m_string.is8Bit() : false; }
+    const LChar* characters8() { return this ? m_string.characters8() : nullptr; }
+    const UChar* characters16() { return this ? m_string.characters16() : nullptr; }
+    unsigned length() { return this ? m_string.length() : 0; }
 
     const UChar* characters();
 

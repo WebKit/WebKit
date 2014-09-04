@@ -54,6 +54,9 @@ namespace JSC {
         TextPosition startPosition() const { return m_startPosition; }
         intptr_t asID()
         {
+            ASSERT(this);
+            if (!this) // Be defensive in release mode.
+                return nullID;
             if (!m_id)
                 getID();
             return m_id;

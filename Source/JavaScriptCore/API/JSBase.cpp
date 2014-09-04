@@ -60,7 +60,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
     // evaluate sets "this" to the global object if it is NULL
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
-    SourceCode source = makeSource(script ? script->string() : String(), sourceURL ? sourceURL->string() : String(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
+    SourceCode source = makeSource(script->string(), sourceURL->string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
 
     JSValue evaluationException;
     JSValue returnValue = evaluate(globalObject->globalExec(), source, jsThisObject, &evaluationException);
