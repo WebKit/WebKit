@@ -1,3 +1,27 @@
+2014-09-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Initialize m_usesNetworkProcess earlier in WebProcess::initializeWebProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=136478
+
+        Reviewed by Alexey Proskuryakov.
+
+        The soup network backend uses WebProcess::usesNetworkProcess()
+        from WebProcess::platformSetCacheModel() and
+        WebProcess::platformInitializeWebProcess(), both called before the
+        m_usesNetworkProcess member has been initialized.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Move the
+        m_usesNetworkProcess initialization at the beginning right before
+        calling platformInitializeWebProcess().
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetCacheModel): Remove the early
+        return when using the network process, since this was dead code
+        before this change, and not really needed now that
+        usesNetworkProcess() will return true.
+        (WebKit::WebProcess::platformInitializeWebProcess): Remove comment
+        that is not accurate since r171156.
+
 2014-09-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Race condition when downloading a file due to the intermediate temporary file

@@ -271,6 +271,10 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 {
     ASSERT(m_pageMap.isEmpty());
 
+#if ENABLE(NETWORK_PROCESS)
+    m_usesNetworkProcess = parameters.usesNetworkProcess;
+#endif
+
     platformInitializeWebProcess(parameters, decoder);
 
     WTF::setCurrentThreadIsUserInitiated();
@@ -348,7 +352,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         NetworkStorageSession::switchToNewTestingSession();
 
 #if ENABLE(NETWORK_PROCESS)
-    m_usesNetworkProcess = parameters.usesNetworkProcess;
     ensureNetworkProcessConnection();
 
 #if PLATFORM(COCOA)
