@@ -1,3 +1,10 @@
+2014-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Reenable call edge profiling and polymorphic call inlining, now that a bunch of the bugs
+        are fixed.
+
+        * runtime/Options.h:
+
 2014-09-03  David Kilzer  <ddkilzer@apple.com>
 
         JavaScriptCore should build with newer clang
