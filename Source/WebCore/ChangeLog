@@ -1,3 +1,24 @@
+2014-09-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce CSS_BASIC_SHAPES_TYPE_CASTS, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=136403
+
+        Reviewed by Daniel Bates.
+
+        toCSSBasicShapeFoo() will help to detect wrong type casting. So this patch generates it, and use it
+        instead of static_cast<const CSSBasicShapeFoo*>().
+
+        No new tests no behavior changes.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::basicShapeForValue):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::CSSBasicShapeCircle::equals):
+        (WebCore::CSSBasicShapeEllipse::equals):
+        (WebCore::CSSBasicShapePolygon::equals):
+        (WebCore::CSSBasicShapeInset::equals):
+        * css/CSSBasicShapes.h:
+
 2014-09-04  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make iOS build when ENABLE_TOUCH_EVENT and ENABLE_IOS_TOUCH_EVENTS disabled
