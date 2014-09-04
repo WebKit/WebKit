@@ -911,12 +911,10 @@ void ReplaceSelectionCommand::doApply()
     if (!selection.rootEditableElement())
         return;
 
-#if PLATFORM(IOS)
     // In plain text only regions, we create style-less fragments, so the inserted content will automatically
     // match the style of the surrounding area and so we can avoid unnecessary work below for m_matchStyle.
     if (!selection.isContentRichlyEditable())
         m_matchStyle = false;
-#endif
 
     ReplacementFragment fragment(document(), m_documentFragment.get(), selection);
     if (performTrivialReplace(fragment))

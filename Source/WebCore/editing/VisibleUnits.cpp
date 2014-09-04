@@ -1342,18 +1342,13 @@ VisiblePosition startOfDocument(const Node* node)
     if (!node || !node->document().documentElement())
         return VisiblePosition();
     
-#if PLATFORM(IOS)
     // The canonicalization of the position at (documentElement, 0) can turn the visible
     // position to null, even when there's a valid candidate to be had, because the root HTML element
     // is not content editable.  So we construct directly from the valid candidate.
-    // FIXME: Do this for non-iOS platforms too. https://bugs.webkit.org/show_bug.cgi?id=56437
     Position firstCandidate = nextCandidate(createLegacyEditingPosition(node->document().documentElement(), 0));
     if (firstCandidate.isNull())
         return VisiblePosition();
     return VisiblePosition(firstCandidate);
-#else
-    return VisiblePosition(firstPositionInNode(node->document().documentElement()), DOWNSTREAM);
-#endif
 }
 
 VisiblePosition startOfDocument(const VisiblePosition& c)
@@ -1366,19 +1361,14 @@ VisiblePosition endOfDocument(const Node* node)
     if (!node || !node->document().documentElement())
         return VisiblePosition();
     
-#if PLATFORM(IOS)
     // (As above, in startOfDocument.)  The canonicalization can reject valid visible positions
     // when descending from the root element, so we construct the visible position directly from a
     // valid candidate.
-    // FIXME: Do this for non-iOS platforms too. https://bugs.webkit.org/show_bug.cgi?id=56437
     Position lastPosition = createLegacyEditingPosition(node->document().documentElement(), node->document().documentElement()->childNodeCount());
     Position lastCandidate = previousCandidate(lastPosition);
     if (lastCandidate.isNull())
         return VisiblePosition();
     return VisiblePosition(lastCandidate);
-#else
-    return VisiblePosition(lastPositionInNode(node->document().documentElement()), DOWNSTREAM);
-#endif
 }
 
 VisiblePosition endOfDocument(const VisiblePosition& c)

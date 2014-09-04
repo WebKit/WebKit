@@ -59,8 +59,6 @@
 #include "htmlediting.h"
 #include "markup.h"
 
-#if PLATFORM(IOS)
-
 SOFT_LINK_FRAMEWORK(AppSupport)
 SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())
 
@@ -630,5 +628,3 @@ PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResourc
 }
 
 } // namespace WebCore
-
-#endif // PLATFORM(IOS)

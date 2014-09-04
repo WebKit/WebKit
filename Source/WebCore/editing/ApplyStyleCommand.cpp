@@ -253,18 +253,10 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     if (visibleStart.isNull() || visibleStart.isOrphan() || visibleEnd.isNull() || visibleEnd.isOrphan())
         return;
 
-#if !PLATFORM(IOS)
-    // Save and restore the selection endpoints using their indices in the document, since
-#else
     // Save and restore the selection endpoints using their indices in the editable root, since
-#endif
     // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
     // Calculate start and end indices from the start of the tree that they're in.
-#if !PLATFORM(IOS)
-    Node* scope = highestAncestor(visibleStart.deepEquivalent().deprecatedNode());
-#else
     Node* scope = highestEditableRoot(visibleStart.deepEquivalent());
-#endif
     RefPtr<Range> startRange = Range::create(document(), firstPositionInNode(scope), visibleStart.deepEquivalent().parentAnchoredEquivalent());
     RefPtr<Range> endRange = Range::create(document(), firstPositionInNode(scope), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
     int startIndex = TextIterator::rangeLength(startRange.get(), true);

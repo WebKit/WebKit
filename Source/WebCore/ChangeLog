@@ -1,3 +1,26 @@
+2014-09-04  Enrica Casucci  <enrica@apple.com>
+
+        Remove PLATFORM(IOS) from WebCore/editing (Part 2).
+        https://bugs.webkit.org/show_bug.cgi?id=136474
+
+        Reviewed by Tim Horton.
+
+        Removing some more PLATFORM(IOS) from the editing code.
+        Most of these changes are fixes that were made for IOS but never merged
+        to OpenSource.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        * editing/ios/EditorIOS.mm: No need for platform guard, this file is not built for Mac.
+
 2014-09-03  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Some WebKitLegacy headers migrated from WebCore incorrectly contain WEBCORE_EXPORT
