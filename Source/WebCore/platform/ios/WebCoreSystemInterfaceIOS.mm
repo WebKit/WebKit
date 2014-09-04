@@ -32,7 +32,6 @@ WEBCORE_EXPORT CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef
 WEBCORE_EXPORT void (*wkCGContextResetClip)(CGContextRef);
 WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
 WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
-WEBCORE_EXPORT NSString* (*wkGetMIMETypeForExtension)(NSString*);
 WEBCORE_EXPORT NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 WEBCORE_EXPORT void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 WEBCORE_EXPORT void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);

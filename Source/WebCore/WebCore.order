@@ -30592,7 +30592,6 @@ _wkHitTestMediaUIPart
 _wkDrawMediaUIPart
 _wkMeasureMediaUIPart
 _wkMediaControllerThemeAvailable
-_wkGetPreferredExtensionForMIMEType
 _wkSignedPublicKeyAndChallengeString
 _wkGetExtensionsForMIMEType
 _wkGetNSURLResponseLastModifiedDate

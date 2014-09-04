@@ -1,3 +1,15 @@
+2014-09-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix a few leftovers from removing MIME-related WKSI usage
+        https://bugs.webkit.org/show_bug.cgi?id=136513
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2014-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text caret changes to color of text in Mail and Notes
