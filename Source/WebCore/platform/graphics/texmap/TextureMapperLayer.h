@@ -101,17 +101,11 @@ public:
     void setSolidColor(const Color&);
     void setContentsTileSize(const FloatSize&);
     void setContentsTilePhase(const FloatPoint&);
-#if ENABLE(CSS_FILTERS)
     void setFilters(const FilterOperations&);
-#endif
 
     bool hasFilters() const
     {
-#if ENABLE(CSS_FILTERS)
         return !m_currentFilters.isEmpty();
-#else
-        return false;
-#endif
     }
 
     void setDebugVisuals(bool showDebugBorders, const Color& debugBorderColor, float debugBorderWidth, bool showRepaintCounter);
@@ -173,9 +167,7 @@ private:
     // GraphicsLayerAnimation::Client
     virtual void setAnimatedTransform(const TransformationMatrix&) override;
     virtual void setAnimatedOpacity(float) override;
-#if ENABLE(CSS_FILTERS)
     virtual void setAnimatedFilters(const FilterOperations&) override;
-#endif
 
     bool isVisible() const;
     enum ContentsLayerCount {
@@ -198,9 +190,7 @@ private:
     TextureMapperPlatformLayer* m_contentsLayer;
     GraphicsLayerTransform m_currentTransform;
     float m_currentOpacity;
-#if ENABLE(CSS_FILTERS)
     FilterOperations m_currentFilters;
-#endif
     float m_centerZ;
 
     template<class HitTestCondition> TextureMapperLayer* hitTest(const FloatPoint&, HitTestCondition);
@@ -222,9 +212,7 @@ private:
         TextureMapperLayer* maskLayer;
         TextureMapperLayer* replicaLayer;
         Color solidColor;
-#if ENABLE(CSS_FILTERS)
         FilterOperations filters;
-#endif
         Color debugBorderColor;
         float debugBorderWidth;
         int repaintCount;

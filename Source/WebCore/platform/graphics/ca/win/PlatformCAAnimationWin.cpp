@@ -374,12 +374,10 @@ void PlatformCAAnimationWin::setFromValue(const WebCore::Color& value)
     CACFAnimationSetFromValue(m_animation.get(), v.get());
 }
 
-#if ENABLE(CSS_FILTERS)
 void PlatformCAAnimationWin::setFromValue(const FilterOperation*, int)
 {
     // FIXME: Hardware filter animation not implemented on Windows
 }
-#endif
 
 void PlatformCAAnimationWin::copyFromValueFrom(const PlatformCAAnimation* value)
 {
@@ -427,12 +425,10 @@ void PlatformCAAnimationWin::setToValue(const WebCore::Color& value)
     CACFAnimationSetToValue(m_animation.get(), v.get());
 }
 
-#if ENABLE(CSS_FILTERS)
 void PlatformCAAnimationWin::setToValue(const FilterOperation*, int)
 {
     // FIXME: Hardware filter animation not implemented on Windows
 }
-#endif
 
 void PlatformCAAnimationWin::copyToValueFrom(const PlatformCAAnimation* value)
 {
@@ -501,12 +497,10 @@ void PlatformCAAnimationWin::setValues(const Vector<WebCore::Color>& value)
     CACFAnimationSetValues(m_animation.get(), array.get());
 }
 
-#if ENABLE(CSS_FILTERS)
 void PlatformCAAnimationWin::setValues(const Vector<RefPtr<FilterOperation> >&, int)
 {
     // FIXME: Hardware filter animation not implemented on Windows
 }
-#endif
 
 void PlatformCAAnimationWin::copyValuesFrom(const PlatformCAAnimation* value)
 {

@@ -161,7 +161,6 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
 }
 #endif
 
-#if ENABLE(CSS_FILTERS)
 static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* anim, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
 {
     ASSERT(toOp);
@@ -224,7 +223,6 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
     result.get().setFilterOperations(filterResult);
     return StyleGeneratedImage::create(WTF::move(result));
 }
-#endif // ENABLE(CSS_FILTERS)
 
 static inline EVisibility blendFunc(const AnimationBase* anim, EVisibility from, EVisibility to, double progress)
 {
@@ -299,7 +297,6 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
         CSSImageGeneratorValue& fromGenerated = toStyleGeneratedImage(from)->imageValue();
         CSSImageGeneratorValue& toGenerated = toStyleGeneratedImage(to)->imageValue();
 
-#if ENABLE(CSS_FILTERS)
         if (fromGenerated.isFilterImageValue() && toGenerated.isFilterImageValue()) {
             // Animation of generated images just possible if input images are equal.
             // Otherwise fall back to cross fade animation.
@@ -308,7 +305,6 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
             if (fromFilter.equalInputImages(toFilter) && fromFilter.cachedImage())
                 return blendFilter(anim, fromFilter.cachedImage(), fromFilter.filterOperations(), toFilter.filterOperations(), progress);
         }
-#endif
 
         if (fromGenerated.isCrossfadeValue() && toGenerated.isCrossfadeValue()) {
             CSSCrossfadeValue& fromCrossfade = toCSSCrossfadeValue(fromGenerated);
@@ -319,7 +315,6 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
 
         // FIXME: Add support for animation between two *gradient() functions.
         // https://bugs.webkit.org/show_bug.cgi?id=119956
-#if ENABLE(CSS_FILTERS)
     } else if (from->isGeneratedImage() && to->isCachedImage()) {
         CSSImageGeneratorValue& fromGenerated = toStyleGeneratedImage(from)->imageValue();
         if (fromGenerated.isFilterImageValue()) {
@@ -335,7 +330,6 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
             if (toFilter.cachedImage() && toStyleCachedImage(from)->cachedImage() == toFilter.cachedImage())     
                 return blendFilter(anim, toFilter.cachedImage(), FilterOperations(), toFilter.filterOperations(), progress);
         }
-#endif
         // FIXME: Add interpolation between image source and cross-fade.
     }
 
@@ -557,7 +551,6 @@ public:
     }
 };
 
-#if ENABLE(CSS_FILTERS)
 class PropertyWrapperAcceleratedFilter : public PropertyWrapper<const FilterOperations&> {
 public:
     PropertyWrapperAcceleratedFilter()
@@ -572,7 +565,6 @@ public:
         dst->setFilter(blendFunc(anim, a->filter(), b->filter(), progress));
     }
 };
-#endif
 
 static inline size_t shadowListLength(const ShadowData* shadow)
 {
@@ -1221,10 +1213,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapperAcceleratedOpacity(),
         new PropertyWrapperAcceleratedTransform(),
-#if ENABLE(CSS_FILTERS)
         new PropertyWrapperAcceleratedFilter(),
-#endif
-
         new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath),
 
 #if ENABLE(CSS_SHAPES)

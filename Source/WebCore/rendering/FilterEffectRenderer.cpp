@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_FILTERS)
-
 #include "FilterEffectRenderer.h"
 
 #include "CachedSVGDocument.h"
@@ -444,5 +442,3 @@ void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext* destinationC
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_FILTERS)

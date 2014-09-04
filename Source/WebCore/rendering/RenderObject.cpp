@@ -1235,8 +1235,6 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
                 repaintContainer = &compLayer->renderer();
         }
     }
-    
-#if ENABLE(CSS_FILTERS)
     if (view().hasSoftwareFilters()) {
         if (RenderLayer* parentLayer = enclosingLayer()) {
             RenderLayer* enclosingFilterLayer = parentLayer->enclosingFilterLayer();
@@ -1244,7 +1242,6 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
                 return &enclosingFilterLayer->renderer();
         }
     }
-#endif
 
     // If we have a flow thread, then we need to do individual repaints within the RenderRegions instead.
     // Return the flow thread as a repaint container in order to create a chokepoint that allows us to change
@@ -1276,12 +1273,10 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         return;
     }
 
-#if ENABLE(CSS_FILTERS)
     if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
         repaintContainer->layer()->setFilterBackendNeedsRepaintingInRect(r);
         return;
     }
-#endif
 
     RenderView& v = view();
     if (repaintContainer->isRenderView()) {

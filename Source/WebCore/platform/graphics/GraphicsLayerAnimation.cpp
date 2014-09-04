@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-#if ENABLE(CSS_FILTERS)
 static inline PassRefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation* toOp, double progress, const FloatSize& size, bool blendToPassthrough = false)
 {
     ASSERT(toOp);
@@ -73,7 +72,6 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
 
     return result;
 }
-#endif
 
 static bool shouldReverseAnimationValue(Animation::AnimationDirection direction, int loopCount)
 {
@@ -235,11 +233,9 @@ void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue&
     case AnimatedPropertyWebkitTransform:
         client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize, m_listsMatch));
         return;
-#if ENABLE(CSS_FILTERS)
     case AnimatedPropertyWebkitFilter:
         client->setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize));
         return;
-#endif
     default:
         ASSERT_NOT_REACHED();
     }

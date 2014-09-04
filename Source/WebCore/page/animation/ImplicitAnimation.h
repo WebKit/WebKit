@@ -79,9 +79,7 @@ protected:
     bool sendTransitionEvent(const AtomicString&, double elapsedTime);
 
     void validateTransformFunctionList();
-#if ENABLE(CSS_FILTERS)
     void checkForMatchingFilterFunctionLists();
-#endif
 
 private:
     ImplicitAnimation(const Animation&, CSSPropertyID, RenderElement*, CompositeAnimation*, RenderStyle*);

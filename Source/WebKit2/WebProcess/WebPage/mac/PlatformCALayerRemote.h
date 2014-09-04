@@ -122,11 +122,9 @@ public:
     virtual float opacity() const override;
     virtual void setOpacity(float) override;
 
-#if ENABLE(CSS_FILTERS)
     virtual void setFilters(const WebCore::FilterOperations&) override;
     static bool filtersCanBeComposited(const WebCore::FilterOperations&);
     virtual void copyFiltersFrom(const WebCore::PlatformCALayer*) override;
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     virtual void setBlendMode(WebCore::BlendMode) override;

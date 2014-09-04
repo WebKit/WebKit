@@ -102,10 +102,8 @@ public:
     // return true if we started an animation
     WEBCORE_EXPORT virtual void setOpacity(float) override;
 
-#if ENABLE(CSS_FILTERS)
     WEBCORE_EXPORT virtual bool setFilters(const FilterOperations&) override;
     virtual bool filtersCanBeComposited(const FilterOperations&);
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     WEBCORE_EXPORT virtual void setBlendMode(BlendMode) override;
@@ -203,10 +201,7 @@ private:
 
     WEBCORE_EXPORT void layerDidDisplay(PlatformCALayer*);
     void updateOpacityOnLayer();
-    
-#if ENABLE(CSS_FILTERS)
     void updateFilters();
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
@@ -230,9 +225,7 @@ private:
 
     bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
     bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset, const FloatSize& boxSize);
-#if ENABLE(CSS_FILTERS)
     bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, double timeOffset);
-#endif
 
     // Return autoreleased animation (use RetainPtr?)
     PassRefPtr<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive);
@@ -247,10 +240,8 @@ private:
     bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const FloatSize& boxSize);
     bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const FloatSize& boxSize);
     
-#if ENABLE(CSS_FILTERS)
     bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex);
     bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType);
-#endif
 
     bool isRunningTransformAnimation() const;
 
@@ -406,9 +397,7 @@ private:
     void moveOrCopyAnimations(MoveOrCopy, PlatformCALayer * fromLayer, PlatformCALayer * toLayer);
     
     bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation);
-#if ENABLE(CSS_FILTERS)
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, double timeOffset);
-#endif
 
     enum LayerChange {
         NoChange = 0,

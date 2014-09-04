@@ -26,8 +26,6 @@
 #ifndef FilterOperations_h
 #define FilterOperations_h
 
-#if ENABLE(CSS_FILTERS)
-
 #include "FilterOperation.h"
 #include "IntRectExtent.h"
 #include <wtf/RefPtr.h>
@@ -77,7 +75,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_FILTERS)
 
 #endif // FilterOperations_h

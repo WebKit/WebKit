@@ -374,7 +374,7 @@ template<> struct ArgumentCoder<WebCore::StickyPositionViewportConstraints> {
     static bool decode(ArgumentDecoder&, WebCore::StickyPositionViewportConstraints&);
 };
 
-#if ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
+#if !USE(COORDINATED_GRAPHICS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);

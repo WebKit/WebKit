@@ -91,9 +91,7 @@ public:
     void setIsScrollable(bool);
     bool isScrollable() const { return m_isScrollable; }
 
-#if ENABLE(CSS_FILTERS)
     virtual bool setFilters(const FilterOperations&);
-#endif
 
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }

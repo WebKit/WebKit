@@ -101,9 +101,7 @@ public:
     virtual void deviceOrPageScaleFactorChanged() override;
     virtual void flushCompositingState(const FloatRect&) override;
     virtual void flushCompositingStateForThisLayerOnly() override;
-#if ENABLE(CSS_FILTERS)
     virtual bool setFilters(const FilterOperations&) override;
-#endif
     virtual bool addAnimation(const KeyframeValueList&, const FloatSize&, const Animation*, const String&, double) override;
     virtual void pauseAnimation(const String&, double) override;
     virtual void removeAnimation(const String&) override;
@@ -176,18 +174,14 @@ private:
     void didChangeAnimations();
     void didChangeGeometry();
     void didChangeChildren();
-#if ENABLE(CSS_FILTERS)
     void didChangeFilters();
-#endif
     void didChangeImageBacking();
 
     void resetLayerState();
     void syncLayerState();
     void syncAnimations();
     void syncChildren();
-#if ENABLE(CSS_FILTERS)
     void syncFilters();
-#endif
     void syncImageBacking();
     void computeTransformedVisibleRect();
     void updateContentBuffers();

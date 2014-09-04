@@ -67,9 +67,7 @@ public:
     virtual PassRefPtr<BitmapTexture> createTexture() override;
     inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
 
-#if ENABLE(CSS_FILTERS)
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
-#endif
 
     void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
 
@@ -155,7 +153,6 @@ public:
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag);
     virtual bool isBackedByOpenGL() const { return true; }
 
-#if ENABLE(CSS_FILTERS)
     virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) override;
     struct FilterInfo {
         RefPtr<FilterOperation> filter;
@@ -169,7 +166,6 @@ public:
             { }
     };
     const FilterInfo* filterInfo() const { return &m_filterInfo; }
-#endif
 
 private:
     void updateContentsNoSwizzle(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel = 4, Platform3DObject glFormat = GraphicsContext3D::RGBA);
@@ -190,9 +186,7 @@ private:
     void clearIfNeeded();
     void createFboIfNeeded();
 
-#if ENABLE(CSS_FILTERS)
     FilterInfo m_filterInfo;
-#endif
 
     friend class TextureMapperGL;
 };

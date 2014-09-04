@@ -28,6 +28,7 @@
 
 #include "Animation.h"
 #include "Color.h"
+#include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
@@ -38,10 +39,6 @@
 #include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-
-#if ENABLE(CSS_FILTERS)
-#include "FilterOperations.h"
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 #include "GraphicsTypes.h"
@@ -145,7 +142,6 @@ private:
     TransformOperations m_value;
 };
 
-#if ENABLE(CSS_FILTERS)
 // Used to store one filter value in a keyframe list.
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
@@ -171,7 +167,6 @@ private:
 
     FilterOperations m_value;
 };
-#endif
 
 // Used to store a series of values in a keyframe list.
 // Values will all be of the same type, which can be inferred from the property.
@@ -356,12 +351,10 @@ public:
     float opacity() const { return m_opacity; }
     virtual void setOpacity(float opacity) { m_opacity = opacity; }
 
-#if ENABLE(CSS_FILTERS)
     const FilterOperations& filters() const { return m_filters; }
     
     // Returns true if filter can be rendered by the compositor
     virtual bool setFilters(const FilterOperations& filters) { m_filters = filters; return true; }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return m_blendMode; }
@@ -531,7 +524,6 @@ protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
     WEBCORE_EXPORT virtual void willBeDestroyed();
 
-#if ENABLE(CSS_FILTERS)
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
     // needs to notifiy the change to the platform layer as needed.
@@ -539,7 +531,6 @@ protected:
 
     // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
     static int validateFilterOperations(const KeyframeValueList&);
-#endif
 
     // Given a list of TransformAnimationValues, see if all the operations for each keyframe match. If so
     // return the index of the KeyframeValueList entry that has that list of operations (it may not be
@@ -582,9 +573,7 @@ protected:
     float m_opacity;
     float m_zPosition;
     
-#if ENABLE(CSS_FILTERS)
     FilterOperations m_filters;
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode;

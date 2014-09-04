@@ -27,9 +27,6 @@
 #include "StyleFilterData.h"
 
 #include "FEGaussianBlur.h"
-
-#if ENABLE(CSS_FILTERS)
-
 #include "RenderStyle.h"
 
 namespace WebCore {
@@ -56,5 +53,3 @@ bool StyleFilterData::operator==(const StyleFilterData& o) const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_FILTERS)

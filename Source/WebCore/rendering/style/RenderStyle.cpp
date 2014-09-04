@@ -632,10 +632,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         return true;
     }
 
-#if ENABLE(CSS_FILTERS)
     if (rareNonInheritedData->hasFilters() != other->rareNonInheritedData->hasFilters())
         return true;
-#endif
 
     const QuotesData* quotesDataA = rareInheritedData->quotes.get();
     const QuotesData* quotesDataB = other->rareInheritedData->quotes.get();
@@ -696,13 +694,11 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned&
         // Don't return; keep looking for another change.
     }
 
-#if ENABLE(CSS_FILTERS)
     if (rareNonInheritedData->m_filter.get() != other->rareNonInheritedData->m_filter.get()
         && *rareNonInheritedData->m_filter.get() != *other->rareNonInheritedData->m_filter.get()) {
         changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
         // Don't return; keep looking for another change.
     }
-#endif
 
     if (rareNonInheritedData->m_mask != other->rareNonInheritedData->m_mask
         || rareNonInheritedData->m_maskBoxImage != other->rareNonInheritedData->m_maskBoxImage)

@@ -238,10 +238,8 @@ public:
 
     void clearCachedPropertiesAffectedByViewportUnits();
 
-#if ENABLE(CSS_FILTERS)
     bool createFilterOperations(CSSValue* inValue, FilterOperations& outOperations);
     void loadPendingSVGDocuments();
-#endif // ENABLE(CSS_FILTERS)
 
     void loadPendingResources();
 
@@ -382,9 +380,8 @@ public:
         bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
         bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
         PendingImagePropertyMap& pendingImageProperties() { return m_pendingImageProperties; }
-#if ENABLE(CSS_FILTERS)
+
         Vector<RefPtr<ReferenceFilterOperation>>& filtersWithPendingSVGDocuments() { return m_filtersWithPendingSVGDocuments; }
-#endif
 
         void setLineHeightValue(CSSValue* value) { m_lineHeightValue = value; }
         CSSValue* lineHeightValue() { return m_lineHeightValue; }
@@ -431,9 +428,9 @@ public:
         bool m_applyPropertyToVisitedLinkStyle;
 
         PendingImagePropertyMap m_pendingImageProperties;
-#if ENABLE(CSS_FILTERS)
+
         Vector<RefPtr<ReferenceFilterOperation>> m_filtersWithPendingSVGDocuments;
-#endif
+
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;
         bool m_fontSizeHasViewportUnits;

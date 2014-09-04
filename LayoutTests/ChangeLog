@@ -1,3 +1,12 @@
+2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove CSS_FILTERS flag
+        https://bugs.webkit.org/show_bug.cgi?id=136529
+
+        Reviewed by Dirk Schulze.
+
+        * platform/efl/TestExpectations:
+
 2014-09-03  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         XMLHttpRequest always defaults Content-Type to application/xml, while it should depend on data type

@@ -30,6 +30,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "Color.h"
+#include "FilterOperations.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerAnimation.h"
@@ -37,10 +38,6 @@
 #include "IntSize.h"
 #include "SurfaceUpdateInfo.h"
 #include "TransformationMatrix.h"
-
-#if ENABLE(CSS_FILTERS)
-#include "FilterOperations.h"
-#endif
 
 #if USE(GRAPHICS_SURFACE)
 #include "GraphicsSurface.h"
@@ -148,9 +145,7 @@ struct CoordinatedGraphicsLayerState {
     Color solidColor;
     Color debugBorderColor;
     float debugBorderWidth;
-#if ENABLE(CSS_FILTERS)
     FilterOperations filters;
-#endif
     GraphicsLayerAnimations animations;
     Vector<uint32_t> children;
     Vector<TileCreationInfo> tilesToCreate;

@@ -540,10 +540,8 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     if (m_changeMask & BackgroundColorChange)
         m_layer->setSolidColor(solidColor());
 
-#if ENABLE(CSS_FILTERS)
     if (m_changeMask & FilterChange)
         m_layer->setFilters(filters());
-#endif
 
     if (m_changeMask & BackingStoreChange)
         m_layer->setBackingStore(m_backingStore);
@@ -665,7 +663,6 @@ void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
     m_animations.remove(animationName);
 }
 
-#if ENABLE(CSS_FILTERS)
 bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
 {
     TextureMapper* textureMapper = m_layer->textureMapper();
@@ -675,7 +672,6 @@ bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
     notifyChange(FilterChange);
     return GraphicsLayer::setFilters(filters);
 }
-#endif
 
 void GraphicsLayerTextureMapper::setFixedToViewport(bool fixed)
 {

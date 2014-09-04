@@ -99,18 +99,14 @@ public:
     virtual void setFromValue(const WebCore::TransformationMatrix&) override;
     virtual void setFromValue(const FloatPoint3D&) override;
     virtual void setFromValue(const WebCore::Color&) override;
-#if ENABLE(CSS_FILTERS)
     virtual void setFromValue(const FilterOperation*, int internalFilterPropertyIndex) override;
-#endif
     virtual void copyFromValueFrom(const PlatformCAAnimation*) override;
 
     virtual void setToValue(float) override;
     virtual void setToValue(const WebCore::TransformationMatrix&) override;
     virtual void setToValue(const FloatPoint3D&) override;
     virtual void setToValue(const WebCore::Color&) override;
-#if ENABLE(CSS_FILTERS)
     virtual void setToValue(const FilterOperation*, int internalFilterPropertyIndex) override;
-#endif
     virtual void copyToValueFrom(const PlatformCAAnimation*) override;
 
     // Keyframe-animation properties.
@@ -118,9 +114,7 @@ public:
     virtual void setValues(const Vector<WebCore::TransformationMatrix>&) override;
     virtual void setValues(const Vector<FloatPoint3D>&) override;
     virtual void setValues(const Vector<WebCore::Color>&) override;
-#if ENABLE(CSS_FILTERS)
     virtual void setValues(const Vector<RefPtr<FilterOperation>>&, int internalFilterPropertyIndex) override;
-#endif
     virtual void copyValuesFrom(const PlatformCAAnimation*) override;
 
     virtual void setKeyTimes(const Vector<float>&) override;

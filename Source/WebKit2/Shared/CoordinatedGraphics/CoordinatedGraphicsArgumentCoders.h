@@ -44,9 +44,7 @@ class TransformationMatrix;
 class TransformOperations;
 struct Length;
 
-#if ENABLE(CSS_FILTERS)
 class FilterOperations;
-#endif
 
 #if USE(GRAPHICS_SURFACE)
 struct GraphicsSurfaceToken;
@@ -55,12 +53,10 @@ struct GraphicsSurfaceToken;
 
 namespace IPC {
 
-#if ENABLE(CSS_FILTERS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
 };
-#endif
 
 template<> struct ArgumentCoder<WebCore::TransformOperations> {
     static void encode(ArgumentEncoder&, const WebCore::TransformOperations&);

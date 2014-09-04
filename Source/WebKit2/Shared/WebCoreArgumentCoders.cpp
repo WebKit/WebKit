@@ -1576,7 +1576,7 @@ bool ArgumentCoder<StickyPositionViewportConstraints>::decode(ArgumentDecoder& d
     return true;
 }
 
-#if ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
+#if !USE(COORDINATED_GRAPHICS)
 void ArgumentCoder<FilterOperation>::encode(ArgumentEncoder& encoder, const FilterOperation& filter)
 {
     encoder.encodeEnum(filter.type());
@@ -1707,7 +1707,7 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 
     return true;
 }
-#endif // ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
+#endif // !USE(COORDINATED_GRAPHICS)
 
 #if ENABLE(INDEXED_DATABASE)
 void ArgumentCoder<IDBDatabaseMetadata>::encode(ArgumentEncoder& encoder, const IDBDatabaseMetadata& metadata)

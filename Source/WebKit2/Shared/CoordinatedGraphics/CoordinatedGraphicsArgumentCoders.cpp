@@ -34,6 +34,7 @@
 #include <WebCore/Animation.h>
 #include <WebCore/Color.h>
 #include <WebCore/CoordinatedGraphicsState.h>
+#include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/IdentityTransformOperation.h>
@@ -50,10 +51,6 @@
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
 
-#if ENABLE(CSS_FILTERS)
-#include <WebCore/FilterOperations.h>
-#endif
-
 #if USE(GRAPHICS_SURFACE)
 #include <WebCore/GraphicsSurface.h>
 #endif
@@ -63,7 +60,6 @@ using namespace WebKit;
 
 namespace IPC {
 
-#if ENABLE(CSS_FILTERS)
 void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, const WebCore::FilterOperations& filters)
 {
     encoder << static_cast<uint32_t>(filters.size());
@@ -171,7 +167,6 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
 
     return true;
 }
-#endif
 
 void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder& encoder, const TransformOperations& transformOperations)
 {
@@ -446,11 +441,9 @@ void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder& encoder, con
         case AnimatedPropertyWebkitTransform:
             encoder << static_cast<const TransformAnimationValue&>(value).value();
             break;
-#if ENABLE(CSS_FILTERS)
         case AnimatedPropertyWebkitFilter:
             encoder << static_cast<const FilterAnimationValue&>(value).value();
             break;
-#endif
         default:
             break;
         }
@@ -534,7 +527,6 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             keyframes.insert(TransformAnimationValue::create(keyTime, transform, timingFunction.get()));
             break;
         }
-#if ENABLE(CSS_FILTERS)
         case AnimatedPropertyWebkitFilter: {
             FilterOperations filter;
             if (!decoder.decode(filter))
@@ -542,7 +534,6 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
             keyframes.insert(FilterAnimationValue::create(keyTime, filter, timingFunction.get()));
             break;
         }
-#endif
         default:
             break;
         }
@@ -657,10 +648,8 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encod
     if (state.debugBorderWidthChanged)
         encoder << state.debugBorderWidth;
 
-#if ENABLE(CSS_FILTERS)
     if (state.filtersChanged)
         encoder << state.filters;
-#endif
 
     if (state.animationsChanged)
         encoder << state.animations;
@@ -743,10 +732,8 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decod
     if (state.debugBorderWidthChanged && !decoder.decode(state.debugBorderWidth))
         return false;
 
-#if ENABLE(CSS_FILTERS)
     if (state.filtersChanged && !decoder.decode(state.filters))
         return false;
-#endif
 
     if (state.animationsChanged && !decoder.decode(state.animations))
         return false;

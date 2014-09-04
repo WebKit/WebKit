@@ -440,7 +440,6 @@ void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
     }
 }
 
-#if ENABLE(CSS_FILTERS)
 static inline const FilterOperations& filterOperationsAt(const KeyframeValueList& valueList, size_t index)
 {
     return static_cast<const FilterAnimationValue&>(valueList.at(index)).value();
@@ -478,7 +477,6 @@ int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
     
     return firstIndex;
 }
-#endif
 
 // An "invalid" list is one whose functions don't match, and therefore has to be animated as a Matrix
 // The hasBigRotation flag will always return false if isValid is false. Otherwise hasBigRotation is 

@@ -181,11 +181,8 @@ public:
 
     virtual float opacity() const = 0;
     virtual void setOpacity(float) = 0;
-
-#if ENABLE(CSS_FILTERS)
     virtual void setFilters(const FilterOperations&) = 0;
     virtual void copyFiltersFrom(const PlatformCALayer*) = 0;
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     virtual void setBlendMode(BlendMode) = 0;

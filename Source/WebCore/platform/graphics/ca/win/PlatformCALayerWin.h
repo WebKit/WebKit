@@ -109,11 +109,9 @@ public:
     virtual float opacity() const override;
     virtual void setOpacity(float) override;
 
-#if ENABLE(CSS_FILTERS)
     virtual void setFilters(const FilterOperations&) override;
     static bool filtersCanBeComposited(const FilterOperations&) { return false; }
     virtual void copyFiltersFrom(const PlatformCALayer*) override;
-#endif
 
     virtual void setName(const String&) override;
 

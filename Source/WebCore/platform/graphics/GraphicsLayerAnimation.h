@@ -34,9 +34,7 @@ public:
     public:
         virtual void setAnimatedTransform(const TransformationMatrix&) = 0;
         virtual void setAnimatedOpacity(float) = 0;
-#if ENABLE(CSS_FILTERS)
         virtual void setAnimatedFilters(const FilterOperations&) = 0;
-#endif
     };
 
     GraphicsLayerAnimation()

@@ -76,13 +76,11 @@ void CoordinatedGraphicsLayer::didChangeChildren()
     notifyFlushRequired();
 }
 
-#if ENABLE(CSS_FILTERS)
 void CoordinatedGraphicsLayer::didChangeFilters()
 {
     m_shouldSyncFilters = true;
     notifyFlushRequired();
 }
-#endif
 
 void CoordinatedGraphicsLayer::didChangeImageBacking()
 {
@@ -421,7 +419,6 @@ void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platfor
 #endif
 }
 
-#if ENABLE(CSS_FILTERS)
 bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 {
     if (filters() == newFilters)
@@ -433,7 +430,6 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
     didChangeFilters();
     return true;
 }
-#endif
 
 void CoordinatedGraphicsLayer::setContentsToSolidColor(const Color& color)
 {
@@ -622,7 +618,6 @@ void CoordinatedGraphicsLayer::syncChildren()
         m_layerState.children.append(toCoordinatedLayerID(children()[i]));
 }
 
-#if ENABLE(CSS_FILTERS)
 void CoordinatedGraphicsLayer::syncFilters()
 {
     if (!m_shouldSyncFilters)
@@ -632,7 +627,6 @@ void CoordinatedGraphicsLayer::syncFilters()
     m_layerState.filters = GraphicsLayer::filters();
     m_layerState.filtersChanged = true;
 }
-#endif
 
 void CoordinatedGraphicsLayer::syncImageBacking()
 {
@@ -788,9 +782,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     syncAnimations();
     computeTransformedVisibleRect();
     syncChildren();
-#if ENABLE(CSS_FILTERS)
     syncFilters();
-#endif
 #if USE(GRAPHICS_SURFACE)
     syncPlatformLayer();
 #endif

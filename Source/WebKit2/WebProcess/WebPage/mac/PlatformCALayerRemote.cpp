@@ -132,10 +132,8 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setOpaque(isOpaque());
     clone.setBackgroundColor(backgroundColor());
     clone.setContentsScale(contentsScale());
-#if ENABLE(CSS_FILTERS)
     if (m_properties.filters)
         clone.copyFiltersFrom(this);
-#endif
     clone.updateCustomAppearance(customAppearance());
 }
 
@@ -598,7 +596,6 @@ void PlatformCALayerRemote::setOpacity(float value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::OpacityChanged);
 }
 
-#if ENABLE(CSS_FILTERS)
 void PlatformCALayerRemote::setFilters(const FilterOperations& filters)
 {
     m_properties.filters = std::make_unique<FilterOperations>(filters);
@@ -627,7 +624,6 @@ bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filte
 {
     return PlatformCALayerMac::filtersCanBeComposited(filters);
 }
-#endif
 
 void PlatformCALayerRemote::setName(const String& value)
 {

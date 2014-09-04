@@ -110,9 +110,7 @@ RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
     , m_renderQuoteHead(0)
     , m_renderCounterCount(0)
     , m_selectionWasCaret(false)
-#if ENABLE(CSS_FILTERS)
     , m_hasSoftwareFilters(false)
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionRectGatherer(*this)
 #endif

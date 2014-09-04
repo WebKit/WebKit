@@ -27,8 +27,6 @@
 #include "config.h"
 #include "CSSFilterImageValue.h"
 
-#if ENABLE(CSS_FILTERS)
-
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -168,5 +166,3 @@ bool CSSFilterImageValue::equalInputImages(const CSSFilterImageValue& other) con
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_FILTERS)

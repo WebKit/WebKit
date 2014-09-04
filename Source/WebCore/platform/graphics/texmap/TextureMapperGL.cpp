@@ -122,9 +122,7 @@ public:
         , previousScissorState(0)
         , previousDepthState(0)
         , sharedData(TextureMapperGLData::SharedGLData::currentSharedGLData(this->context))
-#if ENABLE(CSS_FILTERS)
         , filterInfo(0)
-#endif
     { }
 
     ~TextureMapperGLData();
@@ -143,9 +141,7 @@ public:
     RefPtr<SharedGLData> sharedData;
     RefPtr<BitmapTexture> currentSurface;
     HashMap<const void*, Platform3DObject> vbos;
-#if ENABLE(CSS_FILTERS)
     const BitmapTextureGL::FilterInfo* filterInfo;
-#endif
 };
 
 Platform3DObject TextureMapperGLData::getStaticVBO(GC3Denum target, GC3Dsizeiptr size, const void* data)
@@ -367,8 +363,6 @@ void TextureMapperGL::drawNumber(int number, const Color& color, const FloatPoin
 #endif
 }
 
-#if ENABLE(CSS_FILTERS)
-
 static TextureMapperShaderProgram::Options optionsForFilterType(FilterOperation::OperationType type, unsigned pass)
 {
     switch (type) {
@@ -512,7 +506,6 @@ static void prepareFilterProgram(TextureMapperShaderProgram* program, const Filt
         break;
     }
 }
-#endif
 
 void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, unsigned exposedEdges)
 {
@@ -523,9 +516,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
         return;
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
-#if ENABLE(CSS_FILTERS)
     TemporaryChange<const BitmapTextureGL::FilterInfo*> filterInfo(data().filterInfo, textureGL.filterInfo());
-#endif
 
     drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : ShouldBlend, textureGL.size(), targetRect, matrix, opacity, exposedEdges);
 }
@@ -547,7 +538,6 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
         flags |= ShouldAntialias;
     }
 
-#if ENABLE(CSS_FILTERS)
     RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: 0;
     GC3Duint filterContentTextureID = 0;
 
@@ -558,7 +548,6 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
         if (filter->affectsOpacity())
             flags |= ShouldBlend;
     }
-#endif
 
     if (useAntialiasing || opacity < 1)
         flags |= ShouldBlend;
@@ -566,10 +555,8 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
     RefPtr<TextureMapperShaderProgram> program;
     program = data().sharedGLData().getShaderProgram(options);
 
-#if ENABLE(CSS_FILTERS)
     if (filter)
         prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
-#endif
 
     drawTexturedQuadWithProgram(program.get(), texture, flags, textureSize, targetRect, modelViewMatrix, opacity);
 }
@@ -857,7 +844,6 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     updateContents(imageData, targetRect, offset, bytesPerLine, updateContentsFlag);
 }
 
-#if ENABLE(CSS_FILTERS)
 void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTexture* contentTexture, const FilterOperation& filter, int pass)
 {
     // For standard filters, we always draw the whole texture without transformations.
@@ -913,7 +899,6 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
     texmapGL->bindSurface(previousSurface.get());
     return resultSurface;
 }
-#endif
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored)
 {

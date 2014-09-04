@@ -52,6 +52,9 @@
 #include "DocumentEventQueue.h"
 #include "Element.h"
 #include "EventHandler.h"
+#include "FEColorMatrix.h"
+#include "FEMerge.h"
+#include "FilterEffectRenderer.h"
 #include "FloatConversion.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
@@ -83,6 +86,7 @@
 #include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerFilterInfo.h"
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
@@ -114,13 +118,6 @@
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(CSS_FILTERS)
-#include "FEColorMatrix.h"
-#include "FEMerge.h"
-#include "FilterEffectRenderer.h"
-#include "RenderLayerFilterInfo.h"
-#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #include "AxisScrollSnapOffsets.h"
@@ -189,9 +186,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #if !ASSERT_DISABLED
     , m_layerListMutationAllowed(true)
 #endif
-#if ENABLE(CSS_FILTERS)
     , m_hasFilterInfo(false)
-#endif
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
@@ -256,10 +251,8 @@ RenderLayer::~RenderLayer()
 
     if (m_reflection)
         removeReflection();
-    
-#if ENABLE(CSS_FILTERS)
+
     FilterInfo::remove(*this);
-#endif
 
     // Child layers will be deleted by their corresponding render objects, so
     // we don't need to delete them ourselves.
@@ -318,8 +311,6 @@ bool RenderLayer::canRender3DTransforms() const
     return compositor().canRender3DTransforms();
 }
 
-#if ENABLE(CSS_FILTERS)
-
 bool RenderLayer::paintsWithFilters() const
 {
     // FIXME: Eventually there will be cases where we paint with filters even without accelerated compositing,
@@ -350,8 +341,6 @@ FilterEffectRenderer* RenderLayer::filterRenderer() const
     FilterInfo* filterInfo = FilterInfo::getIfExists(*this);
     return filterInfo ? filterInfo->renderer() : 0;
 }
-
-#endif
 
 void RenderLayer::updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, UpdateLayerPositionsFlags flags)
 {
@@ -1456,8 +1445,6 @@ RenderLayer* RenderLayer::enclosingCompositingLayerForRepaint(IncludeSelfOrNot i
     return 0;
 }
 
-#if ENABLE(CSS_FILTERS)
-
 RenderLayer* RenderLayer::enclosingFilterLayer(IncludeSelfOrNot includeSelf) const
 {
     const RenderLayer* curr = (includeSelf == IncludeSelf) ? this : parent();
@@ -1525,8 +1512,6 @@ bool RenderLayer::hasAncestorWithFilterOutsets() const
     }
     return false;
 }
-
-#endif
 
 RenderLayer* RenderLayer::clippingRootForPainting() const
 {
@@ -1659,9 +1644,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // paints unfragmented.
         LayoutRect clipRect = layer.boundingBox(&layer);
         expandClipRectForDescendantsAndReflection(clipRect, layer, &layer, transparencyBehavior, paintBehavior);
-#if ENABLE(CSS_FILTERS)
         layer.renderer().style().filterOutsets().expandRect(clipRect);
-#endif
         LayoutRect result = transform.mapRect(clipRect);
         if (!paginationLayer)
             return result;
@@ -1677,9 +1660,8 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
     
     LayoutRect clipRect = layer.boundingBox(rootLayer, layer.offsetFromAncestor(rootLayer), transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::UseFragmentBoxesIncludingCompositing : RenderLayer::UseFragmentBoxesExcludingCompositing);
     expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, transparencyBehavior, paintBehavior);
-#if ENABLE(CSS_FILTERS)
     layer.renderer().style().filterOutsets().expandRect(clipRect);
-#endif
+
     return clipRect;
 }
 
@@ -3951,8 +3933,6 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     return false;
 }
 
-#if ENABLE(CSS_FILTERS)
-
 std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext* context, LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
 {
     if (context->paintingDisabled())
@@ -4009,8 +3989,6 @@ GraphicsContext* RenderLayer::applyFilters(FilterEffectRendererHelper* filterPai
     restoreClip(originalContext, paintingInfo.paintDirtyRect, backgroundRect);
     return originalContext;
 }
-
-#endif
 
 // Helper for the sorting of layers by z-index.
 static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
@@ -4095,7 +4073,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     LayerPaintingInfo localPaintingInfo(paintingInfo);
 
     GraphicsContext* transparencyLayerContext = context;
-#if ENABLE(CSS_FILTERS)
     std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, paintFlags, offsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
     if (filterPainter) {
         context = filterPainter->filterContext();
@@ -4104,7 +4081,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             beginTransparencyLayers(transparencyLayerContext, localPaintingInfo, paintingInfo.paintDirtyRect);
         }
     }
-#endif
 
     // If this layer's renderer is a child of the subtreePaintRoot, we render unconditionally, which
     // is done by passing a nil subtreePaintRoot down to our renderer (as if no subtreePaintRoot was ever set).
@@ -4180,12 +4156,10 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     if (isPaintingOverlayScrollbars)
         paintOverflowControlsForFragments(layerFragments, context, localPaintingInfo);
 
-#if ENABLE(CSS_FILTERS)
     if (filterPainter) {
         context = applyFilters(filterPainter.get(), transparencyLayerContext, localPaintingInfo, layerFragments);
         filterPainter = nullptr;
     }
-#endif
     
     // Make sure that we now use the original transparency context.
     ASSERT(transparencyLayerContext == context);
@@ -5801,14 +5775,12 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
             }
         }
     }
-    
-#if ENABLE(CSS_FILTERS)
+
     // FIXME: We can optimize the size of the composited layers, by not enlarging
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
     // https://bugs.webkit.org/show_bug.cgi?id=81239
     if (flags & IncludeLayerFilterOutsets)
         renderer().style().filterOutsets().expandRect(unionBounds);
-#endif
 
     if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal)) {
         TransformationMatrix* affineTrans = transform();
@@ -5849,9 +5821,7 @@ RenderLayerBacking* RenderLayer::ensureBacking()
         m_backing = std::make_unique<RenderLayerBacking>(*this);
         compositor().layerBecameComposited(*this);
 
-#if ENABLE(CSS_FILTERS)
         updateOrRemoveFilterEffectRenderer();
-#endif
     }
     return m_backing.get();
 }
@@ -5862,12 +5832,8 @@ void RenderLayer::clearBacking(bool layerBeingDestroyed)
         compositor().layerBecameNonComposited(*this);
     m_backing = nullptr;
 
-#if ENABLE(CSS_FILTERS)
     if (!layerBeingDestroyed)
         updateOrRemoveFilterEffectRenderer();
-#else
-    UNUSED_PARAM(layerBeingDestroyed);
-#endif
 }
 
 bool RenderLayer::hasCompositedMask() const
@@ -5914,10 +5880,8 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (renderer().style().visibility() != VISIBLE)
         return false;
 
-#if ENABLE(CSS_FILTERS)
     if (paintsWithFilters() && renderer().style().filter().hasFilterThatAffectsOpacity())
         return false;
-#endif
 
     // FIXME: Handle simple transforms.
     if (paintsWithTransform(PaintBehaviorNormal))
@@ -6236,9 +6200,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         && !renderer().isPositioned()
         && !renderer().hasTransform()
         && !renderer().hasClipPath()
-#if ENABLE(CSS_FILTERS)
         && !renderer().hasFilter()
-#endif
 #if PLATFORM(IOS)
         && !hasAcceleratedTouchScrolling()
 #endif
@@ -6517,9 +6479,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
 #endif
-#if ENABLE(CSS_FILTERS)
     updateOrRemoveFilterClients();
-#endif
 
     updateNeedsCompositedScrolling();
 
@@ -6553,7 +6513,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     UNUSED_PARAM(diff);
 #endif
 
-#if ENABLE(CSS_FILTERS)
     updateOrRemoveFilterEffectRenderer();
     bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
     if (isComposited() && backingDidCompositeLayers && !backing()->canCompositeFilters()) {
@@ -6561,7 +6520,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         // Fallback to drawing them in software.
         setBackingNeedsRepaint();
     }
-#endif
 }
 
 void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
@@ -6690,8 +6648,6 @@ PassRef<RenderStyle> RenderLayer::createReflectionStyle()
     return newStyle;
 }
 
-#if ENABLE(CSS_FILTERS)
-
 void RenderLayer::updateOrRemoveFilterClients()
 {
     if (!hasFilter()) {
@@ -6751,8 +6707,6 @@ void RenderLayer::filterNeedsRepaint()
         element->setNeedsStyleRecalc(SyntheticStyleChange);
     renderer().repaint();
 }
-
-#endif
 
 void RenderLayer::paintNamedFlowThreadInsideRegion(GraphicsContext* context, RenderNamedFlowFragment* region, LayoutRect paintDirtyRect, LayoutPoint paintOffset, PaintBehavior paintBehavior, PaintLayerFlags paintFlags)
 {

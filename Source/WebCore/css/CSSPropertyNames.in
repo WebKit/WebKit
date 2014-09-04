@@ -292,9 +292,7 @@ z-index
 mix-blend-mode
 isolation
 #endif
-#if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter
-#endif
 -webkit-align-content
 -webkit-align-items
 -webkit-align-self

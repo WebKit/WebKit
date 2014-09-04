@@ -55,6 +55,7 @@
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
+#include "StyleFilterData.h"
 #include "StyleFlexibleBoxData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"
@@ -73,10 +74,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(CSS_FILTERS)
-#include "StyleFilterData.h"
-#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
 #include "StyleGridData.h"
@@ -107,10 +104,7 @@ template<typename T, typename U> inline bool compareEqual(const T& t, const U& u
 
 namespace WebCore {
 
-#if ENABLE(CSS_FILTERS)
 class FilterOperations;
-#endif
-
 class BorderData;
 class CounterContent;
 class CursorList;
@@ -568,10 +562,8 @@ public:
         return imageOutsets(maskBoxImage());
     }
 
-#if ENABLE(CSS_FILTERS)
     bool hasFilterOutsets() const { return hasFilter() && filter().hasOutsets(); }
     FilterOutsets filterOutsets() const { return hasFilter() ? filter().outsets() : FilterOutsets(); }
-#endif
 
     Order rtlOrdering() const { return static_cast<Order>(inherited_flags.m_rtlOrdering); }
     void setRTLOrdering(Order o) { inherited_flags.m_rtlOrdering = o; }
@@ -1134,13 +1126,9 @@ public:
     
     ESpeak speak() const { return static_cast<ESpeak>(rareInheritedData->speak); }
 
-#if ENABLE(CSS_FILTERS)
     FilterOperations& mutableFilter() { return rareNonInheritedData.access()->m_filter.access()->m_operations; }
     const FilterOperations& filter() const { return rareNonInheritedData->m_filter->m_operations; }
     bool hasFilter() const { return !rareNonInheritedData->m_filter->m_operations.operations().isEmpty(); }
-#else
-    bool hasFilter() const { return false; }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return static_cast<BlendMode>(rareNonInheritedData->m_effectiveBlendMode); }
@@ -1569,9 +1557,7 @@ public:
 
     void setRubyPosition(RubyPosition position) { SET_VAR(rareInheritedData, m_rubyPosition, position); }
 
-#if ENABLE(CSS_FILTERS)
     void setFilter(const FilterOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_filter, m_operations, ops); }
-#endif
 
     void setTabSize(unsigned size) { SET_VAR(rareInheritedData, m_tabSize, size); }
 
@@ -2009,9 +1995,7 @@ public:
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
-#if ENABLE(CSS_FILTERS)
     static const FilterOperations& initialFilter() { DEPRECATED_DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
-#endif
 #if ENABLE(CSS_COMPOSITING)
     static BlendMode initialBlendMode() { return BlendModeNormal; }
     static Isolation initialIsolation() { return IsolationAuto; }

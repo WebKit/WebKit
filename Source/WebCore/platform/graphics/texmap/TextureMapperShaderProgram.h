@@ -74,13 +74,11 @@ public:
     TEXMAP_DECLARE_SAMPLER(sampler)
     TEXMAP_DECLARE_SAMPLER(mask)
 
-#if ENABLE(CSS_FILTERS)
     TEXMAP_DECLARE_UNIFORM(filterAmount)
     TEXMAP_DECLARE_UNIFORM(gaussianKernel)
     TEXMAP_DECLARE_UNIFORM(blurRadius)
     TEXMAP_DECLARE_UNIFORM(shadowOffset)
     TEXMAP_DECLARE_SAMPLER(contentTexture)
-#endif
 
     void setMatrix(GC3Duint, const TransformationMatrix&);
 

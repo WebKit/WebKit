@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebKitCSSFilterValue.h"
 
-#if ENABLE(CSS_FILTERS)
-
 #include "CSSValueList.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -101,5 +99,3 @@ bool WebKitCSSFilterValue::equals(const WebKitCSSFilterValue& other) const
 }
 
 }
-
-#endif // ENABLE(CSS_FILTERS)

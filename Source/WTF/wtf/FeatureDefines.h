@@ -372,10 +372,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_CSS_COMPOSITING 0
 #endif
 
-#if !defined(ENABLE_CSS_FILTERS)
-#define ENABLE_CSS_FILTERS 0
-#endif
-
 #if !defined(ENABLE_CSS_IMAGE_ORIENTATION)
 #define ENABLE_CSS_IMAGE_ORIENTATION 0
 #endif

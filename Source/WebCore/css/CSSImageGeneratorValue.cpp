@@ -112,10 +112,8 @@ PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const F
         return toCSSCanvasValue(this)->image(renderer, size);
     case CrossfadeClass:
         return toCSSCrossfadeValue(this)->image(renderer, size);
-#if ENABLE(CSS_FILTERS)
     case FilterImageClass:
         return toCSSFilterImageValue(this)->image(renderer, size);
-#endif
     case LinearGradientClass:
         return toCSSLinearGradientValue(this)->image(renderer, size);
     case RadialGradientClass:
@@ -133,10 +131,8 @@ bool CSSImageGeneratorValue::isFixedSize() const
         return toCSSCanvasValue(this)->isFixedSize();
     case CrossfadeClass:
         return toCSSCrossfadeValue(this)->isFixedSize();
-#if ENABLE(CSS_FILTERS)
     case FilterImageClass:
         return toCSSFilterImageValue(this)->isFixedSize();
-#endif
     case LinearGradientClass:
         return toCSSLinearGradientValue(this)->isFixedSize();
     case RadialGradientClass:
@@ -154,10 +150,8 @@ FloatSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
         return toCSSCanvasValue(this)->fixedSize(renderer);
     case CrossfadeClass:
         return toCSSCrossfadeValue(this)->fixedSize(renderer);
-#if ENABLE(CSS_FILTERS)
     case FilterImageClass:
         return toCSSFilterImageValue(this)->fixedSize(renderer);
-#endif
     case LinearGradientClass:
         return toCSSLinearGradientValue(this)->fixedSize(renderer);
     case RadialGradientClass:
@@ -175,10 +169,8 @@ bool CSSImageGeneratorValue::isPending() const
         return toCSSCrossfadeValue(this)->isPending();
     case CanvasClass:
         return toCSSCanvasValue(this)->isPending();
-#if ENABLE(CSS_FILTERS)
     case FilterImageClass:
         return toCSSFilterImageValue(this)->isPending();
-#endif
     case LinearGradientClass:
         return toCSSLinearGradientValue(this)->isPending();
     case RadialGradientClass:
@@ -196,10 +188,8 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement* renderer) cons
         return toCSSCrossfadeValue(this)->knownToBeOpaque(renderer);
     case CanvasClass:
         return false;
-#if ENABLE(CSS_FILTERS)
     case FilterImageClass:
         return toCSSFilterImageValue(this)->knownToBeOpaque(renderer);
-#endif
     case LinearGradientClass:
         return toCSSLinearGradientValue(this)->knownToBeOpaque(renderer);
     case RadialGradientClass:
@@ -219,11 +209,9 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
     case CanvasClass:
         toCSSCanvasValue(this)->loadSubimages(cachedResourceLoader);
         break;
-#if ENABLE(CSS_FILTERS)
     case FilterImageClass:
         toCSSFilterImageValue(this)->loadSubimages(cachedResourceLoader);
         break;
-#endif
     case LinearGradientClass:
         toCSSLinearGradientValue(this)->loadSubimages(cachedResourceLoader);
         break;

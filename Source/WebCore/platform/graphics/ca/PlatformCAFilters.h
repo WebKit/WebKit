@@ -26,8 +26,6 @@
 #ifndef PlatformCAFilters_h
 #define PlatformCAFilters_h
 
-#if ENABLE(CSS_FILTERS)
-
 #include "FilterOperations.h"
 #include "GraphicsTypes.h"
 #include "PlatformLayer.h"
@@ -63,7 +61,5 @@ public:
 };
 
 }
-
-#endif // ENABLE(CSS_FILTERS)
 
 #endif // PlatformCAFilters_h

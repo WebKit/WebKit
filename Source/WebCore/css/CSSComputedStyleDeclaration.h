@@ -58,9 +58,7 @@ public:
     bool useFixedFontDefaultSize() const;
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
-#if ENABLE(CSS_FILTERS)
     static PassRef<CSSValue> valueForFilter(const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
-#endif
 
 private:
     // The styled node is either the node passed into computedPropertyValue, or the

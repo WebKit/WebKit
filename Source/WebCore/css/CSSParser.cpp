@@ -78,6 +78,7 @@
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "TextEncoding.h"
+#include "WebKitCSSFilterValue.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
@@ -98,10 +99,6 @@
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
-#endif
-
-#if ENABLE(CSS_FILTERS)
-#include "WebKitCSSFilterValue.h"
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -2456,7 +2453,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitBoxOrdinalGroup:
         validPrimitive = validUnit(value, FInteger | FNonNeg, CSSStrictMode) && value->fValue;
         break;
-#if ENABLE(CSS_FILTERS)
     case CSSPropertyWebkitFilter:
         if (id == CSSValueNone)
             validPrimitive = true;
@@ -2468,7 +2464,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return true;
         }
         break;
-#endif
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
         if (cssCompositingEnabled())
@@ -8709,15 +8704,12 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList* valueList, RefPtr<CSSVal
     if (equalIgnoringCase(val->function->name, "-webkit-cross-fade("))
         return parseCrossfade(valueList, value);
 
-#if ENABLE(CSS_FILTERS)
     if (equalIgnoringCase(val->function->name, "-webkit-filter("))
         return parseFilterImage(valueList, value);
-#endif
 
     return false;
 }
 
-#if ENABLE(CSS_FILTERS)
 bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>& filter)
 {
     RefPtr<CSSFilterImageValue> result;
@@ -8758,7 +8750,6 @@ bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>
 
     return true;
 }
-#endif
 
 bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& crossfade)
 {
@@ -9267,8 +9258,6 @@ bool CSSParser::isCompositeOperator(CSSValueID valueID)
     return valueID >= CSSValueClear && valueID <= CSSValueXor;
 }
 
-#if ENABLE(CSS_FILTERS)
-
 static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue::FilterOperationType& filterType, unsigned& maximumArgumentCount)
 {
     if (equalIgnoringCase(name, "grayscale("))
@@ -9430,7 +9419,6 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& res
 
     return true;
 }
-#endif
 
 #if ENABLE(CSS_REGIONS)
 static bool validFlowName(const String& flowName)

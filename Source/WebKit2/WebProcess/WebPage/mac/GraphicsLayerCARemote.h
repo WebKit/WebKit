@@ -42,10 +42,8 @@ public:
     }
 
     virtual ~GraphicsLayerCARemote();
-    
-#if ENABLE(CSS_FILTERS)
+
     virtual bool filtersCanBeComposited(const WebCore::FilterOperations& filters) override;
-#endif
 
 private:
     virtual bool isGraphicsLayerCARemote() const override { return true; }

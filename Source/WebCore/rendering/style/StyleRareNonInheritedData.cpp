@@ -47,9 +47,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_marquee(StyleMarqueeData::create())
     , m_multiCol(StyleMultiColData::create())
     , m_transform(StyleTransformData::create())
-#if ENABLE(CSS_FILTERS)
     , m_filter(StyleFilterData::create())
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(StyleGridData::create())
     , m_gridItem(StyleGridItemData::create())
@@ -119,9 +117,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_marquee(o.m_marquee)
     , m_multiCol(o.m_multiCol)
     , m_transform(o.m_transform)
-#if ENABLE(CSS_FILTERS)
     , m_filter(o.m_filter)
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(o.m_grid)
     , m_gridItem(o.m_gridItem)
@@ -216,9 +212,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_marquee == o.m_marquee
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform
-#if ENABLE(CSS_FILTERS)
         && m_filter == o.m_filter
-#endif
 #if ENABLE(CSS_GRID_LAYOUT)
         && m_grid == o.m_grid
         && m_gridItem == o.m_gridItem
@@ -348,11 +342,7 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
 
 bool StyleRareNonInheritedData::hasFilters() const
 {
-#if ENABLE(CSS_FILTERS)
     return m_filter.get() && !m_filter->m_operations.isEmpty();
-#else
-    return false;
-#endif
 }
 
 } // namespace WebCore

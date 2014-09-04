@@ -182,9 +182,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerWin::clone(PlatformCALayerClient* own
     newLayer->setOpaque(isOpaque());
     newLayer->setBackgroundColor(backgroundColor());
     newLayer->setContentsScale(contentsScale());
-#if ENABLE(CSS_FILTERS)
     newLayer->copyFiltersFrom(this);
-#endif
 
     return newLayer;
 }
@@ -545,8 +543,6 @@ void PlatformCALayerWin::setOpacity(float value)
     setNeedsCommit();
 }
 
-#if ENABLE(CSS_FILTERS)
-
 void PlatformCALayerWin::setFilters(const FilterOperations&)
 {
 }
@@ -554,8 +550,6 @@ void PlatformCALayerWin::setFilters(const FilterOperations&)
 void PlatformCALayerWin::copyFiltersFrom(const PlatformCALayer*)
 {
 }
-
-#endif // ENABLE(CSS_FILTERS)
 
 void PlatformCALayerWin::setName(const String& value)
 {

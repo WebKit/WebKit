@@ -36,12 +36,10 @@ GraphicsLayerCARemote::~GraphicsLayerCARemote()
 {
 }
 
-#if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filters)
 {
     return PlatformCALayerRemote::filtersCanBeComposited(filters);
 }
-#endif
 
 PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {

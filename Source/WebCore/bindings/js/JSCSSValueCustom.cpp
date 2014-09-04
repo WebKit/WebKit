@@ -33,15 +33,12 @@
 #include "JSNode.h"
 #include "JSSVGColor.h"
 #include "JSSVGPaint.h"
+#include "JSWebKitCSSFilterValue.h"
 #include "JSWebKitCSSTransformValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
-#include "WebKitCSSTransformValue.h"
-
-#if ENABLE(CSS_FILTERS)
-#include "JSWebKitCSSFilterValue.h"
 #include "WebKitCSSFilterValue.h"
-#endif
+#include "WebKitCSSTransformValue.h"
 
 using namespace JSC;
 
@@ -87,10 +84,8 @@ JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSValue* value)
 
     if (value->isWebKitCSSTransformValue())
         wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSTransformValue, value);
-#if ENABLE(CSS_FILTERS)
     else if (value->isWebKitCSSFilterValue())
         wrapper = CREATE_DOM_WRAPPER(globalObject, WebKitCSSFilterValue, value);
-#endif
     else if (value->isValueList())
         wrapper = CREATE_DOM_WRAPPER(globalObject, CSSValueList, value);
     else if (value->isSVGPaint())

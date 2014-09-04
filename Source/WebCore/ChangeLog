@@ -1,3 +1,208 @@
+2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove CSS_FILTERS flag
+        https://bugs.webkit.org/show_bug.cgi?id=136529
+
+        Reviewed by Dirk Schulze.
+
+        No new tests, no behaviour changed.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * WebCore.exp.in:
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFilterImageValue.cpp:
+        * css/CSSFilterImageValue.h:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::isFixedSize):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::isPending):
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGeneratedImage):
+        (WebCore::CSSParser::parseFilterImage):
+        (WebCore::CSSParser::parseFilter):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::hasFailedOrCanceledSubresources):
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/CSSValue.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::generatedOrPendingFromValue):
+        (WebCore::StyleResolver::loadPendingResources):
+        * css/StyleResolver.h:
+        * css/WebKitCSSFilterValue.cpp:
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSFilterValue.idl:
+        * loader/cache/CachedSVGDocumentReference.cpp:
+        * loader/cache/CachedSVGDocumentReference.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFilter):
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::checkForMatchingFilterFunctionLists):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::checkForMatchingFilterFunctionLists):
+        * page/animation/KeyframeAnimation.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::validateFilterOperations):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::applyFilterAnimation):
+        (WebCore::GraphicsLayerAnimation::applyInternal):
+        * platform/graphics/GraphicsLayerAnimation.h:
+        * platform/graphics/IntRectExtent.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::propertyIdToString):
+        (WebCore::supportsAcceleratedFilterAnimations):
+        (WebCore::GraphicsLayerCA::filtersCanBeComposited):
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimations):
+        (WebCore::GraphicsLayerCA::setFilters):
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateFilters):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::setFilterAnimationKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimationMac::setFromValue):
+        (PlatformCAAnimationMac::setToValue):
+        (PlatformCAAnimationMac::setValues):
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        (PlatformCAFilters::animatedFilterPropertyName):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::clone):
+        (PlatformCALayerMac::filtersCanBeComposited):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimationWin::setFromValue):
+        (PlatformCAAnimationWin::setToValue):
+        (PlatformCAAnimationWin::setValues):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.h:
+        * platform/graphics/ca/win/PlatformCAFiltersWin.cpp:
+        (PlatformCAFilters::animatedFilterPropertyName):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::clone):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        * platform/graphics/filters/FilterOperation.cpp:
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/graphics/filters/FilterOperations.cpp:
+        * platform/graphics/filters/FilterOperations.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::GraphicsLayerTextureMapper::setFilters):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::BitmapTextureGL::applyFilters):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::applyFilters):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::setAnimatedFilters):
+        (WebCore::TextureMapperLayer::computeOverlapRegions):
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+        (WebCore::TextureMapperLayer::setFilters):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (WebCore::TextureMapperLayer::hasFilters):
+        * platform/graphics/texmap/TextureMapperShaderProgram.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::didChangeFilters):
+        (WebCore::CoordinatedGraphicsLayer::setFilters):
+        (WebCore::CoordinatedGraphicsLayer::syncFilters):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::setLayerFiltersIfNeeded):
+        (WebCore::CoordinatedGraphicsScene::setLayerState):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        * rendering/FilterEffectRenderer.cpp:
+        * rendering/FilterEffectRenderer.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasFilter): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateFilters):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        (WebCore::RenderLayerBacking::graphicsLayerToCSSProperty):
+        (WebCore::RenderLayerBacking::cssToGraphicsLayerProperty):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFilters):
+        * rendering/RenderLayerFilterInfo.cpp:
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleWillChange):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::repaintUsingContainer):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleFilterData.cpp:
+        * rendering/style/StyleFilterData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::hasFilters):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientLayersForInvalidation):
+
 2014-09-04  Pratik Solanki  <psolanki@apple.com>
 
         Remove iOS specific disk image cache

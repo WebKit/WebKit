@@ -226,7 +226,6 @@ void CoordinatedGraphicsScene::setLayerChildrenIfNeeded(TextureMapperLayer* laye
     layer->setChildren(children);
 }
 
-#if ENABLE(CSS_FILTERS)
 void CoordinatedGraphicsScene::setLayerFiltersIfNeeded(TextureMapperLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
     if (!state.filtersChanged)
@@ -234,7 +233,6 @@ void CoordinatedGraphicsScene::setLayerFiltersIfNeeded(TextureMapperLayer* layer
 
     layer->setFilters(state.filters);
 }
-#endif
 
 void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const CoordinatedGraphicsLayerState& layerState)
 {
@@ -314,9 +312,7 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
     createTilesIfNeeded(layer, layerState);
     removeTilesIfNeeded(layer, layerState);
     updateTilesIfNeeded(layer, layerState);
-#if ENABLE(CSS_FILTERS)
     setLayerFiltersIfNeeded(layer, layerState);
-#endif
     setLayerAnimationsIfNeeded(layer, layerState);
 #if USE(GRAPHICS_SURFACE)
     syncPlatformLayerIfNeeded(layer, layerState);

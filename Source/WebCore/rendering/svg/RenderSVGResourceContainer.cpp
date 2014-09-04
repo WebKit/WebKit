@@ -115,10 +115,8 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 
 void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
-#if ENABLE(CSS_FILTERS)
     for (auto* clientLayer : m_clientLayers)
         clientLayer->filterNeedsRepaint();
-#endif
 }
 
 void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)

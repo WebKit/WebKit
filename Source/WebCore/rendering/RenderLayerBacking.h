@@ -231,9 +231,7 @@ public:
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 
-#if ENABLE(CSS_FILTERS)
     bool canCompositeFilters() const { return m_canCompositeFilters; }
-#endif
 
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     double backingStoreMemoryEstimate() const;
@@ -280,9 +278,7 @@ private:
 
     void updateOpacity(const RenderStyle&);
     void updateTransform(const RenderStyle&);
-#if ENABLE(CSS_FILTERS)
     void updateFilters(const RenderStyle&);
-#endif
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
 #endif
@@ -351,9 +347,7 @@ private:
     bool m_isMainFrameRenderViewLayer;
     bool m_usingTiledCacheLayer;
     bool m_requiresOwnBackingStore;
-#if ENABLE(CSS_FILTERS)
     bool m_canCompositeFilters;
-#endif
     bool m_backgroundLayerPaintsFixedRootBackground;
 
     static bool m_creatingPrimaryGraphicsLayer;

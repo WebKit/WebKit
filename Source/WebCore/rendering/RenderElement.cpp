@@ -274,8 +274,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
-    
-#if ENABLE(CSS_FILTERS)
+
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
         RenderLayer* layer = toRenderLayerModelObject(this)->layer();
         if (!layer->isComposited() || layer->paintsWithFilters())
@@ -283,7 +282,6 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
-#endif
     
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the

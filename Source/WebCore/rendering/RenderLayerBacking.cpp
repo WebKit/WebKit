@@ -32,6 +32,7 @@
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"
 #include "Chrome.h"
+#include "FilterEffectRenderer.h"
 #include "FontCache.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -60,10 +61,6 @@
 #include "StyleResolver.h"
 #include "TiledBacking.h"
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(CSS_FILTERS)
-#include "FilterEffectRenderer.h"
-#endif
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
 #include "GraphicsContext3D.h"
@@ -112,9 +109,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     , m_isMainFrameRenderViewLayer(false)
     , m_usingTiledCacheLayer(false)
     , m_requiresOwnBackingStore(true)
-#if ENABLE(CSS_FILTERS)
     , m_canCompositeFilters(false)
-#endif
     , m_backgroundLayerPaintsFixedRootBackground(false)
 {
     Page* page = renderer().frame().page();
@@ -313,9 +308,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     
     updateOpacity(renderer().style());
     updateTransform(renderer().style());
-#if ENABLE(CSS_FILTERS)
     updateFilters(renderer().style());
-#endif
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(renderer().style());
 #endif
@@ -375,12 +368,10 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
         m_graphicsLayer->setTransform(t);
 }
 
-#if ENABLE(CSS_FILTERS)
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
     m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
 }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
@@ -656,10 +647,8 @@ void RenderLayerBacking::updateGeometry()
     // Set opacity, if it is not animating.
     if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyOpacity, AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards))
         updateOpacity(style);
-        
-#if ENABLE(CSS_FILTERS)
+
     updateFilters(style);
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
@@ -2325,20 +2314,14 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 {
     bool hasOpacity = keyframes.containsProperty(CSSPropertyOpacity);
     bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyWebkitTransform);
-#if ENABLE(CSS_FILTERS)
     bool hasFilter = keyframes.containsProperty(CSSPropertyWebkitFilter);
-#else
-    bool hasFilter = false;
-#endif
 
     if (!hasOpacity && !hasTransform && !hasFilter)
         return false;
     
     KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
     KeyframeValueList opacityVector(AnimatedPropertyOpacity);
-#if ENABLE(CSS_FILTERS)
     KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
-#endif
 
     size_t numKeyframes = keyframes.size();
     for (size_t i = 0; i < numKeyframes; ++i) {
@@ -2358,10 +2341,8 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
         if ((hasOpacity && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyOpacity))
             opacityVector.insert(FloatAnimationValue::create(key, keyframeStyle->opacity(), tf));
 
-#if ENABLE(CSS_FILTERS)
         if ((hasFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitFilter))
             filterVector.insert(FilterAnimationValue::create(key, keyframeStyle->filter(), tf));
-#endif
     }
 
     if (renderer().frame().page() && !renderer().frame().page()->settings().acceleratedCompositedAnimationsEnabled())
@@ -2375,10 +2356,8 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-#if ENABLE(CSS_FILTERS)
     if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize(), anim, keyframes.animationName(), timeOffset))
         didAnimate = true;
-#endif
 
     return didAnimate;
 }
@@ -2428,7 +2407,6 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
         }
     }
 
-#if ENABLE(CSS_FILTERS)
     if (property == CSSPropertyWebkitFilter && m_owningLayer.hasFilter()) {
         const Animation* filterAnim = toStyle->transitionForProperty(CSSPropertyWebkitFilter);
         if (filterAnim && !filterAnim->isEmptyOrZeroDuration()) {
@@ -2442,7 +2420,6 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             }
         }
     }
-#endif
 
     return didAnimate;
 }
@@ -2529,11 +2506,7 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID 
             cssProperty = CSSPropertyBackgroundColor;
             break;
         case AnimatedPropertyWebkitFilter:
-#if ENABLE(CSS_FILTERS)
             cssProperty = CSSPropertyWebkitFilter;
-#else
-            ASSERT_NOT_REACHED();
-#endif
             break;
         case AnimatedPropertyInvalid:
             ASSERT_NOT_REACHED();
@@ -2550,10 +2523,8 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID 
             return AnimatedPropertyOpacity;
         case CSSPropertyBackgroundColor:
             return AnimatedPropertyBackgroundColor;
-#if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
             return AnimatedPropertyWebkitFilter;
-#endif
         default:
             // It's fine if we see other css properties here; they are just not accelerated.
             break;

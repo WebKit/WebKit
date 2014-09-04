@@ -220,10 +220,8 @@ public:
     
     ImageQualityController& imageQualityController();
 
-#if ENABLE(CSS_FILTERS)
     void setHasSoftwareFilters(bool hasSoftwareFilters) { m_hasSoftwareFilters = hasSoftwareFilters; }
     bool hasSoftwareFilters() const { return m_hasSoftwareFilters; }
-#endif
 
     uint64_t rendererCount() const { return m_rendererCount; }
     void didCreateRenderer() { ++m_rendererCount; }
@@ -362,9 +360,7 @@ private:
     unsigned m_renderCounterCount;
 
     bool m_selectionWasCaret;
-#if ENABLE(CSS_FILTERS)
     bool m_hasSoftwareFilters;
-#endif
 
     HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
 

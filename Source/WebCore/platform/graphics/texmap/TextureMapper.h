@@ -87,9 +87,7 @@ public:
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
     inline bool isOpaque() const { return !(m_flags & SupportsAlpha); }
 
-#if ENABLE(CSS_FILTERS)
     virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) { return this; }
-#endif
 
 protected:
     IntSize m_contentSize;

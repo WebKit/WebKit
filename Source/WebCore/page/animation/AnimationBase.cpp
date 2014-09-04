@@ -72,9 +72,7 @@ AnimationBase::AnimationBase(const Animation& transition, RenderElement* rendere
     : m_animationState(AnimationState::New)
     , m_isAccelerated(false)
     , m_transformFunctionListValid(false)
-#if ENABLE(CSS_FILTERS)
     , m_filterFunctionListsMatch(false)
-#endif
     , m_startTime(0)
     , m_pauseTime(-1)
     , m_requestedStartTime(0)

@@ -243,11 +243,7 @@ static String propertyIdToString(AnimatedPropertyID property)
     case AnimatedPropertyBackgroundColor:
         return "backgroundColor";
     case AnimatedPropertyWebkitFilter:
-#if ENABLE(CSS_FILTERS)
         return "filters";
-#else
-        ASSERT_NOT_REACHED();
-#endif
     case AnimatedPropertyInvalid:
         ASSERT_NOT_REACHED();
     }
@@ -275,7 +271,6 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
     return false;
 }
 
-#if ENABLE(CSS_FILTERS) || !ASSERT_DISABLED
 static inline bool supportsAcceleratedFilterAnimations()
 {
 // <rdar://problem/10907251> - WebKit2 doesn't support CA animations of CI filters on Lion and below
@@ -285,7 +280,6 @@ static inline bool supportsAcceleratedFilterAnimations()
     return false;
 #endif
 }
-#endif
 
 std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client)
 {
@@ -300,7 +294,6 @@ std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* facto
     return graphicsLayer;
 }
 
-#if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 {
 #if PLATFORM(COCOA)
@@ -309,7 +302,6 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
     return PlatformCALayerWin::filtersCanBeComposited(filters);
 #endif
 }
-#endif
     
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
@@ -578,9 +570,7 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
             
             if (currAnimation.m_property == AnimatedPropertyWebkitTransform || currAnimation.m_property == AnimatedPropertyOpacity
                     || currAnimation.m_property == AnimatedPropertyBackgroundColor
-#if ENABLE(CSS_FILTERS)
                     || currAnimation.m_property == AnimatedPropertyWebkitFilter
-#endif
                 )
                 moveOrCopyLayerAnimation(operation, animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index, currAnimation.m_subIndex), fromLayer, toLayer);
         }
@@ -673,7 +663,6 @@ void GraphicsLayerCA::setOpacity(float opacity)
     noteLayerPropertyChanged(OpacityChanged);
 }
 
-#if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
 {
     bool canCompositeFilters = filtersCanBeComposited(filterOperations);
@@ -695,7 +684,6 @@ bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
     }
     return canCompositeFilters;
 }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::setBlendMode(BlendMode blendMode)
@@ -802,12 +790,10 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
     bool createdAnimations = false;
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
-#if ENABLE(CSS_FILTERS)
     else if (valueList.property() == AnimatedPropertyWebkitFilter) {
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
     }
-#endif
     else
         createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, timeOffset);
 
@@ -1324,11 +1310,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     if (m_uncommittedChanges & OpacityChanged)
         updateOpacityOnLayer();
-    
-#if ENABLE(CSS_FILTERS)
+
     if (m_uncommittedChanges & FiltersChanged)
         updateFilters();
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     if (m_uncommittedChanges & BlendModeChanged)
@@ -1641,7 +1625,6 @@ void GraphicsLayerCA::updateBackfaceVisibility()
     }
 }
 
-#if ENABLE(CSS_FILTERS)
 void GraphicsLayerCA::updateFilters()
 {
     m_layer->setFilters(m_filters);
@@ -1656,7 +1639,6 @@ void GraphicsLayerCA::updateFilters()
         }
     }
 }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 void GraphicsLayerCA::updateBlendMode()
@@ -1687,9 +1669,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         | ChildrenTransformChanged
         | ChildrenChanged
         | BackfaceVisibilityChanged
-#if ENABLE(CSS_FILTERS)
         | FiltersChanged
-#endif
         | OpacityChanged;
 
     if (purpose == NoStructuralLayer) {
@@ -2378,7 +2358,6 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     return validMatrices;
 }
 
-#if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, double timeOffset)
 {
     bool isKeyframe = valueList.size() > 2;
@@ -2442,7 +2421,6 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
 
     return true;
 }
-#endif
 
 PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
@@ -2695,7 +2673,6 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     return true;
 }
 
-#if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, int internalFilterPropertyIndex)
 {
     ASSERT(valueList.size() == 2);
@@ -2768,7 +2745,6 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
 
     return true;
 }
-#endif
 
 void GraphicsLayerCA::suspendAnimations(double time)
 {

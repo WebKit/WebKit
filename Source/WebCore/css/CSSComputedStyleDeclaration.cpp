@@ -62,6 +62,7 @@
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/NeverDestroyed.h>
@@ -75,10 +76,6 @@
 
 #if ENABLE(CSS_SHAPES)
 #include "ShapeValue.h"
-#endif
-
-#if ENABLE(CSS_FILTERS)
-#include "WebKitCSSFilterValue.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -283,9 +280,6 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
 #endif
-#if ENABLE(CSS_FILTERS)
-    CSSPropertyWebkitFilter,
-#endif
     CSSPropertyWebkitAlignContent,
     CSSPropertyWebkitAlignItems,
     CSSPropertyWebkitAlignSelf,
@@ -296,6 +290,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitFlexWrap,
     CSSPropertyWebkitJustifyContent,
     CSSPropertyWebkitJustifySelf,
+    CSSPropertyWebkitFilter,
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitFontVariantLigatures,
@@ -883,7 +878,6 @@ PassRef<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shado
     return WTF::move(list);
 }
 
-#if ENABLE(CSS_FILTERS)
 PassRef<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle* style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
 {
     if (filterOperations.operations().isEmpty())
@@ -974,7 +968,6 @@ PassRef<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle* styl
 
     return WTF::move(list);
 }
-#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
 static PassRef<CSSValue> specifiedValueForGridTrackBreadth(const GridLength& trackBreadth, const RenderStyle* style)
@@ -1618,9 +1611,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransform:
-#if ENABLE(CSS_FILTERS)
     case CSSPropertyWebkitFilter:
-#endif
         return true;
     case CSSPropertyMargin: {
         if (!renderer || !renderer->isBox())
@@ -2917,10 +2908,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitShapeOutside:
             return shapePropertyValue(style.get(), style->shapeOutside());
 #endif
-#if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get(), style->filter());
-#endif
 #if ENABLE(CSS_COMPOSITING)
         case CSSPropertyMixBlendMode:
             return cssValuePool().createValue(style->blendMode());

@@ -320,9 +320,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* own
     newLayer->setOpaque(isOpaque());
     newLayer->setBackgroundColor(backgroundColor());
     newLayer->setContentsScale(contentsScale());
-#if ENABLE(CSS_FILTERS)
     newLayer->copyFiltersFrom(this);
-#endif
     newLayer->updateCustomAppearance(customAppearance());
 
     if (type == LayerTypeAVPlayerLayer) {
@@ -710,7 +708,6 @@ void PlatformCALayerMac::setOpacity(float value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#if ENABLE(CSS_FILTERS)
 void PlatformCALayerMac::setFilters(const FilterOperations& filters)
 {
     PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters);
@@ -746,7 +743,6 @@ bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
 
     return true;
 }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 void PlatformCALayerMac::setBlendMode(BlendMode blendMode)

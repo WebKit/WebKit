@@ -31,8 +31,6 @@
 #ifndef RenderLayerFilterInfo_h
 #define RenderLayerFilterInfo_h
 
-#if ENABLE(CSS_FILTERS)
-
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
 #include "RenderLayer.h"
@@ -88,7 +86,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_FILTERS)
 
 #endif // RenderLayerFilterInfo_h
