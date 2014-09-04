@@ -1,3 +1,9 @@
+2014-09-03  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unreviewed, mark test as crashing
+
+        * platform/wk2/TestExpectations:
+
 2014-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Text caret changes to color of text in Mail and Notes
