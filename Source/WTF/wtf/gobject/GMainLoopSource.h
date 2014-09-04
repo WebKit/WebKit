@@ -32,7 +32,6 @@
 #include <wtf/gobject/GRefPtr.h>
 
 typedef struct _GSocket GSocket;
-typedef union _GMutex GMutex;
 
 namespace WTF {
 
@@ -66,13 +65,13 @@ private:
 
     enum Status { Ready, Scheduled, Dispatched };
 
-    void cancelWithoutLocking();
+    void reset();
     void scheduleIdleSource(const char* name, GSourceFunc, int priority, GMainContext*);
     void scheduleTimeoutSource(const char* name, GSourceFunc, int priority, GMainContext*);
     void voidCallback();
     bool boolCallback();
     bool socketCallback(GIOCondition);
-    void destroy(const std::function<void ()>&);
+    void destroy();
 
     static gboolean voidSourceCallback(GMainLoopSource*);
     static gboolean boolSourceCallback(GMainLoopSource*);
@@ -80,20 +79,12 @@ private:
 
     DeleteOnDestroyType m_deleteOnDestroy;
     Status m_status;
-    GMutex m_mutex;
-
-    struct Context {
-        Context() = default;
-        Context(Context&&) = default;
-        Context& operator=(Context&&) = default;
-
-        GRefPtr<GSource> source;
-        GRefPtr<GCancellable> cancellable;
-        std::function<void ()> voidCallback;
-        std::function<bool ()> boolCallback;
-        std::function<bool (GIOCondition)> socketCallback;
-        std::function<void ()> destroyCallback;
-    } m_context;
+    GRefPtr<GSource> m_source;
+    GRefPtr<GCancellable> m_cancellable;
+    std::function<void ()> m_voidCallback;
+    std::function<bool ()> m_boolCallback;
+    std::function<bool (GIOCondition)> m_socketCallback;
+    std::function<void ()> m_destroyCallback;
 };
 
 } // namespace WTF

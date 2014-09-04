@@ -1,3 +1,17 @@
+2014-09-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r173201.
+        https://bugs.webkit.org/show_bug.cgi?id=136538
+
+        Improves the situation but also introduces additional crashes.
+        (Requested by zdobersek on #webkit).
+
+        Reverted changeset:
+
+        "GMainLoopSource is exposed to race conditions"
+        https://bugs.webkit.org/show_bug.cgi?id=135800
+        http://trac.webkit.org/changeset/173201
+
 2014-09-04  Pratik Solanki  <psolanki@apple.com>
 
         Remove iOS specific disk image cache
