@@ -618,7 +618,7 @@ String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request,
         // !-- following a less-than sign. We stop instead on any ampersand
         // slash, or less-than sign.
         size_t position = 0;
-        if ((position = decodedSnippet.find("=")) != notFound
+        if ((position = decodedSnippet.find('=')) != notFound
             && (position = decodedSnippet.find(isNotHTMLSpace, position + 1)) != notFound
             && (position = decodedSnippet.find(isTerminatingCharacter, isHTMLQuote(decodedSnippet[position]) ? position + 1 : position)) != notFound) {
             decodedSnippet.truncate(position);

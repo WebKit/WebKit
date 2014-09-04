@@ -180,7 +180,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
         // FIXME: serviceType calculation does not belong in this function.
         if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
             serviceType = param.value();
-            size_t pos = serviceType.find(";");
+            size_t pos = serviceType.find(';');
             if (pos != notFound)
                 serviceType = serviceType.left(pos);
         }

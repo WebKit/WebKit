@@ -81,7 +81,7 @@ bool UserContentURLPattern::parse(const String& pattern)
     if (equalIgnoringCase(m_scheme, "file"))
         pathStartPos = hostStartPos;
     else {
-        size_t hostEndPos = pattern.find("/", hostStartPos);
+        size_t hostEndPos = pattern.find('/', hostStartPos);
         if (hostEndPos == notFound)
             return false;
 
@@ -99,7 +99,7 @@ bool UserContentURLPattern::parse(const String& pattern)
         }
 
         // No other '*' can occur in the host.
-        if (m_host.find("*") != notFound)
+        if (m_host.find('*') != notFound)
             return false;
 
         pathStartPos = hostEndPos;

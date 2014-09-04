@@ -128,7 +128,7 @@ static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(const String& qu
     while (equalSearchLocation < queryLength - 1 && equalSearchLength) {
         
         // Search for "=".
-        size_t equalLocation = queryString.find("=", equalSearchLocation);
+        size_t equalLocation = queryString.find('=', equalSearchLocation);
         if (equalLocation == notFound)
             break;
         
@@ -141,7 +141,7 @@ static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(const String& qu
         size_t keyLength = equalLocation - equalSearchLocation;
         
         // Seach for the ampersand.
-        size_t ampersandLocation = queryString.find("&", indexAfterEqual);
+        size_t ampersandLocation = queryString.find('&', indexAfterEqual);
         
         // Get the value after the "=", before the ampersand.
         size_t valueLocation = indexAfterEqual;

@@ -1,3 +1,21 @@
+2014-09-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use WTFString::find(char) in more places
+        https://bugs.webkit.org/show_bug.cgi?id=136541
+
+        Reviewed by Daniel Bates.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::queryKeysAndValues):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodedSnippetForAttribute):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse):
+
 2014-09-04  Antti Koivisto  <antti@apple.com>
 
         Try to fix iOS build.
