@@ -1,3 +1,13 @@
+2014-09-04  Renato Nagy  <rnagy@inf.u-szeged.hu>
+
+        Remove Qt cruft: MIMESniffing.cpp and MIMESniffing.h
+        https://bugs.webkit.org/show_bug.cgi?id=136528
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/MIMESniffing.cpp: Removed.
+        * platform/network/MIMESniffing.h: Removed.
+
 2014-09-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce CSS_BASIC_SHAPES_TYPE_CASTS, and use it
