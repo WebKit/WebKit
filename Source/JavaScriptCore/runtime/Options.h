@@ -172,7 +172,7 @@ typedef const char* optionString;
     v(bool, callEdgeProfileReallyProcessesLog, true) \
     v(bool, baselineDoesCallEdgeProfiling, false) \
     v(bool, dfgDoesCallEdgeProfiling, true) \
-    v(bool, enableCallEdgeProfiling, true) \
+    v(bool, enableCallEdgeProfiling, false) \
     v(unsigned, frequentCallThreshold, 2) \
     v(bool, optimizeNativeCalls, false) \
     \
