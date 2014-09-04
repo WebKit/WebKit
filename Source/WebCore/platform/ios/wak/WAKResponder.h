@@ -46,7 +46,9 @@
 - (void)mouseExited:(WebEvent *)theEvent;
 - (void)keyDown:(WebEvent *)event;
 - (void)keyUp:(WebEvent *)event;
+#if ENABLE(TOUCH_EVENTS)
 - (void)touch:(WebEvent *)event;
+#endif
 
 - (void)insertText:(NSString *)text;
 

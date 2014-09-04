@@ -1257,7 +1257,9 @@ private:
 
 #if PLATFORM(IOS)
     bool m_adjustForIOSCaretWhenScrolling : 1;
+#if ENABLE(IOS_TOUCH_EVENTS)
     bool m_registeredAsTouchEventListenerForScrolling : 1;
+#endif
     bool m_inUserScroll : 1;
     bool m_requiresScrollBoundsOriginUpdate : 1;
 #endif

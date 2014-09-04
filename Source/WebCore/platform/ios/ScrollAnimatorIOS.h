@@ -44,6 +44,7 @@ public:
 #endif
 
 private:
+#if ENABLE(TOUCH_EVENTS)
     void determineScrollableAreaForTouchSequence(const IntSize& touchDelta);
 
     // State for handling sequences of touches in defaultTouchEventHandler.
@@ -63,6 +64,7 @@ private:
     // When we're in a touch sequence, this will point to the scrollable area that
     // should actually be scrolled during the sequence.
     ScrollableArea* m_scrollableAreaForTouchSequence;
+#endif
 };
 
 } // namespace WebCore

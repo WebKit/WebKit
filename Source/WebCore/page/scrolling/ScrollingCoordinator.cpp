@@ -98,7 +98,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
 
 Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, const IntPoint& frameLocation) const
 {
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
     ASSERT(frame->isMainFrame());
     UNUSED_PARAM(frameLocation);

@@ -28,10 +28,13 @@
 
 #include "Frame.h"
 #include "Page.h"
-#include "PlatformTouchEventIOS.h"
 #include "RenderLayer.h"
 #include "ScrollableArea.h"
 #include <wtf/PassOwnPtr.h>
+
+#if ENABLE(TOUCH_EVENTS)
+#include "PlatformTouchEventIOS.h"
+#endif
 
 using namespace WebCore;
 
@@ -44,11 +47,13 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
 
 ScrollAnimatorIOS::ScrollAnimatorIOS(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
+#if ENABLE(TOUCH_EVENTS)
     , m_touchScrollAxisLatch(AxisLatchNotComputed)
     , m_inTouchSequence(false)
     , m_committedToScrollAxis(false)
     , m_startedScroll(false)
     , m_scrollableAreaForTouchSequence(0)
+#endif
 {
 }
 
@@ -56,6 +61,7 @@ ScrollAnimatorIOS::~ScrollAnimatorIOS()
 {
 }
 
+#if ENABLE(TOUCH_EVENTS)
 bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
     if (touchEvent.type() == PlatformEvent::TouchStart && touchEvent.touchCount() == 1) {
@@ -180,5 +186,6 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
     ASSERT(scrollableArea);
     m_scrollableAreaForTouchSequence = scrollableArea;
 }
+#endif
 
 } // namespace WebCore

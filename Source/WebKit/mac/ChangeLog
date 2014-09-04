@@ -1,3 +1,13 @@
+2014-09-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make iOS build when ENABLE_TOUCH_EVENT and ENABLE_IOS_TOUCH_EVENTS disabled
+        https://bugs.webkit.org/show_bug.cgi?id=136494
+
+        Reviewed by Andy Estes.
+
+        * MigrateHeaders.make: Migrate header WebEventRegion.h only when ENABLE_IOS_TOUCH_EVENTS is defined.
+        * WebView/WebView.mm: Substitute ENABLE(IOS_TOUCH_EVENTS) for ENABLE(TOUCH_EVENTS).
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient

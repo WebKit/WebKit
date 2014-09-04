@@ -176,7 +176,11 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #if PLATFORM(IOS)
     , m_adjustForIOSCaretWhenScrolling(false)
+#endif
+#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     , m_registeredAsTouchEventListenerForScrolling(false)
+#endif
     , m_inUserScroll(false)
     , m_requiresScrollBoundsOriginUpdate(false)
 #endif
@@ -235,7 +239,7 @@ RenderLayer::~RenderLayer()
     renderer().view().frameView().removeScrollableArea(this);
 
     if (!renderer().documentBeingDestroyed()) {
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
         unregisterAsTouchEventListenerForScrolling();
 #endif
         if (Element* element = renderer().element())
@@ -2065,7 +2069,9 @@ bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
     return ScrollableArea::handleTouchEvent(touchEvent);
 }
 #endif
+#endif // PLATFORM(IOS)
 
+#if ENABLE(IOS_TOUCH_EVENTS)
 void RenderLayer::registerAsTouchEventListenerForScrolling()
 {
     if (!renderer().element() || m_registeredAsTouchEventListenerForScrolling)
@@ -2083,7 +2089,7 @@ void RenderLayer::unregisterAsTouchEventListenerForScrolling()
     renderer().document().removeTouchEventListener(renderer().element());
     m_registeredAsTouchEventListenerForScrolling = false;
 }
-#endif // PLATFORM(IOS)
+#endif // ENABLE(IOS_TOUCH_EVENTS)
 
 bool RenderLayer::usesCompositedScrolling() const
 {
@@ -6576,7 +6582,7 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
     if (addedOrRemoved)
         updateNeedsCompositedScrolling();
 
-#if PLATFORM(IOS)
+#if ENABLE(IOS_TOUCH_EVENTS)
     if (addedOrRemoved) {
         if (isScrollable && !hasAcceleratedTouchScrolling())
             registerAsTouchEventListenerForScrolling();

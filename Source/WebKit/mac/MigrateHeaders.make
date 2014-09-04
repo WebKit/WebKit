@@ -215,8 +215,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WebCoreThread.h \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadMessage.h \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h \
-    $(PRIVATE_HEADERS_DIR)/WebEvent.h \
-    $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
+    $(PRIVATE_HEADERS_DIR)/WebEvent.h
 
 # Special case WAKScrollView.h, which contains the protocol named
 # <WebCoreFrameScrollView> and shouldn't be changed by the default rule.
@@ -230,6 +229,11 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMTouch.h \
     $(PRIVATE_HEADERS_DIR)/DOMTouchEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMTouchList.h
+endif
+
+ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS, $(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
+all : \
+    $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
 endif
 
 ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS, $(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)

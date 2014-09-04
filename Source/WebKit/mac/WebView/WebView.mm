@@ -274,7 +274,7 @@
 #include <WebCore/QuickLook.h>
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 #import <WebCore/WebEventRegion.h>
 #endif
 

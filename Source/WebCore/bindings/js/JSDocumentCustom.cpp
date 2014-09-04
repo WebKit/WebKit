@@ -25,22 +25,25 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSCanvasRenderingContext2D.h"
-#if ENABLE(WEBGL)
-#include "JSWebGLRenderingContext.h"
-#endif
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
 #include "JSSVGDocument.h"
-#include "JSTouch.h"
-#include "JSTouchList.h"
 #include "Location.h"
 #include "NodeTraversal.h"
 #include "ScriptController.h"
 #include "SVGDocument.h"
 #include "TouchList.h"
-
 #include <wtf/GetPtr.h>
+
+#if ENABLE(WEBGL)
+#include "JSWebGLRenderingContext.h"
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+#include "JSTouch.h"
+#include "JSTouchList.h"
+#endif
 
 using namespace JSC;
 
