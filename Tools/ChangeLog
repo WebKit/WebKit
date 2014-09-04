@@ -1,3 +1,31 @@
+2014-09-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] webkitpy test suite frequently fails to complete
+        https://bugs.webkit.org/show_bug.cgi?id=136546
+
+        Reviewed by Daniel Bates.
+
+        Properly convert the ASCII crash log produced by ntsd into
+        a unicode string as early as possible so that we handle it
+        properly when generating our logs and other test support output.
+
+        We were mixing ASCII/unicode strings under Windows, which was
+        causing test system failures when we processed some crash logs.
+
+        Also do a better job of handling garbage pid entries in the
+        Cygwin lock files.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._find_newest_log_win): The ntsd '.logopen' command
+        creates an ASCII file. Decode it as ASCII, not 'utf-8', and
+        handle the strings as unicode from that point on.
+        * Scripts/webkitpy/port/http_lock.py:
+        (HttpLock._current_lock_pid): Add logging and handle case of
+        the current_pid failing to cleanly convert to 'int'.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort): Add 64-bit architecture as a known target for the
+        Windows build.
+
 2014-09-04  Andy Estes  <aestes@apple.com>
 
         Address additional review feedback after landing r173283.

@@ -91,9 +91,21 @@ class HttpLock(object):
             _log.debug("No lock file list")
             return
         try:
-            current_pid = self._filesystem.read_text_file(lock_list[0])
-            if not (current_pid and self._executive.check_running_pid(int(current_pid))):
-                _log.debug("Removing stuck lock file: %s" % lock_list[0])
+            _log.debug("Retrieving current lock pid from %s" % lock_list[0])
+            current_pid_string = self._filesystem.read_text_file(lock_list[0])
+            _log.debug("Checking current lock on pid %s" % current_pid_string)
+            if not current_pid_string:
+                self._filesystem.remove(lock_list[0])
+                return
+
+            try:
+                current_pid = int(current_pid_string)
+                if not (current_pid and self._executive.check_running_pid(current_pid)):
+                    _log.debug("Removing stuck lock file: %s" % lock_list[0])
+                    self._filesystem.remove(lock_list[0])
+                    return
+            except ValueError, e:
+                _log.debug("ValueError: %s" % e)
                 self._filesystem.remove(lock_list[0])
                 return
         except IOError, e:

@@ -49,7 +49,7 @@ class WinPort(ApplePort):
 
     VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
-    ARCHITECTURES = ['x86']
+    ARCHITECTURES = ['x86', 'x86_64']
 
     CRASH_LOG_PREFIX = "CrashLog"
 

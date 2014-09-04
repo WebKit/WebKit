@@ -85,11 +85,11 @@ class CrashLogs(object):
             return basename.startswith("CrashLog")
 
         logs = self._host.filesystem.files_under(self._results_directory, file_filter=is_crash_log)
-        errors = ''
+        errors = u''
         for path in reversed(sorted(logs)):
             try:
                 if not newer_than or self._host.filesystem.mtime(path) > newer_than:
-                    log_file = self._host.filesystem.read_binary_file(path).decode('utf8', 'ignore')
+                    log_file = self._host.filesystem.read_binary_file(path).decode('ascii', 'ignore')
                     match = self.PID_LINE_REGEX.search(log_file)
                     if match is None:
                         continue
@@ -98,15 +98,15 @@ class CrashLogs(object):
             except IOError, e:
                 print "IOError %s" % str(e)
                 if include_errors:
-                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+                    errors += u"ERROR: Failed to read '%s': %s\n" % (path, str(e))
             except OSError, e:
                 print "OSError %s" % str(e)
                 if include_errors:
-                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+                    errors += u"ERROR: Failed to read '%s': %s\n" % (path, str(e))
             except UnicodeDecodeError, e:
                 print "UnicodeDecodeError %s" % str(e)
                 if include_errors:
-                    errors += "ERROR: Failed to decode '%s' as utf8: %s\n" % (path, str(e))
+                    errors += u"ERROR: Failed to decode '%s' as ascii: %s\n" % (path, str(e))
 
         if include_errors and errors:
             return errors
