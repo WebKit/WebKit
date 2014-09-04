@@ -1,3 +1,16 @@
+2014-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Make hash table classes final
+        https://bugs.webkit.org/show_bug.cgi?id=136540
+
+        Reviewed by Antti Koivisto.
+
+        We don't want anybody inheriting from these classes, so make them final.
+
+        * wtf/HashCountedSet.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

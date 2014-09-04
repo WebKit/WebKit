@@ -28,7 +28,7 @@
 namespace WTF {
 
     template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash, typename Traits = HashTraits<Value>>
-    class HashCountedSet {
+    class HashCountedSet final {
         WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef HashMap<Value, unsigned, HashFunctions, Traits> ImplType;

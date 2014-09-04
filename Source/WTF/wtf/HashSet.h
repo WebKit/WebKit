@@ -32,7 +32,7 @@ namespace WTF {
     template<typename Value, typename HashFunctions, typename Traits> class HashSet;
 
     template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash,
-        typename TraitsArg = HashTraits<ValueArg>> class HashSet {
+        typename TraitsArg = HashTraits<ValueArg>> class HashSet final {
         WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef HashArg HashFunctions;

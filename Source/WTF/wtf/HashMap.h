@@ -33,7 +33,7 @@ template<typename T> struct KeyValuePairKeyExtractor {
 
 template<typename KeyArg, typename MappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
     typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
-class HashMap {
+class HashMap final {
     WTF_MAKE_FAST_ALLOCATED;
 private:
     typedef KeyTraitsArg KeyTraits;
