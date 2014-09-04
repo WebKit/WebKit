@@ -35,9 +35,9 @@
 #include "InspectorAgent.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorFrontendChannel.h"
-#include "JSConsoleClient.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectConsoleAgent.h"
+#include "JSGlobalObjectConsoleClient.h"
 #include "JSGlobalObjectDebuggerAgent.h"
 #include "JSGlobalObjectRuntimeAgent.h"
 #include "ScriptArguments.h"
@@ -62,7 +62,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(m_injectedScriptManager.get(), m_globalObject, consoleAgent.get());
 
     m_consoleAgent = consoleAgent.get();
-    m_consoleClient = std::make_unique<JSConsoleClient>(m_consoleAgent);
+    m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
 
     runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
 
@@ -156,7 +156,7 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSVa
     String errorMessage = exception.toString(exec)->value(exec);
     exec->clearException();
 
-    if (JSConsoleClient::logToSystemConsole()) {
+    if (JSGlobalObjectConsoleClient::logToSystemConsole()) {
         if (callStack->size()) {
             const ScriptCallFrame& callFrame = callStack->at(0);
             ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callFrame.sourceURL(), callFrame.lineNumber(), callFrame.columnNumber());

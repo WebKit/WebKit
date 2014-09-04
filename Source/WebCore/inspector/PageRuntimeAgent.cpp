@@ -40,7 +40,7 @@
 #include "JSDOMWindowBase.h"
 #include "MainFrame.h"
 #include "Page.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "ScriptController.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
@@ -146,12 +146,12 @@ InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString* errorString,
 
 void PageRuntimeAgent::muteConsole()
 {
-    PageConsole::mute();
+    PageConsoleClient::mute();
 }
 
 void PageRuntimeAgent::unmuteConsole()
 {
-    PageConsole::unmute();
+    PageConsoleClient::unmute();
 }
 
 void PageRuntimeAgent::reportExecutionContextCreation()

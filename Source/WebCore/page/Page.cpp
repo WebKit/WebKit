@@ -57,7 +57,7 @@
 #include "NetworkStateNotifier.h"
 #include "PageActivityAssertionToken.h"
 #include "PageCache.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "PageDebuggable.h"
 #include "PageGroup.h"
 #include "PageThrottler.h"
@@ -192,7 +192,7 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_alternativeTextClient(pageClients.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_console(std::make_unique<PageConsole>(*this))
+    , m_consoleClient(std::make_unique<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))
 #endif

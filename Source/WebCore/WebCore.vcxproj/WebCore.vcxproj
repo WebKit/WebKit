@@ -7177,7 +7177,7 @@
     <ClCompile Include="..\page\OriginAccessEntry.cpp" />
     <ClCompile Include="..\page\Page.cpp" />
     <ClCompile Include="..\page\PageActivityAssertionToken.cpp" />
-    <ClCompile Include="..\page\PageConsole.cpp" />
+    <ClCompile Include="..\page\PageConsoleClient.cpp" />
     <ClCompile Include="..\page\PageGroup.cpp" />
     <ClCompile Include="..\page\PageGroupLoadDeferrer.cpp" />
     <ClCompile Include="..\page\PageSerializer.cpp" />
@@ -19158,7 +19158,7 @@
     <ClInclude Include="..\page\Navigator.h" />
     <ClInclude Include="..\page\NavigatorBase.h" />
     <ClInclude Include="..\page\OriginAccessEntry.h" />
-    <ClInclude Include="..\page\PageConsole.h" />
+    <ClInclude Include="..\page\PageConsoleClient.h" />
     <ClInclude Include="..\page\PageGroup.h" />
     <ClInclude Include="..\page\PageGroupLoadDeferrer.h" />
     <ClInclude Include="..\page\PageSerializer.h" />

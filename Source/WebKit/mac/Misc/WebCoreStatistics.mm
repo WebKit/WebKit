@@ -41,7 +41,7 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/PageCache.h>
-#import <WebCore/PageConsole.h>
+#import <WebCore/PageConsoleClient.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
@@ -168,13 +168,13 @@ using namespace WebCore;
 + (BOOL)shouldPrintExceptions
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    return PageConsole::shouldPrintExceptions();
+    return PageConsoleClient::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    PageConsole::setShouldPrintExceptions(print);
+    PageConsoleClient::setShouldPrintExceptions(print);
 }
 
 + (void)emptyCache

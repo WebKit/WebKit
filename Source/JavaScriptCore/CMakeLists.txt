@@ -283,9 +283,9 @@ set(JavaScriptCore_SOURCES
     inspector/InspectorAgentRegistry.cpp
     inspector/InspectorBackendDispatcher.cpp
     inspector/InspectorValues.cpp
-    inspector/JSConsoleClient.cpp
     inspector/JSInjectedScriptHost.cpp
     inspector/JSInjectedScriptHostPrototype.cpp
+    inspector/JSGlobalObjectConsoleClient.cpp
     inspector/JSGlobalObjectInspectorController.cpp
     inspector/JSGlobalObjectScriptDebugServer.cpp
     inspector/JSJavaScriptCallFrame.cpp

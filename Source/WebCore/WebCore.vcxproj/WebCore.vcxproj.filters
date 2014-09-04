@@ -4983,7 +4983,7 @@
     <ClCompile Include="..\page\PageActivityAssertionToken.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\PageConsole.cpp">
+    <ClCompile Include="..\page\PageConsoleClient.cpp">
       <Filter>page</Filter>
     </ClCompile>
     <ClCompile Include="..\page\PageGroup.cpp">
@@ -12931,7 +12931,7 @@
     <ClInclude Include="..\page\OriginAccessEntry.h">
       <Filter>page</Filter>
     </ClInclude>
-    <ClInclude Include="..\page\PageConsole.h">
+    <ClInclude Include="..\page\PageConsoleClient.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\PageGroup.h">

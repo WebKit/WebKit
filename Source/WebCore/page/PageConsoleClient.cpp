@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -49,40 +49,40 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageConsole::PageConsole(Page& page)
+PageConsoleClient::PageConsoleClient(Page& page)
     : m_page(page)
 {
 }
 
-PageConsole::~PageConsole()
+PageConsoleClient::~PageConsoleClient()
 {
 }
 
 static int muteCount = 0;
 static bool printExceptions = false;
 
-bool PageConsole::shouldPrintExceptions()
+bool PageConsoleClient::shouldPrintExceptions()
 {
     return printExceptions;
 }
 
-void PageConsole::setShouldPrintExceptions(bool print)
+void PageConsoleClient::setShouldPrintExceptions(bool print)
 {
     printExceptions = print;
 }
 
-void PageConsole::mute()
+void PageConsoleClient::mute()
 {
     muteCount++;
 }
 
-void PageConsole::unmute()
+void PageConsoleClient::unmute()
 {
     ASSERT(muteCount > 0);
     muteCount--;
 }
 
-void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
 {
     String url;
     if (document)
@@ -106,12 +106,12 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     addMessage(source, level, message, url, line, column, 0, JSMainThreadExecState::currentState(), requestIdentifier);
 }
 
-void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
 {
     addMessage(source, level, message, String(), 0, 0, callStack, 0);
 }
 
-void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (muteCount && source != MessageSource::ConsoleAPI)
         return;
@@ -136,7 +136,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
 }
 
 
-void PageConsole::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, PassRefPtr<Inspector::ScriptArguments> prpArguments)
+void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, PassRefPtr<Inspector::ScriptArguments> prpArguments)
 {
     RefPtr<ScriptArguments> arguments = prpArguments;
 
@@ -154,43 +154,43 @@ void PageConsole::messageWithTypeAndLevel(MessageType type, MessageLevel level, 
         m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
     }
 
-    if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsole::shouldPrintExceptions())
+    if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
         ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, arguments.release());
 }
 
-void PageConsole::count(JSC::ExecState* exec, PassRefPtr<ScriptArguments> arguments)
+void PageConsoleClient::count(JSC::ExecState* exec, PassRefPtr<ScriptArguments> arguments)
 {
     InspectorInstrumentation::consoleCount(&m_page, exec, arguments);
 }
 
-void PageConsole::profile(JSC::ExecState* exec, const String& title)
+void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
 {
     InspectorInstrumentation::startProfiling(&m_page, exec, title);
 }
 
-void PageConsole::profileEnd(JSC::ExecState* exec, const String& title)
+void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
 {
     if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(&m_page, exec, title))
         m_profiles.append(profile.release());
 }
 
-void PageConsole::time(JSC::ExecState*, const String& title)
+void PageConsoleClient::time(JSC::ExecState*, const String& title)
 {
     InspectorInstrumentation::startConsoleTiming(&m_page.mainFrame(), title);
 }
 
-void PageConsole::timeEnd(JSC::ExecState* exec, const String& title)
+void PageConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
     InspectorInstrumentation::stopConsoleTiming(&m_page.mainFrame(), title, callStack.release());
 }
 
-void PageConsole::timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments> arguments)
+void PageConsoleClient::timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments> arguments)
 {
     InspectorInstrumentation::consoleTimeStamp(&m_page.mainFrame(), arguments);
 }
 
-void PageConsole::clearProfiles()
+void PageConsoleClient::clearProfiles()
 {
     m_profiles.clear();
 }

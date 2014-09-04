@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSConsoleClient_h
-#define JSConsoleClient_h
+#ifndef JSGlobalObjectConsoleClient_h
+#define JSGlobalObjectConsoleClient_h
 
 #include "ConsoleClient.h"
 
@@ -32,11 +32,11 @@ namespace Inspector {
 
 class InspectorConsoleAgent;
 
-class JSConsoleClient final : public JSC::ConsoleClient {
+class JSGlobalObjectConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit JSConsoleClient(InspectorConsoleAgent*);
-    virtual ~JSConsoleClient() { }
+    explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*);
+    virtual ~JSGlobalObjectConsoleClient() { }
 
     static bool logToSystemConsole();
     static void setLogToSystemConsole(bool);
@@ -60,4 +60,4 @@ private:
 
 }
 
-#endif // !defined(JSConsoleClient_h)
+#endif // !defined(JSGlobalObjectConsoleClient_h)

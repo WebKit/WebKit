@@ -1,3 +1,14 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=136476
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::shouldPrintExceptions):
+        (WebCoreStatistics::setShouldPrintExceptions):
+
 2014-09-02  Maciej Stachowiak  <mjs@apple.com>
 
         Clean up naming for and slightly refactor legacy video fullscreen support

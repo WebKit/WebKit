@@ -1938,7 +1938,7 @@ set(WebCore_SOURCES
     page/OriginAccessEntry.cpp
     page/Page.cpp
     page/PageActivityAssertionToken.cpp
-    page/PageConsole.cpp
+    page/PageConsoleClient.cpp
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
     page/PageSerializer.cpp

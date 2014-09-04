@@ -36,7 +36,7 @@
 #include "Frame.h"
 #include "GCController.h"
 #include "Page.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSLock.h>

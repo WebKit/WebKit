@@ -27,7 +27,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "Page.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
 #include "XMLDocumentParserScope.h"
@@ -140,7 +140,7 @@ bool XSLStyleSheet::parseString(const String& string)
         xmlFreeDoc(m_stylesheetDoc);
     m_stylesheetDocTaken = false;
 
-    PageConsole* console = 0;
+    PageConsoleClient* console = nullptr;
     Frame* frame = ownerDocument()->frame();
     if (frame && frame->page())
         console = &frame->page()->console();

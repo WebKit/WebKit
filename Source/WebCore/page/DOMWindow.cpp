@@ -76,7 +76,7 @@
 #include "MessageEvent.h"
 #include "Navigator.h"
 #include "Page.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "Performance.h"
@@ -702,11 +702,11 @@ BarProp* DOMWindow::toolbar() const
     return m_toolbar.get();
 }
 
-PageConsole* DOMWindow::pageConsole() const
+PageConsoleClient* DOMWindow::console() const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
-    return m_frame->page() ? &m_frame->page()->console() : 0;
+        return nullptr;
+    return m_frame->page() ? &m_frame->page()->console() : nullptr;
 }
 
 DOMApplicationCache* DOMWindow::applicationCache() const
@@ -937,7 +937,7 @@ void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTarg
         if (!intendedTargetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
             String message = "Unable to post message to " + intendedTargetOrigin->toString() +
                              ". Recipient has origin " + document()->securityOrigin()->toString() + ".\n";
-            pageConsole()->addMessage(MessageSource::Security, MessageLevel::Error, message, stackTrace);
+            console()->addMessage(MessageSource::Security, MessageLevel::Error, message, stackTrace);
             return;
         }
     }
@@ -1036,7 +1036,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
     bool allowScriptsToCloseWindows = m_frame->settings().allowScriptsToCloseWindows();
 
     if (!(page->openedByDOM() || page->backForward().count() <= 1 || allowScriptsToCloseWindows)) {
-        pageConsole()->addMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Can't close the window since it was not opened by JavaScript"));
+        console()->addMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Can't close the window since it was not opened by JavaScript"));
         return;
     }
 
@@ -2008,8 +2008,8 @@ void DOMWindow::printErrorMessage(const String& message)
     if (message.isEmpty())
         return;
 
-    if (PageConsole* console = pageConsole())
-        console->addMessage(MessageSource::JS, MessageLevel::Error, message);
+    if (PageConsoleClient* pageConsole = console())
+        pageConsole->addMessage(MessageSource::JS, MessageLevel::Error, message);
 }
 
 String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow)

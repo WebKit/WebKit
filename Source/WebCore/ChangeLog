@@ -1,3 +1,58 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=136476
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests. No behavior changed.
+
+        * CMakeLists.txt:
+        * WebCore.exp.in:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::logError):
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage):
+        (WebCore::Document::addMessage):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::muteConsole):
+        (WebCore::PageDebuggerAgent::unmuteConsole):
+        (WebCore::PageDebuggerAgent::breakpointActionLog):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::muteConsole):
+        (WebCore::PageRuntimeAgent::unmuteConsole):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::console):
+        (WebCore::DOMWindow::dispatchMessageEventWithOriginCheck):
+        (WebCore::DOMWindow::close):
+        (WebCore::DOMWindow::printErrorMessage):
+        (WebCore::DOMWindow::pageConsole): Deleted.
+        * page/DOMWindow.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * page/PageConsoleClient.cpp: Renamed from Source/WebCore/page/PageConsole.cpp.
+        * page/PageConsoleClient.h: Renamed from Source/WebCore/page/PageConsole.h.
+        * testing/Internals.cpp:
+        (WebCore::Internals::consoleProfiles):
+        * testing/Internals.h:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+        (WebCore::docLoaderFunc):
+
 2014-09-03  Maciej Stachowiak  <mjs@apple.com>
 
         Fix a few leftovers from removing MIME-related WKSI usage

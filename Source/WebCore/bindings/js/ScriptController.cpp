@@ -37,7 +37,7 @@
 #include "MainFrame.h"
 #include "NP_jsobject.h"
 #include "Page.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PluginView.h"
 #include "ScriptSourceCode.h"

@@ -1,3 +1,19 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=136476
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSGlobalObjectConsoleClient.cpp: Renamed from Source/JavaScriptCore/inspector/JSConsoleClient.cpp.
+        * inspector/JSGlobalObjectConsoleClient.h: Renamed from Source/JavaScriptCore/inspector/JSConsoleClient.h.
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * inspector/JSGlobalObjectInspectorController.h:
+
 2014-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         Reenable call edge profiling and polymorphic call inlining, now that a bunch of the bugs

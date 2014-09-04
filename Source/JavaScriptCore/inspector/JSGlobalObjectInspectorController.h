@@ -48,7 +48,7 @@ class InspectorConsoleAgent;
 class InspectorBackendDispatcher;
 class InspectorConsoleAgent;
 class InspectorFrontendChannel;
-class JSConsoleClient;
+class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
 
 class JSGlobalObjectInspectorController final : public InspectorEnvironment {
@@ -83,7 +83,7 @@ private:
 
     JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
-    std::unique_ptr<JSConsoleClient> m_consoleClient;
+    std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     InspectorConsoleAgent* m_consoleAgent;
     InspectorAgentRegistry m_agents;
     InspectorFrontendChannel* m_inspectorFrontendChannel;

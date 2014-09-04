@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageConsole_h
-#define PageConsole_h
+#ifndef PageConsoleClient_h
+#define PageConsoleClient_h
 
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ConsoleClient.h>
@@ -45,10 +45,10 @@ class Page;
 
 typedef Vector<RefPtr<JSC::Profile>> ProfilesArray;
 
-class PageConsole final : public JSC::ConsoleClient {
+class PageConsoleClient final : public JSC::ConsoleClient {
 public:
-    explicit PageConsole(Page&);
-    virtual ~PageConsole();
+    explicit PageConsoleClient(Page&);
+    virtual ~PageConsoleClient();
 
     WEBCORE_EXPORT static bool shouldPrintExceptions();
     WEBCORE_EXPORT static void setShouldPrintExceptions(bool);
@@ -79,4 +79,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PageConsole_h
+#endif // PageConsoleClient_h

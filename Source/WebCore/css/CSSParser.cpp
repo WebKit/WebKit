@@ -65,7 +65,7 @@
 #include "MediaList.h"
 #include "MediaQueryExp.h"
 #include "Page.h"
-#include "PageConsole.h"
+#include "PageConsoleClient.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderTheme.h"
@@ -11689,7 +11689,7 @@ bool CSSParser::isLoggingErrors()
 void CSSParser::logError(const String& message, int lineNumber)
 {
     // FIXME: <http://webkit.org/b/114313> CSS parser console message errors should include column numbers.
-    PageConsole& console = m_styleSheet->singleOwnerDocument()->page()->console();
+    PageConsoleClient& console = m_styleSheet->singleOwnerDocument()->page()->console();
     console.addMessage(MessageSource::CSS, MessageLevel::Warning, message, m_styleSheet->baseURL().string(), lineNumber + 1, 0);
 }
 

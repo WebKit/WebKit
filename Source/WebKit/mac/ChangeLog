@@ -1,3 +1,14 @@
+2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: fix prefixes for subclasses of JSC::ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=136476
+
+        Reviewed by Timothy Hatcher.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics shouldPrintExceptions]):
+        (+[WebCoreStatistics setShouldPrintExceptions:]):
+
 2014-09-03  Enrica Casucci  <enrica@apple.com>
 
         Remove PLATFORM(IOS) from WebCore/editing (Part 1).
