@@ -32,66 +32,66 @@
 
 namespace JSC {
 
-    class NumericStrings {
-    public:
-        ALWAYS_INLINE String add(double d)
-        {
-            CacheEntry<double>& entry = lookup(d);
-            if (d == entry.key && !entry.value.isNull())
-                return entry.value;
-            entry.key = d;
-            entry.value = String::numberToStringECMAScript(d);
+class NumericStrings {
+public:
+    ALWAYS_INLINE String add(double d)
+    {
+        CacheEntry<double>& entry = lookup(d);
+        if (d == entry.key && !entry.value.isNull())
             return entry.value;
-        }
+        entry.key = d;
+        entry.value = String::numberToStringECMAScript(d);
+        return entry.value;
+    }
 
-        ALWAYS_INLINE String add(int i)
-        {
-            if (static_cast<unsigned>(i) < cacheSize)
-                return lookupSmallString(static_cast<unsigned>(i));
-            CacheEntry<int>& entry = lookup(i);
-            if (i == entry.key && !entry.value.isNull())
-                return entry.value;
-            entry.key = i;
-            entry.value = String::number(i);
+    ALWAYS_INLINE String add(int i)
+    {
+        if (static_cast<unsigned>(i) < cacheSize)
+            return lookupSmallString(static_cast<unsigned>(i));
+        CacheEntry<int>& entry = lookup(i);
+        if (i == entry.key && !entry.value.isNull())
             return entry.value;
-        }
+        entry.key = i;
+        entry.value = String::number(i);
+        return entry.value;
+    }
 
-        ALWAYS_INLINE String add(unsigned i)
-        {
-            if (i < cacheSize)
-                return lookupSmallString(static_cast<unsigned>(i));
-            CacheEntry<unsigned>& entry = lookup(i);
-            if (i == entry.key && !entry.value.isNull())
-                return entry.value;
-            entry.key = i;
-            entry.value = String::number(i);
+    ALWAYS_INLINE String add(unsigned i)
+    {
+        if (i < cacheSize)
+            return lookupSmallString(static_cast<unsigned>(i));
+        CacheEntry<unsigned>& entry = lookup(i);
+        if (i == entry.key && !entry.value.isNull())
             return entry.value;
-        }
-    private:
-        static const size_t cacheSize = 64;
+        entry.key = i;
+        entry.value = String::number(i);
+        return entry.value;
+    }
+private:
+    static const size_t cacheSize = 64;
 
-        template<typename T>
-        struct CacheEntry {
-            T key;
-            String value;
-        };
-
-        CacheEntry<double>& lookup(double d) { return doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
-        CacheEntry<int>& lookup(int i) { return intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
-        CacheEntry<unsigned>& lookup(unsigned i) { return unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
-        ALWAYS_INLINE const String& lookupSmallString(unsigned i)
-        {
-            ASSERT(i < cacheSize);
-            if (smallIntCache[i].isNull())
-                smallIntCache[i] = String::number(i);
-            return smallIntCache[i];
-        }
-
-        std::array<CacheEntry<double>, cacheSize> doubleCache;
-        std::array<CacheEntry<int>, cacheSize> intCache;
-        std::array<CacheEntry<unsigned>, cacheSize> unsignedCache;
-        std::array<String, cacheSize> smallIntCache;
+    template<typename T>
+    struct CacheEntry {
+        T key;
+        String value;
     };
+
+    CacheEntry<double>& lookup(double d) { return doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
+    CacheEntry<int>& lookup(int i) { return intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
+    CacheEntry<unsigned>& lookup(unsigned i) { return unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
+    ALWAYS_INLINE const String& lookupSmallString(unsigned i)
+    {
+        ASSERT(i < cacheSize);
+        if (smallIntCache[i].isNull())
+            smallIntCache[i] = String::number(i);
+        return smallIntCache[i];
+    }
+
+    std::array<CacheEntry<double>, cacheSize> doubleCache;
+    std::array<CacheEntry<int>, cacheSize> intCache;
+    std::array<CacheEntry<unsigned>, cacheSize> unsignedCache;
+    std::array<String, cacheSize> smallIntCache;
+};
 
 } // namespace JSC
 

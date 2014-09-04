@@ -25,39 +25,39 @@
 
 namespace JSC {
 
-    class DatePrototype;
+class DatePrototype;
 
-    class DateConstructor : public InternalFunction {
-    public:
-        typedef InternalFunction Base;
+class DateConstructor : public InternalFunction {
+public:
+    typedef InternalFunction Base;
 
-        static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype)
-        {
-            DateConstructor* constructor = new (NotNull, allocateCell<DateConstructor>(vm.heap)) DateConstructor(vm, structure);
-            constructor->finishCreation(vm, datePrototype);
-            return constructor;
-        }
+    static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype)
+    {
+        DateConstructor* constructor = new (NotNull, allocateCell<DateConstructor>(vm.heap)) DateConstructor(vm, structure);
+        constructor->finishCreation(vm, datePrototype);
+        return constructor;
+    }
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-    protected:
-        void finishCreation(VM&, DatePrototype*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
+protected:
+    void finishCreation(VM&, DatePrototype*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
-    private:
-        DateConstructor(VM&, Structure*);
-        static ConstructType getConstructData(JSCell*, ConstructData&);
-        static CallType getCallData(JSCell*, CallData&);
+private:
+    DateConstructor(VM&, Structure*);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
 
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    };
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+};
 
-    JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);
+JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);
 
 } // namespace JSC
 

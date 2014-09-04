@@ -32,160 +32,160 @@
 
 namespace JSC {
 
-    class ExecutableBase;
-    class FunctionExecutable;
-    class FunctionPrototype;
-    class JSActivation;
-    class JSGlobalObject;
-    class LLIntOffsetsExtractor;
-    class NativeExecutable;
-    class SourceCode;
-    namespace DFG {
-    class SpeculativeJIT;
-    class JITCompiler;
+class ExecutableBase;
+class FunctionExecutable;
+class FunctionPrototype;
+class JSActivation;
+class JSGlobalObject;
+class LLIntOffsetsExtractor;
+class NativeExecutable;
+class SourceCode;
+namespace DFG {
+class SpeculativeJIT;
+class JITCompiler;
+}
+
+JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
+
+JS_EXPORT_PRIVATE String getCalculatedDisplayName(CallFrame*, JSObject*);
+    
+class JSFunction : public JSDestructibleObject {
+    friend class JIT;
+    friend class DFG::SpeculativeJIT;
+    friend class DFG::JITCompiler;
+    friend class VM;
+
+public:
+    typedef JSDestructibleObject Base;
+
+    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+
+    static JSFunction* create(VM& vm, FunctionExecutable* executable, JSScope* scope)
+    {
+        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
+        ASSERT(function->structure()->globalObject());
+        function->finishCreation(vm);
+        return function;
     }
 
-    JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
+    static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*);
 
-    JS_EXPORT_PRIVATE String getCalculatedDisplayName(CallFrame*, JSObject*);
-    
-    class JSFunction : public JSDestructibleObject {
-        friend class JIT;
-        friend class DFG::SpeculativeJIT;
-        friend class DFG::JITCompiler;
-        friend class VM;
+    static void destroy(JSCell*);
 
-    public:
-        typedef JSDestructibleObject Base;
+    JS_EXPORT_PRIVATE String name(ExecState*);
+    JS_EXPORT_PRIVATE String displayName(ExecState*);
+    const String calculatedDisplayName(ExecState*);
 
-        JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+    JSScope* scope()
+    {
+        ASSERT(!isHostFunctionNonInline());
+        return m_scope.get();
+    }
+    // This method may be called for host functins, in which case it
+    // will return an arbitrary value. This should only be used for
+    // optimized paths in which the return value does not matter for
+    // host functions, and checking whether the function is a host
+    // function is deemed too expensive.
+    JSScope* scopeUnchecked()
+    {
+        return m_scope.get();
+    }
+    void setScope(VM& vm, JSScope* scope)
+    {
+        ASSERT(!isHostFunctionNonInline());
+        m_scope.set(vm, this, scope);
+    }
+    void addNameScopeIfNeeded(VM&);
 
-        static JSFunction* create(VM& vm, FunctionExecutable* executable, JSScope* scope)
-        {
-            JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
-            ASSERT(function->structure()->globalObject());
-            function->finishCreation(vm);
-            return function;
-        }
-        
-        static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*);
-        
-        static void destroy(JSCell*);
-        
-        JS_EXPORT_PRIVATE String name(ExecState*);
-        JS_EXPORT_PRIVATE String displayName(ExecState*);
-        const String calculatedDisplayName(ExecState*);
+    ExecutableBase* executable() const { return m_executable.get(); }
 
-        JSScope* scope()
-        {
-            ASSERT(!isHostFunctionNonInline());
-            return m_scope.get();
-        }
-        // This method may be called for host functins, in which case it
-        // will return an arbitrary value. This should only be used for
-        // optimized paths in which the return value does not matter for
-        // host functions, and checking whether the function is a host
-        // function is deemed too expensive.
-        JSScope* scopeUnchecked()
-        {
-            return m_scope.get();
-        }
-        void setScope(VM& vm, JSScope* scope)
-        {
-            ASSERT(!isHostFunctionNonInline());
-            m_scope.set(vm, this, scope);
-        }
-        void addNameScopeIfNeeded(VM&);
+    // To call either of these methods include Executable.h
+    bool isHostFunction() const;
+    FunctionExecutable* jsExecutable() const;
 
-        ExecutableBase* executable() const { return m_executable.get(); }
+    JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;
 
-        // To call either of these methods include Executable.h
-        bool isHostFunction() const;
-        FunctionExecutable* jsExecutable() const;
+    DECLARE_EXPORT_INFO;
 
-        JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    {
+        ASSERT(globalObject);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info()); 
+    }
 
-        DECLARE_EXPORT_INFO;
+    NativeFunction nativeFunction();
+    NativeFunction nativeConstructor();
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-        {
-            ASSERT(globalObject);
-            return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info()); 
-        }
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
 
-        NativeFunction nativeFunction();
-        NativeFunction nativeConstructor();
+    static inline ptrdiff_t offsetOfScopeChain()
+    {
+        return OBJECT_OFFSETOF(JSFunction, m_scope);
+    }
 
-        static ConstructType getConstructData(JSCell*, ConstructData&);
-        static CallType getCallData(JSCell*, CallData&);
+    static inline ptrdiff_t offsetOfExecutable()
+    {
+        return OBJECT_OFFSETOF(JSFunction, m_executable);
+    }
 
-        static inline ptrdiff_t offsetOfScopeChain()
-        {
-            return OBJECT_OFFSETOF(JSFunction, m_scope);
-        }
+    static inline ptrdiff_t offsetOfAllocationProfile()
+    {
+        return OBJECT_OFFSETOF(JSFunction, m_allocationProfile);
+    }
 
-        static inline ptrdiff_t offsetOfExecutable()
-        {
-            return OBJECT_OFFSETOF(JSFunction, m_executable);
-        }
+    ObjectAllocationProfile* allocationProfile(ExecState* exec, unsigned inlineCapacity)
+    {
+        if (UNLIKELY(m_allocationProfile.isNull()))
+            return createAllocationProfile(exec, inlineCapacity);
+        return &m_allocationProfile;
+    }
 
-        static inline ptrdiff_t offsetOfAllocationProfile()
-        {
-            return OBJECT_OFFSETOF(JSFunction, m_allocationProfile);
-        }
+    Structure* allocationStructure() { return m_allocationProfile.structure(); }
 
-        ObjectAllocationProfile* allocationProfile(ExecState* exec, unsigned inlineCapacity)
-        {
-            if (UNLIKELY(m_allocationProfile.isNull()))
-                return createAllocationProfile(exec, inlineCapacity);
-            return &m_allocationProfile;
-        }
-        
-        Structure* allocationStructure() { return m_allocationProfile.structure(); }
+    InlineWatchpointSet& allocationProfileWatchpointSet()
+    {
+        return m_allocationProfileWatchpoint;
+    }
 
-        InlineWatchpointSet& allocationProfileWatchpointSet()
-        {
-            return m_allocationProfileWatchpoint;
-        }
+    bool isHostOrBuiltinFunction() const;
+    bool isBuiltinFunction() const;
+    JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
 
-        bool isHostOrBuiltinFunction() const;
-        bool isBuiltinFunction() const;
-        JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
+protected:
+    const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-    protected:
-        const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesGetPropertyNames | JSObject::StructureFlags;
+    JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
+    JSFunction(VM&, FunctionExecutable*, JSScope*);
 
-        JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
-        JSFunction(VM&, FunctionExecutable*, JSScope*);
-        
-        void finishCreation(VM&, NativeExecutable*, int length, const String& name);
-        using Base::finishCreation;
+    void finishCreation(VM&, NativeExecutable*, int length, const String& name);
+    using Base::finishCreation;
 
-        ObjectAllocationProfile* createAllocationProfile(ExecState*, size_t inlineCapacity);
+    ObjectAllocationProfile* createAllocationProfile(ExecState*, size_t inlineCapacity);
 
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
-        static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
+    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-        static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
-        static void visitChildren(JSCell*, SlotVisitor&);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
-    private:
-        friend class LLIntOffsetsExtractor;
-        
-        static EncodedJSValue argumentsGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
-        static EncodedJSValue callerGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
-        static EncodedJSValue lengthGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
-        static EncodedJSValue nameGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+private:
+    friend class LLIntOffsetsExtractor;
 
-        WriteBarrier<ExecutableBase> m_executable;
-        WriteBarrier<JSScope> m_scope;
-        ObjectAllocationProfile m_allocationProfile;
-        InlineWatchpointSet m_allocationProfileWatchpoint;
-    };
+    static EncodedJSValue argumentsGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue callerGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue lengthGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue nameGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
+
+    WriteBarrier<ExecutableBase> m_executable;
+    WriteBarrier<JSScope> m_scope;
+    ObjectAllocationProfile m_allocationProfile;
+    InlineWatchpointSet m_allocationProfileWatchpoint;
+};
 
 } // namespace JSC
 

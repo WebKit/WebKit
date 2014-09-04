@@ -25,33 +25,33 @@
 
 namespace JSC {
 
-    class FunctionPrototype : public InternalFunction {
-    public:
-        typedef InternalFunction Base;
+class FunctionPrototype : public InternalFunction {
+public:
+    typedef InternalFunction Base;
 
-        static FunctionPrototype* create(VM& vm, Structure* structure)
-        {
-            FunctionPrototype* prototype = new (NotNull, allocateCell<FunctionPrototype>(vm.heap)) FunctionPrototype(vm, structure);
-            prototype->finishCreation(vm, String());
-            return prototype;
-        }
-        
-        void addFunctionProperties(ExecState*, JSGlobalObject*, JSFunction** callFunction, JSFunction** applyFunction);
-        
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
-        {
-            return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    static FunctionPrototype* create(VM& vm, Structure* structure)
+    {
+        FunctionPrototype* prototype = new (NotNull, allocateCell<FunctionPrototype>(vm.heap)) FunctionPrototype(vm, structure);
+        prototype->finishCreation(vm, String());
+        return prototype;
+    }
 
-        DECLARE_INFO;
+    void addFunctionProperties(ExecState*, JSGlobalObject*, JSFunction** callFunction, JSFunction** applyFunction);
 
-    protected:
-        void finishCreation(VM&, const String& name);
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+    {
+        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-    private:
-        FunctionPrototype(VM&, Structure*);
-        static CallType getCallData(JSCell*, CallData&);
-    };
+    DECLARE_INFO;
+
+protected:
+    void finishCreation(VM&, const String& name);
+
+private:
+    FunctionPrototype(VM&, Structure*);
+    static CallType getCallData(JSCell*, CallData&);
+};
 
 } // namespace JSC
 

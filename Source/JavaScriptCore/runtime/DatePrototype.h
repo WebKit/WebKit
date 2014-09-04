@@ -25,34 +25,34 @@
 
 namespace JSC {
 
-    class ObjectPrototype;
+class ObjectPrototype;
 
-    class DatePrototype : public DateInstance {
-    private:
-        DatePrototype(VM&, Structure*);
+class DatePrototype : public DateInstance {
+private:
+    DatePrototype(VM&, Structure*);
 
-    public:
-        typedef DateInstance Base;
+public:
+    typedef DateInstance Base;
 
-        static DatePrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-        {
-            DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(vm.heap)) DatePrototype(vm, structure);
-            prototype->finishCreation(vm, globalObject);
-            return prototype;
-        }
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static DatePrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(vm.heap)) DatePrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
+        return prototype;
+    }
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-    protected:
-        void finishCreation(VM&, JSGlobalObject*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
-    };
+protected:
+    void finishCreation(VM&, JSGlobalObject*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
+};
 
 } // namespace JSC
 

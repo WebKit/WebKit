@@ -1,3 +1,62 @@
+2014-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Fixed indentations and some style warnings in JavaScriptCore/runtime.
+        <https://webkit.org/b/136518>
+
+        Reviewed by Michael Saboff.
+
+        Also removed some superflous spaces.  There are no semantic changes.
+
+        * runtime/Completion.h:
+        * runtime/ConstructData.h:
+        * runtime/DateConstructor.h:
+        * runtime/DateInstance.h:
+        * runtime/DateInstanceCache.h:
+        * runtime/DatePrototype.h:
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.h:
+        * runtime/GetterSetter.h:
+        * runtime/Identifier.h:
+        * runtime/InitializeThreading.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSFunction.h:
+        * runtime/JSLock.h:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.h:
+        * runtime/JSString.h:
+        * runtime/JSTypeInfo.h:
+        * runtime/JSWrapperObject.h:
+        * runtime/Lookup.h:
+        * runtime/MathObject.h:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberObject.h:
+        * runtime/NumberPrototype.h:
+        * runtime/NumericStrings.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.h:
+        * runtime/PropertyDescriptor.h:
+        * runtime/Protect.h:
+        * runtime/PutPropertySlot.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpCachedResult.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.h:
+        * runtime/SmallStrings.h:
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.h:
+        * runtime/StructureChain.h:
+        * runtime/VM.h:
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

@@ -30,54 +30,54 @@
 
 namespace JSC {
 
-    class JSString;
-    class RegExpMatchesArray;
+class JSString;
+class RegExpMatchesArray;
 
-    // RegExpCachedResult is used to track the cached results of the last
-    // match, stores on the RegExp constructor (e.g. $&, $_, $1, $2 ...).
-    // These values will be lazily generated on demand, so the cached result
-    // may be in a lazy or reified state. A lazy state is indicated by a
-    // value of m_result indicating a successful match, and a reified state
-    // is indicated by setting m_result to MatchResult::failed().
-    // Following a successful match, m_result, m_lastInput and m_lastRegExp
-    // can be used to reify the results from the match, following reification
-    // m_reifiedResult and m_reifiedInput hold the cached results.
-    class RegExpCachedResult {
-    public:
-        RegExpCachedResult(VM& vm, JSObject* owner, RegExp* emptyRegExp)
-            : m_result(0, 0)
-        {
-            m_lastInput.set(vm, owner, jsEmptyString(&vm));
-            m_lastRegExp.set(vm, owner, emptyRegExp);
-        }
+// RegExpCachedResult is used to track the cached results of the last
+// match, stores on the RegExp constructor (e.g. $&, $_, $1, $2 ...).
+// These values will be lazily generated on demand, so the cached result
+// may be in a lazy or reified state. A lazy state is indicated by a
+// value of m_result indicating a successful match, and a reified state
+// is indicated by setting m_result to MatchResult::failed().
+// Following a successful match, m_result, m_lastInput and m_lastRegExp
+// can be used to reify the results from the match, following reification
+// m_reifiedResult and m_reifiedInput hold the cached results.
+class RegExpCachedResult {
+public:
+    RegExpCachedResult(VM& vm, JSObject* owner, RegExp* emptyRegExp)
+        : m_result(0, 0)
+    {
+        m_lastInput.set(vm, owner, jsEmptyString(&vm));
+        m_lastRegExp.set(vm, owner, emptyRegExp);
+    }
 
-        ALWAYS_INLINE void record(VM& vm, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)
-        {
-            m_lastRegExp.set(vm, owner, regExp);
-            m_lastInput.set(vm, owner, input);
-            m_result = result;
-        }
+    ALWAYS_INLINE void record(VM& vm, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)
+    {
+        m_lastRegExp.set(vm, owner, regExp);
+        m_lastInput.set(vm, owner, input);
+        m_result = result;
+    }
 
-        RegExpMatchesArray* lastResult(ExecState*, JSObject* owner);
-        void setInput(ExecState*, JSObject* owner, JSString*);
+    RegExpMatchesArray* lastResult(ExecState*, JSObject* owner);
+    void setInput(ExecState*, JSObject* owner, JSString*);
 
-        JSString* input()
-        {
-            // If m_result showas a match then we're in a lazy state, so m_lastInput
-            // is the most recent value of the input property. If not then we have
-            // reified, in which case m_reifiedInput will contain the correct value.
-            return m_result ? m_lastInput.get() : m_reifiedInput.get();
-        }
+    JSString* input()
+    {
+        // If m_result showas a match then we're in a lazy state, so m_lastInput
+        // is the most recent value of the input property. If not then we have
+        // reified, in which case m_reifiedInput will contain the correct value.
+        return m_result ? m_lastInput.get() : m_reifiedInput.get();
+    }
 
-        void visitChildren(SlotVisitor&);
+    void visitChildren(SlotVisitor&);
 
-    private:
-        MatchResult m_result;
-        WriteBarrier<JSString> m_lastInput;
-        WriteBarrier<RegExp> m_lastRegExp;
-        WriteBarrier<RegExpMatchesArray> m_reifiedResult;
-        WriteBarrier<JSString> m_reifiedInput;
-    };
+private:
+    MatchResult m_result;
+    WriteBarrier<JSString> m_lastInput;
+    WriteBarrier<RegExp> m_lastRegExp;
+    WriteBarrier<RegExpMatchesArray> m_reifiedResult;
+    WriteBarrier<JSString> m_reifiedInput;
+};
 
 } // namespace JSC
 

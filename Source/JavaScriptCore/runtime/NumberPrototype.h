@@ -25,32 +25,32 @@
 
 namespace JSC {
 
-    class NumberPrototype : public NumberObject {
-    public:
-        typedef NumberObject Base;
+class NumberPrototype : public NumberObject {
+public:
+    typedef NumberObject Base;
 
-        static NumberPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-        {
-            NumberPrototype* prototype = new (NotNull, allocateCell<NumberPrototype>(vm.heap)) NumberPrototype(vm, structure);
-            prototype->finishCreation(vm, globalObject);
-            return prototype;
-        }
-        
-        DECLARE_INFO;
+    static NumberPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        NumberPrototype* prototype = new (NotNull, allocateCell<NumberPrototype>(vm.heap)) NumberPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
+        return prototype;
+    }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
-        }
+    DECLARE_INFO;
 
-    protected:
-        void finishCreation(VM&, JSGlobalObject*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NumberObject::StructureFlags;
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
+    }
 
-    private:
-        NumberPrototype(VM&, Structure*);
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    };
+protected:
+    void finishCreation(VM&, JSGlobalObject*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NumberObject::StructureFlags;
+
+private:
+    NumberPrototype(VM&, Structure*);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+};
 
 } // namespace JSC
 

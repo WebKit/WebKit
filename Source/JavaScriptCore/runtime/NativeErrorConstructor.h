@@ -26,41 +26,41 @@
 
 namespace JSC {
 
-    class ErrorInstance;
-    class FunctionPrototype;
-    class NativeErrorPrototype;
+class ErrorInstance;
+class FunctionPrototype;
+class NativeErrorPrototype;
 
-    class NativeErrorConstructor : public InternalFunction {
-    public:
-        typedef InternalFunction Base;
+class NativeErrorConstructor : public InternalFunction {
+public:
+    typedef InternalFunction Base;
 
-        static NativeErrorConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const String& name)
-        {
-            NativeErrorConstructor* constructor = new (NotNull, allocateCell<NativeErrorConstructor>(vm.heap)) NativeErrorConstructor(vm, structure);
-            constructor->finishCreation(vm, globalObject, prototypeStructure, name);
-            return constructor;
-        }
-        
-        DECLARE_INFO;
+    static NativeErrorConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const String& name)
+    {
+        NativeErrorConstructor* constructor = new (NotNull, allocateCell<NativeErrorConstructor>(vm.heap)) NativeErrorConstructor(vm, structure);
+        constructor->finishCreation(vm, globalObject, prototypeStructure, name);
+        return constructor;
+    }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    DECLARE_INFO;
 
-        Structure* errorStructure() { return m_errorStructure.get(); }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-    protected:
-        void finishCreation(VM&, JSGlobalObject*, Structure* prototypeStructure, const String& name);
+    Structure* errorStructure() { return m_errorStructure.get(); }
 
-    private:
-        NativeErrorConstructor(VM&, Structure*);
-        static ConstructType getConstructData(JSCell*, ConstructData&);
-        static CallType getCallData(JSCell*, CallData&);
-        static void visitChildren(JSCell*, SlotVisitor&);
+protected:
+    void finishCreation(VM&, JSGlobalObject*, Structure* prototypeStructure, const String& name);
 
-        WriteBarrier<Structure> m_errorStructure;
-    };
+private:
+    NativeErrorConstructor(VM&, Structure*);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    WriteBarrier<Structure> m_errorStructure;
+};
 
 } // namespace JSC
 

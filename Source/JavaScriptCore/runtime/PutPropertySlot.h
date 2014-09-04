@@ -33,86 +33,85 @@
 
 namespace JSC {
     
-    class JSObject;
-    class JSFunction;
+class JSObject;
+class JSFunction;
     
-    class PutPropertySlot {
-    public:
-        enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomProperty };
-        enum Context { UnknownContext, PutById, PutByIdEval };
-        typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
+class PutPropertySlot {
+public:
+    enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomProperty };
+    enum Context { UnknownContext, PutById, PutByIdEval };
+    typedef void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
 
-        PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext)
-            : m_type(Uncachable)
-            , m_base(0)
-            , m_thisValue(thisValue)
-            , m_isStrictMode(isStrictMode)
-            , m_context(context)
-            , m_putFunction(nullptr)
-        {
-        }
+    PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext)
+        : m_type(Uncachable)
+        , m_base(0)
+        , m_thisValue(thisValue)
+        , m_isStrictMode(isStrictMode)
+        , m_context(context)
+        , m_putFunction(nullptr)
+    {
+    }
 
-        void setExistingProperty(JSObject* base, PropertyOffset offset)
-        {
-            m_type = ExistingProperty;
-            m_base = base;
-            m_offset = offset;
-        }
+    void setExistingProperty(JSObject* base, PropertyOffset offset)
+    {
+        m_type = ExistingProperty;
+        m_base = base;
+        m_offset = offset;
+    }
 
-        void setNewProperty(JSObject* base, PropertyOffset offset)
-        {
-            m_type = NewProperty;
-            m_base = base;
-            m_offset = offset;
-        }
+    void setNewProperty(JSObject* base, PropertyOffset offset)
+    {
+        m_type = NewProperty;
+        m_base = base;
+        m_offset = offset;
+    }
 
-        void setCustomProperty(JSObject* base, PutValueFunc function)
-        {
-            m_type = CustomProperty;
-            m_base = base;
-            m_putFunction = function;
-        }
-        
-        void setCacheableSetter(JSObject* base, PropertyOffset offset)
-        {
-            m_type = SetterProperty;
-            m_base = base;
-            m_offset = offset;
-        }
+    void setCustomProperty(JSObject* base, PutValueFunc function)
+    {
+        m_type = CustomProperty;
+        m_base = base;
+        m_putFunction = function;
+    }
 
-        void setThisValue(JSValue thisValue)
-        {
-            m_thisValue = thisValue;
-        }
+    void setCacheableSetter(JSObject* base, PropertyOffset offset)
+    {
+        m_type = SetterProperty;
+        m_base = base;
+        m_offset = offset;
+    }
 
-        PutValueFunc customSetter() const { return m_putFunction; }
+    void setThisValue(JSValue thisValue)
+    {
+        m_thisValue = thisValue;
+    }
 
-        Context context() const { return static_cast<Context>(m_context); }
+    PutValueFunc customSetter() const { return m_putFunction; }
 
-        Type type() const { return m_type; }
-        JSObject* base() const { return m_base; }
-        JSValue thisValue() const { return m_thisValue; }
+    Context context() const { return static_cast<Context>(m_context); }
 
-        bool isStrictMode() const { return m_isStrictMode; }
-        bool isCacheablePut() const { return m_type == NewProperty || m_type == ExistingProperty; }
-        bool isCacheableSetter() const { return m_type == SetterProperty; }
-        bool isCacheableCustom() const { return m_type == CustomProperty; }
+    Type type() const { return m_type; }
+    JSObject* base() const { return m_base; }
+    JSValue thisValue() const { return m_thisValue; }
 
-        PropertyOffset cachedOffset() const
-        {
-            return m_offset;
-        }
+    bool isStrictMode() const { return m_isStrictMode; }
+    bool isCacheablePut() const { return m_type == NewProperty || m_type == ExistingProperty; }
+    bool isCacheableSetter() const { return m_type == SetterProperty; }
+    bool isCacheableCustom() const { return m_type == CustomProperty; }
 
-    private:
-        Type m_type;
-        JSObject* m_base;
-        JSValue m_thisValue;
-        PropertyOffset m_offset;
-        bool m_isStrictMode;
-        uint8_t m_context;
-        PutValueFunc m_putFunction;
+    PropertyOffset cachedOffset() const
+    {
+        return m_offset;
+    }
 
-    };
+private:
+    Type m_type;
+    JSObject* m_base;
+    JSValue m_thisValue;
+    PropertyOffset m_offset;
+    bool m_isStrictMode;
+    uint8_t m_context;
+    PutValueFunc m_putFunction;
+};
 
 } // namespace JSC
 

@@ -26,61 +26,61 @@
 
 namespace JSC {
 
-    // This class is used as a base for classes such as String,
-    // Number, Boolean and Date which are wrappers for primitive types.
-    class JSWrapperObject : public JSDestructibleObject {
-    public:
-        typedef JSDestructibleObject Base;
+// This class is used as a base for classes such as String,
+// Number, Boolean and Date which are wrappers for primitive types.
+class JSWrapperObject : public JSDestructibleObject {
+public:
+    typedef JSDestructibleObject Base;
 
-        static size_t allocationSize(size_t inlineCapacity)
-        {
-            ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
-            return sizeof(JSWrapperObject);
-        }
+    static size_t allocationSize(size_t inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSWrapperObject);
+    }
 
-        JSValue internalValue() const;
-        void setInternalValue(VM&, JSValue);
+    JSValue internalValue() const;
+    void setInternalValue(VM&, JSValue);
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-        { 
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
-        
-        static ptrdiff_t internalValueOffset() { return OBJECT_OFFSETOF(JSWrapperObject, m_internalValue); }
-        static ptrdiff_t internalValueCellOffset()
-        {
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    { 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static ptrdiff_t internalValueOffset() { return OBJECT_OFFSETOF(JSWrapperObject, m_internalValue); }
+    static ptrdiff_t internalValueCellOffset()
+    {
 #if USE(JSVALUE64)
-            return internalValueOffset();
+        return internalValueOffset();
 #else
-            return internalValueOffset() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload);
+        return internalValueOffset() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload);
 #endif
-        }
-
-    protected:
-        explicit JSWrapperObject(VM&, Structure*);
-
-        JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
-
-    private:
-        WriteBarrier<Unknown> m_internalValue;
-    };
-
-    inline JSWrapperObject::JSWrapperObject(VM& vm, Structure* structure)
-        : JSDestructibleObject(vm, structure)
-    {
     }
 
-    inline JSValue JSWrapperObject::internalValue() const
-    {
-        return m_internalValue.get();
-    }
+protected:
+    explicit JSWrapperObject(VM&, Structure*);
 
-    inline void JSWrapperObject::setInternalValue(VM& vm, JSValue value)
-    {
-        ASSERT(value);
-        ASSERT(!value.isObject());
-        m_internalValue.set(vm, this, value);
-    }
+    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+
+private:
+    WriteBarrier<Unknown> m_internalValue;
+};
+
+inline JSWrapperObject::JSWrapperObject(VM& vm, Structure* structure)
+    : JSDestructibleObject(vm, structure)
+{
+}
+
+inline JSValue JSWrapperObject::internalValue() const
+{
+    return m_internalValue.get();
+}
+
+inline void JSWrapperObject::setInternalValue(VM& vm, JSValue value)
+{
+    ASSERT(value);
+    ASSERT(!value.isObject());
+    m_internalValue.set(vm, this, value);
+}
 
 } // namespace JSC
 

@@ -29,40 +29,40 @@
 
 namespace JSC {
 
-    class FunctionPrototype;
+class FunctionPrototype;
 
-    class InternalFunction : public JSDestructibleObject {
-    public:
-        typedef JSDestructibleObject Base;
+class InternalFunction : public JSDestructibleObject {
+public:
+    typedef JSDestructibleObject Base;
 
-        DECLARE_EXPORT_INFO;
+    DECLARE_EXPORT_INFO;
 
-        JS_EXPORT_PRIVATE const String& name(ExecState*);
-        const String displayName(ExecState*);
-        const String calculatedDisplayName(ExecState*);
+    JS_EXPORT_PRIVATE const String& name(ExecState*);
+    const String displayName(ExecState*);
+    const String calculatedDisplayName(ExecState*);
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
-        { 
-            return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
-        }
-
-    protected:
-        static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
-
-        JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);
-
-        JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);
-
-        static CallType getCallData(JSCell*, CallData&);
-    };
-
-    InternalFunction* asInternalFunction(JSValue);
-
-    inline InternalFunction* asInternalFunction(JSValue value)
-    {
-        ASSERT(asObject(value)->inherits(InternalFunction::info()));
-        return static_cast<InternalFunction*>(asObject(value));
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
+    { 
+        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
     }
+
+protected:
+    static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
+
+    JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);
+
+    JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);
+
+    static CallType getCallData(JSCell*, CallData&);
+};
+
+InternalFunction* asInternalFunction(JSValue);
+
+inline InternalFunction* asInternalFunction(JSValue value)
+{
+    ASSERT(asObject(value)->inherits(InternalFunction::info()));
+    return static_cast<InternalFunction*>(asObject(value));
+}
 
 } // namespace JSC
 

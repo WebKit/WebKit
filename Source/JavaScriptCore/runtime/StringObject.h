@@ -26,60 +26,60 @@
 
 namespace JSC {
 
-    class StringObject : public JSWrapperObject {
-    public:
-        typedef JSWrapperObject Base;
+class StringObject : public JSWrapperObject {
+public:
+    typedef JSWrapperObject Base;
 
-        static StringObject* create(VM& vm, Structure* structure)
-        {
-            JSString* string = jsEmptyString(&vm);
-            StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
-            object->finishCreation(vm, string);
-            return object;
-        }
-        static StringObject* create(VM& vm, Structure* structure, JSString* string)
-        {
-            StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
-            object->finishCreation(vm, string);
-            return object;
-        }
-        static StringObject* create(VM&, JSGlobalObject*, JSString*);
-
-        JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
-
-        JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-        JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-
-        JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-        JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
-        JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-
-        DECLARE_EXPORT_INFO;
-
-        JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
-
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
-
-    protected:
-        JS_EXPORT_PRIVATE void finishCreation(VM&, JSString*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
-        JS_EXPORT_PRIVATE StringObject(VM&, Structure*);
-    };
-
-    StringObject* asStringObject(JSValue);
-
-    inline StringObject* asStringObject(JSValue value)
+    static StringObject* create(VM& vm, Structure* structure)
     {
-        ASSERT(asObject(value)->inherits(StringObject::info()));
-        return static_cast<StringObject*>(asObject(value));
+        JSString* string = jsEmptyString(&vm);
+        StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
+        object->finishCreation(vm, string);
+        return object;
+    }
+    static StringObject* create(VM& vm, Structure* structure, JSString* string)
+    {
+        StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
+        object->finishCreation(vm, string);
+        return object;
+    }
+    static StringObject* create(VM&, JSGlobalObject*, JSString*);
+
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+
+    JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+    JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+
+    DECLARE_EXPORT_INFO;
+
+    JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
+protected:
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSString*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
+    JS_EXPORT_PRIVATE StringObject(VM&, Structure*);
+};
+
+StringObject* asStringObject(JSValue);
+
+inline StringObject* asStringObject(JSValue value)
+{
+    ASSERT(asObject(value)->inherits(StringObject::info()));
+    return static_cast<StringObject*>(asObject(value));
+}
+
+JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

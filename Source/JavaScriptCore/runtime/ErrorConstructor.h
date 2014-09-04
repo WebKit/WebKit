@@ -26,34 +26,34 @@
 
 namespace JSC {
 
-    class ErrorPrototype;
+class ErrorPrototype;
 
-    class ErrorConstructor : public InternalFunction {
-    public:
-        typedef InternalFunction Base;
+class ErrorConstructor : public InternalFunction {
+public:
+    typedef InternalFunction Base;
 
-        static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype)
-        {
-            ErrorConstructor* constructor = new (NotNull, allocateCell<ErrorConstructor>(vm.heap)) ErrorConstructor(vm, structure);
-            constructor->finishCreation(vm, errorPrototype);
-            return constructor;
-        }
+    static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype)
+    {
+        ErrorConstructor* constructor = new (NotNull, allocateCell<ErrorConstructor>(vm.heap)) ErrorConstructor(vm, structure);
+        constructor->finishCreation(vm, errorPrototype);
+        return constructor;
+    }
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-        { 
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
-        }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    { 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+    }
 
-    protected:
-        void finishCreation(VM&, ErrorPrototype*);
+protected:
+    void finishCreation(VM&, ErrorPrototype*);
         
-    private:
-        ErrorConstructor(VM&, Structure*);
-        static ConstructType getConstructData(JSCell*, ConstructData&);
-        static CallType getCallData(JSCell*, CallData&);
-    };
+private:
+    ErrorConstructor(VM&, Structure*);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
+};
 
 } // namespace JSC
 

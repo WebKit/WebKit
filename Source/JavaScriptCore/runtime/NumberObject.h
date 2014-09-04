@@ -25,30 +25,30 @@
 
 namespace JSC {
 
-    class NumberObject : public JSWrapperObject {
-    protected:
-        NumberObject(VM&, Structure*);
-        void finishCreation(VM&);
+class NumberObject : public JSWrapperObject {
+protected:
+    NumberObject(VM&, Structure*);
+    void finishCreation(VM&);
 
-    public:
-        typedef JSWrapperObject Base;
+public:
+    typedef JSWrapperObject Base;
 
-        static NumberObject* create(VM& vm, Structure* structure)
-        {
-            NumberObject* number = new (NotNull, allocateCell<NumberObject>(vm.heap)) NumberObject(vm, structure);
-            number->finishCreation(vm);
-            return number;
-        }
+    static NumberObject* create(VM& vm, Structure* structure)
+    {
+        NumberObject* number = new (NotNull, allocateCell<NumberObject>(vm.heap)) NumberObject(vm, structure);
+        number->finishCreation(vm);
+        return number;
+    }
 
-        DECLARE_EXPORT_INFO;
+    DECLARE_EXPORT_INFO;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
-        }
-    };
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
+    }
+};
 
-    JS_EXPORT_PRIVATE NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);
+JS_EXPORT_PRIVATE NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

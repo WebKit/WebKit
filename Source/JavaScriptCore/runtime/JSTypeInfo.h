@@ -34,89 +34,89 @@
 
 namespace JSC {
 
-    class LLIntOffsetsExtractor;
+class LLIntOffsetsExtractor;
 
-    static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
-    static const unsigned ImplementsHasInstance = 1 << 1;
-    static const unsigned OverridesHasInstance = 1 << 2;
-    static const unsigned ImplementsDefaultHasInstance = 1 << 3;
-    static const unsigned IsEnvironmentRecord = 1 << 4;
-    static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
-    static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
+static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
+static const unsigned ImplementsHasInstance = 1 << 1;
+static const unsigned OverridesHasInstance = 1 << 2;
+static const unsigned ImplementsDefaultHasInstance = 1 << 3;
+static const unsigned IsEnvironmentRecord = 1 << 4;
+static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
+static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
 
-    static const unsigned OverridesGetPropertyNames = 1 << 8;
-    static const unsigned ProhibitsPropertyCaching = 1 << 9;
-    static const unsigned HasImpureGetOwnPropertySlot = 1 << 10;
-    static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 11;
-    static const unsigned StructureIsImmortal = 1 << 12;
+static const unsigned OverridesGetPropertyNames = 1 << 8;
+static const unsigned ProhibitsPropertyCaching = 1 << 9;
+static const unsigned HasImpureGetOwnPropertySlot = 1 << 10;
+static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 11;
+static const unsigned StructureIsImmortal = 1 << 12;
 
-    class TypeInfo {
-    public:
-        typedef uint8_t InlineTypeFlags;
-        typedef uint8_t OutOfLineTypeFlags;
+class TypeInfo {
+public:
+    typedef uint8_t InlineTypeFlags;
+    typedef uint8_t OutOfLineTypeFlags;
 
-        TypeInfo(JSType type, unsigned flags = 0)
-            : TypeInfo(type, flags & 0xff, flags >> 8)
-        {
-        }
-        
-        TypeInfo(JSType type, InlineTypeFlags inlineTypeFlags, OutOfLineTypeFlags outOfLineTypeFlags)
-            : m_type(type)
-            , m_flags(inlineTypeFlags)
-            , m_flags2(outOfLineTypeFlags)
-        {
-            // No object that doesn't ImplementsHasInstance should override it!
-            ASSERT((m_flags & (ImplementsHasInstance | OverridesHasInstance)) != OverridesHasInstance);
-            // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
-            if ((m_flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
-                m_flags |= ImplementsDefaultHasInstance;
-        }
+    TypeInfo(JSType type, unsigned flags = 0)
+        : TypeInfo(type, flags & 0xff, flags >> 8)
+    {
+    }
 
-        JSType type() const { return static_cast<JSType>(m_type); }
-        bool isObject() const { return isObject(type()); }
-        static bool isObject(JSType type) { return type >= ObjectType; }
-        bool isFinalObject() const { return type() == FinalObjectType; }
-        bool isNumberObject() const { return type() == NumberObjectType; }
-        bool isName() const { return type() == NameInstanceType; }
+    TypeInfo(JSType type, InlineTypeFlags inlineTypeFlags, OutOfLineTypeFlags outOfLineTypeFlags)
+        : m_type(type)
+        , m_flags(inlineTypeFlags)
+        , m_flags2(outOfLineTypeFlags)
+    {
+        // No object that doesn't ImplementsHasInstance should override it!
+        ASSERT((m_flags & (ImplementsHasInstance | OverridesHasInstance)) != OverridesHasInstance);
+        // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
+        if ((m_flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
+            m_flags |= ImplementsDefaultHasInstance;
+    }
 
-        unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
-        bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
-        bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
-        bool isEnvironmentRecord() const { return isSetOnFlags1(IsEnvironmentRecord); }
-        bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
-        bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
-        bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
-        static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
-        bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
-        bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
-        bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
-        bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }
-        bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
-        bool structureIsImmortal() const { return isSetOnFlags2(StructureIsImmortal); }
+    JSType type() const { return static_cast<JSType>(m_type); }
+    bool isObject() const { return isObject(type()); }
+    static bool isObject(JSType type) { return type >= ObjectType; }
+    bool isFinalObject() const { return type() == FinalObjectType; }
+    bool isNumberObject() const { return type() == NumberObjectType; }
+    bool isName() const { return type() == NameInstanceType; }
 
-        static ptrdiff_t flagsOffset()
-        {
-            return OBJECT_OFFSETOF(TypeInfo, m_flags);
-        }
+    unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
+    bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
+    bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
+    bool isEnvironmentRecord() const { return isSetOnFlags1(IsEnvironmentRecord); }
+    bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
+    bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
+    bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
+    static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
+    bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
+    bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
+    bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
+    bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }
+    bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
+    bool structureIsImmortal() const { return isSetOnFlags2(StructureIsImmortal); }
 
-        static ptrdiff_t typeOffset()
-        {
-            return OBJECT_OFFSETOF(TypeInfo, m_type);
-        }
+    static ptrdiff_t flagsOffset()
+    {
+        return OBJECT_OFFSETOF(TypeInfo, m_flags);
+    }
 
-        InlineTypeFlags inlineTypeFlags() const { return m_flags; }
-        OutOfLineTypeFlags outOfLineTypeFlags() const { return m_flags2; }
+    static ptrdiff_t typeOffset()
+    {
+        return OBJECT_OFFSETOF(TypeInfo, m_type);
+    }
 
-    private:
-        friend class LLIntOffsetsExtractor;
-        
-        bool isSetOnFlags1(unsigned flag) const { ASSERT(flag <= (1 << 7)); return m_flags & flag; }
-        bool isSetOnFlags2(unsigned flag) const { ASSERT(flag >= (1 << 8)); return m_flags2 & (flag >> 8); }
+    InlineTypeFlags inlineTypeFlags() const { return m_flags; }
+    OutOfLineTypeFlags outOfLineTypeFlags() const { return m_flags2; }
 
-        unsigned char m_type;
-        unsigned char m_flags;
-        unsigned char m_flags2;
-    };
+private:
+    friend class LLIntOffsetsExtractor;
+
+    bool isSetOnFlags1(unsigned flag) const { ASSERT(flag <= (1 << 7)); return m_flags & flag; }
+    bool isSetOnFlags2(unsigned flag) const { ASSERT(flag >= (1 << 8)); return m_flags2 & (flag >> 8); }
+
+    unsigned char m_type;
+    unsigned char m_flags;
+    unsigned char m_flags2;
+};
 
 }
 

@@ -25,35 +25,35 @@
 
 namespace JSC {
 
-    class ObjectPrototype;
+class ObjectPrototype;
 
-    class ErrorPrototype : public ErrorInstance {
-    public:
-        typedef ErrorInstance Base;
+class ErrorPrototype : public ErrorInstance {
+public:
+    typedef ErrorInstance Base;
 
-        static ErrorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-        {
-            ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(vm.heap)) ErrorPrototype(vm, structure);
-            prototype->finishCreation(vm, globalObject);
-            return prototype;
-        }
-        
-        DECLARE_INFO;
+    static ErrorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(vm.heap)) ErrorPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
+        return prototype;
+    }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
-        }
+    DECLARE_INFO;
 
-    protected:
-        ErrorPrototype(VM&, Structure*);
-        void finishCreation(VM&, JSGlobalObject*);
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
+    }
 
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
+protected:
+    ErrorPrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 
-    private:
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    };
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
+
+private:
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+};
 
 } // namespace JSC
 

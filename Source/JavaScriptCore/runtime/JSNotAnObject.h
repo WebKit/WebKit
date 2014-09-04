@@ -33,52 +33,52 @@
 
 namespace JSC {
 
-    // This unholy class is used to allow us to avoid multiple exception checks
-    // in certain SquirrelFish bytecodes -- effectively it just silently consumes
-    // any operations performed on the result of a failed toObject call.
-    class JSNotAnObject : public JSNonFinalObject {
-    private:
-        explicit JSNotAnObject(VM& vm)
-            : JSNonFinalObject(vm, vm.notAnObjectStructure.get())
-        {
-        }
-        
-    public:
-        typedef JSNonFinalObject Base;
+// This unholy class is used to allow us to avoid multiple exception checks
+// in certain SquirrelFish bytecodes -- effectively it just silently consumes
+// any operations performed on the result of a failed toObject call.
+class JSNotAnObject : public JSNonFinalObject {
+private:
+    explicit JSNotAnObject(VM& vm)
+        : JSNonFinalObject(vm, vm.notAnObjectStructure.get())
+    {
+    }
 
-        static JSNotAnObject* create(VM& vm)
-        {
-            JSNotAnObject* object = new (NotNull, allocateCell<JSNotAnObject>(vm.heap)) JSNotAnObject(vm);
-            object->finishCreation(vm);
-            return object;
-        }
+public:
+    typedef JSNonFinalObject Base;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    static JSNotAnObject* create(VM& vm)
+    {
+        JSNotAnObject* object = new (NotNull, allocateCell<JSNotAnObject>(vm.heap)) JSNotAnObject(vm);
+        object->finishCreation(vm);
+        return object;
+    }
 
-        DECLARE_INFO;
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-     private:
-        
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
+    DECLARE_INFO;
 
-        // JSValue methods
-        static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+private:
 
-        // JSObject methods
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-        static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    // JSValue methods
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
-        static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-        static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+    // JSObject methods
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
 
-        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    };
+    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+};
 
 } // namespace JSC
 

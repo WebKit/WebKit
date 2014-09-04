@@ -30,49 +30,49 @@
 
 namespace JSC {
 
-    class JSAPIValueWrapper : public JSCell {
-        friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
-    public:
-        typedef JSCell Base;
+class JSAPIValueWrapper : public JSCell {
+    friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
+public:
+    typedef JSCell Base;
 
-        JSValue value() const { return m_value.get(); }
+    JSValue value() const { return m_value.get(); }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesGetPropertyNames), info());
-        }
-        
-        DECLARE_EXPORT_INFO;
-        
-        static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
-        {
-            VM& vm = exec->vm();
-            JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm.heap)) JSAPIValueWrapper(exec);
-            wrapper->finishCreation(vm, value);
-            return wrapper;
-        }
-
-    protected:
-        void finishCreation(VM& vm, JSValue value)
-        {
-            Base::finishCreation(vm);
-            m_value.set(vm, this, value);
-            ASSERT(!value.isCell());
-        }
-
-    private:
-        JSAPIValueWrapper(ExecState* exec)
-            : JSCell(exec->vm(), exec->vm().apiWrapperStructure.get())
-        {
-        }
-
-        WriteBarrier<Unknown> m_value;
-    };
-
-    inline JSValue jsAPIValueWrapper(ExecState* exec, JSValue value)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return JSAPIValueWrapper::create(exec, value);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(APIValueWrapperType, OverridesGetPropertyNames), info());
     }
+
+    DECLARE_EXPORT_INFO;
+
+    static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
+    {
+        VM& vm = exec->vm();
+        JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm.heap)) JSAPIValueWrapper(exec);
+        wrapper->finishCreation(vm, value);
+        return wrapper;
+    }
+
+protected:
+    void finishCreation(VM& vm, JSValue value)
+    {
+        Base::finishCreation(vm);
+        m_value.set(vm, this, value);
+        ASSERT(!value.isCell());
+    }
+
+private:
+    JSAPIValueWrapper(ExecState* exec)
+        : JSCell(exec->vm(), exec->vm().apiWrapperStructure.get())
+    {
+    }
+
+    WriteBarrier<Unknown> m_value;
+};
+
+inline JSValue jsAPIValueWrapper(ExecState* exec, JSValue value)
+{
+    return JSAPIValueWrapper::create(exec, value);
+}
 
 } // namespace JSC
 

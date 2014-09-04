@@ -26,31 +26,31 @@
 
 namespace JSC {
 
-    class RegExpPrototype : public RegExpObject {
-    public:
-        typedef RegExpObject Base;
+class RegExpPrototype : public RegExpObject {
+public:
+    typedef RegExpObject Base;
 
-        static RegExpPrototype* create(VM& vm, Structure* structure, RegExp* regExp)
-        {
-            RegExpPrototype* prototype = new (NotNull, allocateCell<RegExpPrototype>(vm.heap)) RegExpPrototype(vm, structure, regExp);
-            prototype->finishCreation(vm);
-            return prototype;
-        }
-        
-        DECLARE_INFO;
+    static RegExpPrototype* create(VM& vm, Structure* structure, RegExp* regExp)
+    {
+        RegExpPrototype* prototype = new (NotNull, allocateCell<RegExpPrototype>(vm.heap)) RegExpPrototype(vm, structure, regExp);
+        prototype->finishCreation(vm);
+        return prototype;
+    }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    DECLARE_INFO;
 
-    protected:
-        RegExpPrototype(VM&, Structure*, RegExp*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-    private:
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    };
+protected:
+    RegExpPrototype(VM&, Structure*, RegExp*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
+
+private:
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+};
 
 } // namespace JSC
 

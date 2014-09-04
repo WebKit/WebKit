@@ -30,102 +30,102 @@
 
 namespace JSC {
 
-    class ExecState;
-    class VM;
-    class JSGlobalObject;
-    class JSObject;
-    class SourceCode;
-    class Structure;
+class ExecState;
+class VM;
+class JSGlobalObject;
+class JSObject;
+class SourceCode;
+class Structure;
 
-    // Methods to create a range of internal errors.
-    JSObject* createError(JSGlobalObject*, const String&);
-    JSObject* createEvalError(JSGlobalObject*, const String&);
-    JSObject* createRangeError(JSGlobalObject*, const String&);
-    JSObject* createReferenceError(JSGlobalObject*, const String&);
-    JSObject* createSyntaxError(JSGlobalObject*, const String&);
-    JSObject* createTypeError(JSGlobalObject*, const String&);
-    JSObject* createNotEnoughArgumentsError(JSGlobalObject*);
-    JSObject* createURIError(JSGlobalObject*, const String&);
-    // ExecState wrappers.
-    JS_EXPORT_PRIVATE JSObject* createError(ExecState*, const String&);
-    JSObject* createEvalError(ExecState*, const String&);
-    JS_EXPORT_PRIVATE JSObject* createRangeError(ExecState*, const String&);
-    JS_EXPORT_PRIVATE JSObject* createReferenceError(ExecState*, const String&);
-    JS_EXPORT_PRIVATE JSObject* createSyntaxError(ExecState*, const String&);
-    JS_EXPORT_PRIVATE JSObject* createTypeError(ExecState*, const String&);
-    JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(ExecState*);
-    JSObject* createURIError(ExecState*, const String&);
+// Methods to create a range of internal errors.
+JSObject* createError(JSGlobalObject*, const String&);
+JSObject* createEvalError(JSGlobalObject*, const String&);
+JSObject* createRangeError(JSGlobalObject*, const String&);
+JSObject* createReferenceError(JSGlobalObject*, const String&);
+JSObject* createSyntaxError(JSGlobalObject*, const String&);
+JSObject* createTypeError(JSGlobalObject*, const String&);
+JSObject* createNotEnoughArgumentsError(JSGlobalObject*);
+JSObject* createURIError(JSGlobalObject*, const String&);
+// ExecState wrappers.
+JS_EXPORT_PRIVATE JSObject* createError(ExecState*, const String&);
+JSObject* createEvalError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createRangeError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createReferenceError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createSyntaxError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createTypeError(ExecState*, const String&);
+JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(ExecState*);
+JSObject* createURIError(ExecState*, const String&);
 
-    // Methods to add 
-    bool hasErrorInfo(ExecState*, JSObject* error);
-    // ExecState wrappers.
-    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
+// Methods to add 
+bool hasErrorInfo(ExecState*, JSObject* error);
+// ExecState wrappers.
+JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
-    // Methods to throw Errors.
+// Methods to throw Errors.
 
-    // Convenience wrappers, create an throw an exception with a default message.
-    JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
-    JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
+// Convenience wrappers, create an throw an exception with a default message.
+JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
+JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
 
-    // Convenience wrappers, wrap result as an EncodedJSValue.
-    inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(exec->vm().throwException(exec, error)); }
-    inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
-    inline EncodedJSValue throwVMTypeError(ExecState* exec, const String& errorMessage) { return JSValue::encode(throwTypeError(exec, errorMessage)); }
-    
-    class StrictModeTypeErrorFunction : public InternalFunction {
-    private:
-        StrictModeTypeErrorFunction(VM& vm, Structure* structure, const String& message)
-            : InternalFunction(vm, structure)
-            , m_message(message)
-        {
-        }
+// Convenience wrappers, wrap result as an EncodedJSValue.
+inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(exec->vm().throwException(exec, error)); }
+inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
+inline EncodedJSValue throwVMTypeError(ExecState* exec, const String& errorMessage) { return JSValue::encode(throwTypeError(exec, errorMessage)); }
 
-        static void destroy(JSCell*);
+class StrictModeTypeErrorFunction : public InternalFunction {
+private:
+    StrictModeTypeErrorFunction(VM& vm, Structure* structure, const String& message)
+        : InternalFunction(vm, structure)
+        , m_message(message)
+    {
+    }
 
-    public:
-        typedef InternalFunction Base;
+    static void destroy(JSCell*);
 
-        static StrictModeTypeErrorFunction* create(VM& vm, Structure* structure, const String& message)
-        {
-            StrictModeTypeErrorFunction* function = new (NotNull, allocateCell<StrictModeTypeErrorFunction>(vm.heap)) StrictModeTypeErrorFunction(vm, structure, message);
-            function->finishCreation(vm, String());
-            return function;
-        }
-    
-        static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)
-        {
-            throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
-            return JSValue::encode(jsNull());
-        }
-    
-        static ConstructType getConstructData(JSCell*, ConstructData& constructData)
-        {
-            constructData.native.function = constructThrowTypeError;
-            return ConstructTypeHost;
-        }
-    
-        static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
-        {
-            throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
-            return JSValue::encode(jsNull());
-        }
+public:
+    typedef InternalFunction Base;
 
-        static CallType getCallData(JSCell*, CallData& callData)
-        {
-            callData.native.function = callThrowTypeError;
-            return CallTypeHost;
-        }
+    static StrictModeTypeErrorFunction* create(VM& vm, Structure* structure, const String& message)
+    {
+        StrictModeTypeErrorFunction* function = new (NotNull, allocateCell<StrictModeTypeErrorFunction>(vm.heap)) StrictModeTypeErrorFunction(vm, structure, message);
+        function->finishCreation(vm, String());
+        return function;
+    }
 
-        DECLARE_INFO;
+    static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)
+    {
+        throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+        return JSValue::encode(jsNull());
+    }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-        { 
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
-        }
+    static ConstructType getConstructData(JSCell*, ConstructData& constructData)
+    {
+        constructData.native.function = constructThrowTypeError;
+        return ConstructTypeHost;
+    }
 
-    private:
-        String m_message;
-    };
+    static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
+    {
+        throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+        return JSValue::encode(jsNull());
+    }
+
+    static CallType getCallData(JSCell*, CallData& callData)
+    {
+        callData.native.function = callThrowTypeError;
+        return CallTypeHost;
+    }
+
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    { 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+    }
+
+private:
+    String m_message;
+};
 
 } // namespace JSC
 

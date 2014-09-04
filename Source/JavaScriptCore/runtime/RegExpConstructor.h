@@ -30,100 +30,100 @@
 
 namespace JSC {
 
-    class RegExpPrototype;
+class RegExpPrototype;
 
-    class RegExpConstructor : public InternalFunction {
-    public:
-        typedef InternalFunction Base;
+class RegExpConstructor : public InternalFunction {
+public:
+    typedef InternalFunction Base;
 
-        static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
-        {
-            RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm.heap)) RegExpConstructor(vm, structure, regExpPrototype);
-            constructor->finishCreation(vm, regExpPrototype);
-            return constructor;
-        }
-
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
-
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-
-        DECLARE_INFO;
-
-        MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
-        MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset);
-
-        void setMultiline(bool multiline) { m_multiline = multiline; }
-        bool multiline() const { return m_multiline; }
-
-        JSValue getBackref(ExecState*, unsigned);
-        JSValue getLastParen(ExecState*);
-        JSValue getLeftContext(ExecState*);
-        JSValue getRightContext(ExecState*);
-
-        void setInput(ExecState* exec, JSString* string) { m_cachedResult.setInput(exec, this, string); }
-        JSString* input() { return m_cachedResult.input(); }
-
-        static void visitChildren(JSCell*, SlotVisitor&);
-
-    protected:
-        void finishCreation(VM&, RegExpPrototype*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
-
-    private:
-        RegExpConstructor(VM&, Structure*, RegExpPrototype*);
-        static void destroy(JSCell*);
-        static ConstructType getConstructData(JSCell*, ConstructData&);
-        static CallType getCallData(JSCell*, CallData&);
-
-        RegExpCachedResult m_cachedResult;
-        bool m_multiline;
-        Vector<int, 32> m_ovector;
-    };
-
-    RegExpConstructor* asRegExpConstructor(JSValue);
-
-    JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, bool callAsConstructor = false);
-
-    inline RegExpConstructor* asRegExpConstructor(JSValue value)
+    static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
     {
-        ASSERT(asObject(value)->inherits(RegExpConstructor::info()));
-        return static_cast<RegExpConstructor*>(asObject(value));
+        RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm.heap)) RegExpConstructor(vm, structure, regExpPrototype);
+        constructor->finishCreation(vm, regExpPrototype);
+        return constructor;
     }
 
-    /* 
-      To facilitate result caching, exec(), test(), match(), search(), and replace() dipatch regular
-      expression matching through the performMatch function. We use cached results to calculate, 
-      e.g., RegExp.lastMatch and RegExp.leftParen.
-    */
-    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        int position = regExp->match(vm, input, startOffset, m_ovector);
-
-        if (ovector)
-            *ovector = m_ovector.data();
-
-        if (position == -1)
-            return MatchResult::failed();
-
-        ASSERT(!m_ovector.isEmpty());
-        ASSERT(m_ovector[0] == position);
-        ASSERT(m_ovector[1] >= position);
-        size_t end = m_ovector[1];
-
-        m_cachedResult.record(vm, this, regExp, string, MatchResult(position, end));
-
-        return MatchResult(position, end);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp, JSString* string, const String& input, int startOffset)
-    {
-        MatchResult result = regExp->match(vm, input, startOffset);
-        if (result)
-            m_cachedResult.record(vm, this, regExp, string, result);
-        return result;
-    }
+
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+
+    DECLARE_INFO;
+
+    MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
+    MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset);
+
+    void setMultiline(bool multiline) { m_multiline = multiline; }
+    bool multiline() const { return m_multiline; }
+
+    JSValue getBackref(ExecState*, unsigned);
+    JSValue getLastParen(ExecState*);
+    JSValue getLeftContext(ExecState*);
+    JSValue getRightContext(ExecState*);
+
+    void setInput(ExecState* exec, JSString* string) { m_cachedResult.setInput(exec, this, string); }
+    JSString* input() { return m_cachedResult.input(); }
+
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+protected:
+    void finishCreation(VM&, RegExpPrototype*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
+
+private:
+    RegExpConstructor(VM&, Structure*, RegExpPrototype*);
+    static void destroy(JSCell*);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
+
+    RegExpCachedResult m_cachedResult;
+    bool m_multiline;
+    Vector<int, 32> m_ovector;
+};
+
+RegExpConstructor* asRegExpConstructor(JSValue);
+
+JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, bool callAsConstructor = false);
+
+inline RegExpConstructor* asRegExpConstructor(JSValue value)
+{
+    ASSERT(asObject(value)->inherits(RegExpConstructor::info()));
+    return static_cast<RegExpConstructor*>(asObject(value));
+}
+
+/* 
+   To facilitate result caching, exec(), test(), match(), search(), and replace() dipatch regular
+   expression matching through the performMatch function. We use cached results to calculate, 
+   e.g., RegExp.lastMatch and RegExp.leftParen.
+*/
+ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
+{
+    int position = regExp->match(vm, input, startOffset, m_ovector);
+
+    if (ovector)
+        *ovector = m_ovector.data();
+
+    if (position == -1)
+        return MatchResult::failed();
+
+    ASSERT(!m_ovector.isEmpty());
+    ASSERT(m_ovector[0] == position);
+    ASSERT(m_ovector[1] >= position);
+    size_t end = m_ovector[1];
+
+    m_cachedResult.record(vm, this, regExp, string, MatchResult(position, end));
+
+    return MatchResult(position, end);
+}
+ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(VM& vm, RegExp* regExp, JSString* string, const String& input, int startOffset)
+{
+    MatchResult result = regExp->match(vm, input, startOffset);
+    if (result)
+        m_cachedResult.record(vm, this, regExp, string, result);
+    return result;
+}
 
 } // namespace JSC
 

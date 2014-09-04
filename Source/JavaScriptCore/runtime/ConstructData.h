@@ -34,29 +34,29 @@
 
 namespace JSC {
 
-    class ArgList;
-    class ExecState;
-    class FunctionExecutable;
-    class JSObject;
-    class JSScope;
+class ArgList;
+class ExecState;
+class FunctionExecutable;
+class JSObject;
+class JSScope;
 
-    enum ConstructType {
-        ConstructTypeNone,
-        ConstructTypeHost,
-        ConstructTypeJS
-    };
+enum ConstructType {
+    ConstructTypeNone,
+    ConstructTypeHost,
+    ConstructTypeJS
+};
 
-    union ConstructData {
-        struct {
-            NativeFunction function;
-        } native;
-        struct {
-            FunctionExecutable* functionExecutable;
-            JSScope* scope;
-        } js;
-    };
+union ConstructData {
+    struct {
+        NativeFunction function;
+    } native;
+    struct {
+        FunctionExecutable* functionExecutable;
+        JSScope* scope;
+    } js;
+};
 
-    JS_EXPORT_PRIVATE JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&);
+JS_EXPORT_PRIVATE JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&);
 
 } // namespace JSC
 

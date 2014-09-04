@@ -27,40 +27,40 @@
 
 namespace JSC {
 
-    class ErrorInstance : public JSNonFinalObject {
-    public:
-        typedef JSNonFinalObject Base;
+class ErrorInstance : public JSNonFinalObject {
+public:
+    typedef JSNonFinalObject Base;
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
-        }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
+    }
 
-        static ErrorInstance* create(VM& vm, Structure* structure, const String& message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
-        {
-            ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
-            instance->finishCreation(vm, message, stackTrace);
-            return instance;
-        }
+    static ErrorInstance* create(VM& vm, Structure* structure, const String& message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
+    {
+        ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
+        instance->finishCreation(vm, message, stackTrace);
+        return instance;
+    }
 
-        static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
-        {
-            return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), stackTrace);
-        }
+    static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
+    {
+        return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), stackTrace);
+    }
 
-        bool appendSourceToMessage() { return m_appendSourceToMessage; }
-        void setAppendSourceToMessage() { m_appendSourceToMessage = true; }
-        void clearAppendSourceToMessage() { m_appendSourceToMessage = false; }
+    bool appendSourceToMessage() { return m_appendSourceToMessage; }
+    void setAppendSourceToMessage() { m_appendSourceToMessage = true; }
+    void clearAppendSourceToMessage() { m_appendSourceToMessage = false; }
 
-    protected:
-        explicit ErrorInstance(VM&, Structure*);
+protected:
+    explicit ErrorInstance(VM&, Structure*);
 
-        void finishCreation(VM&, const String&, Vector<StackFrame> = Vector<StackFrame>());
+    void finishCreation(VM&, const String&, Vector<StackFrame> = Vector<StackFrame>());
 
-        bool m_appendSourceToMessage;
-    };
+    bool m_appendSourceToMessage;
+};
 
 } // namespace JSC
 

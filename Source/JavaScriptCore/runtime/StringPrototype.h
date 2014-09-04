@@ -25,29 +25,28 @@
 
 namespace JSC {
 
-    class ObjectPrototype;
+class ObjectPrototype;
 
-    class StringPrototype : public StringObject {
-    private:
-        StringPrototype(VM&, Structure*);
+class StringPrototype : public StringObject {
+private:
+    StringPrototype(VM&, Structure*);
 
-    public:
-        typedef StringObject Base;
+public:
+    typedef StringObject Base;
 
-        static StringPrototype* create(VM&, JSGlobalObject*, Structure*);
+    static StringPrototype* create(VM&, JSGlobalObject*, Structure*);
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-        }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
 
-        DECLARE_INFO;
-        
-    protected:
-        void finishCreation(VM&, JSGlobalObject*, JSString*);
-        static const unsigned StructureFlags = StringObject::StructureFlags;
+    DECLARE_INFO;
 
-    };
+protected:
+    void finishCreation(VM&, JSGlobalObject*, JSString*);
+    static const unsigned StructureFlags = StringObject::StructureFlags;
+};
 
 } // namespace JSC
 
