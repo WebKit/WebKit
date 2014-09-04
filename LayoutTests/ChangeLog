@@ -1,3 +1,16 @@
+2014-09-04  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r172832): Poor 2-finger scrolling performance at theverge.com articles 
+        (all tiles repaint)
+        https://bugs.webkit.org/show_bug.cgi?id=136433
+        -and corresponding-
+        rdar://problem/18193942
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/root-overflow-with-mousewheel-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/root-overflow-with-mousewheel.html: Added.
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

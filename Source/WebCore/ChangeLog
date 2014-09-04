@@ -1,3 +1,30 @@
+2014-09-04  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r172832): Poor 2-finger scrolling performance at theverge.com articles 
+        (all tiles repaint)
+        https://bugs.webkit.org/show_bug.cgi?id=136433
+        -and corresponding-
+        rdar://problem/18193942
+
+        Reviewed by Tim Horton.
+
+        We should ensure that we are only setting scroll elasticity for layers that return 
+        true for scrollsOverflow(). When overflow:scroll is set on the root element, we 
+        wound up setting the ScrollElasticity for the root, which messed up with the 
+        special way that the root is meant to scroll. Even though overflow:scroll has been 
+        set on the root, scrollsOverflow() is still false because we knew not to set 
+        hasOverflowClip() since it’s the root, which is why this check works.  
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+
+        Really, we should have never even called RenderLayer::setHasVerticalScrollbar or 
+        RenderLayer::setHasHorizontalScrollbar since it’s wrong to be creating a scrollbar 
+        on RenderLayer for the root. We should make sure, in addition to the other 
+        requirements consulted, that the renderer has an overflow clip before we create 
+        the scrollbars.
+        (WebCore::RenderLayer::updateScrollbarsAfterStyleChange):
+
 2014-09-04  Antti Koivisto  <antti@apple.com>
 
         Remove ResourceResponse::m_suggestedFilename
