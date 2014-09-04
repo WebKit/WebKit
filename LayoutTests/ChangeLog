@@ -1,3 +1,14 @@
+2014-09-03  Shivakumar JM  <shiva.jm@samsung.com>
+
+        [EFL] Websocket Layout Tests passed in latest build.
+        https://bugs.webkit.org/show_bug.cgi?id=136278
+
+        Unreviewed gardening.
+ 
+        Websocket Layout Tests passed in latest build, possibly because r172438.
+
+        * platform/efl/TestExpectations:
+
 2014-09-03  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed, mark test as crashing
