@@ -95,17 +95,23 @@ bool CallEdgeProfile::worthDespecifying()
     if (m_closuresAreDespecified)
         return false;
     
-    if (!!m_primaryCallee && !JSC::worthDespecifying(m_primaryCallee))
-        return false;
+    bool didSeeEntry = false;
+    
+    if (!!m_primaryCallee) {
+        didSeeEntry = true;
+        if (!JSC::worthDespecifying(m_primaryCallee))
+            return false;
+    }
     
     if (m_otherCallees) {
         for (unsigned i = m_otherCallees->m_processed.size(); i--;) {
+            didSeeEntry = true;
             if (!JSC::worthDespecifying(m_otherCallees->m_processed[i].callee()))
                 return false;
         }
     }
     
-    return true;
+    return didSeeEntry;
 }
 
 void CallEdgeProfile::visitWeak()
@@ -131,7 +137,7 @@ void CallEdgeProfile::visitWeak()
         }
         
         Vector<CallSpectrum::KeyAndCount> list = newSpectrum.buildList();
-        ASSERT(list.size());
+        RELEASE_ASSERT(list.size());
         m_primaryCallee = list.last().key;
         m_numCallsToPrimary = list.last().count;
         
@@ -207,8 +213,8 @@ void CallEdgeProfile::mergeBack()
 {
     ConcurrentJITLocker locker(m_lock);
     
-    ASSERT(m_otherCallees);
-    ASSERT(m_otherCallees->m_temporarySpectrum);
+    RELEASE_ASSERT(m_otherCallees);
+    RELEASE_ASSERT(m_otherCallees->m_temporarySpectrum);
     
     if (!!m_primaryCallee)
         m_otherCallees->m_temporarySpectrum->add(m_primaryCallee, m_numCallsToPrimary);

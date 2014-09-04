@@ -1,3 +1,15 @@
+2014-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        CallEdgeProfile::visitWeak() shouldn't attempt to despecify empty profiles
+        https://bugs.webkit.org/show_bug.cgi?id=136511
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CallEdgeProfile.cpp:
+        (JSC::CallEdgeProfile::worthDespecifying):
+        (JSC::CallEdgeProfile::visitWeak):
+        (JSC::CallEdgeProfile::mergeBack):
+
 2014-09-03  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r167325): (null) entry added to Xcode project file when JSBoundFunction.h was removed
