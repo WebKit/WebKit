@@ -1,3 +1,9 @@
+2014-09-05  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed GTK build fix; include StringPrintStream to pull in toString().
+
+        * html/HTMLMediaElement.h:
+
 2014-09-05  Brady Eidson  <beidson@apple.com>
 
         Allow pages with unload handlers in the page cache

@@ -49,6 +49,9 @@
 #include "MediaStream.h"
 #endif
 
+#ifndef NDEBUG
+#include <wtf/StringPrintStream.h>
+#endif
 
 namespace WebCore {
 
