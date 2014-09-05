@@ -103,4 +103,9 @@ void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* me
 
 }
 
+String ResourceResponse::platformSuggestedFilename() const
+{
+    return String();
+}
+
 #endif

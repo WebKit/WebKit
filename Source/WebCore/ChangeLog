@@ -1,5 +1,13 @@
 2014-09-04  Pratik Solanki  <psolanki@apple.com>
 
+        Unreviewed. Another speculative build fix after r173272. Add a stub implementation for
+        ResourceResponse::platformSuggestedFilename(). Filed bug 136562 for proper fix.
+
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (ResourceResponse::platformSuggestedFilename):
+
+2014-09-04  Pratik Solanki  <psolanki@apple.com>
+
         Unreviewed. Speculative EFL and GTK build fix after r173272. Remove the filename argument
         from the various ResourceResponse constructors.
 
