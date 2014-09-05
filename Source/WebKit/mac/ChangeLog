@@ -3,6 +3,16 @@
         [iOS] Another attempt to fix the iOS build after <http://trac.webkit.org/changeset/173309>
         (https://bugs.webkit.org/show_bug.cgi?id=136564)
 
+        Move #endif inside -viewDidMoveToWindow up one line such that the closing brace ('}') is after it.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewDidMoveToWindow]):
+
+2014-09-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Another attempt to fix the iOS build after <http://trac.webkit.org/changeset/173309>
+        (https://bugs.webkit.org/show_bug.cgi?id=136564)
+
         Add !PLATFORM(IOS)-guard in -viewDidMoveToWindow around code that references WebHTMLViewPrivate.flagsChangedEventMonitor.
         The instance variable WebHTMLViewPrivate.flagsChangedEventMonitor is guarded by !PLATFORM(IOS).
 

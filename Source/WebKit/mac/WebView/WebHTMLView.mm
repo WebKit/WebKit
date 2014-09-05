@@ -3155,8 +3155,8 @@ WEBCORE_COMMAND(toggleUnderline)
     } else {
         [NSEvent removeMonitor:_private->flagsChangedEventMonitor];
         _private->flagsChangedEventMonitor = nil;
-    }
 #endif
+    }
 }
 
 - (void)_web_makePluginSubviewsPerformSelector:(SEL)selector withObject:(id)object
