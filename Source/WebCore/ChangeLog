@@ -1,3 +1,36 @@
+2014-09-05  Zalan Bujtas  <zalan@apple.com>
+
+        Move computeInlinePreferredLogicalWidths() from RenderBlock to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=136461
+
+        Reviewed by Darin Adler.
+
+        This patch enables us to go from const_cast<RenderBlockFlow*>(this)->computeInlinePreferredLogicalWidths()
+        to computeInlinePreferredLogicalWidths().
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::InlineMinMaxIterator::endOfInline): Deleted.
+        (WebCore::InlineMinMaxIterator::next): Deleted.
+        (WebCore::getBPMWidth): Deleted.
+        (WebCore::getBorderPaddingMargin): Deleted.
+        (WebCore::stripTrailingSpace): Deleted.
+        (WebCore::preferredWidth): Deleted.
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths):
+        (WebCore::InlineMinMaxIterator::initial): The (parent == current) condition was used as 'initial' state before.
+        and in order to make computeInlinePreferredLogicalWidths const, InlineMinMaxIterator() needs to take const RenderObject*.
+        (WebCore::InlineMinMaxIterator::next):
+        (WebCore::getBPMWidth):
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::stripTrailingSpace):
+        (WebCore::preferredWidth):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths):
+        * rendering/RenderBlockFlow.h:
+
 2014-09-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, build fix for EFL and GTK ports since r173272.

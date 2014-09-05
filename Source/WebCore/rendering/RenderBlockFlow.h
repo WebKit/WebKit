@@ -580,6 +580,8 @@ private:
     bool namedFlowFragmentNeedsUpdate() const;
     virtual bool canHaveChildren() const override;
 
+    void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;
     unsigned m_lineCountForTextAutosizing : 2;
