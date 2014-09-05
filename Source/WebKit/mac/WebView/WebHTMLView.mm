@@ -3145,6 +3145,7 @@ WEBCORE_COMMAND(toggleUnderline)
 
         _private->lastScrollPosition = NSZeroPoint;
 
+#if !PLATFORM(IOS)
         if (!_private->flagsChangedEventMonitor) {
             _private->flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
                 [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
@@ -3155,6 +3156,7 @@ WEBCORE_COMMAND(toggleUnderline)
         [NSEvent removeMonitor:_private->flagsChangedEventMonitor];
         _private->flagsChangedEventMonitor = nil;
     }
+#endif
 }
 
 - (void)_web_makePluginSubviewsPerformSelector:(SEL)selector withObject:(id)object
