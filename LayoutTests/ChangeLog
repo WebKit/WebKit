@@ -1,3 +1,12 @@
+2014-09-05  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add test after r173324
+
+        Rubber-stamped by Simon Fraser.
+
+        * storage/indexeddb/version-change-event-expected.txt: Added.
+        * storage/indexeddb/version-change-event.html: Added.
+
 2014-09-05  Brady Eidson  <beidson@apple.com>
 
         Allow pages with unload handlers in the page cache
