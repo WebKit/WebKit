@@ -2811,14 +2811,6 @@ _wkSetLayerContentsScale
 __ZN7WebCore20ResourceHandleClient22willCacheResponseAsyncEPNS_14ResourceHandleEPK20_CFCachedURLResponse
 #endif
 
-#if PLATFORM(IOS) && defined(__LP64__) && __LP64__
-__ZN7WebCore28createCGColorWithDeviceWhiteEdd
-#endif
-
-#if PLATFORM(IOS) && !(defined(__LP64__) && __LP64__)
-__ZN7WebCore28createCGColorWithDeviceWhiteEff
-#endif
-
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 __ZN7WebCore15ProtectionSpace28encodingRequiresPlatformDataEP20NSURLProtectionSpace
 __ZN7WebCore16DiskCacheMonitorC2ERKNS_15ResourceRequestENS_9SessionIDEPK20_CFCachedURLResponse

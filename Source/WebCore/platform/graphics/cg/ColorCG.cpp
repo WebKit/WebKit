@@ -42,13 +42,6 @@
 namespace WebCore {
 
 #if PLATFORM(IOS)
-CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
-{
-    static CGColorSpaceRef graySpace = CGColorSpaceCreateDeviceGray();
-    const CGFloat components[] = { white, alpha };
-    return CGColorCreate(graySpace, components);
-}
-
 static CGColorRef createCGColorWithDeviceRGBA(CGColorRef sourceColor)
 {
     if (!sourceColor || CFEqual(CGColorGetColorSpace(sourceColor), deviceRGBColorSpaceRef()))

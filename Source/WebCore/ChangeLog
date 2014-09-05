@@ -1,3 +1,18 @@
+2014-09-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some PLATFORM(IOS) code in Color.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=136582
+
+        Reviewed by Dan Bates.
+
+        Remove Color::tap which is unused, and remove createCGColorWithDeviceWhite()
+        which was only called in one file in WebKit.
+
+        * WebCore.exp.in:
+        * platform/graphics/Color.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::createCGColorWithDeviceWhite): Deleted.
+
 2014-09-05  Beth Dakin  <bdakin@apple.com>
 
         ScrollablArea::handleWheelEvent() should return early if the ScrollableArea is not 

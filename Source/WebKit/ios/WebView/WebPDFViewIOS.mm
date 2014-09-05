@@ -61,6 +61,13 @@ static int comparePageRects(const void *key, const void *array);
 static const float PAGE_WIDTH_INSET     = 4.0 * 2.0;
 static const float PAGE_HEIGHT_INSET    = 4.0 * 2.0;
 
+static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
+{
+    static CGColorSpaceRef graySpace = CGColorSpaceCreateDeviceGray();
+    const CGFloat components[] = { white, alpha };
+    return CGColorCreate(graySpace, components);
+}
+
 @implementation WebPDFView
 
 + (NSArray *)supportedMIMETypes
