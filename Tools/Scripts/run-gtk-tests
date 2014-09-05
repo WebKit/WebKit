@@ -67,6 +67,8 @@ class TestRunner:
         SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/snapshot", "Test fails", 120404),
         SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/page-visibility", "Test fails or times out", 131731),
         SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
+        SkippedTest("WebKit2Gtk/TestDownloads", "/webkit2/Downloads/remote-file", "Test fails since r173272", 136562),
+        SkippedTest("WebKit2Gtk/TestResources", "/webkit2/WebKitWebResource/suggested-filename", "Test fails since r173272", 136562),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),

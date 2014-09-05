@@ -27,7 +27,7 @@ layer at (0,0) size 785x2966
       RenderBlock {H3} at (0,2588) size 769x22
         RenderText {#text} at (0,0) size 509x21
           text run at (0,0) width 509: "Right-To-Left containing replaced content blocking the ellipsis"
-layer at (8,48) size 19x310 clip at (9,49) size 17x308 scrollHeight 719
+layer at (8,48) size 19x310 clip at (9,49) size 17x308 scrollHeight 720
   RenderBlock {DIV} at (0,39) size 19x311 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 17x720
       text run at (1,1) width 719: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
@@ -52,7 +52,7 @@ layer at (8,787) size 30x310 clip at (9,788) size 28x308 scrollHeight 749
     RenderImage {IMG} at (1,182) size 25x26
     RenderText {#text} at (12,207) size 17x543
       text run at (12,207) width 542: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-layer at (8,1157) size 30x310 clip at (9,1158) size 28x308 scrollHeight 744
+layer at (8,1157) size 30x310 clip at (9,1158) size 28x308 scrollHeight 745
   RenderBlock {DIV} at (0,1148) size 30x311 [border: (1px solid #000000)]
     RenderText {#text} at (12,1) size 17x272
       text run at (12,1) width 271: "Lorem ipsum dolor sit amet, consectetur ad"

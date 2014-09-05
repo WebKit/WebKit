@@ -1,3 +1,10 @@
+2014-09-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skip tests failing since r173272.
+
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         Add some logging to help diagnose assertions in dumpWebViewAsPixelsAndCompareWithExpected() on bots

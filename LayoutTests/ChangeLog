@@ -1,3 +1,11 @@
+2014-09-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures after r173049 and r173272.
+        Update some expectations for new cases.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Rebaseline after r173049.
+
 2014-06-10  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: make MediaTime the primary time type for audiovisual times.
