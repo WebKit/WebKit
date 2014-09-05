@@ -460,7 +460,13 @@ bool TCompiler::enforcePackingRestrictions()
         return false;
     }
 
-    success = packer.CheckVariablesWithinPackingLimits(maxVaryingVectors, varyings);
+    TVariableInfoList nonStaticallyUsedVaryings;
+
+    for (TVariableInfo info : varyings) {
+        if (!info.staticUse)
+            nonStaticallyUsedVaryings.push_back(info);
+    }
+    success = packer.CheckVariablesWithinPackingLimits(maxVaryingVectors, nonStaticallyUsedVaryings);
 
     if (!success) {
         infoSink.info.prefix(EPrefixError);

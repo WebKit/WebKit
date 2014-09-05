@@ -1,3 +1,14 @@
+2014-09-05  Roger Fong  <roger_fong@apple.com>
+
+        Remove statically used varyings from packing restrictions check.
+        https://bugs.webkit.org/show_bug.cgi?id=136585.
+        <rdar://problem/16308409>
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/Compiler.cpp:
+        (TCompiler::enforcePackingRestrictions):
+
 2014-08-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviwed, remove empty directories.

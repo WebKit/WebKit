@@ -1,3 +1,13 @@
+2014-09-05  Roger Fong  <roger_fong@apple.com>
+
+        Remove statically used varyings from packing restrictions check.
+        https://bugs.webkit.org/show_bug.cgi?id=136585.
+        <rdar://problem/16308409>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/TestExpectations: Unskip build_009_to_016.html conformance test.
+
 2014-09-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: breakpoint actions should work regardless of Content Security Policy
