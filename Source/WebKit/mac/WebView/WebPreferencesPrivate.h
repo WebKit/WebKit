@@ -271,6 +271,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)_setMinimumZoomFontSize:(float)size;
 - (float)_minimumZoomFontSize;
 
+// Deprecated. Has no effect.
+- (void)setDiskImageCacheEnabled:(BOOL)enabled;
+
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsAirPlay;
 #endif

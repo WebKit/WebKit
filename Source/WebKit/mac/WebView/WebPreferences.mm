@@ -1904,6 +1904,11 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitAccelerated2dCanvasEnabledPreferenceKey];
 }
 
+- (void)setDiskImageCacheEnabled:(BOOL)enabled
+{
+    // Staging. Can be removed once there are no more callers.
+}
+
 - (BOOL)isFrameFlatteningEnabled
 {
     return [self _boolValueForKey:WebKitFrameFlatteningEnabledPreferenceKey];
