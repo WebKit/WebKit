@@ -1,3 +1,9 @@
+2014-09-04  Andy Estes  <aestes@apple.com>
+
+        Fix the Mac Production build after r173283.
+
+        * WebKitTestRunner/config.h: Reverted to defining WEBCORE_EXPORT for now.
+
 2014-09-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] webkitpy test suite frequently fails to complete
