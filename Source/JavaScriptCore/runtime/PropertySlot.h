@@ -246,6 +246,24 @@ private:
     CacheabilityType m_cacheability;
 };
 
+ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName propertyName) const
+{
+    if (m_propertyType == TypeValue)
+        return JSValue::decode(m_data.value);
+    if (m_propertyType == TypeGetter)
+        return functionGetter(exec);
+    return JSValue::decode(m_data.custom.getValue(exec, slotBase(), JSValue::encode(m_thisValue), propertyName));
+}
+
+ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyName) const
+{
+    if (m_propertyType == TypeValue)
+        return JSValue::decode(m_data.value);
+    if (m_propertyType == TypeGetter)
+        return functionGetter(exec);
+    return JSValue::decode(m_data.custom.getValue(exec, slotBase(), JSValue::encode(m_thisValue), Identifier::from(exec, propertyName)));
+}
+
 } // namespace JSC
 
 #endif // PropertySlot_h

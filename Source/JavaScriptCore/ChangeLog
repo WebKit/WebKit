@@ -1,3 +1,15 @@
+2014-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Move PropertySlot's inline functions back to PropertySlot.h.
+        <https://webkit.org/b/136547>
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSObject.h:
+        (JSC::PropertySlot::getValue): Deleted.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue):
+
 2014-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         Make sure that deleting all code first processes the call edge log, and reenable call edge profiling.
