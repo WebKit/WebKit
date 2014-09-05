@@ -1,5 +1,20 @@
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
+        CSS filter on a compositing layer should not cause unncessary backing store allocation
+        https://bugs.webkit.org/show_bug.cgi?id=136557
+
+        Reviewed by Dean Jackson.
+        
+        Remove the style.hasFilter() check from hasBoxDecorations(), since filters aren't
+        a box decoration. This allows creation of simple container layers with composited filters.
+
+        Test: compositing/backing/filter-no-backing.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
+2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+
         Improve the logic for compositing backing store avoidance
         https://bugs.webkit.org/show_bug.cgi?id=136556
 

@@ -1,5 +1,17 @@
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
+        CSS filter on a compositing layer should not cause unncessary backing store allocation
+        https://bugs.webkit.org/show_bug.cgi?id=136557
+
+        Reviewed by Dean Jackson.
+        
+        Dump the layer tree on some layer configs with filters.
+        
+        * compositing/backing/filter-no-backing-expected.txt: Added.
+        * compositing/backing/filter-no-backing.html: Added.
+
+2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+
         Improve the logic for compositing backing store avoidance
         https://bugs.webkit.org/show_bug.cgi?id=136556
 
