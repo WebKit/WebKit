@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script type="text/javascript" src="./resources/breakpoint.js"></script>
+<script>
+function runBreakpointActions()
+{
+    setTimeout(function() { breakpointActions(42, {x:220, y:284}); }, 0);
+}
+
+function action(a, b)
+{
+    InspectorTestProxy.addResult("Breakpoint action evaluated. a:(" + a + ") b:(" + b + ")");
+    InspectorTestProxy.completeTest();
+}
+
+function test()
+{
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        var scriptObject = event.data.script;
+
+        if (!/breakpoint\.js$/.test(scriptObject.url))
+            return;
+
+        var location = scriptObject.createSourceCodeLocation(4, 0);
+        // Create the breakpoint and its actions before sending anything to the backend.
+        var breakpoint = new WebInspector.Breakpoint(location);
+        breakpoint.autoContinue = true;
+        breakpoint.createAction(WebInspector.BreakpointAction.Type.Evaluate, null, "action(a, b)");
+
+        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+
+        InspectorTest.evaluateInPage("runBreakpointActions()");
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that "Evaluate JavaScript" breakpoint actions work correctly in the presense of a Content Security Policy that doesn't include 'unsafe-eval'.</p>
+</body>
+</html>

@@ -1,3 +1,35 @@
+2014-09-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: breakpoint actions should work regardless of Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=136542
+
+        Reviewed by Mark Lam.
+
+        Added JSC::DebuggerEvalEnabler, an RAII object which enables eval on a 
+        JSGlobalObject for the duration of a scope, returning the eval enabled state to its
+        original value when the scope exits. Used by JSC::DebuggerCallFrame::evaluate 
+        to allow breakpoint actions to execute JS in pages with a Content Security Policy
+        that would normally prohibit this (such as Inspector's Main.html).
+
+        Refactored Inspector::InjectedScriptBase to use the RAII object instead of manually
+        setting eval enabled and then resetting the original eval enabled state.
+
+        NOTE: The JS::DebuggerEvalEnabler constructor checks the passed in ExecState pointer
+        for null to be equivalent with the original code in Inspector::InjectedScriptBase.
+        InjectedScriptBase is getting the ExecState from ScriptObject::scriptState(), which
+        can currently be null.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerEvalEnabler.h: Added.
+        (JSC::DebuggerEvalEnabler::DebuggerEvalEnabler):
+        (JSC::DebuggerEvalEnabler::~DebuggerEvalEnabler):
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled):
+
 2014-09-05  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] jsc.exe won't run.

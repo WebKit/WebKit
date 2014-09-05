@@ -1,3 +1,16 @@
+2014-09-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: breakpoint actions should work regardless of Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=136542
+
+        Reviewed by Mark Lam.
+
+        Added test for "Evaluate JavaScript" breakpoint actions for breakpoints set on
+        pages with a CSP that does not allow 'unsafe-eval'.
+
+        * inspector/debugger/breakpoint-action-eval-expected.txt: Added.
+        * inspector/debugger/breakpoint-action-eval.html: Added.
+
 2014-09-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [SOUP] Implement ResourceResponse::platformSuggestedFilename() when USE(SOUP) is enabled.

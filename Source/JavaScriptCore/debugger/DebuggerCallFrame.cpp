@@ -30,6 +30,7 @@
 #include "DebuggerCallFrame.h"
 
 #include "CodeBlock.h"
+#include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
@@ -186,6 +187,7 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception)
     if (!callFrame->codeBlock())
         return JSValue();
     
+    DebuggerEvalEnabler evalEnabler(callFrame);
     VM& vm = callFrame->vm();
     EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), callFrame->codeBlock()->isStrictMode());
     if (vm.exception()) {

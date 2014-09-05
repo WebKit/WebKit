@@ -1172,6 +1172,7 @@
 		65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */; };
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
 		65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */; };
+		6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CD2186F8A9300955C24 /* JSPromiseFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */; };
 		7C008CD3186F8A9300955C24 /* JSPromiseFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */; };
@@ -2811,6 +2812,7 @@
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
 		65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtoCallFrame.h; sourceTree = "<group>"; };
 		65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtoCallFrame.cpp; sourceTree = "<group>"; };
+		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = JSPromiseFunctions.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseFunctions.h; sourceTree = "<group>"; };
@@ -4216,6 +4218,7 @@
 				F692A8590255597D01FF60F7 /* Debugger.h */,
 				149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */,
 				1480DB9B0DDC227F003CFDF2 /* DebuggerCallFrame.h */,
+				6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */,
 				FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */,
 				0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */,
 				0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */,
@@ -5752,6 +5755,7 @@
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				C49FE4AB19AAC86100F40CE9 /* generate_protocol_types_header.py in Headers */,
+				6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */,
 				C49FE4AC19AAC86100F40CE9 /* generate_protocol_types_implementation.py in Headers */,
 				658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */,
 				2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */,

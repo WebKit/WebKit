@@ -34,6 +34,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "DebuggerEvalEnabler.h"
 #include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
@@ -81,18 +82,12 @@ Deprecated::ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecat
         m_environment->willCallInjectedScriptFunction(m_injectedScriptObject.scriptState(), name(), 1);
 
     JSC::ExecState* scriptState = m_injectedScriptObject.scriptState();
-    bool evalIsDisabled = false;
-    if (scriptState) {
-        evalIsDisabled = !scriptState->lexicalGlobalObject()->evalEnabled();
-        // Temporarily enable allow evals for inspector.
-        if (evalIsDisabled)
-            scriptState->lexicalGlobalObject()->setEvalEnabled(true);
+    Deprecated::ScriptValue resultValue;
+
+    {
+        JSC::DebuggerEvalEnabler evalEnabler(scriptState);
+        resultValue = function.call(hadException);
     }
-
-    Deprecated::ScriptValue resultValue = function.call(hadException);
-
-    if (evalIsDisabled)
-        scriptState->lexicalGlobalObject()->setEvalEnabled(false);
 
     if (m_environment)
         m_environment->didCallInjectedScriptFunction(m_injectedScriptObject.scriptState());

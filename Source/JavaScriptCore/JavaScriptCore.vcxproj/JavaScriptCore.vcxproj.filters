@@ -1958,6 +1958,9 @@
     <ClInclude Include="..\debugger\DebuggerCallFrame.h">
       <Filter>debugger</Filter>
     </ClInclude>
+    <ClInclude Include="..\debugger\DebuggerEvalEnabler.h">
+      <Filter>debugger</Filter>
+    </ClInclude>
     <ClInclude Include="..\debugger\DebuggerPrimitives.h">
       <Filter>debugger</Filter>
     </ClInclude>

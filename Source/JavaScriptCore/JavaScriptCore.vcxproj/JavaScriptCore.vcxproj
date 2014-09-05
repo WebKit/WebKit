@@ -974,6 +974,7 @@
     <ClInclude Include="..\debugger\Breakpoint.h" />
     <ClInclude Include="..\debugger\Debugger.h" />
     <ClInclude Include="..\debugger\DebuggerCallFrame.h" />
+    <ClInclude Include="..\debugger\DebuggerEvalEnabler.h" />
     <ClInclude Include="..\debugger\DebuggerPrimitives.h" />
     <ClInclude Include="..\debugger\DebuggerScope.h" />
     <ClInclude Include="..\dfg\DFGAbstractHeap.h" />
