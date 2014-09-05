@@ -1,3 +1,14 @@
+2014-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out <http://trac.webkit.org/changeset/173313>.
+
+        It seems to have broken the PLT bot.
+
+                Do the bmalloc.
+                https://bugs.webkit.org/show_bug.cgi?id=132629
+
+                * wtf/FastMalloc.cpp:
+
 2014-06-06  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: make MediaTime the primary time type for audiovisual times.
