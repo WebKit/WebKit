@@ -4223,9 +4223,9 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
             initWithRect:[self frame] options:options owner:self userInfo:nil];
         [self addTrackingArea:trackingArea];
         [trackingArea release];
-#endif
         _private->installedTrackingArea = YES;
     }
+#endif
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource

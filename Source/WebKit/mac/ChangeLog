@@ -1,3 +1,13 @@
+2014-09-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the iOS build after <http://trac.webkit.org/changeset/173309>
+        (https://bugs.webkit.org/show_bug.cgi?id=136564)
+
+        Include more code inside the !PLATFORM(IOS)-guarded section in -setDataSource:.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setDataSource:]):
+
 2014-09-04  Maciej Stachowiak  <mjs@apple.com>
 
         Use tracking areas instead of (SPI) mouse moved notifications, and follow flags changes with an event monitor
