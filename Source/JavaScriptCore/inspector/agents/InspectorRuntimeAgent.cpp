@@ -251,7 +251,7 @@ public:
 
 static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTypeProfiling)
 {
-    vm.waitForCompilationsToComplete();
+    vm.prepareToDiscardCode();
 
     bool needsToRecompile = (shouldEnableTypeProfiling ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
     if (needsToRecompile) {

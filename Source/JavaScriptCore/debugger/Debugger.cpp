@@ -141,7 +141,7 @@ private:
 template<typename Functor>
 void Debugger::forEachCodeBlock(Functor& functor)
 {
-    m_vm->waitForCompilationsToComplete();
+    m_vm->prepareToDiscardCode();
     m_vm->heap.forEachCodeBlock(functor);
 }
 
@@ -235,7 +235,7 @@ void Debugger::setSteppingMode(SteppingMode mode)
     if (mode == m_steppingMode || !m_vm)
         return;
 
-    m_vm->waitForCompilationsToComplete();
+    m_vm->prepareToDiscardCode();
 
     m_steppingMode = mode;
     SetSteppingModeFunctor functor(this, mode);
@@ -345,7 +345,7 @@ void Debugger::recompileAllJSFunctions(VM* vm)
         return;
     }
 
-    vm->waitForCompilationsToComplete();
+    vm->prepareToDiscardCode();
 
     Recompiler recompiler(this);
     HeapIterationScope iterationScope(vm->heap);

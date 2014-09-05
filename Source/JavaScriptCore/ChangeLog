@@ -1,3 +1,24 @@
+2014-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Make sure that deleting all code first processes the call edge log, and reenable call edge profiling.
+
+        Rubber stamped by Sam Weinig.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::forEachCodeBlock):
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::recompileAllJSFunctions):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::recompileAllJSFunctionsForTypeProfiling):
+        * runtime/Options.h: Reenable call edge profiling.
+        * runtime/VM.cpp:
+        (JSC::VM::prepareToDiscardCode): Make sure this also processes the call edge log, in case any call edge profiles are about to be destroyed.
+        (JSC::VM::discardAllCode):
+        (JSC::VM::releaseExecutableMemory):
+        (JSC::VM::setEnabledProfiler):
+        (JSC::VM::waitForCompilationsToComplete): Deleted.
+        * runtime/VM.h: Rename waitForCompilationsToComplete() back to prepareToDiscardCode() because the purpose of the method - now as ever - is to do all of the things that need to be done to ensure that code may be safely deleted.
+
 2014-09-04  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Ensure that the call frame set up by vmEntryToNative does not overlap with the stack of the callee

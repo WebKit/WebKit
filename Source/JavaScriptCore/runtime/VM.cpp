@@ -459,8 +459,11 @@ void VM::stopSampling()
     interpreter->stopSampling();
 }
 
-void VM::waitForCompilationsToComplete()
+void VM::prepareToDiscardCode()
 {
+    if (callEdgeLog)
+        callEdgeLog->processLog();
+    
 #if ENABLE(DFG_JIT)
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
@@ -471,7 +474,7 @@ void VM::waitForCompilationsToComplete()
 
 void VM::discardAllCode()
 {
-    waitForCompilationsToComplete();
+    prepareToDiscardCode();
     m_codeCache->clear();
     m_regExpCache->invalidateCode();
     heap.deleteAllCompiledCode();
@@ -515,7 +518,7 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
 
 void VM::releaseExecutableMemory()
 {
-    waitForCompilationsToComplete();
+    prepareToDiscardCode();
     
     if (entryScope) {
         StackPreservingRecompiler recompiler;
@@ -891,7 +894,7 @@ void VM::setEnabledProfiler(LegacyProfiler* profiler)
 {
     m_enabledProfiler = profiler;
     if (m_enabledProfiler) {
-        waitForCompilationsToComplete();
+        prepareToDiscardCode();
         SetEnabledProfilerFunctor functor;
         heap.forEachCodeBlock(functor);
     }

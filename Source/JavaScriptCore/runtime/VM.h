@@ -501,8 +501,8 @@ public:
     JSLock& apiLock() { return *m_apiLock; }
     CodeCache* codeCache() { return m_codeCache.get(); }
 
-    void waitForCompilationsToComplete();
-
+    void prepareToDiscardCode();
+        
     JS_EXPORT_PRIVATE void discardAllCode();
 
     void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
