@@ -222,10 +222,12 @@ BuildbotQueue.prototype = {
         this._load(this.allIterationsURL, function(data) {
             for (var idString in data) {
                 console.assert(typeof idString === "string");
-                iteration = new BuildbotIteration(this, data[idString]);
+                var iteration = new BuildbotIteration(this, data[idString]);
                 this.iterations.push(iteration);
                 this._knownIterations[iteration.id] = iteration;
             }
+
+            this.sortIterations();
 
             callback(this);
         }.bind(this));

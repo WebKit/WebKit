@@ -230,7 +230,7 @@ Analyzer.prototype = {
         iterationsByRevision.sort(function(a, b) { return a.endTime - b.endTime; }); // When there are multiple iterations building the same revision, the first one wins (as the other ones were probably manual retries).
         iterationsByRevision.sort(function(a, b) { return a.openSourceRevision - b.openSourceRevision; });
 
-        // Revisions that landed within the period.
+        // Revisions that landed within the time range.
         var revisions = webkitTrac.recordedCommits.reduce(function(result, revision) {
             if (revision.date >= this._rangeStartTime && revision.date < this._rangeEndTime)
                 result[revision.revisionNumber] = revision;
@@ -269,8 +269,10 @@ Analyzer.prototype = {
         var ownTimes = [];
         for (var revisionNumber in revisions) {
             var revision = revisions[revisionNumber];
-            if (!("elapsedTime" in revision))
+            if (!("elapsedTime" in revision)) {
+                // A revision that landed within the time range didn't necessarily get all results by the range end.
                 continue;
+            }
             // Changes on other branches are irrelevant, as they are not built or tested.
             // FIXME: Support metrics for non-trunk queues.
             if (!revision.containsBranchLocation || revision.branch === "trunk") {

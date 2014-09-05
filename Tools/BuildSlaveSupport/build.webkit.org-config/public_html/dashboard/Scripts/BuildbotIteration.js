@@ -308,9 +308,6 @@ BuildbotIteration.prototype = {
             }
             this._productive = finishedAnyProductiveStep;
         }
-
-        // Update the sorting since it is based on the revisions we just loaded.
-        this.queue.sortIterations();
     },
 
     _updateWithData: function(data)
@@ -319,6 +316,10 @@ BuildbotIteration.prototype = {
             return;
 
         this._parseData(data);
+
+        // Update the sorting since it is based on the revision numbers that just became known.
+        this.queue.sortIterations();
+
         this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
     },
 
