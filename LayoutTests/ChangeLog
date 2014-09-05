@@ -1,5 +1,13 @@
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Rebaseline three blending tests which no longer need backing store.
+
+        * css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer-expected.txt:
+        * css3/blending/blend-mode-parent-of-composited-blended-has-layer-expected.txt:
+        * css3/blending/blend-mode-with-composited-descendant-should-have-layer-expected.txt:
+
+2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+
         border-radius should not force layer backing store
         https://bugs.webkit.org/show_bug.cgi?id=136555
 
