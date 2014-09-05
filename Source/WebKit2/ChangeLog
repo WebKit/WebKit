@@ -1,3 +1,20 @@
+2014-09-05  Enrica Casucci  <enrica@apple.com>
+
+        Remove PLATFORM(IOS) from WebCore/editing (Part 3).
+        https://bugs.webkit.org/show_bug.cgi?id=136474
+
+        Reviewed by Benjamin Poulain.
+
+        This patch removes the use of PLATFORM(IOS) from TextAffinity.h
+        and removes the assumption that EAffinity values match NSSelectionAffinity
+        values. It also removes the includes in TextAffinity.h, creating the need to
+        include explicitly the files when necessary. It also removes the unnecessary
+        use of platform specific types, replacing them with WebCore types.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2014-09-05  David Kilzer  <ddkilzer@apple.com>
 
         JavaScriptCore should build with newer clang

@@ -201,8 +201,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSPoint floatPoint = scrollPoint;
-    NSPoint tempPoint = { std::max(-[scrollView() scrollOrigin].x, floatPoint.x), std::max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
+    NSPoint tempPoint = NSMakePoint(std::max(-[scrollView() scrollOrigin].x(), scrollPoint.x()), std::max(-[scrollView() scrollOrigin].y(), scrollPoint.y()));
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     // AppKit has the inset factored into all of its scroll positions. In WebCore, we use positions that ignore

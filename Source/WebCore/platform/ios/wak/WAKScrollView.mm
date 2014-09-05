@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "IntPoint.h"
 #import "WAKAppKitStubs.h"
 #import "WAKClipView.h"
 #import "WAKViewInternal.h"
@@ -232,7 +233,7 @@ static void _notificationCallback(WKViewRef v, WKViewNotificationType type, void
     UNUSED_PARAM(repaint);
 }
 
-- (void)setScrollOrigin:(NSPoint)scrollOrigin updatePositionAtAll:(BOOL)updatePositionAtAll immediately:(BOOL)updatePositionImmediately
+- (void)setScrollOrigin:(WebCore::IntPoint)scrollOrigin updatePositionAtAll:(BOOL)updatePositionAtAll immediately:(BOOL)updatePositionImmediately
 {
     UNUSED_PARAM(updatePositionAtAll);
     UNUSED_PARAM(updatePositionImmediately);
@@ -241,12 +242,12 @@ static void _notificationCallback(WKViewRef v, WKViewNotificationType type, void
     // so we don't have to check for equivalence here.
     _scrollOrigin = scrollOrigin;
 
-    [_documentView setBoundsOrigin:NSMakePoint(-scrollOrigin.x, -scrollOrigin.y)];
+    [_documentView setBoundsOrigin:NSMakePoint(-scrollOrigin.x(), -scrollOrigin.y())];
 }
 
-- (NSPoint)scrollOrigin
+- (WebCore::IntPoint)scrollOrigin
 {
-    return _scrollOrigin;
+    return WebCore::IntPoint(_scrollOrigin);
 }
 
 #pragma mark -

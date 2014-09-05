@@ -243,9 +243,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSPoint floatPoint = scrollPoint;
-    NSPoint tempPoint = { max(-[scrollView() scrollOrigin].x, floatPoint.x), max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
-    [documentView() scrollPoint:tempPoint];
+    [documentView() scrollPoint:NSMakePoint(max(-[scrollView() scrollOrigin].x(), scrollPoint.x()), max(-[scrollView() scrollOrigin].y(), scrollPoint.y()))];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -307,7 +305,7 @@ void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle)
 void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePositionAll, bool updatePositionSynchronously)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [scrollView() setScrollOrigin:static_cast<CGPoint>(origin) updatePositionAtAll:updatePositionAll immediately:updatePositionSynchronously];
+    [scrollView() setScrollOrigin:origin updatePositionAtAll:updatePositionAll immediately:updatePositionSynchronously];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
