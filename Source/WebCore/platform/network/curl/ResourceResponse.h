@@ -26,6 +26,9 @@
 #ifndef ResourceResponse_h
 #define ResourceResponse_h
 
+#include "HTTPHeaderNames.h"
+#include "HTTPParsers.h"
+
 #include "ResourceResponseBase.h"
 
 typedef struct _CFURLResponse* CFURLResponseRef;
@@ -58,7 +61,10 @@ private:
 
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
-    String platformSuggestedFilename() const { return String(); }
+    String platformSuggestedFilename() const
+    {
+        return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
+    }
 
     bool m_responseFired;
 };

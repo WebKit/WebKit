@@ -194,7 +194,6 @@ void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
 
     response.setMimeType(extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)));
     response.setTextEncodingName(extractCharsetFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType)));
-    response.setSuggestedFilename(filenameFromHTTPContentDisposition(response.httpHeaderField(HTTPHeaderName::ContentDisposition)));
 }
 
 void CurlCacheEntry::didFail()

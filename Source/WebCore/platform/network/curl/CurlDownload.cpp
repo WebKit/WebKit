@@ -399,7 +399,6 @@ void CurlDownload::didReceiveHeader(const String& header)
 
             m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
             m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
-            m_response.setSuggestedFilename(filenameFromHTTPContentDisposition(m_response.httpHeaderField(HTTPHeaderName::ContentDisposition)));
 
             callOnMainThread(MainThreadTask(receivedResponseCallback, this));
         }
