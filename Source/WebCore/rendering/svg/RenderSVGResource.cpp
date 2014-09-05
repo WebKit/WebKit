@@ -111,7 +111,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     }
 
     // If no resources are associated with the given renderer, return the color resource.
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources) {
         if (paintType == SVGPaint::SVG_PAINTTYPE_URI_NONE || !inheritColorFromParentStyleIfNeeded(renderer, applyToFill, color))
             return nullptr;
@@ -156,7 +156,7 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
 
 static inline void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout)
 {
-    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer)) {
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
 #if ENABLE(FILTERS)
         if (RenderSVGResourceFilter* filter = resources->filter())
             filter->removeClientFromCache(renderer);

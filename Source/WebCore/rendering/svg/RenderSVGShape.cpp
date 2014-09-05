@@ -218,7 +218,7 @@ bool RenderSVGShape::shouldGenerateMarkerPositions() const
     if (!graphicsElement().supportsMarkers())
         return false;
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*this);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
     if (!resources)
         return false;
 
@@ -372,7 +372,7 @@ FloatRect RenderSVGShape::markerRect(float strokeWidth) const
 {
     ASSERT(!m_markerPositions.isEmpty());
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*this);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
     ASSERT(resources);
 
     RenderSVGResourceMarker* markerStart = resources->markerStart();
@@ -448,7 +448,7 @@ void RenderSVGShape::drawMarkers(PaintInfo& paintInfo)
 {
     ASSERT(!m_markerPositions.isEmpty());
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*this);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
     if (!resources)
         return;
 

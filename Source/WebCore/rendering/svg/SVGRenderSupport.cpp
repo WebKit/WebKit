@@ -190,7 +190,7 @@ const RenderSVGRoot& SVGRenderSupport::findTreeRootObject(const RenderElement& s
 static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 {
     ASSERT(!renderer.needsLayout());
-    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer))
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
         resources->removeClientFromCache(renderer, false);
 
     for (auto& child : childrenOfType<RenderElement>(renderer))
@@ -359,7 +359,7 @@ void SVGRenderSupport::intersectRepaintRectWithShadows(const RenderElement& rend
 
 void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& renderer, FloatRect& repaintRect)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources)
         return;
 
@@ -382,7 +382,7 @@ bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer
     if (!renderer.normalChildNeedsLayout())
         return false;
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources || !resources->filter())
         return false;
 
@@ -393,7 +393,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
 {
     // We just take clippers into account to determine if a point is on the node. The Specification may
     // change later and we also need to check maskers.
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources)
         return true;
 

@@ -75,21 +75,21 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
         resourceContainer->removeClient(renderer);
 }
 
-static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderObject& renderer)
+static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement& renderer)
 {
     SVGDocumentExtensions* extensions = renderer.document().accessSVGExtensions();
     ASSERT(extensions);
     return extensions->resourcesCache();
 }
 
-SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(const RenderObject& renderer)
+SVGResources* SVGResourcesCache::cachedResourcesForRenderer(const RenderElement& renderer)
 {
     return resourcesCacheFromRenderer(renderer).m_cache.get(&renderer);
 }
 
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources)
         return;
 
@@ -156,8 +156,7 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
 
 void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
-    if (resources)
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
         resources->removeClientFromCache(renderer);
 
     resourcesCacheFromRenderer(renderer).removeResourcesFromRenderer(renderer);
@@ -175,7 +174,7 @@ void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer& resource)
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
         Element& resourceElement = resource.element();
-        Element* clientElement = toElement(it.key->node());
+        Element* clientElement = it.key->element();
         SVGDocumentExtensions* extensions = clientElement->document().accessSVGExtensions();
 
         extensions->addPendingResource(resourceElement.getIdAttribute(), clientElement);

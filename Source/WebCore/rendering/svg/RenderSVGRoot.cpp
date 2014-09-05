@@ -247,7 +247,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
 
     // Don't paint if we don't have kids, except if we have filters we should paint those.
     if (!firstChild()) {
-        SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*this);
+        auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (page && paintInfo.phase == PaintPhaseForeground)
                 page->addRelevantUnpaintedObject(this, visualOverflowRect());

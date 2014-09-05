@@ -158,7 +158,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
         maskContext->concatCTM(animatedLocalTransform);
 
         // clipPath can also be clipped by another clipPath.
-        SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*this);
+        auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         RenderSVGResourceClipper* clipper;
         bool succeeded;
         if (resources && (clipper = resources->clipper())) {

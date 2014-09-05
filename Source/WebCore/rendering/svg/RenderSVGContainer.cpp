@@ -102,7 +102,7 @@ RenderObject* RenderSVGContainer::removeChild(RenderObject& child)
 
 bool RenderSVGContainer::selfWillPaint()
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*this);
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
     return resources && resources->filter();
 }
 
