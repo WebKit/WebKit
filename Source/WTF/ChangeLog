@@ -1,3 +1,14 @@
+2014-09-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Do the bmalloc.
+        https://bugs.webkit.org/show_bug.cgi?id=132629
+
+        Reviewed by Michael Saboff.
+
+        64-bit only for now, just to try it out.
+
+        * wtf/FastMalloc.cpp:
+
 2014-09-05  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Enable GenGC on ARM Traditional
