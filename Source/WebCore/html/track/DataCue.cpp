@@ -36,28 +36,28 @@
 
 namespace WebCore {
 
-DataCue::DataCue(ScriptExecutionContext& context, double start, double end, ArrayBuffer* data, const String& type, ExceptionCode& ec)
+DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer* data, const String& type, ExceptionCode& ec)
     : TextTrackCue(context, start, end)
     , m_type(type)
 {
     setData(data, ec);
 }
 
-DataCue::DataCue(ScriptExecutionContext& context, double start, double end, const void* data, unsigned length)
+DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
     : TextTrackCue(context, start, end)
 {
     m_data = ArrayBuffer::create(data, length);
 }
 
 #if ENABLE(DATACUE_VALUE)
-DataCue::DataCue(ScriptExecutionContext& context, double start, double end, PassRefPtr<SerializedPlatformRepresentation> platformValue, const String& type)
+DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation> platformValue, const String& type)
     : TextTrackCue(context, start, end)
     , m_type(type)
     , m_platformValue(platformValue)
 {
 }
 
-DataCue::DataCue(ScriptExecutionContext& context, double start, double end, JSC::JSValue value, const String& type)
+DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, JSC::JSValue value, const String& type)
     : TextTrackCue(context, start, end)
     , m_type(type)
     , m_value(value)

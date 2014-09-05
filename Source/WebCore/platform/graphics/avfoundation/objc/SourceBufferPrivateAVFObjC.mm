@@ -34,7 +34,7 @@
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSample.h"
 #import "MediaSourcePrivateAVFObjC.h"
-#import "MediaTimeMac.h"
+#import "MediaTimeAVFoundation.h"
 #import "NotImplemented.h"
 #import "SoftLinking.h"
 #import "SourceBufferPrivateClient.h"

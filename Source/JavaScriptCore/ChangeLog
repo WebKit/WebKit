@@ -1,3 +1,15 @@
+2014-06-06  Jer Noble  <jer.noble@apple.com>
+
+        Refactoring: make MediaTime the primary time type for audiovisual times.
+        https://bugs.webkit.org/show_bug.cgi?id=133579
+
+        Reviewed by Eric Carlson.
+
+        Add a utility function which converts a MediaTime to a JSNumber.
+
+        * runtime/JSCJSValue.h:
+        (JSC::jsNumber):
+
 2014-09-04  Michael Saboff  <msaboff@apple.com>
 
         ARM: Add more coverage to ARMv7 disassembler

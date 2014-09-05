@@ -72,7 +72,7 @@ public:
 
     // MediaSourcePrivateClient
     virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) override;
-    virtual double duration() const override;
+    virtual MediaTime duration() const override;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual void seekToTime(const MediaTime&) override;
 
@@ -83,8 +83,8 @@ public:
     void completeSeek();
 
     void setDuration(double, ExceptionCode&);
-    void setDurationInternal(double);
-    double currentTime() const;
+    void setDurationInternal(const MediaTime&);
+    MediaTime currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
     void setReadyState(const AtomicString&);
     void endOfStream(ExceptionCode&);
@@ -119,7 +119,7 @@ protected:
     explicit MediaSource(ScriptExecutionContext&);
 
     void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState);
-    Vector<RefPtr<TimeRanges>> activeRanges() const;
+    Vector<PlatformTimeRanges> activeRanges() const;
 
     RefPtr<SourceBufferPrivate> createSourceBufferPrivate(const ContentType&, ExceptionCode&);
     void scheduleEvent(const AtomicString& eventName);
@@ -133,7 +133,7 @@ protected:
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
     HTMLMediaElement* m_mediaElement;
-    double m_duration;
+    MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     AtomicString m_readyState;
     GenericEventQueue m_asyncEventQueue;

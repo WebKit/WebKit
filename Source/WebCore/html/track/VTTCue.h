@@ -74,7 +74,16 @@ protected:
 
 class VTTCue : public TextTrackCue {
 public:
-    static PassRefPtr<VTTCue> create(ScriptExecutionContext&, double start, double end, const String&);
+    static PassRefPtr<VTTCue> create(ScriptExecutionContext& context, double start, double end, const String& content)
+    {
+        return create(context, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), content);
+    }
+
+    static PassRefPtr<VTTCue> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
+    {
+        return adoptRef(new VTTCue(context, start, end, content));
+    }
+
     static PassRefPtr<VTTCue> create(ScriptExecutionContext&, const WebVTTCueData&);
 
     static const AtomicString& cueBackdropShadowPseudoId();
@@ -120,9 +129,9 @@ public:
     VTTCueBox* getDisplayTree(const IntSize& videoSize, int fontSize);
     HTMLSpanElement* element() const { return m_cueHighlightBox.get(); }
 
-    void updateDisplayTree(double);
+    void updateDisplayTree(const MediaTime&);
     void removeDisplayTree();
-    void markFutureAndPastNodes(ContainerNode*, double, double);
+    void markFutureAndPastNodes(ContainerNode*, const MediaTime&, const MediaTime&);
 
     int calculateComputedLinePosition();
     std::pair<double, double> getPositionCoordinates() const;
@@ -164,7 +173,7 @@ public:
     virtual void didChange() override;
 
 protected:
-    VTTCue(ScriptExecutionContext&, double start, double end, const String& content);
+    VTTCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
     VTTCue(ScriptExecutionContext&, const WebVTTCueData&);
 
     virtual PassRefPtr<VTTCueBox> createDisplayTree();
@@ -215,7 +224,7 @@ private:
     int m_displaySize;
     std::pair<float, float> m_displayPosition;
 
-    double m_originalStartTime;
+    MediaTime m_originalStartTime;
 
     bool m_snapToLines : 1;
     bool m_displayTreeShouldChange : 1;

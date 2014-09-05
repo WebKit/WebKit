@@ -30,6 +30,7 @@ my @parsedRange = (0, $rangeEnd);
 if ($nph) {
     # Handle HTTP Range requests.
     my $httpContentRange;
+    my $httpContentLength;
     my $httpStatus;
 
     if ($contentRange) {
@@ -42,13 +43,15 @@ if ($nph) {
         }
         $httpStatus = "206 Partial Content";
         $httpContentRange = "bytes " . $parsedRange[0] . "-" . $parsedRange[1] . "/" . $filesize;
+        $httpContentLength = $parsedRange[1] - $parsedRange[0] + 1;
     } else {
         $httpStatus = "200 OK";
+        $httpContentLength = $filesize;
     }
 
     print "Status: " . $httpStatus . "\n";
     print "Connection: close\n";
-    print "Content-Length: " . $filesize . "\n";
+    print "Content-Length: " . $httpContentLength . "\n";
     print "Content-Type: " . $type . "\n";
     print "Accept-Ranges: bytes\n";
     if ($httpContentRange) {
@@ -67,10 +70,12 @@ open FILE, $name or die;
 binmode FILE;
 my ($data, $n);
 my $total = $parsedRange[0];
+my $length = $parsedRange[1] - $parsedRange[0];
+my $chunkLength = $length < 1024 ? $length : 1024;
 
 seek(FILE, $parsedRange[0], 0);
 
-while (($n = read FILE, $data, 1024) != 0) {
+while (($n = read FILE, $data, $chunkLength) != 0) {
     print $data;
 
     $total += $n;

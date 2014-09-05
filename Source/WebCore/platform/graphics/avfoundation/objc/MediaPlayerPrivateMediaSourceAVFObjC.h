@@ -119,18 +119,18 @@ private:
 
     virtual void setVisible(bool) override;
 
-    virtual double durationDouble() const override;
-    virtual double currentTimeDouble() const override;
-    virtual double startTimeDouble() const override;
-    virtual double initialTime() const override;
+    virtual MediaTime durationMediaTime() const override;
+    virtual MediaTime currentMediaTime() const override;
+    virtual MediaTime startTime() const override;
+    virtual MediaTime initialTime() const override;
 
-    virtual void seekWithTolerance(double time, double negativeThreshold, double positiveThreshold) override;
+    virtual void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
     virtual bool seeking() const override;
     virtual void setRateDouble(double) override;
 
     virtual std::unique_ptr<PlatformTimeRanges> seekable() const override;
-    virtual double maxTimeSeekableDouble() const override;
-    virtual double minTimeSeekable() const override;
+    virtual MediaTime maxMediaTimeSeekable() const override;
+    virtual MediaTime minMediaTimeSeekable() const override;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
 
     virtual bool didLoadingProgress() const override;
@@ -159,9 +159,7 @@ private:
     virtual unsigned long totalVideoFrames() override;
     virtual unsigned long droppedVideoFrames() override;
     virtual unsigned long corruptedVideoFrames() override;
-    virtual double totalFrameDelay() override;
-
-    MediaTime currentMediaTime() const;
+    virtual MediaTime totalFrameDelay() override;
 
     void ensureLayer();
     void destroyLayer();

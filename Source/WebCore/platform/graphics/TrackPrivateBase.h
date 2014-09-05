@@ -29,6 +29,7 @@
 #define TrackPrivateBase_h
 
 #include <wtf/Forward.h>
+#include <wtf/MediaTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -61,7 +62,7 @@ public:
 
     virtual int trackIndex() const { return 0; }
 
-    virtual double startTimeVariance() const { return 0; }
+    virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
     
     void willBeRemoved()
     {

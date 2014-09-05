@@ -23,46 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "MediaTimeMac.h"
+#ifndef MediaTimeAVFoundation_h
+#define MediaTimeAVFoundation_h
 
-#if USE(COREMEDIA)
+#if USE(AVFOUNDATION)
+
+#include <CoreMedia/CMTime.h>
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
 
-MediaTime toMediaTime(const CMTime& cmTime)
-{
-    uint32_t flags = 0;
-    if (CMTIME_IS_VALID(cmTime))
-        flags |= MediaTime::Valid;
-    if (CMTIME_HAS_BEEN_ROUNDED(cmTime))
-        flags |= MediaTime::HasBeenRounded;
-    if (CMTIME_IS_POSITIVE_INFINITY(cmTime))
-        flags |= MediaTime::PositiveInfinite;
-    if (CMTIME_IS_NEGATIVE_INFINITY(cmTime))
-        flags |= MediaTime::NegativeInfinite;
-    if (CMTIME_IS_INDEFINITE(cmTime))
-        flags |= MediaTime::Indefinite;
-
-    return MediaTime(cmTime.value, cmTime.timescale, flags);
-}
-
-CMTime toCMTime(const MediaTime& mediaTime)
-{
-    CMTime time = {mediaTime.timeValue(), mediaTime.timeScale(), 0, 0};
-
-    if (mediaTime.isValid())
-        time.flags |= kCMTimeFlags_Valid;
-    if (mediaTime.hasBeenRounded())
-        time.flags |= kCMTimeFlags_HasBeenRounded;
-    if (mediaTime.isPositiveInfinite())
-        time.flags |= kCMTimeFlags_PositiveInfinity;
-    if (mediaTime.isNegativeInfinite())
-        time.flags |= kCMTimeFlags_NegativeInfinity;
-
-    return time;
-}
+CMTime toCMTime(const MediaTime&);
+MediaTime toMediaTime(const CMTime&);
 
 }
+
+#endif
 
 #endif

@@ -47,7 +47,7 @@ public:
     bool hasAudio() const;
     bool hasVideo() const;
 
-    double duration();
+    MediaTime duration();
     std::unique_ptr<PlatformTimeRanges> buffered();
 
     MockMediaPlayerMediaSource* player() const { return m_player; }
@@ -58,12 +58,12 @@ public:
     unsigned long totalVideoFrames() const { return m_totalVideoFrames; }
     unsigned long droppedVideoFrames() const  { return m_droppedVideoFrames; }
     unsigned long corruptedVideoFrames() const { return m_corruptedVideoFrames; }
-    double totalFrameDelay() const { return m_totalFrameDelay; }
+    MediaTime totalFrameDelay() const { return m_totalFrameDelay; }
 
     void incrementTotalVideoFrames() { ++m_totalVideoFrames; }
     void incrementDroppedFrames() { ++m_droppedVideoFrames; }
     void incrementCorruptedFrames() { ++m_corruptedVideoFrames; }
-    void incrementTotalFrameDelayBy(double delay) { m_totalFrameDelay += delay; }
+    void incrementTotalFrameDelayBy(const MediaTime& delay) { m_totalFrameDelay += delay; }
 
 private:
     MockMediaSourcePrivate(MockMediaPlayerMediaSource*, MediaSourcePrivateClient*);
@@ -92,7 +92,7 @@ private:
     unsigned long m_totalVideoFrames;
     unsigned long m_droppedVideoFrames;
     unsigned long m_corruptedVideoFrames;
-    double m_totalFrameDelay;
+    MediaTime m_totalFrameDelay;
 };
 
 }

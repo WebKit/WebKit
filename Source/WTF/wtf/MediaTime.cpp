@@ -219,6 +219,25 @@ MediaTime MediaTime::operator-(const MediaTime& rhs) const
     return a;
 }
 
+MediaTime MediaTime::operator-() const
+{
+    if (isInvalid())
+        return invalidTime();
+
+    if (isIndefinite())
+        return indefiniteTime();
+
+    if (isPositiveInfinite())
+        return negativeInfiniteTime();
+
+    if (isNegativeInfinite())
+        return positiveInfiniteTime();
+
+    MediaTime negativeTime = *this;
+    negativeTime.m_timeValue = -negativeTime.m_timeValue;
+    return negativeTime;
+}
+
 MediaTime MediaTime::operator*(int32_t rhs) const
 {
     if (isInvalid())
@@ -281,6 +300,16 @@ bool MediaTime::operator>=(const MediaTime& rhs) const
 bool MediaTime::operator<=(const MediaTime& rhs) const
 {
     return compare(rhs) <= EqualTo;
+}
+
+bool MediaTime::operator!() const
+{
+    return compare(zeroTime()) == EqualTo;
+}
+
+MediaTime::operator bool() const
+{
+    return compare(zeroTime()) != EqualTo;
 }
 
 MediaTime::ComparisonFlags MediaTime::compare(const MediaTime& rhs) const

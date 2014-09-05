@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "URL.h"
+#include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -40,10 +41,8 @@ public:
     
     MediaFragmentURIParser(const URL&);
 
-    double startTime();
-    double endTime();
-
-    static double invalidTimeValue();
+    MediaTime startTime();
+    MediaTime endTime();
 
 private:
 
@@ -51,13 +50,13 @@ private:
     
     enum TimeFormat { None, Invalid, NormalPlayTime, SMPTETimeCode, WallClockTimeCode };
     void parseTimeFragment();
-    bool parseNPTFragment(const LChar*, unsigned length, double& startTime, double& endTime);
-    bool parseNPTTime(const LChar*, unsigned length, unsigned& offset, double& time);
+    bool parseNPTFragment(const LChar*, unsigned length, MediaTime& startTime, MediaTime& endTime);
+    bool parseNPTTime(const LChar*, unsigned length, unsigned& offset, MediaTime&);
 
     URL m_url;
     TimeFormat m_timeFormat;
-    double m_startTime;
-    double m_endTime;
+    MediaTime m_startTime;
+    MediaTime m_endTime;
     Vector<std::pair<String, String>> m_fragments;
 };
 
