@@ -304,6 +304,7 @@ end
 
 macro makeHostFunctionCall(entry, temp)
     move entry, temp
+    storep cfr, [sp]
     if X86_64
         move sp, t4
     elsif X86_64_WIN
@@ -311,7 +312,6 @@ macro makeHostFunctionCall(entry, temp)
     elsif ARM64 or C_LOOP
         move sp, a0
     end
-    storep cfr, [sp]
     if C_LOOP
         storep lr, 8[sp]
         cloopCallNative temp
@@ -321,9 +321,7 @@ macro makeHostFunctionCall(entry, temp)
         call temp
         addp 32, sp
     else
-        addp 16, sp
         call temp
-        subp 16, sp
     end
 end
 

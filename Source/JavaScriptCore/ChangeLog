@@ -1,3 +1,20 @@
+2014-09-04  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Ensure that the call frame set up by vmEntryToNative does not overlap with the stack of the callee
+        https://bugs.webkit.org/show_bug.cgi?id=136485
+
+        Reviewed by Michael Saboff.
+
+        Changed makeHostFunctionCall to keep the stack pointer above the call
+        frame set up by doVMEntry. Thus the callee will/can not override the top
+        of the call frame.
+
+        Refactored the two (32_64 and 64) versions of makeHostFunctionCall to be
+        more alike to help future maintenance.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2014-09-04  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r173031): crashes during run-layout-jsc on x86/Linux

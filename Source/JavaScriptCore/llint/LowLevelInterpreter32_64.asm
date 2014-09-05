@@ -372,24 +372,18 @@ macro makeHostFunctionCall(entry, temp1, temp2)
         move sp, a0
         storep lr, PtrSize[sp]
         cloopCallNative temp1
-    else
-        if X86 or X86_WIN
-            # Put callee frame pointer on stack as arg0, also put it in ecx for "fastcall" targets
-            move 0, temp2
-            move temp2, 4[sp] # put 0 in ReturnPC
-            move sp, t2 # t2 is ecx
-            push temp2 # Push dummy arg1
-            push t2
-        else
-            move sp, a0
-            addp CallerFrameAndPCSize, sp
-        end
+    elsif X86 or X86_WIN
+        # Put callee frame pointer on stack as arg0, also put it in ecx for "fastcall" targets
+        move 0, temp2
+        move temp2, 4[sp] # put 0 in ReturnPC
+        move sp, t2 # t2 is ecx
+        push temp2 # Push dummy arg1
+        push t2
         call temp1
-        if X86 or X86_WIN
-            addp 8, sp
-        else
-            subp CallerFrameAndPCSize, sp
-        end
+        addp 8, sp
+    else
+        move sp, a0
+        call temp1
     end
 end
 
