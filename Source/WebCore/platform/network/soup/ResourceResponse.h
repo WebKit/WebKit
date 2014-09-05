@@ -85,6 +85,7 @@ private:
     GTlsCertificateFlags m_tlsErrors;
 
     void doUpdateResourceResponse() { }
+    String platformSuggestedFilename() const;
 
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }

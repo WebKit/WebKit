@@ -58,6 +58,7 @@ private:
 
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
+    String platformSuggestedFilename() const { return String(); }
 
     bool m_responseFired;
 };

@@ -1,5 +1,15 @@
 2014-09-04  Pratik Solanki  <psolanki@apple.com>
 
+        Unreviewed. Speculative build fix. Add platformSuggestedFilename() to all the ResourceResponse header files.
+
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::platformSuggestedFilename):
+        * platform/network/soup/ResourceResponse.h:
+        * platform/network/win/ResourceResponse.h:
+        (WebCore::ResourceResponse::platformSuggestedFilename):
+
+2014-09-04  Pratik Solanki  <psolanki@apple.com>
+
         Unreviewed. Another speculative build fix after r173272. Add a stub implementation for
         ResourceResponse::platformSuggestedFilename(). Filed bug 136562 for proper fix.
 
