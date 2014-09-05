@@ -9,7 +9,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>WIN_CAIRO;NOMINMAX;USE_CONSOLE_ENTRY_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;USE_CONSOLE_ENTRY_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\API;$(ConfigurationBuildDir)\include\JavaScriptCore;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>

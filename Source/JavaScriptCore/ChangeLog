@@ -1,3 +1,18 @@
+2014-09-05  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] jsc.exe won't run.
+        https://bugs.webkit.org/show_bug.cgi?id=136481
+
+        Reviewed by Alex Christensen.
+        
+        We need to define WIN_CAIRO to avoid looking for the AAS folder.
+
+        * JavaScriptCore.vcxproj/jsc/DLLLauncherWinCairo.props: Added.
+        * JavaScriptCore.vcxproj/jsc/jscLauncher.vcxproj:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncher.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props:
+        * JavaScriptCore.vcxproj/testapi/testapiLauncher.vcxproj:
+
 2014-09-05  David Kilzer  <ddkilzer@apple.com>
 
         JavaScriptCore should build with newer clang
