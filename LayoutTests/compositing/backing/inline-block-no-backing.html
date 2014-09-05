@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            display: inline-block;
+            height: 320px;
+            width: 160px;
+            margin: 10px;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        .child {
+            position: relative;
+            height: 120px;
+            width: 120px;
+            margin: 10px;
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+        }
+
+        window.addEventListener('load', dumpLayers, false)
+    </script>
+</head>
+<body>
+    <div class="composited container">
+        <img class="composited child" src="../resources/apple.jpg">
+        <img class="composited child" src="../resources/apple.jpg">
+    </div>
+
+    <div class="composited container"  style="-webkit-user-select: none;">
+        <img class="composited child" src="../resources/apple.jpg">
+        <img class="composited child" src="../resources/apple.jpg">
+    </div>
+
+    <div class="composited container" style="-webkit-user-select: none;">
+        <img class="composited child" src="../resources/apple.jpg">
+        <div style="inline-block">
+            <img class="composited child" src="../resources/apple.jpg">
+        </div>
+    </div>
+    
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>
