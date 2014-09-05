@@ -1,3 +1,24 @@
+2014-09-05  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r173272): Two blob tests failing on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=136573
+
+        Reviewed by Alexey Proskuryakov.
+
+        http/tests/fileapi/blob-url-in-subframe.html
+        http/tests/security/mixedContent/blob-url-in-iframe.html
+
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+
+            No need to set this twice.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::initNSURLResponse):
+
+            Also test that it is an HTTP URL before using NSHTTPURLResponse. Blobs create non-HTTP URLs with status codes.
+            Pass the accidentally lost expected content length.
+
 2014-09-05  Zalan Bujtas  <zalan@apple.com>
 
         Move computeInlinePreferredLogicalWidths() from RenderBlock to RenderBlockFlow

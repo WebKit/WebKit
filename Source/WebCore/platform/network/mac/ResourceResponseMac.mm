@@ -45,7 +45,7 @@ namespace WebCore {
 
 void ResourceResponse::initNSURLResponse() const
 {
-    if (!m_httpStatusCode) {
+    if (!m_httpStatusCode || !m_url.protocolIsInHTTPFamily()) {
         // Work around a mistake in the NSURLResponse class - <rdar://problem/6875219>.
         // The init function takes an NSInteger, even though the accessor returns a long long.
         // For values that won't fit in an NSInteger, pass -1 instead.
@@ -55,7 +55,7 @@ void ResourceResponse::initNSURLResponse() const
         else
             expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
 
-        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:-1 textEncodingName:m_textEncodingName]);
+        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
         return;
     }
     NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
