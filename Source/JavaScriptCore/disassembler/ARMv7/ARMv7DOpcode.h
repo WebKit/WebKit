@@ -1011,6 +1011,36 @@ protected:
     unsigned op() { return (m_opcode >> 20) & 0x1; }
 };
 
+class ARMv7DOpcodeDataPushPopMultiple : public ARMv7D32BitOpcode {
+protected:
+    void appendRegisterList();
+
+    unsigned registerList() { return m_opcode & 0xffff; }
+    unsigned condition() { return m_opcode >> 28; }
+};
+
+class ARMv7DOpcodeDataPopMultiple : public ARMv7DOpcodeDataPushPopMultiple {
+public:
+    static const uint32_t s_mask = 0x0fff0000;
+    static const uint32_t s_pattern = 0x08bd0000;
+
+    DEFINE_STATIC_FORMAT32(ARMv7DOpcodeDataPopMultiple, thisObj);
+
+protected:
+    const char* format();
+};
+
+class ARMv7DOpcodeDataPushMultiple : public ARMv7DOpcodeDataPushPopMultiple {
+public:
+    static const uint32_t s_mask = 0xfe7f0000;
+    static const uint32_t s_pattern = 0xe82d0000;
+
+    DEFINE_STATIC_FORMAT32(ARMv7DOpcodeDataPushMultiple, thisObj);
+
+protected:
+    const char* format();
+};
+
 class ARMv7DOpcodeDataStoreSingle : public ARMv7D32BitOpcode {
 protected:
     static const char* const s_opNames[4];
@@ -1084,6 +1114,63 @@ protected:
     unsigned immediate5() { return ((m_opcode >> 9) & 0x1c) | ((m_opcode >> 6) & 0x3); }
     unsigned immediate12() { return ((m_opcode >> 15) & 0x0800) | ((m_opcode >> 4) & 0x0700) | (m_opcode & 0x00ff); }
     unsigned immediate16() { return ((m_opcode >> 4) & 0xf000) | ((m_opcode >> 15) & 0x0800) | ((m_opcode >> 4) & 0x0700) | (m_opcode & 0x00ff); }
+};
+
+class ARMv7DOpcodeVCMP : public ARMv7D32BitOpcode {
+public:
+    static const uint32_t s_mask = 0x0fbf0e50;
+    static const uint32_t s_pattern = 0x0eb40a40;
+
+    DEFINE_STATIC_FORMAT32(ARMv7DOpcodeVCMP, thisObj);
+
+protected:
+    const char* format();
+
+    unsigned condition() { return m_opcode >> 28; }
+    unsigned dBit() { return (m_opcode >> 22) & 0x1; }
+    unsigned vd() { return (m_opcode >> 12) & 0xf; }
+    unsigned szBit() { return (m_opcode >> 8) & 0x1; }
+    unsigned eBit() { return (m_opcode >> 7) & 0x1; }
+    unsigned mBit() { return (m_opcode >> 5) & 0x1; }
+    unsigned vm() { return m_opcode & 0xf; }
+};
+
+class ARMv7DOpcodeVCVTBetweenFPAndInt : public ARMv7D32BitOpcode {
+public:
+    static const uint32_t s_mask = 0x0fb80e50;
+    static const uint32_t s_pattern = 0x0eb80a40;
+
+    DEFINE_STATIC_FORMAT32(ARMv7DOpcodeVCVTBetweenFPAndInt, thisObj);
+
+protected:
+    const char* format();
+
+    unsigned condition() { return m_opcode >> 28; }
+    unsigned dBit() { return (m_opcode >> 22) & 0x1; }
+    unsigned op2() { return (m_opcode >> 16) & 0x7; }
+    unsigned vd() { return (m_opcode >> 12) & 0xf; }
+    unsigned szBit() { return (m_opcode >> 8) & 0x1; }
+    unsigned op() { return (m_opcode >> 7) & 0x1; }
+    unsigned mBit() { return (m_opcode >> 5) & 0x1; }
+    unsigned vm() { return m_opcode & 0xf; }
+};
+
+class ARMv7DOpcodeVLDR : public ARMv7D32BitOpcode {
+public:
+    static const uint32_t s_mask = 0x0f300e00;
+    static const uint32_t s_pattern = 0x0d100a00;
+
+    DEFINE_STATIC_FORMAT32(ARMv7DOpcodeVLDR, thisObj);
+
+protected:
+    const char* format();
+
+    unsigned condition() { return m_opcode >> 28; }
+    unsigned uBit() { return (m_opcode >> 23) & 0x1; }
+    unsigned rn() { return (m_opcode >> 16) & 0xf; }
+    unsigned vd() { return ((m_opcode >> 18) & 0x10) | ((m_opcode >> 12) & 0xf); }
+    bool doubleReg() { return !!(m_opcode & 0x100); }
+    unsigned immediate8() { return m_opcode & 0xff; }
 };
 
 class ARMv7DOpcodeVMOVDoublePrecision : public ARMv7D32BitOpcode {

@@ -1,3 +1,45 @@
+2014-09-04  Michael Saboff  <msaboff@apple.com>
+
+        ARM: Add more coverage to ARMv7 disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=136565
+
+        Reviewed by Mark Lam.
+
+        Added ARMV7 disassembler support for Push/Pop multiple and floating point instructions
+        VCMP, VCVT[R] between floating point and integer, and VLDR.
+
+        * disassembler/ARMv7/ARMv7DOpcode.cpp:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeDataPushPopMultiple::appendRegisterList):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeDataPopMultiple::format):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeDataPushMultiple::format):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::format):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::format):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::format):
+        * disassembler/ARMv7/ARMv7DOpcode.h:
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeDataPushPopMultiple::registerList):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeDataPushPopMultiple::condition):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::condition):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::dBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::vd):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::szBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::eBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::mBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCMP::vm):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::condition):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::dBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::op2):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::vd):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::szBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::op):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::mBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVCVTBetweenFPAndInt::vm):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::condition):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::uBit):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::rn):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::vd):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::doubleReg):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVLDR::immediate8):
+
 2014-09-04  Mark Lam  <mark.lam@apple.com>
 
         Move PropertySlot's inline functions back to PropertySlot.h.
