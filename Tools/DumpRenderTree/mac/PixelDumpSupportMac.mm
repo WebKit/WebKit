@@ -54,15 +54,18 @@ static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t p
     rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
 
     buffer = calloc(pixelsHigh, rowBytes);
-    if (!buffer)
-        return 0;
+    if (!buffer) {
+        WTFLogAlways("DumpRenderTree: calloc(%llu, %llu) failed\n", pixelsHigh, rowBytes);
+        return nullptr;
+    }
     
     // Creating this bitmap in the device color space prevents any color conversion when the image of the web view is drawn into it.
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host); // Use ARGB8 on PPC or BGRA8 on X86 to improve CG performance
     if (!context) {
         free(buffer);
-        return 0;
+        WTFLogAlways("DumpRenderTree: CGBitmapContextCreate(%p, %llu, %llu, 8, %llu, %p, 0x%x) failed\n", buffer, pixelsHigh, pixelsWide, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+        return nullptr;
     }
 
     return BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
@@ -115,10 +118,10 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     size_t pixelsWide = static_cast<size_t>(webViewSize.width * deviceScaleFactor);
     size_t pixelsHigh = static_cast<size_t>(webViewSize.height * deviceScaleFactor);
     size_t rowBytes = 0;
-    void* buffer = 0;
+    void* buffer = nullptr;
     RefPtr<BitmapContext> bitmapContext = createBitmapContext(pixelsWide, pixelsHigh, rowBytes, buffer);
     if (!bitmapContext)
-        return 0;
+        return nullptr;
     CGContextRef context = bitmapContext->cgContext();
     // The final scaling gets doubled on the screen capture surface when we use the hidpi backingScaleFactor value for CTM.
     // This is a workaround to push the scaling back.
