@@ -1,3 +1,60 @@
+2014-09-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update the current matching of :read-only and :read-write to the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=136566
+
+        Reviewed by Antti Koivisto.
+
+        WebKit's implementation of :read-only and :read-write dated from 2008 and
+        it was based on the web form spec (http://www.w3.org/TR/web-forms-2/).
+        That spec is very dead now.
+
+        There are new definitions of :read-only and :read-write in three specs:
+        -the HTML living spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting.html#selector-read-only
+        -Selectors level 4: http://dev.w3.org/csswg/selectors4/#rw-pseudos
+        -CSS 3 UI: http://www.w3.org/TR/css3-ui/
+
+        All the definitions say about the same thing. The definitions of Selector Level 4 and
+        CSS 3 UI are very vague and poorly worded. I used the HTML when something was ambiguous.
+
+        In the new definitions, :read-only and :read-write are opposite. It is no longer possible to
+        match both selector simultaneously for the same element.
+        Consequently, I got rid of Element:matchesReadOnlyPseudoClass(). Matching :read-only is now equivalent
+        to :not(:read-write).
+
+        The existing definition of :read-write was matching the spec so I could reuse that.
+
+        There is one more part to the new spec that is not addressed here: the pseudo class :read-write should
+        now also match arbitrary editable HTMLElement (e.g. an element with contenteditable). This will be fixed
+        in a follow up.
+
+        Tests: fast/css/read-only-read-write-input-basics.html
+               fast/css/read-only-read-write-textarea-basics.html
+               fast/selectors/read-only-read-write-input-basics.html
+               fast/selectors/read-only-read-write-input-in-fieldset.html
+               fast/selectors/read-only-read-write-textarea-basics.html
+               fast/selectors/read-only-read-write-textarea-in-fieldset.html
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesReadOnlyPseudoClass):
+        * dom/Element.cpp:
+        (WebCore::Element::matchesReadOnlyPseudoClass): Deleted.
+        * dom/Element.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::matchesReadOnlyPseudoClass): Deleted.
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::matchesReadOnlyPseudoClass): Deleted.
+        * html/HTMLTextAreaElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::matchesReadOnlyPseudoClass): Deleted.
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::matchesReadOnlyPseudoClass): Deleted.
+        * html/shadow/SpinButtonElement.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isReadOnlyControl):
+
 2014-09-05  Andreas Kling  <akling@apple.com>
 
         CTTE: SVGResourcesCache should only allow RenderElements.

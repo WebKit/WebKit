@@ -72,7 +72,6 @@ private:
     virtual void willDetachRenderers() override;
     virtual bool isSpinButtonElement() const override { return true; }
     virtual bool isDisabledFormControl() const override { return shadowHost() && shadowHost()->isDisabledFormControl(); }
-    virtual bool matchesReadOnlyPseudoClass() const override;
     virtual bool matchesReadWritePseudoClass() const override;
     virtual void defaultEventHandler(Event*) override;
     virtual void willOpenPopup() override;

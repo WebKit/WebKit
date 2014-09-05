@@ -2304,11 +2304,6 @@ unsigned Element::childElementCount() const
     return count;
 }
 
-bool Element::matchesReadOnlyPseudoClass() const
-{
-    return false;
-}
-
 bool Element::matchesReadWritePseudoClass() const
 {
     return false;

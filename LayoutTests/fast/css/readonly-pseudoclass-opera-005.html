@@ -5,7 +5,11 @@
  input { background: red; }
  #i1:read-write { background: lime; }
  #i2 { background: lime; }
- #i2:read-only { background: red; }
+
+ /* This definition was modified since the original opera test. In the latest definition (http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting.html#selector-read-only),
+    input[type=radio] is always read-only. */
+ #i2:read-write { background: red; }
+
  #i3:read-write { background: lime; }
  #i4:read-only { background: lime; }
  #i5:read-only { background: lime; }

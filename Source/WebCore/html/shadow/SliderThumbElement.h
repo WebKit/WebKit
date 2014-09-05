@@ -64,7 +64,6 @@ private:
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) override;
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() override;
     virtual bool isDisabledFormControl() const override;
-    virtual bool matchesReadOnlyPseudoClass() const override;
     virtual bool matchesReadWritePseudoClass() const override;
     virtual Element* focusDelegate() override;
 #if !PLATFORM(IOS)

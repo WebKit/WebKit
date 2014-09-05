@@ -112,7 +112,6 @@ private:
     virtual void accessKeyAction(bool sendMouseEvents) override;
 
     virtual bool shouldUseInputMethod() override;
-    virtual bool matchesReadOnlyPseudoClass() const override;
     virtual bool matchesReadWritePseudoClass() const override;
 
     bool valueMissing(const String& value) const { return isRequiredFormControl() && !isDisabledOrReadOnly() && value.isEmpty(); }

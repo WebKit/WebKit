@@ -847,7 +847,7 @@ bool RenderTheme::isReadOnlyControl(const RenderObject& o) const
     Node* node = o.node();
     if (!node || !node->isElementNode())
         return false;
-    return toElement(node)->matchesReadOnlyPseudoClass();
+    return !toElement(node)->matchesReadWritePseudoClass();
 }
 
 bool RenderTheme::isHovered(const RenderObject& o) const

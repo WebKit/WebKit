@@ -225,12 +225,6 @@ bool SliderThumbElement::isDisabledFormControl() const
     return !input || input->isDisabledFormControl();
 }
 
-bool SliderThumbElement::matchesReadOnlyPseudoClass() const
-{
-    HTMLInputElement* input = hostInput();
-    return input && input->matchesReadOnlyPseudoClass();
-}
-
 bool SliderThumbElement::matchesReadWritePseudoClass() const
 {
     HTMLInputElement* input = hostInput();

@@ -199,11 +199,6 @@ void SpinButtonElement::releaseCapture()
     }
 }
 
-bool SpinButtonElement::matchesReadOnlyPseudoClass() const
-{
-    return shadowHost()->matchesReadOnlyPseudoClass();
-}
-
 bool SpinButtonElement::matchesReadWritePseudoClass() const
 {
     return shadowHost()->matchesReadWritePseudoClass();

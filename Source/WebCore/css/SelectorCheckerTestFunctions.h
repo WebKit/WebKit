@@ -156,7 +156,7 @@ inline bool matchesLangPseudoClass(const Element* element, AtomicStringImpl* fil
 
 ALWAYS_INLINE bool matchesReadOnlyPseudoClass(const Element* element)
 {
-    return element->matchesReadOnlyPseudoClass();
+    return !element->matchesReadWritePseudoClass();
 }
 
 ALWAYS_INLINE bool matchesReadWritePseudoClass(const Element* element)

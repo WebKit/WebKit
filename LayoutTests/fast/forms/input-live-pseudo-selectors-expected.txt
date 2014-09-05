@@ -12,7 +12,7 @@ Change disabled:
 PASS backgroundOf(el) is disabledColor
 PASS backgroundOf(el) is invalidColor
 Change readOnly:
-PASS backgroundOf(el) is readOnlyColor
+PASS backgroundOf(el) is normalColor
 PASS backgroundOf(el) is invalidColor
 Inside/outside of a form:
 PASS backgroundOf(el) is invalidColor
