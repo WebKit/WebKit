@@ -103,7 +103,7 @@ void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* me
 
 String ResourceResponse::platformSuggestedFilename() const
 {
-    return String();
+    return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
 }
 
 }

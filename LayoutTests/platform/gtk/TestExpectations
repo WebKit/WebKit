@@ -2115,9 +2115,6 @@ webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFai
 webkit.org/b/136537 css3/flexbox/flex-rounding.html [ Failure ]
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
 
-webkit.org/b/136562 http/tests/download/basic-ascii.html [ Failure ]
-webkit.org/b/136562 http/tests/download/literal-utf-8.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
