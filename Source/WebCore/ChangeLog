@@ -1,5 +1,23 @@
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
+        border-radius should not force layer backing store
+        https://bugs.webkit.org/show_bug.cgi?id=136555
+
+        Reviewed by Dean Jackson.
+        
+        Border-radius is not a reason to allocate backing store; it's not relevant unless
+        we also have a border or background, and hasBoxDecorations() already checks for that.
+        
+        With that gone, we can now use renderer.hasBoxDecorations() (which also checks for
+        a background), but it doesn't check for outlines, so do that in addition.
+
+        Test: compositing/backing/border-radius-no-backing.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
+2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+
         CSS filter on a compositing layer should not cause unncessary backing store allocation
         https://bugs.webkit.org/show_bug.cgi?id=136557
 

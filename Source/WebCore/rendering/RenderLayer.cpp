@@ -6246,15 +6246,9 @@ void RenderLayer::updateSelfPaintingLayer()
         parent()->dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 }
 
-// FIXME: use RenderObject::hasBoxDecorations(). And why hasBorderRadius()?
-static bool hasBoxDecorations(const RenderStyle& style)
-{
-    return style.hasBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasAppearance() || style.boxShadow();
-}
-
 static bool hasBoxDecorationsOrBackground(const RenderElement& renderer)
 {
-    return hasBoxDecorations(renderer.style()) || renderer.hasBackground();
+    return renderer.hasBoxDecorations() || renderer.style().hasOutline();
 }
 
 // Constrain the depth and breadth of the search for performance.

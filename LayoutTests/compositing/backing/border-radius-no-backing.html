@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            padding: 10px;
+            border: 2px solid black;
+        }
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        .rounded {
+            border-radius: 50%;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+        }
+
+        window.addEventListener('load', dumpLayers, false)
+    </script>
+</head>
+<body>
+
+    <div class="composited rounded container">
+        <div class="composited box">
+        </div>
+    </div>
+
+<div class="composited rounded box">
+</div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>

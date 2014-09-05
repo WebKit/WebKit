@@ -1,5 +1,17 @@
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
+        border-radius should not force layer backing store
+        https://bugs.webkit.org/show_bug.cgi?id=136555
+
+        Reviewed by Dean Jackson.
+        
+        Test that dumps layers on some composited elements with border-radius
+
+        * compositing/backing/border-radius-no-backing-expected.txt: Added.
+        * compositing/backing/border-radius-no-backing.html: Added.
+
+2014-09-04  Simon Fraser  <simon.fraser@apple.com>
+
         CSS filter on a compositing layer should not cause unncessary backing store allocation
         https://bugs.webkit.org/show_bug.cgi?id=136557
 
