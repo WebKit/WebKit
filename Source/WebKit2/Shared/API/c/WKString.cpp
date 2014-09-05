@@ -85,7 +85,7 @@ bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef aRef, const char* b)
 
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 {
-    RefPtr<API::String> apiString = API::String::create(jsStringRef);
+    RefPtr<API::String> apiString = jsStringRef ? API::String::create(jsStringRef) : API::String::createNull();
     return toAPI(apiString.release().leakRef());
 }
 

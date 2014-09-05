@@ -1,3 +1,56 @@
+2014-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        JavaScriptCore should build with newer clang
+        <http://webkit.org/b/136002>
+        <rdar://problem/18020616>
+
+        Reviewed by Geoffrey Garen.
+
+        Other than the JSC::SourceProvider::asID() change (which simply
+        removes code that the optimizing compiler would have discarded
+        in Release builds), we move the |this| checks in OpaqueJSString
+        to NULL checks in to JSBase, JSObjectRef, JSScriptRef,
+        JSStringRef{CF} and JSValueRef.
+
+        Note that the following function arguments are _not_ NULL-checked
+        since doing so would just cover up bugs (and were not needed to
+        prevent any tests from failing):
+        - |script| in JSEvaluateScript(), JSCheckScriptSyntax();
+        - |body| in JSObjectMakeFunction();
+        - |source| in JSScriptCreateReferencingImmortalASCIIText()
+          (which is a const char* anyway);
+        - |source| in JSScriptCreateFromString().
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript): Add NULL check for |sourceURL|.
+        (JSCheckScriptSyntax): Ditto.
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction): Ditto.
+        * API/JSScriptRef.cpp:
+        (JSScriptCreateReferencingImmortalASCIIText): Ditto.
+        (JSScriptCreateFromString): Add NULL check for |url|.
+        * API/JSStringRef.cpp:
+        (JSStringGetLength): Return early if NULL pointer is passed in.
+        (JSStringGetCharactersPtr): Ditto.
+        (JSStringGetUTF8CString): Ditto.  Also check |buffer| parameter.
+        * API/JSStringRefCF.cpp:
+        (JSStringCopyCFString): Ditto.
+        * API/JSValueRef.cpp:
+        (JSValueMakeString): Add NULL check for |string|.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::string): Remove code that checks |this|.
+        (OpaqueJSString::identifier): Ditto.
+        (OpaqueJSString::characters): Ditto.
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::is8Bit): Remove code that checks |this|.
+        (OpaqueJSString::characters8): Ditto.
+        (OpaqueJSString::characters16): Ditto.
+        (OpaqueJSString::length): Ditto.
+
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::asID): Remove code that checks |this|.
+
 2014-06-06  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: make MediaTime the primary time type for audiovisual times.

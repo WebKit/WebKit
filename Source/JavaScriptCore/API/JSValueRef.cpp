@@ -318,7 +318,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 
-    return toRef(exec, jsString(exec, string->string()));
+    return toRef(exec, jsString(exec, string ? string->string() : String()));
 }
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
