@@ -53,8 +53,6 @@ PASS Math.ceil(1) is 1
 PASS Math.ceil(-1) is -1
 PASS Math.ceil(1.1) is 2
 PASS Math.ceil(-1.1) is -1
-PASS Math.ceil(Number.MIN_VALUE) is 1
-PASS Math.ceil(-Number.MIN_VALUE) is -0
 PASS Math.ceil(Number.MAX_VALUE) is Number.MAX_VALUE
 PASS Math.ceil(-Number.MAX_VALUE) is -Number.MAX_VALUE
 PASS Math.ceil(Infinity) is Infinity
@@ -77,8 +75,6 @@ PASS Math.floor(1) is 1
 PASS Math.floor(-1) is -1
 PASS Math.floor(1.1) is 1
 PASS Math.floor(-1.1) is -2
-PASS Math.floor(Number.MIN_VALUE) is 0
-PASS Math.floor(-Number.MIN_VALUE) is -1
 PASS Math.floor(Number.MAX_VALUE) is Number.MAX_VALUE
 PASS Math.floor(-Number.MAX_VALUE) is -Number.MAX_VALUE
 PASS Math.floor(Infinity) is Infinity
