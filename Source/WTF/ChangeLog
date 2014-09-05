@@ -1,5 +1,15 @@
 2014-09-05  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc should honor the FastMalloc scavenging API
+        https://bugs.webkit.org/show_bug.cgi?id=136588
+
+        Reviewed by Andreas Kling.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::releaseFastMallocFreeMemory):
+
+2014-09-05  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled out <http://trac.webkit.org/changeset/173313>.
 
         It seems to have broken the PLT bot.

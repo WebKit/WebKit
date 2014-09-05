@@ -470,7 +470,10 @@ TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
     return fastCalloc(numElements, elementSize);
 }
     
-void releaseFastMallocFreeMemory() { }
+void releaseFastMallocFreeMemory()
+{
+    bmalloc::api::scavenge();
+}
 
 FastMallocStatistics fastMallocStatistics()
 {
