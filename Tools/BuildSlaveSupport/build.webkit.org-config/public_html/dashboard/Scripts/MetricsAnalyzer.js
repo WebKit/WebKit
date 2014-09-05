@@ -237,16 +237,23 @@ Analyzer.prototype = {
             return result;
         }.bind(this), {});
 
+        // Find the oldest iteration for each queue. Revisions landed before a new bot was added are considered fully tested
+        // even without results from the not yet existent bot.
+        // Unfortunately, we don't know when the bot got added to dashboard, so we have to assume that it was there for as long as it had results.
+        var lastTestedRevisionByQueue = {};
+        queues.forEach(function(queue) {
+            var queueIterations = queue.iterations.filter(function(iteration) { return iteration.finished; });
+            queueIterations.sort(function(a, b) { return b.endTime - a.endTime; });
+            if (queueIterations.length > 0)
+                lastTestedRevisionByQueue[queue.id] = queueIterations[queueIterations.length - 1].openSourceRevision;
+        });
+
         var previousFullyTestedRevisionNumber = -1;
-        var lastTestedRevisionByQueue = queues.reduce(function(previousValue, queue) {
-            previousValue[queue.id] = -1;
-            return previousValue;
-        }, {});
 
         for (var i = 0; i < iterationsByRevision.length; ++i) {
             var iteration = iterationsByRevision[i];
 
-            console.assert(lastTestedRevisionByQueue[iteration.queue.id] <= iteration.openSourceRevision);
+            console.assert(lastTestedRevisionByQueue[iteration.queue.id] === undefined || lastTestedRevisionByQueue[iteration.queue.id] <= iteration.openSourceRevision);
             lastTestedRevisionByQueue[iteration.queue.id] = iteration.openSourceRevision;
 
             var newFullyTestedRevisionNumber = this._fullyTestedRevisionNumber(lastTestedRevisionByQueue);
