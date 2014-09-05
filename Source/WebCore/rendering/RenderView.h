@@ -299,7 +299,7 @@ private:
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
 
-    virtual bool isScrollableOrRubberbandable() const override;
+    virtual bool isScrollableOrRubberbandableBox() const override;
 
     void splitSelectionBetweenSubtrees(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode blockRepaintMode);
     void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&);

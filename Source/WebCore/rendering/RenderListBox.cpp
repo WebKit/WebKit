@@ -787,6 +787,11 @@ ScrollableArea* RenderListBox::enclosingScrollableArea() const
     return 0;
 }
 
+bool RenderListBox::isScrollableOrRubberbandable()
+{
+    return m_vBar;
+}
+
 bool RenderListBox::hasScrollableOrRubberbandableAncestor()
 {
     return enclosingLayer() && enclosingLayer()->hasScrollableOrRubberbandableAncestor();

@@ -1,3 +1,61 @@
+2014-09-05  Beth Dakin  <bdakin@apple.com>
+
+        ScrollablArea::handleWheelEvent() should return early if the ScrollableArea is not 
+        actually scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=136558
+
+        Reviewed by Simon Fraser.
+
+        This patch requires adding a new virtual function to ScrollableArea called 
+        isScrollableOrRubberbandable(). Unfortunately, there is already a virtual function 
+        of that name that exists on RenderLayerModelObject, which is only problematic 
+        because RenderListBox inherits from both RenderLayerModelObject and 
+        ScrollableArea. This patch resolves that conflict in the simplest way, by re-
+        naming the RenderLayerModelObject version of the function to 
+        isScrollableOrRubberbandableBox(). It’s a little unfortunate, but simpler than the 
+        other solutions I came up with.
+
+        New ScrollableArea virtual function.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollableOrRubberbandable):
+        * page/FrameView.h:
+
+        The point of the whole patch! Return early if you can’t scroll or rubber band.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleWheelEvent):
+
+        New ScrollableArea virtual function.
+        * platform/ScrollableArea.h:
+        * platform/win/PopupMenuWin.h:
+
+        Re-name.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::isScrollableOrRubberbandableBox):
+        (WebCore::RenderBox::isScrollableOrRubberbandable): Deleted.
+        * rendering/RenderBox.h:
+
+        Implement new ScrollableArea virtual function, and adapt to the re-name.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isScrollableOrRubberbandable):
+        (WebCore::RenderLayer::hasScrollableOrRubberbandableAncestor):
+        * rendering/RenderLayer.h:
+
+        Re-name.
+        * rendering/RenderLayerModelObject.h:
+        (WebCore::RenderLayerModelObject::isScrollableOrRubberbandableBox):
+        (WebCore::RenderLayerModelObject::isScrollableOrRubberbandable): Deleted.
+
+        Implement ScrollableArea virtual function.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isScrollableOrRubberbandable):
+        * rendering/RenderListBox.h:
+
+        Re-name.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::isScrollableOrRubberbandableBox):
+        (WebCore::RenderView::isScrollableOrRubberbandable): Deleted.
+        * rendering/RenderView.h:
+
 2014-06-06  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: make MediaTime the primary time type for audiovisual times.

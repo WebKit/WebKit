@@ -403,6 +403,8 @@ public:
     // callers use Scrollability::ScrollableOrRubberbandable.
     enum class Scrollability { Scrollable, ScrollableOrRubberbandable };
     bool isScrollable(Scrollability definitionOfScrollable = Scrollability::Scrollable);
+
+    virtual bool isScrollableOrRubberbandable() override;
     virtual bool hasScrollableOrRubberbandableAncestor() override;
 
     enum ScrollbarModesCalculationStrategy { RulesFromWebContentOnly, AnyRule };

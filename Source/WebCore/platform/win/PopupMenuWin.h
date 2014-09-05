@@ -95,6 +95,7 @@ private:
     virtual void invalidateScrollCornerRect(const IntRect&) override { }
     virtual bool isActive() const override { return true; }
     ScrollableArea* enclosingScrollableArea() const override { return 0; }
+    virtual bool isScrollableOrRubberbandable() override { return true; }
     virtual bool hasScrollableOrRubberbandableAncestor() override { return true; }
     virtual bool isScrollCornerVisible() const override { return false; }
     virtual IntRect scrollCornerRect() const override { return IntRect(); }

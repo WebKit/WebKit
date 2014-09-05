@@ -3056,10 +3056,15 @@ ScrollableArea* RenderLayer::enclosingScrollableArea() const
     return 0;
 }
 
+bool RenderLayer::isScrollableOrRubberbandable()
+{
+    return renderer().isScrollableOrRubberbandableBox();
+}
+
 bool RenderLayer::hasScrollableOrRubberbandableAncestor()
 {
     for (RenderLayer* nextLayer = parentLayerCrossFrame(this); nextLayer; nextLayer = parentLayerCrossFrame(nextLayer)) {
-        if (nextLayer->renderer().isScrollableOrRubberbandable())
+        if (nextLayer->isScrollableOrRubberbandable())
             return true;
     }
 

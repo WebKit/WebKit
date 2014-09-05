@@ -207,6 +207,7 @@ public:
     // Note that this only returns scrollable areas that can actually be scrolled.
     virtual ScrollableArea* enclosingScrollableArea() const = 0;
 
+    virtual bool isScrollableOrRubberbandable() = 0;
     virtual bool hasScrollableOrRubberbandableAncestor() = 0;
 
     // Returns the bounding box of this scrollable area, in the coordinate system of the enclosing scroll view.

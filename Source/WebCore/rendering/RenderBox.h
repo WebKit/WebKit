@@ -662,7 +662,7 @@ private:
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;
 
-    virtual bool isScrollableOrRubberbandable() const override;
+    virtual bool isScrollableOrRubberbandableBox() const override;
 
     // Returns true if we did a full repaint
     bool repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground);

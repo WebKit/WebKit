@@ -3339,6 +3339,11 @@ bool FrameView::isScrollable(Scrollability definitionOfScrollable)
     return true;
 }
 
+bool FrameView::isScrollableOrRubberbandable()
+{
+    return frame().isMainFrame() ? isScrollable(Scrollability::ScrollableOrRubberbandable) : isScrollable(Scrollability::Scrollable);
+}
+
 bool FrameView::hasScrollableOrRubberbandableAncestor()
 {
     if (frame().isMainFrame())

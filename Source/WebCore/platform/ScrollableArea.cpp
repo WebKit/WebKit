@@ -185,6 +185,9 @@ void ScrollableArea::scrollPositionChanged(const IntPoint& position)
 
 bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+    if (!isScrollableOrRubberbandable())
+        return false;
+
     return scrollAnimator()->handleWheelEvent(wheelEvent);
 }
 

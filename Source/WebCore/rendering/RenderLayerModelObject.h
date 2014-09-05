@@ -49,7 +49,7 @@ public:
     // The query rect is given in local coordinate system.
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
-    virtual bool isScrollableOrRubberbandable() const { return false; }
+    virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
 protected:
     RenderLayerModelObject(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);

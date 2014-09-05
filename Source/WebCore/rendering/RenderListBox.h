@@ -131,6 +131,7 @@ private:
     virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
     virtual ScrollableArea* enclosingScrollableArea() const override;
+    virtual bool isScrollableOrRubberbandable() override;
     virtual bool hasScrollableOrRubberbandableAncestor() override;
     virtual IntRect scrollableAreaBoundingBox() const override;
 

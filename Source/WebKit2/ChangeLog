@@ -1,3 +1,14 @@
+2014-09-05  Beth Dakin  <bdakin@apple.com>
+
+        ScrollablArea::handleWheelEvent() should return early if the ScrollableArea is not 
+        actually scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=136558
+
+        Reviewed by Simon Fraser.
+
+        New ScrollableArea virtual function.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+
 2014-09-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, speculative build fix on GTK port since r173305.
