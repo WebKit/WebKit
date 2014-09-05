@@ -1,3 +1,11 @@
+2014-09-05  Lucas Forschler  <lforschler@apple.com>
+
+        <https://webkit.org/b/136586> Add bots to Apple build/test queues
+        
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-09-05  Alexey Proskuryakov  <ap@apple.com>
 
         Buildbot metrics page gives wrong results after a new bot gets added
