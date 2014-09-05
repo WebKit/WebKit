@@ -171,7 +171,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
     if (!priv->bytesRead) {
         // First chunk read. In case of empty reply an empty API::Data is sent to the networking process.
         WebCore::ResourceResponse response(WebCore::URL(WebCore::URL(), String::fromUTF8(priv->uri)), String::fromUTF8(priv->mimeType.data()),
-            priv->streamLength, emptyString(), emptyString());
+            priv->streamLength, emptyString());
         priv->webRequestManager->didReceiveResponse(priv->requestID, response);
         priv->webRequestManager->didLoadData(priv->requestID, webData.get());
     } else if (bytesRead || (!bytesRead && !priv->streamLength)) {

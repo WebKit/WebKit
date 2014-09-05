@@ -1,3 +1,10 @@
+2014-09-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, speculative build fix on GTK port since r173305.
+
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+
 2014-09-03  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Some WebKitLegacy headers migrated from WebCore incorrectly contain WEBCORE_EXPORT
