@@ -1,3 +1,46 @@
+2014-09-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Use tracking areas instead of (SPI) mouse moved notifications, and follow flags changes with an event monitor
+        https://bugs.webkit.org/show_bug.cgi?id=136564
+
+        Reviewed by Dan Bernstein.
+        
+        WebKit1 depended on mouse moved event notifications to track mouse
+        moves, and on being specially called by Safari to track flags
+        changes. WebKit2 does both these things better - it uses a tracking area
+        and event monitors. Copy those approaches.
+
+        * WebKit.order: Remove reference to obsolete call.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]): No need to deallocate tracking
+        area, since we now just always have one.
+        (-[WebHTMLViewPrivate clear]): ditto
+        (-[WebHTMLView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        New method that posts a fake mouse move event in response to
+        a flags change event, for use by the event monitor.
+        (+[WebHTMLView _postFlagsChangedEvent:]): Empty this old call,
+        still kept around for benefit of older Safari.
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Handle Dashboard's
+        special mouseover mode (previously handled in a weird way).
+        (-[WebHTMLView close]): No more need to mess with mouse moved observer.
+        (-[WebHTMLView viewWillMoveToWindow:]): ditto
+        (-[WebHTMLView viewDidMoveToWindow]): ditto; but now hook up a flags
+        changed monitor.
+        (-[WebHTMLView windowDidBecomeKey:]): No need to handle non-key window
+        tracking area or mouse moved observer.
+        (-[WebHTMLView windowDidResignKey:]): ditto
+        (-[WebHTMLView windowWillOrderOnScreen:]): No need to mess with mouse
+        moved observer.
+        (-[WebHTMLView windowWillOrderOffScreen:]): ditto
+        (-[WebHTMLView mouseMoved:]): Converted from the old mouseMovedNotification:
+        (-[WebHTMLView setDataSource:]): Change if around body to early return. Hook
+        up tracking area - we have to do it here, because before this point, the
+        WebHTMLView does not know its WebView, which is where dashboard settings
+        live.
+        (-[WebHTMLView _removeMouseMovedObserverUnconditionally]): Deleted.
+        (-[WebHTMLView addMouseMovedObserver]): Deleted.
+        (-[WebHTMLView removeMouseMovedObserver]): Deleted.
+
 2014-09-04  Pratik Solanki  <psolanki@apple.com>
 
         Bring back [WebPreferences setDiskImageCacheEnabled:] for backwards compatibility

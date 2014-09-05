@@ -502,7 +502,6 @@ __ZN20WebFrameLoaderClient32postProgressFinishedNotificationEv
 __ZN20WebDocumentLoaderMacD0Ev
 -[WebView _windowChangedKeyState]
 -[WebHTMLView windowDidBecomeKey:]
-_WKMouseMovedNotification
 -[WebHTMLView(WebNSTextInputSupport) _updateSecureInputState]
 -[WebView _windowWillOrderOnScreen:]
 -[WebHTMLView windowWillOrderOnScreen:]

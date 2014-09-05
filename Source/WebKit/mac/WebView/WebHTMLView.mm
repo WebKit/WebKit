@@ -433,7 +433,7 @@ static NSString * const WebMarkedTextUpdatedNotification = @"WebMarkedTextUpdate
 - (NSString *)_plainTextFromPasteboard:(NSPasteboard *)pasteboard;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard;
-- (void)_removeMouseMovedObserverUnconditionally;
+- (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_removeSuperviewObservers;
 - (void)_removeWindowObservers;
 #endif
@@ -543,7 +543,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL printing;
     BOOL paginateScreenContent;
 #if !PLATFORM(IOS)
-    BOOL observingMouseMovedNotifications;
     BOOL observingSuperviewNotifications;
     BOOL observingWindowNotifications;
     
@@ -614,7 +613,8 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     SEL selectorForDoCommandBySelector;
 
 #if !PLATFORM(IOS)
-    NSTrackingArea *trackingAreaForNonKeyWindow;
+    BOOL installedTrackingArea;
+    id flagsChangedEventMonitor;
 #endif
 
 #ifndef NDEBUG
@@ -694,7 +694,6 @@ static NSCellStateValue kit(TriState state)
 #endif
     [dataSource release];
 #if !PLATFORM(IOS)
-    [trackingAreaForNonKeyWindow release];
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
 #endif
@@ -732,7 +731,6 @@ static NSCellStateValue kit(TriState state)
 #endif
     [dataSource release];
 #if !PLATFORM(IOS)
-    [trackingAreaForNonKeyWindow release];
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
 #endif
@@ -746,7 +744,6 @@ static NSCellStateValue kit(TriState state)
 #endif
     dataSource = nil;
 #if !PLATFORM(IOS)
-    trackingAreaForNonKeyWindow = nil;
     promisedDragTIFFDataSource = 0;
 #endif
 
@@ -993,6 +990,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [webView release];
 }
 
+- (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent
+{
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
+        modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
+        context:flagsChangedEvent.context eventNumber:0 clickCount:0 pressure:0];
+
+    [self mouseMoved:fakeEvent];
+}
+
 // This method is needed to support Mac OS X services.
 - (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard 
 { 
@@ -1004,15 +1010,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     else 
         [self _pasteAsPlainTextWithPasteboard:pasteboard]; 
     return YES; 
-}
-
-- (void)_removeMouseMovedObserverUnconditionally
-{
-    if (!_private || !_private->observingMouseMovedNotifications)
-        return;
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:WKMouseMovedNotification() object:nil];
-    _private->observingMouseMovedNotifications = false;
 }
 
 - (void)_removeSuperviewObservers
@@ -1282,22 +1279,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 #if !PLATFORM(IOS)
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
-    // This is a workaround for: <rdar://problem/2981619> NSResponder_Private should include notification for FlagsChanged
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-        location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]]
-        modifierFlags:[flagsChangedEvent modifierFlags]
-        timestamp:[flagsChangedEvent timestamp]
-        windowNumber:[flagsChangedEvent windowNumber]
-        context:[flagsChangedEvent context]
-        eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
-
-    // Pretend it's a mouse move.
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:WKMouseMovedNotification() object:self
-        userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
+    // This is obsolete SPI needed only for older versions of Safari
 }
 
 - (id)_bridge
@@ -1792,9 +1774,15 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             // newer when legacy scrollbars are enabled, because then WebKit receives mouse events all the time. 
             // If it is one of those cases where the page is not active and the mouse is not pressed, then we can
             // fire a much more restricted and efficient scrollbars-only version of the event.
-            if ([[self window] isKeyWindow] || mouseEventIsPartOfClickOrDrag(event))
+
+            if ([[self window] isKeyWindow] 
+                || mouseEventIsPartOfClickOrDrag(event)
+#if ENABLE(DASHBOARD_SUPPORT)
+                || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
+#endif
+                ) {
                 coreFrame->eventHandler().mouseMoved(event);
-            else
+            } else
                 coreFrame->eventHandler().passMouseMovedEventToScrollbars(event);
         }
 
@@ -2121,7 +2109,6 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
     [self _clearLastHitViewIfSelf];
 #if !PLATFORM(IOS)
-    [self _removeMouseMovedObserverUnconditionally];
     [self _removeWindowObservers];
     [self _removeSuperviewObservers];
 #endif
@@ -3055,41 +3042,6 @@ WEBCORE_COMMAND(toggleUnderline)
 }
 
 #if !PLATFORM(IOS)
-- (void)addMouseMovedObserver
-{
-    if (!_private->dataSource || ![self _isTopHTMLView] || _private->observingMouseMovedNotifications)
-        return;
-
-    // Unless the Dashboard asks us to do this for all windows, keep an observer going only for the key window.
-    if (!([[self window] isKeyWindow] 
-#if ENABLE(DASHBOARD_SUPPORT)
-            || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
-#endif
-        ))
-        return;
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
-        name:WKMouseMovedNotification() object:nil];
-    [self _frameOrBoundsChanged];
-    _private->observingMouseMovedNotifications = true;
-}
-
-- (void)removeMouseMovedObserver
-{
-#if ENABLE(DASHBOARD_SUPPORT)
-    // Don't remove the observer if we're running the Dashboard.
-    if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows])
-        return;
-#endif
-
-    // Legacy scrollbars require tracking the mouse at all times.
-    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
-        return;
-
-    [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
-    [self _removeMouseMovedObserverUnconditionally];
-}
-
 - (void)addSuperviewObservers
 {
     if (_private->observingSuperviewNotifications)
@@ -3161,7 +3113,6 @@ WEBCORE_COMMAND(toggleUnderline)
 
 #if !PLATFORM(IOS)
     // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
-    [self _removeMouseMovedObserverUnconditionally];
     [self _removeWindowObservers];
     [self _removeSuperviewObservers];
 #endif
@@ -3186,7 +3137,6 @@ WEBCORE_COMMAND(toggleUnderline)
 #if !PLATFORM(IOS)
         [self addWindowObservers];
         [self addSuperviewObservers];
-        [self addMouseMovedObserver];
 #endif
 
         // FIXME: This accomplishes the same thing as the call to setCanStartMedia(true) in
@@ -3194,6 +3144,16 @@ WEBCORE_COMMAND(toggleUnderline)
         [[self _pluginController] startAllPlugins];
 
         _private->lastScrollPosition = NSZeroPoint;
+
+        if (!_private->flagsChangedEventMonitor) {
+            _private->flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
+                [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
+                return flagsChangedEvent;
+            }];
+        }
+    } else {
+        [NSEvent removeMonitor:_private->flagsChangedEventMonitor];
+        _private->flagsChangedEventMonitor = nil;
     }
 }
 
@@ -3672,18 +3632,10 @@ static void setMenuTargets(NSMenu* menu)
         return;
     }
 
-    if (_private->trackingAreaForNonKeyWindow) {
-        [self removeTrackingArea:_private->trackingAreaForNonKeyWindow];
-        [_private->trackingAreaForNonKeyWindow release];
-        _private->trackingAreaForNonKeyWindow = nil;
-    }
-
     NSWindow *keyWindow = [notification object];
 
-    if (keyWindow == [self window]) {
-        [self addMouseMovedObserver];
+    if (keyWindow == [self window])
         [self _updateSecureInputState];
-    }
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
@@ -3695,23 +3647,9 @@ static void setMenuTargets(NSMenu* menu)
 
     NSWindow *formerKeyWindow = [notification object];
 
-    if (formerKeyWindow == [self window])
-        [self removeMouseMovedObserver];
-
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
         [_private->completionController endRevertingChange:NO moveLeft:NO];
-    }
-
-    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy) {
-        // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
-        // It's easiest to do this with a tracking area, which we will remove when the window is key
-        // again.
-        _private->trackingAreaForNonKeyWindow = [[NSTrackingArea alloc] initWithRect:[self bounds]
-                                                    options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingActiveAlways
-                                                    owner:self
-                                                    userInfo:nil];
-        [self addTrackingArea:_private->trackingAreaForNonKeyWindow];
     }
 }
 
@@ -3721,10 +3659,6 @@ static void setMenuTargets(NSMenu* menu)
         [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
         return;
     }
-
-    // Check if the window is already a key window, which can be the case for NSPopovers.
-    if ([[self window] isKeyWindow])
-        [self addMouseMovedObserver];
 }
 
 - (void)windowWillOrderOffScreen:(NSNotification *)notification
@@ -3733,10 +3667,6 @@ static void setMenuTargets(NSMenu* menu)
         [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
         return;
     }
-
-    // When the WebView is in a NSPopover the NSWindowDidResignKeyNotification isn't sent
-    // unless the parent window loses key. So we need to remove the mouse moved observer.
-    [self removeMouseMovedObserver];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -4107,9 +4037,9 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 }
 
 #if !PLATFORM(IOS)
-- (void)mouseMovedNotification:(NSNotification *)notification
+- (void)mouseMoved:(NSEvent *)event
 {
-    [self _updateMouseoverWithEvent:[[notification userInfo] objectForKey:@"NSEvent"]];
+    [self _updateMouseoverWithEvent:event];
 }
 #endif
 
@@ -4267,21 +4197,34 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 - (void)setDataSource:(WebDataSource *)dataSource 
 {
     ASSERT(dataSource);
-    if (_private->dataSource != dataSource) {
-        ASSERT(!_private->closed);
-#if !PLATFORM(IOS)
-        BOOL hadDataSource = _private->dataSource != nil;
-#endif
+    if (_private->dataSource == dataSource)
+        return;
 
-        [dataSource retain];
-        [_private->dataSource release];
-        _private->dataSource = dataSource;
-        [_private->pluginController setDataSource:dataSource];
+    ASSERT(!_private->closed);
+
+    [dataSource retain];
+    [_private->dataSource release];
+    _private->dataSource = dataSource;
+    [_private->pluginController setDataSource:dataSource];
 
 #if !PLATFORM(IOS)
-        if (!hadDataSource)
-            [self addMouseMovedObserver];
+    if (!_private->installedTrackingArea) {
+        NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
+        if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy
+#if ENABLE(DASHBOARD_SUPPORT)
+            || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
 #endif
+            )
+            options |= NSTrackingActiveAlways;
+        else
+            options |= NSTrackingActiveInKeyWindow;
+
+        NSTrackingArea *trackingArea = [[NSTrackingArea alloc] 
+            initWithRect:[self frame] options:options owner:self userInfo:nil];
+        [self addTrackingArea:trackingArea];
+        [trackingArea release];
+#endif
+        _private->installedTrackingArea = YES;
     }
 }
 
