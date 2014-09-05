@@ -531,6 +531,19 @@
 
 2014-09-04  Roger Fong  <roger_fong@apple.com>
 
+        Increase number of maximum active WebGL contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=136551.
+        <rdar://problem/18236425>
+
+        Reviewed by Brent Fulgham.
+
+        Test covered by Khronos conformance test:
+        webgl/1.0.2/conformance/context/context-creation-and-destruction.html
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+
+2014-09-04  Roger Fong  <roger_fong@apple.com>
+
         Clicking on a select element should never hide the popup menu.
         https://bugs.webkit.org/show_bug.cgi?id=136548.
         <rdar://problem/10215926>

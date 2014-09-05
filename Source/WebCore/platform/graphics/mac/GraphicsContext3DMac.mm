@@ -61,7 +61,7 @@
 
 namespace WebCore {
 
-const int maxActiveContexts = 16;
+const int maxActiveContexts = 64;
 int GraphicsContext3D::numActiveContexts = 0;
 
 // FIXME: This class is currently empty on Mac, but will get populated as 
