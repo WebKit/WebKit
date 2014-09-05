@@ -75,7 +75,6 @@ enum ReasonFrameCannotBeInPageCache {
     IsErrorPage,
     HasPlugins,
     IsHttpsAndCacheControlled,
-    HasUnloadListener,
     HasDatabaseHandles,
     HasSharedWorkers,
     NoHistoryItem,
@@ -129,15 +128,6 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
             || frame->loader().documentLoader()->response().cacheControlContainsNoStore())) {
         PCLOG("   -Frame is HTTPS, and cache control prohibits caching or storing");
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
-    }
-    if (frame->document()->domWindow() && frame->document()->domWindow()->hasEventListeners(eventNames().unloadEvent)) {
-        PCLOG("   -Frame has an unload event listener");
-#if !PLATFORM(IOS)
-        rejectReasons |= 1 << HasUnloadListener;
-#else
-        // iOS allows pages with unload event listeners to enter the page cache.
-        PCLOG("    -BUT iOS allows these pages to be cached.");
-#endif
     }
 #if ENABLE(SQL_DATABASE)
     if (DatabaseManager::manager().hasOpenDatabases(frame->document())) {
@@ -296,9 +286,6 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
         && (!document->url().protocolIs("https") || (!documentLoader->response().cacheControlContainsNoCache() && !documentLoader->response().cacheControlContainsNoStore()))
-#if !PLATFORM(IOS)
-        && (!document->domWindow() || !document->domWindow()->hasEventListeners(eventNames().unloadEvent))
-#endif
 #if ENABLE(SQL_DATABASE)
         && !DatabaseManager::manager().hasOpenDatabases(document)
 #endif

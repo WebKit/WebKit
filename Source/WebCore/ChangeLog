@@ -1,3 +1,18 @@
+2014-09-05  Brady Eidson  <beidson@apple.com>
+
+        Allow pages with unload handlers in the page cache
+        <rdar://problem/11084669> and https://bugs.webkit.org/show_bug.cgi?id=136535
+
+        Reviewed by Oliver Hunt.
+
+        This will match what iOS has been doing for some time.
+
+        Updated tests for new behavior.
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+
 2014-09-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [SOUP] Implement ResourceResponse::platformSuggestedFilename() when USE(SOUP) is enabled.

@@ -17,13 +17,8 @@ function loadNext() {
     setTimeout(function() {location.href = "cached-page-2.html";}, 0);
 }
 
-// This unload handler exists just to make sure this page is not added
-// to the page cache!
-function myUnload() {
-    window.opener.log("page-1 running unload handler");
-}
 </script>
 </head>
-<body onload="loadNext()" onunload="myUnload()">
+<body onpageshow="loadNext()">
 </body>
 </html>
