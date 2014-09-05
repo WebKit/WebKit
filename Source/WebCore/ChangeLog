@@ -1,3 +1,15 @@
+2014-09-04  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed. Speculative EFL and GTK build fix after r173272. Remove the filename argument
+        from the various ResourceResponse constructors.
+
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/win/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2014-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         border-radius should not force layer backing store

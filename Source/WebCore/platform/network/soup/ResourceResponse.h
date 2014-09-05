@@ -42,8 +42,8 @@ public:
     {
     }
 
-    ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
+    ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
+        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName)
         , m_soupFlags(static_cast<SoupMessageFlags>(0))
         , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
     {
