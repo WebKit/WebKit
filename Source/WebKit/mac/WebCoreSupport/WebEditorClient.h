@@ -189,6 +189,8 @@ inline NSSelectionAffinity kit(WebCore::EAffinity affinity)
     case WebCore::EAffinity::DOWNSTREAM:
         return NSSelectionAffinityDownstream;
     }
+    ASSERT_NOT_REACHED();
+    return NSSelectionAffinityUpstream;
 }
 
 inline WebCore::EAffinity core(NSSelectionAffinity affinity)
@@ -199,6 +201,8 @@ inline WebCore::EAffinity core(NSSelectionAffinity affinity)
     case NSSelectionAffinityDownstream:
         return WebCore::EAffinity::DOWNSTREAM;
     }
+    ASSERT_NOT_REACHED();
+    return WebCore::EAffinity::UPSTREAM;
 }
 #endif
 
