@@ -1,3 +1,13 @@
+2014-09-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the iOS build after <http://trac.webkit.org/changeset/173258>
+        (https://bugs.webkit.org/show_bug.cgi?id=136494)
+
+        Use ENABLE_TOUCH_EVENT instead of ENABLE(TOUCH_EVENT) as the latter isn't available
+        to some clients of this private header.
+
+        * platform/ios/wak/WAKResponder.h:
+
 2014-09-04  Roger Fong  <roger_fong@apple.com>
 
         Clicking on a select element should never hide the popup menu.

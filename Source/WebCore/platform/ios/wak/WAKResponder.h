@@ -46,7 +46,7 @@
 - (void)mouseExited:(WebEvent *)theEvent;
 - (void)keyDown:(WebEvent *)event;
 - (void)keyUp:(WebEvent *)event;
-#if ENABLE(TOUCH_EVENTS)
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 - (void)touch:(WebEvent *)event;
 #endif
 
