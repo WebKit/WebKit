@@ -1,3 +1,12 @@
+2014-09-05  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        Enable GenGC on ARM Traditional
+        https://bugs.webkit.org/show_bug.cgi?id=136567
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Platform.h:
+
 2014-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         Beef up the DFG's CFG analyses to include iterated dominance frontiers and more user-friendly BlockSets
