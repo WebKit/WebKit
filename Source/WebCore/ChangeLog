@@ -1,3 +1,21 @@
+2014-09-06  David Kilzer  <ddkilzer@apple.com>
+
+        HTMLElement.cpp does not compile with new clang
+        <http://webkit.org/b/136600>
+
+        Reviewed by Chris Fleizach.
+
+        Fixes the following static analyzer warning:
+
+            Source/WebCore/html/HTMLElement.cpp:545:10: error: 'this' pointer cannot be null in well-defined C++ code; pointer may be assumed to always convert to true [-Werror,-Wundefined-bool-conversion]
+                if (!this || !parentNode())
+                    ~^~~~
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterText): Remove "!this" check added
+        in r75738.  It would only cover up real bugs, and isn't even hit
+        in layout tests.
+
 2014-09-06  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Drop evas object cursor support

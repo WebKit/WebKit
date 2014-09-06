@@ -542,7 +542,7 @@ void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
     else
         newChild = Text::create(document(), text);
 
-    if (!this || !parentNode())
+    if (!parentNode())
         ec = HIERARCHY_REQUEST_ERR;
     if (ec)
         return;
