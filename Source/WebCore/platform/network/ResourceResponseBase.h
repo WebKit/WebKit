@@ -124,6 +124,9 @@ public:
 
     static bool compare(const ResourceResponse&, const ResourceResponse&);
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ResourceResponseBase&);
+
 protected:
     enum InitLevel {
         Uninitialized,
@@ -185,6 +188,62 @@ private:
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
 inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { return !(a == b); }
+
+template<class Encoder>
+void ResourceResponseBase::encode(Encoder& encoder) const
+{
+    encoder << m_isNull;
+    if (m_isNull)
+        return;
+    lazyInit(AllFields);
+
+    encoder << m_url.string();
+    encoder << m_mimeType;
+    encoder << static_cast<int64_t>(m_expectedContentLength);
+    encoder << m_textEncodingName;
+    encoder << m_httpStatusText;
+    encoder << m_httpHeaderFields;
+    encoder << m_resourceLoadTiming;
+    encoder << m_httpStatusCode;
+    encoder << m_connectionID;
+}
+
+template<class Decoder>
+bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& response)
+{
+    ASSERT(response.m_isNull);
+    bool responseIsNull;
+    if (!decoder.decode(responseIsNull))
+        return false;
+    if (responseIsNull)
+        return true;
+
+    String url;
+    if (!decoder.decode(url))
+        return false;
+    response.m_url = URL(URL(), url);
+    if (!decoder.decode(response.m_mimeType))
+        return false;
+    int64_t expectedContentLength;
+    if (!decoder.decode(expectedContentLength))
+        return false;
+    response.m_expectedContentLength = expectedContentLength;
+    if (!decoder.decode(response.m_textEncodingName))
+        return false;
+    if (!decoder.decode(response.m_httpStatusText))
+        return false;
+    if (!decoder.decode(response.m_httpHeaderFields))
+        return false;
+    if (!decoder.decode(response.m_resourceLoadTiming))
+        return false;
+    if (!decoder.decode(response.m_httpStatusCode))
+        return false;
+    if (!decoder.decode(response.m_connectionID))
+        return false;
+    response.m_isNull = false;
+
+    return true;
+}
 
 struct CrossThreadResourceResponseDataBase {
     WTF_MAKE_NONCOPYABLE(CrossThreadResourceResponseDataBase); WTF_MAKE_FAST_ALLOCATED;

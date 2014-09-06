@@ -76,6 +76,9 @@ public:
 
     bool platformResponseIsUpToDate() const { return false; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ResourceResponse&);
+
 private:
     friend class ResourceResponseBase;
 
@@ -90,6 +93,23 @@ private:
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
 };
+
+template<class Encoder>
+void ResourceResponse::encode(Encoder& encoder) const
+{
+    ResourceResponseBase::encode(encoder);
+    encoder.encodeEnum(m_soupFlags);
+}
+
+template<class Decoder>
+bool ResourceResponse::decode(Decoder& decoder, ResourceResponse& response)
+{
+    if (!ResourceResponseBase::decode(decoder, response))
+        return false;
+    if (!decoder.decodeEnum(response.m_soupFlags))
+        return false;
+    return true;
+}
 
 struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
 };

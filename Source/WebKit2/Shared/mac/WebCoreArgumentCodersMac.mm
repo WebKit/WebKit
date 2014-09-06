@@ -143,42 +143,6 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     return true;
 }
 
-void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
-{
-    bool responseIsPresent = resourceResponse.platformResponseIsUpToDate() && resourceResponse.nsURLResponse();
-    encoder << responseIsPresent;
-
-    if (!responseIsPresent)
-        return;
-
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), IPC::tokenNullTypeRef()));
-    IPC::encode(encoder, dictionary.get());
-}
-
-bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
-{
-    bool responseIsPresent;
-    if (!decoder.decode(responseIsPresent))
-        return false;
-
-    if (!responseIsPresent) {
-        resourceResponse = ResourceResponse();
-        return true;
-    }
-
-    RetainPtr<CFDictionaryRef> dictionary;
-    if (!IPC::decode(decoder, dictionary))
-        return false;
-
-    RetainPtr<NSURLResponse> nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
-
-    if (!nsURLResponse)
-        return false;
-
-    resourceResponse = ResourceResponse(nsURLResponse.get());
-    return true;
-}
-
 void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
 {
     CFArrayRef certificateChain = certificateInfo.certificateChain();

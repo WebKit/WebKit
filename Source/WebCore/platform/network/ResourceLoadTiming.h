@@ -80,7 +80,10 @@ public:
     {
         return !(*this == other);
     }
-    
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ResourceLoadTiming&);
+
     // These are millisecond deltas from the navigation start.
     int domainLookupStart;
     int domainLookupEnd;
@@ -90,6 +93,30 @@ public:
     int responseStart;
     int secureConnectionStart;
 };
+
+template<class Encoder>
+void ResourceLoadTiming::encode(Encoder& encoder) const
+{
+    encoder << domainLookupStart;
+    encoder << domainLookupEnd;
+    encoder << connectStart;
+    encoder << connectEnd;
+    encoder << requestStart;
+    encoder << responseStart;
+    encoder << secureConnectionStart;
+}
+
+template<class Decoder>
+bool ResourceLoadTiming::decode(Decoder& decoder, ResourceLoadTiming& timing)
+{
+    return decoder.decode(timing.domainLookupStart)
+        && decoder.decode(timing.domainLookupEnd)
+        && decoder.decode(timing.connectStart)
+        && decoder.decode(timing.connectEnd)
+        && decoder.decode(timing.requestStart)
+        && decoder.decode(timing.responseStart)
+        && decoder.decode(timing.secureConnectionStart);
+}
 
 }
 

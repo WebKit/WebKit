@@ -1,3 +1,34 @@
+2014-09-06  Antti Koivisto  <antti@apple.com>
+
+        Serialize ResourceResponses using WebKit types
+        https://bugs.webkit.org/show_bug.cgi?id=136545
+
+        Reviewed by Alexey Proskuryakov.
+
+        Serialization is faster and we can mostly avoid having NSURLResponses in web process.
+
+        * WebCore.exp.in:
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::encode):
+        (WebCore::ResourceLoadTiming::decode):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+
+            Serialize from the WebCore data instead of serializing NSURLResponse.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::cfURLResponse):
+
+            Synthesize CFURLResponse by creating NSURLResponse on Cocoa platforms so we don't need copy code.
+            This has negligible performance impact, NSURLResponse is just a wrapper around CFURLResponse.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::nsURLResponse):
+        (WebCore::ResourceResponse::setCertificateChain):
+
+            Avoid unnecessary NSURLRequest instantiation in debug builds.
+
 2014-09-06  David Kilzer  <ddkilzer@apple.com>
 
         HTMLElement.cpp does not compile with new clang

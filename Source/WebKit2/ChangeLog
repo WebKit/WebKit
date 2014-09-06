@@ -1,3 +1,21 @@
+2014-09-06  Antti Koivisto  <antti@apple.com>
+
+        Serialize ResourceResponses using WebKit types
+        https://bugs.webkit.org/show_bug.cgi?id=136545
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the WK2 serialization code for responses. It moves to the types itself in WebCore where it is
+        close to the data being serialized and less likely to get out of sync.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceResponse>::encode): Deleted.
+        (IPC::ArgumentCoder<ResourceResponse>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceResponse>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<ResourceResponse>::decodePlatformData): Deleted.
+
 2014-09-06  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Drop evas object cursor support

@@ -104,20 +104,6 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     return true;
 }
 
-void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
-{
-    encoder << static_cast<uint32_t>(resourceResponse.soupMessageFlags());
-}
-
-bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
-{
-    uint32_t soupMessageFlags;
-    if (!decoder.decode(soupMessageFlags))
-        return false;
-    resourceResponse.setSoupMessageFlags(static_cast<SoupMessageFlags>(soupMessageFlags));
-    return true;
-}
-
 void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
 {
     if (!certificateInfo.certificate()) {

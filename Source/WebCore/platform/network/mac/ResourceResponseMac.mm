@@ -58,6 +58,8 @@ void ResourceResponse::initNSURLResponse() const
         m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
         return;
     }
+
+    // FIXME: We lose the status text and the HTTP version here.
     NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
     for (auto& header : m_httpHeaderFields)
         [headerDictionary setObject:(NSString *)header.value forKey:(NSString *)header.key];
@@ -185,7 +187,7 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 
 void ResourceResponse::setCertificateChain(CFArrayRef certificateChain)
 {
-    ASSERT(!wkCopyNSURLResponseCertificateChain(nsURLResponse()));
+    ASSERT(!m_nsResponse || !wkCopyNSURLResponseCertificateChain(m_nsResponse.get()));
     m_externalCertificateChain = certificateChain;
 }
 
