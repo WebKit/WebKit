@@ -1,3 +1,11 @@
+2014-09-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Change this test not to use a percentage width, and to use a non-blurred
+        shadow to avoid different results on Retina display systems.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/fixed-inside-frame.html:
+
 2014-09-05  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed, skip tests for a feature that isn't supported
