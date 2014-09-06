@@ -64,7 +64,6 @@
 #include "ewk_settings_private.h"
 #include "ewk_window_features_private.h"
 #include <Ecore_Evas.h>
-#include <Ecore_X.h>
 #include <Edje.h>
 #include <Evas_GL.h>
 #include <WebCore/CairoUtilitiesEfl.h>
@@ -217,11 +216,17 @@ void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_WHEEL>::handleEvent(void* data, Eva
 }
 
 template <>
-void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent(void*, Evas*, Evas_Object*, void*)
+void EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent(void* data, Evas* evas, Evas_Object*, void*)
 {
-    // FIXME: self->updateCursor(); was removed in order to fix crash caused by invalid cursor image.
-    // new cursor implementation should be added for curso image restoration previously used for.
-    notImplemented();
+#ifdef HAVE_ECORE_X
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+    EwkView* self = toEwkView(smartData);
+
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
+    Ecore_X_Window window = getEcoreXWindow(ecoreEvas);
+
+    self->updateCursor(window);
+#endif
 }
 
 template <>
@@ -280,7 +285,9 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_vibrationClient(std::make_unique<VibrationClientEfl>(this))
 #endif
     , m_backForwardList(std::make_unique<EwkBackForwardList>(WKPageGetBackForwardList(wkPage())))
-    , m_useCustomCursor(false)
+#ifdef HAVE_ECORE_X
+    , m_customCursor(ECORE_X_CURSOR_X)
+#endif
     , m_userAgent(WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage())))
     , m_applicationNameForUserAgent(WKEinaSharedString(AdoptWK, WKPageCopyApplicationNameForUserAgent(wkPage())))
     , m_mouseEventsEnabled(false)
@@ -404,36 +411,11 @@ WKPageRef EwkView::wkPage() const
     return WKViewGetPage(wkView());
 }
 
-void EwkView::updateCursor()
-{
-    Ewk_View_Smart_Data* sd = smartData();
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
-    // FIXME : ecore_evas_object_cursor_set doesn't guarantee deletion of cursor image previously set.
-    // Therefore, this patch deletes old cursor image before setting new image explicitly.
-    ecore_evas_object_cursor_set(ecoreEvas, 0, 0, 0, 0);
-
-    if (m_useCustomCursor) {
-        Image* cursorImage = static_cast<Image*>(m_cursorIdentifier.image);
-        if (!cursorImage)
-            return;
-
-        EflUniquePtr<Evas_Object> cursorObject = EflUniquePtr<Evas_Object>(cursorImage->getEvasObject(sd->base.evas));
-        if (!cursorObject)
-            return;
-
-        IntSize cursorSize = IntSize(cursorImage->size());
-        // Resize cursor.
-        evas_object_resize(cursorObject.get(), cursorSize.width(), cursorSize.height());
-
-        // Get cursor hot spot.
-        IntPoint hotSpot;
-        cursorImage->getHotSpot(hotSpot);
-
 #ifdef HAVE_ECORE_X
-        ecore_x_window_cursor_set(getEcoreXWindow(ecoreEvas), 0);
-#endif
-        // ecore_evas takes care of freeing the cursor object.
-        ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release(), EVAS_LAYER_MAX, hotSpot.x(), hotSpot.y());
+void EwkView::updateCursor(Ecore_X_Window window)
+{
+    if (m_customCursor) {
+        ecore_x_window_cursor_set(window, m_customCursor);
         return;
     }
 
@@ -441,66 +423,50 @@ void EwkView::updateCursor()
     if (!group)
         return;
 
-    EflUniquePtr<Evas_Object> cursorObject = EflUniquePtr<Evas_Object>(edje_object_add(sd->base.evas));
-
-    if (!m_theme || !edje_object_file_set(cursorObject.get(), m_theme, group)) {
-#ifdef HAVE_ECORE_X
-        WebCore::applyFallbackCursor(ecoreEvas, group);
-#endif
-        return;
-    }
-
-    // Set cursor size.
-    Evas_Coord width, height;
-    edje_object_size_min_get(cursorObject.get(), &width, &height);
-    if (width <= 0 || height <= 0)
-        edje_object_size_min_calc(cursorObject.get(), &width, &height);
-    if (width <= 0 || height <= 0) {
-        width = defaultCursorSize;
-        height = defaultCursorSize;
-    }
-    evas_object_resize(cursorObject.get(), width, height);
-
-    // Get cursor hot spot.
-    const char* data;
-    int hotspotX = 0;
-    data = edje_object_data_get(cursorObject.get(), "hot.x");
-    if (data)
-        hotspotX = atoi(data);
-
-    int hotspotY = 0;
-    data = edje_object_data_get(cursorObject.get(), "hot.y");
-    if (data)
-        hotspotY = atoi(data);
-
-#ifdef HAVE_ECORE_X
-    ecore_x_window_cursor_set(getEcoreXWindow(ecoreEvas), 0);
-#endif
-
-    // ecore_evas takes care of freeing the cursor object.
-    ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release(), EVAS_LAYER_MAX, hotspotX, hotspotY);
+    applyCursorFromEcoreX(window, group);
 }
+#endif
 
 void EwkView::setCursor(const Cursor& cursor)
 {
-    if (cursor.image()) {
+#ifdef HAVE_ECORE_X
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData()->base.evas);
+    Ecore_X_Window window = getEcoreXWindow(ecoreEvas);
+
+    if (Image* cursorImage = cursor.image()) {
         // Custom cursor.
-        if (cursor.image() == m_cursorIdentifier.image)
+        if (cursorImage == m_cursorIdentifier.image)
             return;
 
-        m_cursorIdentifier.image = cursor.image();
-        m_useCustomCursor = true;
+        IntPoint hotSpot;
+        cursorImage->getHotSpot(hotSpot);
+
+        Ecore_X_Cursor customCursor = createCustomCursor(window, cursorImage, IntSize(cursorImage->size()), hotSpot);
+        if (!customCursor)
+            return;
+
+        if (m_customCursor)
+            ecore_x_cursor_free(m_customCursor);
+
+        m_cursorIdentifier.image = cursorImage;
+        m_customCursor = customCursor;
+
     } else {
+        if (m_customCursor) {
+            ecore_x_cursor_free(m_customCursor);
+            m_customCursor = ECORE_X_CURSOR_X;
+        }
+
         // Standard cursor.
         const char* group = cursor.platformCursor();
         if (!group || group == m_cursorIdentifier.group)
             return;
 
         m_cursorIdentifier.group = group;
-        m_useCustomCursor = false;
     }
 
-    updateCursor();
+    updateCursor(window);
+#endif
 }
 
 void EwkView::setDeviceScaleFactor(float scale)

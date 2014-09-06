@@ -19,13 +19,22 @@
 #ifndef EflScreenUtilities_h
 #define EflScreenUtilities_h
 
-#include <wtf/text/WTFString.h>
+#ifdef HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
 
 namespace WebCore {
 
-void applyFallbackCursor(Ecore_Evas*, const char*);
+#ifdef HAVE_ECORE_X
+class Image;
+class IntSize;
+class IntPoint;
+
+void applyCursorFromEcoreX(Ecore_X_Window, const char*);
+Ecore_X_Cursor createCustomCursor(Ecore_X_Window, Image*, const IntSize& cursorSize, const IntPoint& hotSpot);
 
 Ecore_X_Window getEcoreXWindow(Ecore_Evas*);
+#endif
 
 } // namespace WebCore
 

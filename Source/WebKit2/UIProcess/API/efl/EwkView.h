@@ -38,6 +38,10 @@
 #include "ewk_touch.h"
 #endif
 
+#ifdef HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
+
 typedef struct _cairo_surface cairo_surface_t;
 
 namespace WebKit {
@@ -129,7 +133,9 @@ public:
     void doneWithTouchEvent(WKTouchEventRef, bool);
 #endif
 
-    void updateCursor();
+#ifdef HAVE_ECORE_X
+    void updateCursor(Ecore_X_Window);
+#endif
     void setCursor(const WebCore::Cursor& cursor);
 
     void scheduleUpdateDisplay();
@@ -261,6 +267,11 @@ private:
 #endif
     std::unique_ptr<EwkBackForwardList> m_backForwardList;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
+
+#ifdef HAVE_ECORE_X
+    Ecore_X_Cursor m_customCursor;
+#endif
+
     union CursorIdentifier {
         CursorIdentifier()
             : image(nullptr)
@@ -269,7 +280,6 @@ private:
         WebCore::Image* image;
         const char* group;
     } m_cursorIdentifier;
-    bool m_useCustomCursor;
 
     WKEinaSharedString m_url;
     mutable WKEinaSharedString m_title;

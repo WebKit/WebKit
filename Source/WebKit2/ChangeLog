@@ -1,3 +1,20 @@
+2014-09-06  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Drop evas object cursor support
+        https://bugs.webkit.org/show_bug.cgi?id=136324
+
+        Reviewed by Gyuyoung Kim.
+
+        Removed evas object cursor because there are some bugs.
+        ewebkit will only support ecore_x_cursor because ewebkit is available with X, now.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkViewEventHandler<EVAS_CALLBACK_MOUSE_IN>::handleEvent):
+        (EwkView::EwkView):
+        (EwkView::updateCursor): Simplifies not to use evas object cursor.
+        (EwkView::setCursor): Ditto.
+        * UIProcess/API/efl/EwkView.h:
+
 2014-09-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173340 and r173342.
