@@ -443,7 +443,7 @@ PluginVersion PluginVersion::parse(const String& versionString)
     PluginVersion version;
 
     Vector<String> versionStringComponents;
-    versionString.split(".", versionStringComponents);
+    versionString.split('.', versionStringComponents);
     for (size_t i = 0; i < versionStringComponents.size(); ++i) {
         bool successfullyParsed = false;
         unsigned versionComponent = versionStringComponents[i].toUInt(&successfullyParsed);

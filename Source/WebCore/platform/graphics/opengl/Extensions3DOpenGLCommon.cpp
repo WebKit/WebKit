@@ -215,7 +215,7 @@ void Extensions3DOpenGLCommon::initializeAvailableExtensions()
 {
     String extensionsString = getExtensions();
     Vector<String> availableExtensions;
-    extensionsString.split(" ", availableExtensions);
+    extensionsString.split(' ', availableExtensions);
     for (size_t i = 0; i < availableExtensions.size(); ++i)
         m_availableExtensions.add(availableExtensions[i]);
     m_initializedAvailableExtensions = true;

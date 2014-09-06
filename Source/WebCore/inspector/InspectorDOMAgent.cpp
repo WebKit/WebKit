@@ -1936,7 +1936,7 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
 
     Node* node = m_document.get();
     Vector<String> pathTokens;
-    path.split(",", false, pathTokens);
+    path.split(',', false, pathTokens);
     if (!pathTokens.size())
         return 0;
     for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {

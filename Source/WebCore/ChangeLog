@@ -1,3 +1,27 @@
+2014-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Use WTFString::split(char) in more places
+        https://bugs.webkit.org/show_bug.cgi?id=136543
+
+        Reviewed by Sam Weinig.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::nodeForPath):
+        * mathml/MathMLMencloseElement.cpp:
+        (WebCore::MathMLMencloseElement::collectStyleForPresentationAttribute):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::passesTimingAllowCheck):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions):
+        * platform/graphics/opengl/GLPlatformContext.cpp:
+        (WebCore::parseExtensions):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillDataObjectFromDropData):
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::loadResponseHeaders):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::loadIndex):
+
 2014-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Laying out a TextRun using an SVG font is O(n^2)

@@ -78,7 +78,7 @@ void MathMLMencloseElement::collectStyleForPresentationAttribute(const Qualified
     if (val.isEmpty())
         return;
     if (name == MathMLNames::notationAttr) {
-        val.split(" ", m_notationValues);
+        val.split(' ', m_notationValues);
         size_t notationValueSize = m_notationValues.size();
         for (size_t i = 0; i < notationValueSize; i++) {
             if (m_notationValues[i] == "top" || m_notationValues[i] == "longdiv") {

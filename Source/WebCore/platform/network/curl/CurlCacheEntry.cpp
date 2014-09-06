@@ -153,7 +153,7 @@ bool CurlCacheEntry::loadResponseHeaders()
 
     String headerContent = String(buffer.data(), buffer.size());
     Vector<String> headerFields;
-    headerContent.split("\n", headerFields);
+    headerContent.split('\n', headerFields);
 
     Vector<String>::const_iterator it = headerFields.begin();
     Vector<String>::const_iterator end = headerFields.end();
