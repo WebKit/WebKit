@@ -62,8 +62,6 @@
 
 #if PLATFORM(IOS)
 
-#import "WAKAppKitStubs.h"
-
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIColor)
 

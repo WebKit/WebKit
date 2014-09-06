@@ -669,8 +669,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (![self _isScrollable])
         return NO;
     NSPoint point = [(NSView *)[[self _scrollView] documentView] frame].origin;
-    point.x += [[self _scrollView] scrollOrigin].x();
-    point.y += [[self _scrollView] scrollOrigin].y();
+    point.x += [[self _scrollView] scrollOrigin].x;
+    point.y += [[self _scrollView] scrollOrigin].y;
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
 
@@ -700,9 +700,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     
     // Reset the position opposite to the block progression direction.
     if (isVertical)
-        point.x += [[self _scrollView] scrollOrigin].x();
+        point.x += [[self _scrollView] scrollOrigin].x;
     else
-        point.y += [[self _scrollView] scrollOrigin].y();
+        point.y += [[self _scrollView] scrollOrigin].y;
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
 

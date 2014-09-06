@@ -69,12 +69,12 @@
     return m_page->pageScaleFactor();
 }
 
-- (id)accessibilityHitTest:(WebCore::IntPoint)point
+- (id)accessibilityHitTest:(NSPoint)point
 {
     if (!m_page)
         return nil;
     
-    WebCore::IntPoint convertedPoint = m_page->accessibilityScreenToRootView(point);
+    WebCore::IntPoint convertedPoint = m_page->accessibilityScreenToRootView(WebCore::IntPoint(point));
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
 }
 
