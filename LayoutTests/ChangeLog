@@ -1,5 +1,11 @@
 2014-09-05  Jeffrey Pfau  <jpfau@apple.com>
 
+        Unreviewed, skip tests for a feature that isn't supported
+
+        * platform/mac/TestExpectations:
+
+2014-09-05  Jeffrey Pfau  <jpfau@apple.com>
+
         Add test after r173324
 
         Rubber-stamped by Simon Fraser.
