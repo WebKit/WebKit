@@ -1,3 +1,17 @@
+2014-09-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: convert DockSide to an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=136601
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::attachWindow):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::attachedBottom):
+        (WebKit::WebInspector::attachedRight):
+        (WebKit::WebInspector::detached):
+
 2014-09-06  Antti Koivisto  <antti@apple.com>
 
         Serialize ResourceResponses using WebKit types

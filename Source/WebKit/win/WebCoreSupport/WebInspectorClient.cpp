@@ -254,7 +254,7 @@ void WebInspectorFrontendClient::frontendLoaded()
     if (m_attached)
         restoreAttachedWindowHeight();
 
-    setAttachedWindow(m_attached ? DOCKED_TO_BOTTOM : UNDOCKED);
+    setAttachedWindow(m_attached ? DockSide::Bottom : DockSide::Undocked);
 }
 
 String WebInspectorFrontendClient::localizedStringsURL()

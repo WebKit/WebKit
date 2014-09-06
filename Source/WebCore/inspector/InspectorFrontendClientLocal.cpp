@@ -121,7 +121,7 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
     , m_frontendPage(frontendPage)
     , m_settings(WTF::move(settings))
     , m_frontendLoaded(false)
-    , m_dockSide(UNDOCKED)
+    , m_dockSide(DockSide::Undocked)
 {
     m_frontendPage->settings().setAllowFileAccessFromFileURLs(true);
     m_dispatchTask = std::make_unique<InspectorBackendDispatchTask>(inspectorController);
@@ -161,7 +161,7 @@ void InspectorFrontendClientLocal::frontendLoaded()
 
 void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 {
-    if (dockSide == UNDOCKED) {
+    if (dockSide == DockSide::Undocked) {
         detachWindow();
         setAttachedWindow(dockSide);
     } else if (canAttachWindow()) {
@@ -178,7 +178,7 @@ bool InspectorFrontendClientLocal::canAttachWindow()
         return false;
 
     // If we are already attached, allow attaching again to allow switching sides.
-    if (m_dockSide != UNDOCKED)
+    if (m_dockSide != DockSide::Undocked)
         return true;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
@@ -238,13 +238,13 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 {
     const char* side = "undocked";
     switch (dockSide) {
-    case UNDOCKED:
+    case DockSide::Undocked:
         side = "undocked";
         break;
-    case DOCKED_TO_RIGHT:
+    case DockSide::Right:
         side = "right";
         break;
-    case DOCKED_TO_BOTTOM:
+    case DockSide::Bottom:
         side = "bottom";
         break;
     }

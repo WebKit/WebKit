@@ -234,7 +234,7 @@ void WebInspectorFrontendClient::frontendLoaded()
                               @selector(webView:didClearInspectorWindowObject:forFrame:), [frame windowObject], frame);
 
     bool attached = [m_windowController.get() attached];
-    setAttachedWindow(attached ? DOCKED_TO_BOTTOM : UNDOCKED);
+    setAttachedWindow(attached ? DockSide::Bottom : DockSide::Undocked);
 }
 
 String WebInspectorFrontendClient::localizedStringsURL()
@@ -604,7 +604,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (IBAction)attachWindow:(id)sender
 {
-    _frontendClient->attachWindow(InspectorFrontendClient::DOCKED_TO_BOTTOM);
+    _frontendClient->attachWindow(InspectorFrontendClient::DockSide::Bottom);
 }
 
 - (IBAction)showWindow:(id)sender
@@ -651,7 +651,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         return;
 
     _inspectorClient->setInspectorStartsAttached(true);
-    _frontendClient->setAttachedWindow(InspectorFrontendClient::DOCKED_TO_BOTTOM);
+    _frontendClient->setAttachedWindow(InspectorFrontendClient::DockSide::Bottom);
 
     [self close];
     [self showWindow:nil];
@@ -663,7 +663,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         return;
 
     _inspectorClient->setInspectorStartsAttached(false);
-    _frontendClient->setAttachedWindow(InspectorFrontendClient::UNDOCKED);
+    _frontendClient->setAttachedWindow(InspectorFrontendClient::DockSide::Undocked);
 
     [self close];
     [self showWindow:nil];
