@@ -1,3 +1,27 @@
+2014-09-06  David Kilzer  <ddkilzer@apple.com>
+
+        New clang warns about boolean checks for |this| pointer in RenderObject debug methods
+        <http://webkit.org/b/136599>
+
+        Reviewed by Zalan Bujtas.
+
+        Ignores the following static analyzer warnings:
+
+            Source/WebCore/rendering/RenderObject.cpp:1465:10: error: 'this' pointer cannot be null in well-defined C++ code; pointer may be assumed to always convert to true [-Werror,-Wundefined-bool-conversion]
+                if (!this) {
+                    ~^~~~
+            Source/WebCore/rendering/RenderObject.cpp:1584:10: error: 'this' pointer cannot be null in well-defined C++ code; pointer may be assumed to always convert to true [-Werror,-Wundefined-bool-conversion]
+                if (!this)
+                    ~^~~~
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderObject):
+        (WebCore::RenderObject::showRenderSubTreeAndMark):
+        Add "#pragma clang" preprocessor macros to ignore this warning
+        since the code is only compiled for Debug builds.  Also add a
+        pragma for the pragma so older clangs don't complain about an
+        unkonwn pragma.
+
 2014-09-06  Antti Koivisto  <antti@apple.com>
 
         Serialize ResourceResponses using WebKit types
