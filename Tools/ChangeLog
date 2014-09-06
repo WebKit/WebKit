@@ -1,3 +1,9 @@
+2014-09-06  Saam Barati  <saambarati1@gmail.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-09-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL build fix when SHARED_CORE is on.
