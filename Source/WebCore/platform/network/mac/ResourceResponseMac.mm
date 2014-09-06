@@ -55,7 +55,8 @@ void ResourceResponse::initNSURLResponse() const
         else
             expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);
 
-        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:m_textEncodingName]);
+        NSString* encodingNSString = nsStringNilIfEmpty(m_textEncodingName);
+        m_nsResponse = adoptNS([[NSURLResponse alloc] initWithURL:m_url MIMEType:m_mimeType expectedContentLength:expectedContentLength textEncodingName:encodingNSString]);
         return;
     }
 

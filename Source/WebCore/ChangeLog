@@ -1,3 +1,13 @@
+2014-09-06  Antti Koivisto  <antti@apple.com>
+
+        Serialize ResourceResponses using WebKit types
+        https://bugs.webkit.org/show_bug.cgi?id=136545
+
+        Fix the failing webarchive tests.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::initNSURLResponse): Map empty text encoding name to nil NSString.
+
 2014-09-06  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo][Curl] fileExists() incorrectly claims folder does not exist.
