@@ -1,3 +1,24 @@
+2014-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r169407): Calls to RenderStyle::getRoundedBorderFor() in computeRoundedRectForBoxShape() still include RenderView pointer
+        <http://webkit.org/b/136591>
+        <rdar://problem/18143731>
+
+        Reviewed by Simon Fraser.
+
+        In r169407, the RenderView* argument was removed from
+        RenderStyle::getRoundedBorderFor().  This argument was not
+        removed from these calls in computeRoundedRectForBoxShape(), but
+        because getRoundedBorderFor() always returned a reference, and
+        because the default for the next argument was true, there was no
+        actual change in behavior from this bug.
+
+        No new tests since there is no change in behavior.
+
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::computeRoundedRectForBoxShape): Remove RenderView*
+        arguments from calls to getRoundedBorderFor().
+
 2014-09-05  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Work around bug 136593 by disabling the PDFDocumentImage live resize optimization there

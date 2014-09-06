@@ -71,7 +71,7 @@ RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& rende
             return RoundedRect(renderer.marginBoxRect(), RoundedRect::Radii());
 
         LayoutRect marginBox = renderer.marginBoxRect();
-        RoundedRect::Radii radii = computeMarginBoxShapeRadii(style.getRoundedBorderFor(renderer.borderBoxRect(), &(renderer.view())).radii(), renderer);
+        RoundedRect::Radii radii = computeMarginBoxShapeRadii(style.getRoundedBorderFor(renderer.borderBoxRect()).radii(), renderer);
         radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
         return RoundedRect(marginBox, radii);
     }
@@ -87,11 +87,11 @@ RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& rende
     case Stroke:
     case ViewBox:
     case BoxMissing:
-        return style.getRoundedBorderFor(renderer.borderBoxRect(), &(renderer.view()));
+        return style.getRoundedBorderFor(renderer.borderBoxRect());
     }
 
     ASSERT_NOT_REACHED();
-    return style.getRoundedBorderFor(renderer.borderBoxRect(), &(renderer.view()));
+    return style.getRoundedBorderFor(renderer.borderBoxRect());
 }
 
 LayoutRect BoxShape::shapeMarginLogicalBoundingBox() const
