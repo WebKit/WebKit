@@ -33,6 +33,8 @@
 namespace bmalloc {
 
 VMHeap::VMHeap()
+    : m_size(0)
+    , m_capacity(0)
 {
 }
 
@@ -41,6 +43,9 @@ void VMHeap::allocateSmallChunk()
     SmallChunk* chunk = SmallChunk::create();
     for (auto* it = chunk->begin(); it != chunk->end(); ++it)
         m_smallPages.push(it);
+
+    m_size += smallChunkSize;
+    m_capacity += smallChunkSize;
 }
 
 void VMHeap::allocateMediumChunk()
@@ -48,12 +53,19 @@ void VMHeap::allocateMediumChunk()
     MediumChunk* chunk = MediumChunk::create();
     for (auto* it = chunk->begin(); it != chunk->end(); ++it)
         m_mediumPages.push(it);
+
+    m_size += mediumChunkSize;
+    m_capacity += mediumChunkSize;
 }
 
 Range VMHeap::allocateLargeChunk()
 {
     LargeChunk* chunk = LargeChunk::create();
     Range result = BoundaryTag::init(chunk);
+
+    m_size += largeChunkSize;
+    m_capacity += largeChunkSize;
+
     return result;
 }
 

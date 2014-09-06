@@ -1,3 +1,43 @@
+2014-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc should honor the FastMalloc statistics API
+        https://bugs.webkit.org/show_bug.cgi?id=136592
+
+        Reviewed by Gavin Barraclough.
+
+        We do this by tracking "size" and "capacity" in the VM heap.
+
+        The VM heap's "capacity" is all the VM we ever allocated.
+
+        The VM heap's "size" the subset of VM currently held onto by the
+        VM heap (and therefore not in use by the regular heap).
+
+        Somewhat ironically, reducing the process's memory footprint, increases
+        the size of the VM heap, since the VM heap holds the pages that are
+        purely virtual and not physical.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::size):
+        (bmalloc::Heap::capacity):
+        * bmalloc/Heap.h:
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::allocateSmallChunk):
+        (bmalloc::VMHeap::allocateMediumChunk):
+        (bmalloc::VMHeap::allocateLargeChunk):
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::size):
+        (bmalloc::VMHeap::capacity):
+        (bmalloc::VMHeap::allocateSmallPage):
+        (bmalloc::VMHeap::allocateMediumPage):
+        (bmalloc::VMHeap::allocateLargeRange):
+        (bmalloc::VMHeap::deallocateSmallPage):
+        (bmalloc::VMHeap::deallocateMediumPage):
+        (bmalloc::VMHeap::deallocateLargeRange):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::heapSize):
+        (bmalloc::api::heapCapacity):
+
 2014-09-02  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc crashes on the EWS bots (due to bad large object allocation)

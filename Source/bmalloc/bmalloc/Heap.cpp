@@ -210,4 +210,14 @@ void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object)
     m_scavenger.run();
 }
 
+size_t Heap::size(std::lock_guard<StaticMutex>&)
+{
+    return m_vmHeap.capacity() - m_vmHeap.size();
+}
+
+size_t Heap::capacity(std::lock_guard<StaticMutex>&)
+{
+    return m_vmHeap.capacity();
+}
+
 } // namespace bmalloc

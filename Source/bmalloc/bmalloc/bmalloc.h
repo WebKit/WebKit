@@ -89,5 +89,17 @@ inline void scavenge()
     PerProcess<Heap>::get()->scavenge(lock, std::chrono::milliseconds(0));
 }
 
+inline size_t heapSize()
+{
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    return PerProcess<Heap>::get()->size(lock);
+}
+
+inline size_t heapCapacity()
+{
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    return PerProcess<Heap>::get()->capacity(lock);
+}
+
 } // namespace api
 } // namespace bmalloc

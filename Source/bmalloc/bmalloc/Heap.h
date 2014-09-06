@@ -62,7 +62,10 @@ public:
     void deallocateXLarge(std::lock_guard<StaticMutex>&, void*);
 
     void scavenge(std::unique_lock<StaticMutex>&, std::chrono::milliseconds sleepDuration);
-    
+
+    size_t size(std::lock_guard<StaticMutex>&);
+    size_t capacity(std::lock_guard<StaticMutex>&);
+
 private:
     ~Heap() = delete;
 
