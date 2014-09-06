@@ -1,3 +1,9 @@
+2014-09-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL build fix when SHARED_CORE is on.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2014-09-05  Lucas Forschler  <lforschler@apple.com>
 
         <https://webkit.org/b/136586> Add bots to Apple build/test queues
