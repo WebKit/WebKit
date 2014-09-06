@@ -42,6 +42,7 @@ using namespace Unicode;
 namespace WebCore {
 
 static String createStringWithMirroredCharacters(StringView);
+static void computeNormalizedSpaces(const TextRun&, bool mirror, String& normalizedSpacesStringCache);
 
 SVGFontData::SVGFontData(SVGFontFaceElement* fontFaceElement)
     : m_svgFontFaceElement(fontFaceElement)
@@ -130,27 +131,11 @@ float SVGFontData::widthForSVGGlyph(Glyph glyph, float fontSize) const
     return svgGlyph.horizontalAdvanceX * scaleEmToUnits(fontSize, svgFontFaceElement->unitsPerEm());
 }
 
-bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& glyphData, bool mirror, int currentCharacter, unsigned& advanceLength) const
+bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& glyphData, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) const
 {
     const TextRun& run = iterator.run();
     Vector<SVGGlyph::ArabicForm>& arabicForms = iterator.arabicForms();
-    ASSERT(int(run.charactersLength()) >= currentCharacter);
-
-    // Associate text with arabic forms, if needed.
-    String remainingTextInRun;
-
-    if (run.is8Bit()) {
-        remainingTextInRun = String(run.data8(currentCharacter), run.charactersLength() - currentCharacter);
-        remainingTextInRun = Font::normalizeSpaces(remainingTextInRun.characters8(), remainingTextInRun.length());
-    } else {
-        remainingTextInRun = String(run.data16(currentCharacter), run.charactersLength() - currentCharacter);
-        remainingTextInRun = Font::normalizeSpaces(remainingTextInRun.characters16(), remainingTextInRun.length());
-    }
-
-    if (mirror)
-        remainingTextInRun = createStringWithMirroredCharacters(remainingTextInRun);
-    if (!currentCharacter && arabicForms.isEmpty())
-        arabicForms = charactersWithArabicForm(remainingTextInRun, mirror);
+    ASSERT(run.charactersLength() >= currentCharacter);
 
     SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
     ASSERT(svgFontFaceElement);
@@ -202,8 +187,16 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
             advanceLength = svgGlyph.unicodeStringLength;
             return true;
         }
-    } else
+    } else {
+        // Associate text with arabic forms, if needed.
+        computeNormalizedSpaces(run, mirror, normalizedSpacesStringCache);
+        auto remainingTextInRun = normalizedSpacesStringCache.substring(currentCharacter);
+
+        if (!currentCharacter && arabicForms.isEmpty())
+            arabicForms = charactersWithArabicForm(remainingTextInRun, mirror);
+
         associatedFontElement->collectGlyphsForString(remainingTextInRun, glyphs);
+    }
 
     size_t glyphsSize = glyphs.size();
     for (size_t i = 0; i < glyphsSize; ++i) {
@@ -287,6 +280,21 @@ bool SVGFontData::fillNonBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageT
     }
 
     return haveGlyphs;
+}
+
+void computeNormalizedSpaces(const TextRun& run, bool mirror, String& normalizedSpacesStringCache)
+{
+    if (normalizedSpacesStringCache.length() == static_cast<unsigned>(run.charactersLength()))
+        return;
+    if (run.is8Bit()) {
+        normalizedSpacesStringCache = String(run.data8(0), run.charactersLength());
+        normalizedSpacesStringCache = Font::normalizeSpaces(normalizedSpacesStringCache.characters8(), normalizedSpacesStringCache.length());
+    } else {
+        normalizedSpacesStringCache = String(run.data16(0), run.charactersLength());
+        normalizedSpacesStringCache = Font::normalizeSpaces(normalizedSpacesStringCache.characters16(), normalizedSpacesStringCache.length());
+    }
+    if (mirror)
+        normalizedSpacesStringCache = createStringWithMirroredCharacters(normalizedSpacesStringCache);
 }
 
 String createStringWithMirroredCharacters(StringView string)

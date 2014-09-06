@@ -1,3 +1,41 @@
+2014-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Laying out a TextRun using an SVG font is O(n^2)
+        https://bugs.webkit.org/show_bug.cgi?id=136584
+
+        Reviewed by Andreas Kling.
+
+        Caching the version of the run with normalized spaces leads to a 5x speedup on the
+        performance test this patch adds.
+
+        Note that SVGFontData::applySVGGlyphSelection() is still unnecesarrily O(n), so more
+        work can be done here. In particular, the call to collectGlyphsForString() can likely
+        be sped up.
+
+        No new correctness tests because there is no behavior change.
+        Performance Test: SVG/SVG-Text.html
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsSpace): Make inline.
+        (WebCore::Font::treatAsZeroWidthSpace): Ditto.
+        (WebCore::Font::treatAsZeroWidthSpaceInComplexScript): Ditto.
+        * platform/graphics/SimpleFontData.h: Add String cache argument.
+        * platform/graphics/TextRun.h: Move member variables around for better packing.
+        (WebCore::TextRun::TextRun): Ditto.
+        * platform/graphics/WidthIterator.cpp: Add String cache argument.
+        (WebCore::WidthIterator::glyphDataForCharacter): Ditto.
+        (WebCore::WidthIterator::advanceInternal): Create String cache and pass it to
+        glyphDataForCharacter.
+        * platform/graphics/WidthIterator.h: Add String cache argument.
+        * rendering/svg/SVGTextRunRenderingContext.cpp: Ditto.
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter): Ditto.
+        * rendering/svg/SVGTextRunRenderingContext.h: Ditto.
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection): Call computeNormalizedSpaces
+        to consult with the cache.
+        (WebCore::computeNormalizedSpaces): Compute cached String value.
+        * svg/SVGFontData.h: Add String cache argument.
+
 2014-09-05  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r169407): Calls to RenderStyle::getRoundedBorderFor() in computeRoundedRectForBoxShape() still include RenderView pointer

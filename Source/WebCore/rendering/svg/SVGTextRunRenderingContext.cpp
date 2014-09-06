@@ -290,7 +290,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
     }
 }
 
-GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
+GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)
 {
     const SimpleFontData* primaryFont = font.primaryFont();
     ASSERT(primaryFont);
@@ -305,7 +305,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
         return glyphData;
     }
 
-    // Save data fromt he font fallback list because we may modify it later. Do this before the
+    // Save data from the font fallback list because we may modify it later. Do this before the
     // potential change to glyphData.fontData below.
     FontGlyphs* glyph = font.glyphs();
     ASSERT(glyph);
@@ -337,7 +337,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
         // The returned glyph by glyphDataAndPageForCharacter() is a glyph stored in the SVG Font glyph table.
         // This doesn't necessarily mean the glyph is suitable for rendering/measuring in this context, its
         // arabic-form/orientation/... may not match, we have to apply SVG Glyph selection to discover that.
-        if (svgFontData->applySVGGlyphSelection(iterator, glyphData, mirror, currentCharacter, advanceLength))
+        if (svgFontData->applySVGGlyphSelection(iterator, glyphData, mirror, currentCharacter, advanceLength, normalizedSpacesStringCache))
             return glyphData;
     }
 

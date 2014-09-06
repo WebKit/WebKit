@@ -1,3 +1,15 @@
+2014-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Laying out a TextRun using an SVG font is O(n^2)
+        https://bugs.webkit.org/show_bug.cgi?id=136584
+
+        Reviewed by Andreas Kling.
+
+        Time how long it takes to lay out and render some text using an SVG font.
+
+        * SVG/SVG-Text.html: Added.
+        * SVG/resources/graffiti.svg: Added.
+
 2014-09-02  Geoffrey Garen  <ggaren@apple.com>
 
         MallocBench should have a stress test for correctness

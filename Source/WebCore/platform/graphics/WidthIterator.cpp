@@ -68,13 +68,13 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     }
 }
 
-GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
+GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)
 {
     ASSERT(m_font);
 
 #if ENABLE(SVG_FONTS)
     if (TextRun::RenderingContext* renderingContext = m_run.renderingContext())
-        return renderingContext->glyphDataForCharacter(*m_font, *this, character, mirror, currentCharacter, advanceLength);
+        return renderingContext->glyphDataForCharacter(*m_font, *this, character, mirror, currentCharacter, advanceLength, normalizedSpacesStringCache);
 #else
     UNUSED_PARAM(currentCharacter);
     UNUSED_PARAM(advanceLength);
@@ -172,10 +172,11 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     UChar32 character = 0;
     unsigned clusterLength = 0;
     CharactersTreatedAsSpace charactersTreatedAsSpace;
+    String normalizedSpacesStringCache;
     while (textIterator.consume(character, clusterLength)) {
         unsigned advanceLength = clusterLength;
         int currentCharacter = textIterator.currentCharacter();
-        const GlyphData& glyphData = glyphDataForCharacter(character, rtl, currentCharacter, advanceLength);
+        const GlyphData& glyphData = glyphDataForCharacter(character, rtl, currentCharacter, advanceLength, normalizedSpacesStringCache);
         Glyph glyph = glyphData.glyph;
         const SimpleFontData* fontData = glyphData.fontData;
 

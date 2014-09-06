@@ -64,6 +64,7 @@ public:
     TextRun(const LChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_charactersLength(len)
         , m_len(len)
+        , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
@@ -76,7 +77,6 @@ public:
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
-        , m_tabSize(0)
     {
         m_data.characters8 = c;
     }
@@ -84,6 +84,7 @@ public:
     TextRun(const UChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_charactersLength(len)
         , m_len(len)
+        , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
@@ -96,7 +97,6 @@ public:
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
-        , m_tabSize(0)
     {
         m_data.characters16 = c;
     }
@@ -104,6 +104,7 @@ public:
     explicit TextRun(const String& s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_charactersLength(s.length())
         , m_len(s.length())
+        , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
@@ -115,7 +116,6 @@ public:
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
-        , m_tabSize(0)
     {
         if (!m_charactersLength || s.is8Bit()) {
             m_data.characters8 = s.characters8();
@@ -129,6 +129,7 @@ public:
     explicit TextRun(StringView s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_charactersLength(s.length())
         , m_len(s.length())
+        , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
         , m_expansion(expansion)
@@ -141,7 +142,6 @@ public:
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
-        , m_tabSize(0)
     {
         if (s.is8Bit())
             m_data.characters8 = s.characters8();
@@ -217,7 +217,7 @@ public:
         virtual ~RenderingContext() { }
 
 #if ENABLE(SVG_FONTS)
-        virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) = 0;
+        virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) = 0;
         virtual void drawSVGGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
         virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const = 0;
         virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const = 0;
@@ -238,8 +238,13 @@ private:
         const LChar* characters8;
         const UChar* characters16;
     } m_data;
+
+    RefPtr<RenderingContext> m_renderingContext;
+
     unsigned m_charactersLength; // Marks the end of the characters buffer. Default equals to m_len.
     unsigned m_len;
+
+    unsigned m_tabSize;
 
     // m_xpos is the x position relative to the left start of the text line, not relative to the left
     // start of the containing block. In the case of right alignment or center alignment, left start of
@@ -257,8 +262,6 @@ private:
     unsigned m_applyRunRounding : 1;
     unsigned m_applyWordRounding : 1;
     unsigned m_disableSpacing : 1;
-    unsigned m_tabSize;
-    RefPtr<RenderingContext> m_renderingContext;
 };
 
 inline void TextRun::setTabSize(bool allow, unsigned size)
