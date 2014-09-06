@@ -1,3 +1,22 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Added CLANG_WARN_UNREACHABLE_CODE, COMBINE_HIDPI_IMAGES,
+        and ENABLE_STRICT_OBJC_MSGSEND as suggested by Xcode upgrade check.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Update LastUpgradeCheck.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode): Compile out unreachable code
+        for clang, since it understands the code is unreachable.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fillArgList): Ditto.
+        (JSC::JSArray::copyToArguments): Ditto.
+
 2014-09-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: breakpoint actions should work regardless of Content Security Policy

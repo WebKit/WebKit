@@ -1553,9 +1553,11 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         
     default:
         CRASH();
+#if !COMPILER(CLANG)
         vector = 0;
         vectorEnd = 0;
         break;
+#endif
     }
     
     for (; i < vectorEnd; ++i) {
@@ -1615,9 +1617,11 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t co
         
     default:
         CRASH();
+#if !COMPILER(CLANG)
         vector = 0;
         vectorEnd = 0;
         break;
+#endif
     }
     
     for (; i < vectorEnd; ++i) {

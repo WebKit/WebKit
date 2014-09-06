@@ -1,3 +1,18 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/Config/General.xcconfig: Moved CLANG_WARN_BOOL_CONVERSION,
+        CLANG_WARN_ENUM_CONVERSION, CLANG_WARN_INT_CONVERSION, and COMBINE_HIDPI_IMAGES
+        here from project file.  Added CLANG_WARN_UNREACHABLE_CODE, ENABLE_STRICT_OBJC_MSGSEND,
+        and GCC_WARN_64_TO_32_BIT_CONVERSION as suggested by Xcode upgrade check.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Updated LastUpgradeCheck and removed
+        things that are redundant with the xcconfig file above.
+
 2014-08-22  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
 
         Remove LevelDB.

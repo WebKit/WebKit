@@ -596,8 +596,10 @@ JITCompiler::Jump SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, A
     switch (arrayMode.arrayClass()) {
     case Array::OriginalArray: {
         CRASH();
+#if !COMPILER(CLANG)
         JITCompiler::Jump result; // I already know that VC++ takes unkindly to the expression "return Jump()", so I'm doing it this way in anticipation of someone eventually using VC++ to compile the DFG.
         return result;
+#endif
     }
         
     case Array::Array:

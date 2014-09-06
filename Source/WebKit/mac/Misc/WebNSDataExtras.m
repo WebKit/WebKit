@@ -111,7 +111,7 @@
 
 -(NSString *)_webkit_guessedMIMETypeForXML
 {
-    int length = [self length];
+    NSUInteger length = [self length];
     const UInt8 *bytes = [self bytes];
     
 #define CHANNEL_TAG_LENGTH 7
@@ -171,7 +171,7 @@
     if ([MIMEType length])
         return MIMEType;
     
-    int length = [self length];
+    NSUInteger length = [self length];
     const char *bytes = [self bytes];
     
     const char *p = bytes;
@@ -236,8 +236,8 @@
     }
     
     // Test for plain text.
-    int i;
-    for(i=0; i<length; i++){
+    NSUInteger i;
+    for (i = 0; i < length; ++i) {
         char c = bytes[i];
         if ((c < 0x20 || c > 0x7E) && (c != '\t' && c != '\r' && c != '\n')) {
             break;
@@ -311,7 +311,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
     NSMutableDictionary *headerFields = [NSMutableDictionary dictionary];
 
     const UInt8 *bytes = [self bytes];
-    unsigned length = [self length];
+    NSUInteger length = [self length];
     NSString *lastKey = nil;
     const UInt8 *eol;
 
@@ -400,7 +400,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
 - (NSInteger)_web_locationAfterFirstBlankLine
 {
     const char *bytes = (const char *)[self bytes];
-    unsigned length = [self length];
+    NSUInteger length = [self length];
     
     unsigned i;
     for (i = 0; i < length - 4; i++) {

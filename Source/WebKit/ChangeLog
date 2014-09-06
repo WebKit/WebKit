@@ -1,3 +1,12 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.xcodeproj/project.pbxproj: Updated LastUpgradeCheck.
+
 2014-09-04  Pratik Solanki  <psolanki@apple.com>
 
         Remove iOS specific disk image cache

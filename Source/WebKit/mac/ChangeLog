@@ -1,3 +1,61 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Added CLANG_WARN_UNREACHABLE_CODE, COMBINE_HIDPI_IMAGES,
+        and ENABLE_STRICT_OBJC_MSGSEND as suggested by Xcode upgrade check.
+
+        * History/WebURLsWithTitles.m:
+        (+[WebURLsWithTitles writeURLs:andTitles:toPasteboard:]): Use NSUInteger instead of
+        unsigned for correctness, and to quiet the 32-to-64-bit compiler warning (which is
+        not turned on because it gives us too many false positives).
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary objectForKey:]): Ditto.
+        * Misc/WebNSDataExtras.m:
+        (-[NSData _webkit_guessedMIMETypeForXML]): Ditto.
+        (-[NSData _webkit_guessedMIMEType]): Ditto.
+        (-[NSData _webkit_parseRFC822HeaderFields]): Ditto.
+        (-[NSData _web_locationAfterFirstBlankLine]): Ditto.
+
+        * Misc/WebNSURLExtras.h: Removed unused _web_URLWithLowercasedScheme, _web_hostData,
+        _webkit_URLByRemovingFragment, _webkit_URLByRemovingResourceSpecifier, _webkit_isFTPDirectoryURL,
+        _webkit_shouldLoadAsEmptyDocument, _web_hostNameNeedsDecodingWithRange:,
+        _web_hostNameNeedsEncodingWithRange:, _web_decodeHostNameWithRange:, _web_encodeHostNameWithRange:,
+        and _webkit_URLFragment methods.
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _web_URLByTruncatingOneCharacterBeforeComponent:]): Deleted.
+        (-[NSURL _webkit_URLByRemovingFragment]): Deleted.
+        (-[NSURL _webkit_URLByRemovingResourceSpecifier]): Deleted.
+        (-[NSURL _webkit_isFTPDirectoryURL]): Deleted.
+        (-[NSURL _webkit_shouldLoadAsEmptyDocument]): Deleted.
+        (-[NSURL _web_URLWithLowercasedScheme]): Deleted.
+        (-[NSString _webkit_isFTPDirectoryURL]): Deleted.
+        (-[NSString _web_hostNameNeedsDecodingWithRange:]): Deleted.
+        (-[NSString _web_hostNameNeedsEncodingWithRange:]): Deleted.
+        (-[NSString _web_decodeHostNameWithRange:]): Deleted.
+        (-[NSString _web_encodeHostNameWithRange:]): Deleted.
+        (-[NSString _webkit_URLFragment]): Deleted.
+
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase removePluginInstanceViewsFor:]): Use a modern for loop
+        to iterate an array instead of a loop using the type "unsigned int".
+
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        (-[WebOpenPanelResultListener chooseFilenames:]): Use NSUInteger instead of int.
+
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegate): Use wtfCallIMP in one overload that was instead just calling the
+        directly without a proper type for the function pointer. This might have been causing
+        an actual problem on 64-bit systems, and it was different from all the other CallDelegate
+        functions that were already doing this correctly.
+
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _placePopupWindow:]): Use NSUInteger instead of int.
+
 2014-09-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: convert DockSide to an enum class

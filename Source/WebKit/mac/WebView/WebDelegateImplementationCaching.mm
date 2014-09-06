@@ -558,7 +558,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return implementation(delegate, selector, self, integer);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, integer);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }

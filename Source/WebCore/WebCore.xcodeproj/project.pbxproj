@@ -21072,7 +21072,6 @@
 				7EE6847312D26E5500E79415 /* cf */,
 				7E4DE10B198B10810051CB02 /* cocoa */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
-				CE79D68617F220ED00815C00 /* ios */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				E1424C91164B52C800F32D40 /* CookieJar.cpp */,
 				E1424C92164B52C800F32D40 /* CookieJar.h */,
@@ -26715,7 +26714,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 3.2";

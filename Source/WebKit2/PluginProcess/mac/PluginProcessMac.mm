@@ -264,7 +264,7 @@ static void initializeShim()
 }
 #endif
 
-static IMP NSConcreteTask_launch;
+static void (*NSConcreteTask_launch)(NSTask *, SEL);
 
 static void replacedNSConcreteTask_launch(NSTask *self, SEL _cmd)
 {
@@ -318,7 +318,7 @@ static void initializeCocoaOverrides()
 {
     // Override -[NSConcreteTask launch:]
     Method launchMethod = class_getInstanceMethod(objc_getClass("NSConcreteTask"), @selector(launch));
-    NSConcreteTask_launch = method_setImplementation(launchMethod, reinterpret_cast<IMP>(replacedNSConcreteTask_launch));
+    NSConcreteTask_launch = reinterpret_cast<void (*)(NSTask *, SEL)>(method_setImplementation(launchMethod, reinterpret_cast<IMP>(replacedNSConcreteTask_launch)));
 
     // Override -[NSWorkspace launchApplicationAtURL:options:configuration:error:]
     Method launchApplicationAtURLOptionsConfigurationErrorMethod = class_getInstanceMethod(objc_getClass("NSWorkspace"), @selector(launchApplicationAtURL:options:configuration:error:));

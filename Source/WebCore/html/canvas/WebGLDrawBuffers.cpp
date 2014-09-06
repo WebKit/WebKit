@@ -46,17 +46,24 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
     return WebGLExtension::WebGLDrawBuffersName;
 }
 
-// static
-bool WebGLDrawBuffers::supported(WebGLRenderingContext* context)
-{
 #if OS(DARWIN)
+
+bool WebGLDrawBuffers::supported(WebGLRenderingContext*)
+{
     // https://bugs.webkit.org/show_bug.cgi?id=112486
     return false;
-#endif
-    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
-    return (extensions->supports("GL_EXT_draw_buffers")
-        && satisfiesWebGLRequirements(context));
 }
+
+#else
+
+bool WebGLDrawBuffers::supported(WebGLRenderingContext* context)
+{
+    Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
+    return extensions->supports("GL_EXT_draw_buffers")
+        && satisfiesWebGLRequirements(context);
+}
+
+#endif
 
 void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GC3Denum>& buffers)
 {

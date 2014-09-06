@@ -1,3 +1,18 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Added CLANG_WARN_BOOL_CONVERSION, CLANG_WARN_CONSTANT_CONVERSION,
+        CLANG_WARN_EMPTY_BODY, CLANG_WARN_ENUM_CONVERSION, CLANG_WARN_INT_CONVERSION,
+        CLANG_WARN_UNREACHABLE_CODE, CLANG_WARN__DUPLICATE_METHOD_MATCH, ENABLE_STRICT_OBJC_MSGSEND,
+        GCC_WARN_UNDECLARED_SELECTOR, and GCC_WARN_UNUSED_FUNCTION as suggested by Xcode update check.
+        Also removed duplicate GCC_WARN_UNUSED_VARIABLE line.
+
+        * WebInspectorUI.xcodeproj/project.pbxproj: Updated LastUpgradeCheck.
+
 2014-09-02  Brian J. Burg  <burg@cs.washington.edu>
 
         LegacyProfiler: remove redundant ProfileNode members and other cleanup

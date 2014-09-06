@@ -1,3 +1,24 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Added COMBINE_HIDPI_IMAGES and
+        ENABLE_STRICT_OBJC_MSGSEND as suggested by Xcode upgrade check.
+
+        * WebCore.xcodeproj/project.pbxproj: Let Xcode remove an orphaned item from the file,
+        and also updated LastUpgradeCheck.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateTextTrackDisplay): Use #if/#else/#endif instead of
+        using #if/return/#endif and leaving code unreachable.
+        (WebCore::HTMLMediaElement::configureMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Ditto.
+        * html/canvas/WebGLDrawBuffers.cpp:
+        (WebCore::WebGLDrawBuffers::supported): Ditto.
+
 2014-09-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: convert DockSide to an enum class

@@ -348,12 +348,7 @@ static NSArray *additionalWebPlugInPaths;
 
     NSView <WebDocumentView> *documentView = [[webFrame frameView] documentView]; 
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        NSArray *subviews = [documentView subviews]; 
-        unsigned int subviewCount = [subviews count]; 
-        unsigned int subviewIndex; 
-        
-        for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
-            NSView *subview = [subviews objectAtIndex:subviewIndex]; 
+        for (NSView *subview in [documentView subviews]) {
 #if ENABLE(NETSCAPE_PLUGIN_API)
             if ([subview isKindOfClass:[WebBaseNetscapePluginView class]] || [WebPluginController isPlugInView:subview])
 #else

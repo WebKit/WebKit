@@ -1,3 +1,16 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Added CLANG_WARN_UNREACHABLE_CODE,
+        COMBINE_HIDPI_IMAGES, and ENABLE_STRICT_OBJC_MSGSEND as suggested by
+        Xcode upgrade check.
+
+        * WTF.xcodeproj/project.pbxproj: Updated LastUpgradeCheck.
+
 2014-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc should honor the FastMalloc statistics API

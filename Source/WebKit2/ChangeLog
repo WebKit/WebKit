@@ -1,3 +1,27 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Added CLANG_WARN_UNREACHABLE_CODE, COMBINE_HIDPI_IMAGES,
+        and ENABLE_STRICT_OBJC_MSGSEND as suggested by the Xcode upgrade check.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeCocoaOverrides): Changed NSConcreteTask_launch to use the same technique
+        as the other functions in this file, doing the type casting right at the call to
+        method_setImplementation so the global has a suitable type for making a function call,
+        rather than relying on the abilty to call through a type without a specific argument list.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::pathExtension): Use size_t for the result of String::reverseFind rather than
+        converting it to an int. Also don't rely on the fact that WTF's notFound becomes -1 when
+        cast from size_t to int.
+
+        * WebKit2.xcodeproj/project.pbxproj: Let Xcode delete some orphaned items, and updated
+        LastUpgradeCheck.
+
 2014-09-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: convert DockSide to an enum class

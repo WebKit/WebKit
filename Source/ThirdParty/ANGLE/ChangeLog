@@ -1,3 +1,16 @@
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * ANGLE.xcodeproj/project.pbxproj: Updated LastUpgradeCheck.
+
+        * Configurations/ANGLE.xcconfig: Added CLANG_WARN_BOOL_CONVERSION,
+        CLANG_WARN_ENUM_CONVERSION, CLANG_WARN_INT_CONVERSION, COMBINE_HIDPI_IMAGES,
+        and ENABLE_STRICT_OBJC_MSGSEND as suggested by Xcode upgrade check.
+
 2014-09-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173335.

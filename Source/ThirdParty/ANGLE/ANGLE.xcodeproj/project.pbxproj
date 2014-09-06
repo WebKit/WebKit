@@ -805,7 +805,7 @@
 		FB39D0701200ED9200088E69 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
 			compatibilityVersion = "Xcode 3.2";

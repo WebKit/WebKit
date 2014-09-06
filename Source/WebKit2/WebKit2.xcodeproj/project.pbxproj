@@ -717,7 +717,6 @@
 		373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373CEAD71859553F008C363D /* WKPagePolicyClientInternal.h */; };
 		373D122218A473010066D9CC /* _WKFrameHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 373D122018A473010066D9CC /* _WKFrameHandle.mm */; };
 		373D122318A473010066D9CC /* _WKFrameHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122118A473010066D9CC /* _WKFrameHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		373D122518A473B30066D9CC /* WKBrowsingContextHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122418A473B30066D9CC /* WKBrowsingContextHandleInternal.h */; };
 		373D122718A473F60066D9CC /* _WKFrameHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122618A473F60066D9CC /* _WKFrameHandleInternal.h */; };
 		373D122D18A4B6EB0066D9CC /* WKWebProcessPlugInFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7316,7 +7315,6 @@
 				BC597075116591D000551FCA /* ProcessModel.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,
 				1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */,
-				373D122518A473B30066D9CC /* WKBrowsingContextHandleInternal.h in Headers */,
 				1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */,
 				1AA3D75C1651B44F008713D0 /* RemoteLayerTreeHost.h in Headers */,
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
@@ -8179,7 +8177,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.2";

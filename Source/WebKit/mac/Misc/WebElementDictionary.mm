@@ -160,7 +160,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
         return nil;
     value = [self performSelector:selector];
 
-    unsigned lookupTableCount = CFDictionaryGetCount(lookupTable);
+    NSUInteger lookupTableCount = CFDictionaryGetCount(lookupTable);
     if (value) {
         if (!_cache)
             _cache = [[NSMutableDictionary alloc] initWithCapacity:lookupTableCount];
