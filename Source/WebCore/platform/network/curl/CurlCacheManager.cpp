@@ -68,7 +68,7 @@ CurlCacheManager::~CurlCacheManager()
 void CurlCacheManager::setCacheDirectory(const String& directory)
 {
     m_cacheDir = directory;
-    m_cacheDir.append("/");
+
     if (m_cacheDir.isEmpty()) {
         LOG(Network, "Cache Error: Cache location is not set! CacheManager disabled.\n");
         m_disabled = true;
@@ -82,6 +82,8 @@ void CurlCacheManager::setCacheDirectory(const String& directory)
             return;
         }
     }
+
+    m_cacheDir.append("/");
 
     m_disabled = false;
     loadIndex();

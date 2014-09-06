@@ -1,3 +1,16 @@
+2014-09-06  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo][Curl] fileExists() incorrectly claims folder does not exist.
+        https://bugs.webkit.org/show_bug.cgi?id=136598
+
+        Reviewed by Alex Christensen.
+
+        The fileExists() function will always return false on Windows,
+        if the filename parameter ends with a slash or backslash.
+
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::setCacheDirectory): Add slash after call to fileExists().
+
 2014-09-06  David Kilzer  <ddkilzer@apple.com>
 
         New clang warns about boolean checks for |this| pointer in RenderObject debug methods
