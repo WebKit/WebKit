@@ -1,3 +1,10 @@
+2014-09-07  Darin Adler  <darin@apple.com>
+
+        Fix build failure seen on Mountain Lion buildbot.
+
+        * Misc/WebNSDataExtras.h: Make WEB_GUESS_MIME_TYPE_PEEK_LENGTH an unsigned instead
+        of an int, to avoid warning about mixing signs.
+
 2014-09-06  Darin Adler  <darin@apple.com>
 
         Make updates suggested by new version of Xcode
