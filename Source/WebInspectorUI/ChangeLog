@@ -1,3 +1,20 @@
+2014-09-07  Timothy Hatcher  <timothy@apple.com>
+
+        Use a <circle> instead of a <path> in DownloadArrow.svg.
+        https://bugs.webkit.org/show_bug.cgi?id=136608
+
+        Reviewed by Antoine Quint.
+
+        * UserInterface/Images/DownloadArrow.svg:
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (.item > .status > .status-button > svg .filled):
+        (body.mac-platform.legacy .item > .status > .status-button > svg .filled):
+        (:focus .item.selected > .status > .status-button > svg .filled):
+        (.item > .status > .status-button > svg .stroked):
+        (body.mac-platform.legacy .item > .status > .status-button > svg .stroked):
+        (:focus .item.selected > .status > .status-button > svg .stroked):
+        Tweak CSS selectors to apply to other shapes, not just path.
+
 2014-09-06  Darin Adler  <darin@apple.com>
 
         Make updates suggested by new version of Xcode
