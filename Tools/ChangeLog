@@ -1,3 +1,15 @@
+2014-09-06  Sam Weinig  <sam@webkit.org>
+
+        XPCPtr should be converted into an all purpose smart pointer for os_objects
+        https://bugs.webkit.org/show_bug.cgi?id=136602
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/darwin: Added.
+        * TestWebKitAPI/Tests/WTF/darwin/OSObjectPtr.cpp: Added.
+        Add basic unit tests for OSObjectPtr.
+
 2014-09-06  Saam Barati  <saambarati1@gmail.com>
 
         Unreviewed. Add myself as a committer.

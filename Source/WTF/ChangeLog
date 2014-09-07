@@ -1,3 +1,24 @@
+2014-09-06  Sam Weinig  <sam@webkit.org>
+
+        XPCPtr should be converted into an all purpose smart pointer for os_objects
+        https://bugs.webkit.org/show_bug.cgi?id=136602
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/OSObjectPtr.h: Copied from Source/WebKit2/Platform/IPC/mac/XPCPtr.h.
+        (WTF::retainOSObject):
+        (WTF::releaseOSObject):
+        (WTF::OSObjectPtr::OSObjectPtr):
+        (WTF::OSObjectPtr::~OSObjectPtr):
+        (WTF::OSObjectPtr::operator=):
+        (WTF::adoptOSObject):
+        (IPC::XPCPtr::XPCPtr): Deleted.
+        (IPC::XPCPtr::~XPCPtr): Deleted.
+        (IPC::XPCPtr::operator=): Deleted.
+        (IPC::adoptXPC): Deleted.
+        Rename/move XPCPtr to OSObjectPtr and make it work with any os_object.
+
 2014-09-06  Darin Adler  <darin@apple.com>
 
         Make updates suggested by new version of Xcode

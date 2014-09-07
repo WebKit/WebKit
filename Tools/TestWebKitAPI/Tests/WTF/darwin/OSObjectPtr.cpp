@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#include "config.h"
 
-#import "EnvironmentUtilities.h"
-#import "WKBase.h"
-#import "WebProcess.h"
-#import "XPCServiceEntryPoint.h"
-#import <wtf/RunLoop.h>
+#include <wtf/OSObjectPtr.h>
 
-#if PLATFORM(IOS)
-#import <GraphicsServices/GraphicsServices.h>
-#import <WebCore/WebCoreThreadSystemInterface.h>
-#endif // PLATFORM(IOS)
+#include <dispatch/dispatch.h>
+#include <CoreFoundation/CoreFoundation.h>
 
-using namespace WebCore;
-using namespace WebKit;
+namespace TestWebKitAPI {
 
-extern "C" WK_EXPORT void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
-
-void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
+TEST(OSObjectPtr, AdoptOSObject)
 {
-    // Remove the WebProcessShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
-    // the this process don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
 
-#if PLATFORM(IOS)
-    GSInitialize();
-    InitWebCoreThreadSystemInterface();
-#endif // PLATFORM(IOS)
-
-    XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+    EXPECT_EQ(1, CFGetRetainCount(foo.get()));
 }
+
+TEST(OSObjectPtr, RetainRelease)
+{
+    dispatch_queue_t foo = dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL);
+    EXPECT_EQ(1, CFGetRetainCount(foo));
+
+    WTF::retainOSObject(foo);
+    EXPECT_EQ(2, CFGetRetainCount(foo));
+
+    WTF::releaseOSObject(foo);
+    EXPECT_EQ(1, CFGetRetainCount(foo));
+}
+
+} // namespace TestWebKitAPI

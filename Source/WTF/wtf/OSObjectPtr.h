@@ -23,31 +23,78 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPCPtr_h
-#define XPCPtr_h
+#ifndef OSObjectPtr_h
+#define OSObjectPtr_h
 
-#include <xpc/xpc.h>
+#include <os/object.h>
 
-namespace IPC {
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
 
-struct AdoptXPC { };
+#if __has_include(<os/object_private.h>)
+#include <os/object_private.h>
+#endif
 
-template<typename T> class XPCPtr {
+#if OS_OBJECT_USE_OBJC
+@class OS_object;
+typedef OS_object *_os_object_t;
+#else
+typedef struct _os_object_s *_os_object_t;
+#endif
+
+extern "C" _os_object_t _os_object_retain(_os_object_t object);
+extern "C" void _os_object_release(_os_object_t object);
+
+#endif
+
+
+namespace WTF {
+
+struct AdoptOSObject { };
+
+template<typename T>
+static inline void retainOSObject(T ptr)
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 || PLATFORM(IOS)
+    os_retain(ptr);
+#else
+#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+    [ptr retain];
+#else
+    _os_object_retain((_os_object_t)ptr);
+#endif
+#endif
+}
+
+template<typename T>
+static inline void releaseOSObject(T ptr)
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 || PLATFORM(IOS)
+    os_release(ptr);
+#else
+#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+    [ptr release];
+#else
+    _os_object_release((_os_object_t)ptr);
+#endif
+#endif
+}
+
+template<typename T> class OSObjectPtr {
 public:
-    XPCPtr()
+    OSObjectPtr()
         : m_ptr(nullptr)
     {
     }
 
-    XPCPtr(AdoptXPC, T ptr)
+    OSObjectPtr(AdoptOSObject, T ptr)
         : m_ptr(ptr)
     {
     }
 
-    ~XPCPtr()
+    ~OSObjectPtr()
     {
         if (m_ptr)
-            xpc_release(m_ptr);
+            releaseOSObject(m_ptr);
     }
 
     T get() const { return m_ptr; }
@@ -55,38 +102,38 @@ public:
     explicit operator bool() const { return m_ptr; }
     bool operator!() const { return !m_ptr; }
 
-    XPCPtr(const XPCPtr& other)
+    OSObjectPtr(const OSObjectPtr& other)
         : m_ptr(other.m_ptr)
     {
         if (m_ptr)
-            xpc_retain(m_ptr);
+            retainOSObject(m_ptr);
     }
 
-    XPCPtr(XPCPtr&& other)
+    OSObjectPtr(OSObjectPtr&& other)
         : m_ptr(other.m_ptr)
     {
         other.m_ptr = nullptr;
     }
 
-    XPCPtr& operator=(const XPCPtr& other)
+    OSObjectPtr& operator=(const OSObjectPtr& other)
     {
         T optr = other.get();
         if (optr)
-            xpc_retain(optr);
+            retainOSObject(optr);
 
         T ptr = m_ptr;
         m_ptr = optr;
 
         if (ptr)
-            xpc_release(ptr);
+            releaseOSObject(ptr);
 
         return *this;
     }
 
-    XPCPtr& operator=(std::nullptr_t)
+    OSObjectPtr& operator=(std::nullptr_t)
     {
         if (m_ptr)
-            xpc_release(m_ptr);
+            releaseOSObject(m_ptr);
         m_ptr = nullptr;
 
         return *this;
@@ -95,11 +142,14 @@ private:
     T m_ptr;
 };
 
-template<typename T> inline XPCPtr<T> adoptXPC(T ptr)
+template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)
 {
-    return XPCPtr<T>(AdoptXPC { }, ptr);
+    return OSObjectPtr<T>(AdoptOSObject { }, ptr);
 }
 
-} // namespace IPC
+} // namespace WTF
 
-#endif // XPCPtr_h
+using WTF::OSObjectPtr;
+using WTF::adoptOSObject;
+
+#endif // OSObjectPtr_h

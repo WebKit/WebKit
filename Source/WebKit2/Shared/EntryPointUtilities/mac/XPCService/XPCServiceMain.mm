@@ -24,7 +24,7 @@
  */
 
 #import <CoreFoundation/CoreFoundation.h>
-#import "XPCPtr.h"
+#import <wtf/OSObjectPtr.h>
 
 namespace WebKit {
 
@@ -52,7 +52,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     exit(EXIT_FAILURE);
                 }
 
-                auto reply = IPC::adoptXPC(xpc_dictionary_create_reply(event));
+                auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
                 xpc_dictionary_set_string(reply.get(), "message-name", "process-finished-launching");
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply.get());
 
