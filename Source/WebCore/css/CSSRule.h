@@ -112,6 +112,9 @@ private:
     };
 };
 
+#define CSS_RULE_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, CSSRule, rule, rule->type() == predicate, rule.type() == predicate)
+
 } // namespace WebCore
 
 #endif // CSSRule_h

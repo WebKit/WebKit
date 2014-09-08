@@ -431,7 +431,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 {
     if (rule->type() != CSSRule::STYLE_RULE)
         return nullptr;
-    return static_cast<CSSStyleRule*>(rule);
+    return toCSSStyleRule(rule);
 }
 
 InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
@@ -919,7 +919,7 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Inspector:
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
         CSSRule* rule = styleSheet->item(i);
         if (rule->type() == CSSRule::IMPORT_RULE) {
-            CSSStyleSheet* importedStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet();
+            CSSStyleSheet* importedStyleSheet = toCSSImportRule(rule)->styleSheet();
             if (importedStyleSheet)
                 collectStyleSheets(importedStyleSheet, result);
         }

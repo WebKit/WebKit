@@ -1,5 +1,40 @@
 2014-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Introduce CSS_RULE_TYPE_CASTS, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=136628
+
+        Reviewed by Darin Adler.
+
+        As a step to use toFoo, this patch introduces toCSSFooRule(). This will help to detect
+        wrong type cast. Additionally some missing type casts are clean up as well.
+
+        No new tests, no behavior changes.
+
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSImportRule.h:
+        * css/CSSMediaRule.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreas):
+        * css/CSSRule.h:
+        * css/CSSStyleRule.h:
+        * css/CSSSupportsRule.h:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collect):
+        * css/WebKitCSSRegionRule.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asCSSStyleRule):
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+        (WebCore::fillMediaListChain):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+
+2014-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         [EFL[WK2] MiniBrowser comes to crash on debug mode
         https://bugs.webkit.org/show_bug.cgi?id=136617
 

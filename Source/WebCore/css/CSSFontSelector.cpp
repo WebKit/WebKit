@@ -251,7 +251,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
     if (rangeList) {
         unsigned numRanges = rangeList->length();
         for (unsigned i = 0; i < numRanges; i++) {
-            CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->itemWithoutBoundsCheck(i));
+            CSSUnicodeRangeValue* range = toCSSUnicodeRangeValue(rangeList->itemWithoutBoundsCheck(i));
             fontFace->addRange(range->from(), range->to());
         }
     }

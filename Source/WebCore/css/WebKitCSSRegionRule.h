@@ -50,6 +50,8 @@ private:
     WebKitCSSRegionRule(StyleRuleRegion*, CSSStyleSheet* parent);
 };
 
+CSS_RULE_TYPE_CASTS(WebKitCSSRegionRule, CSSRule::WEBKIT_REGION_RULE)
+
 }
 
 #endif // ENABLE(CSS_REGIONS)

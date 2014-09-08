@@ -50,6 +50,8 @@ private:
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
 };
 
+CSS_RULE_TYPE_CASTS(CSSMediaRule, CSSRule::MEDIA_RULE)
+
 } // namespace WebCore
 
 #endif // CSSMediaRule_h

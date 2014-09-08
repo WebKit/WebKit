@@ -215,14 +215,14 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
         return nullptr;
 
     if (rule->type() == CSSRule::MEDIA_RULE)
-        return static_cast<CSSMediaRule*>(rule)->cssRules();
+        return toCSSMediaRule(rule)->cssRules();
 
     if (rule->type() == CSSRule::WEBKIT_KEYFRAMES_RULE)
         return static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
     if (rule->type() == CSSRule::SUPPORTS_RULE)
-        return static_cast<CSSSupportsRule*>(rule)->cssRules();
+        return toCSSSupportsRule(rule)->cssRules();
 #endif
 
     return nullptr;
@@ -237,11 +237,11 @@ static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CS
         CSSStyleSheet* parentStyleSheet = nullptr;
         bool isMediaRule = true;
         if (parentRule->type() == CSSRule::MEDIA_RULE) {
-            CSSMediaRule* mediaRule = static_cast<CSSMediaRule*>(parentRule);
+            CSSMediaRule* mediaRule = toCSSMediaRule(parentRule);
             mediaList = mediaRule->media();
             parentStyleSheet = mediaRule->parentStyleSheet();
         } else if (parentRule->type() == CSSRule::IMPORT_RULE) {
-            CSSImportRule* importRule = static_cast<CSSImportRule*>(parentRule);
+            CSSImportRule* importRule = toCSSImportRule(parentRule);
             mediaList = importRule->media();
             parentStyleSheet = importRule->parentStyleSheet();
             isMediaRule = false;

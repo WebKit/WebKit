@@ -5007,7 +5007,7 @@ bool CSSParser::parseGridTemplateRowsAndAreas(PassRefPtr<CSSValue> templateColum
         if (m_valueList->current()->unit == CSSParserValue::ValueList) {
             if (trailingIdentWasAdded) {
                 // A row's trailing ident must be concatenated with the next row's leading one.
-                parseGridLineNames(*m_valueList, *templateRows, static_cast<CSSGridLineNamesValue*>(templateRows->item(templateRows->length() - 1)));
+                parseGridLineNames(*m_valueList, *templateRows, toCSSGridLineNamesValue(templateRows->item(templateRows->length() - 1)));
             } else
                 parseGridLineNames(*m_valueList, *templateRows);
         }

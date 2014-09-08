@@ -56,6 +56,8 @@ private:
     CSSSupportsRule(StyleRuleSupports*, CSSStyleSheet*);
 };
 
+CSS_RULE_TYPE_CASTS(CSSSupportsRule, CSSRule::SUPPORTS_RULE)
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS3_CONDITIONAL_RULES)
