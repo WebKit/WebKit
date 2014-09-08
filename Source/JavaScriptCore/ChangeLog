@@ -1,3 +1,31 @@
+2014-09-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Introduce COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=136616
+
+        Reviewed by Darin Adler.
+        
+        Many compilers will analyze unrechable code paths (e.g. after an
+        unreachable code path), so sometimes they need dead code initializations.
+        But clang with suitable warnings will complain about unreachable code. So
+        use the quirk to include it conditionally.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        * jsc.cpp:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+
 2014-09-06  Darin Adler  <darin@apple.com>
 
         Make updates suggested by new version of Xcode

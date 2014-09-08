@@ -279,7 +279,9 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         op = 0;
+#endif
     }
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;

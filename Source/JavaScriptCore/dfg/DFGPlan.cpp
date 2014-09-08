@@ -181,7 +181,9 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
             pathName = "";
+#endif
             break;
         }
         double now = currentTimeMS();

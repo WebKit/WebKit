@@ -331,7 +331,9 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
     } else if (registerFormat == DataFormatBoolean) {
 #if USE(JSVALUE64)
         RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         fillAction = DoNothingForFill;
+#endif
 #elif USE(JSVALUE32_64)
         ASSERT(info.gpr() == source);
         if (node->hasConstant()) {
@@ -367,7 +369,9 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
             fillAction = Load64;
         else {
             RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
             fillAction = Load64; // Make GCC happy.
+#endif
         }
     } else if (registerFormat == DataFormatStrictInt52) {
         if (node->hasConstant())
@@ -380,7 +384,9 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
             fillAction = Load64;
         else {
             RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QURIK(CONSIDERS_UNREACHABLE_CODE)
             fillAction = Load64; // Make GCC happy.
+#endif
         }
     } else {
         ASSERT(registerFormat & DataFormatJS);
@@ -596,7 +602,7 @@ JITCompiler::Jump SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, A
     switch (arrayMode.arrayClass()) {
     case Array::OriginalArray: {
         CRASH();
-#if !COMPILER(CLANG)
+#if COMPILER_QURIK(CONSIDERS_UNREACHABLE_CODE)
         JITCompiler::Jump result; // I already know that VC++ takes unkindly to the expression "return Jump()", so I'm doing it this way in anticipation of someone eventually using VC++ to compile the DFG.
         return result;
 #endif

@@ -1553,7 +1553,7 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         
     default:
         CRASH();
-#if !COMPILER(CLANG)
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         vector = 0;
         vectorEnd = 0;
         break;
@@ -1617,7 +1617,7 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t co
         
     default:
         CRASH();
-#if !COMPILER(CLANG)
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         vector = 0;
         vectorEnd = 0;
         break;

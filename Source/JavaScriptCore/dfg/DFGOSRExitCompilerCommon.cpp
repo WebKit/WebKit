@@ -123,7 +123,9 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         clippedValue = 0; // Make some compilers, and mhahnenberg, happy.
+#endif
         break;
     }
     jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));

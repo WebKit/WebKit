@@ -1,3 +1,12 @@
+2014-09-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Introduce COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE) and use it
+        https://bugs.webkit.org/show_bug.cgi?id=136616
+
+        Reviewed by Darin Adler.
+
+        * wtf/Compiler.h: Define the quirk for all compilers but clang.
+
 2014-09-06  Sam Weinig  <sam@webkit.org>
 
         XPCPtr should be converted into an all purpose smart pointer for os_objects
