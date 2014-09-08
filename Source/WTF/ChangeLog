@@ -1,3 +1,9 @@
+2014-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the build after r173383.
+
+        * wtf/OSObjectPtr.h:
+
 2014-09-07  Sam Weinig  <sam@webkit.org>
 
         Make OSObjectPtr a bit more like RefPtr

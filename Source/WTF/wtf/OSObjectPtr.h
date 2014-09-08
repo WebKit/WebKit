@@ -27,6 +27,7 @@
 #define OSObjectPtr_h
 
 #include <os/object.h>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
 
