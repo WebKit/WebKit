@@ -384,7 +384,7 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
             fillAction = Load64;
         else {
             RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QURIK(CONSIDERS_UNREACHABLE_CODE)
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
             fillAction = Load64; // Make GCC happy.
 #endif
         }
@@ -602,7 +602,7 @@ JITCompiler::Jump SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, A
     switch (arrayMode.arrayClass()) {
     case Array::OriginalArray: {
         CRASH();
-#if COMPILER_QURIK(CONSIDERS_UNREACHABLE_CODE)
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
         JITCompiler::Jump result; // I already know that VC++ takes unkindly to the expression "return Jump()", so I'm doing it this way in anticipation of someone eventually using VC++ to compile the DFG.
         return result;
 #endif

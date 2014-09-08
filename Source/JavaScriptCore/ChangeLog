@@ -1,5 +1,15 @@
 2014-09-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Fix typos in last patch to fix build.
+
+        Unreviewed build fix.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+
+2014-09-07  Maciej Stachowiak  <mjs@apple.com>
+
         Introduce COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE) and use it
         https://bugs.webkit.org/show_bug.cgi?id=136616
 
