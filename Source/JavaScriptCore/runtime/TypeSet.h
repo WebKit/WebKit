@@ -78,8 +78,11 @@ public:
 
 private:
     static String leastCommonAncestor(const Vector<RefPtr<StructureShape>>);
+    static PassRefPtr<StructureShape> merge(const PassRefPtr<StructureShape>, const PassRefPtr<StructureShape>);
+    bool hasSamePrototypeChain(PassRefPtr<StructureShape>);
 
-    Vector<RefPtr<StringImpl>> m_fields;
+    HashSet<RefPtr<StringImpl>> m_fields;
+    HashSet<RefPtr<StringImpl>> m_optionalFields;
     RefPtr<StructureShape> m_proto;
     std::unique_ptr<String> m_propertyHash;
     String m_constructorName;
