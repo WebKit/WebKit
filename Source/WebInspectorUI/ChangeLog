@@ -1,3 +1,19 @@
+2014-09-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Fixes to layout test infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=136360
+
+        Reviewed by Joseph Pecoraro.
+
+        Added missing includes to Test.html, which was breaking tests that
+        depended on SourceCodeLocation and LazySourceCodeLocation. Also fixed
+        bug which prevented test results from being resent after reloading the
+        page under test.
+
+        * UserInterface/Base/Test.js:
+        (InspectorTest.reloadPage):
+        * UserInterface/Test.html:
+
 2014-09-07  Timothy Hatcher  <timothy@apple.com>
 
         Use a <circle> instead of a <path> in DownloadArrow.svg.
