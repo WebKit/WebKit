@@ -1,3 +1,9 @@
+2014-09-08  Jessie Berlin  <jberlin@apple.com>
+
+        Speculative build fix after r173364.
+
+        * wtf/dtoa/strtod.cc:
+
 2014-09-07  Maciej Stachowiak  <mjs@apple.com>
 
         Introduce COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE) and use it
