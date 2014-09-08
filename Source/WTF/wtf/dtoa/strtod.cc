@@ -177,6 +177,9 @@ namespace double_conversion {
                              int exponent,
                              double* result) {
 #if !defined(DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS)
+        UNUSED_PARAM(trimmed);
+        UNUSED_PARAM(exponent);
+        UNUSED_PARAM(result);
         // On x86 the floating-point stack can be 64 or 80 bits wide. If it is
         // 80 bits wide (as is the case on Linux) then double-rounding occurs and the
         // result is not accurate.
