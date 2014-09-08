@@ -2,7 +2,7 @@ MAJOR_VERSION = 600;
 MINOR_VERSION = 1;
 TINY_VERSION = 4;
 MICRO_VERSION = 11;
-NANO_VERSION = 5;
+NANO_VERSION = 6;
 FULL_VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(TINY_VERSION).$(MICRO_VERSION).$(NANO_VERSION);
 
 // The system version prefix is based on the current system version.
