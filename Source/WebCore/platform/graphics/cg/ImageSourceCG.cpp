@@ -150,16 +150,8 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
     CGImageSourceUpdateData(m_decoder, data->createCFData().get(), allDataReceived);
 #else
-    if (!m_decoder) {
+    if (!m_decoder)
         m_decoder = CGImageSourceCreateIncremental(0);
-    } else if (allDataReceived) {
-#if !PLATFORM(WIN)
-        // 10.6 bug workaround: image sources with final=false fail to draw into PDF contexts, so re-create image source
-        // when data is complete. <rdar://problem/7874035> (<http://openradar.appspot.com/7874035>)
-        CFRelease(m_decoder);
-        m_decoder = CGImageSourceCreateIncremental(0);
-#endif
-    }
     // Create a CGDataProvider to wrap the SharedBuffer.
     data->ref();
     // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer

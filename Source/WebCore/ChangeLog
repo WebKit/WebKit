@@ -1,3 +1,15 @@
+2014-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some unused code in ImageSourceCG
+        https://bugs.webkit.org/show_bug.cgi?id=136638
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        Remove this code. Firstly, it's in a USE(CG) && !PLATFORM(COCOA) && !PLATFORM(WIN)
+        block, and that's simply not a thing. Secondly, the referenced bug was fixed in Lion.
+
 2014-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce CSS_RULE_TYPE_CASTS, and use it
