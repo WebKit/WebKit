@@ -1,3 +1,17 @@
+2014-09-08  Jochen Eisinger  <jochen@chromium.org>
+
+        Always update the referrer header in CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=136642
+
+        Reviewed by Alexey Proskuryakov.
+
+        If a request already includes a referrer header, and the document has
+        a non-default referrer policy, it is possible that we have to modify
+        the referrer header.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addAdditionalRequestHeaders):
+
 2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove FILTERS flag

@@ -256,7 +256,7 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedRes
     outgoingReferrer = SecurityPolicy::generateReferrerHeader(cachedResourceLoader->document()->referrerPolicy(), m_resourceRequest.url(), outgoingReferrer);
     if (outgoingReferrer.isEmpty())
         m_resourceRequest.clearHTTPReferrer();
-    else if (!m_resourceRequest.httpReferrer())
+    else
         m_resourceRequest.setHTTPReferrer(outgoingReferrer);
     FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 
