@@ -49,7 +49,8 @@ extern "C" void _os_object_release(_os_object_t object);
 
 namespace WTF {
 
-struct AdoptOSObject { };
+template<typename T> class OSObjectPtr;
+template<typename T> OSObjectPtr<T> adoptOSObject(T);
 
 template<typename T>
 static inline void retainOSObject(T ptr)
@@ -86,11 +87,6 @@ public:
     {
     }
 
-    OSObjectPtr(AdoptOSObject, T ptr)
-        : m_ptr(ptr)
-    {
-    }
-
     ~OSObjectPtr()
     {
         if (m_ptr)
@@ -117,16 +113,15 @@ public:
 
     OSObjectPtr& operator=(const OSObjectPtr& other)
     {
-        T optr = other.get();
-        if (optr)
-            retainOSObject(optr);
+        OSObjectPtr ptr = other;
+        swap(ptr);
+        return *this;
+    }
 
-        T ptr = m_ptr;
-        m_ptr = optr;
-
-        if (ptr)
-            releaseOSObject(ptr);
-
+    OSObjectPtr& operator=(OSObjectPtr&& other)
+    {
+        OSObjectPtr ptr = WTF::move(other);
+        swap(ptr);
         return *this;
     }
 
@@ -138,13 +133,27 @@ public:
 
         return *this;
     }
+
+    void swap(OSObjectPtr& other)
+    {
+        std::swap(m_ptr, other.m_ptr);
+    }
+
+    friend OSObjectPtr adoptOSObject<T>(T);
+
 private:
+    struct AdoptOSObject { };
+    OSObjectPtr(AdoptOSObject, T ptr)
+        : m_ptr(ptr)
+    {
+    }
+
     T m_ptr;
 };
 
 template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)
 {
-    return OSObjectPtr<T>(AdoptOSObject { }, ptr);
+    return OSObjectPtr<T>(typename OSObjectPtr<T>::AdoptOSObject { }, ptr);
 }
 
 } // namespace WTF

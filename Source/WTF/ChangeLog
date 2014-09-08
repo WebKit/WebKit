@@ -1,3 +1,20 @@
+2014-09-07  Sam Weinig  <sam@webkit.org>
+
+        Make OSObjectPtr a bit more like RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=136613
+
+        Reviewed by Darin Adler.
+
+        Address some of Darin's feedback by:
+        - Making the adopting constructor private and friending adoptOSObject().
+        - Implementing the assignment operator using swap.
+        - Adding a move assignment operator.
+
+        * wtf/OSObjectPtr.h:
+        (WTF::OSObjectPtr::operator=):
+        (WTF::OSObjectPtr::swap):
+        (WTF::OSObjectPtr::OSObjectPtr):
+
 2014-09-08  Jessie Berlin  <jberlin@apple.com>
 
         More build fixes after r173374.
