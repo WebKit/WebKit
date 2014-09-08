@@ -1851,7 +1851,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
 
     updateLayout();
 
-    if (runPostLayoutTasks == RunPostLayoutTasksSynchronously && view())
+    if (runPostLayoutTasks == RunPostLayoutTasks::Synchronously && view())
         view()->flushAnyPendingPostLayoutTasks();
 
     m_ignorePendingStylesheets = oldIgnore;

@@ -591,12 +591,17 @@ public:
     void recalcStyle(Style::Change = Style::NoChange);
     WEBCORE_EXPORT void updateStyleIfNeeded();
     bool updateStyleIfNeededForNode(const Node&);
+
     WEBCORE_EXPORT void updateLayout();
-    enum RunPostLayoutTasks {
-        RunPostLayoutTasksAsynchronously,
-        RunPostLayoutTasksSynchronously,
+    
+    // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
+    // so calling this may cause a flash of unstyled content (FOUC).
+    enum class RunPostLayoutTasks {
+        Asynchronously,
+        Synchronously,
     };
-    WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasksAsynchronously);
+    WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
+
     PassRef<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
 
     // Returns true if page box (margin boxes and page borders) is visible.

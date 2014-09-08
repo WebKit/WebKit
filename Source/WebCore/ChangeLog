@@ -1,3 +1,25 @@
+2014-09-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Use enum class for the RunPostLayoutTasks enum
+        https://bugs.webkit.org/show_bug.cgi?id=136640
+
+        Reviewed by Dean Jackson.
+
+        Use enum class for RunPostLayoutTasks fixing callers. Add an explanatory comment,
+        and add some spacing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        * dom/Document.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        * testing/Internals.cpp:
+        (WebCore::Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks):
+
 2014-09-08  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error.

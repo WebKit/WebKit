@@ -1926,7 +1926,7 @@ void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* 
         return;
     }
 
-    document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
+    document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
 }
 
 #if !PLATFORM(IOS)
