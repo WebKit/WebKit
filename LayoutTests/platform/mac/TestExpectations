@@ -1404,6 +1404,7 @@ webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Fai
 
 webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Failure ]
 webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failure ]
+webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
 
 # Mac doesn't support YUV 420/422 colorspace
 media/video-colorspace-yuv420.html [ Skip ]
