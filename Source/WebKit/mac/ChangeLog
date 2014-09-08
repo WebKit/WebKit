@@ -1,5 +1,15 @@
 2014-09-08  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        Added back SPI that is still in use.
+
+        * Misc/WebNSURLExtras.h:
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _webkit_URLByRemovingFragment]):
+
+2014-09-08  Dan Bernstein  <mitz@apple.com>
+
         iOS Simulator build fix.
 
         * Misc/WebKitSystemBits.m:

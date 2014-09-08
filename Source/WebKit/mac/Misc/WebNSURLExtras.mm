@@ -132,6 +132,11 @@ using namespace WTF;
     return URLByCanonicalizingURL(self);
 }
 
+- (NSURL *)_webkit_URLByRemovingFragment 
+{
+    return URLByTruncatingOneCharacterBeforeComponent(self, kCFURLComponentFragment);
+}
+
 - (NSURL *)_web_URLByRemovingUserInfo
 {
     return URLByRemovingUserInfo(self);
