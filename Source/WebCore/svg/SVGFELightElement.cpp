@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFELightElement.h"
 
 #include "Attribute.h"
@@ -221,5 +219,3 @@ void SVGFELightElement::childrenChanged(const ChildChange& change)
 }
 
 }
-
-#endif // ENABLE(FILTERS)

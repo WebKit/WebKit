@@ -27,7 +27,7 @@
 #ifndef FEGaussianBlurNEON_h
 #define FEGaussianBlurNEON_h
 
-#if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
+#if HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEGaussianBlur.h"
 #include "NEONHelpers.h"
@@ -73,6 +73,6 @@ inline void boxBlurNEON(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dst
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
+#endif // HAVE(ARM_NEON_INTRINSICS)
 
 #endif // FEGaussianBlurNEON_h

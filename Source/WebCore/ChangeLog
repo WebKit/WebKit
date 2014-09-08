@@ -1,3 +1,195 @@
+2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove FILTERS flag
+        https://bugs.webkit.org/show_bug.cgi?id=136571
+
+        Reviewed by Darin Adler.
+
+        No new tests required, no new functionality.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSupportedSVG10Feature):
+        (WebCore::isSupportedSVG11Feature):
+        * platform/graphics/cpu/arm/filters/FEBlendNEON.h:
+        * platform/graphics/cpu/arm/filters/FECompositeArithmeticNEON.h:
+        * platform/graphics/cpu/arm/filters/FEGaussianBlurNEON.h:
+        * platform/graphics/cpu/arm/filters/NEONHelpers.h:
+        * platform/graphics/filters/DistantLightSource.cpp:
+        * platform/graphics/filters/DistantLightSource.h:
+        * platform/graphics/filters/FEBlend.cpp:
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * platform/graphics/filters/FEDiffuseLighting.cpp:
+        * platform/graphics/filters/FEDiffuseLighting.h:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        * platform/graphics/filters/FEDisplacementMap.h:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        * platform/graphics/filters/FEDropShadow.h:
+        * platform/graphics/filters/FEFlood.cpp:
+        * platform/graphics/filters/FEFlood.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FELighting.cpp:
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMerge.cpp:
+        * platform/graphics/filters/FEMerge.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FEOffset.cpp:
+        * platform/graphics/filters/FEOffset.h:
+        * platform/graphics/filters/FESpecularLighting.cpp:
+        * platform/graphics/filters/FESpecularLighting.h:
+        * platform/graphics/filters/FETile.cpp:
+        * platform/graphics/filters/FETile.h:
+        * platform/graphics/filters/FETurbulence.cpp:
+        * platform/graphics/filters/FETurbulence.h:
+        * platform/graphics/filters/Filter.h:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/LightSource.h:
+        * platform/graphics/filters/PointLightSource.cpp:
+        * platform/graphics/filters/PointLightSource.h:
+        * platform/graphics/filters/SourceAlpha.cpp:
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.cpp:
+        * platform/graphics/filters/SourceGraphic.h:
+        * platform/graphics/filters/SpotLightSource.cpp:
+        * platform/graphics/filters/SpotLightSource.h:
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithResources):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        (WebCore::writeResources):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::~SVGRenderingContext):
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGRenderingContext.h:
+        (WebCore::SVGRenderingContext::SVGRenderingContext):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        (WebCore::SVGResources::buildCachedResources):
+        (WebCore::SVGResources::removeClientFromCache):
+        (WebCore::SVGResources::resourceDestroyed):
+        (WebCore::SVGResources::buildSetOfResources):
+        (WebCore::SVGResources::resetFilter):
+        (WebCore::SVGResources::dump):
+        * rendering/svg/SVGResources.h:
+        (WebCore::SVGResources::filter):
+        (WebCore::SVGResources::ClipperFilterMaskerData::ClipperFilterMaskerData):
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::breakCycle):
+        * svg/SVGAnimatedEnumeration.cpp:
+        (WebCore::enumerationValueForTargetAttribute):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGComponentTransferFunctionElement.idl:
+        * svg/SVGFEBlendElement.cpp:
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEBlendElement.idl:
+        * svg/SVGFEColorMatrixElement.cpp:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEColorMatrixElement.idl:
+        * svg/SVGFEComponentTransferElement.cpp:
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFEComponentTransferElement.idl:
+        * svg/SVGFECompositeElement.cpp:
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEConvolveMatrixElement.idl:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDiffuseLightingElement.idl:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDisplacementMapElement.idl:
+        * svg/SVGFEDistantLightElement.cpp:
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEDistantLightElement.idl:
+        * svg/SVGFEDropShadowElement.cpp:
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEDropShadowElement.idl:
+        * svg/SVGFEFloodElement.cpp:
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFloodElement.idl:
+        * svg/SVGFEFuncAElement.cpp:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncAElement.idl:
+        * svg/SVGFEFuncBElement.cpp:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncBElement.idl:
+        * svg/SVGFEFuncGElement.cpp:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncGElement.idl:
+        * svg/SVGFEFuncRElement.cpp:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEFuncRElement.idl:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMergeElement.idl:
+        * svg/SVGFEMergeNodeElement.cpp:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMergeNodeElement.idl:
+        * svg/SVGFEMorphologyElement.cpp:
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFEOffsetElement.cpp:
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFEOffsetElement.idl:
+        * svg/SVGFEPointLightElement.cpp:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFEPointLightElement.idl:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpecularLightingElement.idl:
+        * svg/SVGFESpotLightElement.cpp:
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFESpotLightElement.idl:
+        * svg/SVGFETileElement.cpp:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETileElement.idl:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFETurbulenceElement.idl:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFilter.cpp:
+        * svg/graphics/filters/SVGFilter.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        * svg/svgtags.in:
+
 2014-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Use enum class for the RunPostLayoutTasks enum

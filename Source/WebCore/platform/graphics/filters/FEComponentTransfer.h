@@ -22,7 +22,6 @@
 #ifndef FEComponentTransfer_h
 #define FEComponentTransfer_h
 
-#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
 #include "Filter.h"
@@ -96,7 +95,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // FEComponentTransfer_h

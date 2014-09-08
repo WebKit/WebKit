@@ -19,9 +19,8 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFEFuncAElement.h"
+
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -38,7 +37,5 @@ PassRefPtr<SVGFEFuncAElement> SVGFEFuncAElement::create(const QualifiedName& tag
 }
 
 }
-
-#endif // ENABLE(FILTERS)
 
 // vim:ts=4:noet

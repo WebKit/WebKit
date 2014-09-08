@@ -21,7 +21,6 @@
 #ifndef SVGFEColorMatrixElement_h
 #define SVGFEColorMatrixElement_h
 
-#if ENABLE(FILTERS)
 #include "FEColorMatrix.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumberList.h"
@@ -88,5 +87,4 @@ private:
 
 } // namespace WebCore
 
-#endif
 #endif

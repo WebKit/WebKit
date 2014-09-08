@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=FILTERS,
     DoNotCheckConstants
 ] interface SVGFECompositeElement : SVGElement {
     // Composite Operators

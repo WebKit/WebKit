@@ -23,7 +23,6 @@
 #ifndef SVGFilterElement_h
 #define SVGFilterElement_h
 
-#if ENABLE(FILTERS)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedInteger.h"
@@ -80,5 +79,4 @@ NODE_TYPE_CASTS(SVGFilterElement)
 
 }
 
-#endif
 #endif

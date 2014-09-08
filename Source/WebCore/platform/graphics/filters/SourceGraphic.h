@@ -21,7 +21,6 @@
 #ifndef SourceGraphic_h
 #define SourceGraphic_h
 
-#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "Filter.h"
 
@@ -54,7 +53,5 @@ private:
 };
 
 } //namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // SourceGraphic_h

@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=FILTERS,
     DoNotCheckConstants
 ] interface SVGFETurbulenceElement : SVGElement {
     // Turbulence Types

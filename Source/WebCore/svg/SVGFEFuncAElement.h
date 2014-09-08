@@ -21,7 +21,6 @@
 #ifndef SVGFEFuncAElement_h
 #define SVGFEFuncAElement_h
 
-#if ENABLE(FILTERS)
 #include "SVGComponentTransferFunctionElement.h"
 
 namespace WebCore {
@@ -38,5 +37,4 @@ NODE_TYPE_CASTS(SVGFEFuncAElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif

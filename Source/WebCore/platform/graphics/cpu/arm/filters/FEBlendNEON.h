@@ -28,7 +28,7 @@
 #ifndef FEBlendNEON_h
 #define FEBlendNEON_h
 
-#if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
+#if HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEBlend.h"
 #include <arm_neon.h>
@@ -201,6 +201,6 @@ void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* sr
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
+#endif // HAVE(ARM_NEON_INTRINSICS)
 
 #endif // FEBlendNEON_h

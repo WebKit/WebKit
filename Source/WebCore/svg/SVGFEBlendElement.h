@@ -22,7 +22,6 @@
 #ifndef SVGFEBlendElement_h
 #define SVGFEBlendElement_h
 
-#if ENABLE(FILTERS)
 #include "FEBlend.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -74,5 +73,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif

@@ -22,7 +22,6 @@
 #ifndef FEFlood_h
 #define FEFlood_h
 
-#if ENABLE(FILTERS)
 #include "Color.h"
 #include "Filter.h"
 #include "FilterEffect.h"
@@ -64,7 +63,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // FEFlood_h

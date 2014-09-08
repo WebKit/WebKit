@@ -432,10 +432,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_ENCRYPTED_MEDIA_V2 0
 #endif
 
-#if !defined(ENABLE_FILTERS)
-#define ENABLE_FILTERS 0
-#endif
-
 #if !defined(ENABLE_FONT_LOAD_EVENTS)
 #define ENABLE_FONT_LOAD_EVENTS 0
 #endif

@@ -363,10 +363,8 @@ void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& re
     if (!resources)
         return;
 
-#if ENABLE(FILTERS)
     if (RenderSVGResourceFilter* filter = resources->filter())
         repaintRect = filter->resourceBoundingBox(renderer);
-#endif
 
     if (RenderSVGResourceClipper* clipper = resources->clipper())
         repaintRect.intersect(clipper->resourceBoundingBox(renderer));

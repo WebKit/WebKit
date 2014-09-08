@@ -27,7 +27,7 @@
 #ifndef NEONHelpers_h
 #define NEONHelpers_h
 
-#if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
+#if HAVE(ARM_NEON_INTRINSICS)
 
 #include <arm_neon.h>
 
@@ -50,6 +50,6 @@ inline void storeFloatAsRGBA8(float32x4_t data, uint32_t* destination)
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
+#endif // HAVE(ARM_NEON_INTRINSICS)
 
 #endif // NEONHelpers_h

@@ -36,6 +36,7 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGResourceFilter.h"
 #include "RenderView.h"
 #include "SVGImage.h"
 #include "SVGLength.h"
@@ -46,10 +47,6 @@
 #include "SVGViewSpec.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
-
-#if ENABLE(FILTERS)
-#include "RenderSVGResourceFilter.h"
-#endif
 
 namespace WebCore {
 

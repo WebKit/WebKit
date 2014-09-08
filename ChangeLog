@@ -1,3 +1,16 @@
+2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Remove FILTERS flag
+        https://bugs.webkit.org/show_bug.cgi?id=136571
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-09-04  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove CSS_FILTERS flag

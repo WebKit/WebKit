@@ -24,7 +24,6 @@
 #ifndef RenderSVGResourceFilter_h
 #define RenderSVGResourceFilter_h
 
-#if ENABLE(FILTERS)
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
@@ -102,5 +101,4 @@ RENDER_OBJECT_TYPE_CASTS(RenderSVGResourceFilter, isSVGResourceFilter())
 
 }
 
-#endif
 #endif

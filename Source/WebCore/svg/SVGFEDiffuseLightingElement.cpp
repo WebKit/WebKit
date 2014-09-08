@@ -18,8 +18,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"
@@ -227,5 +225,3 @@ PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* fi
 }
 
 }
-
-#endif

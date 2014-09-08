@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFEMergeElement.h"
 
 #include "ElementIterator.h"
@@ -61,5 +59,3 @@ PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilde
 }
 
 }
-
-#endif // ENABLE(FILTERS)

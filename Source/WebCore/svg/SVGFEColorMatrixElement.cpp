@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFEColorMatrixElement.h"
 
 #include "Attribute.h"
@@ -174,5 +172,3 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)

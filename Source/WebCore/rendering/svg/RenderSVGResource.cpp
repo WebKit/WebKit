@@ -157,10 +157,9 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
 static inline void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout)
 {
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-#if ENABLE(FILTERS)
         if (RenderSVGResourceFilter* filter = resources->filter())
             filter->removeClientFromCache(renderer);
-#endif
+
         if (RenderSVGResourceMasker* masker = resources->masker())
             masker->removeClientFromCache(renderer);
 

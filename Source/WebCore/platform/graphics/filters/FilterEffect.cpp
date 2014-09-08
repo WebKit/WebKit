@@ -21,8 +21,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
 #include "Filter.h"
@@ -555,5 +553,3 @@ TextStream& FilterEffect::externalRepresentation(TextStream& ts, int) const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)

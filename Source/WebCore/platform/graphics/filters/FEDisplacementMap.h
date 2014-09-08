@@ -22,7 +22,6 @@
 #ifndef FEDisplacementMap_h
 #define FEDisplacementMap_h
 
-#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "Filter.h"
 #include <wtf/text/WTFString.h>
@@ -69,7 +68,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // FEDisplacementMap_h

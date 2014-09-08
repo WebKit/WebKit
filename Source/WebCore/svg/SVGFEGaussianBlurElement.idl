@@ -24,8 +24,7 @@
  */
 
 [
-    Conditional=FILTERS,
-    DoNotCheckConstants,
+    DoNotCheckConstants
 ] interface SVGFEGaussianBlurElement : SVGElement {
     // Edge Mode Values
     const unsigned short SVG_EDGEMODE_UNKNOWN   = 0;

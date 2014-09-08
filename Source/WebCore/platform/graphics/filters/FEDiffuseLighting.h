@@ -22,7 +22,6 @@
 #ifndef FEDiffuseLighting_h
 #define FEDiffuseLighting_h
 
-#if ENABLE(FILTERS)
 #include "FELighting.h"
 
 namespace WebCore {
@@ -62,7 +61,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // FEDiffuseLighting_h

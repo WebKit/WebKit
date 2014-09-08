@@ -23,7 +23,6 @@ cursor generateTypeHelpers
 defs
 desc
 ellipse generateTypeHelpers
-#if ENABLE_FILTERS
 feBlend
 feColorMatrix
 feComponentTransfer
@@ -50,7 +49,6 @@ feSpotLight generateTypeHelpers
 feTile
 feTurbulence
 filter generateTypeHelpers
-#endif
 #if ENABLE_SVG_FONTS
 font generateTypeHelpers
 font_face generateTypeHelpers

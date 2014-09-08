@@ -17,9 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    Conditional=FILTERS,
-] interface SVGFEDropShadowElement : SVGElement {
+interface SVGFEDropShadowElement : SVGElement {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber dx;
     readonly attribute SVGAnimatedNumber dy;

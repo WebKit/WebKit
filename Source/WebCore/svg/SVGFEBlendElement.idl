@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=FILTERS,
     DoNotCheckConstants
 ] interface SVGFEBlendElement : SVGElement {
     // Blend Mode Types

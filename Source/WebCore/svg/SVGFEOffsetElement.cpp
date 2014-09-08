@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFEOffsetElement.h"
 
 #include "Attribute.h"
@@ -122,5 +120,3 @@ PassRefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder* filterBuild
 }
 
 }
-
-#endif // ENABLE(FILTERS)

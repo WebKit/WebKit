@@ -19,8 +19,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFETurbulenceElement.h"
 
 #include "Attribute.h"
@@ -179,5 +177,3 @@ PassRefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter
 }
 
 }
-
-#endif // ENABLE(FILTERS)

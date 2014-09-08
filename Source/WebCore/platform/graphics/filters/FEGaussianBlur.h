@@ -22,7 +22,6 @@
 #ifndef FEGaussianBlur_h
 #define FEGaussianBlur_h
 
-#if ENABLE(FILTERS)
 #include "FEConvolveMatrix.h"
 #include "Filter.h"
 #include "FilterEffect.h"
@@ -110,7 +109,5 @@ inline void FEGaussianBlur::kernelPosition(int boxBlur, unsigned& std, int& dLef
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // FEGaussianBlur_h

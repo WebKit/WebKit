@@ -21,7 +21,6 @@
 #ifndef SVGFilterPrimitiveStandardAttributes_h
 #define SVGFilterPrimitiveStandardAttributes_h
 
-#if ENABLE(FILTERS)
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGAnimatedLength.h"
@@ -93,5 +92,4 @@ NODE_TYPE_CASTS(SVGFilterPrimitiveStandardAttributes)
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif

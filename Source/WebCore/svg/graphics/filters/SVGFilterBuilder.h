@@ -21,7 +21,6 @@
 #ifndef SVGFilterBuilder_h
 #define SVGFilterBuilder_h
 
-#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
 #include <wtf/HashMap.h>
@@ -80,5 +79,4 @@ private:
     
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif // SVGFilterBuilder_h

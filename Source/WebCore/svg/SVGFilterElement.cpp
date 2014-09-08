@@ -23,8 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FILTERS)
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
@@ -237,5 +235,3 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
 }
 
 }
-
-#endif

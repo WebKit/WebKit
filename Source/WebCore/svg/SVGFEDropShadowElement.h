@@ -20,7 +20,6 @@
 #ifndef SVGFEDropShadowElement_h
 #define SVGFEDropShadowElement_h
 
-#if ENABLE(FILTERS)
 #include "FEDropShadow.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -55,5 +54,4 @@ private:
     
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif

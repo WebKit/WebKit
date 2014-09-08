@@ -21,7 +21,6 @@
 #ifndef SVGFEMergeElement_h
 #define SVGFEMergeElement_h
 
-#if ENABLE(FILTERS)
 #include "FEMerge.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -39,5 +38,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif

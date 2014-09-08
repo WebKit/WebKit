@@ -23,7 +23,6 @@
 #ifndef SpotLightSource_h
 #define SpotLightSource_h
 
-#if ENABLE(FILTERS)
 #include "LightSource.h"
 
 namespace WebCore {
@@ -75,7 +74,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FILTERS)
 
 #endif // SpotLightSource_h

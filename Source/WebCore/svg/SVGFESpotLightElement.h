@@ -20,7 +20,6 @@
 #ifndef SVGFESpotLightElement_h
 #define SVGFESpotLightElement_h
 
-#if ENABLE(FILTERS)
 #include "SVGFELightElement.h"
 
 namespace WebCore {
@@ -39,5 +38,4 @@ NODE_TYPE_CASTS(SVGFESpotLightElement)
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif

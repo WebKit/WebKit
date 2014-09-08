@@ -21,7 +21,6 @@
 #ifndef SVGFEFloodElement_h
 #define SVGFEFloodElement_h
 
-#if ENABLE(FILTERS)
 #include "FEFlood.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -40,5 +39,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
 #endif
