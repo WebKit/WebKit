@@ -5418,9 +5418,17 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     // the exiting document.
     bool eventTargetQueuesEmpty = m_fullScreenChangeEventTargetQueue.isEmpty() && m_fullScreenErrorEventTargetQueue.isEmpty();
     Document& exitingDocument = eventTargetQueuesEmpty ? topDocument() : *this;
-    exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);
+
+    // FIXME(136605): Remove this quirk once YouTube moves to relative widths and heights for
+    // fullscreen mode.
+    String host = url().host();
+    if (settings() && settings()->needsSiteSpecificQuirks() && (host.endsWith(".youtube.com", false) || equalIgnoringCase("youtube.com", host)))
+        exitingDocument.fullScreenChangeDelayTimerFired(exitingDocument.m_fullScreenChangeDelayTimer);
+    else
+        exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);
+
 }
-    
+
 void Document::setFullScreenRenderer(RenderFullScreen* renderer)
 {
     if (renderer == m_fullScreenRenderer)

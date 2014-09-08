@@ -1,3 +1,24 @@
+2014-09-08  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173365
+
+    2014-09-06  Jer Noble  <jer.noble@apple.com>
+
+            [Fullscreen] Add a site-specific hack to work around "flash on exit" behavior of YouTube.com.
+            https://bugs.webkit.org/show_bug.cgi?id=136604
+
+            Reviewed by Eric Carlson.
+
+            YouTube.com will cause a "flash" of the full screen sized <video> element upon exiting full
+            screen because the "fullscreenchange" event is fired asynchronously after the exit animation
+            completes. Only YouTube sites and embeds, add a site-specific-quirk which runs the "fullscreenchange"
+            event synchronously at the end of the exit animation. This causes YouTube's video resizing logic
+            to run during the period of time where we've disabled screen updates, instead of immediately
+            after.
+
+            * dom/Document.cpp:
+            (WebCore::Document::webkitDidExitFullScreenForElement):
+
 2014-08-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173097
