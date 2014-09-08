@@ -1,3 +1,15 @@
+2014-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL[WK2] MiniBrowser comes to crash on debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=136617
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix wrong ASSERTION use in applyCursorFromEcoreX().
+
+        * platform/efl/EflScreenUtilities.cpp: Change ASSERT(!window) with *ASSERT(window)*
+        (WebCore::applyCursorFromEcoreX):
+
 2014-09-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toBasicShapeFoo() instead of static_cast<BasicShapeFoo*>

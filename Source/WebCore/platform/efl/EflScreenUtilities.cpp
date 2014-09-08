@@ -110,7 +110,7 @@ int getEcoreCursor(const String& cursorString)
 
 void applyCursorFromEcoreX(Ecore_X_Window window, const char* cursorString)
 {
-    ASSERT(!window);
+    ASSERT(window);
 
     int shape = getEcoreCursor(cursorString);
     if (shape < ECORE_X_CURSOR_X || shape > ECORE_X_CURSOR_XTERM) {
