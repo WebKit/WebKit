@@ -1,3 +1,26 @@
+2014-09-08  Dean Jackson  <dino@apple.com>
+
+        Separate the Apple media controls module from other ports
+        https://bugs.webkit.org/show_bug.cgi?id=136644
+        rdar://problem/18270969
+
+        Reviewed by Eric Carlson.
+
+        Make a mediaControlsBase.{js|css} that acts as the base
+        class for the EFL and GTK ports (they were using mediaControlsApple).
+        Over time, the Apple-specific controls may use more of the
+        Base class.
+
+        * Modules/mediacontrols/mediaControlsBase.css: Added.
+        * Modules/mediacontrols/mediaControlsBase.js: Added.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::mediaControlsStyleSheet): Load Base rather than Apple.
+        (WebCore::RenderThemeEfl::mediaControlsScript): Ditto.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::mediaControlsScript): Ditto.
+
 2014-09-08  Jochen Eisinger  <jochen@chromium.org>
 
         Always update the referrer header in CachedResource
