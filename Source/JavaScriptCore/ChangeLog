@@ -1,3 +1,10 @@
+2014-09-08  Jessie Berlin  <jberlin@apple.com>
+
+        More 32-bit Release build fixes after r173364.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2014-09-07  Maciej Stachowiak  <mjs@apple.com>
 
         Fix typos in last patch to fix build.
