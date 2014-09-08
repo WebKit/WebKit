@@ -1,3 +1,49 @@
+2014-09-08  Antti Koivisto  <antti@apple.com>
+
+        Buffer images on web process side
+        https://bugs.webkit.org/show_bug.cgi?id=136631
+
+        Reviewed by Darin Adler.
+
+        We can substantially reduce IPC and decoding time for large images by allowing some buffering.
+
+        This patch makes us buffer image data up to 0.5s before sending it over to the web process.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+
+            Start the timer.
+
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::startBufferingTimerIfNeeded):
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::sendBuffer):
+
+            Send the data when the timer fires or the load finishes, whichever happens first.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Platform/IPC/ArgumentCoders.h:
+
+            Support encoding std::chrono::duration
+
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+
+            Pass maximimum buffering duration.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::maximumBufferingTime):
+
+            Deterimine duration from the resource type.
+            Enabled full buffering for font resources. They are not decoded incrementally.
+
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
 2014-09-08  Dan Bernstein  <mitz@apple.com>
 
         HAVE(VOUCHERS) is not available outside of WebKit2

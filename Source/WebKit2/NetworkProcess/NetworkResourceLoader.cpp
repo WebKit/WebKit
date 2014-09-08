@@ -83,7 +83,7 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     data.m_delayedReply = nullptr;
 }
 
-NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> synchronousReply)
     : m_bytesReceived(0)
     , m_handleConvertedToDownload(false)
     , m_identifier(parameters.identifier)
@@ -97,8 +97,11 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_isLoadingMainResource(parameters.isMainResource)
     , m_defersLoading(parameters.defersLoading)
+    , m_maximumBufferingTime(parameters.maximumBufferingTime)
+    , m_bufferingTimer(this, &NetworkResourceLoader::bufferingTimerFired)
     , m_sandboxExtensionsAreConsumed(false)
     , m_connection(connection)
+    , m_bufferedDataEncodedDataLength(0)
 {
     // Either this loader has both a webPageID and webFrameID, or it is not allowed to ask the client for authentication credentials.
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -127,11 +130,11 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 
     ASSERT(RunLoop::isMain());
     
-    if (reply || parameters.shouldBufferResource)
+    if (synchronousReply || m_maximumBufferingTime > 0_ms)
         m_bufferedData = WebCore::SharedBuffer::create();
 
-    if (reply)
-        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(m_request, reply);
+    if (synchronousReply)
+        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(m_request, synchronousReply);
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
@@ -182,6 +185,8 @@ void NetworkResourceLoader::setDefersLoading(bool defers)
 void NetworkResourceLoader::cleanup()
 {
     ASSERT(RunLoop::isMain());
+
+    m_bufferingTimer.stop();
 
     invalidateSandboxExtensions();
 
@@ -238,13 +243,18 @@ void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* /* data 
     ASSERT_NOT_REACHED();
 }
 
-void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<SharedBuffer> buffer, int encodedDataLength)
+void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<SharedBuffer> buffer, int reportedEncodedDataLength)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
+
+    // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
+    unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer->size();
 
     m_bytesReceived += buffer->size();
     if (m_bufferedData) {
         m_bufferedData->append(buffer.get());
+        m_bufferedDataEncodedDataLength += encodedDataLength;
+        startBufferingTimerIfNeeded();
         return;
     }
     sendBuffer(buffer.get(), encodedDataLength);
@@ -258,7 +268,7 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
         sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
     else {
         if (m_bufferedData && m_bufferedData->size())
-            sendBuffer(m_bufferedData.get(), m_bufferedData->size());
+            sendBuffer(m_bufferedData.get(), -1);
         send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     }
 
@@ -397,6 +407,29 @@ void NetworkResourceLoader::receivedCancellation(ResourceHandle* handle, const A
 
     m_handle->cancel();
     didFail(m_handle.get(), cancelledError(m_request));
+}
+
+void NetworkResourceLoader::startBufferingTimerIfNeeded()
+{
+    if (isSynchronous())
+        return;
+    if (m_bufferingTimer.isActive())
+        return;
+    m_bufferingTimer.startOneShot(m_maximumBufferingTime);
+}
+
+void NetworkResourceLoader::bufferingTimerFired(Timer<NetworkResourceLoader>&)
+{
+    ASSERT(m_bufferedData);
+    ASSERT(m_handle);
+    if (!m_bufferedData->size())
+        return;
+
+    IPC::SharedBufferDataReference dataReference(m_bufferedData.get());
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, m_bufferedDataEncodedDataLength));
+
+    m_bufferedData = WebCore::SharedBuffer::create();
+    m_bufferedDataEncodedDataLength = 0;
 }
 
 void NetworkResourceLoader::sendBuffer(WebCore::SharedBuffer* buffer, int encodedDataLength)

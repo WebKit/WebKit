@@ -63,7 +63,7 @@ public:
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool isMainResource;
     bool defersLoading;
-    bool shouldBufferResource;
+    std::chrono::milliseconds maximumBufferingTime;
 };
 
 } // namespace WebKit

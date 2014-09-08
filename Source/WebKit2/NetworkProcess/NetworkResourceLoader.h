@@ -38,6 +38,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SessionID.h>
+#include <WebCore/Timer.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -161,6 +162,8 @@ private:
     
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
+    void startBufferingTimerIfNeeded();
+    void bufferingTimerFired(WebCore::Timer<NetworkResourceLoader>&);
     void sendBuffer(WebCore::SharedBuffer*, int encodedDataLength);
 
     void consumeSandboxExtensions();
@@ -190,6 +193,9 @@ private:
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool m_isLoadingMainResource;
     bool m_defersLoading;
+    const std::chrono::milliseconds m_maximumBufferingTime;
+
+    WebCore::Timer<NetworkResourceLoader> m_bufferingTimer;
 
     Vector<RefPtr<SandboxExtension>> m_requestBodySandboxExtensions;
     Vector<RefPtr<SandboxExtension>> m_resourceSandboxExtensions;
@@ -199,6 +205,7 @@ private:
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     
     RefPtr<WebCore::SharedBuffer> m_bufferedData;
+    size_t m_bufferedDataEncodedDataLength;
 };
 
 } // namespace WebKit

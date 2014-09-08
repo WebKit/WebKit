@@ -47,7 +47,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
     , isMainResource(false)
     , defersLoading(false)
-    , shouldBufferResource(false)
+    , maximumBufferingTime(0_ms)
 {
 }
 
@@ -95,7 +95,7 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << isMainResource;
     encoder << defersLoading;
-    encoder << shouldBufferResource;
+    encoder << maximumBufferingTime;
 }
 
 bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
@@ -146,7 +146,7 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
         return false;
     if (!decoder.decode(result.defersLoading))
         return false;
-    if (!decoder.decode(result.shouldBufferResource))
+    if (!decoder.decode(result.maximumBufferingTime))
         return false;
 
     return true;

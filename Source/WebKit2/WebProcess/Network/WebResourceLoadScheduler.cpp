@@ -85,6 +85,35 @@ PassRefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginS
     return loader.release();
 }
 
+static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
+{
+    if (!resource)
+        return 0_ms;
+
+    switch (resource->type()) {
+    case CachedResource::CSSStyleSheet:
+    case CachedResource::Script:
+    case CachedResource::FontResource:
+        return std::chrono::milliseconds::max();
+    case CachedResource::ImageResource:
+        return 500_ms;
+    case CachedResource::MainResource:
+    case CachedResource::RawResource:
+    case CachedResource::SVGDocumentResource:
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkSubresource:
+#endif
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::TextTrackResource:
+#endif
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+        return 0_ms;
+    }
+}
+
 void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
     ASSERT(resourceLoader);
@@ -141,7 +170,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;
     loadParameters.defersLoading = resourceLoader->defersLoading();
-    loadParameters.shouldBufferResource = resource && (resource->type() == CachedResource::CSSStyleSheet || resource->type() == CachedResource::Script);
+    loadParameters.maximumBufferingTime = maximumBufferingTime(resource);
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 

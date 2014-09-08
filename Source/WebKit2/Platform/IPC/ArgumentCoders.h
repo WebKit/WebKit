@@ -104,6 +104,22 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {
     }
 };
 
+template<typename Rep, typename Period> struct ArgumentCoder<std::chrono::duration<Rep, Period>> {
+    static void encode(ArgumentEncoder& encoder, const std::chrono::duration<Rep, Period>& duration)
+    {
+        encoder << duration.count();
+    }
+
+    static bool decode(ArgumentDecoder& decoder, std::chrono::duration<Rep, Period>& result)
+    {
+        Rep count;
+        if (!decoder.decode(count))
+            return false;
+        result = std::chrono::duration<Rep, Period>(count);
+        return true;
+    }
+};
+
 template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType>> {
     static void encode(ArgumentEncoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
