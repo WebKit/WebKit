@@ -1,3 +1,12 @@
+2014-09-08  Dan Bernstein  <mitz@apple.com>
+
+        HAVE(VOUCHERS) is not available outside of WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=136637
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h: Moved the definition of HAVE_VOUCHERS from WebKit2’s config.h here.
+
 2014-09-08  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build after r173383, part 2.
