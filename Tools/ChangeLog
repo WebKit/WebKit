@@ -1,3 +1,13 @@
+2014-09-08  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove EWebLauncher from webkitdirs.pm
+        https://bugs.webkit.org/show_bug.cgi?id=136622
+
+        Reviewed by Gyuyoung Kim.
+
+        * Scripts/webkitdirs.pm:
+        (launcherName):
+
 2014-09-06  Sam Weinig  <sam@webkit.org>
 
         XPCPtr should be converted into an all purpose smart pointer for os_objects
