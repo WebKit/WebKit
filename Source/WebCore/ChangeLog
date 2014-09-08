@@ -1,3 +1,25 @@
+2014-09-08  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173344.
+
+    2014-09-05  Tim Horton  <timothy_horton@apple.com>
+
+            Doing a navigation on a non-opaque WKWebView can result in an empty layer tree
+            https://bugs.webkit.org/show_bug.cgi?id=136590
+            <rdar://problem/18234000>
+
+            Reviewed by Simon Fraser.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::setTransparent):
+            Avoid scheduling a compositing layer update if the RenderView isn't the
+            one associated with this FrameView. This can happen during a navigation,
+            before the new Document (and RenderView) is swapped in. This is particularly
+            bad in the case of setTransparent because it is called from Frame::createView,
+            which is right in the middle of that transition window. If we let the compositing
+            layer update go ahead, it can end up detaching the new Document's layer tree,
+            and we have no mechanism that would cause it to reattach.
+
 2014-08-18  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r172213.

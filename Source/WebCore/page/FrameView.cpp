@@ -2548,6 +2548,13 @@ void FrameView::setTransparent(bool isTransparent)
     if (!renderView)
         return;
 
+    // setTransparent can be called in the window between FrameView initialization
+    // and switching in the new Document; this means that the RenderView that we
+    // retrieve is actually attached to the previous Document, which is going away,
+    // and must not update compositing layers.
+    if (&renderView->frameView() != this)
+        return;
+
     RenderLayerCompositor& compositor = renderView->compositor();
     compositor.setCompositingLayersNeedRebuild();
     compositor.scheduleCompositingLayerUpdate();
