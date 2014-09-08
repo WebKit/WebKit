@@ -258,6 +258,29 @@ BuildbotIteration.prototype = {
         var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision" || isMultiCodebaseGotRevisionProperty(property); });
         this.internalRevision = parseRevisionProperty(internalRevisionProperty, "Internal");
 
+        function sourceStampChanges(sourceStamp) {
+            var result = [];
+            var changes = sourceStamp.changes;
+            for (var i = 0; i < changes.length; ++i) {
+                var change = { revisionNumber: parseInt(changes[i].revision, 10) }
+                if (changes[i].repository)
+                    change.repository = changes[i].repository;
+                if (changes[i].branch)
+                    change.branch = changes[i].branch;
+                // There is also a timestamp, but it's not accurate.
+                result.push(change);
+            }
+            return result;
+        }
+
+        // The changes array is generally meaningful for svn triggered queues (such as builders),
+        // but not for internally triggered ones (such as testers), due to coalescing.
+        this.changes = [];
+        if (data.sourceStamp)
+            this.changes = sourceStampChanges(data.sourceStamp);
+        else for (var i = 0; i < data.sourceStamps.length; ++i)
+            this.changes = this.changes.concat(sourceStampChanges(data.sourceStamps[i]));
+
         this.startTime = new Date(data.times[0] * 1000);
         this.endTime = new Date(data.times[1] * 1000);
 

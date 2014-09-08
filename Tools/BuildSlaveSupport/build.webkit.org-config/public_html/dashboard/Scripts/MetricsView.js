@@ -122,15 +122,13 @@ MetricsView.prototype = {
                 addLine(this.element, "Time from commit: ");
                 addLine(this.element, "Average: " + Math.round(result.averageSecondsFromCommit / 60) + " minutes");
                 addLine(this.element, "Median: " + Math.round(result.medianSecondsFromCommit / 60) + " minutes");
-                addLine(this.element, "Best: " + Math.round(result.bestSecondsFromCommit / 60) + " minutes");
-                addLine(this.element, "Worst: " + Math.round(result.worstSecondsFromCommit / 60) + " minutes");
+                addLine(this.element, "Worst: " + Math.round(result.worstSecondsFromCommit / 60) + " minutes (r" + result.revisionWithWorstTimeFromCommit + ")");
             } else {
                 // Time from commit is pretty useless for tester bots.
                 addLine(this.element, "Time on the bot: ");
                 addLine(this.element, "Average: " + Math.round(result.averageSecondsOwnTime / 60) + " minutes");
                 addLine(this.element, "Median: " + Math.round(result.medianSecondsOwnTime / 60) + " minutes");
-                addLine(this.element, "Best: " + Math.round(result.bestSecondsOwnTime / 60) + " minutes");
-                addLine(this.element, "Worst: " + Math.round(result.worstSecondsOwnTime / 60) + " minutes");
+                addLine(this.element, "Worst: " + Math.round(result.worstSecondsOwnTime / 60) + " minutes (r" + result.revisionWithWorstOwnTime + ")");
             }
         }
 

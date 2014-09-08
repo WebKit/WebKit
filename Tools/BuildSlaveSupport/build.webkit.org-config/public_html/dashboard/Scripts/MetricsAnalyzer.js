@@ -54,11 +54,19 @@ Analyzer.prototype = {
 
         this._hasTracData = false;
 
-        this._queues = queues;
+        // A commit can start a build-test sequence, or it can be ignored following builder queue rules.
+        // Only the builder queue knows which commits triggered builds, and which were ignored.
+        // We need to know which commits were ignored when measuring tester queue performance,
+        // so we load and analyze builder queues first.
+        this._queues = queues.slice(0);
+        this._queues.sort(function(a, b) { return b.builder - a.builder; });
+
         this._remainingQueues = {};
         this._queuesReadyToAnalyze = [];
 
-        queues.forEach(function(queue) {
+        this._triggeringCommitsByTriggeringQueue = {};
+
+        this._queues.forEach(function(queue) {
             if (!queue.iterations.length) {
                 this._remainingQueues[queue.id] = queue;
                 if (!this._queueBeingLoaded) {
@@ -67,9 +75,39 @@ Analyzer.prototype = {
                 }
             } else
                 this._queuesReadyToAnalyze.push(queue);
-        }.bind(this));
+        }, this);
 
         webkitTrac.load(this._rangeStartTime, this._rangeEndTime);
+    },
+
+    _triggeringQueue: function(queue)
+    {
+        if (queue.builder)
+            return queue;
+        for (var i = 0; i < this._queues.length; ++i) {
+            if (this._queues[i].tester)
+                continue;
+            if (this._queues[i].platform === queue.platform && this._queues[i].architecture === queue.architecture && this._queues[i].debug === queue.debug)
+                return this._queues[i];
+        }
+        // Efl bot both builds and tests, but is registered as tester.
+        return queue;
+    },
+
+    _recordTriggeringCommitsForTriggeringQueue: function(queue)
+    {
+        console.assert(!(queue.id in this._triggeringCommitsByTriggeringQueue));
+        console.assert(queue.id === this._triggeringQueue(queue).id);
+
+        var commits = {};
+        queue.iterations.forEach(function(iteration) {
+            iteration.changes.forEach(function(change) {
+                // FIXME: Support multiple source trees.
+                commits[change.revisionNumber] = 1;
+            });
+        });
+
+        this._triggeringCommitsByTriggeringQueue[queue.id] = commits;
     },
 
     // Iterations is an array of finished iterations ordered by time, iterations[0] being the newest.
@@ -144,7 +182,7 @@ Analyzer.prototype = {
                 var i = queueIterations.length - 1;
             while (i >= 0 && queueIterations[i].endTime <= this._rangeEndTime)
                 iterations.push(queueIterations[i--]);
-        }.bind(this));
+        }, this);
 
         iterations.sort(function(a, b) { return b.endTime - a.endTime; });
 
@@ -207,102 +245,75 @@ Analyzer.prototype = {
         }
     },
 
-    _fullyTestedRevisionNumber: function(lastTestedRevisionByQueue)
-    {
-        var result = Infinity;
-        this._queues.forEach(function(queue) {
-            if (lastTestedRevisionByQueue[queue.id] < result)
-                result = lastTestedRevisionByQueue[queue.id];
-        });
-        return result;
-    },
-
     _countTimes: function(queues, result)
     {
-        // Combine all iterations that started and finished within the range into one array.
-        // These are the iterations that can have results for revisions in the range.
-        var iterationsByRevision = [];
+        var relevantIterationsByQueue = {};
         queues.forEach(function(queue) {
-            iterationsByRevision = iterationsByRevision.concat(queue.iterations.filter(function(iteration) {
+            relevantIterationsByQueue[queue.id] = queue.iterations.filter(function(iteration) {
                 return iteration.productive && iteration.startTime > this._rangeStartTime && iteration.endTime < this._rangeEndTime;
-            }.bind(this)));
-        }.bind(this));
-        iterationsByRevision.sort(function(a, b) { return a.endTime - b.endTime; }); // When there are multiple iterations building the same revision, the first one wins (as the other ones were probably manual retries).
-        iterationsByRevision.sort(function(a, b) { return a.openSourceRevision - b.openSourceRevision; });
-
-        // Revisions that landed within the time range.
-        var revisions = webkitTrac.recordedCommits.reduce(function(result, revision) {
-            if (revision.date >= this._rangeStartTime && revision.date < this._rangeEndTime)
-                result[revision.revisionNumber] = revision;
-            return result;
-        }.bind(this), {});
-
-        // Find the oldest iteration for each queue. Revisions landed before a new bot was added are considered fully tested
-        // even without results from the not yet existent bot.
-        // Unfortunately, we don't know when the bot got added to dashboard, so we have to assume that it was there for as long as it had results.
-        var lastTestedRevisionByQueue = {};
-        queues.forEach(function(queue) {
-            var queueIterations = queue.iterations.filter(function(iteration) { return iteration.finished; });
-            queueIterations.sort(function(a, b) { return b.endTime - a.endTime; });
-            if (queueIterations.length > 0)
-                lastTestedRevisionByQueue[queue.id] = queueIterations[queueIterations.length - 1].openSourceRevision;
-        });
-
-        var previousFullyTestedRevisionNumber = -1;
-
-        for (var i = 0; i < iterationsByRevision.length; ++i) {
-            var iteration = iterationsByRevision[i];
-
-            console.assert(lastTestedRevisionByQueue[iteration.queue.id] === undefined || lastTestedRevisionByQueue[iteration.queue.id] <= iteration.openSourceRevision);
-            lastTestedRevisionByQueue[iteration.queue.id] = iteration.openSourceRevision;
-
-            var newFullyTestedRevisionNumber = this._fullyTestedRevisionNumber(lastTestedRevisionByQueue);
-            console.assert(newFullyTestedRevisionNumber >= previousFullyTestedRevisionNumber);
-
-            if (newFullyTestedRevisionNumber === previousFullyTestedRevisionNumber)
-                continue;
-
-            for (var revisionNumber = newFullyTestedRevisionNumber; (revisionNumber > previousFullyTestedRevisionNumber) && (revisionNumber in revisions); --revisionNumber) {
-                var revision = revisions[revisionNumber];
-                console.assert(!("elapsedTime" in revision));
-                revision.elapsedTime = iteration.endTime - revision.date;
-                revision.elapsedOwnTime = iteration.endTime - iteration.startTime;
-            }
-
-            previousFullyTestedRevisionNumber = newFullyTestedRevisionNumber;
-        }
+            }, this);
+            relevantIterationsByQueue[queue.id].sort(function(a, b) { return a.endTime - b.endTime; });
+        }, this);
 
         var times = [];
         var ownTimes = [];
-        for (var revisionNumber in revisions) {
-            var revision = revisions[revisionNumber];
-            if (!("elapsedTime" in revision)) {
-                // A revision that landed within the time range didn't necessarily get all results by the range end.
-                continue;
+        var worstTime = 0;
+        var worstOwnTime = 0
+        var worstTimeRevision;
+        var worstOwnTimeRevision;
+
+        webkitTrac.recordedCommits.forEach(function(revision) {
+            if (revision.date < this._rangeStartTime || revision.date >= this._rangeEndTime)
+                return;
+
+            var endTime = -1;
+            var ownTime = -1;
+            queues.forEach(function(queue) {
+                if (!(revision.revisionNumber in this._triggeringCommitsByTriggeringQueue[this._triggeringQueue(queue).id]))
+                    return;
+                for (var i = 0; i < relevantIterationsByQueue[queue.id].length; ++i) {
+                    var iteration = relevantIterationsByQueue[queue.id][i];
+                    if (iteration.openSourceRevision >= revision.revisionNumber) {
+                        endTime = Math.max(endTime, iteration.endTime);
+                        ownTime = Math.max(ownTime, iteration.endTime - iteration.startTime);
+                        break;
+                    }
+                }
+            }, this);
+            if (endTime >= 0) {
+                console.assert(ownTime >= 0);
+                var time = endTime - revision.date;
+                times.push(time);
+                ownTimes.push(ownTime);
+                if (time > worstTime) {
+                    worstTime = time;
+                    worstTimeCommit = revision.revisionNumber;
+                }
+                if (ownTime > worstOwnTime) {
+                    worstOwnTime = ownTime;
+                    worstOwnTimeCommit = revision.revisionNumber;
+                }
             }
-            // Changes on other branches are irrelevant, as they are not built or tested.
-            // FIXME: Support metrics for non-trunk queues.
-            if (!revision.containsBranchLocation || revision.branch === "trunk") {
-                times.push(revision.elapsedTime);
-                ownTimes.push(revision.elapsedOwnTime);
-            }
-            delete revision.elapsedTime;
-            delete revision.elapsedOwnTime;
-        }
+        }, this);
 
         result.averageSecondsFromCommit = times.average() / 1000;
         result.medianSecondsFromCommit = times.median() / 1000;
-        result.bestSecondsFromCommit = Math.min.apply(Math, times) / 1000;
-        result.worstSecondsFromCommit = Math.max.apply(Math, times) / 1000;
+        console.assert(worstTime === Math.max.apply(Math, times));
+        result.worstSecondsFromCommit = worstTime / 1000;
+        result.revisionWithWorstTimeFromCommit = worstTimeCommit;
 
         result.averageSecondsOwnTime = ownTimes.average() / 1000;
         result.medianSecondsOwnTime = ownTimes.median() / 1000;
-        result.bestSecondsOwnTime = Math.min.apply(Math, ownTimes) / 1000;
-        result.worstSecondsOwnTime = Math.max.apply(Math, ownTimes) / 1000;
+        result.worstSecondsOwnTime = worstOwnTime / 1000;
+        console.assert(worstOwnTime === Math.max.apply(Math, ownTimes));
+        result.revisionWithWorstOwnTime = worstOwnTimeCommit;
     },
 
     _analyzeQueue: function(queue)
     {
+        if (this._triggeringQueue(queue).id === queue.id && !(queue.id in this._triggeringCommitsByTriggeringQueue))
+            this._recordTriggeringCommitsForTriggeringQueue(queue);
+
         var result = { queueID: queue.id };
         this._countPercentageOfGreen([queue], result);
         this._countTimes([queue], result);
@@ -331,7 +342,7 @@ Analyzer.prototype = {
 
         this._queuesReadyToAnalyze.forEach(function(queue) {
             this._analyzeQueue(queue);
-        }.bind(this));
+        }, this);
 
         this._queuesReadyToAnalyze = [];
 

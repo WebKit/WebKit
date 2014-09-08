@@ -1,3 +1,29 @@
+2014-09-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Dashboard metrics should ignore commits that didn't trigger builds
+        https://bugs.webkit.org/show_bug.cgi?id=136618
+
+        Reviewed by Darin Adler.
+
+        Commits that didn't trigger builds are ones like ChangeLog updates, patches for
+        other platforms etc. It does not make sense to count wait time for these, as it
+        can be arbitrarily long.
+
+        The new algorithm is much slower asymptotically, but it's OK, computers are fast.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._parseData): Record changes that triggered the iteration.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js:
+        We used to walk the timeline to see which revisions are fully tested, but that's not
+        correct. A revision that's only tested by a subset of queues finishes independently
+        of another that's tested by another subset. Now, we just search for the answer for
+        each revision individually.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsView.js:
+        (MetricsView.prototype._update.appendQueueResults): Added worst revision number, which
+        the analyzer now reports. Removed best time, which is more confusing than meaningful.
+
 2014-09-08  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
 
         Remove EWebLauncher from webkitdirs.pm
