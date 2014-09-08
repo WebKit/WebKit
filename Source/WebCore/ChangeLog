@@ -1,3 +1,26 @@
+2014-09-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toBasicShapeFoo() instead of static_cast<BasicShapeFoo*>
+        https://bugs.webkit.org/show_bug.cgi?id=136609
+
+        Reviewed by Darin Adler.
+
+        To use BasicShapeFoo() helps to detect wrong type casting and improve code readability.
+
+        No new tests, no behavior changes.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+        (WebCore::BasicShapeCircle::blend):
+        (WebCore::BasicShapeEllipse::blend):
+        (WebCore::BasicShapePolygon::blend):
+        (WebCore::BasicShapeInset::blend):
+        * rendering/style/BasicShapes.h:
+
 2014-09-06  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Add a site-specific hack to work around "flash on exit" behavior of YouTube.com.

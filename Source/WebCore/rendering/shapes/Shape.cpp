@@ -102,7 +102,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
     switch (basicShape->type()) {
 
     case BasicShape::BasicShapeCircleType: {
-        const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
+        const BasicShapeCircle* circle = toBasicShapeCircle(basicShape);
         float centerX = floatValueForCenterCoordinate(circle->centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(circle->centerY(), boxHeight);
         float radius = circle->floatValueForRadiusInBox(boxWidth, boxHeight);
@@ -113,7 +113,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
     }
 
     case BasicShape::BasicShapeEllipseType: {
-        const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
+        const BasicShapeEllipse* ellipse = toBasicShapeEllipse(basicShape);
         float centerX = floatValueForCenterCoordinate(ellipse->centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(ellipse->centerY(), boxHeight);
         float radiusX = ellipse->floatValueForRadiusInBox(ellipse->radiusX(), centerX, boxWidth);
@@ -125,7 +125,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
     }
 
     case BasicShape::BasicShapePolygonType: {
-        const BasicShapePolygon& polygon = *static_cast<const BasicShapePolygon*>(basicShape);
+        const BasicShapePolygon& polygon = *toBasicShapePolygon(basicShape);
         const Vector<Length>& values = polygon.values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
@@ -142,7 +142,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape* basicShape, const La
     }
 
     case BasicShape::BasicShapeInsetType: {
-        const BasicShapeInset& inset = *static_cast<const BasicShapeInset*>(basicShape);
+        const BasicShapeInset& inset = *toBasicShapeInset(basicShape);
         float left = floatValueForLength(inset.left(), boxWidth);
         float top = floatValueForLength(inset.top(), boxHeight);
         FloatRect rect(left,

@@ -71,7 +71,7 @@ PassRef<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicShape*
     RefPtr<CSSBasicShape> basicShapeValue;
     switch (basicShape->type()) {
     case BasicShape::BasicShapeCircleType: {
-        const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
+        const BasicShapeCircle* circle = toBasicShapeCircle(basicShape);
         RefPtr<CSSBasicShapeCircle> circleValue = CSSBasicShapeCircle::create();
 
         circleValue->setCenterX(valueForCenterCoordinate(pool, style, circle->centerX(), HORIZONTAL));
@@ -81,7 +81,7 @@ PassRef<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicShape*
         break;
     }
     case BasicShape::BasicShapeEllipseType: {
-        const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
+        const BasicShapeEllipse* ellipse = toBasicShapeEllipse(basicShape);
         RefPtr<CSSBasicShapeEllipse> ellipseValue = CSSBasicShapeEllipse::create();
 
         ellipseValue->setCenterX(valueForCenterCoordinate(pool, style, ellipse->centerX(), HORIZONTAL));
@@ -92,7 +92,7 @@ PassRef<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicShape*
         break;
     }
     case BasicShape::BasicShapePolygonType: {
-        const BasicShapePolygon* polygon = static_cast<const BasicShapePolygon*>(basicShape);
+        const BasicShapePolygon* polygon = toBasicShapePolygon(basicShape);
         RefPtr<CSSBasicShapePolygon> polygonValue = CSSBasicShapePolygon::create();
 
         polygonValue->setWindRule(polygon->windRule());
@@ -104,7 +104,7 @@ PassRef<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicShape*
         break;
     }
     case BasicShape::BasicShapeInsetType: {
-        const BasicShapeInset* inset = static_cast<const BasicShapeInset*>(basicShape);
+        const BasicShapeInset* inset = toBasicShapeInset(basicShape);
         RefPtr<CSSBasicShapeInset> insetValue = CSSBasicShapeInset::create();
 
         insetValue->setTop(pool.createValue(inset->top(), style));

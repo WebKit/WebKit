@@ -64,6 +64,9 @@ public:
     virtual Type type() const = 0;
 };
 
+#define BASIC_SHAPES_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, BasicShape, basicShape, basicShape->type() == predicate, basicShape.type() == predicate)
+
 class BasicShapeCenterCoordinate {
 public:
     enum Direction {
@@ -169,6 +172,8 @@ private:
     BasicShapeRadius m_radius;
 };
 
+BASIC_SHAPES_TYPE_CASTS(BasicShapeCircle, BasicShape::BasicShapeCircleType)
+
 class BasicShapeEllipse : public BasicShape {
 public:
     static PassRefPtr<BasicShapeEllipse> create() { return adoptRef(new BasicShapeEllipse); }
@@ -197,6 +202,8 @@ private:
     BasicShapeRadius m_radiusY;
 };
 
+BASIC_SHAPES_TYPE_CASTS(BasicShapeEllipse, BasicShape::BasicShapeEllipseType)
+
 class BasicShapePolygon : public BasicShape {
 public:
     static PassRefPtr<BasicShapePolygon> create() { return adoptRef(new BasicShapePolygon); }
@@ -222,6 +229,8 @@ private:
     WindRule m_windRule;
     Vector<Length> m_values;
 };
+
+BASIC_SHAPES_TYPE_CASTS(BasicShapePolygon, BasicShape::BasicShapePolygonType)
 
 class BasicShapeInset : public BasicShape {
 public:
@@ -264,6 +273,8 @@ private:
     LengthSize m_bottomRightRadius;
     LengthSize m_bottomLeftRadius;
 };
+
+BASIC_SHAPES_TYPE_CASTS(BasicShapeInset, BasicShape::BasicShapeInsetType)
 
 }
 #endif
