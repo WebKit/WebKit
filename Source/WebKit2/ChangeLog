@@ -1,3 +1,10 @@
+2014-09-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS build.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+
 2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove FILTERS flag

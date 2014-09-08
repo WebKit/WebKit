@@ -32,6 +32,7 @@
 #import <stdio.h>
 #import <stdlib.h>
 #import <wtf/OSObjectPtr.h>
+#import <xpc/xpc.h>
 
 namespace WebKit {
 
