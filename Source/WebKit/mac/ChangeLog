@@ -1,3 +1,10 @@
+2014-09-08  Jessie Berlin  <jberlin@apple.com>
+
+        32-bit build fix after r173364.
+
+        * Carbon/HIViewAdapter.m:
+        (+[HIViewAdapter bindHIViewToNSView:nsView:]):
+
 2014-09-08  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

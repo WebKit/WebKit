@@ -46,9 +46,9 @@ static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean in
 
 static CFMutableDictionaryRef sViewMap;
 
-static IMP oldNSViewSetNeedsDisplayIMP;
-static IMP oldNSViewSetNeedsDisplayInRectIMP;
-static IMP oldNSViewNextValidKeyViewIMP;
+static void (*oldNSViewSetNeedsDisplayIMP)(id, SEL, BOOL);
+static void (*oldNSViewSetNeedsDisplayInRectIMP)(id, SEL, NSRect);
+static NSView *(*oldNSViewNextValidKeyViewIMP)(id, SEL);
 
 static void _webkit_NSView_setNeedsDisplay(id self, SEL _cmd, BOOL flag);
 static void _webkit_NSView_setNeedsDisplayInRect(id self, SEL _cmd, NSRect invalidRect);
@@ -63,19 +63,19 @@ static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
         Method setNeedsDisplayMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplay:));
         ASSERT(setNeedsDisplayMethod);
         ASSERT(!oldNSViewSetNeedsDisplayIMP);
-        oldNSViewSetNeedsDisplayIMP = method_setImplementation(setNeedsDisplayMethod, (IMP)_webkit_NSView_setNeedsDisplay);
+        oldNSViewSetNeedsDisplayIMP = (void (*)(id, SEL, BOOL))(method_setImplementation(setNeedsDisplayMethod, (IMP)(_webkit_NSView_setNeedsDisplay)));
 
         // Override -[NSView setNeedsDisplayInRect:]
         Method setNeedsDisplayInRectMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplayInRect:));
         ASSERT(setNeedsDisplayInRectMethod);
         ASSERT(!oldNSViewSetNeedsDisplayInRectIMP);
-        oldNSViewSetNeedsDisplayInRectIMP = method_setImplementation(setNeedsDisplayInRectMethod, (IMP)_webkit_NSView_setNeedsDisplayInRect);
+        oldNSViewSetNeedsDisplayInRectIMP = (void (*)(id, SEL, NSRect))(method_setImplementation(setNeedsDisplayInRectMethod, (IMP)(_webkit_NSView_setNeedsDisplayInRect)));
 
         // Override -[NSView nextValidKeyView]
         Method nextValidKeyViewMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(nextValidKeyView));
         ASSERT(nextValidKeyViewMethod);
         ASSERT(!oldNSViewNextValidKeyViewIMP);
-        oldNSViewNextValidKeyViewIMP = method_setImplementation(nextValidKeyViewMethod, (IMP)_webkit_NSView_nextValidKeyView);
+        oldNSViewNextValidKeyViewIMP = (NSView *(*)(id, SEL))(method_setImplementation(nextValidKeyViewMethod, (IMP)(_webkit_NSView_nextValidKeyView)));
     }
 
     CFDictionaryAddValue(sViewMap, nsView, hiView);
