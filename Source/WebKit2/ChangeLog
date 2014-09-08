@@ -1,3 +1,9 @@
+2014-09-08  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * Platform/IPC/Connection.h:
+
 2014-09-06  Sam Weinig  <sam@webkit.org>
 
         XPCPtr should be converted into an all purpose smart pointer for os_objects

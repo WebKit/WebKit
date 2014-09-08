@@ -1,3 +1,10 @@
+2014-09-08  Dan Bernstein  <mitz@apple.com>
+
+        iOS Simulator build fix.
+
+        * Misc/WebKitSystemBits.m:
+        (WebMemorySize):
+
 2014-09-07  Darin Adler  <darin@apple.com>
 
         Fix build failure seen on Mountain Lion buildbot.

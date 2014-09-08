@@ -42,6 +42,7 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
+#include <xpc/xpc.h>
 #include <wtf/OSObjectPtr.h>
 #endif
 

@@ -36,6 +36,8 @@
 #import <sys/types.h>
 #import <wtf/Assertions.h>
 
+#if !PLATFORM(IOS_SIMULATOR)
+
 static host_basic_info_data_t gHostBasicInfo;
 static pthread_once_t initControl = PTHREAD_ONCE_INIT;
 
@@ -55,12 +57,14 @@ static void initCapabilities(void)
     }
 }
 
+#endif
+
 uint64_t WebMemorySize(void)
 {
 #if PLATFORM(IOS_SIMULATOR)
     // Pretend we have 512MB of memory to make cache sizes behave like on device
     return 512 * 1024 * 1024;
-#endif
+#else
     pthread_once(&initControl, initCapabilities);
 #if PLATFORM(IOS)
     // On iOS, round up the memory size to a power of 2 because max_mem may not be exactly 256MB
@@ -68,6 +72,7 @@ uint64_t WebMemorySize(void)
     return powf(2.0, ceilf(log2f(gHostBasicInfo.max_mem)));
 #else
     return gHostBasicInfo.max_mem;
+#endif
 #endif
 }
 
