@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #import <CoreFoundation/CoreFoundation.h>
 #import <wtf/OSObjectPtr.h>
 
