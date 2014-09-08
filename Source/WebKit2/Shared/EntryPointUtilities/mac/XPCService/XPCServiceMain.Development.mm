@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #import <crt_externs.h>
 #import <dlfcn.h>
 #import <mach-o/dyld.h>

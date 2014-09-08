@@ -1,5 +1,12 @@
 2014-09-08  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the build after r173383, part 4.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        Machine finally caught up so I could actually test the fixes!
+
+2014-09-08  Tim Horton  <timothy_horton@apple.com>
+
         Try to fix the build after r173383, part 3.
 
         * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
