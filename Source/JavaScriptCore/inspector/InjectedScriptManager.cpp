@@ -37,6 +37,7 @@
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
 #include "InspectorValues.h"
+#include "JSCInlines.h"
 #include "JSInjectedScriptHost.h"
 #include "JSLock.h"
 #include "ScriptObject.h"

@@ -1,3 +1,39 @@
+2014-09-05  Mark Lam  <mark.lam@apple.com>
+
+        Move CallFrame and Register inlines functions out of JSScope.h.
+        <https://webkit.org/b/136579>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Added #include of the appropriate *Inlines.h files.  Unlike in
+        JavaScriptCore, I #include'd the specific needed *Inlines.h instead of
+        JSCInlines.h.  This is done to minimize the need for WebCore to be
+        rebuilt when JSC changes are introduced.
+
+        * ForwardingHeaders/interpreter/RegisterInlines.h: Added.
+        * bindings/js/JSAudioBufferSourceNodeCustom.cpp:
+        * bindings/js/JSAudioTrackCustom.cpp:
+        * bindings/js/JSBiquadFilterNodeCustom.cpp:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMStringListCustom.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/js/JSOscillatorNodeCustom.cpp:
+        * bindings/js/JSPannerNodeCustom.cpp:
+        * bindings/js/JSPopStateEventCustom.cpp:
+        * dom/TreeWalker.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * inspector/CommandLineAPIModule.cpp:
+        * inspector/InspectorController.cpp:
+
 2014-09-08  Dean Jackson  <dino@apple.com>
 
         Separate the Apple media controls module from other ports

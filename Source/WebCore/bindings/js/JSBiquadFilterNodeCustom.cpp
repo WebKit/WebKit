@@ -30,6 +30,8 @@
 
 #include "BiquadFilterNode.h"
 #include "ExceptionCode.h"
+#include <interpreter/CallFrameInlines.h>
+#include <interpreter/RegisterInlines.h>
 #include <runtime/Error.h>
 #include <runtime/JSCJSValueInlines.h>
 

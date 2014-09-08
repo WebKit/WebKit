@@ -225,33 +225,6 @@ inline VM* JSScope::vm()
     return MarkedBlock::blockFor(this)->vm();
 }
 
-inline Register& Register::operator=(JSScope* scope)
-{
-    *this = JSValue(scope);
-    return *this;
-}
-
-inline JSScope* Register::scope() const
-{
-    return jsCast<JSScope*>(jsValue());
-}
-
-inline VM& ExecState::vm() const
-{
-    ASSERT(scope()->vm());
-    return *scope()->vm();
-}
-
-inline JSGlobalObject* ExecState::lexicalGlobalObject() const
-{
-    return scope()->globalObject();
-}
-
-inline JSObject* ExecState::globalThisValue() const
-{
-    return scope()->globalThis();
-}
-
 inline size_t JSScope::offsetOfNext()
 {
     return OBJECT_OFFSETOF(JSScope, m_next);

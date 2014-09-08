@@ -26,11 +26,8 @@
 #include "config.h"
 #include "JSMapIterator.h"
 
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSMap.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

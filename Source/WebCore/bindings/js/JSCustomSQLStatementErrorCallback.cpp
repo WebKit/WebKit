@@ -35,6 +35,7 @@
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
 #include "ScriptExecutionContext.h"
+#include <interpreter/CallFrameInlines.h>
 #include <runtime/JSLock.h>
 #include <wtf/Ref.h>
 

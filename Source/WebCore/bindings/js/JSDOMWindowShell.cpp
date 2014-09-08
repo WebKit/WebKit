@@ -35,6 +35,7 @@
 #include "DOMWindow.h"
 #include "ScriptController.h"
 #include <heap/StrongInlines.h>
+#include <interpreter/CallFrameInlines.h>
 #include <runtime/JSObject.h>
 
 using namespace JSC;

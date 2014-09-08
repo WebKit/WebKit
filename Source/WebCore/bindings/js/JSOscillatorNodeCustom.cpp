@@ -30,6 +30,8 @@
 
 #include "ExceptionCode.h"
 #include "OscillatorNode.h"
+#include <interpreter/CallFrameInlines.h>
+#include <interpreter/RegisterInlines.h>
 #include <runtime/Error.h>
 #include <runtime/JSCJSValueInlines.h>
 

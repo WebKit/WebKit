@@ -41,6 +41,7 @@
 #include "JSMainThreadExecState.h"
 #include "SegmentedString.h"
 #include "DocumentParser.h"
+#include <interpreter/CallFrameInlines.h>
 #include <runtime/Error.h>
 #include <runtime/JSCell.h>
 #include <wtf/unicode/CharacterNames.h>

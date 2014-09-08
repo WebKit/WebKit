@@ -29,12 +29,11 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "NumberObject.h"
-#include "StructureInlines.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 

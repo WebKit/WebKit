@@ -26,11 +26,8 @@
 #include "config.h"
 #include "JSSetIterator.h"
 
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSSet.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 
 namespace JSC {
 

@@ -44,6 +44,8 @@
 #include "Storage.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorValues.h>
+#include <interpreter/CallFrameInlines.h>
+#include <interpreter/RegisterInlines.h>
 #include <parser/SourceCode.h>
 #include <runtime/IdentifierInlines.h>
 #include <runtime/JSArray.h>

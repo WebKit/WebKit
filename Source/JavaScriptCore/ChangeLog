@@ -1,3 +1,58 @@
+2014-09-08  Mark Lam  <mark.lam@apple.com>
+
+        Move CallFrame and Register inlines functions out of JSScope.h.
+        <https://webkit.org/b/136579>
+
+        Reviewed by Geoffrey Garen.
+
+        This include fixing up some files to #include JSCInlines.h to pick up
+        these inline functions.  I also added JSCellInlines.h to JSCInlines.h
+        since it is included from many of the affected .cpp files.
+
+        * API/ObjCCallbackFunction.mm:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptValue.cpp:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/ScriptDebugServer.cpp:
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::vm):
+        (JSC::CallFrame::lexicalGlobalObject):
+        (JSC::CallFrame::globalThisValue):
+        * interpreter/RegisterInlines.h: Added.
+        (JSC::Register::operator=):
+        (JSC::Register::scope):
+        * runtime/ArgumentsIteratorConstructor.cpp:
+        * runtime/JSArrayIterator.cpp:
+        * runtime/JSCInlines.h:
+        * runtime/JSCJSValue.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromiseDeferred.cpp:
+        * runtime/JSPromiseFunctions.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPromiseReaction.cpp:
+        * runtime/JSScope.h:
+        (JSC::Register::operator=): Deleted.
+        (JSC::Register::scope): Deleted.
+        (JSC::ExecState::vm): Deleted.
+        (JSC::ExecState::lexicalGlobalObject): Deleted.
+        (JSC::ExecState::globalThisValue): Deleted.
+        * runtime/JSSetIterator.cpp:
+        * runtime/MapConstructor.cpp:
+        * runtime/MapData.cpp:
+        * runtime/MapIteratorPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/SetIteratorPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapPrototype.cpp:
+
 2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove FILTERS flag

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ArgumentsIteratorConstructor.h"
+#ifndef RegisterInlines_h
+#define RegisterInlines_h
 
-#include "ArgumentsIteratorPrototype.h"
-#include "JSArgumentsIterator.h"
-#include "JSCInlines.h"
-#include "JSGlobalObject.h"
+#include "JSScope.h"
+#include "Register.h"
 
 namespace JSC {
 
-const ClassInfo ArgumentsIteratorConstructor::s_info = { "ArgumentsIterator", &Base::s_info, 0, CREATE_METHOD_TABLE(ArgumentsIteratorConstructor) };
-
-void ArgumentsIteratorConstructor::finishCreation(VM& vm, ArgumentsIteratorPrototype* prototype)
+inline Register& Register::operator=(JSScope* scope)
 {
-    Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
+    *this = JSValue(scope);
+    return *this;
 }
 
+inline JSScope* Register::scope() const
+{
+    return jsCast<JSScope*>(jsValue());
 }
+
+} // namespace JSC
+
+#endif // Register_h
