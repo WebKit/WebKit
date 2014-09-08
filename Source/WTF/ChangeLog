@@ -1,5 +1,11 @@
 2014-09-08  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the build after r173383, part 2.
+
+        * wtf/OSObjectPtr.h:
+
+2014-09-08  Tim Horton  <timothy_horton@apple.com>
+
         Try to fix the build after r173383.
 
         * wtf/OSObjectPtr.h:
