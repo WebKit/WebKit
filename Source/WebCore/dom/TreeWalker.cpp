@@ -29,8 +29,6 @@
 #include "ContainerNode.h"
 #include "NodeTraversal.h"
 
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/RegisterInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
 namespace WebCore {

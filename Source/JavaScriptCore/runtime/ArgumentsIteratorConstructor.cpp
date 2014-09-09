@@ -28,8 +28,10 @@
 
 #include "ArgumentsIteratorPrototype.h"
 #include "JSArgumentsIterator.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSGlobalObject.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

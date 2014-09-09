@@ -2228,9 +2228,6 @@
     <ClInclude Include="..\interpreter\Register.h">
       <Filter>interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="..\interpreter\RegisterInlines.h">
-      <Filter>interpreter</Filter>
-    </ClInclude>
     <ClInclude Include="..\interpreter\StackVisitor.h">
       <Filter>interpreter</Filter>
     </ClInclude>

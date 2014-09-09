@@ -28,7 +28,6 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "JSScope.h"
 
 namespace JSC  {
 
@@ -146,22 +145,6 @@ inline JSValue CallFrame::uncheckedActivation() const
     RELEASE_ASSERT(codeBlock->needsActivation());
     VirtualRegister activationRegister = codeBlock->activationRegister();
     return registers()[activationRegister.offset()].jsValue();
-}
-
-inline VM& CallFrame::vm() const
-{
-    ASSERT(scope()->vm());
-    return *scope()->vm();
-}
-
-inline JSGlobalObject* CallFrame::lexicalGlobalObject() const
-{
-    return scope()->globalObject();
-}
-
-inline JSObject* CallFrame::globalThisValue() const
-{
-    return scope()->globalThis();
 }
 
 } // namespace JSC

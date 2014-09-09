@@ -29,10 +29,12 @@
 #if ENABLE(PROMISES)
 
 #include "Error.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSPromiseDeferred.h"
 #include "Microtask.h"
+#include "SlotVisitorInlines.h"
 #include "StrongInlines.h"
 
 namespace JSC {

@@ -27,10 +27,12 @@
 #include "MapConstructor.h"
 
 #include "Error.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSMap.h"
 #include "MapPrototype.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

@@ -52,7 +52,6 @@
 #include "SubframeLoader.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSBase.h>
-#include <interpreter/CallFrameInlines.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 

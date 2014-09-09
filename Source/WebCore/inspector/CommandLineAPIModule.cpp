@@ -32,8 +32,6 @@
 #include "JSCommandLineAPIHost.h"
 #include "WebInjectedScriptManager.h"
 #include <inspector/InjectedScript.h>
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/RegisterInlines.h>
 
 using namespace JSC;
 using namespace Inspector;

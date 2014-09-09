@@ -32,8 +32,8 @@
 
 #include "APICast.h"
 #include "InspectorValues.h"
-#include "JSCInlines.h"
 #include "JSLock.h"
+#include "StructureInlines.h"
 
 using namespace JSC;
 using namespace Inspector;

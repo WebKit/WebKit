@@ -34,7 +34,6 @@
 #include "ScriptController.h"
 #include "SVGDocument.h"
 #include "TouchList.h"
-#include <interpreter/CallFrameInlines.h>
 #include <wtf/GetPtr.h>
 
 #if ENABLE(WEBGL)

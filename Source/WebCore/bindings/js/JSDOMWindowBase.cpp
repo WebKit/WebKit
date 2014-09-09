@@ -36,7 +36,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
-#include <interpreter/CallFrameInlines.h>
 #include <runtime/Microtask.h>
 #include <wtf/MainThread.h>
 

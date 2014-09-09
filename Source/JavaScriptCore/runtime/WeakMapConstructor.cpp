@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WeakMapConstructor.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSWeakMap.h"
+#include "StructureInlines.h"
 #include "WeakMapPrototype.h"
 
 namespace JSC {

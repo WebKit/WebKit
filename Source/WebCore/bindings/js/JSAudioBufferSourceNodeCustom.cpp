@@ -32,8 +32,6 @@
 #include "AudioBuffer.h"
 #include "AudioBufferSourceNode.h"
 #include "JSAudioBuffer.h"
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/RegisterInlines.h>
 #include <runtime/Error.h>
 #include <runtime/JSCJSValueInlines.h>
 

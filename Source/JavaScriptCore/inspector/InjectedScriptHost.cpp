@@ -28,7 +28,6 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "JSCInlines.h"
 #include "JSInjectedScriptHost.h"
 
 using namespace JSC;

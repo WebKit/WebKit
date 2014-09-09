@@ -33,8 +33,6 @@
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/RegisterInlines.h>
 
 using namespace JSC;
 

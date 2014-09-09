@@ -34,8 +34,6 @@
 #include <heap/SlotVisitorInlines.h>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/RegisterInlines.h>
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSArrayBuffer.h>

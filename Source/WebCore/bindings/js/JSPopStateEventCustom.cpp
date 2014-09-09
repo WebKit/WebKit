@@ -32,8 +32,6 @@
 #include "JSPopStateEvent.h"
 
 #include "JSHistory.h"
-#include <interpreter/CallFrameInlines.h>
-#include <interpreter/RegisterInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
 using namespace JSC;

@@ -26,8 +26,10 @@
 #include "config.h"
 #include "MapIteratorPrototype.h"
 
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSMapIterator.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

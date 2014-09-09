@@ -30,10 +30,12 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "JSFunctionInlines.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "MapData.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

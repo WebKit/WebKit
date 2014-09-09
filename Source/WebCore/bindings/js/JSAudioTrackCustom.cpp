@@ -30,7 +30,6 @@
 #include "JSAudioTrack.h"
 
 #include "JSTrackCustom.h"
-#include <interpreter/CallFrameInlines.h>
 
 using namespace JSC;
 

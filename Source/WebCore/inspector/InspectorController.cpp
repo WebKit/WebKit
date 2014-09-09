@@ -72,7 +72,6 @@
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorBackendDispatcher.h>
 #include <inspector/agents/InspectorAgent.h>
-#include <interpreter/CallFrameInlines.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;

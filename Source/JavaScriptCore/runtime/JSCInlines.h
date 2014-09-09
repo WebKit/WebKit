@@ -45,12 +45,10 @@
 #include "Interpreter.h"
 #include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSProxy.h"
 #include "JSString.h"
 #include "Operations.h"
-#include "RegisterInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 
