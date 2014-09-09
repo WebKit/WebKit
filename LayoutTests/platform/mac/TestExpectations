@@ -636,9 +636,6 @@ platform/mac/editing/spelling/delete-autocorrected-word-2.html
 # Mac does not have global selections.
 editing/pasteboard/paste-global-selection.html
 
-# Test is faulty, skipping for now
-webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html [ Failure ]
-
 # Skipping all webgl conformance tests on trunk
 webgl/conformance
 
@@ -651,6 +648,7 @@ webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html [ Failure 
 webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html [ Failure ]
 webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html [ Failure ]
 webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Skip ]
+webgl/1.0.1/conformance/context/context-lost-restored.html [Failure]
 webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure Timeout ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
