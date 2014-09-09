@@ -513,6 +513,10 @@ class IOSSimulatorDriver(Driver):
         ]
         return [relay_tool] + relay_args + ['--'] + dump_tool_args
 
+    def _setup_environ_for_driver(self, environment):
+        environment['DEVELOPER_DIR'] = self._port.developer_dir
+        return super(IOSSimulatorDriver, self)._setup_environ_for_driver(environment)
+
 
 class ContentBlock(object):
     def __init__(self):

@@ -101,10 +101,7 @@ class IOSSimulatorPort(Port):
 
     def check_build(self, needs_http):
         needs_driver = super(IOSSimulatorPort, self).check_build(needs_http)
-        return needs_driver and self._check_build_relay() and self._check_build_image_diff()
-
-    def _path_to_image_diff(self):
-        return self._filesystem.join(self._mac_build_directory, 'ImageDiff')
+        return needs_driver and self._check_build_relay()
 
     def _build_relay(self):
         environment = self.host.copy_current_environment()
@@ -118,37 +115,10 @@ class IOSSimulatorPort(Port):
             return False
         return True
 
-    def _check_image_diff(self):
-        image_diff_path = self._path_to_image_diff()
-        if not self._filesystem.exists(image_diff_path):
-            _log.error("%s was not found at %s" % ('ImageDiff', image_diff_path))
-            return False
-        return True
-
-    def _check_build_image_diff(self):
-        if not self._root_was_set and self.get_option('build') and not self._build_driver():
-            return False
-        if not self._check_image_diff():
-            return False
-        return True
-
-    def _build_image_diff(self):
-        environment = self.host.copy_current_environment()
-        environment.disable_gcc_smartquotes()
-        env = environment.to_dictionary()
-
-        try:
-            self._run_script("build-imagediff", env=env)
-        except ScriptError, e:
-            _log.error(e.message_with_output(output_limit=None))
-            return False
-        return True
-
     def _build_driver(self):
         built_tool = super(IOSSimulatorPort, self)._build_driver()
         built_relay = self._build_relay()
-        built_image_diff = self._build_image_diff()
-        return built_tool and built_relay and built_image_diff
+        return built_tool and built_relay
 
     def _build_driver_flags(self):
         archs = ['ARCHS=i386'] if self.architecture() == 'x86' else []
@@ -184,6 +154,10 @@ class IOSSimulatorPort(Port):
 
     def setup_test_run(self):
         self._executive.run_command(['osascript', '-e', 'tell application "iOS Simulator" to quit'])
+        time.sleep(2)
+        self._executive.run_command([
+            'open', '-a', os.path.join(self.developer_dir, 'Applications', 'iOS Simulator.app'),
+            '--args', '-CurrentDeviceUDID', self.simulator_udid()])
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
@@ -257,7 +231,7 @@ class IOSSimulatorPort(Port):
         crash_prefix = 'CRASH: '
         stderr_lines = []
         crash_lines = []
-        for line in stderr.splitlines():
+        for line in (stderr or '').splitlines():
             crash_lines.append(line) if line.startswith(crash_prefix) else stderr_lines.append(line)
 
         for crash_line in crash_lines:
@@ -369,6 +343,10 @@ class IOSSimulatorPort(Port):
         except ScriptError:
             _log.warn("xcrun failed; falling back to '%s'." % fallback)
             return fallback
+
+    @property
+    def developer_dir(self):
+        return self._executive.run_command(['xcode-select', '--print-path']).rstrip()
 
     def logging_patterns_to_strip(self):
         return []

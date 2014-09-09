@@ -89,10 +89,13 @@
 
 - (void)readFileHandle:(NSFileHandle *)fileHandle
 {
-    NSData *data = [fileHandle availableData];
-    uint8_t bytes[[data length]];
-    [data getBytes:bytes length:[data length]];
-    [[[self relay] outputStream] write:[data bytes] maxLength:[data length]];
+    @try {
+        NSData *data = [fileHandle availableData];
+        [[[self relay] outputStream] write:[data bytes] maxLength:[data length]];
+    } @catch (NSException *e) {
+        // Broken pipe - the dump tool crashed. Time to die.
+        [self didCrashWithMessage:nil];
+    }
 }
 
 
@@ -133,66 +136,6 @@
     exit(EXIT_FAILURE);
 }
 
-- (void)launchSimulator
-{
-    NSString *developerDir = [[[NSProcessInfo processInfo] environment] valueForKey:@"DEVELOPER_DIR"];
-    if (!developerDir) {
-        NSTask *xcodeSelectTask = [[NSTask alloc] init];
-        [xcodeSelectTask setLaunchPath:@"/usr/bin/xcode-select"];
-        [xcodeSelectTask setArguments:@[@"--print-path"]];
-        [xcodeSelectTask setStandardOutput:[NSPipe pipe]];
-
-        NSFileHandle *stdoutFileHandle = [[xcodeSelectTask standardOutput] fileHandleForReading];
-        [xcodeSelectTask launch];
-        [xcodeSelectTask waitUntilExit];
-
-        NSData *data = [stdoutFileHandle readDataToEndOfFile];
-        developerDir = [NSString stringWithUTF8String:[data bytes]];
-    }
-
-    developerDir = [developerDir stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-
-    if (!developerDir || ![developerDir length]) {
-        NSLog(@"Not able to determine the path to iOS Simulator.app in your active Xcode.app");
-        exit(EXIT_FAILURE);
-    }
-    NSURL *simulatorURL = [NSURL fileURLWithPath:[developerDir stringByAppendingPathComponent:@"Applications/iOS Simulator.app"]];
-
-    NSDictionary *launchConfiguration = @{
-        NSWorkspaceLaunchConfigurationArguments: @[
-            @"-CurrentDeviceUDID", [[[self device] UDID] UUIDString],
-            ]
-    };
-    NSError *error;
-    [[NSWorkspace sharedWorkspace] launchApplicationAtURL:simulatorURL options:NSWorkspaceLaunchDefault configuration:launchConfiguration error:&error];
-
-    if (error) {
-        NSLog(@"Couldn't launch iOS Simulator from %@: %@", [simulatorURL path], [error description]);
-        exit(EXIT_FAILURE);
-    }
-
-    while ([[self device] state] == SimDeviceStateShutdown) {
-        // Wait for device to start booting
-        sleep(1);
-    }
-}
-
-- (void)bootDevice
-{
-    while ([[self device] state] == SimDeviceStateBooting)
-        sleep(1);
-
-    if ([[self device] state] == SimDeviceStateBooted)
-        return;
-
-    NSError *error;
-    [[self device] bootWithOptions:nil error:&error];
-    if (error) {
-        NSLog(@"Unable to boot device: %@", [error description]);
-        exit(EXIT_FAILURE);
-    }
-}
-
 - (void)createUniqueApp
 {
     NSError *error;
@@ -218,14 +161,6 @@
     NSDictionary *installOptions = @{
         (NSString *)kCFBundleIdentifierKey: [self uniqueAppIdentifier],
     };
-
-    if ([[self device] applicationIsInstalled:[self uniqueAppIdentifier] type: nil error: &error]) {
-        BOOL uninstalled = [[self device ] uninstallApplication:[self uniqueAppIdentifier] withOptions:nil error:&error];
-        if (!uninstalled) {
-            NSLog(@"Couldn't uninstall %@: %@", [self uniqueAppIdentifier], [error description]);
-            exit(EXIT_FAILURE);
-        }
-    }
 
     [[self device] installApplication:[self uniqueAppURL] withOptions:installOptions error:&error];
     if (error) {
@@ -280,8 +215,6 @@
 
 - (void)start
 {
-    [self launchSimulator];
-    [self bootDevice];
     [self createUniqueApp];
     [[self relay] setup];
     [self launchApp];

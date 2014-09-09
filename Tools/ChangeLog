@@ -1,3 +1,37 @@
+2014-08-05  David Farler  <dfarler@apple.com>
+
+        iOS Simulator: run-webkit-tests chokes on unterminated UTF-8 when writing a test result
+        https://bugs.webkit.org/show_bug.cgi?id=135551
+
+        Reviewed by Daniel Bates.
+
+        Prevent printing invalid Unicode strings going to stderr.
+        Also, make filesystem.py more tolerant about receiving
+        Unicode (encoded as UTF-8) when writing to files, in the
+        rare case that an NSError description will make it to
+        stderr, such as -[LTRelayController createUniqueApp].
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController launchSimulator]): Removed.
+        (-[LTRelayController createUniqueApp]):
+        Don't explicitly try to uninstall the app. It is automatically handled
+        when installing an app with the same bundle identifier.
+        (-[LTRelayController start]):
+        (-[LTRelayController bootDevice]): Removed.
+        The device already boots as a part of starting the simulator. Attempting
+        to boot a second time may cause spurious stderr output.
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver._setup_environ_for_driver):
+        Explicitly set DEVELOPER_DIR once so xcode-select isn't called.
+        Open the iOS Simulator once instead of the LayoutTestRelay trying
+        to do it.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._get_crash_log):
+        Make sure stderr is at least an empty string.
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.developer_dir):
+        New property for setting up DEVELOPER_DIR in the driver environment.
+
 2014-09-09  Dan Bernstein  <mitz@apple.com>
 
         Clean up the MiniBrowser Xcode project
