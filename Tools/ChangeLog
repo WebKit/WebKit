@@ -1,3 +1,16 @@
+2014-09-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Enable fixed layout by default
+        https://bugs.webkit.org/show_bug.cgi?id=136607
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fixed layout is being used by Tizen platform by default. However, the feature
+        has still many defects now. So, we need to enable it by default, then should fix
+        those bugs. 
+
+        * MiniBrowser/efl/main.c:
+
 2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove FILTERS flag
