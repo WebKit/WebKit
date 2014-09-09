@@ -1,3 +1,15 @@
+2014-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        PerformanceTests/SVG/SVG-Text.html has unparsable output
+        https://bugs.webkit.org/show_bug.cgi?id=136648
+
+        Reviewed by Gavin Barraclough.
+
+        I need to clean up the arbitrary text on the page before telling
+        the test runner infrastructure that the test is complete.
+
+        * SVG/SVG-Text.html:
+
 2014-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Laying out a TextRun using an SVG font is O(n^2)

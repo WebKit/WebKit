@@ -14,7 +14,7 @@
 </head>
 <body>
 <div id="content">
-<span id="end">This string marks the end of the rendered text</span>
+<span id="end"></span>
 </div>
 <script>
 PerfTestRunner.prepareToMeasureValuesAsync({done: onCompletedRun, unit: 'ms'});
@@ -507,9 +507,9 @@ function finishRun() {
     } else
         rafcount = 0;
     dummy = document.getElementById("end").getBoundingClientRect().left;
-    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - now);
     var content = document.getElementById("content");
     content.removeChild(content.firstChild);
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - now);
     requestAnimationFrame(startRun);
 }
 startRun();
