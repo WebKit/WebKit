@@ -1,3 +1,26 @@
+2014-09-09  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Use C++11 range-based loops in FlowThreadController
+        https://bugs.webkit.org/show_bug.cgi?id=136634
+
+        Reviewed by Andrei Bucur.
+
+        No new tests as no new functionality was introduced.
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::ensureRenderFlowThreadWithName):
+        (WebCore::FlowThreadController::styleDidChange):
+        (WebCore::FlowThreadController::layoutRenderNamedFlowThreads):
+        (WebCore::FlowThreadController::updateFlowThreadsChainIfNecessary):
+        (WebCore::FlowThreadController::updateFlowThreadsNeedingLayout):
+        (WebCore::FlowThreadController::updateFlowThreadsNeedingTwoStepLayout):
+        (WebCore::FlowThreadController::resetFlowThreadsWithAutoHeightRegions):
+        (WebCore::FlowThreadController::updateFlowThreadsIntoMeasureContentPhase):
+        (WebCore::FlowThreadController::updateFlowThreadsLayerToRegionMappingsIfNeeded):
+        (WebCore::FlowThreadController::updateNamedFlowsLayerListsIfNeeded):
+        (WebCore::FlowThreadController::collectFixedPositionedLayers):
+        (WebCore::FlowThreadController::isAutoLogicalHeightRegionsCountConsistent):
+
 2014-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Minor refactor in CSSComputedStyleDeclaration

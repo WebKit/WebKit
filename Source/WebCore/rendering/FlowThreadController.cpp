@@ -57,8 +57,7 @@ RenderNamedFlowThread& FlowThreadController::ensureRenderFlowThreadWithName(cons
     if (!m_renderNamedFlowThreadList)
         m_renderNamedFlowThreadList = std::make_unique<RenderNamedFlowThreadList>();
     else {
-        for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-            RenderNamedFlowThread* flowRenderer = *iter;
+        for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
             if (flowRenderer->flowThreadName() == name)
                 return *flowRenderer;
         }
@@ -84,20 +83,15 @@ RenderNamedFlowThread& FlowThreadController::ensureRenderFlowThreadWithName(cons
 void FlowThreadController::styleDidChange()
 {
     RenderStyle& viewStyle = m_view->style();
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList)
         flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(&viewStyle));
-    }
 }
 
 void FlowThreadController::layoutRenderNamedFlowThreads()
 {
     updateFlowThreadsChainIfNecessary();
-
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList)
         flowRenderer->layoutIfNeeded();
-    }
 }
 
 void FlowThreadController::registerNamedFlowContentElement(Element& contentElement, RenderNamedFlowThread& namedFlow)
@@ -125,8 +119,7 @@ void FlowThreadController::updateFlowThreadsChainIfNecessary()
 
     // Remove the left-over flow threads.
     RenderNamedFlowThreadList toRemoveList;
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
         if (flowRenderer->isMarkedForDestruction())
             toRemoveList.add(flowRenderer);
     }
@@ -134,8 +127,7 @@ void FlowThreadController::updateFlowThreadsChainIfNecessary()
     if (toRemoveList.size() > 0)
         setIsRenderNamedFlowThreadOrderDirty(true);
 
-    for (auto iter = toRemoveList.begin(), end = toRemoveList.end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : toRemoveList) {
         m_renderNamedFlowThreadList->remove(flowRenderer);
         flowRenderer->destroy();
     }
@@ -143,8 +135,7 @@ void FlowThreadController::updateFlowThreadsChainIfNecessary()
     if (isRenderNamedFlowThreadOrderDirty()) {
         // Arrange the thread list according to dependencies.
         RenderNamedFlowThreadList sortedList;
-        for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-            RenderNamedFlowThread* flowRenderer = *iter;
+        for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
             if (sortedList.contains(flowRenderer))
                 continue;
             flowRenderer->pushDependencies(sortedList);
@@ -159,8 +150,7 @@ bool FlowThreadController::updateFlowThreadsNeedingLayout()
 {
     bool needsTwoPassLayout = false;
 
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
         ASSERT(!flowRenderer->needsTwoPhasesLayout());
         ASSERT(flowRenderer->inMeasureContentLayoutPhase());
         if (flowRenderer->needsLayout() && flowRenderer->hasAutoLogicalHeightRegions())
@@ -177,8 +167,7 @@ bool FlowThreadController::updateFlowThreadsNeedingTwoStepLayout()
 {
     bool needsTwoPassLayout = false;
 
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
         if (flowRenderer->needsTwoPhasesLayout()) {
             needsTwoPassLayout = true;
             break;
@@ -193,8 +182,7 @@ bool FlowThreadController::updateFlowThreadsNeedingTwoStepLayout()
 
 void FlowThreadController::resetFlowThreadsWithAutoHeightRegions()
 {
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
         if (flowRenderer->hasAutoLogicalHeightRegions()) {
             flowRenderer->markAutoLogicalHeightRegionsForLayout();
             flowRenderer->invalidateRegions();
@@ -237,8 +225,7 @@ void FlowThreadController::updateFlowThreadsIntoOverflowPhase()
 
 void FlowThreadController::updateFlowThreadsIntoMeasureContentPhase()
 {
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
         ASSERT(flowRenderer->inFinalLayoutPhase());
 
         flowRenderer->dispatchNamedFlowEvents();
@@ -261,18 +248,14 @@ void FlowThreadController::updateFlowThreadsIntoFinalPhase()
 
 void FlowThreadController::updateFlowThreadsLayerToRegionMappingsIfNeeded()
 {
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList)
         flowRenderer->updateAllLayerToRegionMappingsIfNeeded();
-    }
 }
 
 void FlowThreadController::updateNamedFlowsLayerListsIfNeeded()
 {
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList)
         flowRenderer->layer()->updateLayerListsIfNeeded();
-    }
 }
 
 static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
@@ -284,9 +267,7 @@ static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 // These layers are painted and hit-tested starting from RenderView not from regions.
 void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fixedPosLayers) const
 {
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        RenderNamedFlowThread* flowRenderer = *iter;
-
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
         // If the named flow does not have any regions attached, a fixed element should not be
         // displayed even if the fixed element is positioned/sized by the viewport.
         if (!flowRenderer->hasRegions())
@@ -321,8 +302,8 @@ bool FlowThreadController::isAutoLogicalHeightRegionsCountConsistent() const
     if (!hasRenderNamedFlowThreads())
         return !hasFlowThreadsWithAutoLogicalHeightRegions();
 
-    for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
-        if (!(*iter)->isAutoLogicalHeightRegionsCountConsistent())
+    for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
+        if (!flowRenderer->isAutoLogicalHeightRegionsCountConsistent())
             return false;
     }
 
