@@ -1,3 +1,10 @@
+2014-09-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skip TestSSL:webkit2/WebKitWebView/ssl (fails since r173423).
+
 2014-09-09  Christophe Dumez  <cdumez@apple.com>
 
         Update my email in contributors.json

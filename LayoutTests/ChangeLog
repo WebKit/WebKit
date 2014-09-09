@@ -1,3 +1,10 @@
+2014-09-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failures after r173328 and r173418.
+        Update some expectations for new cases.
+
 2014-09-09  Roger Fong  <roger_fong@apple.com>
 
         Skip some WebGL tests failing on Mavericks and MountainLion bots.
