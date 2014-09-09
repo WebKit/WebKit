@@ -335,7 +335,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 // Call updateSiblings since their value might be based on the value that just changed.
                 this.updateSiblings();
             }
-        };
+        }
         this.property.parentObject.setPropertyValue(this.property.name, expression.trim(), callback.bind(this));
     }
 };

@@ -33,7 +33,7 @@ function Formatter(codeMirror, builder)
 
     this._lastToken = null;
     this._lastContent = "";
-};
+}
 
 Formatter.prototype = {
     constructor: Formatter,

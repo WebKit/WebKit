@@ -668,7 +668,7 @@ WebInspector.Resource.prototype = {
             };
             
             callback(this._imageSize);
-        };
+        }
 
         // Create an <img> element that we'll use to load the image resource
         // so that we can query its intrinsic size.

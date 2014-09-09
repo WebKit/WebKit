@@ -181,7 +181,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
             var item1 = a.layer[sortColumnIdentifier] || 0;
             var item2 = b.layer[sortColumnIdentifier] || 0;
             return item1 - item2;
-        };
+        }
 
         this._dataGrid.sortNodes(comparator);
         this._updatePopoverForSelectedNode();

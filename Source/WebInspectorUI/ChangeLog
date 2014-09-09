@@ -1,5 +1,30 @@
 2014-09-09  Jono Wells  <jonowells@apple.com>
 
+        Web Inspector: Fix ESLint no-extra-semi
+        https://bugs.webkit.org/show_bug.cgi?id=136666
+
+        Reviewed by Andy Estes.
+
+        Add explicit no-extra-semi rule to .eslintrc. Remove all unnecessary
+        semicolons as identified by ESLint.
+
+        * .eslintrc:
+        * Tools/PrettyPrinting/Formatter.js:
+        (Formatter):
+        * UserInterface/Controllers/Formatter.js:
+        (Formatter):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.getImageSize.imageDidLoad):
+        (WebInspector.Resource.prototype.getImageSize):
+        * UserInterface/Views/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel.prototype._sortDataGrid.comparator):
+        (WebInspector.LayerTreeSidebarPanel.prototype._sortDataGrid):
+        * UserInterface/Views/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.callback):
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression):
+
+2014-09-09  Jono Wells  <jonowells@apple.com>
+
         Web Inspector: Fix ESLint semi (missing semicolon)
         https://bugs.webkit.org/show_bug.cgi?id=136665
 
