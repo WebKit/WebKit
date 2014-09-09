@@ -1,3 +1,9 @@
+2014-09-09  Roger Fong  <roger_fong@apple.com>
+
+        Skip some WebGL tests failing on Mavericks and MountainLion bots.
+
+        * platform/mac/TestExpectations:
+
 2014-09-09  Takeshi Kurosawa  <taken.spc@gmail.com>
 
         AX: HTML5 landmark (and related) elements should not be ignored.
