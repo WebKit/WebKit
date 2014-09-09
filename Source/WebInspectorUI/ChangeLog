@@ -1,3 +1,12 @@
+2014-09-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Disable the "unreachable-code" warning
+        https://bugs.webkit.org/show_bug.cgi?id=136677
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+
 2014-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix ESLint no-trailing-spaces warnings

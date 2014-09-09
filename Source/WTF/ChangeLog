@@ -1,3 +1,20 @@
+2014-09-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Disable the "unreachable-code" warning
+        https://bugs.webkit.org/show_bug.cgi?id=136677
+
+        Reviewed by Darin Adler.
+
+        The warning causes various build errors depending on which Clang you are using.
+
+        For example, with recent clangs, it breaks all the ARCHS dependent code like this:
+            if (sizeof(uintptr_t) == 4)
+                // Something for 32 bits.
+            else
+                // Somethign for 64 bits.
+
+        * Configurations/Base.xcconfig:
+
 2014-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have a reusable SSA builder
