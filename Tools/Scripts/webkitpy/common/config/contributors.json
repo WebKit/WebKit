@@ -3691,13 +3691,14 @@
       },
       "Christophe Dumez" : {
          "emails" : [
+            "cdumez@apple.com",
             "dchris@gmail.com",
             "ch.dumez@samsung.com",
             "ch.dumez@sta.samsung.com",
             "ch.dumez@sisa.samsung.com",
             "christophe.dumez@intel.com"
          ],
-         "expertise" : "The EFLWebKit Port, Bindings generator",
+         "expertise" : "The EFLWebKit Port, Bindings generator, Performance",
          "nicks" : [
             "cdumez"
          ]
