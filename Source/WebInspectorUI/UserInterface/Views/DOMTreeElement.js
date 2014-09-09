@@ -36,7 +36,7 @@ WebInspector.DOMTreeElement = function(node, elementCloseTag)
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, hasChildrenOverride);
 
-    if (this.representedObject.nodeType() == Node.ELEMENT_NODE && !elementCloseTag)
+    if (this.representedObject.nodeType() === Node.ELEMENT_NODE && !elementCloseTag)
         this._canAddAttributes = true;
     this._searchQuery = null;
     this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
@@ -373,7 +373,7 @@ WebInspector.DOMTreeElement.prototype = {
         this.adjustCollapsedRange();
 
         var lastChild = this.children.lastValue;
-        if (this.representedObject.nodeType() == Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
+        if (this.representedObject.nodeType() === Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
             this.insertChildElement(this.representedObject, this.children.length, true);
 
         // We want to restore the original selection and tree scroll position after a full refresh, if possible.
@@ -536,10 +536,10 @@ WebInspector.DOMTreeElement.prototype = {
 
     _startEditingTarget: function(eventTarget)
     {
-        if (this.treeOutline.selectedDOMNode() != this.representedObject)
+        if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return;
 
-        if (this.representedObject.nodeType() != Node.ELEMENT_NODE && this.representedObject.nodeType() != Node.TEXT_NODE)
+        if (this.representedObject.nodeType() !== Node.ELEMENT_NODE && this.representedObject.nodeType() !== Node.TEXT_NODE)
             return false;
 
         var textNode = eventTarget.enclosingNodeOrSelfWithClass("html-text-node");
@@ -939,7 +939,7 @@ WebInspector.DOMTreeElement.prototype = {
             // We only show text nodes inline in elements if the element only
             // has a single child, and that child is a text node.
             textNode = this.representedObject.firstChild;
-        } else if (this.representedObject.nodeType() == Node.TEXT_NODE)
+        } else if (this.representedObject.nodeType() === Node.TEXT_NODE)
             textNode = this.representedObject;
 
         textNode.setNodeValue(newText, this.updateTitle.bind(this));

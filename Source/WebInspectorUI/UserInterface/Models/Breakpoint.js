@@ -351,7 +351,7 @@ WebInspector.Breakpoint.prototype = {
         if (!type)
             this._actions = [];
         else
-            this._actions = this._actions.filter(function(action) { action.type != type; });
+            this._actions = this._actions.filter(function(action) { action.type !== type; });
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
     },

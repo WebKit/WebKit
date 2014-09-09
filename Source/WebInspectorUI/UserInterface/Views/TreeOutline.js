@@ -846,7 +846,7 @@ TreeElement.prototype.expand = function()
 
     if (this._listItemNode) {
         this._listItemNode.classList.add("expanded");
-        if (this._childrenListNode && this._childrenListNode.parentNode != this._listItemNode.parentNode)
+        if (this._childrenListNode && this._childrenListNode.parentNode !== this._listItemNode.parentNode)
             this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
     }
 

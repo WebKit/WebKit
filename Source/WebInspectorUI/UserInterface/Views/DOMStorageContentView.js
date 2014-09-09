@@ -190,8 +190,8 @@ WebInspector.DOMStorageContentView.prototype = {
         var previousValue = oldText.trim();
         var enteredValue = newText.trim();
         var columnIndex = this._dataGrid.orderedColumns.indexOf(columnIdentifier);
-        var mayMoveToNextRow = moveDirection === "forward" && columnIndex == this._dataGrid.orderedColumns.length - 1;
-        var mayMoveToPreviousRow = moveDirection === "backward" && columnIndex == 0;
+        var mayMoveToNextRow = moveDirection === "forward" && columnIndex === this._dataGrid.orderedColumns.length - 1;
+        var mayMoveToPreviousRow = moveDirection === "backward" && columnIndex === 0;
         var willMoveRow = mayMoveToNextRow || mayMoveToPreviousRow;
         var shouldCommitRow = willMoveRow && key.length && value.length;
 
@@ -233,7 +233,7 @@ WebInspector.DOMStorageContentView.prototype = {
 
         editingNode.element.classList.remove(WebInspector.DOMStorageContentView.DuplicateKeySyleClassName);
 
-        if (editingNode.__previousKeyValue != key)
+        if (editingNode.__previousKeyValue !== key)
             domStorage.removeItem(editingNode.__previousKeyValue);
 
         domStorage.setItem(key, value);

@@ -133,7 +133,7 @@ WebInspector.DatabaseContentView.prototype = {
     {
         if (error.message)
             var message = error.message;
-        else if (error.code == 2)
+        else if (error.code === 2)
             var message = WebInspector.UIString("Database no longer has expected version.");
         else
             var message = WebInspector.UIString("An unexpected error %s occurred.").format(error.code);

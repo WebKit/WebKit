@@ -139,7 +139,7 @@
 
         // Parse characters until the end of the stream/line or a proper end quote character.
         while ((ch = stream.next()) != null) {
-            if (ch == quote && !escaped) {
+            if (ch === quote && !escaped) {
                 reachedEndOfURL = true;
                 break;
             }
@@ -261,7 +261,7 @@
 
     CodeMirror.defineExtension("hasLineClass", function(line, where, className) {
         // This matches the arguments to addLineClass and removeLineClass.
-        var classProperty = (where === "text" ? "textClass" : (where == "background" ? "bgClass" : "wrapClass"));
+        var classProperty = (where === "text" ? "textClass" : (where === "background" ? "bgClass" : "wrapClass"));
         var lineInfo = this.lineInfo(line);
         if (!lineInfo)
             return false;
@@ -386,7 +386,7 @@
             var newLength = alteredNumberString.length;
 
             // Fix up the selection so it follows the increase or decrease in the replacement length.
-            if (previousLength != newLength) {
+            if (previousLength !== newLength) {
                 if (selectionStart.line === from.line && selectionStart.ch > from.ch)
                     selectionStart.ch += newLength - previousLength;
 

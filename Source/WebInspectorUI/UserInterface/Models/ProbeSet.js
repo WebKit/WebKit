@@ -109,7 +109,7 @@ WebInspector.ProbeSet.prototype = {
     removeProbe: function(probe)
     {
         console.assert(probe instanceof WebInspector.Probe, "Tried to remove non-probe ", probe, " to probe group", this);
-        console.assert(this._probes.indexOf(probe) != -1, "Tried to remove probe", probe, " not in group ", this);
+        console.assert(this._probes.indexOf(probe) !== -1, "Tried to remove probe", probe, " not in group ", this);
         console.assert(this._probesByIdentifier.has(probe.id), "Tried to remove probe", probe, " not in group ", this);
 
         this._probes.splice(this._probes.indexOf(probe), 1);

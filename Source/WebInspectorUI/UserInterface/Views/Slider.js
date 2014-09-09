@@ -129,7 +129,7 @@ WebInspector.Slider.prototype = {
 
     get _maxX()
     {
-        if (this.__maxX == 0 && document.body.contains(this._element))
+        if (this.__maxX === 0 && document.body.contains(this._element))
             this.__maxX = this._element.offsetWidth - Math.ceil(WebInspector.Slider.KnobWidth / 2);
 
         return this.__maxX;

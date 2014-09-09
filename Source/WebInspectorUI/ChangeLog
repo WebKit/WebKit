@@ -1,3 +1,47 @@
+2014-09-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix ESLint eqeqeq warnings
+        https://bugs.webkit.org/show_bug.cgi?id=136658
+
+        Reviewed by Andy Estes.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.mycallback):
+        (WebInspector.DOMTreeManager.prototype.searchResult):
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.clearActions):
+        * UserInterface/Models/DOMTree.js:
+        (WebInspector.DOMTree.prototype._requestRootDOMNode.rootObjectAvailable):
+        (WebInspector.DOMTree.prototype._requestRootDOMNode.rootDOMNodeAvailable):
+        (WebInspector.DOMTree.prototype._requestRootDOMNode.dispatchCallbacks):
+        (WebInspector.DOMTree.prototype._requestRootDOMNode):
+        * UserInterface/Models/ProbeSet.js:
+        (WebInspector.ProbeSet.prototype.removeProbe):
+        * UserInterface/Models/ProbeSetDataTable.js:
+        (WebInspector.ProbeSetDataTable.prototype.addSampleForProbe):
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._filterCookies):
+        (WebInspector.cookieMatchesResourceURL):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype._editingCallback):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement):
+        (WebInspector.DOMTreeElement.prototype._updateChildren):
+        (WebInspector.DOMTreeElement.prototype._startEditingTarget):
+        (WebInspector.DOMTreeElement.prototype._textNodeEditingCommitted):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        * UserInterface/Views/DatabaseContentView.js:
+        (WebInspector.DatabaseContentView.prototype._queryError):
+        * UserInterface/Views/DetailsSectionSimpleRow.js:
+        (.valueElementClicked):
+        (WebInspector.DetailsSectionSimpleRow):
+        * UserInterface/Views/Slider.js:
+        (WebInspector.Slider.prototype.get _maxX):
+        * UserInterface/Views/TreeOutline.js:
+        (TreeElement.prototype.expand):
+
 2014-09-09  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Fix ESLint no-extra-semi

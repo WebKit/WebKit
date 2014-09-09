@@ -74,7 +74,7 @@ WebInspector.ProbeSetDataTable.prototype = {
     {
         // Eagerly save the frame if the batch identifier differs, or we know the frame is full.
         // Create a new frame when the batch identifier differs.
-        if (sample.batchId != this._previousBatchIdentifier) {
+        if (sample.batchId !== this._previousBatchIdentifier) {
             if (this._openFrame) {
                 this._openFrame.fillMissingValues(this._probeSet);
                 this.addFrame(this._openFrame);
@@ -85,7 +85,7 @@ WebInspector.ProbeSetDataTable.prototype = {
 
         console.assert(this._openFrame, "Should always have an open frame before adding sample.", this, probe, sample);
         this._openFrame.addSampleForProbe(probe, sample);
-        if (this._openFrame.count == this._probeSet.probes.length) {
+        if (this._openFrame.count === this._probeSet.probes.length) {
             this.addFrame(this._openFrame);
             this._openFrame = null;
         }

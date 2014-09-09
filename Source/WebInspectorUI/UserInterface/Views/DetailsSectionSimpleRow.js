@@ -52,7 +52,7 @@ WebInspector.DetailsSectionSimpleRow = function(label, value) {
             return;
 
         var currentRange = currentSelection.getRangeAt(0);
-        if (!currentRange || currentRange.startContainer == currentRange.endContainer)
+        if (!currentRange || currentRange.startContainer === currentRange.endContainer)
             return;
 
         var correctedRange = document.createRange();

@@ -321,7 +321,7 @@ WebInspector.DOMTreeManager.prototype = {
                     callback(null);
                     return;
                 }
-                if (nodeIds.length != 1)
+                if (nodeIds.length !== 1)
                     return;
 
                 callback(this._idToDOMNode[nodeIds[0]]);

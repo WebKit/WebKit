@@ -140,7 +140,7 @@ WebInspector.DOMTree.prototype = {
         function rootObjectAvailable(error, result)
         {
             // Check to see if we have been invalidated (if the callbacks were cleared).
-            if (!this._pendingRootDOMNodeRequests || requestIdentifier != this._requestIdentifier)
+            if (!this._pendingRootDOMNodeRequests || requestIdentifier !== this._requestIdentifier)
                 return;
 
             if (error) {
@@ -161,7 +161,7 @@ WebInspector.DOMTree.prototype = {
             remoteObject.release();
 
             // Check to see if we have been invalidated (if the callbacks were cleared).
-            if (!this._pendingRootDOMNodeRequests || requestIdentifier != this._requestIdentifier)
+            if (!this._pendingRootDOMNodeRequests || requestIdentifier !== this._requestIdentifier)
                 return;
 
             if (!nodeId) {
@@ -193,7 +193,7 @@ WebInspector.DOMTree.prototype = {
         function dispatchCallbacks()
         {
             // Check to see if we have been invalidated (if the callbacks were cleared).
-            if (!this._pendingRootDOMNodeRequests || requestIdentifier != this._requestIdentifier)
+            if (!this._pendingRootDOMNodeRequests || requestIdentifier !== this._requestIdentifier)
                 return;
 
             for (var i = 0; i < this._pendingRootDOMNodeRequests.length; ++i)
