@@ -674,36 +674,36 @@ static PassRefPtr<CSSValue> positionOffsetValue(RenderStyle* style, CSSPropertyI
     if (!style)
         return nullptr;
 
-    Length l;
+    Length length;
     switch (propertyID) {
         case CSSPropertyLeft:
-            l = style->left();
+            length = style->left();
             break;
         case CSSPropertyRight:
-            l = style->right();
+            length = style->right();
             break;
         case CSSPropertyTop:
-            l = style->top();
+            length = style->top();
             break;
         case CSSPropertyBottom:
-            l = style->bottom();
+            length = style->bottom();
             break;
         default:
             return nullptr;
     }
 
     if (style->hasOutOfFlowPosition()) {
-        if (l.isFixed())
-            return zoomAdjustedPixelValue(l.value(), style);
+        if (length.isFixed())
+            return zoomAdjustedPixelValue(length.value(), style);
 
-        return cssValuePool().createValue(l);
+        return cssValuePool().createValue(length);
     }
 
     if (style->hasInFlowPosition()) {
         // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
         // In other words if left is auto and right is not auto, then left's computed value is negative right().
         // So we should get the opposite length unit and see if it is auto.
-        return cssValuePool().createValue(l);
+        return cssValuePool().createValue(length);
     }
 
     return cssValuePool().createIdentifierValue(CSSValueAuto);
@@ -717,27 +717,27 @@ PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(R
     return cssValuePool().createColorValue(color.rgb());
 }
 
+static PassRef<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, const RenderStyle* style)
+{
+    if (length.isPercentNotCalculated())
+        return cssValuePool().createValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    
+    return zoomAdjustedPixelValue(valueForLength(length, 0), style);
+}
+
 static PassRef<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radius, const RenderStyle* style)
 {
     auto list = CSSValueList::createSpaceSeparated();
-    if (radius.width().isPercentNotCalculated())
-        list.get().append(cssValuePool().createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-    else
-        list.get().append(zoomAdjustedPixelValue(valueForLength(radius.width(), 0), style));
-    if (radius.height().isPercentNotCalculated())
-        list.get().append(cssValuePool().createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-    else
-        list.get().append(zoomAdjustedPixelValue(valueForLength(radius.height(), 0), style));
+    list.get().append(percentageOrZoomAdjustedValue(radius.width(), style));
+    list.get().append(percentageOrZoomAdjustedValue(radius.height(), style));
     return list;
 }
 
 static PassRef<CSSValue> getBorderRadiusCornerValue(const LengthSize& radius, const RenderStyle* style)
 {
-    if (radius.width() == radius.height()) {
-        if (radius.width().isPercentNotCalculated())
-            return cssValuePool().createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
-        return zoomAdjustedPixelValue(valueForLength(radius.width(), 0), style);
-    }
+    if (radius.width() == radius.height())
+        return percentageOrZoomAdjustedValue(radius.width(), style);
+
     return getBorderRadiusCornerValues(radius, style);
 }
 
@@ -1095,34 +1095,20 @@ static PassRef<CSSValueList> getTransitionPropertyValue(const AnimationList* ani
 static PassRef<CSSValueList> scrollSnapDestination(RenderStyle* style, Length x, Length y)
 {
     RefPtr<CSSValueList> snapDestinationValue = CSSValueList::createSpaceSeparated();
-    if (x.isPercentNotCalculated())
-        snapDestinationValue->append(cssValuePool().createValue(x.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-    else
-        snapDestinationValue->append(zoomAdjustedPixelValue(valueForLength(x, 0), style));
-
-    if (y.isPercentNotCalculated())
-        snapDestinationValue->append(cssValuePool().createValue(y.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-    else
-        snapDestinationValue->append(zoomAdjustedPixelValue(valueForLength(y, 0), style));
-
+    snapDestinationValue->append(percentageOrZoomAdjustedValue(x, style));
+    snapDestinationValue->append(percentageOrZoomAdjustedValue(y, style));
     return snapDestinationValue.releaseNonNull();
 }
 
 static PassRef<CSSValueList> scrollSnapPoints(RenderStyle* style, const Vector<Length>& points, Length repeatPoint, bool hasRepeat)
 {
     RefPtr<CSSValueList> snapPointsValue = CSSValueList::createSpaceSeparated();
-    for (auto& point : points) {
-        if (point.isPercentNotCalculated())
-            snapPointsValue->append(cssValuePool().createValue(point.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-        else
-            snapPointsValue->append(zoomAdjustedPixelValue(valueForLength(point, 0), style));
-    }
-    if (hasRepeat) {
-        if (repeatPoint.isPercentNotCalculated())
-            snapPointsValue->append(cssValuePool().createValue(LengthRepeat::create(cssValuePool().createValue(repeatPoint.percent(), CSSPrimitiveValue::CSS_PERCENTAGE))));
-        else
-            snapPointsValue->append(cssValuePool().createValue(LengthRepeat::create(zoomAdjustedPixelValue(valueForLength(repeatPoint, 0), style))));
-    }
+    for (auto& point : points)
+        snapPointsValue->append(percentageOrZoomAdjustedValue(point, style));
+
+    if (hasRepeat)
+        snapPointsValue->append(cssValuePool().createValue(LengthRepeat::create(percentageOrZoomAdjustedValue(repeatPoint, style))));
+
     return snapPointsValue.releaseNonNull();
 }
 
@@ -1131,17 +1117,8 @@ static PassRef<CSSValueList> scrollSnapCoordinates(RenderStyle* style, const Vec
     RefPtr<CSSValueList> snapCoordinatesValue = CSSValueList::createCommaSeparated();
     for (const auto& coordinate : coordinates) {
         RefPtr<CSSValueList> currentCoordinate = CSSValueList::createSpaceSeparated();
-        Length point = coordinate.first;
-        if (point.isPercentNotCalculated())
-            currentCoordinate->append(cssValuePool().createValue(point.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-        else
-            currentCoordinate->append(zoomAdjustedPixelValue(valueForLength(point, 0), style));
-
-        point = coordinate.second;
-        if (point.isPercentNotCalculated())
-            currentCoordinate->append(cssValuePool().createValue(point.percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
-        else
-            currentCoordinate->append(zoomAdjustedPixelValue(valueForLength(point, 0), style));
+        currentCoordinate->append(percentageOrZoomAdjustedValue(coordinate.first, style));
+        currentCoordinate->append(percentageOrZoomAdjustedValue(coordinate.second, style));
 
         snapCoordinatesValue->append(currentCoordinate.releaseNonNull());
     }
