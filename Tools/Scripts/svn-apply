@@ -353,10 +353,10 @@ sub patch($)
         } elsif ($deletion) {
             applyPatch($patch, $fullPath, ["--force"]) if $patch;
             scmRemove($fullPath);
-        } elsif ($addition) {
+        } elsif ($addition && $hasTextChunks) {
             # Addition
             rename($fullPath, "$fullPath.orig") if -e $fullPath;
-            applyPatch($patch, $fullPath) if $patch;
+            applyPatch($patch, $fullPath);
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
             scmAdd($fullPath);
             my $escapedFullPath = escapeSubversionPath("$fullPath.orig");

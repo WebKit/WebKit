@@ -200,13 +200,13 @@ sub patch($)
 
             # Show status if the file is modifed
             system "svn", "stat", $escapedFullPath;
-        } elsif ($addition) {
+        } elsif ($addition && $hasTextChunks) {
             # Reverse addition
             #
             # FIXME: This should use the same logic as svn-apply's deletion
             #        code.  In particular, svn-apply's scmRemove() subroutine
             #        should be used here.
-            unapplyPatch($patch, $fullPath, ["--force"]) if $patch;
+            unapplyPatch($patch, $fullPath, ["--force"]);
             unlink($fullPath) if -z $fullPath;
             system "svn", "revert", $escapedFullPath;
         }

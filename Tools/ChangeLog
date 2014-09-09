@@ -1,3 +1,19 @@
+2014-09-09  Daniel Bates  <dbates@webkit.org>
+
+        svn-{apply, unapply} fails to apply/unapply SVN 1.7 patch that adds new file with property change
+        https://bugs.webkit.org/show_bug.cgi?id=136379
+
+        Reviewed by David Kilzer.
+
+        Fixes an issue where svn-{apply, unapply} fail to apply or unapply, respectively,
+        a patch generated using Subversion 1.7.4 (r1295709) that both adds a new file F
+        and sets a property on F (say, the executable bit).
+
+        * Scripts/svn-apply:
+        (patch): Only add file if the diff has text chunks.
+        * Scripts/svn-unapply:
+        (patch): Only delete added file if the diff has text chunks.
+
 2014-09-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
