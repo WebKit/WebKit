@@ -25,6 +25,11 @@
 
 #include "config.h"
 #include "DrawingArea.h"
+
+#include "DrawingAreaMessages.h"
+#include "WebPage.h"
+#include "WebPageCreationParameters.h"
+#include "WebProcess.h"
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/Functional.h>
@@ -40,8 +45,6 @@
 #include "DrawingAreaImpl.h"
 #endif
 #endif
-
-#include "WebPageCreationParameters.h"
 
 using namespace WebCore;
 
@@ -75,10 +78,12 @@ DrawingArea::DrawingArea(DrawingAreaType type, WebPage& webPage)
     : m_type(type)
     , m_webPage(webPage)
 {
+    WebProcess::shared().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID(), *this);
 }
 
 DrawingArea::~DrawingArea()
 {
+    WebProcess::shared().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID());
 }
 
 void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)

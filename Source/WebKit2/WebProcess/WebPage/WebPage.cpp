@@ -455,7 +455,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     WebProcess::shared().addMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID, *this);
 
     // FIXME: This should be done in the object constructors, and the objects themselves should be message receivers.
-    WebProcess::shared().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_pageID, *this);
 #if USE(COORDINATED_GRAPHICS)
     WebProcess::shared().addMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID, *this);
 #endif
@@ -516,7 +515,6 @@ WebPage::~WebPage()
     WebProcess::shared().removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
 
     // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
-    WebProcess::shared().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_pageID);
 #if USE(COORDINATED_GRAPHICS)
     WebProcess::shared().removeMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID);
 #endif
@@ -3484,12 +3482,6 @@ bool WebPage::windowAndWebPageAreFocused() const
 
 void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
-    if (decoder.messageReceiverName() == Messages::DrawingArea::messageReceiverName()) {
-        if (m_drawingArea)
-            m_drawingArea->didReceiveDrawingAreaMessage(connection, decoder);
-        return;
-    }
-
 #if USE(TILED_BACKING_STORE)
     if (decoder.messageReceiverName() == Messages::CoordinatedLayerTreeHost::messageReceiverName()) {
         if (m_drawingArea)
@@ -3497,7 +3489,7 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder
         return;
     }
 #endif
-    
+
 #if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspector::messageReceiverName()) {
         if (WebInspector* inspector = this->inspector())

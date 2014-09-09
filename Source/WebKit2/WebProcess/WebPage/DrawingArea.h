@@ -28,6 +28,7 @@
 
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
+#include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayerFlushThrottleState.h>
@@ -57,7 +58,7 @@ class WebPage;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
-class DrawingArea {
+class DrawingArea : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
 public:
@@ -65,8 +66,6 @@ public:
     virtual ~DrawingArea();
     
     DrawingAreaType type() const { return m_type; }
-    
-    void didReceiveDrawingAreaMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) = 0;
@@ -128,6 +127,9 @@ protected:
     WebPage& m_webPage;
 
 private:
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+
     // Message handlers.
     // FIXME: These should be pure virtual.
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/, 

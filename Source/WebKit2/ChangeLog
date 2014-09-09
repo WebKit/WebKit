@@ -1,3 +1,22 @@
+2014-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        Make DrawingArea a real MessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=136438
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::DrawingArea):
+        (WebKit::DrawingArea::~DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::didReceiveMessage):
+        Make DrawingArea a real MessageReceiver instead of a LegacyReceiver that
+        jumps through WebPage to receive its messages.
+
 2014-09-08  Antti Koivisto  <antti@apple.com>
 
         Pass certificate info as part of ResourceResponse
