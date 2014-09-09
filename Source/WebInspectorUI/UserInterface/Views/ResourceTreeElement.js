@@ -57,7 +57,7 @@ WebInspector.ResourceTreeElement.compareResourceTreeElements = function(a, b)
 
     // Compare by title when the subtitles are the same.
     return a.mainTitle.localeCompare(b.mainTitle);
-}
+};
 
 WebInspector.ResourceTreeElement.compareFolderAndResourceTreeElements = function(a, b)
 {
@@ -72,7 +72,7 @@ WebInspector.ResourceTreeElement.compareFolderAndResourceTreeElements = function
         return a.mainTitle.localeCompare(b.mainTitle);
 
     return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
-}
+};
 
 WebInspector.ResourceTreeElement.prototype = {
     constructor: WebInspector.ResourceTreeElement,

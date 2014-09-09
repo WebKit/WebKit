@@ -452,7 +452,7 @@
                             lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
                         }
                         var minX = Math.floor(coords.left);
-                        var minY = Math.floor(coords.top)
+                        var minY = Math.floor(coords.top);
                         maxY = Math.ceil(coords.bottom);
                     }
                 }

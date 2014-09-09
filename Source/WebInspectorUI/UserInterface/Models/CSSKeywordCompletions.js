@@ -58,12 +58,12 @@ WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
     }
 
     return new WebInspector.CSSCompletions(acceptedKeywords, true);
-}
+};
 
 WebInspector.CSSKeywordCompletions.isColorAwareProperty = function(propertyName)
 {
     return WebInspector.CSSKeywordCompletions._colorAwareProperties[propertyName] === true;
-}
+};
 
 WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properties__";
 

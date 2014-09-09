@@ -42,7 +42,7 @@ WebInspector.ExecutionContext.supported = function()
     // disable methods, which turn on and off sending Runtime agent execution context created events.
     // So we can feature detect support for execution contexts with these RuntimeAgent functions.
     return typeof RuntimeAgent.enable === "function";
-}
+};
 
 WebInspector.ExecutionContext.prototype = {
     constructor: WebInspector.ExecutionContext,

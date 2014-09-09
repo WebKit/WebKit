@@ -86,4 +86,4 @@ WebInspector.SearchResultTreeElement.truncateAndHighlightTitle = function(title,
     highlightedTitle.appendChild(document.createTextNode(modifiedTitle.substring(searchTermIndex + searchTerm.length)));
 
     return highlightedTitle;
-}
+};

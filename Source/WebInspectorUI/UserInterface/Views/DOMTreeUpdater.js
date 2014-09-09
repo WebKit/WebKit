@@ -40,7 +40,7 @@ WebInspector.DOMTreeUpdater = function(treeOutline)
 
     this._treeOutline = treeOutline;
     this._recentlyModifiedNodes = [];
-}
+};
 
 WebInspector.DOMTreeUpdater.prototype = {
     close: function()
@@ -137,4 +137,4 @@ WebInspector.DOMTreeUpdater.prototype = {
         WebInspector.domTreeManager.hideDOMNodeHighlight();
         this._recentlyModifiedNodes = [];
     }
-}
+};

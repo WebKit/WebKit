@@ -35,7 +35,7 @@ WebInspector.FormatterSourceMap = function(originalLineEndings, formattedLineEnd
 WebInspector.FormatterSourceMap.fromBuilder = function(builder)
 {
     return new WebInspector.FormatterSourceMap(builder.originalLineEndings, builder.formattedLineEndings, builder.mapping);
-}
+};
 
 WebInspector.FormatterSourceMap.prototype = {
     constructor: WebInspector.FormatterSourceMap,

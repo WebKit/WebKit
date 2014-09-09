@@ -26,7 +26,7 @@
 WebInspector.ScriptTimelineDataGrid = function(treeOutline, columns, delegate, editCallback, deleteCallback)
 {
     WebInspector.TimelineDataGrid.call(this, treeOutline, columns, delegate, editCallback, deleteCallback);
-}
+};
 
 WebInspector.ScriptTimelineDataGrid.prototype = {
     constructor: WebInspector.ScriptTimelineDataGrid,
@@ -37,6 +37,6 @@ WebInspector.ScriptTimelineDataGrid.prototype = {
     {
         return this.selectedNode.elementWithColumnIdentifier("location");
     }
-}
+};
 
 WebInspector.ScriptTimelineDataGrid.prototype.__proto__ = WebInspector.TimelineDataGrid.prototype;

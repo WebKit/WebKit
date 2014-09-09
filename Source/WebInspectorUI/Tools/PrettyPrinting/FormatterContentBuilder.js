@@ -226,4 +226,4 @@ FormatterContentBuilder.prototype = {
         console.assert(this._formattedContent.lastValue === "\n");
         this._formattedLineEndings.push(this._formattedContentLength - 1);
     }
-}
+};

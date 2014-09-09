@@ -33,7 +33,7 @@ WebInspector.ReplayPosition = function(segmentOffset, inputOffset)
 WebInspector.ReplayPosition.fromProtocol = function(payload)
 {
     return new WebInspector.ReplayPosition(payload.segmentOffset, payload.inputOffset);
-}
+};
 
 WebInspector.ReplayObserver = function()
 {

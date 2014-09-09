@@ -33,7 +33,7 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
     this.editable = true;
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
-}
+};
 
 WebInspector.ObjectPropertiesSection.prototype = {
     onpopulate: function()
@@ -88,7 +88,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
         this.dispatchEventToListeners(WebInspector.Section.Event.VisibleContentDidChange);
     }
-}
+};
 
 WebInspector.ObjectPropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
@@ -135,7 +135,7 @@ WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, pro
         b = b.substring(chunkb.length);
     }
     return diff;
-}
+};
 
 WebInspector.ObjectPropertyTreeElement = function(property)
 {
@@ -145,7 +145,7 @@ WebInspector.ObjectPropertyTreeElement = function(property)
     TreeElement.call(this, "", null, false);
     this.toggleOnClick = true;
     this.selectable = false;
-}
+};
 
 WebInspector.ObjectPropertyTreeElement.prototype = {
     onpopulate: function()
@@ -338,6 +338,6 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         };
         this.property.parentObject.setPropertyValue(this.property.name, expression.trim(), callback.bind(this));
     }
-}
+};
 
 WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototype;

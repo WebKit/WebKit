@@ -145,7 +145,7 @@ WebInspector.Toolbar.prototype = {
 
         // Force collapsed style for JavaScript debuggables.
         if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
-            this._element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName)
+            this._element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
             return;
         }
 

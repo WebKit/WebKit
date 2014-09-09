@@ -28,7 +28,7 @@ WebInspector.LogManager = function()
     WebInspector.Object.call(this);
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-}
+};
 
 WebInspector.LogManager.Event = {
     SessionStarted: "log-manager-session-was-started",

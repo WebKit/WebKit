@@ -87,7 +87,7 @@ WebInspector.LogContentView = function(representedObject)
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, this._messageAdded, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, this._previousMessageRepeatCountUpdated, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
-}
+};
 
 WebInspector.LogContentView.Scopes = {
     All: "log-all",
@@ -422,7 +422,7 @@ WebInspector.LogContentView.prototype = {
             this._clearMessagesSelection();
 
             // Focus the prompt. Focusing the prompt needs to happen after the click to work.
-            setTimeout(function () { this.prompt.focus() }.bind(this), 0);
+            setTimeout(function () { this.prompt.focus(); }.bind(this), 0);
         }
 
         delete this._mouseMoveIsRowSelection;
@@ -948,6 +948,6 @@ WebInspector.LogContentView.prototype = {
 
         this._ensureMessageIsVisible(this._selectedSearchMatch.message);
     }
-}
+};
 
 WebInspector.LogContentView.prototype.__proto__ = WebInspector.ContentView.prototype;

@@ -25,7 +25,7 @@
 
 WebInspector.Object = function()
 {
-}
+};
 
 WebInspector.Object.addConstructorFunctions = function(subclassConstructor)
 {
@@ -38,7 +38,7 @@ WebInspector.Object.addConstructorFunctions = function(subclassConstructor)
             continue;
         subclassConstructor[property] = value;
     }
-}
+};
 
 WebInspector.Object.addEventListener = function(eventType, listener, thisObject)
 {
@@ -163,7 +163,7 @@ WebInspector.Object.prototype = {
 
         return event.defaultPrevented;
     }
-}
+};
 
 WebInspector.Event = function(target, type, data)
 {
@@ -172,7 +172,7 @@ WebInspector.Event = function(target, type, data)
     this.data = data;
     this.defaultPrevented = false;
     this._stoppedPropagation = false;
-}
+};
 
 WebInspector.Event.prototype = {
     constructor: WebInspector.Event,
@@ -186,6 +186,6 @@ WebInspector.Event.prototype = {
     {
         this.defaultPrevented = true;
     }
-}
+};
 
 WebInspector.notifications = new WebInspector.Object;

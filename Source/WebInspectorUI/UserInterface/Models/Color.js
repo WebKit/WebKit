@@ -38,7 +38,7 @@ WebInspector.Color = function(format, components)
     this.valid = !components.some(function(component) {
         return isNaN(component);
     });
-}
+};
 
 WebInspector.Color.Format = {
     Original: "color-format-original",
@@ -135,7 +135,7 @@ WebInspector.Color.fromString = function(colorString)
     }
 
     return null;
-}
+};
 
 WebInspector.Color.prototype = {
     nextFormat: function(format)
@@ -449,7 +449,7 @@ WebInspector.Color.prototype = {
         rgba.push(hsla[3]);
         return rgba;
     }
-}
+};
 
 WebInspector.Color.Nicknames = {
     "aliceblue": [240, 248, 255],
@@ -625,7 +625,7 @@ WebInspector.Color.rgb2hsv = function(r, g, b)
         s = 1 - (min/max);
 
     return [h, s, v];
-}
+};
 
 WebInspector.Color.hsv2rgb = function(h, s, v)
 {
@@ -663,4 +663,4 @@ WebInspector.Color.hsv2rgb = function(h, s, v)
     }
 
     return rgb;
-}
+};

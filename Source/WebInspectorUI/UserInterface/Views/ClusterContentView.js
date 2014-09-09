@@ -101,12 +101,12 @@ WebInspector.ClusterContentView.prototype = {
 
     goBack: function()
     {
-        this._contentViewContainer.goBack()
+        this._contentViewContainer.goBack();
     },
 
     goForward: function()
     {
-        this._contentViewContainer.goForward()
+        this._contentViewContainer.goForward();
     },
 
     get selectionPathComponents()

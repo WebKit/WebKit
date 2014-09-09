@@ -34,7 +34,7 @@ WebInspector.EventListenerSectionGroup = function(eventListener, nodeId)
     rows.push(new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Type"), this._type()));
 
     WebInspector.DetailsSectionGroup.call(this, rows);
-}
+};
 
 WebInspector.EventListenerSectionGroup.prototype = {
     constructor: WebInspector.EventListenerSectionGroup,
@@ -96,6 +96,6 @@ WebInspector.EventListenerSectionGroup.prototype = {
         fragment.appendChild(document.createTextNode(functionName));
         return fragment;
     }
-}
+};
 
 WebInspector.EventListenerSectionGroup.prototype.__proto__ = WebInspector.DetailsSectionGroup.prototype;

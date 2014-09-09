@@ -30,7 +30,7 @@ WebInspector.EventListener = function(thisObject, fireOnce)
     this._emitter = null;
     this._callback = null;
     this._fireOnce = fireOnce;
-}
+};
 
 WebInspector.EventListener.prototype = {
     connect: function(emitter, type, callback, usesCapture)
@@ -56,7 +56,7 @@ WebInspector.EventListener.prototype = {
             this._callback = function() {
                 listener.disconnect();
                 callback.apply(this, arguments);
-            }
+            };
         } else
             this._callback = callback;
 

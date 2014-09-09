@@ -57,7 +57,7 @@ WebInspector.displayNameForNode = function(node)
     }
 
     return title;
-}
+};
 
 WebInspector.roleSelectorForNode = function(node)
 {
@@ -68,7 +68,7 @@ WebInspector.roleSelectorForNode = function(node)
     if (role)
         title = ":role(" + role + ")";
     return title;
-}
+};
 
 WebInspector.linkifyAccessibilityNodeReference = function(node)
 {
@@ -85,7 +85,7 @@ WebInspector.linkifyAccessibilityNodeReference = function(node)
     link.textContent = tagIdSelector + roleSelector;
     link.title += roleSelector;
     return link;
-}
+};
 
 WebInspector.linkifyNodeReference = function(node)
 {
@@ -102,4 +102,4 @@ WebInspector.linkifyNodeReference = function(node)
     link.addEventListener("mouseout", WebInspector.domTreeManager.hideDOMNodeHighlight.bind(WebInspector.domTreeManager));
 
     return link;
-}
+};

@@ -49,7 +49,7 @@ WebInspector.TextRange = function(startLineOrStartOffset, startColumnOrEndOffset
         this._endLine = NaN;
         this._endColumn = NaN;
     }
-}
+};
 
 WebInspector.TextRange.prototype = {
     constructor: WebInspector.TextRange,

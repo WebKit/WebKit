@@ -145,6 +145,6 @@ WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
         console.error("Unknown DOM node type: ", domNode.nodeType());
         return domNode.nodeNameInCorrectCase();
     }
-}
+};
 
 WebInspector.DOMSearchMatchObject.prototype.__proto__ = WebInspector.Object.prototype;

@@ -33,7 +33,7 @@ WebInspector.GeneralTreeElement = function(classNames, title, subtitle, represen
     this._mainTitle = title || "";
     this._subtitle = subtitle || "";
     this._status = "";
-}
+};
 
 WebInspector.GeneralTreeElement.StyleClassName = "item";
 WebInspector.GeneralTreeElement.DisclosureButtonStyleClassName = "disclosure-button";
@@ -393,6 +393,6 @@ WebInspector.GeneralTreeElement.prototype = {
         } else
             this._statusElement.textContent = this._status;
     }
-}
+};
 
 WebInspector.GeneralTreeElement.prototype.__proto__ = TreeElement.prototype;

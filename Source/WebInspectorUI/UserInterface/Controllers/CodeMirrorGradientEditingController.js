@@ -54,7 +54,7 @@ WebInspector.CodeMirrorGradientEditingController = function(codeMirror, marker)
             }
         };
     }
-}
+};
 
 WebInspector.CodeMirrorGradientEditingController.StyleClassName = "gradient-editing-controller";
 WebInspector.CodeMirrorGradientEditingController.EditsColorClassName = "edits-color";
@@ -140,7 +140,7 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
             this._gradientTypePicker.value = this.value.repeats ? "repeating-linear-gradient" : "linear-gradient";
             this._angleInput.value = this.value.angle + "\u00B0";
         } else
-            this._gradientTypePicker.value = this.value.repeats ? "repeating-radial-gradient" : "radial-gradient"
+            this._gradientTypePicker.value = this.value.repeats ? "repeating-radial-gradient" : "radial-gradient";
 
         this._gradientSlider.delegate = this;
     },
@@ -246,4 +246,4 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         else
             this._container.classList.add(WebInspector.CodeMirrorGradientEditingController.RadialGradientClassName);
     }
-}
+};

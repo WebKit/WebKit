@@ -34,7 +34,7 @@ WebInspector.Setting = function(name, defaultValue)
     this._name = name;
     this._localStorageKey = WebInspector.Setting.LocalStorageKeyPrefix + name;
     this._defaultValue = defaultValue;
-}
+};
 
 WebInspector.Object.addConstructorFunctions(WebInspector.Setting);
 
@@ -91,6 +91,6 @@ WebInspector.Setting.prototype = {
 
         this.dispatchEventToListeners(WebInspector.Setting.Event.Changed, this._value, {name: this._name});
     }
-}
+};
 
 WebInspector.Setting.prototype.__proto__ = WebInspector.Object.prototype;

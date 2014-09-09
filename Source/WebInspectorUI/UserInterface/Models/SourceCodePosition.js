@@ -29,7 +29,7 @@ WebInspector.SourceCodePosition = function(lineNumber, columNumber)
 
     this._lineNumber = lineNumber || 0;
     this._columnNumber = columNumber || 0;
-}
+};
 
 WebInspector.SourceCodePosition.prototype = {
     constructor: WebInspector.SourceCodePosition,

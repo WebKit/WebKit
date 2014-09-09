@@ -83,7 +83,7 @@ WebInspector.BreakpointActionView.displayStringForType = function(type)
         console.assert(false);
         return "";
     }
-}
+};
 
 WebInspector.BreakpointActionView.prototype = {
     constructor: WebInspector.BreakpointActionView,

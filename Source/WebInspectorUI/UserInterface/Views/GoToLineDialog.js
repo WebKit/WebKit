@@ -44,7 +44,7 @@ WebInspector.GoToLineDialog = function()
     this._input.addEventListener("blur", this);
     this._clearIcon.addEventListener("mousedown", this);
     this._clearIcon.addEventListener("click", this);
-}
+};
 
 WebInspector.GoToLineDialog.StyleClassName = "go-to-line-dialog";
 WebInspector.GoToLineDialog.NonEmptyClassName = "non-empty";
@@ -156,4 +156,4 @@ WebInspector.GoToLineDialog.prototype = {
         this._input.value = "";
         this._element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
     }
-}
+};

@@ -40,7 +40,7 @@ WebInspector.DOMTreeElement = function(node, elementCloseTag)
         this._canAddAttributes = true;
     this._searchQuery = null;
     this._expandedChildrenLimit = WebInspector.DOMTreeElement.InitialChildrenLimit;
-}
+};
 
 WebInspector.DOMTreeElement.InitialChildrenLimit = 500;
 WebInspector.DOMTreeElement.MaximumInlineTextChildLength = 80;
@@ -1297,6 +1297,6 @@ WebInspector.DOMTreeElement.prototype = {
         if (event.type === "dragstart" && this._editing)
             event.preventDefault();
     }
-}
+};
 
 WebInspector.DOMTreeElement.prototype.__proto__ = TreeElement.prototype;

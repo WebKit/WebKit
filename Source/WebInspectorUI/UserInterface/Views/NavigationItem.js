@@ -104,6 +104,6 @@ WebInspector.NavigationItem.prototype = {
             classNames = classNames.concat(this._additionalClassNames);
         return classNames;
     }
-}
+};
 
 WebInspector.NavigationItem.prototype.__proto__ = WebInspector.Object.prototype;

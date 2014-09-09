@@ -41,7 +41,7 @@ WebInspector.DatabaseContentView = function(representedObject)
     this._promptElement.appendChild(this.prompt.element);
 
     this.element.addEventListener("click", this._messagesClicked.bind(this), true);
-}
+};
 
 WebInspector.DatabaseContentView.Event = {
     SchemaUpdated: "SchemaUpdated"
@@ -177,6 +177,6 @@ WebInspector.DatabaseContentView.prototype = {
         element.appendChild(resultElement);
         return resultElement;
     }
-}
+};
 
 WebInspector.DatabaseContentView.prototype.__proto__ = WebInspector.ContentView.prototype;

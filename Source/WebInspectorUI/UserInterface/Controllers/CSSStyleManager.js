@@ -44,7 +44,7 @@ WebInspector.CSSStyleManager = function()
     this._styleSheetIdentifierMap = {};
     this._styleSheetFrameURLMap = {};
     this._nodeStylesMap = {};
-}
+};
 
 WebInspector.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
 
@@ -362,6 +362,6 @@ WebInspector.CSSStyleManager.prototype = {
             clearTimeout(styleSheet.__pendingChangeTimeout);
         styleSheet.__pendingChangeTimeout = setTimeout(applyStyleSheetChanges.bind(this), 500);
     }
-}
+};
 
 WebInspector.CSSStyleManager.prototype.__proto__ = WebInspector.Object.prototype;

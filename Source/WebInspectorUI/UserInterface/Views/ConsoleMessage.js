@@ -40,7 +40,7 @@ WebInspector.ConsoleMessage = function(source, level, url, line, column, repeatC
     this.repeatCount = repeatCount;
     this.repeatDelta = repeatCount;
     this.totalRepeatCount = repeatCount;
-}
+};
 
 WebInspector.ConsoleMessage.prototype = {
     isErrorOrWarning: function()
@@ -57,12 +57,12 @@ WebInspector.ConsoleMessage.prototype = {
     {
         // Implemented by concrete instances
     }
-}
+};
 
 WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
 {
     return new WebInspector.ConsoleMessageImpl(source, level, message, null, type, url, line, column, repeatCount, parameters, stackTrace, request);
-}
+};
 
 // Note: Keep these constants in sync with the ones in Console.h
 WebInspector.ConsoleMessage.MessageSource = {

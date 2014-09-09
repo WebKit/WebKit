@@ -43,7 +43,7 @@ WebInspector.SourceMap = function(sourceMappingURL, payload, originalSourceCode)
     this._sourceRoot = null;
     this._sourceContentByURL = {};
     this._parseMappingPayload(payload);
-}
+};
 
 WebInspector.SourceMap.prototype = {
 
@@ -250,13 +250,13 @@ WebInspector.SourceMap.prototype = {
     _VLQ_BASE_SHIFT: 5,
     _VLQ_BASE_MASK: (1 << 5) - 1,
     _VLQ_CONTINUATION_MASK: 1 << 5
-}
+};
 
 WebInspector.SourceMap.StringCharIterator = function(string)
 {
     this._string = string;
     this._position = 0;
-}
+};
 
 WebInspector.SourceMap.StringCharIterator.prototype = {
     next: function()
@@ -273,4 +273,4 @@ WebInspector.SourceMap.StringCharIterator.prototype = {
     {
         return this._position < this._string.length;
     }
-}
+};

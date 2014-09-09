@@ -30,7 +30,7 @@ WebInspector.BranchManager = function()
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
     this.initialize();
-}
+};
 
 WebInspector.BranchManager.prototype = {
     constructor: WebInspector.BranchManager,

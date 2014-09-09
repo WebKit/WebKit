@@ -147,7 +147,7 @@ WebInspector.LinearGradient = function(angle, stops)
     this.type = WebInspector.Gradient.Types.Linear;
     this.angle = angle;
     this.stops = stops;
-}
+};
 
 WebInspector.LinearGradient.linearGradientWithComponents = function(components)
 {
@@ -199,7 +199,7 @@ WebInspector.LinearGradient.linearGradientWithComponents = function(components)
         return null;
 
     return new WebInspector.LinearGradient(angle, stops);
-}
+};
 
 WebInspector.LinearGradient.prototype = {
     constructor: WebInspector.LinearGradient,
@@ -237,14 +237,14 @@ WebInspector.LinearGradient.prototype = {
 
         return (this.repeats ? "repeating-" : "") + this.type + "(" + str + ")";
     }
-}
+};
 
 WebInspector.RadialGradient = function(sizing, stops)
 {
     this.type = WebInspector.Gradient.Types.Radial;
     this.sizing = sizing;
     this.stops = stops;
-}
+};
 
 WebInspector.RadialGradient.radialGradientWithComponents = function(components)
 {
@@ -255,7 +255,7 @@ WebInspector.RadialGradient.radialGradientWithComponents = function(components)
         return null;
 
     return new WebInspector.RadialGradient(sizing, stops);
-}
+};
 
 WebInspector.RadialGradient.prototype = {
     constructor: WebInspector.RadialGradient,
@@ -276,4 +276,4 @@ WebInspector.RadialGradient.prototype = {
         
         return (this.repeats ? "repeating-" : "") + this.type + "(" + str + ")";
     }
-}
+};

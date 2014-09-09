@@ -50,7 +50,7 @@ WebInspector.TimelineRuler = function()
     this._allowsTimeRangeSelection = false;
 
     this._markerElementMap = new Map;
-}
+};
 
 WebInspector.TimelineRuler.MinimumLeftDividerSpacing = 48;
 WebInspector.TimelineRuler.MinimumDividerSpacing = 64;
@@ -86,7 +86,7 @@ WebInspector.TimelineRuler.prototype = {
 
     get allowsClippedLabels()
     {
-        return this._allowsClippedLabels
+        return this._allowsClippedLabels;
     },
 
     set allowsClippedLabels(x)
@@ -664,7 +664,7 @@ WebInspector.TimelineRuler.prototype = {
                 this.selectionStartTime = this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange;
             } else {
                 this.selectionStartTime = Math.max(this.startTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange);
-                this.selectionEndTime = this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange
+                this.selectionEndTime = this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange;
             }
         }
 
@@ -755,6 +755,6 @@ WebInspector.TimelineRuler.prototype = {
         event.preventDefault();
         event.stopPropagation();
     }
-}
+};
 
 WebInspector.TimelineRuler.prototype.__proto__ = WebInspector.Object.prototype;

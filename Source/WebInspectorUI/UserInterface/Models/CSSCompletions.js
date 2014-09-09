@@ -70,7 +70,7 @@ WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
     this._values.sort();
 
     this._acceptEmptyPrefix = acceptEmptyPrefix;
-}
+};
 
 WebInspector.CSSCompletions.cssNameCompletions = null;
 
@@ -153,7 +153,7 @@ WebInspector.CSSCompletions.requestCSSNameCompletions = function()
 
     if (window.CSSAgent)
         CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
-}
+};
 
 WebInspector.CSSCompletions.prototype = {
     get values()
@@ -267,4 +267,4 @@ WebInspector.CSSCompletions.prototype = {
     {
         return this._shorthands[longhand] || [];
     }
-}
+};

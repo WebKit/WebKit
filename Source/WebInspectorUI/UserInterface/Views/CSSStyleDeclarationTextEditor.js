@@ -535,7 +535,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             }).bind(this));
 
             if (this._sortProperties)
-                properties.sort(function(a, b) { return a.name.localeCompare(b.name) });
+                properties.sort(function(a, b) { return a.name.localeCompare(b.name); });
         }
 
         for (var i = 0; i < properties.length; ++i) {

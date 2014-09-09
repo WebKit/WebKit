@@ -103,7 +103,7 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
         this.name = payload.name;
         this.value = payload.value;
     }
-}
+};
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMNode);
 
@@ -592,6 +592,6 @@ WebInspector.DOMNode.prototype = {
                 callback.apply(null, arguments);
         };
     }
-}
+};
 
 WebInspector.DOMNode.prototype.__proto__ = WebInspector.Object.prototype;

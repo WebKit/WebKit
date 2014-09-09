@@ -31,7 +31,7 @@ WebInspector.IncompleteSessionSegment = function(identifier)
 
     this.identifier = identifier;
     this._timestamp = Date.now();
-}
+};
 
 WebInspector.IncompleteSessionSegment.prototype = {
     constructor: WebInspector.IncompleteSessionSegment,

@@ -84,7 +84,7 @@ WebInspector.TreeOutlineDataGridSynchronizer = function(treeOutline, dataGrid, d
         if (existingOnSelect)
             existingOnSelect.call(treeOutline, element, selectedByUser);
     }.bind(this);
-}
+};
 
 WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
     constructor: WebInspector.TreeOutlineDataGridSynchronizer,
@@ -293,6 +293,6 @@ WebInspector.TreeOutlineDataGridSynchronizer.prototype = {
 
         dataGridNode.element.classList.toggle("hidden", hidden);
     }
-}
+};
 
 WebInspector.TreeOutlineDataGridSynchronizer.prototype.__proto__ = WebInspector.Object.prototype;

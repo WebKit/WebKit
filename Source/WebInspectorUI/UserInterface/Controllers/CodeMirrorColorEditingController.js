@@ -26,7 +26,7 @@
 WebInspector.CodeMirrorColorEditingController = function(codeMirror, marker)
 {
     WebInspector.CodeMirrorEditingController.call(this, codeMirror, marker);
-}
+};
 
 WebInspector.CodeMirrorColorEditingController.prototype = {
     constructor: WebInspector.CodeMirrorColorEditingController,
@@ -62,4 +62,4 @@ WebInspector.CodeMirrorColorEditingController.prototype = {
     {
         this.value = event.target.color;
     }    
-}
+};

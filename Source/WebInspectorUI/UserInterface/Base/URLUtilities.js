@@ -202,10 +202,10 @@ WebInspector.displayNameForURL = function(url, urlComponents)
     }
 
     return displayName || WebInspector.displayNameForHost(urlComponents.host) || url;
-}
+};
 
 WebInspector.displayNameForHost = function(host)
 {
     // FIXME <rdar://problem/11237413>: This should decode punycode hostnames.
     return host;
-}
+};

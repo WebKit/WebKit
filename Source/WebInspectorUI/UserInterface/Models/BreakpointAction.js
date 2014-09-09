@@ -50,7 +50,7 @@ WebInspector.BreakpointAction.Type = {
     Evaluate: "evaluate",
     Sound: "sound",
     Probe: "probe"
-}
+};
 
 WebInspector.BreakpointAction.prototype = {
     constructor: WebInspector.BreakpointAction,

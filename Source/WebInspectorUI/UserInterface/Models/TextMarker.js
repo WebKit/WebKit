@@ -31,7 +31,7 @@ WebInspector.TextMarker = function(codeMirrorTextMarker, type)
     codeMirrorTextMarker.__webInspectorTextMarker = this;
 
     this._type = type || WebInspector.TextMarker.Type.Plain;
-}
+};
 
 WebInspector.TextMarker.Type = {
     Color: "text-marker-type-color",

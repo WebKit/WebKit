@@ -101,7 +101,7 @@ WebInspector.FindBanner.SegmentGlyphStyleClassName = "glyph";
 WebInspector.FindBanner.Event = {
     DidShow: "find-banner-did-show",
     DidHide: "find-banner-did-hide"
-}
+};
 
 WebInspector.FindBanner.prototype = {
     constructor: WebInspector.FindBanner,

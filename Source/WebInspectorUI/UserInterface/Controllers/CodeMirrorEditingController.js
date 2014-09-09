@@ -37,7 +37,7 @@ WebInspector.CodeMirrorEditingController = function(codeMirror, marker)
     this._value = this.initialValue;
 
     this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
-}
+};
 
 WebInspector.CodeMirrorEditingController.prototype = {
     constructor: WebInspector.CodeMirrorEditingController,
@@ -187,4 +187,4 @@ WebInspector.CodeMirrorEditingController.prototype = {
         if (this._delegate && typeof this._delegate.editingControllerDidFinishEditing === "function")
             this._delegate.editingControllerDidFinishEditing(this);
     }
-}
+};

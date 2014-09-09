@@ -32,7 +32,7 @@ WebInspector.isBeingEdited = function(element)
     }
 
     return false;
-}
+};
 
 WebInspector.markBeingEdited = function(element, value)
 {
@@ -48,12 +48,12 @@ WebInspector.markBeingEdited = function(element, value)
         --WebInspector.__editingCount;
     }
     return true;
-}
+};
 
 WebInspector.isEditingAnyField = function()
 {
     return !!WebInspector.__editingCount;
-}
+};
 
 WebInspector.isEventTargetAnEditableField = function(event)
 {
@@ -72,7 +72,7 @@ WebInspector.isEventTargetAnEditableField = function(event)
         return true;
 
     return false;
-}
+};
 
 WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
 {
@@ -83,7 +83,7 @@ WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
     this.multiline;
     this.customFinishHandler;
     this.spellcheck = false;
-}
+};
 
 WebInspector.EditingConfig.prototype = {
     setPasteHandler: function(pasteHandler)
@@ -100,7 +100,7 @@ WebInspector.EditingConfig.prototype = {
     {
         this.customFinishHandler = customFinishHandler;
     }
-}
+};
 
 WebInspector.startEditing = function(element, config)
 {
@@ -235,4 +235,4 @@ WebInspector.startEditing = function(element, config)
         cancel: editingCancelled.bind(element),
         commit: editingCommitted.bind(element)
     };
-}
+};

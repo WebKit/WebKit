@@ -31,7 +31,7 @@ WebInspector.IssueManager = function()
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
 
     this.initialize();
-}
+};
 
 WebInspector.IssueManager.Event = {
     IssueWasAdded: "issue-manager-issue-was-added",

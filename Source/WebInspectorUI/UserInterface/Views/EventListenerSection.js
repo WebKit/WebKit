@@ -30,7 +30,7 @@ WebInspector.EventListenerSection = function(type, nodeId)
     this.element.classList.add("event-listener-section");
 
     this._nodeId = nodeId;
-}
+};
 
 WebInspector.EventListenerSection.prototype = {
     constructor: WebInspector.EventListenerSection,
@@ -41,6 +41,6 @@ WebInspector.EventListenerSection.prototype = {
         groups.push(new WebInspector.EventListenerSectionGroup(eventListener, this._nodeId));
         this.groups = groups;
     }
-}
+};
 
 WebInspector.EventListenerSection.prototype.__proto__ = WebInspector.DetailsSection.prototype;

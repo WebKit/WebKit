@@ -52,7 +52,7 @@ WebInspector.Script.DisplayNameCookieKey = "script-display-name";
 WebInspector.Script.resetUniqueDisplayNameNumbers = function()
 {
     WebInspector.Script._nextUniqueDisplayNameNumber = 1;
-}
+};
 
 WebInspector.Script._nextUniqueDisplayNameNumber = 1;
 

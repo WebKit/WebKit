@@ -38,7 +38,7 @@ WebInspector.ContextMenuItem = function(topLevelMenu, type, label, disabled, che
     this._contextMenu = topLevelMenu;
     if (type === "item" || type === "checkbox")
         this._id = topLevelMenu.nextId();
-}
+};
 
 WebInspector.ContextMenuItem.prototype = {
     id: function()
@@ -72,13 +72,13 @@ WebInspector.ContextMenuItem.prototype = {
             return { type: "checkbox", id: this._id, label: this._label, checked: !!this._checked, enabled: !this._disabled };
         }
     }
-}
+};
 
 WebInspector.ContextSubMenuItem = function(topLevelMenu, label, disabled)
 {
     WebInspector.ContextMenuItem.call(this, topLevelMenu, "subMenu", label, disabled);
     this._items = [];
-}
+};
 
 WebInspector.ContextSubMenuItem.prototype = {
     appendItem: function(label, handler, disabled)
@@ -133,14 +133,14 @@ WebInspector.ContextSubMenuItem.prototype = {
     },
 
     __proto__: WebInspector.ContextMenuItem.prototype
-}
+};
 
 WebInspector.ContextMenu = function(event) {
     WebInspector.ContextSubMenuItem.call(this, this, "");
     this._event = event;
     this._handlers = {};
     this._id = 0;
-}
+};
 
 WebInspector.ContextMenu.prototype = {
 
@@ -214,20 +214,20 @@ WebInspector.ContextMenu.prototype = {
     },
 
     __proto__: WebInspector.ContextSubMenuItem.prototype
-}
+};
 
 WebInspector.ContextMenu.Provider = function()
 {
-}
+};
 
 WebInspector.ContextMenu.Provider.prototype = {
     appendApplicableItems: function(event, contextMenu, target) { }
-}
+};
 
 WebInspector.ContextMenu.registerProvider = function(provider)
 {
     WebInspector.ContextMenu._providers.push(provider);
-}
+};
 
 WebInspector.ContextMenu._providers = [];
 
@@ -235,10 +235,10 @@ WebInspector.contextMenuItemSelected = function(id)
 {
     if (WebInspector._contextMenu)
         WebInspector._contextMenu._itemSelected(id);
-}
+};
 
 WebInspector.contextMenuCleared = function()
 {
     // FIXME: Unfortunately, contextMenuCleared is invoked between show and item selected
     // so we can't delete last menu object from WebInspector. Fix the contract.
-}
+};

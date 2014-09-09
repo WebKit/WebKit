@@ -41,7 +41,7 @@ WebInspector.ColorWheel = function()
     this._element.appendChild(this._crosshair);
 
     this._finalCanvas.addEventListener("mousedown", this);
-}
+};
 
 WebInspector.ColorWheel.prototype = {
     contructor: WebInspector.ColorWheel,

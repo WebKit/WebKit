@@ -52,7 +52,7 @@ WebInspector.dispatchNextQueuedMessageFromBackend = function()
 
     if (InspectorBackend.dumpInspectorTimeStats)
         console.log("time-stats: --- RunLoop duration: " + (Date.now() - startTime) + "ms; dispatched: " + (startCount - WebInspector.messagesToDispatch.length) + "; remaining: " + WebInspector.messagesToDispatch.length);
-}
+};
 
 WebInspector.dispatchMessageFromBackend = function(message)
 {
@@ -65,4 +65,4 @@ WebInspector.dispatchMessageFromBackend = function(message)
         return;
 
     this._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
-}
+};

@@ -30,7 +30,7 @@ WebInspector.LayoutTimelineDataGrid = function(treeOutline, columns, delegate, e
     this._showingHighlight = false;
 
     this.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._layoutDataGridSelectedNodeChanged, this);
-}
+};
 
 WebInspector.LayoutTimelineDataGrid.prototype = {
     constructor: WebInspector.LayoutTimelineDataGrid,
@@ -92,6 +92,6 @@ WebInspector.LayoutTimelineDataGrid.prototype = {
             this._showingHighlight = false;
         }
     }
-}
+};
 
 WebInspector.LayoutTimelineDataGrid.prototype.__proto__ = WebInspector.TimelineDataGrid.prototype;

@@ -684,7 +684,7 @@ WebInspector.Resource.prototype = {
     associateWithScript: function(script)
     {
         if (!this._scripts)
-            this._scripts = []
+            this._scripts = [];
 
         this._scripts.push(script);
 

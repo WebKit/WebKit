@@ -33,7 +33,7 @@
 if (!window.InspectorFrontendHost) {
     WebInspector.InspectorFrontendHostStub = function()
     {
-    }
+    };
 
     WebInspector.InspectorFrontendHostStub.prototype = {
         // Public
@@ -155,7 +155,7 @@ if (!window.InspectorFrontendHost) {
 
             delete this._pendingMessages;
         }
-    }
+    };
 
     InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
 

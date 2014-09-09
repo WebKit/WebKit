@@ -49,4 +49,4 @@ Formatter.prototype.debug = function(from, to)
     }
 
     return debug;
-}
+};

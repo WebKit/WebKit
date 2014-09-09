@@ -90,7 +90,7 @@ WebInspector.IssueMessage = function(source, level, text, url, lineNumber, param
         console.error("Unknown issue source:", source);
         this._type = WebInspector.IssueMessage.Type.OtherIssue;
     }
-}
+};
 
 WebInspector.IssueMessage.Level = {
     Error: "error",

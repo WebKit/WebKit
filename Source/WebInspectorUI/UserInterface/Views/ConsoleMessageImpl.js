@@ -45,7 +45,7 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
         "node":   this._formatParameterAsNode,
         "string": this._formatParameterAsString
     };
-}
+};
 
 WebInspector.ConsoleMessageImpl.prototype = {
 
@@ -724,6 +724,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         return clipboardString;
     }
-}
+};
 
 WebInspector.ConsoleMessageImpl.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;

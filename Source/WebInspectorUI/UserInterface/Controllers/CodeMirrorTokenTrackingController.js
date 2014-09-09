@@ -51,7 +51,7 @@ WebInspector.CodeMirrorTokenTrackingController.Mode = {
     JavaScriptExpression: "javascript-expression",
     JavaScriptTypeInformation: "javascript-type-information",
     MarkedTokens: "marked-tokens"
-}
+};
 
 WebInspector.CodeMirrorTokenTrackingController.prototype = {
     constructor: WebInspector.CodeMirrorTokenTrackingController,

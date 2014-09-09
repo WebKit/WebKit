@@ -127,7 +127,7 @@ WebInspector.ProbeSetDetailsSection.prototype = {
         content.createChild("div").textContent = WebInspector.UIString("Add New Probe Expression");
         var textBox = content.createChild("input");
         textBox.addEventListener("keypress", createProbeFromEnteredExpression.bind(this, popover));
-        textBox.addEventListener("click", function (event) {event.target.select()});
+        textBox.addEventListener("click", function (event) { event.target.select(); });
         textBox.type = "text";
         textBox.placeholder = WebInspector.UIString("Expression");
         popover.content = content;

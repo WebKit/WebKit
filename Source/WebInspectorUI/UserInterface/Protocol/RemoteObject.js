@@ -44,17 +44,17 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
         this._hasChildren = false;
         this.value = value;
     }
-}
+};
 
 WebInspector.RemoteObject.fromPrimitiveValue = function(value)
 {
     return new WebInspector.RemoteObject(undefined, typeof value, undefined, value);
-}
+};
 
 WebInspector.RemoteObject.fromLocalObject = function(value)
 {
     return new WebInspector.LocalJSONObject(value);
-}
+};
 
 WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
 {
@@ -69,14 +69,14 @@ WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
             callback(WebInspector.RemoteObject.fromPayload(object));
     }
     DOMAgent.resolveNode(node.id, objectGroup, mycallback);
-}
+};
 
 WebInspector.RemoteObject.fromPayload = function(payload)
 {
     console.assert(typeof payload === "object", "Remote object payload should only be an object");
 
     return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description);
-}
+};
 
 WebInspector.RemoteObject.type = function(remoteObject)
 {
@@ -88,7 +88,7 @@ WebInspector.RemoteObject.type = function(remoteObject)
         return type;
 
     return remoteObject.type;
-}
+};
 
 WebInspector.RemoteObject.prototype = {
     get objectId()
@@ -235,7 +235,7 @@ WebInspector.RemoteObject.prototype = {
             return 0;
         return parseInt(matches[1], 10);
     }
-}
+};
 
 WebInspector.RemoteObjectProperty = function(name, value, descriptor)
 {
@@ -245,12 +245,12 @@ WebInspector.RemoteObjectProperty = function(name, value, descriptor)
     this.writable = descriptor ? !!descriptor.writable : true;
     if (descriptor && descriptor.wasThrown)
         this.wasThrown = true;
-}
+};
 
 WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
 {
     return new WebInspector.RemoteObjectProperty(name, WebInspector.RemoteObject.fromPrimitiveValue(value));
-}
+};
 
 // The below is a wrapper around a local object that provides an interface comaptible
 // with RemoteObject, to be used by the UI code (primarily ObjectPropertiesSection).
@@ -261,7 +261,7 @@ WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
 WebInspector.LocalJSONObject = function(value)
 {
     this._value = value;
-}
+};
 
 WebInspector.LocalJSONObject.prototype = {
     get description()
@@ -363,4 +363,4 @@ WebInspector.LocalJSONObject.prototype = {
     {
         return false;
     }
-}
+};

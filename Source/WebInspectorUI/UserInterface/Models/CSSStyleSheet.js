@@ -39,7 +39,7 @@ WebInspector.Object.addConstructorFunctions(WebInspector.CSSStyleSheet);
 WebInspector.CSSStyleSheet.resetUniqueDisplayNameNumbers = function()
 {
     WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
-}
+};
 
 WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
 

@@ -61,7 +61,7 @@ WebInspector.DOMTreeOutline = function(omitRootDOMNode, selectEnabled, showInEle
     this._hideElementKeyboardShortcut.implicitlyPreventsDefault = false;
 
     WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
-}
+};
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeOutline);
 
@@ -69,7 +69,7 @@ WebInspector.DOMTreeOutline.StyleClassName = "dom-tree-outline";
 
 WebInspector.DOMTreeOutline.Event = {
     SelectedNodeChanged: "dom-tree-outline-selected-node-changed"
-}
+};
 
 WebInspector.DOMTreeOutline.prototype = {
     constructor: WebInspector.DOMTreeOutline,
@@ -577,6 +577,6 @@ WebInspector.DOMTreeOutline.prototype = {
         } else
             toggleProperties.call(this);
     }
-}
+};
 
 WebInspector.DOMTreeOutline.prototype.__proto__ = TreeOutline.prototype;
