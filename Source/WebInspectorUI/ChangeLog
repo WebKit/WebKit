@@ -1,5 +1,22 @@
 2014-09-08  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add layout test for lowercase CSSProperty names
+        https://bugs.webkit.org/show_bug.cgi?id=135961
+
+        Reviewed by Joseph Pecoraro.
+
+        Modified test components to support testing CSSStyleManager and related classes:
+        - Added required models to Test.html
+        - Added CSSCompletions initialization to Test.js
+        - CSSCompletions doesn't assume presence of CodeMirror.
+
+        * UserInterface/Base/Test.js:
+        (WebInspector.loaded):
+        * UserInterface/Models/CSSCompletions.js:
+        * UserInterface/Test.html:
+
+2014-09-08  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Fixes to layout test infrastructure
         https://bugs.webkit.org/show_bug.cgi?id=136360
 
