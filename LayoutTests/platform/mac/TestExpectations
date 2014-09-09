@@ -648,23 +648,23 @@ webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html [ Failure 
 webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html [ Failure ]
 webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html [ Failure ]
 webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Skip ]
-webgl/1.0.1/conformance/context/context-lost-restored.html [Failure]
-webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html [Failure]
+webgl/1.0.1/conformance/context/context-lost-restored.html [ Failure ]
+webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html [ Failure ]
 webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure Timeout ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
 # Some WebGL tests don't work properly on MountainLion
-[ MountainLion ] webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html
-[ MountainLion ] webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html
-[ MountainLion ] webgl/1.0.1/conformance/limits/gl-max-texture-dimensions.html
-[ MountainLion ] webgl/1.0.1/conformance/textures/texture-size.html
-[ MountainLion ] webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html
-[ MountainLion ] webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html
-[ MountainLion ] webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html
-[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html
-[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html
-[ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html
+[ MountainLion ] webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Failure ]
+[ MountainLion ] webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
+[ MountainLion ] webgl/1.0.1/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
+[ MountainLion ] webgl/1.0.1/conformance/textures/texture-size.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Failure ]
+[ MountainLion ] webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
 
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html

@@ -1,3 +1,9 @@
+2014-09-09  Roger Fong  <roger_fong@apple.com>
+
+        Fix syntax on some expected failures.
+
+        * platform/mac/TestExpectations:
+
 2014-09-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
