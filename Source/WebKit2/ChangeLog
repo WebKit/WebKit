@@ -1,3 +1,14 @@
+2014-09-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] -[WKBackForwardList backList] contains an unnecessary nil check
+        https://bugs.webkit.org/show_bug.cgi?id=136680
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        (-[WKBackForwardList backList]): Removed nil check.
+        (-[WKBackForwardList forwardList]): Ditto.
+
 2014-09-09  Tim Horton  <timothy_horton@apple.com>
 
         Make DrawingArea a real MessageReceiver
