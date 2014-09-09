@@ -1,3 +1,9 @@
+2014-09-09  Roger Fong  <roger_fong@apple.com>
+
+        Unskip two snapshotting tests that work for me consistently locally.
+
+        * platform/mac-wk2/TestExpectations:
+
 2014-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Ignore ::first-letter pseudo-element
