@@ -1,3 +1,14 @@
+2014-09-09  Dan Bernstein  <mitz@apple.com>
+
+        FrameLoader::prepareForHistoryNavigation is unused
+        https://bugs.webkit.org/show_bug.cgi?id=136683
+
+        Reviewed by Tim Horton.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForHistoryNavigation): Deleted.
+        * loader/FrameLoader.h: Removed the declaration.
+
 2014-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Ignore ::first-letter pseudo-element

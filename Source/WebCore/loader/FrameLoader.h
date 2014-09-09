@@ -102,7 +102,6 @@ public:
     IconController& icon() const { return *m_icon; }
     MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
 
-    void prepareForHistoryNavigation();
     void setupForReplace();
 
     // FIXME: These are all functions which start loads. We have too many.
