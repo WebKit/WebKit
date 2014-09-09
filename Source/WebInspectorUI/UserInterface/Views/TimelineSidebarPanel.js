@@ -417,7 +417,9 @@ WebInspector.TimelineSidebarPanel.prototype = {
     _recordingLoaded: function()
     {
         this._activeContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(WebInspector.timelineManager.activeRecording);
-        WebInspector.contentBrowser.showContentView(this._activeContentView);
+
+        if (this.selected)
+            WebInspector.contentBrowser.showContentView(this._activeContentView);
     },
 
     _recordGlyphMousedOver: function(event)

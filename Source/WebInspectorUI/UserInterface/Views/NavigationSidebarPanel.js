@@ -147,6 +147,11 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return this._contentTreeOutline;
     },
 
+    get visibleContentTreeOutlines()
+    {
+        return this._visibleContentTreeOutlines;
+    },
+
     get hasSelectedElement()
     {
         return !!this._contentTreeOutline.selectedTreeElement;
@@ -533,7 +538,9 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
         this._checkForEmptyFilterResults();
         this._updateContentOverflowShadowVisibilitySoon();
-        this._checkElementsForPendingViewStateCookie(treeElement);
+
+        if (this.selected)
+            this._checkElementsForPendingViewStateCookie(treeElement);
     },
 
     _treeElementExpandedOrCollapsed: function(treeElement)
@@ -709,7 +716,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         }, this);
 
         if (matchedElement) {
-            matchedElement.revealAndSelect(true, false);
+            matchedElement.revealAndSelect();
 
             delete this._pendingViewStateCookie;
 

@@ -553,9 +553,12 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     _mainFrameMainResourceDidChange: function(event)
     {
+        var wasShowingResourceSidebar = this.selected;
         var currentContentView = WebInspector.contentBrowser.currentContentView;
         var wasShowingResourceContentView = currentContentView instanceof WebInspector.ResourceContentView
-            || currentContentView instanceof WebInspector.FrameContentView || currentContentView instanceof WebInspector.ScriptContentView;
+            || currentContentView instanceof WebInspector.ResourceClusterContentView
+            || currentContentView instanceof WebInspector.FrameContentView
+            || currentContentView instanceof WebInspector.ScriptContentView;
 
         // Close all resource and frame content views since the main frame has navigated and all resources are cleared.
         WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.ResourceClusterContentView);
@@ -565,9 +568,18 @@ WebInspector.ResourceSidebarPanel.prototype = {
         function delayedWork()
         {
             // Show the main frame since there is no content view showing or we were showing a resource before.
-            // FIXME: We could try to select the same resource that was selected before in the case of a reload.
-            if (!WebInspector.contentBrowser.currentContentView || wasShowingResourceContentView)
+            // Cookie restoration will attempt to re-select the resource we were showing.
+            if (!WebInspector.contentBrowser.currentContentView || wasShowingResourceContentView) {
+                // If we were showing a resource inside of the ResourceSidebar, we should
+                // re-show the resource inside of the resource sidebar. It is possible that
+                // the sidebar panel could have switched to another view in the back-forward list.
+                if (wasShowingResourceSidebar)
+                    WebInspector.navigationSidebar.selectedSidebarPanel = this;
+
+                // NOTE: This selection, during provisional loading, won't be saved, so it is
+                // safe to do and not-clobber cookie restoration.
                 this._mainFrameTreeElement.revealAndSelect(true, false);
+            }
         }
 
         // Delay this work because other listeners of this event might not have fired yet. So selecting the main frame

@@ -1,3 +1,78 @@
+2014-09-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector frequently restores wrong view when opened (often Timelines instead of Resource)
+        https://bugs.webkit.org/show_bug.cgi?id=135965
+
+        Reviewed by Timothy Hatcher.
+
+        There were numerous subtle race conditions in state restoration.
+        This patch intends to fix a number of them to get what feels
+        like sane behavior for selected sidebar state restoration.
+
+        1. Starting a Timeline recording no longer automatically switches to the TimelineContentView.
+        This was making every reload switch to Timelines. If you had
+        a resource selected (e.g. the DOM Tree) we should go back
+        to showing the DOM tree.
+
+        2. Background sidebars should not reveal and select tree elements.
+        This was making resources get selected in Timelines when reloading the page
+        because the background Resources sidebar was restoring selection of the resource.
+        That is an unexpected selection and breaks the experience of Timelines.
+
+        3. ContentView changes during page navigation / reload should not be saved, and improve Resource restoration.
+        If a TimelineContentView was in the ContentBrowser back/forward history,
+        a reload with a resource selected in the Resources sidebar would end up
+        showing the Timelines sidebar. This was because when ContentViews are
+        closed during the navigation, the ContentBrowser would fall back to the
+        remaining TimelineContentView and switch to its only allowed sidebar
+        (Timelines). ResourceSidebarPanel, knowing a resource was selected,
+        would select the MainFrame intending to stay in the Resource sidebar,
+        but the resource is okay with showing in any sidebar, so we stay on Timelines.
+
+        4. Resource sidebar state restoration should propertly restore selection.
+        On reload, state restoration would know the resource to re-select in the
+        Resources sidebar. As ResourceTreeElements are added to the sidebar
+        they are checked against the state restoration cookie. If they match,
+        they would select the element and delete the cookie. Unfortunately,
+        if this was the first TreeElement child being added to a FrameTreeElement,
+        the FrameTreeElement onpopulate would remove all children and re-add
+        them in a unique way. Unfortunately this means the TreeElement we
+        selected based on the cookie, immediately got thrown away and recreated,
+        and we no longer reveal and select it. This is a special case for
+        FrameTreeElements which use the onpopulate SPI. So, instead of starting
+        processing the new element queue, if this is the first time just trigger
+        the onpopulate and elements are made just once.
+
+        5. Show Error Console triggering early, could have unexpected sidebar behavior.
+        Opening Web Inspector directly to the console can run before
+        WebInspector.contentLoaded (DOMContentLoaded). So in that case
+        WebInspector.showFullHeightConsole was not handling if the contentBrowser
+        had no content view yet, and the sidebar might be-reopened later on
+        in contentLoaded based on the setting value.
+
+        6. Improve automatic resource selection for sidebars with multiple tree outlines.
+        Selecting a call frame tree element was unexpectedly changing the
+        selection to a Resource where the breakpoint was set. This was
+        because we were only looking at one of potentially many content
+        tree outlines in the sidebar to see if there was a user action.
+        
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.showFullHeightConsole):
+        (WebInspector.toggleConsoleView):
+        (WebInspector._mainResourceDidChange):
+        (WebInspector._provisionalLoadStarted):
+        (WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar):
+        (WebInspector._updateCookieForInspectorViewState):
+        (WebInspector._contentBrowserCurrentContentViewDidChange):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange.delayedWork):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._recordingLoaded):
+
 2014-09-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add layout test for lowercase CSSProperty names

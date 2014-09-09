@@ -346,6 +346,8 @@ WebInspector.contentLoaded = function()
 
     if (this._showingSplitConsoleSetting.value)
         this.showSplitConsole();
+
+    this._contentLoaded = true;
 }
 
 WebInspector.sidebarPanelForCurrentContentView = function()
@@ -610,13 +612,18 @@ WebInspector.showFullHeightConsole = function(scope)
 
     this.consoleContentView.scopeBar.item(scope).selected = true;
 
-    if (this.contentBrowser.currentContentView !== this.consoleContentView) {
+    if (!this.contentBrowser.currentContentView || this.contentBrowser.currentContentView !== this.consoleContentView) {
         this._wasShowingNavigationSidebarBeforeFullHeightConsole = !this.navigationSidebar.collapsed;
 
         // Collapse the sidebar before showing the console view, so the check for the collapsed state in
         // _revealAndSelectRepresentedObjectInNavigationSidebar returns early and does not deselect any
         // tree elements in the current sidebar.
         this.navigationSidebar.collapsed = true;
+
+        // If this is before the content has finished loading update the collapsed value setting
+        // ourselves so that we don't uncollapse the navigation sidebar when it is loaded.
+        if (!this._contentLoaded)
+            this._navigationSidebarCollapsedSetting.value = true;
 
         // Be sure to close any existing log view in the split content browser before showing it in the
         // main content browser. We can only show a content view in one browser at a time.
@@ -645,8 +652,11 @@ WebInspector.toggleConsoleView = function()
     if (this.isShowingConsoleView()) {
         if (this.contentBrowser.canGoBack())
             this.contentBrowser.goBack();
-        else
+        else {
+            if (!this.navigationSidebar.selectedSidebarPanel)
+                this.navigationSidebar.selectedSidebarPanel = this.resourceSidebarPanel;
             this.resourceSidebarPanel.showDefaultContentView();
+        }
 
         if (this._wasShowingNavigationSidebarBeforeFullHeightConsole)
             this.navigationSidebar.collapsed = false;
@@ -762,6 +772,8 @@ WebInspector._mainResourceDidChange = function(event)
     if (!event.target.isMainFrame())
         return;
 
+    this._inProvisionalLoad = false;
+
     this._restoreInspectorViewStateFromCookie(this._lastInspectorViewStateCookieSetting.value, true);
 
     this.updateWindowTitle();
@@ -773,6 +785,8 @@ WebInspector._provisionalLoadStarted = function(event)
         return;
 
     this._updateCookieForInspectorViewState();
+
+    this._inProvisionalLoad = true;
 }
 
 WebInspector._windowFocused = function(event)
@@ -893,11 +907,13 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
     if (!selectedSidebarPanel)
         return;
 
-    // If the tree outline is processing a selection currently then we can assume the selection does not
-    // need to be changed. This is needed to allow breakpoints tree elements to be selected without jumping
-    // back to selecting the resource tree element.
-    if (selectedSidebarPanel.contentTreeOutline.processingSelectionChange)
-        return;
+    // If a tree outline is processing a selection currently then we can assume the selection does not
+    // need to be changed. This is needed to allow breakpoint and call frame tree elements to be selected
+    // without jumping back to selecting the resource tree element.
+    for (var contentTreeOutline of selectedSidebarPanel.visibleContentTreeOutlines) {
+        if (contentTreeOutline.processingSelectionChange)
+            return;
+    }
 
     var treeElement = selectedSidebarPanel.treeElementForRepresentedObject(representedObject);
 
@@ -1030,6 +1046,12 @@ WebInspector._updateCookieForInspectorViewState = function()
         this._lastInspectorViewStateCookieSetting.value = cookie;
         return;
     }
+
+    // Ignore saving the sidebar state for provisional loads. The currently selected sidebar
+    // may have been the result of content views closing as a result of a page navigation,
+    // but those content views may come back very soon.
+    if (this._inProvisionalLoad)
+        return;
 
     var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
     if (!selectedSidebarPanel)

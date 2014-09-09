@@ -304,6 +304,12 @@ WebInspector.FrameTreeElement.prototype = {
 
     _populateFromNewChildQueue: function()
     {
+        if (!this.children.length) {
+            this._updateParentStatus();
+            this.shouldRefreshChildren = true;
+            return;
+        }
+
         for (var i = 0; i < this._newChildQueue.length; ++i)
             this._addChildForRepresentedObject(this._newChildQueue[i]);
 
