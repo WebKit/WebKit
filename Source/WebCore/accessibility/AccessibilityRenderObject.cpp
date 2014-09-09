@@ -1246,9 +1246,25 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (isLink())
         return false;
     
+    if (isLandmark())
+        return false;
+
     // all controls are accessible
     if (isControl())
         return false;
+
+    switch (roleValue()) {
+    case AudioRole:
+    case DescriptionListTermRole:
+    case DescriptionListDetailRole:
+    case DocumentArticleRole:
+    case DocumentRegionRole:
+    case ListItemRole:
+    case VideoRole:
+        return false;
+    default:
+        break;
+    }
     
     if (ariaRoleAttribute() != UnknownRole)
         return false;
@@ -1267,14 +1283,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (hasContentEditableAttributeSet())
         return false;
     
-    switch (roleValue()) {
-    case AudioRole:
-    case ListItemRole:
-    case VideoRole:
-        return false;
-    default:
-        break;
-    }
     
     // if this element has aria attributes on it, it should not be ignored.
     if (supportsARIAAttributes())

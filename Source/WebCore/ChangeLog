@@ -1,3 +1,20 @@
+2014-09-09  Takeshi Kurosawa  <taken.spc@gmail.com>
+
+        AX: HTML5 landmark (and related) elements should not be ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=135116
+
+        Reviewed by Chris Fleizach.
+
+        Make sure following element should not be ignored in computeAccessibilityIsIgnored
+        - header, aside, address, main, nav, article, section
+        - dt, dd
+
+        Tests: platform/mac/accessibility/descriptionlist-not-ignored.html
+               platform/mac/accessibility/landmark-not-ignored.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+
 2014-09-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] RenderGrid methods should take RenderBox references
