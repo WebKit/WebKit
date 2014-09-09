@@ -1,3 +1,25 @@
+2014-09-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add support for :read-write/:read-only matching editable content
+        https://bugs.webkit.org/show_bug.cgi?id=136668
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/read-only-read-write-contenteditable-basics-expected.html: Added.
+        * fast/css/read-only-read-write-contenteditable-basics.html: Added.
+        * fast/css/read-only-read-write-designmode-basics-expected.html: Added.
+        * fast/css/read-only-read-write-designmode-basics.html: Added.
+        * fast/css/read-only-read-write-webkit-user-modify-expected.txt: Added.
+        * fast/css/read-only-read-write-webkit-user-modify.html: Added.
+        * fast/selectors/read-only-read-write-contenteditable-basics-expected.txt: Added.
+        * fast/selectors/read-only-read-write-contenteditable-basics.html: Added.
+        * fast/selectors/read-only-read-write-contenteditable-svg-foreignObject-expected.txt: Added.
+        * fast/selectors/read-only-read-write-contenteditable-svg-foreignObject.html: Added.
+        * fast/selectors/read-only-read-write-designmode-basics-expected.txt: Added.
+        * fast/selectors/read-only-read-write-designmode-basics.html: Added.
+        * fast/selectors/read-only-read-write-style-update-expected.txt: Added.
+        * fast/selectors/read-only-read-write-style-update.html: Added.
+
 2014-09-09  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Unreviewed gardening. Mark two media-source tests as failing.

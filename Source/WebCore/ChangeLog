@@ -1,3 +1,67 @@
+2014-09-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add support for :read-write/:read-only matching editable content
+        https://bugs.webkit.org/show_bug.cgi?id=136668
+
+        Reviewed by Antti Koivisto.
+
+        This is the second part of the update of :read-write/:read-only to the latest spec
+        (http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting.html#selectors).
+
+        The selectors :read-write/:read-only should match elements that are editable. The exact definition is:
+        "elements that are editing hosts or editable and are neither input elements nor textarea elements".
+
+        Matching that definition is really easy. It was done by updating HTMLElement's matchesReadWritePseudoClass()
+        to consider both contentEditable and designMode.
+
+        The tricky part is making that efficient in all cases. Matching contentEditable is horribly inefficient
+        compared to the other primitives. We don't want to execute that for every element.
+
+        Since matchesReadWritePseudoClass() was used by the theming code, that code was adjusted to
+        -Avoid calling that on regular HTMLElement, limiting the query to <input> and <textarea> where it is fast.
+        -Avoid the call entirely when possible.
+
+        Tests: fast/css/read-only-read-write-contenteditable-basics.html
+               fast/css/read-only-read-write-designmode-basics.html
+               fast/css/read-only-read-write-webkit-user-modify.html
+               fast/selectors/read-only-read-write-contenteditable-basics.html
+               fast/selectors/read-only-read-write-contenteditable-svg-foreignObject.html
+               fast/selectors/read-only-read-write-designmode-basics.html
+               fast/selectors/read-only-read-write-style-update.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::contentEditableType):
+        This code is a generalization of the code that was in HTMLElement::contentEditable().
+        It is used by both matchesReadWritePseudoClass() and contentEditable() to determine
+        a valid state from the value of contentEditable.
+
+        (WebCore::HTMLElement::matchesReadWritePseudoClass):
+        Per the definition of editable content, we first check if the current element is an editing host,
+        if not we look for an editing host. If there are none, test for designMode.
+
+        (WebCore::HTMLElement::contentEditable):
+
+        (WebCore::RenderTheme::isReadOnlyControl):
+        The old definition would only match <input> and <textarea>. The code was updated to keep the same
+        behavior after matchesReadWritePseudoClass() is udpated. This avoids the performance problem of calling
+        matchesReadWritePseudoClass() on regular HTMLElement.
+
+        * platform/ControlStates.h:
+        ReadOnlyState was only used by ThemeMac for convertControlStatesToThemeDrawState().
+        In turn, convertControlStatesToThemeDrawState() was only used for painting
+        "-webkit-inner-spin-button". Buttons are not read-write to begin with.
+        The whole code looks like legacy from styling of input elements and was removed.
+
+        Removing ReadOnlyState removes the expensive part of extractControlStatesForRenderer().
+
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::readOnlyAttributeChanged):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::convertControlStatesToThemeDrawState):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::extractControlStatesForRenderer):
+
 2014-09-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE] media/media-source tests broken after r173318

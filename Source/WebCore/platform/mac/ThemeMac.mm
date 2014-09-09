@@ -243,12 +243,10 @@ static ThemeDrawState convertControlStatesToThemeDrawState(ThemeButtonKind kind,
 {
     ControlStates::States states = controlStates->states();
 
-    if (states & ControlStates::ReadOnlyState)
-        return kThemeStateUnavailableInactive;
     if (!(states & ControlStates::EnabledState))
         return kThemeStateUnavailableInactive;
 
-    // Do not process PressedState if !EnabledState or ReadOnlyState.
+    // Do not process PressedState if !EnabledState.
     if (states & ControlStates::PressedState) {
         if (kind == kThemeIncDecButton || kind == kThemeIncDecButtonSmall || kind == kThemeIncDecButtonMini)
             return states & ControlStates::SpinUpState ? kThemeStatePressedUp : kThemeStatePressedDown;

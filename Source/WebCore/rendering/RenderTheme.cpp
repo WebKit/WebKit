@@ -752,8 +752,6 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
         states |= ControlStates::EnabledState;
     if (isChecked(o))
         states |= ControlStates::CheckedState;
-    if (isReadOnlyControl(o))
-        states |= ControlStates::ReadOnlyState;
     if (isDefault(o))
         states |= ControlStates::DefaultState;
     if (!isActive(o))
@@ -845,7 +843,7 @@ bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& o) const
 bool RenderTheme::isReadOnlyControl(const RenderObject& o) const
 {
     Node* node = o.node();
-    if (!node || !node->isElementNode())
+    if (!node || !node->isElementNode() || !toElement(node)->isFormControlElement())
         return false;
     return !toElement(node)->matchesReadWritePseudoClass();
 }

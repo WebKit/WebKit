@@ -45,11 +45,10 @@ public:
         FocusState = 1 << 2,
         EnabledState = 1 << 3,
         CheckedState = 1 << 4,
-        ReadOnlyState = 1 << 5,
-        DefaultState = 1 << 6,
-        WindowInactiveState = 1 << 7,
-        IndeterminateState = 1 << 8,
-        SpinUpState = 1 << 9, // Sub-state for HoverState and PressedState.
+        DefaultState = 1 << 5,
+        WindowInactiveState = 1 << 6,
+        IndeterminateState = 1 << 7,
+        SpinUpState = 1 << 8, // Sub-state for HoverState and PressedState.
         AllStates = 0xffffffff
     };
 

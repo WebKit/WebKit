@@ -336,6 +336,55 @@ void HTMLElement::populateEventNameForAttributeLocalNameMap(HashMap<AtomicString
         map.add(customTable[i].attributeName.localName().impl(), customTable[i].eventName);
 }
 
+enum class ContentEditableType {
+    Inherit,
+    True,
+    False,
+    PlaintextOnly
+};
+
+static ContentEditableType contentEditableType(const HTMLElement& element)
+{
+    const AtomicString& value = element.fastGetAttribute(contenteditableAttr);
+
+    if (value.isNull())
+        return ContentEditableType::Inherit;
+    if (value.isEmpty() || equalIgnoringCase(value, "true"))
+        return ContentEditableType::True;
+    if (equalIgnoringCase(value, "false"))
+        return ContentEditableType::False;
+    if (equalIgnoringCase(value, "plaintext-only"))
+        return ContentEditableType::PlaintextOnly;
+
+    return ContentEditableType::Inherit;
+}
+
+bool HTMLElement::matchesReadWritePseudoClass() const
+{
+    const Element* currentElement = this;
+    do {
+        if (currentElement->isHTMLElement()) {
+            switch (contentEditableType(toHTMLElement(*currentElement))) {
+            case ContentEditableType::True:
+            case ContentEditableType::PlaintextOnly:
+                return true;
+            case ContentEditableType::False:
+                return false;
+            case ContentEditableType::Inherit:
+                break;
+            }
+        }
+        currentElement = currentElement->parentElement();
+    } while (currentElement);
+
+    const Document& document = this->document();
+    if (document.isHTMLDocument()) {
+        const HTMLDocument& htmlDocument = toHTMLDocument(document);
+        return htmlDocument.inDesignMode();
+    }
+    return false;
+}
+
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == HTMLNames::idAttr || name == HTMLNames::classAttr || name == HTMLNames::styleAttr)
@@ -680,17 +729,16 @@ bool HTMLElement::supportsFocus() const
 
 String HTMLElement::contentEditable() const
 {
-    const AtomicString& value = fastGetAttribute(contenteditableAttr);
-
-    if (value.isNull())
+    switch (contentEditableType(*this)) {
+    case ContentEditableType::Inherit:
         return ASCIILiteral("inherit");
-    if (value.isEmpty() || equalIgnoringCase(value, "true"))
+    case ContentEditableType::True:
         return ASCIILiteral("true");
-    if (equalIgnoringCase(value, "false"))
+    case ContentEditableType::False:
         return ASCIILiteral("false");
-    if (equalIgnoringCase(value, "plaintext-only"))
+    case ContentEditableType::PlaintextOnly:
         return ASCIILiteral("plaintext-only");
-
+    }
     return ASCIILiteral("inherit");
 }
 

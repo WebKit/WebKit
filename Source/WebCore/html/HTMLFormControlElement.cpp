@@ -162,8 +162,6 @@ void HTMLFormControlElement::readOnlyAttributeChanged()
 {
     setNeedsWillValidateCheck();
     setNeedsStyleRecalc();
-    if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::ReadOnlyState);
 }
 
 void HTMLFormControlElement::requiredAttributeChanged()
