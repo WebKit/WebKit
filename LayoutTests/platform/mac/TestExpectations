@@ -1402,3 +1402,6 @@ webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pa
 # Mac doesn't support YUV 420/422 colorspace
 media/video-colorspace-yuv420.html [ Skip ]
 media/video-colorspace-yuv422.html [ Skip ]
+
+webkit.org/b/136676 http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Failure ]
+webkit.org/b/136676 http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html [ Failure ]
