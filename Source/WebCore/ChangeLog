@@ -1,3 +1,31 @@
+2014-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION (r172153): Text drawn with wrong color when second text shadow has zero offset and blur (breaks buttons at aws.amazon.com)
+        https://bugs.webkit.org/show_bug.cgi?id=136612
+
+        Reviewed by Darin Adler.
+
+        r172153 was fundamentally broken, and would restore graphics contexts that had never been saved. This patch
+        reimplements r172153 by using "continue" to skip loop iterations instead of changing the internal logic of
+        the loop.
+
+        In addition, I have refactored InlineTextBox::applyShadowToGraphicsContext() to take an extra boolean
+        reference as an out parameter in order to make it obvious it if saved a graphics context that needs
+        to be restored. This should make it less likely to make these kinds of mistakes in the future.
+
+        Test: fast/text/empty-shadow-with-color.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::applyShadowToGraphicsContext): Add bool reference out param.
+        * rendering/InlineTextBox.h: Ditto.
+        * rendering/TextPainter.cpp:
+        (WebCore::isEmptyShadow): Change logic to not skip loop iterations on a null shadow.
+        (WebCore::paintTextWithShadows): Use continue to skip loop iterations for empty shadows. In addition,
+        use the out param in InlineTextBox::applyShadowToGraphicsContext().
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintTextWithShadows): Update for new sigurature of
+        InlineTextBox::applyShadowToGraphicsContext().
+
 2014-09-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173402.

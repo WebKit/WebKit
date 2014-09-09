@@ -424,7 +424,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, const ShadowData* shadow, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal)
+FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, const ShadowData* shadow, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal, bool& didSaveContext)
 {
     if (!shadow)
         return FloatSize();
@@ -445,6 +445,7 @@ FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, 
 
         extraOffset = FloatSize(0, 2 * textRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
         shadowOffset -= extraOffset;
+        didSaveContext = true;
     }
 
     context->setShadow(shadowOffset, shadowRadius, shadowColor, context->fillColorSpace());

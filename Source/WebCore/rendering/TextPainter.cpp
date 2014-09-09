@@ -63,7 +63,7 @@ static void drawTextOrEmphasisMarks(GraphicsContext& context, const Font& font, 
 static bool isEmptyShadow(const ShadowData* shadow)
 {
     if (!shadow)
-        return true;
+        return false;
     return shadow->location() == IntPoint() && !shadow->radius();
 }
 
@@ -78,10 +78,15 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
         context->setFillColor(Color::black, fillColorSpace);
 
     do {
+        if (isEmptyShadow(shadow)) {
+            shadow = shadow->next();
+            continue;
+        }
+
         IntSize extraOffset;
-        bool shadowIsEmpty = isEmptyShadow(shadow);
-        if (!shadowIsEmpty)
-            extraOffset = roundedIntSize(InlineTextBox::applyShadowToGraphicsContext(context, shadow, boxRect, stroked, opaque, horizontal));
+        bool didSaveContext = false;
+        if (shadow)
+            extraOffset = roundedIntSize(InlineTextBox::applyShadowToGraphicsContext(context, shadow, boxRect, stroked, opaque, horizontal, didSaveContext));
         else if (!opaque)
             context->setFillColor(fillColor, fillColorSpace);
 
@@ -97,9 +102,9 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
         if (!shadow)
             break;
 
-        if (shadow->next() || stroked || !opaque)
+        if (didSaveContext)
             context->restore();
-        else if (!shadowIsEmpty)
+        else
             context->clearShadow();
 
         shadow = shadow->next();
