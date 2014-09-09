@@ -112,6 +112,9 @@ static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
 #endif
         return 0_ms;
     }
+
+    ASSERT_NOT_REACHED();
+    return 0_ms;
 }
 
 void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
