@@ -26,17 +26,17 @@
 WebInspector.ApplicationCacheManifest = function(manifestURL)
 {
     WebInspector.Object.call(this);
-    
+
     this._manifestURL = manifestURL;
 };
 
 WebInspector.ApplicationCacheManifest.prototype = {
     constructor: WebInspector.ApplicationCacheManifest,
-    
+
     get manifestURL()
     {
         return this._manifestURL;
-    }    
+    }
 };
 
 WebInspector.ApplicationCacheManifest.prototype.__proto__ = WebInspector.Object.prototype;

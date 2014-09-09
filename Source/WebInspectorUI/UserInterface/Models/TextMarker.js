@@ -47,7 +47,7 @@ WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker = function(codeMirrorT
 WebInspector.TextMarker.prototype = {
     constructor: WebInspector.TextMarker,
     __proto__: WebInspector.Object.prototype,
-    
+
     // Public
 
     get codeMirrorTextMarker()
@@ -78,7 +78,7 @@ WebInspector.TextMarker.prototype = {
             end: range.to
         });
     },
-    
+
     clear: function()
     {
         this._codeMirrorTextMarker.clear();

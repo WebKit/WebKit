@@ -88,7 +88,7 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
 
         this._rangeStartTime = startTime;
         this._rangeEndTime = endTime;
-        
+
         // If we have no duration the range does not matter.
         if (!this._record.duration)
             return;

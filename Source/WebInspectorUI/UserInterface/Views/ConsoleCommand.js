@@ -89,7 +89,7 @@ WebInspector.ConsoleCommand.prototype = {
         this._formattedCommand.className = "console-message-text source-code";
         this._formattedCommand.textContent = this.command;
     },
-    
+
     toClipboardString: function(isPrefixOptional)
     {
         return (isPrefixOptional ? "" : "> ") + this.command;

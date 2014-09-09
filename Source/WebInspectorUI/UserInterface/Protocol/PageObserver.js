@@ -52,7 +52,7 @@ WebInspector.PageObserver.prototype = {
     {
         WebInspector.frameResourceManager.frameDidDetach(frameId);
     },
-    
+
     frameStartedLoading: function(frameId)
     {
         // Not handled yet.

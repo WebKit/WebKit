@@ -380,7 +380,7 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
 
         if (!resource)
             return;
-        
+
         // Hide the section if we're not dealing with an image or if the load failed.
         if (resource.type !== WebInspector.Resource.Type.Image || resource.failed) {
             var imageSectionElement = this._imageSizeSection.element;
@@ -388,10 +388,10 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
                 this.element.removeChild(imageSectionElement);
             return;
         }
-        
+
         // Ensure the section is displayed, right before the "Location" section.
         this.element.insertBefore(this._imageSizeSection.element, this._locationSection.element);
-        
+
         // Get the metrics for this resource and fill in the metrics rows with that information.
         resource.getImageSize(function(size) {
             this._imageWidthRow.value = WebInspector.UIString("%fpx").format(size.width);

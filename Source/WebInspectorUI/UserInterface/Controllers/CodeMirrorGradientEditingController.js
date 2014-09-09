@@ -159,7 +159,7 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
     {
         this.text = this.value.toString();
     },
-    
+
     gradientSliderStopWasSelected: function(gradientSlider, stop)
     {
         var selectedStop = gradientSlider.selectedStop;
@@ -176,7 +176,7 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         // Ensure the angle input is not focused since, if it were, it'd make a scrollbar appear as we
         // animate the popover's frame to fit its new content.
         this._angleInput.blur();
-        
+
         this.popover.update();
     },
 
@@ -238,7 +238,7 @@ WebInspector.CodeMirrorGradientEditingController.prototype = {
         this._gradientSlider.stops = this.value.stops;
         this.text = this.value.toString();
     },
-    
+
     _updateCSSClassForGradientType: function()
     {
         if (this.value instanceof WebInspector.LinearGradient)

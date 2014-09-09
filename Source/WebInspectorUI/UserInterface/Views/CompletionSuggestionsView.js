@@ -151,7 +151,7 @@ WebInspector.CompletionSuggestionsView.prototype = {
         var height = Math.min(containerHeight, maximumHeight);
 
         // Position the suggestions below the anchor. If there is no room, position the suggestions above.
-        if (underHeight - height < 0) 
+        if (underHeight - height < 0)
             y = aboveHeight - height;
 
         this._element.style.left = x + "px";

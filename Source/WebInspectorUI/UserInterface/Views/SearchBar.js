@@ -76,7 +76,7 @@ WebInspector.SearchBar.prototype = {
     {
         this.dispatchEventToListeners(WebInspector.SearchBar.Event.TextChanged);
     },
-    
+
     _handleKeydownEvent: function(event)
     {
         if (this._keyboardShortcutEsc.matchesEvent(event)) {

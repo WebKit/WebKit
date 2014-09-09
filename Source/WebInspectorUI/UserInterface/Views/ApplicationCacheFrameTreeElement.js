@@ -30,7 +30,7 @@ WebInspector.ApplicationCacheFrameTreeElement = function(representedObject)
     WebInspector.GeneralTreeElement.call(this, WebInspector.ApplicationCacheFrameTreeElement.StyleClassName, "", "", representedObject, false);
 
     this.small = true;
-    
+
     this.updateTitles();
 };
 

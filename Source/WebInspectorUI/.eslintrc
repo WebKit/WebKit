@@ -60,6 +60,7 @@
         "curly": 0,
         "no-extra-semi": 2,
         "quotes": [2, "double"],
+        "no-trailing-spaces": 2,
         "no-underscore-dangle": 0,
         "new-parens": 0,
         "semi": 2

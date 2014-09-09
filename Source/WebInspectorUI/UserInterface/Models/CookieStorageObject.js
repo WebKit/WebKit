@@ -38,7 +38,7 @@ WebInspector.CookieStorageObject.prototype = {
     {
         return this._host;
     },
-    
+
     saveIdentityToCookie: function(cookie)
     {
         cookie[WebInspector.CookieStorageObject.CookieHostCookieKey] = this.host;

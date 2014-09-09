@@ -26,7 +26,7 @@
 WebInspector.ScriptTreeElement = function(script)
 {
     console.assert(script instanceof WebInspector.Script);
-    
+
     WebInspector.SourceCodeTreeElement.call(this, script, WebInspector.ScriptTreeElement.StyleClassName, null, null, script, false);
 
     this.mainTitle = script.displayName;

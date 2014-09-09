@@ -28,7 +28,7 @@ WebInspector.Gradient = {
         Linear: "linear-gradient",
         Radial: "radial-gradient"
     },
-    
+
     fromString: function(cssString)
     {
         var type;
@@ -87,13 +87,13 @@ WebInspector.Gradient = {
             gradient = WebInspector.LinearGradient.linearGradientWithComponents(components);
         else
             gradient = WebInspector.RadialGradient.radialGradientWithComponents(components);
-    
+
         if (gradient)
             gradient.repeats = typeString.indexOf("repeating") === 0;
-    
+
         return gradient;
     },
-    
+
     stopsWithComponents: function(components)
     {
         // FIXME: handle lengths.
@@ -129,7 +129,7 @@ WebInspector.Gradient = {
 
         return stops;
     },
-    
+
     stringFromStops: function(stops)
     {
         var count = stops.length - 1;
@@ -273,7 +273,7 @@ WebInspector.RadialGradient.prototype = {
             str += ", ";
 
         str += WebInspector.Gradient.stringFromStops(this.stops);
-        
+
         return (this.repeats ? "repeating-" : "") + this.type + "(" + str + ")";
     }
 };

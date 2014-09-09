@@ -209,7 +209,7 @@ WebInspector.Script.prototype = {
         return null;
     },
 
-    _makeSyntaxTree: function(sourceText) 
+    _makeSyntaxTree: function(sourceText)
     {
         if (this._scriptSyntaxTree || !sourceText)
             return;

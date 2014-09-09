@@ -190,7 +190,7 @@ WebInspector.SourceCodeLocation.prototype = {
 
     hasDifferentDisplayLocation: function()
     {
-       return this.hasMappedLocation() || this.hasFormattedLocation(); 
+       return this.hasMappedLocation() || this.hasFormattedLocation();
     },
 
     update: function(sourceCode, lineNumber, columnNumber)

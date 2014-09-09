@@ -29,7 +29,7 @@ WebInspector.NavigationBar = function(element, navigationItems, role, label) {
     this._element = element || document.createElement("div");
     this._element.classList.add(this.constructor.StyleClassName || WebInspector.NavigationBar.StyleClassName);
     this._element.tabIndex = 0;
-    
+
     if (role)
         this._element.setAttribute("role", role);
     if (label)

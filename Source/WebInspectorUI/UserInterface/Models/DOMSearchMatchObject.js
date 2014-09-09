@@ -56,7 +56,7 @@ WebInspector.DOMSearchMatchObject.prototype = {
 
     get title()
     {
-        return this._title;     
+        return this._title;
     },
 
     get className()
@@ -78,7 +78,7 @@ WebInspector.DOMSearchMatchObject.prototype = {
     },
 
     // Private
-    
+
     _generateClassName: function()
     {
         switch (this._domNode.nodeType()) {
@@ -109,7 +109,7 @@ WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
     switch (domNode.nodeType()) {
     case Node.ELEMENT_NODE:
         var title = "<" + domNode.nodeNameInCorrectCase();
-        
+
         for (var i = 0; i < domNode.attributes().length; ++i) {
             title += " " + domNode.attributes()[i].name;
             if (domNode.attributes()[i].value.length)

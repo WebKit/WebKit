@@ -26,7 +26,7 @@
 WebInspector.DatabaseTableObject = function(name, database)
 {
     console.assert(database instanceof WebInspector.DatabaseObject);
-    
+
     this._name = name;
     this._database = database;
 };
@@ -36,12 +36,12 @@ WebInspector.DatabaseTableObject.NameCookieKey = "database-table-object-name";
 
 WebInspector.DatabaseTableObject.prototype = {
     constructor: WebInspector.DatabaseTableObject,
-    
+
     get name()
     {
         return this._name;
     },
-    
+
     get database()
     {
         return this._database;

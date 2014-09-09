@@ -41,7 +41,7 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
     {
         if (!this._name)
             this._generateTitles();
-    
+
         return this._name;
     },
 
@@ -49,7 +49,7 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
     {
         if (!this._secondaryName)
             this._generateTitles();
-        
+
         return this._secondaryName;
     },
 
@@ -57,7 +57,7 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
     {
         return WebInspector.UIString("Application Cache");
     },
-    
+
     _generateTitles: function()
     {
         var parsedURL = parseURL(this.representedObject.manifestURL);

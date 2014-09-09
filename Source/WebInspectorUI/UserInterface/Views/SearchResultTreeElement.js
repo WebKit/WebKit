@@ -54,7 +54,7 @@ WebInspector.SearchResultTreeElement.truncateAndHighlightTitle = function(title,
 {
     // Use the original location, since those line/column offsets match the line text in title.
     var textRange = sourceCodeTextRange.textRange;
-    
+
     var searchTermIndex = textRange.startColumn;
 
     // We should only have one line text ranges, so make sure that is the case.

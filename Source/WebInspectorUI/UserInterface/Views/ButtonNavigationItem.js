@@ -32,10 +32,10 @@ WebInspector.ButtonNavigationItem = function(identifier, toolTipOrLabel, image, 
     this.toolTip = toolTipOrLabel;
 
     this._element.addEventListener("click", this._mouseClicked.bind(this));
-    
+
     this._element.setAttribute("role", role || "button");
-    
-    if (label) 
+
+    if (label)
         this._element.setAttribute("aria-label", label);
 
     this._imageWidth = imageWidth || 16;

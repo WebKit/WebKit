@@ -42,19 +42,19 @@ WebInspector.Slider.KnobWidth = 13;
 WebInspector.Slider.prototype = {
     contructor: WebInspector.Slider,
     __proto__: WebInspector.Object.prototype,
-    
+
     // Public
 
     get element()
     {
         return this._element;
     },
-    
+
     get value()
     {
         return this._value;
     },
-    
+
     set value(value)
     {
         value = Math.max(Math.min(value, 1), 0);
@@ -70,7 +70,7 @@ WebInspector.Slider.prototype = {
         if (this.delegate && typeof this.delegate.sliderValueDidChange === "function")
             this.delegate.sliderValueDidChange(this, value);
     },
-    
+
     // Protected
 
     handleEvent: function(event)

@@ -207,7 +207,7 @@ WebInspector.IssueMessage.prototype = {
     {
         if (!this._parameters)
             return;
-        
+
         if (WebInspector.RemoteObject.type(this._parameters[0]) !== "string")
             return;
 
@@ -215,14 +215,14 @@ WebInspector.IssueMessage.prototype = {
         {
             return obj.description;
         }
-        
+
         var formatters = {};
         formatters.o = valueFormatter;
         formatters.s = valueFormatter;
         formatters.f = valueFormatter;
         formatters.i = valueFormatter;
         formatters.d = valueFormatter;
-        
+
         function append(a, b)
         {
             a += b;
@@ -231,10 +231,10 @@ WebInspector.IssueMessage.prototype = {
 
         var result = String.format(this._parameters[0].description, this._parameters.slice(1), formatters, "", append);
         var resultText = result.formattedResult;
-        
+
         for (var i = 0; i < result.unusedSubstitutions.length; ++i)
             resultText += " " + result.unusedSubstitutions[i].description;
-        
+
         this._text = resultText;
     }
 };

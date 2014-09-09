@@ -70,7 +70,7 @@ WebInspector.EventListenerSectionGroup.prototype = {
             var functionName = match[1];
         } else {
             var anonymous = true;
-            var functionName = WebInspector.UIString("(anonymous function)");        
+            var functionName = WebInspector.UIString("(anonymous function)");
         }
 
         if (!this._eventListener.location)

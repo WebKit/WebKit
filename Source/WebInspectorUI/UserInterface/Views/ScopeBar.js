@@ -91,7 +91,7 @@ WebInspector.ScopeBar.prototype = {
     },
 
     // Private
-    
+
     _populate: function()
     {
         var item;
@@ -106,7 +106,7 @@ WebInspector.ScopeBar.prototype = {
         if (!this.selectedItems.length && this._defaultItem)
             this._defaultItem.selected = true;
     },
-    
+
     _itemSelectionDidChange: function(event)
     {
         var sender = event.target;

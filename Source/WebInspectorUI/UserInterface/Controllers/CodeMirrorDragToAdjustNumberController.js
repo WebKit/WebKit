@@ -44,7 +44,7 @@ WebInspector.CodeMirrorDragToAdjustNumberController.prototype = {
     {
         if (this.enabled === enabled)
             return;
-        
+
         this._dragToAdjustController.element = this._codeMirror.getWrapperElement();
         this._dragToAdjustController.enabled = enabled;
     },
@@ -108,7 +108,7 @@ WebInspector.CodeMirrorDragToAdjustNumberController.prototype = {
                 line: position.line
             }
         };
-        
+
         return containsNumber;
     }
 };

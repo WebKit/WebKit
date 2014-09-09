@@ -65,7 +65,7 @@ WebInspector.ColorWheel.prototype = {
         this._drawRawCanvas();
         this._draw();
     },
-    
+
     get element()
     {
         return this._element;
@@ -96,7 +96,7 @@ WebInspector.ColorWheel.prototype = {
         this._setCrosshairPosition(data.point);
         this.brightness = data.brightness;
     },
-    
+
     get rawColor()
     {
         if (this._crosshairPosition)
@@ -249,7 +249,7 @@ WebInspector.ColorWheel.prototype = {
             1
         ]);
     },
-    
+
     _drawTintedCanvas: function()
     {
         var ctx = this._tintedCanvas.getContext("2d");
@@ -264,7 +264,7 @@ WebInspector.ColorWheel.prototype = {
         }
         ctx.restore();
     },
-    
+
     _draw: function()
     {
         this._drawTintedCanvas();
@@ -276,7 +276,7 @@ WebInspector.ColorWheel.prototype = {
         ctx.save();
         ctx.clearRect(0, 0, dimension, dimension);
         ctx.beginPath();
-        ctx.arc(dimension / 2, dimension / 2, radius + 1, 0, Math.PI * 2, true); 
+        ctx.arc(dimension / 2, dimension / 2, radius + 1, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.clip();
         ctx.drawImage(this._tintedCanvas, 0, 0, dimension, dimension);

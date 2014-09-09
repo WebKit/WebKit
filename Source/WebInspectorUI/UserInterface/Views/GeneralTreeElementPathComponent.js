@@ -63,9 +63,9 @@ WebInspector.GeneralTreeElementPathComponent.prototype = {
 
         return new WebInspector.GeneralTreeElementPathComponent(nextSibling);
     },
-    
+
     // Private
-    
+
     _mainTitleDidChange: function(event)
     {
         this.displayName = this._generalTreeElement.mainTitle;

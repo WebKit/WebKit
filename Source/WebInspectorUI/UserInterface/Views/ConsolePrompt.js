@@ -158,7 +158,7 @@ WebInspector.ConsolePrompt.prototype = {
     },
 
     // Private
-    
+
     _handleEscapeKey: function(codeMirror)
     {
         if (this.text)

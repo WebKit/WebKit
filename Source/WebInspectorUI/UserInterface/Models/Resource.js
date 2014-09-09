@@ -666,7 +666,7 @@ WebInspector.Resource.prototype = {
                 width: image.width,
                 height: image.height
             };
-            
+
             callback(this._imageSize);
         }
 

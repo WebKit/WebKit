@@ -74,7 +74,7 @@ WebInspector.linkifyAccessibilityNodeReference = function(node)
 {
     if (!node)
         return null;
-    // Same as linkifyNodeReference except the link text has the classnames removed... 
+    // Same as linkifyNodeReference except the link text has the classnames removed...
     // ...for list brevity, and both text and title have roleSelectorForNode appended.
     var link = WebInspector.linkifyNodeReference(node);
     var tagIdSelector = link.title;

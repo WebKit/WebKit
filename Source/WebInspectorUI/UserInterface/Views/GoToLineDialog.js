@@ -121,7 +121,7 @@ WebInspector.GoToLineDialog.prototype = {
             var valueIsValid = false;
             if (this.delegate && typeof this.delegate.isGoToLineDialogValueValid === "function")
                 valueIsValid = this.delegate.isGoToLineDialogValueValid(this, value);
-            
+
             if (valueIsValid && this.delegate && typeof this.delegate.goToLineDialogValueWasValidated === "function") {
                 this.delegate.goToLineDialogValueWasValidated(this, value);
                 this.dismiss();

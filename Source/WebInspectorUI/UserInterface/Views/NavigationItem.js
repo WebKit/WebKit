@@ -30,8 +30,8 @@ WebInspector.NavigationItem = function(identifier, role, label) {
 
     this._element = document.createElement("div");
     this._hidden = false;
-    
-    if (role) 
+
+    if (role)
         this._element.setAttribute("role", role);
     if (label)
         this._element.setAttribute("aria-label", label);

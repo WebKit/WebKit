@@ -74,7 +74,7 @@ WebInspector.DragToAdjustController.prototype = {
     {
         if (!this._element)
             return;
-        
+
         if (this._active === active)
             return;
 
@@ -143,7 +143,7 @@ WebInspector.DragToAdjustController.prototype = {
     {
         if (this._dragging === dragging)
             return;
-        
+
         console.assert(window.event);
         if (dragging)
             WebInspector.elementDragStart(this._element, this, this, window.event, "col-resize", window);
@@ -157,7 +157,7 @@ WebInspector.DragToAdjustController.prototype = {
     {
         if (this._tracksMouseClickAndDrag === tracksMouseClickAndDrag)
             return;
-        
+
         if (tracksMouseClickAndDrag) {
             this._element.classList.add(WebInspector.DragToAdjustController.StyleClassName);
             window.addEventListener("mousedown", this, true);
@@ -168,7 +168,7 @@ WebInspector.DragToAdjustController.prototype = {
             window.removeEventListener("contextmenu", this, true);
             this._setDragging(false);
         }
-        
+
         this._tracksMouseClickAndDrag = tracksMouseClickAndDrag;
     },
 
@@ -180,7 +180,7 @@ WebInspector.DragToAdjustController.prototype = {
 
         this._setTracksMouseClickAndDrag(canBeAdjusted);
     },
-    
+
     _mouseMoved: function(event)
     {
         var canBeAdjusted = event.altKey;
@@ -189,7 +189,7 @@ WebInspector.DragToAdjustController.prototype = {
 
         this._setTracksMouseClickAndDrag(canBeAdjusted);
     },
-    
+
     _mouseWasPressed: function(event)
     {
         this._lastX = event.screenX;

@@ -35,7 +35,7 @@ function relativePath(path, basePath)
 {
     console.assert(path.charAt(0) === "/");
     console.assert(basePath.charAt(0) === "/");
-    
+
     var pathComponents = path.split("/");
     var baseComponents = basePath.replace(/\/$/, "").split("/");
     var finalComponents = [];

@@ -37,7 +37,7 @@ WebInspector.DatabaseObject.NameCookieKey = "database-object-name";
 
 WebInspector.DatabaseObject.prototype = {
     constructor: WebInspector.DatabaseObject,
-    
+
     // Public
 
     get id()
@@ -54,12 +54,12 @@ WebInspector.DatabaseObject.prototype = {
     {
         return this._name;
     },
-    
+
     get version()
     {
         return this._version;
     },
-    
+
     saveIdentityToCookie: function(cookie)
     {
         cookie[WebInspector.DatabaseObject.HostCookieKey] = this.host;
@@ -73,7 +73,7 @@ WebInspector.DatabaseObject.prototype = {
             if (!error)
                 callback(names.sort());
         }
-        
+
         DatabaseAgent.getDatabaseTableNames(this._id, sortingCallback);
     },
 

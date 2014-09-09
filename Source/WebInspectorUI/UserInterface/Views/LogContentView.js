@@ -233,7 +233,7 @@ WebInspector.LogContentView.prototype = {
         var index = this._selectedSearchMatch ? this._searchMatches.indexOf(this._selectedSearchMatch) : this._searchMatches.length;
         this._highlightSearchMatchAtIndex(index - 1);
     },
-    
+
     highlightNextSearchMatch: function()
     {
         if (!this.searchInProgress || isEmptyObject(this._searchMatches))
@@ -858,7 +858,7 @@ WebInspector.LogContentView.prototype = {
     {
         this._performSearch();
     },
-    
+
     _performSearch: function()
     {
         if (!isEmptyObject(this._searchHighlightDOMChanges))
@@ -904,13 +904,13 @@ WebInspector.LogContentView.prototype = {
             delete this._selectedSearchMatch;
         }
     },
-    
+
     _highlightRanges: function(message, matchRanges)
     {
         var highlightedElements = WebInspector.highlightRangesWithStyleClass(message, matchRanges, WebInspector.LogContentView.HighlightedStyleClassName, this._searchHighlightDOMChanges);
 
         console.assert(highlightedElements.length === matchRanges.length);
-        
+
         matchRanges.forEach(function (range, index) {
             this._searchMatches.push({
                 message: message,
@@ -927,7 +927,7 @@ WebInspector.LogContentView.prototype = {
             }
         }, this);
     },
-    
+
     _rangesOverlap: function(range1, range2)
     {
         return range1.offset <= range2.offset + range2.length && range2.offset <= range1.offset + range1.length;

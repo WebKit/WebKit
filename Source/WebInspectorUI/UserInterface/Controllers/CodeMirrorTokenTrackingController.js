@@ -149,7 +149,7 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
     {
         return this._hoveredMarker;
     },
-    
+
     set hoveredMarker(hoveredMarker)
     {
         this._hoveredMarker = hoveredMarker;
@@ -440,13 +440,13 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
                 start: this._codeMirror.getCursor("start"),
                 end: this._codeMirror.getCursor("end")
             };
-        
+
             function tokenIsInRange(token, range)
             {
                 return token.line >= range.start.line && token.ch >= range.start.ch &&
                        token.line <= range.end.line && token.ch <= range.end.ch;
             }
-        
+
             if (tokenIsInRange(startPosition, selectionRange) || tokenIsInRange(endPosition, selectionRange)) {
                 return {
                     hoveredToken: this._hoveredTokenInfo.token,
@@ -455,7 +455,7 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
                     expressionRange: selectionRange,
                 };
             }
-        } 
+        }
 
         // We only handle vars, definitions, properties, and the keyword 'this'.
         var type = this._hoveredTokenInfo.token.type;

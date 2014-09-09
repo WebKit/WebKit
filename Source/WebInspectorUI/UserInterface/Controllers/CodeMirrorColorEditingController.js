@@ -31,7 +31,7 @@ WebInspector.CodeMirrorColorEditingController = function(codeMirror, marker)
 WebInspector.CodeMirrorColorEditingController.prototype = {
     constructor: WebInspector.CodeMirrorColorEditingController,
     __proto__: WebInspector.CodeMirrorEditingController.prototype,
-    
+
     // Public
 
     get initialValue()
@@ -57,9 +57,9 @@ WebInspector.CodeMirrorColorEditingController.prototype = {
     },
 
     // Private
-    
+
     _colorPickerColorChanged: function(event)
     {
         this.value = event.target.color;
-    }    
+    }
 };

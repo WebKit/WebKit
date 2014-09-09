@@ -29,7 +29,7 @@ WebInspector.ScopeBarItem = function(id, label, isExclusive) {
     this.id = id;
     this.label = label;
     this.isExclusive = isExclusive;
-    
+
     this._selectedSetting = new WebInspector.Setting("scopebaritem-" + id, false);
 
     this._markElementSelected(this._selectedSetting.value);
@@ -54,7 +54,7 @@ WebInspector.ScopeBarItem.prototype = {
         }
         return this._element;
     },
-    
+
     get selected()
     {
         return this._selectedSetting.value;
@@ -64,7 +64,7 @@ WebInspector.ScopeBarItem.prototype = {
     {
         this.setSelected(selected, false);
     },
-    
+
     setSelected: function(selected, withModifier)
     {
         if (this._selectedSetting.value === selected)

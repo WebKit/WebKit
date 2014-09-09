@@ -290,7 +290,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
 
         this._childLayersRow.dataGrid = !isEmptyObject(childLayers) ? this._dataGrid : null;
     },
-    
+
     _dataGridNodeForLayer: function(layer)
     {
         var node = new WebInspector.LayerTreeDataGridNode(layer);
@@ -299,7 +299,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
 
         return node;
     },
-    
+
     _updateMetrics: function(layerForNode, childLayers)
     {
         var layerCount = 0;
@@ -359,7 +359,7 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
     {
         var content = document.createElement("div");
         content.className = "layer-tree-popover";
-        
+
         content.appendChild(document.createElement("p")).textContent = WebInspector.UIString("Reasons for compositing:");
 
         var list = content.appendChild(document.createElement("ul"));

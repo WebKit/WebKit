@@ -61,12 +61,12 @@ WebInspector.ColorPicker.prototype = {
     __proto__: WebInspector.Object.prototype,
 
     // Public
-    
+
     get element()
     {
         return this._element;
     },
-    
+
     set brightness(brightness)
     {
         if (brightness === this._brightness)
@@ -77,7 +77,7 @@ WebInspector.ColorPicker.prototype = {
         this._updateColor();
         this._updateSliders(this._colorWheel.rawColor, this._colorWheel.tintedColor);
     },
-    
+
     set opacity(opacity)
     {
         if (opacity === this._opacity)
@@ -125,9 +125,9 @@ WebInspector.ColorPicker.prototype = {
         else if (slider === this._brightnessSlider)
             this.brightness = value;
     },
-    
+
     // Private
-    
+
     _updateColor: function()
     {
         if (this._dontUpdateColor)

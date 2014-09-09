@@ -88,17 +88,17 @@ WebInspector.ApplicationCacheDetailsSidebarPanel.prototype = {
 
         return !!this.applicationCacheFrame;
     },
-    
+
     get applicationCacheFrame()
     {
         return this._applicationCacheFrame;
     },
-    
+
     set applicationCacheFrame(applicationCacheFrame)
     {
         if (this._applicationCacheFrame === applicationCacheFrame)
             return;
-        
+
         this._applicationCacheFrame = applicationCacheFrame;
 
         this.needsRefresh();
@@ -111,21 +111,21 @@ WebInspector.ApplicationCacheDetailsSidebarPanel.prototype = {
 
         this._locationFrameURLRow.value = this.applicationCacheFrame.frame.url;
         this._locationManifestURLRow.value = this.applicationCacheFrame.manifest.manifestURL;
-        
+
         this._refreshOnlineRow();
         this._refreshStatusRow();
     },
-    
+
     // Private
-    
+
     _networkStateUpdated: function(event)
     {
         if (!this.applicationCacheFrame)
             return;
-        
+
         this._refreshOnlineRow();
     },
-    
+
     _frameManifestStatusChanged: function(event)
     {
         if (!this.applicationCacheFrame)
@@ -137,12 +137,12 @@ WebInspector.ApplicationCacheDetailsSidebarPanel.prototype = {
 
         this._refreshStatusRow();
     },
-    
+
     _refreshOnlineRow: function()
     {
         this._onlineRow.value = WebInspector.applicationCacheManager.online ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
     },
-    
+
     _refreshStatusRow: function()
     {
         this._statusRow.value = WebInspector.ApplicationCacheDetailsSidebarPanel.Status[this.applicationCacheFrame.status];
