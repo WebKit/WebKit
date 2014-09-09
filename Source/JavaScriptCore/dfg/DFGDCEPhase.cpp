@@ -116,10 +116,8 @@ public:
         }
         
         if (m_graph.m_form == SSA) {
-            Vector<BasicBlock*> depthFirst;
-            m_graph.getBlocksInPreOrder(depthFirst);
-            for (unsigned i = 0; i < depthFirst.size(); ++i)
-                fixupBlock(depthFirst[i]);
+            for (BasicBlock* block : m_graph.blocksInPreOrder())
+                fixupBlock(block);
         } else {
             RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
             

@@ -145,12 +145,10 @@ public:
         m_out.appendTo(m_prologue, stackOverflow);
         createPhiVariables();
 
-        Vector<BasicBlock*> depthFirst;
-        m_graph.getBlocksInPreOrder(depthFirst);
+        Vector<BasicBlock*> preOrder = m_graph.blocksInPreOrder();
 
         int maxNumberOfArguments = -1;
-        for (unsigned blockIndex = depthFirst.size(); blockIndex--; ) {
-            BasicBlock* block = depthFirst[blockIndex];
+        for (BasicBlock* block : preOrder) {
             for (unsigned nodeIndex = block->size(); nodeIndex--; ) {
                 Node* node = block->at(nodeIndex);
                 switch (node->op()) {
@@ -211,9 +209,8 @@ public:
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         m_out.unreachable();
 
-
-        for (unsigned i = 0; i < depthFirst.size(); ++i)
-            compileBlock(depthFirst[i]);
+        for (BasicBlock* block : preOrder)
+            compileBlock(block);
         
         if (Options::dumpLLVMIR())
             dumpModule(m_ftlState.module);

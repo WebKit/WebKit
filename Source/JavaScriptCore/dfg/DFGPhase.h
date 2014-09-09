@@ -67,6 +67,8 @@ private:
     // Call these hooks when starting and finishing.
     void beginPhase();
     void endPhase();
+    
+    CString m_graphDumpBeforePhase;
 };
 
 template<typename PhaseType>

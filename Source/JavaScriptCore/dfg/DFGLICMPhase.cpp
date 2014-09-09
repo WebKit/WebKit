@@ -150,16 +150,9 @@ public:
         //
         // For maximum profit, we walk blocks in DFS order to ensure that we generally
         // tend to hoist dominators before dominatees.
-        Vector<BasicBlock*> depthFirst;
-        m_graph.getBlocksInPreOrder(depthFirst);
         Vector<const NaturalLoop*> loopStack;
         bool changed = false;
-        for (
-            unsigned depthFirstIndex = 0;
-            depthFirstIndex < depthFirst.size();
-            ++depthFirstIndex) {
-            
-            BasicBlock* block = depthFirst[depthFirstIndex];
+        for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             const NaturalLoop* loop = m_graph.m_naturalLoops.innerMostLoopOf(block);
             if (!loop)
                 continue;

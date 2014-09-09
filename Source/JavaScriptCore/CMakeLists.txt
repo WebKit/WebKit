@@ -201,6 +201,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGPredictionPropagationPhase.cpp
     dfg/DFGPureValue.cpp
     dfg/DFGResurrectionForValidationPhase.cpp
+    dfg/DFGSSACalculator.cpp
     dfg/DFGSSAConversionPhase.cpp
     dfg/DFGSSALoweringPhase.cpp
     dfg/DFGSafepoint.cpp

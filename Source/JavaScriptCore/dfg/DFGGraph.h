@@ -676,8 +676,8 @@ public:
     void clearReplacements();
     void initializeNodeOwners();
     
-    void getBlocksInPreOrder(Vector<BasicBlock*>& result);
-    void getBlocksInPostOrder(Vector<BasicBlock*>& result);
+    BlockList blocksInPreOrder();
+    BlockList blocksInPostOrder();
     
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
     

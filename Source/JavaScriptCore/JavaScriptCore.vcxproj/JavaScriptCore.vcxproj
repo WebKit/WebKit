@@ -451,6 +451,7 @@
     <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT32_64.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT64.cpp" />
+    <ClCompile Include="..\dfg\DFGSSACalculator.cpp" />
     <ClCompile Include="..\dfg\DFGSSAConversionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSSALoweringPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp" />
@@ -1101,6 +1102,7 @@
     <ClInclude Include="..\dfg\DFGSilentRegisterSavePlan.h" />
     <ClInclude Include="..\dfg\DFGSlowPathGenerator.h" />
     <ClInclude Include="..\dfg\DFGSpeculativeJIT.h" />
+    <ClInclude Include="..\dfg\DFGSSACalculator.h" />
     <ClInclude Include="..\dfg\DFGSSAConversionPhase.h" />
     <ClInclude Include="..\dfg\DFGSSALoweringPhase.h" />
     <ClInclude Include="..\dfg\DFGStackLayoutPhase.h" />

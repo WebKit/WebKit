@@ -128,6 +128,7 @@ typedef const char* optionString;
     v(bool, printEachOSRExit, false) \
     v(bool, validateGraph, false) \
     v(bool, validateGraphAtEachPhase, false) \
+    v(bool, verboseValidationFailure, false) \
     v(bool, verboseOSR, false) \
     v(bool, verboseFTLOSRExit, false) \
     v(bool, verboseCallLink, false) \

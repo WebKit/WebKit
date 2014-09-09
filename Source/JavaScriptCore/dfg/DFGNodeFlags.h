@@ -68,7 +68,7 @@ namespace JSC { namespace DFG {
 
 #define NodeRelevantToOSR               0x10000
 
-#define NodeIsFlushed                   0x20000 // Used by Graph::computeIsFlushed(), will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                   0x20000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
 
 #define NodeMiscFlag1                   0x40000
 #define NodeMiscFlag2                   0x80000

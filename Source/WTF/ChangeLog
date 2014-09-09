@@ -1,3 +1,15 @@
+2014-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have a reusable SSA builder
+        https://bugs.webkit.org/show_bug.cgi?id=136331
+
+        Reviewed by Oliver Hunt.
+        
+        Update the alloc() method to use variadic templates. This makes it more natural to use.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::alloc):
+
 2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove FILTERS flag

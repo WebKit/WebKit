@@ -57,6 +57,11 @@ public:
         return from == to || strictlyDominates(from, to);
     }
     
+    BasicBlock* immediateDominatorOf(BasicBlock* block) const
+    {
+        return m_data[block].idomParent;
+    }
+    
     template<typename Functor>
     void forAllStrictDominatorsOf(BasicBlock* to, const Functor& functor) const
     {
@@ -119,14 +124,28 @@ public:
     void forAllBlocksInIteratedDominanceFrontierOf(
         const BlockList& from, const Functor& functor)
     {
+        forAllBlocksInPrunedIteratedDominanceFrontierOf(
+            from,
+            [&] (BasicBlock* block) -> bool {
+                functor(block);
+                return true;
+            });
+    }
+    
+    // This is a close relative of forAllBlocksInIteratedDominanceFrontierOf(), which allows the
+    // given functor to return false to indicate that we don't wish to consider the given block.
+    // Useful for computing pruned SSA form.
+    template<typename Functor>
+    void forAllBlocksInPrunedIteratedDominanceFrontierOf(
+        const BlockList& from, const Functor& functor)
+    {
         BlockSet set;
         forAllBlocksInIteratedDominanceFrontierOfImpl(
             from,
             [&] (BasicBlock* block) -> bool {
                 if (!set.add(block))
                     return false;
-                functor(block);
-                return true;
+                return functor(block);
             });
     }
     

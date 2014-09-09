@@ -1,3 +1,110 @@
+2014-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have a reusable SSA builder
+        https://bugs.webkit.org/show_bug.cgi?id=136331
+
+        Reviewed by Oliver Hunt.
+        
+        We want to implement sophisticated SSA transformations like object allocation sinking
+        (https://bugs.webkit.org/show_bug.cgi?id=136330), but to do that, we need to be able to do
+        updates to SSA that require inserting new Phi's. This requires calculating where Phis go.
+        Previously, our Phi calculation was based on Aycock and Horspool's algorithm, and our
+        implementation of this algorithm only worked when doing CPS->SSA conversion. The code
+        could not be reused for cases where some phase happens to know that it introduced a few
+        defs in some blocks and it wants to figure out where the Phis should go. Moreover, even
+        the general algorithm of Aycock and Horspool is not well suited to such targetted SSA
+        updates, since it requires first inserting maximal Phis. That scales well when the Phis
+        were already there (like in our CPS form) but otherwise it's quite unnatural and may be
+        difficult to make efficient.
+        
+        The usual way of handling both SSA conversion and SSA update is to use Cytron et al's
+        algorithm based on dominance frontiers. For a while now, I've been working on creating a
+        Cytron-based SSA calculator that can be used both as a replacement for our current SSA
+        converter and as a reusable tool for any phase that needs to do SSA update. I previously
+        optimized our dominator calculation and representation to use dominator trees computed
+        using Lengauer and Tarjan's algorithm - mainly to make it more scalable to enumerate over
+        the set of blocks that dominate you or vice-versa, and then I implemented a dominance
+        frontier calculator. This patch implements the final step towards making SSA update
+        available to all SSA phases: it implements an SSACalculator that can tell you where Phis
+        go when given an arbitrary set of Defs. To keep things simple, and to ensure that we have
+        good test coverage for this SSACalculator, this patch replaces the old Aycock-Horspool
+        SSA converter with one based on the SSACalculator.
+        
+        This has no observable impact. It does reduce the amount of code in SSAConversionPhase.
+        But even better, it makes SSAConversionPhase have significantly less tricky logic. It
+        mostly just relies on SSACalculator to do the tricky stuff, and SSAConversionPhase mostly
+        just reasons about the weirdnesses unique to the ThreadedCPS form that it sees as input.
+        In fact, using the Cytron et al approach means that there isn't really any "smoke and
+        mirrors" trickyness related to SSA. SSACalculator's only "tricks" are using the pruned
+        iterated dominance frontier to place Phi's and using the dom tree to find reaching defs.
+        The complexity is mostly confined to Dominators, which computes various dominator-related
+        properties over the control flow graph. That class can be difficult to understand, but at
+        least it follows well-known graph theory wisdom.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAnalysis.h:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::immediateDominatorOf):
+        (JSC::DFG::Dominators::forAllBlocksInIteratedDominanceFrontierOf):
+        (JSC::DFG::Dominators::forAllBlocksInPrunedIteratedDominanceFrontierOf):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::blocksInPreOrder):
+        (JSC::DFG::Graph::blocksInPostOrder):
+        (JSC::DFG::Graph::getBlocksInPreOrder): Deleted.
+        (JSC::DFG::Graph::getBlocksInPostOrder): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::beginPhase):
+        (JSC::DFG::Phase::endPhase):
+        * dfg/DFGPhase.h:
+        * dfg/DFGSSACalculator.cpp: Added.
+        (JSC::DFG::SSACalculator::Variable::dump):
+        (JSC::DFG::SSACalculator::Variable::dumpVerbose):
+        (JSC::DFG::SSACalculator::Def::dump):
+        (JSC::DFG::SSACalculator::SSACalculator):
+        (JSC::DFG::SSACalculator::~SSACalculator):
+        (JSC::DFG::SSACalculator::newVariable):
+        (JSC::DFG::SSACalculator::newDef):
+        (JSC::DFG::SSACalculator::nonLocalReachingDef):
+        (JSC::DFG::SSACalculator::reachingDefAtTail):
+        (JSC::DFG::SSACalculator::dump):
+        * dfg/DFGSSACalculator.h: Added.
+        (JSC::DFG::SSACalculator::Variable::index):
+        (JSC::DFG::SSACalculator::Variable::Variable):
+        (JSC::DFG::SSACalculator::Def::variable):
+        (JSC::DFG::SSACalculator::Def::block):
+        (JSC::DFG::SSACalculator::Def::value):
+        (JSC::DFG::SSACalculator::Def::Def):
+        (JSC::DFG::SSACalculator::variable):
+        (JSC::DFG::SSACalculator::computePhis):
+        (JSC::DFG::SSACalculator::phisForBlock):
+        (JSC::DFG::SSACalculator::reachingDefAtHead):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::SSAConversionPhase):
+        (JSC::DFG::SSAConversionPhase::run):
+        (JSC::DFG::SSAConversionPhase::forwardPhiChildren): Deleted.
+        (JSC::DFG::SSAConversionPhase::forwardPhi): Deleted.
+        (JSC::DFG::SSAConversionPhase::forwardPhiEdge): Deleted.
+        (JSC::DFG::SSAConversionPhase::deduplicateChildren): Deleted.
+        * dfg/DFGSSAConversionPhase.h:
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::Validate):
+        (JSC::DFG::Validate::dumpGraphIfAppropriate):
+        (JSC::DFG::validate):
+        * dfg/DFGValidate.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        * runtime/Options.h:
+
 2014-09-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173402.

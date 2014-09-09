@@ -377,7 +377,7 @@ public:
         m_graph.initializeNodeOwners();
         m_graph.m_dominators.computeIfNecessary(m_graph);
         
-        m_graph.getBlocksInPreOrder(m_preOrder);
+        m_preOrder = m_graph.blocksInPreOrder();
         
         // First figure out what gets clobbered by blocks. Node that this uses the preOrder list
         // for convenience only.

@@ -38,9 +38,10 @@ namespace JSC { namespace DFG {
 
 class Validate {
 public:
-    Validate(Graph& graph, GraphDumpMode graphDumpMode)
+    Validate(Graph& graph, GraphDumpMode graphDumpMode, CString graphDumpBeforePhase)
         : m_graph(graph)
         , m_graphDumpMode(graphDumpMode)
+        , m_graphDumpBeforePhase(graphDumpBeforePhase)
     {
     }
     
@@ -266,6 +267,7 @@ public:
 private:
     Graph& m_graph;
     GraphDumpMode m_graphDumpMode;
+    CString m_graphDumpBeforePhase;
     
     HashMap<Node*, unsigned> m_myRefCounts;
     HashSet<Node*> m_acceptableNodes;
@@ -564,14 +566,19 @@ private:
     {
         if (m_graphDumpMode == DontDumpGraph)
             return;
+        dataLog("\n");
+        if (!m_graphDumpBeforePhase.isNull()) {
+            dataLog("Before phase:\n");
+            dataLog(m_graphDumpBeforePhase);
+        }
         dataLog("At time of failure:\n");
         m_graph.dump();
     }
 };
 
-void validate(Graph& graph, GraphDumpMode graphDumpMode)
+void validate(Graph& graph, GraphDumpMode graphDumpMode, CString graphDumpBeforePhase)
 {
-    Validate validationObject(graph, graphDumpMode);
+    Validate validationObject(graph, graphDumpMode, graphDumpBeforePhase);
     validationObject.validate();
 }
 

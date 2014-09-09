@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,9 @@ class Graph;
 
 // Convert ThreadedCPS form into SSA form. This results in a form that has:
 //
-// - Roughly minimal Phi's. We use the Aycock & Horspool fixpoint for
-//   converting the CPS maximal Phis into SSA minimal Phis, with the caveat
-//   that irreducible control flow may result in some missed opportunities
-//   for Phi reduction.
+// - Minimal Phi's. We use the the Cytron et al (TOPLAS'91) algorithm for
+//   Phi insertion. Most of the algorithm is implemented in SSACalculator
+//   and Dominators.
 //
 // - No uses of GetLocal/SetLocal except for captured variables and flushes.
 //   After this, any remaining SetLocal means Flush. PhantomLocals become

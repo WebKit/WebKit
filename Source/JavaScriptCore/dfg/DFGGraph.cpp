@@ -423,10 +423,10 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     if (!context)
         context = &myContext;
     
-    dataLog("\n");
-    dataLog("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
-    dataLog("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
-    dataLog("\n");
+    out.print("\n");
+    out.print("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
+    out.print("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
+    out.print("\n");
     
     Node* lastNode = 0;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
@@ -495,12 +495,12 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             out.print("  Values: ", nodeMapDump(block->ssa->valuesAtTail, context), "\n");
             break;
         } }
-        dataLog("\n");
+        out.print("\n");
     }
     
     if (!myContext.isEmpty()) {
-        myContext.dump(WTF::dataFile());
-        dataLog("\n");
+        myContext.dump(out);
+        out.print("\n");
     }
 }
 
@@ -626,8 +626,9 @@ void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, Va
     }
 }
 
-void Graph::getBlocksInPreOrder(Vector<BasicBlock*>& result)
+BlockList Graph::blocksInPreOrder()
 {
+    BlockList result;
     BlockWorklist worklist;
     worklist.push(block(0));
     while (BasicBlock* block = worklist.pop()) {
@@ -635,10 +636,12 @@ void Graph::getBlocksInPreOrder(Vector<BasicBlock*>& result)
         for (unsigned i = block->numSuccessors(); i--;)
             worklist.push(block->successor(i));
     }
+    return result;
 }
 
-void Graph::getBlocksInPostOrder(Vector<BasicBlock*>& result)
+BlockList Graph::blocksInPostOrder()
 {
+    BlockList result;
     PostOrderBlockWorklist worklist;
     worklist.push(block(0));
     while (BlockWithOrder item = worklist.pop()) {
@@ -653,6 +656,7 @@ void Graph::getBlocksInPostOrder(Vector<BasicBlock*>& result)
             break;
         }
     }
+    return result;
 }
 
 void Graph::clearReplacements()

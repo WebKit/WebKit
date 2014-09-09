@@ -32,19 +32,20 @@
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
+#include "DFGSSACalculator.h"
+#include "DFGVariableAccessDataDump.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 
 class SSAConversionPhase : public Phase {
     static const bool verbose = false;
-    static const bool dumpGraph = false;
     
 public:
     SSAConversionPhase(Graph& graph)
         : Phase(graph, "SSA conversion")
+        , m_calculator(graph)
         , m_insertionSet(graph)
-        , m_changed(false)
     {
     }
     
@@ -52,297 +53,283 @@ public:
     {
         RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
         
-        if (dumpGraph) {
-            dataLog("Graph dump at top of SSA conversion:\n");
+        m_graph.clearReplacements();
+        m_graph.m_dominators.computeIfNecessary(m_graph);
+        
+        if (verbose) {
+            dataLog("Graph before SSA transformation:\n");
             m_graph.dump();
         }
+
+        // Create a SSACalculator::Variable for every root VariableAccessData.
+        for (VariableAccessData& variable : m_graph.m_variableAccessData) {
+            if (!variable.isRoot() || variable.isCaptured())
+                continue;
+            
+            SSACalculator::Variable* ssaVariable = m_calculator.newVariable();
+            ASSERT(ssaVariable->index() == m_variableForSSAIndex.size());
+            m_variableForSSAIndex.append(&variable);
+            m_ssaVariableForVariable.add(&variable, ssaVariable);
+        }
         
-        // Eliminate all duplicate or self-pointing Phi edges. This means that
-        // we transform:
-        //
-        // p: Phi(@n1, @n2, @n3)
-        //
-        // into:
-        //
-        // p: Phi(@x)
-        //
-        // if each @ni in {@n1, @n2, @n3} is either equal to @p to is equal
-        // to @x, for exactly one other @x. Additionally, trivial Phis (i.e.
-        // p: Phi(@x)) are forwarded, so that if have an edge to such @p, we
-        // replace it with @x. This loop does this for Phis only; later we do
-        // such forwarding for Phi references found in other nodes.
-        //
-        // See Aycock and Horspool in CC'00 for a better description of what
-        // we're doing here.
-        do {
-            m_changed = false;
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                for (unsigned phiIndex = block->phis.size(); phiIndex--;) {
-                    Node* phi = block->phis[phiIndex];
-                    if (phi->variableAccessData()->isCaptured())
-                        continue;
-                    forwardPhiChildren(phi);
-                    deduplicateChildren(phi);
-                }
-            }
-        } while (m_changed);
-        
-        // For each basic block, for each local live at the head of that block,
-        // figure out what node we should be referring to instead of that local.
-        // If it turns out to be a non-trivial Phi, make sure that we create an
-        // SSA Phi and Upsilons in predecessor blocks. We reuse
-        // BasicBlock::variablesAtHead for tracking which nodes to refer to.
-        Operands<bool> nonTrivialPhis(OperandsLike, m_graph.block(0)->variablesAtHead);
+        // Find all SetLocals and create Defs for them. We handle SetArgument by creating a
+        // GetArgument.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
-
-            nonTrivialPhis.fill(false);
-            for (unsigned i = block->phis.size(); i--;) {
-                Node* phi = block->phis[i];
-                if (!phi->children.justOneChild())
-                    nonTrivialPhis.operand(phi->local()) = true;
-            }
-                
-            for (unsigned i = block->variablesAtHead.size(); i--;) {
-                Node* node = block->variablesAtHead[i];
-                if (!node)
+            
+            // Must process the block in forward direction because we want to see the last
+            // assignment for every local.
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+                if (node->op() != SetLocal && node->op() != SetArgument)
                     continue;
-                
-                if (verbose)
-                    dataLog("At block #", blockIndex, " for operand r", block->variablesAtHead.operandForIndex(i), " have node ", node, "\n");
                 
                 VariableAccessData* variable = node->variableAccessData();
-                if (variable->isCaptured()) {
-                    // Poison this entry in variablesAtHead because we don't
-                    // want anyone to try to refer to it, if the variable is
-                    // captured.
-                    block->variablesAtHead[i] = 0;
+                if (variable->isCaptured())
                     continue;
+                
+                Node* childNode;
+                if (node->op() == SetLocal)
+                    childNode = node->child1().node();
+                else {
+                    ASSERT(node->op() == SetArgument);
+                    childNode = m_insertionSet.insertNode(
+                        nodeIndex, node->variableAccessData()->prediction(),
+                        GetArgument, node->origin, OpInfo(node->variableAccessData()));
                 }
                 
-                switch (node->op()) {
-                case Phi:
-                case SetArgument:
-                    break;
-                case Flush:
-                case GetLocal:
-                case PhantomLocal:
-                    node = node->child1().node();
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
-                RELEASE_ASSERT(node->op() == Phi || node->op() == SetArgument);
-                
-                bool isFlushed = !!(node->flags() & NodeIsFlushed);
-                
-                if (node->op() == Phi) {
-                    if (!nonTrivialPhis.operand(node->local())) {
-                        Edge edge = node->children.justOneChild();
-                        ASSERT(edge);
-                        if (verbose)
-                            dataLog("    One child: ", edge, ", ", RawPointer(edge.node()), "\n");
-                        node = edge.node(); // It's something from a different basic block.
-                    } else {
-                        if (verbose)
-                            dataLog("    Non-trivial.\n");
-                        // It's a non-trivial Phi.
-                        FlushFormat format = variable->flushFormat();
-                        NodeFlags result = resultFor(format);
-                        UseKind useKind = useKindFor(format);
-                        
-                        node = m_insertionSet.insertNode(0, SpecNone, Phi, NodeOrigin());
-                        if (verbose)
-                            dataLog("    Inserted new node: ", node, "\n");
-                        node->mergeFlags(result);
-                        RELEASE_ASSERT((node->flags() & NodeResultMask) == result);
-                        
-                        for (unsigned j = block->predecessors.size(); j--;) {
-                            BasicBlock* predecessor = block->predecessors[j];
-                            predecessor->appendNonTerminal(
-                                m_graph, SpecNone, Upsilon, predecessor->last()->origin,
-                                OpInfo(node), Edge(predecessor->variablesAtTail[i], useKind));
-                        }
-                        
-                        if (isFlushed) {
-                            // Do nothing. For multiple reasons.
-                            
-                            // Reason #1: If the local is flushed then we don't need to bother
-                            // with a MovHint since every path to this point in the code will
-                            // have flushed the bytecode variable using a SetLocal and hence
-                            // the Availability::flushedAt() will agree, and that will be
-                            // sufficient for figuring out how to recover the variable's value.
-                            
-                            // Reason #2: If we had inserted a MovHint and the Phi function had
-                            // died (because the only user of the value was the "flush" - i.e.
-                            // some asynchronous runtime thingy) then the MovHint would turn
-                            // into a ZombieHint, which would fool us into thinking that the
-                            // variable is dead.
-                            
-                            // Reason #3: If we had inserted a MovHint then even if the Phi
-                            // stayed alive, we would still end up generating inefficient code
-                            // since we would be telling the OSR exit compiler to use some SSA
-                            // value for the bytecode variable rather than just telling it that
-                            // the value was already on the stack.
-                        } else {
-                            m_insertionSet.insertNode(
-                                0, SpecNone, MovHint, NodeOrigin(),
-                                OpInfo(variable->local().offset()), node->defaultEdge());
-                        }
-                    }
-                }
-                
-                block->variablesAtHead[i] = node;
+                m_calculator.newDef(
+                    m_ssaVariableForVariable.get(variable), block, childNode);
             }
-
+            
             m_insertionSet.execute(block);
         }
         
+        // Decide where Phis are to be inserted. This creates the Phi's but doesn't insert them
+        // yet. We will later know where to insert them because SSACalculator is such a bro.
+        m_calculator.computePhis(
+            [&] (SSACalculator::Variable* ssaVariable, BasicBlock* block) -> Node* {
+                VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
+                
+                // Prune by liveness. This doesn't buy us much other than compile times.
+                Node* headNode = block->variablesAtHead.operand(variable->local());
+                if (!headNode)
+                    return nullptr;
+
+                // There is the possibiltiy of "rebirths". The SSA calculator will already prune
+                // rebirths for the same VariableAccessData. But it will not be able to prune
+                // rebirths that arose from the same local variable number but a different
+                // VariableAccessData. We do that pruning here.
+                //
+                // Here's an example of a rebirth that this would catch:
+                //
+                //     var x;
+                //     if (foo) {
+                //         if (bar) {
+                //             x = 42;
+                //         } else {
+                //             x = 43;
+                //         }
+                //         print(x);
+                //         x = 44;
+                //     } else {
+                //         x = 45;
+                //     }
+                //     print(x); // Without this check, we'd have a Phi for x = 42|43 here.
+                //
+                // FIXME: Consider feeding local variable numbers, not VariableAccessData*'s, as
+                // the "variables" for SSACalculator. That would allow us to eliminate this
+                // special case.
+                // https://bugs.webkit.org/show_bug.cgi?id=136641
+                if (headNode->variableAccessData() != variable)
+                    return nullptr;
+                
+                Node* phiNode = m_graph.addNode(
+                    variable->prediction(), Phi, NodeOrigin());
+                FlushFormat format = variable->flushFormat();
+                NodeFlags result = resultFor(format);
+                phiNode->mergeFlags(result);
+                return phiNode;
+            });
+        
         if (verbose) {
-            dataLog("Variables at head after SSA Phi insertion:\n");
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                dataLog("    ", *block, ": ", block->variablesAtHead, "\n");
-            }
-        }
-        
-        // At this point variablesAtHead in each block refers to either:
-        //
-        // 1) A new SSA phi in the current block.
-        // 2) A SetArgument, which will soon get converted into a GetArgument.
-        // 3) An old CPS phi in a different block.
-        //
-        // We don't have to do anything for (1) and (2), but we do need to
-        // do a replacement for (3).
-        
-        // Clear all replacements, since other phases may have used them.
-        m_graph.clearReplacements();
-        
-        if (dumpGraph) {
-            dataLog("Graph just before identifying replacements:\n");
+            dataLog("Computed Phis, about to transform the graph.\n");
+            dataLog("\n");
+            dataLog("Graph:\n");
             m_graph.dump();
+            dataLog("\n");
+            dataLog("Mappings:\n");
+            for (unsigned i = 0; i < m_variableForSSAIndex.size(); ++i)
+                dataLog("    ", i, ": ", VariableAccessDataDump(m_graph, m_variableForSSAIndex[i]), "\n");
+            dataLog("\n");
+            dataLog("SSA calculator: ", m_calculator, "\n");
         }
         
-        // For all of the old CPS Phis, figure out what they correspond to in SSA.
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            if (verbose)
-                dataLog("Dealing with block #", blockIndex, "\n");
-            for (unsigned phiIndex = block->phis.size(); phiIndex--;) {
-                Node* phi = block->phis[phiIndex];
-                if (verbose) {
-                    dataLog(
-                        "Considering ", phi, " (", RawPointer(phi), "), for r",
-                        phi->local(), ", and its replacement in ", *block, ", ",
-                        block->variablesAtHead.operand(phi->local()), "\n");
-                }
-                ASSERT(phi != block->variablesAtHead.operand(phi->local()));
-                phi->replacement = block->variablesAtHead.operand(phi->local());
-            }
-        }
-        
-        // Now make sure that all variablesAtHead in each block points to the
-        // canonical SSA value. Prior to this, variablesAtHead[local] may point to
-        // an old CPS Phi in a different block.
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            for (size_t i = block->variablesAtHead.size(); i--;) {
-                Node* node = block->variablesAtHead[i];
-                if (!node)
-                    continue;
-                while (node->replacement) {
-                    ASSERT(node != node->replacement);
-                    node = node->replacement;
-                }
-                block->variablesAtHead[i] = node;
-            }
-        }
-        
-        if (verbose) {
-            dataLog("Variables at head after convergence:\n");
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                dataLog("    ", *block, ": ", block->variablesAtHead, "\n");
-            }
-        }
-        
-        // Convert operations over locals into operations over SSA nodes.
-        // - GetLocal over captured variables lose their phis.
-        // - GetLocal over uncaptured variables die and get replaced with references
-        //   to the node specified by variablesAtHead.
-        // - SetLocal gets NodeMustGenerate if it's flushed, or turns into a
-        //   Check otherwise.
-        // - Flush loses its children and turns into a Phantom.
-        // - PhantomLocal becomes Phantom, and its child is whatever is specified
-        //   by variablesAtHead.
-        // - SetArgument turns into GetArgument unless it's a captured variable.
-        // - Upsilons get their children fixed to refer to the true value of that local
-        //   at the end of the block. Prior to this loop, Upsilons will refer to
-        //   variableAtTail[operand], which may be any of Flush, PhantomLocal, GetLocal,
-        //   SetLocal, SetArgument, or Phi. We accomplish this by setting the
-        //   replacement pointers of all of those nodes to refer to either
-        //   variablesAtHead[operand], or the child of the SetLocal.
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
+        // Do the bulk of the SSA conversion. For each block, this tracks the operand->Node
+        // mapping based on a combination of what the SSACalculator tells us, and us walking over
+        // the block in forward order. We use our own data structure, valueForOperand, for
+        // determining the local mapping, but we rely on SSACalculator for the non-local mapping.
+        //
+        // This does three things at once:
+        //
+        // - Inserts the Phis in all of the places where they need to go. We've already created
+        //   them and they are accounted for in the SSACalculator's data structures, but we
+        //   haven't inserted them yet, mostly because we want to insert all of a block's Phis in
+        //   one go to amortize the cost of node insertion.
+        //
+        // - Create and insert Upsilons.
+        //
+        // - Convert all of the preexisting SSA nodes (other than the old CPS Phi nodes) into SSA
+        //   form by replacing as follows:
+        //
+        //   - GetLocal over captured variables lose their phis.
+        //
+        //   - GetLocal over uncaptured variables die and get replaced with references to the node
+        //     specified by valueForOperand.
+        //
+        //   - SetLocal gets NodeMustGenerate if it's flushed, or turns into a Check otherwise.
+        //
+        //   - Flush loses its children and turns into a Phantom.
+        //
+        //   - PhantomLocal becomes Phantom, and its child is whatever is specified by
+        //     valueForOperand.
+        //
+        //   - SetArgument is removed unless it's a captured variable. Note that GetArgument nodes
+        //     have already been inserted.
+        Operands<Node*> valueForOperand(OperandsLike, m_graph.block(0)->variablesAtHead);
+        for (BasicBlock* block : m_graph.blocksInPreOrder()) {
+            valueForOperand.clear();
             
-            for (unsigned phiIndex = block->phis.size(); phiIndex--;) {
-                block->phis[phiIndex]->replacement =
-                    block->variablesAtHead.operand(block->phis[phiIndex]->local());
+            // CPS will claim that the root block has all arguments live. But we have already done
+            // the first step of SSA conversion: argument locals are no longer live at head;
+            // instead we have GetArgument nodes for extracting the values of arguments. So, we
+            // skip the at-head available value calculation for the root block.
+            if (block != m_graph.block(0)) {
+                for (size_t i = valueForOperand.size(); i--;) {
+                    Node* nodeAtHead = block->variablesAtHead[i];
+                    if (!nodeAtHead)
+                        continue;
+                    
+                    VariableAccessData* variable = nodeAtHead->variableAccessData();
+                    if (variable->isCaptured())
+                        continue;
+                    
+                    if (verbose)
+                        dataLog("Considering live variable ", VariableAccessDataDump(m_graph, variable), " at head of block ", *block, "\n");
+                    
+                    SSACalculator::Variable* ssaVariable = m_ssaVariableForVariable.get(variable);
+                    SSACalculator::Def* def = m_calculator.reachingDefAtHead(block, ssaVariable);
+                    if (!def) {
+                        // If we are required to insert a Phi, then we won't have a reaching def
+                        // at head.
+                        continue;
+                    }
+                    
+                    Node* node = def->value();
+                    if (node->replacement) {
+                        // This will occur when a SetLocal had a GetLocal as its source. The
+                        // GetLocal would get replaced with an actual SSA value by the time we get
+                        // here. Note that the SSA value with which the GetLocal got replaced
+                        // would not in turn have a replacement.
+                        node = node->replacement;
+                        ASSERT(!node->replacement);
+                    }
+                    if (verbose)
+                        dataLog("Mapping: r", valueForOperand.operandForIndex(i), " -> ", node, "\n");
+                    valueForOperand[i] = node;
+                }
             }
-            for (unsigned nodeIndex = block->size(); nodeIndex--;)
-                ASSERT(!block->at(nodeIndex)->replacement);
+            
+            // Insert Phis by asking the calculator what phis there are in this block. Also update
+            // valueForOperand with those Phis. For Phis associated with variables that are not
+            // flushed, we also insert a MovHint.
+            size_t phiInsertionPoint = 0;
+            for (SSACalculator::Def* phiDef : m_calculator.phisForBlock(block)) {
+                VariableAccessData* variable = m_variableForSSAIndex[phiDef->variable()->index()];
+                
+                // Figure out if the local is meant to be flushed here.
+                bool isFlushed = !!(
+                    block->variablesAtHead.operand(variable->local())->flags() & NodeIsFlushed);
+                
+                m_insertionSet.insert(phiInsertionPoint, phiDef->value());
+                valueForOperand.operand(variable->local()) = phiDef->value();
+                
+                if (isFlushed) {
+                    // Do nothing. For multiple reasons.
+                    
+                    // Reason #1: If the local is flushed then we don't need to bother with a
+                    // MovHint since every path to this point in the code will have flushed the
+                    // bytecode variable using a SetLocal and hence the Availability::flushedAt()
+                    // will agree, and that will be sufficient for figuring out how to recover the
+                    // variable's value.
+                    
+                    // Reason #2: If we had inserted a MovHint and the Phi function had died
+                    // (because the only user of the value was the "flush" - i.e. some
+                    // asynchronous runtime thingy) then the MovHint would turn into a ZombieHint,
+                    // which would fool us into thinking that the variable is dead. Note that this
+                    // reason has a lot to do with the fact that Flushes do not turn into
+                    // Phantoms, because our handling of Flushes assume that we (1) always leave
+                    // the flushed SetLocals alone and (2) OSR availability analysis always sees
+                    // the available flush. The presence of a MovHint or ZombieHint would make the
+                    // flush seem unavailable.
+                    
+                    // Reason #3: If we had inserted a MovHint then even if the Phi stayed alive,
+                    // we would still end up generating inefficient code since we would be telling
+                    // the OSR exit compiler to use some SSA value for the bytecode variable
+                    // rather than just telling it that the value was already on the stack.
+                } else {
+                    m_insertionSet.insertNode(
+                        phiInsertionPoint, SpecNone, MovHint, NodeOrigin(),
+                        OpInfo(variable->local().offset()), phiDef->value()->defaultEdge());
+                }
+            }
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
+                
+                if (verbose) {
+                    dataLog("Processing node ", node, ":\n");
+                    m_graph.dump(WTF::dataFile(), "    ", node);
+                }
                 
                 m_graph.performSubstitution(node);
                 
                 switch (node->op()) {
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
+                    
                     if (variable->isCaptured() || !!(node->flags() & NodeIsFlushed))
                         node->mergeFlags(NodeMustGenerate);
                     else
                         node->setOpAndDefaultFlags(Check);
-                    node->replacement = node->child1().node(); // Only for Upsilons.
+                    
+                    if (!variable->isCaptured()) {
+                        if (verbose)
+                            dataLog("Mapping: r", variable->local(), " -> ", node->child1().node(), "\n");
+                        valueForOperand.operand(variable->local()) = node->child1().node();
+                    }
                     break;
                 }
                     
                 case GetLocal: {
-                    // It seems tempting to just do forwardPhi(GetLocal), except that we
-                    // could have created a new (SSA) Phi, and the GetLocal could still be
-                    // referring to an old (CPS) Phi. Uses variablesAtHead to tell us what
-                    // to refer to.
                     node->children.reset();
+                    
                     VariableAccessData* variable = node->variableAccessData();
                     if (variable->isCaptured())
                         break;
+                    
                     node->convertToPhantom();
-                    node->replacement = block->variablesAtHead.operand(variable->local());
+                    if (verbose)
+                        dataLog("Replacing node ", node, " with ", valueForOperand.operand(variable->local()), "\n");
+                    node->replacement = valueForOperand.operand(variable->local());
                     break;
                 }
                     
                 case Flush: {
                     node->children.reset();
                     node->convertToPhantom();
-                    // This is only for Upsilons. An Upsilon will only refer to a Flush if
-                    // there were no SetLocals or GetLocals in the block.
-                    node->replacement = block->variablesAtHead.operand(node->local());
                     break;
                 }
                     
@@ -360,14 +347,9 @@ public:
                         // local wouldn't have been computed by the Phi reduction algorithm
                         // above.
                         node->children.reset();
-                    } else {
-                        node->child1() =
-                            block->variablesAtHead.operand(variable->local())->defaultEdge();
-                    }
+                    } else
+                        node->child1() = valueForOperand.operand(variable->local())->defaultEdge();
                     node->convertToPhantom();
-                    // This is only for Upsilons. An Upsilon will only refer to a
-                    // PhantomLocal if there were no SetLocals or GetLocals in the block.
-                    node->replacement = block->variablesAtHead.operand(variable->local());
                     break;
                 }
                     
@@ -375,15 +357,48 @@ public:
                     VariableAccessData* variable = node->variableAccessData();
                     if (variable->isCaptured())
                         break;
-                    node->setOpAndDefaultFlags(GetArgument);
-                    node->setResult(resultFor(node->variableAccessData()->flushFormat()));
+                    node->convertToPhantom();
                     break;
                 }
-
+                    
+                case GetArgument: {
+                    VariableAccessData* variable = node->variableAccessData();
+                    ASSERT(!variable->isCaptured());
+                    if (verbose)
+                        dataLog("Mapping: r", variable->local(), " -> ", node, "\n");
+                    valueForOperand.operand(variable->local()) = node;
+                    break;
+                }
+                    
                 default:
                     break;
                 }
             }
+            
+            // We want to insert Upsilons just before the end of the block. On the surface this
+            // seems dangerous because the Upsilon will have a checking UseKind. But, we will not
+            // actually be performing the check at the point of the Upsilon; the check will
+            // already have been performed at the point where the original SetLocal was.
+            size_t upsilonInsertionPoint = block->size() - 1;
+            NodeOrigin upsilonOrigin = block->last()->origin;
+            for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
+                BasicBlock* successorBlock = block->successor(successorIndex);
+                for (SSACalculator::Def* phiDef : m_calculator.phisForBlock(successorBlock)) {
+                    Node* phiNode = phiDef->value();
+                    SSACalculator::Variable* ssaVariable = phiDef->variable();
+                    VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
+                    FlushFormat format = variable->flushFormat();
+                    UseKind useKind = useKindFor(format);
+                    
+                    m_insertionSet.insertNode(
+                        upsilonInsertionPoint, SpecNone, Upsilon, upsilonOrigin,
+                        OpInfo(phiNode), Edge(
+                            valueForOperand.operand(variable->local()),
+                            useKind));
+                }
+            }
+            
+            m_insertionSet.execute(block);
         }
         
         // Free all CPS phis and reset variables vectors.
@@ -404,74 +419,20 @@ public:
         m_graph.m_arguments.clear();
         
         m_graph.m_form = SSA;
+
+        if (verbose) {
+            dataLog("Graph after SSA transformation:\n");
+            m_graph.dump();
+        }
+
         return true;
     }
 
 private:
-    void forwardPhiChildren(Node* node)
-    {
-        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
-            Edge& edge = node->children.child(i);
-            if (!edge)
-                break;
-            m_changed |= forwardPhiEdge(edge);
-        }
-    }
-    
-    Node* forwardPhi(Node* node)
-    {
-        for (;;) {
-            switch (node->op()) {
-            case Phi: {
-                Edge edge = node->children.justOneChild();
-                if (!edge)
-                    return node;
-                node = edge.node();
-                break;
-            }
-            case GetLocal:
-            case SetLocal:
-                if (node->variableAccessData()->isCaptured())
-                    return node;
-                node = node->child1().node();
-                break;
-            default:
-                return node;
-            }
-        }
-    }
-    
-    bool forwardPhiEdge(Edge& edge)
-    {
-        Node* newNode = forwardPhi(edge.node());
-        if (newNode == edge.node())
-            return false;
-        edge.setNode(newNode);
-        return true;
-    }
-    
-    void deduplicateChildren(Node* node)
-    {
-        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
-            Edge edge = node->children.child(i);
-            if (!edge)
-                break;
-            if (edge == node) {
-                node->children.removeEdge(i--);
-                m_changed = true;
-                continue;
-            }
-            for (unsigned j = i + 1; j < AdjacencyList::Size; ++j) {
-                if (node->children.child(j) == edge) {
-                    node->children.removeEdge(j--);
-                    m_changed = true;
-                }
-            }
-        }
-    }
-    
+    SSACalculator m_calculator;
     InsertionSet m_insertionSet;
-    bool m_changed;
+    HashMap<VariableAccessData*, SSACalculator::Variable*> m_ssaVariableForVariable;
+    Vector<VariableAccessData*> m_variableForSSAIndex;
 };
 
 bool performSSAConversion(Graph& graph)
