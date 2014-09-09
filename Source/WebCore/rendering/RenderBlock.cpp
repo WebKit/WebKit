@@ -3019,6 +3019,17 @@ int RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
     return -1;
 }
 
+static inline bool isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
+{
+    // We include isRenderButton in this check because buttons are implemented
+    // using flex box but should still support first-line|first-letter.
+    // The flex box and specs require that flex box and grid do not support
+    // first-line|first-letter, though.
+    // FIXME: Remove when buttons are implemented with align-items instead of
+    // flex box.
+    return renderElement.isRenderBlockFlow() || renderElement.isRenderButton();
+}
+
 RenderBlock* RenderBlock::firstLineBlock() const
 {
     RenderBlock* firstLineBlock = const_cast<RenderBlock*>(this);
@@ -3028,14 +3039,8 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (hasPseudo)
             break;
         RenderElement* parentBlock = firstLineBlock->parent();
-        // We include isRenderButton in this check because buttons are
-        // implemented using flex box but should still support first-line. The
-        // flex box spec requires that flex box does not support first-line,
-        // though.
-        // FIXME: Remove when buttons are implemented with align-items instead
-        // of flexbox.
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
-            || !parentBlock || parentBlock->firstChild() != firstLineBlock || (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
+            || !parentBlock || parentBlock->firstChild() != firstLineBlock || !isRenderBlockFlowOrRenderButton(*parentBlock))
             break;
         firstLineBlock = toRenderBlock(parentBlock);
     } 
@@ -3111,21 +3116,15 @@ static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
 {
     RenderBlock* firstLetterBlock = start;
     while (true) {
-        // We include isRenderButton in these two checks because buttons are
-        // implemented using flex box but should still support first-letter.
-        // The flex box spec requires that flex box does not support
-        // first-letter, though.
-        // FIXME: Remove when buttons are implemented with align-items instead
-        // of flexbox.
         bool canHaveFirstLetterRenderer = firstLetterBlock->style().hasPseudoStyle(FIRST_LETTER)
             && firstLetterBlock->canHaveGeneratedChildren()
-            && (!firstLetterBlock->isFlexibleBox() || firstLetterBlock->isRenderButton());
+            && isRenderBlockFlowOrRenderButton(*firstLetterBlock);
         if (canHaveFirstLetterRenderer)
             return firstLetterBlock;
 
         RenderElement* parentBlock = firstLetterBlock->parent();
         if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
-            || (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
+            || !isRenderBlockFlowOrRenderButton(*parentBlock))
             return 0;
         firstLetterBlock = toRenderBlock(parentBlock);
     } 
@@ -3293,7 +3292,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
             firstLetter = current.firstChild();
     }
     
-    if (!firstLetter)
+    if (!firstLetter || !isRenderBlockFlowOrRenderButton(*firstLetterContainer))
         firstLetterContainer = nullptr;
 }
 
@@ -3305,7 +3304,7 @@ void RenderBlock::updateFirstLetter()
     // be contained within multiple RenderElements.
     getFirstLetter(firstLetterObj, firstLetterContainer);
 
-    if (!firstLetterObj)
+    if (!firstLetterObj || !firstLetterContainer)
         return;
 
     // If the child already has style, then it has already been created, so we just want

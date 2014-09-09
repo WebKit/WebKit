@@ -1,3 +1,39 @@
+2014-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Ignore ::first-letter pseudo-element
+        https://bugs.webkit.org/show_bug.cgi?id=136625
+
+        Reviewed by Darin Adler.
+
+        According to the spec the ::first-letter pseudo-element do not apply to
+        grid containers (neither to flexboxes).
+
+        Fixed issue in RenderBlock::getFirstLetter() that applies to both grids
+        and flexboxes. Basically if the grid's or flexbox's container was
+        defining the ::first-line pseudo-element and the grid or flexbox itself
+        too, the value from the grid or flexbox was being applied to the items.
+        Added the proper check to avoid this.
+
+        Added two new tests for grid and modified one flexbox test to cover the
+        issue explained above.
+
+        Tests: css3/flexbox/flexbox-ignore-container-firstLetter.html
+               fast/css-grid-layout/grid-container-ignore-first-letter.html
+               fast/css-grid-layout/grid-item-first-letter-valid.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isRenderBlockFlowOrRenderButton): New method refactoring
+        similar calls through the source code.
+        (WebCore::RenderBlock::firstLineBlock): Use
+        isRenderBlockFlowOrRenderButton().
+        (WebCore::findFirstLetterBlock): Modify it to use
+        isRenderBlockFlowOrRenderButton() in order to include grids and not only
+        check flexboxes.
+        (WebCore::RenderBlock::getFirstLetter): Use
+        isRenderBlockFlowOrRenderButton().
+        (WebCore::RenderBlock::updateFirstLetter): Early return if
+        firstLetterContainer is null (in the case of flexboxes or grids).
+
 2014-09-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Add support for :read-write/:read-only matching editable content
