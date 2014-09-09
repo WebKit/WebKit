@@ -71,14 +71,14 @@ private:
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&);
 
     void ensureGridSize(size_t maximumRowIndex, size_t maximumColumnIndex);
-    void insertItemIntoGrid(RenderBox*, const GridCoordinate&);
+    void insertItemIntoGrid(RenderBox&, const GridCoordinate&);
     void placeItemsOnGrid();
     void populateExplicitGridAndOrderIterator();
-    std::unique_ptr<GridCoordinate> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox*, GridTrackSizingDirection, const GridSpan&) const;
+    std::unique_ptr<GridCoordinate> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     typedef std::pair<size_t, size_t> AutoPlacementCursor;
-    void placeAutoMajorAxisItemOnGrid(RenderBox*, AutoPlacementCursor&);
+    void placeAutoMajorAxisItemOnGrid(RenderBox&, AutoPlacementCursor&);
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 
@@ -86,24 +86,24 @@ private:
     void populateGridPositions(const GridSizingData&);
     void clearGrid();
 
-    typedef LayoutUnit (RenderGrid::* SizingFunction)(RenderBox*, GridTrackSizingDirection, Vector<GridTrack>&);
+    typedef LayoutUnit (RenderGrid::* SizingFunction)(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>&);
     typedef LayoutUnit (GridTrack::* AccumulatorGetter)() const;
     typedef void (GridTrack::* AccumulatorGrowFunction)(LayoutUnit);
     typedef bool (GridTrackSize::* FilterFunction)() const;
-    void resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection, GridSizingData&, RenderBox*, FilterFunction, SizingFunction, AccumulatorGetter, AccumulatorGrowFunction);
+    void resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection, GridSizingData&, RenderBox&, FilterFunction, SizingFunction, AccumulatorGetter, AccumulatorGrowFunction);
     void distributeSpaceToTracks(Vector<GridTrack*>&, Vector<GridTrack*>* tracksForGrowthAboveMaxBreadth, AccumulatorGetter, AccumulatorGrowFunction, GridSizingData&, LayoutUnit& availableLogicalSpace);
 
     double computeNormalizedFractionBreadth(Vector<GridTrack>&, const GridSpan& tracksSpan, GridTrackSizingDirection, LayoutUnit availableLogicalSpace) const;
 
     const GridTrackSize& gridTrackSize(GridTrackSizingDirection, size_t) const;
 
-    LayoutUnit logicalContentHeightForChild(RenderBox*, Vector<GridTrack>&);
-    LayoutUnit minContentForChild(RenderBox*, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
-    LayoutUnit maxContentForChild(RenderBox*, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
-    LayoutPoint findChildLogicalPosition(RenderBox*, const GridSizingData&);
-    GridCoordinate cachedGridCoordinate(const RenderBox*) const;
+    LayoutUnit logicalContentHeightForChild(RenderBox&, Vector<GridTrack>&);
+    LayoutUnit minContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
+    LayoutUnit maxContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
+    LayoutPoint findChildLogicalPosition(RenderBox&, const GridSizingData&);
+    GridCoordinate cachedGridCoordinate(const RenderBox&) const;
 
-    LayoutUnit gridAreaBreadthForChild(const RenderBox* child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
+    LayoutUnit gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
 
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override final;
 
