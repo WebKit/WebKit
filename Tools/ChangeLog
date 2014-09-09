@@ -1,3 +1,14 @@
+2014-09-09  Dan Bernstein  <mitz@apple.com>
+
+        Clean up the MiniBrowser Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=136684
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/Configurations/Base.xcconfig: Enabled warnings recommended by Xcode 6.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj: Removed explicit linking against
+        WebKit2.framework. Upgraded project file version.
+
 2014-09-09  Daniel Bates  <dbates@webkit.org>
 
         svn-{apply, unapply} fails to apply/unapply SVN 1.7 patch that adds new file with property change
