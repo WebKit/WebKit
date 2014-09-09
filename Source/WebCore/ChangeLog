@@ -1,5 +1,12 @@
 2014-09-09  Antti Koivisto  <antti@apple.com>
 
+        Remove unnecessary assert that is getting hit in some scenarios.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::certificateInfo):
+
+2014-09-09  Antti Koivisto  <antti@apple.com>
+
         Try to fix windows build.
 
         * platform/network/cf/ResourceResponseCFNet.cpp:

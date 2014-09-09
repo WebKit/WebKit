@@ -217,7 +217,6 @@ void ResourceResponseBase::includeCertificateInfo() const
 
 CertificateInfo ResourceResponseBase::certificateInfo() const
 {
-    ASSERT(m_includesCertificateInfo);
     return m_certificateInfo;
 }
 
