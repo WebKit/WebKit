@@ -1,3 +1,9 @@
+2014-09-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip some WebGL conformance tests that may be passing on the bots now.
+
+        * platform/mac/TestExpectations:
+
 2014-09-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add layout test for lowercase CSSProperty names
