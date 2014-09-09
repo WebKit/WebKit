@@ -1,3 +1,48 @@
+2014-09-08  Antti Koivisto  <antti@apple.com>
+
+        Pass certificate info as part of ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=136611
+
+        Reviewed by Darin Adler.
+
+        The current way of passing certificate info separately from ResourceResponse and then jamming it back
+        is complex and confusing. This patch makes it a true part of the ResourceResponse.
+
+        With this patch we also only create and pass the certificate info object for the main resource. It is
+        a big and complex object and we never look into it for any other resource type.
+
+        * WebCore.exp.in:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+
+            Mark initialized for synthetic responses, unitialized for those backed by a platform request.
+
+        (WebCore::ResourceResponseBase::initializeCertificateInfo):
+
+            Calling this pulls the certificate info out from the platform type.
+            It shoud only be used for resources that need it.
+
+        (WebCore::ResourceResponseBase::certificateInfo):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::platformCertificateInfo):
+        (WebCore::ResourceResponseBase::platformSuggestedFileName):
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+
+            Encode and decode certificate info if it is present.
+
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/mac/CertificateInfo.h:
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::CertificateInfo):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        (WebCore::ResourceResponse::setCertificateChain): Deleted.
+        (WebCore::ResourceResponse::certificateChain): Deleted.
+        * platform/network/soup/ResourceResponse.h:
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+
 2014-09-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Use C++11 range-based loops in FlowThreadController

@@ -97,6 +97,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_isLoadingMainResource(parameters.isMainResource)
     , m_defersLoading(parameters.defersLoading)
+    , m_needsCertificateInfo(parameters.needsCertificateInfo)
     , m_maximumBufferingTime(parameters.maximumBufferingTime)
     , m_bufferingTimer(this, &NetworkResourceLoader::bufferingTimerFired)
     , m_sandboxExtensionsAreConsumed(false)
@@ -221,10 +222,13 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
+    if (m_needsCertificateInfo)
+        response.includeCertificateInfo();
+
     if (isSynchronous())
         m_synchronousLoadData->m_response = response;
     else
-        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, CertificateInfo(response), isLoadingMainResource()));
+        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(response, isLoadingMainResource()));
 
     // m_handle will be null if the request got aborted above.
     if (!m_handle)

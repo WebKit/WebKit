@@ -92,11 +92,6 @@ public:
     WEBCORE_EXPORT NSURLResponse *nsURLResponse() const;
 #endif
 
-#if PLATFORM(COCOA) || USE(CFNETWORK)
-    WEBCORE_EXPORT void setCertificateChain(CFArrayRef);
-    WEBCORE_EXPORT RetainPtr<CFArrayRef> certificateChain() const;
-#endif
-
     bool platformResponseIsUpToDate() const { return m_platformResponseIsUpToDate; }
 
 private:
@@ -104,6 +99,8 @@ private:
 
     void platformLazyInit(InitLevel);
     String platformSuggestedFilename() const;
+    CertificateInfo platformCertificateInfo() const;
+
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
 #if PLATFORM(COCOA)
@@ -120,10 +117,6 @@ private:
 #endif
 #if PLATFORM(COCOA)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
-#endif
-#if PLATFORM(COCOA) || USE(CFNETWORK)
-    // Certificate chain is normally part of NS/CFURLResponse, but there is no way to re-add it to a deserialized response after IPC.
-    RetainPtr<CFArrayRef> m_externalCertificateChain;
 #endif
 };
 

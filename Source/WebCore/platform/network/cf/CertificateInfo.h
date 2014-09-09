@@ -26,16 +26,16 @@
 #ifndef CertificateInfo_h
 #define CertificateInfo_h
 
-#include <WebCore/ResourceResponse.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
 class CertificateInfo {
 public:
-    WEBCORE_EXPORT CertificateInfo();
-    WEBCORE_EXPORT explicit CertificateInfo(const ResourceResponse&);
-    WEBCORE_EXPORT explicit CertificateInfo(CFArrayRef certificateChain);
+    CertificateInfo() { }
+    CertificateInfo(RetainPtr<CFArrayRef> certificateChain)
+        : m_certificateChain(certificateChain)
+    { }
 
     void setCertificateChain(CFArrayRef certificateChain) { m_certificateChain = certificateChain; }
     CFArrayRef certificateChain() const { return m_certificateChain.get(); }
@@ -48,6 +48,6 @@ private:
     RetainPtr<CFArrayRef> m_certificateChain;
 };
 
-} // namespace WebKit
+}
 
-#endif // CertificateInfo_h
+#endif

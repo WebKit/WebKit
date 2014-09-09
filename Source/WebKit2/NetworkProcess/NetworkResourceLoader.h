@@ -193,6 +193,7 @@ private:
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool m_isLoadingMainResource;
     bool m_defersLoading;
+    bool m_needsCertificateInfo;
     const std::chrono::milliseconds m_maximumBufferingTime;
 
     WebCore::Timer<NetworkResourceLoader> m_bufferingTimer;

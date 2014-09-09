@@ -102,33 +102,23 @@ void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeS
     m_coreLoader->didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const CertificateInfo& certificateInfo, bool needsContinueDidReceiveResponseMessage)
+void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponseWithCertificateInfo for '%s'. Status %d.", m_coreLoader->url().string().utf8().data(), response.httpStatusCode());
 
     Ref<WebResourceLoader> protect(*this);
 
-    ResourceResponse responseCopy(response);
-
-    // FIXME: This should use CertificateInfo to avoid the platform ifdefs. See https://bugs.webkit.org/show_bug.cgi?id=124724.
-#if PLATFORM(COCOA)
-    responseCopy.setCertificateChain(certificateInfo.certificateChain());
-#elif USE(SOUP)
-    responseCopy.setSoupMessageCertificate(certificateInfo.certificate());
-    responseCopy.setSoupMessageTLSErrors(certificateInfo.tlsErrors());
-#endif
-
-    if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(m_coreLoader.get(), responseCopy))
+    if (m_coreLoader->documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(m_coreLoader.get(), response))
         return;
 
 #if USE(QUICK_LOOK)
     // Refrain from calling didReceiveResponse if QuickLook will convert this response, since the MIME type of the
     // converted resource isn't yet known. WebResourceLoaderQuickLookDelegate will later call didReceiveResponse upon
     // receiving the converted data.
-    m_coreLoader->documentLoader()->setQuickLookHandle(QuickLookHandle::create(resourceLoader(), responseCopy.nsURLResponse()));
+    m_coreLoader->documentLoader()->setQuickLookHandle(QuickLookHandle::create(resourceLoader(), response.nsURLResponse()));
     if (!m_coreLoader->documentLoader()->quickLookHandle())
 #endif
-        m_coreLoader->didReceiveResponse(responseCopy);
+        m_coreLoader->didReceiveResponse(response);
 
     // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function(). 
     if (!m_coreLoader)

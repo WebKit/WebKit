@@ -417,7 +417,7 @@ WebCore::CertificateInfo WebFrame::certificateInfo() const
     if (!documentLoader)
         return CertificateInfo();
 
-    return CertificateInfo(documentLoader->response());
+    return documentLoader->response().certificateInfo();
 }
 
 String WebFrame::innerText() const

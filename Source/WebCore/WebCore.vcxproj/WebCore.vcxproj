@@ -19798,6 +19798,7 @@
     <ClInclude Include="..\platform\network\SynchronousLoaderClient.h" />
     <CustomBuildStep Include="..\platform\network\cf\AuthenticationCF.h" />
     <CustomBuildStep Include="..\platform\network\cf\AuthenticationChallenge.h" />
+    <CustomBuildStep Include="..\platform\network\cf\CertificateInfo.h" />
     <ClInclude Include="..\platform\network\cf\DownloadBundle.h" />
     <CustomBuildStep Include="..\platform\network\cf\FormDataStreamCFNet.h" />
     <ClInclude Include="..\platform\network\cf\LoaderRunLoopCF.h" />

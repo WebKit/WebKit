@@ -101,6 +101,11 @@ void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* me
     setExpectedContentLength(soup_message_headers_get_content_length(headers));
 }
 
+CertificateInfo ResourceResponse::platformCertificateInfo() const
+{
+    return CertificateInfo(m_certificate.get(), m_tlsErrors);
+}
+
 String ResourceResponse::platformSuggestedFilename() const
 {
     return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));

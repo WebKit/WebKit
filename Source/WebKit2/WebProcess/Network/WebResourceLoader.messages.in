@@ -26,10 +26,9 @@ messages -> WebResourceLoader LegacyReceiver {
 
     CancelResourceLoader()
 
-    // FIXME (NetworkProcess): We'll need much more granularity for response messages.
     WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
-    DidReceiveResponseWithCertificateInfo(WebCore::ResourceResponse response, WebCore::CertificateInfo certificateInfo, bool needsContinueDidReceiveResponseMessage)
+    DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
     DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(double finishTime)
     DidFailResourceLoad(WebCore::ResourceError error)

@@ -46,6 +46,7 @@ inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
 
 ResourceResponseBase::ResourceResponseBase()  
     : m_expectedContentLength(0)
+    , m_includesCertificateInfo(false)
     , m_httpStatusCode(0)
     , m_connectionID(0)
     , m_cacheControlMaxAge(0)
@@ -72,6 +73,7 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_mimeType(mimeType)
     , m_expectedContentLength(expectedLength)
     , m_textEncodingName(textEncodingName)
+    , m_includesCertificateInfo(true) // Empty but valid for synthetic responses.
     , m_httpStatusCode(0)
     , m_connectionID(0)
     , m_cacheControlMaxAge(0)
@@ -205,7 +207,20 @@ void ResourceResponseBase::setTextEncodingName(const String& encodingName)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-// FIXME should compute this on the fly
+void ResourceResponseBase::includeCertificateInfo() const
+{
+    if (m_includesCertificateInfo)
+        return;
+    m_certificateInfo = static_cast<const ResourceResponse*>(this)->platformCertificateInfo();
+    m_includesCertificateInfo = true;
+}
+
+CertificateInfo ResourceResponseBase::certificateInfo() const
+{
+    ASSERT(m_includesCertificateInfo);
+    return m_certificateInfo;
+}
+
 String ResourceResponseBase::suggestedFilename() const
 {
     return static_cast<const ResourceResponse*>(this)->platformSuggestedFilename();

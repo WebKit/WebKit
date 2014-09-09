@@ -28,20 +28,6 @@
 
 namespace WebCore {
 
-CertificateInfo::CertificateInfo()
-{
-}
-
-CertificateInfo::CertificateInfo(const ResourceResponse& response)
-    : m_certificateChain(response.certificateChain())
-{
-}
-
-CertificateInfo::CertificateInfo(CFArrayRef certificateChain)
-    : m_certificateChain(certificateChain)
-{
-}
-
 #ifndef NDEBUG
 void CertificateInfo::dump() const
 {

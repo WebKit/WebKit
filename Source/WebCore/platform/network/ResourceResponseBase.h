@@ -27,6 +27,7 @@
 #ifndef ResourceResponseBase_h
 #define ResourceResponseBase_h
 
+#include "CertificateInfo.h"
 #include "HTTPHeaderMap.h"
 #include "URL.h"
 #include "ResourceLoadTiming.h"
@@ -91,6 +92,9 @@ public:
 
     WEBCORE_EXPORT bool isAttachment() const;
     WEBCORE_EXPORT String suggestedFilename() const;
+
+    void includeCertificateInfo() const;
+    CertificateInfo certificateInfo() const;
     
     // These functions return parsed values of the corresponding response headers.
     // NaN means that the header was not present or had invalid value.
@@ -139,11 +143,11 @@ protected:
 
     void lazyInit(InitLevel) const;
 
-    // The ResourceResponse subclass may "shadow" this method to lazily initialize platform specific fields
+    // The ResourceResponse subclass should shadow these functions to lazily initialize platform specific fields
     void platformLazyInit(InitLevel) { }
-    String platformSuggestedFileName() { return String(); }
+    CertificateInfo platformCertificateInfo() const { return CertificateInfo(); };
+    String platformSuggestedFileName() const { return String(); }
 
-    // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
 
     URL m_url;
@@ -153,6 +157,9 @@ protected:
     AtomicString m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
     mutable ResourceLoadTiming m_resourceLoadTiming;
+
+    mutable bool m_includesCertificateInfo;
+    mutable CertificateInfo m_certificateInfo;
 
     int m_httpStatusCode;
     unsigned m_connectionID;
@@ -206,6 +213,9 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_resourceLoadTiming;
     encoder << m_httpStatusCode;
     encoder << m_connectionID;
+    encoder << m_includesCertificateInfo;
+    if (m_includesCertificateInfo)
+        encoder << m_certificateInfo;
 }
 
 template<class Decoder>
@@ -240,6 +250,12 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     if (!decoder.decode(response.m_connectionID))
         return false;
+    if (!decoder.decode(response.m_includesCertificateInfo))
+        return false;
+    if (response.m_includesCertificateInfo) {
+        if (!decoder.decode(response.m_certificateInfo))
+            return false;
+    }
     response.m_isNull = false;
 
     return true;

@@ -172,6 +172,12 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     m_initLevel = initLevel;
 }
 
+CertificateInfo ResourceResponse::platformCertificateInfo() const
+{
+    ASSERT(m_nsResponse);
+    return CertificateInfo(adoptCF(wkCopyNSURLResponseCertificateChain(m_nsResponse.get())));
+}
+
 String ResourceResponse::platformSuggestedFilename() const
 {
     return [nsURLResponse() suggestedFilename];
@@ -183,24 +189,6 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 }
 
 #endif // USE(CFNETWORK)
-
-#if PLATFORM(COCOA) || USE(CFNETWORK)
-
-void ResourceResponse::setCertificateChain(CFArrayRef certificateChain)
-{
-    ASSERT(!m_nsResponse || !wkCopyNSURLResponseCertificateChain(m_nsResponse.get()));
-    m_externalCertificateChain = certificateChain;
-}
-
-RetainPtr<CFArrayRef> ResourceResponse::certificateChain() const
-{
-    if (m_externalCertificateChain)
-        return m_externalCertificateChain;
-
-    return adoptCF(wkCopyNSURLResponseCertificateChain(nsURLResponse()));
-}
-
-#endif // PLATFORM(COCOA) || USE(CFNETWORK)
 
 } // namespace WebCore
 

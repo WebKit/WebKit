@@ -89,6 +89,7 @@ private:
 
     void doUpdateResourceResponse() { }
     String platformSuggestedFilename() const;
+    CertificateInfo platformCertificateInfo() const;
 
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
