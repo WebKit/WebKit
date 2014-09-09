@@ -113,6 +113,11 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     m_initLevel = initLevel;
 }
 
+CertificateInfo ResourceResponse::platformCertificateInfo() const
+{
+    return CertificateInfo();
+}
+
 String ResourceResponse::platformSuggestedFilename() const
 {
     RetainPtr<CFStringRef> suggestedFilename = adoptCF(CFURLResponseCopySuggestedFilename(m_cfResponse.get()));

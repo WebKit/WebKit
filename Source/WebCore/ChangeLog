@@ -1,3 +1,10 @@
+2014-09-09  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+
 2014-09-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Incorrect layout for multicol element transformed into region
