@@ -1,3 +1,9 @@
+2014-09-08  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix for FHPrime 64bit builds.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2014-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the autotools build
