@@ -31,7 +31,7 @@
 
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
-#include "JSVariableObject.h"
+#include "JSEnvironmentRecord.h"
 #include "Nodes.h"
 #include "SymbolTable.h"
 
@@ -39,12 +39,12 @@ namespace JSC {
 
 class Register;
     
-class JSActivation : public JSVariableObject {
+class JSActivation : public JSEnvironmentRecord {
 private:
     JSActivation(VM&, CallFrame*, Register*, SymbolTable*);
     
 public:
-    typedef JSVariableObject Base;
+    typedef JSEnvironmentRecord Base;
 
     static JSActivation* create(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
     {

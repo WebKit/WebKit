@@ -696,7 +696,7 @@
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSVariableObject.cpp">
+    <ClCompile Include="..\runtime\JSEnvironmentRecord.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSWithScope.cpp">
@@ -2657,7 +2657,7 @@
     <ClInclude Include="..\runtime\JSTypeInfo.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSVariableObject.h">
+    <ClInclude Include="..\runtime\JSEnvironmentRecord.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSWithScope.h">

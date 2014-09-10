@@ -2280,7 +2280,7 @@ macro getGlobalVar()
 end
 
 macro getClosureVar()
-    loadp JSVariableObject::m_registers[t0], t0
+    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t3)
     loadp TagOffset[t0, t3, 8], t1
     loadp PayloadOffset[t0, t3, 8], t2
@@ -2357,7 +2357,7 @@ end
 macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
-    loadp JSVariableObject::m_registers[t0], t0
+    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
     storei t2, TagOffset[t0, t1, 8]
     storei t3, PayloadOffset[t0, t1, 8]

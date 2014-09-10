@@ -52,7 +52,7 @@ namespace JSC { namespace DFG {
     macro(JSCell_typeInfoFlags) \
     macro(JSCell_typeInfoType) \
     macro(JSObject_butterfly) \
-    macro(JSVariableObject_registers) \
+    macro(JSEnvironmentRecord_registers) \
     macro(JSPropertyNameEnumerator_cachedPropertyNames) \
     macro(NamedProperties) \
     macro(IndexedInt32Properties) \

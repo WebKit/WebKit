@@ -3497,7 +3497,7 @@ private:
         }
         
         setStorage(m_out.loadPtr(
-            lowCell(m_node->child1()), m_heaps.JSVariableObject_registers));
+            lowCell(m_node->child1()), m_heaps.JSEnvironmentRecord_registers));
     }
     
     void compileGetClosureVar()

@@ -129,7 +129,7 @@ void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec
             propertyNames.add(Identifier(exec, it->key.get()));
         }
     }
-    // Skip the JSVariableObject implementation of getOwnNonIndexPropertyNames
+    // Skip the JSEnvironmentRecord implementation of getOwnNonIndexPropertyNames
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 

@@ -26,15 +26,15 @@
 #ifndef JSNameScope_h
 #define JSNameScope_h
 
+#include "JSEnvironmentRecord.h"
 #include "JSGlobalObject.h"
-#include "JSVariableObject.h"
 
 namespace JSC {
 
 // Used for scopes with a single named variable: catch and named function expression.
-class JSNameScope : public JSVariableObject {
+class JSNameScope : public JSEnvironmentRecord {
 public:
-    typedef JSVariableObject Base;
+    typedef JSEnvironmentRecord Base;
 
     static JSNameScope* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
     {

@@ -29,9 +29,9 @@
 #if ENABLE(FTL_JIT)
 
 #include "GetterSetter.h"
+#include "JSEnvironmentRecord.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScope.h"
-#include "JSVariableObject.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace FTL {

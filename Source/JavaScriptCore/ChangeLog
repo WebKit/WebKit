@@ -1,3 +1,50 @@
+2014-09-10  Oliver Hunt  <oliver@apple.com>
+
+        Rename JSVariableObject to JSEnvironmentRecord to align naming with ES spec
+        https://bugs.webkit.org/show_bug.cgi?id=136710
+
+        Reviewed by Anders Carlsson.
+
+        This is a trivial rename.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetClosureRegisters):
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emitPutClosureVar):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emitPutClosureVar):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnNonIndexPropertyNames):
+        * runtime/JSActivation.h:
+        * runtime/JSEnvironmentRecord.cpp: Renamed from Source/JavaScriptCore/runtime/JSVariableObject.cpp.
+        * runtime/JSEnvironmentRecord.h: Renamed from Source/JavaScriptCore/runtime/JSVariableObject.h.
+        (JSC::JSEnvironmentRecord::registers):
+        (JSC::JSEnvironmentRecord::registerAt):
+        (JSC::JSEnvironmentRecord::addressOfRegisters):
+        (JSC::JSEnvironmentRecord::offsetOfRegisters):
+        (JSC::JSEnvironmentRecord::JSEnvironmentRecord):
+        * runtime/JSNameScope.h:
+        * runtime/JSSegmentedVariableObject.h:
+
 2014-09-10  Julien Brianceau   <jbriance@cisco.com>
 
         [mips] Add missing parts and fix LLINT mips backend

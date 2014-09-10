@@ -34,8 +34,8 @@
 #include "Interpreter.h"
 #include "JITInlines.h"
 #include "JSArray.h"
+#include "JSEnvironmentRecord.h"
 #include "JSFunction.h"
-#include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
@@ -660,7 +660,7 @@ void JIT::emitGetGlobalVar(uintptr_t operand)
 void JIT::emitGetClosureVar(int scope, uintptr_t operand)
 {
     emitGetVirtualRegister(scope, regT0);
-    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
+    loadPtr(Address(regT0, JSEnvironmentRecord::offsetOfRegisters()), regT0);
     loadPtr(Address(regT0, operand * sizeof(Register)), regT0);
 }
 
@@ -742,7 +742,7 @@ void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value)
 {
     emitGetVirtualRegister(value, regT1);
     emitGetVirtualRegister(scope, regT0);
-    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
+    loadPtr(Address(regT0, JSEnvironmentRecord::offsetOfRegisters()), regT0);
     storePtr(regT1, Address(regT0, operand * sizeof(Register)));
 }
 

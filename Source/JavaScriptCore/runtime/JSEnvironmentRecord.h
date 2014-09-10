@@ -26,13 +26,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSVariableObject.h"
+#ifndef JSEnvironmentRecord_h
+#define JSEnvironmentRecord_h
 
-#include "JSCInlines.h"
+#include "JSObject.h"
+#include "JSSymbolTableObject.h"
+#include "Register.h"
+#include "SymbolTable.h"
 
 namespace JSC {
 
-const ClassInfo JSVariableObject::s_info = { "VariableObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSVariableObject) };
+class LLIntOffsetsExtractor;
+class Register;
+
+class JSEnvironmentRecord : public JSSymbolTableObject {
+    friend class JIT;
+    friend class LLIntOffsetsExtractor;
+
+public:
+    typedef JSSymbolTableObject Base;
+
+    WriteBarrierBase<Unknown>* registers() { return m_registers; }
+    WriteBarrierBase<Unknown>& registerAt(int index) const { return m_registers[index]; }
+
+    WriteBarrierBase<Unknown>* const * addressOfRegisters() const { return &m_registers; }
+    static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSEnvironmentRecord, m_registers); }
+
+    DECLARE_INFO;
+
+protected:
+    static const unsigned StructureFlags = Base::StructureFlags;
+
+    JSEnvironmentRecord(
+        VM& vm,
+        Structure* structure,
+        Register* registers,
+        JSScope* scope,
+        SymbolTable* symbolTable = 0)
+        : Base(vm, structure, scope, symbolTable)
+        , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
+    {
+    }
+
+    WriteBarrierBase<Unknown>* m_registers; // "r" in the stack.
+};
 
 } // namespace JSC
+
+#endif // JSEnvironmentRecord_h

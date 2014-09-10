@@ -750,8 +750,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case GetClosureRegisters:
-        read(JSVariableObject_registers);
-        def(HeapLocation(ClosureRegistersLoc, JSVariableObject_registers, node->child1()), node);
+        read(JSEnvironmentRecord_registers);
+        def(HeapLocation(ClosureRegistersLoc, JSEnvironmentRecord_registers, node->child1()), node);
         return;
 
     case GetClosureVar:
@@ -849,7 +849,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
 
     case TearOffActivation:
         read(Variables);
-        write(JSVariableObject_registers);
+        write(JSEnvironmentRecord_registers);
         return;
         
     case TearOffArguments:

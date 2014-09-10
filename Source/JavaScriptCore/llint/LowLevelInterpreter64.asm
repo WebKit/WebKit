@@ -2110,7 +2110,7 @@ macro getGlobalVar()
 end
 
 macro getClosureVar()
-    loadp JSVariableObject::m_registers[t0], t0
+    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
     loadq [t0, t1, 8], t0
     valueProfile(t0, 7, t1)
@@ -2184,7 +2184,7 @@ end
 macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
-    loadp JSVariableObject::m_registers[t0], t0
+    loadp JSEnvironmentRecord::m_registers[t0], t0
     loadisFromInstruction(6, t1)
     storeq t2, [t0, t1, 8]
 end

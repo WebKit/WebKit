@@ -744,7 +744,7 @@
     <ClCompile Include="..\runtime\JSTypedArrayConstructors.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
-    <ClCompile Include="..\runtime\JSVariableObject.cpp" />
+    <ClCompile Include="..\runtime\JSEnvironmentRecord.cpp" />
     <ClCompile Include="..\runtime\JSWeakMap.cpp" />
     <ClCompile Include="..\runtime\JSWithScope.cpp" />
     <ClCompile Include="..\runtime\JSWrapperObject.cpp" />
@@ -1520,7 +1520,7 @@
     <ClInclude Include="..\runtime\JSUint32Array.h" />
     <ClInclude Include="..\runtime\JSUint8Array.h" />
     <ClInclude Include="..\runtime\JSUint8ClampedArray.h" />
-    <ClInclude Include="..\runtime\JSVariableObject.h" />
+    <ClInclude Include="..\runtime\JSEnvironmentRecord.h" />
     <ClInclude Include="..\runtime\JSWeakMap.h" />
     <ClInclude Include="..\runtime\JSWithScope.h" />
     <ClInclude Include="..\runtime\JSWrapperObject.h" />

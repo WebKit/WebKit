@@ -41,11 +41,11 @@ namespace JSC {
 class LLIntOffsetsExtractor;
 class Register;
 
-// This is a mostly drop-in replacement for JSVariableObject, except that it preserves
+// This is a mostly drop-in replacement for JSEnvironmentRecord, except that it preserves
 // the invariant that after a variable is created, its address in memory will not change
 // so long as the JSSegmentedVariableObject is alive. This allows optimizations based
 // on getting the address of the variable and remembering it. As well, unlike a
-// JSVariableObject, this will manage the memory for the registers itself and neither
+// JSEnvironmentRecord, this will manage the memory for the registers itself and neither
 // requires nor allows for the subclasses to manage that memory. Finally,
 // JSSegmentedVariableObject has its own GC tracing functionality, since it knows the
 // exact dimensions of the variables array at all times.

@@ -67,7 +67,7 @@ namespace JSC { namespace FTL {
     macro(JSString_flags, JSString::offsetOfFlags()) \
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
-    macro(JSVariableObject_registers, JSVariableObject::offsetOfRegisters()) \
+    macro(JSEnvironmentRecord_registers, JSEnvironmentRecord::offsetOfRegisters()) \
     macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(MarkedAllocator_freeListHead, MarkedAllocator::offsetOfFreeListHead()) \
     macro(MarkedBlock_markBits, MarkedBlock::offsetOfMarks()) \

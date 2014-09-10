@@ -471,7 +471,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSTypedArrayConstructors.cpp
     runtime/JSTypedArrayPrototypes.cpp
     runtime/JSTypedArrays.cpp
-    runtime/JSVariableObject.cpp
+    runtime/JSEnvironmentRecord.cpp
     runtime/JSWeakMap.cpp
     runtime/JSWithScope.cpp
     runtime/JSWrapperObject.cpp

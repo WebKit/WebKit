@@ -3538,7 +3538,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg scopeGPR = scope.gpr();
         GPRReg resultGPR = result.gpr();
 
-        m_jit.loadPtr(JITCompiler::Address(scopeGPR, JSVariableObject::offsetOfRegisters()), resultGPR);
+        m_jit.loadPtr(JITCompiler::Address(scopeGPR, JSEnvironmentRecord::offsetOfRegisters()), resultGPR);
         storageResult(resultGPR, node);
         break;
     }
