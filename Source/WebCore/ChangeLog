@@ -1,3 +1,15 @@
+2014-09-10  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Compile error, CertificateInfo.h is not found.
+        https://bugs.webkit.org/show_bug.cgi?id=136703
+
+        Reviewed by Alex Christensen.
+
+        Curl also needs to implement the CertificateInfo class.
+
+        * platform/network/curl/CertificateInfo.h: Added.
+        (WebCore::CertificateInfo::CertificateInfo):
+
 2014-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up some ENABLE(PICTURE_SIZES) stuff, don't change function signatures inside #ifdefs
