@@ -453,40 +453,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
     },
 
-    clearHighlight: function()
-    {
-        if (!this._formattedMessage)
-            return;
-
-        var highlightedMessage = this._formattedMessage;
-        delete this._formattedMessage;
-        this._formatMessage();
-        this._element.replaceChild(this._formattedMessage, highlightedMessage);
-    },
-
-    highlightSearchResults: function(regexObject)
-    {
-        if (!this._formattedMessage)
-            return;
-
-        regexObject.lastIndex = 0;
-        var text = this.message;
-        var match = regexObject.exec(text);
-        var offset = 0;
-        var matchRanges = [];
-        while (match) {
-            matchRanges.push({ offset: match.index, length: match[0].length });
-            match = regexObject.exec(text);
-        }
-        highlightSearchResults(this._formattedMessage, matchRanges);
-        this._element.scrollIntoViewIfNeeded();
-    },
-
-    matchesRegex: function(regexObject)
-    {
-        return regexObject.test(this.message);
-    },
-
     toMessageElement: function()
     {
         if (this._element)

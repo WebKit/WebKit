@@ -1,5 +1,25 @@
 2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused Console search highlight methods
+        https://bugs.webkit.org/show_bug.cgi?id=136661
+
+        Reviewed by Timothy Hatcher.
+
+        ESLint's no-undef warning complained about some undefined references
+        in these functions that would have thrown exceptions. Turns out this
+        code is unused, and we do highlighting in the console separately.
+
+        * UserInterface/Views/ConsoleCommand.js:
+        (WebInspector.ConsoleCommand.prototype.clearHighlight): Deleted.
+        (WebInspector.ConsoleCommand.prototype.highlightSearchResults): Deleted.
+        (WebInspector.ConsoleCommand.prototype.matchesRegex): Deleted.
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype.clearHighlight): Deleted.
+        (WebInspector.ConsoleMessageImpl.prototype.highlightSearchResults): Deleted.
+        (WebInspector.ConsoleMessageImpl.prototype.matchesRegex): Deleted.
+
+2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix ESLint* no-avoidable-bind warnings
         https://bugs.webkit.org/show_bug.cgi?id=136690
 
