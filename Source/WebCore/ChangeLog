@@ -1,5 +1,17 @@
 2014-09-10  peavo@outlook.com  <peavo@outlook.com>
 
+        [Curl] Optimization; avoid reallocating string many times.
+        https://bugs.webkit.org/show_bug.cgi?id=136704
+
+        Reviewed by Alex Christensen.
+
+        Adding individual characters to a string is inefficient, the string will be reallocated each time.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::readCurlCookieToken):
+
+2014-09-10  peavo@outlook.com  <peavo@outlook.com>
+
         [Curl] Compile error, CertificateInfo.h is not found.
         https://bugs.webkit.org/show_bug.cgi?id=136703
 

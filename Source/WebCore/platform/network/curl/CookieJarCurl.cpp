@@ -35,10 +35,10 @@ static void readCurlCookieToken(const char*& cookie, String& token)
 {
     // Read the next token from a cookie with the Netscape cookie format.
     // Curl separates each token in line with tab character.
-    while (cookie && cookie[0] && cookie[0] != '\t') {
-        token.append(cookie[0]);
+    const char* cookieStart = cookie;
+    while (cookie && cookie[0] && cookie[0] != '\t')
         cookie++;
-    }
+    token = String(cookieStart, cookie - cookieStart);
     if (cookie[0] == '\t')
         cookie++;
 }
