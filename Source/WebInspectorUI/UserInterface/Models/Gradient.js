@@ -48,6 +48,7 @@ WebInspector.Gradient = {
         var currentParam = "";
         var openParentheses = 0;
         var ch = openingParenthesisIndex + 1;
+        var c = null;
         while (c = cssString[ch]) {
             if (c === "(")
                 openParentheses++;

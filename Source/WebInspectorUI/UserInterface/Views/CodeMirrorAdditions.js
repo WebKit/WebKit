@@ -552,6 +552,7 @@
                 var endChar = match.index + match[0].length;
 
                 var openParentheses = 0;
+                var c = null;
                 while (c = lineContent[endChar]) {
                     if (c === "(")
                         openParentheses++;

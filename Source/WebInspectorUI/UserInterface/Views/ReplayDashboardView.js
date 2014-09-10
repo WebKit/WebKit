@@ -30,8 +30,6 @@ WebInspector.ReplayDashboardView = function(representedObject)
     this._navigationBar = new WebInspector.NavigationBar;
     this.element.appendChild(this._navigationBar.element);
 
-    replayManager = WebInspector.replayManager;
-
     this._captureButtonItem = new WebInspector.ActivateButtonNavigationItem("replay-dashboard-capture", WebInspector.UIString("Start Recording"), WebInspector.UIString("Stop Recording"), "Images/ReplayRecordingButton.svg", 16, 16);
     this._captureButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._captureButtonItemClicked, this);
     this._captureButtonItem.hidden = true;

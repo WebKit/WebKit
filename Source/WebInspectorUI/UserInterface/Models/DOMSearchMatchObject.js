@@ -98,7 +98,7 @@ WebInspector.DOMSearchMatchObject.prototype = {
             return WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName;
 
         default:
-            console.error("Unknown DOM node type: ", node.nodeType());
+            console.error("Unknown DOM node type: ", this._domNode.nodeType());
             return WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName;
         }
     }
@@ -128,7 +128,7 @@ WebInspector.DOMSearchMatchObject.titleForDOMNode = function(domNode)
         var title = "<!DOCTYPE " + domNode.nodeName();
         if (domNode.publicId) {
             title += " PUBLIC \"" + domNode.publicId + "\"";
-            if (node.systemId)
+            if (domNode.systemId)
                 title += " \"" + domNode.systemId + "\"";
         } else if (domNode.systemId)
             title += " SYSTEM \"" + domNode.systemId + "\"";
