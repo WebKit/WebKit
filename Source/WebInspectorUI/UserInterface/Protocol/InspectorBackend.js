@@ -430,7 +430,7 @@ InspectorBackend.Command.prototype = {
             }
 
             var value = commandArguments.shift();
-            if (optionalFlag && typeof value === "undefined")
+            if (optionalFlag && value === undefined)
                 continue;
 
             if (typeof value !== typeName) {
@@ -442,7 +442,7 @@ InspectorBackend.Command.prototype = {
         }
 
         if (commandArguments.length === 1 && !callback) {
-            if (typeof commandArguments[0] !== "undefined") {
+            if (commandArguments[0] !== undefined) {
                 console.error("Protocol Error: Optional callback argument for method '" + instance.qualifiedName + "' call must be a function but its type is '" + typeof args[0] + "'.");
                 return;
             }

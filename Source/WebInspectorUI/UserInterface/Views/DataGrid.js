@@ -414,7 +414,7 @@ WebInspector.DataGrid.prototype = {
     },
 
     insertColumn: function(columnIdentifier, columnData, insertionIndex) {
-        if (typeof insertionIndex === "undefined")
+        if (insertionIndex === undefined)
             insertionIndex = this.orderedColumns.length;
         insertionIndex = Number.constrain(insertionIndex, 0, this.orderedColumns.length);
 
@@ -1217,7 +1217,7 @@ WebInspector.DataGrid.prototype = {
 
     get resizeMethod()
     {
-        if (typeof this._resizeMethod === "undefined")
+        if (!this._resizeMethod)
             return WebInspector.DataGrid.ResizeMethod.Nearest;
         return this._resizeMethod;
     },

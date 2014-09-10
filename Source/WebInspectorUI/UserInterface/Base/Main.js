@@ -1626,7 +1626,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, tooltipText)
     a.href = url;
     a.className = classes;
 
-    if (typeof tooltipText === "undefined")
+    if (tooltipText === undefined)
         a.title = url;
     else if (typeof tooltipText !== "string" || tooltipText.length)
         a.title = tooltipText;
@@ -1675,7 +1675,7 @@ WebInspector.linkifyStringAsFragment = function(string)
     function linkifier(title, url, lineNumber)
     {
         var urlNode = WebInspector.linkifyURLAsNode(url, title, undefined);
-        if (typeof(lineNumber) !== "undefined")
+        if (lineNumber !== undefined)
             urlNode.lineNumber = lineNumber;
 
         return urlNode;

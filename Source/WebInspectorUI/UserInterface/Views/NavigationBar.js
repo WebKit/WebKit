@@ -233,7 +233,7 @@ WebInspector.NavigationBar.prototype = {
 
     get minimumWidth()
     {
-        if (typeof this._minimumWidth === "undefined" || this._minimumWidthNeedsRecalculation) {
+        if (this._minimumWidth === undefined || this._minimumWidthNeedsRecalculation) {
             this._minimumWidth = this._calculateMinimumWidth();
             delete this._minimumWidthNeedsRecalculation;
         }
