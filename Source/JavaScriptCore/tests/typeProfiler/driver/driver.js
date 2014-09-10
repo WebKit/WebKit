@@ -21,3 +21,5 @@ function assert(condition, reason) {
     if (!condition)
         throw new Error(reason);
 }
+
+var MaxStructureCountWithoutOverflow = 100;

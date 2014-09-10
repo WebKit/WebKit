@@ -1088,6 +1088,9 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
         if (!foundCtorName)
             curShape->setConstructorName(curStructure->classInfo()->className);
 
+        if (curStructure->isDictionary())
+            curShape->enterDictionaryMode();
+
         curShape->markAsFinal();
 
         if (curStructure->storedPrototypeStructure()) {

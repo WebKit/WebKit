@@ -38,6 +38,7 @@ namespace JSC {
 
 TypeSet::TypeSet()
     : m_seenTypes(TypeNothing)
+    , m_isOverflown(false)
 {
 }
 
@@ -94,8 +95,12 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> pr
                 }
             }
 
-            if (!found)
-                m_structureHistory.append(newShape);
+            if (!found) {
+                if (m_structureHistory.size() < 100)
+                    m_structureHistory.append(newShape);
+                else if (!m_isOverflown)
+                    m_isOverflown = true;
+            }
         }
     }
 }
@@ -341,6 +346,7 @@ StructureShape::StructureShape()
     : m_proto(nullptr)
     , m_propertyHash(nullptr)
     , m_final(false)
+    , m_isInDictionaryMode(false)
 {
 }
 
@@ -460,6 +466,13 @@ String StructureShape::toJSONString() const
     json.append("\"");
     json.append(m_constructorName);
     json.append("\"");
+    json.append(",");
+
+    json.append("\"isInDictionaryMode\":");
+    if (m_isInDictionaryMode)
+        json.append("true");
+    else
+        json.append("false");
     json.append(",");
 
     json.append("\"fields\":");
@@ -584,6 +597,11 @@ PassRefPtr<StructureShape> StructureShape::merge(const PassRefPtr<StructureShape
     merged->markAsFinal();
 
     return merged.release();
+}
+
+void StructureShape::enterDictionaryMode()
+{
+    m_isInDictionaryMode = true;
 }
 
 } //namespace JSC

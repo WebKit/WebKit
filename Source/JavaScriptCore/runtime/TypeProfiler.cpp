@@ -104,6 +104,14 @@ String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDesc
 
     json.append("\"instructionTypeSet\":");
     json.append(location->m_instructionTypeSet->toJSONString());
+    json.append(",");
+
+    json.append("\"isOverflown\":");
+    if (location->m_instructionTypeSet->isOverflown() || (location->m_globalTypeSet && location->m_globalTypeSet->isOverflown()))
+        json.append("true");
+    else
+        json.append("false");
+
 
     json.append("}");
     

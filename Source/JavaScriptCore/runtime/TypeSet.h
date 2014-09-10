@@ -75,6 +75,7 @@ public:
     void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object" : name); }
     String constructorName() { return m_constructorName; }
     void setProto(PassRefPtr<StructureShape> shape) { m_proto = shape; }
+    void enterDictionaryMode();
 
 private:
     static String leastCommonAncestor(const Vector<RefPtr<StructureShape>>);
@@ -87,6 +88,7 @@ private:
     std::unique_ptr<String> m_propertyHash;
     String m_constructorName;
     bool m_final;
+    bool m_isInDictionaryMode;
 };
 
 class TypeSet : public RefCounted<TypeSet> {
@@ -102,6 +104,7 @@ public:
     PassRefPtr<Inspector::Protocol::Array<String>> allPrimitiveTypeNames() const;
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
     String toJSONString() const;
+    bool isOverflown() const { return m_isOverflown; }
 
 private:
     String leastCommonAncestor() const;
@@ -109,6 +112,7 @@ private:
     bool doesTypeConformTo(uint32_t test) const;
 
     uint32_t m_seenTypes;
+    bool m_isOverflown;
     Vector<RefPtr<StructureShape>> m_structureHistory;
     HashSet<StructureID> m_structureIDCache;
 };
