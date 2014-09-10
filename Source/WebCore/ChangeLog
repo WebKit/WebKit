@@ -1,3 +1,21 @@
+2014-09-10  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173345.
+        
+    2014-09-05  Tim Horton  <timothy_horton@apple.com>
+
+            [iOS] Work around bug 136593 by disabling the PDFDocumentImage live resize optimization there
+            https://bugs.webkit.org/show_bug.cgi?id=136594
+            rdar://problem/17457013
+
+            Reviewed by Simon Fraser.
+
+            * platform/graphics/cg/PDFDocumentImage.cpp:
+            (WebCore::PDFDocumentImage::updateCachedImageIfNeeded):
+            Disable the optimization on iOS, because bug 136593 rears its head
+            most often on iOS because it is more common to have contexts that always
+            use low-quality image interpolation on that platform.
+
 2014-09-08  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173344.
