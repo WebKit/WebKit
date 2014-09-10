@@ -1,3 +1,14 @@
+2014-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        Remove a workaround in frameIsCompleteAtIndex for a problem that was fixed in Lion
+        https://bugs.webkit.org/show_bug.cgi?id=136652
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        ImageIO returns the right thing now.
+
 2014-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Laying out a TextRun using an SVG font is O(n^2)
