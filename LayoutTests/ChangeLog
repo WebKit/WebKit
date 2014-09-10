@@ -1,5 +1,12 @@
 2014-09-10  Jer Noble  <jer.noble@apple.com>
 
+        More unreviewed gardening of media/ tests; Move tests into the correct sub-groups and add comments
+        to test expectations without attached bugzilla bugs (due to WontFix, etc.).
+
+        * platform/mac/TestExpectations:
+
+2014-09-10  Jer Noble  <jer.noble@apple.com>
+
         More unreviewed gardening; despite the comment, media/audio-repaint.html is failing on all mac ports, not just on Lion.
 
         * platform/mac/TestExpectations:

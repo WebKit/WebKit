@@ -1155,35 +1155,60 @@ webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-add
 # --- Start media tests ---
 ## --- Start media wontfix tests ---
 # This test requires ogg codecs
-media/media-can-play-ogg.html
+media/media-can-play-ogg.html [ WontFix ]
 
 # This test requires flac codec
-media/media-can-play-flac-audio.html
+media/media-can-play-flac-audio.html [ WontFix ]
 
 # This tests requires support for non-Range HTTP requests.
-http/tests/media/media-seeking-no-ranges-server.html
+http/tests/media/media-seeking-no-ranges-server.html [ WontFix ]
 
 # This test requires MKV and OGV support.
 media/track/in-band [ WontFix ]
+
+# These tests require MKV, Vorbis, and Theora support.
+media/track/audio [ WontFix ]
+media/track/video [ WontFix ]
+
+# This test requires alpha-channel video support.
+compositing/video/video-background-color.html [ WontFix ]
+
+# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
+media/video-controls-captions.html [ WontFix ]
+
+# Mac doesn't support YUV 420/422 colorspace
+media/video-colorspace-yuv420.html [ WontFix ]
+media/video-colorspace-yuv422.html [ WontFix ]
+
+# The logic in this test is no longer correct for Apple ports
+media/track/track-user-preferences.html [ WontFix ]
+
+# This test requires the QuickTime LOOP user data property, which AVFoundation and QTKit64 do not support.
+media/video-does-not-loop.html [ WontFix ]
+
+# This test uses movie matricies, which AVFoundation and QTKit64 do not support.
+media/video-size-intrinsic-scale.html [ WontFix ]
 ## --- End media wontfix tests ---
 
-## --- Start media tests failing on Mountain Lion and earlier ---
-# <rdar://problem/11076314> A few media and http/tests/media tests time out on Mountain Lion
-http/tests/media/video-play-stall-seek.html
-http/tests/media/video-play-stall.html
-media/media-fullscreen-not-in-document.html
+## --- Start unimplemented media tests ---
+webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
+# WebKitDataCue is supported, not DataCue
+media/track/track-datacue.html [ Skip ]
+## --- End unimplemeted media tests ---
+
+## --- Start media tests failing on Mountain Lion and earlier ---
 # Mountain Lion and prior do not support custom media data loading
-Bug(jernoble) [ MountainLion ] media/video-src-blob.html
+Bug(jernoble) [ MountainLion ] media/video-src-blob.html [ Skip ]
 
 # Mountain Lion and prior do not allow access to in-band text tracks
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html [ Skip ]
 
 # Mountain Lion and prior do not support HLS timed metadata
 Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ Skip ]
@@ -1199,15 +1224,13 @@ webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failur
 webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
 
 # Mountain Lion and earlier do not support Encrypted Media Extensions.
-media/encrypted-media/
-fast/events/constructors/media-key-event-constructor.html
+Bug(jernoble) [ MountainLion ] media/encrypted-media/ [ Skip ]
+Bug(jernoble) [ MountainLion ] fast/events/constructors/media-key-event-constructor.html [ Skip ]
 ## --- End media tests failing on Mountain Lion and earlier ---
 
 ## --- Start media tests failing on Mavericks and earlier ---
 # HTTP Auth in Media is not supported in Mavericks and Mountain Lion
-webkit.org/b/40382 http/tests/media/video-auth.html [ Skip ]
-
-webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html [ Pass Failure ]
+webkit.org/b/40382 [ Mavericks ] http/tests/media/video-auth.html [ Skip ]
 
 # Mavericks and prior do not support Media Source.
 [ MountainLion Mavericks ] media/media-source [ Skip ]
@@ -1233,9 +1256,11 @@ webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Failure ]
 webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Failure ]
 webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Failure Timeout ]
+webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
 webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Failure ]
 webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Failure Timeout ]
 webkit.org/b/123522 [ Mavericks ] media/track/track-in-band-legacy-api.html [ Pass Failure ]
+webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html [ Pass Failure ]
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
 webkit.org/b/130971 media/track/track-remove-track.html [ Pass Crash Failure ]
 webkit.org/b/131855 media/event-attributes.html [ Pass Failure ]
@@ -1252,6 +1277,10 @@ webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Fai
 
 # Skipped while Eric Carlson works on a fix.
 webkit.org/b/28221 media/audio-delete-while-step-button-clicked.html [ Failure ]
+
+webkit.org/b/136708 http/tests/media/video-play-stall-seek.html
+webkit.org/b/136708 http/tests/media/video-play-stall.html
+webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 
 # This test requires generation of progress events during loading
 webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]
@@ -1313,11 +1342,7 @@ webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.htm
 
 webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
 
-# --- WebKit2 only ---
-compositing/video/video-background-color.html
-media/video-does-not-loop.html
-media/video-size-intrinsic-scale.html
-
+# Imports from platform/mac/Skipped
 media/controls-styling.html
 media/media-document-audio-repaint.html
 media/video-zoom-controls.html
@@ -1331,16 +1356,8 @@ webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
 webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
-# The logic in this test is no longer correct for Apple ports
-webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
-
-webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
-
 # Flaky logging underneath us
 webkit.org/b/124219 [ Mavericks ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
-
-# Feature not implemented
-webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
@@ -1365,16 +1382,4 @@ webkit.org/b/122021 media/video-display-toggle.html
 webkit.org/b/122021 media/video-empty-source.html
 webkit.org/b/122021 media/video-volume-slider.html
 webkit.org/b/122021 media/volume-bar-empty-when-muted.html
-
-# Audio and video tracks aren't supported on mac
-media/track/audio
-media/track/video
-
-# WebKitDataCue is supported, not DataCue
-media/track/track-datacue.html [ Skip ]
-
-# Mac doesn't support YUV 420/422 colorspace
-media/video-colorspace-yuv420.html [ Skip ]
-media/video-colorspace-yuv422.html [ Skip ]
-
 # --- End media tests ---
