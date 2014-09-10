@@ -1,3 +1,13 @@
+2014-09-10  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [GTK] Clean up the WebKit build from unused parameter warning in Webkit2/UIProcess module
+        https://bugs.webkit.org/show_bug.cgi?id=136670
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+
 2014-09-09  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (WebKit2): -webkit-touch-callout: none has no effect.

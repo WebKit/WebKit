@@ -406,7 +406,7 @@ void PageClientImpl::didFinishLoadForMainFrame()
 {
 }
 
-void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType)
 {
 }
 
