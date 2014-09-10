@@ -1,5 +1,13 @@
 2014-09-10  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Fix a snapshotting test. Test was incorrect as it assumed the wrong window size.
+
+        * platform/mac-wk2/TestExpectations: Remove some duplicate test expectations.
+        * platform/mac-wk2/plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image-expected.txt:
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html:
+
+2014-09-10  Roger Fong  <roger_fong@apple.com>
+
         Rollout r173446, the skipped tests still fail only on the bots.
 
         * platform/mac-wk2/TestExpectations:

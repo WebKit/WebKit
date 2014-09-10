@@ -1,4 +1,4 @@
-<p>This tests that a plugin should be snapshotted if it is partially covered by an image but not enough to be considered blocking.</p>
+<p style = "white-space: nowrap;">This tests that a plugin should be snapshotted if it is partially covered by an image but not enough to be considered blocking.</p>
 <p> It additionally tests that we take transforms into account. </p>
 <div id="result">FAIL</div>
 <script>
@@ -21,4 +21,4 @@ if (window.testRunner) {
 <img src="../resources/apple.gif" width="600" height="600" style="position:absolute; top:25px; left:0px">
 <br>
 <embed id="plugin2" src="../resources/lines.swf" width="600" height="600"></embed>
-<img src="../resources/apple.gif" width="300" height="300" style="-webkit-transform:translate(-500px,-200px)">
+<img src="../resources/apple.gif" width="300" height="300" style="-webkit-transform:translate(200px,-500px)">
