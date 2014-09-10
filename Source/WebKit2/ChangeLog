@@ -1,3 +1,30 @@
+2014-09-10  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173450.
+
+    2014-09-09  Enrica Casucci  <enrica@apple.com>
+
+            REGRESSION (WebKit2): -webkit-touch-callout: none has no effect.
+            https://bugs.webkit.org/show_bug.cgi?id=136685
+            rdar://problem/17629840
+
+            Reviewed by Benjamin Poulain.
+
+            We need to check if the touch callout is enabled for the element before starting
+            the long press gesture.
+            The information about the touch callout is returned together with the rest of data
+            returned by the InteractionInformationAtPosition.
+
+            * Shared/InteractionInformationAtPosition.cpp:
+            (WebKit::InteractionInformationAtPosition::encode):
+            (WebKit::InteractionInformationAtPosition::decode):
+            * Shared/InteractionInformationAtPosition.h:
+            (WebKit::InteractionInformationAtPosition::InteractionInformationAtPosition):
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _actionForLongPress]):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::getPositionInformation):
+
 2014-08-27  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r171782.
