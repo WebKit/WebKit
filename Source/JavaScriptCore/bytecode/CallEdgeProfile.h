@@ -29,6 +29,7 @@
 #include "CallEdge.h"
 #include "CallVariant.h"
 #include "ConcurrentJITLock.h"
+#include "GPRInfo.h"
 #include "JSCell.h"
 #include <wtf/OwnPtr.h>
 
