@@ -1,3 +1,28 @@
+2014-09-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use toDocument instead of static_cast<Document*>
+        https://bugs.webkit.org/show_bug.cgi?id=136694
+
+        Reviewed by Andy Estes.
+
+        Clean up static_cast<Document*>.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::document):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::document):
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent): Add a line to remove .get().
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::addToWorkerDocuments):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::document):
+        (WebCore::XMLHttpRequest::open):
+
 2014-09-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Merge CheckingContexts from SelectorCompiler and SelectorChecker

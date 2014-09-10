@@ -225,11 +225,10 @@ void SharedWorkerProxy::workerGlobalScopeDestroyed()
 void SharedWorkerProxy::addToWorkerDocuments(ScriptExecutionContext* context)
 {
     // Nested workers are not yet supported, so passed-in context should always be a Document.
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(context);
     ASSERT(!isClosing());
     MutexLocker lock(m_workerDocumentsLock);
-    Document* document = static_cast<Document*>(context);
-    m_workerDocuments.add(document);
+    m_workerDocuments.add(toDocument(context));
 }
 
 void SharedWorkerProxy::documentDetached(Document* document)

@@ -324,8 +324,8 @@ void AudioContext::stop()
 
 Document* AudioContext::document() const
 {
-    ASSERT(m_scriptExecutionContext && m_scriptExecutionContext->isDocument());
-    return static_cast<Document*>(m_scriptExecutionContext);
+    ASSERT(m_scriptExecutionContext);
+    return toDocument(m_scriptExecutionContext);
 }
 
 PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)

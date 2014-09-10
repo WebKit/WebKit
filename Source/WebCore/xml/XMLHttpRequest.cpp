@@ -154,8 +154,8 @@ XMLHttpRequest::~XMLHttpRequest()
 
 Document* XMLHttpRequest::document() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext()->isDocument());
-    return static_cast<Document*>(scriptExecutionContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext());
+    return toDocument(scriptExecutionContext());
 }
 
 SecurityOrigin* XMLHttpRequest::securityOrigin() const
@@ -488,7 +488,7 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
     bool shouldBypassMainWorldContentSecurityPolicy = false;
     if (scriptExecutionContext()->isDocument()) {
-        Document* document = static_cast<Document*>(scriptExecutionContext());
+        Document* document = toDocument(scriptExecutionContext());
         if (document->frame())
             shouldBypassMainWorldContentSecurityPolicy = document->frame()->script().shouldBypassMainWorldContentSecurityPolicy();
     }
