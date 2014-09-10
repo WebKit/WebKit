@@ -86,4 +86,3 @@ WebInspector.DOMTreeDataGridNode.prototype = {
         WebInspector.resourceSidebarPanel.showMainFrameDOMTree(this._domNode, true);
     }
 };
-

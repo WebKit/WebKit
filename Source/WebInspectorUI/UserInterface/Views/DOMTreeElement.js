@@ -479,7 +479,10 @@ WebInspector.DOMTreeElement.prototype = {
     ondelete: function()
     {
         var startTagTreeElement = this.treeOutline.findTreeElement(this.representedObject);
-        startTagTreeElement ? startTagTreeElement.remove() : this.remove();
+        if (startTagTreeElement)
+            startTagTreeElement.remove();
+        else
+            this.remove();
         return true;
     },
 
@@ -527,7 +530,7 @@ WebInspector.DOMTreeElement.prototype = {
         else {
             var nodeName = tag.textContent.match(/^<(.*?)>$/)[1];
             tag.textContent = "";
-            tag.appendChild(document.createTextNode("<"+nodeName));
+            tag.appendChild(document.createTextNode("<" + nodeName));
             tag.appendChild(node);
             tag.appendChild(document.createTextNode(">"));
         }
@@ -962,14 +965,14 @@ WebInspector.DOMTreeElement.prototype = {
         // in the child element list.
         if (this.expanded) {
             var closers = this._childrenListNode.querySelectorAll(".close");
-            return closers[closers.length-1];
+            return closers[closers.length - 1];
         }
 
         // Remaining cases are single line non-expanded elements with a closing
         // tag, or HTML elements without a closing tag (such as <br>). Return
         // null in the case where there isn't a closing tag.
         var tags = this.listItemElement.getElementsByClassName("html-tag");
-        return (tags.length === 1 ? null : tags[tags.length-1]);
+        return (tags.length === 1 ? null : tags[tags.length - 1]);
     },
 
     updateTitle: function(onlySearchQueryChanged)

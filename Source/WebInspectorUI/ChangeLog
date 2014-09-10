@@ -1,5 +1,41 @@
 2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Fix obscure ESLint warnings and skip directories
+        https://bugs.webkit.org/show_bug.cgi?id=136686
+
+        Reviewed by Timothy Hatcher.
+
+        * .eslintignore: Added.
+        Skip directories we do not want ESLint to process.
+
+        * .eslintrc:
+        Add rules we've seen and sort sections.
+
+        * UserInterface/Controllers/FormatterContentBuilder.js:
+        (FormatterContentBuilder.prototype._appendIndent):
+        * UserInterface/Models/Color.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        * UserInterface/Views/DOMTreeDataGridNode.js:
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.ondelete):
+        (WebInspector.DOMTreeElement.prototype._insertInLastAttributePosition):
+        (WebInspector.DOMTreeElement.prototype._distinctClosingTagElement):
+        * UserInterface/Views/EditingSupport.js:
+        (WebInspector.EditingConfig):
+        * UserInterface/Views/LayerTreeDataGridNode.js:
+        (WebInspector.LayerTreeDataGridNode.prototype._makeOutlet):
+        * UserInterface/Views/TreeOutline.js:
+        (TreeOutline.prototype.appendChild):
+        (TreeOutline.prototype.insertChild):
+        (TreeOutline.prototype.removeChildAtIndex):
+        (TreeOutline.prototype.removeChild):
+        (TreeElement.prototype.expandRecursively):
+        Fix linter issues.
+
+2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix ESLint consistent-return warnings
         https://bugs.webkit.org/show_bug.cgi?id=136682
 

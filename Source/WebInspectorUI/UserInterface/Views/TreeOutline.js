@@ -56,7 +56,7 @@ TreeOutline.prototype.constructor = TreeOutline;
 TreeOutline.prototype.appendChild = function(child)
 {
     if (!child)
-        throw("child can't be undefined or null");
+        throw "child can't be undefined or null";
 
     var lastChild = this.children[this.children.length - 1];
     if (lastChild) {
@@ -98,7 +98,7 @@ TreeOutline.prototype.appendChild = function(child)
 TreeOutline.prototype.insertChild = function(child, index)
 {
     if (!child)
-        throw("child can't be undefined or null");
+        throw "child can't be undefined or null";
 
     var previousChild = (index > 0 ? this.children[index - 1] : null);
     if (previousChild) {
@@ -147,7 +147,7 @@ TreeOutline.prototype.insertChild = function(child, index)
 TreeOutline.prototype.removeChildAtIndex = function(childIndex, suppressOnDeselect, suppressSelectSibling)
 {
     if (childIndex < 0 || childIndex >= this.children.length)
-        throw("childIndex out of range");
+        throw "childIndex out of range";
 
     var child = this.children[childIndex];
     this.children.splice(childIndex, 1);
@@ -185,11 +185,11 @@ TreeOutline.prototype.removeChildAtIndex = function(childIndex, suppressOnDesele
 TreeOutline.prototype.removeChild = function(child, suppressOnDeselect, suppressSelectSibling)
 {
     if (!child)
-        throw("child can't be undefined or null");
+        throw "child can't be undefined or null";
 
     var childIndex = this.children.indexOf(child);
     if (childIndex === -1)
-        throw("child not found in this node's children");
+        throw "child not found in this node's children";
 
     this.removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling);
 };
@@ -869,7 +869,7 @@ TreeElement.prototype.expandRecursively = function(maxDepth)
     // The Inspector uses TreeOutlines to represents object properties, so recursive expansion
     // in some case can be infinite, since JavaScript objects can hold circular references.
     // So default to a recursion cap of 3 levels, since that gives fairly good results.
-    if (typeof maxDepth === "undefined" || typeof maxDepth === "null")
+    if (maxDepth === undefined)
         maxDepth = 3;
 
     while (item) {

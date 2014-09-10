@@ -79,9 +79,6 @@ WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
     this.commitHandler = commitHandler;
     this.cancelHandler = cancelHandler;
     this.context = context;
-    this.pasteHandler;
-    this.multiline;
-    this.customFinishHandler;
     this.spellcheck = false;
 };
 

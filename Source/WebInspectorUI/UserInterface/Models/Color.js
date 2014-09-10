@@ -430,9 +430,9 @@ WebInspector.Color.prototype = {
             l + s
         ];
         return [
-            Math.round(sArray[ ~~h    % 6 ] * 255),
-            Math.round(sArray[ (h|16) % 6 ] * 255),
-            Math.round(sArray[ (h|8)  % 6 ] * 255)
+            Math.round(sArray[ ~~h      % 6 ] * 255),
+            Math.round(sArray[ (h | 16) % 6 ] * 255),
+            Math.round(sArray[ (h | 8)  % 6 ] * 255)
         ];
     },
 
@@ -622,7 +622,7 @@ WebInspector.Color.rgb2hsv = function(r, g, b)
     if (max === 0)
         s = 0;
     else
-        s = 1 - (min/max);
+        s = 1 - (min / max);
 
     return [h, s, v];
 };

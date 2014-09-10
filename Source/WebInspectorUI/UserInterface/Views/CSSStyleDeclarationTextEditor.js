@@ -530,9 +530,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
         if (!onlyVisibleProperties) {
             // Filter based on options only when all properties are used.
-            properties = properties.filter((function(property) {
+            properties = properties.filter(function(property) {
                 return !property.implicit || this._showsImplicitProperties || property.canonicalName in this._alwaysShowPropertyNames;
-            }).bind(this));
+            }, this);
 
             if (this._sortProperties)
                 properties.sort(function(a, b) { return a.name.localeCompare(b.name); });
