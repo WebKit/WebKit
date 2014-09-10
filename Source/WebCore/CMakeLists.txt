@@ -1302,7 +1302,6 @@ set(WebCore_SOURCES
     css/SVGCSSParser.cpp
     css/SVGCSSStyleSelector.cpp
     css/SelectorChecker.cpp
-    css/SelectorCheckerFastPath.cpp
     css/SelectorFilter.cpp
     css/SourceSizeList.cpp
     css/StyleInvalidationAnalysis.cpp

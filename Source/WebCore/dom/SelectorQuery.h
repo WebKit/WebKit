@@ -54,12 +54,11 @@ public:
 
 private:
     struct SelectorData {
-        SelectorData(const CSSSelector* selector, bool isFastCheckable)
+        SelectorData(const CSSSelector* selector)
             : selector(selector)
 #if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING
             , m_compiledSelectorUseCount(0)
 #endif
-            , isFastCheckable(isFastCheckable)
         {
         }
 
@@ -77,7 +76,6 @@ private:
         void compiledSelectorUsed() const { m_compiledSelectorUseCount++; }
 #endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
-        bool isFastCheckable;
     };
 
     bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode) const;
@@ -91,6 +89,7 @@ private:
 #if ENABLE(CSS_SELECTOR_JIT)
     template <typename SelectorQueryTrait> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, SelectorCompiler::SimpleSelectorChecker, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
     template <typename SelectorQueryTrait> void executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, SelectorCompiler::SelectorCheckerWithCheckingContext, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
+    static bool compileSelector(const SelectorData&, const ContainerNode& rootNode);
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     Vector<SelectorData> m_selectors;

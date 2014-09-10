@@ -295,23 +295,28 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
         compiledSelectorChecker = ruleData.compiledSelectorCodeRef().code().executableAddress();
     }
 
-    if (compiledSelectorChecker) {
-        if (ruleData.compilationStatus() == SelectorCompilationStatus::SimpleSelectorChecker) {
-            SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
-            ASSERT_WITH_MESSAGE(!selectorChecker(&m_element) || m_pseudoStyleRequest.pseudoId == NOPSEUDO, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+    if (compiledSelectorChecker && ruleData.compilationStatus() == SelectorCompilationStatus::SimpleSelectorChecker) {
+        SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, ruleData.compilationStatus());
+        ASSERT_WITH_MESSAGE(!selectorChecker(&m_element) || m_pseudoStyleRequest.pseudoId == NOPSEUDO, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #if CSS_SELECTOR_JIT_PROFILING
-            ruleData.compiledSelectorUsed();
+        ruleData.compiledSelectorUsed();
 #endif
-            return selectorChecker(&m_element);
-        }
+        return selectorChecker(&m_element);
+    }
+#endif // ENABLE(CSS_SELECTOR_JIT)
+
+    SelectorChecker::CheckingContext context(m_mode);
+    context.elementStyle = m_style;
+    context.pseudoId = m_pseudoStyleRequest.pseudoId;
+    context.scrollbar = m_pseudoStyleRequest.scrollbar;
+    context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
+
+#if ENABLE(CSS_SELECTOR_JIT)
+    if (compiledSelectorChecker) {
         ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
 
         SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, ruleData.compilationStatus());
-        SelectorCompiler::CheckingContext context(m_mode);
-        context.elementStyle = m_style;
-        context.pseudoId = m_pseudoStyleRequest.pseudoId;
-        context.scrollbar = m_pseudoStyleRequest.scrollbar;
-        context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
+
 #if CSS_SELECTOR_JIT_PROFILING
         ruleData.compiledSelectorUsed();
 #endif
@@ -321,12 +326,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData)
 
     // Slow path.
     SelectorChecker selectorChecker(m_element.document());
-    SelectorChecker::SelectorCheckingContext context(ruleData.selector(), &m_element, m_mode);
-    context.elementStyle = m_style;
-    context.pseudoId = m_pseudoStyleRequest.pseudoId;
-    context.scrollbar = m_pseudoStyleRequest.scrollbar;
-    context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
-    return selectorChecker.match(context);
+    return selectorChecker.match(ruleData.selector(), &m_element, context);
 }
 
 void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)

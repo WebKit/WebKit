@@ -69,24 +69,6 @@ private:
 
 namespace SelectorCompiler {
 
-struct CheckingContext {
-    CheckingContext(SelectorChecker::Mode resolvingMode)
-        : resolvingMode(resolvingMode)
-        , elementStyle(nullptr)
-        , pseudoId(NOPSEUDO)
-        , scrollbar(nullptr)
-        , scrollbarPart(NoPart)
-        , scope(nullptr)
-    { }
-
-    SelectorChecker::Mode resolvingMode;
-    RenderStyle* elementStyle;
-    PseudoId pseudoId;
-    RenderScrollbar* scrollbar;
-    ScrollbarPart scrollbarPart;
-    const ContainerNode* scope;
-};
-
 enum class SelectorContext {
     // Rule Collector needs a resolvingMode and can modify the tree as it matches.
     RuleCollector,
@@ -96,7 +78,7 @@ enum class SelectorContext {
 };
 
 typedef unsigned (*SimpleSelectorChecker)(Element*);
-typedef unsigned (*SelectorCheckerWithCheckingContext)(Element*, const CheckingContext*);
+typedef unsigned (*SelectorCheckerWithCheckingContext)(Element*, const SelectorChecker::CheckingContext*);
 SelectorCompilationStatus compileSelector(const CSSSelector*, JSC::VM*, SelectorContext, JSC::MacroAssemblerCodeRef& outputCodeRef);
 
 inline SimpleSelectorChecker simpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)

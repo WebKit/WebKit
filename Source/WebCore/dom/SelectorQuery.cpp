@@ -29,7 +29,6 @@
 #include "CSSParser.h"
 #include "ElementDescendantIterator.h"
 #include "SelectorChecker.h"
-#include "SelectorCheckerFastPath.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
 
@@ -76,7 +75,7 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
 
     m_selectors.reserveInitialCapacity(selectorCount);
     for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        m_selectors.uncheckedAppend(SelectorData(selector, SelectorCheckerFastPath::canUse(selector)));
+        m_selectors.uncheckedAppend(SelectorData(selector));
 
     if (selectorCount == 1) {
         const CSSSelector& selector = *m_selectors.first().selector;
@@ -114,17 +113,10 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
 
 inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, Element& element, const ContainerNode& rootNode) const
 {
-    if (selectorData.isFastCheckable && !element.isSVGElement()) {
-        SelectorCheckerFastPath selectorCheckerFastPath(selectorData.selector, &element);
-        if (!selectorCheckerFastPath.matchesRightmostSelector(SelectorChecker::VisitedMatchDisabled))
-            return false;
-        return selectorCheckerFastPath.matches();
-    }
-
     SelectorChecker selectorChecker(element.document());
-    SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, &element, SelectorChecker::Mode::QueryingRules);
+    SelectorChecker::CheckingContext selectorCheckingContext(SelectorChecker::Mode::QueryingRules);
     selectorCheckingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
-    return selectorChecker.match(selectorCheckingContext);
+    return selectorChecker.match(selectorData.selector, &element, selectorCheckingContext);
 }
 
 bool SelectorDataList::matches(Element& targetElement) const
@@ -380,7 +372,7 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSimpleSelectorChecker(const 
 template <typename SelectorQueryTrait>
 ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker, typename SelectorQueryTrait::OutputType& output, const SelectorData& selectorData) const
 {
-    SelectorCompiler::CheckingContext checkingContext(SelectorChecker::Mode::QueryingRules);
+    SelectorChecker::CheckingContext checkingContext(SelectorChecker::Mode::QueryingRules);
     checkingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
 
     for (auto& element : elementDescendants(const_cast<ContainerNode&>(searchRootNode))) {
@@ -396,6 +388,23 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithCheckingC
         }
     }
 }
+
+static bool isCompiledSelector(SelectorCompilationStatus compilationStatus)
+{
+    return compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker || compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext;
+}
+
+bool SelectorDataList::compileSelector(const SelectorData& selectorData, const ContainerNode& rootNode)
+{
+    if (selectorData.compilationStatus != SelectorCompilationStatus::NotCompiled)
+        return isCompiledSelector(selectorData.compilationStatus);
+
+    JSC::VM& vm = rootNode.document().scriptExecutionContext()->vm();
+    selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, &vm, SelectorCompiler::SelectorContext::QuerySelector, selectorData.compiledSelectorCodeRef);
+    return isCompiledSelector(selectorData.compilationStatus);
+}
+
+
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
 template <typename SelectorQueryTrait>
@@ -411,37 +420,34 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
             break;
         }
 #if ENABLE(CSS_SELECTOR_JIT)
-        if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker || selectorData.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext)
+        if (compileSelector(selectorData, *searchRootNode))
             goto CompiledSingleCase;
-#endif
-        }
+        goto SingleSelectorCase;
+        ASSERT_NOT_REACHED();
+#else
         FALLTHROUGH;
+#endif // ENABLE(CSS_SELECTOR_JIT)
+        }
     case CompilableSingleWithRootFilter:
     case CompilableSingle:
         {
 #if ENABLE(CSS_SELECTOR_JIT)
         const SelectorData& selectorData = m_selectors.first();
-        ASSERT(m_matchType == RightMostWithIdMatch || selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled);
-
-        JSC::VM& vm = searchRootNode->document().scriptExecutionContext()->vm();
-        selectorData.compilationStatus = SelectorCompiler::compileSelector(selectorData.selector, &vm, SelectorCompiler::SelectorContext::QuerySelector, selectorData.compiledSelectorCodeRef);
-
-        if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker || selectorData.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
+        ASSERT(selectorData.compilationStatus == SelectorCompilationStatus::NotCompiled);
+        ASSERT(m_matchType == CompilableSingle || m_matchType == CompilableSingleWithRootFilter);
+        if (compileSelector(selectorData, *searchRootNode)) {
             if (m_matchType == CompilableSingle) {
                 m_matchType = CompiledSingle;
                 goto CompiledSingleCase;
-            }
-            if (m_matchType == CompilableSingleWithRootFilter) {
+            } else {
+                ASSERT(m_matchType == CompilableSingleWithRootFilter);
                 m_matchType = CompiledSingleWithRootFilter;
                 goto CompiledSingleWithRootFilterCase;
             }
-            goto CompiledSingleCase;
         }
-        if (m_matchType != RightMostWithIdMatch)
-            m_matchType = SingleSelector;
+        m_matchType = SingleSelector;
         goto SingleSelectorCase;
         ASSERT_NOT_REACHED();
-        break;
 #else
         FALLTHROUGH;
 #endif // ENABLE(CSS_SELECTOR_JIT)

@@ -81,7 +81,6 @@
 #include "PageRuleCollector.cpp"
 #include "RuleFeature.cpp"
 #include "RuleSet.cpp"
-#include "SelectorCheckerFastPath.cpp"
 #include "SelectorFilter.cpp"
 #include "StyleProperties.cpp"
 #include "StylePropertyShorthand.cpp"

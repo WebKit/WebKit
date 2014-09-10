@@ -168,21 +168,18 @@ ALWAYS_INLINE bool shouldAppearIndeterminate(const Element* element)
 {
     return element->shouldAppearIndeterminate();
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesEnabledPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesEnabledPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbar && context.scrollbar->enabled();
 }
 
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesDisabledPseudoClass(const ContextType& context)
+ALWAYS_INLINE bool scrollbarMatchesDisabledPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbar && !context.scrollbar->enabled();
 }
 
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesHoverPseudoClass(const ContextType& context)
+ALWAYS_INLINE bool scrollbarMatchesHoverPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     if (!context.scrollbar)
         return false;
@@ -194,8 +191,7 @@ ALWAYS_INLINE bool scrollbarMatchesHoverPseudoClass(const ContextType& context)
     return context.scrollbarPart == hoveredPart;
 }
 
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesActivePseudoClass(const ContextType& context)
+ALWAYS_INLINE bool scrollbarMatchesActivePseudoClass(const SelectorChecker::CheckingContext& context)
 {
     if (!context.scrollbar)
         return false;
@@ -206,45 +202,38 @@ ALWAYS_INLINE bool scrollbarMatchesActivePseudoClass(const ContextType& context)
         return pressedPart == BackTrackPart || pressedPart == ForwardTrackPart || pressedPart == ThumbPart;
     return context.scrollbarPart == pressedPart;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesHorizontalPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesHorizontalPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbar && context.scrollbar->orientation() == HorizontalScrollbar;
 }
 
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesVerticalPseudoClass(const ContextType& context)
+ALWAYS_INLINE bool scrollbarMatchesVerticalPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbar && context.scrollbar->orientation() == VerticalScrollbar;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesDecrementPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesDecrementPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == BackButtonEndPart || context.scrollbarPart == BackTrackPart;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesIncrementPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesIncrementPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbarPart == ForwardButtonStartPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == ForwardTrackPart;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesStartPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesStartPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbarPart == BackButtonStartPart || context.scrollbarPart == ForwardButtonStartPart || context.scrollbarPart == BackTrackPart;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesEndPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesEndPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbarPart == BackButtonEndPart || context.scrollbarPart == ForwardButtonEndPart || context.scrollbarPart == ForwardTrackPart;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesDoubleButtonPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesDoubleButtonPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     if (!context.scrollbar)
         return false;
@@ -255,9 +244,8 @@ ALWAYS_INLINE bool scrollbarMatchesDoubleButtonPseudoClass(const ContextType& co
         return buttonsPlacement == ScrollbarButtonsDoubleEnd || buttonsPlacement == ScrollbarButtonsDoubleBoth;
     return false;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesSingleButtonPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesSingleButtonPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     if (!context.scrollbar)
         return false;
@@ -266,9 +254,8 @@ ALWAYS_INLINE bool scrollbarMatchesSingleButtonPseudoClass(const ContextType& co
         return buttonsPlacement == ScrollbarButtonsSingle;
     return false;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesNoButtonPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesNoButtonPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     if (!context.scrollbar)
         return false;
@@ -279,9 +266,8 @@ ALWAYS_INLINE bool scrollbarMatchesNoButtonPseudoClass(const ContextType& contex
         return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleStart;
     return false;
 }
-    
-template <typename ContextType>
-ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const ContextType& context)
+
+ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const SelectorChecker::CheckingContext& context)
 {
     return context.scrollbar && context.scrollbar->scrollableArea()->isScrollCornerVisible();
 }
