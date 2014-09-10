@@ -1,3 +1,20 @@
+2014-09-10  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        Apply ARM64-specific lowering to load/store instructions in offlineasm
+        https://bugs.webkit.org/show_bug.cgi?id=136569
+
+        Reviewed by Michael Saboff.
+
+        The standard risc lowering of load/store instructions with base +
+        immediate offset addresses is to move the offset to a temporary, add the
+        base to the temporary, and then change the load/store to use the
+        temporary + 0 immediate offset address. However, on ARM64, base +
+        register offset addressing mode is available, so it is unnecessary to
+        perform explicit register additions but it is enough to change load/store
+        to use base + temporary as the address.
+
+        * offlineasm/arm64.rb: Added arm64LowerMalformedLoadStoreAddresses
+
 2014-09-10  Oliver Hunt  <oliver@apple.com>
 
         Rename JSVariableObject to JSEnvironmentRecord to align naming with ES spec
