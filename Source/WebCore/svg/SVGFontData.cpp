@@ -286,13 +286,10 @@ void computeNormalizedSpaces(const TextRun& run, bool mirror, String& normalized
 {
     if (normalizedSpacesStringCache.length() == static_cast<unsigned>(run.charactersLength()))
         return;
-    if (run.is8Bit()) {
-        normalizedSpacesStringCache = String(run.data8(0), run.charactersLength());
-        normalizedSpacesStringCache = Font::normalizeSpaces(normalizedSpacesStringCache.characters8(), normalizedSpacesStringCache.length());
-    } else {
-        normalizedSpacesStringCache = String(run.data16(0), run.charactersLength());
-        normalizedSpacesStringCache = Font::normalizeSpaces(normalizedSpacesStringCache.characters16(), normalizedSpacesStringCache.length());
-    }
+    if (run.is8Bit())
+        normalizedSpacesStringCache = Font::normalizeSpaces(run.characters8(), run.charactersLength());
+    else
+        normalizedSpacesStringCache = Font::normalizeSpaces(run.characters16(), run.charactersLength());
     if (mirror)
         normalizedSpacesStringCache = createStringWithMirroredCharacters(normalizedSpacesStringCache);
 }

@@ -1,3 +1,21 @@
+2014-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Laying out a TextRun using an SVG font is O(n^2)
+        https://bugs.webkit.org/show_bug.cgi?id=136584
+
+        Reviewed by Darin Adler.
+
+        Addressing post-commit review from Darin.
+
+        No new tests.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsSpace): Un-inline.
+        (WebCore::Font::treatAsZeroWidthSpace): Ditto.
+        (WebCore::Font::treatAsZeroWidthSpaceInComplexScript): Ditto.
+        * svg/SVGFontData.cpp:
+        (WebCore::computeNormalizedSpaces): Avoid unnecessary copy.
+
 2014-09-10  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Optimization; avoid reallocating string many times.
