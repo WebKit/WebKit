@@ -1,3 +1,11 @@
+2014-09-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix for Windows.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
 2014-09-09  Dan Bernstein  <mitz@apple.com>
 
         FrameLoader::prepareForHistoryNavigation is unused

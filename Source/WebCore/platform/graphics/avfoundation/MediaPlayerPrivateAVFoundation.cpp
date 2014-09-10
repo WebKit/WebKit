@@ -47,6 +47,7 @@
 #include <runtime/Uint16Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
+#include <wtf/StringPrintStream.h>
 
 namespace WebCore {
 
