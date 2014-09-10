@@ -17,15 +17,7 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ ImageOn
 # https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
 fast/notifications
 
-# Skipped while Eric Carlson works on a fix.
-webkit.org/b/28221 media/audio-delete-while-step-button-clicked.html [ Failure ]
-
 webkit.org/b/108223 fast/forms/range/slider-delete-while-dragging-thumb.html [ Crash Pass ]
-
-webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
-
-# This test requires generation of progress events during loading
-webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
@@ -60,12 +52,6 @@ fast/history/back-forward-reset-after-error-handling.html
 # Need to implement this in plugins code in WebKit
 plugins/reloadplugins-and-pages.html
 
-# This test requires ogg codecs
-media/media-can-play-ogg.html
-
-# This test requires flac codec
-media/media-can-play-flac-audio.html
-
 # These tests require touch support
 fast/events/touch
 
@@ -73,8 +59,6 @@ fast/events/touch
 fast/events/mouseover-button.html
 
 webkit.org/b/33923 platform/mac/accessibility/change-notification-on-scroll.html [ Failure ]
-
-webkit.org/b/34287 http/tests/media/video-cookie.html
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
@@ -210,14 +194,6 @@ webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 # viewport meta tag support
 fast/viewport
 
-# needs enhanced eventSender.contextMenu() return value
-webkit.org/b/116651 media/context-menu-actions.html
-
-# requires video.buffered to be able to return multiple timeranges
-http/tests/media/video-buffered.html [ Skip ]
-
-webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
-
 # The WebKit plugin implementation does not support iframe shims.
 webkit.org/b/46223 plugins/iframe-shims.html
 
@@ -291,8 +267,6 @@ plugins/mouse-click-iframe-to-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html
 
-webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
-
 # Styled scope element is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped
 
@@ -321,50 +295,8 @@ compositing/rtl/rtl-iframe-relative.html
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-# Opera-submitted tests to W3C for <track>, a lot of failures still.
-webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onenter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onexit.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
-
-# WebVTT tests don't work because they need more than a 800x600 snapshot.
-# They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
-webkit.org/b/131476 media/track/w3c/track/webvtt [ Skip ]
-
-# Tests for MediaSource API. Feature is not yet functional.
-# https://bugs.webkit.org/show_bug.cgi?id=64731
-http/tests/media/media-source/
-
-# Encrypted Media Extensions are not enabled.
-media/encrypted-media/
-fast/events/constructors/media-key-event-constructor.html
-
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
-
-webkit.org/b/67716 media/media-controls-invalid-url.html [ Failure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
@@ -387,18 +319,6 @@ http/tests/pointer-lock/
 webkit.org/b/82763 fast/forms/textarea-placeholder-set-attribute.html
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=75184
-media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
-media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
-media/W3C/video/canPlayType/canPlayType_codecs_order_2.html
-media/W3C/video/canPlayType/canPlayType_codecs_order_3.html
-media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
-media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
 
 # Fails because MutationObservers are not notified at end-of-task
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
@@ -460,8 +380,6 @@ webkit.org/b/82972 plugins/layout-in-beforeload-listener-affects-plugin-loading.
 webkit.org/b/82972 plugins/mouse-events-fixedpos.html [ Pass Failure ]
 webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 
-webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
-
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
 
@@ -481,15 +399,10 @@ webkit.org/b/85532 fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 http/tests/security/video-cross-origin-readback.html
 http/tests/security/video-cross-origin-accessfailure.html
 
-# media/audio-repaint.html sometimes fails on Lion Debug (Tests)
-webkit.org/b/84357 media/audio-repaint.html [ Failure ]
-
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
 webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
-
-webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html
 
@@ -507,8 +420,6 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure ]
 
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
-
-webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
 
 # This test depends on subpixel layout.
 webkit.org/b/92352 css3/flexbox/flex-rounding.html
@@ -534,16 +445,6 @@ fast/writing-mode/japanese-lr-selection.html
 fast/writing-mode/japanese-lr-text.html
 fast/writing-mode/japanese-rl-selection.html
 fast/writing-mode/japanese-rl-text.html
-
-# <rdar://problem/11076314> A few media and http/tests/media tests time out on Mountain Lion
-http/tests/media/video-play-stall-seek.html
-http/tests/media/video-play-stall.html
-media/media-fullscreen-not-in-document.html
-
-webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
-
-# Media playback control is passed to AVFoundation that doesn't like fancy PHP URLs like the one used in the test and, in addition, they won't care about HTTP servers not supporting "Range" requests
-http/tests/media/media-seeking-no-ranges-server.html
 
 # <rdar://problem/11358748> http/tests/multipart/multipart-wait-before-boundary.html fails on ML as of r115745
 http/tests/multipart/multipart-wait-before-boundary.html
@@ -678,18 +579,8 @@ http/tests/multipart/load-last-non-html-frame.php
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 platform/mac/accessibility/selection-value-changes-for-aria-textbox.html
 
-# --- WebKit2 only ---
-compositing/video/video-background-color.html
-media/video-does-not-loop.html
-media/video-size-intrinsic-scale.html
-
 # -- Flaky tests (WebKit 1 only) ---
 platform/mac/accessibility/search-with-frames.html
-
-# --- Media ---
-media/controls-styling.html
-media/media-document-audio-repaint.html
-media/video-zoom-controls.html
 
 # --- Miscellaneous ---
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
@@ -784,9 +675,6 @@ webkit.org/b/106185 fast/frames/flattening/frameset-flattening-grid.html [ Failu
 webkit.org/b/69999 [ Release ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Failure Pass ]
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
-
-# Flakey media tests
-webkit.org/b/34331 http/tests/media/video-referer.html [ Failure Pass ]
 
 # Failing ref tests
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
@@ -921,35 +809,11 @@ webkit.org/b/107356 [ MountainLion Release ] fast/css/sticky/sticky-top-zoomed.h
 webkit.org/b/100846 inspector-protocol/debugger/pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]
 
-# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
-webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
-
 # Overflowing LayoutUnits cause RenderGeometryMap assertions
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash3.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip ]
-
-# Mountain Lion and prior do not support custom media data loading
-Bug(jernoble) [ MountainLion ] media/video-src-blob.html
-
-# Mountain Lion and prior do not allow access to in-band text tracks
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html
-
-# These two tests often timeout
-webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
-webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
-
-# The logic in this test is no longer correct for Apple ports
-webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
-
-webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
 
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
@@ -996,12 +860,6 @@ webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
 
 
-# Flakey
-webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Failure ]
-
-# Flaky logging underneath us
-webkit.org/b/124219 [ Mavericks ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
-
 # The following tests only fail on Mac EWS bots. Unfortunately, we haven't been able to figure out the cause of these failures.
 webkit.org/b/112176 canvas/philip/tests/2d.path.arc.scale.2.html [ Failure Pass ]
 webkit.org/b/112176 canvas/philip/tests/2d.path.arcTo.scale.html [ Failure Pass ]
@@ -1023,9 +881,6 @@ webkit.org/b/76364 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Pass Fa
 
 # Always very slow, frequently timing out (only on bots, not locally).
 webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
-
-# Feature not implemented
-webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
@@ -1083,9 +938,6 @@ webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
 
 webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 
-# Don't run ogv and mkv tests on mac
-media/track/in-band [ WontFix ]
-
 webkit.org/b/120922 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/120922 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 
@@ -1109,60 +961,15 @@ webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass
 # Resizing windows appears broken in both DRT and WTR, making the test fail or time out flakily.
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]
 
-webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
-webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
-
-# REGRESSION(r156546): 18 media tests broken (122021)
-webkit.org/b/122021 media/track/track-cue-mutable-text.html
-webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html
-webkit.org/b/122021 media/track/track-in-band-mode.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu-localized.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu-sorted.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu.html
-webkit.org/b/122021 media/video-controls-fullscreen-volume.html
-webkit.org/b/122021 media/video-controls-no-scripting.html
-webkit.org/b/122021 media/video-controls-rendering.html
-webkit.org/b/122021 media/video-controls-toggling.html
-webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html
-webkit.org/b/122021 media/video-display-toggle.html
-webkit.org/b/122021 media/video-empty-source.html
-webkit.org/b/122021 media/video-volume-slider.html
-webkit.org/b/122021 media/volume-bar-empty-when-muted.html
-webkit.org/b/122021 media/track/track-cue-rendering-vertical.html [ Pass Failure ]
-
 webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
-
-webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Failure ]
 
 webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
 
-webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
-
-webkit.org/b/122042 media/media-controller-playback.html [ Pass Failure ]
-
-webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
-
-webkit.org/b/121803 media/video-object-fit.html [ Pass ImageOnlyFailure ]
-webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
-webkit.org/b/121803 compositing/video/video-object-fit.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Failure Timeout ]
-
 webkit.org/b/121628 fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
 
 webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
 webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
-
-webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Failure ]
-
-webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Failure Timeout ]
 
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
 webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html  [ Pass ImageOnlyFailure ]
@@ -1181,12 +988,6 @@ webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-colu
 webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-options-exception.html [ Pass Failure ]
 
 webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Failure ]
-
-webkit.org/b/123522 [ Mavericks ] media/track/track-in-band-legacy-api.html [ Pass Failure ]
-
-# Audio and video tracks aren't supported on mac
-media/track/audio
-media/track/video
 
 # SubtleCrypto is disabled on Mountain Lion
 webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
@@ -1214,9 +1015,6 @@ webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Fail
 # GL Scissors don't work properly in Mountain Lion.
 webkit.org/b/126455 [ MountainLion ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Failure ]
 webkit.org/b/126586 [ Mavericks Debug ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
-
-# HTTP Auth in Media is not supported in Mavericks and Mountain Lion
-webkit.org/b/40382 http/tests/media/video-auth.html [ Skip ]
 
 webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
 
@@ -1273,11 +1071,7 @@ webkit.org/b/132990 fast/regions/overflow/overflow-not-moving-below-floats-in-va
 webkit.org/b/133523 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 # End of subpixel failures.
 
-webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
-
 webkit.org/b/127310 svg/filters/feComponentTransfer-style-crash.xhtml [ Pass Failure Timeout ]
-
-webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html [ Pass Failure ]
 
 # These tests were always flaky, but became a lot more so at in r163472-r163476.
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
@@ -1299,9 +1093,6 @@ webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
 
 webkit.org/b/130353 mathml/wbr-in-mroot-crash.html [ Crash ]
 
-# This test frequently fails on the bots 
-webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
-
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # These tests require an OpenType MATH font on the Apple bots.
@@ -1314,18 +1105,7 @@ webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
 
-# WebKitDataCue is supported, not DataCue
-media/track/track-datacue.html [ Skip ]
-
-# Mountain Lion and prior do not support HLS timed metadata
-Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ Skip ]
-
-# Frequently times out on EWS, which is then misreported as crash.
-webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
-
 webkit.org/b/130953 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
-
-webkit.org/b/130971 media/track/track-remove-track.html [ Pass Crash Failure ]
 
 webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Failure Timeout ]
 
@@ -1335,18 +1115,12 @@ webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
-webkit.org/b/131855 media/event-attributes.html [ Pass Failure ]
-
 [ MountainLion Mavericks ] fast/images/image-controls-basic.html [ WontFix ]
 
 webkit.org/b/131886 [ MountainLion ] webgl/1.0.2/conformance/textures/texture-size-limit.html [ Failure ]
 webkit.org/b/131886 [ MountainLion ] fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
-
-webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-stream.html [ WontFix ]
-
-[ MountainLion Mavericks ] media/media-source [ WontFix ]
 
 # Mavericks and prior do not support web timing.
 [ MountainLion Mavericks ] fast/dom/Window/window-properties-performance.html [ Skip ]
@@ -1368,23 +1142,9 @@ webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-st
 # resizing didn't work. Now the test fails. I believe this bug was never fixed for the Mac port.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 
-webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
-
-# REGRESSION (6/9/2014): Several TextTrackCue tests became very flaky
-webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Failure ]
-webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/endTime.html [ Pass Failure ]
-webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failure ]
-webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
-webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
-webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
-
-webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure ]
-
 webkit.org/b/135015 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
 
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
-
-webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]
 
@@ -1392,13 +1152,231 @@ webkit.org/b/131787 fast/canvas/canvas-putImageData-zero-alpha.html [ Pass Image
 
 webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure ]
-webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
+# --- Start media tests ---
+## --- Start media wontfix tests ---
+# This test requires ogg codecs
+media/media-can-play-ogg.html
 
+# This test requires flac codec
+media/media-can-play-flac-audio.html
+
+# This tests requires support for non-Range HTTP requests.
+http/tests/media/media-seeking-no-ranges-server.html
+
+# This test requires MKV and OGV support.
+media/track/in-band [ WontFix ]
+## --- End media wontfix tests ---
+
+## --- Start media tests failing on Lion and earlier ---
+webkit.org/b/84357 [ Lion ] media/audio-repaint.html [ Failure ]
+## --- End media tests failing on Lion and earlier ---
+
+## --- Start media tests failing on Mountain Lion and earlier ---
+# <rdar://problem/11076314> A few media and http/tests/media tests time out on Mountain Lion
+http/tests/media/video-play-stall-seek.html
+http/tests/media/video-play-stall.html
+media/media-fullscreen-not-in-document.html
+
+# Mountain Lion and prior do not support custom media data loading
+Bug(jernoble) [ MountainLion ] media/video-src-blob.html
+
+# Mountain Lion and prior do not allow access to in-band text tracks
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html
+
+# Mountain Lion and prior do not support HLS timed metadata
+Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ Skip ]
+
+# Frequently times out on EWS, which is then misreported as crash.
+webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
+
+webkit.org/b/132491 [ MountainLion ] http/tests/media/hls/video-controls-live-stream.html [ WontFix ]
+webkit.org/b/134490 [ MountainLion ] media/video-ended-event-negative-playback.html [ Pass Failure ]
+webkit.org/b/135071 [ MountainLion ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Failure ]
 webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failure ]
 webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
 
+# Mountain Lion and earlier do not support Encrypted Media Extensions.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+## --- End media tests failing on Mountain Lion and earlier ---
+
+## --- Start media tests failing on Mavericks and earlier ---
+# HTTP Auth in Media is not supported in Mavericks and Mountain Lion
+webkit.org/b/40382 http/tests/media/video-auth.html [ Skip ]
+
+webkit.org/b/128312 [ Mavericks ] media/video-load-preload-metadata.html [ Pass Failure ]
+
+# Mavericks and prior do not support Media Source.
+[ MountainLion Mavericks ] media/media-source [ Skip ]
+[ MountainLion Mavericks ] http/tests/media/media-source/ [ Skip ]
+## --- End media tests failing on Mavericks and earlier ---
+
+## --- Start flaky media tests ---
+webkit.org/b/34331 http/tests/media/video-referer.html [ Failure Pass ]
+webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
+webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
+webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
+webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
+webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Failure ]
+webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
+webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
+webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
+webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
+webkit.org/b/121803 compositing/video/video-object-fit.html [ Pass ImageOnlyFailure ]
+webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
+webkit.org/b/121803 media/video-object-fit.html [ Pass ImageOnlyFailure ]
+webkit.org/b/122021 media/track/track-cue-rendering-vertical.html [ Pass Failure ]
+webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Failure ]
+webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
+webkit.org/b/122042 media/media-controller-playback.html [ Pass Failure ]
+webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Failure Timeout ]
+webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Failure ]
+webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Failure Timeout ]
+webkit.org/b/123522 [ Mavericks ] media/track/track-in-band-legacy-api.html [ Pass Failure ]
+webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Failure ]
+webkit.org/b/130971 media/track/track-remove-track.html [ Pass Crash Failure ]
+webkit.org/b/131855 media/event-attributes.html [ Pass Failure ]
+webkit.org/b/133363 media/video-rtl.html [ Pass ImageOnlyFailure ]
+webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/align.html [ Pass Failure ]
+webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/endTime.html [ Pass Failure ]
+webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/id.html [ Pass Failure ]
+webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ Pass Failure ]
+webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
+webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
+webkit.org/b/135160 media/track/track-in-band-subtitles-too-large.html [ Pass Failure ]
+webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
+## --- End flaky media tests
+
+# Skipped while Eric Carlson works on a fix.
+webkit.org/b/28221 media/audio-delete-while-step-button-clicked.html [ Failure ]
+
+# This test requires generation of progress events during loading
+webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]
+
+webkit.org/b/34287 http/tests/media/video-cookie.html
+
+# needs enhanced eventSender.contextMenu() return value
+webkit.org/b/116651 media/context-menu-actions.html
+
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html [ Skip ]
+
+webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
+
+# Opera-submitted tests to W3C for <track>, a lot of failures still.
+webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onenter.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onexit.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
+
+# WebVTT tests don't work because they need more than a 800x600 snapshot.
+# They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
+webkit.org/b/131476 media/track/w3c/track/webvtt [ Skip ]
+
+webkit.org/b/67716 media/media-controls-invalid-url.html [ Failure ]
+
+webkit.org/b/75184 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
+webkit.org/b/75184 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_codecs_order_2.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_codecs_order_3.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
+webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
+
+webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
+
+# --- WebKit2 only ---
+compositing/video/video-background-color.html
+media/video-does-not-loop.html
+media/video-size-intrinsic-scale.html
+
+media/controls-styling.html
+media/media-document-audio-repaint.html
+media/video-zoom-controls.html
+
+# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
+webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
+
+# These two tests often timeout
+webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
+webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
+
+# The logic in this test is no longer correct for Apple ports
+webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
+
+webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
+
+# Flaky logging underneath us
+webkit.org/b/124219 [ Mavericks ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
+
+# Feature not implemented
+webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
+
+webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
+webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
+
+# REGRESSION(r156546): 18 media tests broken (122021)
+webkit.org/b/122021 media/track/track-cue-mutable-text.html
+webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html
+webkit.org/b/122021 media/track/track-in-band-mode.html
+webkit.org/b/122021 media/video-controls-captions-trackmenu-localized.html
+webkit.org/b/122021 media/video-controls-captions-trackmenu-sorted.html
+webkit.org/b/122021 media/video-controls-captions-trackmenu.html
+webkit.org/b/122021 media/video-controls-fullscreen-volume.html
+webkit.org/b/122021 media/video-controls-no-scripting.html
+webkit.org/b/122021 media/video-controls-rendering.html
+webkit.org/b/122021 media/video-controls-toggling.html
+webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html
+webkit.org/b/122021 media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html
+webkit.org/b/122021 media/video-display-toggle.html
+webkit.org/b/122021 media/video-empty-source.html
+webkit.org/b/122021 media/video-volume-slider.html
+webkit.org/b/122021 media/volume-bar-empty-when-muted.html
+
+# Audio and video tracks aren't supported on mac
+media/track/audio
+media/track/video
+
+# WebKitDataCue is supported, not DataCue
+media/track/track-datacue.html [ Skip ]
+
 # Mac doesn't support YUV 420/422 colorspace
 media/video-colorspace-yuv420.html [ Skip ]
 media/video-colorspace-yuv422.html [ Skip ]
+
+# --- End media tests ---
