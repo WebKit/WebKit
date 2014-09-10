@@ -1167,10 +1167,6 @@ http/tests/media/media-seeking-no-ranges-server.html
 media/track/in-band [ WontFix ]
 ## --- End media wontfix tests ---
 
-## --- Start media tests failing on Lion and earlier ---
-webkit.org/b/84357 [ Lion ] media/audio-repaint.html [ Failure ]
-## --- End media tests failing on Lion and earlier ---
-
 ## --- Start media tests failing on Mountain Lion and earlier ---
 # <rdar://problem/11076314> A few media and http/tests/media tests time out on Mountain Lion
 http/tests/media/video-play-stall-seek.html
@@ -1325,6 +1321,8 @@ media/video-size-intrinsic-scale.html
 media/controls-styling.html
 media/media-document-audio-repaint.html
 media/video-zoom-controls.html
+
+webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
 # Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
 webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
