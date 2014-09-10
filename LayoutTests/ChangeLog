@@ -1,3 +1,17 @@
+2014-09-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r173446.
+        https://bugs.webkit.org/show_bug.cgi?id=136707
+
+        These two tests fail consistently on Mavericks and ML WK2
+        bots. (Requested by jernoble|laptop on #webkit).
+
+        Reverted changeset:
+
+        "Unskip two snapshotting tests that work for me consistently
+        locally."
+        http://trac.webkit.org/changeset/173446
+
 2014-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-labelledby is not honoring sub-node text
