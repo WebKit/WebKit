@@ -1,3 +1,9 @@
+2014-09-10  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening. Re-skip some obsolete EME tests.
+
+        * platform/mac/TestExpectations:
+
 2014-09-10  Alexey Proskuryakov  <ap@apple.com>
 
         Skip some flaky tests that may be affecting subsequent tests.
