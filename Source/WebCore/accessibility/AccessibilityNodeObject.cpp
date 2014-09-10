@@ -1857,7 +1857,7 @@ static String accessibleNameForNode(Node* node)
     AccessibilityObject* axObject = node->document().axObjectCache()->getOrCreate(node);
     String text;
     if (axObject)
-        text = axObject->textUnderElement();
+        text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeSkipIgnoredChildren, true));
     else
         text = element->innerText();
     

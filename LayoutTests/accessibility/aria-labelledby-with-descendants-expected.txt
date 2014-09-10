@@ -1,0 +1,10 @@
+This tests that if aria-labelledby is pointing to nodes with descendants, it returns all text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+aria-labelledby description: AXDescription: hello link world test1 test2 test3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

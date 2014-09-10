@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<div aria-labelledby="a b" id="group" role="group">
+group text
+</div>
+
+<div id="a">
+hello <a href="#">link</a> world
+</div>
+
+<div id="b">
+<button>test1</button> 
+<p tabindex=0>test2 <span aria-hidden="true">hidden</span> test3</p>
+</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if aria-labelledby is pointing to nodes with descendants, it returns all text.");
+
+    if (window.accessibilityController) {
+          var group = accessibilityController.accessibleElementById("group");
+          debug("aria-labelledby description: " + group.description);
+          document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
