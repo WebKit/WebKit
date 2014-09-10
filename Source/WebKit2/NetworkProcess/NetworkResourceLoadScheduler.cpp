@@ -24,7 +24,7 @@ void NetworkResourceLoadScheduler::scheduleLoader(PassRefPtr<NetworkResourceLoad
 {
     ASSERT(RunLoop::isMain());
 
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleLoader resource '%s'", loader->request().url().string().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleLoader resource '%s'", loader->originalRequest().url().string().utf8().data());
 
     // This request might be from WebProcess we've lost our connection to.
     // If so we should just skip it.
@@ -44,7 +44,7 @@ void NetworkResourceLoadScheduler::removeLoader(NetworkResourceLoader* loader)
 {
     ASSERT(RunLoop::isMain());
 
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::removeLoader resource '%s'", loader->request().url().string().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::removeLoader resource '%s'", loader->originalRequest().url().string().utf8().data());
 
     m_activeLoaders.remove(loader);
 

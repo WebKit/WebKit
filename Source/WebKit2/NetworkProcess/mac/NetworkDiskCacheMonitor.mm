@@ -54,7 +54,7 @@ void NetworkDiskCacheMonitor::monitorFileBackingStoreCreation(CFCachedURLRespons
 }
 
 NetworkDiskCacheMonitor::NetworkDiskCacheMonitor(CFCachedURLResponseRef cachedResponse, NetworkResourceLoader* loader)
-    : DiskCacheMonitor(loader->request(), loader->sessionID(), cachedResponse)
+    : DiskCacheMonitor(loader->originalRequest(), loader->sessionID(), cachedResponse)
     , m_connectionToWebProcess(loader->connectionToWebProcess())
 {
 }

@@ -55,8 +55,8 @@ public:
     uint64_t webFrameID;
     WebCore::SessionID sessionID;
     WebCore::ResourceRequest request;
-    SandboxExtension::HandleArray requestBodySandboxExtensions; // Created automatically for the sender.
-    SandboxExtension::Handle resourceSandboxExtension; // Created automatically for the sender.
+    Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
+    RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     WebCore::ContentSniffingPolicy contentSniffingPolicy;
     WebCore::StoredCredentials allowStoredCredentials;
     WebCore::ClientCredentialPolicy clientCredentialPolicy;

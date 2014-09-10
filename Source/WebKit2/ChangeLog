@@ -1,3 +1,75 @@
+2014-09-10  Antti Koivisto  <antti@apple.com>
+
+        NetworkResourceLoader cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=136701
+
+        Reviewed by Darin Adler.
+
+        After smashing NetworkResourceLoader together with the clients it can be made nicer.
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleLoader):
+        (WebKit::NetworkResourceLoadScheduler::removeLoader):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::SynchronousLoadData::SynchronousLoadData):
+
+            The original request is now part of the loader.
+
+        (WebKit::sendReplyToSynchronousRequest):
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+
+            Instead of copying everything out from NetworkResourceLoadParameters just include the whole thing as a const field.
+            SanboxExtension construction moves to NetworkResourceLoadParameters::decode()
+            Stuff that is related to starting the load moves to start().
+
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::setDefersLoading):
+
+            Eliminate m_deferredRequest since we now always remember the original request.
+
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didConvertHandleToDownload):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::NetworkResourceLoader::willSendRequestAsync):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+
+            Eliminate unnecessary m_suggestedRequestForWillSendRequest.
+
+        (WebKit::NetworkResourceLoader::wasBlocked):
+        (WebKit::NetworkResourceLoader::cannotShowURL):
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage):
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::receivedCancellation):
+        (WebKit::NetworkResourceLoader::startBufferingTimerIfNeeded):
+        (WebKit::NetworkResourceLoader::consumeSandboxExtensions):
+        (WebKit::NetworkResourceLoader::invalidateSandboxExtensions):
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::originalRequest):
+        (WebKit::NetworkResourceLoader::currentRequest):
+        (WebKit::NetworkResourceLoader::sessionID):
+        (WebKit::NetworkResourceLoader::defersLoading):
+        (WebKit::NetworkResourceLoader::isLoadingMainResource):
+        (WebKit::NetworkResourceLoader::request): Deleted.
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure): Deleted.
+
+            Made private and moved to cpp.
+
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.mm:
+        (WebKit::NetworkDiskCacheMonitor::NetworkDiskCacheMonitor):
+
+            Use original request instead of the current one. This might fix a bug where we didn't use file backing over redirects.
+
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+
+            Decode to SanboxExtensions to the actual type rather than a handle.
+
+        * Shared/Network/NetworkResourceLoadParameters.h:
+
 2014-09-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] allow overwriting destination of download

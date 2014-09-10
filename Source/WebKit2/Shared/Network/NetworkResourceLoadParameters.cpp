@@ -127,13 +127,20 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
             return false;
         result.request.setHTTPBody(formData.release());
 
-        if (!decoder.decode(result.requestBodySandboxExtensions))
+        SandboxExtension::HandleArray requestBodySandboxExtensionHandles;
+        if (!decoder.decode(requestBodySandboxExtensionHandles))
             return false;
+        for (size_t i = 0; i < requestBodySandboxExtensionHandles.size(); ++i) {
+            if (RefPtr<SandboxExtension> extension = SandboxExtension::create(requestBodySandboxExtensionHandles[i]))
+                result.requestBodySandboxExtensions.append(extension.release());
+        }
     }
 
     if (result.request.url().isLocalFile()) {
-        if (!decoder.decode(result.resourceSandboxExtension))
+        SandboxExtension::Handle resourceSandboxExtensionHandle;
+        if (!decoder.decode(resourceSandboxExtensionHandle))
             return false;
+        result.resourceSandboxExtension = SandboxExtension::create(resourceSandboxExtensionHandle);
     }
 
     if (!decoder.decodeEnum(result.contentSniffingPolicy))
