@@ -522,6 +522,8 @@ webkit_download_get_estimated_progress
 webkit_download_get_elapsed_time
 webkit_download_get_received_data_length
 webkit_download_get_web_view
+webkit_download_get_allow_overwrite
+webkit_download_set_allow_overwrite
 
 <SUBSECTION Standard>
 WebKitDownloadClass

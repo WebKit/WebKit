@@ -35,7 +35,7 @@ void webkitDownloadNotifyProgress(WebKitDownload*, guint64 bytesReceived);
 void webkitDownloadFailed(WebKitDownload*, const WebCore::ResourceError&);
 void webkitDownloadCancelled(WebKitDownload*);
 void webkitDownloadFinished(WebKitDownload*);
-CString webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, const CString& suggestedFilename);
+CString webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, const CString& suggestedFilename, bool& allowOverwrite);
 void webkitDownloadDestinationCreated(WebKitDownload*, const CString& destinationURI);
 
 #endif // WebKitDownloadPrivate_h

@@ -92,6 +92,13 @@ webkit_download_get_received_data_length (WebKitDownload *download);
 WEBKIT_API WebKitWebView *
 webkit_download_get_web_view             (WebKitDownload *download);
 
+WEBKIT_API gboolean
+webkit_download_get_allow_overwrite      (WebKitDownload *download);
+
+WEBKIT_API void
+webkit_download_set_allow_overwrite      (WebKitDownload *download,
+                                          gboolean        allowed);
+
 G_END_DECLS
 
 #endif

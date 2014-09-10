@@ -1,3 +1,20 @@
+2014-09-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] allow overwriting destination of download
+        https://bugs.webkit.org/show_bug.cgi?id=136372
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (downloadLocalFileSuccessfully): Split from testDownloadLocalFile
+        (testDownloadLocalFile): Split off downloadLocalFileSuccessfully
+        (createFileAtDestination): Added
+        (testDownloadOverwriteDestinationAllowed): Added
+        (testDownloadOverwriteDestinationDisallowed): Added
+        (testDownloadLocalFileError): Use new DownloadErrorTest::ExpectedError
+        (testDownloadRemoteFileError): Use new DownloadErrorTest::ExpectedError
+        (beforeAll): New tests
+
 2014-08-05  David Farler  <dfarler@apple.com>
 
         iOS Simulator: run-webkit-tests chokes on unterminated UTF-8 when writing a test result

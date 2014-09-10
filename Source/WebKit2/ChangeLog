@@ -1,3 +1,25 @@
+2014-09-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] allow overwriting destination of download
+        https://bugs.webkit.org/show_bug.cgi?id=136372
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadGetProperty): Added
+        (webkit_download_class_init): Install webkitDownloadGetProperty
+        (webkitDownloadDecideDestinationWithSuggestedFilename): Add
+        allowOverwrite parameter and set it appropriately
+        (webkit_download_get_allow_overwrite): Added
+        (webkit_download_set_allow_overwrite): Added
+        * UIProcess/API/gtk/WebKitDownload.h: New API
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        (decideDestinationWithSuggestedFilename): Pass allowOverwrite to
+        webkitDownloadDecideDestinationWithSuggestedFilename
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h: Add allowOverwrite
+        parameter to webkitDownloadDecideDestinationWithSuggestedFilename
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: New API
+
 2014-09-10  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [GTK] Clean up the WebKit build from unused parameter warning in Webkit2/UIProcess module

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2014 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,6 +56,8 @@ public:
     {
         g_assert(webkit_download_get_destination(download));
         g_assert_cmpstr(webkit_download_get_destination(download), ==, destination);
+        GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(destination));
+        g_assert(g_file_query_exists(file.get(), nullptr));
         test->createdDestination(download, destination);
     }
 
@@ -72,6 +74,14 @@ public:
     static void failedCallback(WebKitDownload* download, GError* error, DownloadTest* test)
     {
         g_assert(error);
+
+        const char* destinationURI = webkit_download_get_destination(download);
+        if (destinationURI) {
+            GUniquePtr<char> tempFileURI(g_strconcat(destinationURI, ".wkdownload", nullptr));
+            GRefPtr<GFile> tempFile = adoptGRef(g_file_new_for_uri(tempFileURI.get()));
+            g_assert(!g_file_query_exists(tempFile.get(), nullptr));
+        }
+
         test->failed(download, error);
     }
 
@@ -98,6 +108,7 @@ public:
         : m_webContext(webkit_web_context_get_default())
         , m_mainLoop(g_main_loop_new(0, TRUE))
         , m_downloadSize(0)
+        , m_allowOverwrite(false)
     {
         g_signal_connect(m_webContext, "download-started", G_CALLBACK(downloadStartedCallback), this);
     }
@@ -110,6 +121,8 @@ public:
 
     virtual void started(WebKitDownload* download)
     {
+        m_downloadSize = 0;
+        m_downloadEvents.clear();
         m_downloadEvents.append(Started);
     }
 
@@ -154,6 +167,10 @@ public:
         WebKitDownload* download = webkit_web_context_download_uri(m_webContext, requestURI.data());
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download));
 
+        g_assert(!webkit_download_get_allow_overwrite(download));
+        webkit_download_set_allow_overwrite(download, m_allowOverwrite);
+        g_assert(webkit_download_get_allow_overwrite(download) == m_allowOverwrite);
+
         WebKitURIRequest* request = webkit_download_get_request(download);
         g_assert(request);
         ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, requestURI);
@@ -178,11 +195,12 @@ public:
     GMainLoop* m_mainLoop;
     Vector<DownloadEvent> m_downloadEvents;
     guint64 m_downloadSize;
+    bool m_allowOverwrite;
 };
 
-static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
+static GRefPtr<WebKitDownload> downloadLocalFileSuccessfully(DownloadTest* test, const char* filename)
 {
-    GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().data(), "test.pdf", nullptr));
+    GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().data(), filename, nullptr));
     GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
     GRefPtr<GFileInfo> sourceInfo = adoptGRef(g_file_query_info(source.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
     GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
@@ -204,15 +222,50 @@ static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
     g_assert_cmpint(test->m_downloadSize, ==, g_file_info_get_size(sourceInfo.get()));
     g_assert(webkit_download_get_destination(download.get()));
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
-    test->checkDestinationAndDeleteFile(download.get(), "test.pdf");
+
+    return download;
+}
+
+static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
+{
+    static const char* filename = "test.pdf";
+    GRefPtr<WebKitDownload> download = downloadLocalFileSuccessfully(test, filename);
+    test->checkDestinationAndDeleteFile(download.get(), filename);
+}
+
+static void createFileAtDestination(const char* filename)
+{
+    GUniquePtr<char> path(g_build_filename(kTempDirectory, filename, nullptr));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
+    GUniqueOutPtr<GError> error;
+    g_file_create(file.get(), G_FILE_CREATE_NONE, nullptr, &error.outPtr());
+    g_assert(!error);
+    g_assert(g_file_query_exists(file.get(), nullptr));
+}
+
+static void testDownloadOverwriteDestinationAllowed(DownloadTest* test, gconstpointer)
+{
+    static const char* filename = "test.pdf";
+    createFileAtDestination(filename);
+
+    test->m_allowOverwrite = true;
+    GRefPtr<WebKitDownload> download = downloadLocalFileSuccessfully(test, filename);
+    test->checkDestinationAndDeleteFile(download.get(), filename);
 }
 
 class DownloadErrorTest: public DownloadTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(DownloadErrorTest);
 
+    enum ExpectedError {
+        NetworkError,
+        DownloadCancelled,
+        InvalidDestination,
+        DestinationExists
+    };
+
     DownloadErrorTest()
-        : m_expectedError(WEBKIT_DOWNLOAD_ERROR_NETWORK)
+        : m_expectedError(NetworkError)
     {
     }
 
@@ -223,7 +276,7 @@ public:
 
     void createdDestination(WebKitDownload* download, const char* destination)
     {
-        if (m_expectedError == WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER)
+        if (m_expectedError == DownloadCancelled)
             webkit_download_cancel(download);
         else
             g_assert_not_reached();
@@ -231,25 +284,64 @@ public:
 
     void failed(WebKitDownload* download, GError* error)
     {
-        g_assert(g_error_matches(error, WEBKIT_DOWNLOAD_ERROR, m_expectedError));
+        g_assert(g_error_matches(error, WEBKIT_DOWNLOAD_ERROR, expectedErrorToWebKitDownloadError(m_expectedError)));
         DownloadTest::failed(download, error);
     }
 
     void decideDestination(WebKitDownload* download, const gchar* suggestedFilename)
     {
-        if (m_expectedError != WEBKIT_DOWNLOAD_ERROR_DESTINATION) {
+        if (m_expectedError != InvalidDestination) {
             DownloadTest::decideDestination(download, suggestedFilename);
             return;
         }
         webkit_download_set_destination(download, "file:///foo/bar");
     }
 
-    WebKitDownloadError m_expectedError;
+    static WebKitDownloadError expectedErrorToWebKitDownloadError(ExpectedError expected)
+    {
+        switch (expected) {
+        case NetworkError:
+            return WEBKIT_DOWNLOAD_ERROR_NETWORK;
+        case DownloadCancelled:
+            return WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
+        case InvalidDestination:
+            return WEBKIT_DOWNLOAD_ERROR_DESTINATION;
+        case DestinationExists:
+            return WEBKIT_DOWNLOAD_ERROR_DESTINATION;
+        default:
+            g_assert_not_reached();
+        }
+    }
+
+    ExpectedError m_expectedError;
 };
+
+static void testDownloadOverwriteDestinationDisallowed(DownloadErrorTest* test, gconstpointer)
+{
+    static const char* filename = "test.pdf";
+    createFileAtDestination(filename);
+
+    test->m_expectedError = DownloadErrorTest::DestinationExists;
+    GUniquePtr<char> sourcePath(g_build_filename(Test::getResourcesDir().data(), filename, nullptr));
+    GRefPtr<GFile> source = adoptGRef(g_file_new_for_path(sourcePath.get()));
+    GUniquePtr<char> sourceURI(g_file_get_uri(source.get()));
+    GRefPtr<WebKitDownload> download = adoptGRef(test->downloadURIAndWaitUntilFinishes(sourceURI.get()));
+    g_assert(!webkit_download_get_web_view(download.get()));
+
+    Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
+    g_assert_cmpint(events.size(), ==, 4);
+    g_assert_cmpint(events[0], ==, DownloadTest::Started);
+    g_assert_cmpint(events[1], ==, DownloadTest::ReceivedResponse);
+    g_assert_cmpint(events[2], ==, DownloadTest::Failed);
+    g_assert_cmpint(events[3], ==, DownloadTest::Finished);
+    g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 0);
+
+    test->checkDestinationAndDeleteFile(download.get(), filename);
+}
 
 static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
 {
-    test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_NETWORK;
+    test->m_expectedError = DownloadErrorTest::NetworkError;
     GRefPtr<WebKitDownload> download = adoptGRef(test->downloadURIAndWaitUntilFinishes("file:///foo/bar"));
     g_assert(!webkit_download_get_web_view(download.get()));
 
@@ -261,7 +353,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     events.clear();
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
 
-    test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_DESTINATION;
+    test->m_expectedError = DownloadErrorTest::InvalidDestination;
     GUniquePtr<char> path(g_build_filename(Test::getResourcesDir().data(), "test.pdf", nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.get()));
     GUniquePtr<char> uri(g_file_get_uri(file.get()));
@@ -277,7 +369,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
     test->checkDestinationAndDeleteFile(download.get(), "bar");
 
-    test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
+    test->m_expectedError = DownloadErrorTest::DownloadCancelled;
     download = adoptGRef(test->downloadURIAndWaitUntilFinishes(uri.get()));
     g_assert(!webkit_download_get_web_view(download.get()));
 
@@ -369,7 +461,7 @@ static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)
 
 static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
 {
-    test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_NETWORK;
+    test->m_expectedError = DownloadErrorTest::NetworkError;
     GRefPtr<WebKitDownload> download = adoptGRef(test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/foo")));
     g_assert(!webkit_download_get_web_view(download.get()));
 
@@ -384,7 +476,7 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpuint(webkit_uri_response_get_status_code(response), ==, 404);
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
 
-    test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_DESTINATION;
+    test->m_expectedError = DownloadErrorTest::InvalidDestination;
     download = adoptGRef(test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/test.pdf")));
     g_assert(!webkit_download_get_web_view(download.get()));
 
@@ -397,7 +489,7 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
     test->checkDestinationAndDeleteFile(download.get(), "bar");
 
-    test->m_expectedError = WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
+    test->m_expectedError = DownloadErrorTest::DownloadCancelled;
     download = adoptGRef(test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/cancel-after-destination")));
     g_assert(!webkit_download_get_web_view(download.get()));
 
@@ -533,6 +625,8 @@ void beforeAll()
     g_assert(kTempDirectory);
 
     DownloadTest::add("Downloads", "local-file", testDownloadLocalFile);
+    DownloadTest::add("Downloads", "overwrite-destination-allowed", testDownloadOverwriteDestinationAllowed);
+    DownloadErrorTest::add("Downloads", "overwrite-destination-disallowed", testDownloadOverwriteDestinationDisallowed);
     DownloadErrorTest::add("Downloads", "local-file-error", testDownloadLocalFileError);
     DownloadTest::add("Downloads", "remote-file", testDownloadRemoteFile);
     DownloadErrorTest::add("Downloads", "remote-file-error", testDownloadRemoteFileError);

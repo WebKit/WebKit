@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2014 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -63,7 +63,8 @@ enum {
 
     PROP_DESTINATION,
     PROP_RESPONSE,
-    PROP_ESTIMATED_PROGRESS
+    PROP_ESTIMATED_PROGRESS,
+    PROP_ALLOW_OVERWRITE
 };
 
 struct _WebKitDownloadPrivate {
@@ -84,11 +85,25 @@ struct _WebKitDownloadPrivate {
     GUniquePtr<GTimer> timer;
     gdouble lastProgress;
     gdouble lastElapsed;
+    bool allowOverwrite;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT)
+
+static void webkitDownloadSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
+{
+    WebKitDownload* download = WEBKIT_DOWNLOAD(object);
+
+    switch (propId) {
+    case PROP_ALLOW_OVERWRITE:
+        webkit_download_set_allow_overwrite(download, g_value_get_boolean(value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
+    }
+}
 
 static void webkitDownloadGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -103,6 +118,9 @@ static void webkitDownloadGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ESTIMATED_PROGRESS:
         g_value_set_double(value, webkit_download_get_estimated_progress(download));
+        break;
+    case PROP_ALLOW_OVERWRITE:
+        g_value_set_boolean(value, webkit_download_get_allow_overwrite(download));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -130,6 +148,7 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
 static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(downloadClass);
+    objectClass->set_property = webkitDownloadSetProperty;
     objectClass->get_property = webkitDownloadGetProperty;
 
     downloadClass->decide_destination = webkitDownloadDecideDestination;
@@ -177,6 +196,25 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         _("Determines the current progress of the download"),
                                                         0.0, 1.0, 1.0,
                                                         WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitDownload:allow-overwrite:
+     *
+     * Whether or not the download is allowed to overwrite an existing file on
+     * disk. If this property is %FALSE and the destination already exists,
+     * the download will fail.
+     *
+     * Since: 2.6
+     */
+    g_object_class_install_property(
+        objectClass,
+        PROP_ALLOW_OVERWRITE,
+        g_param_spec_boolean(
+            "allow-overwrite",
+            _("Allow Overwrite"),
+            _("Whether the destination may be overwritten"),
+            FALSE,
+            WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitDownload::received-data:
@@ -370,12 +408,13 @@ void webkitDownloadFinished(WebKitDownload* download)
     g_signal_emit(download, signals[FINISHED], 0, NULL);
 }
 
-CString webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename)
+CString webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename, bool& allowOverwrite)
 {
     if (download->priv->isCancelled)
         return "";
     gboolean returnValue;
     g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &returnValue);
+    allowOverwrite = download->priv->allowOverwrite;
     return download->priv->destinationURI;
 }
 
@@ -567,4 +606,45 @@ WebKitWebView* webkit_download_get_web_view(WebKitDownload* download)
     g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
 
     return download->priv->webView;
+}
+
+/**
+ * webkit_download_get_allow_overwrite:
+ * @download: a #WebKitDownload
+ *
+ * Returns the current value of the #WebKitDownload:allow-overwrite property,
+ * which determines whether the download will overwrite an existing file on
+ * disk, or if it will fail if the destination already exists.
+ *
+ * Returns: the current value of the #WebKitDownload:allow-overwrite property
+ *
+ * Since: 2.6
+ */
+gboolean webkit_download_get_allow_overwrite(WebKitDownload* download)
+{
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), FALSE);
+
+    return download->priv->allowOverwrite;
+}
+
+/**
+ * webkit_download_set_allow_overwrite:
+ * @download: a #WebKitDownload
+ * @allowed: the new value for the #WebKitDownload:allow-overwrite property
+ *
+ * Sets the #WebKitDownload:allow-overwrite property, which determines whether
+ * the download may overwrite an existing file on disk, or if it will fail if
+ * the destination already exists.
+ *
+ * Since: 2.6
+ */
+void webkit_download_set_allow_overwrite(WebKitDownload* download, gboolean allowed)
+{
+    g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
+
+    if (allowed == download->priv->allowOverwrite)
+        return;
+
+    download->priv->allowOverwrite = allowed;
+    g_object_notify(G_OBJECT(download), "allow-overwrite");
 }
