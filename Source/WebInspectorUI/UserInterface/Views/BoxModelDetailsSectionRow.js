@@ -378,8 +378,11 @@ WebInspector.BoxModelDetailsSectionRow.prototype = {
 
     _applyUserInput: function(element, userInput, previousContent, context, commitEditor)
     {
-        if (commitEditor && userInput === previousContent)
-            return this._editingCancelled(element, context); // nothing changed, so cancel
+        if (commitEditor && userInput === previousContent) {
+            // Nothing changed, so cancel.
+            this._editingCancelled(element, context);
+            return;
+        }
 
         if (context.box !== "position" && (!userInput || userInput === "\u2012"))
             userInput = "0px";

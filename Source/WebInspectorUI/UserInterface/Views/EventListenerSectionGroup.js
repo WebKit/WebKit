@@ -42,8 +42,9 @@ WebInspector.EventListenerSectionGroup.prototype = {
     _nodeTextOrLink: function()
     {
         var node = this._eventListener.node;
+        console.assert(node);
         if (!node)
-            return;
+            return "";
 
         if (node.nodeType() === Node.DOCUMENT_NODE)
             return "document";

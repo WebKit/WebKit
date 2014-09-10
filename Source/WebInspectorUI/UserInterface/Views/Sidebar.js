@@ -78,11 +78,11 @@ WebInspector.Sidebar.prototype = {
     {
         console.assert(sidebarPanel instanceof WebInspector.SidebarPanel);
         if (!(sidebarPanel instanceof WebInspector.SidebarPanel))
-            return;
+            return null;
 
         console.assert(!sidebarPanel.parentSidebar);
         if (sidebarPanel.parentSidebar)
-            return;
+            return null;
 
         sidebarPanel._parentSidebar = this;
 
@@ -98,7 +98,7 @@ WebInspector.Sidebar.prototype = {
     {
         var sidebarPanel = this.findSidebarPanel(sidebarPanelOrIdentifierOrIndex);
         if (!sidebarPanel)
-            return;
+            return null;
 
         sidebarPanel.willRemove();
 

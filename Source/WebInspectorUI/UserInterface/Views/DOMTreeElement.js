@@ -167,8 +167,9 @@ WebInspector.DOMTreeElement.prototype = {
 
     showChild: function(index)
     {
+        console.assert(!this._elementCloseTag);
         if (this._elementCloseTag)
-            return;
+            return false;
 
         if (index >= this.expandedChildrenLimit) {
             this._expandedChildrenLimit = index + 1;
@@ -537,7 +538,7 @@ WebInspector.DOMTreeElement.prototype = {
     _startEditingTarget: function(eventTarget)
     {
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
-            return;
+            return false;
 
         if (this.representedObject.nodeType() !== Node.ELEMENT_NODE && this.representedObject.nodeType() !== Node.TEXT_NODE)
             return false;
@@ -613,7 +614,7 @@ WebInspector.DOMTreeElement.prototype = {
     _startEditing: function()
     {
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
-            return;
+            return false;
 
         var listItem = this._listItemNode;
 
@@ -629,7 +630,7 @@ WebInspector.DOMTreeElement.prototype = {
             var textNode = listItem.getElementsByClassName("html-text-node")[0];
             if (textNode)
                 return this._startEditingTextNode(textNode);
-            return;
+            return false;
         }
     },
 

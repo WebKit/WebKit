@@ -74,7 +74,7 @@ WebInspector.BranchManager.prototype = {
 
         console.assert(fromBranch instanceof WebInspector.Branch);
         if (!(fromBranch instanceof WebInspector.Branch))
-            return;
+            return null;
 
         var newBranch = fromBranch.fork(displayName);
         this._branches.push(newBranch);

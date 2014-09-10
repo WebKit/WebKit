@@ -246,12 +246,13 @@ WebInspector.QuickConsole.prototype = {
 
     _insertExecutionContextPathComponentForFrame: function(frame, skipRebuild)
     {
+        console.assert(!frame.isMainFrame());
         if (frame.isMainFrame())
-            return;
+            return null;
 
         console.assert(!this._frameIdentifierToExecutionContextPathComponentMap[frame.id]);
         if (this._frameIdentifierToExecutionContextPathComponentMap[frame.id])
-            return;
+            return null;
 
         var executionContextPathComponent = this._createExecutionContextPathComponentFromFrame(frame);
 

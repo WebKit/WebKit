@@ -385,8 +385,6 @@ WebInspector.FrameResourceManager.prototype = {
     _addNewResourceToFrame: function(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, timestamp, frameName, frameSecurityOrigin, initiatorSourceCodeLocation)
     {
         console.assert(!this._waitingForMainFrameResourceTreePayload);
-        if (this._waitingForMainFrameResourceTreePayload)
-            return;
 
         var resource = null;
 

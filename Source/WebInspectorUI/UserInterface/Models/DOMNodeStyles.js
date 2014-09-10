@@ -665,7 +665,7 @@ WebInspector.DOMNodeStyles.prototype = {
                     this._parseStyleDeclarationPayload(payload, styleDeclaration.node, styleDeclaration.inherited, styleDeclaration.type, styleDeclaration.ownerRule);
                 }
 
-                return;
+                return null;
             }
 
             if (!styleDeclaration) {

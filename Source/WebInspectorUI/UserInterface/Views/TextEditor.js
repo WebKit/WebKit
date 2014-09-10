@@ -563,7 +563,7 @@ WebInspector.TextEditor.prototype = {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         console.assert(lineHandle);
         if (!lineHandle)
-            return;
+            return null;
 
         return this._codeMirror.addLineClass(lineHandle, "wrap", styleClassName);
     },
@@ -573,7 +573,7 @@ WebInspector.TextEditor.prototype = {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         console.assert(lineHandle);
         if (!lineHandle)
-            return;
+            return null;
 
         return this._codeMirror.removeLineClass(lineHandle, "wrap", styleClassName);
     },
@@ -583,7 +583,7 @@ WebInspector.TextEditor.prototype = {
         var lineHandle = this._codeMirror.getLineHandle(lineNumber);
         console.assert(lineHandle);
         if (!lineHandle)
-            return;
+            return false;
 
         return this._codeMirror.toggleLineClass(lineHandle, "wrap", styleClassName);
     },

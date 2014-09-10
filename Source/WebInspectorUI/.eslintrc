@@ -58,6 +58,7 @@
     "rules": {
         "eqeqeq": 2,
         "curly": 0,
+        "consistent-return": 2,
         "no-extra-semi": 2,
         "quotes": [2, "double"],
         "no-trailing-spaces": 2,

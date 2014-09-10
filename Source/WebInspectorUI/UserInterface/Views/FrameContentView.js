@@ -179,7 +179,7 @@ WebInspector.FrameContentView.prototype = {
 
         console.assert(representedObjectToShow);
         if (!representedObjectToShow)
-            return;
+            return null;
 
         this._currentContentViewSetting.value = identifier;
 

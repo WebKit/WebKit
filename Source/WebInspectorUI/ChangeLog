@@ -1,5 +1,43 @@
 2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Fix ESLint consistent-return warnings
+        https://bugs.webkit.org/show_bug.cgi?id=136682
+
+        Reviewed by Timothy Hatcher.
+
+        * .eslintrc:
+        * UserInterface/Controllers/BranchManager.js:
+        (WebInspector.BranchManager.prototype.createBranch):
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrame):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._applyUserInput):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.showChild):
+        (WebInspector.DOMTreeElement.prototype._startEditingTarget):
+        (WebInspector.DOMTreeElement.prototype._startEditing):
+        * UserInterface/Views/EditingSupport.js:
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WebInspector.EventListenerSectionGroup.prototype._nodeTextOrLink):
+        * UserInterface/Views/FrameContentView.js:
+        (WebInspector.FrameContentView.prototype._showContentViewForIdentifier):
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype.insertNavigationItem):
+        (WebInspector.NavigationBar.prototype.removeNavigationItem):
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole.prototype._insertExecutionContextPathComponentForFrame):
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.addSidebarPanel):
+        (WebInspector.Sidebar.prototype.removeSidebarPanel):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.addStyleClassToLine):
+        (WebInspector.TextEditor.prototype.removeStyleClassFromLine):
+        (WebInspector.TextEditor.prototype.toggleStyleClassForLine):
+
+2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix ESLint no-undef warnings
         https://bugs.webkit.org/show_bug.cgi?id=136660
 

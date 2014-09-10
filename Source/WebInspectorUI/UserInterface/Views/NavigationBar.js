@@ -77,7 +77,7 @@ WebInspector.NavigationBar.prototype = {
     {
         console.assert(navigationItem instanceof WebInspector.NavigationItem);
         if (!(navigationItem instanceof WebInspector.NavigationItem))
-            return;
+            return null;
 
         if (navigationItem.parentNavigationBar)
             navigationItem.parentNavigationBar.removeNavigationItem(navigationItem);
@@ -111,7 +111,7 @@ WebInspector.NavigationBar.prototype = {
     {
         var navigationItem = this._findNavigationItem(navigationItemOrIdentifierOrIndex);
         if (!navigationItem)
-            return;
+            return null;
 
         navigationItem._parentNavigationBar = null;
 
