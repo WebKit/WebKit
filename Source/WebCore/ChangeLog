@@ -1,3 +1,19 @@
+2014-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        Remove ImageSource::ShouldSkipMetadata
+        https://bugs.webkit.org/show_bug.cgi?id=136713
+
+        Reviewed by Pratik Solanki.
+
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::createImageSourceOptions):
+        (WebCore::imageSourceOptions):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        Remove ShouldSkipMetadata and users. Nobody ever uses DoNotSkipMetadata.
+
 2014-09-10  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=136650
