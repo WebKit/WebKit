@@ -1,3 +1,17 @@
+2014-09-10  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [MIPS] branch32WithPatch missing
+        https://bugs.webkit.org/show_bug.cgi?id=136696
+
+        Reviewed by Michael Saboff.
+
+        Added the missing branch32WithPatch. The implementation
+        is currently the same as the branchPtrithPatch because
+        the macro assembler supports only 32 bit MIPS.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branch32WithPatch):
+
 2014-09-10  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         Fix !ENABLE(DFG_JIT) build

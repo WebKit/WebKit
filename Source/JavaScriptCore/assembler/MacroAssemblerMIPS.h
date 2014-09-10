@@ -2120,6 +2120,16 @@ public:
         return temp;
     }
 
+    Jump branch32WithPatch(RelationalCondition cond, Address left, DataLabel32& dataLabel, TrustedImm32 initialRightValue = TrustedImm32(0))
+    {
+        m_fixedWidth = true;
+        load32(left, dataTempRegister);
+        dataLabel = moveWithPatch(initialRightValue, immTempRegister);
+        Jump temp = branch32(cond, dataTempRegister, immTempRegister);
+        m_fixedWidth = false;
+        return temp;
+    }
+
     DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         m_fixedWidth = true;
