@@ -643,6 +643,8 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 plugins/snapshotting/set-plugin-size-to-tiny.html
 plugins/snapshotting/simple.html
 plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html
+plugins/snapshotting/set-plugin-size-to-tiny.html 
+plugins/snapshotting/simple.html
 
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
