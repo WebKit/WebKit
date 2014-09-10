@@ -1,5 +1,14 @@
 2014-09-10  Jer Noble  <jer.noble@apple.com>
 
+        "AVF info: hasOfflineRenderer, board-id check : true" in media/track/track-forced-subtitles-in-band.html
+        https://bugs.webkit.org/show_bug.cgi?id=124219
+
+        Unreviewed gardening. This skip was made unnecessary after selective filtering was added in r160247.
+
+        * platform/mac/TestExpectations:
+
+2014-09-10  Jer Noble  <jer.noble@apple.com>
+
         More unreviewed gardening of media/ tests; Move tests into the correct sub-groups and add comments
         to test expectations without attached bugzilla bugs (due to WontFix, etc.).
 

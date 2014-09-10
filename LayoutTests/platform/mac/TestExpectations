@@ -1356,9 +1356,6 @@ webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
 webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
-# Flaky logging underneath us
-webkit.org/b/124219 [ Mavericks ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
-
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Timeout Failure ]
