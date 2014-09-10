@@ -176,9 +176,8 @@ macro doVMEntry(makeCall)
         const temp4 = t4 # Same as temp2
     elsif MIPS
         const entry = a0
-        const vmTopCallFrame = a1
+        const vm = a1
         const protoCallFrame = a2
-        const topOfStack = a3
 
         const temp1 = t3
         const temp2 = t5

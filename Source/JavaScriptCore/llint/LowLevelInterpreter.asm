@@ -253,9 +253,9 @@ if C_LOOP
     const CalleeSaveRegisterCount = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const CalleeSaveRegisterCount = 7
-elsif ARM64 or MIPS
+elsif ARM64
     const CalleeSaveRegisterCount = 10
-elsif SH4 or X86_64
+elsif SH4 or X86_64 or MIPS
     const CalleeSaveRegisterCount = 5
 elsif X86 or X86_WIN
     const CalleeSaveRegisterCount = 3
@@ -789,7 +789,8 @@ if C_LOOP
             move pc, pcBase
             subp 8, pcBase
         elsif MIPS
-            crash()  # Need to replace with any initialization steps needed to step up PC relative address calculation
+            la _relativePCBase, pcBase
+        _relativePCBase:
         elsif SH4
             mova _relativePCBase, t0
             move t0, pcBase
@@ -827,7 +828,12 @@ macro setEntryAddress(index, label)
         storep t2, [a0, t3, 4]
         flushcp # Force constant pool flush to avoid "pcrel too far" link error.
     elsif MIPS
-        crash()  # Need to replace with code to turn label into and absolute address and save at index
+        la label, t2
+        la _relativePCBase, t3
+        subp t3, t2
+        addp t2, t1, t2
+        move index, t3
+        storep t2, [a0, t3, 4]
     end
 end
 
