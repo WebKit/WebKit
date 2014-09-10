@@ -1384,6 +1384,19 @@ IntRect RenderLayer::scrollableAreaBoundingBox() const
     return renderer().absoluteBoundingBoxRect();
 }
 
+bool RenderLayer::isRubberBandInProgress() const
+{
+#if ENABLE(RUBBER_BANDING)
+    if (!scrollsOverflow())
+        return false;
+
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->isRubberBandInProgress();
+#endif
+
+    return false;
+}
+
 bool RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
     Page* page = renderer().frame().page();
@@ -3324,7 +3337,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
 
     computeScrollDimensions();
 
-    if (box->style().overflowX() != OMARQUEE) {
+    if (box->style().overflowX() != OMARQUEE && !isRubberBandInProgress()) {
         // Layout may cause us to be at an invalid scroll position. In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
         IntSize clampedScrollOffset = clampScrollOffset(scrollOffset());

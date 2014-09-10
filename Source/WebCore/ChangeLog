@@ -1,3 +1,20 @@
+2014-09-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=136650
+        Rubber-banding in the DOM view of the WebInspector is really jumpy
+        -and corresponding-
+        rdar://problem/18166043
+
+        Reviewed by Darin Adler.
+
+        This patch implements the ScrollableArea virtual function isRubberBandInProgress() 
+        for RenderLayer, and then uses that to determine whether to clamp the scroll 
+        position in updateScrollInfoAfterLayout().
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isRubberBandInProgress):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h:
+
 2014-09-10  Tim Horton  <timothy_horton@apple.com>
 
         Remove a workaround in frameIsCompleteAtIndex for a problem that was fixed in Lion
