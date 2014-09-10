@@ -667,7 +667,7 @@ WebInspector.LogContentView.prototype = {
                 classList.remove(WebInspector.LogContentView.SelectedStyleClassName);
                 classList.add(WebInspector.LogContentView.FilteredOutStyleClassName);
             }
-        }.bind(this));
+        }, this);
 
         this._performSearch();
     },

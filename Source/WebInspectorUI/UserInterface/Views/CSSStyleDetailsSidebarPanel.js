@@ -66,7 +66,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = function()
             }
 
             groupElement.appendChild(labelElement);
-        }.bind(this));
+        }, this);
 
         this._contentElement.appendChild(this._forcedPseudoClassContainer);
     }

@@ -272,19 +272,19 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
                 dataGrid.removeChild(node);
                 delete this._dataGridNodesByLayerId[layer.layerId];
             }
-        }.bind(this));
+        }, this);
 
         mutations.additions.forEach(function(layer) {
             var node = this._dataGridNodeForLayer(layer);
             if (node)
                 dataGrid.appendChild(node);
-        }.bind(this));
+        }, this);
 
         mutations.preserved.forEach(function(layer) {
             var node = this._dataGridNodesByLayerId[layer.layerId];
             if (node)
                 node.layer = layer;
-        }.bind(this));
+        }, this);
 
         this._sortDataGrid();
 

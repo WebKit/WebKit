@@ -355,7 +355,7 @@ WebInspector.LocalJSONObject.prototype = {
             return new WebInspector.RemoteObjectProperty(propName, new WebInspector.LocalJSONObject(this._value[propName]));
         }
         if (!this._cachedChildren)
-            this._cachedChildren = Object.keys(this._value || {}).map(buildProperty.bind(this));
+            this._cachedChildren = Object.keys(this._value || {}).map(buildProperty, this);
         return this._cachedChildren;
     },
 

@@ -1,3 +1,21 @@
+2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix ESLint* no-avoidable-bind warnings
+        https://bugs.webkit.org/show_bug.cgi?id=136690
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.LocalJSONObject.prototype._children):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        * UserInterface/Views/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel.prototype._updateDataGrid):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._filterMessages):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype.get supplementalRepresentedObjects):
+
 2014-09-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Disable the "unreachable-code" warning

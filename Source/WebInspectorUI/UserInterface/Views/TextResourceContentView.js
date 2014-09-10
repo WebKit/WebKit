@@ -89,7 +89,7 @@ WebInspector.TextResourceContentView.prototype = {
     {
         var objects = WebInspector.probeManager.probeSets.filter(function(probeSet) {
             return this._resource.url === probeSet.breakpoint.url;
-        }.bind(this));
+        }, this);
 
         // If the SourceCodeTextEditor has an executionLineNumber, we can assume
         // it is always the active call frame.
