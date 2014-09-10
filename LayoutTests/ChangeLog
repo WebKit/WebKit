@@ -1,5 +1,14 @@
 2014-09-10  Jer Noble  <jer.noble@apple.com>
 
+        More unreviewed gardening.
+
+        - Mark tests as WontFix which depend on platform support which will never be added.
+        - Fix http/tests/media/video-auth.html by marking it as failing on MountainLion.
+
+        * platform/mac/TestExpectations:
+
+2014-09-10  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed gardening. Re-skip some obsolete EME tests.
 
         * platform/mac/TestExpectations:

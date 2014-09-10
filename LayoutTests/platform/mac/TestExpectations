@@ -1204,6 +1204,9 @@ media/encrypted-media/encrypted-media-can-play-type-webm.html [ WontFix ]
 media/encrypted-media/encrypted-media-events.html [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ WontFix ]
 media/encrypted-media/encrypted-media-syntax.html [ WontFix ]
+
+# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
+webkit.org/b/101670 media/video-controls-captions.html [ WontFix ]
 ## --- End media wontfix tests ---
 
 ## --- Start unimplemented media tests ---
@@ -1215,19 +1218,19 @@ media/track/track-datacue.html [ Skip ]
 
 ## --- Start media tests failing on Mountain Lion and earlier ---
 # Mountain Lion and prior do not support custom media data loading
-Bug(jernoble) [ MountainLion ] media/video-src-blob.html [ Skip ]
+Bug(jernoble) [ MountainLion ] media/video-src-blob.html [ WontFix ]
 
 # Mountain Lion and prior do not allow access to in-band text tracks
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html [ Skip ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html [ Skip ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html [ Skip ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html [ Skip ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html [ Skip ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html [ Skip ]
-webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html [ Skip ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html [ WontFix ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html [ WontFix ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html [ WontFix ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html [ WontFix ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html [ WontFix ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html [ WontFix ]
+webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-subtitles-too-large.html [ WontFix ]
 
 # Mountain Lion and prior do not support HLS timed metadata
-Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ Skip ]
+Bug(ericcarlson) [ MountainLion ] http/tests/media/track-in-band-hls-metadata.html [ WontFix ]
 
 # Frequently times out on EWS, which is then misreported as crash.
 webkit.org/b/130720 [ MountainLion Release ] media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html [ Pass Failure Crash Timeout ]
@@ -1240,17 +1243,17 @@ webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failur
 webkit.org/b/136532 [ MountainLion ] media/video-seek-past-end-playing.html [ Pass Failure ]
 
 # Mountain Lion and earlier do not support Encrypted Media Extensions.
-Bug(jernoble) [ MountainLion ] media/encrypted-media/ [ Skip ]
-Bug(jernoble) [ MountainLion ] fast/events/constructors/media-key-event-constructor.html [ Skip ]
+Bug(jernoble) [ MountainLion ] media/encrypted-media/ [ WontFix ]
+Bug(jernoble) [ MountainLion ] fast/events/constructors/media-key-event-constructor.html [ WontFix ]
 ## --- End media tests failing on Mountain Lion and earlier ---
 
 ## --- Start media tests failing on Mavericks and earlier ---
 # HTTP Auth in Media is not supported in Mavericks and Mountain Lion
-webkit.org/b/40382 [ Mavericks ] http/tests/media/video-auth.html [ Skip ]
+webkit.org/b/40382 [ Mavericks MountainLion ] http/tests/media/video-auth.html [ WontFix ]
 
 # Mavericks and prior do not support Media Source.
-[ MountainLion Mavericks ] media/media-source [ Skip ]
-[ MountainLion Mavericks ] http/tests/media/media-source/ [ Skip ]
+[ MountainLion Mavericks ] media/media-source [ WontFix ]
+[ MountainLion Mavericks ] http/tests/media/media-source/ [ WontFix ]
 ## --- End media tests failing on Mavericks and earlier ---
 
 ## --- Start flaky media tests ---
@@ -1364,9 +1367,6 @@ media/media-document-audio-repaint.html
 media/video-zoom-controls.html
 
 webkit.org/b/84357 media/audio-repaint.html [ Failure ]
-
-# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
-webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
 
 # These two tests often timeout
 webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
