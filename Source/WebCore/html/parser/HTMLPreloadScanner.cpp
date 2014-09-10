@@ -93,15 +93,12 @@ public:
     {
     }
 
-    void processAttributes(const HTMLToken::AttributeList& attributes
-#if ENABLE(PICTURE_SIZES)
-        , RenderView* view, Frame* frame
-#endif
-        )
+    void processAttributes(const HTMLToken::AttributeList& attributes, Document& document)
     {
         ASSERT(isMainThread());
         if (m_tagId >= TagId::Unknown)
             return;
+
         for (HTMLToken::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter) {
             AtomicString attributeName(iter->name);
             String attributeValue = StringImpl::create8BitIfPossible(iter->value);
@@ -110,11 +107,11 @@ public:
 
         // Resolve between src and srcSet if we have them.
         if (!m_srcSetAttribute.isEmpty()) {
-            ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute
+            unsigned sourceSize = 0;
 #if ENABLE(PICTURE_SIZES)
-                , SourceSizeList::parseSizesAttribute(m_sizesAttribute, view, frame)
+            sourceSize = SourceSizeList::parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
 #endif
-                );
+            ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setUrlToLoad(imageCandidate.string.toString(), true);
         }
     }
@@ -279,11 +276,7 @@ void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex
     m_checkpoints.clear();
 }
 
-void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests
-#if ENABLE(PICTURE_SIZES)
-        , RenderView* view, Frame* frame
-#endif
-        )
+void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests, Document& document)
 {
     switch (token.type()) {
     case HTMLToken::Character:
@@ -334,11 +327,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         }
 
         StartTagScanner scanner(tagId, m_deviceScaleFactor);
-        scanner.processAttributes(token.attributes()
-#if ENABLE(PICTURE_SIZES)
-            , view, frame
-#endif
-            );
+        scanner.processAttributes(token.attributes(), document);
         if (auto request = scanner.createPreloadRequest(m_predictedBaseElementURL))
             requests.append(WTF::move(request));
         return;
@@ -372,13 +361,11 @@ void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
     m_source.append(source);
 }
 
-void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& startingBaseElementURL
-#if ENABLE(PICTURE_SIZES)
-        , RenderView* view, Frame* frame
-#endif
-        )
+void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, Document& document)
 {
     ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
+
+    const URL& startingBaseElementURL = document.baseElementURL();
 
     // When we start scanning, our best prediction of the baseElementURL is the real one!
     if (!startingBaseElementURL.isEmpty())
@@ -389,11 +376,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& start
     while (m_tokenizer->nextToken(m_source, m_token)) {
         if (m_token.type() == HTMLToken::StartTag)
             m_tokenizer->updateStateFor(AtomicString(m_token.name()));
-        m_scanner.scan(m_token, requests
-#if ENABLE(PICTURE_SIZES)
-            , view, frame
-#endif
-            );
+        m_scanner.scan(m_token, requests, document);
         m_token.clear();
     }
 

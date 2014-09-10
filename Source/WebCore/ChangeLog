@@ -1,3 +1,31 @@
+2014-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some ENABLE(PICTURE_SIZES) stuff, don't change function signatures inside #ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=136654
+
+        Reviewed by Darin Adler.
+
+        Adding parameters inside an #ifdef makes for unreadable code, so remove some
+        #if ENABLE(PICTURE_SIZES) related to the preload scanner and always pass the arguments.
+        Reduced the argument count on some functions by just passing a Document&. 
+        
+        Also fix a couple of uses of #if ENABLE_PICTURE_SIZES.
+
+        * html/HTMLImageElement.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::scan):
+        (WebCore::HTMLPreloadScanner::scan):
+        * html/parser/HTMLPreloadScanner.h:
+        * html/parser/HTMLSrcsetParser.cpp:
+        (WebCore::pickBestImageCandidate):
+        (WebCore::bestFitSourceForImageAttributes):
+        * html/parser/HTMLSrcsetParser.h:
+
 2014-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-labelledby is not honoring sub-node text

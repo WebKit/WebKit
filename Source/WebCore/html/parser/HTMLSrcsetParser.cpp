@@ -229,12 +229,12 @@ Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attrib
         return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length());
 }
 
-static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates
-#if ENABLE(PICTURE_SIZES)
-    , unsigned sourceSize
-#endif
-    )
+static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates, unsigned sourceSize)
 {
+#if !ENABLE(PICTURE_SIZES)
+    UNUSED_PARAM(sourceSize);
+#endif
+
     bool ignoreSrc = false;
     if (imageCandidates.isEmpty())
         return ImageCandidate();
@@ -274,11 +274,7 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     return imageCandidates[winner];
 }
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute
-#if ENABLE(PICTURE_SIZES)
-    , unsigned sourceSize
-#endif
-    )
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute, unsigned sourceSize)
 {
     if (srcsetAttribute.isNull()) {
         if (srcAttribute.isNull())
@@ -291,11 +287,7 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
     if (!srcAttribute.isEmpty())
         imageCandidates.append(ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
 
-    return pickBestImageCandidate(deviceScaleFactor, imageCandidates
-#if ENABLE(PICTURE_SIZES)
-        , sourceSize
-#endif
-        );
+    return pickBestImageCandidate(deviceScaleFactor, imageCandidates, sourceSize);
 }
 
 } // namespace WebCore

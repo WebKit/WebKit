@@ -98,11 +98,7 @@ struct ImageCandidate {
     OriginAttribute originAttribute;
 };
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute
-#if ENABLE(PICTURE_SIZES)
-    , unsigned sourceSize
-#endif
-    );
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute, unsigned sourceSize);
 
 Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute);
 

@@ -47,11 +47,7 @@ public:
     explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
     ~TokenPreloadScanner();
 
-    void scan(const HTMLToken&, PreloadRequestStream& requests
-#if ENABLE_PICTURE_SIZES
-        , RenderView*, Frame*
-#endif
-        );
+    void scan(const HTMLToken&, PreloadRequestStream& requests, Document&);
 
     void setPredictedBaseElementURL(const URL& url) { m_predictedBaseElementURL = url; }
 
@@ -131,11 +127,7 @@ public:
     ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);
-    void scan(HTMLResourcePreloader*, const URL& documentBaseElementURL
-#if ENABLE_PICTURE_SIZES
-        , RenderView*, Frame*
-#endif
-        );
+    void scan(HTMLResourcePreloader*, Document&);
 
 private:
     TokenPreloadScanner m_scanner;

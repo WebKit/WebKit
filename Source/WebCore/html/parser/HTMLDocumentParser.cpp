@@ -326,11 +326,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
             m_preloadScanner = std::make_unique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
             m_preloadScanner->appendToEnd(m_input.current());
         }
-        m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL()
-#if ENABLE(PICTURE_SIZES)
-            , document()->renderView(), document()->frame()
-#endif
-        );
+        m_preloadScanner->scan(m_preloader.get(), *document());
     }
 
     InspectorInstrumentation::didWriteHTML(cookie, m_input.current().currentLine().zeroBasedInt());
@@ -392,11 +388,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
             m_insertionPreloadScanner = std::make_unique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
         }
         m_insertionPreloadScanner->appendToEnd(source);
-        m_insertionPreloadScanner->scan(m_preloader.get(), document()->baseElementURL()
-#if ENABLE(PICTURE_SIZES)
-            , document()->renderView(), document()->frame()
-#endif
-        );
+        m_insertionPreloadScanner->scan(m_preloader.get(), *document());
     }
 
     endIfDelayed();
@@ -420,11 +412,7 @@ void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
         } else {
             m_preloadScanner->appendToEnd(source);
             if (isWaitingForScripts())
-                m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL()
-#if ENABLE(PICTURE_SIZES)
-                    , document()->renderView(), document()->frame()
-#endif
-                );
+                m_preloadScanner->scan(m_preloader.get(), *document());
         }
     }
 
@@ -562,11 +550,7 @@ void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
 {
     ASSERT(m_preloadScanner);
     m_preloadScanner->appendToEnd(m_input.current());
-    m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL()
-#if ENABLE(PICTURE_SIZES)
-        , document()->renderView(), document()->frame()
-#endif
-    );
+    m_preloadScanner->scan(m_preloader.get(), *document());
 }
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
