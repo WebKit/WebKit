@@ -983,9 +983,12 @@ webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
 webkit.org/b/123369 [ Mavericks ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ Mavericks ] svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/call-frame-this-strict.html [ Pass Failure ]
-webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-column.html [ Pass Failure ]
-webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-options-exception.html [ Pass Failure ]
+webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-nonstrict.html [ Skip ]
+webkit.org/b/136715 inspector-protocol/debugger/call-frame-this-strict.html [ Skip ]
+webkit.org/b/136715 inspector-protocol/debugger/regress-133182.html [ Skip ]
+webkit.org/b/136715 inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local.html [ Skip ]
+webkit.org/b/136715 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]
+webkit.org/b/136715 inspector-protocol/debugger/setPauseOnExceptions-all.html [ Skip ]
 
 webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Failure ]
 
@@ -1151,6 +1154,12 @@ webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cac
 webkit.org/b/131787 fast/canvas/canvas-putImageData-zero-alpha.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/136716 fast/forms/submit-to-blank-multiple-times.html [ Skip ]
+
+webkit.org/b/136717 js/dom/string-replace-exception-crash.html [ Skip ]
+
+webkit.org/b/136718 fast/dynamic/layer-no-longer-paginated.html [ Skip ]
 
 # --- Start media tests ---
 ## --- Start media wontfix tests ---
