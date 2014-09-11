@@ -49,8 +49,8 @@ State::State(Graph& graph)
     , module(0)
     , function(0)
     , generatedFunction(0)
-    , compactUnwind(0)
-    , compactUnwindSize(0)
+    , unwindDataSection(0)
+    , unwindDataSectionSize(0)
 {
 
 #if ENABLE(FTL_NATIVE_CALL_INLINING)

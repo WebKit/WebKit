@@ -1,3 +1,15 @@
+2014-09-11  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [JavaScriptCore] Fix FTL on platform EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=133571
+
+        Reviewed by Filip Pizlo.
+
+        * efl/install-dependencies: Revert r169181.
+        * efl/jhbuild.modules: Clone and build a custom branch.
+        This branch contains some fix for FTL of platform EFL.
+        The branch is a fork of llvm r206311.
+
 2014-09-10  Tanay C  <tanay.c@samsung.com>
 
         [EFL][WK2] Minibrowser : Shift+Scroll navigate to back or forward url's

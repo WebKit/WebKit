@@ -128,7 +128,7 @@ void link(State& state)
         
         out.print("    Disassembly:\n");
         for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
-            if (state.codeSectionNames[i] != "__text")
+            if (state.codeSectionNames[i] != SECTION_NAME("text"))
                 continue;
             
                 ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();

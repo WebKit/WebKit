@@ -1,3 +1,33 @@
+2014-09-11  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [JavaScriptCore] Fix FTL on platform EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=133571
+
+        Reviewed by Filip Pizlo.
+
+        There are no compact_unwind sections on Linux systems so FTL crashes.
+        We have to parse eh_frame in FTLUnwindInfo instead of compact_unwind
+        and get the information for stack unwinding from there.
+
+        * CMakeLists.txt: Revert r169181.
+        * ftl/FTLCompile.cpp:
+        Change section name literals to use SECTION_NAME macro, because of architecture differencies.
+        (JSC::FTL::mmAllocateCodeSection):
+        (JSC::FTL::mmAllocateDataSection):
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.h:
+        We need the SECTION_NAME macro in FTLCompile and FTLLink, so we define it here.
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLState.h:
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLUnwindInfo.h:
+        * ftl/FTLUnwindInfo.cpp:
+        Lift the eh_frame parsing method from LLVM/libcxxabi project and modify it for our purposes.
+        Parse eh_frame on Linux instead of compact_unwind.
+        (JSC::FTL::UnwindInfo::parse):
+
 2014-09-10  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Modify the type profiler runtime protocol to transfer some computation into the WebInspector

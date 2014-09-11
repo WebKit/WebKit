@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Samsung Electronics
+ * Copyright (C) 2014 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,9 +63,9 @@ static uint8_t* mmAllocateCodeSection(
     
     // LLVM used to put __compact_unwind in a code section. We keep this here defensively,
     // for clients that use older LLVMs.
-    if (!strcmp(sectionName, "__compact_unwind")) {
-        state.compactUnwind = result->start();
-        state.compactUnwindSize = result->sizeInBytes();
+    if (!strcmp(sectionName, SECTION_NAME("compact_unwind"))) {
+        state.unwindDataSection = result->start();
+        state.unwindDataSectionSize = result->sizeInBytes();
     }
     
     state.jitCode->addHandle(result);
@@ -80,21 +82,25 @@ static uint8_t* mmAllocateDataSection(
     UNUSED_PARAM(isReadOnly);
 
     // Allocate the GOT in the code section to make it reachable for all code.
-    if (!strcmp(sectionName, "__got"))
+    if (!strcmp(sectionName, SECTION_NAME("got")))
         return mmAllocateCodeSection(opaqueState, size, alignment, sectionID, sectionName);
 
     State& state = *static_cast<State*>(opaqueState);
 
     RefPtr<DataSection> section = adoptRef(new DataSection(size, alignment));
 
-    if (!strcmp(sectionName, "__llvm_stackmaps"))
+    if (!strcmp(sectionName, SECTION_NAME("llvm_stackmaps")))
         state.stackmapsSection = section;
     else {
         state.jitCode->addDataSection(section);
         state.dataSectionNames.append(sectionName);
-        if (!strcmp(sectionName, "__compact_unwind")) {
-            state.compactUnwind = section->base();
-            state.compactUnwindSize = size;
+#if OS(DARWIN)
+        if (!strcmp(sectionName, SECTION_NAME("compact_unwind"))) {
+#elif OS(LINUX)
+        if (!strcmp(sectionName, SECTION_NAME("eh_frame"))) {
+#endif
+            state.unwindDataSection = section->base();
+            state.unwindDataSectionSize = size;
         }
     }
 
@@ -717,7 +723,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
     }
     
     bool didSeeUnwindInfo = state.jitCode->unwindInfo.parse(
-        state.compactUnwind, state.compactUnwindSize, state.generatedFunction);
+        state.unwindDataSection, state.unwindDataSectionSize,
+        state.generatedFunction);
     if (shouldShowDisassembly()) {
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
         if (didSeeUnwindInfo)
@@ -751,7 +758,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         
         if (shouldShowDisassembly()) {
             for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
-                if (state.codeSectionNames[i] != "__text")
+                if (state.codeSectionNames[i] != SECTION_NAME("text"))
                     continue;
                 
                 ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();

@@ -36,7 +36,6 @@ function installDependenciesWithApt {
         gperf \
         gtk-doc-tools \
         libatk1.0-dev \
-        libc++abi-dev \
         libdbus-1-dev \
         libenchant-dev \
         libespeak-dev \

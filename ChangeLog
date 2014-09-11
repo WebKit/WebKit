@@ -1,3 +1,15 @@
+2014-09-11  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        [JavaScriptCore] Fix FTL on platform EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=133571
+
+        Reviewed by Filip Pizlo.
+
+        Revert r169181.
+
+        * Source/cmake/FindLIBCXXABI.cmake: Removed.
+        * Source/cmake/OptionsEfl.cmake:
+
 2014-09-08  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove FILTERS flag

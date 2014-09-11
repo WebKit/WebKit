@@ -37,6 +37,16 @@
 #include "LLVMAPI.h"
 #include <wtf/RefCountedArray.h>
 
+#if OS(DARWIN)
+#define SECTION_NAME_PREFIX "__"
+#elif OS(LINUX)
+#define SECTION_NAME_PREFIX "."
+#else
+#error "Unsupported platform"
+#endif
+
+#define SECTION_NAME(NAME) (SECTION_NAME_PREFIX NAME)
+
 namespace JSC { namespace FTL {
 
 class JITCode : public JSC::JITCode {

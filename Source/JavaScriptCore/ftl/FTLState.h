@@ -77,8 +77,8 @@ public:
     Vector<JSCall> jsCalls;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
-    void* compactUnwind;
-    size_t compactUnwindSize;
+    void* unwindDataSection;
+    size_t unwindDataSectionSize;
     RefPtr<DataSection> stackmapsSection;
     
     void dumpState(const char* when);
