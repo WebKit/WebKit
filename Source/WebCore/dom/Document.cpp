@@ -1808,8 +1808,8 @@ void Document::updateLayout()
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
-    if (Element* oe = ownerElement())
-        oe->document().updateLayout();
+    if (HTMLFrameOwnerElement* owner = ownerElement())
+        owner->document().updateLayout();
 
     updateStyleIfNeeded();
 
@@ -4388,7 +4388,7 @@ Document& Document::topDocument() const
     }
 
     Document* document = const_cast<Document*>(this);
-    while (Element* element = document->ownerElement())
+    while (HTMLFrameOwnerElement* element = document->ownerElement())
         document = &element->document();
     return *document;
 }

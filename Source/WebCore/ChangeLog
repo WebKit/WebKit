@@ -1,3 +1,33 @@
+2014-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Use tighter typing for Document::ownerElement() return value
+        https://bugs.webkit.org/show_bug.cgi?id=136746
+
+        Reviewed by Ryosuke Niwa.
+
+        Use tighter typing for Document::ownerElement() return value at call
+        sites to increase code readability a bit and allow the compiler to
+        generate slightly more efficient code in some cases. In particular,
+        the more efficient HTMLElement::hasTagName(HTMLQualifiedName) is
+        now called in several cases instead of the one on Node. This bypasses
+        unnecessary isHTMLElement() checks.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeTextForWebArea):
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::topDocument):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedInto):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2014-09-10  Roger Fong  <roger_fong@apple.com>
 
         Check for varying packing restrictions per program instead of per shader.
