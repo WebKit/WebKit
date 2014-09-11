@@ -40,6 +40,7 @@
 #else
 #include "Extensions3DOpenGL.h"
 #endif
+#include "ANGLEWebKitBridge.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -334,6 +335,53 @@ void GraphicsContext3D::reshape(int width, int height)
     ::glFlush();
 }
 
+bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
+{
+    ASSERT(m_shaderSourceMap.contains(vertexShader));
+    ASSERT(m_shaderSourceMap.contains(fragmentShader));
+    const auto& vertexEntry = m_shaderSourceMap.find(vertexShader)->value;
+    const auto& fragmentEntry = m_shaderSourceMap.find(fragmentShader)->value;
+
+    HashMap<String, ShVariableInfo> combinedVaryings;
+    for (const auto& vertexSymbol : vertexEntry.varyingMap) {
+        const String& symbolName = vertexSymbol.key;
+        // The varying map includes variables for each index of an array variable.
+        // We only want a single variable to represent the array.
+        if (symbolName.endsWith("]"))
+            continue;
+
+        // Don't count built in varyings.
+        if (symbolName == "gl_FragCoord" || symbolName == "gl_FrontFacing" || symbolName == "gl_PointCoord")
+            continue;
+
+        const auto& fragmentSymbol = fragmentEntry.varyingMap.find(symbolName);
+        if (fragmentSymbol != fragmentEntry.varyingMap.end()) {
+            ShVariableInfo symbolInfo;
+            symbolInfo.type = static_cast<ShDataType>((fragmentSymbol->value).type);
+            // The arrays are already split up.
+            symbolInfo.size = (fragmentSymbol->value).size;
+            combinedVaryings.add(symbolName, symbolInfo);
+        }
+    }
+
+    size_t numVaryings = combinedVaryings.size();
+    if (!numVaryings)
+        return true;
+
+    ShVariableInfo* variables = new ShVariableInfo[numVaryings];
+    int index = 0;
+    for (const auto& varyingSymbol : combinedVaryings) {
+        variables[index] = varyingSymbol.value;
+        index++;
+    }
+    
+    GC3Dint maxVaryingFloats = 0;
+    ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
+    int result = ShCheckVariablesWithinPackingLimits(maxVaryingFloats / 4, variables, numVaryings);
+
+    delete[] variables;
+    return result;
+}
 
 bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
 {

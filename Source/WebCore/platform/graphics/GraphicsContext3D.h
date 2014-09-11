@@ -809,6 +809,7 @@ public:
 
     void useProgram(Platform3DObject);
     void validateProgram(Platform3DObject);
+    bool checkVaryingsPacking(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
     bool precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
 
     void vertexAttrib1f(GC3Duint index, GC3Dfloat x);

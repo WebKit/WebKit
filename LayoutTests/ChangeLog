@@ -1,3 +1,13 @@
+2014-09-10  Roger Fong  <roger_fong@apple.com>
+
+        Check for varying packing restrictions per program instead of per shader.
+        https://bugs.webkit.org/show_bug.cgi?id=136585.
+        <rdar://problem/16308409>.
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/TestExpectations:
+
 2014-09-11  Beth Dakin  <bdakin@apple.com>
 
         Support rubber-banding in sub-frames

@@ -95,7 +95,7 @@ protected:
     // Translate to object code.
     virtual void translate(TIntermNode* root) = 0;
     // Returns true if, after applying the packing rules in the GLSL 1.017 spec
-    // Appendix A, section 7, the shader does not use too many uniforms or varyings.
+    // Appendix A, section 7, the shader does not use too many uniforms
     bool enforcePackingRestrictions();
     // Insert statements to initialize varyings without static use in the beginning
     // of main(). It is to work around a Mac driver where such varyings in a vertex

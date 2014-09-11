@@ -1,3 +1,23 @@
+2014-09-10  Roger Fong  <roger_fong@apple.com>
+
+        Check for varying packing restrictions per program instead of per shader.
+        https://bugs.webkit.org/show_bug.cgi?id=136585.
+        <rdar://problem/16308409>.
+
+        Reviewed by Dean Jackson.
+
+        Covered by webgl/1.0.2/conformance/ogles/GL/build/build_009_to_016.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::linkProgram): 
+        Check for varying packing restrictions when linking the program.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking): 
+        Checks varyings shared by both vertex and fragment shaders and makes sure
+        they satisfy packing restrictions.
+
 2014-09-11  Beth Dakin  <bdakin@apple.com>
 
         Support rubber-banding in sub-frames
