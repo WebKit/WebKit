@@ -32,7 +32,8 @@
                 testExpected('mediaKeys.keySystem', 'com.webcore.mock');
                 testExpected('typeof mediaKeys.createSession', 'function');
                 testDOMException('mediaKeys.createSession("", new Uint8Array(1))', "DOMException.INVALID_ACCESS_ERR");
-                testDOMException('mediaKeys.createSession("unsupported/type")', "DOMException.NOT_SUPPORTED_ERR");
+                testDOMException('mediaKeys.createSession("unsupported/type")', "DOMException.INVALID_ACCESS_ERR");
+                testDOMException('mediaKeys.createSession("unsupported/type", new Uint8Array(1))', "DOMException.NOT_SUPPORTED_ERR");
                 consoleWrite("");
 
                 consoleWrite("Test WebKitMediaKeySession.");
