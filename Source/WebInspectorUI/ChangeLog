@@ -1,3 +1,49 @@
+2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOM Tree search highlights are not appearing
+        https://bugs.webkit.org/show_bug.cgi?id=136662
+
+        Reviewed by Timothy Hatcher.
+
+        When performing a search within the DOMTreeContentView all
+        search results should immediately highlight. When moving
+        between search results, emphasize the current with a bouncy.
+        Remember to remove the highlights when the search is changed
+        or cleared.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype.performSearch.searchResultsReady):
+        (WebInspector.DOMTreeContentView.prototype.searchCleared):
+        Shor or hide highlights when searches change.
+
+        (WebInspector.DOMTreeContentView.prototype.revealResult):
+        (WebInspector.DOMTreeContentView.prototype._revealSearchResult):
+        Emphasize the highlight when moving to a new current result.
+
+        (WebInspector.DOMTreeContentView.prototype._showSearchHighlights):
+        (WebInspector.DOMTreeContentView.prototype._hideSearchHighlights):
+        On each affected DOMTreeElement show or hide search highlights.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.emphasizeSearchHighlight.animationEnded):
+        (WebInspector.DOMTreeElement.prototype.emphasizeSearchHighlight):
+        Give a brief bouncy-highlight when told to emphasize the search highlight.
+
+        (WebInspector.DOMTreeElement.prototype.updateTitle):
+        Remove unused and unnecessary style class on each row.
+
+        (WebInspector.DOMTreeElement.prototype._highlightSearchResults):
+        Update the stale code to use new function names and accessors.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline .search-highlight):
+        Styles for the search highlight match search highlights in the sidebar.
+
+        * UserInterface/Views/Main.css:
+        (.bouncy-highlight):
+        * UserInterface/Views/TextEditor.css:
+        Move bouncy-highlight to Main.css.
+
 2014-09-10  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Modify the type profiler runtime protocol to transfer some computation into the WebInspector

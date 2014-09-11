@@ -158,3 +158,9 @@ body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection {
     min-width: 100%;
     white-space: pre-wrap;
 }
+
+.dom-tree-outline .search-highlight {
+    color: black;
+    background-color: rgba(235, 215, 38, 0.2);
+    border-bottom: 1px solid rgb(237, 202, 71);
+}

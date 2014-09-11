@@ -58,6 +58,9 @@ WebInspector.DOMTreeElement.EditTagBlacklist = [
     "html", "head", "body"
 ].keySet();
 
+WebInspector.DOMTreeElement.SearchHighlightStyleClassName = "search-highlight";
+WebInspector.DOMTreeElement.BouncyHighlightStyleClassName = "bouncy-highlight";
+
 WebInspector.DOMTreeElement.prototype = {
     isCloseTag: function()
     {
@@ -80,6 +83,39 @@ WebInspector.DOMTreeElement.prototype = {
     {
         delete this._searchHighlightsVisible;
         this._updateSearchHighlight(false);
+    },
+
+    emphasizeSearchHighlight: function()
+    {
+        var highlightElement = this.title.querySelector("." + WebInspector.DOMTreeElement.SearchHighlightStyleClassName);
+        console.assert(highlightElement);
+        if (!highlightElement)
+            return;
+
+        if (this._bouncyHighlightElement)
+            this._bouncyHighlightElement.remove();
+
+        this._bouncyHighlightElement = document.createElement("div");
+        this._bouncyHighlightElement.className = WebInspector.DOMTreeElement.BouncyHighlightStyleClassName;
+        this._bouncyHighlightElement.textContent = highlightElement.textContent;
+
+        // Position and show the bouncy highlight adjusting the coordinates to be inside the TreeOutline's space.
+        var highlightElementRect = highlightElement.getBoundingClientRect();
+        var treeOutlineRect = this.treeOutline.element.getBoundingClientRect();
+        this._bouncyHighlightElement.style.top = (highlightElementRect.top - treeOutlineRect.top) + "px";
+        this._bouncyHighlightElement.style.left = (highlightElementRect.left - treeOutlineRect.left) + "px";
+        this.title.appendChild(this._bouncyHighlightElement);
+
+        function animationEnded()
+        {
+            if (!this._bouncyHighlightElement)
+                return;
+
+            this._bouncyHighlightElement.remove();
+            delete this._bouncyHighlightElement;
+        }
+
+        this._bouncyHighlightElement.addEventListener("webkitAnimationEnd", animationEnded.bind(this));
     },
 
     _updateSearchHighlight: function(show)
@@ -986,10 +1022,8 @@ WebInspector.DOMTreeElement.prototype = {
             if (this._highlightResult)
                 this._updateSearchHighlight(false);
         } else {
-            var highlightElement = document.createElement("span");
-            highlightElement.className = "highlight";
-            highlightElement.appendChild(this._nodeTitleInfo().titleDOM);
-            this.title = highlightElement;
+            this.title = document.createElement("span");
+            this.title.appendChild(this._nodeTitleInfo().titleDOM);
             delete this._highlightResult;
         }
 
@@ -1270,22 +1304,23 @@ WebInspector.DOMTreeElement.prototype = {
 
     _highlightSearchResults: function()
     {
-        if (!this._searchQuery || !this._searchHighlightsVisible)
+        if (!this.title || !this._searchQuery || !this._searchHighlightsVisible)
             return;
+
         if (this._highlightResult) {
             this._updateSearchHighlight(true);
             return;
         }
 
-        var text = this.listItemElement.textContent;
-        var regexObject = createPlainTextSearchRegex(this._searchQuery, "gi");
+        var text = this.title.textContent;
+        var searchRegex = new RegExp(this._searchQuery.escapeForRegExp(), "gi");
 
         var offset = 0;
-        var match = regexObject.exec(text);
+        var match = searchRegex.exec(text);
         var matchRanges = [];
         while (match) {
             matchRanges.push({ offset: match.index, length: match[0].length });
-            match = regexObject.exec(text);
+            match = searchRegex.exec(text);
         }
 
         // Fall back for XPath, etc. matches.
@@ -1293,7 +1328,7 @@ WebInspector.DOMTreeElement.prototype = {
             matchRanges.push({ offset: 0, length: text.length });
 
         this._highlightResult = [];
-        highlightSearchResults(this.listItemElement, matchRanges, this._highlightResult);
+        WebInspector.highlightRangesWithStyleClass(this.title, matchRanges, WebInspector.DOMTreeElement.SearchHighlightStyleClassName, this._highlightResult);
     },
 
     handleEvent: function(event)
