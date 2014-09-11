@@ -1,3 +1,9 @@
+2014-09-11  Jer Noble  <jer.noble@apple.com>
+
+        More unreviewed gardening. Rebaseline some ML expected results.
+
+        * platform/mac-mountainlion/media/video-controls-captions-trackmenu-sorted-expected.txt: Added.
+
 2014-09-11  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Enable CSS Font Loading on Mac
