@@ -892,7 +892,6 @@ webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass ]
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 
 webkit.org/b/134573 media/track/audio-track.html [ Failure Timeout Pass ]
-webkit.org/b/134575 http/tests/media/hls/video-controls-live-stream.html [ Crash Failure Timeout Pass ]
 webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/track-cue-rendering.html [ Failure Timeout Pass ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass ]
@@ -1022,6 +1021,7 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconw
 Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Pass Slow ] 
 
 Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
+Bug(GTK) http/tests/media/hls/video-controls-live-stream.html [ Pass Slow ]
 
 webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slow ]
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
