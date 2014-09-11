@@ -1,5 +1,24 @@
 2014-09-10  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed gardening. Rebaseline failing media/video- tests broken by r156546.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/mac/media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Added.
+        * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt:
+        * platform/mac/media/video-controls-no-scripting-expected.txt: Added.
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-empty-source-expected.png:
+        * platform/mac/media/video-empty-source-expected.txt:
+        * platform/mac/media/video-volume-slider-expected.png:
+        * platform/mac/media/video-volume-slider-expected.txt:
+        * platform/mac/media/volume-bar-empty-when-muted-expected.txt: Added.
+
+2014-09-10  Jer Noble  <jer.noble@apple.com>
+
         More unreviewed gardening.
 
         - Mark tests as WontFix which depend on platform support which will never be added.

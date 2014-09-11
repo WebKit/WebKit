@@ -1378,21 +1378,12 @@ webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outsid
 webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
 
-# REGRESSION(r156546): 18 media tests broken (122021)
+# REGRESSION(r156546): 7 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html
 webkit.org/b/122021 media/track/track-in-band-mode.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu-localized.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu-sorted.html
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html
 webkit.org/b/122021 media/video-controls-fullscreen-volume.html
-webkit.org/b/122021 media/video-controls-no-scripting.html
-webkit.org/b/122021 media/video-controls-rendering.html
 webkit.org/b/122021 media/video-controls-toggling.html
 webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html
-webkit.org/b/122021 media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html
-webkit.org/b/122021 media/video-display-toggle.html
-webkit.org/b/122021 media/video-empty-source.html
-webkit.org/b/122021 media/video-volume-slider.html
-webkit.org/b/122021 media/volume-bar-empty-when-muted.html
 # --- End media tests ---

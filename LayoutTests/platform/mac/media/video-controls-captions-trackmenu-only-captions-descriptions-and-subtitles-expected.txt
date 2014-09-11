@@ -1,0 +1,9 @@
+Test that the track menu only shows captions, descriptions and subtitles.
+
+
+EVENT(canplaythrough)
+There are 3 caption, description or subtitles tracks.
+Because of "Off" and "Auto", there should be 5 items in the menu.
+EXPECTED (trackListItems.length == '5') OK
+END OF TEST
+
