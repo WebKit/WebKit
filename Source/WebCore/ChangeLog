@@ -1,3 +1,67 @@
+2014-09-11  Myles C. Maxfield <mmaxfield@apple.com>  <litherum@gmail.com>
+
+        Initial implementation of SVG to OTF font converter
+        https://bugs.webkit.org/show_bug.cgi?id=136688
+
+        Reviewed by Darin Adler.
+
+        This patch creates a new file and new function which turns an SVG font into an OpenType font.
+        This function is not very full featured, and as such is never called. However, it works with
+        fonts that only support simple horizontal basic multilingual plane codepoints. It has only
+        been tested on OS X, and does not have any automated tests. This patch is only jumping off
+        point, laying the basic groundwork for a more robust font converter.
+
+        The goal of this patch is to eventually allow us to delete the codepath with which we draw
+        text using SVG fonts. Using a native codepath instead will allow for better performance,
+        security, and code clarity. In my initial benchmarks, using this converter instead of the
+        SVG codepath is at least a 100x speed improvement (after running for 4 hours I stepped
+        away from my machine).
+
+        No new tests because the function is not ready to be called (yet!)
+        Initial implementation of SVG to OTF font converter
+        https://bugs.webkit.org/show_bug.cgi?id=136688
+
+        * WebCore.xcodeproj/project.pbxproj: Add new file.
+        * svg/SVGPathBuilder.h: Single function. Takes a SVGFontElement and returns a byte
+        * svg/SVGToOTFFontConversion.cpp: Added.
+        (WebCore::write32): Write a big-endian Int32.
+        (WebCore::write16): Write a big-endian Int16.
+        (WebCore::overwrite32): Overwrite an existing Int32 in a vector (instead of appending)
+        (WebCore::SVGToOTFFontConverter::GlyphData::GlyphData): Internal class to hold state during
+        function calls.
+        (WebCore::roundDownToPowerOfTwo):
+        (WebCore::SVGToOTFFontConverter::appendCMAPTable): See function name.
+        (WebCore::SVGToOTFFontConverter::appendHEADTable): Ditto.
+        (WebCore::clampTo): Used to clamp data types to fit into other data types.
+        (WebCore::SVGToOTFFontConverter::appendHHEATable): See function name.
+        (WebCore::SVGToOTFFontConverter::appendHMTXTable): Ditto.
+        (WebCore::SVGToOTFFontConverter::appendMAXPTable): Ditto.
+        (WebCore::SVGToOTFFontConverter::appendNAMETable): Ditto.
+        (WebCore::SVGToOTFFontConverter::appendOS2Table): Ditto.
+        (WebCore::SVGToOTFFontConverter::appendPOSTTable): Ditto.
+        (WebCore::isValidStringForCFF): The CFF font format only allows strings with particular
+        characters in them.
+        (WebCore::appendCFFValidString): Append a string assuming it's valid to append.
+        (WebCore::SVGToOTFFontConverter::appendCFFTable): See function name.
+        (WebCore::SVGToOTFFontConverter::appendVORGTable): Ditto.
+        (WebCore::writeCFFEncodedNumber): CFF has this wacky encoding scheme for encoding and
+        decoding numbers.
+        (WebCore::CFFBuilder::CFFBuilder): Subclass of SVGPathBuilder, which is used for building
+        CFF CharStrings (which are glyph path representations).
+        (WebCore::CFFBuilder::updateForConstituentPoint): Invoked for every point in a path, does
+        things like updates glyph bounding box information.
+        (WebCore::CFFBuilder::boundingBox): Getter.
+        (WebCore::transcodeGlyphPaths): SVG path data string -> CFF CharString
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Generate internal state ahead of
+        time before generating any tables.
+        (WebCore::isFourByteAligned):
+        (WebCore::calculateChecksum): OTF files have checksums.
+        (WebCore::SVGToOTFFontConverter::appendTable): Invoked for each entry in the table of
+        contents of the OTF font.
+        (WebCore::SVGToOTFFontConverter::convertSVGToOTFFont): Write out the tables.
+        (WebCore::convertSVGToOTFFont): Entry point.
+        * svg/SVGToOTFFontConversion.h: Added.
+
 2014-09-11  Jer Noble  <jer.noble@apple.com>
 
         [EME] REGRESSION(??): test media/encrypted-media/encrypted-media-v2-syntax.html is failing
