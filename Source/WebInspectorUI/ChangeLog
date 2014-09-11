@@ -1,5 +1,19 @@
 2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Hide DOM search result highlights when find banner is not showing
+        https://bugs.webkit.org/show_bug.cgi?id=136749
+
+        Reviewed by Timothy Hatcher.
+
+        Match search highlights in TextEditor by only showing the highlight
+        when the find banner is showing.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.showing-find-banner .dom-tree-outline .search-result):
+        (.dom-tree-outline .search-highlight): Deleted.
+
+2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: DOM Tree search highlights are not appearing
         https://bugs.webkit.org/show_bug.cgi?id=136662
 
