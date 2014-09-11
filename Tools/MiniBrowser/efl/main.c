@@ -1960,6 +1960,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     window->back_button = create_toolbar_button(window->elm_window, "arrow_left");
     evas_object_smart_callback_add(window->back_button, "clicked", on_back_button_clicked, window);
     evas_object_smart_callback_add(window->back_button, "repeated", on_back_button_longpress, window);
+    elm_object_tooltip_text_set(window->back_button, "Click to go back, longpress to see session history");
+    elm_object_tooltip_window_mode_set(window->back_button, EINA_TRUE);
     elm_object_disabled_set(window->back_button, EINA_TRUE);
     evas_object_size_hint_weight_set(window->back_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->back_button, 0.0, 0.5);
@@ -1970,6 +1972,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     window->forward_button = create_toolbar_button(window->elm_window, "arrow_right");
     evas_object_smart_callback_add(window->forward_button, "clicked", on_forward_button_clicked, window);
     evas_object_smart_callback_add(window->forward_button, "repeated", on_forward_button_longpress, window);
+    elm_object_tooltip_text_set(window->forward_button, "Click to go forward, longpress to see session history");
+    elm_object_tooltip_window_mode_set(window->forward_button, EINA_TRUE);
     elm_object_disabled_set(window->forward_button, EINA_TRUE);
     evas_object_size_hint_weight_set(window->forward_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->forward_button, 0.0, 0.5);
@@ -1993,6 +1997,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Create Refresh button */
     Evas_Object *refresh_button = create_toolbar_button(window->elm_window, "refresh");
     evas_object_smart_callback_add(refresh_button, "clicked", on_refresh_button_clicked, window);
+    elm_object_tooltip_text_set(refresh_button, "Reload page");
+    elm_object_tooltip_window_mode_set(refresh_button, EINA_TRUE);
     evas_object_size_hint_weight_set(refresh_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(refresh_button, 1.0, 0.5);
     elm_box_pack_end(horizontal_layout, refresh_button);
@@ -2001,6 +2007,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Create Stop button */
     Evas_Object *stop_button = create_toolbar_button(window->elm_window, "close");
     evas_object_smart_callback_add(stop_button, "clicked", on_stop_button_clicked, window);
+    elm_object_tooltip_text_set(stop_button, "Stop page load");
+    elm_object_tooltip_window_mode_set(stop_button, EINA_TRUE);
     evas_object_size_hint_weight_set(stop_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(stop_button, 1.0, 0.5);
     elm_box_pack_end(horizontal_layout, stop_button);
@@ -2009,6 +2017,8 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Create Home button */
     Evas_Object *home_button = create_toolbar_button(window->elm_window, "home");
     evas_object_smart_callback_add(home_button, "clicked", on_home_button_clicked, window);
+    elm_object_tooltip_text_set(home_button, "Home page");
+    elm_object_tooltip_window_mode_set(home_button, EINA_TRUE);
     evas_object_size_hint_weight_set(home_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(home_button, 1.0, 0.5);
     elm_box_pack_end(horizontal_layout, home_button);

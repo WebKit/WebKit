@@ -1,3 +1,13 @@
+2014-09-10  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][WK2] Minibrowser : Add tooltip for toolbar buttons in Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=136284
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+
 2014-09-10  Rebecca Hauck  <rhauck@adobe.com>
 
         import-w3c-tests doesn't handle relative paths to support files in ref files correctly
