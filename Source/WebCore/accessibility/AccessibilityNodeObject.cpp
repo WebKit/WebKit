@@ -400,10 +400,6 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case ScrollBarRole:
     case ProgressIndicatorRole:
         return false;
-    case LegendRole:
-        if (Element* element = this->element())
-            return !ancestorsOfType<HTMLFieldSetElement>(*element).first();
-        FALLTHROUGH;
     default:
         return true;
     }

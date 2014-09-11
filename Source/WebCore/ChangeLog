@@ -1,3 +1,19 @@
+2014-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Children inside a <legend> are not accessible
+        https://bugs.webkit.org/show_bug.cgi?id=136735
+
+        Reviewed by Mario Sanchez Prada.
+
+        The AX children of a <legend> are being hidden currently, which makes it impossible for
+        VoiceOver to activate control elements inside of a <legend>.
+        The solution is that legend elements SHOULD be allowed to have children.
+
+        Test: accessibility/legend-children-are-visible.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren):
+
 2014-09-11  Brendan Long  <b.long@cablelabs.com>
 
         Fix FIXME's in JSTrackCustom now that AudioTrack and VideoTrack exist.
