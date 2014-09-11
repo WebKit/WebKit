@@ -583,10 +583,8 @@ void InspectorIndexedDBAgent::disable(ErrorString*)
 static Document* assertDocument(ErrorString* errorString, Frame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
-
     if (!document)
         *errorString = "No document for given frame found";
-
     return document;
 }
 
@@ -597,8 +595,8 @@ static IDBFactory* assertIDBFactory(ErrorString* errorString, Document* document
         *errorString = "No IndexedDB factory for given frame found";
         return nullptr;
     }
-    IDBFactory* idbFactory = DOMWindowIndexedDatabase::indexedDB(domWindow);
 
+    IDBFactory* idbFactory = DOMWindowIndexedDatabase::indexedDB(domWindow);
     if (!idbFactory)
         *errorString = "No IndexedDB factory for given frame found";
 
@@ -611,16 +609,18 @@ void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString* errorString, con
     Document* document = assertDocument(errorString, frame);
     if (!document)
         return;
+
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
 
     ExceptionCode ec = 0;
     RefPtr<IDBRequest> idbRequest = idbFactory->getDatabaseNames(document, ec);
-    if (ec) {
+    if (!idbRequest || ec) {
         requestCallback->sendFailure("Could not obtain database names.");
         return;
     }
+
     idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(requestCallback, document->securityOrigin()->toRawString()), false);
 }
 
@@ -630,6 +630,7 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const St
     Document* document = assertDocument(errorString, frame);
     if (!document)
         return;
+
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
@@ -644,6 +645,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String
     Document* document = assertDocument(errorString, frame);
     if (!document)
         return;
+
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
