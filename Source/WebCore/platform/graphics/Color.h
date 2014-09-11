@@ -153,9 +153,9 @@ public:
     static const RGBA32 cyan = 0xFF00FFFF;
 
 #if PLATFORM(IOS)
-    // FIXME: This color shouldn't be iOS-specific. Once we fix up its usage in InlineTextBox::paintCompositionBackground()
-    // we should move it outside the PLATFORM(IOS)-guard. See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
     static const RGBA32 compositionFill = 0x3CAFC0E3;
+#else
+    static const RGBA32 compositionFill = 0xFFE1DD55;
 #endif
 
 private:

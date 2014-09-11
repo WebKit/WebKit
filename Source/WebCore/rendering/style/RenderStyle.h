@@ -1097,7 +1097,6 @@ public:
 #endif
 #if PLATFORM(IOS)
     bool touchCalloutEnabled() const { return rareInheritedData->touchCalloutEnabled; }
-    Color compositionFillColor() const { return rareInheritedData->compositionFillColor; }
 #endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     bool useTouchOverflowScrolling() const { return rareInheritedData->useTouchOverflowScrolling; }
@@ -1625,7 +1624,6 @@ public:
 #endif
 #if PLATFORM(IOS)
     void setTouchCalloutEnabled(bool v) { SET_VAR(rareInheritedData, touchCalloutEnabled, v); }
-    void setCompositionFillColor(const Color &c) { SET_VAR(rareInheritedData, compositionFillColor, c); }
 #endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     void setUseTouchOverflowScrolling(bool v) { SET_VAR(rareInheritedData, useTouchOverflowScrolling, v); }
@@ -1983,7 +1981,6 @@ public:
 #endif
 #if PLATFORM(IOS)
     static bool initialTouchCalloutEnabled() { return true; }
-    static Color initialCompositionFillColor() { return Color::compositionFill; }
 #endif
 #if ENABLE(TOUCH_EVENTS)
     static Color initialTapHighlightColor();

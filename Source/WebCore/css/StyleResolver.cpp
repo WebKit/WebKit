@@ -2548,17 +2548,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setTouchCalloutEnabled(primitiveValue->getStringValue().lower() != "none");
         return;
     }
-
-    // FIXME: CSSPropertyWebkitCompositionFillColor shouldn't be iOS-specific. Once we fix up its usage in
-    // InlineTextBox::paintCompositionBackground() we should move it outside the PLATFORM(IOS)-guard.
-    // See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
-    case CSSPropertyWebkitCompositionFillColor: {
-        HANDLE_INHERIT_AND_INITIAL(compositionFillColor, CompositionFillColor);
-        if (!primitiveValue)
-            break;
-        state.style()->setCompositionFillColor(colorFromPrimitiveValue(primitiveValue));
-        return;
-    }
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor: {

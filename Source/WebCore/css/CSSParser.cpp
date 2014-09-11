@@ -2778,19 +2778,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 
 #if PLATFORM(IOS)
-    // FIXME: CSSPropertyWebkitCompositionFillColor shouldn't be iOS-specific. Once we fix up its usage in
-    // InlineTextBox::paintCompositionBackground() we should move it outside the PLATFORM(IOS)-guard.
-    // See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
-    case CSSPropertyWebkitCompositionFillColor:
-        if ((id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu
-            || (id >= CSSValueWebkitFocusRingColor && id < CSSValueWebkitText && inQuirksMode())) {
-            validPrimitive = true;
-        } else {
-            parsedValue = parseColor();
-            if (parsedValue)
-                m_valueList->next();
-        }
-        break;
     case CSSPropertyWebkitTouchCallout:
         if (id == CSSValueDefault || id == CSSValueNone)
             validPrimitive = true;

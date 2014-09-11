@@ -74,11 +74,6 @@ static const CSSPropertyID editingProperties[] = {
 #if ENABLE(TOUCH_EVENTS)
     CSSPropertyWebkitTapHighlightColor,
 #endif
-#if PLATFORM(IOS)
-    // FIXME: CSSPropertyWebkitCompositionFillColor shouldn't be iOS-specific. Once we fix up its usage in InlineTextBox::paintCompositionBackground()
-    // we should remove the PLATFORM(IOS)-guard. See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
-    CSSPropertyWebkitCompositionFillColor,
-#endif
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
 #if ENABLE(IOS_TEXT_AUTOSIZING)

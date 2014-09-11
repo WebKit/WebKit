@@ -350,10 +350,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRtlOrdering,
 #if PLATFORM(IOS)
     CSSPropertyWebkitTouchCallout,
-
-    // FIXME: This property shouldn't be iOS-specific. Once we fix up its usage in InlineTextBox::paintCompositionBackground()
-    // we should move it outside the PLATFORM(IOS)-guard. See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
-    CSSPropertyWebkitCompositionFillColor,
 #endif
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeOutside,
@@ -2718,12 +2714,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         }
         case CSSPropertyWebkitRtlOrdering:
             return cssValuePool().createIdentifierValue(style->rtlOrdering() ? CSSValueVisual : CSSValueLogical);
-#if PLATFORM(IOS)
-        // FIXME: This property shouldn't be iOS-specific. Once we fix up its usage in InlineTextBox::paintCompositionBackground()
-        // we should remove the PLATFORM(IOS)-guard. See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
-        case CSSPropertyWebkitCompositionFillColor:
-            return currentColorOrValidColor(style.get(), style->compositionFillColor());
-#endif
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(style.get(), style->tapHighlightColor());

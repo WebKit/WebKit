@@ -121,9 +121,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitLines(-1)
     , m_lineGrid(RenderStyle::initialLineGrid())
     , m_tabSize(RenderStyle::initialTabSize())
-#if PLATFORM(IOS)
-    , compositionFillColor(RenderStyle::initialCompositionFillColor())
-#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
 #endif
@@ -205,9 +202,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
     , m_lineGrid(o.m_lineGrid)
     , m_tabSize(o.m_tabSize)
-#if PLATFORM(IOS)
-    , compositionFillColor(o.compositionFillColor)
-#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , textSizeAdjust(o.textSizeAdjust)
 #endif
@@ -298,7 +292,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_lineBoxContain == o.m_lineBoxContain
 #if PLATFORM(IOS)
         && touchCalloutEnabled == o.touchCalloutEnabled
-        && compositionFillColor == o.compositionFillColor
 #endif
         && hyphenationString == o.hyphenationString
         && locale == o.locale

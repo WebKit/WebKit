@@ -774,22 +774,14 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
         return;
 
     GraphicsContextStateSaver stateSaver(*context);
-
-#if !PLATFORM(IOS)
-    // FIXME: Is this color still applicable as of Mavericks? for non-Mac ports? We should
-    // be able to move this color information to RenderStyle.
-    Color c = Color(225, 221, 85);
-#else
-    Color c = style.compositionFillColor();
-#endif
-    
-    updateGraphicsContext(*context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
+    Color compositionColor = Color::compositionFill;
+    updateGraphicsContext(*context, TextPaintStyle(compositionColor, style.colorSpace())); // Don't draw text at all!
 
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
     TextRun textRun = constructTextRun(style, font);
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
+    context->fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor, style.colorSpace());
 }
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)

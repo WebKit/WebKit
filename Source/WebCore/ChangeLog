@@ -1,3 +1,30 @@
+2014-09-10  Enrica Casucci  <enrica@apple.com>
+
+        Remove iOS-only -webkit-composition-fill-color CSS property.
+        https://bugs.webkit.org/show_bug.cgi?id=136728
+        rdar://problem/10439154
+
+        Reviewed by Tim Horton.
+
+        This property is no longer used on iOS.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * editing/EditingStyle.cpp:
+        * platform/graphics/Color.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+
 2014-09-10  Tim Horton  <timothy_horton@apple.com>
 
         Remove ImageSource::ShouldSkipMetadata

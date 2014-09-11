@@ -142,9 +142,6 @@ public:
     AtomicString m_lineGrid;
     unsigned m_tabSize;
 
-#if PLATFORM(IOS)
-    Color compositionFillColor;
-#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;
 #endif
