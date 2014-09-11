@@ -1,3 +1,19 @@
+2014-09-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [WK2] Authentication dialog is displayed for cross-origin XHR
+        https://bugs.webkit.org/show_bug.cgi?id=131349
+
+        Reviewed by Alexey Proskuryakov.
+
+        Precomputing client credential policy in the Web Process before sending the resource load task to the Network Process.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge): Added an ASSERT to ensure that credential policy is never set to DoNotAskClientForCrossOriginCredentials.
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Precomputing client credential policy to handle the case of cross-origin requests.
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest): Added a TODO to check whether redirections need a specific handling.
+
 2014-09-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Merge WebKitAuthenticationWidget into WebKitAuthenticationDialog

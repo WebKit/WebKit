@@ -1,3 +1,12 @@
+2014-09-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [WK2] Authentication dialog is displayed for cross-origin XHR
+        https://bugs.webkit.org/show_bug.cgi?id=131349
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk2/TestExpectations: Unskipped tests.
+
 2014-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Children inside a <legend> are not accessible

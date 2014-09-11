@@ -357,10 +357,9 @@ bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle* handle)
 void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
+    // NetworkResourceLoader does not know whether the request is cross origin, so Web process computes an applicable credential policy for it.
+    ASSERT(m_parameters.clientCredentialPolicy != DoNotAskClientForCrossOriginCredentials);
 
-    // FIXME (http://webkit.org/b/115291): Since we go straight to the UI process for authentication we don't get WebCore's
-    // cross-origin check before asking the client for credentials.
-    // Therefore we are too permissive in the case where the ClientCredentialPolicy is DoNotAskClientForCrossOriginCredentials.
     if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
         return;
