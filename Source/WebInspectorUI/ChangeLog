@@ -1,3 +1,35 @@
+2014-09-10  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Modify the type profiler runtime protocol to transfer some computation into the WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=136500
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch maintains the same UI in the Web Inspector for displaying
+        type information, but now accounts for the new protocol for type profiling.
+        
+        The Inspector now has a TypeSet class that wraps the TypeDescription 
+        protocol object and creates a simple interface for asking protocol objects 
+        about their type.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeTokensForEachNode):
+        * UserInterface/Main.html:
+        * UserInterface/Models/TypeSet.js: Added.
+        (WebInspector.TypeSet):
+        (WebInspector.TypeSet.fromPayload):
+        (WebInspector.TypeSet.prototype.isContainedIn):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation.handler):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation):
+        * UserInterface/Views/TypePropertiesSection.js:
+        (WebInspector.TypePropertiesSection.prototype.onpopulate):
+        (WebInspector.TypePropertyTreeElement.prototype.onpopulate):
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView.prototype.update):
+        (WebInspector.TypeTokenView.prototype._shouldShowPopover):
+        (WebInspector.TypeTokenView.prototype._displayTypeName):
+
 2014-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Eliminate typeof "undefined" checks

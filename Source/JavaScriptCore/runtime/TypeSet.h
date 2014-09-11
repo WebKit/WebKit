@@ -38,6 +38,7 @@ template<typename T> class Array;
 
 namespace Runtime {
 class StructureDescription;
+class TypeSet;
 }
 
 }
@@ -105,9 +106,10 @@ public:
     PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
     String toJSONString() const;
     bool isOverflown() const { return m_isOverflown; }
+    String leastCommonAncestor() const;
+    PassRefPtr<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
 
 private:
-    String leastCommonAncestor() const;
     void dumpSeenTypes();
     bool doesTypeConformTo(uint32_t test) const;
 

@@ -95,14 +95,13 @@ enum TypeProfilerSearchDescriptor {
 class TypeProfiler {
 public:
     void logTypesForTypeLocation(TypeLocation*);
-    void getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::Protocol::Runtime::TypeDescription>&);
     JS_EXPORT_PRIVATE String typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor, unsigned offset, intptr_t sourceID);
     void insertNewLocation(TypeLocation*);
     FunctionHasExecutedCache* functionHasExecutedCache() { return &m_functionHasExecutedCache; }
     TypeLocationCache* typeLocationCache() { return &m_typeLocationCache; }
+    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor);
     
 private:
-    TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor);
     typedef HashMap<intptr_t, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
     SourceIDToLocationBucketMap m_bucketMap;
     FunctionHasExecutedCache m_functionHasExecutedCache;

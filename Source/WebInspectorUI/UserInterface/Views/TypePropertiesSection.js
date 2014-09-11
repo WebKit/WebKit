@@ -39,8 +39,8 @@ WebInspector.TypePropertiesSection.prototype = {
     {
         this.propertiesTreeOutline.removeChildren();
 
-        var primitiveTypeNames = this.types.globalPrimitiveTypeNames || this.types.localPrimitiveTypeNames;
-        var structures = this.types.globalStructures || this.types.localStructures;
+        var primitiveTypeNames = this.types.primitiveTypeNames;
+        var structures = this.types.structures;
         var properties = [];
         for (var struct of structures) {
             properties.push({
@@ -56,6 +56,10 @@ WebInspector.TypePropertiesSection.prototype = {
         }
 
         properties.sort(WebInspector.TypePropertiesSection.PropertyComparator);
+
+        if (this.types.isTruncated)
+            properties.push({name: "\u2026", structure: null});
+
         for (var property of properties)
             this.propertiesTreeOutline.appendChild(new WebInspector.TypePropertyTreeElement(property));
 
@@ -151,6 +155,22 @@ WebInspector.TypePropertyTreeElement.prototype = {
         }
 
         properties.sort(WebInspector.TypePropertiesSection.PropertyComparator);
+
+        for (var property of properties)
+            this.appendChild(new WebInspector.TypePropertyTreeElement(property));
+
+        properties = [];
+        for (var fieldName of this.property.structure.optionalFields) {
+            properties.push({
+                name: fieldName + "?",
+                structure: null
+            });
+        }
+
+        properties.sort(WebInspector.TypePropertiesSection.PropertyComparator);
+
+        if (this.property.structure.isImprecise)
+            properties.push({name: "\u2026", structure: null});
 
         if (this.property.structure.prototypeStructure) {
             properties.push({

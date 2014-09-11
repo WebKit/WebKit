@@ -150,23 +150,23 @@ WebInspector.TypeTokenAnnotator.prototype = {
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
             for (var param of node.params) {
-                if (!param.attachments.__typeToken && param.attachments.types && param.attachments.types.displayTypeName)
+                if (!param.attachments.__typeToken && param.attachments.types && param.attachments.types.isValid)
                     this._insertToken(param.range[0], param, false, WebInspector.TypeTokenView.TitleType.Variable, param.name);
             }
 
             // If a function does not have an explicit return type, then don't show a return type unless we think it's a constructor.
             var functionReturnType = node.attachments.returnTypes;
-            if (node.attachments.__typeToken || !functionReturnType || !functionReturnType.displayTypeName)
+            if (node.attachments.__typeToken || !functionReturnType || !functionReturnType.isValid)
                 break;
 
-            if (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || functionReturnType.displayTypeName !== "Undefined") {
+            if (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !WebInspector.TypeSet.fromPayload(functionReturnType).isContainedIn(WebInspector.TypeSet.TypeBit.Undefined)) {
                 var functionName = node.id ? node.id.name : null;
                 this._insertToken(node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0], node,
                     true, WebInspector.TypeTokenView.TitleType.ReturnStatement, functionName);
             }
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
-            if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.displayTypeName)
+            if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.isValid)
                 this._insertToken(node.id.range[0], node, false, WebInspector.TypeTokenView.TitleType.Variable, node.id.name);
 
             break;

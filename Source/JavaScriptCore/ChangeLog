@@ -1,3 +1,30 @@
+2014-09-10  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Modify the type profiler runtime protocol to transfer some computation into the WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=136500
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch changes the type profiler protocol to the Web Inspector
+        by moving the work of calculating computed properties that effect the UI 
+        into the Web Inspector. This makes the Web Inspector have control over the 
+        strings it displays as UI elements representing type information to the user 
+        instead of JavaScriptCore deciding on a convention for these strings.
+        JavaScriptCore now sends enough information to the Web Inspector so that 
+        it can compute the properties JavaScriptCore used to compute.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/protocol/Runtime.json:
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::getTypesForVariableAtOffsetForInspector): Deleted.
+        * runtime/TypeProfiler.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::inspectorTypeSet):
+        (JSC::StructureShape::leastCommonAncestor):
+        (JSC::StructureShape::inspectorRepresentation):
+        * runtime/TypeSet.h:
+
 2014-09-10  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         Apply ARM64-specific lowering to load/store instructions in offlineasm

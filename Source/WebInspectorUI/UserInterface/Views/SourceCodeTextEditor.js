@@ -1240,7 +1240,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
             if (!allTypes.length)
                 return;
             var types = allTypes[0];
-            if (types.displayTypeName) {
+            if (types.isValid) {
                 var popoverTitle = WebInspector.TypeTokenView.titleForPopover(WebInspector.TypeTokenView.TitleType.Variable, candidate.expression);
                 this.showPopoverForTypes(types, null, popoverTitle);
             }

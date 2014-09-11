@@ -65,23 +65,6 @@ void TypeProfiler::insertNewLocation(TypeLocation* location)
     bucket.append(location);
 }
 
-void TypeProfiler::getTypesForVariableAtOffsetForInspector(TypeProfilerSearchDescriptor descriptor, unsigned divot, intptr_t sourceID, RefPtr<Inspector::Protocol::Runtime::TypeDescription>& description)
-{
-    TypeLocation* location = findLocation(divot, sourceID, descriptor);
-    if (!location)
-        return;
-
-    if (location->m_globalTypeSet && location->m_globalVariableID != TypeProfilerNoGlobalIDExists) {
-        description->setDisplayTypeName(location->m_globalTypeSet->displayName());
-        description->setGlobalPrimitiveTypeNames(location->m_globalTypeSet->allPrimitiveTypeNames());
-        description->setGlobalStructures(location->m_globalTypeSet->allStructureRepresentations());
-    } else
-        description->setDisplayTypeName(location->m_instructionTypeSet->displayName());
-
-    description->setLocalPrimitiveTypeNames(location->m_instructionTypeSet->allPrimitiveTypeNames());
-    description->setLocalStructures(location->m_instructionTypeSet->allStructureRepresentations());
-}
-
 String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptor descriptor, unsigned offset, intptr_t sourceID)
 {
     // This returns a JSON string representing an Object with the following properties:

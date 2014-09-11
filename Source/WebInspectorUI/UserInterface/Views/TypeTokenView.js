@@ -66,7 +66,6 @@ WebInspector.TypeTokenView.TitleType = {
     ReturnStatement: "title-type-return-statement"
 };
 
-// These type strings should be kept in sync with type information in JavaScriptCore/runtime/TypeSet.cpp
 WebInspector.TypeTokenView.ColorClassForType = {
     "String": "type-token-string",
     "Function": "type-token-function",
@@ -89,9 +88,10 @@ WebInspector.TypeTokenView.prototype = {
 
     update: function(types)
     {
-        var title = types.displayTypeName;
-        this.element.textContent = title;
         this._types = types;
+
+        var title = this._displayTypeName();
+        this.element.textContent = title;
         var hashString = title[title.length - 1] === "?" ? title.slice(0, title.length - 1) : title;
 
         if (this._colorClass)
@@ -129,12 +129,65 @@ WebInspector.TypeTokenView.prototype = {
 
     _shouldShowPopover: function()
     {
-        if ((this._types.globalPrimitiveTypeNames && this._types.globalPrimitiveTypeNames.length > 1) || (this._types.localPrimitiveTypeNames && this._types.localPrimitiveTypeNames.length > 1))
+        if (this._types.primitiveTypeNames && this._types.primitiveTypeNames.length > 1)
             return true;
 
-        if ((this._types.globalStructures && this._types.globalStructures.length) || (this._types.localStructures && this._types.localStructures.length))
+        if (this._types.structures && this._types.structures)
             return true;
 
         return false;
+    },
+
+    _displayTypeName: function() 
+    {
+        var typeSet = WebInspector.TypeSet.fromPayload(this._types);
+
+        if (this._types.leastCommonAncestor) {
+            if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object))
+                return this._types.leastCommonAncestor;
+            if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+                return this._types.leastCommonAncestor + "?";
+        }
+
+        // The order of these checks are important. 
+        // For example, if a value is only a function, it is contained in TypeFunction, but it is also contained in (TypeFunction | TypeNull).
+        // Therefore, more specific types must be checked first.
+
+        // The strings returned here should match those in TypeTokenView.ColorClassForType
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Function))
+            return "Function";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Undefined))
+            return "Undefined";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Null))
+            return "Null";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Boolean))
+            return "Boolean";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Integer))
+            return "Integer";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Number | WebInspector.TypeSet.TypeBit.Integer))
+            return "Number";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.String))
+            return "String";
+
+        if (typeSet.isContainedIn(WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "(?)";
+
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "Function?";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Boolean | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "Boolean?";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Integer | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "Integer?";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Number | WebInspector.TypeSet.TypeBit.Integer | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "Number?";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.String | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "String?";
+       
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.TypeBit.String))
+            return "Object";
+        if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.TypeBit.Function | WebInspector.TypeSet.TypeBit.String | WebInspector.TypeSet.NullOrUndefinedTypeBits))
+            return "Object?";
+
+        return "(" + WebInspector.UIString("many") + ")";
     }
 };
