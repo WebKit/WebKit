@@ -1,3 +1,38 @@
+2014-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Some MallocBench refinements
+        https://bugs.webkit.org/show_bug.cgi?id=136750
+
+        Reviewed by Sam Weinig.
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::run): Allow for null entries in the object list so that
+        we can test in modes that exclude large or small allocations.
+
+        * MallocBench/MallocBench/churn.cpp:
+        (benchmark_churn):
+        * MallocBench/MallocBench/flickr.cpp:
+        (benchmark_flickr):
+        * MallocBench/MallocBench/fragment.cpp:
+        (benchmark_fragment_iterate):
+        * MallocBench/MallocBench/list.cpp:
+        (benchmark_list_allocate):
+        * MallocBench/MallocBench/reddit.cpp:
+        (benchmark_reddit): Updated test runtimes to weight them more equally,
+        for the sake of arithmetic mean.
+
+        * MallocBench/MallocBench/stress.cpp:
+        (Object::Object):
+        (allocate):
+        (deallocate):
+        (benchmark_stress): Verify the contents of memory as we go. Also,
+        force scavenging each time through the loop to test the scavenging path.
+
+        * MallocBench/MallocBench/theverge.cpp:
+        (benchmark_theverge):
+        * MallocBench/MallocBench/tree.cpp:
+        (benchmark_tree_churn): Re-weighted, as above.
+
 2014-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         PerformanceTests/SVG/SVG-Text.html has unparsable output

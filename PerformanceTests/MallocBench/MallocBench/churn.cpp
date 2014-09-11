@@ -41,7 +41,7 @@ struct HeapDouble {
 
 void benchmark_churn(bool isParallel)
 {
-    size_t times = 10000000;
+    size_t times = 7000000;
     if (isParallel)
         times /= cpuCount();
 

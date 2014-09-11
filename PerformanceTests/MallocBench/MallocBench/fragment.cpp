@@ -110,7 +110,7 @@ void benchmark_fragment(bool isParallel)
 void benchmark_fragment_iterate(bool isParallel)
 {
     size_t nodeCount = 512 * 1024;
-    size_t times = 32;
+    size_t times = 20;
     if (isParallel)
         nodeCount /= cpuCount();
     size_t replaceCount = nodeCount / 4;

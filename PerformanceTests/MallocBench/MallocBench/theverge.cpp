@@ -44,7 +44,7 @@
 
 void benchmark_theverge(bool isParallel)
 {
-    size_t times = 1;
+    size_t times = 3;
 
     Interpreter interpreter("theverge.ops");
     for (size_t i = 0; i < times; ++i)

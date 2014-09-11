@@ -207,7 +207,7 @@ void benchmark_tree_traverse(bool isParallel)
 
 void benchmark_tree_churn(bool isParallel)
 {
-    size_t times = 160;
+    size_t times = 130;
     size_t depth = 15;
     if (isParallel) {
         times *= 4;

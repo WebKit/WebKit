@@ -44,7 +44,7 @@
 
 void benchmark_reddit(bool isParallel)
 {
-    size_t times = 1;
+    size_t times = 6;
 
     Interpreter interpreter("reddit.ops");
     for (size_t i = 0; i < times; ++i)

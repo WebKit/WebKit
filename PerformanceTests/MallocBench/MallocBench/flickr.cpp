@@ -44,7 +44,7 @@
 
 void benchmark_flickr(bool isParallel)
 {
-    size_t times = 1;
+    size_t times = 3;
 
     Interpreter interpreter("flickr.ops");
     for (size_t i = 0; i < times; ++i)

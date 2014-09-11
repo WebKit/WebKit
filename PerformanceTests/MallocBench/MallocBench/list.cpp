@@ -99,7 +99,7 @@ struct Node {
 void benchmark_list_allocate(bool isParallel)
 {
     Node* head = 0;
-    size_t times = 96;
+    size_t times = 70;
     size_t nodes = 32 * 1024;
     if (isParallel) {
         nodes /= cpuCount();

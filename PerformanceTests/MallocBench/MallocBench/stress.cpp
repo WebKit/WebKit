@@ -39,14 +39,16 @@ static const size_t kB = 1024;
 static const size_t MB = kB * kB;
 
 struct Object {
-    Object(void* pointer, size_t size)
+    Object(void* pointer, size_t size, long uuid)
         : pointer(pointer)
         , size(size)
+        , uuid(uuid)
     {
     }
 
     void* pointer;
     size_t size;
+    long uuid;
 };
 
 class SizeStream {
@@ -100,6 +102,24 @@ private:
     size_t m_count;
 };
 
+Object allocate(size_t size)
+{
+    Object object(mbmalloc(size), size, random());
+    for (size_t i = 0; i < size / sizeof(long); ++i)
+        (static_cast<long*>(object.pointer))[i] = object.uuid;
+    return object;
+}
+
+void deallocate(const Object& object)
+{
+    for (size_t i = 0; i < object.size / sizeof(long); ++i) {
+        if ((static_cast<long*>(object.pointer))[i] != object.uuid)
+            abort();
+    }
+
+    mbfree(object.pointer, object.size);
+}
+
 void benchmark_stress(bool isParallel)
 {
     const size_t heapSize = 100 * MB;
@@ -112,18 +132,17 @@ void benchmark_stress(bool isParallel)
     
     SizeStream sizeStream;
     
-    size_t lastSize = 0;
-    for (size_t remaining = heapSize; remaining; remaining -= std::min(remaining, lastSize)) {
-        lastSize = sizeStream.next();
-        Object object(mbmalloc(lastSize), lastSize);
-        objects.push_back(object);
+    size_t size = 0;
+    for (size_t remaining = heapSize; remaining; remaining -= std::min(remaining, size)) {
+        size = sizeStream.next();
+        objects.push_back(allocate(size));
     }
     
     for (size_t i = 0; i < churnCount; ++i) {
         std::vector<Object> objectsToFree;
-        for (size_t remaining = churnSize; remaining; remaining -= std::min(remaining, lastSize)) {
-            lastSize = sizeStream.next();
-            Object object(mbmalloc(lastSize), lastSize);
+        for (size_t remaining = churnSize; remaining; remaining -= std::min(remaining, size)) {
+            size = sizeStream.next();
+            Object object = allocate(size);
 
             size_t index = random() % objects.size();
             objectsToFree.push_back(objects[index]);
@@ -131,7 +150,9 @@ void benchmark_stress(bool isParallel)
         }
 
         for (auto& object : objectsToFree)
-            mbfree(object.pointer, object.size);
+            deallocate(object);
+        
+        mbscavenge();
     }
     
     for (auto& object : objects)
