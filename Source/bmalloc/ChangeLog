@@ -1,5 +1,31 @@
 2014-09-11  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc should segregate medium-sized objects by line like it does for small-sized objects
+        https://bugs.webkit.org/show_bug.cgi?id=136693
+
+        Reviewed by Gavin Barraclough.
+
+        4% reduction in heap size on the MallocBench *_memory_warning benchmarks.
+
+        No throughput change.
+
+        We keep an array of medium allocators, just like our array of small
+        allocators.
+
+        In future, we can simplify the allocation fast path by merging the small
+        and medium allocator arrays. For now, this is the simplest change that
+        gets the win.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::scavenge):
+        (bmalloc::Allocator::allocateMedium):
+        * bmalloc/Allocator.h:
+        * bmalloc/Sizes.h:
+        (bmalloc::Sizes::mediumSizeClassFor):
+
+2014-09-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Renamed log => retire for clarity.

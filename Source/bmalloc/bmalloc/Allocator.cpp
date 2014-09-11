@@ -38,7 +38,7 @@ namespace bmalloc {
 Allocator::Allocator(Deallocator& deallocator)
     : m_deallocator(deallocator)
     , m_smallAllocators()
-    , m_mediumAllocator()
+    , m_mediumAllocators()
     , m_smallAllocatorLog()
     , m_mediumAllocatorLog()
 {
@@ -53,7 +53,7 @@ Allocator::~Allocator()
 {
     scavenge();
 }
-    
+
 void Allocator::scavenge()
 {
     for (auto& allocator : m_smallAllocators) {
@@ -62,8 +62,10 @@ void Allocator::scavenge()
     }
     processSmallAllocatorLog();
 
-    retire(m_mediumAllocator);
-    m_mediumAllocator.clear();
+    for (auto& allocator : m_mediumAllocators) {
+        retire(allocator);
+        allocator.clear();
+    }
     processMediumAllocatorLog();
 }
 
@@ -129,7 +131,7 @@ void* Allocator::allocateXLarge(size_t size)
 
 void* Allocator::allocateMedium(size_t size)
 {
-    MediumAllocator& allocator = m_mediumAllocator;
+    MediumAllocator& allocator = m_mediumAllocators[mediumSizeClassFor(size)];
     size = roundUpToMultipleOf<alignment>(size);
 
     void* object;

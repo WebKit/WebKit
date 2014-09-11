@@ -65,7 +65,7 @@ private:
     Deallocator& m_deallocator;
 
     std::array<SmallAllocator, smallMax / alignment> m_smallAllocators;
-    MediumAllocator m_mediumAllocator;
+    std::array<MediumAllocator, mediumMax / alignment> m_mediumAllocators;
 
     FixedVector<std::pair<SmallLine*, unsigned char>, smallAllocatorLogCapacity> m_smallAllocatorLog;
     FixedVector<std::pair<MediumLine*, unsigned char>, mediumAllocatorLogCapacity> m_mediumAllocatorLog;

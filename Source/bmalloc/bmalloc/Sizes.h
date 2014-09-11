@@ -71,7 +71,7 @@ namespace Sizes {
     static const size_t largeAlignmentShift = 6;
     static_assert(1 << largeAlignmentShift == largeAlignment, "largeAlignmentShift be log2(largeAlignment).");
     static const size_t largeMax = largeChunkSize * 99 / 100; // Plenty of room for metadata.
-    static const size_t largeMin = 1024;
+    static const size_t largeMin = mediumMax;
 
     static const size_t segregatedFreeListSearchDepth = 16;
 
@@ -96,6 +96,12 @@ namespace Sizes {
     {
         static const size_t smallSizeClassMask = (smallMax / alignment) - 1;
         return mask((size - 1ul) / alignment, smallSizeClassMask);
+    }
+
+    inline size_t mediumSizeClassFor(size_t size)
+    {
+        static const size_t mediumSizeClassMask = (mediumMax / alignment) - 1;
+        return mask((size - 1ul) / alignment, mediumSizeClassMask);
     }
 };
 
