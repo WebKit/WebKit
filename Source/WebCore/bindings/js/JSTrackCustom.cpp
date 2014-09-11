@@ -45,9 +45,10 @@ TrackBase* toTrack(JSValue value)
     JSObject* object = asObject(value);
     if (object->inherits(JSTextTrack::info()))
         return &jsCast<JSTextTrack*>(object)->impl();
-    
-    // FIXME: Fill in additional tests and casts here for VideoTrack and AudioTrack when 
-    // they have been added to WebCore.
+    if (object->inherits(JSAudioTrack::info()))
+        return &jsCast<JSAudioTrack*>(object)->impl();
+    if (object->inherits(JSVideoTrack::info()))
+        return &jsCast<JSVideoTrack*>(object)->impl();
 
     return 0;
 }

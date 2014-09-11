@@ -1,3 +1,13 @@
+2014-09-11  Brendan Long  <b.long@cablelabs.com>
+
+        Fix FIXME's in JSTrackCustom now that AudioTrack and VideoTrack exist.
+        https://bugs.webkit.org/show_bug.cgi?id=136552
+
+        Reviewed by Eric Carlson.
+
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toTrack): Add casts for AudioTrack and VideoTrack.
+
 2014-09-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Merge WebKitAuthenticationWidget into WebKitAuthenticationDialog
