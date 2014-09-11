@@ -1,3 +1,16 @@
+2014-09-10  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [SVG] Cleanup iterator code in SMILTimeContainer using range-based loop
+        https://bugs.webkit.org/show_bug.cgi?id=136720
+
+        Reviewed by Filip Pizlo.
+
+        No new tests, no change on behavior.
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::setElapsed):
+        (WebCore::SMILTimeContainer::updateAnimations):
+
 2014-09-10  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
