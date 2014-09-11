@@ -782,9 +782,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (SEL)_actionForLongPress
 {
-    if (!_positionInformation.touchCalloutEnabled)
-        return nil;
-
     if (_positionInformation.clickableElementName == "IMG")
         return @selector(_showImageSheet);
     else if (_positionInformation.clickableElementName == "A") {

@@ -1898,10 +1898,8 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             info.title = element->fastGetAttribute(HTMLNames::titleAttr).string();
             if (linkElement && info.title.isEmpty())
                 info.title = element->innerText();
-            if (element->renderer()) {
+            if (element->renderer())
                 info.bounds = element->renderer()->absoluteBoundingBoxRect(true);
-                info.touchCalloutEnabled = element->renderer()->style().touchCalloutEnabled();
-            }
         }
     }
 
