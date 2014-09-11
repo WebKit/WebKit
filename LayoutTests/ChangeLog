@@ -1,3 +1,9 @@
+2014-09-10  Jer Noble  <jer.noble@apple.com>
+
+        More unreviewed gardening. Rebaseline media/encrypted-media/encrypted-media-can-play-type.html
+
+        * platform/mac/media/encrypted-media/encrypted-media-can-play-type-expected.txt:
+
 2014-09-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [WK2] Authentication dialog is displayed for cross-origin XHR

@@ -1,3 +1,4 @@
+
 Test Encrypted Media extension of HTMLMediaElement canPlayType() method.
 
 The test is designed to pass with any implementation regardless of supported media types and relies on the expected log to detect the expected results for some types. To get sufficient coverage, it is important that an implementation support clearkey encryption of at least one of the types below.
