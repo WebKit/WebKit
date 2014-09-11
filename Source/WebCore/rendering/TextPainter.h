@@ -41,23 +41,6 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
         : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
 }
 
-struct SavedDrawingStateForMask {
-    SavedDrawingStateForMask(GraphicsContext* context, TextPaintStyle* textPaintStyle, TextPaintStyle* selectionPaintStyle,
-    const ShadowData* textShadow, const ShadowData* selectionShadow)
-        : m_context(context)
-        , m_textPaintStyle(textPaintStyle)
-        , m_selectionPaintStyle(selectionPaintStyle)
-        , m_textShadow(textShadow)
-        , m_selectionShadow(selectionShadow)
-    {
-    }
-    GraphicsContext* m_context;
-    TextPaintStyle* m_textPaintStyle;
-    TextPaintStyle* m_selectionPaintStyle;
-    const ShadowData* m_textShadow;
-    const ShadowData* m_selectionShadow;
-};
-
 class TextPainter {
 public:
     TextPainter(GraphicsContext&, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const Font&,
@@ -70,6 +53,11 @@ public:
     DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents);
 
 private:
+    GraphicsContext& m_context;
+    TextPaintStyle& m_textPaintStyle;
+    TextPaintStyle& m_selectionPaintStyle;
+    const ShadowData* m_textShadow;
+    const ShadowData* m_selectionShadow;
     bool m_paintSelectedTextOnly;
     bool m_paintSelectedTextSeparately;
     const Font& m_font;
@@ -83,7 +71,6 @@ private:
     FloatPoint m_textOrigin;
     int m_emphasisMarkOffset;
     bool m_textBoxIsHorizontal;
-    SavedDrawingStateForMask m_savedDrawingStateForMask;
 };
 
 } // namespace WebCore

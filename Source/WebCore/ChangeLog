@@ -1,3 +1,27 @@
+2014-09-09  Myles C. Maxfield <mmaxfield@apple.com>  <litherum@gmail.com>
+
+        Delete class SavedDrawingStateForMask
+        https://bugs.webkit.org/show_bug.cgi?id=136498
+
+        Reviewed by Darin Adler.
+
+        This class is left over from when text-decoration-skip: ink used
+        GraphicsContext masking.
+
+        No new tests because there is no behavior change.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::applyShadowToGraphicsContext):
+        * rendering/InlineTextBox.h:
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::TextPainter):
+        (WebCore::paintTextWithShadows):
+        (WebCore::TextPainter::paintText):
+        * rendering/TextPainter.h:
+        (WebCore::SavedDrawingStateForMask::SavedDrawingStateForMask): Deleted.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintTextWithShadows):
+
 2014-09-10  Tim Horton  <timothy_horton@apple.com>
 
         Call setCollectsTimingData only once, and before making any {CF,NS}URLConnections

@@ -597,7 +597,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyl
         FloatSize extraOffset;
         bool didSaveContext = false;
         if (shadow)
-            extraOffset = applyShadowToGraphicsContext(context, shadow, shadowRect, false /* stroked */, true /* opaque */, true /* horizontal */, didSaveContext);
+            extraOffset = applyShadowToGraphicsContext(*context, shadow, shadowRect, false /* stroked */, true /* opaque */, true /* horizontal */, didSaveContext);
 
         context->save();
         context->scale(FloatSize(1 / scalingFactor, 1 / scalingFactor));
