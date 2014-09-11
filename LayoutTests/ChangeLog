@@ -1,3 +1,13 @@
+2014-09-11  Roger Fong  <roger_fong@apple.com>
+
+        Temporary change to determine why some snapshotting tests are failing only on bots.
+
+        Unskip skipped snapshotting tests and increase the time before we check the plugin state to 10s.
+        * platform/mac-wk2/TestExpectations:
+        * plugins/snapshotting/set-plugin-size-to-tiny.html:
+        * plugins/snapshotting/simple.html:
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html:
+
 2014-09-10  Roger Fong  <roger_fong@apple.com>
 
         Check for varying packing restrictions per program instead of per shader.
