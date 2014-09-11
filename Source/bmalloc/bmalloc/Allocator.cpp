@@ -57,17 +57,17 @@ Allocator::~Allocator()
 void Allocator::scavenge()
 {
     for (auto& allocator : m_smallAllocators) {
-        log(allocator);
+        retire(allocator);
         allocator.clear();
     }
     processSmallAllocatorLog();
 
-    log(m_mediumAllocator);
+    retire(m_mediumAllocator);
     m_mediumAllocator.clear();
     processMediumAllocatorLog();
 }
 
-void Allocator::log(SmallAllocator& allocator)
+void Allocator::retire(SmallAllocator& allocator)
 {
     if (m_smallAllocatorLog.size() == m_smallAllocatorLog.capacity())
         processSmallAllocatorLog();
@@ -90,7 +90,7 @@ void Allocator::processSmallAllocatorLog()
     m_smallAllocatorLog.clear();
 }
 
-void Allocator::log(MediumAllocator& allocator)
+void Allocator::retire(MediumAllocator& allocator)
 {
     if (m_mediumAllocatorLog.size() == m_mediumAllocatorLog.capacity())
         processMediumAllocatorLog();
@@ -136,7 +136,7 @@ void* Allocator::allocateMedium(size_t size)
     if (allocator.allocate(size, object))
         return object;
 
-    log(allocator);
+    retire(allocator);
     allocator.refill(m_deallocator.allocateMediumLine());
     return allocator.allocate(size);
 }
@@ -150,7 +150,7 @@ IF_DEBUG(
     if (size <= smallMax) {
         size_t smallSizeClass = smallSizeClassFor(size);
         SmallAllocator& allocator = m_smallAllocators[smallSizeClass];
-        log(allocator);
+        retire(allocator);
         allocator.refill(m_deallocator.allocateSmallLine(smallSizeClass));
         return allocator.allocate();
     }

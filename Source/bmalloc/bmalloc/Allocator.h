@@ -56,8 +56,8 @@ private:
     void* allocateLarge(size_t);
     void* allocateXLarge(size_t);
     
-    void log(SmallAllocator&);
-    void log(MediumAllocator&);
+    void retire(SmallAllocator&);
+    void retire(MediumAllocator&);
 
     void processSmallAllocatorLog();
     void processMediumAllocatorLog();
