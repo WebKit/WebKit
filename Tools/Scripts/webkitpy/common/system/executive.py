@@ -187,7 +187,7 @@ class Executive(object):
             # We only use taskkill.exe on windows (not cygwin) because subprocess.pid
             # is a CYGWIN pid and taskkill.exe expects a windows pid.
             # Thankfully os.kill on CYGWIN handles either pid type.
-            command = ["taskkill.exe", "/f", "/pid", pid]
+            command = ["taskkill.exe", "/f", "/t", "/pid", pid]
             # taskkill will exit 128 if the process is not found.  We should log.
             self.run_command(command, error_handler=self.ignore_error)
             return

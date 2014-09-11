@@ -1,3 +1,16 @@
+2014-09-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Blink merge: Speculative fix for windows run-webkit-tests hangs
+        https://bugs.webkit.org/show_bug.cgi?id=136727
+
+        Reviewed by Csaba Osztrogonác.
+
+        Merged from Blink (patch by Dirk Pranke):
+        <https://chromium.googlesource.com/chromium/blink/+/0cdd98d44a20c3951562ccf8b08b1fefba8dac67%5E%21/#F0>
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_process):
+
 2014-09-11  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Added myself as a committer.
