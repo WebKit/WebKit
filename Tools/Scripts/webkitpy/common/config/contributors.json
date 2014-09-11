@@ -842,6 +842,16 @@
             "eunmi"
          ]
       },
+      "Eva Balazsfalvi" : {
+         "emails" : [
+            "evab.u-szeged@partner.samsung.com",
+            "evab@inf.u-szeged.hu",
+            "balazsfalvi.eva@stud.u-szeged.hu"
+         ],
+         "nicks" : [
+            "ebalazsfalvi"
+         ]
+      },
       "Evan Martin" : {
          "emails" : [
             "evan@chromium.org"
@@ -2961,15 +2971,6 @@
          ],
          "nicks" : [
             "epenner"
-         ]
-      },
-      "Eva Balazsfalvi" : {
-         "emails" : [
-            "evab.u-szeged@partner.samsung.com",
-            "balazsfalvi.eva@stud.u-szeged.hu"
-         ],
-         "nicks" : [
-            "ebalazsfalvi"
          ]
       },
       "Frédéric Wang" : {
