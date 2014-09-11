@@ -1,3 +1,15 @@
+2014-09-10  Tanay C  <tanay.c@samsung.com>
+
+        [EFL][WK2] Minibrowser : Shift+Scroll navigate to back or forward url's
+        https://bugs.webkit.org/show_bug.cgi?id=136698
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Add functionality to support shift + mouse scroll navigation
+        (on_mouse_wheel): Added.
+        (window_free):
+        (window_create):
+
 2014-09-10  Rohit Kumar  <kumar.rohit@samsung.com>
 
         [EFL][WK2] Minibrowser : Add tooltip for toolbar buttons in Minibrowser

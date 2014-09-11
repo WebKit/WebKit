@@ -288,6 +288,27 @@ on_mouse_out(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
 }
 
 static void
+on_mouse_wheel(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+    const Evas_Modifier *mod = evas_key_modifier_get(e);
+    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel *)event_info;
+    Eina_Bool shiftPressed = evas_key_modifier_is_set(mod, "Shift");
+
+    if (!shiftPressed)
+        return;
+
+    /* navigate based on mouse wheel scroll direction when shift key is pressed */
+    if (ev->z == -1 && ewk_view_forward_possible(window->ewk_view)) {
+        ewk_view_forward(window->ewk_view);
+        elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(window->ewk_view));
+    } else if (ev->z == 1 && ewk_view_back_possible(window->ewk_view)) {
+        ewk_view_back(window->ewk_view);
+        elm_object_disabled_set(window->back_button, !ewk_view_back_possible(window->ewk_view));       
+    }
+}
+
+static void
 on_window_resize(void *user_data, Evas *e, Evas_Object *elm_window, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -344,6 +365,7 @@ static void window_free(Browser_Window *window)
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_IN, on_mouse_in);
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_OUT, on_mouse_out);
     evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move);
+    evas_object_event_callback_del(window->ewk_view, EVAS_CALLBACK_MOUSE_WHEEL, on_mouse_wheel);
 
     evas_object_event_callback_del(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize);
 
@@ -2184,6 +2206,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_IN, on_mouse_in, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_OUT, on_mouse_out, window);
     evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_MOVE, on_mouse_move, window);
+    evas_object_event_callback_add(window->ewk_view, EVAS_CALLBACK_MOUSE_WHEEL, on_mouse_wheel, window);
     evas_object_event_callback_add(window->elm_window, EVAS_CALLBACK_RESIZE, on_window_resize, window);
     
     elm_button_autorepeat_set(window->back_button, EINA_TRUE);
