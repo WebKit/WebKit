@@ -207,21 +207,9 @@ class TestImporter(object):
                     ref_file = os.path.splitext(test_basename)[0] + '-expected'
                     ref_file += os.path.splitext(test_basename)[1]
 
-                    copy_list.append({'src': test_info['reference'], 'dest': ref_file})
+                    copy_list.append({'src': test_info['reference'], 'dest': ref_file, 'reference_support_info': test_info['reference_support_info']})
                     copy_list.append({'src': test_info['test'], 'dest': filename})
 
-                    # Update any support files that need to move as well to remain relative to the -expected file.
-                    if 'refsupport' in test_info.keys():
-                        for support_file in test_info['refsupport']:
-                            source_file = os.path.join(os.path.dirname(test_info['reference']), support_file)
-                            source_file = os.path.normpath(source_file)
-
-                            # Keep the dest as it was
-                            to_copy = {'src': source_file, 'dest': support_file}
-
-                            # Only add it once
-                            if not(to_copy in copy_list):
-                                copy_list.append(to_copy)
                 elif 'jstest' in test_info.keys():
                     jstests += 1
                     total_tests += 1
@@ -229,11 +217,6 @@ class TestImporter(object):
                 else:
                     total_tests += 1
                     copy_list.append({'src': fullpath, 'dest': filename})
-
-            if not total_tests:
-                # We can skip the support directory if no tests were found.
-                if 'support' in dirs:
-                    dirs.remove('support')
 
             if copy_list:
                 # Only add this directory to the list if there's something to import
@@ -282,6 +265,10 @@ class TestImporter(object):
                     continue
 
                 new_filepath = os.path.join(new_path, file_to_copy['dest'])
+                if 'reference_support_info' in file_to_copy.keys() and file_to_copy['reference_support_info'] != {}:
+                    reference_support_info = file_to_copy['reference_support_info']
+                else:
+                    reference_support_info = None
 
                 if not(os.path.exists(os.path.dirname(new_filepath))):
                     os.makedirs(os.path.dirname(new_filepath))
@@ -300,10 +287,11 @@ class TestImporter(object):
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if 'html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]):
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath)
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info)
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)
+                        converted_file = None
 
                     if not converted_file:
                         shutil.copyfile(orig_filepath, new_filepath)  # The file was unmodified.

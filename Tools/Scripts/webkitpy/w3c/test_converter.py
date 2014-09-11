@@ -37,12 +37,12 @@ from HTMLParser import HTMLParser
 _log = logging.getLogger(__name__)
 
 
-def convert_for_webkit(new_path, filename, host=Host()):
+def convert_for_webkit(new_path, filename, reference_support_info, host=Host()):
     """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
 
     Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
     contents = host.filesystem.read_binary_file(filename)
-    converter = _W3CTestConverter(new_path, filename, host)
+    converter = _W3CTestConverter(new_path, filename, reference_support_info, host)
     if filename.endswith('.css'):
         return converter.add_webkit_prefix_to_unprefixed_properties(contents)
     else:
@@ -52,7 +52,7 @@ def convert_for_webkit(new_path, filename, host=Host()):
 
 
 class _W3CTestConverter(HTMLParser):
-    def __init__(self, new_path, filename, host=Host()):
+    def __init__(self, new_path, filename, reference_support_info, host=Host()):
         HTMLParser.__init__(self)
 
         self._host = host
@@ -64,6 +64,7 @@ class _W3CTestConverter(HTMLParser):
         self.in_style_tag = False
         self.style_data = []
         self.filename = filename
+        self.reference_support_info = reference_support_info
 
         resources_path = self.path_from_webkit_root('LayoutTests', 'resources')
         resources_relpath = self._filesystem.relpath(resources_path, new_path)
@@ -126,11 +127,27 @@ class _W3CTestConverter(HTMLParser):
         # FIXME: Handle the JS versions of these properties and GetComputedStyle, too.
         return (converted_properties, ''.join(text_chunks))
 
+    def convert_reference_relpaths(self, text):
+        """ Searches |text| for instances of files in reference_support_info and updates the relative path to be correct for the new ref file location"""
+        converted = text
+        for path in self.reference_support_info['files']:
+            if text.find(path) != -1:
+                # FIXME: This doesn't handle an edge case where simply removing the relative path doesn't work.
+                # See http://webkit.org/b/135677 for details.
+                new_path = re.sub(self.reference_support_info['reference_relpath'], '', path, 1)
+                converted = re.sub(path, new_path, text)
+
+        return converted
+
     def convert_style_data(self, data):
         converted = self.add_webkit_prefix_to_unprefixed_properties(data)
         if converted[0]:
             self.converted_properties.extend(list(converted[0]))
-        return converted[1]
+
+        if self.reference_support_info is None or self.reference_support_info == {}:
+            return converted[1]
+
+        return self.convert_reference_relpaths(converted[1])
 
     def convert_attributes_if_needed(self, tag, attrs):
         converted = self.get_starttag_text()
@@ -147,6 +164,12 @@ class _W3CTestConverter(HTMLParser):
             if attr[0] == 'style':
                 new_style = self.convert_style_data(attr[1])
                 converted = re.sub(attr[1], new_style, converted)
+
+        src_tags = ('script', 'img', 'frame', 'iframe', 'input', 'layer', 'textarea', 'video', 'audio')
+        if tag in src_tags and self.reference_support_info is not None and  self.reference_support_info != {}:
+            for attr_name, attr_value in attrs:
+                if attr_name == 'src':
+                    converted = self.convert_reference_relpaths(attr_value)
 
         self.converted_data.append(converted)
 

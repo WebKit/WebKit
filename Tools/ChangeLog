@@ -1,3 +1,30 @@
+2014-09-10  Rebecca Hauck  <rhauck@adobe.com>
+
+        import-w3c-tests doesn't handle relative paths to support files in ref files correctly
+        https://bugs.webkit.org/show_bug.cgi?id=135929
+
+        Reviewed by Bem Jones-Bey.
+
+        The recent refactor of the W3C test repo falsified a bunch of assmumptions that
+        were made when this script was originally written with respect to relative paths
+        in ref files. This patch updates import-w3c-tests to update paths in ref files if
+        they move relative to the test file.
+
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (convert_for_webkit):
+        (_W3CTestConverter.__init__):
+        (_W3CTestConverter.convert_reference_relpaths):
+        (_W3CTestConverter.convert_style_data):
+        (_W3CTestConverter.convert_attributes_if_needed):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.load_file):
+        (TestParser.analyze_test):
+        (TestParser.support_files):
+
 2014-09-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] allow overwriting destination of download
