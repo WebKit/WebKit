@@ -99,11 +99,11 @@ inline bool needsVarInjectionChecks(ResolveType type)
 }
 
 struct ResolveOp {
-    ResolveOp(ResolveType type, size_t depth, Structure* structure, JSActivation* activation, VariableWatchpointSet* watchpointSet, uintptr_t operand)
+    ResolveOp(ResolveType type, size_t depth, Structure* structure, JSLexicalEnvironment* lexicalEnvironment, VariableWatchpointSet* watchpointSet, uintptr_t operand)
         : type(type)
         , depth(depth)
         , structure(structure)
-        , activation(activation)
+        , lexicalEnvironment(lexicalEnvironment)
         , watchpointSet(watchpointSet)
         , operand(operand)
     {
@@ -112,7 +112,7 @@ struct ResolveOp {
     ResolveType type;
     size_t depth;
     Structure* structure;
-    JSActivation* activation;
+    JSLexicalEnvironment* lexicalEnvironment;
     VariableWatchpointSet* watchpointSet;
     uintptr_t operand;
 };

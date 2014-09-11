@@ -29,8 +29,8 @@
 #include "config.h"
 #include "JSSymbolTableObject.h"
 
-#include "JSActivation.h"
 #include "JSGlobalObject.h"
+#include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"

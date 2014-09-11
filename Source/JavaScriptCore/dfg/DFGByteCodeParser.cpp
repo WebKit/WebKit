@@ -37,7 +37,7 @@
 #include "DFGJITCode.h"
 #include "GetByIdStatus.h"
 #include "Heap.h"
-#include "JSActivation.h"
+#include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
@@ -3193,11 +3193,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 break;
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                JSActivation* activation = currentInstruction[5].u.activation.get();
-                if (activation
-                    && activation->symbolTable()->m_functionEnteredOnce.isStillValid()) {
-                    addToGraph(FunctionReentryWatchpoint, OpInfo(activation->symbolTable()));
-                    set(VirtualRegister(dst), weakJSConstant(activation));
+                JSLexicalEnvironment* lexicalEnvironment = currentInstruction[5].u.lexicalEnvironment.get();
+                if (lexicalEnvironment
+                    && lexicalEnvironment->symbolTable()->m_functionEnteredOnce.isStillValid()) {
+                    addToGraph(FunctionReentryWatchpoint, OpInfo(lexicalEnvironment->symbolTable()));
+                    set(VirtualRegister(dst), weakJSConstant(lexicalEnvironment));
                     break;
                 }
                 set(VirtualRegister(dst), getScope(depth));
@@ -3269,8 +3269,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(VirtualRegister(scope));
-                if (JSActivation* activation = m_graph.tryGetActivation(scopeNode)) {
-                    SymbolTable* symbolTable = activation->symbolTable();
+                if (JSLexicalEnvironment* lexicalEnvironment = m_graph.tryGetActivation(scopeNode)) {
+                    SymbolTable* symbolTable = lexicalEnvironment->symbolTable();
                     ConcurrentJITLocker locker(symbolTable->m_lock);
                     SymbolTable::Map::iterator iter = symbolTable->find(locker, uid);
                     ASSERT(iter != symbolTable->end(locker));
@@ -3389,9 +3389,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_init_lazy_reg);
         }
             
-        case op_create_activation: {
+        case op_create_lexical_environment: {
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(CreateActivation, get(VirtualRegister(currentInstruction[1].u.operand))));
-            NEXT_OPCODE(op_create_activation);
+            NEXT_OPCODE(op_create_lexical_environment);
         }
             
         case op_create_arguments: {
@@ -3402,9 +3402,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_arguments);
         }
             
-        case op_tear_off_activation: {
+        case op_tear_off_lexical_environment: {
             addToGraph(TearOffActivation, get(VirtualRegister(currentInstruction[1].u.operand)));
-            NEXT_OPCODE(op_tear_off_activation);
+            NEXT_OPCODE(op_tear_off_lexical_environment);
         }
 
         case op_tear_off_arguments: {

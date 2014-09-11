@@ -621,7 +621,7 @@
     <ClCompile Include="..\runtime\InternalFunction.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSActivation.cpp">
+    <ClCompile Include="..\runtime\JSLexicalEnvironment.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp">
@@ -2576,7 +2576,7 @@
     <ClInclude Include="..\runtime\Intrinsic.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSActivation.h">
+    <ClInclude Include="..\runtime\JSLexicalEnvironment.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSAPIValueWrapper.h">

@@ -35,7 +35,7 @@ namespace JSC {
 class ExecutableBase;
 class FunctionExecutable;
 class FunctionPrototype;
-class JSActivation;
+class JSLexicalEnvironment;
 class JSGlobalObject;
 class LLIntOffsetsExtractor;
 class NativeExecutable;

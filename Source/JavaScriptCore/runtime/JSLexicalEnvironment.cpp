@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
-#include "JSActivation.h"
+#include "JSLexicalEnvironment.h"
 
 #include "Arguments.h"
 #include "Interpreter.h"
@@ -38,11 +38,11 @@ using namespace std;
 
 namespace JSC {
 
-const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, CREATE_METHOD_TABLE(JSActivation) };
+const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, 0, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
-void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSLexicalEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSActivation* thisObject = jsCast<JSActivation*>(cell);
+    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
@@ -54,7 +54,7 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->storage()[i]);
 }
 
-inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
+inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
 {
     SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
     if (entry.isNull())
@@ -68,7 +68,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot
     return true;
 }
 
-inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertyDescriptor& descriptor)
+inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
     if (entry.isNull())
@@ -82,7 +82,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertyDesc
     return true;
 }
 
-inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyName, JSValue value, bool shouldThrow)
+inline bool JSLexicalEnvironment::symbolTablePut(ExecState* exec, PropertyName propertyName, JSValue value, bool shouldThrow)
 {
     VM& vm = exec->vm();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
@@ -110,9 +110,9 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
     return true;
 }
 
-void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSActivation* thisObject = jsCast<JSActivation*>(object);
+    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
 
     CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(thisObject->m_registers));
     if (shouldIncludeDontEnumProperties(mode) && !thisObject->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
@@ -133,7 +133,7 @@ void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-inline bool JSActivation::symbolTablePutWithAttributes(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+inline bool JSLexicalEnvironment::symbolTablePutWithAttributes(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
@@ -155,9 +155,9 @@ inline bool JSActivation::symbolTablePutWithAttributes(VM& vm, PropertyName prop
     return true;
 }
 
-bool JSActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSActivation* thisObject = jsCast<JSActivation*>(object);
+    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
 
     if (propertyName == exec->propertyNames().arguments) {
         // Defend against the inspector asking for the arguments object after it has been optimized out.
@@ -177,16 +177,16 @@ bool JSActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
         return true;
     }
 
-    // We don't call through to JSObject because there's no way to give an 
-    // activation object getter properties or a prototype.
+    // We don't call through to JSObject because there's no way to give a 
+    // lexical environment object getter properties or a prototype.
     ASSERT(!thisObject->hasGetterSetterProperties());
     ASSERT(thisObject->prototype().isNull());
     return false;
 }
 
-void JSActivation::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+void JSLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSActivation* thisObject = jsCast<JSActivation*>(cell);
+    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     if (thisObject->symbolTablePut(exec, propertyName, value, slot.isStrictMode()))
@@ -194,12 +194,12 @@ void JSActivation::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
-    // expose in the activation object.
+    // expose in the lexicalEnvironment object.
     ASSERT(!thisObject->hasGetterSetterProperties());
     thisObject->putOwnDataProperty(exec->vm(), propertyName, value, slot);
 }
 
-bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool JSLexicalEnvironment::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     if (propertyName == exec->propertyNames().arguments)
         return false;
@@ -207,19 +207,19 @@ bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pr
     return Base::deleteProperty(cell, exec, propertyName);
 }
 
-JSValue JSActivation::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
+JSValue JSLexicalEnvironment::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 {
     if (ecmaMode == StrictMode)
         return jsUndefined();
     return exec->globalThisValue();
 }
 
-EncodedJSValue JSActivation::argumentsGetter(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue JSLexicalEnvironment::argumentsGetter(ExecState*, JSObject* slotBase, EncodedJSValue, PropertyName)
 {
-    JSActivation* activation = jsCast<JSActivation*>(slotBase);
-    CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(activation->m_registers));
-    ASSERT(!activation->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()));
-    if (activation->isTornOff() || !(callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
+    JSLexicalEnvironment* lexicalEnvironment = jsCast<JSLexicalEnvironment*>(slotBase);
+    CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(lexicalEnvironment->m_registers));
+    ASSERT(!lexicalEnvironment->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()));
+    if (lexicalEnvironment->isTornOff() || !(callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
         return JSValue::encode(jsUndefined());
 
     VirtualRegister argumentsRegister = callFrame->codeBlock()->argumentsRegister();

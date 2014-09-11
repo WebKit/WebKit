@@ -33,8 +33,8 @@
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
 #include "Interpreter.h"
-#include "JSActivation.h"
 #include "JSFunction.h"
+#include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "Parser.h"
 #include "StackVisitor.h"
@@ -146,9 +146,9 @@ DebuggerScope* DebuggerCallFrame::scope()
         CodeBlock* codeBlock = m_callFrame->codeBlock();
         if (codeBlock && codeBlock->needsActivation() && !m_callFrame->hasActivation()) {
             ASSERT(!m_callFrame->scope()->isWithScope());
-            JSActivation* activation = JSActivation::create(vm, m_callFrame, codeBlock);
-            m_callFrame->setActivation(activation);
-            m_callFrame->setScope(activation);
+            JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, m_callFrame, codeBlock);
+            m_callFrame->setActivation(lexicalEnvironment);
+            m_callFrame->setScope(lexicalEnvironment);
         }
 
         m_scope.set(vm, DebuggerScope::create(vm, m_callFrame->scope()));

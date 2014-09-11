@@ -29,7 +29,7 @@
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
-#include "JSActivation.h"
+#include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "VMEntryScope.h"
 #include <wtf/StringPrintStream.h>
@@ -146,20 +146,20 @@ CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
     return static_cast<CallFrame*>(callerFrameOrVMEntryFrame());
 }
 
-JSActivation* CallFrame::activation() const
+JSLexicalEnvironment* CallFrame::lexicalEnvironment() const
 {
     CodeBlock* codeBlock = this->codeBlock();
     RELEASE_ASSERT(codeBlock->needsActivation());
     VirtualRegister activationRegister = codeBlock->activationRegister();
-    return registers()[activationRegister.offset()].Register::activation();
+    return registers()[activationRegister.offset()].Register::lexicalEnvironment();
 }
 
-void CallFrame::setActivation(JSActivation* activation)
+void CallFrame::setActivation(JSLexicalEnvironment* lexicalEnvironment)
 {
     CodeBlock* codeBlock = this->codeBlock();
     RELEASE_ASSERT(codeBlock->needsActivation());
     VirtualRegister activationRegister = codeBlock->activationRegister();
-    registers()[activationRegister.offset()] = activation;
+    registers()[activationRegister.offset()] = lexicalEnvironment;
 }
 
 void CallFrame::dump(PrintStream& out)

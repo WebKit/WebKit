@@ -55,7 +55,6 @@
 #include "HeapIterationScope.h"
 #include "Interpreter.h"
 #include "JSAPIWrapperObject.h"
-#include "JSActivation.h"
 #include "JSArgumentsIterator.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferConstructor.h"
@@ -74,6 +73,7 @@
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSLexicalEnvironment.h"
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
@@ -319,7 +319,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_typedArrays[toIndex(TypeDataView)].structure.set(vm, this, JSDataView::createStructure(vm, this, m_typedArrays[toIndex(TypeDataView)].prototype.get()));
 
     m_nameScopeStructure.set(vm, this, JSNameScope::createStructure(vm, this, jsNull()));
-    m_activationStructure.set(vm, this, JSActivation::createStructure(vm, this));
+    m_lexicalEnvironmentStructure.set(vm, this, JSLexicalEnvironment::createStructure(vm, this));
     m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
     m_debuggerScopeStructure.set(m_vm, this, DebuggerScope::createStructure(m_vm, this));
     m_withScopeStructure.set(vm, this, JSWithScope::createStructure(vm, this, jsNull()));
@@ -667,7 +667,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_debuggerScopeStructure);
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);
-    visitor.append(&thisObject->m_activationStructure);
+    visitor.append(&thisObject->m_lexicalEnvironmentStructure);
     visitor.append(&thisObject->m_nameScopeStructure);
     visitor.append(&thisObject->m_argumentsStructure);
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)

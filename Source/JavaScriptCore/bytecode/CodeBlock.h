@@ -342,25 +342,25 @@ public:
     }
     void setActivationRegister(VirtualRegister activationRegister)
     {
-        m_activationRegister = activationRegister;
+        m_lexicalEnvironmentRegister = activationRegister;
     }
 
     VirtualRegister activationRegister() const
     {
-        ASSERT(m_activationRegister.isValid());
-        return m_activationRegister;
+        ASSERT(m_lexicalEnvironmentRegister.isValid());
+        return m_lexicalEnvironmentRegister;
     }
 
     VirtualRegister uncheckedActivationRegister()
     {
-        return m_activationRegister;
+        return m_lexicalEnvironmentRegister;
     }
 
     bool usesArguments() const { return m_argumentsRegister.isValid(); }
 
     bool needsActivation() const
     {
-        ASSERT(m_activationRegister.isValid() == m_needsActivation);
+        ASSERT(m_lexicalEnvironmentRegister.isValid() == m_needsActivation);
         return m_needsActivation;
     }
     
@@ -1033,7 +1033,7 @@ private:
     WriteBarrier<SymbolTable> m_symbolTable;
     VirtualRegister m_thisRegister;
     VirtualRegister m_argumentsRegister;
-    VirtualRegister m_activationRegister;
+    VirtualRegister m_lexicalEnvironmentRegister;
 
     bool m_isStrictMode;
     bool m_needsActivation;

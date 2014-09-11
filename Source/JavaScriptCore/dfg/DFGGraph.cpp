@@ -38,7 +38,7 @@
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
 #include "JIT.h"
-#include "JSActivation.h"
+#include "JSLexicalEnvironment.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
 #include "JSCInlines.h"
@@ -852,19 +852,19 @@ JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset 
     return tryGetConstantProperty(base.m_value, base.m_structure, offset);
 }
 
-JSActivation* Graph::tryGetActivation(Node* node)
+JSLexicalEnvironment* Graph::tryGetActivation(Node* node)
 {
-    return node->dynamicCastConstant<JSActivation*>();
+    return node->dynamicCastConstant<JSLexicalEnvironment*>();
 }
 
 WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
 {
-    JSActivation* activation = tryGetActivation(node);
-    if (!activation)
+    JSLexicalEnvironment* lexicalEnvironment = tryGetActivation(node);
+    if (!lexicalEnvironment)
         return 0;
-    if (!activation->isTornOff())
+    if (!lexicalEnvironment->isTornOff())
         return 0;
-    return activation->registers();
+    return lexicalEnvironment->registers();
 }
 
 JSArrayBufferView* Graph::tryGetFoldableView(Node* node)

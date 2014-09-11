@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef JSActivation_h
-#define JSActivation_h
+#ifndef JSLexicalEnvironment_h
+#define JSLexicalEnvironment_h
 
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
@@ -39,29 +39,29 @@ namespace JSC {
 
 class Register;
     
-class JSActivation : public JSEnvironmentRecord {
+class JSLexicalEnvironment : public JSEnvironmentRecord {
 private:
-    JSActivation(VM&, CallFrame*, Register*, SymbolTable*);
+    JSLexicalEnvironment(VM&, CallFrame*, Register*, SymbolTable*);
     
 public:
     typedef JSEnvironmentRecord Base;
 
-    static JSActivation* create(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
+    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
     {
         SymbolTable* symbolTable = codeBlock->symbolTable();
         ASSERT(codeBlock->codeType() == FunctionCode);
-        JSActivation* activation = new (
+        JSLexicalEnvironment* lexicalEnvironment = new (
             NotNull,
-            allocateCell<JSActivation>(
+            allocateCell<JSLexicalEnvironment>(
                 vm.heap,
                 allocationSize(symbolTable)
             )
-        ) JSActivation(vm, callFrame, registers, symbolTable);
-        activation->finishCreation(vm);
-        return activation;
+        ) JSLexicalEnvironment(vm, callFrame, registers, symbolTable);
+        lexicalEnvironment->finishCreation(vm);
+        return lexicalEnvironment;
     }
         
-    static JSActivation* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
+    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
     {
         return create(vm, callFrame, callFrame->registers() + codeBlock->framePointerOffsetToGetActivationRegisters(), codeBlock);
     }
@@ -111,7 +111,7 @@ private:
 extern int activationCount;
 extern int allTheThingsCount;
 
-inline JSActivation::JSActivation(VM& vm, CallFrame* callFrame, Register* registers, SymbolTable* symbolTable)
+inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, CallFrame* callFrame, Register* registers, SymbolTable* symbolTable)
     : Base(
         vm,
         callFrame->lexicalGlobalObject()->activationStructure(),
@@ -125,25 +125,25 @@ inline JSActivation::JSActivation(VM& vm, CallFrame* callFrame, Register* regist
         new (NotNull, &storage[i]) WriteBarrier<Unknown>;
 }
 
-JSActivation* asActivation(JSValue);
+JSLexicalEnvironment* asActivation(JSValue);
 
-inline JSActivation* asActivation(JSValue value)
+inline JSLexicalEnvironment* asActivation(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(JSActivation::info()));
-    return jsCast<JSActivation*>(asObject(value));
+    ASSERT(asObject(value)->inherits(JSLexicalEnvironment::info()));
+    return jsCast<JSLexicalEnvironment*>(asObject(value));
 }
     
-ALWAYS_INLINE JSActivation* Register::activation() const
+ALWAYS_INLINE JSLexicalEnvironment* Register::lexicalEnvironment() const
 {
     return asActivation(jsValue());
 }
 
-inline int JSActivation::registersOffset(SymbolTable* symbolTable)
+inline int JSLexicalEnvironment::registersOffset(SymbolTable* symbolTable)
 {
     return storageOffset() + ((symbolTable->captureCount() - symbolTable->captureStart()  - 1) * sizeof(WriteBarrier<Unknown>));
 }
 
-inline void JSActivation::tearOff(VM& vm)
+inline void JSLexicalEnvironment::tearOff(VM& vm)
 {
     ASSERT(!isTornOff());
 
@@ -159,31 +159,31 @@ inline void JSActivation::tearOff(VM& vm)
     ASSERT(isTornOff());
 }
 
-inline bool JSActivation::isTornOff()
+inline bool JSLexicalEnvironment::isTornOff()
 {
     return m_registers == reinterpret_cast_ptr<WriteBarrierBase<Unknown>*>(
         reinterpret_cast<char*>(this) + registersOffset(symbolTable()));
 }
 
-inline size_t JSActivation::storageOffset()
+inline size_t JSLexicalEnvironment::storageOffset()
 {
-    return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSActivation));
+    return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSLexicalEnvironment));
 }
 
-inline WriteBarrier<Unknown>* JSActivation::storage()
+inline WriteBarrier<Unknown>* JSLexicalEnvironment::storage()
 {
     return reinterpret_cast_ptr<WriteBarrier<Unknown>*>(
         reinterpret_cast<char*>(this) + storageOffset());
 }
 
-inline size_t JSActivation::allocationSize(SymbolTable* symbolTable)
+inline size_t JSLexicalEnvironment::allocationSize(SymbolTable* symbolTable)
 {
-    size_t objectSizeInBytes = WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSActivation));
+    size_t objectSizeInBytes = WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSLexicalEnvironment));
     size_t storageSizeInBytes = symbolTable->captureCount() * sizeof(WriteBarrier<Unknown>);
     return objectSizeInBytes + storageSizeInBytes;
 }
 
-inline bool JSActivation::isValidIndex(int index) const
+inline bool JSLexicalEnvironment::isValidIndex(int index) const
 {
     if (index > symbolTable()->captureStart())
         return false;
@@ -192,12 +192,12 @@ inline bool JSActivation::isValidIndex(int index) const
     return true;
 }
 
-inline bool JSActivation::isValid(const SymbolTableEntry& entry) const
+inline bool JSLexicalEnvironment::isValid(const SymbolTableEntry& entry) const
 {
     return isValidIndex(entry.getIndex());
 }
 
-inline WriteBarrierBase<Unknown>& JSActivation::registerAt(int index) const
+inline WriteBarrierBase<Unknown>& JSLexicalEnvironment::registerAt(int index) const
 {
     ASSERT(isValidIndex(index));
     return Base::registerAt(index);
@@ -205,4 +205,4 @@ inline WriteBarrierBase<Unknown>& JSActivation::registerAt(int index) const
 
 } // namespace JSC
 
-#endif // JSActivation_h
+#endif // JSLexicalEnvironment_h

@@ -36,9 +36,9 @@ public:
 
     static StrictEvalActivation* create(ExecState* exec)
     {
-        StrictEvalActivation* activation = new (NotNull, allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
-        activation->finishCreation(exec->vm());
-        return activation;
+        StrictEvalActivation* lexicalEnvironment = new (NotNull, allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+        lexicalEnvironment->finishCreation(exec->vm());
+        return lexicalEnvironment;
     }
 
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);

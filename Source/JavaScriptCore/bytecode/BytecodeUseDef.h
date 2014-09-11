@@ -59,10 +59,10 @@ void computeUsesForBytecodeOffset(
         return;
     case op_new_func:
     case op_new_captured_func:
-    case op_create_activation: 
+    case op_create_lexical_environment: 
     case op_create_arguments:
     case op_to_this:
-    case op_tear_off_activation:
+    case op_tear_off_lexical_environment:
     case op_profile_will_call:
     case op_profile_did_call:
     case op_profile_type:
@@ -305,7 +305,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_next_enumerator_pname:
     case op_resolve_scope:
     case op_strcat:
-    case op_tear_off_activation:
+    case op_tear_off_lexical_environment:
     case op_to_primitive:
     case op_catch:
     case op_create_this:
@@ -370,7 +370,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_to_this:
     case op_get_callee:
     case op_init_lazy_reg:
-    case op_create_activation:
+    case op_create_lexical_environment:
     case op_create_arguments:
     case op_del_by_id:
     case op_del_by_val:

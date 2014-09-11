@@ -1381,9 +1381,9 @@ JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec, int32_t offset)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSActivation* activation = JSActivation::create(vm, exec, exec->registers() + offset, exec->codeBlock());
-    exec->setScope(activation);
-    return activation;
+    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, exec->registers() + offset, exec->codeBlock());
+    exec->setScope(lexicalEnvironment);
+    return lexicalEnvironment;
 }
 
 JSCell* JIT_OPERATION operationCreateArguments(ExecState* exec)
@@ -1595,14 +1595,14 @@ void JIT_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activatio
     NativeCallFrameTracer tracer(&vm, exec);
 
     ASSERT(exec->codeBlock()->needsActivation());
-    jsCast<JSActivation*>(activationCell)->tearOff(vm);
+    jsCast<JSLexicalEnvironment*>(activationCell)->tearOff(vm);
 }
 
 void JIT_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell* activationCell)
 {
     ASSERT(exec->codeBlock()->usesArguments());
     if (activationCell) {
-        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec, jsCast<JSActivation*>(activationCell));
+        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec, jsCast<JSLexicalEnvironment*>(activationCell));
         return;
     }
     jsCast<Arguments*>(argumentsCell)->tearOff(exec);

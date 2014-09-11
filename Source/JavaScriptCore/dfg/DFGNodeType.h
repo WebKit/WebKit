@@ -254,7 +254,7 @@ namespace JSC { namespace DFG {
     macro(CreateActivation, NodeResultJS) \
     macro(TearOffActivation, NodeMustGenerate) \
     \
-    /* Nodes used for arguments. Similar to activation support, only it makes even less */\
+    /* Nodes used for arguments. Similar to lexical environment support, only it makes even less */\
     /* sense. */\
     macro(CreateArguments, NodeResultJS) \
     macro(PhantomArguments, NodeResultJS) \

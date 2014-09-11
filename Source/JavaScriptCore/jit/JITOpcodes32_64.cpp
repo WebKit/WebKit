@@ -350,11 +350,11 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
-void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
+void JIT::emit_op_tear_off_lexical_environment(Instruction* currentInstruction)
 {
-    int activation = currentInstruction[1].u.operand;
-    Jump activationNotCreated = branch32(Equal, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
-    emitLoadPayload(activation, regT0);
+    int lexicalEnvironment = currentInstruction[1].u.operand;
+    Jump activationNotCreated = branch32(Equal, tagFor(lexicalEnvironment), TrustedImm32(JSValue::EmptyValueTag));
+    emitLoadPayload(lexicalEnvironment, regT0);
     callOperation(operationTearOffActivation, regT0);
     activationNotCreated.link(this);
 }
@@ -362,11 +362,11 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
     VirtualRegister arguments = VirtualRegister(currentInstruction[1].u.operand);
-    int activation = currentInstruction[2].u.operand;
+    int lexicalEnvironment = currentInstruction[2].u.operand;
 
     Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(arguments).offset()), TrustedImm32(JSValue::EmptyValueTag));
     emitLoadPayload(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT0);
-    emitLoadPayload(activation, regT1);
+    emitLoadPayload(lexicalEnvironment, regT1);
     callOperation(operationTearOffArguments, regT0, regT1);
     argsNotCreated.link(this);
 }
@@ -904,12 +904,12 @@ void JIT::emit_op_enter(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
-void JIT::emit_op_create_activation(Instruction* currentInstruction)
+void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
 {
-    int activation = currentInstruction[1].u.operand;
+    int lexicalEnvironment = currentInstruction[1].u.operand;
 
     callOperation(operationCreateActivation, 0);
-    emitStoreCell(activation, returnValueGPR);
+    emitStoreCell(lexicalEnvironment, returnValueGPR);
 }
 
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)

@@ -230,8 +230,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
         return CannotCompile;
 
     case op_new_regexp: 
-    case op_create_activation:
-    case op_tear_off_activation:
+    case op_create_lexical_environment:
+    case op_tear_off_lexical_environment:
     case op_new_func:
     case op_new_captured_func:
     case op_new_func_exp:

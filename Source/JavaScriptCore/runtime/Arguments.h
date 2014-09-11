@@ -25,9 +25,9 @@
 #define Arguments_h
 
 #include "CodeOrigin.h"
-#include "JSActivation.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "JSLexicalEnvironment.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
 #include "WriteBarrierInlines.h"
@@ -82,14 +82,14 @@ public:
     void tearOff(CallFrame*);
     void tearOff(CallFrame*, InlineCallFrame*);
     bool isTornOff() const { return m_registerArray.get(); }
-    void didTearOffActivation(ExecState*, JSActivation*);
+    void didTearOffActivation(ExecState*, JSLexicalEnvironment*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
         return Structure::create(vm, globalObject, prototype, TypeInfo(ArgumentsType, StructureFlags), info()); 
     }
     
-    static ptrdiff_t offsetOfActivation() { return OBJECT_OFFSETOF(Arguments, m_activation); }
+    static ptrdiff_t offsetOfActivation() { return OBJECT_OFFSETOF(Arguments, m_lexicalEnvironment); }
     static ptrdiff_t offsetOfNumArguments() { return OBJECT_OFFSETOF(Arguments, m_numArguments); }
     static ptrdiff_t offsetOfOverrodeLength() { return OBJECT_OFFSETOF(Arguments, m_overrodeLength); }
     static ptrdiff_t offsetOfIsStrictMode() { return OBJECT_OFFSETOF(Arguments, m_isStrictMode); }
@@ -134,7 +134,7 @@ private:
 
     void init(CallFrame*);
 
-    WriteBarrier<JSActivation> m_activation;
+    WriteBarrier<JSLexicalEnvironment> m_lexicalEnvironment;
 
     unsigned m_numArguments;
 
@@ -265,10 +265,10 @@ inline WriteBarrierBase<Unknown>& Arguments::argument(size_t argument)
         return m_registers[CallFrame::argumentOffset(argument)];
 
     int index = m_slowArgumentData->slowArguments()[argument].index;
-    if (!m_activation || m_slowArgumentData->slowArguments()[argument].status != SlowArgument::Captured)
+    if (!m_lexicalEnvironment || m_slowArgumentData->slowArguments()[argument].status != SlowArgument::Captured)
         return m_registers[index];
 
-    return m_activation->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
+    return m_lexicalEnvironment->registerAt(index - m_slowArgumentData->bytecodeToMachineCaptureOffset());
 }
 
 inline void Arguments::finishCreation(CallFrame* callFrame)
@@ -297,7 +297,7 @@ inline void Arguments::finishCreation(CallFrame* callFrame)
             codeBlock->framePointerOffsetToGetActivationRegisters());
     }
 
-    // The bytecode generator omits op_tear_off_activation in cases of no
+    // The bytecode generator omits op_tear_off_lexical_environment in cases of no
     // declared parameters, so we need to tear off immediately.
     if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
         tearOff(callFrame);
@@ -323,7 +323,7 @@ inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inl
     m_isStrictMode = jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->isStrictMode();
     ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable(inlineCallFrame->specializationKind())->slowArguments());
 
-    // The bytecode generator omits op_tear_off_activation in cases of no
+    // The bytecode generator omits op_tear_off_lexical_environment in cases of no
     // declared parameters, so we need to tear off immediately.
     if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
         tearOff(callFrame, inlineCallFrame);

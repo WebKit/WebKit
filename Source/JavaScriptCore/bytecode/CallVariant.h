@@ -38,8 +38,9 @@ namespace JSC {
 // callee in one of the following four forms:
 //
 // JSFunction callee: This means that we expect the callsite to always call a particular function
-//     instance, that is associated with a particular activation. This pinpoints not just the code
-//     that will be called (i.e. the executable) but also the scope within which the code runs.
+//     instance, that is associated with a particular lexical environment. This pinpoints not
+//     just the code that will be called (i.e. the executable) but also the scope within which
+//     the code runs.
 //
 // Executable callee: This corresponds to a call to a closure. In this case, we know that the
 //     callsite will call a JSFunction, but we do not know which particular JSFunction. We do know

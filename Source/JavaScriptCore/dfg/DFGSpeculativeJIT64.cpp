@@ -4316,7 +4316,7 @@ void SpeculativeJIT::compile(Node* node)
         JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, activationValueGPR);
 
         SymbolTable* symbolTable = m_jit.symbolTableFor(node->origin.semantic);
-        int registersOffset = JSActivation::registersOffset(symbolTable);
+        int registersOffset = JSLexicalEnvironment::registersOffset(symbolTable);
 
         int bytecodeCaptureStart = symbolTable->captureStart();
         int machineCaptureStart = m_jit.graph().m_machineCaptureStart;
@@ -4333,7 +4333,7 @@ void SpeculativeJIT::compile(Node* node)
                     registersOffset + (bytecodeCaptureStart - i) * sizeof(Register)));
         }
         m_jit.addPtr(TrustedImm32(registersOffset), activationValueGPR, scratchGPR);
-        m_jit.storePtr(scratchGPR, JITCompiler::Address(activationValueGPR, JSActivation::offsetOfRegisters()));
+        m_jit.storePtr(scratchGPR, JITCompiler::Address(activationValueGPR, JSLexicalEnvironment::offsetOfRegisters()));
 
         notCreated.link(&m_jit);
         noResult(node);

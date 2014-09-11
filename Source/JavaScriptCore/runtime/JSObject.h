@@ -573,7 +573,7 @@ public:
     //  - assumes the object contains no own getter/setter properties.
     //  - provides no special handling for __proto__
     //  - does not walk the prototype chain (to check for accessors or non-writable properties).
-    // This is used by JSActivation.
+    // This is used by JSLexicalEnvironment.
     bool putOwnDataProperty(VM&, PropertyName, JSValue, PutPropertySlot&);
 
     // Fast access to known property offsets.

@@ -69,7 +69,7 @@ extern "C" {
     Idc: const Identifier*
     J: EncodedJSValue
     Jcp: const JSValue*
-    Jsa: JSActivation*
+    Jsa: JSLexicalEnvironment*
     Jss: JSString*
     O: JSObject*
     P: pointer (char*)

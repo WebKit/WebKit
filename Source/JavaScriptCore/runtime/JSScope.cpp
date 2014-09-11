@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSScope.h"
 
-#include "JSActivation.h"
 #include "JSGlobalObject.h"
+#include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "JSWithScope.h"
 #include "JSCInlines.h"
@@ -47,26 +47,26 @@ void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 // Returns true if we found enough information to terminate optimization.
 static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, size_t depth, bool& needsVarInjectionChecks, ResolveOp& op)
 {
-    if (JSActivation* activation = jsDynamicCast<JSActivation*>(scope)) {
+    if (JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(scope)) {
         if (ident == exec->propertyNames().arguments) {
-            // We know the property will be at this activation scope, but we don't know how to cache it.
+            // We know the property will be at this lexical environment scope, but we don't know how to cache it.
             op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
             return true;
         }
 
-        SymbolTableEntry entry = activation->symbolTable()->get(ident.impl());
+        SymbolTableEntry entry = lexicalEnvironment->symbolTable()->get(ident.impl());
         if (entry.isReadOnly() && getOrPut == Put) {
-            // We know the property will be at this activation scope, but we don't know how to cache it.
+            // We know the property will be at this lexical environment scope, but we don't know how to cache it.
             op = ResolveOp(Dynamic, 0, 0, 0, 0, 0);
             return true;
         }
 
         if (!entry.isNull()) {
-            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, activation, entry.watchpointSet(), entry.getIndex());
+            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, lexicalEnvironment, entry.watchpointSet(), entry.getIndex());
             return true;
         }
 
-        if (activation->symbolTable()->usesNonStrictEval())
+        if (lexicalEnvironment->symbolTable()->usesNonStrictEval())
             needsVarInjectionChecks = true;
         return false;
     }

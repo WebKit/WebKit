@@ -34,7 +34,7 @@
 namespace JSC  {
 
     class Arguments;
-    class JSActivation;
+    class JSLexicalEnvironment;
     class Interpreter;
     class JSScope;
 
@@ -52,7 +52,7 @@ namespace JSC  {
         }
 
         bool hasActivation() const { return !!uncheckedActivation(); }
-        JSActivation* activation() const;
+        JSLexicalEnvironment* lexicalEnvironment() const;
         JSValue uncheckedActivation() const;
 
         // Global object in which execution began.
@@ -186,7 +186,7 @@ namespace JSC  {
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(JSScope* scope) { static_cast<Register*>(this)[JSStack::ScopeChain] = scope; }
-        void setActivation(JSActivation*);
+        void setActivation(JSLexicalEnvironment*);
 
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,
             CallFrame* callerFrame, int argc, JSObject* callee)

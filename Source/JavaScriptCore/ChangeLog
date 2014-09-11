@@ -1,3 +1,141 @@
+2014-09-11  Oliver Hunt  <oliver@apple.com>
+
+        Rename activation to be more in line with spec language
+        https://bugs.webkit.org/show_bug.cgi?id=136721
+
+        Reviewed by Michael Saboff.
+
+        Somewhat bigger than the last one, but still just a rename.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CallVariant.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::isCaptured):
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setActivationRegister):
+        (JSC::CodeBlock::activationRegister):
+        (JSC::CodeBlock::uncheckedActivationRegister):
+        (JSC::CodeBlock::needsActivation):
+        * bytecode/Instruction.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::setActivationRegister):
+        (JSC::UnlinkedCodeBlock::activationRegister):
+        (JSC::UnlinkedCodeBlock::hasActivationRegister):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitReturn):
+        * bytecompiler/BytecodeGenerator.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::scope):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::isFunctionOrEvalScope):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetActivation):
+        (JSC::DFG::Graph::tryGetRegisters):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::lexicalEnvironment):
+        (JSC::CallFrame::setActivation):
+        (JSC::CallFrame::activation): Deleted.
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        * interpreter/Register.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_tear_off_lexical_environment):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        (JSC::JIT::emit_op_create_lexical_environment):
+        (JSC::JIT::emit_op_tear_off_activation): Deleted.
+        (JSC::JIT::emit_op_create_activation): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_tear_off_lexical_environment):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        (JSC::JIT::emit_op_create_lexical_environment):
+        (JSC::JIT::emit_op_tear_off_activation): Deleted.
+        (JSC::JIT::emit_op_create_activation): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        (JSC::Arguments::tearOff):
+        (JSC::Arguments::didTearOffActivation):
+        * runtime/Arguments.h:
+        (JSC::Arguments::offsetOfActivation):
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation):
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::activationStructure):
+        * runtime/JSLexicalEnvironment.cpp: Renamed from Source/JavaScriptCore/runtime/JSActivation.cpp.
+        (JSC::JSLexicalEnvironment::visitChildren):
+        (JSC::JSLexicalEnvironment::symbolTableGet):
+        (JSC::JSLexicalEnvironment::symbolTablePut):
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        (JSC::JSLexicalEnvironment::symbolTablePutWithAttributes):
+        (JSC::JSLexicalEnvironment::getOwnPropertySlot):
+        (JSC::JSLexicalEnvironment::put):
+        (JSC::JSLexicalEnvironment::deleteProperty):
+        (JSC::JSLexicalEnvironment::toThis):
+        (JSC::JSLexicalEnvironment::argumentsGetter):
+        * runtime/JSLexicalEnvironment.h: Renamed from Source/JavaScriptCore/runtime/JSActivation.h.
+        (JSC::JSLexicalEnvironment::create):
+        (JSC::JSLexicalEnvironment::createStructure):
+        (JSC::JSLexicalEnvironment::JSLexicalEnvironment):
+        (JSC::asActivation):
+        (JSC::Register::lexicalEnvironment):
+        (JSC::JSLexicalEnvironment::registersOffset):
+        (JSC::JSLexicalEnvironment::tearOff):
+        (JSC::JSLexicalEnvironment::isTornOff):
+        (JSC::JSLexicalEnvironment::storageOffset):
+        (JSC::JSLexicalEnvironment::storage):
+        (JSC::JSLexicalEnvironment::allocationSize):
+        (JSC::JSLexicalEnvironment::isValidIndex):
+        (JSC::JSLexicalEnvironment::isValid):
+        (JSC::JSLexicalEnvironment::registerAt):
+        * runtime/JSObject.h:
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * runtime/JSScope.h:
+        (JSC::ResolveOp::ResolveOp):
+        * runtime/JSSymbolTableObject.cpp:
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create):
+        * runtime/VM.cpp:
+
 2014-09-11  László Langó  <llango.u-szeged@partner.samsung.com>
 
         [JavaScriptCore] Fix FTL on platform EFL.

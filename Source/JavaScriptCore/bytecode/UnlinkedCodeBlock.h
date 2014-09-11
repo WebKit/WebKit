@@ -282,7 +282,7 @@ public:
 
     // Special registers
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
-    void setActivationRegister(VirtualRegister activationRegister) { m_activationRegister = activationRegister; }
+    void setActivationRegister(VirtualRegister activationRegister) { m_lexicalEnvironmentRegister = activationRegister; }
 
     void setArgumentsRegister(VirtualRegister argumentsRegister) { m_argumentsRegister = argumentsRegister; }
     bool usesArguments() const { return m_argumentsRegister.isValid(); }
@@ -429,8 +429,8 @@ public:
     CodeType codeType() const { return m_codeType; }
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
-    VirtualRegister activationRegister() const { return m_activationRegister; }
-    bool hasActivationRegister() const { return m_activationRegister.isValid(); }
+    VirtualRegister activationRegister() const { return m_lexicalEnvironmentRegister; }
+    bool hasActivationRegister() const { return m_lexicalEnvironmentRegister.isValid(); }
 
     void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
     {
@@ -520,7 +520,7 @@ private:
 
     VirtualRegister m_thisRegister;
     VirtualRegister m_argumentsRegister;
-    VirtualRegister m_activationRegister;
+    VirtualRegister m_lexicalEnvironmentRegister;
     VirtualRegister m_globalObjectRegister;
 
     bool m_needsFullScopeChain : 1;

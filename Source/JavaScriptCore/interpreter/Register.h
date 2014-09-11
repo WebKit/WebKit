@@ -37,7 +37,7 @@ namespace JSC {
 
     class CodeBlock;
     class ExecState;
-    class JSActivation;
+    class JSLexicalEnvironment;
     class JSObject;
     class JSScope;
 
@@ -58,7 +58,7 @@ namespace JSC {
         Register& operator=(JSScope*);
 
         int32_t i() const;
-        JSActivation* activation() const;
+        JSLexicalEnvironment* lexicalEnvironment() const;
         CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
         JSObject* function() const;

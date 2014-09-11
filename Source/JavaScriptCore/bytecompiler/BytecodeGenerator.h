@@ -710,7 +710,7 @@ namespace JSC {
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;
-        RegisterID* m_activationRegister;
+        RegisterID* m_lexicalEnvironmentRegister;
         RegisterID* m_emptyValueRegister;
         RegisterID* m_globalObjectRegister;
         Vector<Identifier, 16> m_watchableVariables;

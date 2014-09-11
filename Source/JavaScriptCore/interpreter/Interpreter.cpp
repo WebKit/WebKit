@@ -42,9 +42,9 @@
 #include "EvalCodeCache.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "JSActivation.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
+#include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSStackInlines.h"
@@ -450,16 +450,16 @@ static bool unwindCallFrame(StackVisitor& visitor)
         ASSERT(!callFrame->hadException());
     }
 
-    JSValue activation;
+    JSValue lexicalEnvironment;
     if (codeBlock->codeType() == FunctionCode && codeBlock->needsActivation()) {
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
 #endif
-        activation = callFrame->uncheckedActivation();
-        // Protect against the activation not being created, or the variable still being
+        lexicalEnvironment = callFrame->uncheckedActivation();
+        // Protect against the lexical environment not being created, or the variable still being
         // initialized to Undefined inside op_enter.
-        if (activation && activation.isCell()) {
-            JSActivation* activationObject = jsCast<JSActivation*>(activation);
+        if (lexicalEnvironment && lexicalEnvironment.isCell()) {
+            JSLexicalEnvironment* activationObject = jsCast<JSLexicalEnvironment*>(lexicalEnvironment);
             // Protect against throwing exceptions after tear-off.
             if (!activationObject->isTornOff())
                 activationObject->tearOff(*scope->vm());
@@ -468,8 +468,8 @@ static bool unwindCallFrame(StackVisitor& visitor)
 
     if (codeBlock->codeType() == FunctionCode && codeBlock->usesArguments()) {
         if (Arguments* arguments = visitor->existingArguments()) {
-            if (activation && activation.isCell())
-                arguments->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
+            if (lexicalEnvironment && lexicalEnvironment.isCell())
+                arguments->didTearOffActivation(callFrame, jsCast<JSLexicalEnvironment*>(lexicalEnvironment));
 #if ENABLE(DFG_JIT)
             else if (visitor->isInlinedFrame())
                 arguments->tearOff(callFrame, visitor->inlineCallFrame());

@@ -43,9 +43,9 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITStubs.h"
-#include "JSActivation.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
+#include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
@@ -588,7 +588,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
             unmodifiedArgumentsRegister(argumentsRegister()).offset());
     }
     if (needsActivation() && codeType() == FunctionCode)
-        out.printf("; activation in r%d", activationRegister().offset());
+        out.printf("; lexical environment in r%d", activationRegister().offset());
     out.printf("\n");
     
     StubInfoMap stubInfos;
@@ -743,9 +743,9 @@ void CodeBlock::dumpBytecode(
             printLocationAndOp(out, exec, location, it, "touch_entry");
             break;
         }
-        case op_create_activation: {
+        case op_create_lexical_environment: {
             int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "create_activation", r0);
+            printLocationOpAndRegisterOperand(out, exec, location, it, "create_lexical_environment", r0);
             break;
         }
         case op_create_arguments: {
@@ -1317,9 +1317,9 @@ void CodeBlock::dumpBytecode(
             break;
         }
             
-        case op_tear_off_activation: {
+        case op_tear_off_lexical_environment: {
             int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "tear_off_activation", r0);
+            printLocationOpAndRegisterOperand(out, exec, location, it, "tear_off_lexical_environment", r0);
             break;
         }
         case op_tear_off_arguments: {
@@ -1637,7 +1637,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_instructions(other.m_instructions)
     , m_thisRegister(other.m_thisRegister)
     , m_argumentsRegister(other.m_argumentsRegister)
-    , m_activationRegister(other.m_activationRegister)
+    , m_lexicalEnvironmentRegister(other.m_lexicalEnvironmentRegister)
     , m_isStrictMode(other.m_isStrictMode)
     , m_needsActivation(other.m_needsActivation)
     , m_mayBeExecuting(false)
@@ -1696,7 +1696,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_vm(unlinkedCodeBlock->vm())
     , m_thisRegister(unlinkedCodeBlock->thisRegister())
     , m_argumentsRegister(unlinkedCodeBlock->argumentsRegister())
-    , m_activationRegister(unlinkedCodeBlock->activationRegister())
+    , m_lexicalEnvironmentRegister(unlinkedCodeBlock->activationRegister())
     , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
     , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
     , m_mayBeExecuting(false)
@@ -1950,8 +1950,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), needsActivation(), scope, ident, Get, type);
             instructions[i + 3].u.operand = op.type;
             instructions[i + 4].u.operand = op.depth;
-            if (op.activation)
-                instructions[i + 5].u.activation.set(*vm(), ownerExecutable, op.activation);
+            if (op.lexicalEnvironment)
+                instructions[i + 5].u.lexicalEnvironment.set(*vm(), ownerExecutable, op.lexicalEnvironment);
             break;
         }
 
@@ -2016,7 +2016,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
                 // https://bugs.webkit.org/show_bug.cgi?id=135184
                 if (op.type == ClosureVar)
-                    symbolTable = op.activation->symbolTable();
+                    symbolTable = op.lexicalEnvironment->symbolTable();
                 else if (op.type == GlobalVar)
                     symbolTable = m_globalObject.get()->symbolTable();
                 
@@ -2534,12 +2534,12 @@ void CodeBlock::finalizeUnconditionally()
                 curInstruction[2].u.jsCell.clear();
                 break;
             case op_resolve_scope: {
-                WriteBarrierBase<JSActivation>& activation = curInstruction[5].u.activation;
-                if (!activation || Heap::isMarked(activation.get()))
+                WriteBarrierBase<JSLexicalEnvironment>& lexicalEnvironment = curInstruction[5].u.lexicalEnvironment;
+                if (!lexicalEnvironment || Heap::isMarked(lexicalEnvironment.get()))
                     break;
                 if (Options::verboseOSR())
-                    dataLogF("Clearing dead activation %p.\n", activation.get());
-                activation.clear();
+                    dataLogF("Clearing dead lexicalEnvironment %p.\n", lexicalEnvironment.get());
+                lexicalEnvironment.clear();
                 break;
             }
             case op_get_from_scope:
@@ -2831,7 +2831,7 @@ bool CodeBlock::isCaptured(VirtualRegister operand, InlineCallFrame* inlineCallF
     if (inlineCallFrame)
         return inlineCallFrame->capturedVars.get(operand.toLocal());
 
-    // The activation object isn't in the captured region, but it's "captured"
+    // The lexical environment object isn't in the captured region, but it's "captured"
     // in the sense that stores to its location can be observed indirectly.
     if (needsActivation() && operand == activationRegister())
         return true;
@@ -3837,7 +3837,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
         }
     }
     if (needsActivation() && virtualRegister == activationRegister())
-        return ASCIILiteral("activation");
+        return ASCIILiteral("lexical environment");
     if (virtualRegister == thisRegister())
         return ASCIILiteral("this");
     if (usesArguments()) {

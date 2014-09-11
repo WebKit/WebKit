@@ -475,7 +475,7 @@ namespace JSC {
         void emit_op_div(Instruction*);
         void emit_op_end(Instruction*);
         void emit_op_enter(Instruction*);
-        void emit_op_create_activation(Instruction*);
+        void emit_op_create_lexical_environment(Instruction*);
         void emit_op_eq(Instruction*);
         void emit_op_eq_null(Instruction*);
         void emit_op_get_by_id(Instruction*);
@@ -543,7 +543,7 @@ namespace JSC {
         void emit_op_switch_char(Instruction*);
         void emit_op_switch_imm(Instruction*);
         void emit_op_switch_string(Instruction*);
-        void emit_op_tear_off_activation(Instruction*);
+        void emit_op_tear_off_lexical_environment(Instruction*);
         void emit_op_tear_off_arguments(Instruction*);
         void emit_op_throw(Instruction*);
         void emit_op_throw_static_error(Instruction*);

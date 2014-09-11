@@ -698,7 +698,7 @@ public:
     JSValue tryGetConstantProperty(JSValue base, const StructureAbstractValue&, PropertyOffset);
     JSValue tryGetConstantProperty(const AbstractValue&, PropertyOffset);
     
-    JSActivation* tryGetActivation(Node*);
+    JSLexicalEnvironment* tryGetActivation(Node*);
     WriteBarrierBase<Unknown>* tryGetRegisters(Node*);
     
     JSArrayBufferView* tryGetFoldableView(Node*);

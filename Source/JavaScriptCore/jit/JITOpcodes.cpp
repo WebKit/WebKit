@@ -233,11 +233,11 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
+void JIT::emit_op_tear_off_lexical_environment(Instruction* currentInstruction)
 {
-    int activation = currentInstruction[1].u.operand;
-    Jump activationNotCreated = branchTest64(Zero, addressFor(activation));
-    emitGetVirtualRegister(activation, regT0);
+    int lexicalEnvironment = currentInstruction[1].u.operand;
+    Jump activationNotCreated = branchTest64(Zero, addressFor(lexicalEnvironment));
+    emitGetVirtualRegister(lexicalEnvironment, regT0);
     callOperation(operationTearOffActivation, regT0);
     activationNotCreated.link(this);
 }
@@ -245,11 +245,11 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
     int arguments = currentInstruction[1].u.operand;
-    int activation = currentInstruction[2].u.operand;
+    int lexicalEnvironment = currentInstruction[2].u.operand;
 
     Jump argsNotCreated = branchTest64(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset())));
     emitGetVirtualRegister(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT0);
-    emitGetVirtualRegister(activation, regT1);
+    emitGetVirtualRegister(lexicalEnvironment, regT1);
     callOperation(operationTearOffArguments, regT0, regT1);
     argsNotCreated.link(this);
 }
@@ -680,7 +680,7 @@ void JIT::emit_op_enter(Instruction*)
     emitEnterOptimizationCheck();
 }
 
-void JIT::emit_op_create_activation(Instruction* currentInstruction)
+void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
 

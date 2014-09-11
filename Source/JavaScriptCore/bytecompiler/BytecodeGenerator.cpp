@@ -32,8 +32,8 @@
 #include "BytecodeGenerator.h"
 
 #include "Interpreter.h"
-#include "JSActivation.h"
 #include "JSFunction.h"
+#include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
@@ -164,7 +164,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_scopeNode(programNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
-    , m_activationRegister(0)
+    , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
     , m_finallyDepth(0)
@@ -208,7 +208,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(functionBody)
     , m_codeBlock(vm, codeBlock)
-    , m_activationRegister(0)
+    , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
     , m_finallyDepth(0)
@@ -245,11 +245,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     emitOpcode(op_enter);
     if (m_codeBlock->needsFullScopeChain() || m_shouldEmitDebugHooks) {
-        m_activationRegister = addVar();
-        emitInitLazyRegister(m_activationRegister);
-        m_codeBlock->setActivationRegister(m_activationRegister->virtualRegister());
-        emitOpcode(op_create_activation);
-        instructions().append(m_activationRegister->index());
+        m_lexicalEnvironmentRegister = addVar();
+        emitInitLazyRegister(m_lexicalEnvironmentRegister);
+        m_codeBlock->setActivationRegister(m_lexicalEnvironmentRegister->virtualRegister());
+        emitOpcode(op_create_lexical_environment);
+        instructions().append(m_lexicalEnvironmentRegister->index());
     }
 
     m_symbolTable->setCaptureStart(virtualRegisterForLocal(m_codeBlock->m_numVars).offset());
@@ -423,7 +423,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
-    , m_activationRegister(0)
+    , m_lexicalEnvironmentRegister(0)
     , m_emptyValueRegister(0)
     , m_globalObjectRegister(0)
     , m_finallyDepth(0)
@@ -1855,15 +1855,15 @@ RegisterID* BytecodeGenerator::emitCallVarargs(OpcodeID opcode, RegisterID* dst,
 
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 {
-    if (m_activationRegister) {
-        emitOpcode(op_tear_off_activation);
-        instructions().append(m_activationRegister->index());
+    if (m_lexicalEnvironmentRegister) {
+        emitOpcode(op_tear_off_lexical_environment);
+        instructions().append(m_lexicalEnvironmentRegister->index());
     }
 
     if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
         instructions().append(m_codeBlock->argumentsRegister().offset());
-        instructions().append(m_activationRegister ? m_activationRegister->index() : emitLoad(0, JSValue())->index());
+        instructions().append(m_lexicalEnvironmentRegister ? m_lexicalEnvironmentRegister->index() : emitLoad(0, JSValue())->index());
     }
 
     // Constructors use op_ret_object_or_this to check the result is an

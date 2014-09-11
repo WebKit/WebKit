@@ -45,7 +45,7 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
-#include "JSActivation.h"
+#include "JSLexicalEnvironment.h"
 #include "VM.h"
 #include "JSNameScope.h"
 #include "NameInstance.h"

@@ -26,11 +26,11 @@
 #include "Arguments.h"
 
 #include "CopyVisitorInlines.h"
-#include "JSActivation.h"
 #include "JSArgumentsIterator.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
+#include "JSLexicalEnvironment.h"
 
 using namespace std;
 
@@ -56,7 +56,7 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
             thisObject->m_slowArgumentData.get(), SlowArgumentData::sizeForNumArguments(thisObject->m_numArguments));
     }
     visitor.append(&thisObject->m_callee);
-    visitor.append(&thisObject->m_activation);
+    visitor.append(&thisObject->m_lexicalEnvironment);
 }
 
 void Arguments::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
@@ -384,10 +384,10 @@ void Arguments::tearOff(CallFrame* callFrame)
     allocateRegisterArray(callFrame->vm());
     m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
-    // If we have a captured argument that logically aliases activation storage,
-    // but we optimize away the activation, the argument needs to tear off into
+    // If we have a captured argument that logically aliases lexical environment storage,
+    // but we optimize away the lexicalEnvironment, the argument needs to tear off into
     // our storage. The simplest way to do this is to revert it to Normal status.
-    if (m_slowArgumentData && !m_activation) {
+    if (m_slowArgumentData && !m_lexicalEnvironment) {
         for (size_t i = 0; i < m_numArguments; ++i) {
             if (m_slowArgumentData->slowArguments()[i].status != SlowArgument::Captured)
                 continue;
@@ -400,16 +400,16 @@ void Arguments::tearOff(CallFrame* callFrame)
         trySetArgument(callFrame->vm(), i, callFrame->argumentAfterCapture(i));
 }
 
-void Arguments::didTearOffActivation(ExecState* exec, JSActivation* activation)
+void Arguments::didTearOffActivation(ExecState* exec, JSLexicalEnvironment* lexicalEnvironment)
 {
-    RELEASE_ASSERT(activation);
+    RELEASE_ASSERT(lexicalEnvironment);
     if (isTornOff())
         return;
 
     if (!m_numArguments)
         return;
     
-    m_activation.set(exec->vm(), this, activation);
+    m_lexicalEnvironment.set(exec->vm(), this, lexicalEnvironment);
     tearOff(exec);
 }
 

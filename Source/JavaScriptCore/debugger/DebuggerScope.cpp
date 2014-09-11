@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DebuggerScope.h"
 
-#include "JSActivation.h"
+#include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "JSWithScope.h"
 
@@ -165,7 +165,8 @@ bool DebuggerScope::isGlobalScope() const
 bool DebuggerScope::isFunctionOrEvalScope() const
 {
     // In the current debugger implementation, every function or eval will create an
-    // activation object. Hence, an activation object implies a function or eval scope.
+    // lexical environment object. Hence, a lexical environment object implies a
+    // function or eval scope.
     return m_scope->isActivationObject();
 }
 

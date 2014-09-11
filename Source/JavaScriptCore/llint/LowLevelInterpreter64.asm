@@ -607,10 +607,10 @@ _llint_op_enter:
     dispatch(1)
 
 
-_llint_op_create_activation:
+_llint_op_create_lexical_environment:
     traceExecution()
     loadisFromInstruction(1, t0)
-    callSlowPath(_llint_slow_path_create_activation)
+    callSlowPath(_llint_slow_path_create_lexical_environment)
     dispatch(2)
 
 
@@ -1828,11 +1828,11 @@ macro doCall(slowPath)
 end
 
 
-_llint_op_tear_off_activation:
+_llint_op_tear_off_lexical_environment:
     traceExecution()
     loadisFromInstruction(1, t0)
     btqz [cfr, t0, 8], .opTearOffActivationNotCreated
-    callSlowPath(_llint_slow_path_tear_off_activation)
+    callSlowPath(_llint_slow_path_tear_off_lexical_environment)
 .opTearOffActivationNotCreated:
     dispatch(2)
 

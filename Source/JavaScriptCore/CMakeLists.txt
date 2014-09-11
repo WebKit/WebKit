@@ -427,7 +427,7 @@ set(JavaScriptCore_SOURCES
     runtime/IntendedStructureChain.cpp
     runtime/InternalFunction.cpp
     runtime/JSAPIValueWrapper.cpp
-    runtime/JSActivation.cpp
+    runtime/JSLexicalEnvironment.cpp
     runtime/JSArgumentsIterator.cpp
     runtime/JSArray.cpp
     runtime/JSArrayBuffer.cpp
