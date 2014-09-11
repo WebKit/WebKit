@@ -1,3 +1,53 @@
+2014-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Move JSScope out of JSFunction into separate JSCallee class
+        https://bugs.webkit.org/show_bug.cgi?id=136725
+
+        Reviewed by Oliver Hunt.
+
+        Created new JSCallee class that contains a JSScope*.  Changed JSFunction to inherit from
+        JSCallee.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Build changes.  Added JSCallee.cpp and JSCallee.h.
+
+        * runtime/JSCallee.cpp: Added.
+        (JSC::JSCallee::create):
+        (JSC::JSCallee::destroy):
+        (JSC::JSCallee::JSCallee):
+        (JSC::JSCallee::finishCreation):
+        (JSC::JSCallee::visitChildren):
+        (JSC::JSCallee::getOwnPropertySlot): Pass through wrapper function.
+        (JSC::JSCallee::getOwnNonIndexPropertyNames): Pass through wrapper function.
+        (JSC::JSCallee::put): Pass through wrapper function.
+        (JSC::JSCallee::deleteProperty): Pass through wrapper function.
+        (JSC::JSCallee::defineOwnProperty): Pass through wrapper function.
+
+        * runtime/JSCallee.h: Added.
+        (JSC::JSCallee::scope):
+        (JSC::JSCallee::scopeUnchecked):
+        (JSC::JSCallee::setScope):
+        (JSC::JSCallee::createStructure):
+        (JSC::JSCallee::offsetOfScopeChain):
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::addNameScopeIfNeeded):
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::scope): Deleted.
+        (JSC::JSFunction::scopeUnchecked): Deleted.
+        (JSC::JSFunction::setScope): Deleted.
+        (JSC::JSFunction::offsetOfScopeChain): Deleted.
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+        Changed to reference JSCallee and its methods.
+
+        * runtime/JSType.h: Added JSCallee as a TypeEnum.
+
 2014-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r172129): Vine pages load as blank

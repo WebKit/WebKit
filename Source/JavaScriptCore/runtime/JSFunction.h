@@ -25,7 +25,7 @@
 #define JSFunction_h
 
 #include "InternalFunction.h"
-#include "JSDestructibleObject.h"
+#include "JSCallee.h"
 #include "JSScope.h"
 #include "ObjectAllocationProfile.h"
 #include "Watchpoint.h"
@@ -49,14 +49,14 @@ JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(Exe
 
 JS_EXPORT_PRIVATE String getCalculatedDisplayName(CallFrame*, JSObject*);
     
-class JSFunction : public JSDestructibleObject {
+class JSFunction : public JSCallee {
     friend class JIT;
     friend class DFG::SpeculativeJIT;
     friend class DFG::JITCompiler;
     friend class VM;
 
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSCallee Base;
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
@@ -76,25 +76,6 @@ public:
     JS_EXPORT_PRIVATE String displayName(ExecState*);
     const String calculatedDisplayName(ExecState*);
 
-    JSScope* scope()
-    {
-        ASSERT(!isHostFunctionNonInline());
-        return m_scope.get();
-    }
-    // This method may be called for host functins, in which case it
-    // will return an arbitrary value. This should only be used for
-    // optimized paths in which the return value does not matter for
-    // host functions, and checking whether the function is a host
-    // function is deemed too expensive.
-    JSScope* scopeUnchecked()
-    {
-        return m_scope.get();
-    }
-    void setScope(VM& vm, JSScope* scope)
-    {
-        ASSERT(!isHostFunctionNonInline());
-        m_scope.set(vm, this, scope);
-    }
     void addNameScopeIfNeeded(VM&);
 
     ExecutableBase* executable() const { return m_executable.get(); }
@@ -118,11 +99,6 @@ public:
 
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
-
-    static inline ptrdiff_t offsetOfScopeChain()
-    {
-        return OBJECT_OFFSETOF(JSFunction, m_scope);
-    }
 
     static inline ptrdiff_t offsetOfExecutable()
     {
@@ -182,7 +158,6 @@ private:
     static EncodedJSValue nameGetter(ExecState*, JSObject*, EncodedJSValue, PropertyName);
 
     WriteBarrier<ExecutableBase> m_executable;
-    WriteBarrier<JSScope> m_scope;
     ObjectAllocationProfile m_allocationProfile;
     InlineWatchpointSet m_allocationProfileWatchpoint;
 };

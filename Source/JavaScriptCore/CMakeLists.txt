@@ -438,11 +438,13 @@ set(JavaScriptCore_SOURCES
     runtime/JSBoundFunction.cpp
     runtime/JSGlobalObjectDebuggable.cpp
     runtime/JSCJSValue.cpp
+    runtime/JSCallee.cpp
     runtime/JSCell.cpp
     runtime/JSConsole.cpp
     runtime/JSDataView.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSDateMath.cpp
+    runtime/JSEnvironmentRecord.cpp
     runtime/JSFunction.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectFunctions.cpp
@@ -471,7 +473,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSTypedArrayConstructors.cpp
     runtime/JSTypedArrayPrototypes.cpp
     runtime/JSTypedArrays.cpp
-    runtime/JSEnvironmentRecord.cpp
     runtime/JSWeakMap.cpp
     runtime/JSWithScope.cpp
     runtime/JSWrapperObject.cpp

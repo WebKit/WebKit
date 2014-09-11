@@ -1,3 +1,15 @@
+2014-09-10  Michael Saboff  <msaboff@apple.com>
+
+        Move JSScope out of JSFunction into separate JSCallee class
+        https://bugs.webkit.org/show_bug.cgi?id=136725
+
+        Reviewed by Oliver Hunt.
+
+        Created new JSCallee class that contains a JSScope*.  Changed JSFunction to inherit from
+        JSCallee.
+
+        * ForwardingHeaders/runtime/JSCallee.h: New forwarding header.
+
 2014-09-11  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix iOS.

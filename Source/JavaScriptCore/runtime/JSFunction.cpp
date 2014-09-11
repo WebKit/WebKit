@@ -85,9 +85,8 @@ void JSFunction::destroy(JSCell* cell)
 }
 
 JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, globalObject, structure)
     , m_executable()
-    , m_scope(vm, this, globalObject)
     // We initialize blind so that changes to the prototype after function creation but before
     // the optimizer kicks in don't disable optimizations. Once the optimizer kicks in, the
     // watchpoint will start watching and any changes will both force deoptimization and disable
@@ -117,7 +116,7 @@ void JSFunction::addNameScopeIfNeeded(VM& vm)
         return;
     if (!functionNameScopeIsDynamic(executable->usesEval(), executable->isStrictMode()))
         return;
-    m_scope.set(vm, this, JSNameScope::create(vm, m_scope->globalObject(), executable->name(), this, ReadOnly | DontDelete, m_scope.get()));
+    setScope(vm, JSNameScope::create(vm, scope()->globalObject(), executable->name(), this, ReadOnly | DontDelete, scope()));
 }
 
 JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject)
@@ -180,7 +179,6 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_scope);
     visitor.append(&thisObject->m_executable);
     thisObject->m_allocationProfile.visitAggregate(visitor);
 }

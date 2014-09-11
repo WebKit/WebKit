@@ -32,9 +32,8 @@
 namespace JSC {
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope)
-    : Base(vm, scope->globalObject()->functionStructure())
+    : Base(vm, scope, scope->globalObject()->functionStructure())
     , m_executable(vm, this, executable)
-    , m_scope(vm, this, scope)
     , m_allocationProfileWatchpoint(ClearWatchpoint) // See comment in JSFunction.cpp concerning the reason for using ClearWatchpoint as opposed to IsWatched.
 {
 }
