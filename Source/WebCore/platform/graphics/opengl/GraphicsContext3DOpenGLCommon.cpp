@@ -374,11 +374,16 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
         variables[index] = varyingSymbol.value;
         index++;
     }
-    
+
+    GC3Dint maxVaryingVectors = 0;
+#if !PLATFORM(IOS)
     GC3Dint maxVaryingFloats = 0;
     ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
-    int result = ShCheckVariablesWithinPackingLimits(maxVaryingFloats / 4, variables, numVaryings);
-
+    maxVaryingVectors = maxVaryingFloats / 4;
+#else
+    ::glGetIntegerv(MAX_VARYING_VECTORS, &maxVaryingVectors);
+#endif
+    int result = ShCheckVariablesWithinPackingLimits(maxVaryingVectors, variables, numVaryings);
     delete[] variables;
     return result;
 }

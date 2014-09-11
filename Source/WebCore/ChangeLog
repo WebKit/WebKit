@@ -1,3 +1,10 @@
+2014-09-11  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix iOS.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking):
+
 2014-09-11  Jer Noble  <jer.noble@apple.com>
 
         Add site-specific quirk for entering fullscreen on YouTube.com.
