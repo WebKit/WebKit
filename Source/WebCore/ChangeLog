@@ -1,3 +1,10 @@
+2014-09-11  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking):
+
 2014-09-11  Beth Dakin  <bdakin@apple.com>
 
         WebKit scrollbars flash in non-dominant spaces when entering Mission Control
