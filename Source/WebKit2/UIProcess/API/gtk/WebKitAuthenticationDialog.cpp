@@ -25,12 +25,17 @@
 #include "WebKitCredentialPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebView.h"
+#include <glib/gi18n-lib.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 
 struct _WebKitAuthenticationDialogPrivate {
     GRefPtr<WebKitAuthenticationRequest> request;
-    GtkWidget* authWidget;
+    CredentialStorageMode credentialStorageMode;
+    GtkWidget* loginEntry;
+    GtkWidget* passwordEntry;
+    GtkWidget* rememberCheckButton;
     GtkWidget* defaultButton;
     unsigned long authenticationCancelledID;
     GRefPtr<GtkStyleContext> styleContext;
@@ -41,7 +46,15 @@ WEBKIT_DEFINE_TYPE(WebKitAuthenticationDialog, webkit_authentication_dialog, GTK
 static void okButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
 {
     WebKitAuthenticationDialogPrivate* priv = authDialog->priv;
-    WebKitCredential* credential = webkitCredentialCreate(webkitAuthenticationWidgetCreateCredential(WEBKIT_AUTHENTICATION_WIDGET(priv->authWidget)));
+    const char* username = gtk_entry_get_text(GTK_ENTRY(priv->loginEntry));
+    const char* password = gtk_entry_get_text(GTK_ENTRY(priv->passwordEntry));
+    bool rememberPassword = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->rememberCheckButton));
+
+    WebCore::CredentialPersistence persistence = rememberPassword && priv->credentialStorageMode == AllowPersistentStorage ?
+        WebCore::CredentialPersistencePermanent : WebCore::CredentialPersistenceForSession;
+
+    // FIXME: Use a stack allocated WebKitCredential.
+    WebKitCredential* credential = webkitCredentialCreate(WebCore::Credential(String::fromUTF8(username), String::fromUTF8(password), persistence));
     webkit_authentication_request_authenticate(priv->request.get(), credential);
     webkit_credential_free(credential);
     gtk_widget_destroy(GTK_WIDGET(authDialog));
@@ -49,7 +62,7 @@ static void okButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
 
 static void cancelButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
 {
-    webkit_authentication_request_authenticate(authDialog->priv->request.get(), 0);
+    webkit_authentication_request_authenticate(authDialog->priv->request.get(), nullptr);
     gtk_widget_destroy(GTK_WIDGET(authDialog));
 }
 
@@ -58,7 +71,61 @@ static void authenticationCancelled(WebKitAuthenticationRequest*, WebKitAuthenti
     gtk_widget_destroy(GTK_WIDGET(authDialog));
 }
 
-static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* authDialog, CredentialStorageMode credentialStorageMode)
+static void packTwoColumnLayoutInBox(GtkWidget* box, ...)
+{
+    va_list argumentList;
+    va_start(argumentList, box);
+
+    GtkWidget* grid = gtk_grid_new();
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 6);
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
+    gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
+
+    GtkWidget* firstColumnWidget = va_arg(argumentList, GtkWidget*);
+    int rowNumber = 0;
+    while (firstColumnWidget) {
+        GtkWidget* secondColumnWidget = va_arg(argumentList, GtkWidget*);
+        int firstWidgetWidth = secondColumnWidget ? 1 : 2;
+
+        gtk_grid_attach(GTK_GRID(grid), firstColumnWidget, 0, rowNumber, firstWidgetWidth, 1);
+        gtk_widget_set_hexpand(firstColumnWidget, TRUE);
+        gtk_widget_set_vexpand(firstColumnWidget, TRUE);
+        gtk_widget_show(firstColumnWidget);
+
+        if (secondColumnWidget) {
+            gtk_grid_attach(GTK_GRID(grid), secondColumnWidget, 1, rowNumber, 1, 1);
+            gtk_widget_set_hexpand(secondColumnWidget, TRUE);
+            gtk_widget_set_vexpand(secondColumnWidget, TRUE);
+            gtk_widget_show(secondColumnWidget);
+        }
+
+        firstColumnWidget = va_arg(argumentList, GtkWidget*);
+        rowNumber++;
+    }
+
+    va_end(argumentList);
+
+    gtk_box_pack_start(GTK_BOX(box), grid, FALSE, FALSE, 0);
+    gtk_widget_show(grid);
+}
+
+static GtkWidget* createLabel(const char* labelString, int horizontalPadding = 0)
+{
+    GtkWidget* label = gtk_label_new(labelString);
+    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+    if (horizontalPadding)
+        gtk_misc_set_padding(GTK_MISC(label), 0, horizontalPadding);
+    return label;
+}
+
+static GtkWidget* createEntry(GtkWidget** member)
+{
+    *member = gtk_entry_new();
+    gtk_entry_set_activates_default(GTK_ENTRY(*member), TRUE);
+    return *member;
+}
+
+static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* authDialog)
 {
     GtkWidget* frame = gtk_frame_new(0);
     gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
@@ -76,16 +143,62 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_box_pack_end(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
     gtk_widget_show(button);
 
+    WebKitAuthenticationDialogPrivate* priv = authDialog->priv;
     button = gtk_button_new_from_stock(GTK_STOCK_OK);
-    authDialog->priv->defaultButton = button;
+    priv->defaultButton = button;
     g_signal_connect(button, "clicked", G_CALLBACK(okButtonClicked), authDialog);
     gtk_widget_set_can_default(button, TRUE);
     gtk_box_pack_end(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
     gtk_widget_show(button);
 
-    authDialog->priv->authWidget = webkitAuthenticationWidgetNew(webkitAuthenticationRequestGetAuthenticationChallenge(authDialog->priv->request.get())->core(), credentialStorageMode);
-    gtk_box_pack_start(GTK_BOX(vBox), authDialog->priv->authWidget, TRUE, TRUE, 0);
-    gtk_widget_show(authDialog->priv->authWidget);
+    GtkWidget* authBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
+    gtk_container_set_border_width(GTK_CONTAINER(authBox), 5);
+
+    GtkWidget* icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION, GTK_ICON_SIZE_DIALOG);
+    gtk_misc_set_alignment(GTK_MISC(icon), 0.5, 0.0);
+    gtk_box_pack_start(GTK_BOX(authBox), icon, FALSE, FALSE, 0);
+    gtk_widget_show(icon);
+
+    const WebCore::AuthenticationChallenge& challenge = webkitAuthenticationRequestGetAuthenticationChallenge(priv->request.get())->core();
+    GUniquePtr<char> prompt(g_strdup_printf(_("The site %s:%i requests a username and password"),
+        challenge.protectionSpace().host().utf8().data(), challenge.protectionSpace().port()));
+    priv->rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
+    gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(priv->rememberCheckButton))), TRUE);
+
+    String realm = challenge.protectionSpace().realm();
+    if (!realm.isEmpty()) {
+        packTwoColumnLayoutInBox(
+            authBox,
+            createLabel(prompt.get(), 6), nullptr,
+            createLabel(_("Server message:")), createLabel(realm.utf8().data()),
+            createLabel(_("Username:")), createEntry(&priv->loginEntry),
+            createLabel(_("Password:")), createEntry(&priv->passwordEntry),
+            priv->rememberCheckButton, nullptr,
+            nullptr);
+
+    } else {
+        packTwoColumnLayoutInBox(
+            authBox,
+            createLabel(prompt.get(), 6), nullptr,
+            createLabel(_("Username:")), createEntry(&priv->loginEntry),
+            createLabel(_("Password:")), createEntry(&priv->passwordEntry),
+            priv->rememberCheckButton, nullptr, nullptr,
+            nullptr);
+    }
+    gtk_entry_set_visibility(GTK_ENTRY(priv->passwordEntry), FALSE);
+    gtk_widget_set_visible(priv->rememberCheckButton, priv->credentialStorageMode != DisallowPersistentStorage);
+
+    const WebCore::Credential& credentialFromPersistentStorage = challenge.proposedCredential();
+    if (!credentialFromPersistentStorage.isEmpty()) {
+        gtk_entry_set_text(GTK_ENTRY(priv->loginEntry), credentialFromPersistentStorage.user().utf8().data());
+        gtk_entry_set_text(GTK_ENTRY(priv->passwordEntry), credentialFromPersistentStorage.password().utf8().data());
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(priv->rememberCheckButton), TRUE);
+    }
+
+    gtk_widget_grab_focus(priv->loginEntry);
+
+    gtk_box_pack_start(GTK_BOX(vBox), authBox, TRUE, TRUE, 0);
+    gtk_widget_show(authBox);
 
     gtk_box_pack_end(GTK_BOX(vBox), buttonBox, FALSE, TRUE, 0);
     gtk_widget_show(buttonBox);
@@ -159,6 +272,7 @@ GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest* request, C
 {
     WebKitAuthenticationDialog* authDialog = WEBKIT_AUTHENTICATION_DIALOG(g_object_new(WEBKIT_TYPE_AUTHENTICATION_DIALOG, NULL));
     authDialog->priv->request = request;
-    webkitAuthenticationDialogInitialize(authDialog, mode);
+    authDialog->priv->credentialStorageMode = mode;
+    webkitAuthenticationDialogInitialize(authDialog);
     return GTK_WIDGET(authDialog);
 }

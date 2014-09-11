@@ -21,9 +21,12 @@
 #define WebKitAuthenticationDialog_h
 
 #include "WebKitAuthenticationRequest.h"
-#include "WebKitAuthenticationWidget.h"
-#include "WebKitWebView.h"
 #include <gtk/gtk.h>
+
+enum CredentialStorageMode {
+    AllowPersistentStorage, // The user is asked whether to store credential information.
+    DisallowPersistentStorage // Credential information is only kept in the session.
+};
 
 G_BEGIN_DECLS
 

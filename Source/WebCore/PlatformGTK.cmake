@@ -244,7 +244,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/SoundGtk.cpp
     platform/gtk/TemporaryLinkStubs.cpp
     platform/gtk/UserAgentGtk.cpp
-    platform/gtk/WebKitAuthenticationWidget.cpp
     platform/gtk/WidgetBackingStoreGtkX11.cpp
     platform/gtk/WidgetGtk.cpp
 
