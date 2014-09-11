@@ -1,3 +1,12 @@
+2014-09-11  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening. Rebaseline tests and remove duplicate entry from TestExpectations.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-volume-slider-expected.txt:
+
 2014-09-10  Jer Noble  <jer.noble@apple.com>
 
         More unreviewed gardening. Rebaseline media/encrypted-media/encrypted-media-can-play-type.html
