@@ -93,13 +93,17 @@ public:
             
             unsigned sourceIndex = 0;
             unsigned targetIndex = 0;
-            Node* lastNode = nullptr;
             while (sourceIndex < block->size()) {
                 Node* node = block->at(sourceIndex++);
                 switch (node->op()) {
                 case Phantom: {
-                    if (lastNode && (lastNode->origin.forExit != node->origin.forExit || (lastNode->flags() & NodeHasVarArgs)))
-                        lastNode = nullptr;
+                    Node* lastNode = nullptr;
+                    if (sourceIndex > 1) {
+                        lastNode = block->at(sourceIndex - 2);
+                        if (lastNode->op() != Phantom
+                            || lastNode->origin.forExit != node->origin.forExit)
+                            lastNode = nullptr;
+                    }
                     for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                         Edge edge = node->children.child(i);
                         if (!edge)
@@ -161,7 +165,7 @@ public:
                 default:
                     break;
                 }
-                lastNode = node;
+                
                 block->at(targetIndex++) = node;
             }
             block->resize(targetIndex);

@@ -1,3 +1,21 @@
+2014-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r172129): Vine pages load as blank
+        https://bugs.webkit.org/show_bug.cgi?id=136655
+        rdar://problem/18281215
+
+        Reviewed by Michael Saboff.
+        
+        If lastNode is something that is subject to DCE, then removing the Phantom's reference to something
+        that lastNode references means that the thing being referenced may no longer be kept alive for OSR.
+        Teach PhantomRemovalPhase that it's only safe to do this if lastNode is a Phantom. That's probably too
+        conservative, but that's fine since this is mainly just an optimization to make the IR sane to read and
+        reasonably compact; it's OK if we miss cases here.
+
+        * dfg/DFGPhantomRemovalPhase.cpp:
+        (JSC::DFG::PhantomRemovalPhase::run):
+        * tests/stress/remove-phantom-after-setlocal.js: Added.
+
 2014-09-11  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Enable CSS Font Loading on Mac
