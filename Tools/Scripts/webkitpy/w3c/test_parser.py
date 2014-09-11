@@ -73,6 +73,13 @@ class TestParser(object):
 
         test_info = None
 
+        if test_contents is None and self.test_doc is None:
+            return test_info
+        if test_contents is not None:
+            self.test_doc = Parser(test_contents)
+        if ref_contents is not None:
+            self.ref_doc = Parser(ref_contents)
+
         # First check if it's a reftest
         matches = self.reference_links_of_type('match') + self.reference_links_of_type('mismatch')
         if matches:
@@ -139,7 +146,7 @@ class TestParser(object):
         paths = src_paths + href_paths + urls
         for path in paths:
             uri_scheme_pattern = re.compile(r"[A-Za-z][A-Za-z+.-]*:")
-            if uri_scheme_pattern.match(path):
+            if not uri_scheme_pattern.match(path):
                 support_files.append(path)
 
         return support_files

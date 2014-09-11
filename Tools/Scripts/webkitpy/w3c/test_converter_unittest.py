@@ -53,7 +53,7 @@ class W3CTestConverterTest(unittest.TestCase):
         """ Tests that the current list of properties requiring the -webkit- prefix load correctly """
 
         # FIXME: We should be passing in a MockHost here ...
-        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME)
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
         prop_list = converter.prefixed_properties
         self.assertTrue(prop_list, 'No prefixed properties found')
 
@@ -78,7 +78,7 @@ CONTENT OF TEST
 </body>
 </html>
 """
-        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME)
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
 
         oc = OutputCapture()
         oc.capture_output()
@@ -100,7 +100,7 @@ CONTENT OF TEST
 </head>
 """
         fake_dir_path = self.fake_dir_path("harnessonly")
-        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
         converter.feed(test_html)
         converter.close()
         converted = converter.output()
@@ -128,7 +128,7 @@ CONTENT OF TEST
 </html>
 """
         fake_dir_path = self.fake_dir_path('harnessandprops')
-        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
         test_content = self.generate_test_content(converter.prefixed_properties, 1, test_html)
 
         oc = OutputCapture()
@@ -165,7 +165,7 @@ CONTENT OF TEST
 </html>
 """
         fake_dir_path = self.fake_dir_path('harnessandprops')
-        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
 
         oc = OutputCapture()
         oc.capture_output()
@@ -191,7 +191,7 @@ CONTENT OF TEST
 </head>
 """
         fake_dir_path = self.fake_dir_path('testharnesspaths')
-        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
 
         oc = OutputCapture()
         oc.capture_output()
@@ -268,7 +268,7 @@ CONTENT OF TEST
 ]]></style>
 </html>
 """
-        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME)
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
         test_content = self.generate_test_content(converter.prefixed_properties, 20, test_html)
 
         oc = OutputCapture()

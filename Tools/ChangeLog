@@ -1,3 +1,21 @@
+2014-09-11  Rebecca Hauck  <rhauck@adobe.com>
+
+        webkitpy test failures from import-w3c-tests
+        https://bugs.webkit.org/show_bug.cgi?id=136752
+
+        Reviewed by Bem Jones-Bey.
+
+        This patch fixes a bug in import-w3c-tests where we were appending
+        the wrong set of files to the copy_list. This also updates the tests
+        to clear the failures introduced in the patch for bug 135929.
+
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (W3CTestConverterTest.test_read_prefixed_property_list):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.analyze_test):
+        (TestParser.support_files):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+
 2014-09-10  Brent Fulgham  <bfulgham@apple.com>
 
         Blink merge: Speculative fix for windows run-webkit-tests hangs
