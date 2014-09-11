@@ -177,7 +177,7 @@ void InspectorNetwork1BackendDispatcher::dispatch(long callId, const String& met
     if (method == "loadResource")
         loadResource(callId, *message.get());
     else
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, String("'") + "Network1" + '.' + method + "' was not found");
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
 void InspectorNetwork1BackendDispatcher::loadResource(long callId, const InspectorObject&)

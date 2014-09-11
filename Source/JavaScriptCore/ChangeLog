@@ -1,3 +1,12 @@
+2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rebaseline of inspector generator test results after r173120.
+
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+
 2014-09-11  Oliver Hunt  <oliver@apple.com>
 
         Rename activation to be more in line with spec language

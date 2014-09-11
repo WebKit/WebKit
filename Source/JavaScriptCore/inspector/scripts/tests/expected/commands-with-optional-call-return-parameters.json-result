@@ -185,7 +185,7 @@ void InspectorDatabaseBackendDispatcher::dispatch(long callId, const String& met
     else if (method == "executeNoOptionalParameters")
         executeNoOptionalParameters(callId, *message.get());
     else
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, String("'") + "Database" + '.' + method + "' was not found");
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "Database", '.', method, "' was not found"));
 }
 
 void InspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long callId, const InspectorObject& message)
