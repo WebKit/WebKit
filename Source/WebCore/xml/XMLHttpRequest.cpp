@@ -154,7 +154,7 @@ XMLHttpRequest::~XMLHttpRequest()
 
 Document* XMLHttpRequest::document() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext());
+    ASSERT(scriptExecutionContext());
     return toDocument(scriptExecutionContext());
 }
 

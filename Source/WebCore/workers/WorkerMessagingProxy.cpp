@@ -82,7 +82,7 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
 void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
 {
     // FIXME: This need to be revisited when we support nested worker one day
-    ASSERT_WITH_SECURITY_IMPLICATION(m_scriptExecutionContext);
+    ASSERT(m_scriptExecutionContext);
     Document* document = toDocument(m_scriptExecutionContext);
     GroupSettings* settings = 0;
     if (document->page())
