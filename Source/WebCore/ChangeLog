@@ -1,3 +1,20 @@
+2014-09-11  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Enable CSS Font Loading on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135473
+
+        Reviewed by Antti Koivisto.
+
+        Enable CSS Font Loading in FeatureDefines, and in
+        RuntimeEnabledFeatures.
+
+        Font Loading tests have been toggled back on in the Mac
+        TestExpectations file.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+
 2014-09-11  Chris Dumez  <cdumez@apple.com>
 
         Use tighter typing for Document::ownerElement() return value

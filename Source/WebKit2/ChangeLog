@@ -1,3 +1,14 @@
+2014-09-11  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Enable CSS Font Loading on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135473
+
+        Reviewed by Antti Koivisto.
+
+        Enable CSS Font Loading in FeatureDefines.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-09-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [WK2] Authentication dialog is displayed for cross-origin XHR

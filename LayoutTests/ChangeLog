@@ -1,3 +1,17 @@
+2014-09-11  Bear Travis  <betravis@adobe.com>
+
+        [CSS Font Loading] Enable CSS Font Loading on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=135473
+
+        Reviewed by Antti Koivisto.
+
+        Enable tests on the Mac platform. As more platforms
+        are added, this should move from the tests defaulting
+        to disabled to the tests defaulting to enabled.
+
+        * platform/mac/TestExpectations: Mark the Font Loading
+        tests as enabled.
+
 2014-09-11  Roger Fong  <roger_fong@apple.com>
 
         Temporary change to determine why some snapshotting tests are failing only on bots.
