@@ -45,7 +45,9 @@ public:
     bool allocate(size_t, void*&);
 
     unsigned char derefCount();
+
     void refill(MediumLine*);
+    void clear();
 
 private:
     char* m_end;
@@ -98,6 +100,13 @@ inline void MediumAllocator::refill(MediumLine* line)
     line->concurrentRef(MediumLine::maxRefCount);
     m_end = line->end();
     m_remaining = mediumLineSize;
+    m_objectCount = 0;
+}
+
+inline void MediumAllocator::clear()
+{
+    m_end = nullptr;
+    m_remaining = 0;
     m_objectCount = 0;
 }
 

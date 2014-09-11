@@ -47,7 +47,9 @@ public:
 
     unsigned short objectCount();
     unsigned char derefCount();
+
     void refill(SmallLine*);
+    void clear();
 
 private:
     char* m_ptr;
@@ -105,6 +107,12 @@ inline void SmallAllocator::refill(SmallLine* line)
     line->concurrentRef(SmallLine::maxRefCount);
     m_ptr = line->begin();
     m_remaining = m_maxObjectCount;
+}
+
+inline void SmallAllocator::clear()
+{
+    m_ptr = nullptr;
+    m_remaining = 0;
 }
 
 } // namespace bmalloc

@@ -1,3 +1,25 @@
+2014-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: eager scavenge leaves behind a bogus allocator
+        https://bugs.webkit.org/show_bug.cgi?id=136743
+
+        Reviewed by Sam Weinig.
+
+        Be sure to clear the allocator after logging it in the eager scavenge
+        case, so that we don't later try to allocate out of the lines that we
+        have thrown away.
+
+        We didn't need to do this previously because scavenge would only happen
+        at thread exit time, after which no further allocation from the per-thread
+        cache would take place.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::scavenge):
+        * bmalloc/MediumAllocator.h:
+        (bmalloc::MediumAllocator::clear):
+        * bmalloc/SmallAllocator.h:
+        (bmalloc::SmallAllocator::clear):
+
 2014-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc should honor the FastMalloc statistics API

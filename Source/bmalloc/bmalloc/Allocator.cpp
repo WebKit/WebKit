@@ -56,11 +56,14 @@ Allocator::~Allocator()
     
 void Allocator::scavenge()
 {
-    for (auto& allocator : m_smallAllocators)
+    for (auto& allocator : m_smallAllocators) {
         log(allocator);
+        allocator.clear();
+    }
     processSmallAllocatorLog();
 
     log(m_mediumAllocator);
+    m_mediumAllocator.clear();
     processMediumAllocatorLog();
 }
 
