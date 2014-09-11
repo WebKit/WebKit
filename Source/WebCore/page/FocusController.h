@@ -95,7 +95,7 @@ public:
 private:
     void setActiveInternal(bool);
     void setFocusedInternal(bool);
-    void setIsVisibleInternal(bool);
+    void setIsVisibleAndActiveInternal(bool);
 
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);

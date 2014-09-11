@@ -177,8 +177,6 @@ public:
     // a faithful representation of the content.
     WEBCORE_EXPORT bool isSoftwareRenderable() const;
 
-    void didMoveOnscreen();
-    void willMoveOffscreen();
     void setIsInWindow(bool);
 
     void resetScrollbars();
