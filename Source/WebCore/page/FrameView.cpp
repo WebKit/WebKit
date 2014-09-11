@@ -200,10 +200,20 @@ FrameView::FrameView(Frame& frame)
 {
     init();
 
-    if (frame.isMainFrame()) {
-        ScrollableArea::setVerticalScrollElasticity(m_frame->page() ? m_frame->page()->verticalScrollElasticity() : ScrollElasticityAllowed);
-        ScrollableArea::setHorizontalScrollElasticity(m_frame->page() ? m_frame->page()->horizontalScrollElasticity() : ScrollElasticityAllowed);
+#if ENABLE(RUBBER_BANDING)
+    ScrollElasticity verticalElasticity = ScrollElasticityNone;
+    ScrollElasticity horizontalElasticity = ScrollElasticityNone;
+    if (m_frame->isMainFrame()) {
+        verticalElasticity = m_frame->page() ? m_frame->page()->verticalScrollElasticity() : ScrollElasticityAllowed;
+        horizontalElasticity = m_frame->page() ? m_frame->page()->horizontalScrollElasticity() : ScrollElasticityAllowed;
+    } else if (m_frame->settings().rubberBandingForSubScrollableRegionsEnabled()) {
+        verticalElasticity = ScrollElasticityAutomatic;
+        horizontalElasticity = ScrollElasticityAutomatic;
     }
+
+    ScrollableArea::setVerticalScrollElasticity(verticalElasticity);
+    ScrollableArea::setHorizontalScrollElasticity(horizontalElasticity);
+#endif
 }
 
 PassRefPtr<FrameView> FrameView::create(Frame& frame)
@@ -3348,24 +3358,21 @@ bool FrameView::isScrollable(Scrollability definitionOfScrollable)
 
 bool FrameView::isScrollableOrRubberbandable()
 {
-    return frame().isMainFrame() ? isScrollable(Scrollability::ScrollableOrRubberbandable) : isScrollable(Scrollability::Scrollable);
+    return isScrollable(Scrollability::ScrollableOrRubberbandable);
 }
 
 bool FrameView::hasScrollableOrRubberbandableAncestor()
 {
     if (frame().isMainFrame())
-        return isScrollable(Scrollability::ScrollableOrRubberbandable);
+        return isScrollableOrRubberbandable();
 
-    FrameView* parentFrameView = this->parentFrameView();
-    if (!parentFrameView)
-        return false;
+    for (FrameView* parent = this->parentFrameView(); parent; parent = parent->parentFrameView()) {
+        Scrollability frameScrollability = parent->frame().isMainFrame() ? Scrollability::ScrollableOrRubberbandable : Scrollability::Scrollable;
+        if (parent->isScrollable(frameScrollability))
+            return true;
+    }
 
-    RenderView* parentRenderView = parentFrameView->renderView();
-    if (!parentRenderView)
-        return false;
-
-    RenderLayer* enclosingLayer = parentRenderView->enclosingLayer();
-    return enclosingLayer && enclosingLayer->hasScrollableOrRubberbandableAncestor();
+    return false;
 }
 
 void FrameView::updateScrollableAreaSet()

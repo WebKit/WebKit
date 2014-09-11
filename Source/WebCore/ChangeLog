@@ -1,3 +1,30 @@
+2014-09-11  Beth Dakin  <bdakin@apple.com>
+
+        Support rubber-banding in sub-frames
+        https://bugs.webkit.org/show_bug.cgi?id=136726
+        -and corresponding-
+        rdar://problem/10011924
+
+        Reviewed by Tim Horton.
+
+        Set the appropriate scroll elasticity for all frames! As long as its enabled, sub-
+        frames want an elasticity of ScrollElasticityAutomatic, which will allow for 
+        latching. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+
+        Account for rubber-banding in sub-frames.
+        (WebCore::FrameView::isScrollableOrRubberbandable):
+        (WebCore::FrameView::hasScrollableOrRubberbandableAncestor):
+
+        This patch also re-names rubberBandingForOverflowScrollEnabled to 
+        rubberBandingForSubScrollableRegionsEnabled
+        * page/Settings.in:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::overhangAmount):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+
 2014-09-11  Myles C. Maxfield <mmaxfield@apple.com>  <litherum@gmail.com>
 
         Initial implementation of SVG to OTF font converter

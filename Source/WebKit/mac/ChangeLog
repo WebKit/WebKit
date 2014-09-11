@@ -1,3 +1,17 @@
+2014-09-11  Beth Dakin  <bdakin@apple.com>
+
+        Support rubber-banding in sub-frames
+        https://bugs.webkit.org/show_bug.cgi?id=136726
+        -and corresponding-
+        rdar://problem/10011924
+
+        Reviewed by Tim Horton.
+
+        rubberBandingForOverflowScrollEnabled is re-named to
+        rubberBandingForSubScrollableRegionsEnabled
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2014-09-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Disable the "unreachable-code" warning

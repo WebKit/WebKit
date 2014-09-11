@@ -94,7 +94,7 @@ xssAuditorEnabled initial=false
 unsafePluginPastingEnabled initial=true
 acceleratedCompositingForFixedPositionEnabled initial=defaultAcceleratedCompositingForFixedPositionEnabled
 acceleratedCompositingForOverflowScrollEnabled initial=false
-rubberBandingForOverflowScrollEnabled initial=true, conditional=RUBBER_BANDING
+rubberBandingForSubScrollableRegionsEnabled initial=true, conditional=RUBBER_BANDING
 
 experimentalNotificationsEnabled initial=false
 webGLEnabled initial=false

@@ -2284,7 +2284,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if ENABLE(RUBBER_BANDING)
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=136131
-    settings.setRubberBandingForOverflowScrollEnabled(false);
+    settings.setRubberBandingForSubScrollableRegionsEnabled(false);
 #endif
 
 #if PLATFORM(IOS)
