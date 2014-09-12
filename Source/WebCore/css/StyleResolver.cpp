@@ -2839,7 +2839,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
-    case CSSPropertyJustifySelf: {
+    case CSSPropertyWebkitJustifySelf: {
         HANDLE_INHERIT_AND_INITIAL(justifySelf, JustifySelf);
         CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
         if (Pair* pairValue = primitiveValue->getPairValue()) {

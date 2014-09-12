@@ -289,7 +289,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFlexDirection,
     CSSPropertyFlexWrap,
     CSSPropertyJustifyContent,
-    CSSPropertyJustifySelf,
+    CSSPropertyWebkitJustifySelf,
     CSSPropertyWebkitFilter,
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
@@ -2054,7 +2054,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->flexWrap());
         case CSSPropertyJustifyContent:
             return cssValuePool().createValue(style->justifyContent());
-        case CSSPropertyJustifySelf: {
+        case CSSPropertyWebkitJustifySelf: {
             RefPtr<CSSValueList> result = CSSValueList::createSpaceSeparated();
             result->append(CSSPrimitiveValue::create(style->justifySelf()));
             if (style->justifySelf() >= JustifySelfCenter && style->justifySelfOverflowAlignment() != JustifySelfOverflowAlignmentDefault)

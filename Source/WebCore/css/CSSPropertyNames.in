@@ -315,8 +315,7 @@ flex-wrap
 -webkit-flex-wrap = flex-wrap
 justify-content
 -webkit-justify-content = justify-content
-justify-self
--webkit-justify-self = justify-self
+-webkit-justify-self
 -webkit-font-size-delta
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid
