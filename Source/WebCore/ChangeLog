@@ -1,3 +1,19 @@
+2014-09-11  Shivakumar JM  <shiva.jm@samsung.com>
+
+        The overrideMimeType in XMLHttpRequest should throw the exception.
+        https://bugs.webkit.org/show_bug.cgi?id=136699
+
+        Reviewed by Darin Adler.
+
+        No new tests, modifed test http/tests/xmlhttprequest/exceptions.html.
+
+        Set XMLHttpRequest::overrideMimeType to throw an "InvalidStateError" exception, if the state is LOADING or DONE.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::overrideMimeType):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Occasional ASSERT closing web inspector

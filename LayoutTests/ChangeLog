@@ -1,3 +1,15 @@
+2014-09-11  Shivakumar JM  <shiva.jm@samsung.com>
+
+        The overrideMimeType in XMLHttpRequest should throw the exception.
+        https://bugs.webkit.org/show_bug.cgi?id=136699
+
+        Reviewed by Darin Adler.
+
+        Added test to check for "InvalidStateError" exception for overrideMimeType.
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/exceptions.html:
+
 2014-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Size of web view in Safari as reported by AX changes when adding/removing bars is wrong

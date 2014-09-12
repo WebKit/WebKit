@@ -102,7 +102,7 @@ public:
     void send(JSC::ArrayBufferView*, ExceptionCode&);
     void abort();
     void setRequestHeader(const String& name, const String& value, ExceptionCode&);
-    void overrideMimeType(const String& override);
+    void overrideMimeType(const String& override, ExceptionCode&);
     bool doneWithoutErrors() const { return !m_error && m_state == DONE; }
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;

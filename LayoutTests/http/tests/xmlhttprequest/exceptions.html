@@ -69,6 +69,7 @@
     log("send()");
 
     shouldThrow('req.send(null)');
+    shouldThrow('req.overrideMimeType("text/plain")');
     shouldThrow('req.setRequestHeader("Foo", "bar")');
     shouldThrow('req.getResponseHeader()');
 

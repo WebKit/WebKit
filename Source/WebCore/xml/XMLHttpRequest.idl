@@ -91,7 +91,7 @@ enum XMLHttpRequestResponseType {
     readonly attribute DOMString statusText;
 
     // Extension
-    void overrideMimeType(DOMString override);
+    [RaisesException] void overrideMimeType(DOMString override);
 
     // EventTarget interface
     void addEventListener(DOMString type, 
