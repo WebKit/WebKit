@@ -1,3 +1,17 @@
+2014-09-11  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/forms/submit-to-blank-multiple-times.html crashes with JSC_slowPathAllocsBetweenGCs
+        https://bugs.webkit.org/show_bug.cgi?id=136716
+
+        Reviewed by Darin Adler.
+
+        This test used a fake timeout handler, which is not needed, because WRT/WKTR do it for you.
+        Any time the test took over 2 seconds, we would dump and disable waiting for notifyDone,
+        but the test would still try to open windows after that.
+
+        * fast/forms/submit-to-blank-multiple-times.html:
+        * platform/mac/TestExpectations:
+
 2014-09-11  Shivakumar JM  <shiva.jm@samsung.com>
 
         The overrideMimeType in XMLHttpRequest should throw the exception.

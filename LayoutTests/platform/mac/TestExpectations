@@ -1154,8 +1154,6 @@ webkit.org/b/131787 fast/canvas/canvas-putImageData-zero-alpha.html [ Pass Image
 
 webkit.org/b/135133 [ MountainLion ] fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/136716 fast/forms/submit-to-blank-multiple-times.html [ Skip ]
-
 webkit.org/b/136717 js/dom/string-replace-exception-crash.html [ Skip ]
 
 webkit.org/b/136718 fast/dynamic/layer-no-longer-paginated.html [ Skip ]

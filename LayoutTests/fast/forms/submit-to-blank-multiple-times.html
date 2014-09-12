@@ -20,6 +20,7 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.setCanOpenWindows();
+            testRunner.setCloseRemainingWindowsWhenComplete();
             testRunner.waitUntilDone();
         }
         var numberTimesToClick = 2;
@@ -29,8 +30,6 @@
                 return;
             
             click();
-            // Set a timeout to notify done in case the test fails.
-            setTimeout(notifyDone, 2000);
         };
         function log(message) {
             var span = document.createElement("span");
@@ -65,7 +64,6 @@
             eventSender.keyDown(' ');
         }
         function notifyDone() {
-            testRunner.setCloseRemainingWindowsWhenComplete();
             testRunner.notifyDone();
         }
         </script>
