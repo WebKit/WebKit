@@ -691,8 +691,10 @@ void ViewGestureController::didHitRenderTreeSizeThreshold()
 
     m_swipeWaitingForRenderTreeSizeThreshold = false;
 
-    if (!m_swipeWaitingForVisuallyNonEmptyLayout)
-        removeSwipeSnapshotAfterRepaint();
+    if (!m_swipeWaitingForVisuallyNonEmptyLayout) {
+        // FIXME: Ideally we would call removeSwipeSnapshotAfterRepaint() here, but sometimes
+        // scroll position isn't done restoring until didFinishLoadForFrame, so we flash the wrong content.
+    }
 }
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
@@ -702,9 +704,10 @@ void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
 
     m_swipeWaitingForVisuallyNonEmptyLayout = false;
 
-    if (!m_swipeWaitingForRenderTreeSizeThreshold)
-        removeSwipeSnapshotAfterRepaint();
-    else {
+    if (!m_swipeWaitingForRenderTreeSizeThreshold) {
+        // FIXME: Ideally we would call removeSwipeSnapshotAfterRepaint() here, but sometimes
+        // scroll position isn't done restoring until didFinishLoadForFrame, so we flash the wrong content.
+    } else {
         m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer.startOneShot(swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration.count());
         m_swipeWatchdogTimer.stop();
     }

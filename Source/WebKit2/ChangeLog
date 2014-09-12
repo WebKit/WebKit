@@ -1,3 +1,26 @@
+2014-09-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173573
+
+    2014-09-12  Tim Horton  <timothy_horton@apple.com>
+
+            Flash of page scrolled to wrong origin before restoring scroll position after swiping back to CNN front page from an article
+            https://bugs.webkit.org/show_bug.cgi?id=136788
+            <rdar://problem/18314597>
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold):
+            (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame):
+            Always wait until didFinishLoadForMainFrame or didSameDocumentNavigationForMainFrame
+            before removing the snapshot, because otherwise we don't know if the scroll
+            position has been restored yet.
+
+            We should revisit this at some point, because it should be possible to
+            determine if the scroll position has been restored appropriately, but for
+            now it is safest to restore the antique behavior.
+
 2014-08-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173121
