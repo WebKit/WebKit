@@ -1,5 +1,22 @@
 2014-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r173441): [GTK] All buttons appear insensitive
+        https://bugs.webkit.org/show_bug.cgi?id=136614
+
+        Reviewed by Sergio Villar Senin.
+
+        Do not use RenderTheme::isReadOnlyControl() to decide whether to
+        render non text based forms sensitive or unsensitive, isEnabled()
+        is enough in those cases.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::paintToggle):
+        (WebCore::renderButton):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+
+2014-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r173423): CertificateInfo is never sent to the UI process when using shared secondary process model
         https://bugs.webkit.org/show_bug.cgi?id=136669
 

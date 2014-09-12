@@ -515,7 +515,7 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, const Ren
     gtk_style_context_add_class(context, widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
 
     guint flags = 0;
-    if (!theme->isEnabled(renderObject) || theme->isReadOnlyControl(renderObject))
+    if (!theme->isEnabled(renderObject))
         flags |= GTK_STATE_FLAG_INSENSITIVE;
     else if (theme->isHovered(renderObject))
         flags |= GTK_STATE_FLAG_PRELIGHT;
@@ -575,7 +575,7 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, const Ren
     IntRect buttonRect(rect);
 
     guint flags = 0;
-    if (!theme->isEnabled(renderObject) || theme->isReadOnlyControl(renderObject))
+    if (!theme->isEnabled(renderObject))
         flags |= GTK_STATE_FLAG_INSENSITIVE;
     else if (theme->isHovered(renderObject))
         flags |= GTK_STATE_FLAG_PRELIGHT;
@@ -1105,7 +1105,7 @@ bool RenderThemeGtk::paintSliderTrack(const RenderObject& renderObject, const Pa
     applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
-    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+    if (!isEnabled(renderObject))
         gtk_style_context_set_state(context, GTK_STATE_FLAG_INSENSITIVE);
 
     gtk_render_background(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
@@ -1136,7 +1136,7 @@ bool RenderThemeGtk::paintSliderThumb(const RenderObject& renderObject, const Pa
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SLIDER);
 
     guint flags = 0;
-    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+    if (!isEnabled(renderObject))
         flags |= GTK_STATE_FLAG_INSENSITIVE;
     else if (isHovered(renderObject))
         flags |= GTK_STATE_FLAG_PRELIGHT;
