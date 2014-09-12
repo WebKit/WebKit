@@ -107,6 +107,12 @@ class DriverOutput(object):
         for pattern in patterns:
             self.text = re.sub(pattern[0], pattern[1], self.text)
 
+    def strip_stderror_patterns(self, patterns):
+        if not self.error:
+            return
+        for pattern in patterns:
+            self.error = re.sub(pattern[0], pattern[1], self.error)
+
 class Driver(object):
     """object for running test(s) using DumpRenderTree/WebKitTestRunner."""
 

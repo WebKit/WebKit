@@ -323,3 +323,14 @@ class MacPort(ApplePort):
     def logging_patterns_to_strip(self):
         # FIXME: Remove this after <rdar://problem/15605007> is fixed
         return [(re.compile('(AVF|GVA) info:.*\n'), '')]
+
+    def stderr_patterns_to_strip(self):
+        worthless_patterns = []
+        worthless_patterns.append((re.compile('.*(Fig|fig|itemasync|vt|mv_|PullParamSetSPS|ccrp_|client).* signalled err=.*\n'), ''))
+        worthless_patterns.append((re.compile('.*<<<< FigFilePlayer >>>>.*\n'), ''))
+        worthless_patterns.append((re.compile('.*<<<< FigFile >>>>.*\n'), ''))
+        worthless_patterns.append((re.compile('.*<<<< FAQ >>>>.*\n'), ''))
+        worthless_patterns.append((re.compile('.*<<<< MediaValidator >>>>.*\n'), ''))
+        worthless_patterns.append((re.compile('.*<<<< VMC >>>>.*\n'), ''))
+        worthless_patterns.append((re.compile('.*<<< FFR_Common >>>.*\n'), ''))
+        return worthless_patterns

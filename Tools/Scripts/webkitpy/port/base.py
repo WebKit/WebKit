@@ -1399,6 +1399,9 @@ class Port(object):
     def logging_patterns_to_strip(self):
         return []
 
+    def stderr_patterns_to_strip(self):
+        return []
+
     def test_expectations_file_position(self):
         # By default baseline search path schema is i.e. port-wk2 -> wk2 -> port -> generic, so port expectations file is at second to last position.
         return 1

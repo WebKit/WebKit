@@ -1,3 +1,26 @@
+2014-09-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Strip extraneous AVFoundation and CoreMedia logging
+        https://bugs.webkit.org/show_bug.cgi?id=136747
+
+        Reviewed by Jer Noble.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_compare_test): Allow the port to specify patterns to strip from stderr.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.stderr_patterns_to_strip): Base class, empty list
+
+        * Scripts/webkitpy/port/driver.py:
+        (DriverOutput.strip_stderror_patterns): Strip the specified patterns from stderr.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.stderr_patterns_to_strip): iOS patterns - there are none.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.stderr_patterns_to_strip): CoreMedia and AVFoundation logging we can ignore.
+
+
 2014-09-11  Michael Saboff  <msaboff@apple.com>
 
         lldb_webkit.py:btjs doesn't work with release builds

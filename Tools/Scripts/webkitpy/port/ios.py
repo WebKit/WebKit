@@ -350,3 +350,6 @@ class IOSSimulatorPort(Port):
 
     def logging_patterns_to_strip(self):
         return []
+
+    def stderr_patterns_to_strip(self):
+        return []
