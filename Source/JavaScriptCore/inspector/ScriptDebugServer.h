@@ -74,7 +74,7 @@ protected:
     ScriptDebugServer(bool isInWorkerThread = false);
     ~ScriptDebugServer();
 
-    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) = 0;
+    virtual ListenerSet& getListeners() = 0;
     virtual void didPause(JSC::JSGlobalObject*) = 0;
     virtual void didContinue(JSC::JSGlobalObject*) = 0;
     virtual void runEventLoopWhilePaused() = 0;
@@ -83,7 +83,7 @@ protected:
 
     bool evaluateBreakpointAction(const ScriptBreakpointAction&);
 
-    void dispatchFunctionToListeners(JavaScriptExecutionCallback, JSC::JSGlobalObject*);
+    void dispatchFunctionToListeners(JavaScriptExecutionCallback);
     void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback);
     void dispatchDidPause(ScriptDebugListener*);
     void dispatchDidContinue(ScriptDebugListener*);
@@ -99,7 +99,7 @@ private:
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) override final;
-    virtual bool needPauseHandling(JSC::JSGlobalObject*) override final;
+    virtual bool needPauseHandling(JSC::JSGlobalObject*) override final { return true; }
     virtual void handleBreakpointHit(const JSC::Breakpoint&) override final;
     virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const override final;
     virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) override final;

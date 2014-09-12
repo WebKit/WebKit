@@ -1,3 +1,13 @@
+2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Occasional ASSERT closing web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=136762
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/PageScriptDebugServer.h:
+
 2014-09-11  Chris Dumez  <cdumez@apple.com>
 
         Simplify DOM tree traversal in FrameSelection::setSelectionFromNone()

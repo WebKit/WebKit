@@ -51,7 +51,7 @@ public:
     virtual void recompileAllJSFunctions() override;
 
 private:
-    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) override { return &m_listeners; }
+    virtual ListenerSet& getListeners() override { return m_listeners; }
     virtual void didPause(JSC::JSGlobalObject*) override;
     virtual void didContinue(JSC::JSGlobalObject*) override;
     virtual void runEventLoopWhilePaused() override;

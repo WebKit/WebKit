@@ -1,3 +1,27 @@
+2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Occasional ASSERT closing web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=136762
+
+        Reviewed by Timothy Hatcher.
+
+        It is harmless, and indeed possible to have an empty set of listeners
+        now that each Page gets its own PageDebugServer instead of a shared
+        global. So we should replace the null checks with isEmpty checks.
+        Since nobody was ever returning null, convert to references as well.
+
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionLog):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionSound):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionProbe):
+        (Inspector::ScriptDebugServer::sourceParsed):
+        (Inspector::ScriptDebugServer::dispatchFunctionToListeners):
+        (Inspector::ScriptDebugServer::notifyDoneProcessingDebuggerEvents):
+        (Inspector::ScriptDebugServer::handlePause):
+        (Inspector::ScriptDebugServer::needPauseHandling): Deleted.
+        * inspector/ScriptDebugServer.h:
+
 2014-09-10  Michael Saboff  <msaboff@apple.com>
 
         Move JSScope out of JSFunction into separate JSCallee class
