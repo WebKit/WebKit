@@ -1,3 +1,16 @@
+2014-09-12  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening.
+
+        - Unskip some passing tests.
+        - Move flakey tests into flakey test section.
+        - Move non-media tests out of the media section.
+        - Mark WontFix tests as such.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Removed.
+        * platform/mac/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Removed.
+
 2014-09-12  Dean Jackson  <dino@apple.com>
 
         Import (some of) the W3C CSSWG flexbox tests
