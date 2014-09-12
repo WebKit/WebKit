@@ -158,6 +158,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
+#include <yarr/RegularExpression.h>
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
@@ -5331,6 +5332,15 @@ static void unwrapFullScreenRenderer(RenderFullScreen* fullScreenRenderer, Eleme
         fullScreenElement->parentNode()->setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
+static bool hostIsYouTube(const String& host)
+{
+    // Match .youtube.com, youtube.com, youtube.co.uk, and all two-letter country codes.
+    static NeverDestroyed<JSC::Yarr::RegularExpression> youtubePattern("(^|\\.)youtube.(com|co.uk|[a-z]{2})$", TextCaseInsensitive);
+    ASSERT(youtubePattern.get().isValid());
+
+    return youtubePattern.get().match(host);
+}
+
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
     if (!hasLivingRenderTree() || inPageCache())
@@ -5368,7 +5378,10 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
         RenderFullScreen::wrapRenderer(renderer, renderer ? renderer->parent() : nullptr, *this);
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
-    
+
+    if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
+        fullScreenChangeDelayTimerFired(m_fullScreenChangeDelayTimer);
+
     recalcStyle(Style::Force);
 }
 
@@ -5382,7 +5395,8 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 
     m_fullScreenElement->didBecomeFullscreenElement();
 
-    m_fullScreenChangeDelayTimer.startOneShot(0);
+    if (!settings() || !settings()->needsSiteSpecificQuirks() || !hostIsYouTube(url().host()))
+        m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
 void Document::webkitWillExitFullScreenForElement(Element*)
@@ -5421,8 +5435,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
 
     // FIXME(136605): Remove this quirk once YouTube moves to relative widths and heights for
     // fullscreen mode.
-    String host = url().host();
-    if (settings() && settings()->needsSiteSpecificQuirks() && (host.endsWith(".youtube.com", false) || equalIgnoringCase("youtube.com", host)))
+    if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
         exitingDocument.fullScreenChangeDelayTimerFired(exitingDocument.m_fullScreenChangeDelayTimer);
     else
         exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0);

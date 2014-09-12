@@ -1,3 +1,30 @@
+2014-09-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r173533
+
+    2014-09-11  Jer Noble  <jer.noble@apple.com>
+
+            Add site-specific quirk for entering fullscreen on YouTube.com.
+            https://bugs.webkit.org/show_bug.cgi?id=136742
+
+            Reviewed by Eric Carlson.
+
+            YouTube only resizes its <video> content when entering fullscreen after receiving the "webkitfullscreenchange"
+            event, which is fired once the animation to enter fullscreen completes. This leaves the apparent <video> content
+            too small during the animation, especially at the beginning of the animation. Add a site-specific hack for
+            YouTube sites which fires the "webkitfullscreenchange" event synchronously with the beginning of the enter
+            fullscreen animation. This will cause YouTube to resize their <video> content during the period of time where we
+            disable screen updates, and makes the enter fullscreen animation seamless.
+
+            Add a static utility method, hostIsYouTube(), for the various pieces of this site-specific hack, and expand it
+            to match youtube.co.uk, youtube.fr, etc.
+
+            * dom/Document.cpp:
+            (WebCore::hostIsYouTube): Added.
+            (WebCore::Document::webkitWillEnterFullScreenForElement): Fire fullscreenchange event if hacks are enabled.
+            (WebCore::Document::webkitDidEnterFullScreenForElement): Don't fire the event if same.
+            (WebCore::Document::webkitDidExitFullScreenForElement): Use hostIsYouTube().
+
 2014-09-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173365
