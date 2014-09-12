@@ -333,16 +333,16 @@ StylePropertyShorthand webkitColumnRuleShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitColumnRule, columnRuleProperties, WTF_ARRAY_LENGTH(columnRuleProperties));
 }
 
-StylePropertyShorthand webkitFlexFlowShorthand()
+StylePropertyShorthand flexFlowShorthand()
 {
-    static const CSSPropertyID flexFlowProperties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
-    return StylePropertyShorthand(CSSPropertyWebkitFlexFlow, flexFlowProperties, WTF_ARRAY_LENGTH(flexFlowProperties));
+    static const CSSPropertyID flexFlowProperties[] = { CSSPropertyFlexDirection, CSSPropertyFlexWrap };
+    return StylePropertyShorthand(CSSPropertyFlexFlow, flexFlowProperties, WTF_ARRAY_LENGTH(flexFlowProperties));
 }
 
-StylePropertyShorthand webkitFlexShorthand()
+StylePropertyShorthand flexShorthand()
 {
-    static const CSSPropertyID flexProperties[] = { CSSPropertyWebkitFlexGrow, CSSPropertyWebkitFlexShrink, CSSPropertyWebkitFlexBasis };
-    return StylePropertyShorthand(CSSPropertyWebkitFlex, flexProperties, WTF_ARRAY_LENGTH(flexProperties));
+    static const CSSPropertyID flexProperties[] = { CSSPropertyFlexGrow, CSSPropertyFlexShrink, CSSPropertyFlexBasis };
+    return StylePropertyShorthand(CSSPropertyFlex, flexProperties, WTF_ARRAY_LENGTH(flexProperties));
 }
 
 StylePropertyShorthand webkitMarginCollapseShorthand()
@@ -573,10 +573,10 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitColumnsShorthand();
     case CSSPropertyWebkitColumnRule:
         return webkitColumnRuleShorthand();
-    case CSSPropertyWebkitFlex:
-        return webkitFlexShorthand();
-    case CSSPropertyWebkitFlexFlow:
-        return webkitFlexFlowShorthand();
+    case CSSPropertyFlex:
+        return flexShorthand();
+    case CSSPropertyFlexFlow:
+        return flexFlowShorthand();
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridArea:
         return webkitGridAreaShorthand();
@@ -770,13 +770,13 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID prope
     case CSSPropertyWebkitColumnRuleStyle:
     case CSSPropertyWebkitColumnRuleColor:
         return makeVector(webkitColumnRuleShorthand());
-    case CSSPropertyWebkitFlexGrow:
-    case CSSPropertyWebkitFlexShrink:
-    case CSSPropertyWebkitFlexBasis:
-        return makeVector(webkitFlexShorthand());
-    case CSSPropertyWebkitFlexDirection:
-    case CSSPropertyWebkitFlexWrap:
-        return makeVector(webkitFlexFlowShorthand());
+    case CSSPropertyFlexGrow:
+    case CSSPropertyFlexShrink:
+    case CSSPropertyFlexBasis:
+        return makeVector(flexShorthand());
+    case CSSPropertyFlexDirection:
+    case CSSPropertyFlexWrap:
+        return makeVector(flexFlowShorthand());
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridColumnStart:
     case CSSPropertyWebkitGridColumnEnd:

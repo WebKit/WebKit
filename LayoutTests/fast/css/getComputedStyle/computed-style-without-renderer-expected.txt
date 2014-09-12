@@ -142,12 +142,12 @@ zoom: 1
 -webkit-column-rule-width: 0px
 -webkit-column-span: none
 -webkit-column-width: auto
--webkit-align-content: stretch
--webkit-align-items: stretch
--webkit-align-self: stretch
--webkit-flex-direction: row
--webkit-flex-wrap: nowrap
--webkit-justify-content: flex-start
+align-content: stretch
+align-items: stretch
+align-self: stretch
+flex-direction: row
+flex-wrap: nowrap
+justify-content: flex-start
 -webkit-font-kerning: auto
 -webkit-font-smoothing: auto
 -webkit-font-variant-ligatures: normal
@@ -192,7 +192,7 @@ zoom: 1
 -webkit-mask-repeat: repeat
 -webkit-mask-size: auto
 -webkit-nbsp-mode: normal
--webkit-order: 0
+order: 0
 -webkit-perspective: none
 -webkit-perspective-origin: 50% 50%
 -webkit-print-color-adjust: economy

@@ -358,7 +358,9 @@ table-cell
 table-caption
 -webkit-box
 -webkit-inline-box
+flex
 -webkit-flex
+inline-flex
 -webkit-inline-flex
 -webkit-grid
 -webkit-inline-grid

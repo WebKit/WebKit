@@ -293,18 +293,30 @@ mix-blend-mode
 isolation
 #endif
 -webkit-filter
--webkit-align-content
--webkit-align-items
--webkit-align-self
--webkit-flex
--webkit-flex-basis
--webkit-flex-direction
--webkit-flex-flow
--webkit-flex-grow
--webkit-flex-shrink
--webkit-flex-wrap
--webkit-justify-content
--webkit-justify-self
+align-content
+-webkit-align-content = align-content
+align-items
+-webkit-align-items = align-items
+align-self
+-webkit-align-self = align-self
+flex
+-webkit-flex = flex
+flex-basis
+-webkit-flex-basis = flex-basis
+flex-direction
+-webkit-flex-direction = flex-direction
+flex-flow
+-webkit-flex-flow = flex-flow
+flex-grow
+-webkit-flex-grow = flex-grow
+flex-shrink
+-webkit-flex-shrink = flex-shrink
+flex-wrap
+-webkit-flex-wrap = flex-wrap
+justify-content
+-webkit-justify-content = justify-content
+justify-self
+-webkit-justify-self = justify-self
 -webkit-font-size-delta
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid
@@ -377,7 +389,8 @@ isolation
 -webkit-min-logical-width
 -webkit-min-logical-height
 -webkit-nbsp-mode [Inherited]
--webkit-order
+order
+-webkit-order = order
 -webkit-padding-after
 -webkit-padding-before
 -webkit-padding-end

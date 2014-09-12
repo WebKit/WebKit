@@ -15,9 +15,9 @@ description('Test that setting and getting display: -webkit-flex and -webkit-inl
 
 debug("Test getting |display| set through CSS");
 var flexboxElement = document.getElementById("flexbox");
-shouldBe("getComputedStyle(flexboxElement, '').getPropertyValue('display')", "'-webkit-flex'");
+shouldBe("getComputedStyle(flexboxElement, '').getPropertyValue('display')", "'flex'");
 var inlineFlexboxElement = document.getElementById("flexboxInline");
-shouldBe("getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display')", "'-webkit-inline-flex'");
+shouldBe("getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display')", "'inline-flex'");
 
 debug("");
 debug("Test getting and setting display through JS");
@@ -25,13 +25,13 @@ var element = document.createElement("div");
 document.body.appendChild(element);
 shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'");
 element.style.display = "-webkit-flex";
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-flex'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'flex'");
 
 element = document.createElement("div");
 document.body.appendChild(element);
 shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'");
 element.style.display = "-webkit-inline-flex";
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-inline-flex'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'inline-flex'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -1065,6 +1065,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case TABLE:
     case BOX:
     case FLEX:
+    case WEBKIT_FLEX:
 #if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
 #endif
@@ -1080,6 +1081,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case INLINE_BOX:
         return BOX;
     case INLINE_FLEX:
+    case WEBKIT_INLINE_FLEX:
         return FLEX;
 #if ENABLE(CSS_GRID_LAYOUT)
     case INLINE_GRID:
@@ -2322,8 +2324,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnRule:
-    case CSSPropertyWebkitFlex:
-    case CSSPropertyWebkitFlexFlow:
+    case CSSPropertyFlex:
+    case CSSPropertyFlexFlow:
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridTemplate:
     case CSSPropertyWebkitGridArea:
@@ -2837,7 +2839,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
-    case CSSPropertyWebkitJustifySelf: {
+    case CSSPropertyJustifySelf: {
         HANDLE_INHERIT_AND_INITIAL(justifySelf, JustifySelf);
         CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
         if (Pair* pairValue = primitiveValue->getPairValue()) {
@@ -3107,16 +3109,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #if ENABLE(CURSOR_VISIBILITY)
     case CSSPropertyWebkitCursorVisibility:
 #endif
-    case CSSPropertyWebkitAlignContent:
-    case CSSPropertyWebkitAlignItems:
-    case CSSPropertyWebkitAlignSelf:
-    case CSSPropertyWebkitFlexBasis:
-    case CSSPropertyWebkitFlexDirection:
-    case CSSPropertyWebkitFlexGrow:
-    case CSSPropertyWebkitFlexShrink:
-    case CSSPropertyWebkitFlexWrap:
-    case CSSPropertyWebkitJustifyContent:
-    case CSSPropertyWebkitOrder:
+    case CSSPropertyAlignContent:
+    case CSSPropertyAlignItems:
+    case CSSPropertyAlignSelf:
+    case CSSPropertyFlexBasis:
+    case CSSPropertyFlexDirection:
+    case CSSPropertyFlexGrow:
+    case CSSPropertyFlexShrink:
+    case CSSPropertyFlexWrap:
+    case CSSPropertyJustifyContent:
+    case CSSPropertyOrder:
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitFlowInto:

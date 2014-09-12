@@ -1,3 +1,65 @@
+2014-09-12  Dean Jackson  <dino@apple.com>
+
+        Unprefix the flexbox CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=98420
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the need for a "-webkit-" prefix on flexbox
+        and related properties. This includes:
+        - align-content
+        - align-items
+        - align-self
+        - flex-basis
+        - flex-direction
+        - flex-wrap
+        - flex-grow
+        - flex-shrink
+        - flex
+        - flex-flow
+        - justify
+        - order
+
+        ... as well as the display keyword values "flex" and
+        "inline-flex".
+
+        * css/CSSComputedStyleDeclaration.cpp:  Change names.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp: Ditto.
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFlex):
+        * css/CSSPrimitiveValueMappings.h: Since we need to still handle the old
+        keywords for display, this has added two new keywords.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EDisplay): If the older keywords were used in
+        content, map them to the new value names.
+        * css/CSSPropertyNames.in: Add aliases for the prefixed properties.
+        * css/CSSValueKeywords.in: Add "flex" and "inline-flex".
+        * css/DeprecatedStyleBuilder.cpp: Change names.
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleProperties.cpp: Change names.
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::asText):
+        * css/StylePropertyShorthand.cpp: Rename shorthand methods to remove the prefix.
+        (WebCore::flexFlowShorthand):
+        (WebCore::flexShorthand):
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        (WebCore::webkitFlexFlowShorthand): Deleted.
+        (WebCore::webkitFlexShorthand): Deleted.
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::equivalentBlockDisplay):
+        (WebCore::StyleResolver::applyProperty):
+        * page/animation/CSSPropertyAnimation.cpp: Change names.
+        (WebCore::PropertyWrapperFlex::PropertyWrapperFlex):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor): Handle the two new display values (the same way as
+        the old values).
+        * rendering/style/RenderStyleConstants.h: Add constants for the new display values.
+
 2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ASSERTION FAILED: e in WebCore::StyleResolver::adjustRenderStyle

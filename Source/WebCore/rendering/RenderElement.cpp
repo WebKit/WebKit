@@ -187,6 +187,8 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<Rend
         return createRenderer<RenderDeprecatedFlexibleBox>(element, WTF::move(style));
     case FLEX:
     case INLINE_FLEX:
+    case WEBKIT_FLEX:
+    case WEBKIT_INLINE_FLEX:
         return createRenderer<RenderFlexibleBox>(element, WTF::move(style));
 #if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
