@@ -69,7 +69,7 @@
     return m_page->pageScaleFactor();
 }
 
-- (id)accessibilityHitTest:(NSPoint)point
+- (id)accessibilityHitTest:(WebCore::FloatPoint)point
 {
     if (!m_page)
         return nil;

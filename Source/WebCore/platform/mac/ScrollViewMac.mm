@@ -202,7 +202,7 @@ void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSPoint floatPoint = scrollPoint;
-    NSPoint tempPoint = { std::max(-[scrollView() scrollOrigin].x, floatPoint.x), std::max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
+    NSPoint tempPoint = { std::fmax(-[scrollView() scrollOrigin].x(), floatPoint.x), std::fmax(-[scrollView() scrollOrigin].y(), floatPoint.y) }; // Don't use NSMakePoint to work around 4213314.
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     // AppKit has the inset factored into all of its scroll positions. In WebCore, we use positions that ignore

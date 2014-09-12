@@ -243,9 +243,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSPoint floatPoint = scrollPoint;
-    NSPoint tempPoint = { max(-[scrollView() scrollOrigin].x, floatPoint.x), max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
-    [documentView() scrollPoint:tempPoint];
+    [documentView() scrollPoint:NSMakePoint(fmax(-[scrollView() scrollOrigin].x(), scrollPoint.x()), fmax(-[scrollView() scrollOrigin].y(), scrollPoint.y()))];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
