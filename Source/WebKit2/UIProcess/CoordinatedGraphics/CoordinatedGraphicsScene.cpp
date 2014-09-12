@@ -21,7 +21,6 @@
 #include "config.h"
 
 #if USE(COORDINATED_GRAPHICS)
-
 #include "CoordinatedGraphicsScene.h"
 
 #include "CoordinatedBackingStore.h"

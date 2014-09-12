@@ -22,8 +22,6 @@
 #define CoordinatedGraphicsScene_h
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedGraphicsState.h"
-#include "CoordinatedSurface.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerAnimation.h"
@@ -35,6 +33,8 @@
 #include "TextureMapperFPSCounter.h"
 #include "TextureMapperLayer.h"
 #include "Timer.h"
+#include <WebCore/CoordinatedGraphicsState.h>
+#include <WebCore/CoordinatedSurface.h>
 #include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/ThreadingPrimitives.h>

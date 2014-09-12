@@ -185,9 +185,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/texmap/coordinated/AreaAllocator.cpp
     platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
-    platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
     platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
-    platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp
     platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
     platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
     platform/graphics/texmap/coordinated/CoordinatedTile.cpp

@@ -30,12 +30,12 @@
 #include "WebView.h"
 
 #include "CoordinatedDrawingAreaProxy.h"
+#include "CoordinatedGraphicsScene.h"
 #include "CoordinatedLayerTreeHostProxy.h"
 #include "NotImplemented.h"
 #include "ViewState.h"
 #include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
-#include <WebCore/CoordinatedGraphicsScene.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"

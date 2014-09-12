@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebViewEfl.h"
 
+#include "CoordinatedGraphicsScene.h"
 #include "DownloadManagerEfl.h"
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"
@@ -34,7 +35,6 @@
 #include "WebContextMenuProxyEfl.h"
 #include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
-#include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebCore/PlatformContextCairo.h>
 
 #if ENABLE(FULLSCREEN_API)

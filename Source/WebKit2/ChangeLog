@@ -1,3 +1,23 @@
+2014-09-11  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][CoordinatedGraphics] Move CoordinatedGraphicsScene and CoordinatedBackingStore to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=136770
+
+        Reviewed by Gyuyoung Kim.
+
+        CoordinatedGraphicsScene and CoordinatedBackingStore is only for UIProcess.
+        This patch moved them from WebCore to WebKit2/UIProcess/CoordinatedGraphics/.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp.
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedBackingStore.h.
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.cpp: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp.
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.h: Renamed from Source/WebCore/platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        * UIProcess/efl/WebViewEfl.cpp:
+
 2014-09-11  Bear Travis  <betravis@adobe.com>
 
         [CSS Font Loading] Enable CSS Font Loading on Mac

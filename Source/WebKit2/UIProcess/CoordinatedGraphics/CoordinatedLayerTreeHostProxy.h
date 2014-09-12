@@ -24,8 +24,8 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "CoordinatedGraphicsArgumentCoders.h"
+#include "CoordinatedGraphicsScene.h"
 #include "MessageReceiver.h"
-#include <WebCore/CoordinatedGraphicsScene.h>
 #include <functional>
 
 namespace WebCore {

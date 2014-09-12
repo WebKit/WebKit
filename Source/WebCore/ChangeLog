@@ -1,3 +1,17 @@
+2014-09-11  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][CoordinatedGraphics] Move CoordinatedGraphicsScene and CoordinatedBackingStore to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=136770
+
+        Reviewed by Gyuyoung Kim.
+
+        CoordinatedGraphicsScene and CoordinatedBackingStore is only for UIProcess.
+        This patch moved them from WebCore to WebKit2/UIProcess/CoordinatedGraphics/.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+
 2014-09-11  Shivakumar JM  <shiva.jm@samsung.com>
 
         The overrideMimeType in XMLHttpRequest should throw the exception.

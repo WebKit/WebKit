@@ -21,10 +21,10 @@
 #include "CoordinatedBackingStore.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedSurface.h"
 #include "GraphicsLayer.h"
 #include "TextureMapper.h"
 #include "TextureMapperGL.h"
+#include <WebCore/CoordinatedSurface.h>
 
 namespace WebCore {
 
