@@ -1,3 +1,15 @@
+2014-09-12  Michael Saboff  <msaboff@apple.com>
+
+        Remove unneeded declarations from JSCallee.h
+        https://bugs.webkit.org/show_bug.cgi?id=136783
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSCallee.h:
+        (JSCallee::name): Deleted.
+        (JSCallee::displayName): Deleted.
+        (JSCallee::calculatedDisplayName): Deleted.
+
 2014-09-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: disambiguate double and integer primitive types in the protocol

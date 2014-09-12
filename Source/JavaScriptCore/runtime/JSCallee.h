@@ -48,10 +48,6 @@ public:
 
     static void destroy(JSCell*);
 
-    JS_EXPORT_PRIVATE String name(ExecState*);
-    JS_EXPORT_PRIVATE String displayName(ExecState*);
-    const String calculatedDisplayName(ExecState*);
-
     JSScope* scope()
     {
         return m_scope.get();
