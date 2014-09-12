@@ -5379,10 +5379,10 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 
+    recalcStyle(Style::Force);
+
     if (settings() && settings()->needsSiteSpecificQuirks() && hostIsYouTube(url().host()))
         fullScreenChangeDelayTimerFired(m_fullScreenChangeDelayTimer);
-
-    recalcStyle(Style::Force);
 }
 
 void Document::webkitDidEnterFullScreenForElement(Element*)

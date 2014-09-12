@@ -1,5 +1,22 @@
 2014-09-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173584
+
+    2014-09-12  Jer Noble  <jer.noble@apple.com>
+
+            [Fullscreen] Taking embedded youtube video full screen takes the whole page full screen
+            https://bugs.webkit.org/show_bug.cgi?id=136792
+
+            Reviewed by Beth Dakin.
+
+            Recalculate style after beginning the enter fullscreen animation, but before sending the
+            "webkitfullscreenchange" event to listeners.
+
+            * dom/Document.cpp:
+            (WebCore::Document::webkitWillEnterFullScreenForElement):
+
+2014-09-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173544
 
     2014-09-11  Beth Dakin  <bdakin@apple.com>
