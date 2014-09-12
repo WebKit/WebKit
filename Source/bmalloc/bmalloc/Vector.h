@@ -66,7 +66,7 @@ public:
 private:
     static const size_t growFactor = 2;
     static const size_t shrinkFactor = 4;
-    static const size_t initialCapacity = vmPageSize;
+    static const size_t initialCapacity = vmPageSize / sizeof(T);
 
     void growCapacity(size_t size);
     void shrinkCapacity();

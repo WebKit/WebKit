@@ -1,3 +1,16 @@
+2014-09-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed a goof in bmalloc Vector sizing
+        https://bugs.webkit.org/show_bug.cgi?id=136795
+
+        Reviewed by Gavin Barraclough and Sam Weinig.
+
+        We want our minimum vector to be page-sized since the OS will give us
+        a page no matter what -- but we want that many bytes, and not enough
+        bytes to store that many elements.
+
+        * bmalloc/Vector.h: Math is hard.
+
 2014-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc should segregate medium-sized objects by line like it does for small-sized objects
