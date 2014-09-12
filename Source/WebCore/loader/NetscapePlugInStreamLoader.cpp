@@ -37,7 +37,7 @@
 namespace WebCore {
 
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, NetscapePlugInStreamLoaderClient* client)
-    : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, DoNotBufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType))
+    : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, DoNotBufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo))
     , m_client(client)
 {
 }

@@ -1000,7 +1000,7 @@ CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, 
     DataBufferingPolicy bufferingPolicy = request.url().protocolIs("blob") ? BufferData : DoNotBufferData;
     RequestOriginPolicy corsPolicy = corsMode != MediaPlayerClient::Unspecified ? PotentiallyCrossOriginEnabled : UseDefaultOriginRestrictionsForType;
     StoredCredentials allowCredentials = corsMode == MediaPlayerClient::UseCredentials ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-    ResourceLoaderOptions options(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, corsPolicy);
+    ResourceLoaderOptions options(SendCallbacks, DoNotSniffContent, bufferingPolicy, allowCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, corsPolicy, DoNotIncludeCertificateInfo);
 
     CachedResourceRequest cacheRequest(request, options);
 

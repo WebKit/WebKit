@@ -72,7 +72,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     RetainPtr<CFURLRequestRef> urlRequest = AVCFAssetResourceLoadingRequestGetURLRequest(m_avRequest.get());
     URL requestURL = CFURLRequestGetURL(urlRequest.get());
 
-    CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
+    CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo));
 
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();

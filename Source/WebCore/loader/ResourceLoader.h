@@ -123,6 +123,7 @@ public:
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.setSendLoadCallbacks(sendLoadCallbacks); }
     bool shouldSniffContent() const { return m_options.sniffContent() == SniffContent; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
+    bool shouldIncludeCertificateInfo() const { return m_options.certificateInfoPolicy() == IncludeCertificateInfo; }
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 

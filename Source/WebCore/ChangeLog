@@ -1,3 +1,44 @@
+2014-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r173423): CertificateInfo is never sent to the UI process when using shared secondary process model
+        https://bugs.webkit.org/show_bug.cgi?id=136669
+
+        Reviewed by Antti Koivisto.
+
+        Add CertificateInfoPolicy option to ResourceLoaderOptions. It's
+        set to DoNotIncludeCertificateInfo for all loads except the main
+        resource load.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource): Pass
+        IncludeCertificateInfo to ResourceLoaderOptions.
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        Pass DoNotIncludeCertificateInfo to ResourceLoaderOptions().
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::shouldIncludeCertificateInfo): Return
+        true if IncludeCertificateInfo option was given.
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+        (WebCore::ResourceLoaderOptions::certificateInfoPolicy):
+        (WebCore::ResourceLoaderOptions::setCertificateInfoPolicy):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): If
+        IncludeCertificateInfo option is present, call
+        includeCertificateInfo() on the response.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet): Pass
+        DoNotIncludeCertificateInfo to ResourceLoaderOptions().
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions): Ditto.
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading): Ditto.
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading): Ditto.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading): Ditto.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::CachedResourceStreamingClient): Ditto.
+
 2014-09-11  Ryuan Choi  <ryuan.choi@gmail.com>
 
         Unreviewed build fix attempt on windows port since r173553.

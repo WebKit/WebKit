@@ -1432,7 +1432,7 @@ void DocumentLoader::startLoadingMainResource()
 #endif
 
     ResourceRequest request(m_request);
-    static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType);
+    static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType, IncludeCertificateInfo);
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
     m_mainResource = m_cachedResourceLoader->requestMainResource(cachedResourceRequest);
     if (!m_mainResource) {

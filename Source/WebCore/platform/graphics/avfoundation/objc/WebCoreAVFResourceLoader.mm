@@ -68,7 +68,7 @@ void WebCoreAVFResourceLoader::startLoading()
 
     URL requestURL = [[m_avRequest.get() request] URL];
 
-    CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
+    CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo));
 
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
