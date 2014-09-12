@@ -86,7 +86,7 @@ public:
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
 
-    static int getInt(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static int getInteger(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static double getDouble(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static String getString(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static bool getBoolean(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);

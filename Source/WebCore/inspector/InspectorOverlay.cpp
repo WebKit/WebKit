@@ -333,18 +333,18 @@ void InspectorOverlay::update()
 static PassRefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
-    object->setNumber(ASCIILiteral("x"), point.x());
-    object->setNumber(ASCIILiteral("y"), point.y());
+    object->setDouble(ASCIILiteral("x"), point.x());
+    object->setDouble(ASCIILiteral("y"), point.y());
     return object.release();
 }
 
 static PassRefPtr<InspectorObject> buildObjectForRect(const FloatRect& rect)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
-    object->setNumber(ASCIILiteral("x"), rect.x());
-    object->setNumber(ASCIILiteral("y"), rect.y());
-    object->setNumber(ASCIILiteral("width"), rect.width());
-    object->setNumber(ASCIILiteral("height"), rect.height());
+    object->setDouble(ASCIILiteral("x"), rect.x());
+    object->setDouble(ASCIILiteral("y"), rect.y());
+    object->setDouble(ASCIILiteral("width"), rect.width());
+    object->setDouble(ASCIILiteral("height"), rect.height());
     return object.release();
 }
 
@@ -440,8 +440,8 @@ static PassRefPtr<InspectorArray> buildObjectForCSSRegionsHighlight(RenderRegion
 static PassRefPtr<InspectorObject> buildObjectForSize(const IntSize& size)
 {
     RefPtr<InspectorObject> result = InspectorObject::create();
-    result->setNumber("width", size.width());
-    result->setNumber("height", size.height());
+    result->setInteger("width", size.width());
+    result->setInteger("height", size.height());
     return result.release();
 }
 
@@ -599,8 +599,8 @@ static void appendPathCommandAndPoints(PathApplyInfo* info, const String& comman
     for (unsigned i = 0; i < length; i++) {
         point = info->shapeOutsideInfo->shapeToRendererPoint(points[i]);
         point = localPointToRoot(info->renderer, info->rootView, info->view, point);
-        info->array->pushNumber(point.x());
-        info->array->pushNumber(point.y());
+        info->array->pushDouble(point.x());
+        info->array->pushDouble(point.y());
     }
 }
 
@@ -859,7 +859,7 @@ void InspectorOverlay::forcePaint()
 void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameViewFullSize)
 {
     RefPtr<InspectorObject> resetData = InspectorObject::create();
-    resetData->setNumber("deviceScaleFactor", m_page.deviceScaleFactor());
+    resetData->setDouble("deviceScaleFactor", m_page.deviceScaleFactor());
     resetData->setObject("viewportSize", buildObjectForSize(viewportSize));
     resetData->setObject("frameViewFullSize", buildObjectForSize(frameViewFullSize));
     evaluateInOverlay("reset", resetData.release());

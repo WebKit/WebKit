@@ -485,42 +485,42 @@ bool InspectorValue::asBoolean(bool*) const
     return false;
 }
 
-bool InspectorValue::asNumber(double*) const
+bool InspectorValue::asDouble(double*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(float*) const
+bool InspectorValue::asDouble(float*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(int*) const
+bool InspectorValue::asInteger(int*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(unsigned*) const
+bool InspectorValue::asInteger(unsigned*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(long*) const
+bool InspectorValue::asInteger(long*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(long long*) const
+bool InspectorValue::asInteger(long long*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(unsigned long*) const
+bool InspectorValue::asInteger(unsigned long*) const
 {
     return false;
 }
 
-bool InspectorValue::asNumber(unsigned long long*) const
+bool InspectorValue::asInteger(unsigned long long*) const
 {
     return false;
 }
@@ -591,65 +591,65 @@ bool InspectorBasicValue::asBoolean(bool* output) const
     return true;
 }
 
-bool InspectorBasicValue::asNumber(double* output) const
+bool InspectorBasicValue::asDouble(double* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Double)
         return false;
     *output = m_doubleValue;
     return true;
 }
 
-bool InspectorBasicValue::asNumber(float* output) const
+bool InspectorBasicValue::asDouble(float* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Double)
         return false;
     *output = static_cast<float>(m_doubleValue);
     return true;
 }
 
-bool InspectorBasicValue::asNumber(int* output) const
+bool InspectorBasicValue::asInteger(int* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Integer && type() != Type::Double)
         return false;
     *output = static_cast<int>(m_doubleValue);
     return true;
 }
 
-bool InspectorBasicValue::asNumber(unsigned* output) const
+bool InspectorBasicValue::asInteger(unsigned* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Integer && type() != Type::Double)
         return false;
     *output = static_cast<unsigned>(m_doubleValue);
     return true;
 }
 
-bool InspectorBasicValue::asNumber(long* output) const
+bool InspectorBasicValue::asInteger(long* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Integer && type() != Type::Double)
         return false;
     *output = static_cast<long>(m_doubleValue);
     return true;
 }
 
-bool InspectorBasicValue::asNumber(long long* output) const
+bool InspectorBasicValue::asInteger(long long* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Integer && type() != Type::Double)
         return false;
     *output = static_cast<long long>(m_doubleValue);
     return true;
 }
 
-bool InspectorBasicValue::asNumber(unsigned long* output) const
+bool InspectorBasicValue::asInteger(unsigned long* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Integer && type() != Type::Double)
         return false;
     *output = static_cast<unsigned long>(m_doubleValue);
     return true;
 }
 
-bool InspectorBasicValue::asNumber(unsigned long long* output) const
+bool InspectorBasicValue::asInteger(unsigned long long* output) const
 {
-    if (type() != Type::Number)
+    if (type() != Type::Integer && type() != Type::Double)
         return false;
     *output = static_cast<unsigned long long>(m_doubleValue);
     return true;
@@ -657,13 +657,13 @@ bool InspectorBasicValue::asNumber(unsigned long long* output) const
 
 void InspectorBasicValue::writeJSON(StringBuilder* output) const
 {
-    ASSERT(type() == Type::Boolean || type() == Type::Number);
+    ASSERT(type() == Type::Boolean || type() == Type::Double || type() == Type::Integer);
     if (type() == Type::Boolean) {
         if (m_boolValue)
             output->append(trueString, 4);
         else
             output->append(falseString, 5);
-    } else if (type() == Type::Number) {
+    } else if (type() == Type::Double || type() == Type::Integer) {
         NumberToLStringBuffer buffer;
         if (!std::isfinite(m_doubleValue)) {
             output->append(nullString, 4);

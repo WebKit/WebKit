@@ -97,8 +97,8 @@ void InspectorBackendDispatcher::dispatch(const String& message)
     }
 
     long callId = 0;
-    if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("The type of 'id' property must be number"));
+    if (!callIdValue->asInteger(&callId)) {
+        reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("The type of 'id' property must be integer"));
         return;
     }
 
@@ -143,7 +143,7 @@ void InspectorBackendDispatcher::sendResponse(long callId, PassRefPtr<InspectorO
 
     RefPtr<InspectorObject> responseMessage = InspectorObject::create();
     responseMessage->setObject(ASCIILiteral("result"), result);
-    responseMessage->setNumber(ASCIILiteral("id"), callId);
+    responseMessage->setInteger(ASCIILiteral("id"), callId);
     m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
 }
 
@@ -171,7 +171,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
         return;
 
     RefPtr<InspectorObject> error = InspectorObject::create();
-    error->setNumber(ASCIILiteral("code"), errorCodes[errorCode]);
+    error->setInteger(ASCIILiteral("code"), errorCodes[errorCode]);
     error->setString(ASCIILiteral("message"), errorMessage);
     if (data)
         error->setArray(ASCIILiteral("data"), data);
@@ -179,7 +179,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
     RefPtr<InspectorObject> message = InspectorObject::create();
     message->setObject(ASCIILiteral("error"), error.release());
     if (callId)
-        message->setNumber(ASCIILiteral("id"), *callId);
+        message->setInteger(ASCIILiteral("id"), *callId);
     else
         message->setValue(ASCIILiteral("id"), InspectorValue::null());
 
@@ -221,17 +221,17 @@ static ReturnValueType getPropertyValue(InspectorObject* object, const String& n
 }
 
 struct AsMethodBridges {
-    static bool asInt(InspectorValue* value, int* output) { return value->asNumber(output); }
-    static bool asDouble(InspectorValue* value, double* output) { return value->asNumber(output); }
+    static bool asInteger(InspectorValue* value, int* output) { return value->asInteger(output); }
+    static bool asDouble(InspectorValue* value, double* output) { return value->asDouble(output); }
     static bool asString(InspectorValue* value, String* output) { return value->asString(output); }
     static bool asBoolean(InspectorValue* value, bool* output) { return value->asBoolean(output); }
     static bool asObject(InspectorValue* value, RefPtr<InspectorObject>* output) { return value->asObject(output); }
     static bool asArray(InspectorValue* value, RefPtr<InspectorArray>* output) { return value->asArray(output); }
 };
 
-int InspectorBackendDispatcher::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+int InspectorBackendDispatcher::getInteger(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
-    return getPropertyValue<int, int, int>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asInt, "Number");
+    return getPropertyValue<int, int, int>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asInteger, "Integer");
 }
 
 double InspectorBackendDispatcher::getDouble(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)

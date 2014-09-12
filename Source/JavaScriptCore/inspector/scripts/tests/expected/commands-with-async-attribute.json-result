@@ -215,7 +215,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long
     RefPtr<InspectorObject> paramsContainer = message.getObject(ASCIILiteral("params"));
     InspectorObject* paramsContainerPtr = paramsContainer.get();
     InspectorArray* protocolErrorsPtr = protocolErrors.get();
-    int in_databaseId = InspectorBackendDispatcher::getInt(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
+    int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
     String in_query = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("query"), nullptr, protocolErrorsPtr);
     if (protocolErrors->length()) {
         String errorMessage = String::format("Some arguments of method '%s' can't be processed", "Database.executeSQLSyncOptionalReturnValues");
@@ -242,13 +242,13 @@ void InspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long
         if (out_notes.isAssigned())
             result->setString(ASCIILiteral("notes"), out_notes.getValue());
         if (out_timestamp.isAssigned())
-            result->setNumber(ASCIILiteral("timestamp"), out_timestamp.getValue());
+            result->setDouble(ASCIILiteral("timestamp"), out_timestamp.getValue());
         if (out_values.isAssigned())
             result->setObject(ASCIILiteral("values"), out_values.getValue());
         if (out_payload.isAssigned())
             result->setValue(ASCIILiteral("payload"), out_payload.getValue());
         if (out_databaseId.isAssigned())
-            result->setNumber(ASCIILiteral("databaseId"), out_databaseId.getValue());
+            result->setInteger(ASCIILiteral("databaseId"), out_databaseId.getValue());
         if (out_sqlError)
             result->setObject(ASCIILiteral("sqlError"), out_sqlError);
         if (out_screenColor.isAssigned())
@@ -269,13 +269,13 @@ void InspectorDatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnVal
     if (notes.isAssigned())
         jsonMessage->setString(ASCIILiteral("notes"), notes.getValue());
     if (timestamp.isAssigned())
-        jsonMessage->setNumber(ASCIILiteral("timestamp"), timestamp.getValue());
+        jsonMessage->setDouble(ASCIILiteral("timestamp"), timestamp.getValue());
     if (values.isAssigned())
         jsonMessage->setObject(ASCIILiteral("values"), values.getValue());
     if (payload.isAssigned())
         jsonMessage->setValue(ASCIILiteral("payload"), payload.getValue());
     if (databaseId.isAssigned())
-        jsonMessage->setNumber(ASCIILiteral("databaseId"), databaseId.getValue());
+        jsonMessage->setInteger(ASCIILiteral("databaseId"), databaseId.getValue());
     if (sqlError)
         jsonMessage->setObject(ASCIILiteral("sqlError"), sqlError);
     if (screenColor.isAssigned())
@@ -291,7 +291,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(lon
     RefPtr<InspectorObject> paramsContainer = message.getObject(ASCIILiteral("params"));
     InspectorObject* paramsContainerPtr = paramsContainer.get();
     InspectorArray* protocolErrorsPtr = protocolErrors.get();
-    int in_databaseId = InspectorBackendDispatcher::getInt(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
+    int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
     String in_query = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("query"), nullptr, protocolErrorsPtr);
     if (protocolErrors->length()) {
         String errorMessage = String::format("Some arguments of method '%s' can't be processed", "Database.executeSQLAsyncOptionalReturnValues");
@@ -317,7 +317,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLSync(long callId, const Inspe
     RefPtr<InspectorObject> paramsContainer = message.getObject(ASCIILiteral("params"));
     InspectorObject* paramsContainerPtr = paramsContainer.get();
     InspectorArray* protocolErrorsPtr = protocolErrors.get();
-    int in_databaseId = InspectorBackendDispatcher::getInt(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
+    int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
     String in_query = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("query"), nullptr, protocolErrorsPtr);
     if (protocolErrors->length()) {
         String errorMessage = String::format("Some arguments of method '%s' can't be processed", "Database.executeSQLSync");
@@ -341,10 +341,10 @@ void InspectorDatabaseBackendDispatcher::executeSQLSync(long callId, const Inspe
     if (!error.length()) {
         result->setArray(ASCIILiteral("columnNames"), out_columnNames);
         result->setString(ASCIILiteral("notes"), out_notes);
-        result->setNumber(ASCIILiteral("timestamp"), out_timestamp);
+        result->setDouble(ASCIILiteral("timestamp"), out_timestamp);
         result->setObject(ASCIILiteral("values"), out_values);
         result->setValue(ASCIILiteral("payload"), out_payload);
-        result->setNumber(ASCIILiteral("databaseId"), out_databaseId);
+        result->setInteger(ASCIILiteral("databaseId"), out_databaseId);
         result->setObject(ASCIILiteral("sqlError"), out_sqlError);
         result->setString(ASCIILiteral("screenColor"), Inspector::Protocol::getTestEnumConstantValue(out_screenColor));
         result->setString(ASCIILiteral("printColor"), Inspector::Protocol::getTestEnumConstantValue(out_printColor));
@@ -359,10 +359,10 @@ void InspectorDatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuc
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setArray(ASCIILiteral("columnNames"), columnNames);
     jsonMessage->setString(ASCIILiteral("notes"), notes);
-    jsonMessage->setNumber(ASCIILiteral("timestamp"), timestamp);
+    jsonMessage->setDouble(ASCIILiteral("timestamp"), timestamp);
     jsonMessage->setObject(ASCIILiteral("values"), values);
     jsonMessage->setValue(ASCIILiteral("payload"), payload);
-    jsonMessage->setNumber(ASCIILiteral("databaseId"), databaseId);
+    jsonMessage->setInteger(ASCIILiteral("databaseId"), databaseId);
     jsonMessage->setObject(ASCIILiteral("sqlError"), sqlError);
     jsonMessage->setString(ASCIILiteral("screenColor"), Inspector::Protocol::getTestEnumConstantValue(screenColor));
     jsonMessage->setString(ASCIILiteral("printColor"), Inspector::Protocol::getTestEnumConstantValue(printColor));
@@ -375,7 +375,7 @@ void InspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, const Insp
     RefPtr<InspectorObject> paramsContainer = message.getObject(ASCIILiteral("params"));
     InspectorObject* paramsContainerPtr = paramsContainer.get();
     InspectorArray* protocolErrorsPtr = protocolErrors.get();
-    int in_databaseId = InspectorBackendDispatcher::getInt(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
+    int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
     String in_query = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("query"), nullptr, protocolErrorsPtr);
     if (protocolErrors->length()) {
         String errorMessage = String::format("Some arguments of method '%s' can't be processed", "Database.executeSQLAsync");
@@ -614,7 +614,7 @@ public:
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setNumber(ASCIILiteral("code"), value);
+            m_result->setInteger(ASCIILiteral("code"), value);
             return castState<CodeSet>();
         }
 

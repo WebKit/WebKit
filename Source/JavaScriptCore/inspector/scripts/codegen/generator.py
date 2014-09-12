@@ -232,7 +232,9 @@ class Generator:
             return 'getArray'
         if isinstance(_type, PrimitiveType):
             if _type.raw_name() is 'integer':
-                return 'getInt'
+                return 'getInteger'
+            elif _type.raw_name() is 'number':
+                return 'getDouble'
             else:
                 return 'get' + ucfirst(_type.raw_name())
         if isinstance(_type, AliasedType):
@@ -247,9 +249,11 @@ class Generator:
         if isinstance(_type, ArrayType):
             return 'setArray'
         if isinstance(_type, PrimitiveType):
-            if _type.raw_name() in ['integer', 'number']:
-                return 'setNumber'
-            elif _type.raw_name() in ['any']:
+            if _type.raw_name() is 'integer':
+                return 'setInteger'
+            elif _type.raw_name() is 'number':
+                return 'setDouble'
+            elif _type.raw_name() is 'any':
                 return 'setValue'
             else:
                 return 'set' + ucfirst(_type.raw_name())

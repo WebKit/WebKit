@@ -97,7 +97,7 @@ InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& ob
     RefPtr<InspectorValue> parsedObjectId = InspectorValue::parseJSON(objectId);
     if (parsedObjectId && parsedObjectId->type() == InspectorValue::Type::Object) {
         long injectedScriptId = 0;
-        bool success = parsedObjectId->asObject()->getNumber(ASCIILiteral("injectedScriptId"), &injectedScriptId);
+        bool success = parsedObjectId->asObject()->getInteger(ASCIILiteral("injectedScriptId"), &injectedScriptId);
         if (success)
             return m_idToInjectedScript.get(injectedScriptId);
     }

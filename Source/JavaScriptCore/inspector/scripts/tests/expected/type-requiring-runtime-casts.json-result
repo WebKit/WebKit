@@ -350,7 +350,7 @@ public:
         Builder<STATE | NumberSet>& setNumber(int value)
         {
             COMPILE_ASSERT(!(STATE & NumberSet), property_number_already_set);
-            m_result->setNumber(ASCIILiteral("number"), value);
+            m_result->setInteger(ASCIILiteral("number"), value);
             return castState<NumberSet>();
         }
 
@@ -364,7 +364,7 @@ public:
         Builder<STATE | IdSet>& setId(int value)
         {
             COMPILE_ASSERT(!(STATE & IdSet), property_id_already_set);
-            m_result->setNumber(ASCIILiteral("id"), value);
+            m_result->setInteger(ASCIILiteral("id"), value);
             return castState<IdSet>();
         }
 

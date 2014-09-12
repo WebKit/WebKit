@@ -112,7 +112,7 @@ template<> bool EncodedValue::convertTo<bool>()
 template<> double EncodedValue::convertTo<double>()
 {
     double result;
-    bool castSucceeded = m_value->asNumber(&result);
+    bool castSucceeded = m_value->asDouble(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return result;
@@ -121,7 +121,7 @@ template<> double EncodedValue::convertTo<double>()
 template<> float EncodedValue::convertTo<float>()
 {
     float result;
-    bool castSucceeded = m_value->asNumber(&result);
+    bool castSucceeded = m_value->asDouble(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return result;
@@ -130,7 +130,7 @@ template<> float EncodedValue::convertTo<float>()
 template<> int32_t EncodedValue::convertTo<int32_t>()
 {
     int32_t result;
-    bool castSucceeded = m_value->asNumber(&result);
+    bool castSucceeded = m_value->asInteger(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return result;
@@ -139,7 +139,7 @@ template<> int32_t EncodedValue::convertTo<int32_t>()
 template<> int64_t EncodedValue::convertTo<int64_t>()
 {
     int64_t result;
-    bool castSucceeded = m_value->asNumber(&result);
+    bool castSucceeded = m_value->asInteger(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return result;
@@ -148,7 +148,7 @@ template<> int64_t EncodedValue::convertTo<int64_t>()
 template<> uint32_t EncodedValue::convertTo<uint32_t>()
 {
     uint32_t result;
-    bool castSucceeded = m_value->asNumber(&result);
+    bool castSucceeded = m_value->asInteger(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return result;
@@ -157,7 +157,7 @@ template<> uint32_t EncodedValue::convertTo<uint32_t>()
 template<> uint64_t EncodedValue::convertTo<uint64_t>()
 {
     uint64_t result;
-    bool castSucceeded = m_value->asNumber(&result);
+    bool castSucceeded = m_value->asInteger(&result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return result;

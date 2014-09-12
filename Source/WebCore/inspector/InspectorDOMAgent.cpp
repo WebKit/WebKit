@@ -119,14 +119,14 @@ static Color parseColor(const RefPtr<InspectorObject>* colorObject)
     int r;
     int g;
     int b;
-    bool success = (*colorObject)->getNumber("r", &r);
-    success |= (*colorObject)->getNumber("g", &g);
-    success |= (*colorObject)->getNumber("b", &b);
+    bool success = (*colorObject)->getInteger("r", &r);
+    success |= (*colorObject)->getInteger("g", &g);
+    success |= (*colorObject)->getInteger("b", &b);
     if (!success)
         return Color::transparent;
 
     double a;
-    success = (*colorObject)->getNumber("a", &a);
+    success = (*colorObject)->getDouble("a", &a);
     if (!success)
         return Color(r, g, b);
 
@@ -154,7 +154,7 @@ static bool parseQuad(const RefPtr<InspectorArray>& quadArray, FloatQuad* quad)
     if (quadArray->length() != coordinatesInQuad)
         return false;
     for (size_t i = 0; i < coordinatesInQuad; ++i) {
-        if (!quadArray->get(i)->asNumber(coordinates + i))
+        if (!quadArray->get(i)->asDouble(coordinates + i))
             return false;
     }
     quad->setP1(FloatPoint(coordinates[0], coordinates[1]));
@@ -899,7 +899,7 @@ void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& wh
                 return;
             }
             int nodeId = 0;
-            if (!nodeValue->asNumber(&nodeId)) {
+            if (!nodeValue->asInteger(&nodeId)) {
                 *errorString = "Invalid nodeIds item type. Expecting integer types.";
                 return;
             }

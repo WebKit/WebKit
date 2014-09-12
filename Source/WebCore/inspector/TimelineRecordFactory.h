@@ -111,7 +111,7 @@ namespace WebCore {
         static inline PassRefPtr<Inspector::InspectorObject> createWebSocketCreateData(unsigned long identifier, const URL& url, const String& protocol)
         {
             RefPtr<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
-            data->setNumber("identifier", identifier);
+            data->setInteger("identifier", identifier);
             data->setString("url", url.string());
             if (!protocol.isNull())
                 data->setString("webSocketProtocol", protocol);
@@ -121,7 +121,7 @@ namespace WebCore {
         static inline PassRefPtr<Inspector::InspectorObject> createGenericWebSocketData(unsigned long identifier)
         {
             RefPtr<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
-            data->setNumber("identifier", identifier);
+            data->setInteger("identifier", identifier);
             return data.release();
         }
 #endif

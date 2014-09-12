@@ -419,7 +419,7 @@ public:
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setNumber(ASCIILiteral("code"), value);
+            m_result->setInteger(ASCIILiteral("code"), value);
             return castState<CodeSet>();
         }
 

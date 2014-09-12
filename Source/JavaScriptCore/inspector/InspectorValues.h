@@ -58,7 +58,8 @@ public:
     enum class Type {
         Null = 0,
         Boolean,
-        Number,
+        Double,
+        Integer,
         String,
         Object,
         Array
@@ -69,14 +70,14 @@ public:
     bool isNull() const { return m_type == Type::Null; }
 
     virtual bool asBoolean(bool* output) const;
-    virtual bool asNumber(double* output) const;
-    virtual bool asNumber(float* output) const;
-    virtual bool asNumber(int* output) const;
-    virtual bool asNumber(unsigned* output) const;
-    virtual bool asNumber(long* output) const;
-    virtual bool asNumber(long long* output) const;
-    virtual bool asNumber(unsigned long* output) const;
-    virtual bool asNumber(unsigned long long* output) const;
+    virtual bool asInteger(int* output) const;
+    virtual bool asInteger(unsigned* output) const;
+    virtual bool asInteger(long* output) const;
+    virtual bool asInteger(long long* output) const;
+    virtual bool asInteger(unsigned long* output) const;
+    virtual bool asInteger(unsigned long long* output) const;
+    virtual bool asDouble(double* output) const;
+    virtual bool asDouble(float* output) const;
     virtual bool asString(String* output) const;
     virtual bool asValue(RefPtr<InspectorValue>* output);
     virtual bool asObject(RefPtr<InspectorObject>* output);
@@ -104,14 +105,16 @@ public:
     static PassRefPtr<InspectorBasicValue> create(double);
 
     virtual bool asBoolean(bool* output) const override;
-    virtual bool asNumber(double* output) const override;
-    virtual bool asNumber(float* output) const override;
-    virtual bool asNumber(int* output) const override;
-    virtual bool asNumber(unsigned* output) const override;
-    virtual bool asNumber(long* output) const override;
-    virtual bool asNumber(long long* output) const override;
-    virtual bool asNumber(unsigned long* output) const override;
-    virtual bool asNumber(unsigned long long* output) const override;
+    // Numbers from the frontend are always parsed as doubles, so we allow
+    // clients to convert to integral values with this function.
+    virtual bool asInteger(int* output) const override;
+    virtual bool asInteger(unsigned* output) const override;
+    virtual bool asInteger(long* output) const override;
+    virtual bool asInteger(long long* output) const override;
+    virtual bool asInteger(unsigned long* output) const override;
+    virtual bool asInteger(unsigned long long* output) const override;
+    virtual bool asDouble(double* output) const override;
+    virtual bool asDouble(float* output) const override;
 
     virtual void writeJSON(StringBuilder* output) const override;
 
@@ -121,11 +124,11 @@ private:
         , m_boolValue(value) { }
 
     explicit InspectorBasicValue(int value)
-        : InspectorValue(Type::Number)
+        : InspectorValue(Type::Integer)
         , m_doubleValue(static_cast<double>(value)) { }
 
     explicit InspectorBasicValue(double value)
-        : InspectorValue(Type::Number)
+        : InspectorValue(Type::Double)
         , m_doubleValue(value) { }
 
     union {
@@ -171,8 +174,10 @@ protected:
 
     virtual bool asObject(RefPtr<InspectorObject>* output) override;
 
+    // FIXME: use templates to reduce the amount of duplicated set*() methods.
     void setBoolean(const String& name, bool);
-    void setNumber(const String& name, double);
+    void setInteger(const String& name, int);
+    void setDouble(const String& name, double);
     void setString(const String& name, const String&);
     void setValue(const String& name, PassRefPtr<InspectorValue>);
     void setObject(const String& name, PassRefPtr<InspectorObjectBase>);
@@ -180,14 +185,24 @@ protected:
 
     iterator find(const String& name);
     const_iterator find(const String& name) const;
+
+    // FIXME: use templates to reduce the amount of duplicated get*() methods.
     bool getBoolean(const String& name, bool* output) const;
-    template<class T> bool getNumber(const String& name, T* output) const
+    template<class T> bool getDouble(const String& name, T* output) const
     {
         RefPtr<InspectorValue> value = get(name);
         if (!value)
             return false;
-        return value->asNumber(output);
+        return value->asDouble(output);
     }
+    template<class T> bool getInteger(const String& name, T* output) const
+    {
+        RefPtr<InspectorValue> value = get(name);
+        if (!value)
+            return false;
+        return value->asInteger(output);
+    }
+
     bool getString(const String& name, String* output) const;
     PassRefPtr<InspectorObject> getObject(const String& name) const;
     PassRefPtr<InspectorArray> getArray(const String& name) const;
@@ -219,7 +234,8 @@ public:
     using InspectorObjectBase::asObject;
 
     using InspectorObjectBase::setBoolean;
-    using InspectorObjectBase::setNumber;
+    using InspectorObjectBase::setInteger;
+    using InspectorObjectBase::setDouble;
     using InspectorObjectBase::setString;
     using InspectorObjectBase::setValue;
     using InspectorObjectBase::setObject;
@@ -227,7 +243,8 @@ public:
 
     using InspectorObjectBase::find;
     using InspectorObjectBase::getBoolean;
-    using InspectorObjectBase::getNumber;
+    using InspectorObjectBase::getInteger;
+    using InspectorObjectBase::getDouble;
     using InspectorObjectBase::getString;
     using InspectorObjectBase::getObject;
     using InspectorObjectBase::getArray;
@@ -257,8 +274,8 @@ protected:
     virtual bool asArray(RefPtr<InspectorArray>* output) override;
 
     void pushBoolean(bool);
-    void pushInt(int);
-    void pushNumber(double);
+    void pushInteger(int);
+    void pushDouble(double);
     void pushString(const String&);
     void pushValue(PassRefPtr<InspectorValue>);
     void pushObject(PassRefPtr<InspectorObject>);
@@ -287,8 +304,8 @@ public:
     using InspectorArrayBase::asArray;
 
     using InspectorArrayBase::pushBoolean;
-    using InspectorArrayBase::pushInt;
-    using InspectorArrayBase::pushNumber;
+    using InspectorArrayBase::pushInteger;
+    using InspectorArrayBase::pushDouble;
     using InspectorArrayBase::pushString;
     using InspectorArrayBase::pushValue;
     using InspectorArrayBase::pushObject;
@@ -316,7 +333,12 @@ inline void InspectorObjectBase::setBoolean(const String& name, bool value)
     setValue(name, InspectorBasicValue::create(value));
 }
 
-inline void InspectorObjectBase::setNumber(const String& name, double value)
+inline void InspectorObjectBase::setInteger(const String& name, int value)
+{
+    setValue(name, InspectorBasicValue::create(value));
+}
+
+inline void InspectorObjectBase::setDouble(const String& name, double value)
 {
     setValue(name, InspectorBasicValue::create(value));
 }
@@ -352,12 +374,12 @@ inline void InspectorArrayBase::pushBoolean(bool value)
     m_data.append(InspectorBasicValue::create(value));
 }
 
-inline void InspectorArrayBase::pushInt(int value)
+inline void InspectorArrayBase::pushInteger(int value)
 {
     m_data.append(InspectorBasicValue::create(value));
 }
 
-inline void InspectorArrayBase::pushNumber(double value)
+inline void InspectorArrayBase::pushDouble(double value)
 {
     m_data.append(InspectorBasicValue::create(value));
 }

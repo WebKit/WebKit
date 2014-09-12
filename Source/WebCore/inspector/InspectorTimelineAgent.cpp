@@ -356,7 +356,7 @@ void InspectorTimelineAgent::didWriteHTML(unsigned endLine)
 {
     if (!m_recordStack.isEmpty()) {
         const TimelineRecordEntry& entry = m_recordStack.last();
-        entry.data->setNumber("endLine", endLine);
+        entry.data->setInteger("endLine", endLine);
         didCompleteCurrentRecord(TimelineRecordType::ParseHTML);
     }
 }
@@ -670,7 +670,7 @@ void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& e
 {
     entry.record->setObject(ASCIILiteral("data"), entry.data);
     entry.record->setArray(ASCIILiteral("children"), entry.children);
-    entry.record->setNumber(ASCIILiteral("endTime"), timestamp());
+    entry.record->setDouble(ASCIILiteral("endTime"), timestamp());
     addRecordToTimeline(entry.record, entry.type);
 }
 

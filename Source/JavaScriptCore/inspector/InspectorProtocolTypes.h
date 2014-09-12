@@ -120,7 +120,7 @@ struct ArrayItemHelper<int> {
     struct Traits {
         static void pushRaw(InspectorArray* array, int value)
         {
-            array->pushInt(value);
+            array->pushInteger(value);
         }
     };
 };
@@ -130,7 +130,7 @@ struct ArrayItemHelper<double> {
     struct Traits {
         static void pushRaw(InspectorArray* array, double value)
         {
-            array->pushNumber(value);
+            array->pushDouble(value);
         }
     };
 };
@@ -248,21 +248,8 @@ template<> struct BindingTraits<InspectorArray> : public PrimitiveBindingTraits<
 template<> struct BindingTraits<InspectorObject> : public PrimitiveBindingTraits<InspectorValue::Type::Object> { };
 template<> struct BindingTraits<String> : public PrimitiveBindingTraits<InspectorValue::Type::String> { };
 template<> struct BindingTraits<bool> : public PrimitiveBindingTraits<InspectorValue::Type::Boolean> { };
-template<> struct BindingTraits<double> : public PrimitiveBindingTraits<InspectorValue::Type::Number> { };
-
-// FIXME: Add an Inspector::Type tag for int so we can remove this special case.
-template<>
-struct BindingTraits<int> {
-#if !ASSERT_DISABLED
-    static void assertValueHasExpectedType(InspectorValue* value)
-    {
-        double v;
-        bool castRes = value->asNumber(&v);
-        ASSERT_UNUSED(castRes, castRes);
-        ASSERT(static_cast<double>(static_cast<int>(v)) == v);
-    }
-#endif // !ASSERT_DISABLED
-};
+template<> struct BindingTraits<double> : public PrimitiveBindingTraits<InspectorValue::Type::Double> { };
+template<> struct BindingTraits<int> : public PrimitiveBindingTraits<InspectorValue::Type::Integer> { };
 
 } // namespace Protocol
 

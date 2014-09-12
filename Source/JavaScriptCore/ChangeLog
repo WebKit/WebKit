@@ -1,3 +1,79 @@
+2014-09-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: disambiguate double and integer primitive types in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=136606
+
+        Reviewed by Timothy Hatcher.
+
+        Right now it's really easy to mix up doubles and integers when serializing or deserializing
+        values for the inspector protocol. This patch disambiguates setting/getting doubles and integers
+        so that it is clearer as to which type is intended.
+
+        A new InspectorValue::Type is added for Integer types, and the Number type is renamed to Double.
+        The existing callsites for asNumber/getNumber/setNumber have been fixed.
+
+        Address various integration points to make sure the right type tag is assigned to InspectorValues.
+
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue): Make an Integer if the JSValue is Int52 or smaller.
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptForObjectId):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::InspectorBackendDispatcher::dispatch):
+        (Inspector::InspectorBackendDispatcher::sendResponse):
+        (Inspector::InspectorBackendDispatcher::reportProtocolError):
+        (Inspector::AsMethodBridges::asInteger):
+        (Inspector::AsMethodBridges::asDouble):
+        (Inspector::InspectorBackendDispatcher::getInteger):
+        (Inspector::InspectorBackendDispatcher::getDouble):
+        (Inspector::AsMethodBridges::asInt): Deleted.
+        (Inspector::InspectorBackendDispatcher::getInt): Deleted.
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/InspectorProtocolTypes.h: Remove the special case for checking int type tags.
+        (Inspector::Protocol::ArrayItemHelper<int>::Traits::pushRaw):
+        (Inspector::Protocol::ArrayItemHelper<double>::Traits::pushRaw):
+        (Inspector::Protocol::BindingTraits<int>::assertValueHasExpectedType): Deleted.
+        * inspector/InspectorValues.cpp: Allow integers and doubles to be convertible using asInteger/asDouble.
+        (Inspector::InspectorValue::asDouble):
+        (Inspector::InspectorValue::asInteger):
+        (Inspector::InspectorBasicValue::asDouble):
+        (Inspector::InspectorBasicValue::asInteger):
+        (Inspector::InspectorBasicValue::writeJSON):
+        (Inspector::InspectorValue::asNumber): Deleted.
+        (Inspector::InspectorBasicValue::asNumber): Deleted.
+        * inspector/InspectorValues.h:
+        (Inspector::InspectorObjectBase::setInteger):
+        (Inspector::InspectorObjectBase::setDouble):
+        (Inspector::InspectorArrayBase::pushInteger):
+        (Inspector::InspectorArrayBase::pushDouble):
+        (Inspector::InspectorObjectBase::setNumber): Deleted.
+        (Inspector::InspectorArrayBase::pushInt): Deleted.
+        (Inspector::InspectorArrayBase::pushNumber): Deleted.
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::buildObjectForBreakpointCookie):
+        (Inspector::InspectorDebuggerAgent::breakpointActionsFromProtocol):
+        (Inspector::parseLocation):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/scripts/codegen/generator.py: Update emitted code and rebaseline test results.
+        (Generator.keyed_get_method_for_type):
+        (Generator.keyed_set_method_for_type):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * replay/EncodedValue.cpp:
+        (JSC::EncodedValue::convertTo<double>):
+        (JSC::EncodedValue::convertTo<float>):
+        (JSC::EncodedValue::convertTo<int32_t>):
+        (JSC::EncodedValue::convertTo<int64_t>):
+        (JSC::EncodedValue::convertTo<uint32_t>):
+        (JSC::EncodedValue::convertTo<uint64_t>):
+
 2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Occasional ASSERT closing web inspector

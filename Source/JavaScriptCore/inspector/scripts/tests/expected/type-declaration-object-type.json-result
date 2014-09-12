@@ -341,7 +341,7 @@ public:
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setNumber(ASCIILiteral("code"), value);
+            m_result->setInteger(ASCIILiteral("code"), value);
             return castState<CodeSet>();
         }
 
@@ -431,7 +431,7 @@ public:
 
     void setTimestamp(double value)
     {
-        InspectorObjectBase::setNumber(ASCIILiteral("timestamp"), value);
+        InspectorObjectBase::setDouble(ASCIILiteral("timestamp"), value);
     }
 
     void setValues(PassRefPtr<Inspector::InspectorObject> value)
@@ -498,7 +498,7 @@ public:
         Builder<STATE | TimestampSet>& setTimestamp(double value)
         {
             COMPILE_ASSERT(!(STATE & TimestampSet), property_timestamp_already_set);
-            m_result->setNumber(ASCIILiteral("timestamp"), value);
+            m_result->setDouble(ASCIILiteral("timestamp"), value);
             return castState<TimestampSet>();
         }
 
@@ -699,7 +699,7 @@ public:
         Builder<STATE | TimestampSet>& setTimestamp(double value)
         {
             COMPILE_ASSERT(!(STATE & TimestampSet), property_timestamp_already_set);
-            m_result->setNumber(ASCIILiteral("timestamp"), value);
+            m_result->setDouble(ASCIILiteral("timestamp"), value);
             return castState<TimestampSet>();
         }
 

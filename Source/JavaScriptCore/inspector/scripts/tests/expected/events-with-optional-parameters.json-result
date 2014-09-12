@@ -249,7 +249,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(PassRefPt
     if (notes)
         paramsObject->setString(ASCIILiteral("notes"), *notes);
     if (timestamp)
-        paramsObject->setNumber(ASCIILiteral("timestamp"), *timestamp);
+        paramsObject->setDouble(ASCIILiteral("timestamp"), *timestamp);
     if (values)
         paramsObject->setObject(ASCIILiteral("values"), values);
     if (payload)
@@ -272,7 +272,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(PassRef
     RefPtr<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setArray(ASCIILiteral("columnNames"), columnNames);
     paramsObject->setString(ASCIILiteral("notes"), notes);
-    paramsObject->setNumber(ASCIILiteral("timestamp"), timestamp);
+    paramsObject->setDouble(ASCIILiteral("timestamp"), timestamp);
     paramsObject->setObject(ASCIILiteral("values"), values);
     paramsObject->setValue(ASCIILiteral("payload"), payload);
     paramsObject->setObject(ASCIILiteral("sqlError"), sqlError);
@@ -398,7 +398,7 @@ public:
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setNumber(ASCIILiteral("code"), value);
+            m_result->setInteger(ASCIILiteral("code"), value);
             return castState<CodeSet>();
         }
 

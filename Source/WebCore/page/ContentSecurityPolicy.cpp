@@ -1661,7 +1661,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     if (callFrame && callFrame->lineNumber()) {
         URL source = URL(URL(), callFrame->sourceURL());
         cspReport->setString(ASCIILiteral("source-file"), stripURLForUseInReport(document, source));
-        cspReport->setNumber(ASCIILiteral("line-number"), callFrame->lineNumber());
+        cspReport->setInteger(ASCIILiteral("line-number"), callFrame->lineNumber());
     }
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();

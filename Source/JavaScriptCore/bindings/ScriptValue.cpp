@@ -114,8 +114,10 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSV
         return InspectorValue::null();
     if (value.isBoolean())
         return InspectorBasicValue::create(value.asBoolean());
-    if (value.isNumber())
+    if (value.isNumber() && value.isDouble())
         return InspectorBasicValue::create(value.asNumber());
+    if (value.isNumber() && value.isMachineInt())
+        return InspectorBasicValue::create(static_cast<int>(value.asMachineInt()));
     if (value.isString())
         return InspectorString::create(value.getString(scriptState));
 

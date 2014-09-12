@@ -336,7 +336,7 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
 
     if (type == number) {
         double number;
-        if (!key->getNumber("number", &number))
+        if (!key->getDouble("number", &number))
             return nullptr;
         idbKey = IDBKey::createNumber(number);
     } else if (type == string) {
@@ -346,7 +346,7 @@ static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
         idbKey = IDBKey::createString(string);
     } else if (type == date) {
         double date;
-        if (!key->getNumber("date", &date))
+        if (!key->getDouble("date", &date))
             return nullptr;
         idbKey = IDBKey::createDate(date);
     } else if (type == array) {

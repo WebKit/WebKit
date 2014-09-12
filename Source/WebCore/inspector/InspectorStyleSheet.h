@@ -69,7 +69,7 @@ public:
             return;
         
         RefPtr<Inspector::InspectorValue> ordinalValue = value->get("ordinal");
-        if (!ordinalValue || !ordinalValue->asNumber(&m_ordinal))
+        if (!ordinalValue || !ordinalValue->asInteger(&m_ordinal))
             m_styleSheetId = "";
     }
 

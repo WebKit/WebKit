@@ -199,13 +199,13 @@ void InspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long callI
     bool notes_valueFound = false;
     String in_notes = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("notes"), &notes_valueFound, protocolErrorsPtr);
     bool timestamp_valueFound = false;
-    Inspector::Protocol::OptOutput<double> in_timestamp = InspectorBackendDispatcher::getNumber(paramsContainerPtr, ASCIILiteral("timestamp"), &timestamp_valueFound, protocolErrorsPtr);
+    Inspector::Protocol::OptOutput<double> in_timestamp = InspectorBackendDispatcher::getDouble(paramsContainerPtr, ASCIILiteral("timestamp"), &timestamp_valueFound, protocolErrorsPtr);
     bool values_valueFound = false;
     RefPtr<Inspector::InspectorObject> in_values = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("values"), &values_valueFound, protocolErrorsPtr);
     bool payload_valueFound = false;
     RefPtr<Inspector::InspectorValue> in_payload = InspectorBackendDispatcher::getAny(paramsContainerPtr, ASCIILiteral("payload"), &payload_valueFound, protocolErrorsPtr);
     bool databaseId_valueFound = false;
-    int in_databaseId = InspectorBackendDispatcher::getInt(paramsContainerPtr, ASCIILiteral("databaseId"), &databaseId_valueFound, protocolErrorsPtr);
+    int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), &databaseId_valueFound, protocolErrorsPtr);
     bool sqlError_valueFound = false;
     RefPtr<Inspector::InspectorObject> in_sqlError = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("sqlError"), &sqlError_valueFound, protocolErrorsPtr);
     bool screenColor_valueFound = false;
@@ -237,13 +237,13 @@ void InspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long callI
         if (out_notes.isAssigned())
             result->setString(ASCIILiteral("notes"), out_notes.getValue());
         if (out_timestamp.isAssigned())
-            result->setNumber(ASCIILiteral("timestamp"), out_timestamp.getValue());
+            result->setDouble(ASCIILiteral("timestamp"), out_timestamp.getValue());
         if (out_values.isAssigned())
             result->setObject(ASCIILiteral("values"), out_values.getValue());
         if (out_payload.isAssigned())
             result->setValue(ASCIILiteral("payload"), out_payload.getValue());
         if (out_databaseId.isAssigned())
-            result->setNumber(ASCIILiteral("databaseId"), out_databaseId.getValue());
+            result->setInteger(ASCIILiteral("databaseId"), out_databaseId.getValue());
         if (out_sqlError)
             result->setObject(ASCIILiteral("sqlError"), out_sqlError);
         if (out_screenColor.isAssigned())
@@ -262,10 +262,10 @@ void InspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long callId
     InspectorArray* protocolErrorsPtr = protocolErrors.get();
     RefPtr<Inspector::InspectorArray> in_columnNames = InspectorBackendDispatcher::getArray(paramsContainerPtr, ASCIILiteral("columnNames"), nullptr, protocolErrorsPtr);
     String in_notes = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("notes"), nullptr, protocolErrorsPtr);
-    double in_timestamp = InspectorBackendDispatcher::getNumber(paramsContainerPtr, ASCIILiteral("timestamp"), nullptr, protocolErrorsPtr);
+    double in_timestamp = InspectorBackendDispatcher::getDouble(paramsContainerPtr, ASCIILiteral("timestamp"), nullptr, protocolErrorsPtr);
     RefPtr<Inspector::InspectorObject> in_values = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("values"), nullptr, protocolErrorsPtr);
     RefPtr<Inspector::InspectorValue> in_payload = InspectorBackendDispatcher::getAny(paramsContainerPtr, ASCIILiteral("payload"), nullptr, protocolErrorsPtr);
-    int in_databaseId = InspectorBackendDispatcher::getInt(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
+    int in_databaseId = InspectorBackendDispatcher::getInteger(paramsContainerPtr, ASCIILiteral("databaseId"), nullptr, protocolErrorsPtr);
     RefPtr<Inspector::InspectorObject> in_sqlError = InspectorBackendDispatcher::getObject(paramsContainerPtr, ASCIILiteral("sqlError"), nullptr, protocolErrorsPtr);
     String in_screenColor = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("screenColor"), nullptr, protocolErrorsPtr);
     String in_printColor = InspectorBackendDispatcher::getString(paramsContainerPtr, ASCIILiteral("printColor"), nullptr, protocolErrorsPtr);
@@ -291,10 +291,10 @@ void InspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long callId
     if (!error.length()) {
         result->setArray(ASCIILiteral("columnNames"), out_columnNames);
         result->setString(ASCIILiteral("notes"), out_notes);
-        result->setNumber(ASCIILiteral("timestamp"), out_timestamp);
+        result->setDouble(ASCIILiteral("timestamp"), out_timestamp);
         result->setObject(ASCIILiteral("values"), out_values);
         result->setValue(ASCIILiteral("payload"), out_payload);
-        result->setNumber(ASCIILiteral("databaseId"), out_databaseId);
+        result->setInteger(ASCIILiteral("databaseId"), out_databaseId);
         result->setObject(ASCIILiteral("sqlError"), out_sqlError);
         result->setString(ASCIILiteral("screenColor"), Inspector::Protocol::getTestEnumConstantValue(out_screenColor));
         result->setString(ASCIILiteral("printColor"), Inspector::Protocol::getTestEnumConstantValue(out_printColor));
@@ -521,7 +521,7 @@ public:
         Builder<STATE | CodeSet>& setCode(int value)
         {
             COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
-            m_result->setNumber(ASCIILiteral("code"), value);
+            m_result->setInteger(ASCIILiteral("code"), value);
             return castState<CodeSet>();
         }
 

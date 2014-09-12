@@ -1,3 +1,57 @@
+2014-09-11  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: disambiguate integral and real number primitive types in the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=136606
+
+        Reviewed by Timothy Hatcher.
+
+        Update clients of InspectorValue to disambiguate integer and double primitive types.
+
+        No new tests, no behavior changed.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseQuad):
+        (WebCore::InspectorDOMAgent::performSearch):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForPoint):
+        (WebCore::buildObjectForRect):
+        (WebCore::buildObjectForSize):
+        (WebCore::appendPathCommandAndPoints):
+        (WebCore::InspectorOverlay::reset):
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::replayToPosition):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didCompleteRecordEntry):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createBackgroundRecord):
+        (WebCore::TimelineRecordFactory::createGCEventData):
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        (WebCore::TimelineRecordFactory::createGenericTimerData):
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createXHRReadyStateChangeData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+        (WebCore::TimelineRecordFactory::createReceiveResourceData):
+        (WebCore::TimelineRecordFactory::createLayoutData):
+        (WebCore::TimelineRecordFactory::createParseHTMLData):
+        (WebCore::TimelineRecordFactory::createAnimationFrameData):
+        (WebCore::createQuad):
+        * inspector/TimelineRecordFactory.h:
+        (WebCore::TimelineRecordFactory::createWebSocketCreateData):
+        (WebCore::TimelineRecordFactory::createGenericWebSocketData):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+
 2014-09-11  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL][CoordinatedGraphics] Move CoordinatedGraphicsScene and CoordinatedBackingStore to WebKit2

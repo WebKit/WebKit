@@ -152,8 +152,8 @@ static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& 
 {
     RefPtr<InspectorObject> breakpointObject = InspectorObject::create();
     breakpointObject->setString(ASCIILiteral("url"), url);
-    breakpointObject->setNumber(ASCIILiteral("lineNumber"), lineNumber);
-    breakpointObject->setNumber(ASCIILiteral("columnNumber"), columnNumber);
+    breakpointObject->setInteger(ASCIILiteral("lineNumber"), lineNumber);
+    breakpointObject->setInteger(ASCIILiteral("columnNumber"), columnNumber);
     breakpointObject->setString(ASCIILiteral("condition"), condition);
     breakpointObject->setBoolean(ASCIILiteral("isRegex"), isRegex);
     breakpointObject->setBoolean(ASCIILiteral("autoContinue"), autoContinue);
@@ -228,7 +228,7 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString* errorStr
         // Specifying an identifier is optional. They are used to correlate probe samples
         // in the frontend across multiple backend probe actions and segregate object groups.
         int identifier = 0;
-        object->getNumber(ASCIILiteral("id"), &identifier);
+        object->getInteger(ASCIILiteral("id"), &identifier);
 
         String data;
         object->getString(ASCIILiteral("data"), &data);
@@ -288,7 +288,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
 static bool parseLocation(ErrorString* errorString, InspectorObject* location, JSC::SourceID* sourceID, unsigned* lineNumber, unsigned* columnNumber)
 {
     String scriptIDStr;
-    if (!location->getString(ASCIILiteral("scriptId"), &scriptIDStr) || !location->getNumber(ASCIILiteral("lineNumber"), lineNumber)) {
+    if (!location->getString(ASCIILiteral("scriptId"), &scriptIDStr) || !location->getInteger(ASCIILiteral("lineNumber"), lineNumber)) {
         *sourceID = JSC::noSourceID;
         *errorString = ASCIILiteral("scriptId and lineNumber are required.");
         return false;
@@ -296,7 +296,7 @@ static bool parseLocation(ErrorString* errorString, InspectorObject* location, J
 
     *sourceID = scriptIDStr.toIntPtr();
     *columnNumber = 0;
-    location->getNumber(ASCIILiteral("columnNumber"), columnNumber);
+    location->getInteger(ASCIILiteral("columnNumber"), columnNumber);
     return true;
 }
 
@@ -601,8 +601,8 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
         if (!matches(scriptURL, url, isRegex))
             continue;
         ScriptBreakpoint breakpoint;
-        breakpointObject->getNumber(ASCIILiteral("lineNumber"), &breakpoint.lineNumber);
-        breakpointObject->getNumber(ASCIILiteral("columnNumber"), &breakpoint.columnNumber);
+        breakpointObject->getInteger(ASCIILiteral("lineNumber"), &breakpoint.lineNumber);
+        breakpointObject->getInteger(ASCIILiteral("columnNumber"), &breakpoint.columnNumber);
         breakpointObject->getString(ASCIILiteral("condition"), &breakpoint.condition);
         breakpointObject->getBoolean(ASCIILiteral("autoContinue"), &breakpoint.autoContinue);
         ErrorString errorString;
