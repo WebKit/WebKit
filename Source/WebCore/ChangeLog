@@ -1,3 +1,22 @@
+2014-09-11  Chris Dumez  <cdumez@apple.com>
+
+        Simplify DOM tree traversal in FrameSelection::setSelectionFromNone()
+        https://bugs.webkit.org/show_bug.cgi?id=136763
+
+        Reviewed by Ryosuke Niwa.
+
+        We only need to traverse the direct children of the Document element to
+        find the body. The previous code was potentially traversing descendants.
+        The new code is consistent with Document::body() except that we only
+        look for an HTMLBodyElement (and ignore HTMLFrameSetElement).
+
+        Also update the code to use tighter typing for clarity.
+
+        No new tests, no behavior change.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionFromNone):
+
 2014-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Size of web view in Safari as reported by AX changes when adding/removing bars is wrong

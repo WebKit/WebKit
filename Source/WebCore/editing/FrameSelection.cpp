@@ -41,6 +41,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLBodyElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
@@ -2111,11 +2112,11 @@ void FrameSelection::setSelectionFromNone()
         return;
 #endif
 
-    Node* node = document->documentElement();
-    while (node && !node->hasTagName(bodyTag))
-        node = NodeTraversal::next(node);
-    if (node)
-        setSelection(VisibleSelection(firstPositionInOrBeforeNode(node), DOWNSTREAM));
+    Element* documentElement = document->documentElement();
+    if (!documentElement)
+        return;
+    if (auto body = childrenOfType<HTMLBodyElement>(*documentElement).first())
+        setSelection(VisibleSelection(firstPositionInOrBeforeNode(body), DOWNSTREAM));
 }
 
 bool FrameSelection::shouldChangeSelection(const VisibleSelection& newSelection) const
