@@ -2178,14 +2178,6 @@ void SpeculativeJIT::compileValueRep(Node* node)
         if (needsTypeCheck(node->child1(), ~SpecDoubleImpureNaN))
             m_jit.purifyNaN(valueFPR);
 
-#if CPU(X86)
-        // boxDouble() on X86 clobbers the source, so we need to copy.
-        // FIXME: Don't do that! https://bugs.webkit.org/show_bug.cgi?id=131690
-        FPRTemporary temp(this);
-        m_jit.moveDouble(valueFPR, temp.fpr());
-        valueFPR = temp.fpr();
-#endif
-        
         boxDouble(valueFPR, resultRegs);
         
         jsValueResult(resultRegs, node);

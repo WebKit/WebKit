@@ -129,14 +129,7 @@ namespace JSC {
             move(tagTypeNumberRegister, regT0);
             done.link(this);
 #else
-#if !CPU(X86)
-            // The src register is not clobbered by moveDoubleToInts with ARM, MIPS and SH4 macro assemblers, so let's use it.
             moveDoubleToInts(src, regT0, regT1);
-#else
-            storeDouble(src, Address(stackPointerRegister, -(int)sizeof(double)));
-            loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - sizeof(double)), regT1);
-            loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - sizeof(double)), regT0);
-#endif
             Jump lowNonZero = branchTestPtr(NonZero, regT1);
             Jump highNonZero = branchTestPtr(NonZero, regT0);
             move(TrustedImm32(0), regT0);

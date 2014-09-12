@@ -168,14 +168,14 @@ public:
         m_assembler.movb_i8m(imm.m_value, address);
     }
     
-    // Possibly clobbers src.
-    // FIXME: Don't do that.
-    // https://bugs.webkit.org/show_bug.cgi?id=131690
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
+        ASSERT(isSSE2Present());
+        m_assembler.pextrw_irr(3, src, dest1);
+        m_assembler.pextrw_irr(2, src, dest2);
+        lshift32(TrustedImm32(16), dest1);
+        or32(dest1, dest2);
         movePackedToInt32(src, dest1);
-        rshiftPacked(TrustedImm32(32), src);
-        movePackedToInt32(src, dest2);
     }
 
     void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)

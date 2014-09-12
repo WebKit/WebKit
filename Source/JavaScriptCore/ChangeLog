@@ -1,3 +1,17 @@
+2014-09-12  Julien Brianceau  <jbriance@cisco.com>
+
+        [x86] moveDoubleToInts() does not clobber its source register anymore
+        https://bugs.webkit.org/show_bug.cgi?id=131690
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::moveDoubleToInts):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueRep):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+
 2014-09-12  Mark Lam  <mark.lam@apple.com>
 
         Unreviewed build fix for CLOOP build.
