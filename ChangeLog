@@ -1,3 +1,9 @@
+2014-09-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r173574.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2014-09-11  László Langó  <llango.u-szeged@partner.samsung.com>
 
         [JavaScriptCore] Fix FTL on platform EFL.

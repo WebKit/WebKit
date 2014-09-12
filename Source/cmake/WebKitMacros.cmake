@@ -281,10 +281,10 @@ macro(GENERATE_WEBKIT2_MESSAGE_SOURCES _output_source _input_files)
         add_custom_command(
             OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
             MAIN_DEPENDENCY ${_file}
-            DEPENDS ${WEBKIT2_DIR}/Scripts/webkit2/__init__.py
-                    ${WEBKIT2_DIR}/Scripts/webkit2/messages.py
-                    ${WEBKIT2_DIR}/Scripts/webkit2/model.py
-                    ${WEBKIT2_DIR}/Scripts/webkit2/parser.py
+            DEPENDS ${WEBKIT2_DIR}/Scripts/webkit/__init__.py
+                    ${WEBKIT2_DIR}/Scripts/webkit/messages.py
+                    ${WEBKIT2_DIR}/Scripts/webkit/model.py
+                    ${WEBKIT2_DIR}/Scripts/webkit/parser.py
             COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-message-receiver.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp
             COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-messages-header.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
             WORKING_DIRECTORY ${WEBKIT2_DIR}
