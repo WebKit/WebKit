@@ -144,10 +144,10 @@ MESSAGE_RECEIVERS = \
 SCRIPTS = \
     $(WebKit2)/Scripts/generate-message-receiver.py \
     $(WebKit2)/Scripts/generate-messages-header.py \
-    $(WebKit2)/Scripts/webkit2/__init__.py \
-    $(WebKit2)/Scripts/webkit2/messages.py \
-    $(WebKit2)/Scripts/webkit2/model.py \
-    $(WebKit2)/Scripts/webkit2/parser.py \
+    $(WebKit2)/Scripts/webkit/__init__.py \
+    $(WebKit2)/Scripts/webkit/messages.py \
+    $(WebKit2)/Scripts/webkit/model.py \
+    $(WebKit2)/Scripts/webkit/parser.py \
 #
 
 .PHONY : all

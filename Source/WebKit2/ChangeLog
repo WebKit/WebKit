@@ -1,3 +1,23 @@
+2014-09-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Message generation scripts should be installed in WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=136771
+
+        Reviewed by Anders Carlsson.
+
+        * DerivedSources.make: Updated for rename of Scripts/webkit2 to Scripts/webkit.
+        * Scripts/generate-message-receiver.py:
+        (main): Updated for rename from webkit2 to webkit.
+        * Scripts/generate-messages-header.py:
+        (main): Ditto.
+        * Scripts/webkit: Renamed from Source/WebKit2/Scripts/webkit2.
+        * Scripts/webkit/messages.py: Updated for rename.
+        * Scripts/webkit/parser.py: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Moved the Copy Message Generation Scripts build phase
+        from the WebKit2 target to the WebKit target and changed its destination to
+        WebKit.framework/PrivateHeaders/Scripts/webkit. Removed the Remove Compiled Python Files
+        build phase, since compiled files no longer get copied.
+
 2014-09-12  Tim Horton  <timothy_horton@apple.com>
 
         Flash of page scrolled to wrong origin before restoring scroll position after swiping back to CNN front page from an article
