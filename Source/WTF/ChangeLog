@@ -1,3 +1,15 @@
+2014-09-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out r173540.
+
+        It broke the Membuster performance bot, and it's still slightly profligate
+        with memory.
+
+            Do the bmalloc.
+            https://bugs.webkit.org/show_bug.cgi?id=132629
+
+        * wtf/FastMalloc.cpp:
+
 2014-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         Do the bmalloc.
