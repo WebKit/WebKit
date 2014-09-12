@@ -1,5 +1,39 @@
 2014-09-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r173544
+
+    2014-09-11  Beth Dakin  <bdakin@apple.com>
+
+            WebKit scrollbars flash in non-dominant spaces when entering Mission Control
+            https://bugs.webkit.org/show_bug.cgi?id=136761
+            -and corresponding-
+            rdar://problem/18195616
+
+            Reviewed by Tim Horton.
+
+            This patch makes our logic about when to call ScrollableArea::contentAreaDidHide/
+            Show match the logic in AppKit. We only want these notifications when the window 
+            has become both visible and active (or lost both, in the case of hide).
+
+            Re-name setIsVisibleInternal() to setIsVisibleAndActiveInternal(), and call it 
+            only when both visibility and active-state have changed.
+            * page/FocusController.cpp:
+            (WebCore::FocusController::setViewState):
+            (WebCore::FocusController::setIsVisibleAndActiveInternal):
+            (WebCore::FocusController::setIsVisibleInternal): Deleted.
+            * page/FocusController.h:
+
+            FocusController::setViewState() is the only place that needs to call 
+            ScrollableArea::contentAreaDidHide/Show, so remove these callers.
+            * page/FrameView.cpp:
+            (WebCore::FrameView::didMoveOnscreen): Deleted.
+            (WebCore::FrameView::willMoveOffscreen): Deleted.
+            * page/FrameView.h:
+            * page/Page.cpp:
+            (WebCore::Page::setIsVisibleInternal):
+
+2014-09-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r173533
 
     2014-09-11  Jer Noble  <jer.noble@apple.com>

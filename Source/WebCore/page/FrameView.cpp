@@ -1032,16 +1032,6 @@ bool FrameView::isSoftwareRenderable() const
     return !renderView || !renderView->compositor().has3DContent();
 }
 
-void FrameView::didMoveOnscreen()
-{
-    contentAreaDidShow();
-}
-
-void FrameView::willMoveOffscreen()
-{
-    contentAreaDidHide();
-}
-
 void FrameView::setIsInWindow(bool isInWindow)
 {
     if (RenderView* renderView = this->renderView())
