@@ -15,19 +15,29 @@
     if (window.accessibilityController) {
         var webArea = accessibilityController.rootElement.childAtIndex(0);
         var webX = webArea.x;
-        var webY = webArea.y;
+        var webY = webArea.y - webArea.height;
 
         var scrollView = webArea.parentElement();
         var scrollViewX = scrollView.x;
-        var scrollViewY = scrollView.y;
-  
+        // to get what the y that we're expecting, we need to subtract the height, because Cocoa requires the bottom point to be consider the y origin.
+        var scrollViewY = scrollView.y - scrollView.height;
+        var scrollViewHeight = scrollView.height;  
+
         debug("The position of the web area and the scroll view should be the same when there's no content inset");
         shouldBeTrue("webX == scrollViewX && webY == scrollViewY");
+        debug("\n");
  
         window.internals.setTopContentInset(100);
 
+        var newScrollViewHeight = scrollView.height;
+        var newScrollViewY =  scrollView.y - scrollView.height;
         debug("After setting the content inset, the new y position should be less than the initial");
-        shouldBe("scrollViewY - scrollView.y", "100")
+        shouldBe("newScrollViewY - scrollViewY", "100")
+        debug("\n");
+
+        debug("The content inset also reduces the height of the scroll view, which should be reflected here.");
+        shouldBeTrue("scrollViewHeight > newScrollViewHeight");
+        debug("\n");
     }
 </script>
 

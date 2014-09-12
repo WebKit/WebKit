@@ -1,3 +1,18 @@
+2014-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Size of web view in Safari as reported by AX changes when adding/removing bars is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=136756
+
+        Reviewed by Beth Dakin.
+
+        topContentInset not only seems to push the scroll view's origin down, but it also shrinks its height as well, which
+        was not accounted for in the original fix.
+
+        Modified: platform/mac-wk2/accessibility/content-inset-scrollview-frame.html
+
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::elementRect):
+
 2014-09-11  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed build fix.

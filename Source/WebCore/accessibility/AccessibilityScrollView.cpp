@@ -222,7 +222,10 @@ LayoutRect AccessibilityScrollView::elementRect() const
         return LayoutRect();
 
     LayoutRect rect = m_scrollView->frameRect();
-    rect.setY(rect.y() + m_scrollView->topContentInset());
+    float topContentInset = m_scrollView->topContentInset();
+    // Top content inset pushes the frame down and shrinks it.
+    rect.move(0, topContentInset);
+    rect.contract(0, topContentInset);
     return rect;
 }
 
