@@ -55,13 +55,13 @@ protected:
     virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
 
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustRadioStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustRadioStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual void setButtonSize(RenderStyle&) const override;
@@ -71,13 +71,13 @@ protected:
     virtual bool paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual bool paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const override;
+    virtual void adjustSliderThumbSize(RenderStyle&, Element*) const override;
     virtual bool paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     // Returns the repeat interval of the animation for the progress bar.
@@ -92,7 +92,7 @@ protected:
     virtual int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
-    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual Color platformActiveSelectionBackgroundColor() const override;

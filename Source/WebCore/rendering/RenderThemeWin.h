@@ -77,7 +77,7 @@ public:
 
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
@@ -85,38 +85,38 @@ public:
     virtual bool paintTextArea(const RenderObject& o, const PaintInfo& i, const FloatRect& r) override
     { return paintTextField(o, i, r); }
 
-    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
-    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
 
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const override;
+    virtual void adjustSliderThumbSize(RenderStyle&, Element*) const override;
 
     virtual bool popupOptionSupportsTextIndent() const override { return true; }
 
-    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) override { return false; }
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual void themeChanged() override;
 
-    virtual void adjustButtonStyle(StyleResolver&, RenderStyle& style, Element&) const override { }
-    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle& style, Element&) const override { }
-    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle& style, Element&) const override { }
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle& style, Element*) const override { }
+    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle& style, Element*) const override { }
+    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle& style, Element*) const override { }
 
     static void setWebKitIsBeingUnloaded();
 
@@ -132,7 +132,7 @@ public:
 #if ENABLE(METER_ELEMENT)
     virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const override;
     virtual bool supportsMeter(ControlPart) const override;
-    virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 

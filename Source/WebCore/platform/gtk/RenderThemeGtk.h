@@ -110,7 +110,7 @@ private:
     virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual void setRadioSize(RenderStyle&) const override;
 
-    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
@@ -125,30 +125,30 @@ private:
     // The former is used when a menu list button has been styled. This is used to ensure
     // Aqua themed controls whenever possible. We always want to use GTK+ theming, so
     // we don't maintain this differentiation.
-    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element&) const override;
-    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const override;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSliderTrackStyle(StyleResolver&, RenderStyle&, Element*) const override;
 
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element*) const override;
 
-    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const override;
+    virtual void adjustSliderThumbSize(RenderStyle&, Element*) const override;
 
 #if ENABLE(VIDEO)
     void initMediaColors();
@@ -172,12 +172,12 @@ private:
 
     virtual double animationRepeatIntervalForProgressBar(RenderProgress&) const override;
     virtual double animationDurationForProgressBar(RenderProgress&) const override;
-    virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const override;

@@ -350,7 +350,7 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, Graphics
     return border.rect();
 }
 
-void RenderThemeIOS::adjustCheckboxStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeIOS::adjustCheckboxStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
@@ -446,7 +446,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const BorderData&
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
 
-void RenderThemeIOS::adjustRadioStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeIOS::adjustRadioStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
@@ -603,7 +603,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, HTMLInputElement& 
     }
 }
 
-void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element& element) const
+void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element* element) const
 {
     // Set the min-height to be at least MenuListMinHeight.
     if (style.height().isAuto())
@@ -611,13 +611,16 @@ void RenderThemeIOS::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& styl
     else
         style.setMinHeight(Length(MenuListMinHeight, Fixed));
 
+    if (!element)
+        return;
+
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
     // "-webkit-appearance: menulist-button".
-    if (element.hasTagName(HTMLNames::selectTag) && !element.hasAttribute(HTMLNames::multipleAttr))
-        adjustSelectListButtonStyle(style, element);
-    else if (element.hasTagName(HTMLNames::inputTag))
-        adjustInputElementButtonStyle(style, static_cast<HTMLInputElement&>(element));
+    if (element->hasTagName(HTMLNames::selectTag) && !element->hasAttribute(HTMLNames::multipleAttr))
+        adjustSelectListButtonStyle(style, *element);
+    else if (element->hasTagName(HTMLNames::inputTag))
+        adjustInputElementButtonStyle(style, static_cast<HTMLInputElement&>(*element));
 }
 
 bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
@@ -712,7 +715,7 @@ const CGFloat kTrackThickness = 4.0;
 const CGFloat kTrackRadius = kTrackThickness / 2.0;
 const int kDefaultSliderThumbSize = 16;
 
-void RenderThemeIOS::adjustSliderTrackStyle(StyleResolver& selector, RenderStyle& style, Element& element) const
+void RenderThemeIOS::adjustSliderTrackStyle(StyleResolver& selector, RenderStyle& style, Element* element) const
 {
     RenderTheme::adjustSliderTrackStyle(selector, style, element);
 
@@ -800,7 +803,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
     return false;
 }
 
-void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, Element&) const
+void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, Element*) const
 {
     if (style.appearance() != SliderThumbHorizontalPart && style.appearance() != SliderThumbVerticalPart)
         return;
@@ -940,14 +943,17 @@ int RenderThemeIOS::sliderTickOffsetFromTrackCenter() const
 }
 #endif
 
-void RenderThemeIOS::adjustSearchFieldStyle(StyleResolver& selector, RenderStyle& style, Element& element) const
+void RenderThemeIOS::adjustSearchFieldStyle(StyleResolver& selector, RenderStyle& style, Element* element) const
 {
     RenderTheme::adjustSearchFieldStyle(selector, style, element);
+
+    if (!element)
+        return;
 
     if (!style.hasBorder())
         return;
 
-    RenderBox* box = element.renderBox();
+    RenderBox* box = element->renderBox();
     if (!box)
         return;
 
@@ -959,7 +965,7 @@ bool RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const 
     return paintTextFieldDecorations(box, paintInfo, rect);
 }
 
-void RenderThemeIOS::adjustButtonStyle(StyleResolver& selector, RenderStyle& style, Element& element) const
+void RenderThemeIOS::adjustButtonStyle(StyleResolver& selector, RenderStyle& style, Element* element) const
 {
     RenderTheme::adjustButtonStyle(selector, style, element);
 
@@ -971,7 +977,10 @@ void RenderThemeIOS::adjustButtonStyle(StyleResolver& selector, RenderStyle& sty
     int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, nullptr, nullptr, 1.0, false));
     style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
 
-    RenderBox* box = element.renderBox();
+    if (!element)
+        return;
+
+    RenderBox* box = element->renderBox();
     if (!box)
         return;
 

@@ -693,18 +693,18 @@ bool RenderThemeEfl::paintSliderTrack(const RenderObject& object, const PaintInf
     return false;
 }
 
-void RenderThemeEfl::adjustSliderTrackStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeEfl::adjustSliderTrackStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     style.setBoxShadow(nullptr);
 }
 
-void RenderThemeEfl::adjustSliderThumbStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustSliderThumbStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(styleResolver, style, element);
     style.setBoxShadow(nullptr);
 }
 
-void RenderThemeEfl::adjustSliderThumbSize(RenderStyle& style, Element&) const
+void RenderThemeEfl::adjustSliderThumbSize(RenderStyle& style, Element*) const
 {
     ControlPart part = style.appearance();
     if (part == SliderThumbVerticalPart) {
@@ -760,10 +760,10 @@ bool RenderThemeEfl::paintSliderThumb(const RenderObject& object, const PaintInf
     return false;
 }
 
-void RenderThemeEfl::adjustCheckboxStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustCheckboxStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustCheckboxStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustCheckboxStyle(styleResolver, style, element);
         return;
     }
 
@@ -783,10 +783,10 @@ bool RenderThemeEfl::paintCheckbox(const RenderObject& object, const PaintInfo& 
     return paintThemePart(object, CheckBox, info, rect);
 }
 
-void RenderThemeEfl::adjustRadioStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustRadioStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustRadioStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustRadioStyle(styleResolver, style, element);
         return;
     }
 
@@ -806,10 +806,10 @@ bool RenderThemeEfl::paintRadio(const RenderObject& object, const PaintInfo& inf
     return paintThemePart(object, RadioButton, info, rect);
 }
 
-void RenderThemeEfl::adjustButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustButtonStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustButtonStyle(styleResolver, style, element);
         return;
     }
 
@@ -823,10 +823,10 @@ bool RenderThemeEfl::paintButton(const RenderObject& object, const PaintInfo& in
     return paintThemePart(object, Button, info, rect);
 }
 
-void RenderThemeEfl::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustMenuListStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustMenuListStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, ComboBox);
@@ -841,7 +841,7 @@ bool RenderThemeEfl::paintMenuList(const RenderObject& object, const PaintInfo& 
     return paintThemePart(object, ComboBox, info, IntRect(rect));
 }
 
-void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
     // Height is locked to auto if height is not specified.
     style.setHeight(Length(Auto));
@@ -862,10 +862,10 @@ bool RenderThemeEfl::paintMenuListButtonDecorations(const RenderObject& object, 
     return paintMenuList(object, info, rect);
 }
 
-void RenderThemeEfl::adjustTextFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustTextFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustTextFieldStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustTextFieldStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, TextField);
@@ -877,7 +877,7 @@ bool RenderThemeEfl::paintTextField(const RenderObject& object, const PaintInfo&
     return paintThemePart(object, TextField, info, IntRect(rect));
 }
 
-void RenderThemeEfl::adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element&) const
+void RenderThemeEfl::adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element*) const
 {
 }
 
@@ -886,10 +886,10 @@ bool RenderThemeEfl::paintTextArea(const RenderObject& object, const PaintInfo& 
     return paintTextField(object, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustSearchFieldResultsButtonStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldResultsButtonStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsButton);
@@ -908,10 +908,10 @@ bool RenderThemeEfl::paintSearchFieldResultsButton(const RenderObject& object, c
     return paintThemePart(object, SearchFieldResultsButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsDecoration);
@@ -930,10 +930,10 @@ bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(const RenderObject& o
     return paintThemePart(object, SearchFieldResultsDecoration, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustSearchFieldCancelButtonStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldCancelButtonStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldCancelButton);
@@ -954,10 +954,10 @@ bool RenderThemeEfl::paintSearchFieldCancelButton(const RenderObject& object, co
     return paintThemePart(object, SearchFieldCancelButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustSearchFieldStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchField);
@@ -970,10 +970,10 @@ bool RenderThemeEfl::paintSearchField(const RenderObject& object, const PaintInf
     return paintThemePart(object, SearchField, info, rect);
 }
 
-void RenderThemeEfl::adjustInnerSpinButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& element) const
+void RenderThemeEfl::adjustInnerSpinButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element) const
 {
-    if (!m_page && element.document().page()) {
-        static_cast<RenderThemeEfl&>(element.document().page()->theme()).adjustInnerSpinButtonStyle(styleResolver, style, element);
+    if (!m_page && element && element->document().page()) {
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustInnerSpinButtonStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, Spinner);
@@ -1001,7 +1001,7 @@ void RenderThemeEfl::systemFont(CSSValueID, FontDescription& fontDescription) co
     fontDescription.setItalic(false);
 }
 
-void RenderThemeEfl::adjustProgressBarStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeEfl::adjustProgressBarStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     style.setBoxShadow(nullptr);
 }

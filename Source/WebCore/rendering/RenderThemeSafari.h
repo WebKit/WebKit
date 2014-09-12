@@ -76,8 +76,8 @@ public:
 
     virtual int minimumMenuListSize(RenderStyle&) const;
 
-    virtual void adjustSliderThumbSize(RenderStyle&, Element&) const;
-    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element&) const; 
+    virtual void adjustSliderThumbSize(RenderStyle&, Element*) const;
+    virtual void adjustSliderThumbStyle(StyleResolver&, RenderStyle&, Element*) const;
     
     virtual int popupInternalPaddingLeft(RenderStyle&) const;
     virtual int popupInternalPaddingRight(RenderStyle&) const;
@@ -92,38 +92,38 @@ protected:
     virtual bool paintRadio(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void setRadioSize(RenderStyle&) const;
 
-    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, WebCore::Element&) const;
+    virtual void adjustButtonStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void setButtonSize(RenderStyle&) const;
 
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const;
 
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element*) const;
 
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustMenuListStyle(StyleResolver&, RenderStyle&, Element*) const;
 
     virtual bool paintMenuListButtonDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
-    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver&, RenderStyle&, Element*) const;
 
     virtual bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&);
 
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&);
-    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustSearchFieldStyle(StyleResolver&, RenderStyle&, Element*) const;
 
-    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintSearchFieldCancelButton(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintSearchFieldResultsDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element&) const;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintSearchFieldResultsButton(const RenderObject&, const PaintInfo&, const IntRect&);
  
     virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&);
@@ -136,7 +136,7 @@ protected:
 #if ENABLE(METER_ELEMENT)
     virtual IntSize meterSizeForBounds(const RenderMeter&, const IntRect&) const override;
     virtual bool supportsMeter(ControlPart) const override;
-    virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element&) const override;
+    virtual void adjustMeterStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 

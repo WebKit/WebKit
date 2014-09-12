@@ -508,7 +508,7 @@ void RenderThemeSafari::setButtonPaddingFromControlSize(RenderStyle& style, NSCo
     style.setPaddingBottom(Length(0, Fixed));
 }
 
-void RenderThemeSafari::adjustButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeSafari::adjustButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element*) const
 {
     // There are three appearance constants for buttons.
     // (1) Push-button is the constant for the default Aqua system button.  Push buttons will not scale vertically and will not allow
@@ -620,7 +620,7 @@ bool RenderThemeSafari::paintTextField(const RenderObject& o, const PaintInfo& p
     return false;
 }
 
-void RenderThemeSafari::adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element&) const
+void RenderThemeSafari::adjustTextFieldStyle(StyleResolver&, RenderStyle&, Element*) const
 {
 }
 
@@ -648,7 +648,7 @@ bool RenderThemeSafari::paintTextArea(const RenderObject& o, const PaintInfo& pa
     return false;
 }
 
-void RenderThemeSafari::adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element&) const
+void RenderThemeSafari::adjustTextAreaStyle(StyleResolver&, RenderStyle&, Element*) const
 {
 }
 
@@ -864,7 +864,7 @@ bool RenderThemeSafari::paintMenuListButtonDecorations(const RenderObject& rende
     return false;
 }
 
-void RenderThemeSafari::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeSafari::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element* e) const
 {
     NSControlSize controlSize = controlSizeForFont(style);
 
@@ -879,7 +879,7 @@ void RenderThemeSafari::adjustMenuListStyle(StyleResolver& styleResolver, Render
 
     // Set the foreground color to black or gray when we have the aqua look.
     // Cast to RGB32 is to work around a compiler bug.
-    style.setColor(!e.isDisabledFormControl() ? static_cast<RGBA32>(Color::black) : Color::darkGray);
+    style.setColor(e && !e->isDisabledFormControl() ? static_cast<RGBA32>(Color::black) : Color::darkGray);
 
     // Set the button's vertical size.
     setButtonSize(style);
@@ -929,7 +929,7 @@ int RenderThemeSafari::popupInternalPaddingBottom(RenderStyle& style) const
     return 0;
 }
 
-void RenderThemeSafari::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     float fontScale = style.fontSize() / baseFontSize;
     
@@ -987,7 +987,7 @@ bool RenderThemeSafari::paintSliderTrack(const RenderObject& o, const PaintInfo&
     return false;
 }
 
-void RenderThemeSafari::adjustSliderThumbStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const 
+void RenderThemeSafari::adjustSliderThumbStyle(StyleResolver& styleResolver, RenderStyle& style, Element* e) const 
 { 
     RenderTheme::adjustSliderThumbStyle(styleResolver, style, e);
     style.setBoxShadow(nullptr); 
@@ -1005,7 +1005,7 @@ bool RenderThemeSafari::paintSliderThumb(const RenderObject& o, const PaintInfo&
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
 
-void RenderThemeSafari::adjustSliderThumbSize(RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustSliderThumbSize(RenderStyle& style, Element*) const
 {
     if (style.appearance() == SliderThumbHorizontalPart || style.appearance() == SliderThumbVerticalPart) {
         style.setWidth(Length(sliderThumbWidth, Fixed));
@@ -1041,7 +1041,7 @@ void RenderThemeSafari::setSearchFieldSize(RenderStyle& style) const
     setSizeFromFont(style, searchFieldSizes());
 }
 
-void RenderThemeSafari::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeSafari::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element*) const
 {
     // Override border.
     style.resetBorder();
@@ -1053,19 +1053,19 @@ void RenderThemeSafari::adjustSearchFieldStyle(StyleResolver& styleResolver, Ren
     style.setBorderBottomWidth(borderWidth);
     style.setBorderBottomStyle(INSET);
     style.setBorderTopWidth(borderWidth);
-    style.setBorderTopStyle(INSET);    
-    
+    style.setBorderTopStyle(INSET);
+
     // Override height.
     style.setHeight(Length(Auto));
     setSearchFieldSize(style);
-    
+
     // Override padding size to match AppKit text positioning.
     const int padding = 1;
     style.setPaddingLeft(Length(padding, Fixed));
     style.setPaddingRight(Length(padding, Fixed));
     style.setPaddingTop(Length(padding, Fixed));
     style.setPaddingBottom(Length(padding, Fixed));
-    
+
     NSControlSize controlSize = controlSizeForFont(style);
     setFontFromControlSize(styleResolver, style, controlSize);
 }
@@ -1092,7 +1092,7 @@ const IntSize* RenderThemeSafari::cancelButtonSizes() const
     return sizes;
 }
 
-void RenderThemeSafari::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
     style.setWidth(Length(size.width(), Fixed));
@@ -1106,7 +1106,7 @@ const IntSize* RenderThemeSafari::resultsButtonSizes() const
 }
 
 const int emptyResultsOffset = 9;
-void RenderThemeSafari::adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Length(size.width() - emptyResultsOffset, Fixed));
@@ -1118,7 +1118,7 @@ bool RenderThemeSafari::paintSearchFieldDecorationPart(const RenderObject&, cons
     return false;
 }
 
-void RenderThemeSafari::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Length(size.width(), Fixed));
@@ -1142,7 +1142,7 @@ bool RenderThemeSafari::paintSearchFieldResultsDecorationPart(const RenderObject
 }
 
 const int resultsArrowWidth = 5;
-void RenderThemeSafari::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Length(size.width() + resultsArrowWidth, Fixed));
@@ -1190,7 +1190,7 @@ String RenderThemeSafari::mediaControlsScript()
 #endif
 
 #if ENABLE(METER_ELEMENT)
-void RenderThemeSafari::adjustMeterStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeSafari::adjustMeterStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     style.setBoxShadow(nullptr);
 }

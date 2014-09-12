@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+#center::before {
+    content: "cocoa";
+    -webkit-appearance: button;
+}
+#center::after {
+    content: "cappuccino";
+    -webkit-appearance: list-item;
+}
+</style>
+<body>
+<p>This should not incur crashes.</p>
+<p><a href="https://bugs.webkit.org/show_bug.cgi?id=136366">https://bugs.webkit.org/show_bug.cgi?id=136366</a></p>
+<p id="center"> and </p>
+</body>

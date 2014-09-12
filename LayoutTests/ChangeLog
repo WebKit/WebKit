@@ -1,3 +1,13 @@
+2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ASSERTION FAILED: e in WebCore::StyleResolver::adjustRenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=136366
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/css/appearance-with-pseudo-elements-expected.html: Added.
+        * fast/css/appearance-with-pseudo-elements.html: Added.
+
 2014-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         fast/forms/submit-to-blank-multiple-times.html crashes with JSC_slowPathAllocsBetweenGCs

@@ -96,7 +96,7 @@ void RenderSliderThumb::updateAppearance(RenderStyle* parentStyle)
         style().setAppearance(MediaFullScreenVolumeSliderThumbPart);
     if (style().hasAppearance()) {
         ASSERT(element());
-        theme().adjustSliderThumbSize(style(), *element());
+        theme().adjustSliderThumbSize(style(), element());
     }
 }
 

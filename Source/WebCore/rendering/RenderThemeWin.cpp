@@ -730,7 +730,7 @@ bool RenderThemeWin::paintButton(const RenderObject& o, const PaintInfo& i, cons
     return false;
 }
 
-void RenderThemeWin::adjustInnerSpinButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeWin::adjustInnerSpinButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element*) const
 {
     int width = ::GetSystemMetrics(SM_CXVSCROLL);
     if (width <= 0)
@@ -797,13 +797,13 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
     return paintMenuListButtonDecorations(renderer, paintInfo, FloatRect(rect));
 }
 
-void RenderThemeWin::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeWin::adjustMenuListStyle(StyleResolver& styleResolver, RenderStyle& style, Element* e) const
 {
     style.resetBorder();
     adjustMenuListButtonStyle(styleResolver, style, e);
 }
 
-void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver& styleResolver, RenderStyle& style, Element*) const
 {
     // These are the paddings needed to place the text correctly in the <select> box
     const int dropDownBoxPaddingTop    = 2;
@@ -886,7 +886,7 @@ bool RenderThemeWin::paintSliderThumb(const RenderObject& o, const PaintInfo& i,
 const int sliderThumbWidth = 7;
 const int sliderThumbHeight = 15;
 
-void RenderThemeWin::adjustSliderThumbSize(RenderStyle& style, Element&) const
+void RenderThemeWin::adjustSliderThumbSize(RenderStyle& style, Element*) const
 {
     ControlPart part = style.appearance();
     if (part == SliderThumbVerticalPart) {
@@ -907,7 +907,7 @@ bool RenderThemeWin::paintSearchField(const RenderObject& o, const PaintInfo& i,
     return paintTextField(o, i, r);
 }
 
-void RenderThemeWin::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element& e) const
+void RenderThemeWin::adjustSearchFieldStyle(StyleResolver& styleResolver, RenderStyle& style, Element* e) const
 {
     // Override paddingSize to match AppKit text positioning.
     const int padding = 1;
@@ -915,7 +915,7 @@ void RenderThemeWin::adjustSearchFieldStyle(StyleResolver& styleResolver, Render
     style.setPaddingRight(Length(padding, Fixed));
     style.setPaddingTop(Length(padding, Fixed));
     style.setPaddingBottom(Length(padding, Fixed));
-    if (e.focused() && e.document().frame()->selection().isFocusedAndActive())
+    if (e && e->focused() && e->document().frame()->selection().isFocusedAndActive())
         style.setOutlineOffset(-2);
 }
 
@@ -944,7 +944,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(const RenderObject& o, const P
     return false;
 }
 
-void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style.fontSize() / defaultControlFontPixelSize;
@@ -953,14 +953,14 @@ void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderSt
     style.setHeight(Length(cancelButtonSize, Fixed));
 }
 
-void RenderThemeWin::adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeWin::adjustSearchFieldDecorationPartStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     IntSize emptySize(1, 11);
     style.setWidth(Length(emptySize.width(), Fixed));
     style.setHeight(Length(emptySize.height(), Fixed));
 }
 
-void RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     // Scale the decoration size based on the font size
     float fontScale = style.fontSize() / defaultControlFontPixelSize;
@@ -993,7 +993,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderObject& o
     return false;
 }
 
-void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style.fontSize() / defaultControlFontPixelSize;
@@ -1157,7 +1157,7 @@ String RenderThemeWin::mediaControlsScript()
 #endif
 
 #if ENABLE(METER_ELEMENT)
-void RenderThemeWin::adjustMeterStyle(StyleResolver&, RenderStyle& style, Element&) const
+void RenderThemeWin::adjustMeterStyle(StyleResolver&, RenderStyle& style, Element*) const
 {
     style.setBoxShadow(nullptr);
 }

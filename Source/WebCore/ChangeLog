@@ -1,3 +1,125 @@
+2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ASSERTION FAILED: e in WebCore::StyleResolver::adjustRenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=136366
+
+        Reviewed by Benjamin Poulain.
+
+        Since element becomes nullptr when resolving styles for pseudo elements,
+        so don't do `ASSERT(e)` and use pointer for that.
+
+        Test: fast/css/appearance-with-pseudo-elements.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::updateAppearance):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustSliderTrackStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbStyle):
+        (WebCore::RenderThemeEfl::adjustSliderThumbSize):
+        (WebCore::RenderThemeEfl::adjustCheckboxStyle):
+        (WebCore::RenderThemeEfl::adjustRadioStyle):
+        (WebCore::RenderThemeEfl::adjustButtonStyle):
+        (WebCore::RenderThemeEfl::adjustMenuListStyle):
+        (WebCore::RenderThemeEfl::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeEfl::adjustTextFieldStyle):
+        (WebCore::RenderThemeEfl::adjustTextAreaStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldStyle):
+        (WebCore::RenderThemeEfl::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeEfl::adjustProgressBarStyle):
+        * platform/efl/RenderThemeEfl.h:
+        * platform/gtk/RenderThemeGtk.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustCheckboxStyle):
+        (WebCore::RenderTheme::adjustRadioStyle):
+        (WebCore::RenderTheme::adjustButtonStyle):
+        (WebCore::RenderTheme::adjustInnerSpinButtonStyle):
+        (WebCore::RenderTheme::adjustTextFieldStyle):
+        (WebCore::RenderTheme::adjustTextAreaStyle):
+        (WebCore::RenderTheme::adjustMenuListStyle):
+        (WebCore::RenderTheme::adjustMeterStyle):
+        (WebCore::RenderTheme::adjustProgressBarStyle):
+        (WebCore::RenderTheme::adjustMenuListButtonStyle):
+        (WebCore::RenderTheme::adjustMediaControlStyle):
+        (WebCore::RenderTheme::adjustSliderTrackStyle):
+        (WebCore::RenderTheme::adjustSliderThumbStyle):
+        (WebCore::RenderTheme::adjustSliderThumbSize):
+        (WebCore::RenderTheme::adjustSearchFieldStyle):
+        (WebCore::RenderTheme::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderTheme::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderTheme::adjustSearchFieldResultsButtonStyle):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustButtonStyle):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle):
+        (WebCore::RenderThemeGtk::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle):
+        (WebCore::RenderThemeGtk::adjustSliderTrackStyle):
+        (WebCore::RenderThemeGtk::adjustSliderThumbStyle):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustCheckboxStyle):
+        (WebCore::RenderThemeIOS::adjustRadioStyle):
+        (WebCore::RenderThemeIOS::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeIOS::adjustSliderTrackStyle):
+        (WebCore::RenderThemeIOS::adjustSliderThumbSize):
+        (WebCore::RenderThemeIOS::adjustSearchFieldStyle):
+        (WebCore::RenderThemeIOS::adjustButtonStyle):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+        (WebCore::RenderThemeMac::adjustTextAreaStyle):
+        (WebCore::RenderThemeMac::adjustProgressBarStyle):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeMac::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeMac::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::adjustButtonStyle):
+        (WebCore::RenderThemeSafari::adjustTextFieldStyle):
+        (WebCore::RenderThemeSafari::adjustTextAreaStyle):
+        (WebCore::RenderThemeSafari::adjustMenuListStyle):
+        (WebCore::RenderThemeSafari::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeSafari::adjustSliderThumbStyle):
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize):
+        (WebCore::RenderThemeSafari::adjustSearchFieldStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeSafari::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeSafari::adjustMeterStyle):
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeWin::adjustMenuListStyle):
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeWin::adjustSliderThumbSize):
+        (WebCore::RenderThemeWin::adjustSearchFieldStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldDecorationPartStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeWin::adjustMeterStyle):
+        * rendering/RenderThemeWin.h:
+
 2014-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix casing in method name - formatNumberForCustomCSSText
