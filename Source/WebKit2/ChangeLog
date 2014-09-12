@@ -1,3 +1,32 @@
+2014-09-12  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        Reverted r173564.
+
+        * DerivedSources.make:
+        * Scripts/generate-message-receiver.py:
+        (main):
+        * Scripts/generate-messages-header.py:
+        (main):
+        * Scripts/webkit: Removed.
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp: Removed.
+        * Scripts/webkit/LegacyMessages-expected.h: Removed.
+        * Scripts/webkit/MessageReceiver-expected.cpp: Removed.
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp: Removed.
+        * Scripts/webkit/Messages-expected.h: Removed.
+        * Scripts/webkit/MessagesSuperclass-expected.h: Removed.
+        * Scripts/webkit/__init__.py: Removed.
+        * Scripts/webkit/messages.py: Removed.
+        * Scripts/webkit/messages_unittest.py: Removed.
+        * Scripts/webkit/model.py: Removed.
+        * Scripts/webkit/parser.py: Removed.
+        * Scripts/webkit/test-legacy-messages.in: Removed.
+        * Scripts/webkit/test-messages.in: Removed.
+        * Scripts/webkit/test-superclass-messages.in: Removed.
+        * Scripts/webkit2: Copied from Scripts/webkit2.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2014-09-11  Andy Estes  <aestes@apple.com>
 
         [WebKit2] WKImageCreateCGImage crashes when passed a null WKImage
