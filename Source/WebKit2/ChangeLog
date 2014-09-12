@@ -1,3 +1,16 @@
+2014-09-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Use a nicer HTTP authentication dialog
+        https://bugs.webkit.org/show_bug.cgi?id=136615
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogInitialize): Use a nicer layout.
+        (packTwoColumnLayoutInBox): Deleted.
+        (createLabel): Deleted.
+        (createEntry): Deleted.
+
 2014-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r173423): CertificateInfo is never sent to the UI process when using shared secondary process model

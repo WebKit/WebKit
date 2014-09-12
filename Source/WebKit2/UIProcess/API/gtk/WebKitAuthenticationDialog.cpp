@@ -71,58 +71,13 @@ static void authenticationCancelled(WebKitAuthenticationRequest*, WebKitAuthenti
     gtk_widget_destroy(GTK_WIDGET(authDialog));
 }
 
-static void packTwoColumnLayoutInBox(GtkWidget* box, ...)
+static GtkWidget* createLabelWithLineWrap(const char* text)
 {
-    va_list argumentList;
-    va_start(argumentList, box);
-
-    GtkWidget* grid = gtk_grid_new();
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 6);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
-    gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
-
-    GtkWidget* firstColumnWidget = va_arg(argumentList, GtkWidget*);
-    int rowNumber = 0;
-    while (firstColumnWidget) {
-        GtkWidget* secondColumnWidget = va_arg(argumentList, GtkWidget*);
-        int firstWidgetWidth = secondColumnWidget ? 1 : 2;
-
-        gtk_grid_attach(GTK_GRID(grid), firstColumnWidget, 0, rowNumber, firstWidgetWidth, 1);
-        gtk_widget_set_hexpand(firstColumnWidget, TRUE);
-        gtk_widget_set_vexpand(firstColumnWidget, TRUE);
-        gtk_widget_show(firstColumnWidget);
-
-        if (secondColumnWidget) {
-            gtk_grid_attach(GTK_GRID(grid), secondColumnWidget, 1, rowNumber, 1, 1);
-            gtk_widget_set_hexpand(secondColumnWidget, TRUE);
-            gtk_widget_set_vexpand(secondColumnWidget, TRUE);
-            gtk_widget_show(secondColumnWidget);
-        }
-
-        firstColumnWidget = va_arg(argumentList, GtkWidget*);
-        rowNumber++;
-    }
-
-    va_end(argumentList);
-
-    gtk_box_pack_start(GTK_BOX(box), grid, FALSE, FALSE, 0);
-    gtk_widget_show(grid);
-}
-
-static GtkWidget* createLabel(const char* labelString, int horizontalPadding = 0)
-{
-    GtkWidget* label = gtk_label_new(labelString);
+    GtkWidget* label = gtk_label_new(text);
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-    if (horizontalPadding)
-        gtk_misc_set_padding(GTK_MISC(label), 0, horizontalPadding);
+    gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+    gtk_label_set_max_width_chars(GTK_LABEL(label), 40);
     return label;
-}
-
-static GtkWidget* createEntry(GtkWidget** member)
-{
-    *member = gtk_entry_new();
-    gtk_entry_set_activates_default(GTK_ENTRY(*member), TRUE);
-    return *member;
 }
 
 static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* authDialog)
@@ -131,7 +86,7 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 
     GtkWidget* vBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
-    gtk_container_set_border_width(GTK_CONTAINER(vBox), 5);
+    gtk_container_set_border_width(GTK_CONTAINER(vBox), 12);
 
     GtkWidget* buttonBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_END);
@@ -151,40 +106,62 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_box_pack_end(GTK_BOX(buttonBox), button, FALSE, TRUE, 0);
     gtk_widget_show(button);
 
-    GtkWidget* authBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
+    GtkWidget* authBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
     gtk_container_set_border_width(GTK_CONTAINER(authBox), 5);
 
-    GtkWidget* icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION, GTK_ICON_SIZE_DIALOG);
-    gtk_misc_set_alignment(GTK_MISC(icon), 0.5, 0.0);
-    gtk_box_pack_start(GTK_BOX(authBox), icon, FALSE, FALSE, 0);
-    gtk_widget_show(icon);
-
     const WebCore::AuthenticationChallenge& challenge = webkitAuthenticationRequestGetAuthenticationChallenge(priv->request.get())->core();
+    // Prompt on the HTTP authentication dialog.
     GUniquePtr<char> prompt(g_strdup_printf(_("The site %s:%i requests a username and password"),
         challenge.protectionSpace().host().utf8().data(), challenge.protectionSpace().port()));
-    priv->rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
-    gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(priv->rememberCheckButton))), TRUE);
+    GtkWidget* label = createLabelWithLineWrap(prompt.get());
+    gtk_widget_show(label);
+    gtk_box_pack_start(GTK_BOX(authBox), label, FALSE, FALSE, 0);
 
     String realm = challenge.protectionSpace().realm();
     if (!realm.isEmpty()) {
-        packTwoColumnLayoutInBox(
-            authBox,
-            createLabel(prompt.get(), 6), nullptr,
-            createLabel(_("Server message:")), createLabel(realm.utf8().data()),
-            createLabel(_("Username:")), createEntry(&priv->loginEntry),
-            createLabel(_("Password:")), createEntry(&priv->passwordEntry),
-            priv->rememberCheckButton, nullptr,
-            nullptr);
-
-    } else {
-        packTwoColumnLayoutInBox(
-            authBox,
-            createLabel(prompt.get(), 6), nullptr,
-            createLabel(_("Username:")), createEntry(&priv->loginEntry),
-            createLabel(_("Password:")), createEntry(&priv->passwordEntry),
-            priv->rememberCheckButton, nullptr, nullptr,
-            nullptr);
+        GUniquePtr<char> message(g_strdup_printf("%s “%s”", _("Server message:"), realm.utf8().data()));
+        label = createLabelWithLineWrap(message.get());
+        gtk_widget_show(label);
+        gtk_box_pack_start(GTK_BOX(authBox), label, FALSE, FALSE, 0);
     }
+
+    // Check button on the HTTP authentication dialog.
+    priv->rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
+    gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(priv->rememberCheckButton))), TRUE);
+
+    // Entry on the HTTP authentication dialog.
+    GtkWidget* loginLabel = gtk_label_new(_("Username:"));
+    gtk_widget_set_halign(loginLabel, GTK_ALIGN_END);
+    gtk_style_context_add_class(gtk_widget_get_style_context(loginLabel), GTK_STYLE_CLASS_DIM_LABEL);
+    gtk_widget_show(loginLabel);
+
+    priv->loginEntry = gtk_entry_new();
+    gtk_widget_set_hexpand(priv->loginEntry, TRUE);
+    gtk_entry_set_activates_default(GTK_ENTRY(priv->loginEntry), TRUE);
+    gtk_widget_show(priv->loginEntry);
+
+    // Entry on the HTTP authentication dialog.
+    GtkWidget* passwordLabel = gtk_label_new(_("Password:"));
+    gtk_widget_set_halign(passwordLabel, GTK_ALIGN_END);
+    gtk_style_context_add_class(gtk_widget_get_style_context(passwordLabel), GTK_STYLE_CLASS_DIM_LABEL);
+    gtk_widget_show(passwordLabel);
+
+    priv->passwordEntry = gtk_entry_new();
+    gtk_widget_set_hexpand(priv->passwordEntry, TRUE);
+    gtk_entry_set_activates_default(GTK_ENTRY(priv->passwordEntry), TRUE);
+    gtk_widget_show(priv->passwordEntry);
+
+    GtkWidget* grid = gtk_grid_new();
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 6);
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
+    gtk_grid_attach(GTK_GRID(grid), loginLabel, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), priv->loginEntry, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), passwordLabel, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), priv->passwordEntry, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), priv->rememberCheckButton, 1, 2, 1, 1);
+    gtk_widget_show(grid);
+    gtk_box_pack_start(GTK_BOX(authBox), grid, FALSE, FALSE, 0);
+
     gtk_entry_set_visibility(GTK_ENTRY(priv->passwordEntry), FALSE);
     gtk_widget_set_visible(priv->rememberCheckButton, priv->credentialStorageMode != DisallowPersistentStorage);
 
