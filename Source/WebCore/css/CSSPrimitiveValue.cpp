@@ -973,7 +973,7 @@ ALWAYS_INLINE PassRef<StringImpl> CSSPrimitiveValue::formatNumberValue(const cha
     return formatNumberValue(characters, characterCount - 1);
 }
 
-ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForcustomCSSText() const
+ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
 {
     switch (m_primitiveUnitType) {
     case CSS_UNKNOWN:
@@ -1186,7 +1186,7 @@ String CSSPrimitiveValue::customCSSText() const
         return cssTextCache.get(this);
     }
 
-    String text = formatNumberForcustomCSSText();
+    String text = formatNumberForCustomCSSText();
 
     ASSERT(!cssTextCache.contains(this));
     m_hasCachedCSSText = true;

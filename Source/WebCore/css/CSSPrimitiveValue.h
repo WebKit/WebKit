@@ -396,7 +396,7 @@ private:
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 
-    ALWAYS_INLINE String formatNumberForcustomCSSText() const;
+    ALWAYS_INLINE String formatNumberForCustomCSSText() const;
     template <unsigned characterCount>
     ALWAYS_INLINE PassRef<StringImpl> formatNumberValue(const char (&characters)[characterCount]) const;
     NEVER_INLINE PassRef<StringImpl> formatNumberValue(const char* suffix, unsigned suffixLength) const;

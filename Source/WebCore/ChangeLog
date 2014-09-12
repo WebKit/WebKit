@@ -1,3 +1,16 @@
+2014-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix casing in method name - formatNumberForCustomCSSText
+        https://bugs.webkit.org/show_bug.cgi?id=136758
+
+        Reviewed by Benjamin Poulain.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+        (WebCore::CSSPrimitiveValue::customCSSText):
+        (WebCore::CSSPrimitiveValue::formatNumberForcustomCSSText): Deleted.
+        * css/CSSPrimitiveValue.h:
+
 2014-09-12  Chris Dumez  <cdumez@apple.com>
 
         Make all CSSSelector data members private
