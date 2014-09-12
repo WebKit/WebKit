@@ -6859,13 +6859,7 @@
     <ClCompile Include="..\platform\graphics\texmap\coordinated\CompositingCoordinator.cpp">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.cpp">
-      <Filter>platform\graphics\texmap\coordinated</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsLayer.cpp">
-      <Filter>platform\graphics\texmap\coordinated</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsScene.cpp">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedImageBacking.cpp">
@@ -14792,13 +14786,7 @@
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CompositingCoordinator.h">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.h">
-      <Filter>platform\graphics\texmap\coordinated</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsLayer.h">
-      <Filter>platform\graphics\texmap\coordinated</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsScene.h">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsState.h">

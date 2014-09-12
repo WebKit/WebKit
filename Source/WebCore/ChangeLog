@@ -1,3 +1,10 @@
+2014-09-11  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        Unreviewed build fix attempt on windows port since r173553.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2014-09-11  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: disambiguate integral and real number primitive types in the protocol
