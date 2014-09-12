@@ -415,16 +415,6 @@
             "brettx"
          ]
       },
-      "Brian Burg" : {
-         "emails" : [
-            "burg@cs.washington.edu"
-         ],
-         "expertise" : "Developer Tools, Web Inspector",
-         "nicks" : [
-            "bburg",
-            "brrian"
-         ]
-      },
       "Brian Holt" : {
          "emails" : [
             "brian.holt@samsung.com"
@@ -3600,6 +3590,16 @@
          "expertise" : "The WinCairo Port, WebKit on Windows",
          "nicks" : [
             "bfulgham"
+         ]
+      },
+      "Brian Burg" : {
+         "emails" : [
+            "burg@cs.washington.edu"
+         ],
+         "expertise" : "Developer Tools, Web Inspector",
+         "nicks" : [
+            "bburg",
+            "brrian"
          ]
       },
       "Brian Weinstein" : {

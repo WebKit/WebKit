@@ -1,3 +1,9 @@
+2014-09-12  Timothy Hatcher  <timothy@apple.com>
+
+        Make Brian Burg a WebKit reviewer.
+
+        * Scripts/webkitpy/common/config/contributors.json: Move Brian Burg's entry.
+
 2014-09-12  Alexey Proskuryakov  <ap@apple.com>
 
         Multiple EWS or commit bots can pick up processing of the same patch
