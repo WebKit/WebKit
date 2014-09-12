@@ -1,3 +1,17 @@
+2014-09-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Multiple EWS or commit bots can pick up processing of the same patch
+        https://bugs.webkit.org/show_bug.cgi?id=136793
+
+        Reviewed by Ryosuke Niwa.
+
+        Change timeout from one hour to two hours. This will let bots finish, and in the
+        unlikely event of a bot being frozen, will only delay patch processing restart by
+        one hour.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/model/activeworkitems.py: (ActiveWorkItems.deactivate_expired):
+
 2014-09-11  Andy Estes  <aestes@apple.com>
 
         [WebKit2] WKImageCreateCGImage crashes when passed a null WKImage

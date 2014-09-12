@@ -79,8 +79,10 @@ class ActiveWorkItems(db.Model, QueuePropertyMixin):
         return db.run_in_transaction(self._expire_item, self.key(), item_id)
 
     def deactivate_expired(self, now):
-        one_hour_ago = time.mktime((now - timedelta(minutes=60)).timetuple())
-        nonexpired_pairs = [pair for pair in self._item_time_pairs() if pair[1] > one_hour_ago]
+        # If the patch is still active after this much time, then a bot must have frozen or rebooted,
+        # and dropped the patch on the floor. Let another bot pick it up.
+        two_hours_ago = time.mktime((now - timedelta(minutes=120)).timetuple())
+        nonexpired_pairs = [pair for pair in self._item_time_pairs() if pair[1] > two_hours_ago]
         self._set_item_time_pairs(nonexpired_pairs)
 
     def next_item(self, work_item_ids, now):
