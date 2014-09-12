@@ -37,8 +37,10 @@ class LLIntOffsetsExtractor;
 
 class JSCallee : public JSDestructibleObject {
     friend class JIT;
+#if ENABLE(DFG_JIT)
     friend class DFG::SpeculativeJIT;
     friend class DFG::JITCompiler;
+#endif
     friend class VM;
 
 public:
