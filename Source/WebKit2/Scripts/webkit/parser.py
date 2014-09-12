@@ -22,7 +22,7 @@
 
 import re
 
-from webkit2 import model
+from webkit import model
 
 
 def combine_condition(conditions):

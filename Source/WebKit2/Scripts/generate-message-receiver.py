@@ -25,7 +25,7 @@
 from __future__ import with_statement
 import sys
 
-import webkit2.messages
+import webkit.messages
 
 
 def main(argv=None):
@@ -33,8 +33,8 @@ def main(argv=None):
         argv = sys.argv
     input_path = argv[1]
     with open(input_path) as input_file:
-        # Python 3, change to:  print(webkit2.messages.generate_message_handler(input_file), end='')
-        sys.stdout.write(webkit2.messages.generate_message_handler(input_file))
+        # Python 3, change to:  print(webkit.messages.generate_message_handler(input_file), end='')
+        sys.stdout.write(webkit.messages.generate_message_handler(input_file))
     return 0
 
 if __name__ == '__main__':

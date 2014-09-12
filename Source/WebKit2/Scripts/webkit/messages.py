@@ -23,7 +23,7 @@
 import collections
 import re
 import sys
-from webkit2 import parser
+from webkit import parser
 
 WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
