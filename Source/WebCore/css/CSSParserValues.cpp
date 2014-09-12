@@ -167,7 +167,7 @@ CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const CSSParserStr
         return nullptr;
 
     auto selector = std::make_unique<CSSParserSelector>();
-    selector->m_selector->m_match = CSSSelector::PagePseudoClass;
+    selector->m_selector->setMatch(CSSSelector::PagePseudoClass);
     selector->m_selector->setPagePseudoType(pseudoType);
     return selector.release();
 }
@@ -182,7 +182,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString
         return nullptr;
 
     auto selector = std::make_unique<CSSParserSelector>();
-    selector->m_selector->m_match = CSSSelector::PseudoElement;
+    selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(pseudoType);
     selector->m_selector->setValue(name);
     return selector.release();
@@ -199,7 +199,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(cons
         return nullptr;
 
     auto selector = std::make_unique<CSSParserSelector>();
-    selector->m_selector->m_match = CSSSelector::PseudoElement;
+    selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(CSSSelector::PseudoElementCue);
     selector->adoptSelectorVector(*selectorVector);
     return selector.release();
@@ -211,13 +211,13 @@ CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSel
     PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
     if (pseudoType.pseudoClass != CSSSelector::PseudoClassUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
-        selector->m_selector->m_match = CSSSelector::PseudoClass;
-        selector->m_selector->m_pseudoType = pseudoType.pseudoClass;
+        selector->m_selector->setMatch(CSSSelector::PseudoClass);
+        selector->m_selector->setPseudoClassType(pseudoType.pseudoClass);
         return selector.release();
     }
     if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoElementUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
-        selector->m_selector->m_match = CSSSelector::PseudoElement;
+        selector->m_selector->setMatch(CSSSelector::PseudoElement);
         selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
         AtomicString name = pseudoTypeString;
         selector->m_selector->setValue(name);
@@ -260,10 +260,10 @@ void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSele
 
 void CSSParserSelector::setPseudoClassValue(const CSSParserString& pseudoClassString)
 {
-    ASSERT(m_selector->m_match == CSSSelector::PseudoClass);
+    ASSERT(m_selector->match() == CSSSelector::PseudoClass);
 
     PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoClassString);
-    m_selector->m_pseudoType = pseudoType.pseudoClass;
+    m_selector->setPseudoClassType(pseudoType.pseudoClass);
 }
 
 bool CSSParserSelector::isSimple() const
@@ -274,7 +274,7 @@ bool CSSParserSelector::isSimple() const
     if (!m_tagHistory)
         return true;
 
-    if (m_selector->m_match == CSSSelector::Tag) {
+    if (m_selector->match() == CSSSelector::Tag) {
         // We can't check against anyQName() here because namespace may not be nullAtom.
         // Example:
         //     @namespace "http://www.w3.org/2000/svg";
@@ -312,7 +312,7 @@ void CSSParserSelector::prependTagSelector(const QualifiedName& tagQName, bool t
     m_tagHistory = WTF::move(second);
 
     m_selector = std::make_unique<CSSSelector>(tagQName, tagIsForNamespaceRule);
-    m_selector->m_relation = CSSSelector::SubSelector;
+    m_selector->setRelation(CSSSelector::SubSelector);
 }
 
 }

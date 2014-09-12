@@ -1,3 +1,96 @@
+2014-09-12  Chris Dumez  <cdumez@apple.com>
+
+        Make all CSSSelector data members private
+        https://bugs.webkit.org/show_bug.cgi?id=136784
+
+        Reviewed by Benjamin Poulain.
+
+        Make all CSSSelector data members private. Previously, some of the data
+        members such as m_relation / m_match / m_pseudoType were public and
+        accessed directly from outside the class. The new approach is better
+        because:
+        - Those members are bit fields so by using getters, we can hide the
+          casts inside the getters. The setters can now also check that the
+          bitfield is big enough to actually store the enum value.
+        - When using those in switch() statements, the compiler now complains
+          if we fail to test some of the enum values as the value is now an
+          enum, and not merely an unsigned integer.
+        - Some of these members already has getters (e.g. relation()).
+        - Better encapsulation.
+
+        No new tests, no behavior change.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePagePseudoSelector):
+        (WebCore::CSSParserSelector::parsePseudoElementSelector):
+        (WebCore::CSSParserSelector::parsePseudoElementCueFunctionSelector):
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector):
+        (WebCore::CSSParserSelector::setPseudoClassValue):
+        (WebCore::CSSParserSelector::isSimple):
+        (WebCore::CSSParserSelector::prependTagSelector):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setMatch):
+        (WebCore::CSSParserSelector::setRelation):
+        (WebCore::CSSParserSelector::isPseudoElementCueFunction):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::createRareData):
+        (WebCore::CSSSelector::specificityForOneSelector):
+        (WebCore::CSSSelector::specificityForPage):
+        (WebCore::CSSSelector::operator==):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::setPseudoElementType):
+        (WebCore::CSSSelector::setPagePseudoType):
+        (WebCore::CSSSelector::pseudoClassType):
+        (WebCore::CSSSelector::setPseudoClassType):
+        (WebCore::CSSSelector::pseudoElementType):
+        (WebCore::CSSSelector::pagePseudoClassType):
+        (WebCore::CSSSelector::setRelation):
+        (WebCore::CSSSelector::match):
+        (WebCore::CSSSelector::setMatch):
+        (WebCore::CSSSelector::matchesPseudoElement):
+        (WebCore::CSSSelector::isUnknownPseudoElement):
+        (WebCore::CSSSelector::isCustomPseudoElement):
+        (WebCore::CSSSelector::isSiblingSelector):
+        (WebCore::CSSSelector::isAttributeSelector):
+        (WebCore::CSSSelector::setValue):
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::tagQName):
+        (WebCore::CSSSelector::value):
+        * css/CSSSelectorList.cpp:
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        * css/PageRuleCollector.cpp:
+        (WebCore::checkPageSelectorComponents):
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector):
+        * css/RuleSet.cpp:
+        (WebCore::isSelectorMatchingHTMLBasedOnRuleHash):
+        (WebCore::determinePropertyWhitelistType):
+        (WebCore::RuleSet::addRule):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::anyAttributeMatches):
+        (WebCore::canMatchHoverOrActiveInQuirksMode):
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::checkScrollbarPseudoClass):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::isCommonPseudoClassSelector):
+        * css/SelectorFilter.cpp:
+        (WebCore::collectDescendantSelectorIdentifierHashes):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueMatching):
+        * dom/SelectorQuery.cpp:
+        (WebCore::isSingleTagNameSelector):
+        (WebCore::isSingleClassNameSelector):
+        (WebCore::findIdMatchingType):
+        (WebCore::SelectorDataList::SelectorDataList):
+        (WebCore::selectorForIdLookup):
+        (WebCore::filterRootById):
+
 2014-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r173441): [GTK] All buttons appear insensitive

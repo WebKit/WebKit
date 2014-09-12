@@ -35,14 +35,14 @@ namespace WebCore {
 
 void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
 {
-    if (selector->m_match == CSSSelector::Id)
+    if (selector->match() == CSSSelector::Id)
         idsInRules.add(selector->value().impl());
-    else if (selector->m_match == CSSSelector::Class)
+    else if (selector->match() == CSSSelector::Class)
         classesInRules.add(selector->value().impl());
     else if (selector->isAttributeSelector()) {
         attributeCanonicalLocalNamesInRules.add(selector->attributeCanonicalLocalName().impl());
         attributeLocalNamesInRules.add(selector->attribute().localName().impl());
-    } else if (selector->m_match == CSSSelector::PseudoElement) {
+    } else if (selector->match() == CSSSelector::PseudoElement) {
         switch (selector->pseudoElementType()) {
         case CSSSelector::PseudoElementFirstLine:
             usesFirstLineRules = true;

@@ -94,7 +94,7 @@ private:
 
 inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* selector)
 {
-    if (selector->m_match != CSSSelector::PseudoClass)
+    if (selector->match() != CSSSelector::PseudoClass)
         return false;
     CSSSelector::PseudoClassType pseudoType = selector->pseudoClassType();
     return pseudoType == CSSSelector::PseudoClassLink

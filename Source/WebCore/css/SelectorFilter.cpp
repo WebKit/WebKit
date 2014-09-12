@@ -112,7 +112,7 @@ void SelectorFilter::pushParent(Element* parent)
 
 static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash)
 {
-    switch (selector->m_match) {
+    switch (selector->match()) {
     case CSSSelector::Id:
         if (!selector->value().isEmpty())
             (*hash++) = selector->value().impl()->existingHash() * IdAttributeSalt;

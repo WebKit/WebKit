@@ -705,7 +705,7 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             return FunctionType::CannotMatchAnything;
         }
 
-        switch (selector->m_match) {
+        switch (selector->match()) {
         case CSSSelector::Tag:
             ASSERT(!fragment.tagName);
             fragment.tagName = &(selector->tagQName());
@@ -2177,7 +2177,7 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
 
     successCases.link(&m_assembler);
 
-    if (attributeSelector.m_match != CSSSelector::Set) {
+    if (attributeSelector.match() != CSSSelector::Set) {
         // We make the assumption that name matching fails in most cases and we keep value matching outside
         // of the loop. We re-enter the loop if needed.
         // FIXME: exact case sensitive value matching is so simple that it should be done in the loop.
@@ -2269,7 +2269,7 @@ void SelectorCodeGenerator::generateElementAttributeValueMatching(Assembler::Jum
     ASSERT(!expectedValue.isNull());
     bool defaultToCaseSensitiveValueMatch = attributeInfo.canDefaultToCaseSensitiveValueMatch();
 
-    switch (attributeSelector.m_match) {
+    switch (attributeSelector.match()) {
     case CSSSelector::Begin:
         generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, defaultToCaseSensitiveValueMatch, attributeValueBeginsWith<CaseSensitive>, attributeValueBeginsWith<CaseInsensitive>);
         break;

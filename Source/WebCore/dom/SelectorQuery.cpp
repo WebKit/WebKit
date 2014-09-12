@@ -37,12 +37,12 @@ namespace WebCore {
 #if !ASSERT_DISABLED
 static bool isSingleTagNameSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.m_match == CSSSelector::Tag;
+    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Tag;
 }
 
 static bool isSingleClassNameSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.m_match == CSSSelector::Class;
+    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Class;
 }
 #endif
 
@@ -56,7 +56,7 @@ static IdMatchingType findIdMatchingType(const CSSSelector& firstSelector)
 {
     bool inRightmost = true;
     for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
-        if (selector->m_match == CSSSelector::Id) {
+        if (selector->match() == CSSSelector::Id) {
             if (inRightmost)
                 return IdMatchingType::Rightmost;
             return IdMatchingType::Filter;
@@ -80,7 +80,7 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
     if (selectorCount == 1) {
         const CSSSelector& selector = *m_selectors.first().selector;
         if (selector.isLastInTagHistory()) {
-            switch (selector.m_match) {
+            switch (selector.match()) {
             case CSSSelector::Tag:
                 m_matchType = TagNameMatch;
                 break;
@@ -168,7 +168,7 @@ static const CSSSelector* selectorForIdLookup(const ContainerNode& rootNode, con
         return nullptr;
 
     for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
-        if (selector->m_match == CSSSelector::Id)
+        if (selector->match() == CSSSelector::Id)
             return selector;
         if (selector->relation() != CSSSelector::SubSelector)
             break;
@@ -224,7 +224,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     // Thus we can skip the rightmost match.
     const CSSSelector* selector = &firstSelector;
     do {
-        ASSERT(selector->m_match != CSSSelector::Id);
+        ASSERT(selector->match() != CSSSelector::Id);
         if (selector->relation() != CSSSelector::SubSelector)
             break;
         selector = selector->tagHistory();
@@ -232,7 +232,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
 
     bool inAdjacentChain = false;
     for (; selector; selector = selector->tagHistory()) {
-        if (selector->m_match == CSSSelector::Id) {
+        if (selector->match() == CSSSelector::Id) {
             const AtomicString& idToMatch = selector->value();
             if (ContainerNode* searchRoot = rootNode.treeScope().getElementById(idToMatch)) {
                 if (LIKELY(!rootNode.treeScope().containsMultipleElementsWithId(idToMatch))) {

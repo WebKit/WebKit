@@ -195,8 +195,8 @@ public:
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
     void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }
     void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
-    void setMatch(CSSSelector::Match value) { m_selector->m_match = value; }
-    void setRelation(CSSSelector::Relation value) { m_selector->m_relation = value; }
+    void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
+    void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
 
 
@@ -209,7 +209,7 @@ public:
     bool isPseudoElementCueFunction() const
     {
 #if ENABLE(VIDEO_TRACK)
-        return m_selector->m_match == CSSSelector::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
+        return m_selector->match() == CSSSelector::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
 #else
         return false;
 #endif

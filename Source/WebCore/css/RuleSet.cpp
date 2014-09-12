@@ -58,13 +58,13 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector& sele
     if (selector.tagHistory())
         return false;
 
-    if (selector.m_match == CSSSelector::Tag) {
+    if (selector.match() == CSSSelector::Tag) {
         const AtomicString& selectorNamespace = selector.tagQName().namespaceURI();
         return selectorNamespace == starAtom || selectorNamespace == xhtmlNamespaceURI;
     }
     if (SelectorChecker::isCommonPseudoClassSelector(&selector))
         return true;
-    return selector.m_match == CSSSelector::Id || selector.m_match == CSSSelector::Class;
+    return selector.match() == CSSSelector::Id || selector.match() == CSSSelector::Class;
 }
 
 static bool selectorCanMatchPseudoElement(const CSSSelector& rootSelector)
@@ -135,7 +135,7 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRule
         return PropertyWhitelistRegion;
 #if ENABLE(VIDEO_TRACK)
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
-        if (component->m_match == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
+        if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
             return PropertyWhitelistCue;
     }
 #else
@@ -214,13 +214,13 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     const CSSSelector* focusSelector = nullptr;
     const CSSSelector* selector = ruleData.selector();
     do {
-        if (selector->m_match == CSSSelector::Id) {
+        if (selector->match() == CSSSelector::Id) {
             addToRuleSet(selector->value().impl(), m_idRules, ruleData);
             return;
         }
 
 #if ENABLE(VIDEO_TRACK)
-        if (selector->m_match == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue) {
+        if (selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue) {
             m_cuePseudoRules.append(ruleData);
             return;
         }
@@ -231,7 +231,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             return;
         }
 
-        if (selector->m_match == CSSSelector::Class) {
+        if (selector->match() == CSSSelector::Class) {
             AtomicStringImpl* className = selector->value().impl();
             if (!classSelector) {
                 classSelector = selector;
@@ -245,7 +245,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             }
         }
 
-        if (selector->m_match == CSSSelector::Tag && selector->tagQName().localName() != starAtom)
+        if (selector->match() == CSSSelector::Tag && selector->tagQName().localName() != starAtom)
             tagSelector = selector;
 
         if (SelectorChecker::isCommonPseudoClassSelector(selector)) {
