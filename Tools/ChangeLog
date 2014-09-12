@@ -1,3 +1,19 @@
+2014-09-11  Michael Saboff  <msaboff@apple.com>
+
+        lldb_webkit.py:btjs doesn't work with release builds
+        https://bugs.webkit.org/show_bug.cgi?id=136760
+
+        Reviewed by Jer Noble.
+
+        If we can't get a result calling JSC::ExecState::describeFrame(), try calling the
+        mangled name _ZN3JSC9ExecState13describeFrameEv.  Also cleaned up the handling if
+        we can't get a valid result from trying either call.  In that case, we fallback to
+        just showing the PC.  Also added check for both entry points.  If neither is found,
+        we issue a warning and output the stack trace without JavaScript annotations.
+
+        * lldb/lldb_webkit.py:
+        (btjs):
+
 2014-09-11  Rebecca Hauck  <rhauck@adobe.com>
 
         webkitpy test failures from import-w3c-tests

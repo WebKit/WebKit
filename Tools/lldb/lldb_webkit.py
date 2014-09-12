@@ -109,6 +109,14 @@ def btjs(debugger, command, result, internal_dict):
     process = target.GetProcess()
     thread = process.GetSelectedThread()
 
+    if target.FindFunctions("JSC::ExecState::describeFrame").GetSize() or target.FindFunctions("_ZN3JSC9ExecState13describeFrameEv").GetSize():
+        annotateJSFrames = True
+    else:
+        annotateJSFrames = False
+
+    if not annotateJSFrames:
+        print "Warning: Can't find JSC::ExecState::describeFrame() in executable to annotate JavaScript frames"
+
     backtraceDepth = thread.GetNumFrames()
 
     if len(command) == 1:
@@ -128,14 +136,17 @@ def btjs(debugger, command, result, internal_dict):
 
         function = frame.GetFunction()
 
-        if not frame or not frame.GetSymbol() or frame.GetSymbol().GetName() == "llint_entry":
+        if annotateJSFrames and not frame or not frame.GetSymbol() or frame.GetSymbol().GetName() == "llint_entry":
             callFrame = frame.GetSP()
-            JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
-            JSFrameDescription = string.strip(JSFrameDescription, '"')
-            frameFormat = '    frame #{num}: {addr:' + addressFormat + '} {desc}'
-            print frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription)
-        else:
-            print '    %s' % frame
+            JSFrameDescription = frame.EvaluateExpression("((JSC::ExecState*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
+            if not JSFrameDescription:
+                JSFrameDescription = frame.EvaluateExpression("(char*)_ZN3JSC9ExecState13describeFrameEv(0x%x)" % frame.GetFP()).GetSummary()
+            if JSFrameDescription:
+                JSFrameDescription = string.strip(JSFrameDescription, '"')
+                frameFormat = '    frame #{num}: {addr:' + addressFormat + '} {desc}'
+                print frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription)
+                continue
+        print '    %s' % frame
 
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):
