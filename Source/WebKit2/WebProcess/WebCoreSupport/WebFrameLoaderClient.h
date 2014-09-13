@@ -222,6 +222,10 @@ private:
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext() override;
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    virtual void didRequestAutocomplete(PassRefPtr<WebCore::FormState>) override;
+#endif
+
     virtual void forcePageTransitionIfNeeded() override;
 
 #if USE(QUICK_LOOK)

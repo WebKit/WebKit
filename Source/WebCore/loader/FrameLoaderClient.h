@@ -307,6 +307,10 @@ namespace WebCore {
 
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+        virtual void didRequestAutocomplete(PassRefPtr<FormState>) = 0;
+#endif
+
         virtual bool shouldPaintBrokenImage(const URL&) const { return true; }
 
         virtual void dispatchGlobalObjectAvailable(DOMWrapperWorld&) { }

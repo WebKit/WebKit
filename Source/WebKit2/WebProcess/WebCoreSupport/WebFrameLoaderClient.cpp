@@ -1636,4 +1636,10 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(std::unique_ptr<WebCore::Co
 }
 #endif
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+void WebFrameLoaderClient::didRequestAutocomplete(PassRefPtr<WebCore::FormState>)
+{
+}
+#endif
+
 } // namespace WebKit

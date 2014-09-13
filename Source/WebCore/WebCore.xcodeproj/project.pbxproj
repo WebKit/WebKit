@@ -2288,6 +2288,7 @@
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		759CB837192DA9190012BC64 /* ControlStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 311C08BC18E35D6800B65615 /* ControlStates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75DCC7B818B81C8800A57128 /* SessionIDHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75DCC7B718B81C8800A57128 /* SessionIDHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		760847CE19A6A27800428CCC /* AutocompleteErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 760847CD19A6A27700428CCC /* AutocompleteErrorEvent.h */; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
 		7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */; };
 		76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */; };
@@ -2301,6 +2302,11 @@
 		76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */; };
 		76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */; };
 		76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */; };
+		76FB9FEB19A7284B00420562 /* DOMAutocompleteErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FB9FE819A7284B00420562 /* DOMAutocompleteErrorEvent.h */; };
+		76FB9FEC19A7284B00420562 /* DOMAutocompleteErrorEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 76FB9FE919A7284B00420562 /* DOMAutocompleteErrorEvent.mm */; };
+		76FB9FED19A7284B00420562 /* DOMAutocompleteErrorEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FB9FEA19A7284B00420562 /* DOMAutocompleteErrorEventInternal.h */; };
+		76FB9FF819A73E3A00420562 /* JSAutocompleteErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FB9FF619A73E3A00420562 /* JSAutocompleteErrorEvent.cpp */; };
+		76FB9FF919A73E3A00420562 /* JSAutocompleteErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FB9FF719A73E3A00420562 /* JSAutocompleteErrorEvent.h */; };
 		76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FC2B0812370DA0006A991A /* DOMTokenList.cpp */; };
 		76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FC2B0912370DA0006A991A /* DOMTokenList.h */; };
 		76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FF17E211235673001D61B5 /* PluginViewNone.cpp */; };
@@ -9403,6 +9409,8 @@
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		75DCC7B718B81C8800A57128 /* SessionIDHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionIDHash.h; sourceTree = "<group>"; };
+		760847CD19A6A27700428CCC /* AutocompleteErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocompleteErrorEvent.h; sourceTree = "<group>"; };
+		760847CF19A6A28600428CCC /* AutocompleteErrorEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutocompleteErrorEvent.idl; sourceTree = "<group>"; };
 		7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleToScriptMapping.h; sourceTree = "<group>"; };
 		7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocaleToScriptMappingDefault.cpp; sourceTree = "<group>"; };
 		76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDialogElement.h; sourceTree = "<group>"; };
@@ -9416,6 +9424,11 @@
 		76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMenuListPopup.h; sourceTree = "<group>"; };
 		76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMenuListOption.cpp; sourceTree = "<group>"; };
 		76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMenuListOption.h; sourceTree = "<group>"; };
+		76FB9FE819A7284B00420562 /* DOMAutocompleteErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAutocompleteErrorEvent.h; sourceTree = "<group>"; };
+		76FB9FE919A7284B00420562 /* DOMAutocompleteErrorEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMAutocompleteErrorEvent.mm; sourceTree = "<group>"; };
+		76FB9FEA19A7284B00420562 /* DOMAutocompleteErrorEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAutocompleteErrorEventInternal.h; sourceTree = "<group>"; };
+		76FB9FF619A73E3A00420562 /* JSAutocompleteErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAutocompleteErrorEvent.cpp; sourceTree = "<group>"; };
+		76FB9FF719A73E3A00420562 /* JSAutocompleteErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAutocompleteErrorEvent.h; sourceTree = "<group>"; };
 		76FC2B0812370DA0006A991A /* DOMTokenList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTokenList.cpp; sourceTree = "<group>"; };
 		76FC2B0912370DA0006A991A /* DOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTokenList.h; sourceTree = "<group>"; };
 		76FC2B0A12370DA0006A991A /* DOMTokenList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMTokenList.idl; sourceTree = "<group>"; };
@@ -16890,6 +16903,9 @@
 		85AFA7AB0AAF3BB000E84305 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				76FB9FE819A7284B00420562 /* DOMAutocompleteErrorEvent.h */,
+				76FB9FE919A7284B00420562 /* DOMAutocompleteErrorEvent.mm */,
+				76FB9FEA19A7284B00420562 /* DOMAutocompleteErrorEventInternal.h */,
 				BC946EED107FDBAC00857193 /* DOMBeforeLoadEvent.h */,
 				BC946EEE107FDBAC00857193 /* DOMBeforeLoadEvent.mm */,
 				85AFA8200AAF528A00E84305 /* DOMEvent.h */,
@@ -19288,6 +19304,8 @@
 		A83B79120CCB003F000B0825 /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				76FB9FF619A73E3A00420562 /* JSAutocompleteErrorEvent.cpp */,
+				76FB9FF719A73E3A00420562 /* JSAutocompleteErrorEvent.h */,
 				BC946345107A934B00857193 /* JSBeforeLoadEvent.cpp */,
 				BC946347107A936600857193 /* JSBeforeLoadEvent.h */,
 				8225432CA9D4B4CF4628EC7F /* JSBeforeUnloadEvent.cpp */,
@@ -22413,6 +22431,8 @@
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
 				A8C4A7F909D563270003AC8D /* Attribute.h */,
+				760847CF19A6A28600428CCC /* AutocompleteErrorEvent.idl */,
+				760847CD19A6A27700428CCC /* AutocompleteErrorEvent.h */,
 				BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */,
 				BC9462CB107A7A3900857193 /* BeforeLoadEvent.idl */,
 				AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */,
@@ -24243,6 +24263,7 @@
 				9746AF2914F4DDE6003E7A70 /* GeolocationPosition.h in Headers */,
 				9746AF2A14F4DDE6003E7A70 /* Geoposition.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
+				76FB9FEB19A7284B00420562 /* DOMAutocompleteErrorEvent.h in Headers */,
 				B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */,
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
 				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
@@ -24424,6 +24445,7 @@
 				516730A4182D8FBB003FAF5C /* IDBCursorBackend.h in Headers */,
 				510194451836F7E500925523 /* IDBCursorBackendOperations.h in Headers */,
 				51D719C4181106E00016DC51 /* IDBCursorWithValue.h in Headers */,
+				76FB9FED19A7284B00420562 /* DOMAutocompleteErrorEventInternal.h in Headers */,
 				51D719C7181106E00016DC51 /* IDBDatabase.h in Headers */,
 				536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */,
 				51771C8F182DB4B7008E781E /* IDBDatabaseBackend.h in Headers */,
@@ -25640,6 +25662,7 @@
 				A8DF4AE90980C42C0052981B /* RenderTableCell.h in Headers */,
 				A8DF4AF10980C42C0052981B /* RenderTableCol.h in Headers */,
 				A8DF4AEE0980C42C0052981B /* RenderTableRow.h in Headers */,
+				76FB9FF919A73E3A00420562 /* JSAutocompleteErrorEvent.h in Headers */,
 				A8DF4AEF0980C42C0052981B /* RenderTableSection.h in Headers */,
 				BCEA488C097D93020094C9E4 /* RenderText.h in Headers */,
 				AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */,
@@ -26116,6 +26139,7 @@
 				84C6784D1214814700A92902 /* SVGPathBlender.h in Headers */,
 				CDCFABBD18C0AF78006F8450 /* SelectionSubtreeRoot.h in Headers */,
 				8476C9EB11DF6A2900555B02 /* SVGPathBuilder.h in Headers */,
+				760847CE19A6A27800428CCC /* AutocompleteErrorEvent.h in Headers */,
 				8419D2A7120D92D000141F8F /* SVGPathByteStream.h in Headers */,
 				8419D2A9120D92D000141F8F /* SVGPathByteStreamBuilder.h in Headers */,
 				8419D2AD120D92FC00141F8F /* SVGPathByteStreamSource.h in Headers */,
@@ -27687,6 +27711,7 @@
 				7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */,
 				514C764F0CE9234E007EF3CD /* FormDataStreamMac.mm in Sources */,
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
+				76FB9FEC19A7284B00420562 /* DOMAutocompleteErrorEvent.mm in Sources */,
 				41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,
@@ -28024,6 +28049,7 @@
 				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
 				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
 				5C4304B5191AEF46000E2BC0 /* JSEXTShaderTextureLOD.cpp in Sources */,
+				76FB9FF819A73E3A00420562 /* JSAutocompleteErrorEvent.cpp in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSDataTransfer.cpp in Sources */,
 				BCA83E520D7CE205003421A8 /* JSDataTransferCustom.cpp in Sources */,
 				51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */,

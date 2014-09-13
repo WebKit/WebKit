@@ -53,6 +53,7 @@ MediaKeyEvent conditional=ENCRYPTED_MEDIA
 MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA_V2
 MediaKeyNeededEvent conditional=ENCRYPTED_MEDIA_V2
 TrackEvent conditional=VIDEO_TRACK
+AutocompleteErrorEvent conditional=REQUEST_AUTOCOMPLETE
 CSSFontFaceLoadEvent conditional=FONT_LOAD_EVENTS
 SecurityPolicyViolationEvent conditional=CSP_NEXT
 UIRequestEvent conditional=INDIE_UI

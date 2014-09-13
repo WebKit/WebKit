@@ -26,6 +26,10 @@
 #include "HTMLFormElement.h"
 
 #include "Attribute.h"
+
+#include "AutocompleteErrorEvent.h"
+#include "DOMFormData.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "Event.h"
@@ -60,6 +64,9 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& documen
     , m_shouldSubmit(false)
     , m_isInResetFunction(false)
     , m_wasDemoted(false)
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    , m_requestAutocompleteTimer(this, &HTMLFormElement::requestAutocompleteTimerFired)
+#endif
 {
     ASSERT(hasTagName(formTag));
 }
@@ -416,6 +423,63 @@ void HTMLFormElement::setAutocapitalize(const AtomicString& value)
 {
     setAttribute(autocapitalizeAttr, value);
 }
+
+#endif
+
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+
+void HTMLFormElement::requestAutocomplete()
+{
+    Frame* frame = document().frame();
+    if (!frame)
+        return;
+
+    if (!shouldAutocomplete() || !ScriptController::processingUserGesture()) {
+        finishRequestAutocomplete(AutocompleteResultErrorDisabled);
+        return;
+    }
+
+    StringPairVector controlNamesAndValues;
+    getTextFieldValues(controlNamesAndValues);
+
+    RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, &document(), SubmittedByJavaScript);
+    frame->loader().client().didRequestAutocomplete(formState.release());
+}
+
+void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
+{
+    RefPtr<Event> event;
+    switch (result) {
+    case AutocompleteResultSuccess:
+        event = Event::create(eventNames().autocompleteEvent, false, false);
+        break;
+    case AutocompleteResultErrorDisabled:
+        event = AutocompleteErrorEvent::create("disabled");
+        break;
+    case AutocompleteResultErrorCancel:
+        event = AutocompleteErrorEvent::create("cancel");
+        break;
+    case AutocompleteResultErrorInvalid:
+        event = AutocompleteErrorEvent::create("invalid");
+        break;
+    }
+
+    event->setTarget(this);
+    m_pendingAutocompleteEvents.append(event.release());
+
+    // Dispatch events later as this API is meant to work asynchronously in all situations and implementations.
+    if (!m_requestAutocompleteTimer.isActive())
+        m_requestAutocompleteTimer.startOneShot(0);
+}
+
+void HTMLFormElement::requestAutocompleteTimerFired(Timer<HTMLFormElement>*)
+{
+    Vector<RefPtr<Event>> pendingEvents;
+    m_pendingAutocompleteEvents.swap(pendingEvents);
+    for (auto& pendingEvent : pendingEvents)
+        dispatchEvent(pendingEvent.release());
+}
+
 #endif
 
 void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -436,6 +500,12 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
         else
             document().unregisterForPageCacheSuspensionCallbacks(this);
     }
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    else if (name == onautocompleteAttr)
+        setAttributeEventListener(eventNames().autocompleteEvent, name, value);
+    else if (name == onautocompleteerrorAttr)
+        setAttributeEventListener(eventNames().autocompleteerrorEvent, name, value);
+#endif
     else
         HTMLElement::parseAttribute(name, value);
 }

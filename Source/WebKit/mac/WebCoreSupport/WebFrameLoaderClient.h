@@ -229,6 +229,10 @@ private:
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    virtual void didRequestAutocomplete(PassRefPtr<WebCore::FormState>) override { }
+#endif
+
     virtual bool shouldPaintBrokenImage(const WebCore::URL&) const;
 
 #if USE(QUICK_LOOK)

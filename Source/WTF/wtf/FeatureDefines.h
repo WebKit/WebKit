@@ -644,6 +644,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_REQUEST_ANIMATION_FRAME 0
 #endif
 
+#if !defined(ENABLE_REQUEST_AUTOCOMPLETE)
+#define ENABLE_REQUEST_AUTOCOMPLETE 0
+#endif
+
 #if !defined(ENABLE_RUBBER_BANDING)
 #define ENABLE_RUBBER_BANDING 0
 #endif

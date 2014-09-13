@@ -286,6 +286,11 @@ namespace WebCore {
     macro(gamepadconnected) \
     macro(gamepaddisconnected) \
     /* End of ENABLE(GAMEPAD) */ \
+    \
+    /* ENABLE(REQUEST_AUTOCOMPLETE) */ \
+    macro(autocomplete) \
+    macro(autocompleteerror) \
+    /* End of ENABLE(REQUEST_AUTOCOMPLETE) */ \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

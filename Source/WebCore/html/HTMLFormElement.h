@@ -112,6 +112,21 @@ public:
 
     bool checkValidity();
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    enum class AutocompleteResult {
+        AutocompleteResultSuccess,
+        AutocompleteResultErrorDisabled,
+        AutocompleteResultErrorCancel,
+        AutocompleteResultErrorInvalid,
+    };
+
+    void requestAutocomplete();
+    void finishRequestAutocomplete(AutocompleteResult);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(autocomplete);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(autocompleteerror);
+#endif
+
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
 
     const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
@@ -177,6 +192,13 @@ private:
     bool m_isInResetFunction;
 
     bool m_wasDemoted;
+
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    void requestAutocompleteTimerFired(Timer<HTMLFormElement>*);
+
+    Vector<RefPtr<Event>> m_pendingAutocompleteEvents;
+    Timer<HTMLFormElement> m_requestAutocompleteTimer;
+#endif
 };
 
 NODE_TYPE_CASTS(HTMLFormElement)

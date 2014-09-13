@@ -169,6 +169,8 @@ novalidate
 nowrap
 object
 onabort
+onautocomplete
+onautocompleteerror
 onbeforecopy
 onbeforecut
 onbeforeload

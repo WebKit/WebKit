@@ -396,6 +396,10 @@ public:
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() override;
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    virtual void didRequestAutocomplete(PassRefPtr<FormState>) override { }
+#endif
+
     virtual bool isEmptyFrameLoaderClient() override { return true; }
 };
 

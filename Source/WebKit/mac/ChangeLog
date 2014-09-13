@@ -1,3 +1,22 @@
+2014-09-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Re-add the request autocomplete feature
+
+        <https://bugs.webkit.org/show_bug.cgi?id=136730>
+
+        This feature was rolled out in r148731 because it was only used by
+        Chromium. As we consider supporting this feature, roll it back in, but
+        leave it disabled.
+
+        This rolls out r148731 (which removed the feature) with small changes
+        needed to make the code build in ToT, to match modern style, to make
+        the tests run, and to remove unused code.
+
+        Reviewed by Andy Estes.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2014-09-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173575.
