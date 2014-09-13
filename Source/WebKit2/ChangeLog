@@ -1,3 +1,36 @@
+2014-09-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173595
+
+    2014-09-12  Tim Horton  <timothy_horton@apple.com>
+
+            Swiping back from a Twitter image to Twitter flashes to the wrong position
+            https://bugs.webkit.org/show_bug.cgi?id=136798
+            <rdar://problem/18324338>
+
+            Reviewed by Darin Adler and Sam Weinig.
+
+            * UIProcess/mac/ViewGestureController.h:
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::ViewGestureController):
+            (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+            (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+            Add a 250ms repeating timer that we start in didFinishLoadForMainFrame
+            if we are for some reason still loading, and in didSameDocumentNavigationForMainFrame
+            unconditionally, to match behavior of the old swipe implementation.
+
+            Also, do the active gesture check in both of those places so that we don't
+            start the timer if we're in the middle of a live swipe or have already torn
+            down the snapshot (removeSwipeSnapshotAfterRepaint does this as well, so
+            this isn't really a behavior change).
+
+            (WebKit::ViewGestureController::activeLoadMonitoringTimerFired):
+            Every time the timer fires, check if we're still loading; if not,
+            tear down the swipe snapshot (after repainting).
+
+            (WebKit::ViewGestureController::removeSwipeSnapshotAfterRepaint):
+            Stop the active load monitoring timer.
+
 2014-09-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173573

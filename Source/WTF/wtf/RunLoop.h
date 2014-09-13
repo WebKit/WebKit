@@ -76,6 +76,7 @@ public:
         WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
         void startRepeating(double repeatInterval) { start(repeatInterval, true); }
+        void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(repeatInterval.count() * 0.001); }
         void startOneShot(double interval) { start(interval, false); }
 
         WTF_EXPORT_PRIVATE void stop();

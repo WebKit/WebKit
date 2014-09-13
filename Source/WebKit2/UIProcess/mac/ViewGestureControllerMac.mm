@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "FrameLoadState.h"
 #import "NativeWebWheelEvent.h"
 #import "WebPageGroup.h"
 #import "ViewGestureControllerMessages.h"
@@ -79,6 +80,7 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogDuration = 5_s;
 static const std::chrono::seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration = 3_s;
+static const std::chrono::milliseconds swipeSnapshotRemovalActiveLoadMonitoringInterval = 250_ms;
 
 @interface WKSwipeCancellationTracker : NSObject {
 @private
@@ -100,6 +102,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
     , m_swipeWatchdogTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
     , m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer(RunLoop::main(), this, &ViewGestureController::swipeSnapshotWatchdogTimerFired)
+    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::activeLoadMonitoringTimerFired)
     , m_lastMagnificationGestureWasSmartMagnification(false)
     , m_visibleContentRectIsValid(false)
     , m_frameHandlesMagnificationGesture(false)
@@ -715,12 +718,31 @@ void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
 
 void ViewGestureController::didFinishLoadForMainFrame()
 {
+    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
+        return;
+
+    if (m_webPageProxy.pageLoadState().isLoading()) {
+        m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
+        return;
+    }
+
     removeSwipeSnapshotAfterRepaint();
 }
 
 void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
+    if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
+        return;
+
     if (type != SameDocumentNavigationSessionStateReplace && type != SameDocumentNavigationSessionStatePop)
+        return;
+
+    m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
+}
+
+void ViewGestureController::activeLoadMonitoringTimerFired()
+{
+    if (m_webPageProxy.pageLoadState().isLoading())
         return;
 
     removeSwipeSnapshotAfterRepaint();
@@ -733,6 +755,8 @@ void ViewGestureController::swipeSnapshotWatchdogTimerFired()
 
 void ViewGestureController::removeSwipeSnapshotAfterRepaint()
 {
+    m_swipeActiveLoadMonitoringTimer.stop();
+
     if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
         return;
 
