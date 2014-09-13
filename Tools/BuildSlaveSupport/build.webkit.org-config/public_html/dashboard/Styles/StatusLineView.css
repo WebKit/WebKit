@@ -25,7 +25,7 @@
 
 .status-line {
     text-align: left;
-    height: 32px;
+    min-height: 32px;
     padding: 2px 0;
 }
 

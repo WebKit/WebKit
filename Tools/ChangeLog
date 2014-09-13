@@ -1,3 +1,13 @@
+2014-09-12  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Overlapping text when status is long
+        https://bugs.webkit.org/show_bug.cgi?id=136794
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line): Replaces height with min-height.
+
 2014-09-12  Timothy Hatcher  <timothy@apple.com>
 
         Make Brian Burg a WebKit reviewer.
