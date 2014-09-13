@@ -1,5 +1,25 @@
 2014-09-12  Michael Saboff  <msaboff@apple.com>
 
+        Merge JSGlobalObject::reset() into ::init()
+        https://bugs.webkit.org/show_bug.cgi?id=136800
+
+        Reviewed by Oliver Hunt.
+
+        Moved the contents of reset() into init().
+        Note that the diff shows more changes.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Moved body of reset() into init.
+        (JSC::JSGlobalObject::put):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        (JSC::lastInPrototypeChain):
+        (JSC::JSGlobalObject::reset): Deleted.
+        * runtime/JSGlobalObject.h:
+
+2014-09-12  Michael Saboff  <msaboff@apple.com>
+
         Add JSCallee to program and eval CallFrames
         https://bugs.webkit.org/show_bug.cgi?id=136785
 

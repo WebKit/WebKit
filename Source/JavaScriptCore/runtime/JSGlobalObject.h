@@ -603,9 +603,7 @@ private:
 
     JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
 
-    // FIXME: Fold reset into init.
     JS_EXPORT_PRIVATE void init();
-    void reset(JSValue prototype);
 
     void createThrowTypeError(VM&);
 
