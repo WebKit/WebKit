@@ -39,13 +39,6 @@ namespace JSC {
 
 const ClassInfo JSCallee::s_info = { "Callee", &Base::s_info, 0, CREATE_METHOD_TABLE(JSCallee) };
 
-JSCallee* JSCallee::create(VM& vm, JSGlobalObject* globalObject)
-{
-    JSCallee* function = new (NotNull, allocateCell<JSCallee>(vm.heap)) JSCallee(vm, globalObject, globalObject->functionStructure());
-    function->finishCreation(vm);
-    return function;
-}
-
 void JSCallee::destroy(JSCell* cell)
 {
     static_cast<JSCallee*>(cell)->JSCallee::~JSCallee();

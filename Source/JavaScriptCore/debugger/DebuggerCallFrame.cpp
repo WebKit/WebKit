@@ -128,7 +128,7 @@ String DebuggerCallFrame::functionName() const
     ASSERT(isValid());
     if (!isValid())
         return String();
-    JSObject* function = m_callFrame->callee();
+    JSFunction* function = jsDynamicCast<JSFunction*>(m_callFrame->callee());
     if (!function)
         return String();
 
@@ -162,7 +162,7 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
     if (!isValid())
         return ProgramType;
 
-    if (m_callFrame->callee())
+    if (jsDynamicCast<JSFunction*>(m_callFrame->callee()))
         return FunctionType;
 
     return ProgramType;

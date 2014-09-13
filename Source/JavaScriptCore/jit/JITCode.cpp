@@ -46,7 +46,7 @@ JITCode::~JITCode()
 JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
     void* entryAddress;
-    JSFunction* function = jsCast<JSFunction*>(protoCallFrame->callee());
+    JSFunction* function = jsDynamicCast<JSFunction*>(protoCallFrame->callee());
 
     if (!function || !protoCallFrame->needArityCheck()) {
         ASSERT(!protoCallFrame->needArityCheck());

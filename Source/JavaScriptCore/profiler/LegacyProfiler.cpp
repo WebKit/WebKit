@@ -198,6 +198,8 @@ CallIdentifier LegacyProfiler::createCallIdentifier(ExecState* exec, JSValue fun
         return CallIdentifier(ASCIILiteral("(unknown)"), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
     if (asObject(functionValue)->inherits(JSFunction::info()) || asObject(functionValue)->inherits(InternalFunction::info()))
         return createCallIdentifierFromFunctionImp(exec, asObject(functionValue), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
+    if (asObject(functionValue)->inherits(JSCallee::info()))
+        return CallIdentifier(ASCIILiteral(GlobalCodeExecution), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
     return CallIdentifier(asObject(functionValue)->methodTable()->className(asObject(functionValue)), defaultSourceURL, defaultLineNumber, defaultColumnNumber);
 }
 

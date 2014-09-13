@@ -27,6 +27,7 @@
 #define JSCallee_h
 
 #include "JSDestructibleObject.h"
+#include "JSGlobalObject.h"
 #include "JSScope.h"
 
 namespace JSC {
@@ -46,8 +47,13 @@ class JSCallee : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    JS_EXPORT_PRIVATE static JSCallee* create(VM&, JSGlobalObject*);
-
+    static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
+    {
+        JSCallee* callee = new (NotNull, allocateCell<JSCallee>(vm.heap)) JSCallee(vm, scope, globalObject->calleeStructure());
+        callee->finishCreation(vm);
+        return callee;
+    }
+    
     static void destroy(JSCell*);
 
     JSScope* scope()

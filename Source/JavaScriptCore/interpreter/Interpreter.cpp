@@ -443,7 +443,7 @@ static bool unwindCallFrame(StackVisitor& visitor)
 
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         ClearExceptionScope scope(&callFrame->vm());
-        if (callFrame->callee())
+        if (jsDynamicCast<JSFunction*>(callFrame->callee()))
             debugger->returnEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
@@ -914,7 +914,7 @@ failedJSONP:
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, scope, 0, thisObj, 1);
+    protoCallFrame.init(codeBlock, scope, JSCallee::create(vm, scope->globalObject(), scope), thisObj, 1);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, program->sourceURL(), program->lineNo(), program->startColumn());
@@ -1195,7 +1195,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, scope, 0, thisValue, 1);
+    protoCallFrame.init(codeBlock, scope, JSCallee::create(vm, scope->globalObject(), scope), thisValue, 1);
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->willExecute(callFrame, eval->sourceURL(), eval->lineNo(), eval->startColumn());

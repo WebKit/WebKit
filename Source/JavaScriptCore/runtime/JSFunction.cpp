@@ -289,8 +289,12 @@ EncodedJSValue JSFunction::callerGetter(ExecState* exec, JSObject* slotBase, Enc
     JSValue caller = retrieveCallerFunction(exec, thisObj);
 
     // See ES5.1 15.3.5.4 - Function.caller may not be used to retrieve a strict caller.
-    if (!caller.isObject() || !asObject(caller)->inherits(JSFunction::info()))
+    if (!caller.isObject() || !asObject(caller)->inherits(JSFunction::info())) {
+        // It isn't a JSFunction, but if it is a JSCallee from a program or call eval, return null.
+        if (jsDynamicCast<JSCallee*>(caller))
+            return JSValue::encode(jsNull());
         return JSValue::encode(caller);
+    }
     JSFunction* function = jsCast<JSFunction*>(caller);
     if (function->isHostOrBuiltinFunction() || !function->jsExecutable()->isStrictMode())
         return JSValue::encode(caller);

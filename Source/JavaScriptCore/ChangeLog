@@ -1,3 +1,51 @@
+2014-09-12  Michael Saboff  <msaboff@apple.com>
+
+        Add JSCallee to program and eval CallFrames
+        https://bugs.webkit.org/show_bug.cgi?id=136785
+
+        Reviewed by Mark Lam.
+
+        Populated Callee slot for program and call eval CallFrames with a JSCallee objects.
+        Made supporting changes including adding a JSCallee structure to global object and adding
+        JSCallee::create() method.  Added code so that the newly added callee object won't be
+        returned by Function.caller.  Changed null pointer checks of callee to check the if
+        the type is JSFunction* or JSCallee*.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        (JSC::DebuggerCallFrame::type):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::createCallIdentifier):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        Changed checks of callee is a JSFunction* or JSCallee* instead of just checking
+        if it is null or not.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute): Create and use JSCallee objects for execute(EvalExecutable, ...)
+        and execute(ProgramExecutable, ...)
+
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute): Use jsDynamicCast to cast only JSFunctions.
+
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::create): Not used, therefore deleted.
+
+        * runtime/JSCallee.h:
+        (JSC::JSCallee::create): Added.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::callerGetter): Added test to return null for JSCallee's that aren't
+        JSFunction's.  This can only be the case when the JSCallee comes from a program or
+        call eval CallFrame.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::calleeStructure):
+        Added new JSCallee structure.
+
 2014-09-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Re-add the request autocomplete feature
