@@ -1,3 +1,16 @@
+2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add -webkit-appearance and pseudo element tests for quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=136366
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/css/appearance-with-pseudo-elements-expected.html:
+        -webkit-appearance in OSX affects the ::first-letter related style informations (such as font).
+        So expected.html also requires these styles.
+        * fast/css/appearance-with-pseudo-elements-in-quirks-mode-expected.html: Added.
+        * fast/css/appearance-with-pseudo-elements-in-quirks-mode.html: Added.
+
 2014-09-12  Vivek Galatage  <vivek.vg@samsung.com>
 
         CanvasRenderingContext2D should update the computed style while setting the font
