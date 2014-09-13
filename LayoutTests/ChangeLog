@@ -1,3 +1,13 @@
+2014-09-12  Vivek Galatage  <vivek.vg@samsung.com>
+
+        CanvasRenderingContext2D should update the computed style while setting the font
+        https://bugs.webkit.org/show_bug.cgi?id=136737
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/canvas-set-font-with-updated-style-expected.txt: Added.
+        * fast/canvas/canvas-set-font-with-updated-style.html: Added.
+
 2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         CSS JIT: Apply CSS JIT to SelectorQuery with multiple selectors
