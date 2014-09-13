@@ -89,6 +89,7 @@ private:
 #if ENABLE(CSS_SELECTOR_JIT)
     template <typename SelectorQueryTrait> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, SelectorCompiler::SimpleSelectorChecker, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
     template <typename SelectorQueryTrait> void executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, SelectorCompiler::SelectorCheckerWithCheckingContext, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
+    template <typename SelectorQueryTrait> void executeCompiledSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
     static bool compileSelector(const SelectorData&, const ContainerNode& rootNode);
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
@@ -96,8 +97,10 @@ private:
     mutable enum MatchType {
         CompilableSingle,
         CompilableSingleWithRootFilter,
+        CompilableMultipleSelectorMatch,
         CompiledSingle,
         CompiledSingleWithRootFilter,
+        CompiledMultipleSelectorMatch,
         SingleSelector,
         RightMostWithIdMatch,
         TagNameMatch,

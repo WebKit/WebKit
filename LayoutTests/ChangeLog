@@ -1,3 +1,13 @@
+2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Apply CSS JIT to SelectorQuery with multiple selectors
+        https://bugs.webkit.org/show_bug.cgi?id=135255
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/selectors/querySelector-multiple-selectors-expected.txt: Added.
+        * fast/selectors/querySelector-multiple-selectors.html: Added.
+
 2014-09-12  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening.

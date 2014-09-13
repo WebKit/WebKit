@@ -1,3 +1,33 @@
+2014-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        CSS JIT: Apply CSS JIT to SelectorQuery with multiple selectors
+        https://bugs.webkit.org/show_bug.cgi?id=135255
+
+        Reviewed by Benjamin Poulain.
+
+        After dropping SelectorCheckerFastPath, Dromaeo cssquery-jquery test
+        result becomes significantly worse. 400.26/s to 348.16/s, 13%
+        performance regression.
+
+        Investigated the cause of it and we found that the test results for
+        querySelector with multiple selectors causes performance regressions.
+
+        To solve this, we attempt to JIT compile all selectors in multiple
+        selectors. And if compiling some selectors is failed, SelectorQuery
+        fallbacks to the slower implementation.
+
+        This change improves the performance. After applying this patch,
+        cssquery-jquery test result becomes 418.71/s, 4.61% better than the
+        previous good performance case.
+
+        Test: fast/selectors/querySelector-multiple-selectors.html
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::SelectorDataList):
+        (WebCore::SelectorDataList::executeCompiledSingleMultiSelectorData):
+        (WebCore::SelectorDataList::execute):
+        * dom/SelectorQuery.h:
+
 2014-09-12  Jer Noble  <jer.noble@apple.com>
 
         [Fullscreen] Taking embedded youtube video full screen takes the whole page full screen

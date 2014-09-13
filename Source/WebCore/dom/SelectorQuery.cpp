@@ -108,7 +108,7 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
             }
         }
     } else
-        m_matchType = MultipleSelectorMatch;
+        m_matchType = CompilableMultipleSelectorMatch;
 }
 
 inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, Element& element, const ContainerNode& rootNode) const
@@ -389,6 +389,37 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSelectorCheckerWithCheckingC
     }
 }
 
+template <typename SelectorQueryTrait>
+ALWAYS_INLINE void SelectorDataList::executeCompiledSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType& output) const
+{
+    SelectorChecker::CheckingContext checkingContext(SelectorChecker::Mode::QueryingRules);
+    checkingContext.scope = rootNode.isDocumentNode() ? nullptr : &rootNode;
+    unsigned selectorCount = m_selectors.size();
+    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+        for (unsigned i = 0; i < selectorCount; ++i) {
+#if CSS_SELECTOR_JIT_PROFILING
+            m_selectors[i].compiledSelectorUsed();
+#endif
+            bool matched = false;
+            void* compiledSelectorChecker = m_selectors[i].compiledSelectorCodeRef.code().executableAddress();
+            if (m_selectors[i].compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
+                SelectorCompiler::SimpleSelectorChecker selectorChecker = SelectorCompiler::simpleSelectorCheckerFunction(compiledSelectorChecker, m_selectors[i].compilationStatus);
+                matched = selectorChecker(&element);
+            } else {
+                ASSERT(m_selectors[i].compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
+                SelectorCompiler::SelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::selectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, m_selectors[i].compilationStatus);
+                matched = selectorChecker(&element, &checkingContext);
+            }
+            if (matched) {
+                SelectorQueryTrait::appendOutputForElement(output, &element);
+                if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
+                    return;
+                break;
+            }
+        }
+    }
+}
+
 static bool isCompiledSelector(SelectorCompilationStatus compilationStatus)
 {
     return compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker || compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext;
@@ -489,7 +520,34 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
     case ClassNameMatch:
         executeSingleClassNameSelectorData<SelectorQueryTrait>(*searchRootNode, m_selectors.first(), output);
         break;
+    case CompilableMultipleSelectorMatch:
+#if ENABLE(CSS_SELECTOR_JIT)
+        {
+        unsigned selectorCount = m_selectors.size();
+        for (unsigned i = 0; i < selectorCount; ++i) {
+            if (!compileSelector(m_selectors[i], *searchRootNode)) {
+                m_matchType = MultipleSelectorMatch;
+                goto MultipleSelectorMatch;
+            }
+        }
+        m_matchType = CompiledMultipleSelectorMatch;
+        goto CompiledMultipleSelectorMatch;
+        }
+#else
+        FALLTHROUGH;
+#endif // ENABLE(CSS_SELECTOR_JIT)
+    case CompiledMultipleSelectorMatch:
+#if ENABLE(CSS_SELECTOR_JIT)
+        CompiledMultipleSelectorMatch:
+        executeCompiledSingleMultiSelectorData<SelectorQueryTrait>(*searchRootNode, output);
+        break;
+#else
+        FALLTHROUGH;
+#endif // ENABLE(CSS_SELECTOR_JIT)
     case MultipleSelectorMatch:
+#if ENABLE(CSS_SELECTOR_JIT)
+        MultipleSelectorMatch:
+#endif
         executeSingleMultiSelectorData<SelectorQueryTrait>(*searchRootNode, output);
         break;
     }
