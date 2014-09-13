@@ -134,6 +134,7 @@ private:
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
     void didHitRenderTreeSizeThreshold();
     void removeSwipeSnapshotAfterRepaint();
+    void activeLoadMonitoringTimerFired();
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
@@ -163,6 +164,7 @@ private:
 
 #if PLATFORM(MAC)
     RunLoop::Timer<ViewGestureController> m_swipeWatchdogAfterFirstVisuallyNonEmptyLayoutTimer;
+    RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 
     double m_magnification;
     WebCore::FloatPoint m_magnificationOrigin;

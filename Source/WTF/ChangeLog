@@ -1,3 +1,15 @@
+2014-09-12  Tim Horton  <timothy_horton@apple.com>
+
+        Swiping back from a Twitter image to Twitter flashes to the wrong position
+        https://bugs.webkit.org/show_bug.cgi?id=136798
+        <rdar://problem/18324338>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::TimerBase::startRepeating):
+        Add a std::chrono veresion of RunLoop::TimerBase::startRepeating.
+
 2014-09-12  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out r173540.
