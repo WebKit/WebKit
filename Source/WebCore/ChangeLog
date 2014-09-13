@@ -1,3 +1,11 @@
+2014-09-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Build fix with REQUEST_AUTOCOMPLETE enabled
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::requestAutocomplete):
+        (WebCore::HTMLFormElement::finishRequestAutocomplete):
+
 2014-09-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Re-add the request autocomplete feature

@@ -435,7 +435,7 @@ void HTMLFormElement::requestAutocomplete()
         return;
 
     if (!shouldAutocomplete() || !ScriptController::processingUserGesture()) {
-        finishRequestAutocomplete(AutocompleteResultErrorDisabled);
+        finishRequestAutocomplete(AutocompleteResult::AutocompleteResultErrorDisabled);
         return;
     }
 
@@ -450,16 +450,16 @@ void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
 {
     RefPtr<Event> event;
     switch (result) {
-    case AutocompleteResultSuccess:
+    case AutocompleteResult::AutocompleteResultSuccess:
         event = Event::create(eventNames().autocompleteEvent, false, false);
         break;
-    case AutocompleteResultErrorDisabled:
+    case AutocompleteResult::AutocompleteResultErrorDisabled:
         event = AutocompleteErrorEvent::create("disabled");
         break;
-    case AutocompleteResultErrorCancel:
+    case AutocompleteResult::AutocompleteResultErrorCancel:
         event = AutocompleteErrorEvent::create("cancel");
         break;
-    case AutocompleteResultErrorInvalid:
+    case AutocompleteResult::AutocompleteResultErrorInvalid:
         event = AutocompleteErrorEvent::create("invalid");
         break;
     }
