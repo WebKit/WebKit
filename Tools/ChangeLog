@@ -1,3 +1,15 @@
+2014-09-12  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remind about rebaselining generator test results
+        https://bugs.webkit.org/show_bug.cgi?id=136759
+
+        Reviewed by Joseph Pecoraro.
+
+        For now, we can implement this as a watchlist message. Add watchlist
+        groups and messages for the inspector and web replay generators.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-09-12  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Overlapping text when status is long

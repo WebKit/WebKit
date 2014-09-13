@@ -199,6 +199,15 @@
                         r"|Source/WebCore/inspector/.+\.idl"
                         r"|Source/WebCore/page/Console.idl",
         },
+        "WebInspectorGenerator": {
+            "filename": r"Source/JavaScriptCore/inspector/scripts/codegen"
+                        r"|Tools/Scripts/generate-inspector-protocol-bindings.py"
+                        r"|Tools/Scripts/webkitpy/inspector",
+        },
+        "WebReplayGenerator": {
+            "filename": r"Source/JavaScriptCore/replay/scripts",
+                        r"|Tools/Scripts/webkitpy/replay",
+        },
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"
                         r"|Source/WebCore/platform/network/(|.+/)SocketStream.*",
@@ -366,6 +375,8 @@
         "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com" , "roger_fong@apple.com" ],
         "WebIDL": [ "esprehn+autocc@chromium.org", "dchris@gmail.com", "kondapallykalyan@gmail.com" ],
         "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@webkit.org" ],
+        "WebInspectorGenerator": [ "burg@cs.washington.edu", "joepeck@webkit.org" ],
+        "WebReplayGenerator": [ "burg@cs.washington.edu" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],
@@ -382,5 +393,7 @@
                                  "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
         "ANGLE": [ "Note that there are important steps to take when updating ANGLE. "
                    "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
+        "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
+        "WebReplayGenerator": [ "This patch modifies the WEB_REPLAY inputs generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-input-generator-tests --reset-results`)" ],
     },
 }
