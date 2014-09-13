@@ -1,3 +1,23 @@
+2014-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Un-inline Element constructor
+        https://bugs.webkit.org/show_bug.cgi?id=136786
+
+        Reviewed by Benjamin Poulain.
+
+        Un-inline Element constructor as it is non-trivial and it does not seem
+        to impact performance based on my testing:
+        http://dromaeo.com/?id=226865,226869
+
+        This reduces the stripped binary size by 8 Kb.
+
+        No new tests, no behavior change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element):
+        * dom/Element.h:
+        (WebCore::Element::Element): Deleted.
+
 2014-09-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Build fix with REQUEST_AUTOCOMPLETE enabled

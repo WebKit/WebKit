@@ -142,6 +142,12 @@ PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document& docu
     return adoptRef(new Element(tagName, document, CreateElement));
 }
 
+Element::Element(const QualifiedName& tagName, Document& document, ConstructionType type)
+    : ContainerNode(document, type)
+    , m_tagName(tagName)
+{
+}
+
 Element::~Element()
 {
 #ifndef NDEBUG

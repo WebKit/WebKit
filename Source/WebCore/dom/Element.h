@@ -560,11 +560,7 @@ public:
     WEBCORE_EXPORT URL absoluteLinkURL() const;
 
 protected:
-    Element(const QualifiedName& tagName, Document& document, ConstructionType type)
-        : ContainerNode(document, type)
-        , m_tagName(tagName)
-    {
-    }
+    Element(const QualifiedName&, Document&, ConstructionType);
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
