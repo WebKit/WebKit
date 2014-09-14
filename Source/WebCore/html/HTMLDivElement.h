@@ -40,6 +40,8 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 };
 
+NODE_TYPE_CASTS(HTMLDivElement)
+
 } // namespace WebCore
 
 #endif // HTMLDivElement_h

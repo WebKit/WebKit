@@ -38,7 +38,7 @@ del interfaceName=HTMLModElement
 details conditional=DETAILS_ELEMENT, generateTypeHelpers 
 dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
-div
+div generateTypeHelpers
 dl interfaceName=HTMLDListElement
 dt interfaceName=HTMLElement
 em interfaceName=HTMLElement

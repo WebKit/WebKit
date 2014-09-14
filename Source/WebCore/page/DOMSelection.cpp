@@ -337,7 +337,7 @@ void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
         return;
     }
 
-    if (offset < 0 || offset > (node->offsetInCharacters() ? caretMaxOffset(node) : (int)node->childNodeCount())) {
+    if (offset < 0 || offset > (node->offsetInCharacters() ? caretMaxOffset(node) : static_cast<int>(node->countChildNodes()))) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -481,7 +481,7 @@ void DOMSelection::selectAllChildren(Node* n, ExceptionCode& ec)
         return;
 
     // This doesn't (and shouldn't) select text node characters.
-    setBaseAndExtent(n, 0, n, n->childNodeCount(), ec);
+    setBaseAndExtent(n, 0, n, n->countChildNodes(), ec);
 }
 
 String DOMSelection::toString()

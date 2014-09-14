@@ -672,7 +672,7 @@ static inline unsigned lengthOfContentsInNode(Node* node)
     case Node::DOCUMENT_FRAGMENT_NODE:
     case Node::NOTATION_NODE:
     case Node::XPATH_NAMESPACE_NODE:
-        return node->childNodeCount();
+        return node->countChildNodes();
     }
     ASSERT_NOT_REACHED();
     return 0;

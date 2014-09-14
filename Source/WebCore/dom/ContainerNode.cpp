@@ -653,7 +653,7 @@ void ContainerNode::removeChildren()
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            removedChildren.reserveInitialCapacity(childNodeCount());
+            removedChildren.reserveInitialCapacity(countChildNodes());
             while (RefPtr<Node> n = m_firstChild) {
                 removedChildren.append(*m_firstChild);
                 removeBetween(0, m_firstChild->nextSibling(), *m_firstChild);
@@ -931,12 +931,11 @@ LayoutRect ContainerNode::boundingBox() const
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
-unsigned ContainerNode::childNodeCount() const
+unsigned ContainerNode::countChildNodes() const
 {
     unsigned count = 0;
-    Node *n;
-    for (n = firstChild(); n; n = n->nextSibling())
-        count++;
+    for (Node* child = firstChild(); child; child = child->nextSibling())
+        ++count;
     return count;
 }
 

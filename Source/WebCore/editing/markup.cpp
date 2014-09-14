@@ -43,6 +43,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
@@ -398,7 +399,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
                 appendStartTag(*n);
 
             // If node has no children, close the tag now.
-            if (!n->childNodeCount()) {
+            if (!n->hasChildNodes()) {
                 if (shouldEmit)
                     appendEndTag(*n);
                 lastClosed = n;
@@ -740,15 +741,27 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
     }
 }
 
-bool isPlainTextMarkup(Node *node)
+bool isPlainTextMarkup(Node* node)
 {
-    if (!node->isElementNode() || !node->hasTagName(divTag) || toElement(node)->hasAttributes())
+    if (!isHTMLDivElement(node))
+        return false;
+
+    HTMLDivElement& element = toHTMLDivElement(*node);
+    if (element.hasAttributes())
+        return false;
+
+    Node* firstChild = element.firstChild();
+    if (!firstChild)
+        return false;
+
+    Node* secondChild = firstChild->nextSibling();
+    if (!secondChild)
+        return firstChild->isTextNode() || firstChild->firstChild();
+    
+    if (secondChild->nextSibling())
         return false;
     
-    if (node->childNodeCount() == 1 && (node->firstChild()->isTextNode() || (node->firstChild()->firstChild())))
-        return true;
-    
-    return (node->childNodeCount() == 2 && isTabSpanTextNode(node->firstChild()->firstChild()) && node->firstChild()->nextSibling()->isTextNode());
+    return isTabSpanTextNode(firstChild->firstChild()) && secondChild->isTextNode();
 }
 
 static bool contextPreservesNewline(const Range& context)

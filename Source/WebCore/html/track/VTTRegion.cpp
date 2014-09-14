@@ -36,6 +36,7 @@
 
 #include "ClientRect.h"
 #include "DOMTokenList.h"
+#include "ElementChildIterator.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLDivElement.h"
 #include "Logging.h"
@@ -361,7 +362,7 @@ void VTTRegion::displayLastTextTrackCueBox()
     ASSERT(m_cueContainer);
 
     // The container needs to be rendered, if it is not empty and the region is not currently scrolling.
-    if (!m_cueContainer->renderer() || !m_cueContainer->childNodeCount() || m_scrollTimer.isActive())
+    if (!m_cueContainer->renderer() || !m_cueContainer->hasChildNodes() || m_scrollTimer.isActive())
         return;
 
     // If it's a scrolling region, add the scrolling class.
@@ -371,9 +372,10 @@ void VTTRegion::displayLastTextTrackCueBox()
     float regionBottom = m_regionDisplayTree->getBoundingClientRect()->bottom();
 
     // Find first cue that is not entirely displayed and scroll it upwards.
-    for (size_t i = 0; i < m_cueContainer->childNodeCount() && !m_scrollTimer.isActive(); ++i) {
-        float childTop = static_cast<HTMLDivElement*>(m_cueContainer->childNode(i))->getBoundingClientRect()->top();
-        float childBottom = static_cast<HTMLDivElement*>(m_cueContainer->childNode(i))->getBoundingClientRect()->bottom();
+    for (auto& child : childrenOfType<Element>(*m_cueContainer)) {
+        RefPtr<ClientRect> rect = child.getBoundingClientRect();
+        float childTop = rect->top();
+        float childBottom = rect->bottom();
 
         if (regionBottom >= childBottom)
             continue;
@@ -384,6 +386,7 @@ void VTTRegion::displayLastTextTrackCueBox()
         m_cueContainer->setInlineStyleProperty(CSSPropertyTop, m_currentTop, CSSPrimitiveValue::CSS_PX);
 
         startTimer();
+        break;
     }
 }
 

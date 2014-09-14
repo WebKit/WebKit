@@ -416,7 +416,7 @@ public:
     bool isReadOnlyNode() const { return nodeType() == ENTITY_REFERENCE_NODE; }
     bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
-    unsigned childNodeCount() const;
+    unsigned countChildNodes() const;
     Node* childNode(unsigned index) const;
 
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);

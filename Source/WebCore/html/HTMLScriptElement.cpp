@@ -81,14 +81,12 @@ void HTMLScriptElement::setText(const String &value)
 {
     Ref<HTMLScriptElement> protectFromMutationEvents(*this);
 
-    int numChildren = childNodeCount();
-
-    if (numChildren == 1 && firstChild()->isTextNode()) {
+    if (hasOneChild() && firstChild()->isTextNode()) {
         toText(firstChild())->setData(value, IGNORE_EXCEPTION);
         return;
     }
 
-    if (numChildren > 0)
+    if (hasChildNodes())
         removeChildren();
 
     appendChild(document().createTextNode(value.impl()), IGNORE_EXCEPTION);

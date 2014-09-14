@@ -1,3 +1,18 @@
+2014-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename Node::childNodeCount() to countChildNodes() and avoid inefficient uses
+        https://bugs.webkit.org/show_bug.cgi?id=136789
+
+        Reviewed by Darin Adler.
+
+        Avoid calling slow Node::countChildNodes().
+
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint):
+        Replace call to "node->parentNode()->childNodeCount() != 1" by
+        "!node->parentNode()->hasOneChild()" which is equivalent but more
+        efficient.
+
 2014-09-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Re-add the request autocomplete feature

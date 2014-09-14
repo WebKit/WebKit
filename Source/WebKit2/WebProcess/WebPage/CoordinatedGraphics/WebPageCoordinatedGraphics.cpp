@@ -64,9 +64,9 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
             return;
 
         // Candidate found, and it is a better candidate than its parent.
-        // NB: A parent is considered a better candidate iff the node is
+        // NB: A parent is considered a better candidate if the node is
         // contained by it and it is the only child.
-        if (found && (!node->parentNode() || node->parentNode()->childNodeCount() != 1))
+        if (found && (!node->parentNode() || !node->parentNode()->hasOneChild()))
             break;
 
         node = node->parentNode();

@@ -96,10 +96,8 @@ StringWithDirection HTMLTitleElement::textWithDirection()
 void HTMLTitleElement::setText(const String &value)
 {
     Ref<HTMLTitleElement> protectFromMutationEvents(*this);
-
-    int numChildren = childNodeCount();
     
-    if (numChildren == 1 && firstChild()->isTextNode())
+    if (hasOneChild() && firstChild()->isTextNode())
         toText(firstChild())->setData(value, IGNORE_EXCEPTION);
     else {
         // We make a copy here because entity of "value" argument can be Document::m_title,
@@ -107,7 +105,7 @@ void HTMLTitleElement::setText(const String &value)
         // which causes HTMLTitleElement::childrenChanged(), which ends up Document::setTitle().
         String valueCopy(value);
 
-        if (numChildren > 0)
+        if (hasChildNodes())
             removeChildren();
 
         appendChild(document().createTextNode(valueCopy.impl()), IGNORE_EXCEPTION);

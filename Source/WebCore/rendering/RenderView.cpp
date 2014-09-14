@@ -905,7 +905,7 @@ void RenderView::splitSelectionBetweenSubtrees(RenderObject* start, int startPos
             if (node == endNode)
                 selectionData.setSelectionEndPos(endPos);
             else
-                selectionData.setSelectionEndPos(node->offsetInCharacters() ? node->maxCharacterOffset() : node->childNodeCount());
+                selectionData.setSelectionEndPos(node->offsetInCharacters() ? node->maxCharacterOffset() : node->countChildNodes());
 
             renderSubtreesMap.set(&root, selectionData);
         }

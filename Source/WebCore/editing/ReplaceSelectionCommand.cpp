@@ -1437,7 +1437,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
 {
     RefPtr<HTMLElement> listElement = prpListElement;
 
-    while (listElement->hasChildNodes() && isListElement(listElement->firstChild()) && listElement->childNodeCount() == 1)
+    while (listElement->hasOneChild() && isListElement(listElement->firstChild()))
         listElement = toHTMLElement(listElement->firstChild());
 
     bool isStart = isStartOfParagraph(insertPos);

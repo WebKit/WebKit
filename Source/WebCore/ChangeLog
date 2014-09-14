@@ -1,3 +1,136 @@
+2014-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename Node::childNodeCount() to countChildNodes() and avoid inefficient uses
+        https://bugs.webkit.org/show_bug.cgi?id=136789
+
+        Reviewed by Darin Adler.
+
+        Rename Node::childNodeCount() to countChildNodes() to make it clearer
+        that the method actually computes the result rather than returning a
+        cached value.
+
+        This patch also introduces a new Node::hasOneChild() method that is
+        used to check if a Node has a single child. This is much more efficient
+        than calling countChildNodes() == 1.
+
+        The patch also leverages Node::hasChildNodes() in a lot of places
+        instead of calling countChildNodes().
+
+        Finally, in a couple of places, we now use childrenOfType() to iterate
+        over children more efficient than using countChildNodes() and
+        childNode(index).
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        Update the name of the exposed symbol for countChildNodes().
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::countChildNodes):
+        (WebCore::ContainerNode::childNodeCount): Deleted.
+        Rename childNodeCount() to countChildNodes() to make it obvious it is
+        computing the result rather than returning a cached value.
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::hasOneChild):
+        Introduce an efficient way to check in a ContainerNode has a single
+        child as "countChildNodes() == 1" calls were frequent and inefficient.
+
+        (WebCore::Node::countChildNodes):
+        (WebCore::Node::childNodeCount): Deleted.
+        * dom/Node.h:
+        Rename childNodeCount() to countChildNodes().
+
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent):
+        * dom/Position.h:
+        (WebCore::lastOffsetInNode):
+        * dom/Range.cpp:
+        Mechanical renaming.
+
+        (WebCore::lengthOfContentsInNode):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::shouldApplyInlineStyleToRun):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange):
+        Call hasChildNodes() rather than countChildNodes() as it is a lot more
+        efficient.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setTextAsChildOfElement):
+        (WebCore::Editor::rangeOfString):
+        (WebCore::Editor::countMatchesForText):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::elementRangeContainingCaretSelection):
+        Mechanical renaming.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        Call hasOneChild() instead of countChildNodes() == 1. Also remove
+        redundant listElement->hasChildNodes() check as hasOneChild() takes
+        care of this already.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        * editing/VisibleUnits.cpp:
+        (WebCore::endOfDocument):
+        * editing/htmlediting.cpp:
+        (WebCore::lastOffsetForEditing):
+        Mechanical renaming.
+
+        (WebCore::visiblePositionBeforeNode):
+        (WebCore::visiblePositionAfterNode):
+        Call hasChildNodes() instead of converting countChildNodes() to a
+        boolean.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+        Call !hasChildNodes() instead of !countChildNodes().
+
+        (WebCore::isPlainTextMarkup):
+        - Drop !node->isElementNode() check as !node->hasTagName(divTag) takes
+          care of discarding non-Element Nodes already.
+        - Cast the Node to an HTMLDivElement as soon as possible to avoid
+          calling calling the slower Node APIs in several cases.
+        - Call hasOneChild() instead of countChildNodes() == 1.
+
+        * html/HTMLDivElement.h:
+        * html/HTMLTagNames.in:
+        Generate casting helpers as I use them in WebCore::isPlainTextMarkup().
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::setText):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::setText):
+        Call hasOneChild() / hasChildNodes() instead of countChildNodes().
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineContainerElement::setTimeDisplaysHidden):
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        Use childrenOfType<Element>() to iterate of child Elements instead of
+        slower childNodeCount() + childNode(index) + isElementNode(). Also,
+        childNodeCount() was not even cached before the loop.
+
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::displayLastTextTrackCueBox):
+        Use childrenOfType<Element>() to iterate of child Elements, thus
+        avoiding calling childNodeCount() + childNode(index).
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend):
+        (WebCore::DOMSelection::selectAllChildren):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::caretMaxOffset):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::isSelected):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::splitSelectionBetweenSubtrees):
+        Mechanical renaming.
+
 2014-09-13  Chris Dumez  <cdumez@apple.com>
 
         Un-inline Element constructor

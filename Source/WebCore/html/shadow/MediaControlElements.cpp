@@ -33,6 +33,7 @@
 #include "MediaControlElements.h"
 
 #include "DOMTokenList.h"
+#include "ElementChildIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
@@ -296,20 +297,16 @@ PassRefPtr<MediaControlTimelineContainerElement> MediaControlTimelineContainerEl
 
 void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
 {
-    for (unsigned i = 0; i < childNodeCount(); ++i) {
-        Node* child = childNode(i);
-        if (!child || !child->isElementNode())
-            continue;
-        Element* element = toElement(child);
-        if (element->shadowPseudoId() != getMediaControlTimeRemainingDisplayElementShadowPseudoId()
-            && element->shadowPseudoId() != getMediaControlCurrentTimeDisplayElementShadowPseudoId())
+    for (auto& element : childrenOfType<Element>(*this)) {
+        if (element.shadowPseudoId() != getMediaControlTimeRemainingDisplayElementShadowPseudoId()
+            && element.shadowPseudoId() != getMediaControlCurrentTimeDisplayElementShadowPseudoId())
             continue;
 
-        MediaControlTimeDisplayElement* timeDisplay = static_cast<MediaControlTimeDisplayElement*>(element);
+        MediaControlTimeDisplayElement& timeDisplay = static_cast<MediaControlTimeDisplayElement&>(element);
         if (hidden)
-            timeDisplay->hide();
+            timeDisplay.hide();
         else
-            timeDisplay->show();
+            timeDisplay.show();
     }
 }
 
@@ -1152,7 +1149,9 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // we wish to render (e.g., we are adding another cue in a set of roll-up
     // cues), remove all the existing CSS boxes representing the cues and re-add
     // them so that the new cue is at the bottom.
-    if (childNodeCount() < activeCues.size())
+    // FIXME: Calling countChildNodes() here is inefficient. We don't need to
+    // traverse all children just to check if there are less children than cues.
+    if (countChildNodes() < activeCues.size())
         removeChildren();
 
     // Sort the active cues for the appropriate display order. For example, for roll-up

@@ -2196,7 +2196,7 @@ PassRefPtr<Range> FrameSelection::elementRangeContainingCaretSelection() const
         return nullptr;
 
     Position startPos = createLegacyEditingPosition(element, 0);
-    Position endPos = createLegacyEditingPosition(element, element->childNodeCount());
+    Position endPos = createLegacyEditingPosition(element, element->countChildNodes());
     
     VisiblePosition startVisiblePos(startPos, VP_DEFAULT_AFFINITY);
     VisiblePosition endVisiblePos(endPos, VP_DEFAULT_AFFINITY);

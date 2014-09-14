@@ -1146,13 +1146,13 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& ra
     int endOffset = range.endOffset();
 
     if (!startNode->offsetInCharacters()) {
-        if (startOffset >= 0 && startOffset < static_cast<int>(startNode->childNodeCount())) {
+        if (startOffset >= 0 && startOffset < static_cast<int>(startNode->countChildNodes())) {
             startNode = startNode->childNode(startOffset);
             startOffset = 0;
         }
     }
     if (!endNode->offsetInCharacters()) {
-        if (endOffset > 0 && endOffset <= static_cast<int>(endNode->childNodeCount())) {
+        if (endOffset > 0 && endOffset <= static_cast<int>(endNode->countChildNodes())) {
             endNode = endNode->childNode(endOffset - 1);
             endOffset = lastOffsetInNode(endNode);
         }
