@@ -45,8 +45,6 @@ Node* next(const Text*, const Node* stayWithin);
 // Like next, but skips children and starts with the next sibling.
 Node* nextSkippingChildren(const Node*);
 Node* nextSkippingChildren(const Node*, const Node* stayWithin);
-Node* nextSkippingChildren(const ContainerNode*);
-Node* nextSkippingChildren(const ContainerNode*, const Node* stayWithin);
 
 // Does a reverse pre-order traversal to find the node that comes before the current one in document order
 Node* last(const ContainerNode*);
@@ -101,18 +99,14 @@ inline Node* traverseNextTemplate(NodeType* current, const Node* stayWithin)
 inline Node* next(const Node* current, const Node* stayWithin) { return traverseNextTemplate(current, stayWithin); }
 inline Node* next(const ContainerNode* current, const Node* stayWithin) { return traverseNextTemplate(current, stayWithin); }
 
-template <class NodeType>
-inline Node* traverseNextSkippingChildrenTemplate(NodeType* current)
+inline Node* nextSkippingChildren(const Node* current)
 {
     if (current->nextSibling())
         return current->nextSibling();
     return nextAncestorSibling(current);
 }
-inline Node* nextSkippingChildren(const Node* current) { return traverseNextSkippingChildrenTemplate(current); }
-inline Node* nextSkippingChildren(const ContainerNode* current) { return traverseNextSkippingChildrenTemplate(current); }
 
-template <class NodeType>
-inline Node* traverseNextSkippingChildrenTemplate(NodeType* current, const Node* stayWithin)
+inline Node* nextSkippingChildren(const Node* current, const Node* stayWithin)
 {
     if (current == stayWithin)
         return 0;
@@ -120,11 +114,9 @@ inline Node* traverseNextSkippingChildrenTemplate(NodeType* current, const Node*
         return current->nextSibling();
     return nextAncestorSibling(current, stayWithin);
 }
-inline Node* nextSkippingChildren(const Node* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
-inline Node* nextSkippingChildren(const ContainerNode* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
 
-inline Node* next(const Text* current) { return traverseNextSkippingChildrenTemplate(current); }
-inline Node* next(const Text* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
+inline Node* next(const Text* current) { return nextSkippingChildren(current); }
+inline Node* next(const Text* current, const Node* stayWithin) { return nextSkippingChildren(current, stayWithin); }
 
 inline Node* previous(const Node* current, const Node* stayWithin)
 {
