@@ -31,6 +31,10 @@
 #include "WinLauncherWebHost.h"
 #include "Common.cpp"
 
+#if USE(GLIB)
+#include <glib.h>
+#endif
+
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 {
 #ifdef _CRTDBG_MAP_ALLOC

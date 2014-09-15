@@ -1,3 +1,15 @@
+2014-09-15  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Make it easier to enable/disable GStreamer.
+        https://bugs.webkit.org/show_bug.cgi?id=135766
+
+        Reviewed by Brent Fulgham.
+
+        Make it possible to enable/disable GStreamer by editing the new user macro ENABLE_GSTREAMER_WINCAIRO.
+
+        * WebKit.vcxproj/WebKit/WebKitDebugWinCairo.props: Import GStreamer property file.
+        * WebKit.vcxproj/WebKit/WebKitReleaseWinCairo.props: Ditto.
+
 2014-09-06  Darin Adler  <darin@apple.com>
 
         Make updates suggested by new version of Xcode

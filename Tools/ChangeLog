@@ -1,3 +1,14 @@
+2014-09-15  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Make it easier to enable/disable GStreamer.
+        https://bugs.webkit.org/show_bug.cgi?id=135766
+
+        Reviewed by Brent Fulgham.
+
+        Make it possible to enable/disable GStreamer by editing the new user macro ENABLE_GSTREAMER_WINCAIRO.
+
+        * WinLauncher/WinMain.cpp: Compile fix when GStreamer is enabled.
+
 2014-09-12  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remind about rebaselining generator test results
