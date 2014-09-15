@@ -14,6 +14,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
+    "${WEBCORE_DIR}/platform/graphics/wayland"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
     "${WEBCORE_DIR}/platform/mock/mediasource"
@@ -433,6 +434,13 @@ if (ENABLE_WAYLAND_TARGET)
         platform/graphics/wayland/WaylandSurface.cpp
 
         ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
+    )
+
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${WAYLAND_INCLUDE_DIRECTORIES}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${WAYLAND_LIBRARIES}
     )
 endif ()
 
