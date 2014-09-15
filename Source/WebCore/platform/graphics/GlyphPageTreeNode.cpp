@@ -207,24 +207,24 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
             // for only 128 out of 256 characters.
             bool haveGlyphs;
             if (!fontData->isSegmented()) {
-                if (GlyphPage::mayUseMixedFontDataWhenFilling(buffer, bufferLength, static_cast<const SimpleFontData*>(fontData)))
+                if (GlyphPage::mayUseMixedFontDataWhenFilling(buffer, bufferLength, toSimpleFontData(fontData)))
                     m_page = GlyphPage::createForMixedFontData(this);
                 else
-                    m_page = GlyphPage::createForSingleFontData(this, static_cast<const SimpleFontData*>(fontData));
+                    m_page = GlyphPage::createForSingleFontData(this, toSimpleFontData(fontData));
 #if PLATFORM(IOS)
                 // FIXME: Times New Roman contains Arabic glyphs, but Core Text doesn't know how to shape them. See <rdar://problem/9823975>.
                 // Once we have the fix for <rdar://problem/9823975> then remove this code together with SimpleFontData::shouldNotBeUsedForArabic()
                 // in <rdar://problem/12096835>.
-                if (pageNumber == 6 && static_cast<const SimpleFontData*>(fontData)->shouldNotBeUsedForArabic())
+                if (pageNumber == 6 && toSimpleFontData(fontData)->shouldNotBeUsedForArabic())
                     haveGlyphs = false;
                 else
 #endif
-                haveGlyphs = fill(m_page.get(), 0, GlyphPage::size, buffer, bufferLength, static_cast<const SimpleFontData*>(fontData));
+                haveGlyphs = fill(m_page.get(), 0, GlyphPage::size, buffer, bufferLength, toSimpleFontData(fontData));
             } else {
                 m_page = GlyphPage::createForMixedFontData(this);
                 haveGlyphs = false;
 
-                const SegmentedFontData* segmentedFontData = static_cast<const SegmentedFontData*>(fontData);
+                const SegmentedFontData* segmentedFontData = toSegmentedFontData(fontData);
                 unsigned numRanges = segmentedFontData->numRanges();
                 bool zeroFilled = false;
                 RefPtr<GlyphPage> scratchPage;

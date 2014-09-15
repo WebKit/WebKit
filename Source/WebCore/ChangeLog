@@ -1,5 +1,26 @@
 2014-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Introduce FONT_DATA_TYPE_CASTS, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=136766
+
+        Reviewed by Darin Adler.
+
+        As a step to use toFoo, this patch introduces FONT_DATA_TYPE_CASTS macro for toFooFontData().
+        This will help to detect wrong type cast.
+
+        * platform/graphics/FontData.h:
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::releaseFontData):
+        (WebCore::FontGlyphs::determinePitch):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/SegmentedFontData.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCompositeFontReferenceFontData):
+
+2014-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Generate toCSSStyleSheet using STYLE_SHEET_TYPE_CASTS
         https://bugs.webkit.org/show_bug.cgi?id=136774
 

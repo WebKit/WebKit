@@ -80,6 +80,8 @@ private:
     Vector<FontDataRange, 1> m_ranges;
 };
 
+FONT_DATA_TYPE_CASTS(SegmentedFontData, fontData->isSegmented(), fontData.isSegmented())
+
 } // namespace WebCore
 
 #endif // SegmentedFontData_h

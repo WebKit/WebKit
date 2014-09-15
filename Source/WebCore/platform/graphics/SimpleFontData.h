@@ -391,5 +391,7 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     return width;
 }
 
+FONT_DATA_TYPE_CASTS(SimpleFontData, !fontData->isSegmented(), !fontData.isSegmented())
+
 } // namespace WebCore
 #endif // SimpleFontData_h
