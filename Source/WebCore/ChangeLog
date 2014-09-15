@@ -1,3 +1,22 @@
+2014-09-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Attempt to fix the iOS build after <http://trac.webkit.org/changeset/173606>
+        (https://bugs.webkit.org/show_bug.cgi?id=136789)
+
+        Substitute Node::countChildNodes() for Node::childNodeCount() in more places.
+
+        Although I updated a comment in WebCore::lastOffsetForEditing() (defined in file
+        editing/htmlediting.cpp) to refer to Node::countChildNodes(), I'm unclear what the
+        comment is trying to explain that isn't otherwise explained by the code or the
+        comments that precede this function. Specifically, I don't understand the use of
+        the word "preempt" in the comment. We should look to improve the readability of
+        this comment.
+
+        * editing/htmlediting.cpp:
+        (WebCore::lastOffsetForEditing):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot):
+
 2014-09-14  Chris Dumez  <cdumez@apple.com>
 
         Drop NodeTraversal::nextSkippingChildren() overload taking a ContainerNode

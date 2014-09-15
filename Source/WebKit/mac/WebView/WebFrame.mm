@@ -2346,7 +2346,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         return NO;
 
     VisiblePosition first(createLegacyEditingPosition(root, 0));
-    VisiblePosition last(createLegacyEditingPosition(root, root->childNodeCount()));
+    VisiblePosition last(createLegacyEditingPosition(root, root->countChildNodes()));
     return first != last;
 }
 

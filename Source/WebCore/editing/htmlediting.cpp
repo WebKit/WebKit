@@ -345,7 +345,7 @@ int lastOffsetForEditing(const Node* node)
     if (node->hasChildNodes())
         return node->countChildNodes();
 
-    // NOTE: This should preempt the childNodeCount for, e.g., select nodes
+    // NOTE: This should preempt the countChildNodes() for, e.g., select nodes (what does this mean)?
     if (editingIgnoresContent(node))
         return 1;
 

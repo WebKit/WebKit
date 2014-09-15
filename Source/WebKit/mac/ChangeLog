@@ -1,3 +1,13 @@
+2014-09-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Attempt to fix the iOS build after <http://trac.webkit.org/changeset/173606>
+        (https://bugs.webkit.org/show_bug.cgi?id=136789)
+
+        Substitute Node::countChildNodes() for Node::childNodeCount() in more places.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame focusedNodeHasContent]):
+
 2014-09-14  Chris Dumez  <cdumez@apple.com>
 
         Rename Node::childNodeCount() to countChildNodes() and avoid inefficient uses

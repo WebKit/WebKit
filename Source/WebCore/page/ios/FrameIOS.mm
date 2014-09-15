@@ -745,7 +745,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
         return nil;
 
     Element* root = selection().selection().selectionType() == VisibleSelection::NoSelection ? document()->body() : selection().selection().rootEditableElement();
-    unsigned rootChildCount = root->childNodeCount();
+    unsigned rootChildCount = root->countChildNodes();
     RefPtr<Range> rangeOfRootContents = Range::create(*document(), createLegacyEditingPosition(root, 0), createLegacyEditingPosition(root, rootChildCount));
 
     Vector<DocumentMarker*> markersInRoot = document()->markers().markersInRange(rangeOfRootContents.get(), DocumentMarker::DictationPhraseWithAlternatives);
