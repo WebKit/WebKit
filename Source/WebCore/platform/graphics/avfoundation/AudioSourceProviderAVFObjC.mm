@@ -119,7 +119,7 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
         return;
     }
 
-    size_t framesAvailable = endFrame - (m_readCount + m_writeAheadCount);
+    size_t framesAvailable = static_cast<size_t>(endFrame - (m_readCount + m_writeAheadCount));
     if (framesAvailable < framesToProcess) {
         framesToProcess = framesAvailable;
         bus->zero();

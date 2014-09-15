@@ -26,6 +26,8 @@
 #ifndef CARingBuffer_h
 #define CARingBuffer_h
 
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+
 #include <runtime/ArrayBuffer.h>
 #include <wtf/ByteSpinLock.h>
 #include <wtf/Vector.h>
@@ -90,5 +92,6 @@ private:
 
 }
 
+#endif // ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #endif // CARingBuffer_h

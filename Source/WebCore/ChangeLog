@@ -1,5 +1,19 @@
 2014-09-15  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix for 32-bit builds.
+
+        Make casts from unsigned long long -> size_t explicit, rather than implicit. Also
+        make CARingBuffer be protected by USING_MEDIA_TOOLBOX so ports without that flag
+        won't try to compile unused code.
+
+        * platform/audio/mac/CARingBuffer.cpp:
+        (WebCore::CARingBuffer::fetch):
+        * platform/audio/mac/CARingBuffer.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::provideInput):
+
+2014-09-15  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed logic fix from r173631. Logic for includeShadowDOM was reversed.
 
         * page/DragController.cpp:

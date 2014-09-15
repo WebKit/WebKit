@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CARingBuffer.h"
 
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+
 #include <CoreAudio/CoreAudioTypes.h>
 #include <libkern/OSAtomic.h>
 #include <wtf/MathExtras.h>
@@ -272,14 +274,14 @@ CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, u
         return Ok;
     }
     
-    size_t byteSize = (endRead - startRead) * m_bytesPerFrame;
+    size_t byteSize = static_cast<size_t>((endRead - startRead) * m_bytesPerFrame);
     
-    size_t destStartByteOffset = std::max<size_t>(0, (startRead - startRead0) * m_bytesPerFrame);
+    size_t destStartByteOffset = static_cast<size_t>(std::max<uint64_t>(0, (startRead - startRead0) * m_bytesPerFrame));
     
     if (destStartByteOffset > 0)
         ZeroABL(list, 0, std::min<size_t>(nFrames * m_bytesPerFrame, destStartByteOffset));
 
-    size_t destEndSize = std::max<size_t>(0, endRead0 - endRead);
+    size_t destEndSize = static_cast<size_t>(std::max<uint64_t>(0, endRead0 - endRead));
     if (destEndSize > 0)
         ZeroABL(list, destStartByteOffset + byteSize, destEndSize * m_bytesPerFrame);
 
@@ -309,3 +311,5 @@ CARingBuffer::Error CARingBuffer::fetch(AudioBufferList* list, size_t nFrames, u
 }
 
 }
+
+#endif // ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
