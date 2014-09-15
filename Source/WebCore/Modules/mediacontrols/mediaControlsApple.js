@@ -296,6 +296,7 @@ Controller.prototype = {
         this.listenFor(panel, 'transitionend', this.handlePanelTransitionEnd);
         this.listenFor(panel, 'click', this.handlePanelClick);
         this.listenFor(panel, 'dblclick', this.handlePanelClick);
+        this.listenFor(panel, 'dragstart', this.handlePanelDragStart);
 
         var rewindButton = this.controls.rewindButton = document.createElement('button');
         rewindButton.setAttribute('pseudo', '-webkit-media-controls-rewind-button');
@@ -694,6 +695,12 @@ Controller.prototype = {
     handlePanelClick: function(event)
     {
         // Prevent clicks in the panel from playing or pausing the video in a MediaDocument.
+        event.preventDefault();
+    },
+
+    handlePanelDragStart: function(event)
+    {
+        // Prevent drags in the panel from triggering a drag event on the <video> element.
         event.preventDefault();
     },
 

@@ -80,6 +80,7 @@ audio::-webkit-media-controls-panel {
     height: 25px;
     line-height: 25px;
     -webkit-user-select: none;
+    -webkit-user-drag: element;
     background-color: transparent;
     background-image: -webkit-linear-gradient(top,
         rgba(0,  0,  0,  .92) 0,
