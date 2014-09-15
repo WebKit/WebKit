@@ -1,3 +1,17 @@
+2014-09-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Naming clean-up.
+
+        Rubber-stamped by Andy Estes.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::requestAutocomplete):
+        (WebCore::HTMLFormElement::finishRequestAutocomplete):
+        Remove superfluous "AutocompleteResult".
+
+        * html/HTMLFormElement.h:
+        Ditto.
+
 2014-09-15  Alexey Proskuryakov  <ap@apple.com>
 
         Crash when logging in to optionshouse.com

@@ -114,10 +114,10 @@ public:
 
 #if ENABLE(REQUEST_AUTOCOMPLETE)
     enum class AutocompleteResult {
-        AutocompleteResultSuccess,
-        AutocompleteResultErrorDisabled,
-        AutocompleteResultErrorCancel,
-        AutocompleteResultErrorInvalid,
+        Success,
+        ErrorDisabled,
+        ErrorCancel,
+        ErrorInvalid,
     };
 
     void requestAutocomplete();
