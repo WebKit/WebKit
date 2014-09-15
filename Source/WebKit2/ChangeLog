@@ -1,5 +1,29 @@
 2014-09-15  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173623.
+
+    2014-09-13  Gavin Barraclough  <baraclough@apple.com>
+
+            Should call [BKSProcessAssertion invalidate]
+            https://bugs.webkit.org/show_bug.cgi?id=136804
+            <rdar://problem/17897780>
+
+            Reviewed by Darin Adler.
+
+            We should invalidate the process assertion before releasing it. Fortunately this is really easy,
+            since there is a simple 1:1 relationship with ProcessAssertion, with their lifetimes matching exactly.
+
+            * UIProcess/ProcessAssertion.cpp:
+            (WebKit::ProcessAssertion::~ProcessAssertion):
+                - no-op implementation.
+            * UIProcess/ProcessAssertion.h:
+                - added destructor.
+            * UIProcess/ios/ProcessAssertionIOS.mm:
+            (WebKit::ProcessAssertion::~ProcessAssertion):
+                - destructor invalidates the BKSProcessAssertion.
+
+2014-09-15  Babak Shafiei  <bshafiei@apple.com>
+
         <rdar://problem/18327341> Disable Web Timing on this branch.
 
         Reviewed originally by Sam Weinig.
