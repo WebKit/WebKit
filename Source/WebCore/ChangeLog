@@ -1,3 +1,18 @@
+2014-09-15  Andres Gomez  <agomez@igalia.com>
+
+        [GStreamer] don't send transferMode HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=136781
+
+        Reviewed by Philippe Normand.
+
+        No header at all is better than having the wrong header as DLNA
+        mandates that a missing header has to be tolerated while a wrong
+        header is an error.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        * platform/network/HTTPHeaderNames.in:
+
 2014-09-14  Christophe Dumez  <cdumez@apple.com>
 
         Fix post-mortem nits for r173528 & r173549
