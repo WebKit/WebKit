@@ -1,5 +1,12 @@
 2014-09-15  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Skip initial-letter tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=136841
+
+        * platform/win/TestExpectations:
+
+2014-09-15  Roger Fong  <roger_fong@apple.com>
+
         Change all snapshotting tests to use quicktime.
 
         * platform/mac-wk2/TestExpectations:

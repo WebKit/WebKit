@@ -2763,3 +2763,11 @@ webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
 
 # Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechsynthesis [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=136484
+fast/css-generated-content/initial-letter-basic.html [ Failure ]
+fast/css-generated-content/initial-letter-border-padding.html [ Failure ]
+fast/css-generated-content/initial-letter-clearance.html [ Failure ]
+fast/css-generated-content/initial-letter-descender.html [ Failure ]
+fast/css-generated-content/initial-letter-raised.html [ Failure ]
+fast/css-generated-content/initial-letter-sunken.html [ Failure ]
