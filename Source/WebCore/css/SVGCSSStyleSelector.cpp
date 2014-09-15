@@ -562,6 +562,9 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             // Silently ignoring this property for now
             // http://bugs.webkit.org/show_bug.cgi?id=6022
             break;
+        case CSSPropertyWebkitInitialLetter:
+            // Not Implemented
+            break;
         case CSSPropertyWebkitSvgShadow: {
             if (isInherit)
                 return svgStyle.setShadow(state.parentStyle()->svgStyle().shadow() ? std::make_unique<ShadowData>(*state.parentStyle()->svgStyle().shadow()) : nullptr);
