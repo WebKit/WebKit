@@ -1,3 +1,15 @@
+2014-09-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Remove FIND_PACKAGE_HANDLE_STANDARD_ARGS call for WAYLAND_EGL in FindWayland.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=136814
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/FindWayland.cmake: This line was committed by mistake.
+        We bundle the wayland-egl dependency with wayland-client and wayland-server
+        and store the resulting variables with the WAYLAND_ prefix. Because of this
+        this line wasn't exporting anything useful.
+
 2014-09-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r173574.
