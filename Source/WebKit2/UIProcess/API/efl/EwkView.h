@@ -196,7 +196,8 @@ public:
     // FIXME: PageViewportController needs to fix a problem that current page is shown in (0,0) position when starting to load new page.
     // Below functions are to fix this problem for now.
     void setWaitingForNewPage() { m_isWaitingForNewPage = true; }
-    bool didCommitNewPage() { return m_isWaitingForNewPage = false; }
+    bool waitingForNewPage() { return m_isWaitingForNewPage; }
+    void didCommitNewPage() { m_isWaitingForNewPage = false; }
 
     static const char smartClassName[];
 

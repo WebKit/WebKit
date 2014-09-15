@@ -1,3 +1,20 @@
+2014-09-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        REGRESSION(r170243): [EFL][WK2] Dirty image is shown when new page is loading on fixed layout 
+        https://bugs.webkit.org/show_bug.cgi?id=136568
+
+        Reviewed by Csaba Osztrogonác.
+
+        r170243 landed wrong didCommitNewPage() since it always returns false. It cause that
+        PageViewportControllerClientEfl::didChangeVisibleContents() continues to draw dirty image on 0,0 coordinate.
+        This patch fixes the problem.
+
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::waitingForNewPage):
+        (EwkView::didCommitNewPage):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+
 2014-09-14  Chris Dumez  <cdumez@apple.com>
 
         Rename Node::childNodeCount() to countChildNodes() and avoid inefficient uses
