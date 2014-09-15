@@ -1,3 +1,92 @@
+2014-09-15  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Support audioSourceProvider() in MediaPlayerPrivateAVFoundationObjC
+        https://bugs.webkit.org/show_bug.cgi?id=135042
+
+        Reviewed by Eric Carlson.
+
+        Add support for AudioSourceProvider in MediaPlayerPrivateAVFoundationObjC, thereby
+        supporting MediaElementAudioSourceNode.
+
+        Import the CARingBuffer from CoreAudio sample code, making the necessary modifications
+        for WebKit style and coding conventions. The threading assumptions for this class are
+        that there will be a single writer thread and a single reader thread.
+
+        * platform/audio/mac/CARingBuffer.cpp: Added.
+        (WebCore::CARingBuffer::create): Create a unique_ptr.
+        (WebCore::CARingBuffer::CARingBuffer): Simple constructor.
+        (WebCore::CARingBuffer::~CARingBuffer): Simple destructor.
+        (WebCore::CARingBuffer::allocate): Initialize the buffers and time bounds structures.
+        (WebCore::CARingBuffer::deallocate): Destroy same.
+        (WebCore::ZeroRange): Static utility method.
+        (WebCore::StoreABL): Ditto.
+        (WebCore::FetchABL): Ditto.
+        (WebCore::ZeroABL): Ditto.
+        (WebCore::CARingBuffer::store): Store the passed in buffer in the ring buffer, wrapping
+            if necessary.
+        (WebCore::CARingBuffer::setTimeBounds): Set the new time bounds by incrementing the
+            bounds index locally, filling in the new values, then atomically incrementing the
+            reader-visible index.
+        (WebCore::CARingBuffer::getTimeBounds): Get the new time bounds by masking the time
+            bounds index, and using it as an offset to the time bounds array. Protect against
+            CPU starvation on the reading thread by checking the index against the stored
+            index in the array entry. This check will fail if the writing thread has wrapped
+            more than the size of the array.
+        (WebCore::CARingBuffer::clipTimeBounds): Clamp the passed values to the available bounds.
+        (WebCore::CARingBuffer::startFrame): Simple accessor.
+        (WebCore::CARingBuffer::endFrame): Ditto.
+        (WebCore::CARingBuffer::fetch): Read an audio buffer list from the ring buffer, possbily
+            wrapping around to the start of the ring buffer.
+        * platform/audio/mac/CARingBuffer.h: Added.
+        (WebCore::CARingBuffer::numberOfChannels): Simple accessor.
+        (WebCore::CARingBuffer::frameOffset): Ditto.
+        (WebCore::CARingBuffer::TimeBounds::TimeBounds): Struct holding the start and end frame values.
+
+        Add an implementation of AudioSourceProvider, using AVAudioMix and MTAudioProcessingTap
+        to tap an AVPlayerItem's audio output and feed it to a MediaElementAudioSourceNode.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h: Added.
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm: Added.
+        (WebCore::AudioSourceProviderAVFObjC::create): Simple factory.
+        (WebCore::AudioSourceProviderAVFObjC::AudioSourceProviderAVFObjC): Simple constructor.
+        (WebCore::AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC): Simple destructor.
+        (WebCore::AudioSourceProviderAVFObjC::provideInput): Push audio into the ring buffer.
+        (WebCore::AudioSourceProviderAVFObjC::setClient): Call destroyMix()/createMix() as appropriate.
+        (WebCore::AudioSourceProviderAVFObjC::setPlayerItem): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::destroyMix): Detach and destroy the AVAudioMix and tap.
+        (WebCore::AudioSourceProviderAVFObjC::createMix): Set up the AVAudioMix and tap and attach to
+            the AVPlayerItem.
+        (WebCore::AudioSourceProviderAVFObjC::initCallback): Pass to class method.
+        (WebCore::AudioSourceProviderAVFObjC::finalizeCallback): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::prepareCallback): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::unprepareCallback): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::processCallback): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::init): Set up the storage pointer for the tap.
+        (WebCore::AudioSourceProviderAVFObjC::finalize): No-op.
+        (WebCore::operator==): Compare two AudioStreamBasicDescription objects.
+        (WebCore::operator!=): Ditto.
+        (WebCore::AudioSourceProviderAVFObjC::prepare): Create an AudioCoverter object if necessary,
+            create the ring buffer, and notify the client of format changes.
+        (WebCore::AudioSourceProviderAVFObjC::unprepare): Destroy same.
+        (WebCore::AudioSourceProviderAVFObjC::process): Copy samples out of the ring buffer,
+            format converting them if necessary. Mute original audio.
+
+        Create the AudioSourceProviderAVFObjC object and notify it when the current AVPlayerItem changes.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::audioSourceProvider):
+
+        Enable SOFT_LINK_MAY_FAIL on the Mac platform.
+
+        * platform/mac/SoftLinking.h:
+
+        Add new files to the project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-09-15  Chris Dumez  <cdumez@apple.com>
 
         Avoid redundant isElementNode() checks in Traversal<HTML*Element> / Traversal<SVG*Element>

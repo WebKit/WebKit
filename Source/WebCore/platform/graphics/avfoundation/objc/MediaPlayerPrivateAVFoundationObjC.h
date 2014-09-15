@@ -62,6 +62,7 @@ namespace WebCore {
 class WebCoreAVFResourceLoader;
 class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVFObjC;
+class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
 class VideoTrackPrivateAVFObjC;
 
@@ -209,6 +210,10 @@ private:
 
     void setAVPlayerItem(AVPlayerItem *);
 
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+    virtual AudioSourceProvider* audioSourceProvider();
+#endif
+
     void createImageGenerator();
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
@@ -288,6 +293,10 @@ private:
     mutable String m_languageOfPrimaryAudioTrack;
     bool m_videoFrameHasDrawn;
     bool m_haveCheckedPlayability;
+
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+    RefPtr<AudioSourceProviderAVFObjC> m_provider;
+#endif
 
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)

@@ -1085,4 +1085,8 @@
 #define TARGET_OS_IPHONE 0
 #endif
 
+#if PLATFORM(IOS) || (PLATFORM(COCOA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
+#define WTF_USE_MEDIATOOLBOX 1
+#endif
+
 #endif /* WTF_Platform_h */

@@ -29,6 +29,7 @@
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
 #import "AVTrackPrivateAVFObjCImpl.h"
+#import "AudioSourceProviderAVFObjC.h"
 #import "AudioTrackPrivateAVFObjC.h"
 #import "AuthenticationChallenge.h"
 #import "BlockExceptions.h"
@@ -499,6 +500,11 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
     m_cachedTracks = nullptr;
 
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+    if (m_provider)
+        m_provider->setPlayerItem(nullptr);
+#endif
+
     setIgnoreLoadStateChanges(false);
 }
 
@@ -907,6 +913,11 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
     [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
     [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
+#endif
+
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+    if (m_provider)
+        m_provider->setPlayerItem(m_avPlayerItem.get());
 #endif
 
     setDelayCallbacks(false);
@@ -1836,6 +1847,15 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
 #endif
 }
 #endif // ENABLE(VIDEO_TRACK)
+
+#if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
+AudioSourceProvider* MediaPlayerPrivateAVFoundationObjC::audioSourceProvider()
+{
+    if (!m_provider)
+        m_provider = AudioSourceProviderAVFObjC::create(m_avPlayerItem.get());
+    return m_provider.get();
+}
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
 {
