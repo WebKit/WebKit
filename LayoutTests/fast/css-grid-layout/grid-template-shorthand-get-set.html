@@ -42,6 +42,9 @@
 #gridTemplateComplexFormOnlyAreas {
     -webkit-grid-template: "a";
 }
+#gridTemplateNoColumnsRowWithEmptyTrailingLineNames {
+    -webkit-grid-template: (first) "a" auto ();
+}
 
 /* Bad values. */
 
@@ -105,6 +108,12 @@
 #gridTemplateComplexFormWithNoneColumns {
     -webkit-grid-template: none / "a" (name) 10px;
 }
+#gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames {
+    -webkit-grid-template: (first) "a" auto () ();
+}
+#gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames {
+    -webkit-grid-template: (first) "a" auto () (tail);
+}
 
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -122,6 +131,9 @@
 <div class="grid" id="gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"></div>
 <div class="grid" id="gridTemplateComplexFormWithAuto"></div>
 <div class="grid" id="gridTemplateComplexFormOnlyAreas"></div>
+<div class="grid" id="gridTemplateNoColumnsRowWithEmptyTrailingLineNames"></div>
+<div class="grid" id="gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames"></div>
+<div class="grid" id="gridTemplateNoColumnsRowWithNonEmptyLeadingLineNamesAndEmptyTrailingLineNames"></div>
 <div class="grid" id="gridTemplateMultipleSlash"></div>
 <div class="grid" id="gridTemplateSimpleFormJustColumns"></div>
 <div class="grid" id="gridTemplateSimpleFormNoRows"></div>
@@ -142,6 +154,7 @@
 <div class="grid" id="gridTemplateComplexFormColumnsNotParsing1"></div>
 <div class="grid" id="gridTemplateComplexFormColumnsNotParsing2"></div>
 <div class="grid" id="gridTemplateComplexFormWithNoneColumns"></div>
+<div class="grid" id="gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames"></div>
 <script src="resources/grid-template-shorthand-parsing-utils.js"></script>
 <script>
     description("This test checks that the 'grid-template' shorthand is properly parsed and the longhand properties correctly assigned.");
@@ -159,6 +172,7 @@
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"), "(first) 10px (nav nav2) 15px (nav nav2) 15px", "100px (nav nav2) 25px (nav nav2) 25px (last)", '"a b c" "d e f" "g h i"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithAuto"), "10px", "0px", '"a"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormOnlyAreas"), "none", "0px", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithEmptyTrailingLineNames"), "none", "(first) 0px", '"a"');
 
     debug("");
     debug("Test getting wrong values for grid-template shorthand through CSS (they should resolve to the default: 'none')");
@@ -182,6 +196,8 @@
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormColumnsNotParsing1"), "none", "none", "none");
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormColumnsNotParsing2"), "none", "none", "none");
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithNoneColumns"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames"), "none", "none", "none");
+    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames"), "none", "none", "none");
 
     debug("");
     debug("Test the initial value");

@@ -40,6 +40,9 @@ PASS window.getComputedStyle(gridTemplateComplexFormWithAuto, '').getPropertyVal
 PASS window.getComputedStyle(gridTemplateComplexFormOnlyAreas, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS window.getComputedStyle(gridTemplateComplexFormOnlyAreas, '').getPropertyValue('-webkit-grid-template-rows') is "0px"
 PASS window.getComputedStyle(gridTemplateComplexFormOnlyAreas, '').getPropertyValue('-webkit-grid-template-areas') is "\"a\""
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithEmptyTrailingLineNames, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithEmptyTrailingLineNames, '').getPropertyValue('-webkit-grid-template-rows') is "(first) 0px"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithEmptyTrailingLineNames, '').getPropertyValue('-webkit-grid-template-areas') is "\"a\""
 
 Test getting wrong values for grid-template shorthand through CSS (they should resolve to the default: 'none')
 PASS window.getComputedStyle(gridTemplateMultipleSlash, '').getPropertyValue('-webkit-grid-template-columns') is "none"
@@ -102,6 +105,12 @@ PASS window.getComputedStyle(gridTemplateComplexFormColumnsNotParsing2, '').getP
 PASS window.getComputedStyle(gridTemplateComplexFormWithNoneColumns, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS window.getComputedStyle(gridTemplateComplexFormWithNoneColumns, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 PASS window.getComputedStyle(gridTemplateComplexFormWithNoneColumns, '').getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames, '').getPropertyValue('-webkit-grid-template-rows') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames, '').getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames, '').getPropertyValue('-webkit-grid-template-columns') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames, '').getPropertyValue('-webkit-grid-template-rows') is "none"
+PASS window.getComputedStyle(gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames, '').getPropertyValue('-webkit-grid-template-areas') is "none"
 
 Test the initial value
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"

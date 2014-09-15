@@ -1,3 +1,16 @@
+2014-09-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Crash at CSSParser::parseGridTemplateRowsAndAreas
+        https://bugs.webkit.org/show_bug.cgi?id=136778
+
+        Reviewed by Darin Adler.
+
+        Added some new test cases to verify that we properly handle empty
+        lists of grid line names.
+
+        * fast/css-grid-layout/grid-template-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html:
+
 2014-09-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Re-add the request autocomplete feature

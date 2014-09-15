@@ -171,7 +171,7 @@ public:
     PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
     bool parseGridTemplateAreasRow(NamedGridAreaMap&, const unsigned, unsigned&);
     PassRefPtr<CSSValue> parseGridTemplateAreas();
-    void parseGridLineNames(CSSParserValueList&, CSSValueList&, CSSGridLineNamesValue* = nullptr);
+    bool parseGridLineNames(CSSParserValueList&, CSSValueList&, CSSGridLineNamesValue* = nullptr);
     PassRefPtr<CSSValue> parseGridAutoFlow(CSSParserValueList&);
 #endif
 

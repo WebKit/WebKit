@@ -1,3 +1,21 @@
+2014-09-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Crash at CSSParser::parseGridTemplateRowsAndAreas
+        https://bugs.webkit.org/show_bug.cgi?id=136778
+
+        Reviewed by Darin Adler.
+
+        An empty list of grid line names (represented by "()") does not
+        add anything to the list of parsed values. That's why trying to
+        concatenate an adjacent list of grid line names was failing,
+        because we were trying to concatenate a list with the last parsed
+        CSSValue which was not the expected grid line names list.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreas):
+        (WebCore::CSSParser::parseGridLineNames):
+        * css/CSSParser.h:
+
 2014-09-15  Andres Gomez  <agomez@igalia.com>
 
         [GStreamer] don't send transferMode HTTP header
