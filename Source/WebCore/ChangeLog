@@ -1,3 +1,39 @@
+2014-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Remove unnecessary overloads taking a ContainerNode in Element Traversal
+        https://bugs.webkit.org/show_bug.cgi?id=136767
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary overloads taking a ContainerNode in Element Traversal.
+        Several of those don't bring any performance improvements as the needed
+        methods are defined on Node (not ContainerNode).
+
+        No new tests, no behavior change.
+
+        * dom/ElementTraversal.h:
+        (WebCore::Traversal<Element>::previous):
+        NodeTraversal::previous() takes a const Node* in argument so the
+        ContainerNode overload is not needed.
+
+        (WebCore::Traversal<ElementType>::previous):
+        Unnecessary now that Traversal<Element>::previous() takes a const Node*
+        in argument.
+
+        (WebCore::Traversal<ElementType>::nextSibling):
+        nextSibling() is defined on Node, not ContainerNode, so the overload
+        is not needed.
+
+        (WebCore::Traversal<ElementType>::previousSibling):
+        previousSibling() is defined on Node, not ContainerNode, so the overload
+        is not needed.
+
+        (WebCore::Traversal<Element>::previousTemplate): Deleted.
+        (WebCore::Traversal<ElementType>::previousTemplate): Deleted.
+        (WebCore::Traversal<ElementType>::nextSiblingTemplate): Deleted.
+        (WebCore::Traversal<ElementType>::previousSiblingTemplate): Deleted.
+        No need to have those functions templated anymore.
+
 2014-09-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Attempt to fix the iOS build after <http://trac.webkit.org/changeset/173606>

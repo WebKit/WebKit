@@ -52,14 +52,10 @@ public:
     static ElementType* next(const ContainerNode*, const Node* stayWithin);
     static ElementType* previous(const Node*);
     static ElementType* previous(const Node*, const Node* stayWithin);
-    static ElementType* previous(const ContainerNode*);
-    static ElementType* previous(const ContainerNode*, const Node* stayWithin);
 
     // Next or previous ElementType sibling if there is one.
     static ElementType* nextSibling(const Node*);
-    static ElementType* nextSibling(const ContainerNode*);
     static ElementType* previousSibling(const Node*);
-    static ElementType* previousSibling(const ContainerNode*);
 
     // Like next, but skips children.
     static ElementType* nextSkippingChildren(const Node*);
@@ -72,10 +68,6 @@ private:
     template <typename CurrentType> static ElementType* lastWithinTemplate(CurrentType*);
     template <typename CurrentType> static ElementType* nextTemplate(CurrentType*);
     template <typename CurrentType> static ElementType* nextTemplate(CurrentType*, const Node* stayWithin);
-    template <typename CurrentType> static ElementType* previousTemplate(CurrentType*);
-    template <typename CurrentType> static ElementType* previousTemplate(CurrentType*, const Node* stayWithin);
-    template <typename CurrentType> static ElementType* nextSiblingTemplate(CurrentType*);
-    template <typename CurrentType> static ElementType* previousSiblingTemplate(CurrentType*);
 };
 
 class ElementTraversal : public Traversal<Element> {
@@ -129,8 +121,7 @@ inline Element* Traversal<Element>::nextTemplate(CurrentType* current, const Nod
 }
 
 template <>
-template <typename CurrentType>
-inline Element* Traversal<Element>::previousTemplate(CurrentType* current)
+inline Element* Traversal<Element>::previous(const Node* current)
 {
     Node* node = NodeTraversal::previous(current);
     while (node && !node->isElementNode())
@@ -139,8 +130,7 @@ inline Element* Traversal<Element>::previousTemplate(CurrentType* current)
 }
 
 template <>
-template <typename CurrentType>
-inline Element* Traversal<Element>::previousTemplate(CurrentType* current, const Node* stayWithin)
+inline Element* Traversal<Element>::previous(const Node* current, const Node* stayWithin)
 {
     Node* node = NodeTraversal::previous(current, stayWithin);
     while (node && !node->isElementNode())
@@ -210,8 +200,7 @@ inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType* current, c
 }
 
 template <typename ElementType>
-template <typename CurrentType>
-inline ElementType* Traversal<ElementType>::previousTemplate(CurrentType* current)
+inline ElementType* Traversal<ElementType>::previous(const Node* current)
 {
     Element* element = Traversal<Element>::previous(current);
     while (element && !isElementOfType<const ElementType>(*element))
@@ -220,8 +209,7 @@ inline ElementType* Traversal<ElementType>::previousTemplate(CurrentType* curren
 }
 
 template <typename ElementType>
-template <typename CurrentType>
-inline ElementType* Traversal<ElementType>::previousTemplate(CurrentType* current, const Node* stayWithin)
+inline ElementType* Traversal<ElementType>::previous(const Node* current, const Node* stayWithin)
 {
     Element* element = Traversal<Element>::previous(current, stayWithin);
     while (element && !isElementOfType<const ElementType>(*element))
@@ -230,8 +218,7 @@ inline ElementType* Traversal<ElementType>::previousTemplate(CurrentType* curren
 }
 
 template <typename ElementType>
-template <typename CurrentType>
-inline ElementType* Traversal<ElementType>::nextSiblingTemplate(CurrentType* current)
+inline ElementType* Traversal<ElementType>::nextSibling(const Node* current)
 {
     Node* node = current->nextSibling();
     while (node && !isElementOfType<const ElementType>(*node))
@@ -240,8 +227,7 @@ inline ElementType* Traversal<ElementType>::nextSiblingTemplate(CurrentType* cur
 }
 
 template <typename ElementType>
-template <typename CurrentType>
-inline ElementType* Traversal<ElementType>::previousSiblingTemplate(CurrentType* current)
+inline ElementType* Traversal<ElementType>::previousSibling(const Node* current)
 {
     Node* node = current->previousSibling();
     while (node && !isElementOfType<const ElementType>(*node))
@@ -295,25 +281,6 @@ template <typename ElementType>
 inline ElementType* Traversal<ElementType>::next(const ContainerNode* current, const Node* stayWithin) { return nextTemplate(current, stayWithin); }
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::next(const Node* current, const Node* stayWithin) { return nextTemplate(current, stayWithin); }
-
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::previous(const ContainerNode* current) { return previousTemplate(current); }
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::previous(const Node* current) { return previousTemplate(current); }
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::previous(const ContainerNode* current, const Node* stayWithin) { return previousTemplate(current, stayWithin); }
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::previous(const Node* current, const Node* stayWithin) { return previousTemplate(current, stayWithin); }
-
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::nextSibling(const ContainerNode* current) { return nextSiblingTemplate(current); }
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::nextSibling(const Node* current) { return nextSiblingTemplate(current); }
-
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::previousSibling(const ContainerNode* current) { return previousSiblingTemplate(current); }
-template <typename ElementType>
-inline ElementType* Traversal<ElementType>::previousSibling(const Node* current) { return previousSiblingTemplate(current); }
 
 // FIXME: These should go somewhere else.
 inline Element* ElementTraversal::previousIncludingPseudo(const Node* current, const Node* stayWithin)
