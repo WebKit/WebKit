@@ -562,6 +562,124 @@ void Graph::resetReachability()
     determineReachability();
 }
 
+namespace {
+
+class RefCountCalculator {
+public:
+    RefCountCalculator(Graph& graph)
+        : m_graph(graph)
+    {
+    }
+    
+    void calculate()
+    {
+        // First reset the counts to 0 for all nodes.
+        //
+        // Also take this opportunity to pretend that Check nodes are not NodeMustGenerate. Check
+        // nodes are MustGenerate because they are executed for effect, but they follow the same
+        // DCE rules as nodes that aren't MustGenerate: they only contribute to the ref count of
+        // their children if the edges require checks. Non-checking edges are removed. Note that
+        // for any Checks left over, this phase will turn them back into NodeMustGenerate.
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            for (unsigned indexInBlock = block->size(); indexInBlock--;)
+                block->at(indexInBlock)->setRefCount(0);
+            for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+                block->phis[phiIndex]->setRefCount(0);
+        }
+    
+        // Now find the roots:
+        // - Nodes that are must-generate.
+        // - Nodes that are reachable from type checks.
+        // Set their ref counts to 1 and put them on the worklist.
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            for (unsigned indexInBlock = block->size(); indexInBlock--;) {
+                Node* node = block->at(indexInBlock);
+                DFG_NODE_DO_TO_CHILDREN(m_graph, node, findTypeCheckRoot);
+                if (!(node->flags() & NodeMustGenerate))
+                    continue;
+                if (node->op() == Check) {
+                    // We don't treat Check nodes as MustGenerate. We will gladly
+                    // kill them off in this phase.
+                    continue;
+                }
+                if (!node->postfixRef())
+                    m_worklist.append(node);
+            }
+        }
+        
+        while (!m_worklist.isEmpty()) {
+            while (!m_worklist.isEmpty()) {
+                Node* node = m_worklist.last();
+                m_worklist.removeLast();
+                ASSERT(node->shouldGenerate()); // It should not be on the worklist unless it's ref'ed.
+                DFG_NODE_DO_TO_CHILDREN(m_graph, node, countEdge);
+            }
+            
+            if (m_graph.m_form == SSA) {
+                // Find Phi->Upsilon edges, which are represented as meta-data in the
+                // Upsilon.
+                for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+                    BasicBlock* block = m_graph.block(blockIndex);
+                    if (!block)
+                        continue;
+                    for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+                        Node* node = block->at(nodeIndex);
+                        if (node->op() != Upsilon)
+                            continue;
+                        if (node->shouldGenerate())
+                            continue;
+                        if (node->phi()->shouldGenerate())
+                            countNode(node);
+                    }
+                }
+            }
+        }
+    }
+    
+private:
+    void findTypeCheckRoot(Node*, Edge edge)
+    {
+        // We may have an "unproved" untyped use for code that is unreachable. The CFA
+        // will just not have gotten around to it.
+        if (edge.isProved() || edge.willNotHaveCheck())
+            return;
+        if (!edge->postfixRef())
+            m_worklist.append(edge.node());
+    }
+    
+    void countNode(Node* node)
+    {
+        if (node->postfixRef())
+            return;
+        m_worklist.append(node);
+    }
+    
+    void countEdge(Node*, Edge edge)
+    {
+        // Don't count edges that are already counted for their type checks.
+        if (!(edge.isProved() || edge.willNotHaveCheck()))
+            return;
+        countNode(edge.node());
+    }
+    
+    Graph& m_graph;
+    Vector<Node*, 128> m_worklist;
+};
+
+} // anonymous namespace
+
+void Graph::computeRefCounts()
+{
+    RefCountCalculator calculator(*this);
+    calculator.calculate();
+}
+
 void Graph::killBlockAndItsContents(BasicBlock* block)
 {
     for (unsigned phiIndex = block->phis.size(); phiIndex--;)

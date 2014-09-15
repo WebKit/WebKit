@@ -570,6 +570,8 @@ public:
     void determineReachability();
     void resetReachability();
     
+    void computeRefCounts();
+    
     unsigned varArgNumChildren(Node* node)
     {
         ASSERT(node->flags() & NodeHasVarArgs);

@@ -1,3 +1,23 @@
+2014-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ref count calculation should be reusable
+        https://bugs.webkit.org/show_bug.cgi?id=136811
+
+        Reviewed by Oliver Hunt.
+        
+        Henceforth if you call Graph::computeRefCounts(), a nifty O(n) operation, every Node
+        will be able to tell you how many places it is used from. Currently only DCE uses this,
+        but it will be useful for https://bugs.webkit.org/show_bug.cgi?id=136330.
+
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::findTypeCheckRoot): Deleted.
+        (JSC::DFG::DCEPhase::countNode): Deleted.
+        (JSC::DFG::DCEPhase::countEdge): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::computeRefCounts):
+        * dfg/DFGGraph.h:
+
 2014-09-12  Michael Saboff  <msaboff@apple.com>
 
         Merge JSGlobalObject::reset() into ::init()
