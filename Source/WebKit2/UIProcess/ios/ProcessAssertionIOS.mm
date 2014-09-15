@@ -158,6 +158,11 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
 }
 
+ProcessAssertion::~ProcessAssertion()
+{
+    [m_assertion invalidate];
+}
+
 void ProcessAssertion::setState(AssertionState assertionState)
 {
     if (m_assertionState == assertionState)
@@ -198,6 +203,10 @@ namespace WebKit {
 
 ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState)
     : m_assertionState(assertionState)
+{
+}
+
+ProcessAssertion::~ProcessAssertion()
 {
 }
 
