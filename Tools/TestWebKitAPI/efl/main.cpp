@@ -26,9 +26,8 @@
 
 #include "config.h"
 #include "TestsController.h"
-#include <Ecore.h>
-#include <Eina.h>
 #include <getopt.h>
+#include <EWebKit2.h>
 #include <wtf/Assertions.h>
 
 bool useX11Window = false;
@@ -52,18 +51,14 @@ int main(int argc, char** argv)
     WTFInstallReportBacktraceOnCrashHook();
     setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, false);
 
-    if (!eina_init())
-        return EXIT_FAILURE;
-
-    if (!ecore_init())
+    if (!ewk_init())
         return EXIT_FAILURE;
 
     useX11Window = checkForUseX11WindowArgument(argc, argv);
 
     int returnCode = TestWebKitAPI::TestsController::shared().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 
-    ecore_shutdown();
-    eina_shutdown();
+    ewk_shutdown();
 
     return returnCode;
 }

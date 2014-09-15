@@ -66,7 +66,6 @@ static void onWebProcessCrashed(void*, Evas_Object*, void* eventInfo)
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    ewk_init();
     m_window = createEcoreEvas();
 
     m_view = EWKViewCreate(contextRef, pageGroupRef, ecore_evas_get(m_window), /* smart */ 0);
@@ -83,7 +82,6 @@ PlatformWebView::~PlatformWebView()
     evas_object_del(m_view);
 
     ecore_evas_free(m_window);
-    ewk_shutdown();
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
