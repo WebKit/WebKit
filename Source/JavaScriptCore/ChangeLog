@@ -1,3 +1,14 @@
+2014-09-15  Babak Shafiei  <bshafiei@apple.com>
+
+        <rdar://problem/18327341> Disable Web Timing on this branch.
+
+        Reviewed originally by Sam Weinig.
+
+        Disable:
+        - WEB_TIMING
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2014-08-03  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for <rdar://problem/17887398>.
