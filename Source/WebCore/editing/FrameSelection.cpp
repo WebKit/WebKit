@@ -2112,7 +2112,7 @@ void FrameSelection::setSelectionFromNone()
         return;
 #endif
 
-    Element* documentElement = document->documentElement();
+    auto* documentElement = document->documentElement();
     if (!documentElement)
         return;
     if (auto body = childrenOfType<HTMLBodyElement>(*documentElement).first())

@@ -1461,9 +1461,9 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
             return ariaLabel;
     }
     
-    if (HTMLFrameOwnerElement* owner = document->ownerElement()) {
+    if (auto* owner = document->ownerElement()) {
         if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
-            const AtomicString& title = owner->getAttribute(titleAttr);
+            const AtomicString& title = owner->fastGetAttribute(titleAttr);
             if (!title.isEmpty())
                 return title;
         }
@@ -1474,7 +1474,7 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     if (!documentTitle.isEmpty())
         return documentTitle;
     
-    if (HTMLElement* body = document->body())
+    if (auto* body = document->body())
         return body->getNameAttribute();
     
     return String();

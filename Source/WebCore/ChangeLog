@@ -1,3 +1,24 @@
+2014-09-14  Christophe Dumez  <cdumez@apple.com>
+
+        Fix post-mortem nits for r173528 & r173549
+        https://bugs.webkit.org/show_bug.cgi?id=136808
+
+        Reviewed by Darin Adler.
+
+        Fix post-mortem nits for r173528 & r173549.
+
+        No new tests, no behavior change.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeTextForWebArea):
+        - Use auto* instead of more specific types.
+        - Use fastGetAttribute() instead of getAttribute() as this is
+          supported for the "title" attribute.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionFromNone):
+        Use auto* instead of more specific types.
+
 2014-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce FONT_DATA_TYPE_CASTS, and use it
