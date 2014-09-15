@@ -1,3 +1,17 @@
+2014-09-15  Michael Saboff  <msaboff@apple.com>
+
+        Create a JSCallee for GlobalExec object
+        https://bugs.webkit.org/show_bug.cgi?id=136840
+
+        Reviewed by Geoffrey Garen.
+
+        Added m_globalCallee, initialized it and then used it to set the globalExec's callee.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+
 2014-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ref count calculation should be reusable
