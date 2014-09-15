@@ -665,7 +665,7 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
         if (SVGViewElement* viewElement = toSVGViewElement(anchorNode)) {
             SVGElement* element = SVGLocatable::nearestViewportElement(viewElement);
             if (element->hasTagName(SVGNames::svgTag)) {
-                SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
+                SVGSVGElement* svg = toSVGSVGElement(element);
                 svg->inheritViewAttributes(viewElement);
 
                 if (RenderElement* renderer = svg->renderer())

@@ -36,9 +36,9 @@ namespace WebCore {
 void ElementData::destroy()
 {
     if (isUnique())
-        delete static_cast<UniqueElementData*>(this);
+        delete toUniqueElementData(this);
     else
-        delete static_cast<ShareableElementData*>(this);
+        delete toShareableElementData(this);
 }
 
 ElementData::ElementData()

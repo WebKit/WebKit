@@ -1,3 +1,28 @@
+2014-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toFooElementData() using ELEMENT_DATA_TYPE_CASTS
+        https://bugs.webkit.org/show_bug.cgi?id=136775
+
+        Reviewed by Darin Adler.
+
+        As a step to use toFoo, this patch introduces ELEMENT_DATA_TYPE_CASTS for toFooElementData().
+        This will help to detect wrong type cast. Additonally this patch helps to remove argument type of RefPtr.
+
+        No new tests, no behavior changes.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneAttributesFromElement):
+        (WebCore::Element::createUniqueElementData):
+        * dom/ElementData.cpp:
+        (WebCore::ElementData::destroy):
+        * dom/ElementData.h:
+        (WebCore::ElementData::length):
+        (WebCore::ElementData::attributeBase):
+        (WebCore::ElementData::presentationAttributeStyle):
+        (WebCore::ElementData::attributesIterator):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setupInitialView): Remove static_cast<SVGSVGElement*>
+
 2014-09-14  Chris Dumez  <cdumez@apple.com>
 
         Remove unnecessary overloads taking a ContainerNode in Element Traversal
