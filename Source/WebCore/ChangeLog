@@ -1,5 +1,12 @@
 2014-09-15  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed logic fix from r173631. Logic for includeShadowDOM was reversed.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+2014-09-15  Jer Noble  <jer.noble@apple.com>
+
         Videos with controls enabled never receive 'dragstart' events.
         https://bugs.webkit.org/show_bug.cgi?id=136837
 
