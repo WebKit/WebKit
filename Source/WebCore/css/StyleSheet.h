@@ -55,6 +55,10 @@ public:
     virtual bool isXSLStyleSheet() const { return false; }
 };
 
+#define STYLE_SHEET_TYPE_CASTS(ToClassName) \
+    template<typename T> inline ToClassName* to##ToClassName(const RefPtr<T>& styleSheet) { return to##ToClassName(styleSheet.get()); } \
+    TYPE_CASTS_BASE(ToClassName, StyleSheet, styleSheet, styleSheet->is##ToClassName(), styleSheet.is##ToClassName())
+
 } // namespace
 
 #endif

@@ -413,7 +413,7 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& r
             continue;
         if (sheets[i]->disabled())
             continue;
-        CSSStyleSheet* sheet = static_cast<CSSStyleSheet*>(sheets[i].get());
+        CSSStyleSheet* sheet = toCSSStyleSheet(sheets[i]);
         if (!sheet->length())
             continue;
         result.append(sheet);

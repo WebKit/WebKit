@@ -139,6 +139,8 @@ private:
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 
+STYLE_SHEET_TYPE_CASTS(CSSStyleSheet)
+
 } // namespace
 
 #endif

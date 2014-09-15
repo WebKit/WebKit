@@ -222,7 +222,7 @@ void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& base
 void ProcessingInstruction::parseStyleSheet(const String& sheet)
 {
     if (m_isCSS)
-        static_cast<CSSStyleSheet*>(m_sheet.get())->contents().parseString(sheet);
+        toCSSStyleSheet(*m_sheet).contents().parseString(sheet);
 #if ENABLE(XSLT)
     else if (m_isXSL)
         static_cast<XSLStyleSheet*>(m_sheet.get())->parseString(sheet);
@@ -235,7 +235,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_loading = false;
 
     if (m_isCSS)
-        static_cast<CSSStyleSheet*>(m_sheet.get())->contents().checkLoaded();
+        toCSSStyleSheet(*m_sheet).contents().checkLoaded();
 #if ENABLE(XSLT)
     else if (m_isXSL)
         static_cast<XSLStyleSheet*>(m_sheet.get())->checkLoaded();

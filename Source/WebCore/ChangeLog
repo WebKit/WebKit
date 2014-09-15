@@ -1,5 +1,29 @@
 2014-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Generate toCSSStyleSheet using STYLE_SHEET_TYPE_CASTS
+        https://bugs.webkit.org/show_bug.cgi?id=136774
+
+        Reviewed by Darin Adler.
+
+        As a step to use toFoo, this patch introduces STYLE_SHEET_TYPE_CASTS for toCSSStyleSheet().
+        This will help to detect wrong type cast. Additonally this patch helps to remove argument type of RefPtr.
+
+        No new tests, no behavior changes.
+
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap):
+        * css/CSSStyleSheet.h:
+        * css/StyleSheet.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::filterEnabledNonemptyCSSStyleSheets):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+
+2014-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Generate toFooElementData() using ELEMENT_DATA_TYPE_CASTS
         https://bugs.webkit.org/show_bug.cgi?id=136775
 
