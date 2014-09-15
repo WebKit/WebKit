@@ -424,6 +424,10 @@ void SocketStreamHandle::readStreamCallback(CFReadStreamRef stream, CFStreamEven
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_readStream.get());
+    // Workaround for <rdar://problem/17727073>. Keeping this below the assertion as we'd like better steps to reproduce this.
+    if (!handle->m_readStream)
+        return;
+
 #if PLATFORM(WIN)
     callOnMainThreadAndWait([&] {
         handle->readStreamCallback(type);
@@ -438,6 +442,10 @@ void SocketStreamHandle::writeStreamCallback(CFWriteStreamRef stream, CFStreamEv
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(clientCallBackInfo);
     ASSERT_UNUSED(stream, stream == handle->m_writeStream.get());
+    // This wasn't seen happening in practice, yet it seems like it could, due to symmetry with read stream callback.
+    if (!handle->m_writeStream)
+        return;
+
 #if PLATFORM(WIN)
     callOnMainThreadAndWait([&] {
         handle->writeStreamCallback(type);
