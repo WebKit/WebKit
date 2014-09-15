@@ -4,6 +4,7 @@
                     { "name": "apple-mac-121",  "platform": "mac-mountainlion"},
                     { "name": "apple-mac-122",  "platform": "mac-mountainlion"},
                     { "name": "apple-mac-123",  "platform": "mac-mountainlion"},
+                    { "name": "apple-mac-127",  "platform": "mac-mountainlion"},
                     { "name": "apple-mini-201", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-202", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-203", "platform": "mac-mountainlion"},
@@ -76,7 +77,7 @@
                     },
                     { "name": "Apple MountainLion Debug WK1 (Tests)", "type": "Test", "builddir": "mountainlion-debug-tests-wk1",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-mini-205"]
+                      "slavenames": ["apple-mac-127", "apple-mini-205"]
                     },
                     { "name": "Apple MountainLion Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mountainlion-debug-tests-wk2",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],

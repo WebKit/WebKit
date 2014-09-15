@@ -1,3 +1,11 @@
+2014-09-15  Lucas Forschler  <lforschler@apple.com>
+
+        Add another Apple build slave to the Mountain Lion Debug WK1 queue
+        
+        Rubber stamped by Matt Hanson.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2014-09-15  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Ecore and Eina are initialized twice in TestWebKitAPI
