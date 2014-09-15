@@ -1,3 +1,20 @@
+2014-09-15  Roger Fong  <roger_fong@apple.com>
+
+        Change all snapshotting tests to use quicktime.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/plugins/snapshotting/autoplay-similar-to-dominant-expected.txt:
+        * plugins/snapshotting/autoplay-dominant-blank-plugin-moved-into-view.html:
+        * plugins/snapshotting/autoplay-dominant.html:
+        * plugins/snapshotting/autoplay-plugin-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-plugin-mostly-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-similar-to-dominant.html:
+        * plugins/snapshotting/plugin-receives-click-event.html:
+        * plugins/snapshotting/restart.html:
+        * plugins/snapshotting/set-plugin-size-to-tiny.html:
+        * plugins/snapshotting/simple.html:
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html:
+
 2014-08-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Sort items by span when resolving content-based track sizing functions
@@ -524,6 +541,23 @@
         * css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse-expected.html: Added.
         * css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html: Added.
         * css3/flexbox/csswg/ttwf-reftest-flex-wrap.html: Added.
+
+2014-09-12  Roger Fong  <roger_fong@apple.com>
+
+        Switch all snapshotting tests to use quicktime instead of flash.
+
+        * platform/mac-wk2/TestExpectations:
+        * plugins/snapshotting/autoplay-dominant-blank-plugin-moved-into-view.html:
+        * plugins/snapshotting/autoplay-dominant.html:
+        * plugins/snapshotting/autoplay-plugin-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-plugin-mostly-blocked-by-image.html:
+        * plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html:
+        * plugins/snapshotting/autoplay-similar-to-dominant.html:
+        * plugins/snapshotting/plugin-receives-click-event.html:
+        * plugins/snapshotting/restart.html:
+        * plugins/snapshotting/set-plugin-size-to-tiny.html:
+        * plugins/snapshotting/simple.html:
+        * plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html:
 
 2014-09-12  Roger Fong  <roger_fong@apple.com>
 

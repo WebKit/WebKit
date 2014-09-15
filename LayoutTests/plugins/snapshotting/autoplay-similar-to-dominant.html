@@ -10,26 +10,16 @@ if (window.testRunner) {
         var result = document.getElementById("result");
         var embed1 = document.getElementById("plugin1");
         var embed2 = document.getElementById("plugin2");
-        var embed3 = document.getElementById("plugin3");
-        var embed4 = document.getElementById("plugin4");
-        if (!(internals.isPluginSnapshotted(embed1)
-            || internals.isPluginSnapshotted(embed2)
-            || internals.isPluginSnapshotted(embed3)
-            || internals.isPluginSnapshotted(embed4)))
-            result.innerHTML = "PASS";
+        if (!internals.isPluginSnapshotted(embed1)
+            && !internals.isPluginSnapshotted(embed2))
+        	result.innerHTML = "PASS";
         testRunner.notifyDone();
-    }, 2000);
+    }, 1000);
 }
 </script>
 <p>
-<embed id="plugin1" src="../resources/lines.swf" width="600" height="600"></embed>
+<embed id="plugin1" src="../resources/test.mov" width="400" height="400"></embed>
 </p>
 <p>
-<embed id="plugin2" src="../resources/lines.swf" width="200" height="200"></embed>
-</p>
-<p>
-<embed id="plugin3" src="../resources/lines.swf" width="100" height="100"></embed>
-</p>
-<p>
-<embed id="plugin4" src="../resources/lines.swf" width="50" height="50"></embed>
+<embed id="plugin2" src="../resources/test.mov" width="50" height="50"></embed>
 </p>

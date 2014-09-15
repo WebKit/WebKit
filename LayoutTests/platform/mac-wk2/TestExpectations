@@ -636,9 +636,8 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 [ Mavericks ] http/tests/navigation/ping-cookie.html [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=133227
-plugins/snapshotting/snapshot-plugin-not-quite-blocked-by-image.html
+plugins/snapshotting/autoplay-similar-to-dominant-after-delay.html
 plugins/snapshotting/set-plugin-size-to-tiny.html 
-plugins/snapshotting/simple.html
 
 ### END OF (6) Features that are not supported in WebKit2, on Mavericks
 ########################################
