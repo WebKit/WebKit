@@ -193,7 +193,11 @@ private:
 void isHTMLFormControlElement(const HTMLFormControlElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLFormControlElement(const Element& element) { return element.isFormControlElement(); }
 inline bool isHTMLFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isFormControlElement(); }
-template <> inline bool isElementOfType<const HTMLFormControlElement>(const Element& element) { return isHTMLFormControlElement(element); }
+
+template <typename ArgType>
+struct ElementTypeCastTraits<const HTMLFormControlElement, ArgType> {
+    static bool is(ArgType& node) { return isHTMLFormControlElement(node); }
+};
 
 NODE_TYPE_CASTS(HTMLFormControlElement)
 

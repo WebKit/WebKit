@@ -25,9 +25,9 @@
 
 #include "CSSPropertyNames.h"
 #include "SVGAnimatedString.h"
-#include "SVGElementTypeHelpers.h"
 #include "SVGLangSpace.h"
 #include "SVGLocatable.h"
+#include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyInfo.h"
 #include "StyledElement.h"
@@ -225,7 +225,11 @@ struct SVGAttributeHashTranslator {
 
 void isSVGElement(const SVGElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isSVGElement(const Node& node) { return node.isSVGElement(); }
-template <> inline bool isElementOfType<const SVGElement>(const Element& element) { return element.isSVGElement(); }
+
+template <typename ArgType>
+struct ElementTypeCastTraits<const SVGElement, ArgType> {
+    static bool is(ArgType& node) { return isSVGElement(node); }
+};
 
 NODE_TYPE_CASTS(SVGElement)
 
@@ -234,6 +238,8 @@ inline bool Node::hasTagName(const SVGQualifiedName& name) const
     return isSVGElement() && toSVGElement(*this).hasTagName(name);
 }
 
-}
+} // namespace WebCore
+
+#include "SVGElementTypeHelpers.h"
 
 #endif

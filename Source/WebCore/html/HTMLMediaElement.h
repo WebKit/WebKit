@@ -916,7 +916,11 @@ struct ValueToString<TextTrackCue*> {
 void isHTMLMediaElement(const HTMLMediaElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLMediaElement(const Element& element) { return element.isMediaElement(); }
 inline bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && toElement(node).isMediaElement(); }
-template <> inline bool isElementOfType<const HTMLMediaElement>(const Element& element) { return element.isMediaElement(); }
+
+template <typename ArgType>
+struct ElementTypeCastTraits<const HTMLMediaElement, ArgType> {
+    static bool is(ArgType& node) { return isHTMLMediaElement(node); }
+};
 
 NODE_TYPE_CASTS(HTMLMediaElement)
 

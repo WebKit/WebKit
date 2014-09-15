@@ -92,16 +92,6 @@ inline Element* Traversal<Element>::firstWithinTemplate(CurrentType* current)
 
 template <>
 template <typename CurrentType>
-inline Element* Traversal<Element>::lastWithinTemplate(CurrentType* current)
-{
-    Node* node = NodeTraversal::last(current);
-    while (node && !node->isElementNode())
-        node = NodeTraversal::previous(node, current);
-    return toElement(node);
-}
-
-template <>
-template <typename CurrentType>
 inline Element* Traversal<Element>::nextTemplate(CurrentType* current)
 {
     Node* node = NodeTraversal::next(current);
@@ -117,24 +107,6 @@ inline Element* Traversal<Element>::nextTemplate(CurrentType* current, const Nod
     Node* node = NodeTraversal::next(current, stayWithin);
     while (node && !node->isElementNode())
         node = NodeTraversal::nextSkippingChildren(node, stayWithin);
-    return toElement(node);
-}
-
-template <>
-inline Element* Traversal<Element>::previous(const Node* current)
-{
-    Node* node = NodeTraversal::previous(current);
-    while (node && !node->isElementNode())
-        node = NodeTraversal::previous(node);
-    return toElement(node);
-}
-
-template <>
-inline Element* Traversal<Element>::previous(const Node* current, const Node* stayWithin)
-{
-    Node* node = NodeTraversal::previous(current, stayWithin);
-    while (node && !node->isElementNode())
-        node = NodeTraversal::previous(node, stayWithin);
     return toElement(node);
 }
 
@@ -163,58 +135,58 @@ template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::firstWithinTemplate(CurrentType* current)
 {
-    Element* element = Traversal<Element>::firstWithin(current);
-    while (element && !isElementOfType<const ElementType>(*element))
-        element = Traversal<Element>::next(element, current);
-    return static_cast<ElementType*>(element);
+    Node* node = current->firstChild();
+    while (node && !isElementOfType<const ElementType>(*node))
+        node = NodeTraversal::next(node, current);
+    return static_cast<ElementType*>(node);
 }
 
 template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::lastWithinTemplate(CurrentType* current)
 {
-    Element* element = Traversal<Element>::lastWithin(current);
-    while (element && !isElementOfType<const ElementType>(*element))
-        element = Traversal<Element>::previous(element, current);
-    return static_cast<ElementType*>(element);
+    Node* node = NodeTraversal::last(current);
+    while (node && !isElementOfType<const ElementType>(*node))
+        node = NodeTraversal::previous(node, current);
+    return static_cast<ElementType*>(node);
 }
 
 template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType* current)
 {
-    Element* element = Traversal<Element>::next(current);
-    while (element && !isElementOfType<const ElementType>(*element))
-        element = Traversal<Element>::next(element);
-    return static_cast<ElementType*>(element);
+    Node* node = NodeTraversal::next(current);
+    while (node && !isElementOfType<const ElementType>(*node))
+        node = NodeTraversal::next(node);
+    return static_cast<ElementType*>(node);
 }
 
 template <typename ElementType>
 template <typename CurrentType>
 inline ElementType* Traversal<ElementType>::nextTemplate(CurrentType* current, const Node* stayWithin)
 {
-    Element* element = Traversal<Element>::next(current, stayWithin);
-    while (element && !isElementOfType<const ElementType>(*element))
-        element = Traversal<Element>::next(element, stayWithin);
-    return static_cast<ElementType*>(element);
+    Node* node = NodeTraversal::next(current, stayWithin);
+    while (node && !isElementOfType<const ElementType>(*node))
+        node = NodeTraversal::next(node, stayWithin);
+    return static_cast<ElementType*>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previous(const Node* current)
 {
-    Element* element = Traversal<Element>::previous(current);
-    while (element && !isElementOfType<const ElementType>(*element))
-        element = Traversal<Element>::previous(element);
-    return static_cast<ElementType*>(element);
+    Node* node = NodeTraversal::previous(current);
+    while (node && !isElementOfType<const ElementType>(*node))
+        node = NodeTraversal::previous(node);
+    return static_cast<ElementType*>(node);
 }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::previous(const Node* current, const Node* stayWithin)
 {
-    Element* element = Traversal<Element>::previous(current, stayWithin);
-    while (element && !isElementOfType<const ElementType>(*element))
-        element = Traversal<Element>::previous(element, stayWithin);
-    return static_cast<ElementType*>(element);
+    Node* node = NodeTraversal::previous(current, stayWithin);
+    while (node && !isElementOfType<const ElementType>(*node))
+        node = NodeTraversal::previous(node, stayWithin);
+    return static_cast<ElementType*>(node);
 }
 
 template <typename ElementType>

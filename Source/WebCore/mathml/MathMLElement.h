@@ -75,6 +75,12 @@ private:
 
 void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isMathMLElement(const Node& node) { return node.isMathMLElement(); }
+
+template <typename ArgType>
+struct ElementTypeCastTraits<const MathMLElement, ArgType> {
+    static bool is(ArgType& node) { return isMathMLElement(node); }
+};
+
 NODE_TYPE_CASTS(MathMLElement)
 
 inline bool Node::hasTagName(const MathMLQualifiedName& name) const

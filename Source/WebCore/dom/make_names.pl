@@ -642,40 +642,29 @@ void $checkHelper(const $class*); // Catch unnecessary runtime check of type kno
 END
         ;
 
-        if ($parameters{namespace} eq "HTML") {
-            if ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
-                # We need to check for HTMLUnknownElement if it might have been created by the factory.
-                print F <<END
+        if ($parameters{namespace} eq "HTML" && $parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
+            # We need to check for HTMLUnknownElement if it might have been created by the factory.
+            print F <<END
 inline bool $checkHelper(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName($parameters{namespace}Names::${name}Tag); }
-inline bool $checkHelper(const HTMLElement* element) { ASSERT(element); return $checkHelper(*element); }
-END
-                ;
-            } else {
-                print F <<END
-inline bool $checkHelper(const HTMLElement& element) { return element.hasTagName(HTMLNames::${name}Tag); }
-inline bool $checkHelper(const HTMLElement* element) { ASSERT(element); return $checkHelper(*element); }
-END
-                ;
-            }
-
-                print F <<END
 inline bool $checkHelper(const Node& node) { return node.isHTMLElement() && $checkHelper(toHTMLElement(node)); }
-inline bool $checkHelper(const Node* node) { ASSERT(node); return $checkHelper(*node); }
-template <> inline bool isElementOfType<const $class>(const HTMLElement& element) { return $checkHelper(element); }
-template <> inline bool isElementOfType<const $class>(const Element& element) { return $checkHelper(element); }
 END
-                ;
-
+            ;
         } else {
             print F <<END
-inline bool $checkHelper(const Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }
-inline bool $checkHelper(const Element* element) { ASSERT(element); return $checkHelper(*element); }
-inline bool $checkHelper(const Node& node) { return node.isElementNode() && $checkHelper(toElement(node)); }
-inline bool $checkHelper(const Node* node) { ASSERT(node); return node->isElementNode() && $checkHelper(toElement(node)); }
-template <> inline bool isElementOfType<const $class>(const Element& element) { return $checkHelper(element); }
+inline bool $checkHelper(const $parameters{namespace}Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }
+inline bool $checkHelper(const Node& node) { return node.hasTagName($parameters{namespace}Names::${name}Tag); }
 END
             ;
         }
+        print F <<END
+inline bool $checkHelper(const $parameters{namespace}Element* element) { ASSERT(element); return $checkHelper(*element); }
+inline bool $checkHelper(const Node* node) { ASSERT(node); return $checkHelper(*node); }
+template <typename ArgType>
+struct ElementTypeCastTraits<const $class, ArgType> {
+    static bool is(ArgType& node) { return $checkHelper(node); }
+};
+END
+        ;
 
         print F "\n";
     }

@@ -1,3 +1,133 @@
+2014-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Avoid redundant isElementNode() checks in Traversal<HTML*Element> / Traversal<SVG*Element>
+        https://bugs.webkit.org/show_bug.cgi?id=136719
+
+        Reviewed by Darin Adler.
+
+        Avoid redundant isElementNode() checks in Traversal<HTML*Element> /
+        Traversal<SVG*Element>.  We used to iterate through Elements, and then
+        call isElementOfType<HTML*Element>()  on each Element. This made sense
+        because hasTagName() used to be defined on Element. However, after
+        http://trac.webkit.org/changeset/165699, hasTagName() is now defined on
+        Node for HTMLQualifiedName / SVGQualifiedName arguments.
+
+        Node::hasTagName(HTMLQualifiedName) basically does the following check
+        "isHTMLElement() &&  toHTMLElement(*this).hasTagName(tagName)". As a
+        consequence, doing an isElementNode() check is now redundant as
+        isHTMLElement() is defined on Node.
+
+        This patch adds a template parameter to isElementOfType() so that it can
+        take any type in argument (particulaly Node, Element, HTMLElement,
+        SVGElement, MathMLElement), not just an Element. I had to add an
+        ElementTypeCastTraits struct to support partial specialization as C++
+        does not support partial specialization of template functions.
+        This patch also updates Traversal<ElementType> so that the methods use
+        NodeTraversal internally instead of Traversal<ElementType>. As a result,
+        we now iterate over Nodes (not Elements) and call the new
+        isElementOfType<ElementType>(Node) helpers (which are efficient after
+        r165699).
+
+        Before the patch, the code ended up doing the following checks for
+        Traversal<HTML*element>:
+        node.isElementNode() && toElement(node).isHTMLElement()
+            && toHTMLElement(node).hasTagName(HTMLNames::fooTag)
+
+        After the patch, the code only does:
+        node.isHTMLElement()
+            && toHTMLElement(node).hasTagName(HTMLNames::fooTag)
+
+        No new tests, no behavior change.
+
+        * dom/Element.h:
+        (WebCore::Element>):
+        (WebCore::isElementOfType):
+        Add template parameter to isElementOfType() function so that it can
+        handle any argument type, not just Elements. Also introduce an
+        ElementTypeCastTraits struct that is called by isElementOfType()
+        function so that we can so partial template specialization.
+
+        * dom/ElementTraversal.h:
+        (WebCore::Traversal<ElementType>::firstWithinTemplate):
+        (WebCore::Traversal<ElementType>::lastWithinTemplate):
+        (WebCore::Traversal<ElementType>::nextTemplate):
+        (WebCore::Traversal<ElementType>::previousTemplate):
+        Use NodeTraversal API internally instead of Traversal<Element> to avoid
+        redundant isElementNode() checks.
+
+        (WebCore::Traversal<Element>::lastWithinTemplate): Deleted.
+        The code is now identical to the generic version.
+
+        (WebCore::Traversal<Element>::previousTemplate): Deleted.
+        The code is now identical to the generic version.
+
+        * dom/make_names.pl:
+        (printTypeHelpers):
+        - Generate template specializations for ElementTypeCastTraits struct
+          instead of isElementOfType(). This avoids having to provide overloads
+          for specific argument types (e.g. Node, Element, HTMLElement, ...).
+        - Share more code between HTML code path and the other path (for SVG,
+          MTHML).
+
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement>):
+        Provide HTMLElement template specialization for ElementTypeCastTraits
+        struct instead of isElementOfType().
+
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement>):
+        Provide HTMLFormControlElement template specialization for
+        ElementTypeCastTraits struct instead of isElementOfType().
+
+        * html/HTMLFrameElementBase.h:
+        (WebCore::isHTMLFrameElementBase):
+        - Remove helper taking an Element in argument as it does not bring any
+          benefit. Instead, update the overload taking a Node in argument to
+          remove the unnecessary isElementNode() check as isHTMLFrameElement(Node)
+          is now efficient.
+        - Add an overload taking an HTMLElement in argument so that we can bypass
+          the isHTMLElement() check when we know the input is an HTMLElement.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement>):
+        Provide HTMLMediaElement template specialization for ElementTypeCastTraits
+        struct instead of isElementOfType().
+
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::HTMLPlugInImageElement>):
+        Provide HTMLPlugInImageElement template specialization for
+        ElementTypeCastTraits struct instead of isElementOfType().
+
+        * html/LabelableElement.h:
+        (WebCore::LabelableElement>):
+        Provide LabelableElement template specialization for ElementTypeCastTraits
+        struct instead of isElementOfType().
+
+        * mathml/MathMLElement.h:
+        (WebCore::MathMLElement>):
+        Provide MathMLElement template specialization for ElementTypeCastTraits
+        struct for consistency with HTMLElement / SVGElement.
+
+        * svg/SVGElement.h:
+        (WebCore::SVGElement>):
+        - Provide SVGElement template specialization for ElementTypeCastTraits
+          struct instead of isElementOfType().
+        - include SVGElementTypeHelpers.h at the end of the file (similarly to
+          what is already done in HTMLElement.h because
+          isElementOfType(const SVGElement&) needs to be defiend because the
+          include.
+
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes>):
+        Provide SVGFilterPrimitiveStandardAttributes template specialization for
+        ElementTypeCastTraits struct instead of isElementOfType().
+
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement>):
+        Provide SVGSMILElement template specialization for ElementTypeCastTraits
+        struct instead of isElementOfType().
+
+
 2014-08-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Sort items by span when resolving content-based track sizing functions

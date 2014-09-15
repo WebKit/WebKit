@@ -240,7 +240,12 @@ private:
 void isSVGSMILElement(const SVGSMILElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isSVGSMILElement(const SVGElement& element) { return element.isSMILElement(); }
 inline bool isSVGSMILElement(const Node& node) { return node.isSVGElement() && toSVGElement(node).isSMILElement(); }
-template <> inline bool isElementOfType<const SVGSMILElement>(const Element& element) { return isSVGSMILElement(element); }
+
+template <typename ArgType>
+struct ElementTypeCastTraits<const SVGSMILElement, ArgType> {
+    static bool is(ArgType& node) { return isSVGSMILElement(node); }
+};
+
 
 NODE_TYPE_CASTS(SVGSMILElement)
 

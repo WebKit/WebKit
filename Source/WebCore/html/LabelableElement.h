@@ -53,7 +53,11 @@ private:
 void isLabelableElement(const LabelableElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isLabelableElement(const HTMLElement& element) { return element.isLabelable(); }
 inline bool isLabelableElement(const Node& node) { return node.isHTMLElement() && toHTMLElement(node).isLabelable(); }
-template <> inline bool isElementOfType<const LabelableElement>(const Element& element) { return isLabelableElement(element); }
+
+template <typename ArgType>
+struct ElementTypeCastTraits<const LabelableElement, ArgType> {
+    static bool is(ArgType& node) { return isLabelableElement(node); }
+};
 
 NODE_TYPE_CASTS(LabelableElement)
 
