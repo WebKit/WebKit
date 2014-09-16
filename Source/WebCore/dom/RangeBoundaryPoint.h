@@ -95,7 +95,7 @@ inline void RangeBoundaryPoint::ensureOffsetIsValid() const
         return;
 
     ASSERT(m_childBeforeBoundary);
-    m_offsetInContainer = m_childBeforeBoundary->nodeIndex() + 1;
+    m_offsetInContainer = m_childBeforeBoundary->computeNodeIndex() + 1;
 }
 
 inline const Position RangeBoundaryPoint::toPosition() const

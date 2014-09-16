@@ -997,7 +997,7 @@ void updatePositionForNodeRemoval(Position& position, Node* node)
             position = positionInParentBeforeNode(node);
         break;
     case Position::PositionIsOffsetInAnchor:
-        if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->nodeIndex())
+        if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->computeNodeIndex())
             position.moveToOffset(position.offsetInContainerNode() - 1);
         else if (node->containsIncludingShadowDOM(position.containerNode()))
             position = positionInParentBeforeNode(node);

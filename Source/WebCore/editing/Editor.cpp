@@ -163,12 +163,12 @@ PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Rang
     if (startContainer == element || startContainer->isDescendantOf(element)) {
         ASSERT(element->parentNode());
         startContainer = element->parentNode();
-        startOffset = element->nodeIndex();
+        startOffset = element->computeNodeIndex();
     }
     if (endContainer == element || endContainer->isDescendantOf(element)) {
         ASSERT(element->parentNode());
         endContainer = element->parentNode();
-        endOffset = element->nodeIndex();
+        endOffset = element->computeNodeIndex();
     }
 
     return Range::create(range->ownerDocument(), startContainer, startOffset, endContainer, endOffset);

@@ -424,7 +424,7 @@ static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& 
         offsetInContainer = offset;
     } else {
         containerNode = node->parentNode();
-        offsetInContainer = node->nodeIndex() + offset;
+        offsetInContainer = node->computeNodeIndex() + offset;
     }
 }
 

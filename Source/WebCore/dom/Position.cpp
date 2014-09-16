@@ -196,9 +196,9 @@ int Position::computeOffsetInContainerNode() const
     case PositionIsOffsetInAnchor:
         return minOffsetForNode(m_anchorNode.get(), m_offset);
     case PositionIsBeforeAnchor:
-        return m_anchorNode->nodeIndex();
+        return m_anchorNode->computeNodeIndex();
     case PositionIsAfterAnchor:
-        return m_anchorNode->nodeIndex() + 1;
+        return m_anchorNode->computeNodeIndex() + 1;
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -330,7 +330,7 @@ Position Position::previous(PositionMoveType moveType) const
     if (!parent)
         return *this;
 
-    return createLegacyEditingPosition(parent, n->nodeIndex());
+    return createLegacyEditingPosition(parent, n->computeNodeIndex());
 }
 
 Position Position::next(PositionMoveType moveType) const
@@ -362,7 +362,7 @@ Position Position::next(PositionMoveType moveType) const
     if (!parent)
         return *this;
 
-    return createLegacyEditingPosition(parent, n->nodeIndex() + 1);
+    return createLegacyEditingPosition(parent, n->computeNodeIndex() + 1);
 }
 
 int Position::uncheckedPreviousOffset(const Node* n, int current)
@@ -614,7 +614,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             lastVisible = currentPos;
         
         // Don't move past a position that is visually distinct.  We could rely on code above to terminate and 
-        // return lastVisible on the next iteration, but we terminate early to avoid doing a nodeIndex() call.
+        // return lastVisible on the next iteration, but we terminate early to avoid doing a computeNodeIndex() call.
         if (endsOfNodeAreVisuallyDistinctPositions(currentNode) && currentPos.atStartOfNode())
             return lastVisible;
 
@@ -732,7 +732,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
             return lastVisible;
         // Do not move past a visually disinct position.
         // Note: The first position after the last in a node whose ends are visually distinct
-        // positions will be [boundary->parentNode(), originalBlock->nodeIndex() + 1].
+        // positions will be [boundary->parentNode(), originalBlock->computeNodeIndex() + 1].
         if (boundary && boundary->parentNode() == currentNode)
             return lastVisible;
 

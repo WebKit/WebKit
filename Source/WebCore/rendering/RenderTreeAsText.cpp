@@ -828,7 +828,7 @@ static String nodePosition(Node* node)
                 result.append('}');
             } else {
                 result.appendLiteral("child ");
-                result.appendNumber(n->nodeIndex());
+                result.appendNumber(n->computeNodeIndex());
                 result.appendLiteral(" {");
                 result.append(getTagName(n));
                 result.append('}');

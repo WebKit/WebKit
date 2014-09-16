@@ -1095,7 +1095,7 @@ PassRefPtr<Range> TextIterator::range() const
 
     // use the current run information, if we have it
     if (m_positionOffsetBaseNode) {
-        int index = m_positionOffsetBaseNode->nodeIndex();
+        unsigned index = m_positionOffsetBaseNode->computeNodeIndex();
         m_positionStartOffset += index;
         m_positionEndOffset += index;
         m_positionOffsetBaseNode = nullptr;
@@ -1327,7 +1327,7 @@ RenderText* SimplifiedBackwardsTextIterator::handleFirstLetter(int& startOffset,
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()
 {
-    unsigned index = m_node->nodeIndex();
+    unsigned index = m_node->computeNodeIndex();
     // We want replaced elements to behave like punctuation for boundary 
     // finding, and to simply take up space for the selection preservation 
     // code in moveParagraphs, so we use a comma. Unconditionally emit
@@ -1341,7 +1341,7 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
     // We can use a linefeed in place of a tab because this simple iterator is only used to
     // find boundaries, not actual content. A linefeed breaks words, sentences, and paragraphs.
     if (shouldEmitNewlineForNode(m_node, m_behavior & TextIteratorEmitsOriginalText) || shouldEmitNewlineAfterNode(*m_node) || shouldEmitTabBeforeNode(*m_node)) {
-        unsigned index = m_node->nodeIndex();
+        unsigned index = m_node->computeNodeIndex();
         // The start of this emitted range is wrong. Ensuring correctness would require
         // VisiblePositions and so would be slow. previousBoundary expects this.
         emitCharacter('\n', *m_node->parentNode(), index + 1, index + 1);

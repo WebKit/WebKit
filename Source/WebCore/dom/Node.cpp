@@ -691,12 +691,11 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
         markAncestorsWithChildNeedsStyleRecalc(*this);
 }
 
-unsigned Node::nodeIndex() const
+unsigned Node::computeNodeIndex() const
 {
-    Node *_tempNode = previousSibling();
-    unsigned count=0;
-    for ( count=0; _tempNode; count++ )
-        _tempNode = _tempNode->previousSibling();
+    unsigned count = 0;
+    for (Node* sibling = previousSibling(); sibling; sibling = sibling->previousSibling())
+        ++count;
     return count;
 }
 

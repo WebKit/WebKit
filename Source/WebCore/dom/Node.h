@@ -383,7 +383,7 @@ public:
     WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
 
-    WEBCORE_EXPORT unsigned nodeIndex() const;
+    WEBCORE_EXPORT unsigned computeNodeIndex() const;
 
     // Returns the DOM ownerDocument attribute. This method never returns null, except in the case
     // of a Document node.

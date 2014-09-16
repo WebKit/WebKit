@@ -1,3 +1,79 @@
+2014-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Rename Node::nodeIndex() to computeNodeIndex() for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=136826
+
+        Reviewed by Benjamin Poulain.
+
+        Rename Node::nodeIndex() to computeNodeIndex() to make it clear that
+        index is being computed and that calling this method is potentially
+        expensive.
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        Rename exported symbol for Node::nodeIndex() as well.
+
+        * dom/Document.cpp:
+        (WebCore::Document::caretRangeFromPoint):
+        * dom/Node.cpp:
+        (WebCore::Node::computeNodeIndex):
+        (WebCore::Node::nodeIndex): Deleted.
+        * dom/Node.h:
+        * dom/NodeWithIndex.h:
+        (WebCore::NodeWithIndex::index):
+        Clean up implementation to reduce the scope of the Node variable and
+        to follow coding style (variable naming, spacing, star placement).
+
+        * dom/Position.cpp:
+        (WebCore::Position::computeOffsetInContainerNode):
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        * dom/Position.h:
+        (WebCore::positionInParentBeforeNode):
+        (WebCore::positionInParentAfterNode):
+        * dom/Range.cpp:
+        (WebCore::Range::compareNode):
+        (WebCore::Range::intersectsNode):
+        (WebCore::Range::processContents):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::setStartAfter):
+        (WebCore::Range::setEndBefore):
+        (WebCore::Range::setEndAfter):
+        (WebCore::Range::setStartBefore):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::ensureOffsetIsValid):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/Editor.cpp:
+        (WebCore::Editor::avoidIntersectionWithDeleteButtonController):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::range):
+        (WebCore::SimplifiedBackwardsTextIterator::handleReplacedElement):
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        * editing/htmlediting.cpp:
+        (WebCore::updatePositionForNodeRemoval):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::setContainerAndOffsetForRange):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::getRangeAt):
+        (WebCore::DOMSelection::containsNode):
+        (WebCore::DOMSelection::shadowAdjustedOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::nodePosition):
+
 2014-09-16  Jer Noble  <jer.noble@apple.com>
 
         Videos with controls enabled never receive 'dragstart' events.

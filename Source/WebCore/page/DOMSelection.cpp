@@ -364,7 +364,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
 
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame)) {
         ContainerNode* container = shadowAncestor->parentNodeGuaranteedHostFree();
-        int offset = shadowAncestor->nodeIndex();
+        unsigned offset = shadowAncestor->computeNodeIndex();
         return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }
 
@@ -457,7 +457,7 @@ bool DOMSelection::containsNode(Node* n, bool allowPartial) const
     ContainerNode* parentNode = node->parentNode();
     if (!parentNode || !parentNode->inDocument())
         return false;
-    unsigned nodeIndex = node->nodeIndex();
+    unsigned nodeIndex = node->computeNodeIndex();
 
     ExceptionCode ec = 0;
     bool nodeFullySelected = Range::compareBoundaryPoints(parentNode, nodeIndex, selectedRange->startContainer(), selectedRange->startOffset(), ec) >= 0 && !ec
@@ -523,7 +523,7 @@ int DOMSelection::shadowAdjustedOffset(const Position& position) const
     if (containerNode == adjustedNode)
         return position.computeOffsetInContainerNode();
 
-    return adjustedNode->nodeIndex();
+    return adjustedNode->computeNodeIndex();
 }
 
 bool DOMSelection::isValidForPosition(Node* node) const

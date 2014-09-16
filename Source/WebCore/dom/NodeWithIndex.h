@@ -46,10 +46,10 @@ public:
     int index() const
     {
         if (!m_haveIndex) {
-            m_index = m_node->nodeIndex();
+            m_index = m_node->computeNodeIndex();
             m_haveIndex = true;
         }
-        ASSERT(m_index == static_cast<int>(m_node->nodeIndex()));
+        ASSERT(m_index == static_cast<int>(m_node->computeNodeIndex()));
         return m_index;
     }
 

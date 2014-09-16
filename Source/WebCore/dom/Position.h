@@ -95,7 +95,7 @@ public:
     void clear() { m_anchorNode.clear(); m_offset = 0; m_anchorType = PositionIsOffsetInAnchor; m_isLegacyEditingPosition = false; }
 
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
-    // will return img->parentNode() and img->nodeIndex() from these functions.
+    // will return img->parentNode() and img->computeNodeIndex() from these functions.
     WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
     Text* containerText() const;
 
@@ -273,13 +273,13 @@ inline bool operator<=(const Position& a, const Position& b)
 inline Position positionInParentBeforeNode(const Node* node)
 {
     ASSERT(node->parentNode());
-    return Position(node->parentNode(), node->nodeIndex(), Position::PositionIsOffsetInAnchor);
+    return Position(node->parentNode(), node->computeNodeIndex(), Position::PositionIsOffsetInAnchor);
 }
 
 inline Position positionInParentAfterNode(const Node* node)
 {
     ASSERT(node->parentNode());
-    return Position(node->parentNode(), node->nodeIndex() + 1, Position::PositionIsOffsetInAnchor);
+    return Position(node->parentNode(), node->computeNodeIndex() + 1, Position::PositionIsOffsetInAnchor);
 }
 
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)
