@@ -1,3 +1,56 @@
+2014-09-15  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add WaylandDisplay
+        https://bugs.webkit.org/show_bug.cgi?id=136216
+
+        Reviewed by Martin Robinson.
+
+        Add the WaylandDisplay class. This class is used in the LayerTreeHostGtk,
+        in the WebProcess, and controls the connection to the nested Wayland
+        compositor in the UIProcess. Only one instance of the class is used in the
+        WebProcess, accessible via the static WaylandDisplay::instance() method.
+
+        The WaylandDisplay constructor performs the EGL initialization while also
+        querying the Wayland register, resulting in initializing client-side objects
+        that can interact with the wl_compositor and wl_webkitgtk interfaces
+        implemented in the nested Wayland compositor. The single class instance is
+        only deemed properly initialized if it picked up the Wayland interface objects
+        and has properly acquired the EGL display and config.
+
+        WaylandDisplay::createSurface() is called by the LayerTreeHostGtk during
+        its own initialization. The method creates a new wl_surface object via the
+        wl_compositor interface and a new wl_egl_window object that's based on that
+        surface. For the wl_egl_window object, we fall back to a width or height of 1
+        in case the passed-in value for either is 0. This avoids problems in Mesa
+        where widths or heights of 0 are not supported.
+
+        We associate the created surface with the passed-in widget ID, as provided
+        by LayerTreeHostGtk, via the wl_webkitgtk interface. This enables proper
+        mapping of Wayland surfaces and the GtkWidgets in the UIProcess and makes
+        it possible for the nested Wayland compositor to correctly determine which
+        GtkWidget has to be redrawn after some surface has been committed.
+
+        WaylandDisplay::createSharingGLContext() creates a new GLContextEGL object
+        that's to be used as a sharing context. The method creates a new surface
+        via the wl_compositor interface and uses it to create a dummy native EGL
+        window that's 1x1px in size. The GLContextEGL object is then created
+        through the static GLContextEGL::createWindowContext() method.
+
+        * PlatformGTK.cmake:
+        * platform/graphics/wayland/WaylandDisplay.cpp: Added.
+        (WebCore::WaylandDisplay::globalCallback):
+        (WebCore::WaylandDisplay::globalRemoveCallback):
+        (WebCore::WaylandDisplay::instance):
+        (WebCore::WaylandDisplay::WaylandDisplay):
+        (WebCore::WaylandDisplay::createSurface):
+        (WebCore::WaylandDisplay::createSharingGLContext):
+        * platform/graphics/wayland/WaylandDisplay.h: Added.
+        (WebCore::WaylandDisplay::nativeDisplay):
+        (WebCore::WaylandDisplay::eglDisplay):
+        * platform/graphics/wayland/WaylandSurface.cpp:
+        (WebCore::WaylandSurface::~WaylandSurface): Assert that the WaylandDisplay
+        instance is present before going on to destroy the surface resources.
+
 2014-09-15  Chris Dumez  <cdumez@apple.com>
 
         Rename LiveNodeLists / HTMLCollections's nodeMatches() to elementMatches()

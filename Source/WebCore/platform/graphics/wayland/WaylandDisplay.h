@@ -23,60 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WaylandSurface.h"
+#ifndef  WaylandDisplay_h
+#define  WaylandDisplay_h
 
 #if PLATFORM(WAYLAND)
 
-#include "GLContextEGL.h"
-#include "IntSize.h"
-#include "WaylandDisplay.h"
+#include "WebKitGtkWaylandClientProtocol.h"
+#include <memory>
+#include <wayland-client.h>
+#include <wtf/PassOwnPtr.h>
+
+#include <wayland-egl.h>
 #include <EGL/egl.h>
 
 namespace WebCore {
 
-void frameCallback(void*, struct wl_callback* callback, uint32_t)
-{
-    if (callback)
-        wl_callback_destroy(callback);
-}
+class GLContextEGL;
+class IntSize;
+class WaylandSurface;
 
-static const struct wl_callback_listener frameListener = {
-    frameCallback
+class WaylandDisplay {
+public:
+    static WaylandDisplay* instance();
+
+    struct wl_display* nativeDisplay() const { return m_display; }
+    EGLDisplay eglDisplay() const { return m_eglDisplay; }
+
+    std::unique_ptr<WaylandSurface> createSurface(const IntSize&, int widgetID);
+
+    PassOwnPtr<GLContextEGL> createSharingGLContext();
+
+private:
+    static const struct wl_registry_listener m_registryListener;
+    static void globalCallback(void* data, struct wl_registry*, uint32_t name, const char* interface, uint32_t version);
+    static void globalRemoveCallback(void* data, struct wl_registry*, uint32_t name);
+
+    WaylandDisplay(struct wl_display*);
+    bool isInitialized() { return m_compositor && m_webkitgtk && m_eglDisplay != EGL_NO_DISPLAY && m_eglConfigChosen; }
+
+    struct wl_display* m_display;
+    struct wl_registry* m_registry;
+    struct wl_compositor* m_compositor;
+    struct wl_webkitgtk* m_webkitgtk;
+
+    EGLDisplay m_eglDisplay;
+    EGLConfig m_eglConfig;
+    bool m_eglConfigChosen;
 };
-
-WaylandSurface::WaylandSurface(struct wl_surface* wlSurface, EGLNativeWindowType nativeWindow)
-    : m_wlSurface(wlSurface)
-    , m_nativeWindow(nativeWindow)
-{
-}
-
-WaylandSurface::~WaylandSurface()
-{
-    // The surface couldn't have been created in the first place if WaylandDisplay wasn't properly initialized.
-    ASSERT(WaylandDisplay::instance());
-    eglMakeCurrent(WaylandDisplay::instance()->eglDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-
-    wl_egl_window_destroy(m_nativeWindow);
-    wl_surface_destroy(m_wlSurface);
-}
-
-void WaylandSurface::resize(const IntSize& size)
-{
-    wl_egl_window_resize(m_nativeWindow, size.width(), size.height(), 0, 0);
-}
-
-PassOwnPtr<GLContextEGL> WaylandSurface::createGLContext()
-{
-    return GLContextEGL::createWindowContext(m_nativeWindow, GLContext::sharingContext());
-}
-
-void WaylandSurface::requestFrame()
-{
-    struct wl_callback* frameCallback = wl_surface_frame(m_wlSurface);
-    wl_callback_add_listener(frameCallback, &frameListener, this);
-}
 
 } // namespace WebCore
 
 #endif // PLATFORM(WAYLAND)
+
+#endif // WaylandDisplay_h
