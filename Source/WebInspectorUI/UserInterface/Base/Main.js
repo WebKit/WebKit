@@ -1281,25 +1281,40 @@ WebInspector._dockedResizerMouseDown = function(event)
         return;
 
     var windowProperty = this._dockSide === "bottom" ? "innerHeight" : "innerWidth";
-    var eventProperty = this._dockSide === "bottom" ? "screenY" : "screenX";
+    var eventScreenProperty = this._dockSide === "bottom" ? "screenY" : "screenX";
+    var eventClientProperty = this._dockSide === "bottom" ? "clientY" : "clientX";
 
     var resizerElement = event.target;
-    var lastScreenPosition = event[eventProperty];
+    var firstClientPosition = event[eventClientProperty];
+    var lastScreenPosition = event[eventScreenProperty];
 
     function dockedResizerDrag(event)
     {
         if (event.button !== 0)
             return;
 
-        var position = event[eventProperty];
-        var dimension = window[windowProperty] - (position - lastScreenPosition);
+        var position = event[eventScreenProperty];
+        var delta = position - lastScreenPosition;
+        var clientPosition = event[eventClientProperty];
+
+        lastScreenPosition = position;
+
+        // If delta is positive the docked Inspector size is decreasing, in which case the cursor client position
+        // with respect to the target cannot be less than the first mouse down position within the target.
+        if (delta > 0 && clientPosition < firstClientPosition)
+            return;
+
+        // If delta is negative the docked Inspector size is increasing, in which case the cursor client position
+        // with respect to the target cannot be greater than the first mouse down position within the target.
+        if (delta < 0 && clientPosition > firstClientPosition)
+            return;
+
+        var dimension = Math.max(0, window[windowProperty] - delta);
 
         if (this._dockSide === "bottom")
             InspectorFrontendHost.setAttachedWindowHeight(dimension);
         else
             InspectorFrontendHost.setAttachedWindowWidth(dimension);
-
-        lastScreenPosition = position;
     }
 
     function dockedResizerDragEnd(event)

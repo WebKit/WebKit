@@ -1,3 +1,17 @@
+2014-09-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: mouse drifts away from resizer when resizing docked inspector
+        https://bugs.webkit.org/show_bug.cgi?id=22263
+
+        Reviewed by Joseph Pecoraro.
+
+        Modified the docked resizer dragging logic to record the initial mouse down position relative to the
+        resizer client rectangle. Added check while dragging the resizer to ensure that the cursor is positioned
+        correctly with respect to the resize direction before updating the attached window dimension.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._dockedResizerMouseDown.dockedResizerDrag):
+
 2014-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix assert in QuickConsole - main frame execution context path component
