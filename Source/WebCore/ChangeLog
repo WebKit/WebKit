@@ -1,3 +1,15 @@
+2014-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r173659.
+
+        After r173659 convertToIntLength() is used only inside ENABLE(DASHBOARD_SUPPORT), so it
+        became unused function and caused build failure if ENABLE(DASHBOARD_SUPPORT) is false.
+
+        Source/WebCore/css/StyleResolver.cpp:1471:15: error: 'WebCore::Length WebCore::convertToIntLength(const WebCore::CSSPrimitiveValue*, const WebCore::CSSToLengthConversionData&)'
+        defined but not used [-Werror=unused-function] cc1plus: all warnings being treated as errors
+
+        * css/StyleResolver.cpp: Missing ENABLE(DASHBOARD_SUPPORT) guard added.
+
 2014-09-14  Darin Adler  <darin@apple.com>
 
         Scroll snap properties don't handle inherit and initial propertly.
