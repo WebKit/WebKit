@@ -1,5 +1,18 @@
 2014-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add Versioned Inspector protocol JSON files for iOS 8.0
+        https://bugs.webkit.org/show_bug.cgi?id=136873
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/update-LegacyInspectorBackendCommands.rb:
+        * UserInterface/Protocol/Legacy/8.0/InspectorJSBackendCommands.js: Added.
+        * UserInterface/Protocol/Legacy/8.0/InspectorWebBackendCommands.js: Added.
+        * Versions/InspectorJS-iOS-8.0.json: Added.
+        * Versions/InspectorWeb-iOS-8.0.json: Added.
+
+2014-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix ESLint no-extra-bind warnings
         https://bugs.webkit.org/show_bug.cgi?id=136659
 

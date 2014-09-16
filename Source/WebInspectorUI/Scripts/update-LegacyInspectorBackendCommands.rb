@@ -57,12 +57,22 @@ def all_tasks
 
   had_error = false
   Dir.glob(File.join($versions_directory_path, "*.json")).each do |version_path|
-    match = File.basename(version_path).match(/^Inspector(.*?)\-([^-]+?)\.json$/)
+    match = File.basename(version_path).match(/^Inspector(.*?)\-(.*?)\-([^-]+?)\.json$/)
     if match
-      output_path = File.join $web_inspector_protocol_legacy_path, match[2]
-      tasks << Task.new(version_path, nil, "Web", output_path)
+      output_path = File.join $web_inspector_protocol_legacy_path, match[3]
+      type = "Web"
+      dependency_path = nil
+      if !match[1].empty?
+        if match[1] == "JS"
+          type = "JavaScript"
+        else
+          dependency_filename = version_path.sub(/InspectorWeb/, "InspectorJS")
+          dependency_path = File.join($versions_directory_path, dependency_filename)
+        end
+      end
+      tasks << Task.new(version_path, dependency_filename, type, output_path)
     else
-      puts "ERROR: Version file (#{version_path}) did not match the template Inspector<ANYTHING>-<VERSION>.js"
+      puts "ERROR: Version file (#{version_path}) did not match the template Inspector(Web|JS)?-<ANYTHING>-<VERSION>.js"
       had_error = true
     end
   end
