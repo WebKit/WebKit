@@ -40,6 +40,10 @@
 #import "WKDOMDocument.h"
 #import "WKDOMText.h"
 
+#if PLATFORM(IOS)
+#import <WebCore/WAKAppKitStubs.h>
+#endif
+
 namespace WebKit {
 
 template<typename WebCoreType, typename WKDOMType>

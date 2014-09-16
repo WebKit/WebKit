@@ -34,6 +34,10 @@
 #import <wtf/Vector.h>
 #import <wtf/text/StringView.h>
 
+#if PLATFORM(IOS)
+#import <WebCore/WAKAppKitStubs.h>
+#endif
+
 @class WebView;
 @class WebEditorUndoTarget;
 
@@ -175,6 +179,32 @@ private:
     bool m_hasDelayedContentChangeNotification;
 #endif
 };
+
+#if PLATFORM(COCOA)
+inline NSSelectionAffinity kit(WebCore::EAffinity affinity)
+{
+    switch (affinity) {
+        case WebCore::EAffinity::UPSTREAM:
+            return NSSelectionAffinityUpstream;
+        case WebCore::EAffinity::DOWNSTREAM:
+            return NSSelectionAffinityDownstream;
+    }
+    ASSERT_NOT_REACHED();
+    return NSSelectionAffinityUpstream;
+}
+
+inline WebCore::EAffinity core(NSSelectionAffinity affinity)
+{
+    switch (affinity) {
+    case NSSelectionAffinityUpstream:
+        return WebCore::EAffinity::UPSTREAM;
+    case NSSelectionAffinityDownstream:
+        return WebCore::EAffinity::DOWNSTREAM;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::EAffinity::UPSTREAM;
+}
+#endif
 
 #if PLATFORM(IOS)
 

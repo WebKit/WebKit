@@ -1,3 +1,20 @@
+2014-09-16  Enrica Casucci  <enrica@apple.com>
+
+        Remove PLATFORM(IOS) from WebCore/editing (Part 3).
+        https://bugs.webkit.org/show_bug.cgi?id=136474
+
+        Reviewed by Benjamin Poulain.
+
+        This is the updated version of the patch that was landed in r173340.
+        This patch removes the use of PLATFORM(IOS) from TextAffinity.h
+        and removes the assumption that EAffinity values match NSSelectionAffinity
+        values. It also removes the includes in TextAffinity.h, creating the need to
+        include explicitly the files when necessary.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (kit):
+        (core):
+
 2014-09-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] Attempt to fix the iOS build after <http://trac.webkit.org/changeset/173606>

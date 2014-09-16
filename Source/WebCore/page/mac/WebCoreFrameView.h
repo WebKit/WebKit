@@ -25,6 +25,12 @@
 
 #include "ScrollTypes.h"
 
+#ifdef __cplusplus
+#if PLATFORM(IOS)
+#include "WAKAppKitStubs.h"
+#endif
+#endif
+
 // WTF_PLATFORM_IOS
 #ifdef __cplusplus
 namespace WebCore {
