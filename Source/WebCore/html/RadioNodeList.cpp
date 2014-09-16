@@ -99,7 +99,7 @@ bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement)
     return testElement->getIdAttribute() == m_name || testElement->getNameAttribute() == m_name;
 }
 
-bool RadioNodeList::nodeMatches(Element* testElement) const
+bool RadioNodeList::elementMatches(Element* testElement) const
 {
     if (!testElement->hasTagName(objectTag) && !testElement->isFormControlElement())
         return false;

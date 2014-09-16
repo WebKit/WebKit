@@ -46,7 +46,7 @@ public:
 
     virtual ~TagNodeList();
 
-    virtual bool nodeMatches(Element*) const override;
+    virtual bool elementMatches(Element*) const override;
     virtual bool isRootedAtDocument() const override { return false; }
 
 protected:
@@ -56,7 +56,7 @@ protected:
     AtomicString m_localName;
 };
 
-inline bool TagNodeList::nodeMatches(Element* element) const
+inline bool TagNodeList::elementMatches(Element* element) const
 {
     // Implements http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-getelementsbytagnamens
     if (m_localName != starAtom && m_localName != element->localName())
@@ -74,7 +74,7 @@ public:
 
     virtual ~HTMLTagNodeList();
 
-    virtual bool nodeMatches(Element*) const override;
+    virtual bool elementMatches(Element*) const override;
     virtual bool isRootedAtDocument() const override { return false; }
 
 private:
@@ -84,7 +84,7 @@ private:
     AtomicString m_loweredLocalName;
 };
 
-inline bool HTMLTagNodeList::nodeMatches(Element* element) const
+inline bool HTMLTagNodeList::elementMatches(Element* element) const
 {
     // Implements http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-getelementsbytagname
     if (m_localName == starAtom)

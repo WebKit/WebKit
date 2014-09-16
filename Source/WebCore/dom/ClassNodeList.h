@@ -43,7 +43,7 @@ public:
 
     virtual ~ClassNodeList();
 
-    virtual bool nodeMatches(Element*) const override;
+    virtual bool elementMatches(Element*) const override;
     virtual bool isRootedAtDocument() const override { return false; }
 
 private:
@@ -60,7 +60,7 @@ inline ClassNodeList::ClassNodeList(ContainerNode& rootNode, const AtomicString&
 {
 }
 
-inline bool ClassNodeList::nodeMatches(Element* element) const
+inline bool ClassNodeList::elementMatches(Element* element) const
 {
     if (!element->hasClass())
         return false;

@@ -1,5 +1,64 @@
 2014-09-15  Chris Dumez  <cdumez@apple.com>
 
+        Rename LiveNodeLists / HTMLCollections's nodeMatches() to elementMatches()
+        https://bugs.webkit.org/show_bug.cgi?id=136844
+
+        Reviewed by Sam Weinig.
+
+        Rename LiveNodeLists / HTMLCollections's nodeMatches() to elementMatches()
+        for clarity as the argument is an Element.
+
+        No new tests, no behavior change.
+
+        * dom/ClassNodeList.h:
+        (WebCore::ClassNodeList::elementMatches):
+        (WebCore::ClassNodeList::nodeMatches): Deleted.
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesWindowNamedItem):
+        (WebCore::keyMatchesDocumentNamedItem):
+        * dom/Element.cpp:
+        (WebCore::Element::updateNameForDocument):
+        (WebCore::Element::updateIdForDocument):
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::namedItem):
+        * dom/LiveNodeList.h:
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionBegin):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionLast):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionTraverseForward):
+        (WebCore::CachedLiveNodeList<NodeListType>::collectionTraverseBackward):
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::elementMatches):
+        (WebCore::NameNodeList::nodeMatches): Deleted.
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::elementMatches):
+        (WebCore::HTMLTagNodeList::elementMatches):
+        (WebCore::TagNodeList::nodeMatches): Deleted.
+        (WebCore::HTMLTagNodeList::nodeMatches): Deleted.
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingElement):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::WindowNameCollection::elementMatchesIfNameAttributeMatch):
+        (WebCore::WindowNameCollection::elementMatches):
+        (WebCore::DocumentNameCollection::elementMatchesIfIdAttributeMatch):
+        (WebCore::DocumentNameCollection::elementMatchesIfNameAttributeMatch):
+        (WebCore::DocumentNameCollection::elementMatches):
+        (WebCore::WindowNameCollection::nodeMatchesIfNameAttributeMatch): Deleted.
+        (WebCore::WindowNameCollection::nodeMatches): Deleted.
+        (WebCore::DocumentNameCollection::nodeMatchesIfIdAttributeMatch): Deleted.
+        (WebCore::DocumentNameCollection::nodeMatchesIfNameAttributeMatch): Deleted.
+        (WebCore::DocumentNameCollection::nodeMatches): Deleted.
+        * html/HTMLNameCollection.h:
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::elementMatches):
+        (WebCore::LabelsNodeList::nodeMatches): Deleted.
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::elementMatches):
+        (WebCore::RadioNodeList::nodeMatches): Deleted.
+        * html/RadioNodeList.h:
+
+2014-09-15  Chris Dumez  <cdumez@apple.com>
+
         Use an AtomicString as key for caching ClassNodeList objects
         https://bugs.webkit.org/show_bug.cgi?id=136830
 

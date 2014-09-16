@@ -43,7 +43,7 @@ LabelsNodeList::~LabelsNodeList()
     ownerNode().nodeLists()->removeCacheWithAtomicName(this, starAtom);
 } 
     
-bool LabelsNodeList::nodeMatches(Element* testNode) const
+bool LabelsNodeList::elementMatches(Element* testNode) const
 {
     return isHTMLLabelElement(testNode) && toHTMLLabelElement(testNode)->control() == &ownerNode();
 }

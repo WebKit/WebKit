@@ -40,7 +40,7 @@ public:
 
     virtual ~NameNodeList();
 
-    virtual bool nodeMatches(Element*) const override;
+    virtual bool elementMatches(Element*) const override;
     virtual bool isRootedAtDocument() const override { return false; }
 
 private:
@@ -49,7 +49,7 @@ private:
     AtomicString m_name;
 };
 
-inline bool NameNodeList::nodeMatches(Element* element) const
+inline bool NameNodeList::elementMatches(Element* element) const
 {
     return element->getNameAttribute() == m_name;
 }

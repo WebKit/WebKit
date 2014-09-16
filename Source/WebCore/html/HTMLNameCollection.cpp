@@ -49,35 +49,35 @@ HTMLNameCollection::~HTMLNameCollection()
     document().nodeLists()->removeCachedCollection(this, m_name);
 }
 
-bool WindowNameCollection::nodeMatchesIfNameAttributeMatch(Element* element)
+bool WindowNameCollection::elementMatchesIfNameAttributeMatch(Element* element)
 {
     return isHTMLImageElement(element) || isHTMLFormElement(element) || element->hasTagName(appletTag)
         || element->hasTagName(embedTag) || element->hasTagName(objectTag);
 }
 
-bool WindowNameCollection::nodeMatches(Element* element, const AtomicStringImpl* name)
+bool WindowNameCollection::elementMatches(Element* element, const AtomicStringImpl* name)
 {
     // Find only images, forms, applets, embeds and objects by name, but anything by id
-    if (nodeMatchesIfNameAttributeMatch(element) && element->getNameAttribute().impl() == name)
+    if (elementMatchesIfNameAttributeMatch(element) && element->getNameAttribute().impl() == name)
         return true;
     return element->getIdAttribute().impl() == name;
 }
 
-bool DocumentNameCollection::nodeMatchesIfIdAttributeMatch(Element* element)
+bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(Element* element)
 {
     // FIXME: we need to fix HTMLImageElement to update the hash map for us when name attribute has been removed.
     return element->hasTagName(appletTag) || (element->hasTagName(objectTag) && toHTMLObjectElement(element)->isDocNamedItem())
         || (isHTMLImageElement(element) && element->hasName());
 }
 
-bool DocumentNameCollection::nodeMatchesIfNameAttributeMatch(Element* element)
+bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(Element* element)
 {
     return isHTMLFormElement(element) || element->hasTagName(embedTag) || element->hasTagName(iframeTag)
         || element->hasTagName(appletTag) || (element->hasTagName(objectTag) && toHTMLObjectElement(element)->isDocNamedItem())
         || isHTMLImageElement(element);
 }
 
-bool DocumentNameCollection::nodeMatches(Element* element, const AtomicStringImpl* name)
+bool DocumentNameCollection::elementMatches(Element* element, const AtomicStringImpl* name)
 {
     // Find images, forms, applets, embeds, objects and iframes by name, applets and object by id, and images by id
     // but only if they have a name attribute (this very strange rule matches IE)
