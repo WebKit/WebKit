@@ -38,8 +38,10 @@ RESET_AFTER_ITERATION=$3
 shift 3
 QUEUE_PARAMS="$@"
 
-while :
-do
+# We reboot every night between 1 and 6 to reduce the likelihood of unexpected reboots while people are looking into things.
+TIME_TO_REBOOT=$(( $(date +%s) + 3600 * 12))
+
+while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +%H) -ge 6 ]; do
     # Delete log files older than 14 days, move aside the main mac-ews.log file to prevent it from growing extra large.
     cd /Volumes/Data/EWS/$QUEUE_NAME-logs
     find . -mtime +14 -delete
@@ -71,4 +73,7 @@ do
     # We use --exit-after-iteration to pick up any changes to webkit-patch, including
     # changes to the contributors.json file.
     ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration $RESET_AFTER_ITERATION $QUEUE_PARAMS
+
 done
+
+osascript -e 'tell app "System Events" to restart'
