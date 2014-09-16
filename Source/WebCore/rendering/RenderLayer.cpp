@@ -3255,6 +3255,20 @@ bool RenderLayer::hasVerticalOverflow() const
     return scrollHeight() > renderBox()->pixelSnappedClientHeight();
 }
 
+static bool styleRequiresScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
+{
+    EOverflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
+    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme()->usesOverlayScrollbars();
+    return overflow == OSCROLL && !overflowScrollActsLikeAuto;
+}
+
+static bool styleDefinesAutomaticScrollbar(const RenderStyle& style, ScrollbarOrientation axis)
+{
+    EOverflow overflow = axis == ScrollbarOrientation::HorizontalScrollbar ? style.overflowX() : style.overflowY();
+    bool overflowScrollActsLikeAuto = overflow == OSCROLL && !style.hasPseudoStyle(SCROLLBAR) && ScrollbarTheme::theme()->usesOverlayScrollbars();
+    return overflow == OAUTO || overflow == OOVERLAY || overflowScrollActsLikeAuto;
+}
+
 void RenderLayer::updateScrollbarsAfterLayout()
 {
     RenderBox* box = renderBox();
@@ -3267,20 +3281,20 @@ void RenderLayer::updateScrollbarsAfterLayout()
     bool hasHorizontalOverflow = this->hasHorizontalOverflow();
     bool hasVerticalOverflow = this->hasVerticalOverflow();
 
-    // overflow:scroll should just enable/disable.
-    if (renderer().style().overflowX() == OSCROLL)
+    // If overflow requires a scrollbar, then we just need to enable or disable.
+    if (styleRequiresScrollbar(renderer().style(), HorizontalScrollbar))
         m_hBar->setEnabled(hasHorizontalOverflow);
-    if (renderer().style().overflowY() == OSCROLL)
+    if (styleRequiresScrollbar(renderer().style(), VerticalScrollbar))
         m_vBar->setEnabled(hasVerticalOverflow);
 
-    // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool autoHorizontalScrollBarChanged = box->hasAutoHorizontalScrollbar() && (hasHorizontalScrollbar() != hasHorizontalOverflow);
-    bool autoVerticalScrollBarChanged = box->hasAutoVerticalScrollbar() && (hasVerticalScrollbar() != hasVerticalOverflow);
+    // Scrollbars with auto behavior may need to lay out again if scrollbars got added or removed.
+    bool autoHorizontalScrollBarChanged = box->hasHorizontalScrollbarWithAutoBehavior() && (hasHorizontalScrollbar() != hasHorizontalOverflow);
+    bool autoVerticalScrollBarChanged = box->hasVerticalScrollbarWithAutoBehavior() && (hasVerticalScrollbar() != hasVerticalOverflow);
 
     if (autoHorizontalScrollBarChanged || autoVerticalScrollBarChanged) {
-        if (box->hasAutoHorizontalScrollbar())
+        if (box->hasHorizontalScrollbarWithAutoBehavior())
             setHasHorizontalScrollbar(hasHorizontalOverflow);
-        if (box->hasAutoVerticalScrollbar())
+        if (box->hasVerticalScrollbarWithAutoBehavior())
             setHasVerticalScrollbar(hasVerticalOverflow);
 
         updateSelfPaintingLayer();
@@ -6387,16 +6401,6 @@ void RenderLayer::updateStackingContextsAfterStyleChange(const RenderStyle* oldS
     }
 }
 
-static bool overflowRequiresScrollbar(EOverflow overflow)
-{
-    return overflow == OSCROLL;
-}
-
-static bool overflowDefinesAutomaticScrollbar(EOverflow overflow)
-{
-    return overflow == OAUTO || overflow == OOVERLAY;
-}
-
 void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
 {
     // Overflow are a box concept.
@@ -6412,22 +6416,18 @@ void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
     EOverflow overflowY = box->style().overflowY();
 
     // To avoid doing a relayout in updateScrollbarsAfterLayout, we try to keep any automatic scrollbar that was already present.
-    bool needsHorizontalScrollbar = box->hasOverflowClip() && ((hasHorizontalScrollbar() && overflowDefinesAutomaticScrollbar(overflowX)) || overflowRequiresScrollbar(overflowX));
-    bool needsVerticalScrollbar = box->hasOverflowClip() && ((hasVerticalScrollbar() && overflowDefinesAutomaticScrollbar(overflowY)) || overflowRequiresScrollbar(overflowY));
+    bool needsHorizontalScrollbar = box->hasOverflowClip() && ((hasHorizontalScrollbar() && styleDefinesAutomaticScrollbar(box->style(), HorizontalScrollbar)) || styleRequiresScrollbar(box->style(), HorizontalScrollbar));
+    bool needsVerticalScrollbar = box->hasOverflowClip() && ((hasVerticalScrollbar() && styleDefinesAutomaticScrollbar(box->style(), VerticalScrollbar)) || styleRequiresScrollbar(box->style(), VerticalScrollbar));
     setHasHorizontalScrollbar(needsHorizontalScrollbar);
     setHasVerticalScrollbar(needsVerticalScrollbar);
 
-    // With overflow: scroll, scrollbars are always visible but may be disabled.
+    // With non-overlay overflow:scroll, scrollbars are always visible but may be disabled.
     // When switching to another value, we need to re-enable them (see bug 11985).
-    if (needsHorizontalScrollbar && oldStyle && oldStyle->overflowX() == OSCROLL && overflowX != OSCROLL) {
-        ASSERT(hasHorizontalScrollbar());
+    if (m_hBar && needsHorizontalScrollbar && oldStyle && oldStyle->overflowX() == OSCROLL && overflowX != OSCROLL)
         m_hBar->setEnabled(true);
-    }
 
-    if (needsVerticalScrollbar && oldStyle && oldStyle->overflowY() == OSCROLL && overflowY != OSCROLL) {
-        ASSERT(hasVerticalScrollbar());
+    if (m_vBar && needsVerticalScrollbar && oldStyle && oldStyle->overflowY() == OSCROLL && overflowY != OSCROLL)
         m_vBar->setEnabled(true);
-    }
 
     if (!m_scrollDimensionsDirty)
         updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
