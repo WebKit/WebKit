@@ -137,7 +137,7 @@ public:
     PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
     PassRefPtr<NodeList> getElementsByName(const String& elementName);
-    PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
+    PassRefPtr<NodeList> getElementsByClassName(const AtomicString& classNames);
     PassRefPtr<RadioNodeList> radioNodeList(const AtomicString&);
 
 protected:

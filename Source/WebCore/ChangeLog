@@ -1,5 +1,71 @@
 2014-09-15  Chris Dumez  <cdumez@apple.com>
 
+        Use an AtomicString as key for caching ClassNodeList objects
+        https://bugs.webkit.org/show_bug.cgi?id=136830
+
+        Reviewed by Benjamin Poulain.
+
+        Use an AtomicString as key for caching ClassNodeList objects instead of
+        a String. ClassNodeList is the only type using a String instead of an
+        AtomicString as key in the cache HashTable. This brings some
+        complexity.
+
+        I believe this was done to avoid unnecessarily atomizing the String,
+        for performance reasons. However, at the moment, the String gets
+        atomized anyway when constructing the ClassNodeList object. This is
+        because the ClassNodeList::m_classNames member is of SpaceSplitString
+        type and the SpaceSplitString constructor takes an AtomicString in
+        argument.
+
+        Using an AtomicString to cache ClassNodeLists simplifies the code quite
+        a bit and decreases the size of NodeListsNodeData as well.
+
+        Test: fast/dom/getElementsByClassName/conflict-tag-name.html
+
+        * WebCore.order:
+        Remove symbol corresponding to addCacheWithName() as it was removed.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::~ClassNodeList):
+        Update the constructor to take an AtomicString in argument instead of
+        a String, for clarity. The String gets atomized when initializing
+        m_classNames anyway.
+
+        (WebCore::ClassNodeList::ClassNodeList):
+        Call removeCacheWithAtomicName() instead of removeCacheWithName() now
+        that m_originalClassNames is an AtomicString.
+
+        * dom/ClassNodeList.h:
+        Use AtomicString instead of String type for classNames, in both the
+        constructor argument and the m_originalClassNames data member.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByClassName):
+        Call addCacheWithAtomicName() instead of addCacheWithName() now that
+        addCacheWithName() has been removed.
+
+        * dom/Node.cpp:
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        Stop invalidating m_nameCaches as this HashMap no longer exists.
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::hash):
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::equal):
+        (WebCore::NodeListsNodeData::isEmpty):
+        (WebCore::NodeListsNodeData::adoptDocument):
+        (WebCore::NodeListsNodeData::namedNodeListKey):
+        (WebCore::NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList):
+        (WebCore::NodeListsNodeData::addCacheWithName): Deleted.
+        (WebCore::NodeListsNodeData::removeCacheWithName): Deleted.
+        - Drop addCacheWithName() / removeCacheWithName() now that no NodeList
+          uses a String as HashMap key.
+        - Drop m_nameCaches now that ClassNodeLists are cached in
+          m_atomicNameCaches instead.
+        - Remove StringType template parameter and hardcode AtomicString
+          instead.
+
+2014-09-15  Chris Dumez  <cdumez@apple.com>
+
         Return early in SelectorChecker::checkOne() if selector.isAttributeSelector() is true
         https://bugs.webkit.org/show_bug.cgi?id=136838
 

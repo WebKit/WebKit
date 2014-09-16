@@ -1695,9 +1695,6 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
     for (auto& atomicName : m_atomicNameCaches)
         atomicName.value->invalidateCacheForAttribute(attrName);
 
-    for (auto& name : m_nameCaches)
-        name.value->invalidateCacheForAttribute(attrName);
-
     for (auto& collection : m_cachedCollections)
         collection.value->invalidateCache(attrName);
 

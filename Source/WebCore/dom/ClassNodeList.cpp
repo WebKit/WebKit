@@ -35,16 +35,14 @@
 
 namespace WebCore {
 
-ClassNodeList::ClassNodeList(ContainerNode& rootNode, const String& classNames)
-    : CachedLiveNodeList(rootNode, InvalidateOnClassAttrChange)
-    , m_classNames(classNames, document().inQuirksMode())
-    , m_originalClassNames(classNames)
+PassRef<ClassNodeList> ClassNodeList::create(ContainerNode& rootNode, const AtomicString& classNames)
 {
+    return adoptRef(*new ClassNodeList(rootNode, classNames));
 }
 
 ClassNodeList::~ClassNodeList()
 {
-    ownerNode().nodeLists()->removeCacheWithName(this, m_originalClassNames);
+    ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_originalClassNames);
 }
 
 } // namespace WebCore

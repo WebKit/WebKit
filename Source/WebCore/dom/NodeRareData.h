@@ -35,7 +35,6 @@
 #include "TagNodeList.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/StringHash.h>
 
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrack.h"
@@ -106,19 +105,17 @@ public:
         m_emptyChildNodeList = nullptr;
     }
 
-    template <typename StringType>
     struct NodeListCacheMapEntryHash {
-        static unsigned hash(const std::pair<unsigned char, StringType>& entry)
+        static unsigned hash(const std::pair<unsigned char, AtomicString>& entry)
         {
-            return DefaultHash<StringType>::Hash::hash(entry.second) + entry.first;
+            return DefaultHash<AtomicString>::Hash::hash(entry.second) + entry.first;
         }
-        static bool equal(const std::pair<unsigned char, StringType>& a, const std::pair<unsigned char, StringType>& b) { return a.first == b.first && DefaultHash<StringType>::Hash::equal(a.second, b.second); }
-        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<StringType>::Hash::safeToCompareToEmptyOrDeleted;
+        static bool equal(const std::pair<unsigned char, AtomicString>& a, const std::pair<unsigned char, AtomicString>& b) { return a.first == b.first && DefaultHash<AtomicString>::Hash::equal(a.second, b.second); }
+        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<AtomicString>::Hash::safeToCompareToEmptyOrDeleted;
     };
 
-    typedef HashMap<std::pair<unsigned char, AtomicString>, LiveNodeList*, NodeListCacheMapEntryHash<AtomicString>> NodeListAtomicNameCacheMap;
-    typedef HashMap<std::pair<unsigned char, String>, LiveNodeList*, NodeListCacheMapEntryHash<String>> NodeListNameCacheMap;
-    typedef HashMap<std::pair<unsigned char, AtomicString>, HTMLCollection*, NodeListCacheMapEntryHash<AtomicString>> CollectionCacheMap;
+    typedef HashMap<std::pair<unsigned char, AtomicString>, LiveNodeList*, NodeListCacheMapEntryHash> NodeListAtomicNameCacheMap;
+    typedef HashMap<std::pair<unsigned char, AtomicString>, HTMLCollection*, NodeListCacheMapEntryHash> CollectionCacheMap;
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
     template<typename T, typename ContainerType>
@@ -129,18 +126,6 @@ public:
             return static_cast<T&>(*result.iterator->value);
 
         auto list = T::create(container, name);
-        result.iterator->value = &list.get();
-        return list;
-    }
-
-    template<typename T>
-    ALWAYS_INLINE PassRef<T> addCacheWithName(ContainerNode& node, const String& name)
-    {
-        NodeListNameCacheMap::AddResult result = m_nameCaches.fastAdd(namedNodeListKey<T>(name), nullptr);
-        if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
-
-        auto list = T::create(node, name);
         result.iterator->value = &list.get();
         return list;
     }
@@ -196,15 +181,6 @@ public:
         m_atomicNameCaches.remove(namedNodeListKey<NodeListType>(name));
     }
 
-    template <class NodeListType>
-    void removeCacheWithName(NodeListType* list, const String& name)
-    {
-        ASSERT(list == m_nameCaches.get(namedNodeListKey<NodeListType>(name)));
-        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
-            return;
-        m_nameCaches.remove(namedNodeListKey<NodeListType>(name));
-    }
-
     void removeCacheWithQualifiedName(LiveNodeList* list, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         QualifiedName name(nullAtom, localName, namespaceURI);
@@ -225,7 +201,7 @@ public:
     void invalidateCaches(const QualifiedName* attrName = 0);
     bool isEmpty() const
     {
-        return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_cachedCollections.isEmpty() && m_tagNodeListCacheNS.isEmpty();
+        return m_atomicNameCaches.isEmpty() && m_cachedCollections.isEmpty() && m_tagNodeListCacheNS.isEmpty();
     }
 
     void adoptTreeScope()
@@ -244,9 +220,6 @@ public:
         for (auto& cache : m_atomicNameCaches.values())
             cache->invalidateCache(*oldDocument);
 
-        for (auto& cache : m_nameCaches.values())
-            cache->invalidateCache(*oldDocument);
-
         for (auto& list : m_tagNodeListCacheNS.values()) {
             ASSERT(!list->isRootedAtDocument());
             list->invalidateCache(*oldDocument);
@@ -263,9 +236,9 @@ private:
     }
 
     template <class NodeListType>
-    std::pair<unsigned char, String> namedNodeListKey(const String& name)
+    std::pair<unsigned char, AtomicString> namedNodeListKey(const AtomicString& name)
     {
-        return std::pair<unsigned char, String>(NodeListTypeIdentifier<NodeListType>::value(), name);
+        return std::pair<unsigned char, AtomicString>(NodeListTypeIdentifier<NodeListType>::value(), name);
     }
 
     bool deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node&);
@@ -275,7 +248,6 @@ private:
     EmptyNodeList* m_emptyChildNodeList;
 
     NodeListAtomicNameCacheMap m_atomicNameCaches;
-    NodeListNameCacheMap m_nameCaches;
     TagNodeListCacheNS m_tagNodeListCacheNS;
     CollectionCacheMap m_cachedCollections;
 };
@@ -336,7 +308,7 @@ private:
 inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node& ownerNode)
 {
     ASSERT(ownerNode.nodeLists() == this);
-    if ((m_childNodeList ? 1 : 0) + (m_emptyChildNodeList ? 1 : 0) + m_atomicNameCaches.size() + m_nameCaches.size()
+    if ((m_childNodeList ? 1 : 0) + (m_emptyChildNodeList ? 1 : 0) + m_atomicNameCaches.size()
         + m_tagNodeListCacheNS.size() + m_cachedCollections.size() != 1)
         return false;
     ownerNode.clearNodeLists();

@@ -1054,9 +1054,9 @@ PassRefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, elementName);
 }
 
-PassRefPtr<NodeList> ContainerNode::getElementsByClassName(const String& classNames)
+PassRefPtr<NodeList> ContainerNode::getElementsByClassName(const AtomicString& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, classNames);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<ClassNodeList>(*this, classNames);
 }
 
 PassRefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
