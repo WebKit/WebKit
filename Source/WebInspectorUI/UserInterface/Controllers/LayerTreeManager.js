@@ -139,7 +139,7 @@ WebInspector.LayerTreeManager.prototype = {
             var firstLayer = layers[0];
             var layerForNode = firstLayer.nodeId === node.id && !firstLayer.isGeneratedContent ? layers.shift() : null;
             callback(layerForNode, layers);
-        }.bind(this));
+        });
     },
 
     reasonsForCompositingLayer: function(layer, callback)

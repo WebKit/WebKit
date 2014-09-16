@@ -63,6 +63,7 @@
         "no-comma-dangle": 0,
         "no-console": 0,
         "no-constant-condition": 0,
+        "no-extra-bind": 2,
         "no-extra-semi": 2,
         "no-proto": 0,
         "no-return-assign": 2,
