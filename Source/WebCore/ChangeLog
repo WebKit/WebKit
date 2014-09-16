@@ -1,3 +1,20 @@
+2014-09-16  Dana Burkart <dburkart@apple.com>
+
+        Merge r173635
+
+    2014-09-15  Alexey Proskuryakov  <ap@apple.com>
+
+            Crash when logging in to optionshouse.com
+            https://bugs.webkit.org/show_bug.cgi?id=136834
+
+            Reviewed by Anders Carlsson.
+
+            No test, because I couldn't make one. I don't have a way to reproduce first-hand.
+
+            * platform/network/cf/SocketStreamHandleCFNet.cpp:
+            (WebCore::SocketStreamHandle::readStreamCallback):
+            (WebCore::SocketStreamHandle::writeStreamCallback):
+
 2014-09-12  Lucas Forschler  <lforschler@apple.com>
 
         Merge r173584
