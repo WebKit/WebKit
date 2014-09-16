@@ -86,9 +86,6 @@ namespace Sizes {
 
     static const size_t smallLineCacheCapacity = 16;
     static const size_t mediumLineCacheCapacity = 8;
-
-    static const size_t smallAllocatorLogCapacity = 16;
-    static const size_t mediumAllocatorLogCapacity = 8;
     
     static const std::chrono::milliseconds scavengeSleepDuration = std::chrono::milliseconds(512);
 

@@ -26,10 +26,11 @@
 #ifndef Allocator_h
 #define Allocator_h
 
+#include "BumpAllocator.h"
 #include "FixedVector.h"
 #include "MediumAllocator.h"
 #include "Sizes.h"
-#include "SmallAllocator.h"
+#include "SmallLine.h"
 #include <array>
 
 namespace bmalloc {
@@ -50,25 +51,16 @@ public:
     void scavenge();
 
 private:
-    void* allocateFastCase(SmallAllocator&);
+    void* allocateFastCase(BumpAllocator&);
 
     void* allocateMedium(size_t);
     void* allocateLarge(size_t);
     void* allocateXLarge(size_t);
     
-    void retire(SmallAllocator&);
-    void retire(MediumAllocator&);
-
-    void processSmallAllocatorLog();
-    void processMediumAllocatorLog();
-
     Deallocator& m_deallocator;
 
-    std::array<SmallAllocator, smallMax / alignment> m_smallAllocators;
-    std::array<MediumAllocator, mediumMax / alignment> m_mediumAllocators;
-
-    FixedVector<std::pair<SmallLine*, unsigned char>, smallAllocatorLogCapacity> m_smallAllocatorLog;
-    FixedVector<std::pair<MediumLine*, unsigned char>, mediumAllocatorLogCapacity> m_mediumAllocatorLog;
+    std::array<BumpAllocator, smallMax / alignment> m_smallAllocators;
+    std::array<BumpAllocator, mediumMax / alignment> m_mediumAllocators;
 };
 
 inline bool Allocator::allocateFastCase(size_t size, void*& object)
@@ -76,7 +68,7 @@ inline bool Allocator::allocateFastCase(size_t size, void*& object)
     if (size > smallMax)
         return false;
 
-    SmallAllocator& allocator = m_smallAllocators[smallSizeClassFor(size)];
+    BumpAllocator& allocator = m_smallAllocators[smallSizeClassFor(size)];
     if (!allocator.canAllocate())
         return false;
 

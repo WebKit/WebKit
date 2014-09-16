@@ -46,6 +46,11 @@ inline bool isSmall(void* smallOrMedium)
     return test(smallOrMedium, smallOrMediumSmallTypeMask);
 }
 
+inline bool isMedium(void* smallOrMedium)
+{
+    return !isSmall(smallOrMedium);
+}
+
 } // namespace bmalloc
 
 #endif // ObjectType_h

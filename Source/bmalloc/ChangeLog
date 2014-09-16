@@ -1,3 +1,68 @@
+2014-09-15  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: allocate small and medium objects using the same bump pointer class
+        https://bugs.webkit.org/show_bug.cgi?id=136843
+
+        Reviewed by Gavin Barraclough.
+
+        4% speedup on MallocBench.
+
+        Now that medium-sized objects have dedicated per-size allocators, they
+        don't need to use an arbitrary bump pointer allocator. This means that
+        every allocator knows how many objects it will allocate from the start,
+        and we don't need a post-processing step to adjust refcounts based on
+        real allocation count.
+
+        * bmalloc.xcodeproj/project.pbxproj: Renamed SmallAllocator to BumpAllocator
+        since it's used for small and medium objects now.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator): Updated to use new interface.
+        (bmalloc::Allocator::scavenge): To "retire" an allocator, we just need
+        to make sure that we finish allocating all the objects in it.
+
+        (bmalloc::Allocator::allocateMedium):
+        (bmalloc::Allocator::allocateSlowCase):
+        (bmalloc::Allocator::retire): Deleted.
+        (bmalloc::Allocator::processSmallAllocatorLog): Deleted.
+        (bmalloc::Allocator::processMediumAllocatorLog): Deleted.
+        * bmalloc/Allocator.h:
+        (bmalloc::Allocator::allocateFastCase): Removed abstractions and data
+        used to post-process an allocator based on how many objects it allocated.
+
+        * bmalloc/BumpAllocator.h: Copied from Source/bmalloc/bmalloc/SmallAllocator.h.
+        (bmalloc::BumpAllocator::BumpAllocator):
+        (bmalloc::BumpAllocator::init):
+        (bmalloc::BumpAllocator::line):
+        (bmalloc::BumpAllocator::validate):
+        (bmalloc::BumpAllocator::allocate):
+        (bmalloc::BumpAllocator::refill):
+        (bmalloc::BumpAllocator::clear): Updated these functions to be agnostic
+        about the kinds of lines they allocate into. In some cases, the line
+        type must be provided as a template parameter by the caller.
+
+        (bmalloc::SmallAllocator::SmallAllocator): Deleted.
+        (bmalloc::SmallAllocator::line): Deleted.
+        (bmalloc::SmallAllocator::allocate): Deleted.
+        (bmalloc::SmallAllocator::objectCount): Deleted.
+        (bmalloc::SmallAllocator::derefCount): Deleted.
+        (bmalloc::SmallAllocator::refill): Deleted.
+        (bmalloc::SmallAllocator::clear): Deleted.
+
+        * bmalloc/ObjectType.h:
+        (bmalloc::isMedium):
+
+        * bmalloc/SmallAllocator.h:
+        (bmalloc::SmallAllocator::isNull): Deleted.
+        (bmalloc::SmallAllocator::canAllocate): Deleted.
+        (bmalloc::SmallAllocator::SmallAllocator): Deleted.
+        (bmalloc::SmallAllocator::line): Deleted.
+        (bmalloc::SmallAllocator::allocate): Deleted.
+        (bmalloc::SmallAllocator::objectCount): Deleted.
+        (bmalloc::SmallAllocator::derefCount): Deleted.
+        (bmalloc::SmallAllocator::refill): Deleted.
+        (bmalloc::SmallAllocator::clear): Deleted.
+
 2014-09-12  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a goof in bmalloc Vector sizing
