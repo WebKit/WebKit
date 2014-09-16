@@ -1,5 +1,21 @@
 2014-09-16  Enrica Casucci  <enrica@apple.com>
 
+        Move HTMLConverter from editing/cocoa to platform/cocoa.
+        https://bugs.webkit.org/show_bug.cgi?id=136474
+
+        Reviewed by Benjamin Poulain.
+
+        This is a platform specific class and it belongs to the platform folder.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa: Removed.
+        * editing/cocoa/HTMLConverter.h: Removed.
+        * editing/cocoa/HTMLConverter.mm: Removed.
+        * platform/cocoa/HTMLConverter.h: Copied from editing/cocoa/HTMLConverter.h.
+        * platform/cocoa/HTMLConverter.mm: Copied from editing/cocoa/HTMLConverter.mm.
+
+2014-09-16  Enrica Casucci  <enrica@apple.com>
+
         Remove PLATFORM(IOS) from WebCore/editing (Part 3).
         https://bugs.webkit.org/show_bug.cgi?id=136474
 

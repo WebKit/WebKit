@@ -2382,8 +2382,6 @@
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
 		7C3B79711908757B00B47A2D /* UserMessageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3B796F1908757B00B47A2D /* UserMessageHandler.cpp */; };
 		7C3B79721908757B00B47A2D /* UserMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3B79701908757B00B47A2D /* UserMessageHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C3E510A18DF8F3500C112F7 /* HTMLConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3E510818DF8F3500C112F7 /* HTMLConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */; };
 		7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C48A6CE191C9D6500026674 /* WebKitNamespace.cpp */; };
 		7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C48A6CF191C9D6500026674 /* WebKitNamespace.h */; };
 		7C4902A218B825F8007D9298 /* DOMWheelEventInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85989DCA0ACC8BBD00A0BC51 /* DOMWheelEventInternal.h */; };
@@ -5528,6 +5526,8 @@
 		C55C7BA11718AFBA001327E4 /* RenderThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */; };
 		C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */; };
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
+		C564FA7819C8D85C00488CAC /* HTMLConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = C564FA7619C8D85C00488CAC /* HTMLConverter.h */; };
+		C564FA7919C8D85C00488CAC /* HTMLConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = C564FA7719C8D85C00488CAC /* HTMLConverter.mm */; };
 		C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */; };
 		C57FEDE11212EE9C0097BE65 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */; };
 		C58361A91744523F00173511 /* FontServicesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C58361A71744523F00173511 /* FontServicesIOS.h */; };
@@ -9517,8 +9517,6 @@
 		7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObjectTask.h; sourceTree = "<group>"; };
 		7C3B796F1908757B00B47A2D /* UserMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandler.cpp; sourceTree = "<group>"; };
 		7C3B79701908757B00B47A2D /* UserMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandler.h; sourceTree = "<group>"; };
-		7C3E510818DF8F3500C112F7 /* HTMLConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLConverter.h; sourceTree = "<group>"; };
-		7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HTMLConverter.mm; sourceTree = "<group>"; };
 		7C48A6CE191C9D6500026674 /* WebKitNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitNamespace.cpp; sourceTree = "<group>"; };
 		7C48A6CF191C9D6500026674 /* WebKitNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNamespace.h; sourceTree = "<group>"; };
 		7C48A6D2191C9D8E00026674 /* WebKitNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitNamespace.idl; sourceTree = "<group>"; };
@@ -12938,6 +12936,8 @@
 		C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderThemeIOS.mm; sourceTree = "<group>"; };
 		C55E38BB10040D5D00A56BDB /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
+		C564FA7619C8D85C00488CAC /* HTMLConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLConverter.h; sourceTree = "<group>"; };
+		C564FA7719C8D85C00488CAC /* HTMLConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HTMLConverter.mm; sourceTree = "<group>"; };
 		C572EE1D1201C9BC007D8F82 /* JSIDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBIndex.h; sourceTree = "<group>"; };
 		C57FEDE01212EE9C0097BE65 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
 		C58361A71744523F00173511 /* FontServicesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontServicesIOS.h; sourceTree = "<group>"; };
@@ -16674,15 +16674,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		7C3E510718DF8F1200C112F7 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				7C3E510818DF8F3500C112F7 /* HTMLConverter.h */,
-				7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */,
-			);
-			path = cocoa;
-			sourceTree = "<group>";
-		};
 		7C74D43018823A4200E5ED57 /* icu */ = {
 			isa = PBXGroup;
 			children = (
@@ -17334,7 +17325,6 @@
 		93309D86099E64910056E581 /* editing */ = {
 			isa = PBXGroup;
 			children = (
-				7C3E510718DF8F1200C112F7 /* cocoa */,
 				443292C10EBA6D7300E62016 /* ios */,
 				ED501DC90B249F3900AE18D9 /* mac */,
 				CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */,
@@ -18493,6 +18483,8 @@
 			children = (
 				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisablerCocoa.cpp */,
 				5D8C4DBE1428222C0026CE72 /* DisplaySleepDisablerCocoa.h */,
+				C564FA7619C8D85C00488CAC /* HTMLConverter.h */,
+				C564FA7719C8D85C00488CAC /* HTMLConverter.mm */,
 				A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */,
 				A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */,
 				ADB6B29718FB90240081963E /* MemoryPressureHandlerCocoa.mm */,
@@ -23679,7 +23671,6 @@
 				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 				4167EBF6102962BA003D252A /* DefaultSharedWorkerRepository.h in Headers */,
 				1AF4CEEA18BC350100BC2D34 /* DefaultVisitedLinkStore.h in Headers */,
-				7C3E510A18DF8F3500C112F7 /* HTMLConverter.h in Headers */,
 				FD31602C12B0267600C1A359 /* DelayDSPKernel.h in Headers */,
 				FD31602E12B0267600C1A359 /* DelayNode.h in Headers */,
 				FD31603112B0267600C1A359 /* DelayProcessor.h in Headers */,
@@ -24258,6 +24249,7 @@
 				C4CD629B18383766007EBAF1 /* FrameSnapshotting.h in Headers */,
 				65A21485097A3F5300B9050A /* FrameTree.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
+				C564FA7819C8D85C00488CAC /* HTMLConverter.h in Headers */,
 				97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */,
 				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,
 				26B999931803B9D900D01121 /* FunctionCall.h in Headers */,
@@ -28916,7 +28908,6 @@
 				31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */,
 				77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */,
 				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
-				7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */,
 				FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */,
 				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
 				CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */,
@@ -29646,6 +29637,7 @@
 				071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */,
 				9759E94514EF1CF80026A2DD /* TextTrackCueList.cpp in Sources */,
 				076970861463AD8700F502CF /* TextTrackList.cpp in Sources */,
+				C564FA7919C8D85C00488CAC /* HTMLConverter.mm in Sources */,
 				B1AD4E7313A12A4600846B27 /* TextTrackLoader.cpp in Sources */,
 				CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */,
 				CDCA82961679100F00875714 /* TextTrackRepresentationIOS.mm in Sources */,
