@@ -287,6 +287,20 @@ void Node::trackForDebugging()
 #endif
 }
 
+Node::Node(Document& document, ConstructionType type)
+    : m_nodeFlags(type)
+    , m_parentNode(nullptr)
+    , m_treeScope(&document)
+    , m_previous(nullptr)
+    , m_next(nullptr)
+{
+    document.incrementReferencingNodeCount();
+
+#if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
+    trackForDebugging();
+#endif
+}
+
 Node::~Node()
 {
 #ifndef NDEBUG

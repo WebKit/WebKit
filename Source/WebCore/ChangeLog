@@ -1,3 +1,23 @@
+2014-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Un-inline the Node constructor
+        https://bugs.webkit.org/show_bug.cgi?id=136842
+
+        Reviewed by Benjamin Poulain.
+
+        Un-inline the Node constructor as it does not seem to impact
+        performance, based on my testing:
+        http://dromaeo.com/?id=226992,226998
+
+        This reduces the stripped binary size by ~4Kb.
+
+        No new tests, no behavior change.
+
+        * dom/Document.h:
+        (WebCore::Node::Node): Deleted.
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+
 2014-09-15  Shivakumar JM  <shiva.jm@samsung.com>
 
         Web Core: Websocket state should be set to closed in didReceiveMessage call back.

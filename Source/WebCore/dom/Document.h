@@ -1728,20 +1728,6 @@ inline bool Node::isDocumentNode() const
     return this == &document();
 }
 
-inline Node::Node(Document& document, ConstructionType type)
-    : m_nodeFlags(type)
-    , m_parentNode(0)
-    , m_treeScope(&document)
-    , m_previous(0)
-    , m_next(0)
-{
-    document.incrementReferencingNodeCount();
-
-#if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
-    trackForDebugging();
-#endif
-}
-
 inline ScriptExecutionContext* Node::scriptExecutionContext() const
 {
     return &document();
