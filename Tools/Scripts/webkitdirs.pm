@@ -101,7 +101,6 @@ my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
 my $debugger;
-my $iPhoneSimulatorVersion;
 my $didLoadIPhoneSimulatorNotification;
 my $nmPath;
 my $osXVersion;
@@ -1181,48 +1180,6 @@ sub isIOSWebKit()
     return isAppleMacWebKit() && (willUseIOSDeviceSDKWhenBuilding() || willUseIOSSimulatorSDKWhenBuilding());
 }
 
-sub isPerianInstalled()
-{
-    if (!isAppleWebKit()) {
-        return 0;
-    }
-
-    if (-d "/Library/QuickTime/Perian.component") {
-        return 1;
-    }
-
-    if (-d "$ENV{HOME}/Library/QuickTime/Perian.component") {
-        return 1;
-    }
-
-    return 0;
-}
-
-sub determineIPhoneSimulatorVersion()
-{
-    return if $iPhoneSimulatorVersion;
-
-    if (!isIOSWebKit()) {
-        $iPhoneSimulatorVersion = -1;
-        return;
-    }
-
-    my $version = `/usr/local/bin/psw_vers -productVersion`;
-    my @splitVersion = split(/\./, $version);
-    @splitVersion >= 2 or die "Invalid version $version";
-    $iPhoneSimulatorVersion = {
-            "major" => $splitVersion[0],
-            "minor" => $splitVersion[1],
-            "subminor" => defined($splitVersion[2] ? $splitVersion[2] : 0),
-    };
-}
-
-sub iPhoneSimulatorVersion()
-{
-    determineIPhoneSimulatorVersion();
-    return $iPhoneSimulatorVersion;
-}
-
 sub determineNmPath()
 {
     return if $nmPath;
@@ -1263,16 +1220,6 @@ sub osXVersion()
 {
     determineOSXVersion();
     return $osXVersion;
-}
-
-sub isSnowLeopard()
-{
-    return isDarwin() && osXVersion()->{"minor"} == 6;
-}
-
-sub isLion()
-{
-    return isDarwin() && osXVersion()->{"minor"} == 7;
 }
 
 sub isWindowsNT()
@@ -2125,11 +2072,6 @@ sub openIOSSimulator()
         $date->release();
     }
     $iPhoneSimulatorNotification->stopObservingReadyNotification();
-}
-
-sub quitIOSSimulator()
-{
-    return system {"osascript"} "osascript", "-e", 'tell application "iOS Simulator" to quit';
 }
 
 sub iosSimulatorDeviceByName($)
