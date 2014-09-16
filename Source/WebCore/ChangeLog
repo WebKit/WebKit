@@ -1,3 +1,21 @@
+2014-09-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [GStreamer] http/tests/media/video-auth.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=126619
+
+        Reviewed by Philippe Normand.
+
+        Test: http/tests/media/video-auth-cors.html
+
+        Use stored credentials when retrieving videos following image loading behavior
+        (i.e. stored credentials are always used except when in cors anonymous mode),
+        except that requesting credentials from user remains disabled for cross-origin requests.
+
+        Patch is covered by http/tests/media/video-auth.html.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::CachedResourceStreamingClient): Enable using stored credentials except when using cors anonymous mode.
+
 2014-09-16  Jinho Bang  <jinho.bang@samsung.com>
 
         Add version of drawFocusIfNeeded that take a Path2D parameter.
