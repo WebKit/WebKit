@@ -13,6 +13,6 @@ layer at (0,0) size 800x278
         RenderBlock {P} at (50,0) size 18x216
           RenderText {#text} at (0,0) size 18x119
             text run at (0,0) width 119: "\x{540D}\x{524D}\x{306F}\x{307E}\x{3060}\x{7121}\x{3044}\x{3002}"
-      RenderBlock {PRE} at (0,262) size 784x1
+      RenderBlock {PRE} at (0,262) size 784x0
 selection start: position 2 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 3 {P} of child 3 {DIV} of body
