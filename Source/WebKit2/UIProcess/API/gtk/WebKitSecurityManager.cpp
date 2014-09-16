@@ -302,7 +302,7 @@ gboolean webkit_security_manager_uri_scheme_is_cors_enabled(WebKitSecurityManage
  * @scheme: a URI scheme
  *
  * Register @scheme as an empty document scheme. This means that
- * they are allowd to commit synchronously.
+ * they are allowed to commit synchronously.
  */
 void webkit_security_manager_register_uri_scheme_as_empty_document(WebKitSecurityManager* manager, const char* scheme)
 {
