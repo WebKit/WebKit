@@ -533,6 +533,7 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char>> binaryData)
 void WebSocket::didReceiveMessageError()
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
+    m_state = CLOSED;
     ASSERT(scriptExecutionContext());
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
