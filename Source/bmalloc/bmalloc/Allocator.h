@@ -51,16 +51,25 @@ public:
     void scavenge();
 
 private:
+    typedef FixedVector<SmallLine*, smallLineCacheCapacity> SmallLineCache;
+    typedef FixedVector<MediumLine*, mediumLineCacheCapacity> MediumLineCache;
+
     void* allocateFastCase(BumpAllocator&);
 
     void* allocateMedium(size_t);
     void* allocateLarge(size_t);
     void* allocateXLarge(size_t);
     
+    SmallLine* allocateSmallLine(size_t smallSizeClass);
+    MediumLine* allocateMediumLine();
+    
     Deallocator& m_deallocator;
 
     std::array<BumpAllocator, smallMax / alignment> m_smallAllocators;
     std::array<BumpAllocator, mediumMax / alignment> m_mediumAllocators;
+
+    std::array<SmallLineCache, smallMax / alignment> m_smallLineCaches;
+    MediumLineCache m_mediumLineCache;
 };
 
 inline bool Allocator::allocateFastCase(size_t size, void*& object)

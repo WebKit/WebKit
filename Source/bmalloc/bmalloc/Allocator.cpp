@@ -63,6 +63,43 @@ void Allocator::scavenge()
             m_deallocator.deallocate(allocator.allocate());
         allocator.clear();
     }
+
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    Heap* heap = PerProcess<Heap>::getFastCase();
+    
+    for (auto& smallLineCache : m_smallLineCaches) {
+        while (smallLineCache.size())
+            heap->deallocateSmallLine(lock, smallLineCache.pop());
+    }
+    while (m_mediumLineCache.size())
+        heap->deallocateMediumLine(lock, m_mediumLineCache.pop());
+}
+
+SmallLine* Allocator::allocateSmallLine(size_t smallSizeClass)
+{
+    SmallLineCache& smallLineCache = m_smallLineCaches[smallSizeClass];
+    if (!smallLineCache.size()) {
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+        Heap* heap = PerProcess<Heap>::getFastCase();
+
+        while (smallLineCache.size() != smallLineCache.capacity())
+            smallLineCache.push(heap->allocateSmallLine(lock, smallSizeClass));
+    }
+
+    return smallLineCache.pop();
+}
+
+MediumLine* Allocator::allocateMediumLine()
+{
+    if (!m_mediumLineCache.size()) {
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+        Heap* heap = PerProcess<Heap>::getFastCase();
+
+        while (m_mediumLineCache.size() != m_mediumLineCache.capacity())
+            m_mediumLineCache.push(heap->allocateMediumLine(lock));
+    }
+
+    return m_mediumLineCache.pop();
 }
 
 void* Allocator::allocateLarge(size_t size)
@@ -84,7 +121,7 @@ void* Allocator::allocateMedium(size_t size)
     BumpAllocator& allocator = m_mediumAllocators[mediumSizeClassFor(size)];
 
     if (!allocator.canAllocate())
-        allocator.refill(m_deallocator.allocateMediumLine());
+        allocator.refill(allocateMediumLine());
     return allocator.allocate();
 }
 
@@ -97,7 +134,7 @@ IF_DEBUG(
     if (size <= smallMax) {
         size_t smallSizeClass = smallSizeClassFor(size);
         BumpAllocator& allocator = m_smallAllocators[smallSizeClass];
-        allocator.refill(m_deallocator.allocateSmallLine(smallSizeClass));
+        allocator.refill(allocateSmallLine(smallSizeClass));
         return allocator.allocate();
     }
 

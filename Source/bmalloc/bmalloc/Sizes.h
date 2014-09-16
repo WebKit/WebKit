@@ -27,6 +27,7 @@
 #define Sizes_h
 
 #include "Algorithm.h"
+#include "BPlatform.h"
 #include <algorithm>
 #include <cstdint>
 #include <cstddef>
@@ -45,6 +46,13 @@ namespace Sizes {
     static const size_t alignment = 8;
     static const size_t alignmentMask = alignment - 1ul;
 
+#if BPLATFORM(IOS)
+    static const size_t vmPageSize = 16 * kB;
+#else
+    static const size_t vmPageSize = 4 * kB;
+#endif
+    static const size_t vmPageMask = ~(vmPageSize - 1);
+    
     static const size_t superChunkSize = 32 * MB;
 
     static const size_t smallMax = 256;
@@ -84,8 +92,8 @@ namespace Sizes {
 
     static const size_t deallocatorLogCapacity = 256;
 
-    static const size_t smallLineCacheCapacity = 16;
-    static const size_t mediumLineCacheCapacity = 8;
+    static const size_t smallLineCacheCapacity = vmPageSize / smallLineSize;
+    static const size_t mediumLineCacheCapacity = vmPageSize / mediumLineSize;
     
     static const std::chrono::milliseconds scavengeSleepDuration = std::chrono::milliseconds(512);
 

@@ -27,7 +27,6 @@
 #define VMAllocate_h
 
 #include "BAssert.h"
-#include "BPlatform.h"
 #include "Range.h"
 #include "Sizes.h"
 #include "Syscall.h"
@@ -40,14 +39,6 @@ namespace bmalloc {
 
 #define BMALLOC_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
 
-#if BPLATFORM(IOS)
-static const size_t vmPageSize = 16 * kB;
-#else
-static const size_t vmPageSize = 4 * kB;
-#endif
-
-static const size_t vmPageMask = ~(vmPageSize - 1);
-    
 inline size_t vmSize(size_t size)
 {
     return roundUpToMultipleOf<vmPageSize>(size);

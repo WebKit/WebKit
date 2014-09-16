@@ -1,3 +1,45 @@
+2014-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: moved line caches from the deallocator to the allocator
+        https://bugs.webkit.org/show_bug.cgi?id=136868
+
+        Reviewed by Gavin Barraclough.
+
+        I did this mostly as a simplification, to make it easier to change the
+        allocation strategy.
+
+        No throughput change on MallocBench. Saves about 50kB.
+
+        Since the deallocator needs to lock the heap when freeing lines anyway,
+        there isn't much benefit to giving the deallocator a local cache of
+        deallocated lines.
+
+        We still give the allocator a local cache of lines because that does
+        reduce the frequency at which it needs to lock the heap in order to
+        acquire more lines.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::scavenge):
+        (bmalloc::Allocator::allocateSmallLine):
+        (bmalloc::Allocator::allocateMediumLine):
+        (bmalloc::Allocator::allocateMedium):
+        (bmalloc::Allocator::allocateSlowCase):
+        * bmalloc/Allocator.h:
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator):
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSmallLine): Deleted.
+        (bmalloc::Deallocator::allocateSmallLine): Deleted.
+        (bmalloc::Deallocator::deallocateMediumLine): Deleted.
+        (bmalloc::Deallocator::allocateMediumLine): Deleted.
+        * bmalloc/Deallocator.h:
+
+        * bmalloc/Sizes.h:
+        * bmalloc/VMAllocate.h: Took the opportunity to make the line cache size
+        exactly one page in size. That's about what we were shooting for anyway,
+        and it may make it easier to switch to per-page allocation in future.
+
 2014-09-15  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: allocate small and medium objects using the same bump pointer class
