@@ -1401,6 +1401,8 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext* context, const IntRect& rect)
 {
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(%p)", this);
+
     RetainPtr<CGImageRef> image = createImageForTimeInRect(currentTime(), rect);
     if (image) {
         GraphicsContextStateSaver stateSaver(*context);
@@ -2002,18 +2004,28 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
 {
     updateLastImage();
 
-    if (m_lastImage) {
-        GraphicsContextStateSaver stateSaver(*context);
+    if (!m_lastImage)
+        return;
 
-        IntRect imageRect(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
+    AVAssetTrack* firstEnabledVideoTrack = firstEnabledTrack([m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual]);
+    if (!firstEnabledVideoTrack)
+        return;
 
-        context->drawNativeImage(m_lastImage.get(), imageRect.size(), ColorSpaceDeviceRGB, outputRect, imageRect);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(%p)", this);
 
-        // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
-        // video frame, destroy it now that it is no longer needed.
-        if (m_imageGenerator)
-            destroyImageGenerator();
-    }
+    GraphicsContextStateSaver stateSaver(*context);
+    FloatRect imageRect(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
+    AffineTransform videoTransform = [firstEnabledVideoTrack preferredTransform];
+    FloatRect transformedOutputRect = videoTransform.inverse().mapRect(outputRect);
+
+    context->concatCTM(videoTransform);
+    context->drawNativeImage(m_lastImage.get(), imageRect.size(), ColorSpaceDeviceRGB, transformedOutputRect, imageRect);
+
+    // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
+    // video frame, destroy it now that it is no longer needed.
+    if (m_imageGenerator)
+        destroyImageGenerator();
+
 }
 
 PassNativeImagePtr MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

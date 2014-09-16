@@ -1,3 +1,15 @@
+2014-09-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput doesn't work with rotated movies
+        https://bugs.webkit.org/show_bug.cgi?id=136872
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator): Add logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput): Apply the video track
+            preferred transform.
+
 2014-09-16  Dana Burkart <dburkart@apple.com>
 
         Merge r173635
