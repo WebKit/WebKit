@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,8 @@ public:
         }
         
         // This could be made more efficient by processing blocks in reverse postorder.
-        Operands<Availability> availability;
+        
+        LocalOSRAvailabilityCalculator calculator;
         bool changed;
         do {
             changed = false;
@@ -81,54 +82,23 @@ public:
                 if (!block)
                     continue;
                 
-                availability = block->ssa->availabilityAtHead;
+                calculator.beginBlock(block);
                 
-                for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                    Node* node = block->at(nodeIndex);
-                    
-                    switch (node->op()) {
-                    case SetLocal: {
-                        VariableAccessData* variable = node->variableAccessData();
-                        availability.operand(variable->local()) =
-                            Availability(node->child1().node(), variable->flushedAt());
-                        break;
-                    }
-                        
-                    case GetArgument: {
-                        VariableAccessData* variable = node->variableAccessData();
-                        availability.operand(variable->local()) =
-                            Availability(node, variable->flushedAt());
-                        break;
-                    }
-                        
-                    case MovHint: {
-                        availability.operand(node->unlinkedLocal()) =
-                            Availability(node->child1().node());
-                        break;
-                    }
-                        
-                    case ZombieHint: {
-                        availability.operand(node->unlinkedLocal()) =
-                            Availability::unavailable();
-                        break;
-                    }
-                        
-                    default:
-                        break;
-                    }
-                }
+                for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex)
+                    calculator.executeNode(block->at(nodeIndex));
                 
-                if (availability == block->ssa->availabilityAtTail)
+                if (calculator.m_availability == block->ssa->availabilityAtTail)
                     continue;
                 
-                block->ssa->availabilityAtTail = availability;
+                block->ssa->availabilityAtTail = calculator.m_availability;
                 changed = true;
                 
                 for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                     BasicBlock* successor = block->successor(successorIndex);
-                    for (unsigned i = availability.size(); i--;) {
-                        successor->ssa->availabilityAtHead[i] = availability[i].merge(
-                            successor->ssa->availabilityAtHead[i]);
+                    for (unsigned i = calculator.m_availability.size(); i--;) {
+                        successor->ssa->availabilityAtHead[i] =
+                            calculator.m_availability[i].merge(
+                                successor->ssa->availabilityAtHead[i]);
                     }
                 }
             }
@@ -142,6 +112,53 @@ bool performOSRAvailabilityAnalysis(Graph& graph)
 {
     SamplingRegion samplingRegion("DFG OSR Availability Analysis Phase");
     return runPhase<OSRAvailabilityAnalysisPhase>(graph);
+}
+
+LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator()
+{
+}
+
+LocalOSRAvailabilityCalculator::~LocalOSRAvailabilityCalculator()
+{
+}
+
+void LocalOSRAvailabilityCalculator::beginBlock(BasicBlock* block)
+{
+    m_availability = block->ssa->availabilityAtHead;
+}
+
+void LocalOSRAvailabilityCalculator::executeNode(Node* node)
+{
+    switch (node->op()) {
+    case SetLocal: {
+        VariableAccessData* variable = node->variableAccessData();
+        m_availability.operand(variable->local()) =
+            Availability(node->child1().node(), variable->flushedAt());
+        break;
+    }
+
+    case GetArgument: {
+        VariableAccessData* variable = node->variableAccessData();
+        m_availability.operand(variable->local()) =
+            Availability(node, variable->flushedAt());
+        break;
+    }
+
+    case MovHint: {
+        m_availability.operand(node->unlinkedLocal()) =
+            Availability(node->child1().node());
+        break;
+    }
+
+    case ZombieHint: {
+        m_availability.operand(node->unlinkedLocal()) =
+            Availability::unavailable();
+        break;
+    }
+
+    default:
+        break;
+    }
 }
 
 } } // namespace JSC::DFG

@@ -31,6 +31,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGInPlaceAbstractState.h"
+#include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLAvailableRecovery.h"
 #include "FTLForOSREntryJITCode.h"
@@ -93,7 +94,6 @@ public:
         , m_ftlState(state)
         , m_heaps(state.context)
         , m_out(state.context)
-        , m_availability(OperandsLike, state.graph.block(0)->variablesAtHead)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
         , m_stackmapIDs(0)
@@ -295,7 +295,7 @@ private:
             return;
         }
         
-        initializeOSRExitStateForBlock();
+        m_availabilityCalculator.beginBlock(m_highBlock);
         
         m_state.reset();
         m_state.beginBasicBlock(m_highBlock);
@@ -388,17 +388,11 @@ private:
         case SetLocal:
             compileSetLocal();
             break;
-        case MovHint:
-            compileMovHint();
-            break;
         case GetMyArgumentsLength:
             compileGetMyArgumentsLength();
             break;
         case GetMyArgumentByVal:
             compileGetMyArgumentByVal();
-            break;
-        case ZombieHint:
-            compileZombieHint();
             break;
         case Phantom:
         case HardPhantom:
@@ -739,11 +733,15 @@ private:
         case FunctionReentryWatchpoint:
         case TypedArrayWatchpoint:
         case AllocationProfileWatchpoint:
+        case MovHint:
+        case ZombieHint:
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Unrecognized node in FTL backend");
             break;
         }
+        
+        m_availabilityCalculator.executeNode(m_node);
         
         if (shouldExecuteEffects)
             m_interpreter.executeEffects(nodeIndex);
@@ -1064,22 +1062,6 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad flush format");
             break;
         }
-        
-        m_availability.operand(variable->local()) = Availability(variable->flushedAt());
-    }
-    
-    void compileMovHint()
-    {
-        ASSERT(m_node->containsMovHint());
-        ASSERT(m_node->op() != ZombieHint);
-        
-        VirtualRegister operand = m_node->unlinkedLocal();
-        m_availability.operand(operand) = Availability(m_node->child1().node());
-    }
-    
-    void compileZombieHint()
-    {
-        m_availability.operand(m_node->unlinkedLocal()) = Availability::unavailable();
     }
     
     void compilePhantom()
@@ -3973,12 +3955,12 @@ private:
     void compileInvalidationPoint()
     {
         if (verboseCompilationEnabled())
-            dataLog("    Invalidation point with availability: ", m_availability, "\n");
+            dataLog("    Invalidation point with availability: ", availability(), "\n");
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             UncountableInvalidation, InvalidValueFormat, MethodOfGettingAValueProfile(),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile,
-            m_availability.numberOfArguments(), m_availability.numberOfLocals()));
+            availability().numberOfArguments(), availability().numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -6360,16 +6342,11 @@ private:
         return m_blocks.get(block);
     }
     
-    void initializeOSRExitStateForBlock()
-    {
-        m_availability = m_highBlock->ssa->availabilityAtHead;
-    }
-    
     void appendOSRExit(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
         if (verboseCompilationEnabled()) {
-            dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", m_availability, "\n");
+            dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", availability(), "\n");
             if (!m_availableRecoveries.isEmpty())
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
         }
@@ -6379,7 +6356,7 @@ private:
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile,
-            m_availability.numberOfArguments(), m_availability.numberOfLocals()));
+            availability().numberOfArguments(), availability().numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -6427,7 +6404,7 @@ private:
                 continue;
             }
             
-            Availability availability = m_availability[i];
+            Availability availability = this->availability()[i];
             FlushedAt flush = availability.flushedAt();
             switch (flush.format()) {
             case DeadFlush:
@@ -6766,6 +6743,8 @@ private:
         m_out.unreachable();
     }
     
+    Operands<Availability>& availability() { return m_availabilityCalculator.m_availability; }
+    
     VM& vm() { return m_graph.m_vm; }
     CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
     
@@ -6795,7 +6774,7 @@ private:
     
     HashMap<Node*, LValue> m_phis;
     
-    Operands<Availability> m_availability;
+    LocalOSRAvailabilityCalculator m_availabilityCalculator;
     
     Vector<AvailableRecovery, 3> m_availableRecoveries;
     

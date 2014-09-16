@@ -1,3 +1,43 @@
+2014-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Local OSR availability calculation should be reusable
+        https://bugs.webkit.org/show_bug.cgi?id=136860
+
+        Reviewed by Oliver Hunt.
+        
+        Previously, the FTL lowering repeated some of the logic of the OSR availability analysis
+        phase. Humorously, it actually did this logic a bit differently; for example the phase
+        would claim that a SetLocal makes both the flush and the node available while the FTL
+        only claimed that the flush was available. This different was benign, but still: yuck!
+        
+        Also, previously if you wanted to use availability information then you'd have to repeat
+        some of the logic that both the phase itself and the FTL lowering already had.
+        Presumably, you could get epic style points for finding other benign ways in which to
+        make your copy of the logic different from the other two!
+        
+        This reduces the amount of style points one could conceivably get in the future when
+        hacking JSC, by creating a single reusable thingy for computing local OSR availability.
+
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::~LocalOSRAvailabilityCalculator):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::beginBlock):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::availability):
+        (JSC::FTL::LowerDFGToLLVM::compileMovHint): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::compileZombieHint): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::initializeOSRExitStateForBlock): Deleted.
+
 2014-09-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         JSC test gardening
