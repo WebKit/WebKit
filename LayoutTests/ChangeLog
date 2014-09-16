@@ -1,3 +1,19 @@
+2014-09-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Windows gardening. fast/forms/label test expectations now match Mac platform's expectations.
+
+        * platform/win/fast/forms/label: Removed.
+        * platform/win/fast/forms/label/labelable-elements-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-add-htmlFor-label-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-add-parent-label-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-change-htmlFor-attribute-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-multiple-sibling-labels-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-parent-and-sibling-labels-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-remove-htmlFor-attribute-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-remove-htmlFor-label-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-remove-parent-label-expected.txt: Removed.
+        * platform/win/fast/forms/label/labels-set-htmlFor-attribute-expected.txt: Removed.
+
 2014-09-15  Shivakumar JM  <shiva.jm@samsung.com>
 
         Web Core: Websocket state should be set to closed in didReceiveMessage call back.
