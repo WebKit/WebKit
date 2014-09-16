@@ -45,7 +45,7 @@ public:
     ~CurlCacheEntry();
 
     bool isCached();
-    bool isLoading();
+    bool isLoading() const;
     size_t entrySize();
     HTTPHeaderMap& requestHeaders() { return m_requestHeaders; }
 
@@ -61,6 +61,8 @@ public:
 
     bool parseResponseHeaders(const ResourceResponse&);
 
+    void setIsLoading(bool);
+
     const ResourceHandle* getJob() const { return m_job; }
 
 private:
@@ -73,6 +75,7 @@ private:
     size_t m_entrySize;
     double m_expireDate;
     bool m_headerParsed;
+    bool m_isLoading;
 
     ResourceResponse m_cachedResponse;
     HTTPHeaderMap m_requestHeaders;

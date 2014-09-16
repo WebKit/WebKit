@@ -53,6 +53,7 @@ CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const Str
     , m_entrySize(0)
     , m_expireDate(-1)
     , m_headerParsed(false)
+    , m_isLoading(false)
     , m_job(job)
 {
     generateBaseFilename(url.latin1());
@@ -69,9 +70,9 @@ CurlCacheEntry::~CurlCacheEntry()
     closeContentFile();
 }
 
-bool CurlCacheEntry::isLoading()
+bool CurlCacheEntry::isLoading() const
 {
-    return isHandleValid(m_contentFile);
+    return m_isLoading;
 }
 
 // Cache manager should invalidate the entry on false
@@ -115,7 +116,9 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
     if (!loadFileToBuffer(m_contentFilename, buffer))
         return false;
 
-    job->getInternal()->client()->didReceiveData(job, buffer.data(), buffer.size(), 0);
+    if (buffer.size())
+        job->getInternal()->client()->didReceiveData(job, buffer.data(), buffer.size(), 0);
+
     return true;
 }
 
@@ -199,12 +202,12 @@ void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
 void CurlCacheEntry::didFail()
 {
     // The cache manager will call invalidate()
-    closeContentFile();
+    setIsLoading(false);
 }
 
 void CurlCacheEntry::didFinishLoading()
 {
-    closeContentFile();
+    setIsLoading(false);
 }
 
 void CurlCacheEntry::generateBaseFilename(const CString& url)
@@ -344,6 +347,15 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
 
     m_headerParsed = true;
     return true;
+}
+
+void CurlCacheEntry::setIsLoading(bool isLoading)
+{
+    m_isLoading = isLoading;
+    if (m_isLoading)
+        openContentFile();
+    else
+        closeContentFile();
 }
 
 size_t CurlCacheEntry::entrySize()

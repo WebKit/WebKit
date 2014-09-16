@@ -218,6 +218,7 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
         auto cacheEntry = std::make_unique<CurlCacheEntry>(url, &job, m_cacheDir);
         bool cacheable = cacheEntry->parseResponseHeaders(response);
         if (cacheable) {
+            cacheEntry->setIsLoading(true);
             m_LRUEntryList.prependOrMoveToFirst(url);
             m_index.set(url, WTF::move(cacheEntry));
             saveResponseHeaders(url, response);

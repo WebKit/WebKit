@@ -1,3 +1,27 @@
+2014-09-16  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Sometimes incomplete or empty content can be loaded from cache.
+        https://bugs.webkit.org/show_bug.cgi?id=136855
+
+        Reviewed by Alex Christensen.
+
+        Sometimes, when two requests with the same url are started at the same time,
+        there is a possibility of loading incomplete or empty content from the cache.
+        This happens because the method CurlCacheEntry::isLoading() is returning the wrong status
+        in the time period between the headers are received, and the content data is received.
+        This can be fixed by using a flag for the load status, instead of checking whether
+        the content file is open. 
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::CurlCacheEntry): Initialize loading flag.
+        (WebCore::CurlCacheEntry::isLoading): Return loading flag.
+        (WebCore::CurlCacheEntry::didFail): Call new method to set loading flag.
+        (WebCore::CurlCacheEntry::didFinishLoading): Ditto.
+        (WebCore::CurlCacheEntry::setIsLoading): Added new method to set loading flag.
+        * platform/network/curl/CurlCacheEntry.h: Added loading flag and new method to set it.
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::didReceiveResponse): Call new method to set loading flag.
+
 2014-09-16  Chris Dumez  <cdumez@apple.com>
 
         Rename Node::nodeIndex() to computeNodeIndex() for clarity
