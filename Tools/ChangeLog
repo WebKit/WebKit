@@ -1,3 +1,15 @@
+2014-09-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add iOS SDK name and version suffix to WebKitSystemInterface debug/release product name
+        https://bugs.webkit.org/show_bug.cgi?id=136862
+
+        Reviewed by David Kilzer.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Remove hardcoded iOS 8.0
+        IPHONEOS_DEPLOYMENT_TARGET to ensure we link against the latest version of WebKitSystemInterface.
+
 2014-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac queue slaves should reboot every so often

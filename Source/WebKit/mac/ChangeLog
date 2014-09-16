@@ -1,3 +1,12 @@
+2014-09-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add iOS SDK name and version suffix to WebKitSystemInterface debug/release product name
+        https://bugs.webkit.org/show_bug.cgi?id=136862
+
+        Reviewed by David Kilzer.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2014-09-16  Enrica Casucci  <enrica@apple.com>
 
         Remove PLATFORM(IOS) from WebCore/editing (Part 3).
