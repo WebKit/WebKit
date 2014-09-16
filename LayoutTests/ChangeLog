@@ -1,3 +1,15 @@
+2014-09-16  Jinho Bang  <jinho.bang@samsung.com>
+
+        Add version of drawFocusIfNeeded that take a Path2D parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=136846
+
+        Reviewed by Dirk Schulze.
+
+        * fast/canvas/draw-focus-if-needed-expected.txt: Added.
+        * fast/canvas/draw-focus-if-needed-with-path-expected.txt: Added.
+        * fast/canvas/draw-focus-if-needed-with-path.html: Added.
+        * fast/canvas/draw-focus-if-needed.html: Added.
+
 2014-09-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Windows gardening. fast/forms/label test expectations now match Mac platform's expectations.

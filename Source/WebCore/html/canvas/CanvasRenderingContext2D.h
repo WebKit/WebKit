@@ -198,6 +198,7 @@ public:
     void webkitPutImageDataHD(ImageData*, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
     void drawFocusIfNeeded(Element*);
+    void drawFocusIfNeeded(DOMPath*, Element*);
 
     float webkitBackingStorePixelRatio() const { return 1; }
 
@@ -322,6 +323,8 @@ private:
 
     bool isPointInPathInternal(const Path&, float x, float y, const String& winding);
     bool isPointInStrokeInternal(const Path&, float x, float y);
+
+    void drawFocusIfNeededInternal(const Path&, Element*);
 
     void clearCanvas();
     Path transformAreaToDevice(const Path&) const;

@@ -181,6 +181,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     
     // Focus rings
     void drawFocusIfNeeded(Element element);
+    void drawFocusIfNeeded(DOMPath path, Element element);
 
     readonly attribute float webkitBackingStorePixelRatio;
 

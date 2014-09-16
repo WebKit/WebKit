@@ -1,0 +1,2 @@
+This test ensures that a focus ring is drawn. 
+TEST PASSED

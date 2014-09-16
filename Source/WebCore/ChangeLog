@@ -1,3 +1,18 @@
+2014-09-16  Jinho Bang  <jinho.bang@samsung.com>
+
+        Add version of drawFocusIfNeeded that take a Path2D parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=136846
+
+        Reviewed by Dirk Schulze.
+
+        Tests: fast/canvas/draw-focus-if-needed-with-path.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeeded):
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2014-09-15  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WaylandDisplay
