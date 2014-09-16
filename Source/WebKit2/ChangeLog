@@ -1,3 +1,11 @@
+2014-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Standardized the return type of a delegate method.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Changed a return type from bool to BOOL.
+
 2014-09-16  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Typo in  webkit_security_manager_register_uri_scheme_as_empty_document documentation
