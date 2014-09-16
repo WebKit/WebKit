@@ -42,7 +42,7 @@ use POSIX;
 setConfiguration();
 my $configuration = configuration();
 
-my @testsToSkip = (
+my @testsToSkipOnWindows = (
     # Various ecma/Date tests sometimes fail on Windows (but not Mac) https://bugs.webkit.org/show_bug.cgi?id=25160
     "ecma/Date/15.9.2.1.js",
     "ecma/Date/15.9.2.2-1.js",
@@ -52,12 +52,18 @@ my @testsToSkip = (
     "ecma/Date/15.9.2.2-5.js",
     "ecma/Date/15.9.2.2-6.js",
     "ecma/Date/15.9.5.31-1.js",
+);
+
+my @testsToSkipOnNonWindows = (
     # ecma_3/Date/15.9.5.7.js fails on Mac (but not Windows) https://bugs.webkit.org/show_bug.cgi?id=25161
-    "ecma_3/Date/15.9.5.6.js",
     "ecma_3/Date/15.9.5.7.js",
 );
 
-my $jsDriverArgs = "-L " . join(" ", @testsToSkip);
+my @testsToSkip;
+@testsToSkip = @testsToSkipOnWindows if isAppleWinWebKit();
+@testsToSkip = (@testsToSkip, @testsToSkipOnNonWindows) if !isAppleWinWebKit();
+my $jsDriverArgs = "-L " . join(" ", @testsToSkip) if @testsToSkip;
+
 # These variables are intentionally left undefined.
 my $root;
 my $showHelp;

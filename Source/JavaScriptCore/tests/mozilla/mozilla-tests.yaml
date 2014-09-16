@@ -104,19 +104,19 @@
 - path: ecma/Date/15.9.1.1-2.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.1.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.2-1.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.2-2.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.2-3.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.2-4.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.2-5.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.2.2-6.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.3.1-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.3.1-2.js
@@ -228,7 +228,7 @@
 - path: ecma/Date/15.9.5.13-8.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.14.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.15.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.16.js
@@ -348,13 +348,13 @@
 - path: ecma/Date/15.9.5.30-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.31-1.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.32-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.33-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.34-1.js
-  cmd: defaultRunMozillaTest :skip, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.35-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.36-1.js

@@ -1,3 +1,12 @@
+2014-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        JSC test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=136823
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/run-javascriptcore-tests: Skip tests on only the affected platforms.
+
 2014-09-16  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Remove shouldAbortEarly cruft from master.cfg
