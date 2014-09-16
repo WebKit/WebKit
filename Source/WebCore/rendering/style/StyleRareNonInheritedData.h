@@ -168,7 +168,7 @@ public:
     AtomicString m_regionThread;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    ScrollSnapType m_scrollSnapType; // ScrollSnapType
+    unsigned m_scrollSnapType : 2; // ScrollSnapType
 #endif
 
     unsigned m_regionFragment : 1; // RegionFragment

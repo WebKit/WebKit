@@ -30,30 +30,36 @@
 
 namespace WebCore {
 
-StyleScrollSnapPoints::StyleScrollSnapPoints()
-    : repeatOffsetX(StyleScrollSnapPoints::defaultRepeatOffset())
-    , repeatOffsetY(StyleScrollSnapPoints::defaultRepeatOffset())
-    , destinationX(StyleScrollSnapPoints::defaultDestinationOffset())
-    , destinationY(StyleScrollSnapPoints::defaultDestinationOffset())
-    , hasRepeatX(true)
-    , hasRepeatY(true)
-    , usesElementsX(false)
-    , usesElementsY(false)
+ScrollSnapPoints::ScrollSnapPoints()
+    : repeatOffset(100, Percent)
+    , hasRepeat(true)
+    , usesElements(false)
 {
 }
 
-inline StyleScrollSnapPoints::StyleScrollSnapPoints(const StyleScrollSnapPoints& o)
-    : repeatOffsetX(o.repeatOffsetX)
-    , repeatOffsetY(o.repeatOffsetY)
-    , destinationX(o.destinationX)
-    , destinationY(o.destinationY)
-    , hasRepeatX(o.hasRepeatX)
-    , hasRepeatY(o.hasRepeatY)
-    , usesElementsX(o.usesElementsX)
-    , usesElementsY(o.usesElementsY)
-    , offsetsX(o.offsetsX)
-    , offsetsY(o.offsetsY)
-    , coordinates(o.coordinates)
+bool operator==(const ScrollSnapPoints& a, const ScrollSnapPoints& b)
+{
+    return a.repeatOffset == b.repeatOffset
+        && a.hasRepeat == b.hasRepeat
+        && a.usesElements == b.usesElements
+        && a.offsets == b.offsets;
+}
+
+LengthSize defaultScrollSnapDestination()
+{
+    return LengthSize(Length(0, Fixed), Length(0, Fixed));
+}
+
+StyleScrollSnapPoints::StyleScrollSnapPoints()
+    : destination(defaultScrollSnapDestination())
+{
+}
+
+inline StyleScrollSnapPoints::StyleScrollSnapPoints(const StyleScrollSnapPoints& other)
+    : xPoints(other.xPoints)
+    , yPoints(other.yPoints)
+    , destination(other.destination)
+    , coordinates(other.coordinates)
 {
 }
 
@@ -62,20 +68,14 @@ PassRef<StyleScrollSnapPoints> StyleScrollSnapPoints::copy() const
     return adoptRef(*new StyleScrollSnapPoints(*this));
 }
 
-bool StyleScrollSnapPoints::operator==(const StyleScrollSnapPoints& o) const
+bool operator==(const StyleScrollSnapPoints& a, const StyleScrollSnapPoints& b)
 {
-    return (offsetsX == o.offsetsX
-        && offsetsY == o.offsetsY
-        && repeatOffsetX == o.repeatOffsetX
-        && hasRepeatX == o.hasRepeatX
-        && hasRepeatY == o.hasRepeatY
-        && destinationX == o.destinationX
-        && destinationY == o.destinationY
-        && coordinates == o.coordinates
-        && usesElementsX == o.usesElementsX
-        && usesElementsY == o.usesElementsY);
+    return a.xPoints == b.xPoints
+        && a.yPoints == b.yPoints
+        && a.destination == b.destination
+        && a.coordinates == b.coordinates;
 }
-    
+
 } // namespace WebCore
 
 #endif /* ENABLE(CSS_SCROLL_SNAP) */

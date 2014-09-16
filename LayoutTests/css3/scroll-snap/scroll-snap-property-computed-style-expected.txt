@@ -34,11 +34,26 @@ PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-sna
 mismatched x coordinate : 50% 100px 75%
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
 
+inherited type : inherit
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+
+initial type : initial
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+
+none type : none
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+
 mandatory type : mandatory
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'mandatory'
 
 proximity type : proximity
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'proximity'
+
+inherited points along x axis : inherit
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+
+initial points along x axis : initial
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
 
 element points along x axis : elements
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'elements'
@@ -67,6 +82,12 @@ PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-sna
 pixel points along x axis with pixel repeat : 100px repeat(42px)
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px repeat(42px)'
 
+inherited points along y axis : inherit
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+
+initial points along y axis : initial
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+
 element points along y axis : elements
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'elements'
 
@@ -94,6 +115,12 @@ PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-sna
 pixel points along y axis with pixel repeat : 100px repeat(42px)
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px repeat(42px)'
 
+inherited destination : inherit
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+
+initial destination : initial
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+
 pixel/pixel destination : 10px 50px
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '10px 50px'
 
@@ -105,6 +132,15 @@ PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-sna
 
 percentage/percentage destination : 5% 100%
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '5% 100%'
+
+inherited coordinate : inherit
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+
+initial coordinate : initial
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+
+no coordinate : none
+PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
 
 single pixel coordinate : 50px 100px
 PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px'

@@ -1,3 +1,119 @@
+2014-09-14  Darin Adler  <darin@apple.com>
+
+        Scroll snap properties don't handle inherit and initial propertly.
+        https://bugs.webkit.org/show_bug.cgi?id=136643
+
+        Reviewed by Beth Dakin.
+
+        Restructured scroll snap code both to handle inherit and initial, and to reduce the
+        total code size a bit, fixing a few minor bugs along the way. Updated the regression
+        tests to cover the new parts.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::addValuesForNamedGridLinesAtIndex): Use a modern for loop.
+        (WebCore::scrollSnapDestination): Changed to take a LengthSize. Also streamlined.
+        (WebCore::scrollSnapPoints): Changed to to take a ScrollSnapPoints. Also streamlined and
+        added code to handle the "uses elements" case; serialize that as an identifier, not the
+        string "elements", fixing a minor bug.
+        (WebCore::scrollSnapCoordinates): Changed to take a Vector<LengthSize>. Also streamlined
+        and added code to handle the empty vector case; serialize that as an identifier, not the
+        string "none", fixing a minor bug.
+        (WebCore::ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword): Use nullptr.
+        (WebCore::counterToCSSValue): Use nullptr.
+        (WebCore::ComputedStyleExtractor::styledNode): Use nullptr.
+        (WebCore::ComputedStyleExtractor::propertyValue): Use nullptr. Moved CSS_SCROLL_SNAP
+        to a more appropriate section of the switch statement. Made it just call through to
+        the functions above in a more straightforward way.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyValue): Reversed logic to use early
+        return and to call emptyString.
+        (WebCore::CSSComputedStyleDeclaration::item): Use emptyString.
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForSidesShorthand): Use nullptr.
+        (WebCore::CSSComputedStyleDeclaration::parentRule): Use nullptr.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Use nullptr.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyPriority): Use emptyString.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyShorthand): Use emptyString.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyMarqueeIncrement::applyValue): Use the switch statement for the
+        invalid value as well as for the valid values, rather than a separate if statement.
+        Call convertToLength directly rather than through a StyleResolver static member function.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue): Fixed a formatting mistake.
+
+        * css/StyleResolver.cpp:
+        (WebCore::convertToIntLength): Made this function local to this file instead of a
+        static member function.
+        (WebCore::convertToFloatLength): Ditto.
+        (WebCore::StyleResolver::parseSnapCoordinate): Added. Used to keep snap point parsing
+        code small.
+        (WebCore::StyleResolver::parseSnapCoordinatePair): Ditto.
+        (WebCore::StyleResolver::parseSnapPoints): Added. Parses an entire snap points property.
+        (WebCore::StyleResolver::applyProperty): Removed various bits of redundant code that
+        were not using the primitiveValue value already in a local variable. Added the
+        HANDLE_INHERIT_AND_INITIAL to all the scroll snap properties and updated since the
+        RenderStyle structure now more closely matches the CSS properties.
+
+        * css/StyleResolver.h: Updated for above changes, and removed a redundant "private:".
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::appendChildSnapOffsets): Use auto& instead of SnapCoordinate since that type
+        is now gone. Updated since coordinates are now LengthSize.
+        (WebCore::updateFromStyle): Changed to take a reference instead of a pointer and
+        also to fetch the data from RenderStyle in a new way that more closely matches the
+        CSS properties.
+        (WebCore::updateSnapOffsetsForScrollableArea): Ditto. Also moved some memory allocation
+        inside if statements so we don't wastefully allocate and destroy.
+
+        * rendering/style/RenderStyle.cpp: Added an include of StyleScrollSnapPoints.h now
+        that the header doesn't include them. Moved the conditional includes out of the main
+        include paragraph (even though I don't think conditional includes are usually a good
+        idea).
+        (WebCore::RenderStyle::initialScrollSnapPointsX): Added.
+        (WebCore::RenderStyle::initialScrollSnapPointsY): Added.
+        (WebCore::RenderStyle::initialScrollSnapDestination): Added.
+        (WebCore::RenderStyle::initialScrollSnapCoordinates): Added.
+        (WebCore::RenderStyle::scrollSnapPointsX): Added.
+        (WebCore::RenderStyle::scrollSnapPointsY): Added.
+        (WebCore::RenderStyle::scrollSnapDestination): Added.
+        (WebCore::RenderStyle::scrollSnapCoordinates): Added.
+        (WebCore::RenderStyle::setScrollSnapPointsX): Added.
+        (WebCore::RenderStyle::setScrollSnapPointsY): Added.
+        (WebCore::RenderStyle::setScrollSnapDestination): Added.
+        (WebCore::RenderStyle::setScrollSnapCoordinates): Added.
+
+        * rendering/style/RenderStyle.h: Replaced the include of StyleScrollSnapPoints.h with
+        a forward declaration of ScrollSnapPoints. Removed getters and setters for the old
+        style properties and replaced them with new ones that match the CSS properties more
+        closely. Tweaked formatting a bit. Added initial value functions for the the scroll snap
+        properties.
+
+        * rendering/style/StyleRareNonInheritedData.cpp: Added include of StyleScrollSnapPoints.h
+        now that RenderStyle.h doesn't include it.
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData): Updated since
+        m_scrollSnapType is now unsigned instead of ScrollSnapType.
+
+        * rendering/style/StyleRareNonInheritedData.h: Fixed type of m_scrollSnapType to be
+        unsigned instead of ScrollSnapType. This should have been causing problems on Windows,
+        but I think we got lucky and had no detectable problems.
+
+        * rendering/style/StyleScrollSnapPoints.cpp:
+        (WebCore::ScrollSnapPoints::ScrollSnapPoints): Added.
+        (WebCore::operator==): Added overloads for both ScrollSnapPoints and also for
+        StyleScrollSnapPoints; using a free function for both since both have public data.
+        (WebCore::defaultScrollSnapDestination): Added, replaces a static member function.
+        (WebCore::StyleScrollSnapPoints::StyleScrollSnapPoints): Updated both the default
+        constructor and the copy constructor for the new design.
+
+        * rendering/style/StyleScrollSnapPoints.h: Added a ScrollSnapPoints struct for the
+        type of the snap-points-x and snap-points-y CSS properties. Changed the data members
+        of StyleScrollSnapPoints to match the various CSS properties rather than breaking
+        out all the data into separate data members.
+        (WebCore::StyleScrollSnapPoints::defaultRepeatOffset): Deleted. Replaced by the
+        default constructor for ScrollSnapPoints.
+        (WebCore::StyleScrollSnapPoints::defaultDestinationOffset): Deleted. Replaced by
+        a function inside the .cpp file.
+
 2014-09-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [GStreamer] http/tests/media/video-auth.html is failing

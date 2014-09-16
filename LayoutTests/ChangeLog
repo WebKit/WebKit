@@ -1,3 +1,25 @@
+2014-09-14  Darin Adler  <darin@apple.com>
+
+        Scroll snap properties do not handle inherit and initial properly.
+        https://bugs.webkit.org/show_bug.cgi?id=136643
+
+        Reviewed by Beth Dakin.
+
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt: Added
+        expected passing results from new tests.
+        * css3/scroll-snap/scroll-snap-property-computed-style.js: Added new test
+        cases that cover inherit and initial. Before, these would crash or fail.
+
+        * css3/scroll-snap/scroll-snap-property-parsing-expected.txt: Added expected
+        passing results from new tests, and also updated to expect pass rather than
+        fail for the tests that had incorrect expected results.
+
+        * css3/scroll-snap/scroll-snap-property-parsing.js: Added new test cases that
+        cover inherit and initial. Also updated expected results for certain pixel
+        repeat cases that were incorrect.
+
+        * platform/mac/TestExpectations: Fixed an unrelated syntax error in this file.
+
 2014-09-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [GStreamer] http/tests/media/video-auth.html is failing

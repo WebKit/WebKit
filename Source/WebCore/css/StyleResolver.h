@@ -458,9 +458,6 @@ public:
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }
 
-    static Length convertToIntLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
-    static Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
-
     CSSToStyleMap* styleMap() { return &m_styleMap; }
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
     const FontDescription& fontDescription() { return m_state.fontDescription(); }
@@ -476,7 +473,6 @@ private:
 
     void cacheBorderAndBackground();
 
-private:
     bool canShareStyleWithControl(StyledElement*) const;
 
     void applyProperty(CSSPropertyID, CSSValue*);
@@ -507,6 +503,10 @@ private:
     bool classNamesAffectedByRules(const SpaceSplitString&) const;
     bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement*) const;
 
+    Length parseSnapCoordinate(CSSPrimitiveValue&);
+    Length parseSnapCoordinate(CSSValueList&, unsigned offset);
+    LengthSize parseSnapCoordinatePair(CSSValueList&, unsigned offset);
+    ScrollSnapPoints parseSnapPoints(CSSValue&);
 
     unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
 

@@ -4,6 +4,56 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
+inherited type : inherit
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-type') is 'inherit'
+
+initial type : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-type') is 'initial'
+
+inherited points-x : inherit
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'inherit'
+
+initial points-x : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'initial'
+
+inherited points-y : inherit
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'inherit'
+
+initial points-y : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'initial'
+
+inherited destination : inherit
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is 'inherit'
+
+initial destination : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is 'initial'
+
+inherited coordinate : inherit
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is 'inherit'
+
+initial coordinate : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is 'initial'
+
 mandatory type : mandatory
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -107,22 +157,22 @@ PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100px repe
 em points along x axis with pixel repeat : 100em repeat(42em)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-FAIL declaration.getPropertyValue('-webkit-scroll-snap-points-x') should be 100em repeat 42em. Was 100em repeat(42em).
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100em repeat(42em)'
 
 mm along x axis with pixel repeat : 100mm repeat(42mm)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-FAIL declaration.getPropertyValue('-webkit-scroll-snap-points-x') should be 100mm repeat 42mm. Was 100mm repeat(42mm).
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100mm repeat(42mm)'
 
 in along x axis with pixel repeat : 100in repeat(42in)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-FAIL declaration.getPropertyValue('-webkit-scroll-snap-points-x') should be 100in repeat 42in. Was 100in repeat(42in).
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100in repeat(42in)'
 
 pt along x axis with pixel repeat : 100pt repeat(42pt)
 PASS cssRule.type is 1
 PASS declaration.length is 1
-FAIL declaration.getPropertyValue('-webkit-scroll-snap-points-x') should be 100pt repeat 42pt. Was 100pt repeat(42pt).
+PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100pt repeat(42pt)'
 
 pixel/pixel destination : 10px 50px
 PASS cssRule.type is 1

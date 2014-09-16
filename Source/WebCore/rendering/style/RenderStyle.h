@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -84,10 +84,6 @@
 #include "StyleDashboardRegion.h"
 #endif
 
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "StyleScrollSnapPoints.h"
-#endif
-
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 #include "TextSizeAdjustment.h"
 #endif
@@ -104,10 +100,11 @@ template<typename T, typename U> inline bool compareEqual(const T& t, const U& u
 
 namespace WebCore {
 
-class FilterOperations;
 class BorderData;
+class ContentData;
 class CounterContent;
 class CursorList;
+class FilterOperations;
 class Font;
 class FontMetrics;
 class IntRect;
@@ -118,7 +115,7 @@ class StyleInheritedData;
 class StyleResolver;
 class TransformationMatrix;
 
-class ContentData;
+struct ScrollSnapPoints;
 
 typedef Vector<RefPtr<RenderStyle>, 4> PseudoStyleCache;
 
@@ -1080,30 +1077,28 @@ public:
 
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType() const { return static_cast<ScrollSnapType>(rareNonInheritedData->m_scrollSnapType); }
-    Vector<Length> scrollSnapOffsetsX() const { return rareNonInheritedData->m_scrollSnapPoints->offsetsX; }
-    Vector<Length> scrollSnapOffsetsY() const { return rareNonInheritedData->m_scrollSnapPoints->offsetsY; }
-    Length scrollSnapRepeatOffsetX() const { return rareNonInheritedData->m_scrollSnapPoints->repeatOffsetX; }
-    Length scrollSnapRepeatOffsetY() const { return rareNonInheritedData->m_scrollSnapPoints->repeatOffsetY; }
-    bool scrollSnapHasRepeatX() const { return rareNonInheritedData->m_scrollSnapPoints->hasRepeatX; }
-    bool scrollSnapHasRepeatY() const { return rareNonInheritedData->m_scrollSnapPoints->hasRepeatY; }
-    Length scrollSnapDestinationX() const { return rareNonInheritedData->m_scrollSnapPoints->destinationX; }
-    Length scrollSnapDestinationY() const { return rareNonInheritedData->m_scrollSnapPoints->destinationY; }
-    Vector<SnapCoordinate> scrollSnapCoordinates() const { return rareNonInheritedData->m_scrollSnapPoints->coordinates; }
-    bool scrollSnapUsesElementsX() const { return rareNonInheritedData->m_scrollSnapPoints->usesElementsX; }
-    bool scrollSnapUsesElementsY() const { return rareNonInheritedData->m_scrollSnapPoints->usesElementsY; }
+    const ScrollSnapPoints& scrollSnapPointsX() const;
+    const ScrollSnapPoints& scrollSnapPointsY() const;
+    const LengthSize& scrollSnapDestination() const;
+    const Vector<LengthSize>& scrollSnapCoordinates() const;
 #endif
+
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor() const { return rareInheritedData->tapHighlightColor; }
 #endif
+
 #if PLATFORM(IOS)
     bool touchCalloutEnabled() const { return rareInheritedData->touchCalloutEnabled; }
 #endif
+
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     bool useTouchOverflowScrolling() const { return rareInheritedData->useTouchOverflowScrolling; }
 #endif
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
 #endif
+
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
     WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
@@ -1319,7 +1314,7 @@ public:
 #if ENABLE(CSS3_TEXT)
     void setTextAlignLast(TextAlignLast v) { SET_VAR(rareInheritedData, m_textAlignLast, v); }
     void setTextJustify(TextJustify v) { SET_VAR(rareInheritedData, m_textJustify, v); }
-#endif // CSS3_TEXT
+#endif
     void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(rareNonInheritedData, m_textDecorationStyle, v); }
     void setTextDecorationSkip(TextDecorationSkip skip) { SET_VAR(rareInheritedData, m_textDecorationSkip, skip); }
     void setTextUnderlinePosition(TextUnderlinePosition v) { SET_VAR(rareInheritedData, m_textUnderlinePosition, v); }
@@ -1605,32 +1600,29 @@ public:
     void setInitialLetter(const IntSize& size) { SET_VAR(rareNonInheritedData, m_initialLetter, size); }
     
 #if ENABLE(CSS_SCROLL_SNAP)
-    void setScrollSnapType(ScrollSnapType type) { SET_VAR(rareNonInheritedData, m_scrollSnapType, type); }
-    void setScrollSnapOffsetsX(Vector<Length>& offsets) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, offsetsX, offsets); }
-    void setScrollSnapOffsetsY(Vector<Length>& offsets) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, offsetsY, offsets); }
-    void setScrollSnapRepeatOffsetX(Length repeatOffset) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, repeatOffsetX, repeatOffset); }
-    void setScrollSnapRepeatOffsetY(Length repeatOffset) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, repeatOffsetY, repeatOffset); }
-    void setScrollSnapHasRepeatX(bool hasRepeat) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, hasRepeatX, hasRepeat); }
-    void setScrollSnapHasRepeatY(bool hasRepeat) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, hasRepeatY, hasRepeat); }
-    void setScrollSnapDestinationX(Length destination) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, destinationX, destination); }
-    void setScrollSnapDestinationY(Length destination) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, destinationY, destination); }
-    void setScrollSnapCoordinates(Vector<SnapCoordinate>& coordinates) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, coordinates, coordinates); }
-    void setScrollSnapUsesElementsX(bool usesElements) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, usesElementsX, usesElements); }
-    void setScrollSnapUsesElementsY(bool usesElements) { SET_VAR(rareNonInheritedData.access()->m_scrollSnapPoints, usesElementsY, usesElements); }
+    void setScrollSnapType(ScrollSnapType type) { SET_VAR(rareNonInheritedData, m_scrollSnapType, static_cast<unsigned>(type)); }
+    void setScrollSnapPointsX(ScrollSnapPoints);
+    void setScrollSnapPointsY(ScrollSnapPoints);
+    void setScrollSnapDestination(LengthSize);
+    void setScrollSnapCoordinates(Vector<LengthSize>);
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
     void setTapHighlightColor(const Color& c) { SET_VAR(rareInheritedData, tapHighlightColor, c); }
 #endif
+
 #if PLATFORM(IOS)
     void setTouchCalloutEnabled(bool v) { SET_VAR(rareInheritedData, touchCalloutEnabled, v); }
 #endif
+
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     void setUseTouchOverflowScrolling(bool v) { SET_VAR(rareInheritedData, useTouchOverflowScrolling, v); }
 #endif
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     void setTextSizeAdjust(TextSizeAdjustment anAdjustment) { SET_VAR(rareInheritedData, textSizeAdjust, anAdjustment); }
 #endif
+
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
     const SVGRenderStyle& svgStyle() const { return *m_svgStyle; }
@@ -1932,8 +1924,13 @@ public:
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
+
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType() { return ScrollSnapType::None; }
+    static ScrollSnapPoints initialScrollSnapPointsX();
+    static ScrollSnapPoints initialScrollSnapPointsY();
+    static LengthSize initialScrollSnapDestination();
+    static Vector<LengthSize> initialScrollSnapCoordinates();
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)

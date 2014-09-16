@@ -1348,26 +1348,26 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        if (primitiveValue->getValueID()) {
-            switch (primitiveValue->getValueID()) {
-            case CSSValueSmall:
-                styleResolver->style()->setMarqueeIncrement(Length(1, Fixed)); // 1px.
-                break;
-            case CSSValueNormal:
-                styleResolver->style()->setMarqueeIncrement(Length(6, Fixed)); // 6px. The WinIE default.
-                break;
-            case CSSValueLarge:
-                styleResolver->style()->setMarqueeIncrement(Length(36, Fixed)); // 36px.
-                break;
-            default:
-                break;
-            }
-        } else {
-            Length marqueeLength = styleResolver->convertToIntLength(primitiveValue, styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            if (!marqueeLength.isUndefined())
-                styleResolver->style()->setMarqueeIncrement(marqueeLength);
+        CSSPrimitiveValue& primitiveValue = toCSSPrimitiveValue(*value);
+        Length marqueeLength(Undefined);
+        switch (primitiveValue.getValueID()) {
+        case CSSValueSmall:
+            marqueeLength = Length(1, Fixed); // 1px.
+            break;
+        case CSSValueNormal:
+            marqueeLength = Length(6, Fixed); // 6px. The WinIE default.
+            break;
+        case CSSValueLarge:
+            marqueeLength = Length(36, Fixed); // 36px.
+            break;
+        case CSSValueInvalid:
+            marqueeLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            break;
+        default:
+            break;
         }
+        if (!marqueeLength.isUndefined())
+            styleResolver->style()->setMarqueeIncrement(marqueeLength);
     }
     static PropertyHandler createHandler()
     {

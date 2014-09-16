@@ -20,6 +20,21 @@ function testScrollSnapRule(description, snapProperty, rule, expectedValue)
     shouldBe("declaration.getPropertyValue('-webkit-scroll-snap-" + snapProperty + "')", "'" + expectedValue + "'");
 }
 
+testScrollSnapRule("inherited type", "type", "inherit", "inherit");
+testScrollSnapRule("initial type", "type", "initial", "initial");
+
+testScrollSnapRule("inherited points-x", "points-x", "inherit", "inherit");
+testScrollSnapRule("initial points-x", "points-x", "initial", "initial");
+
+testScrollSnapRule("inherited points-y", "points-y", "inherit", "inherit");
+testScrollSnapRule("initial points-y", "points-y", "initial", "initial");
+
+testScrollSnapRule("inherited destination", "destination", "inherit", "inherit");
+testScrollSnapRule("initial destination", "destination", "initial", "initial");
+
+testScrollSnapRule("inherited coordinate", "coordinate", "inherit", "inherit");
+testScrollSnapRule("initial coordinate", "coordinate", "initial", "initial");
+
 testScrollSnapRule("mandatory type", "type", "mandatory", "mandatory");
 testScrollSnapRule("proximity type", "type", "proximity", "proximity");
 
@@ -43,10 +58,10 @@ testScrollSnapRule("pixel points along y axis with percentage repeat", "points-y
 testScrollSnapRule("percentage points along y axis with pixel repeat", "points-y", "100% 50% repeat(40px)", "100% 50% repeat(40px)");
 testScrollSnapRule("pixel points along y axis with pixel repeat", "points-y", "100px repeat(42px)", "100px repeat(42px)");
 
-testScrollSnapRule("em points along x axis with pixel repeat", "points-x", "100em repeat(42em)", "100em repeat 42em");
-testScrollSnapRule("mm along x axis with pixel repeat", "points-x", "100mm repeat(42mm)", "100mm repeat 42mm");
-testScrollSnapRule("in along x axis with pixel repeat", "points-x", "100in repeat(42in)", "100in repeat 42in");
-testScrollSnapRule("pt along x axis with pixel repeat", "points-x", "100pt repeat(42pt)", "100pt repeat 42pt");
+testScrollSnapRule("em points along x axis with pixel repeat", "points-x", "100em repeat(42em)", "100em repeat(42em)");
+testScrollSnapRule("mm along x axis with pixel repeat", "points-x", "100mm repeat(42mm)", "100mm repeat(42mm)");
+testScrollSnapRule("in along x axis with pixel repeat", "points-x", "100in repeat(42in)", "100in repeat(42in)");
+testScrollSnapRule("pt along x axis with pixel repeat", "points-x", "100pt repeat(42pt)", "100pt repeat(42pt)");
 
 testScrollSnapRule("pixel/pixel destination", "destination", "10px 50px", "10px 50px");
 testScrollSnapRule("pixel/percentage destination", "destination", "20px 40%", "20px 40%");

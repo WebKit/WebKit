@@ -28,57 +28,46 @@
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-#include "Length.h"
-
-#include <wtf/PassRefPtr.h>
+#include "LengthSize.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-typedef std::pair<Length, Length> SnapCoordinate;
+struct ScrollSnapPoints {
+    Length repeatOffset;
+    bool hasRepeat;
+    bool usesElements;
+    Vector<Length> offsets;
+
+    ScrollSnapPoints();
+};
+
+bool operator==(const ScrollSnapPoints&, const ScrollSnapPoints&);
+inline bool operator!=(const ScrollSnapPoints& a, const ScrollSnapPoints& b) { return !(a == b); }
+
+LengthSize defaultScrollSnapDestination();
 
 class StyleScrollSnapPoints : public RefCounted<StyleScrollSnapPoints> {
 public:
     static PassRef<StyleScrollSnapPoints> create() { return adoptRef(*new StyleScrollSnapPoints); }
-    
-    static Length defaultRepeatOffset()
-    {
-        return Length(100, Percent);
-    }
-    
-    static Length defaultDestinationOffset()
-    {
-        return Length(0, Fixed);
-    }
-
     PassRef<StyleScrollSnapPoints> copy() const;
-    
-    bool operator==(const StyleScrollSnapPoints&) const;
-    bool operator!=(const StyleScrollSnapPoints& o) const
-    {
-        return !(*this == o);
-    }
-    
-    Length repeatOffsetX;
-    Length repeatOffsetY;
-    Length destinationX;
-    Length destinationY;
-    bool hasRepeatX;
-    bool hasRepeatY;
-    bool usesElementsX;
-    bool usesElementsY;
-    Vector<Length> offsetsX;
-    Vector<Length> offsetsY;
-    Vector<SnapCoordinate> coordinates;
-    
+
+    ScrollSnapPoints xPoints;
+    ScrollSnapPoints yPoints;
+    LengthSize destination;
+    Vector<LengthSize> coordinates;
+
 private:
     StyleScrollSnapPoints();
     StyleScrollSnapPoints(const StyleScrollSnapPoints&);
 };
 
+bool operator==(const StyleScrollSnapPoints&, const StyleScrollSnapPoints&);
+inline bool operator!=(const StyleScrollSnapPoints& a, const StyleScrollSnapPoints& b) { return !(a == b); }
+
 } // namespace WebCore
 
-#endif /* ENABLE(CSS_SCROLL_SNAP) */
+#endif // ENABLE(CSS_SCROLL_SNAP)
 
 #endif // StyleScrollSnapPoints_h

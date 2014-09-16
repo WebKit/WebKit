@@ -30,6 +30,7 @@
 #include "StyleTransformData.h"
 #include "StyleImage.h"
 #include "StyleResolver.h"
+#include "StyleScrollSnapPoints.h"
 
 namespace WebCore {
 
@@ -68,7 +69,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
 #if ENABLE(CSS_SCROLL_SNAP)
-    , m_scrollSnapType(RenderStyle::initialScrollSnapType())
+    , m_scrollSnapType(static_cast<unsigned>(RenderStyle::initialScrollSnapType()))
 #endif
     , m_regionFragment(RenderStyle::initialRegionFragment())
     , m_regionBreakAfter(RenderStyle::NonInheritedFlags::initialPageBreak())

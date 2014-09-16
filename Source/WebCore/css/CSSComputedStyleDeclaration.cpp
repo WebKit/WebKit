@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
@@ -998,8 +998,8 @@ static void addValuesForNamedGridLinesAtIndex(const OrderedNamedGridLinesMap& or
         return;
 
     RefPtr<CSSGridLineNamesValue> lineNames = CSSGridLineNamesValue::create();
-    for (size_t i = 0; i < namedGridLines.size(); ++i)
-        lineNames->append(cssValuePool().createValue(namedGridLines[i], CSSPrimitiveValue::CSS_STRING));
+    for (auto& name : namedGridLines)
+        lineNames->append(cssValuePool().createValue(name, CSSPrimitiveValue::CSS_STRING));
     list.append(lineNames.releaseNonNull());
 }
 
@@ -1088,38 +1088,44 @@ static PassRef<CSSValueList> getTransitionPropertyValue(const AnimationList* ani
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-static PassRef<CSSValueList> scrollSnapDestination(RenderStyle* style, Length x, Length y)
+
+static PassRef<CSSValueList> scrollSnapDestination(RenderStyle& style, const LengthSize& destination)
 {
-    RefPtr<CSSValueList> snapDestinationValue = CSSValueList::createSpaceSeparated();
-    snapDestinationValue->append(percentageOrZoomAdjustedValue(x, style));
-    snapDestinationValue->append(percentageOrZoomAdjustedValue(y, style));
-    return snapDestinationValue.releaseNonNull();
+    auto list = CSSValueList::createSpaceSeparated();
+    list.get().append(percentageOrZoomAdjustedValue(destination.width(), &style));
+    list.get().append(percentageOrZoomAdjustedValue(destination.height(), &style));
+    return list;
 }
 
-static PassRef<CSSValueList> scrollSnapPoints(RenderStyle* style, const Vector<Length>& points, Length repeatPoint, bool hasRepeat)
+static PassRef<CSSValue> scrollSnapPoints(RenderStyle& style, const ScrollSnapPoints& points)
 {
-    RefPtr<CSSValueList> snapPointsValue = CSSValueList::createSpaceSeparated();
-    for (auto& point : points)
-        snapPointsValue->append(percentageOrZoomAdjustedValue(point, style));
-
-    if (hasRepeat)
-        snapPointsValue->append(cssValuePool().createValue(LengthRepeat::create(percentageOrZoomAdjustedValue(repeatPoint, style))));
-
-    return snapPointsValue.releaseNonNull();
+    if (points.usesElements)
+        return cssValuePool().createIdentifierValue(CSSValueElements);
+    auto list = CSSValueList::createSpaceSeparated();
+    for (auto& point : points.offsets)
+        list.get().append(percentageOrZoomAdjustedValue(point, &style));
+    if (points.hasRepeat)
+        list.get().append(cssValuePool().createValue(LengthRepeat::create(percentageOrZoomAdjustedValue(points.repeatOffset, &style))));
+    return WTF::move(list);
 }
 
-static PassRef<CSSValueList> scrollSnapCoordinates(RenderStyle* style, const Vector<SnapCoordinate>& coordinates)
+static PassRef<CSSValue> scrollSnapCoordinates(RenderStyle& style, const Vector<LengthSize>& coordinates)
 {
-    RefPtr<CSSValueList> snapCoordinatesValue = CSSValueList::createCommaSeparated();
-    for (const auto& coordinate : coordinates) {
-        RefPtr<CSSValueList> currentCoordinate = CSSValueList::createSpaceSeparated();
-        currentCoordinate->append(percentageOrZoomAdjustedValue(coordinate.first, style));
-        currentCoordinate->append(percentageOrZoomAdjustedValue(coordinate.second, style));
+    if (coordinates.isEmpty())
+        return cssValuePool().createIdentifierValue(CSSValueNone);
 
-        snapCoordinatesValue->append(currentCoordinate.releaseNonNull());
+    auto list = CSSValueList::createCommaSeparated();
+
+    for (auto& coordinate : coordinates) {
+        auto pair = CSSValueList::createSpaceSeparated();
+        pair.get().append(percentageOrZoomAdjustedValue(coordinate.width(), &style));
+        pair.get().append(percentageOrZoomAdjustedValue(coordinate.height(), &style));
+        list.get().append(WTF::move(pair));
     }
-    return snapCoordinatesValue.releaseNonNull();
+
+    return WTF::move(list);
 }
+
 #endif
 
 static PassRef<CSSValueList> getDelayValue(const AnimationList* animList)
@@ -1268,13 +1274,13 @@ static CSSValueID cssIdentifierForFontSizeKeyword(int keywordSize)
 PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword() const
 {
     if (!m_node)
-        return 0;
+        return nullptr;
 
     m_node->document().updateLayoutIgnorePendingStylesheets();
 
     RefPtr<RenderStyle> style = m_node->computedStyle(m_pseudoElementSpecifier);
     if (!style)
-        return 0;
+        return nullptr;
 
     if (int keywordSize = style->fontDescription().keywordSize())
         return cssValuePool().createIdentifierValue(cssIdentifierForFontSizeKeyword(keywordSize));
@@ -1464,7 +1470,7 @@ static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPrope
 {
     const CounterDirectiveMap* map = style->counterDirectives();
     if (!map)
-        return 0;
+        return nullptr;
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (CounterDirectiveMap::const_iterator it = map->begin(); it != map->end(); ++it) {
@@ -1622,7 +1628,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
 Node* ComputedStyleExtractor::styledNode() const
 {
     if (!m_node)
-        return 0;
+        return nullptr;
     if (!m_node->isElementNode())
         return m_node.get();
     Element* element = toElement(m_node.get());
@@ -1690,10 +1696,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 {
     Node* styledNode = this->styledNode();
     if (!styledNode)
-        return 0;
+        return nullptr;
 
     RefPtr<RenderStyle> style;
-    RenderObject* renderer = 0;
+    RenderObject* renderer = nullptr;
     bool forceFullLayout = false;
     if (updateLayout) {
         Document& document = styledNode->document();
@@ -1728,7 +1734,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
     }
 
     if (!style)
-        return 0;
+        return nullptr;
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
@@ -2324,7 +2330,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             EPageBreak pageBreak = style->pageBreakInside();
             ASSERT(pageBreak != PBALWAYS);
             if (pageBreak == PBALWAYS)
-                return 0;
+                return nullptr;
             return cssValuePool().createValue(style->pageBreakInside());
         }
         case CSSPropertyPosition:
@@ -2458,7 +2464,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                     return cssValuePool().createValue(style->verticalAlignLength());
             }
             ASSERT_NOT_REACHED();
-            return 0;
+            return nullptr;
         case CSSPropertyVisibility:
             return cssValuePool().createValue(style->visibility());
         case CSSPropertyWhiteSpace:
@@ -2528,7 +2534,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 return cssValuePool().createIdentifierValue(CSSValueNone);
 
             RefPtr<DashboardRegion> firstRegion;
-            DashboardRegion* previousRegion = 0;
+            DashboardRegion* previousRegion = nullptr;
             for (unsigned i = 0; i < count; i++) {
                 RefPtr<DashboardRegion> region = DashboardRegion::create();
                 StyleDashboardRegion styleRegion = regions[i];
@@ -2898,11 +2904,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return getBackgroundShorthandValue();
         case CSSPropertyBorder: {
             RefPtr<CSSValue> value = propertyValue(CSSPropertyBorderTop, DoNotUpdateLayout);
-            const CSSPropertyID properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
-                                        CSSPropertyBorderLeft };
-            for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
-                if (!compareCSSValuePtr<CSSValue>(value, propertyValue(properties[i], DoNotUpdateLayout)))
-                    return 0;
+            const CSSPropertyID properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft };
+            for (auto& property : properties) {
+                if (!compareCSSValuePtr<CSSValue>(value, propertyValue(property, DoNotUpdateLayout)))
+                    return nullptr;
             }
             return value.release();
         }
@@ -2936,6 +2941,20 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return getCSSPropertyValuesForShorthandProperties(outlineShorthand());
         case CSSPropertyPadding:
             return getCSSPropertyValuesForSidesShorthand(paddingShorthand());
+
+#if ENABLE(CSS_SCROLL_SNAP)
+        case CSSPropertyWebkitScrollSnapType:
+            return cssValuePool().createValue(style->scrollSnapType());
+        case CSSPropertyWebkitScrollSnapDestination:
+            return scrollSnapDestination(*style, style->scrollSnapDestination());
+        case CSSPropertyWebkitScrollSnapPointsX:
+            return scrollSnapPoints(*style, style->scrollSnapPointsX());
+        case CSSPropertyWebkitScrollSnapPointsY:
+            return scrollSnapPoints(*style, style->scrollSnapPointsY());
+        case CSSPropertyWebkitScrollSnapCoordinate:
+            return scrollSnapCoordinates(*style, style->scrollSnapCoordinates());
+#endif
+
         /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:
@@ -3093,38 +3112,18 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWritingMode:
         case CSSPropertyWebkitSvgShadow:
             return svgPropertyValue(propertyID, DoNotUpdateLayout);
-
-#if ENABLE(CSS_SCROLL_SNAP)
-        case CSSPropertyWebkitScrollSnapType:
-            return cssValuePool().createValue(style->scrollSnapType());
-        case CSSPropertyWebkitScrollSnapDestination:
-            return scrollSnapDestination(style.get(), style->scrollSnapDestinationX(), style->scrollSnapDestinationY());
-        case CSSPropertyWebkitScrollSnapPointsX:
-            if (style->scrollSnapUsesElementsX())
-                return cssValuePool().createValue("elements", CSSPrimitiveValue::CSS_STRING);
-            return scrollSnapPoints(style.get(), style->scrollSnapOffsetsX(), style->scrollSnapRepeatOffsetX(), style->scrollSnapHasRepeatX());
-        case CSSPropertyWebkitScrollSnapPointsY:
-            if (style->scrollSnapUsesElementsY())
-                return cssValuePool().createValue("elements", CSSPrimitiveValue::CSS_STRING);
-            return scrollSnapPoints(style.get(), style->scrollSnapOffsetsY(), style->scrollSnapRepeatOffsetY(), style->scrollSnapHasRepeatY());
-        case CSSPropertyWebkitScrollSnapCoordinate:
-            Vector<SnapCoordinate> coords = style->scrollSnapCoordinates();
-            if (!coords.size())
-                return cssValuePool().createValue("none", CSSPrimitiveValue::CSS_STRING);
-            return scrollSnapCoordinates(style.get(), coords);
-#endif
     }
 
     logUnimplementedPropertyID(propertyID);
-    return 0;
+    return nullptr;
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const
 {
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
-    if (value)
-        return value->cssText();
-    return "";
+    if (!value)
+        return emptyString(); // FIXME: Should this be null instead, as it is in StyleProperties::getPropertyValue?
+    return value->cssText();
 }
 
 unsigned CSSComputedStyleDeclaration::length() const
@@ -3143,7 +3142,7 @@ unsigned CSSComputedStyleDeclaration::length() const
 String CSSComputedStyleDeclaration::item(unsigned i) const
 {
     if (i >= length())
-        return "";
+        return emptyString();
 
     return getPropertyNameString(computedProperties[i]);
 }
@@ -3190,7 +3189,7 @@ PassRefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForSidesSho
 
     // All 4 properties must be specified.
     if (!topValue || !rightValue || !bottomValue || !leftValue)
-        return 0;
+        return nullptr;
 
     bool showLeft = !compareCSSValuePtr(rightValue, leftValue);
     bool showBottom = !compareCSSValuePtr(topValue, bottomValue) || showLeft;
@@ -3231,16 +3230,16 @@ PassRef<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(cons
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const
 {
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
-        return 0;
+        return nullptr;
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
-    return value ? value->cloneForCSSOM() : 0;
+    return value ? value->cloneForCSSOM() : nullptr;
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
@@ -3254,12 +3253,12 @@ String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 String CSSComputedStyleDeclaration::getPropertyPriority(const String&)
 {
     // All computed styles have a priority of not "important".
-    return "";
+    return emptyString(); // FIXME: Should this sometimes be null instead of empty, to match a normal style declaration?
 }
 
 String CSSComputedStyleDeclaration::getPropertyShorthand(const String&)
 {
-    return "";
+    return emptyString(); // FIXME: Should this sometimes be null instead of empty, to match a normal style declaration?
 }
 
 bool CSSComputedStyleDeclaration::isPropertyImplicit(const String&)
