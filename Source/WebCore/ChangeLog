@@ -1,5 +1,24 @@
 2014-09-15  Chris Dumez  <cdumez@apple.com>
 
+        Return early in SelectorChecker::checkOne() if selector.isAttributeSelector() is true
+        https://bugs.webkit.org/show_bug.cgi?id=136838
+
+        Reviewed by Benjamin Poulain.
+
+        Return early in SelectorChecker::checkOne() if selector.isAttributeSelector()
+        is true and the selector matched. Previously, we were only returning early if
+        the selector did not match and we were falling through if it did. This means
+        that we ended up doing the 2 if() checks below in the method unnecessarily:
+        - selector.m_match == CSSSelector::PseudoClass
+        - selector.m_match == CSSSelector::PseudoElement
+
+        No new tests, no behavior change.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
+2014-09-15  Chris Dumez  <cdumez@apple.com>
+
         Un-inline the Node constructor
         https://bugs.webkit.org/show_bug.cgi?id=136842
 

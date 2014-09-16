@@ -512,8 +512,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
         const QualifiedName& attr = selector->attribute();
         bool caseSensitive = !(m_documentIsHTML && element->isHTMLElement()) || HTMLDocument::isCaseSensitiveAttribute(attr);
 
-        if (!anyAttributeMatches(element, selector, attr, caseSensitive))
-            return false;
+        return anyAttributeMatches(element, selector, attr, caseSensitive);
     }
 
     if (selector->match() == CSSSelector::PseudoClass) {
