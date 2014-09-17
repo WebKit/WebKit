@@ -34,6 +34,7 @@ public:
     virtual void provisionalLoadStarted();
     virtual void provisionalLoadReceivedServerRedirect();
     virtual void provisionalLoadFailed(const gchar* failingURI, GError*);
+    virtual bool loadFailedWithTLSErrors(const gchar* failingURI, GTlsCertificate*, GTlsCertificateFlags);
     virtual void loadCommitted();
     virtual void loadFinished();
     virtual void loadFailed(const char* failingURI, GError*);
@@ -56,7 +57,8 @@ public:
         ProvisionalLoadFailed,
         LoadCommitted,
         LoadFinished,
-        LoadFailed
+        LoadFailed,
+        LoadFailedWithTLSErrors
     };
     bool m_runLoadUntilCompletion;
     bool m_loadFailed;

@@ -150,43 +150,37 @@ public:
 
     TLSErrorsTest()
         : m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
+        , m_failingURI(nullptr)
     {
-        g_signal_connect(m_webView, "load-failed-with-tls-errors", G_CALLBACK(runLoadFailedWithTLSErrorsCallback), this);
     }
 
     ~TLSErrorsTest()
     {
-        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        if (m_failingURI)
+            soup_uri_free(m_failingURI);
     }
 
-    static gboolean runLoadFailedWithTLSErrorsCallback(WebKitWebView*, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors, const char* host, TLSErrorsTest* test)
+    bool loadFailedWithTLSErrors(const char* failingURI, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors) override
     {
-        test->runLoadFailedWithTLSErrors(certificate, tlsErrors, host);
-        return TRUE;
-    }
+        LoadTrackingTest::loadFailedWithTLSErrors(failingURI, certificate, tlsErrors);
 
-    void runLoadFailedWithTLSErrors(GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors, const char* host)
-    {
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(certificate));
         m_certificate = certificate;
         m_tlsErrors = tlsErrors;
-        m_host.reset(g_strdup(host));
-        g_main_loop_quit(m_mainLoop);
-    }
-
-    void waitUntilLoadFailedWithTLSErrors()
-    {
-        g_main_loop_run(m_mainLoop);
+        if (m_failingURI)
+            soup_uri_free(m_failingURI);
+        m_failingURI = soup_uri_new(failingURI);
+        return true;
     }
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
-    const char* host() const { return m_host.get(); }
+    const char* host() const { return m_failingURI->host; }
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;
     GTlsCertificateFlags m_tlsErrors;
-    GUniquePtr<char> m_host;
+    SoupURI* m_failingURI;
 };
 
 static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
@@ -196,13 +190,13 @@ static void testLoadFailedWithTLSErrors(TLSErrorsTest* test, gconstpointer)
 
     // The load-failed-with-tls-errors signal should be emitted when there is a TLS failure.
     test->loadURI(kHttpsServer->getURIForPath("/test-tls/").data());
-    test->waitUntilLoadFailedWithTLSErrors();
-    // Test the WebKitCertificateInfo API.
+    test->waitUntilLoadFinished();
     g_assert(G_IS_TLS_CERTIFICATE(test->certificate()));
     g_assert_cmpuint(test->tlsErrors(), ==, G_TLS_CERTIFICATE_UNKNOWN_CA);
     g_assert_cmpstr(test->host(), ==, soup_uri_get_host(kHttpsServer->baseURI()));
     g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
-    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadFinished);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadFailedWithTLSErrors);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
 
     // Test allowing an exception for this certificate on this host.
     webkit_web_context_allow_tls_certificate_for_host(context, test->certificate(), test->host());

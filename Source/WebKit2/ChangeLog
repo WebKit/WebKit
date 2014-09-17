@@ -1,3 +1,24 @@
+2014-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView::load-failed-with-tls-errors should receive the failing URI instead of a host
+        https://bugs.webkit.org/show_bug.cgi?id=136889
+
+        Reviewed by Gustavo Noronha Silva.
+
+        We were passing a host for two different reasons, first because
+        it's more convenient to add an exception with
+        webkit_web_context_allow_tls_certificate_for_host(), but also
+        because we were assuming the active URI is the failing URI in case
+        of failure. This assumption is correct because our current code
+        does that, but I'm not sure we are doing it on purpose. That
+        behaviour is not documented anywhere and it's not what WebKit2 does
+        internaly.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewLoadFailedWithTLSErrors):
+        * UIProcess/API/gtk/WebKitWebView.h:
+
 2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix layering violations in PasteboardGtk

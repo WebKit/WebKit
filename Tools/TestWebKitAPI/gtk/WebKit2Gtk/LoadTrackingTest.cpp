@@ -68,7 +68,7 @@ static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent
     switch (loadEvent) {
     case WEBKIT_LOAD_STARTED:
         g_assert(!webkit_web_view_is_loading(webView));
-        g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        g_assert_cmpstr(test->m_activeURI.data(), ==, failingURI);
         g_assert(error);
         test->provisionalLoadFailed(failingURI, error);
         break;
@@ -83,6 +83,16 @@ static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent
     }
 }
 
+static gboolean loadFailedWithTLSErrorsCallback(WebKitWebView* webView, const char* failingURI, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors, LoadTrackingTest* test)
+{
+    test->m_loadFailed = true;
+    g_assert(!webkit_web_view_is_loading(webView));
+    g_assert_cmpstr(test->m_activeURI.data(), ==, failingURI);
+    g_assert(G_IS_TLS_CERTIFICATE(certificate));
+    g_assert(tlsErrors);
+    return test->loadFailedWithTLSErrors(failingURI, certificate, tlsErrors);
+}
+
 static void estimatedProgressChangedCallback(GObject*, GParamSpec*, LoadTrackingTest* test)
 {
     test->estimatedProgressChanged();
@@ -94,6 +104,7 @@ LoadTrackingTest::LoadTrackingTest()
 {
     g_signal_connect(m_webView, "load-changed", G_CALLBACK(loadChangedCallback), this);
     g_signal_connect(m_webView, "load-failed", G_CALLBACK(loadFailedCallback), this);
+    g_signal_connect(m_webView, "load-failed-with-tls-errors", G_CALLBACK(loadFailedWithTLSErrorsCallback), this);
     g_signal_connect(m_webView, "notify::estimated-load-progress", G_CALLBACK(estimatedProgressChangedCallback), this);
 
     g_assert(!webkit_web_view_get_uri(m_webView));
@@ -141,6 +152,12 @@ void LoadTrackingTest::loadFinished()
 void LoadTrackingTest::loadFailed(const gchar* failingURI, GError* error)
 {
     m_loadEvents.append(LoadFailed);
+}
+
+bool LoadTrackingTest::loadFailedWithTLSErrors(const gchar* /*failingURI*/, GTlsCertificate*, GTlsCertificateFlags)
+{
+    m_loadEvents.append(LoadFailedWithTLSErrors);
+    return false;
 }
 
 void LoadTrackingTest::estimatedProgressChanged()

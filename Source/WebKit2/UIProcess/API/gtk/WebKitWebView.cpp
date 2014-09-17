@@ -873,13 +873,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::load-failed-with-tls-errors:
      * @web_view: the #WebKitWebView on which the signal is emitted
+     * @failing_uri: the URI that failed to load
      * @certificate: a #GTlsCertificate
      * @errors: a #GTlsCertificateFlags with the verification status of @certificate
-     * @host: the host on which the error occurred
      *
      * Emitted when a TLS error occurs during a load operation.
-     * To allow an exception for this certificate
-     * and this host use webkit_web_context_allow_tls_certificate_for_host().
+     * To allow an exception for this @certificate
+     * and the host of @failing_uri use webkit_web_context_allow_tls_certificate_for_host().
      *
      * To handle this signal asynchronously you should call g_object_ref() on @certificate
      * and return %TRUE.
@@ -900,9 +900,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             g_signal_accumulator_true_handled, 0 /* accumulator data */,
             g_cclosure_marshal_generic,
             G_TYPE_BOOLEAN, 3,
+            G_TYPE_STRING,
             G_TYPE_TLS_CERTIFICATE,
-            G_TYPE_TLS_CERTIFICATE_FLAGS,
-            G_TYPE_STRING);
+            G_TYPE_TLS_CERTIFICATE_FLAGS);
 
     /**
      * WebKitWebView::create:
@@ -1584,9 +1584,8 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
 
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context);
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
-        GUniquePtr<SoupURI> soupURI(soup_uri_new(failingURI));
         gboolean returnValue;
-        g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, certificate, tlsErrors, soupURI->host, &returnValue);
+        g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURI, certificate, tlsErrors, &returnValue);
         if (!returnValue)
             g_signal_emit(webView, signals[LOAD_FAILED], 0, WEBKIT_LOAD_STARTED, failingURI, error, &returnValue);
     }
