@@ -199,9 +199,9 @@ void JSGlobalObject::setGlobalThis(VM& vm, JSObject* globalThis)
     m_globalThis.set(vm, this, globalThis);
 }
 
-void JSGlobalObject::init()
+void JSGlobalObject::init(VM& vm)
 {
-    ASSERT(vm().currentThreadIsHoldingAPILock());
+    ASSERT(vm.currentThreadIsHoldingAPILock());
 
     JSGlobalObject::globalExec()->init(0, 0, this, CallFrame::noCaller(), 0, 0);
 
@@ -215,8 +215,7 @@ void JSGlobalObject::init()
 #endif
 
     ExecState* exec = JSGlobalObject::globalExec();
-    VM& vm = exec->vm();
-    
+
     m_functionPrototype.set(vm, this, FunctionPrototype::create(vm, FunctionPrototype::createStructure(vm, this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
     m_calleeStructure.set(vm, this, JSCallee::createStructure(vm, this, jsNull()));
 

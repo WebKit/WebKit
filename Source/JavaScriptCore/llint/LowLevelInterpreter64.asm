@@ -327,7 +327,7 @@ end
 
 
 _handleUncaughtException:
-    loadp ScopeChain[cfr], t3
+    loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
@@ -578,7 +578,7 @@ macro functionArityCheck(doneLabel, slowPath)
 end
 
 macro branchIfException(label)
-    loadp ScopeChain[cfr], t3
+    loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     btqz VM::m_exception[t3], .noException
@@ -1892,7 +1892,7 @@ _llint_op_catch:
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
-    loadp ScopeChain[cfr], t3
+    loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
@@ -1952,7 +1952,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
             const arg2 = t1  # t1 = rdx
             const temp = t0
         end
-        loadp ScopeChain[cfr], t0
+        loadp Callee[cfr], t0
         andp MarkedBlockMask, t0
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t0], t0
         storep cfr, VM::topCallFrame[t0]
@@ -1970,11 +1970,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         if X86_64_WIN
             addp 32, sp
         end
-        loadp ScopeChain[cfr], t3
+        loadp Callee[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif ARM64 or C_LOOP
-        loadp ScopeChain[cfr], t0
+        loadp Callee[cfr], t0
         andp MarkedBlockMask, t0
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t0], t0
         storep cfr, VM::topCallFrame[t0]
@@ -1993,7 +1993,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
             call executableOffsetToFunction[t1]
         end
         restoreReturnAddressBeforeReturn(t3)
-        loadp ScopeChain[cfr], t3
+        loadp Callee[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     else

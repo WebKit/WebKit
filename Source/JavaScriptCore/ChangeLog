@@ -1,3 +1,38 @@
+2014-09-17  Michael Saboff  <msaboff@apple.com>
+
+        Change CallFrame to use Callee instead of JSScope to implement vm()
+        https://bugs.webkit.org/show_bug.cgi?id=136894
+
+        Reviewed by Geoffrey Garen.
+
+        Added JSCell::vm() method that can be used on any JSObject.  Changed CallFrame::vm() to
+        use JSCell::vm with the Callee.  Made similar changes in the LLInt.
+        In support of this, changed JSGlobalObject::init() to take a VM& parameter, as there is
+        a chicken/egg problem with trying to use the Callee in the global exec before the Callee
+        has been create.  Besides, the vm is readily available in finishCreation(), the caller of
+        init().
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Changed the calculation of CallFrame::VM to use the Callee instead of JSScope.
+
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::vm): New method for getting VM from the pointer.
+        (JSC::ExecState::vm): Moved this method from JSScope.h to here since this file
+        contains the implementation of JSCell::vm(), this file is included by all users
+        of CallFrame::vm, and lastly putting it in CallFrameInlines.h required changing
+        many other .h files and possible the WebCore generator generate-bindings.pl.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        Changed init() to take a VM parameter.
+
+        * runtime/JSScope.h:
+        (JSC::ExecState::vm): Deleted.
+
 2014-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, disable native inlining because it causes build failures.

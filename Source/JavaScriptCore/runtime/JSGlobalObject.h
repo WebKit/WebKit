@@ -303,7 +303,7 @@ protected:
         Base::finishCreation(vm);
         structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
-        init();
+        init(vm);
         setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, prototype(), PureForwardingProxyType), this));
     }
 
@@ -312,7 +312,7 @@ protected:
         Base::finishCreation(vm);
         structure()->setGlobalObject(vm, this);
         m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
-        init();
+        init(vm);
         setGlobalThis(vm, thisValue);
     }
 
@@ -604,7 +604,7 @@ private:
 
     JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
 
-    JS_EXPORT_PRIVATE void init();
+    JS_EXPORT_PRIVATE void init(VM&);
 
     void createThrowTypeError(VM&);
 

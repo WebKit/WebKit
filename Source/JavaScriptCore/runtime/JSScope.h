@@ -236,12 +236,6 @@ inline JSScope* Register::scope() const
     return jsCast<JSScope*>(jsValue());
 }
 
-inline VM& ExecState::vm() const
-{
-    ASSERT(scope()->vm());
-    return *scope()->vm();
-}
-
 inline JSGlobalObject* ExecState::lexicalGlobalObject() const
 {
     return scope()->globalObject();

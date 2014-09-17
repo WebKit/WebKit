@@ -33,6 +33,7 @@
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "JSString.h"
+#include "MarkedBlock.h"
 #include "Structure.h"
 #include <wtf/CompilationThread.h>
 
@@ -109,6 +110,17 @@ inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Structure* structure = cell->structure(visitor.vm());
     visitor.appendUnbarrieredPointer(&structure);
+}
+
+inline VM* JSCell::vm() const
+{
+    return MarkedBlock::blockFor(this)->vm();
+}
+
+inline VM& ExecState::vm() const
+{
+    ASSERT(callee()->vm());
+    return *callee()->vm();
 }
 
 template<typename T>

@@ -104,6 +104,8 @@ public:
 
     const char* className() const;
 
+    VM* vm() const;
+
     // Extracting the value.
     JS_EXPORT_PRIVATE bool getString(ExecState*, String&) const;
     JS_EXPORT_PRIVATE String getString(ExecState*) const; // null string if not a string

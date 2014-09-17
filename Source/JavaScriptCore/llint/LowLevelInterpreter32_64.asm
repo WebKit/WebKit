@@ -387,7 +387,7 @@ macro makeHostFunctionCall(entry, temp1, temp2)
 end
 
 _handleUncaughtException:
-    loadp ScopeChain + PayloadOffset[cfr], t3
+    loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
@@ -689,7 +689,7 @@ macro functionArityCheck(doneLabel, slowPath)
 end
 
 macro branchIfException(label)
-    loadp ScopeChain[cfr], t3
+    loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     bieq VM::m_exception + TagOffset[t3], EmptyValueTag, .noException
@@ -2036,7 +2036,7 @@ _llint_op_catch:
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
-    loadp ScopeChain + PayloadOffset[cfr], t3
+    loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
@@ -2124,6 +2124,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadi ScopeChain + PayloadOffset[t0], t1
     storei CellTag, ScopeChain + TagOffset[cfr]
     storei t1, ScopeChain + PayloadOffset[cfr]
+    loadi Callee + PayloadOffset[t0], t1
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
         andp MarkedBlockMask, t1
@@ -2135,13 +2136,13 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp JSFunction::m_executable[t1], t1
         checkStackPointerAlignment(t3, 0xdead0001)
         call executableOffsetToFunction[t1]
-        loadp ScopeChain[cfr], t3
+        loadp Callee[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         addp 8, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS or SH4
         subp 8, sp # align stack pointer
-        # t1 already contains the ScopeChain.
+        # t1 already contains the Callee.
         andp MarkedBlockMask, t1
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
@@ -2158,7 +2159,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         else
             call executableOffsetToFunction[t1]
         end
-        loadp ScopeChain[cfr], t3
+        loadp Callee[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         addp 8, sp
