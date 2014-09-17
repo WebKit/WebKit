@@ -783,7 +783,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             if (enclosingTextFormControl(src.selection().selection().start()))
                 dataTransfer.pasteboard().writePlainText(src.editor().selectedTextForDataTransfer(), Pasteboard::CannotSmartReplace);
             else {
-#if PLATFORM(COCOA) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
                 src.editor().writeSelectionToPasteboard(dataTransfer.pasteboard());
 #else
                 // FIXME: Convert all other platforms to match Mac and delete this.

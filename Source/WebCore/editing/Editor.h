@@ -443,7 +443,7 @@ public:
 #endif // !PLATFORM(IOS)
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(EFL)
+#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
     WEBCORE_EXPORT void writeSelectionToPasteboard(Pasteboard&);
     WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
 #endif

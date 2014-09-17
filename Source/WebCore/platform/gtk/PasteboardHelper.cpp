@@ -23,16 +23,14 @@
 #include "config.h"
 #include "PasteboardHelper.h"
 
-#include "Chrome.h"
 #include "DataObjectGtk.h"
-#include "Frame.h"
 #include "GRefPtrGtk.h"
 #include "GtkVersioning.h"
-#include "Page.h"
 #include "Pasteboard.h"
 #include "TextResourceDecoder.h"
 #include <gtk/gtk.h>
 #include <wtf/gobject/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -93,20 +91,6 @@ PasteboardHelper::PasteboardHelper()
 PasteboardHelper::~PasteboardHelper()
 {
     gtk_target_list_unref(m_targetList);
-}
-
-static inline GdkDisplay* displayFromFrame(Frame* frame)
-{
-    ASSERT(frame);
-    Page* page = frame->page();
-    ASSERT(page);
-    PlatformPageClient client = page->chrome().platformPageClient();
-    return client ? gtk_widget_get_display(client) : gdk_display_get_default();
-}
-
-GtkClipboard* PasteboardHelper::getPrimarySelectionClipboard(Frame* frame) const
-{
-    return gtk_clipboard_get_for_display(displayFromFrame(frame), GDK_SELECTION_PRIMARY);
 }
 
 GtkTargetList* PasteboardHelper::targetList() const
@@ -309,12 +293,11 @@ static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer dat
     if (!data)
         return;
 
-    GClosure* callback = static_cast<GClosure*>(data);
+    GRefPtr<GClosure> callback = adoptGRef(static_cast<GClosure*>(data));
     GValue firstArgument = {0, {{0}}};
     g_value_init(&firstArgument, G_TYPE_POINTER);
     g_value_set_pointer(&firstArgument, clipboard);
-    g_closure_invoke(callback, 0, 1, &firstArgument, 0);
-    g_closure_unref(callback);
+    g_closure_invoke(callback.get(), nullptr, 1, &firstArgument, 0);
 }
 
 void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, SmartPasteInclusion includeSmartPaste, GClosure* callback)
@@ -328,11 +311,14 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, SmartPast
     if (numberOfTargets > 0 && table) {
         settingClipboardDataObject = dataObject;
 
-        gtk_clipboard_set_with_data(clipboard, table, numberOfTargets,
-            getClipboardContentsCallback, clearClipboardContentsCallback, callback);
-        gtk_clipboard_set_can_store(clipboard, 0, 0);
+        if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, g_closure_ref(callback)))
+            gtk_clipboard_set_can_store(clipboard, nullptr, 0);
+        else {
+            // When gtk_clipboard_set_with_data fails the callbacks are ignored, so we need to release the reference we were passing to clearClipboardContentsCallback.
+            g_closure_unref(callback);
+        }
 
-        settingClipboardDataObject = 0;
+        settingClipboardDataObject = nullptr;
 
     } else
         gtk_clipboard_clear(clipboard);

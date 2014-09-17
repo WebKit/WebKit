@@ -19,9 +19,9 @@
 #include "config.h"
 #include "DataObjectGtk.h"
 
-#include "markup.h"
 #include <gtk/gtk.h>
 #include <wtf/gobject/GUniquePtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -33,23 +33,6 @@ static void replaceNonBreakingSpaceWithSpace(String& str)
     str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
 }
 
-String DataObjectGtk::text() const
-{
-    if (m_range) {
-        String text = m_range->text();
-        replaceNonBreakingSpaceWithSpace(text);
-        return text;
-    }
-    return m_text;
-}
-
-String DataObjectGtk::markup() const
-{
-    if (m_range)
-        return createMarkup(*m_range, 0, AnnotateForInterchange, false, ResolveNonLocalURLs);
-    return m_markup;
-}
-
 HashMap<String, String> DataObjectGtk::unknownTypes() const
 {
     return m_unknownTypeData;
@@ -57,14 +40,12 @@ HashMap<String, String> DataObjectGtk::unknownTypes() const
 
 void DataObjectGtk::setText(const String& newText)
 {
-    m_range = 0;
     m_text = newText;
     replaceNonBreakingSpaceWithSpace(m_text);
 }
 
 void DataObjectGtk::setMarkup(const String& newMarkup)
 {
-    m_range = 0;
     m_markup = newMarkup;
 }
 
@@ -131,14 +112,12 @@ void DataObjectGtk::setURL(const URL& url, const String& label)
 
 void DataObjectGtk::clearText()
 {
-    m_range = 0;
-    m_text = "";
+    m_text = emptyString();
 }
 
 void DataObjectGtk::clearMarkup()
 {
-    m_range = 0;
-    m_markup = "";
+    m_markup = emptyString();
 }
 
 String DataObjectGtk::urlLabel() const
@@ -154,12 +133,11 @@ String DataObjectGtk::urlLabel() const
 
 void DataObjectGtk::clearAllExceptFilenames()
 {
-    m_text = "";
-    m_markup = "";
-    m_uriList = "";
+    m_text = emptyString();
+    m_markup = emptyString();
+    m_uriList = emptyString();
     m_url = URL();
-    m_image = 0;
-    m_range = 0;
+    m_image = nullptr;
     m_unknownTypeData.clear();
 }
 

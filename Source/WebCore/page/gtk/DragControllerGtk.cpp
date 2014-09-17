@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DragData.h"
+#include "Editor.h"
 #include "Element.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -75,7 +76,9 @@ void DragController::cleanupAfterSystemDrag()
 
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
-    dataTransfer.pasteboard().writeImage(element, url, label);
+    Frame* frame = element.document().frame();
+    ASSERT(frame);
+    frame->editor().writeImageToPasteboard(dataTransfer.pasteboard(), element, url, label);
 }
 
 PassRefPtr<DocumentFragment> DragController::createFragmentFromDragData(DragData& dragData, Frame& frame, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)

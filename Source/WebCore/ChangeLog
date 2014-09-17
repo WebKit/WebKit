@@ -1,5 +1,58 @@
 2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix layering violations in PasteboardGtk
+        https://bugs.webkit.org/show_bug.cgi?id=136802
+
+        Reviewed by Darin Adler.
+
+        Refactor the Pasteboard code moving the WebCore parts to the Editor.
+
+        * PlatformGTK.cmake: Add new file to compilation.
+        * editing/Editor.cpp:
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h:
+        * editing/gtk/EditorGtk.cpp: Added.
+        (WebCore::createFragmentFromPasteBoardData):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::getImageAndURLForElement):
+        (WebCore::Editor::writeImageToPasteboard):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::declareAndWriteDragImage):
+        * platform/Pasteboard.h:
+        * platform/gtk/DataObjectGtk.cpp: Remove range member, the caller
+        should call setText() + setMarkup() intead.
+        (WebCore::DataObjectGtk::setText):
+        (WebCore::DataObjectGtk::setMarkup):
+        (WebCore::DataObjectGtk::clearText):
+        (WebCore::DataObjectGtk::clearMarkup):
+        (WebCore::DataObjectGtk::clearAllExceptFilenames):
+        * platform/gtk/DataObjectGtk.h:
+        (WebCore::DataObjectGtk::hasText):
+        (WebCore::DataObjectGtk::hasMarkup):
+        (WebCore::DataObjectGtk::clearImage):
+        (WebCore::DataObjectGtk::text):
+        (WebCore::DataObjectGtk::markup):
+        (WebCore::DataObjectGtk::setRange): Deleted.
+        * platform/gtk/GtkDragAndDropHelper.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::PasteboardImage::PasteboardImage):
+        (WebCore::PasteboardImage::~PasteboardImage):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::writeSelection): Deleted.
+        (WebCore::getURLForImageElement): Deleted.
+        (WebCore::Pasteboard::writeImage): Deleted.
+        (WebCore::Pasteboard::documentFragment): Deleted.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::displayFromFrame): Deleted.
+        (WebCore::PasteboardHelper::getPrimarySelectionClipboard): Deleted.
+        * platform/gtk/PasteboardHelper.h:
+
+2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         DragData should not depend on Clipboard, DocumentFragment, and Document
         https://bugs.webkit.org/show_bug.cgi?id=21358
 

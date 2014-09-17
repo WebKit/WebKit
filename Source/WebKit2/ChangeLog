@@ -1,5 +1,16 @@
 2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix layering violations in PasteboardGtk
+        https://bugs.webkit.org/show_bug.cgi?id=136802
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection): Use new API to
+        update the global selection.
+
+2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         DragData should not depend on Clipboard, DocumentFragment, and Document
         https://bugs.webkit.org/show_bug.cgi?id=21358
 

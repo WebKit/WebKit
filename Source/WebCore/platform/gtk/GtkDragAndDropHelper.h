@@ -27,6 +27,7 @@ namespace WebCore {
 
 struct DroppingContext;
 class DragData;
+class IntPoint;
 
 typedef void (*DragExitedCallback)(GtkWidget*, DragData&, bool dropHappened);
 

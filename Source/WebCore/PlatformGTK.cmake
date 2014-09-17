@@ -180,6 +180,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
     editing/atk/FrameSelectionAtk.cpp
+    editing/gtk/EditorGtk.cpp
 
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp

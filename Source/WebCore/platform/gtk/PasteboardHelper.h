@@ -25,8 +25,8 @@
 #ifndef PasteboardHelper_h
 #define PasteboardHelper_h
 
-#include "Frame.h"
 #include <glib-object.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -40,7 +40,6 @@ public:
 
     enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
 
-    GtkClipboard* getPrimarySelectionClipboard(Frame*) const;
     GtkTargetList* targetList() const;
     GtkTargetList* targetListForDataObject(DataObjectGtk*, SmartPasteInclusion = DoNotIncludeSmartPaste);
     void fillSelectionData(GtkSelectionData*, guint, DataObjectGtk*);

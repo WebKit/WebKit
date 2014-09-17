@@ -20,17 +20,19 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
-#include "Frame.h"
-#include "FrameDestructionObserver.h"
 #include "PlatformKeyboardEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/Document.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/PasteboardHelper.h>
+#include <WebCore/Pasteboard.h>
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <WebCore/markup.h>
+#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;
 
@@ -175,24 +177,25 @@ static void collapseSelection(GtkClipboard*, Frame* frame)
 void WebEditorClient::updateGlobalSelection(Frame* frame)
 {
 #if PLATFORM(X11)
-    GtkClipboard* clipboard = PasteboardHelper::defaultPasteboardHelper()->getPrimarySelectionClipboard(frame);
-    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-
     if (!frame->selection().isRange())
         return;
 
-    dataObject->clearAll();
-    dataObject->setRange(frame->selection().toNormalizedRange());
-
     frameSettingClipboard = frame;
-    GClosure* callback = g_cclosure_new(G_CALLBACK(collapseSelection), frame, 0);
+    GRefPtr<GClosure> callback = adoptGRef(g_cclosure_new(G_CALLBACK(collapseSelection), frame, nullptr));
     // This observer will be self-destroyed on closure finalization,
     // that will happen either after closure execution or after
     // closure invalidation.
-    new EditorClientFrameDestructionObserver(frame, callback);
-    g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
-    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard, PasteboardHelper::DoNotIncludeSmartPaste, callback);
-    frameSettingClipboard = 0;
+    new EditorClientFrameDestructionObserver(frame, callback.get());
+    g_closure_set_marshal(callback.get(), g_cclosure_marshal_VOID__VOID);
+
+    RefPtr<Range> range = frame->selection().toNormalizedRange();
+    PasteboardWebContent pasteboardContent;
+    pasteboardContent.canSmartCopyOrDelete = false;
+    pasteboardContent.text = range->text();
+    pasteboardContent.markup = createMarkup(*range, nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+    pasteboardContent.callback = callback;
+    Pasteboard::createForGlobalSelection()->write(pasteboardContent);
+    frameSettingClipboard = nullptr;
 #endif
 }
 

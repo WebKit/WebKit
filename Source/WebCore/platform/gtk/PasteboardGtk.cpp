@@ -20,26 +20,13 @@
 #include "config.h"
 #include "Pasteboard.h"
 
-#include "CachedImage.h"
 #include "DataObjectGtk.h"
-#include "DocumentFragment.h"
 #include "DragData.h"
-#include "Editor.h"
-#include "Frame.h"
-#include "HTMLImageElement.h"
-#include "HTMLInputElement.h"
-#include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "Image.h"
 #include "URL.h"
 #include "PasteboardHelper.h"
-#include "RenderImage.h"
-#include "SVGElement.h"
-#include "SVGNames.h"
-#include "XLinkNames.h"
-#include "markup.h"
 #include <gtk/gtk.h>
-
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -88,6 +75,15 @@ PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData
     return create(dragData.platformData());
 }
 #endif
+
+// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
+PasteboardImage::PasteboardImage()
+{
+}
+
+PasteboardImage::~PasteboardImage()
+{
+}
 
 Pasteboard::Pasteboard(PassRefPtr<DataObjectGtk> dataObject)
     : m_dataObject(dataObject)
@@ -156,16 +152,6 @@ void Pasteboard::writeString(const String& type, const String& data)
     }
 }
 
-void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
-{
-    m_dataObject->clearAll();
-    m_dataObject->setText(shouldSerializeSelectedTextForDataTransfer == IncludeImageAltTextForDataTransfer ? frame.editor().selectedTextForDataTransfer() : frame.editor().selectedText());
-    m_dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
-
-    if (m_gtkClipboard)
-        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
-}
-
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
     m_dataObject->clearAll();
@@ -186,46 +172,30 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
 }
 
-static URL getURLForImageElement(Element& element)
+void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    // FIXME: Later this code should be shared with Chromium somehow. Chances are all platforms want it.
-    AtomicString urlString;
-    if (isHTMLImageElement(element) || isHTMLInputElement(element))
-        urlString = element.getAttribute(HTMLNames::srcAttr);
-    else if (element.hasTagName(SVGNames::imageTag))
-        urlString = element.getAttribute(XLinkNames::hrefAttr);
-    else if (element.hasTagName(HTMLNames::embedTag) || isHTMLObjectElement(element))
-        urlString = element.imageSourceURL();
-
-    return urlString.isEmpty() ? URL() : element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
-}
-
-void Pasteboard::writeImage(Element& element, const URL&, const String& title)
-{
-    if (!(element.renderer() && element.renderer()->isRenderImage()))
-        return;
-
-    RenderImage* renderer = toRenderImage(element.renderer());
-    CachedImage* cachedImage = renderer->cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
-        return;
-    Image* image = cachedImage->imageForRenderer(renderer);
-    ASSERT(image);
-
     m_dataObject->clearAll();
-
-    URL url = getURLForImageElement(element);
-    if (!url.isEmpty()) {
-        m_dataObject->setURL(url, title);
-
-        m_dataObject->setMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
+    if (!pasteboardImage.url.url.isEmpty()) {
+        m_dataObject->setURL(pasteboardImage.url.url, pasteboardImage.url.title);
+        m_dataObject->setMarkup(pasteboardImage.url.markup);
     }
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
-    m_dataObject->setImage(pixbuf.get());
+    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(pasteboardImage.image->getGdkPixbuf());
+    if (pixbuf)
+        m_dataObject->setImage(pixbuf.get());
 
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
+}
+
+void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
+{
+    m_dataObject->clearAll();
+    m_dataObject->setText(pasteboardContent.text);
+    m_dataObject->setMarkup(pasteboardContent.markup);
+
+    if (m_gtkClipboard)
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard, pasteboardContent.canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste, pasteboardContent.callback.get());
 }
 
 void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
@@ -301,34 +271,6 @@ void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
 {
 }
 #endif
-
-PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
-{
-    if (m_gtkClipboard)
-        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
-
-    chosePlainText = false;
-
-    if (m_dataObject->hasMarkup()) {
-        if (frame.document()) {
-            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(*frame.document(), m_dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent);
-            if (fragment)
-                return fragment.release();
-        }
-    }
-
-    if (!allowPlainText)
-        return 0;
-
-    if (m_dataObject->hasText()) {
-        chosePlainText = true;
-        RefPtr<DocumentFragment> fragment = createFragmentFromText(context, m_dataObject->text());
-        if (fragment)
-            return fragment.release();
-    }
-
-    return 0;
-}
 
 void Pasteboard::read(PasteboardPlainText& text)
 {
