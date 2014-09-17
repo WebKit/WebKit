@@ -57,20 +57,12 @@ void JSDOMGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-#if ENABLE(REMOTE_INSPECTOR)
-    setRemoteDebuggingEnabled(false);
-#endif
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     Base::finishCreation(vm, thisValue);
     ASSERT(inherits(info()));
-
-#if ENABLE(REMOTE_INSPECTOR)
-    setRemoteDebuggingEnabled(false);
-#endif
 }
 
 ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const

@@ -1,3 +1,14 @@
+2014-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce a bit of churn setting initial remote inspection state
+        https://bugs.webkit.org/show_bug.cgi?id=136875
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        We no longer need to toggle this state.
+
 2014-09-16  Enrica Casucci  <enrica@apple.com>
 
         Should have an editing behavior specific for IOS.

@@ -211,7 +211,6 @@ void JSGlobalObject::init()
     m_inspectorController = std::make_unique<Inspector::JSGlobalObjectInspectorController>(*this);
     m_inspectorDebuggable = std::make_unique<JSGlobalObjectDebuggable>(*this);
     m_inspectorDebuggable->init();
-    m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
     m_consoleClient = m_inspectorController->consoleClient();
 #endif
 
