@@ -1,3 +1,24 @@
+2014-09-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add a helper function for display system deduction
+        https://bugs.webkit.org/show_bug.cgi?id=136849
+
+        Reviewed by Martin Robinson.
+
+        getDisplaySystemType() is a helper function that checks the type of the
+        default GdkDisplay object and initializes a static variable to the
+        corresponding value. It then returns the value of that variable.
+
+        When building with the GTK+2 API (still the case with the GTK+2 plugin
+        process) we default to X11.
+
+        The function is declared and implemented in GtkUtilities files.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::widgetIsOnscreenToplevelWindow):
+        (WebCore::getDisplaySystemType):
+        * platform/gtk/GtkUtilities.h:
+
 2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         filterRootById accidentally clears inAdjacentChain flag

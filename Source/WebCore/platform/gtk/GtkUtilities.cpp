@@ -22,6 +22,13 @@
 #include "IntPoint.h"
 #include <gtk/gtk.h>
 
+#if PLATFORM(X11)
+#include <gdk/gdkx.h>
+#endif
+#if PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
+#include <gdk/gdkwayland.h>
+#endif
+
 namespace WebCore {
 
 IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& point)
@@ -50,6 +57,28 @@ IntPoint convertWidgetPointToScreenPoint(GtkWidget* widget, const IntPoint& poin
 bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
 {
     return gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
+}
+
+DisplaySystemType getDisplaySystemType()
+{
+#if defined(GTK_API_VERSION_2)
+    return DisplaySystemType::X11;
+#else
+    static DisplaySystemType type = [] {
+        GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+#if PLATFORM(X11)
+        if (GDK_IS_X11_DISPLAY(display))
+            return DisplaySystemType::X11;
+#endif
+#if PLATFORM(WAYLAND)
+        if (GDK_IS_WAYLAND_DISPLAY(display))
+            return DisplaySystemType::Wayland;
+#endif
+        ASSERT_NOT_REACHED();
+        return DisplaySystemType::X11;
+    }();
+    return type;
+#endif
 }
 
 } // namespace WebCore

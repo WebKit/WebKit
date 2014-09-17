@@ -26,6 +26,13 @@ class IntPoint;
 IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 bool widgetIsOnscreenToplevelWindow(GtkWidget*);
 
+enum class DisplaySystemType {
+    X11,
+    Wayland
+};
+
+DisplaySystemType getDisplaySystemType();
+
 } // namespace WebCore
 
 #endif // GtkUtilities_h
