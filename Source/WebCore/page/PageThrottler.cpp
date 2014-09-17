@@ -35,9 +35,15 @@ PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     , m_viewState(viewState)
     , m_weakPtrFactory(this)
     , m_hysteresis(*this)
-    , m_activity("Page is active.")
     , m_activityCount(0)
 {
+    updateUserActivity();
+}
+
+void PageThrottler::createUserActivity()
+{
+    ASSERT(!m_activity);
+    m_activity = std::make_unique<UserActivity::Impl>("Page is active.");
     updateUserActivity();
 }
 
@@ -75,11 +81,14 @@ void PageThrottler::decrementActivityCount()
 
 void PageThrottler::updateUserActivity()
 {
+    if (!m_activity)
+        return;
+
     // Allow throttling if there is no page activity, and the page is visually idle.
     if (m_hysteresis.state() == HysteresisState::Stopped && m_viewState & ViewState::IsVisuallyIdle)
-        m_activity.endActivity();
+        m_activity->endActivity();
     else
-        m_activity.beginActivity();
+        m_activity->beginActivity();
 }
 
 void PageThrottler::setViewState(ViewState::Flags viewState)

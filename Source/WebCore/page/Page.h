@@ -405,8 +405,8 @@ public:
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
 
-    PageThrottler* pageThrottler() { return m_pageThrottler.get(); }
-    WEBCORE_EXPORT void createPageThrottler();
+    PageThrottler& pageThrottler() { return m_pageThrottler; }
+    WEBCORE_EXPORT void enablePageThrottler();
 
     PageConsoleClient& console() { return *m_consoleClient; }
 
@@ -570,7 +570,7 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
-    std::unique_ptr<PageThrottler> m_pageThrottler;
+    PageThrottler m_pageThrottler;
     const std::unique_ptr<PageConsoleClient> m_consoleClient;
 
 #if ENABLE(REMOTE_INSPECTOR)

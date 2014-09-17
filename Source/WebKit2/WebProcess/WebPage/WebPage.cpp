@@ -423,7 +423,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setViewState(m_viewState);
     if (!isVisible())
         m_page->setIsPrerender();
-    m_page->createPageThrottler();
+    m_page->enablePageThrottler();
 
     updateIsInWindow(true);
 
@@ -1886,8 +1886,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
-    ASSERT(m_page->pageThrottler());
-    m_page->pageThrottler()->didReceiveUserInput();
+    m_page->pageThrottler().didReceiveUserInput();
 
 #if ENABLE(CONTEXT_MENUS)
     // Don't try to handle any pending mouse events if a context menu is showing.
@@ -1955,8 +1954,7 @@ static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
-    ASSERT(m_page->pageThrottler());
-    m_page->pageThrottler()->didReceiveUserInput();
+    m_page->pageThrottler().didReceiveUserInput();
 
     bool handled = false;
 
@@ -1990,8 +1988,7 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    ASSERT(m_page->pageThrottler());
-    m_page->pageThrottler()->didReceiveUserInput();
+    m_page->pageThrottler().didReceiveUserInput();
 
     bool handled = false;
 

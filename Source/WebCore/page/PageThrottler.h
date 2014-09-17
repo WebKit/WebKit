@@ -42,6 +42,7 @@ class PageThrottler {
 public:
     PageThrottler(Page&, ViewState::Flags);
 
+    void createUserActivity();
     void setViewState(ViewState::Flags);
 
     void didReceiveUserInput() { m_hysteresis.impulse(); }
@@ -65,7 +66,7 @@ private:
     ViewState::Flags m_viewState;
     WeakPtrFactory<PageThrottler> m_weakPtrFactory;
     HysteresisActivity<PageThrottler> m_hysteresis;
-    UserActivity::Impl m_activity;
+    std::unique_ptr<UserActivity::Impl> m_activity;
     size_t m_activityCount;
 };
 

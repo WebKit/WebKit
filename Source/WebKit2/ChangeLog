@@ -1,3 +1,36 @@
+2014-09-17  Gavin Barraclough  <baraclough@apple.com>
+
+        Aways have a PageThrottler (sometimes have a UserActivity::Impl)
+        https://bugs.webkit.org/show_bug.cgi?id=136892
+
+        Reviewed by Geoffrey Garen.
+
+        Some instances of Page have a PageThrottler to track activity on the Page, and some do not.
+        (Specifically, those created from WebPage in WK2 do, those related to WK1, SVG & inspector do not).
+
+        We do this for three reasons:
+            * We do not need to take AppNap assertions on WK1.
+            * Some Pages do not track their visibility correctly, and would always claim to be visible.
+            * Page VisibilityState is not set until after construction, so if we instantiate
+
+        Creating the entire PageThrottler lazily has the drawback that we have to check for its existence at
+        numerous points throughout the code, and we'll miss activity that occurs between the Page being created
+        & the PageThrottler added to it (really a theoretical problem right now, since they're currently always
+        created pretty much back to back).
+
+        Instead, Page should always have a PageThrottler, & instead make the UserActivity::Impl on the
+        PageThrottler be added later.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::evaluate):
+            - createPageThrottler -> enablePageThrottler
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::keyEvent):
+            - Page::pageThrottler now returns a reference rather than a pointer
+
 2014-09-17  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make WebCore build with public iOS SDK
