@@ -1,3 +1,24 @@
+2014-09-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        CSS value in whitespace-separated list attribute selector (~=) mishandles tab/newline/etc.
+        https://bugs.webkit.org/show_bug.cgi?id=136807
+
+        Reviewed by Antti Koivisto.
+
+        * fast/selectors/attr-list-01-expected.html: Added.
+        * fast/selectors/attr-list-01.html: Added.
+        This test is from a similar fix from Opera for the blink fork.
+        Review URL: https://chromiumcodereview.appspot.com/14980012
+        No other part of that patch is included.
+
+        * fast/selectors/attribute-list-with-whitespace-in-selector-expected.txt: Added.
+        * fast/selectors/attribute-list-with-whitespace-in-selector.html: Added.
+        Test whitespace characters in the selector itself.
+
+        * fast/selectors/attribute-list-with-whitespace-in-value-expected.txt: Added.
+        * fast/selectors/attribute-list-with-whitespace-in-value.html: Added.
+        Test whitespace characters in the attribute value.
+
 2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         filterRootById accidentally clears inAdjacentChain flag

@@ -36,6 +36,7 @@
 
 #include "WebVTTParser.h"
 
+#include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
 #include "ProcessingInstruction.h"
 #include "Text.h"
@@ -258,7 +259,7 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     if (!line.startsWith(fileIdentifier, fileIdentifierLength))
         return false;
 
-    if (line.length() > fileIdentifierLength && !isASpace(line[fileIdentifierLength]))
+    if (line.length() > fileIdentifierLength && !isHTMLSpace(line[fileIdentifierLength]))
         return false;
     return true;
 }
@@ -306,25 +307,25 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
 
     // Collect WebVTT cue timings and settings. (5.3 WebVTT cue timings and settings parsing.)
     // Steps 1 - 3 - Let input be the string being parsed and position be a pointer into input
-    input.skipWhile<isASpace>();
+    input.skipWhile<isHTMLSpace<UChar>>();
 
     // Steps 4 - 5 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue start time be the collected time.
     if (!collectTimeStamp(input, m_currentStartTime))
         return BadCue;
     
-    input.skipWhile<isASpace>();
+    input.skipWhile<isHTMLSpace<UChar>>();
 
     // Steps 6 - 9 - If the next three characters are not "-->", abort and return failure.
     if (!input.scan("-->"))
         return BadCue;
     
-    input.skipWhile<isASpace>();
+    input.skipWhile<isHTMLSpace<UChar>>();
 
     // Steps 10 - 11 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue end time be the collected time.
     if (!collectTimeStamp(input, m_currentEndTime))
         return BadCue;
 
-    input.skipWhile<isASpace>();
+    input.skipWhile<isHTMLSpace<UChar>>();
 
     // Step 12 - Parse the WebVTT settings for the cue (conducted in TextTrackCue).
     m_currentSettings = input.restOfInputAsString();

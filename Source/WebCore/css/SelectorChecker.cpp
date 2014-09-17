@@ -41,6 +41,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
 #include "InsertionPoint.h"
@@ -371,8 +372,8 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
         break;
     case CSSSelector::List:
         {
-            // Ignore empty selectors or selectors containing spaces
-            if (selectorValue.contains(' ') || selectorValue.isEmpty())
+            // Ignore empty selectors or selectors containing spaces.
+            if (selectorValue.isEmpty() || selectorValue.find(isHTMLSpace<UChar>) != notFound)
                 return false;
 
             unsigned startSearchAt = 0;
@@ -380,9 +381,9 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
                 size_t foundPos = value.find(selectorValue, startSearchAt, caseSensitive);
                 if (foundPos == notFound)
                     return false;
-                if (!foundPos || value[foundPos - 1] == ' ') {
+                if (!foundPos || isHTMLSpace(value[foundPos - 1])) {
                     unsigned endStr = foundPos + selectorValue.length();
-                    if (endStr == value.length() || value[endStr] == ' ')
+                    if (endStr == value.length() || isHTMLSpace(value[endStr]))
                         break; // We found a match.
                 }
 

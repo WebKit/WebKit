@@ -123,7 +123,9 @@ public:
         { return m_string.find(s, start, caseSentitive); }
     size_t find(const String& s, unsigned start = 0, bool caseSentitive = true) const
         { return m_string.find(s, start, caseSentitive); }
-    
+    size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const
+        { return m_string.find(matchFunction, start); }
+
     bool startsWith(const String& s, bool caseSensitive = true) const
         { return m_string.startsWith(s, caseSensitive); }
     bool startsWith(UChar character) const

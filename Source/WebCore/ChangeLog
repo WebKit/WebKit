@@ -1,3 +1,42 @@
+2014-09-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        CSS value in whitespace-separated list attribute selector (~=) mishandles tab/newline/etc.
+        https://bugs.webkit.org/show_bug.cgi?id=136807
+
+        Reviewed by Antti Koivisto.
+
+        The spec defines selector lists as token separated by white space.
+
+        The definition of white space for CSS Selectors is:
+        "White space in Selectors consists of the code points SPACE (U+0020),
+        TAB (U+0009), LINE FEED (U+000A), CARRIAGE RETURN (U+000D), and FORM FEED (U+000C)
+        can occur in whitespace. Other space-like code points, such as EM SPACE (U+2003)
+        and IDEOGRAPHIC SPACE (U+3000), are never part of white space."
+
+        The old code was only matching SPACE (U+0020) which is buggy. This patch
+        adds support for the other caracters.
+
+        Tests: fast/selectors/attr-list-01.html
+               fast/selectors/attribute-list-with-whitespace-in-selector.html
+               fast/selectors/attribute-list-with-whitespace-in-value.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::attributeValueMatches):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::constructFragments):
+        (WebCore::SelectorCompiler::attributeValueSpaceSeparetedListContains):
+        Add the missing checks.
+
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::setRegionSettings):
+        (WebCore::VTTRegion::parseSettingValue):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::hasRequiredFileIdentifier):
+        (WebCore::WebVTTParser::collectTimingsAndSettings):
+        * html/track/WebVTTParser.h:
+        While looking for affected code, I discovered WebVTT redefines isHTMLSpace().
+        I cleaned that code.
+
 2014-09-17  Gavin Barraclough  <baraclough@apple.com>
 
         Aways have a PageThrottler (sometimes have a UserActivity::Impl)

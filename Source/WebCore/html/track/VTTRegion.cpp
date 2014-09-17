@@ -39,6 +39,7 @@
 #include "ElementChildIterator.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLDivElement.h"
+#include "HTMLParserIdioms.h"
 #include "Logging.h"
 #include "RenderElement.h"
 #include "VTTCue.h"
@@ -233,7 +234,7 @@ void VTTRegion::setRegionSettings(const String& inputString)
 
         // Verify that we're looking at a '='.
         if (name == None || !input.scan('=')) {
-            input.skipUntil<WebVTTParser::isASpace>();
+            input.skipUntil<isHTMLSpace<UChar>>();
             continue;
         }
 
@@ -269,7 +270,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, scrollUpValueKeyword, ("up", AtomicString::ConstructFromLiteral));
 
-    VTTScanner::Run valueRun = input.collectUntil<WebVTTParser::isASpace>();
+    VTTScanner::Run valueRun = input.collectUntil<isHTMLSpace<UChar>>();
 
     switch (setting) {
     case Id: {

@@ -37,6 +37,7 @@
 #include "FunctionCall.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "QualifiedName.h"
@@ -777,7 +778,7 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             break;
         }
         case CSSSelector::List:
-            if (selector->value().contains(' '))
+            if (selector->value().find(isHTMLSpace<UChar>) != notFound)
                 return FunctionType::CannotMatchAnything;
             FALLTHROUGH;
         case CSSSelector::Begin:
@@ -2252,9 +2253,9 @@ static bool attributeValueSpaceSeparetedListContains(const Attribute* attribute,
             foundPos = value.findIgnoringCase(expectedString, startSearchAt);
         if (foundPos == notFound)
             return false;
-        if (!foundPos || value[foundPos - 1] == ' ') {
+        if (!foundPos || isHTMLSpace(value[foundPos - 1])) {
             unsigned endStr = foundPos + expectedString->length();
-            if (endStr == value.length() || value[endStr] == ' ')
+            if (endStr == value.length() || isHTMLSpace(value[endStr]))
                 return true;
         }
         startSearchAt = foundPos + 1;
