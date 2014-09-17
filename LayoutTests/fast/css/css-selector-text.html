@@ -99,6 +99,32 @@ testSelectorRoundTrip(":-webkit-drag");
 
 debug('');
 
+testSelectorRoundTrip(":nth-child(odd)");
+testSelectorRoundTrip(":nth-child(even)");
+testSelectorRoundTrip(":nth-child(n)");
+testSelectorRoundTrip(":nth-child(-n)");
+testSelectorRoundTrip(":nth-child(5)");
+testSelectorRoundTrip(":nth-child(-5)");
+testSelectorRoundTrip(":nth-child(5n+7)");
+testSelectorRoundTrip(":nth-child(-5n+7)");
+testSelectorRoundTrip(":nth-child(5n-7)");
+testSelectorRoundTrip(":nth-child(-5n-7)");
+
+debug('');
+
+testSelectorRoundTrip(":nth-child(odd of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(even of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(n of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(-n of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(5 of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(-5 of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(5n+7 of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(-5n+7 of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(5n-7 of .foo, :nth-child(odd))");
+testSelectorRoundTrip(":nth-child(-5n-7 of .foo, :nth-child(odd))");
+
+debug('');
+
 shouldBe("parseThenSerializeRule('::-webkit-file-upload-button { }')", "'*::-webkit-file-upload-button { }'");
 shouldBe("parseThenSerializeRule('::-webkit-search-cancel-button { }')", "'*::-webkit-search-cancel-button { }'");
 shouldBe("parseThenSerializeRule('::-webkit-search-decoration { }')", "'*::-webkit-search-decoration { }'");

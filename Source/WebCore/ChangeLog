@@ -1,5 +1,51 @@
 2014-09-17  Benjamin Poulain  <bpoulain@apple.com>
 
+        Add parsing for :nth-child(An+B of selector)
+        https://bugs.webkit.org/show_bug.cgi?id=136845
+
+        Reviewed by Antti Koivisto.
+
+        Add support for parsing :nth-child(of). The implementation of selector matching
+        will be in a follow up, there are enough edge cases here already.
+
+        Spec here: http://dev.w3.org/csswg/selectors4/#the-nth-child-pseudo
+
+        Test: fast/css/parsing-css-nth-child-of.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        (WebCore::CSSParser::realLex):
+        The parser generate two new kinds of tokens:
+        -NTHCHILDFUNCTION, matching the "nth-child" identifier.
+        -NTHCHILDSELECTORSEPARATOR, matching the "of" keyword separating An+B from the selector list.
+
+        NTHCHILDFUNCTION is used to extend the new syntax only for :nth-child() and not all the "nth" functions
+        (e.g. :nth-of-type()).
+
+        NTHCHILDSELECTORSEPARATOR exists for two reasons:
+        -We must clear the "parsingMode" before parsing selectorList. If we failed to do that, the complex selectors
+         would be parsed in NthChildMode, which has all kind of bad side effects.
+        -The second reason is differentiacting "of" for all the other identifiers. Arguably, this could have been done
+         in the grammar, but it is clearer this way since we already need the branches for the parsingMode.
+
+        * css/CSSGrammar.y.in:
+        Those are pretty much duplicates of the existing FUNCTION rules but supporting the new syntax.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::selectorListMatchesPseudoElement):
+        (WebCore::CSSParserSelector::matchesPseudoElement):
+        Matching pseudo elements does not make much sense for those selectorList (e.g. :nth-child(2n of ::before)).
+        Add helper function to fail parsing of those cases.
+
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::selectorList):
+        Updated serialization code for CSS OM.
+
+2014-09-17  Benjamin Poulain  <bpoulain@apple.com>
+
         CSS value in whitespace-separated list attribute selector (~=) mishandles tab/newline/etc.
         https://bugs.webkit.org/show_bug.cgi?id=136807
 

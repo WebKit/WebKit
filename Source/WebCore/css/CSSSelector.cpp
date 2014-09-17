@@ -3,7 +3,7 @@
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2007, 2008, 2009, 2010, 2013, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -395,7 +395,21 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassNthChild:
                 str.appendLiteral(":nth-child(");
-                appendPseudoClassFunctionTail(str, cs);
+                str.append(cs->argument());
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                if (const CSSSelectorList* selectorList = cs->selectorList()) {
+                    str.appendLiteral(" of ");
+                    const CSSSelector* firstSubSelector = selectorList->first();
+                    for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                        if (subSelector != firstSubSelector)
+                            str.appendLiteral(", ");
+                        str.append(subSelector->selectorText());
+                    }
+                }
+#else
+                ASSERT(!cs->selectorList());
+#endif
+                str.append(')');
                 break;
             case CSSSelector::PseudoClassNthLastChild:
                 str.appendLiteral(":nth-last-child(");

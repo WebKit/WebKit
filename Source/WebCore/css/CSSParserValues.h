@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -217,6 +217,7 @@ public:
 
     bool isSimple() const;
     bool hasShadowDescendant() const;
+    bool matchesPseudoElement() const;
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTF::move(selector); }

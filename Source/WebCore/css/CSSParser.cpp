@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -10671,6 +10671,7 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
 
     case 9:
         if (isEqualToCSSIdentifier(name, "nth-child")) {
+            m_token = NTHCHILDFUNCTION;
             m_parsingMode = NthChildMode;
             return true;
         }
@@ -11204,6 +11205,10 @@ restartAfterComment:
                 }
             }
         }
+        if (m_parsingMode == NthChildMode && m_token == IDENT && yylval->string.length() == 2 && yylval->string.equalIgnoringCase("of")) {
+            m_parsingMode = NormalMode;
+            m_token = NTHCHILDSELECTORSEPARATOR;
+        }
         break;
 
     case CharacterDot:
@@ -11477,6 +11482,10 @@ restartAfterComment:
             --currentCharacter<SrcCharacterType>();
             parseIdentifier(result, yylval->string, hasEscape);
             m_token = IDENT;
+        }
+        if (m_parsingMode == NthChildMode && m_token == IDENT && yylval->string.length() == 2 && yylval->string.equalIgnoringCase("of")) {
+            m_parsingMode = NormalMode;
+            m_token = NTHCHILDSELECTORSEPARATOR;
         }
         break;
 

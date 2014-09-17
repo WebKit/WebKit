@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2014 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -284,6 +284,25 @@ bool CSSParserSelector::isSimple() const
     }
 
     return false;
+}
+
+static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
+{
+    if (!selectorList)
+        return false;
+
+    for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        for (const CSSSelector* selector = subSelector; selector; selector = selector->tagHistory()) {
+            if (selector->matchesPseudoElement())
+                return true;
+        }
+    }
+    return false;
+}
+
+bool CSSParserSelector::matchesPseudoElement() const
+{
+    return m_selector->matchesPseudoElement() || selectorListMatchesPseudoElement(m_selector->selectorList());
 }
 
 void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector> selector, CSSSelector::Relation after)

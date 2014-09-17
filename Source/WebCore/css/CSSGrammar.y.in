@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2014 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *  Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2012 Intel Corporation. All rights reserved.
@@ -59,6 +59,8 @@ static inline bool isCSSTokenAString(int yytype)
     case CALCFUNCTION:
     case MINFUNCTION:
     case MAXFUNCTION:
+    case NTHCHILDFUNCTION:
+    case NTHCHILDSELECTORSEPARATOR:
     case UNICODERANGE:
         return true;
     default:
@@ -77,19 +79,38 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
     return v;
 }
 
+auto invalidSelectorVector = reinterpret_cast<Vector<std::unique_ptr<CSSParserSelector>>*>(-1);
+
+static bool isValidNthSelectorList(const Vector<std::unique_ptr<CSSParserSelector>>* selectorVector)
+{
+    if (!selectorVector)
+        return true;
+
+    if (selectorVector == invalidSelectorVector)
+        return false;
+
+    for (unsigned i = 0; i < selectorVector->size(); ++i) {
+        for (const CSSParserSelector* selector = selectorVector->at(i).get(); selector; selector = selector->tagHistory()) {
+            if (selector->matchesPseudoElement())
+                return false;
+        }
+    }
+    return true;
+}
+
 %}
 
 #if ENABLE_CSS_GRID_LAYOUT
 #if ENABLE_PICTURE_SIZES
-%expect 34
+%expect 36
 #else
-%expect 30
+%expect 32
 #endif
 #else
 #if ENABLE_PICTURE_SIZES
-%expect 33
+%expect 35
 #else
-%expect 29
+%expect 31
 #endif
 #endif
 
@@ -109,6 +130,7 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %token <string> STRING
 %right <string> IDENT
 %token <string> NTH
+%token <string> NTHCHILDSELECTORSEPARATOR
 
 %nonassoc <string> HEX
 %nonassoc <string> IDSEL
@@ -201,6 +223,7 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %token <string> CALCFUNCTION
 %token <string> MINFUNCTION
 %token <string> MAXFUNCTION
+%token <string> NTHCHILDFUNCTION
 
 %token <string> UNICODERANGE
 
@@ -279,8 +302,8 @@ static inline CSSParserValue makeIdentValue(CSSParserString string)
 %destructor { delete $$; } attrib class page_selector pseudo pseudo_page complex_selector complex_selector_with_trailing_whitespace compound_selector specifier specifier_list
 
 %union { Vector<std::unique_ptr<CSSParserSelector>>* selectorList; }
-%type <selectorList> selector_list simple_selector_list
-%destructor { delete $$; } selector_list simple_selector_list
+%type <selectorList> selector_list simple_selector_list nth_selector_ending
+%destructor { delete $$; } selector_list simple_selector_list nth_selector_ending
 
 %union { bool boolean; }
 %type <boolean> declaration declaration_list decl_list priority
@@ -1263,6 +1286,21 @@ pseudo_page:
         $$ = CSSParserSelector::parsePagePseudoSelector($2);
     }
 
+nth_selector_ending:
+    ')' {
+        $$ = nullptr;
+    }
+    | space ')' {
+        $$ = nullptr;
+    }
+    | space NTHCHILDSELECTORSEPARATOR space selector_list maybe_space ')' {
+        if ($4)
+            $$ = $4;
+        else
+            $$ = invalidSelectorVector;
+    }
+    ;
+
 pseudo:
     ':' IDENT {
         $$ = CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector($2);
@@ -1292,6 +1330,48 @@ pseudo:
                 $$ = selector.release();
         }
     }
+
+    // Definition of :nth-child().
+    | ':' NTHCHILDFUNCTION maybe_space NTH nth_selector_ending {
+        $$ = nullptr;
+        if (isValidNthSelectorList($5)) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgument($4);
+            selector->setPseudoClassValue($2);
+            if ($5)
+                selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($5));
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassNthChild)
+                $$ = selector.release();
+        }
+    }
+    | ':' NTHCHILDFUNCTION maybe_space maybe_unary_operator INTEGER nth_selector_ending {
+        $$ = nullptr;
+        if (isValidNthSelectorList($6)) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgument(AtomicString::number($4 * $5));
+            selector->setPseudoClassValue($2);
+            if ($6)
+                selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($6));
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassNthChild)
+                $$ = selector.release();
+        }
+    }
+    | ':' NTHCHILDFUNCTION maybe_space IDENT nth_selector_ending {
+        $$ = nullptr;
+        if (isValidNthToken($4) && isValidNthSelectorList($5)) {
+            auto selector = std::make_unique<CSSParserSelector>();
+            selector->setMatch(CSSSelector::PseudoClass);
+            selector->setArgument($4);
+            selector->setPseudoClassValue($2);
+            if ($5)
+               selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($5));
+            if (selector->pseudoClassType() == CSSSelector::PseudoClassNthChild)
+                $$ = selector.release();
+        }
+    }
+
     // used by :nth-*(ax+b)
     | ':' FUNCTION maybe_space NTH maybe_space ')' {
         $$ = nullptr;
@@ -1330,6 +1410,7 @@ pseudo:
         }
         $$ = selector.release();
     }
+
     // used by :not
     | ':' NOTFUNCTION maybe_space compound_selector maybe_space ')' {
         std::unique_ptr<CSSParserSelector> selector($4);

@@ -203,7 +203,7 @@ namespace WebCore {
         const QualifiedName& attribute() const;
         const AtomicString& attributeCanonicalLocalName() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
-        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
+        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
 
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&, bool isCaseInsensitive);
@@ -272,8 +272,6 @@ namespace WebCore {
         void setLastInSelectorList() { m_isLastInSelectorList = true; }
         bool isLastInTagHistory() const { return m_isLastInTagHistory; }
         void setNotLastInTagHistory() { m_isLastInTagHistory = false; }
-
-        bool isSimple() const;
 
         bool isForPage() const { return m_isForPage; }
         void setForPage() { m_isForPage = true; }
