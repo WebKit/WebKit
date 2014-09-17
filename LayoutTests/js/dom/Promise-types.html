@@ -78,14 +78,9 @@ shouldBeType("Promise.reject", "Function");
 shouldBe("Promise.reject.length", "1");
 shouldNotThrow("Promise.reject(1)");
 
-shouldBeType("Promise.cast", "Function");
-shouldBe("Promise.cast.length", "1");
-shouldNotThrow("Promise.cast(1)");
-
 // Should return Promise objects.
 shouldBeType("Promise.resolve(1)", "Promise");
 shouldBeType("Promise.reject(1)", "Promise");
-shouldBeType("Promise.cast(1)", "Promise");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -78,7 +78,6 @@
     macro(bytecodesID) \
     macro(callee) \
     macro(caller) \
-    macro(cast) \
     macro(clear) \
     macro(close) \
     macro(closed) \
@@ -147,6 +146,7 @@
     macro(prototype) \
     macro(reload) \
     macro(replace) \
+    macro(resolve) \
     macro(set) \
     macro(showModalDialog) \
     macro(size) \

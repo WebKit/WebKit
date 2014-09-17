@@ -45,12 +45,8 @@ PASS Promise.resolve(1) did not throw exception.
 PASS Promise.reject is an instance of Function
 PASS Promise.reject.length is 1
 PASS Promise.reject(1) did not throw exception.
-PASS Promise.cast is an instance of Function
-PASS Promise.cast.length is 1
-PASS Promise.cast(1) did not throw exception.
 PASS Promise.resolve(1) is an instance of Promise
 PASS Promise.reject(1) is an instance of Promise
-PASS Promise.cast(1) is an instance of Promise
 PASS successfullyParsed is true
 
 TEST COMPLETE

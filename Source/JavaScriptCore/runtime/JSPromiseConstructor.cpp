@@ -43,7 +43,6 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseConstructor);
 
-static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState*);
@@ -58,7 +57,6 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::
 
 /* Source for JSPromiseConstructor.lut.h
 @begin promiseConstructorTable
-  cast            JSPromiseConstructorFuncCast                DontEnum|Function 1
   resolve         JSPromiseConstructorFuncResolve             DontEnum|Function 1
   reject          JSPromiseConstructorFuncReject              DontEnum|Function 1
   race            JSPromiseConstructorFuncRace                DontEnum|Function 1
@@ -164,9 +162,9 @@ bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec,
     return getStaticFunctionSlot<InternalFunction>(exec, promiseConstructorTable, jsCast<JSPromiseConstructor*>(object), propertyName, slot);
 }
 
-EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState* exec)
 {
-    // -- Promise.cast(x) --
+    // -- Promise.resolve(x) --
     JSValue x = exec->argument(0);
 
     // 1. Let 'C' be the this value.
@@ -184,7 +182,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState* exec)
 
     // 3. Let 'deferred' be the result of calling GetDeferred(C).
     JSValue deferredValue = createJSPromiseDeferredFromConstructor(exec, C);
-    
+
     // 4. ReturnIfAbrupt(deferred).
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
@@ -201,36 +199,6 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // 7. Return deferred.[[Promise]].
-    return JSValue::encode(deferred->promise());
-}
-
-EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState* exec)
-{
-    // -- Promise.resolve(x) --
-    JSValue x = exec->argument(0);
-
-    // 1. Let 'C' be the this value.
-    JSValue C = exec->thisValue();
-
-    // 2. Let 'deferred' be the result of calling GetDeferred(C).
-    JSValue deferredValue = createJSPromiseDeferredFromConstructor(exec, C);
-
-    // 3. ReturnIfAbrupt(deferred).
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    JSPromiseDeferred* deferred = jsCast<JSPromiseDeferred*>(deferredValue);
-
-    // 4. Let 'resolveResult' be the result of calling the [[Call]] internal method
-    //    of deferred.[[Resolve]] with undefined as thisArgument and a List containing x
-    //    as argumentsList.
-    performDeferredResolve(exec, deferred, x);
-    
-    // 5. ReturnIfAbrupt(resolveResult).
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    // 6. Return deferred.[[Promise]].
     return JSValue::encode(deferred->promise());
 }
 
@@ -332,21 +300,21 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState* exec)
         // v. RejectIfAbrupt(nextValue, deferred).
         // Note: 'next' is already the value, so there is nothing to do here.
 
-        // vi. Let 'nextPromise' be the result of calling Invoke(C, "cast", (nextValue)).
-        JSValue castFunction = C.get(exec, vm.propertyNames->cast);
+        // vi. Let 'nextPromise' be the result of calling Invoke(C, "resolve", (nextValue)).
+        JSValue resolveFunction = C.get(exec, vm.propertyNames->resolve);
         if (exec->hadException())
             return JSValue::encode(abruptRejection(exec, deferred));
 
-        CallData castFunctionCallData;
-        CallType castFunctionCallType = getCallData(castFunction, castFunctionCallData);
-        if (castFunctionCallType == CallTypeNone) {
+        CallData resolveFunctionCallData;
+        CallType resolveFunctionCallType = getCallData(resolveFunction, resolveFunctionCallData);
+        if (resolveFunctionCallType == CallTypeNone) {
             throwTypeError(exec);
             return JSValue::encode(abruptRejection(exec, deferred));
         }
 
-        MarkedArgumentBuffer castFunctionArguments;
-        castFunctionArguments.append(next);
-        JSValue nextPromise = call(exec, castFunction, castFunctionCallType, castFunctionCallData, C, castFunctionArguments);
+        MarkedArgumentBuffer resolveFunctionArguments;
+        resolveFunctionArguments.append(next);
+        JSValue nextPromise = call(exec, resolveFunction, resolveFunctionCallType, resolveFunctionCallData, C, resolveFunctionArguments);
 
         // vii. RejectIfAbrupt(nextPromise, deferred).
         if (exec->hadException())
@@ -471,21 +439,21 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncAll(ExecState* exec)
         // v. RejectIfAbrupt(nextValue, deferred).
         // Note: 'next' is already the value, so there is nothing to do here.
 
-        // vi. Let 'nextPromise' be the result of calling Invoke(C, "cast", (nextValue)).
-        JSValue castFunction = C.get(exec, vm.propertyNames->cast);
+        // vi. Let 'nextPromise' be the result of calling Invoke(C, "resolve", (nextValue)).
+        JSValue resolveFunction = C.get(exec, vm.propertyNames->resolve);
         if (exec->hadException())
             return JSValue::encode(abruptRejection(exec, deferred));
 
-        CallData castFunctionCallData;
-        CallType castFunctionCallType = getCallData(castFunction, castFunctionCallData);
-        if (castFunctionCallType == CallTypeNone) {
+        CallData resolveFunctionCallData;
+        CallType resolveFunctionCallType = getCallData(resolveFunction, resolveFunctionCallData);
+        if (resolveFunctionCallType == CallTypeNone) {
             throwTypeError(exec);
             return JSValue::encode(abruptRejection(exec, deferred));
         }
 
-        MarkedArgumentBuffer castFunctionArguments;
-        castFunctionArguments.append(next);
-        JSValue nextPromise = call(exec, castFunction, castFunctionCallType, castFunctionCallData, C, castFunctionArguments);
+        MarkedArgumentBuffer resolveFunctionArguments;
+        resolveFunctionArguments.append(next);
+        JSValue nextPromise = call(exec, resolveFunction, resolveFunctionCallType, resolveFunctionCallData, C, resolveFunctionArguments);
 
         // vii. RejectIfAbrupt(nextPromise, deferred).
         if (exec->hadException())

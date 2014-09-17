@@ -1,3 +1,19 @@
+2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Promise: Drop Promise.cast
+        https://bugs.webkit.org/show_bug.cgi?id=136222
+
+        Reviewed by Sam Weinig.
+
+        Promise.cast is dropped and Promise.resolve is replaced with old Promise.cast.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructorFuncResolve):
+        (JSC::JSPromiseConstructorFuncRace):
+        (JSC::JSPromiseConstructorFuncAll):
+        (JSC::JSPromiseConstructorFuncCast): Deleted.
+
 2014-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Local OSR availability calculation should be reusable
