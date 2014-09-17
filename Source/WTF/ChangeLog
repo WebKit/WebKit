@@ -1,3 +1,9 @@
+2014-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, disable native inlining because it causes build failures.
+
+        * wtf/Platform.h:
+
 2014-09-15  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Support audioSourceProvider() in MediaPlayerPrivateAVFoundationObjC

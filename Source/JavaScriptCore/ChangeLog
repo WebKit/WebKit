@@ -1,3 +1,9 @@
+2014-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, disable native inlining because it causes build failures.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2014-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce a bit of churn setting initial remote inspection state
