@@ -1,3 +1,15 @@
+2014-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix runtime critical warnings when writing to the clipboard after r173687
+        https://bugs.webkit.org/show_bug.cgi?id=136891
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::writeClipboardContents): Check passed
+        callback is not null before trying to ref/unref it since
+        g_closure_ref/unref are not null safe.
+
 2014-09-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add a helper function for display system deduction

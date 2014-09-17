@@ -311,11 +311,12 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, SmartPast
     if (numberOfTargets > 0 && table) {
         settingClipboardDataObject = dataObject;
 
-        if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, g_closure_ref(callback)))
+        if (gtk_clipboard_set_with_data(clipboard, table, numberOfTargets, getClipboardContentsCallback, clearClipboardContentsCallback, callback ? g_closure_ref(callback) : nullptr))
             gtk_clipboard_set_can_store(clipboard, nullptr, 0);
         else {
             // When gtk_clipboard_set_with_data fails the callbacks are ignored, so we need to release the reference we were passing to clearClipboardContentsCallback.
-            g_closure_unref(callback);
+            if (callback)
+                g_closure_unref(callback);
         }
 
         settingClipboardDataObject = nullptr;
