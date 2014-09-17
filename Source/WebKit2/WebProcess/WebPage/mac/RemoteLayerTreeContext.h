@@ -55,6 +55,8 @@ public:
 
     WebCore::LayerPool& layerPool() { return m_layerPool; }
 
+    float deviceScaleFactor() const { return m_webPage.deviceScaleFactor(); }
+
     LayerHostingMode layerHostingMode() const { return m_webPage.layerHostingMode(); }
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer);

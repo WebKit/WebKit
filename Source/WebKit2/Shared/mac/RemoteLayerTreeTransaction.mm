@@ -47,6 +47,7 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
     : layerID(0)
     , type(PlatformCALayer::LayerTypeLayer)
     , hostingContextID(0)
+    , hostingDeviceScaleFactor(1)
 {
 }
 
@@ -55,6 +56,7 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::ArgumentEn
     encoder << layerID;
     encoder.encodeEnum(type);
     encoder << hostingContextID;
+    encoder << hostingDeviceScaleFactor;
 }
 
 bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::ArgumentDecoder& decoder, LayerCreationProperties& result)
@@ -66,6 +68,9 @@ bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::ArgumentDe
         return false;
 
     if (!decoder.decode(result.hostingContextID))
+        return false;
+
+    if (!decoder.decode(result.hostingDeviceScaleFactor))
         return false;
 
     return true;
