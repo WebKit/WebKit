@@ -1,3 +1,15 @@
+2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        filterRootById accidentally clears inAdjacentChain flag
+        https://bugs.webkit.org/show_bug.cgi?id=136851
+
+        Reviewed by Benjamin Poulain.
+
+        Test: fast/selectors/filter-root-node-with-selector-contains-adjacents.html
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::filterRootById):
+
 2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix layering violations in PasteboardGtk
