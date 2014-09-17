@@ -362,7 +362,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "inline", "block", "list-item", "compact", "inline-block", "table", "inline-table",
         "table-row-group", "table-header-group", "table-footer-group", "table-row", "table-column-group",
         "table-column", "table-cell", "table-caption", "-webkit-box", "-webkit-inline-box", "-wap-marquee",
-        "-webkit-flex", "-webkit-inline-flex", "-webkit-grid", "-webkit-inline-grid"
+        "flex", "inline-flex", "-webkit-grid", "-webkit-inline-grid"
     ],
     "image-rendering": [
         "auto", "optimizeSpeed", "optimizeQuality", "-webkit-crisp-edges", "-webkit-optimize-contrast"
@@ -667,32 +667,32 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-box-decoration-break": [
         "slice", "clone"
     ],
-    "-webkit-align-content": [
+    "align-content": [
         "flex-start", "flex-end", "center", "space-between", "space-around", "stretch"
     ],
-    "-webkit-align-items": [
+    "align-items": [
         "flex-start", "flex-end", "center", "baseline", "stretch"
     ],
-    "-webkit-align-self": [
+    "align-self": [
         "auto", "flex-start", "flex-end", "center", "baseline", "stretch"
     ],
-    "-webkit-justify-content": [
+    "justify-content": [
         "flex-start", "flex-end", "center", "space-between", "space-around"
     ],
-    "-webkit-flex-direction": [
+    "flex-direction": [
         "row", "row-reverse", "column", "column-reverse"
     ],
-    "-webkit-flex-wrap": [
+    "flex-wrap": [
         "nowrap", "wrap", "wrap-reverse"
     ],
-    "-webkit-flex-flow": [
+    "flex-flow": [
         "row", "row-reverse", "column", "column-reverse",
         "nowrap", "wrap", "wrap-reverse"
     ],
-    "-webkit-flex": [
+    "flex": [
         "none"
     ],
-    "-webkit-flex-basis": [
+    "flex-basis": [
         "auto"
     ],
     "-webkit-grid-after": [

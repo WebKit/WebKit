@@ -1,3 +1,14 @@
+2014-09-16  Dean Jackson  <dino@apple.com>
+
+        Add unprefixed flexbox display values and property names/values
+        https://bugs.webkit.org/show_bug.cgi?id=136880
+        <rdar://problem/18361137>
+
+        Reviewed by Benjamin Poulain with some extra comments by Joseph Pecoraro.
+
+        * UserInterface/Models/CSSKeywordCompletions.js: Switch to all the unprefixed
+        flex properties.
+
 2014-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Versioned Inspector protocol JSON files for iOS 8.0
