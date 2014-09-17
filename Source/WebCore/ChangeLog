@@ -1,3 +1,91 @@
+2014-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Rename Node::childNode(index) to traverseToChildAt(index) for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=136825
+
+        Reviewed by Benjamin Poulain.
+
+        Rename Node::childNode(index) to traverseToChildAt(index) to make it
+        clearer that the method is actually traversing the children and thus
+        potentially expensive.
+
+        This patch also avoids calling traverseToChildAt() in a couple of
+        easily avoidable cases.
+
+        No new tests, no behavior change.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        Remove symbol for ContainerNode::childNode() as it was renamed. It does
+        not seem we need to expose ContainerNode::traverseToChildAt().
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:]):
+        Mechanical renaming.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::traverseToChildAt):
+        (WebCore::ContainerNode::childNode): Deleted.
+        * dom/ContainerNode.h:
+        (WebCore::Node::traverseToChildAt):
+        (WebCore::Node::childNode): Deleted.
+        * dom/Node.h:
+        - Rename Node / ContainerNode's childNode(index) to
+          traverseToChildAt(index) to make it clear that it is actually
+          traversing the children and thus potentially expensive.
+        - Clean up the implementation of ContainerNode::traverseToChildAt()
+          to avoid the use of an extra |i| variable.
+
+        * dom/Position.cpp:
+        (WebCore::Position::computeNodeBeforePosition):
+        Avoid calling traverseToChildAt(-1). Relying on the unsigned argument
+        wrapping and the method returning null in this case is a bit obscure
+        and causes unnecessary traversal of all children.
+
+        (WebCore::Position::computeNodeAfterPosition):
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        Mechanical renaming and update variable names to stop using
+        abbreviations as per coding style.
+
+        * dom/PositionIterator.h:
+        (WebCore::PositionIterator::PositionIterator):
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+        (WebCore::Range::checkNodeWOffset):
+        (WebCore::Range::firstNode):
+        (WebCore::Range::pastLastNode):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::set):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeChildrenInRange):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/TextIterator.cpp:
+        (WebCore::nextInPreOrderCrossingShadowBoundaries):
+        (WebCore::TextIterator::node):
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        * editing/VisibleUnits.cpp:
+        (WebCore::nextLinePosition):
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedStringFromRange):
+        Mechanical renaming.
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+        Iterate over children while incrementing the |i| variable to avoid
+        calling traverseToChildAt(index) repeatedly and thus traversing the
+        children from the beginning every time.
+
 2014-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce a bit of churn setting initial remote inspection state

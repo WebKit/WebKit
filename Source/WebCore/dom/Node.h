@@ -417,7 +417,7 @@ public:
     bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
     unsigned countChildNodes() const;
-    Node* childNode(unsigned index) const;
+    Node* traverseToChildAt(unsigned) const;
 
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
 

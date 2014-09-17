@@ -246,7 +246,7 @@ Node* Position::computeNodeBeforePosition() const
     case PositionIsAfterChildren:
         return m_anchorNode->lastChild();
     case PositionIsOffsetInAnchor:
-        return m_anchorNode->childNode(m_offset - 1); // -1 converts to childNode((unsigned)-1) and returns null.
+        return m_offset ? m_anchorNode->traverseToChildAt(m_offset - 1) : nullptr;
     case PositionIsBeforeAnchor:
         return m_anchorNode->previousSibling();
     case PositionIsAfterAnchor:
@@ -267,7 +267,7 @@ Node* Position::computeNodeAfterPosition() const
     case PositionIsAfterChildren:
         return 0;
     case PositionIsOffsetInAnchor:
-        return m_anchorNode->childNode(m_offset);
+        return m_anchorNode->traverseToChildAt(m_offset);
     case PositionIsBeforeAnchor:
         return m_anchorNode.get();
     case PositionIsAfterAnchor:
@@ -298,17 +298,16 @@ Element* Position::element() const
 
 Position Position::previous(PositionMoveType moveType) const
 {
-    Node* n = deprecatedNode();
-    if (!n)
+    Node* node = deprecatedNode();
+    if (!node)
         return *this;
 
-    int o = deprecatedEditingOffset();
+    int offset = deprecatedEditingOffset();
     // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
-    ASSERT(o >= 0);
+    ASSERT(offset >= 0);
 
-    if (o > 0) {
-        Node* child = n->childNode(o - 1);
-        if (child)
+    if (offset > 0) {
+        if (Node* child = node->traverseToChildAt(offset - 1))
             return lastPositionInOrAfterNode(child);
 
         // There are two reasons child might be 0:
@@ -318,35 +317,35 @@ Position Position::previous(PositionMoveType moveType) const
         //      Going from 1 to 0 is correct.
         switch (moveType) {
         case CodePoint:
-            return createLegacyEditingPosition(n, o - 1);
+            return createLegacyEditingPosition(node, offset - 1);
         case Character:
-            return createLegacyEditingPosition(n, uncheckedPreviousOffset(n, o));
+            return createLegacyEditingPosition(node, uncheckedPreviousOffset(node, offset));
         case BackwardDeletion:
-            return createLegacyEditingPosition(n, uncheckedPreviousOffsetForBackwardDeletion(n, o));
+            return createLegacyEditingPosition(node, uncheckedPreviousOffsetForBackwardDeletion(node, offset));
         }
     }
 
-    ContainerNode* parent = findParent(n);
+    ContainerNode* parent = findParent(node);
     if (!parent)
         return *this;
 
-    return createLegacyEditingPosition(parent, n->computeNodeIndex());
+    return createLegacyEditingPosition(parent, node->computeNodeIndex());
 }
 
 Position Position::next(PositionMoveType moveType) const
 {
     ASSERT(moveType != BackwardDeletion);
 
-    Node* n = deprecatedNode();
-    if (!n)
+    Node* node = deprecatedNode();
+    if (!node)
         return *this;
 
-    int o = deprecatedEditingOffset();
+    int offset = deprecatedEditingOffset();
     // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
-    ASSERT(o >= 0);
+    ASSERT(offset >= 0);
 
-    Node* child = n->childNode(o);
-    if (child || (!n->hasChildNodes() && o < lastOffsetForEditing(n))) {
+    Node* child = node->traverseToChildAt(offset);
+    if (child || (!node->hasChildNodes() && offset < lastOffsetForEditing(node))) {
         if (child)
             return firstPositionInOrBeforeNode(child);
 
@@ -355,14 +354,14 @@ Position Position::next(PositionMoveType moveType) const
         //      Going forward one character at a time is correct.
         //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
         //      Going from 0 to 1 is correct.
-        return createLegacyEditingPosition(n, (moveType == Character) ? uncheckedNextOffset(n, o) : o + 1);
+        return createLegacyEditingPosition(node, (moveType == Character) ? uncheckedNextOffset(node, offset) : offset + 1);
     }
 
-    ContainerNode* parent = findParent(n);
+    ContainerNode* parent = findParent(node);
     if (!parent)
         return *this;
 
-    return createLegacyEditingPosition(parent, n->computeNodeIndex() + 1);
+    return createLegacyEditingPosition(parent, node->computeNodeIndex() + 1);
 }
 
 int Position::uncheckedPreviousOffset(const Node* n, int current)

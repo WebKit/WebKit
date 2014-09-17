@@ -396,7 +396,7 @@ void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<Containe
 void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned from, unsigned to)
 {
     Vector<RefPtr<Node>> children;
-    Node* child = node->childNode(from);
+    Node* child = node->traverseToChildAt(from);
     for (unsigned i = from; child && i < to; i++, child = child->nextSibling())
         children.append(child);
 

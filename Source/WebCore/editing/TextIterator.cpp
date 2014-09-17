@@ -193,7 +193,7 @@ static unsigned depthCrossingShadowBoundaries(Node& node)
 static Node* nextInPreOrderCrossingShadowBoundaries(Node& rangeEndContainer, int rangeEndOffset)
 {
     if (rangeEndOffset >= 0 && !rangeEndContainer.offsetInCharacters()) {
-        if (Node* next = rangeEndContainer.childNode(rangeEndOffset))
+        if (Node* next = rangeEndContainer.traverseToChildAt(rangeEndOffset))
             return next;
     }
     for (Node* node = &rangeEndContainer; node; node = node->parentOrShadowHostNode()) {
@@ -1111,7 +1111,7 @@ Node* TextIterator::node() const
     if (node->offsetInCharacters())
         return node;
     
-    return node->childNode(textRange->startOffset());
+    return node->traverseToChildAt(textRange->startOffset());
 }
 
 // --------
@@ -1147,13 +1147,13 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range& ra
 
     if (!startNode->offsetInCharacters()) {
         if (startOffset >= 0 && startOffset < static_cast<int>(startNode->countChildNodes())) {
-            startNode = startNode->childNode(startOffset);
+            startNode = startNode->traverseToChildAt(startOffset);
             startOffset = 0;
         }
     }
     if (!endNode->offsetInCharacters()) {
         if (endOffset > 0 && endOffset <= static_cast<int>(endNode->countChildNodes())) {
-            endNode = endNode->childNode(endOffset - 1);
+            endNode = endNode->traverseToChildAt(endOffset - 1);
             endOffset = lastOffsetInNode(endNode);
         }
     }

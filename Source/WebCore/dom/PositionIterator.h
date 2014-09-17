@@ -45,7 +45,7 @@ public:
 
     PositionIterator(const Position& pos)
         : m_anchorNode(pos.anchorNode())
-        , m_nodeAfterPositionInAnchor(m_anchorNode->childNode(pos.deprecatedEditingOffset()))
+        , m_nodeAfterPositionInAnchor(m_anchorNode->traverseToChildAt(pos.deprecatedEditingOffset()))
         , m_offsetInAnchor(m_nodeAfterPositionInAnchor ? 0 : pos.deprecatedEditingOffset())
     {
     }

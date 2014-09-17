@@ -1102,7 +1102,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
                 AXAttributedStringAppendText(attrString, node, listMarkerText);
             AXAttributedStringAppendText(attrString, node, it.text());
         } else {
-            Node* replacedNode = node->childNode(offset);
+            Node* replacedNode = node->traverseToChildAt(offset);
             NSString *attachmentString = nsStringForReplacedNode(replacedNode);
             if (attachmentString) {
                 NSRange attrStringRange = NSMakeRange([attrString length], [attachmentString length]);

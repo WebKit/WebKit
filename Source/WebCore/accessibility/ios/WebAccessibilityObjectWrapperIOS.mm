@@ -1844,7 +1844,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 [attrString release];
             }
         } else {
-            Node* replacedNode = node->childNode(offset);
+            Node* replacedNode = node->traverseToChildAt(offset);
             if (replacedNode) {
                 AccessibilityObject* obj = m_object->axObjectCache()->getOrCreate(replacedNode->renderer());
                 if (obj && !obj->accessibilityIsIgnored())

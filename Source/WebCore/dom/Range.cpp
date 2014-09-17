@@ -1056,7 +1056,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
         container = m_start.container();
         RefPtr<Node> firstInsertedChild = newNodeType == Node::DOCUMENT_FRAGMENT_NODE ? newNode->firstChild() : newNode;
         RefPtr<Node> lastInsertedChild = newNodeType == Node::DOCUMENT_FRAGMENT_NODE ? newNode->lastChild() : newNode;
-        RefPtr<Node> childAfterInsertedContent = container->childNode(m_start.offset());
+        RefPtr<Node> childAfterInsertedContent = container->traverseToChildAt(m_start.offset());
         container->insertBefore(newNode.release(), childAfterInsertedContent.get(), ec);
         if (ec)
             return;
@@ -1171,7 +1171,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::XPATH_NAMESPACE_NODE: {
             if (!offset)
                 return 0;
-            Node* childBefore = n->childNode(offset - 1);
+            Node* childBefore = n->traverseToChildAt(offset - 1);
             if (!childBefore)
                 ec = INDEX_SIZE_ERR;
             return childBefore;
@@ -1568,7 +1568,7 @@ Node* Range::firstNode() const
         return 0;
     if (m_start.container()->offsetInCharacters())
         return m_start.container();
-    if (Node* child = m_start.container()->childNode(m_start.offset()))
+    if (Node* child = m_start.container()->traverseToChildAt(m_start.offset()))
         return child;
     if (!m_start.offset())
         return m_start.container();
@@ -1586,7 +1586,7 @@ Node* Range::pastLastNode() const
         return 0;
     if (m_end.container()->offsetInCharacters())
         return NodeTraversal::nextSkippingChildren(m_end.container());
-    if (Node* child = m_end.container()->childNode(m_end.offset()))
+    if (Node* child = m_end.container()->traverseToChildAt(m_end.offset()))
         return child;
     return NodeTraversal::nextSkippingChildren(m_end.container());
 }

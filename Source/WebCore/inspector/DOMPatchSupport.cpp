@@ -377,10 +377,11 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
     }
 
     // 3. Insert missing nodes.
-    for (size_t i = 0; i < newMap.size(); ++i) {
+    Node* node = parentNode->firstChild();
+    for (unsigned i = 0; node && i < newMap.size(); ++i, node = node->nextSibling()) {
         if (newMap[i].first || merges.contains(newList[i].get()))
             continue;
-        if (!insertBeforeAndMarkAsUsed(parentNode, newList[i].get(), parentNode->childNode(i), ec))
+        if (!insertBeforeAndMarkAsUsed(parentNode, newList[i].get(), node, ec))
             return false;
     }
 
@@ -389,7 +390,7 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
         if (!oldMap[i].first)
             continue;
         RefPtr<Node> node = oldMap[i].first->m_node;
-        Node* anchorNode = parentNode->childNode(oldMap[i].second);
+        Node* anchorNode = parentNode->traverseToChildAt(oldMap[i].second);
         if (node.get() == anchorNode)
             continue;
         if (node->hasTagName(bodyTag) || node->hasTagName(headTag))

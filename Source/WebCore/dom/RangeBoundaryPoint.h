@@ -121,7 +121,7 @@ inline void RangeBoundaryPoint::set(PassRefPtr<Node> container, int offset, Node
 {
     ASSERT(container);
     ASSERT(offset >= 0);
-    ASSERT(childBefore == (offset ? container->childNode(offset - 1) : 0));
+    ASSERT(childBefore == (offset ? container->traverseToChildAt(offset - 1) : 0));
     m_containerNode = container;
     m_offsetInContainer = offset;
     m_childBeforeBoundary = childBefore;

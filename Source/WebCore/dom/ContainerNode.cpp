@@ -939,13 +939,12 @@ unsigned ContainerNode::countChildNodes() const
     return count;
 }
 
-Node *ContainerNode::childNode(unsigned index) const
+Node* ContainerNode::traverseToChildAt(unsigned index) const
 {
-    unsigned i;
-    Node *n = firstChild();
-    for (i = 0; n != 0 && i < index; i++)
-        n = n->nextSibling();
-    return n;
+    Node* child = firstChild();
+    for (; child && index > 0; --index)
+        child = child->nextSibling();
+    return child;
 }
 
 static void dispatchChildInsertionEvents(Node& child)

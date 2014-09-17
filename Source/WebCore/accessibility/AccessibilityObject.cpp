@@ -1139,7 +1139,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             Node* node = it.range()->startContainer();
             ASSERT(node == it.range()->endContainer());
             int offset = it.range()->startOffset();
-            if (replacedNodeNeedsCharacter(node->childNode(offset)))
+            if (replacedNodeNeedsCharacter(node->traverseToChildAt(offset)))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -1166,7 +1166,7 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
             ASSERT(node == it.range()->endContainer(exception));
             int offset = it.range()->startOffset(exception);
 
-            if (replacedNodeNeedsCharacter(node->childNode(offset)))
+            if (replacedNodeNeedsCharacter(node->traverseToChildAt(offset)))
                 length++;
         }
     }

@@ -93,7 +93,7 @@ public:
     void setDirectChildNeedsStyleRecalc() { setFlag(DirectChildNeedsStyleRecalcFlag); }
 
     WEBCORE_EXPORT unsigned countChildNodes() const;
-    WEBCORE_EXPORT Node* childNode(unsigned index) const;
+    WEBCORE_EXPORT Node* traverseToChildAt(unsigned) const;
 
     bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
     bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
@@ -192,11 +192,11 @@ inline unsigned Node::countChildNodes() const
     return toContainerNode(this)->countChildNodes();
 }
 
-inline Node* Node::childNode(unsigned index) const
+inline Node* Node::traverseToChildAt(unsigned index) const
 {
     if (!isContainerNode())
         return 0;
-    return toContainerNode(this)->childNode(index);
+    return toContainerNode(this)->traverseToChildAt(index);
 }
 
 inline Node* Node::firstChild() const
