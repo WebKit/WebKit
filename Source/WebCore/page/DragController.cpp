@@ -717,7 +717,7 @@ static IntPoint dragLocForSelectionDrag(Frame& src)
 
 bool DragController::startDrag(Frame& src, const DragState& state, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin)
 {
-    if (!src.view() || !src.contentRenderer())
+    if (!src.view() || !src.contentRenderer() || !state.source)
         return false;
 
     HitTestResult hitTestResult = src.eventHandler().hitTestResultAtPoint(dragOrigin, HitTestRequest::ReadOnly | HitTestRequest::Active);

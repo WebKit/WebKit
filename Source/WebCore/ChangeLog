@@ -1,5 +1,22 @@
 2014-09-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173664. rdar://problem/18187713
+
+    2014-09-16  Jer Noble  <jer.noble@apple.com>
+
+            Videos with controls enabled never receive 'dragstart' events.
+            https://bugs.webkit.org/show_bug.cgi?id=136837
+
+            Reviewed by Eric Carlson.
+
+            Fixes a crash regression introduced by r173631. Node::contains() has an interesting property of returning false
+            if `this` is NULL. Rather than depending on this behavior, explicitly NULL-check state.source and bail early.
+
+            * page/DragController.cpp:
+            (WebCore::DragController::startDrag):
+
+2014-09-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r173632. rdar://problem/18187713
 
     2014-09-15  Jer Noble  <jer.noble@apple.com>
