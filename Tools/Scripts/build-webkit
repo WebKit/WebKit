@@ -59,8 +59,6 @@ my $prefixPath;
 my $makeArgs = "";
 my $cmakeArgs = "";
 my $onlyWebKitProject = 0;
-my $noWebKit1 = 0;
-my $noWebKit2 = 0;
 my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $startTime = time();
@@ -109,8 +107,6 @@ Usage: $programName [options] [options to pass to build system]
   --minimal                         No optional features, unless explicitly enabled
 
   --only-webkit                     Build only the WebKit project
-  --no-webkit1                      Omit WebKit1 code from the build (EFL/GTK only)
-  --no-webkit2                      Omit WebKit2 code from the build
 
 EOF
 
@@ -124,8 +120,6 @@ my %options = (
     'cmakeargs=s' => \$cmakeArgs,
     'minimal' => \$minimal,
     'only-webkit' => \$onlyWebKitProject,
-    'no-webkit1' => \$noWebKit1,
-    'no-webkit2' => \$noWebKit2,
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
 );
@@ -246,8 +240,6 @@ if (isInspectorFrontend()) {
 }
 
 if (isCMakeBuild()) {
-    $cmakeArgs = "-DENABLE_WEBKIT=OFF "  . $cmakeArgs if $noWebKit1;
-    $cmakeArgs = "-DENABLE_WEBKIT2=OFF " . $cmakeArgs if $noWebKit2;
 
     # By default we build using all of the available CPUs.
     if (!isWinCE()) {

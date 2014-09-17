@@ -52,24 +52,14 @@ class GtkPortTest(port_testcase.PortTestCase):
 
     def test_default_baseline_search_path(self):
         port = self.make_port()
-        self.assertEqual(port.default_baseline_search_path(), ['/mock-checkout/LayoutTests/platform/gtk-wk1',
-            '/mock-checkout/LayoutTests/platform/gtk'])
-
-        port = self.make_port(options=MockOptions(webkit_test_runner=True))
-        self.assertEqual(port.default_baseline_search_path(), ['/mock-checkout/LayoutTests/platform/gtk-wk2',
-            '/mock-checkout/LayoutTests/platform/wk2', '/mock-checkout/LayoutTests/platform/gtk'])
+        self.assertEqual(port.default_baseline_search_path(), ['/mock-checkout/LayoutTests/platform/gtk',
+            '/mock-checkout/LayoutTests/platform/wk2'])
 
     def test_port_specific_expectations_files(self):
         port = self.make_port()
         self.assertEqual(port.expectations_files(), ['/mock-checkout/LayoutTests/TestExpectations',
-            '/mock-checkout/LayoutTests/platform/gtk/TestExpectations',
-            '/mock-checkout/LayoutTests/platform/gtk-wk1/TestExpectations'])
-
-        port = self.make_port(options=MockOptions(webkit_test_runner=True))
-        self.assertEqual(port.expectations_files(), ['/mock-checkout/LayoutTests/TestExpectations',
-            '/mock-checkout/LayoutTests/platform/gtk/TestExpectations',
             '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
-            '/mock-checkout/LayoutTests/platform/gtk-wk2/TestExpectations'])
+            '/mock-checkout/LayoutTests/platform/gtk/TestExpectations'])
 
     def test_show_results_html_file(self):
         port = self.make_port()

@@ -69,9 +69,6 @@ class GtkPort(Port):
     def _built_libraries_path(self, *path):
         return self._build_path(*(('lib',) + path))
 
-    def warn_if_bug_missing_in_test_expectations(self):
-        return not self.get_option('webkit_test_runner')
-
     def _port_flag_for_scripts(self):
         return "--gtk"
 
@@ -177,11 +174,8 @@ class GtkPort(Port):
 
     def _search_paths(self):
         search_paths = []
-        if self.get_option('webkit_test_runner'):
-            search_paths.extend([self.port_name + '-wk2', 'wk2'])
-        else:
-            search_paths.append(self.port_name + '-wk1')
         search_paths.append(self.port_name)
+        search_paths.append('wk2')
         search_paths.extend(self.get_option("additional_platform_directory", []))
         return search_paths
 
@@ -215,21 +209,17 @@ class GtkPort(Port):
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
 
+    def test_expectations_file_position(self):
+        # GTK port baseline search path is gtk -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.
+        return 2
+
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)
         command.extend(["--gtk", "--update-gtk"])
-
-        if self.get_option('webkit_test_runner'):
-            command.append("--no-webkit1")
-        else:
-            command.append("--no-webkit2")
-
         command.append(super(GtkPort, self).make_args())
         return command
 
     def run_webkit_tests_command(self):
         command = super(GtkPort, self).run_webkit_tests_command()
         command.append("--gtk")
-        if self.get_option('webkit_test_runner'):
-            command.append("-2")
         return command

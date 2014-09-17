@@ -3,14 +3,12 @@ add_subdirectory(${WEBCORE_DIR}/platform/gtk/po)
 # This allows exposing a 'gir' target which builds all GObject introspection files.
 add_custom_target(gir ALL DEPENDS ${GObjectIntrospectionTargets})
 
-if (ENABLE_WEBKIT2)
-    list(APPEND DocumentationDependencies
-        WebKit2
-        "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
-        "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt"
-        GObjectDOMBindings
-    )
-endif ()
+list(APPEND DocumentationDependencies
+    GObjectDOMBindings
+    WebKit2
+    "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
+    "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt"
+)
 
 if (ENABLE_GTKDOC)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk/html/
@@ -51,41 +49,40 @@ add_custom_target(check
     COMMAND ${TOOLS_DIR}/gtk/check-for-webkitdom-api-breaks
 )
 
-if (ENABLE_WEBKIT2)
-    add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
-        DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
-        DEPENDS WebKit2
-        DEPENDS gtkdoc
-        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
-                --source-dir=${CMAKE_SOURCE_DIR}
-                --build-dir=${CMAKE_BINARY_DIR}
-                --version=${PROJECT_VERSION}
-                ${TOOLS_DIR}/gtk/manifest.txt
-    )
 
-    add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
-        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-    )
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+    DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
+    DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
+    DEPENDS WebKit2
+    DEPENDS gtkdoc
+    COMMAND ${TOOLS_DIR}/gtk/make-dist.py
+            --source-dir=${CMAKE_SOURCE_DIR}
+            --build-dir=${CMAKE_BINARY_DIR}
+            --version=${PROJECT_VERSION}
+            ${TOOLS_DIR}/gtk/manifest.txt
+)
 
-    add_custom_target(dist
-        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
-    )
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
+    DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+    COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+)
 
-    add_custom_target(distcheck
-        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
-        DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
-        DEPENDS WebKit2
-        DEPENDS gtkdoc
-        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
-                --check
-                --source-dir=${CMAKE_SOURCE_DIR}
-                --build-dir=${CMAKE_BINARY_DIR}
-                --version=/webkitgtk-${PROJECT_VERSION}
-                ${TOOLS_DIR}/gtk/manifest.txt
-        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-    )
-endif ()
+add_custom_target(dist
+    DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
+)
+
+add_custom_target(distcheck
+    DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
+    DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
+    DEPENDS WebKit2
+    DEPENDS gtkdoc
+    COMMAND ${TOOLS_DIR}/gtk/make-dist.py
+            --check
+            --source-dir=${CMAKE_SOURCE_DIR}
+            --build-dir=${CMAKE_BINARY_DIR}
+            --version=/webkitgtk-${PROJECT_VERSION}
+            ${TOOLS_DIR}/gtk/manifest.txt
+    COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+)

@@ -68,8 +68,8 @@ my @testCases = (
 {
     description => "option whose value is the empty string and follows an equal sign", # Unrecognized argument; no change 
     argToCheck => "--sdk",
-    args => ["--clean", "--debug", "--sdk=", "--no-webkit2"],
-    expectedArgs => ["--clean", "--debug", "--sdk=", "--no-webkit2"],
+    args => ["--clean", "--debug", "--sdk="],
+    expectedArgs => ["--clean", "--debug", "--sdk="],
     expectedReturn => undef,
 },
 {

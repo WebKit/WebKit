@@ -202,7 +202,7 @@
                       "slavenames": ["wincairo-1"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2Only", "builddir": "efl-linux-64-release-wk2",
+                      "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTest", "builddir": "efl-linux-64-release-wk2",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-2"]
                     },

@@ -145,7 +145,6 @@ class GtkWK2Port(DeprecatedPort):
         command = super(GtkWK2Port, self).build_webkit_command(build_style=build_style)
         command.append("--gtk")
         command.append("--update-gtk")
-        command.append("--no-webkit1")
         command.append(super(GtkWK2Port, self).makeArgs())
         return command
 
@@ -163,6 +162,5 @@ class EflWK2Port(DeprecatedPort):
         command = super(EflWK2Port, self).build_webkit_command(build_style=build_style)
         command.append("--efl")
         command.append("--update-efl")
-        command.append("--no-webkit1")
         command.append(super(EflWK2Port, self).makeArgs())
         return command
