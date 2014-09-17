@@ -1,3 +1,34 @@
+2014-09-16  Enrica Casucci  <enrica@apple.com>
+
+        Should have an editing behavior specific for IOS.
+        https://bugs.webkit.org/show_bug.cgi?id=136876
+
+        Reviewed by Sam Weinig.
+
+        This patch introduces a new editing behavior type to be able
+        to perform editing tasks that are specific to iOS.
+        All the existing EditingBehavior methods return the same boolean
+        value for for Mac and iOS. A new one has been introduced to support
+        a specific behavior in the DeleteSelectionCommand.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldConsiderSelectionAsDirectional):
+        (WebCore::EditingBehavior::shouldCenterAlignWhenSelectionIsRevealed):
+        (WebCore::EditingBehavior::shouldToggleStyleBasedOnStartOfSelection):
+        (WebCore::EditingBehavior::shouldAlwaysGrowSelectionWhenExtendingToBoundary):
+        (WebCore::EditingBehavior::shouldSelectOnContextualMenuClick):
+        (WebCore::EditingBehavior::shouldExtendSelectionByWordOrLineAcrossCaret):
+        (WebCore::EditingBehavior::shouldRebalanceWhiteSpacesInSecureField):
+        * editing/EditingBehaviorTypes.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::positionForPlatform):
+        * page/Settings.cpp:
+        (WebCore::editingBehaviorTypeForPlatform):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setEditingBehavior):
+
 2014-09-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r173670.

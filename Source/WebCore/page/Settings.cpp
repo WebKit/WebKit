@@ -107,7 +107,9 @@ bool Settings::gManageAudioSession = false;
 static EditingBehaviorType editingBehaviorTypeForPlatform()
 {
     return
-#if OS(DARWIN)
+#if PLATFORM(IOS)
+    EditingIOSBehavior
+#elif OS(DARWIN)
     EditingMacBehavior
 #elif OS(WINDOWS)
     EditingWindowsBehavior
