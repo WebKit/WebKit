@@ -114,25 +114,25 @@ DragController::~DragController()
     m_client.dragControllerDestroyed();
 }
 
-static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragData, Frame* frame, Range& context, bool allowPlainText, bool& chosePlainText)
+PassRefPtr<DocumentFragment> DragController::documentFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 
     Document& document = context.ownerDocument();
     if (dragData.containsCompatibleContent()) {
-        if (PassRefPtr<DocumentFragment> fragment = dragData.asFragment(frame, context, allowPlainText, chosePlainText))
+        if (PassRefPtr<DocumentFragment> fragment = createFragmentFromDragData(dragData, frame, context, allowPlainText, chosePlainText))
             return fragment;
 
-        if (dragData.containsURL(frame, DragData::DoNotConvertFilenames)) {
+        if (dragData.containsURL(DragData::DoNotConvertFilenames)) {
             String title;
-            String url = dragData.asURL(frame, DragData::DoNotConvertFilenames, &title);
+            String url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
                 RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the url might be normalized or escaped.
                     if (dragData.containsPlainText())
-                        title = dragData.asPlainText(frame);
+                        title = dragData.asPlainText();
                     if (title.isEmpty())
                         title = url;
                 }
@@ -146,7 +146,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragD
     }
     if (allowPlainText && dragData.containsPlainText()) {
         chosePlainText = true;
-        return createFragmentFromText(context, dragData.asPlainText(frame)).get();
+        return createFragmentFromText(context, dragData.asPlainText()).get();
     }
 
     return 0;
@@ -234,7 +234,7 @@ bool DragController::performDragOperation(DragData& dragData)
         return false;
 
     m_client.willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page.mainFrame().loader().load(FrameLoadRequest(&m_page.mainFrame(), ResourceRequest(dragData.asURL(&m_page.mainFrame()))));
+    m_page.mainFrame().loader().load(FrameLoadRequest(&m_page.mainFrame(), ResourceRequest(dragData.asURL())));
     return true;
 }
 
@@ -425,7 +425,7 @@ static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, R
 bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData& dragData)
 {
     ASSERT(m_page.dragCaretController().hasCaret());
-    String text = m_page.dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText(innerFrame);
+    String text = m_page.dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText();
     Node* target = innerFrame->editor().findEventTargetFrom(m_page.dragCaretController().caretPosition());
     return target->dispatchEvent(TextEvent::createForDrop(innerFrame->document()->domWindow(), text), IGNORE_EXCEPTION);
 }
@@ -494,7 +494,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
     ResourceCacheValidationSuppressor validationSuppressor(cachedResourceLoader);
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
-        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, innerFrame.get(), *range, true, chosePlainText);
+        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, *range, true, chosePlainText);
         if (!fragment || !innerFrame->editor().shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
             return false;
         }
@@ -517,7 +517,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
             }
         }
     } else {
-        String text = dragData.asPlainText(innerFrame.get());
+        String text = dragData.asPlainText();
         if (text.isEmpty() || !innerFrame->editor().shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
             return false;
         }

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Document;
+class DocumentFragment;
 class URL;
 
 HGLOBAL createGlobalData(const String&);

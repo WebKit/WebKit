@@ -27,18 +27,11 @@
 #import "DragData.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#import "Document.h"
-#import "DocumentFragment.h"
-#import "DOMDocumentFragment.h"
-#import "DOMDocumentFragmentInternal.h"
-#import "Editor.h"
-#import "EditorClient.h"
-#import "Frame.h"
 #import "MIMETypeRegistry.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
-#import "Range.h"
+#import "WebCoreNSURLExtras.h"
 
 namespace WebCore {
 
@@ -107,9 +100,20 @@ bool DragData::containsPlainText() const
         || platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), m_pasteboardName).length();
 }
 
-String DragData::asPlainText(Frame *frame) const
+String DragData::asPlainText() const
 {
-    return frame->editor().readPlainTextFromPasteboard(*Pasteboard::create(m_pasteboardName));
+    Pasteboard pasteboard(m_pasteboardName);
+    PasteboardPlainText text;
+    pasteboard.read(text);
+    String string = text.text;
+
+    // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
+    // all the same cases we handle well in the URL code for creating an NSURL.
+    if (text.isURL)
+        return userVisibleString([NSURL URLWithString:string]);
+
+    // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
+    return [(NSString *)string precomposedStringWithCanonicalMapping];
 }
 
 Color DragData::asColor() const
@@ -134,12 +138,12 @@ bool DragData::containsCompatibleContent() const
         || types.contains(String(kUTTypePNG));
 }
     
-bool DragData::containsURL(Frame* frame, FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-    return !asURL(frame, filenamePolicy).isEmpty();
+    return !asURL(filenamePolicy).isEmpty();
 }
 
-String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) const
+String DragData::asURL(FilenameConversionPolicy, String* title) const
 {
     // FIXME: Use filenamePolicy.
 
@@ -151,17 +155,13 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) co
     
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    
-    // FIXME: using the editorClient to call into WebKit, for now, since 
-    // calling webkit_canonicalize from WebCore involves migrating a sizable amount of 
-    // helper code that should either be done in a separate patch or figured out in another way.
-    
+
     if (types.contains(String(NSURLPboardType))) {
         NSURL *URLFromPasteboard = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(String(NSURLPboardType), m_pasteboardName)];
         NSString *scheme = [URLFromPasteboard scheme];
         // Cannot drop other schemes unless <rdar://problem/10562662> and <rdar://problem/11187315> are fixed.
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
-            return [frame->editor().client()->canonicalizeURL(URLFromPasteboard) absoluteString];
+            return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
     }
     
     if (types.contains(String(NSStringPboardType))) {
@@ -171,7 +171,7 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) co
         // The result of this function is used to initiate navigation, so we shouldn't allow arbitrary file URLs.
         // FIXME: Should we allow only http family schemes, or anything non-local?
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"])
-            return [frame->editor().client()->canonicalizeURL(URLFromPasteboard) absoluteString];
+            return [URLByCanonicalizingURL(URLFromPasteboard) absoluteString];
     }
     
     if (types.contains(String(NSFilenamesPboardType))) {
@@ -181,19 +181,13 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) co
             BOOL isDirectory;
             if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && isDirectory)
                 return String();
-            return [frame->editor().client()->canonicalizeURL([NSURL fileURLWithPath:files[0]]) absoluteString];
+            return [URLByCanonicalizingURL([NSURL fileURLWithPath:files[0]]) absoluteString];
         }
     }
     
     return String();        
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, Range& range, bool allowPlainText, bool& chosePlainText) const
-{
-    Pasteboard pasteboard(m_pasteboardName);
-    return frame->editor().webContentFromPasteboard(pasteboard, range, allowPlainText, chosePlainText);
-}
-    
 } // namespace WebCore
 
 #endif // ENABLE(DRAG_SUPPORT)

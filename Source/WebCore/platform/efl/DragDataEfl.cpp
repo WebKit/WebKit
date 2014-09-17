@@ -21,8 +21,7 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "Document.h"
-#include "DocumentFragment.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -55,7 +54,7 @@ bool DragData::containsPlainText() const
     return false;
 }
 
-String DragData::asPlainText(Frame*) const
+String DragData::asPlainText() const
 {
     return String();
 }
@@ -70,19 +69,14 @@ bool DragData::containsCompatibleContent() const
     return false;
 }
 
-bool DragData::containsURL(Frame*, FilenameConversionPolicy) const
+bool DragData::containsURL(FilenameConversionPolicy) const
 {
     return false;
 }
 
-String DragData::asURL(Frame*, FilenameConversionPolicy, String*) const
+String DragData::asURL(FilenameConversionPolicy, String*) const
 {
     return String();
-}
-
-PassRefPtr<DocumentFragment> DragData::asFragment(Frame*, Range&, bool, bool&) const
-{
-    return 0;
 }
 
 }

@@ -18,10 +18,6 @@
 #include "DragData.h"
 
 #include "DataObjectGtk.h"
-#include "Document.h"
-#include "DocumentFragment.h"
-#include "Frame.h"
-#include "markup.h"
 
 namespace WebCore {
 
@@ -55,7 +51,7 @@ bool DragData::containsPlainText() const
     return m_platformDragData->hasText();
 }
 
-String DragData::asPlainText(Frame*) const
+String DragData::asPlainText() const
 {
     return m_platformDragData->text();
 }
@@ -67,15 +63,15 @@ Color DragData::asColor() const
 
 bool DragData::containsCompatibleContent() const
 {
-    return containsPlainText() || containsURL(0) || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
+    return containsPlainText() || containsURL() || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
 }
 
-bool DragData::containsURL(Frame* frame, FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
-    return !asURL(frame, filenamePolicy).isEmpty();
+    return !asURL(filenamePolicy).isEmpty();
 }
 
-String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
 {
     if (!m_platformDragData->hasURL())
         return String();
@@ -89,18 +85,6 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
     if (title)
         *title = m_platformDragData->urlLabel();
     return url;
-}
-
-
-PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, Range&, bool, bool&) const
-{
-    if (!m_platformDragData->hasMarkup())
-        return nullptr;
-
-    if (!frame->document())
-        return nullptr;
-
-    return createFragmentFromMarkup(*frame->document(), m_platformDragData->markup(), "");
 }
 
 }

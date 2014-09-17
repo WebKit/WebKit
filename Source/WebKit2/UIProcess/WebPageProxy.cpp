@@ -1369,7 +1369,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     UNUSED_PARAM(sandboxExtensionHandle);
     UNUSED_PARAM(sandboxExtensionsForUpload);
 
-    String url = dragData.asURL(nullptr);
+    String url = dragData.asURL();
     if (!url.isEmpty())
         m_process->assumeReadAccessToBaseURL(url);
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData), m_pageID);

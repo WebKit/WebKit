@@ -29,6 +29,8 @@
 #include "config.h"
 #include "DragController.h"
 
+#include "Document.h"
+#include "DocumentFragment.h"
 #include "DragData.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -50,7 +52,7 @@ bool DragController::isCopyKeyDown(DragData&)
 
 DragOperation DragController::dragOperation(DragData& dragData)
 {
-    if (dragData.containsURL(0))
+    if (dragData.containsURL())
         return DragOperationCopy;
 
     return DragOperationNone;
@@ -69,6 +71,11 @@ void DragController::cleanupAfterSystemDrag()
 
 void DragController::declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String&)
 {
+}
+
+PassRefPtr<DocumentFragment> DragController::createFragmentFromDragData(DragData&, Frame&, Range&, bool /*allowPlainText*/, bool& /*chosePlainText*/)
+{
+    return nullptr;
 }
 
 }

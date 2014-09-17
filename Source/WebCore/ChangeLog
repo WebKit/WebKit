@@ -1,3 +1,62 @@
+2014-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        DragData should not depend on Clipboard, DocumentFragment, and Document
+        https://bugs.webkit.org/show_bug.cgi?id=21358
+
+        Reviewed by Darin Adler.
+
+        Refactor DragData to not depend on Frame, DocumentFragment,
+        Document and Range. DragData::asFragment() has been moved to
+        DragController and implemented in the platform specific file.
+        DragData methods using Frame has been reworked in Mac to not use
+        Frame, since all other ports were ignoreing the frame parameter.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::documentFragmentFromDragData): Make it
+        a static member to be able to use createFragmentFromDragData().
+        (WebCore::DragController::performDragOperation): Update to
+        DragData API changes.
+        (WebCore::DragController::dispatchTextInputEventFor): Ditto.
+        (WebCore::DragController::concludeEditDrag): Ditto.
+        (WebCore::documentFragmentFromDragData): Deleted.
+        * page/DragController.h:
+        * page/efl/DragControllerEfl.cpp:
+        (WebCore::DragController::createFragmentFromDragData): Move
+        DragData::asFragment() implementation here.
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::createFragmentFromDragData): Ditto.
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::createFragmentFromDragData): Ditto.
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::createFragmentFromDragData): Ditto.
+        * platform/DragData.h:
+        * platform/efl/DragDataEfl.cpp:
+        (WebCore::DragData::asPlainText): Remove Frame parameter.
+        (WebCore::DragData::containsURL): Ditto.
+        (WebCore::DragData::asURL): Ditto.
+        (WebCore::DragData::asFragment): Deleted.
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::asPlainText): Remove Frame parameter.
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL): Ditto.
+        (WebCore::DragData::asURL): Ditto.
+        (WebCore::DragData::asFragment): Deleted.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asPlainText): Same implementation as the
+        Editor.
+        (WebCore::DragData::containsURL): Remove Frame parameter.
+        (WebCore::DragData::asURL): Use URLByCanonicalizingURL() instead
+        of using the Editor client.
+        (WebCore::DragData::asFragment): Deleted.
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::containsURL): Remove Frame parameter.
+        (WebCore::DragData::asURL): Ditto.
+        (WebCore::DragData::asPlainText): Ditto.
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asFragment): Deleted.
+
 2014-09-16  Chris Dumez  <cdumez@apple.com>
 
         Rename Node::childNode(index) to traverseToChildAt(index) for clarity

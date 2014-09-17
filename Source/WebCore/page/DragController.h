@@ -35,6 +35,7 @@ namespace WebCore {
 
     class DataTransfer;
     class Document;
+    class DocumentFragment;
     class DragClient;
     class DragData;
     class Element;
@@ -44,6 +45,7 @@ namespace WebCore {
     class IntRect;
     class Page;
     class PlatformMouseEvent;
+    class Range;
 
     struct DragState;
 
@@ -112,6 +114,10 @@ namespace WebCore {
         void doSystemDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool forLink);
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
+
+        // FIXME: Move createFragmentFromDragData implementation to the Editor and make documentFragmentFromDragData a static function again.
+        static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData&, Frame&, Range&, bool allowPlainText, bool& chosePlainText);
+        static PassRefPtr<DocumentFragment> createFragmentFromDragData(DragData&, Frame&, Range&, bool allowPlainText, bool& chosePlainText);
 
         Page& m_page;
         DragClient& m_client;

@@ -29,13 +29,18 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #import "DataTransfer.h"
+#import "Document.h"
+#import "DocumentFragment.h"
 #import "DragClient.h"
 #import "DragData.h"
+#import "Editor.h"
+#import "EditorClient.h"
 #import "Element.h"
 #import "FrameView.h"
 #import "MainFrame.h"
 #import "Page.h"
 #import "Pasteboard.h"
+#import "Range.h"
 
 namespace WebCore {
 
@@ -54,7 +59,7 @@ bool DragController::isCopyKeyDown(DragData& dragData)
     
 DragOperation DragController::dragOperation(DragData& dragData)
 {
-    if ((dragData.flags() & DragApplicationIsModal) || !dragData.containsURL(&m_page.mainFrame()))
+    if ((dragData.flags() & DragApplicationIsModal) || !dragData.containsURL())
         return DragOperationNone;
 
     if (!m_documentUnderMouse || (!(dragData.flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
@@ -85,6 +90,12 @@ void DragController::cleanupAfterSystemDrag()
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {
     m_client.declareAndWriteDragImage(dataTransfer.pasteboard().name(), element, url, label, element.document().frame());
+}
+
+PassRefPtr<DocumentFragment> DragController::createFragmentFromDragData(DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+{
+    Pasteboard pasteboard(dragData.pasteboardName());
+    return frame.editor().webContentFromPasteboard(pasteboard, context, allowPlainText, chosePlainText);
 }
 
 } // namespace WebCore

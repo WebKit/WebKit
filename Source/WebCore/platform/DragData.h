@@ -60,10 +60,7 @@ typedef void* DragDataRef;
 
 namespace WebCore {
 
-class Frame;
-class DocumentFragment;
 class URL;
-class Range;
 
 enum DragApplicationFlags {
     DragApplicationNone = 0,
@@ -95,14 +92,13 @@ public:
     DragApplicationFlags flags() const { return m_applicationFlags; }
     DragDataRef platformData() const { return m_platformDragData; }
     DragOperation draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
-    bool containsURL(Frame*, FilenameConversionPolicy filenamePolicy = ConvertFilenames) const;
+    bool containsURL(FilenameConversionPolicy = ConvertFilenames) const;
     bool containsPlainText() const;
     bool containsCompatibleContent() const;
-    String asURL(Frame*, FilenameConversionPolicy filenamePolicy = ConvertFilenames, String* title = 0) const;
-    String asPlainText(Frame*) const;
+    String asURL(FilenameConversionPolicy = ConvertFilenames, String* title = nullptr) const;
+    String asPlainText() const;
     void asFilenames(Vector<String>&) const;
     Color asColor() const;
-    PassRefPtr<DocumentFragment> asFragment(Frame*, Range& context, bool allowPlainText, bool& chosePlainText) const;
     bool canSmartReplace() const;
     bool containsColor() const;
     bool containsFiles() const;
