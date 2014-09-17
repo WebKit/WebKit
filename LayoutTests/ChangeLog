@@ -1,3 +1,9 @@
+2014-09-17  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed gardening. Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
+
+        * platform/win/TestExpectations: Tests sometimes crash or timeout in addition to just failing.
+
 2014-09-17  Benjamin Poulain  <bpoulain@apple.com>
 
         Add parsing for :nth-child(An+B of selector)
