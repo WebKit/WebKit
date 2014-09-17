@@ -732,6 +732,7 @@ void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrNa
     m_inInvalidateNodeListAndCollectionCaches = true;
 #endif
     HashSet<LiveNodeList*> lists = WTF::move(m_listsInvalidatedAtDocument);
+    m_listsInvalidatedAtDocument.clear();
     for (auto* list : lists)
         list->invalidateCacheForAttribute(attrName);
     HashSet<HTMLCollection*> collections = WTF::move(m_collectionsInvalidatedAtDocument);

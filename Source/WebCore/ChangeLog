@@ -1,3 +1,10 @@
+2014-09-17  Roger Fong  <roger_fong@apple.com>
+
+        Speculative fix for a fast\dom\html-collections-named-getter failing only in Debug builds.
+
+        * dom/Node.cpp:
+        (WebCore::Document::invalidateNodeListAndCollectionCaches):
+
 2014-09-17  Benjamin Poulain  <bpoulain@apple.com>
 
         Add parsing for :nth-child(An+B of selector)
