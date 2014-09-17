@@ -721,7 +721,16 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         return false;
 
     HitTestResult hitTestResult = src.eventHandler().hitTestResultAtPoint(dragOrigin, HitTestRequest::ReadOnly | HitTestRequest::Active);
-    if (!state.source->contains(hitTestResult.innerNode()))
+
+    // FIXME(136836): Investigate whether all elements should use the containsIncludingShadowDOM() path here.
+    bool includeShadowDOM = state.source->isMediaElement();
+    bool sourceContainsHitNode;
+    if (includeShadowDOM)
+        sourceContainsHitNode = state.source->contains(hitTestResult.innerNode());
+    else
+        sourceContainsHitNode = state.source->containsIncludingShadowDOM(hitTestResult.innerNode());
+
+    if (!sourceContainsHitNode)
         // The original node being dragged isn't under the drag origin anymore... maybe it was
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
         // something that's not actually under the drag origin.
