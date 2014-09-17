@@ -109,7 +109,7 @@ public:
 
     PassRefPtr<WebCore::SharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
-    WebCore::AudioHardwareActivityType audioHardwareActivity() const;
+    virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const override;
 
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);

@@ -39,7 +39,6 @@
 #include "PluginProcessConnectionMessages.h"
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
-#include <WebCore/AudioHardwareListener.h>
 #include <unistd.h>
 #include <wtf/RunLoop.h>
 

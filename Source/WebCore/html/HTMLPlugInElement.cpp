@@ -253,6 +253,23 @@ bool HTMLPlugInElement::isPluginElement() const
     return true;
 }
 
+bool HTMLPlugInElement::isUserObservable() const
+{
+    // No widget - can't be anything to see or hear here.
+    Widget* widget = pluginWidget();
+    if (!widget || !widget->isPluginViewBase())
+        return false;
+
+    PluginViewBase* pluginView = toPluginViewBase(widget);
+
+    // If audio is playing (or might be) then the plugin is detectable.
+    if (pluginView->audioHardwareActivity() != AudioHardwareActivityType::IsInactive)
+        return true;
+
+    // If the plugin is visible and not vanishingly small in either dimension it is detectable.
+    return pluginView->isVisible() && widget->width() > 2 && widget->height() > 2;
+}
+
 bool HTMLPlugInElement::supportsFocus() const
 {
     if (HTMLFrameOwnerElement::supportsFocus())

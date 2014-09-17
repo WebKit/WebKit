@@ -82,6 +82,9 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 
     HTMLPlugInElement& pluginElement = toHTMLPlugInElement(element);
 
+    // Choke point for script/plugin interaction; notify DOMTimer of the event.
+    DOMTimer::scriptDidInteractWithPlugin(pluginElement);
+
     // First, see if the element has a plug-in replacement with a script.
     if (JSObject* scriptObject = pluginElement.scriptObjectForPluginReplacement())
         return scriptObject;
