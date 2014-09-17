@@ -29,7 +29,7 @@
     overflow-x: hidden;
     overflow-y: auto;
 
-    display: -webkit-flex;
+    display: flex;
 
     -webkit-justify-content: center;
 }

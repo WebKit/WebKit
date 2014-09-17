@@ -26,8 +26,8 @@
 .quick-console {
     position: relative;
 
-    display: -webkit-flex;
-    -webkit-align-items: flex-end;
+    display: flex;
+    align-items: flex-end;
 
     background-color: white;
     border-top: 1px solid rgb(190, 190, 190);
@@ -48,10 +48,10 @@ body.mac-platform.legacy .quick-console {
 }
 
 .quick-console > .console-prompt {
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 
-    -webkit-align-items: flex-start;
+    align-items: flex-start;
 
     max-height: 150px;
 

@@ -24,7 +24,7 @@
  */
 
 .toolbar {
-    display: -webkit-flex;
+    display: flex;
 
     white-space: nowrap;
     overflow: hidden;
@@ -109,10 +109,10 @@ body.mac-platform.legacy.window-inactive .toolbar {
 }
 
 .toolbar .control-section {
-    display: -webkit-flex;
+    display: flex;
 
-    -webkit-flex-direction: column;
-    -webkit-align-items: center;
+    flex-direction: column;
+    align-items: center;
     -webkit-justify-content: center;
 
     padding-left: 6px;
@@ -124,16 +124,16 @@ body.mac-platform.legacy.window-inactive .toolbar {
 .toolbar.icon-and-label-horizontal.small-size .control-section,
 .toolbar.icon-only.small-size .control-section,
 .toolbar.label-only .control-section {
-    -webkit-flex-direction: row;
+    flex-direction: row;
 }
 
 .toolbar .item-section {
-    display: -webkit-flex;
+    display: flex;
     min-width: -webkit-min-content;
 }
 
 .toolbar .item-section:not(.center) {
-    -webkit-flex: 1;
+    flex: 1;
 }
 
 .toolbar .item-section.left {
@@ -142,7 +142,7 @@ body.mac-platform.legacy.window-inactive .toolbar {
 }
 
 .toolbar .item-section.center {
-    -webkit-flex: 2;
+    flex: 2;
     -webkit-justify-content: center;
 }
 
@@ -153,6 +153,6 @@ body.mac-platform.legacy.window-inactive .toolbar {
 }
 
 .toolbar .item {
-    display: -webkit-flex;
+    display: flex;
     outline: none;
 }

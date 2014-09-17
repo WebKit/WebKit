@@ -39,7 +39,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation.resource > .empty-content-
     left: 0;
     right: 0;
 
-    display: -webkit-flex;
+    display: flex;
 
     box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
 
@@ -54,8 +54,8 @@ body.mac-platform.legacy .sidebar > .panel.navigation.resource > .search-bar {
 }
 
 .sidebar > .panel.navigation.resource > .search-bar > input[type="search"] {
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 
     margin: 3px 6px;
     padding-left: 4px;

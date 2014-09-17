@@ -24,7 +24,7 @@
  */
 
 .filter-bar {
-    display: -webkit-flex;
+    display: flex;
 
     height: 26px;
 
@@ -37,8 +37,8 @@ body.mac-platform.legacy .filter-bar {
 }
 
 .filter-bar > input[type="search"] {
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 
     margin: 1px 6px;
     padding-top: 0;

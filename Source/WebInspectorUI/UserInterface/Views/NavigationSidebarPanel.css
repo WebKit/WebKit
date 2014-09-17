@@ -89,10 +89,10 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow.top {
     right: 0;
     bottom: 28px;
 
-    display: -webkit-flex;
+    display: flex;
 
     -webkit-justify-content: center;
-    -webkit-align-items: center;
+    align-items: center;
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation > .empty-content-placeholder {

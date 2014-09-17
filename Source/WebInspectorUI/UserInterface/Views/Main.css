@@ -28,8 +28,8 @@
 }
 
 body {
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
@@ -116,8 +116,8 @@ body.docked.bottom #toolbar .item:not(.flexible-space) {
 }
 
 #main {
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 
     background-color: white;
 
@@ -135,13 +135,13 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 }
 
 #content {
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
-    -webkit-flex: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 #content-browser {
-    -webkit-flex: 1;
+    flex: 1;
 }
 
 #split-content-browser {
@@ -167,7 +167,7 @@ body.mac-platform.legacy #split-content-browser > .navigation-bar {
 }
 
 .message-text-view {
-    display: -webkit-flex;
+    display: flex;
     z-index: 1000;
 
     position: absolute;
@@ -180,7 +180,7 @@ body.mac-platform.legacy #split-content-browser > .navigation-bar {
     padding-right: 20%;
 
     -webkit-justify-content: center;
-    -webkit-align-items: center;
+    align-items: center;
 
     line-height: 20px;
     white-space: pre-wrap;

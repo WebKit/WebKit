@@ -24,9 +24,9 @@
  */
 
 .navigation-bar {
-    display: -webkit-flex;
+    display: flex;
     -webkit-justify-content: center;
-    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
 
     box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
     border-bottom: 1px solid rgb(179, 179, 179);
@@ -44,9 +44,9 @@ body.mac-platform.legacy .navigation-bar {
 }
 
 .navigation-bar .item {
-    display: -webkit-flex;
-    -webkit-align-items: center;
-    -webkit-flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 
     height: 28px;
     outline: none;

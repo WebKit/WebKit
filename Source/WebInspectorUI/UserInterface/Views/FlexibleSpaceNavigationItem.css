@@ -25,5 +25,5 @@
 
 .navigation-bar .item.flexible-space,
 .toolbar .item.flexible-space {
-    -webkit-flex: 1;
+    flex: 1;
 }

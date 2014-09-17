@@ -70,9 +70,9 @@
 }
 
 .popover > .container.center {
-    display: -webkit-flex;
+    display: flex;
     -webkit-justify-content: center;
-    -webkit-align-items: center;
+    align-items: center;
 }
 
 .popover.arrow-up > .container {

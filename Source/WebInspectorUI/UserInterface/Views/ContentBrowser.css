@@ -24,11 +24,11 @@
  */
 
 .content-browser {
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .content-browser > .content-view-container {
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 }

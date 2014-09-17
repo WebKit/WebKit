@@ -54,7 +54,7 @@
 .layer-tree.panel .bottom-bar {
     position: relative;
     height: 28px;
-    display: -webkit-flex;
+    display: flex;
 }
 
 body.mac-platform.legacy .layer-tree.panel .bottom-bar {
@@ -70,8 +70,8 @@ body.mac-platform.legacy .layer-tree.panel .bottom-bar {
     overflow: hidden;
     text-overflow: ellipsis;
 
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 }
 
 body.mac-platform.legacy .layer-tree.panel .bottom-bar > div {

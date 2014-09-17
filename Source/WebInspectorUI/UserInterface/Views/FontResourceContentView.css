@@ -24,7 +24,7 @@
  */
 
 .content-view.resource.font {
-    display: -webkit-flex;
+    display: flex;
 
     -webkit-justify-content: center;
 

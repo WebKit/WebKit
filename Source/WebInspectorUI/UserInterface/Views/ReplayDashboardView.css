@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 .toolbar .dashboard.replay {
-    display: -webkit-flex;
-    -webkit-flex-wrap: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
     -webkit-justify-content: center;
-    -webkit-align-items: center;
+    align-items: center;
 
     text-align: center;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;

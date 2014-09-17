@@ -24,7 +24,7 @@
  */
 
 .hierarchical-path-component {
-    display: -webkit-flex;
+    display: flex;
     position: relative;
     height: 20px;
     min-width: 32px;
@@ -71,8 +71,8 @@ body.mac-platform.legacy .hierarchical-path-component > .selector-arrows {
 }
 
 .hierarchical-path-component > .title {
-    display: -webkit-flex;
-    -webkit-flex: 1;
+    display: flex;
+    flex: 1;
 
     vertical-align: top;
 

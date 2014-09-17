@@ -1,3 +1,46 @@
+2014-09-17  Dean Jackson  <dino@apple.com>
+
+        WebInpector can use unprefixed flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=136899
+
+        Reviewed by Joseph Pecoraro.
+
+        Now the inspector UI itself can use a non-prefixed flexbox. This was
+        a basic search and replace for the following properties:
+        - align-content
+        - align-items
+        - align-self
+        - flex-basis
+        - flex-direction
+        - flex-wrap
+        - flex-grow
+        - flex-shrink
+        - flex
+        - flex-flow
+        - justify
+
+        * UserInterface/Views/ButtonToolbarItem.css:
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        * UserInterface/Views/ContentBrowser.css:
+        * UserInterface/Views/ControlToolbarItem.css:
+        * UserInterface/Views/DebuggerDashboardView.css:
+        * UserInterface/Views/DefaultDashboardView.css:
+        * UserInterface/Views/FilterBar.css:
+        * UserInterface/Views/FlexibleSpaceNavigationItem.css:
+        * UserInterface/Views/FontResourceContentView.css:
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        * UserInterface/Views/ImageResourceContentView.css:
+        * UserInterface/Views/LayerTreeSidebarPanel.css:
+        * UserInterface/Views/LogContentView.css:
+        * UserInterface/Views/Main.css:
+        * UserInterface/Views/NavigationBar.css:
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        * UserInterface/Views/Popover.css:
+        * UserInterface/Views/QuickConsole.css:
+        * UserInterface/Views/ReplayDashboardView.css:
+        * UserInterface/Views/ResourceSidebarPanel.css:
+        * UserInterface/Views/Toolbar.css:
+
 2014-09-16  Dean Jackson  <dino@apple.com>
 
         Add unprefixed flexbox display values and property names/values

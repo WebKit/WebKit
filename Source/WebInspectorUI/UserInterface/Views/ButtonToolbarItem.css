@@ -24,18 +24,18 @@
  */
 
 .toolbar .item.button {
-    -webkit-align-items: center;
-    -webkit-justify-content: center;
+    align-items: center;
+    justify-content: center;
 
     padding: 0 6px;
 }
 
 .toolbar.icon-and-label-vertical .item.button {
-    -webkit-flex-direction: column;
+    flex-direction: column;
 }
 
 .toolbar.icon-and-label-horizontal .item.button {
-    -webkit-flex-direction: row;
+    flex-direction: row;
 }
 
 .toolbar .item.button > .glyph {
