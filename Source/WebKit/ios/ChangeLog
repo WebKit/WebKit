@@ -1,3 +1,14 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebCore build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        Substitute <WebCore/CGFloatSPI.h> for <CoreGraphics/CGFloat.h>.
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+
 2014-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some PLATFORM(IOS) code in Color.h/cpp

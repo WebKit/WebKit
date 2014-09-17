@@ -1,3 +1,23 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebCore build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        Update WebKit1 source files to include the wrapper SPI headers instead of the corresponding
+        actual SPI header(s).
+
+        * DOM/WebDOMOperationsPrivate.h:
+        * MigrateHeaders.make: Modified to only modify the include path of a "<WebCore/"-prefixed header
+        file if its filename doesn't end in "SPI.h" as an alternative to having MigrateHeaders.make copy
+        such files into the WebKit framework as private headers.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebInspector/WebNodeHighlight.mm:
+        * WebView/WebIndicateLayer.mm:
+        * WebView/WebRenderLayer.h:
+        * WebView/WebView.mm:
+
 2014-09-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add iOS SDK name and version suffix to WebKitSystemInterface debug/release product name

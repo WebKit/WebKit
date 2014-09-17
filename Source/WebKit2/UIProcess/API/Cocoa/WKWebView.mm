@@ -88,7 +88,6 @@
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebPageMessages.h"
-#import <CoreGraphics/CGFloat.h>
 #import <CoreGraphics/CGPDFDocumentPrivate.h>
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIDevice_Private.h>
@@ -96,6 +95,8 @@
 #import <UIKit/UIWindow_Private.h>
 #import <QuartzCore/CARenderServer.h>
 #import <QuartzCore/QuartzCorePrivate.h>
+#import <WebCore/CALayerSPI.h>
+#import <WebCore/CGFloatSPI.h>
 #import <WebCore/InspectorOverlay.h>
 
 @interface UIScrollView (UIScrollViewInternal)

@@ -5733,15 +5733,46 @@
 		CDFC360718CA696C0026E56F /* RemoteCommandListenerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE08AC5619C202B700644843 /* MachVMSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08AC5519C202AF00644843 /* MachVMSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */; };
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
+		CE4F6D3419B774F600BFC64A /* CALayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3219B774F600BFC64A /* CALayerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE4F6D4419B7751200BFC64A /* CGFloatSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3A19B7751200BFC64A /* CGFloatSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE4F6D6419B775F800BFC64A /* DispatchSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D5F19B775F800BFC64A /* DispatchSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE4F6D6719B775F800BFC64A /* NSGeometrySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D6219B775F800BFC64A /* NSGeometrySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DAC19BAD13C00613518 /* CTFontDescriptorSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D4C19B7757B00BFC64A /* CTFontDescriptorSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DAD19BAD14400613518 /* CTFontSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D4D19B7757B00BFC64A /* CTFontSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DAE19BAD15800613518 /* MPAVRoutingControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D5319B7757B00BFC64A /* MPAVRoutingControllerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DAF19BAD18400613518 /* MobileGestaltSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D5219B7757B00BFC64A /* MobileGestaltSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DB019BAD1B400613518 /* NSFileManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D6119B775F800BFC64A /* NSFileManagerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DB119BB603E00613518 /* CGContextSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3919B7751200BFC64A /* CGContextSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CE650DB319BB60DD00613518 /* CGFontRenderingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3D19B7751200BFC64A /* CGFontRenderingSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */; };
-		CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE8245F219B671D500AC0122 /* CFURLRequestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245F119B671D500AC0122 /* CFURLRequestSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE95208A1811B475007A5392 /* WebSafeIncrementalSweeperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */; };
+		CEAA693A19C35BC400C4F7BF /* CATiledLayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3319B774F600BFC64A /* CATiledLayerSPI.h */; };
+		CEAA693B19C35C0F00C4F7BF /* CFLocaleSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 65086DA719AC1719009AF46B /* CFLocaleSPI.h */; };
+		CEAA693C19C35C1300C4F7BF /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */; };
+		CEAA693D19C35C1B00C4F7BF /* CGColorTransformSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3719B7751200BFC64A /* CGColorTransformSPI.h */; };
+		CEAA693E19C35C2200C4F7BF /* CGFontGlyphSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3B19B7751200BFC64A /* CGFontGlyphSupportSPI.h */; };
+		CEAA693F19C35C2500C4F7BF /* CGFontInfoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3C19B7751200BFC64A /* CGFontInfoSPI.h */; };
+		CEAA694019C35C2A00C4F7BF /* CGFontUnicodeSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3E19B7751200BFC64A /* CGFontUnicodeSupportSPI.h */; };
+		CEAA694119C35C2C00C4F7BF /* CGImageSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D3F19B7751200BFC64A /* CGImageSPI.h */; };
+		CEAA694219C35C2F00C4F7BF /* CGSRegionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D4019B7751200BFC64A /* CGSRegionSPI.h */; };
+		CEAA694319C35C3800C4F7BF /* dyldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D6019B775F800BFC64A /* dyldSPI.h */; };
+		CEAA694419C35C3B00C4F7BF /* IOPMLibSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D6919B7854E00BFC64A /* IOPMLibSPI.h */; };
+		CEAA694519C35C4700C4F7BF /* NSPointerFunctionsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D6319B775F800BFC64A /* NSPointerFunctionsSPI.h */; };
+		CEAA694619C35C4F00C4F7BF /* AVPlayerControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D2919B774D500BFC64A /* AVPlayerControllerSPI.h */; };
+		CEAA694719C35C5100C4F7BF /* AVPlayerViewControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D2A19B774D500BFC64A /* AVPlayerViewControllerSPI.h */; };
+		CEAA694819C35C5300C4F7BF /* AVValueTimingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D2B19B774D500BFC64A /* AVValueTimingSPI.h */; };
+		CEAA694919C35C5600C4F7BF /* AVVideoLayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D2C19B774D500BFC64A /* AVVideoLayerSPI.h */; };
+		CEAA694A19C35C5B00C4F7BF /* CUICatalogSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D4F19B7757B00BFC64A /* CUICatalogSPI.h */; };
+		CEAA694B19C35C5E00C4F7BF /* CUIStyleEffectConfigurationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D5019B7757B00BFC64A /* CUIStyleEffectConfigurationSPI.h */; };
+		CEAA694C19C35C6300C4F7BF /* QLPreviewConverterSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D5519B7757B00BFC64A /* QLPreviewConverterSPI.h */; };
+		CEAA694D19C35C6500C4F7BF /* QuickLookSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4F6D5619B7757B00BFC64A /* QuickLookSPI.h */; };
 		CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC2153778FF00E37068 /* DictationAlternative.cpp */; };
 		CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC3153778FF00E37068 /* DictationAlternative.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC4153778FF00E37068 /* DictationCommand.cpp */; };
@@ -13199,8 +13230,38 @@
 		CDFC360418CA61C20026E56F /* RemoteCommandListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandListener.h; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
+		CE08AC5519C202AF00644843 /* MachVMSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
 		CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativeTextController.cpp; sourceTree = "<group>"; };
 		CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextController.h; sourceTree = "<group>"; };
+		CE4F6D2919B774D500BFC64A /* AVPlayerControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVPlayerControllerSPI.h; sourceTree = "<group>"; };
+		CE4F6D2A19B774D500BFC64A /* AVPlayerViewControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVPlayerViewControllerSPI.h; sourceTree = "<group>"; };
+		CE4F6D2B19B774D500BFC64A /* AVValueTimingSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVValueTimingSPI.h; sourceTree = "<group>"; };
+		CE4F6D2C19B774D500BFC64A /* AVVideoLayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVVideoLayerSPI.h; sourceTree = "<group>"; };
+		CE4F6D3219B774F600BFC64A /* CALayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CALayerSPI.h; sourceTree = "<group>"; };
+		CE4F6D3319B774F600BFC64A /* CATiledLayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATiledLayerSPI.h; sourceTree = "<group>"; };
+		CE4F6D3719B7751200BFC64A /* CGColorTransformSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGColorTransformSPI.h; sourceTree = "<group>"; };
+		CE4F6D3919B7751200BFC64A /* CGContextSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGContextSPI.h; sourceTree = "<group>"; };
+		CE4F6D3A19B7751200BFC64A /* CGFloatSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFloatSPI.h; sourceTree = "<group>"; };
+		CE4F6D3B19B7751200BFC64A /* CGFontGlyphSupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFontGlyphSupportSPI.h; sourceTree = "<group>"; };
+		CE4F6D3C19B7751200BFC64A /* CGFontInfoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFontInfoSPI.h; sourceTree = "<group>"; };
+		CE4F6D3D19B7751200BFC64A /* CGFontRenderingSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFontRenderingSPI.h; sourceTree = "<group>"; };
+		CE4F6D3E19B7751200BFC64A /* CGFontUnicodeSupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGFontUnicodeSupportSPI.h; sourceTree = "<group>"; };
+		CE4F6D3F19B7751200BFC64A /* CGImageSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGImageSPI.h; sourceTree = "<group>"; };
+		CE4F6D4019B7751200BFC64A /* CGSRegionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSRegionSPI.h; sourceTree = "<group>"; };
+		CE4F6D4C19B7757B00BFC64A /* CTFontDescriptorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTFontDescriptorSPI.h; sourceTree = "<group>"; };
+		CE4F6D4D19B7757B00BFC64A /* CTFontSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTFontSPI.h; sourceTree = "<group>"; };
+		CE4F6D4F19B7757B00BFC64A /* CUICatalogSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUICatalogSPI.h; sourceTree = "<group>"; };
+		CE4F6D5019B7757B00BFC64A /* CUIStyleEffectConfigurationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUIStyleEffectConfigurationSPI.h; sourceTree = "<group>"; };
+		CE4F6D5219B7757B00BFC64A /* MobileGestaltSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileGestaltSPI.h; sourceTree = "<group>"; };
+		CE4F6D5319B7757B00BFC64A /* MPAVRoutingControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPAVRoutingControllerSPI.h; sourceTree = "<group>"; };
+		CE4F6D5519B7757B00BFC64A /* QLPreviewConverterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLPreviewConverterSPI.h; sourceTree = "<group>"; };
+		CE4F6D5619B7757B00BFC64A /* QuickLookSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSPI.h; sourceTree = "<group>"; };
+		CE4F6D5F19B775F800BFC64A /* DispatchSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchSPI.h; sourceTree = "<group>"; };
+		CE4F6D6019B775F800BFC64A /* dyldSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dyldSPI.h; sourceTree = "<group>"; };
+		CE4F6D6119B775F800BFC64A /* NSFileManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSFileManagerSPI.h; sourceTree = "<group>"; };
+		CE4F6D6219B775F800BFC64A /* NSGeometrySPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSGeometrySPI.h; sourceTree = "<group>"; };
+		CE4F6D6319B775F800BFC64A /* NSPointerFunctionsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPointerFunctionsSPI.h; sourceTree = "<group>"; };
+		CE4F6D6919B7854E00BFC64A /* IOPMLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPMLibSPI.h; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CE6D89294C7AACE0AD89B3DD /* MathMLMencloseElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLMencloseElement.h; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlternativeTextUIController.h; path = mac/AlternativeTextUIController.h; sourceTree = "<group>"; };
@@ -16156,8 +16217,11 @@
 		653EF83619A043AE0052202C /* spi */ = {
 			isa = PBXGroup;
 			children = (
+				CE4F6D3119B774F600BFC64A /* ca */,
 				65086DA619AC1719009AF46B /* cf */,
+				CE4F6D3619B7751200BFC64A /* cg */,
 				653EF83719A043AE0052202C /* cocoa */,
+				CE4F6D5119B7757B00BFC64A /* ios */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -16165,6 +16229,13 @@
 		653EF83719A043AE0052202C /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CE4F6D5F19B775F800BFC64A /* DispatchSPI.h */,
+				CE4F6D6019B775F800BFC64A /* dyldSPI.h */,
+				CE4F6D6919B7854E00BFC64A /* IOPMLibSPI.h */,
+				CE08AC5519C202AF00644843 /* MachVMSPI.h */,
+				CE4F6D6119B775F800BFC64A /* NSFileManagerSPI.h */,
+				CE4F6D6219B775F800BFC64A /* NSGeometrySPI.h */,
+				CE4F6D6319B775F800BFC64A /* NSPointerFunctionsSPI.h */,
 				653EF83819A043AE0052202C /* NSURLFileTypeMappingsSPI.h */,
 			);
 			path = cocoa;
@@ -21565,6 +21636,50 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		CE4F6D3119B774F600BFC64A /* ca */ = {
+			isa = PBXGroup;
+			children = (
+				CE4F6D3219B774F600BFC64A /* CALayerSPI.h */,
+				CE4F6D3319B774F600BFC64A /* CATiledLayerSPI.h */,
+			);
+			path = ca;
+			sourceTree = "<group>";
+		};
+		CE4F6D3619B7751200BFC64A /* cg */ = {
+			isa = PBXGroup;
+			children = (
+				CE4F6D3719B7751200BFC64A /* CGColorTransformSPI.h */,
+				CE4F6D3919B7751200BFC64A /* CGContextSPI.h */,
+				CE4F6D3A19B7751200BFC64A /* CGFloatSPI.h */,
+				CE4F6D3B19B7751200BFC64A /* CGFontGlyphSupportSPI.h */,
+				CE4F6D3C19B7751200BFC64A /* CGFontInfoSPI.h */,
+				CE4F6D3D19B7751200BFC64A /* CGFontRenderingSPI.h */,
+				CE4F6D3E19B7751200BFC64A /* CGFontUnicodeSupportSPI.h */,
+				CE4F6D3F19B7751200BFC64A /* CGImageSPI.h */,
+				CE4F6D4019B7751200BFC64A /* CGSRegionSPI.h */,
+			);
+			path = cg;
+			sourceTree = "<group>";
+		};
+		CE4F6D5119B7757B00BFC64A /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				CE4F6D2919B774D500BFC64A /* AVPlayerControllerSPI.h */,
+				CE4F6D2A19B774D500BFC64A /* AVPlayerViewControllerSPI.h */,
+				CE4F6D2B19B774D500BFC64A /* AVValueTimingSPI.h */,
+				CE4F6D2C19B774D500BFC64A /* AVVideoLayerSPI.h */,
+				CE4F6D4C19B7757B00BFC64A /* CTFontDescriptorSPI.h */,
+				CE4F6D4D19B7757B00BFC64A /* CTFontSPI.h */,
+				CE4F6D4F19B7757B00BFC64A /* CUICatalogSPI.h */,
+				CE4F6D5019B7757B00BFC64A /* CUIStyleEffectConfigurationSPI.h */,
+				CE4F6D5219B7757B00BFC64A /* MobileGestaltSPI.h */,
+				CE4F6D5319B7757B00BFC64A /* MPAVRoutingControllerSPI.h */,
+				CE4F6D5519B7757B00BFC64A /* QLPreviewConverterSPI.h */,
+				CE4F6D5619B7757B00BFC64A /* QuickLookSPI.h */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
 			isa = PBXGroup;
 			children = (
@@ -23340,6 +23455,7 @@
 				CD54A763180F9F7000B076C9 /* AudioTrackPrivateMediaSourceAVFObjC.h in Headers */,
 				FD31608B12B026F700C1A359 /* AudioUtilities.h in Headers */,
 				7EE6846012D26E3800E79415 /* AuthenticationCF.h in Headers */,
+				CEAA693C19C35C1300C4F7BF /* CFNetworkConnectionCacheSPI.h in Headers */,
 				7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */,
 				934F713A0D5A6F1000018D69 /* AuthenticationChallengeBase.h in Headers */,
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
@@ -23425,6 +23541,7 @@
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
 				518F5002194CAC3A0081BAAE /* JSGamepad.h in Headers */,
+				CE4F6D3419B774F600BFC64A /* CALayerSPI.h in Headers */,
 				49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */,
 				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
@@ -23443,9 +23560,9 @@
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDDD571518B57A8200A94FCB /* CDMSession.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
-				CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */,
 				E1A8E56717552B2A007488E7 /* CFURLExtras.h in Headers */,
 				CE8245F219B671D500AC0122 /* CFURLRequestSPI.h in Headers */,
+				CE4F6D4419B7751200BFC64A /* CGFloatSPI.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
 				97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */,
 				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
@@ -23586,6 +23703,7 @@
 				A80E6CED0A1989CA007FB8C5 /* CSSFontValue.h in Headers */,
 				BC02A63C0E09A9CF004B6D2B /* CSSFunctionValue.h in Headers */,
 				7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */,
+				CE08AC5619C202B700644843 /* MachVMSPI.h in Headers */,
 				BC53C6920DA591140021EB5D /* CSSGradientValue.h in Headers */,
 				650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */,
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */,
@@ -23708,6 +23826,7 @@
 				D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */,
 				316023F01532C40C00D50FF4 /* Dictionary.h in Headers */,
 				FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */,
+				CE4F6D6419B775F800BFC64A /* DispatchSPI.h in Headers */,
 				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
 				5D8C4DC01428222C0026CE72 /* DisplaySleepDisablerCocoa.h in Headers */,
 				FD31609112B026F700C1A359 /* Distance.h in Headers */,
@@ -23732,6 +23851,7 @@
 				BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */,
 				8538F0190AD718D8006A81D1 /* DOMAbstractView.h in Headers */,
 				BC99812E0DBE807A008CE9EF /* DOMAbstractViewFrame.h in Headers */,
+				CE650DB019BAD1B400613518 /* NSFileManagerSPI.h in Headers */,
 				8538F01B0AD718D8006A81D1 /* DOMAbstractViewInternal.h in Headers */,
 				1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */,
 				85D389B20A991A7F00282145 /* DOMAttr.h in Headers */,
@@ -23964,6 +24084,7 @@
 				85989DCC0ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h in Headers */,
 				850656FE0AAB4763002D15C0 /* DOMMediaList.h in Headers */,
 				85E711D10AC5D5350053270F /* DOMMediaListInternal.h in Headers */,
+				CE650DAE19BAD15800613518 /* MPAVRoutingControllerSPI.h in Headers */,
 				75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */,
 				75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */,
 				E1ACAF4D0E791AAF0087D12B /* DOMMessagePort.h in Headers */,
@@ -24074,6 +24195,7 @@
 				51D719B7181106E00016DC51 /* DOMWindowIndexedDatabase.h in Headers */,
 				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
+				CEAA694319C35C3800C4F7BF /* dyldSPI.h in Headers */,
 				89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */,
 				AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */,
 				A8CCBB49151F831600AB7CE9 /* DOMWindowWebDatabase.h in Headers */,
@@ -24204,6 +24326,7 @@
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */,
 				B27535690B053814002CE64F /* FloatPoint.h in Headers */,
+				CEAA694719C35C5100C4F7BF /* AVPlayerViewControllerSPI.h in Headers */,
 				B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */,
 				6EC480A216EA638A00A48DCB /* FloatPolygon.h in Headers */,
 				0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */,
@@ -24326,6 +24449,7 @@
 				A871DC1F0A15205700B12A68 /* HTMLBaseElement.h in Headers */,
 				A8DF3FD2097FA0FC0052981B /* HTMLBaseFontElement.h in Headers */,
 				9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */,
+				CEAA694919C35C5600C4F7BF /* AVVideoLayerSPI.h in Headers */,
 				A871DE2C0A152AC800B12A68 /* HTMLBodyElement.h in Headers */,
 				A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */,
 				CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */,
@@ -24341,6 +24465,7 @@
 				A8EA79F70A1916DF00A8EF5F /* HTMLDListElement.h in Headers */,
 				CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
+				CEAA693A19C35BC400C4F7BF /* CATiledLayerSPI.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
 				93309DE8099E64920056E581 /* htmlediting.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
@@ -24501,6 +24626,7 @@
 				8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
+				CEAA694C19C35C6300C4F7BF /* QLPreviewConverterSPI.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
 				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
 				22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */,
@@ -24566,6 +24692,7 @@
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */,
 				71B1E125164048F700B1880A /* InspectorLayerTreeAgent.h in Headers */,
+				CEAA694119C35C2C00C4F7BF /* CGImageSPI.h in Headers */,
 				504AACCE1834455900E3D9BC /* InspectorNodeFinder.h in Headers */,
 				0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
@@ -24805,6 +24932,7 @@
 				070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */,
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
 				6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */,
+				CEAA694819C35C5300C4F7BF /* AVValueTimingSPI.h in Headers */,
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
 				C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */,
 				81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */,
@@ -24944,8 +25072,10 @@
 				E1FF8F65180745D800132674 /* JSSubtleCrypto.h in Headers */,
 				B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */,
 				24D9129213CA951E00D21915 /* JSSVGAltGlyphDefElement.h in Headers */,
+				CEAA694019C35C2A00C4F7BF /* CGFontUnicodeSupportSPI.h in Headers */,
 				F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */,
 				07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */,
+				CEAA694B19C35C5E00C4F7BF /* CUIStyleEffectConfigurationSPI.h in Headers */,
 				6515EC920D9723FF0063D49A /* JSSVGAltGlyphElement.h in Headers */,
 				24D9129613CA956100D21915 /* JSSVGAltGlyphItemElement.h in Headers */,
 				B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */,
@@ -25059,6 +25189,7 @@
 				B2FA3DD90AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalRel.h in Headers */,
 				B2FA3DDB0AB75A6F000E5AC4 /* JSSVGPathSegList.h in Headers */,
 				B2FA3DDD0AB75A6F000E5AC4 /* JSSVGPathSegMovetoAbs.h in Headers */,
+				CE650DAF19BAD18400613518 /* MobileGestaltSPI.h in Headers */,
 				B2FA3DDF0AB75A6F000E5AC4 /* JSSVGPathSegMovetoRel.h in Headers */,
 				B2FA3DE10AB75A6F000E5AC4 /* JSSVGPatternElement.h in Headers */,
 				8542A7950AE5C94100DF58DF /* JSSVGPoint.h in Headers */,
@@ -25209,6 +25340,7 @@
 				BC7FA6210D1F0CBD00DB22A9 /* LiveNodeList.h in Headers */,
 				9759E94914EF1D490026A2DD /* LoadableTextTrack.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
+				CE650DB119BB603E00613518 /* CGContextSPI.h in Headers */,
 				7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */,
 				51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
@@ -25296,6 +25428,7 @@
 				076306D317E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h in Headers */,
 				076306E317E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h in Headers */,
 				CD641EC01819B36000EE4C41 /* MediaTimeAVFoundation.h in Headers */,
+				CEAA693F19C35C2500C4F7BF /* CGFontInfoSPI.h in Headers */,
 				0705852117FDC140005F2BCB /* MediaTrackConstraint.h in Headers */,
 				0705852417FDC140005F2BCB /* MediaTrackConstraints.h in Headers */,
 				0705852917FDE02C005F2BCB /* MediaTrackConstraintSet.h in Headers */,
@@ -25331,6 +25464,7 @@
 				D6E528A4149A926D00EFE1F3 /* MutationObserverInterestGroup.h in Headers */,
 				D6E276B014637455001D280A /* MutationObserverRegistration.h in Headers */,
 				C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */,
+				CE4F6D6719B775F800BFC64A /* NSGeometrySPI.h in Headers */,
 				52B6C9C615E3F4DF00690B05 /* NamedFlowCollection.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
@@ -25590,6 +25724,7 @@
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
+				CE650DAC19BAD13C00613518 /* CTFontDescriptorSPI.h in Headers */,
 				3792917E1987678F00F4B661 /* CredentialCocoa.h in Headers */,
 				A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */,
 				0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */,
@@ -25678,6 +25813,7 @@
 				A8DF4AEE0980C42C0052981B /* RenderTableRow.h in Headers */,
 				76FB9FF919A73E3A00420562 /* JSAutocompleteErrorEvent.h in Headers */,
 				A8DF4AEF0980C42C0052981B /* RenderTableSection.h in Headers */,
+				CE650DAD19BAD14400613518 /* CTFontSPI.h in Headers */,
 				BCEA488C097D93020094C9E4 /* RenderText.h in Headers */,
 				AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */,
 				083DAEA70F01A7FB00342754 /* RenderTextControlMultiLine.h in Headers */,
@@ -25985,6 +26121,7 @@
 				BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */,
 				BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */,
 				E4D58EB517B4DBDC00CBDCA8 /* StyleResolveForDocument.h in Headers */,
+				CEAA694519C35C4700C4F7BF /* NSPointerFunctionsSPI.h in Headers */,
 				E139866415478474001E3F65 /* StyleResolver.h in Headers */,
 				E4DEAA1817A93DC3000E0430 /* StyleResolveTree.h in Headers */,
 				E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */,
@@ -26009,6 +26146,7 @@
 				087558C613B4A57D00F49307 /* SurrogatePairAwareTextIterator.h in Headers */,
 				62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */,
 				B22279740D00BF220071B782 /* SVGAElement.h in Headers */,
+				CEAA693D19C35C1B00C4F7BF /* CGColorTransformSPI.h in Headers */,
 				24D912B113CA9A1F00D21915 /* SVGAltGlyphDefElement.h in Headers */,
 				65653F2E0D9727D200CA9723 /* SVGAltGlyphElement.h in Headers */,
 				24D912B813CA9A6900D21915 /* SVGAltGlyphItemElement.h in Headers */,
@@ -26062,6 +26200,7 @@
 				B22279B70D00BF220071B782 /* SVGElement.h in Headers */,
 				656581FE09D1508D000E61D7 /* SVGElementFactory.h in Headers */,
 				B22279BA0D00BF220071B782 /* SVGElementInstance.h in Headers */,
+				CEAA694A19C35C5B00C4F7BF /* CUICatalogSPI.h in Headers */,
 				B22279BD0D00BF220071B782 /* SVGElementInstanceList.h in Headers */,
 				081AA8DA1111237E002AB06E /* SVGElementRareData.h in Headers */,
 				B562DB6117D3CD660010AF96 /* SVGElementTypeHelpers.h in Headers */,
@@ -26166,6 +26305,7 @@
 				83C1D425178D5AB400141E68 /* SVGPathSegArcAbs.h in Headers */,
 				83C1D426178D5AB400141E68 /* SVGPathSegArcRel.h in Headers */,
 				B2227A620D00BF220071B782 /* SVGPathSegClosePath.h in Headers */,
+				CEAA693B19C35C0F00C4F7BF /* CFLocaleSPI.h in Headers */,
 				B2227A650D00BF220071B782 /* SVGPathSegCurvetoCubic.h in Headers */,
 				83C1D427178D5AB400141E68 /* SVGPathSegCurvetoCubicAbs.h in Headers */,
 				83C1D428178D5AB400141E68 /* SVGPathSegCurvetoCubicRel.h in Headers */,
@@ -26235,6 +26375,7 @@
 				7CDEEE1E197610D700E352CD /* ViewStateChangeObserver.h in Headers */,
 				B2227AC10D00BF220071B782 /* SVGSymbolElement.h in Headers */,
 				B2227AC50D00BF220071B782 /* SVGTests.h in Headers */,
+				CEAA694219C35C2F00C4F7BF /* CGSRegionSPI.h in Headers */,
 				08F0BFC31255C53C00075185 /* SVGTextChunk.h in Headers */,
 				081668D4125603BF006F25DE /* SVGTextChunkBuilder.h in Headers */,
 				B2227AC80D00BF220071B782 /* SVGTextContentElement.h in Headers */,
@@ -26294,7 +26435,9 @@
 				B2C3DA400D006C1D00EF6F26 /* TextCodecUserDefined.h in Headers */,
 				B2C3DA420D006C1D00EF6F26 /* TextCodecUTF16.h in Headers */,
 				9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */,
+				CE650DB319BB60DD00613518 /* CGFontRenderingSPI.h in Headers */,
 				142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */,
+				CEAA694619C35C4F00C4F7BF /* AVPlayerControllerSPI.h in Headers */,
 				B2C3DA450D006C1D00EF6F26 /* TextDirection.h in Headers */,
 				97BC84B412371180000C6161 /* TextDocument.h in Headers */,
 				97BC84841236FD93000C6161 /* TextDocumentParser.h in Headers */,
@@ -26437,6 +26580,7 @@
 				8678D0BB1878E891003ABDE6 /* ViewState.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				07AB996918DA3C010018771E /* RTCConfiguration.h in Headers */,
+				CEAA694D19C35C6500C4F7BF /* QuickLookSPI.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
 				93309E1E099E64920056E581 /* VisibleUnits.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
@@ -26471,6 +26615,7 @@
 				C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */,
 				DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */,
 				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
+				CEAA693E19C35C2200C4F7BF /* CGFontGlyphSupportSPI.h in Headers */,
 				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
 				E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
@@ -26608,6 +26753,7 @@
 				2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */,
 				2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */,
 				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
+				CEAA694419C35C3B00C4F7BF /* IOPMLibSPI.h in Headers */,
 				97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */,
 				0FE5806419327A6200DE32EB /* ScrollingTreeMac.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,

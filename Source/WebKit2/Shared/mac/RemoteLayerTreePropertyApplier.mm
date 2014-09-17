@@ -31,20 +31,13 @@
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/CALayerSPI.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
 
 #if PLATFORM(IOS)
 #import <UIKit/UIView.h>
 #endif
-
-#if __has_include(<QuartzCore/CALayerPrivate.h>)
-#import <QuartzCore/CALayerPrivate.h>
-#endif
-
-@interface CALayer (Details)
-@property BOOL contentsOpaque;
-@end
 
 #if PLATFORM(IOS)
 @interface UIView (WKUIViewUtilities)

@@ -26,13 +26,14 @@
 #ifndef CFURLRequestSPI_h
 #define CFURLRequestSPI_h
 
+#include <CoreFoundation/CFBase.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <CFNetwork/CFURLRequest.h>
 #else
-#include <CoreFoundation/CFBase.h>
 typedef const struct _CFURLRequest *CFURLRequestRef;
 #endif
 
-extern "C" void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
+EXTERN_C void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
 
 #endif

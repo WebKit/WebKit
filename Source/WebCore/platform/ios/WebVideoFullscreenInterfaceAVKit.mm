@@ -30,16 +30,15 @@
 
 #import "WebVideoFullscreenInterfaceAVKit.h"
 
+#import "AVPlayerControllerSPI.h"
+#import "AVPlayerViewControllerSPI.h"
+#import "AVValueTimingSPI.h"
+#import "AVVideoLayerSPI.h"
 #import "Logging.h"
 #import "GeometryUtilities.h"
 #import "WebVideoFullscreenModel.h"
 #import <AVFoundation/AVTime.h>
 #import <AVKit/AVKit.h>
-#import <AVKit/AVPlayerController.h>
-#import <AVKit/AVPlayerViewController_Private.h>
-#import <AVKit/AVPlayerViewController_WebKitOnly.h>
-#import <AVKit/AVValueTiming.h>
-#import <AVKit/AVVideoLayer.h>
 #import <CoreMedia/CMTime.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>

@@ -28,15 +28,10 @@
 
 #if TARGET_OS_IPHONE
 
-#import "WAKResponder.h"
-#import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
-
-#ifndef NSRect
-#define NSRect CGRect
-#endif
-#define NSPoint CGPoint
-#define NSSize CGSize
+#import <Foundation/Foundation.h>
+#import <WebCore/NSGeometrySPI.h>
+#import <WebCore/WAKResponder.h>
 
 extern NSString *WAKViewFrameSizeDidChangeNotification;
 extern NSString *WAKViewDidScrollNotification;

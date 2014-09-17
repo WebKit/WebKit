@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#include "CALayerSPI.h"
 #include "Color.h"
 #include "LegacyTileCache.h"
 #include "LegacyTileGrid.h"
@@ -35,7 +36,6 @@
 #include "LegacyTileLayerPool.h"
 #include "WAKWindow.h"
 #include <QuartzCore/QuartzCore.h>
-#include <QuartzCore/QuartzCorePrivate.h>
 #include <algorithm>
 #include <functional>
 

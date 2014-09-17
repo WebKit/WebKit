@@ -29,11 +29,11 @@
 #import "config.h"
 #import "FontCache.h"
 
+#import "CGFontUnicodeSupportSPI.h"
+#import "CTFontDescriptorSPI.h"
+#import "CTFontSPI.h"
 #import "Font.h"
 #import "RenderThemeIOS.h"
-#import <CoreGraphics/CGFontUnicodeSupport.h>
-#import <CoreText/CTFontDescriptorPriv.h>
-#import <CoreText/CTFontPriv.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>

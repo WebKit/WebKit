@@ -32,8 +32,9 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
+
 // FIXME: <rdar://problem/6669434> Switch from using NSGeometry methods to CGGeometry methods
-#import <Foundation/NSGeometry.h>
+#import <WebCore/NSGeometrySPI.h>
 
 #ifndef NSClipView
 #define NSClipView WAKClipView

@@ -27,12 +27,11 @@
 #import "NativeWebTouchEvent.h"
 
 #if PLATFORM(IOS)
-
 #import "WebEvent.h"
-#import <Foundation/NSGeometry.h>
 #import <UIKit/UITouch.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <WebCore/IntPoint.h>
+#import <WebCore/NSGeometrySPI.h>
 #import <wtf/CurrentTime.h>
 
 namespace WebKit {

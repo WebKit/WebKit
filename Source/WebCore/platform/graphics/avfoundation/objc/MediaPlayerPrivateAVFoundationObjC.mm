@@ -44,6 +44,7 @@
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import "InbandTextTrackPrivateLegacyAVFObjC.h"
+#import "NSGeometrySPI.h"
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "URL.h"
 #import "Logging.h"
@@ -75,7 +76,6 @@
 #include "TextTrack.h"
 #endif
 
-#import <Foundation/NSGeometry.h>
 #import <AVFoundation/AVFoundation.h>
 #if PLATFORM(IOS)
 #import <CoreImage/CoreImage.h>

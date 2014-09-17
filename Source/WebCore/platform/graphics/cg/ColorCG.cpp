@@ -34,8 +34,7 @@
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
-#include <CoreGraphics/CGColorTransform.h>
-#include <CoreGraphics/CoreGraphics.h>
+#include "CGColorTransformSPI.h"
 #include <wtf/StdLibExtras.h>
 #endif // !PLATFORM(IOS)
 

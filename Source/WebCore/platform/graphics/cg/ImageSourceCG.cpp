@@ -37,7 +37,7 @@
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
-#include <CoreGraphics/CGImagePrivate.h>
+#include "CGImageSPI.h"
 #include <ImageIO/ImageIO.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>

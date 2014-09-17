@@ -34,6 +34,6 @@ enum HTTPConnectionCacheLimitKeys {
 };
 #endif
 
-extern "C" void _CFNetworkHTTPConnectionCacheSetLimit(HTTPConnectionCacheLimitKeys, int);
+EXTERN_C void _CFNetworkHTTPConnectionCacheSetLimit(HTTPConnectionCacheLimitKeys, int);
 
 #endif

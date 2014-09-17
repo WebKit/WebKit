@@ -1,3 +1,23 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebCore build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        Define convenience macro EXTERN_C that can be used to specify the C linkage convention
+        for a declaration. For example, the declaration "EXTERN_C const int x;" will expand to:
+
+        extern const int x;
+
+        and
+
+        extern "C" const int x;
+
+        when used in a C and C++ file, respectively.
+
+        * wtf/Compiler.h:
+
 2014-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, disable native inlining because it causes build failures.

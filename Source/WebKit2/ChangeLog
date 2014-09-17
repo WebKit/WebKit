@@ -1,3 +1,24 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebCore build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        Update WebKit2 source files to include the wrapper SPI headers instead of the corresponding
+        actual SPI header(s).
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.mm:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2014-09-17  Gavin Barraclough  <barraclough@apple.com>
 
         DOM timer throttling for hidden plugins

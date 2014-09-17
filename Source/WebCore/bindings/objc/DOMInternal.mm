@@ -36,6 +36,8 @@
 
 #if PLATFORM(IOS)
 #define NEEDS_WRAPPER_CACHE_LOCK 1
+
+#import "NSPointerFunctionsSPI.h"
 #endif
 
 //------------------------------------------------------------------------------------------

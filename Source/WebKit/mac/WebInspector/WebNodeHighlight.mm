@@ -27,9 +27,10 @@
  */
 
 #import "WebNodeHighlight.h"
+
 #import "WebNodeHighlightView.h"
 #import "WebNSViewExtras.h"
-
+#import <WebCore/CALayerSPI.h>
 #import <WebCore/InspectorController.h>
 #import <wtf/Assertions.h>
 
@@ -37,7 +38,6 @@
 #import "WebFramePrivate.h"
 #import "WebHTMLView.h"
 #import "WebView.h"
-#import <QuartzCore/CALayerPrivate.h>
 #import <WebCore/WAKWindow.h>
 #endif
 

@@ -29,7 +29,7 @@
 #import "WebEvent.h"
 
 #import "KeyEventCocoa.h"
-#import <Foundation/NSGeometry.h>
+#import "NSGeometrySPI.h"
 #import <wtf/Assertions.h>
 
 using namespace WebCore;

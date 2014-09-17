@@ -1,3 +1,87 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebCore build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        Add headers that wrap Mac and iOS SPIs and update WebCore source files to include these
+        headers instead of the corresponding actual SPI header(s).
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreCG.props:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMInternal.mm:
+        * bridge/objc/objc_instance.mm:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        * platform/cocoa/DisplaySleepDisablerCocoa.cpp:
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        * platform/graphics/cg/ColorCG.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        * platform/graphics/ios/FontCacheIOS.mm:
+        * platform/graphics/ios/FontServicesIOS.mm:
+        * platform/graphics/ios/SimpleFontDataIOS.mm:
+        * platform/graphics/mac/FontMac.mm:
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        * platform/graphics/mac/MediaPlayerProxy.h:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/ios/LegacyTileCache.mm:
+        * platform/ios/LegacyTileGrid.mm:
+        * platform/ios/LegacyTileGridTile.mm:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+        * platform/ios/WebEvent.mm:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        * platform/ios/wak/WAKAppKitStubs.h:
+        * platform/ios/wak/WAKView.h:
+        * platform/ios/wak/WKGraphics.h:
+        * platform/ios/wak/WKGraphics.mm:
+        * platform/ios/wak/WebCoreThread.mm:
+        * platform/network/ios/QuickLook.mm:
+        * platform/spi/ca/CALayerSPI.h: Added.
+        * platform/spi/ca/CATiledLayerSPI.h: Added.
+        * platform/spi/cf/CFLocaleSPI.h: Modified to use EXTERN_C.
+        * platform/spi/cf/CFNetworkConnectionCacheSPI.h: Ditto. Also changed header visibility from private to project.
+        * platform/spi/cf/CFURLRequestSPI.h: Ditto. Also modified to unconditionally include header <CoreFoundation/CFBase.h>.
+        * platform/spi/cg/CGColorTransformSPI.h: Added.
+        * platform/spi/cg/CGContextSPI.h: Added.
+        * platform/spi/cg/CGFloatSPI.h: Added.
+        * platform/spi/cg/CGFontGlyphSupportSPI.h: Added.
+        * platform/spi/cg/CGFontInfoSPI.h: Added.
+        * platform/spi/cg/CGFontRenderingSPI.h: Added.
+        * platform/spi/cg/CGFontUnicodeSupportSPI.h: Added.
+        * platform/spi/cg/CGImageSPI.h: Added.
+        * platform/spi/cg/CGSRegionSPI.h: Added.
+        * platform/spi/cocoa/DispatchSPI.h: Added.
+        * platform/spi/cocoa/IOPMLibSPI.h: Added.
+        * platform/spi/cocoa/MachVMSPI.h: Added.
+        * platform/spi/cocoa/NSFileManagerSPI.h: Added.
+        * platform/spi/cocoa/NSGeometrySPI.h: Added.
+        * platform/spi/cocoa/NSPointerFunctionsSPI.h: Added.
+        * platform/spi/cocoa/dyldSPI.h: Added.
+        * platform/spi/ios/AVPlayerControllerSPI.h: Added.
+        * platform/spi/ios/AVPlayerViewControllerSPI.h: Added.
+        * platform/spi/ios/AVValueTimingSPI.h: Added.
+        * platform/spi/ios/AVVideoLayerSPI.h: Added.
+        * platform/spi/ios/CTFontDescriptorSPI.h: Added.
+        * platform/spi/ios/CTFontSPI.h: Added.
+        * platform/spi/ios/CUICatalogSPI.h: Added.
+        * platform/spi/ios/CUIStyleEffectConfigurationSPI.h: Added.
+        * platform/spi/ios/MPAVRoutingControllerSPI.h: Added.
+        * platform/spi/ios/MobileGestaltSPI.h: Added.
+        * platform/spi/ios/QLPreviewConverterSPI.h: Added.
+        * platform/spi/ios/QuickLookSPI.h: Added.
+        * rendering/RenderThemeIOS.mm:
+
 2014-09-17  Gavin Barraclough  <barraclough@apple.com>
 
         DOM timer throttling for hidden plugins

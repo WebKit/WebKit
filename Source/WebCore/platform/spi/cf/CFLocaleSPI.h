@@ -32,10 +32,8 @@
 #import <CoreFoundation/CFPriv.h>
 #endif
 
-extern "C" {
 // FIXME: <rdar://problem/18128192> Make CFLocaleGetLanguageRegionEncodingForLocaleIdentifier public API
 // FIXME: <rdar://problem/18083880> Replace use of Script Manager to canonicalize locales with a custom Web-specific table
-Boolean CFLocaleGetLanguageRegionEncodingForLocaleIdentifier(CFStringRef locale, LangCode*, RegionCode*, ScriptCode*, CFStringEncoding*);
-}
+EXTERN_C Boolean CFLocaleGetLanguageRegionEncodingForLocaleIdentifier(CFStringRef locale, LangCode*, RegionCode*, ScriptCode*, CFStringEncoding*);
 
 #endif

@@ -1,3 +1,14 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebCore build with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+
+        Reviewed by David Kilzer.
+
+        Substitute <WebCore/MachVMSPI.h> for <mach/mach_vm.h>.
+
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+
 2014-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView::load-failed-with-tls-errors should receive the failing URI instead of a host

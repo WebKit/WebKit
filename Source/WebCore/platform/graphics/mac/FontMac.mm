@@ -23,6 +23,7 @@
 #import "config.h"
 #import "Font.h"
 
+#import "CTFontDescriptorSPI.h"
 #import "DashArray.h"
 #import "GlyphBuffer.h"
 #import "GraphicsContext.h"
@@ -34,20 +35,11 @@
 #endif
 #import <wtf/MathExtras.h>
 
-#if __has_include(<CoreText/CTFontDescriptorPriv.h>)
-#import <CoreText/CTFontDescriptorPriv.h>
-#endif
-extern "C" bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
-
 #if ENABLE(LETTERPRESS)
+#import "CGContextSPI.h"
+#import "CUICatalogSPI.h"
+#import "CUIStyleEffectConfigurationSPI.h"
 #import "SoftLinking.h"
-#if __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-#else
-extern CGColorRef CGContextGetFillColorAsColor(CGContextRef);
-#endif
-#import <CoreUI/CUICatalog.h>
-#import <CoreUI/CUIStyleEffectConfiguration.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(CoreUI)
 SOFT_LINK_CLASS(CoreUI, CUICatalog)
@@ -55,7 +47,7 @@ SOFT_LINK_CLASS(CoreUI, CUIStyleEffectConfiguration)
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK(UIKit, _UIKitGetTextEffectsCatalog, CUICatalog *, (void), ())
-#endif
+#endif // ENABLE(LETTERPRESS)
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 

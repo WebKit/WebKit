@@ -29,7 +29,7 @@
 
 #import "WebFramePrivate.h"
 #import "WebView.h"
-#import <QuartzCore/CALayerPrivate.h>
+#import <WebCore/CALayerSPI.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/WAKWindow.h>
 

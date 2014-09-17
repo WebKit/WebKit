@@ -193,8 +193,8 @@
 #include "RemoteLayerTreeDrawingArea.h"
 #include "WebVideoFullscreenManager.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <CoreText/CTFontDescriptorPriv.h>
-#include <CoreText/CTFontPriv.h>
+#include <WebCore/CTFontDescriptorSPI.h>
+#include <WebCore/CTFontSPI.h>
 #include <WebCore/Icon.h>
 #endif
 
