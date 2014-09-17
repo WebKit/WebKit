@@ -1,3 +1,38 @@
+2014-09-16  Gavin Barraclough  <baraclough@apple.com>
+
+        Exclude page visibility from PageThrottler's hysteresis
+        https://bugs.webkit.org/show_bug.cgi?id=136866
+
+        Reviewed by Geoff Garen.
+
+        Including visibility in the hysteresis mechanism has the effect of prolonging the visually
+        idle timeout, and causing the page hide event to be run at foreground priority. Neither of
+        these are particularly desirable. Instead separate visibility from the rest of the page
+        activities we track (and apply hysteresis to), and feed this directly into determination
+        of the UserActivity state.
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - when the PageThrottler is instantiated call updateUserActivity to set initial UserActivity.
+        (WebCore::PageThrottler::incrementActivityCount):
+            - simplified - when m_activityCount becomes non-zero, start m_hysteresis.
+        (WebCore::PageThrottler::decrementActivityCount):
+            - simplified - when m_activityCount becomes zero, stop m_hysteresis.
+        (WebCore::PageThrottler::updateUserActivity):
+            - end the UserActivity (allow AppNap) if visually idle and no page activity is taking place.
+        (WebCore::PageThrottler::setViewState):
+            - when the visually idle state changed call updateUserActivity to update the UserActivity.
+        (WebCore::PageThrottler::started):
+        (WebCore::PageThrottler::stopped):
+            - when the hysteresis state changed call updateUserActivity to update the UserActivity.
+        (WebCore::PageThrottler::updateHysteresis): Deleted.
+            - removed: simplified the hysteresis trigger, we now incorporate visually idle state in updateUserActivity.
+        * page/PageThrottler.h:
+            - removed updateHysteresis, added updateUserActivity.
+        * platform/HysteresisActivity.h:
+        (WebCore::HysteresisActivity::state):
+            - determine the curent state of the HysteresisActivity - started, waiting, or stopped.
+
 2014-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix runtime critical warnings when writing to the clipboard after r173687

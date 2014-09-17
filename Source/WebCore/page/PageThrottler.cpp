@@ -26,12 +26,7 @@
 #include "config.h"
 #include "PageThrottler.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
-#include "MainFrame.h"
-#include "Page.h"
 #include "PageActivityAssertionToken.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -43,8 +38,7 @@ PageThrottler::PageThrottler(Page& page, ViewState::Flags viewState)
     , m_activity("Page is active.")
     , m_activityCount(0)
 {
-    if (!(m_viewState & ViewState::IsVisuallyIdle))
-        m_hysteresis.start();
+    updateUserActivity();
 }
 
 std::unique_ptr<PageActivityAssertionToken> PageThrottler::mediaActivityToken()
@@ -59,22 +53,33 @@ std::unique_ptr<PageActivityAssertionToken> PageThrottler::pageLoadActivityToken
 
 void PageThrottler::incrementActivityCount()
 {
-    ++m_activityCount;
-    updateHysteresis();
+    // If m_activityCount is nonzero, state must be Started; if m_activityCount is zero, state may be Waiting or Stopped.
+    ASSERT(!!m_activityCount == (m_hysteresis.state() == HysteresisState::Started));
+
+    if (!m_activityCount++)
+        m_hysteresis.start();
+
+    ASSERT(m_activityCount && m_hysteresis.state() == HysteresisState::Started);
 }
 
 void PageThrottler::decrementActivityCount()
 {
-    --m_activityCount;
-    updateHysteresis();
+    ASSERT(m_activityCount && m_hysteresis.state() == HysteresisState::Started);
+
+    if (!--m_activityCount)
+        m_hysteresis.stop();
+
+    // If m_activityCount is nonzero, state must be Started; if m_activityCount is zero, state may be Waiting or Stopped.
+    ASSERT(!!m_activityCount == (m_hysteresis.state() == HysteresisState::Started));
 }
 
-void PageThrottler::updateHysteresis()
+void PageThrottler::updateUserActivity()
 {
-    if (m_activityCount || !(m_viewState & ViewState::IsVisuallyIdle))
-        m_hysteresis.start();
+    // Allow throttling if there is no page activity, and the page is visually idle.
+    if (m_hysteresis.state() == HysteresisState::Stopped && m_viewState & ViewState::IsVisuallyIdle)
+        m_activity.endActivity();
     else
-        m_hysteresis.stop();
+        m_activity.beginActivity();
 }
 
 void PageThrottler::setViewState(ViewState::Flags viewState)
@@ -83,17 +88,17 @@ void PageThrottler::setViewState(ViewState::Flags viewState)
     m_viewState = viewState;
 
     if (changed & ViewState::IsVisuallyIdle)
-        updateHysteresis();
+        updateUserActivity();
 }
 
 void PageThrottler::started()
 {
-    m_activity.beginActivity();
+    updateUserActivity();
 }
 
 void PageThrottler::stopped()
 {
-    m_activity.endActivity();
+    updateUserActivity();
 }
 
 }

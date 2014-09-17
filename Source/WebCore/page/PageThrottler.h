@@ -30,7 +30,6 @@
 
 #include "UserActivity.h"
 #include "ViewState.h"
-#include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -56,7 +55,7 @@ private:
     void incrementActivityCount();
     void decrementActivityCount();
 
-    void updateHysteresis();
+    void updateUserActivity();
 
     friend class HysteresisActivity<PageThrottler>;
     WEBCORE_EXPORT void started();

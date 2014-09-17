@@ -32,6 +32,12 @@ namespace WebCore {
 
 static const double DefaultHysteresisSeconds = 5.0;
 
+enum class HysteresisState {
+    Started,
+    WillStopPendingTimeout,
+    Stopped
+};
+
 template<typename Delegate>
 class HysteresisActivity {
 public:
@@ -72,6 +78,15 @@ public:
         }
     }
 
+    HysteresisState state() const
+    {
+        if (m_active)
+            return HysteresisState::Started;
+        if (m_timer.isActive())
+            return HysteresisState::WillStopPendingTimeout;
+        return HysteresisState::Stopped;
+    }
+    
 private:
     void hysteresisTimerFired(Timer<HysteresisActivity>&)
     {
