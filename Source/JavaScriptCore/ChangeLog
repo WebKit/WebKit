@@ -1,3 +1,13 @@
+2014-09-18  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
+
+        Fix "Tools/Scripts/build-webkit --efl --no-inspector" build
+        https://bugs.webkit.org/show_bug.cgi?id=136912
+
+        Reviewed by Darin Adler.
+
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::leastCommonAncestor):
+
 2014-09-17  Michael Saboff  <msaboff@apple.com>
 
         Change CallFrame to use Callee instead of JSScope to implement vm()
