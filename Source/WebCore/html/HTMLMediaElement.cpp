@@ -1812,11 +1812,6 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
         source.cancelPendingErrorEvent();
 }
 
-Document* HTMLMediaElement::mediaPlayerOwningDocument()
-{
-    return &document();
-}
-
 void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
@@ -5663,19 +5658,9 @@ bool HTMLMediaElement::mediaPlayerIsLooping() const
     return loop();
 }
 
-HostWindow* HTMLMediaElement::mediaPlayerHostWindow()
-{
-    return mediaPlayerOwningDocument()->view()->hostWindow();
-}
-
-IntRect HTMLMediaElement::mediaPlayerWindowClipRect()
-{
-    return mediaPlayerOwningDocument()->view()->windowClipRect();
-}
-
 CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 {
-    return mediaPlayerOwningDocument()->cachedResourceLoader();
+    return document().cachedResourceLoader();
 }
 
 bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)

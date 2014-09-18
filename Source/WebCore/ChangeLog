@@ -1,3 +1,20 @@
+2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove unused methods from MediaPlayerClient
+        https://bugs.webkit.org/show_bug.cgi?id=136884
+
+        Reviewed by Eric Carlson.
+
+        Remove unused methods from MediaPlayerClient that introduce
+        dependencies on WebCore types.
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerOwningDocument): Deleted.
+        (WebCore::MediaPlayerClient::mediaPlayerHostWindow): Deleted.
+        (WebCore::MediaPlayerClient::mediaPlayerWindowClipRect): Deleted.
+
 2014-09-17  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add Wayland support to GLContextEGL

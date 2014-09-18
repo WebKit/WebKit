@@ -514,7 +514,6 @@ private:
 
     double effectivePlaybackRate() const;
 
-    virtual Document* mediaPlayerOwningDocument() override;
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) override;
     virtual void mediaPlayerReadyStateChanged(MediaPlayer*) override;
     virtual void mediaPlayerTimeChanged(MediaPlayer*) override;
@@ -570,8 +569,6 @@ private:
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const override;
     virtual bool mediaPlayerIsPaused() const override;
     virtual bool mediaPlayerIsLooping() const override;
-    virtual HostWindow* mediaPlayerHostWindow() override;
-    virtual IntRect mediaPlayerWindowClipRect() override;
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() override;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)

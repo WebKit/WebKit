@@ -70,7 +70,6 @@ namespace WebCore {
 
 class AudioSourceProvider;
 class AuthenticationChallenge;
-class Document;
 #if ENABLE(MEDIA_SOURCE)
 class MediaSourcePrivateClient;
 #endif
@@ -133,7 +132,6 @@ class ContentType;
 class FrameView;
 class GraphicsContext;
 class GraphicsContext3D;
-class HostWindow;
 class IntRect;
 class IntSize;
 class MediaPlayer;
@@ -149,9 +147,6 @@ public:
     enum CORSMode { Unspecified, Anonymous, UseCredentials };
 
     virtual ~MediaPlayerClient() { }
-
-    // Get the document which the media player is owned by
-    virtual Document* mediaPlayerOwningDocument() { return 0; }
 
     // the network state has changed
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) { }
@@ -244,8 +239,6 @@ public:
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const { return false; }
     virtual bool mediaPlayerIsPaused() const { return true; }
     virtual bool mediaPlayerIsLooping() const { return false; }
-    virtual HostWindow* mediaPlayerHostWindow() { return 0; }
-    virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return 0; }
     virtual bool doesHaveAttribute(const AtomicString&, AtomicString* = 0) const { return false; }
 
