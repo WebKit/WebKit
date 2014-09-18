@@ -35,6 +35,13 @@
 #include "OpenGLShims.h"
 #endif
 
+#if PLATFORM(GTK)
+#include "GtkUtilities.h"
+#if PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
+#include "WaylandDisplay.h"
+#endif
+#endif
+
 #if ENABLE(ACCELERATED_2D_CANVAS)
 // cairo-gl.h includes some definitions from GLX that conflict with
 // the ones provided by us. Since GLContextEGL doesn't use any GLX
@@ -58,10 +65,15 @@ static EGLDisplay sharedEGLDisplay()
     static bool initialized = false;
     if (!initialized) {
         initialized = true;
+#if PLATFORM(GTK) && PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
+        if (getDisplaySystemType() == DisplaySystemType::Wayland && WaylandDisplay::instance())
+            gSharedEGLDisplay = eglGetDisplay(WaylandDisplay::instance()->nativeDisplay());
+        else // Note that this branch continutes outside this #if-guarded segment.
+#endif
 #if PLATFORM(X11)
-        gSharedEGLDisplay = eglGetDisplay(GLContext::sharedX11Display());
+            gSharedEGLDisplay = eglGetDisplay(GLContext::sharedX11Display());
 #else
-        gSharedEGLDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+            gSharedEGLDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 #endif
         if (gSharedEGLDisplay != EGL_NO_DISPLAY && (!eglInitialize(gSharedEGLDisplay, 0, 0) || !eglBindAPI(gGLAPI)))
             gSharedEGLDisplay = EGL_NO_DISPLAY;

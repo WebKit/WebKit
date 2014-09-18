@@ -1,3 +1,17 @@
+2014-09-17  Iago Toral  <itoral@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add Wayland support to GLContextEGL
+        https://bugs.webkit.org/show_bug.cgi?id=136829
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::sharedEGLDisplay): Special-case the shared EGL display initialization
+        for the GTK port when running under Wayland. In that case the pointer to the
+        native wl_display object should be passed to eglGetDisplay(). If not running
+        under Wayland we should fall back to using the shared X11 display (if support
+        for that display system is enabled) or the EGL_DEFAULT_DISPLAY.
+
 2014-09-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r173695.
