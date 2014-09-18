@@ -170,7 +170,7 @@ WARNING: Moved in the wrong direction in step 13: from (52, 831) to (136, 849).
 WARNING: Moved in the wrong direction in step 25: from (49, 849) to (136, 867).
   Moving right:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 35, 36, 37, 38, 34, 33, 31, 32, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 10, 11, 12, 13, 14, 15, 9]
 WARNING: Moved in the wrong direction in step 7: from (136, 867) to (49, 849).
-WARNING: Moved in the wrong direction in step 19: from (136, 849) to (51, 831).
+WARNING: Moved in the wrong direction in step 19: from (136, 849) to (52, 831).
 Test 23, LTR:
   Moving right: "\n        Lorem\n        "[9, 10, 11, 12, 13, 14], <DIV>[0], "\n        ipsum\n    "[9, 10, 11, 12, 13, 14]
 WARNING: Moved in the wrong direction in step 6: from (86, 899) to (37, 957).

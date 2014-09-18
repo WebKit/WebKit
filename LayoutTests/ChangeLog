@@ -1,5 +1,20 @@
 2014-09-17  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Windows rebaselining to account for subpixel layout Part 2.
+
+        * platform/win/editing/apply-style-iframe-crash-expected.txt: Added.
+        * platform/win/editing/selection/move-left-right-expected.txt:
+        * platform/win/fast/table/dynamic-caption-add-remove-before-child-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug4527-expected.txt: Added.
+        * platform/win/tables/mozilla/marvin/body_col-expected.txt:
+        * platform/win/tables/mozilla/marvin/x_th_valign_baseline-expected.txt:
+        * platform/win/tables/mozilla/other/body_col-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/core: Added.
+        * platform/win/tables/mozilla_expected_failures/core/captions1-expected.txt: Added.
+        * platform/win/tables/mozilla_expected_failures/core/captions2-expected.txt: Added.
+
+2014-09-17  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Unreviewed gardening. Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 
         * platform/win/TestExpectations: Tests sometimes crash or timeout in addition to just failing.
