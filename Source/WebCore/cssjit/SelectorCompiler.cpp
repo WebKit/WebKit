@@ -679,6 +679,9 @@ static const unsigned minimumRequiredRegisterCount = 6;
 // Element + ElementData + scratchRegister + attributeArrayPointer + expectedLocalName + (qualifiedNameImpl && expectedValue).
 static const unsigned minimumRequiredRegisterCountForAttributeFilter = 6;
 
+// Element + parentElement + elementCounter + previousSibling + elementRareData + cachedChildIndex.
+static const unsigned minimumRequiredRegisterCountForNthChildFilter = 6;
+
 static inline unsigned minimumRegisterRequirements(const SelectorFragment& selectorFragment)
 {
     unsigned minimum = minimumRequiredRegisterCount;
@@ -704,6 +707,9 @@ static inline unsigned minimumRegisterRequirements(const SelectorFragment& selec
 
         minimum = std::max(minimum, attributeMinimum);
     }
+
+    if (!selectorFragment.nthChildFilters.isEmpty())
+        minimum = std::max(minimum, minimumRequiredRegisterCountForNthChildFilter + backtrackingRegisterRequirements);
 
     // :not pseudo class filters cause some register pressure.
     for (const SelectorFragment& subFragment : selectorFragment.notFilters) {

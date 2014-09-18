@@ -9,6 +9,8 @@ PASS coloredItems is 7
 PASS document.querySelectorAll("ul>[foo=bar]:nth-child(-3n+3)+li+li+li~li+li+li~li>span.first>span.second a").length is 11
 PASS allLinks.length is 20
 PASS backgroundColoredCount is 11
+PASS document.querySelectorAll("ul>:nth-child(-3n+3)>*>* a").length is 1
+PASS nonOpaqueCount is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

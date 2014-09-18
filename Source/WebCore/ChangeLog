@@ -1,3 +1,31 @@
+2014-09-18  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for <rdar://problem/18382131>.
+
+    2014-09-18  Benjamin Poulain  <bpoulain@apple.com>
+
+            CSS JIT: The backtracking register can be ignored from the minimumRegisterRequirements
+            https://bugs.webkit.org/show_bug.cgi?id=136906
+            rdar://problem/18368294
+
+            Reviewed by Darin Adler.
+
+            This patch is for WebKit branches that do not include r173229.
+
+            * cssjit/SelectorCompiler.cpp:
+            (WebCore::SelectorCompiler::minimumRegisterRequirements):
+            In the worst case, the nth-child() filter can take up to 6 registers:
+            1) currentElement, the state register.
+            2) parentElement for tree marking on style resolution.
+            3) elementCounter to count elements pior to current.
+            4) previousSibling when walking the previous siblings.
+            5) elementRareData to access the index cache.
+            6) cachedChildIndex, the value of the index cache.
+
+            If the backtracking register is also used, the total of "in-flight" registers is 7,
+            one more than "minimumRequiredRegisterCount". This needs to be taken into account
+            in minimumRegisterRequirements() or we will run out of registers when hitting the worst case.
+
 2014-09-15  Babak Shafiei  <bshafiei@apple.com>
 
         <rdar://problem/18327341> Disable Web Timing on this branch.
