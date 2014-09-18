@@ -45,12 +45,12 @@ public:
     String value() const;
     void setValue(const String&);
 
-    virtual bool elementMatches(Element*) const override;
+    virtual bool elementMatches(Element&) const override;
     virtual bool isRootedAtDocument() const override { return m_isRootedAtDocument; }
 
 private:
     RadioNodeList(ContainerNode&, const AtomicString& name);
-    bool checkElementMatchesRadioNodeListFilter(Element*) const;
+    bool checkElementMatchesRadioNodeListFilter(const Element&) const;
 
     AtomicString m_name;
     bool m_isRootedAtDocument;

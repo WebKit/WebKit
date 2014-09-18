@@ -38,7 +38,7 @@ public:
     }
     ~LabelsNodeList();
 
-    virtual bool elementMatches(Element*) const override;
+    virtual bool elementMatches(Element&) const override;
     virtual bool isRootedAtDocument() const override { return true; }
 
 private:

@@ -213,9 +213,9 @@ inline bool isMatchingElement(const HTMLCollection& htmlCollection, Element& ele
     case NodeChildren:
         return true;
     case DocumentNamedItems:
-        return static_cast<const DocumentNameCollection&>(htmlCollection).elementMatches(&element);
+        return static_cast<const DocumentNameCollection&>(htmlCollection).elementMatches(element);
     case WindowNamedItems:
-        return static_cast<const WindowNameCollection&>(htmlCollection).elementMatches(&element);
+        return static_cast<const WindowNameCollection&>(htmlCollection).elementMatches(element);
     case FormControls:
     case TableRows:
         break;

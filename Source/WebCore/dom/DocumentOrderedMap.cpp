@@ -74,12 +74,12 @@ inline bool keyMatchesLabelForAttribute(const AtomicStringImpl& key, const Eleme
 
 inline bool keyMatchesWindowNamedItem(const AtomicStringImpl& key, const Element& element)
 {
-    return WindowNameCollection::elementMatches(const_cast<Element*>(&element), &key);
+    return WindowNameCollection::elementMatches(element, &key);
 }
 
 inline bool keyMatchesDocumentNamedItem(const AtomicStringImpl& key, const Element& element)
 {
-    return DocumentNameCollection::elementMatches(const_cast<Element*>(&element), &key);
+    return DocumentNameCollection::elementMatches(element, &key);
 }
 
 void DocumentOrderedMap::clear()

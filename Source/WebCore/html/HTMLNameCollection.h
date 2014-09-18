@@ -50,11 +50,11 @@ public:
         return adoptRef(*new WindowNameCollection(document, type, name));
     }
 
-    bool elementMatches(Element* element) const { return elementMatches(element, m_name.impl()); }
+    bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
-    static bool elementMatchesIfIdAttributeMatch(Element*) { return true; }
-    static bool elementMatchesIfNameAttributeMatch(Element*);
-    static bool elementMatches(Element*, const AtomicStringImpl*);
+    static bool elementMatchesIfIdAttributeMatch(const Element&) { return true; }
+    static bool elementMatchesIfNameAttributeMatch(const Element&);
+    static bool elementMatches(const Element&, const AtomicStringImpl*);
 
 private:
     WindowNameCollection(Document& document, CollectionType type, const AtomicString& name)
@@ -71,11 +71,11 @@ public:
         return adoptRef(*new DocumentNameCollection(document, type, name));
     }
 
-    static bool elementMatchesIfIdAttributeMatch(Element*);
-    static bool elementMatchesIfNameAttributeMatch(Element*);
-    bool elementMatches(Element* element) const { return elementMatches(element, m_name.impl()); }
+    static bool elementMatchesIfIdAttributeMatch(const Element&);
+    static bool elementMatchesIfNameAttributeMatch(const Element&);
+    bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
-    static bool elementMatches(Element*, const AtomicStringImpl*);
+    static bool elementMatches(const Element&, const AtomicStringImpl*);
 
 private:
     DocumentNameCollection(Document& document, CollectionType type, const AtomicString& name)

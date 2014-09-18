@@ -46,7 +46,7 @@ public:
 
     virtual Node* namedItem(const AtomicString&) const override final;
 
-    virtual bool elementMatches(Element*) const = 0;
+    virtual bool elementMatches(Element&) const = 0;
     virtual bool isRootedAtDocument() const = 0;
 
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
@@ -159,7 +159,7 @@ ElementDescendantIterator CachedLiveNodeList<NodeListType>::collectionBegin() co
     auto descendants = elementDescendants(rootNode());
     auto end = descendants.end();
     for (auto it = descendants.begin(); it != end; ++it) {
-        if (nodeList.elementMatches(&*it))
+        if (nodeList.elementMatches(*it))
             return it;
     }
     return end;
@@ -172,7 +172,7 @@ ElementDescendantIterator CachedLiveNodeList<NodeListType>::collectionLast() con
     auto descendants = elementDescendants(rootNode());
     auto end = descendants.end();
     for (auto it = descendants.last(); it != end; --it) {
-        if (nodeList.elementMatches(&*it))
+        if (nodeList.elementMatches(*it))
             return it;
     }
     return end;
@@ -182,14 +182,14 @@ template <class NodeListType>
 void CachedLiveNodeList<NodeListType>::collectionTraverseForward(ElementDescendantIterator& current, unsigned count, unsigned& traversedCount) const
 {
     auto& nodeList = static_cast<const NodeListType&>(*this);
-    ASSERT(nodeList.elementMatches(&*current));
+    ASSERT(nodeList.elementMatches(*current));
     auto end = collectionEnd();
     for (traversedCount = 0; traversedCount < count; ++traversedCount) {
         do {
             ++current;
             if (current == end)
                 return;
-        } while (!nodeList.elementMatches(&*current));
+        } while (!nodeList.elementMatches(*current));
     }
 }
 
@@ -197,14 +197,14 @@ template <class NodeListType>
 void CachedLiveNodeList<NodeListType>::collectionTraverseBackward(ElementDescendantIterator& current, unsigned count) const
 {
     auto& nodeList = static_cast<const NodeListType&>(*this);
-    ASSERT(nodeList.elementMatches(&*current));
+    ASSERT(nodeList.elementMatches(*current));
     auto end = collectionEnd();
     for (; count; --count) {
         do {
             --current;
             if (current == end)
                 return;
-        } while (!nodeList.elementMatches(&*current));
+        } while (!nodeList.elementMatches(*current));
     }
 }
 

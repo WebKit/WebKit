@@ -43,7 +43,7 @@ public:
 
     virtual ~ClassNodeList();
 
-    virtual bool elementMatches(Element*) const override;
+    virtual bool elementMatches(Element&) const override;
     virtual bool isRootedAtDocument() const override { return false; }
 
 private:
@@ -60,17 +60,17 @@ inline ClassNodeList::ClassNodeList(ContainerNode& rootNode, const AtomicString&
 {
 }
 
-inline bool ClassNodeList::elementMatches(Element* element) const
+inline bool ClassNodeList::elementMatches(Element& element) const
 {
-    if (!element->hasClass())
+    if (!element.hasClass())
         return false;
     if (!m_classNames.size())
         return false;
     // FIXME: DOM4 allows getElementsByClassName to return non StyledElement.
     // https://bugs.webkit.org/show_bug.cgi?id=94718
-    if (!element->isStyledElement())
+    if (!element.isStyledElement())
         return false;
-    return element->classNames().containsAll(m_classNames);
+    return element.classNames().containsAll(m_classNames);
 }
 
 } // namespace WebCore
