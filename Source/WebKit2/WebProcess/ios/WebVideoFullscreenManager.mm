@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS)
 
+#import "Attachment.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebProcess.h"
@@ -45,6 +46,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebCoreThreadRun.h>
+#import <mach/mach_port.h>
 
 using namespace WebCore;
 
@@ -176,6 +178,7 @@ void WebVideoFullscreenManager::didSetupFullscreen()
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
+    [videoLayer setPosition:CGPointMake(0, 0)];
     [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent, WebCore::ColorSpaceDeviceRGB)];
 
     // Set a scale factor here to make convertRect:toLayer:nil take scale factor into account. <rdar://problem/18316542>.
@@ -240,6 +243,13 @@ void WebVideoFullscreenManager::didCleanupFullscreen()
 void WebVideoFullscreenManager::setVideoLayerGravityEnum(unsigned gravity)
 {
     setVideoLayerGravity((WebVideoFullscreenModel::VideoGravity)gravity);
+}
+    
+void WebVideoFullscreenManager::setVideoLayerFrameFenced(WebCore::FloatRect bounds, IPC::Attachment fencePort)
+{
+    m_layerHostingContext->setFencePort(fencePort.port());
+    setVideoLayerFrame(bounds);
+    mach_port_deallocate(mach_task_self(), fencePort.port());
 }
 
 } // namespace WebKit
