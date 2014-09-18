@@ -1,3 +1,16 @@
+2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Incorrect pending API request URL when loading an HTML string
+        https://bugs.webkit.org/show_bug.cgi?id=136913
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use about:blank as pending API request URL when the given base URL
+        is empty, otherwise use the given base URL.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadHTMLString):
+
 2014-09-18  Tim Horton  <timothy_horton@apple.com>
 
         Occasional unreproducible crashes in MessageReceiverMap::dispatchMessage

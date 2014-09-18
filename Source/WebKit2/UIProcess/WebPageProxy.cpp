@@ -792,8 +792,7 @@ uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& ba
 
     auto transaction = m_pageLoadState.transaction();
 
-    String pendingAPIRequestURL = baseURL.isEmpty() ? baseURL : ASCIILiteral("about:blank");
-    m_pageLoadState.setPendingAPIRequestURL(transaction, pendingAPIRequestURL);
+    m_pageLoadState.setPendingAPIRequestURL(transaction, !baseURL.isEmpty() ? baseURL : ASCIILiteral("about:blank"));
 
     if (!isValid())
         reattachToWebProcess();
