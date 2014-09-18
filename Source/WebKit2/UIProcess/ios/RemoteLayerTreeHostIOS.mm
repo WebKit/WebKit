@@ -108,10 +108,13 @@ using namespace WebCore;
 @end
 
 @implementation WKRemoteView
-- (instancetype)initWithFrame:(CGRect)frame contextID:(uint32_t)contextID
+- (instancetype)initWithFrame:(CGRect)frame contextID:(uint32_t)contextID hostingDeviceScaleFactor:(float)scaleFactor
 {
     if ((self = [super initWithFrame:frame])) {
         [[self layer] setContextId:contextID];
+        // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
+        float inverseScale = 1 / scaleFactor;
+        [[self layer] setTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
     }
     
     return self;
@@ -155,7 +158,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeWebGLLayer:
         if (!m_isDebugLayerTreeHost)
-            view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID]);
+            view = adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:properties.hostingContextID hostingDeviceScaleFactor:properties.hostingDeviceScaleFactor]);
         else
             view = adoptNS([[WKCompositingView alloc] init]);
         break;

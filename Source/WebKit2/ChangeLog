@@ -1,3 +1,51 @@
+2014-09-17  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173702.
+
+    2014-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix an issue that caused video playback to not always use high resolution streams
+            https://bugs.webkit.org/show_bug.cgi?id=136879
+            rdar://problem/18316542
+
+            Reviewed by Eric Carlson.
+        
+            The underlying video framework expects to be able to use -[CALayer convertRect:toLayer:nil] on
+            the video layer to obtain information about the display resolution of the video,
+            including the device scale factor. This doesn't work for layers in the web process,
+            which are remotely hosted into the UI process.
+        
+            For now, use a workaround which involves putting a scale transform equivalent to
+            the device scale factor on the web process layer, and the inverse scale on the 
+            hosting layer in the UI process.
+        
+            We have to do this in two places, for in-page video, and for fullscreen video.
+
+            * Shared/mac/RemoteLayerTreeTransaction.h: Add hostingDeviceScaleFactor to the LayerCreation
+            properties.
+            * Shared/mac/RemoteLayerTreeTransaction.mm:
+            (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties):
+            (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode):
+            (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+            * UIProcess/ios/RemoteLayerTreeHostIOS.mm:
+            (-[WKRemoteView initWithFrame:contextID:hostingDeviceScaleFactor:]): Set the inverse scale
+            transform on the layer.
+            (WebKit::RemoteLayerTreeHost::createLayer):
+            (-[WKRemoteView initWithFrame:contextID:]): Deleted.
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+            (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+            * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+            (WebKit::PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+            * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+            (WebKit::RemoteLayerTreeContext::deviceScaleFactor):
+            * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+            (WebKit::RemoteLayerTreeContext::layerWasCreated):
+            * WebProcess/ios/WebVideoFullscreenManager.mm:
+            (WebKit::WebVideoFullscreenManager::enterFullscreenForNode):
+            (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+
 2014-09-15  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173623.

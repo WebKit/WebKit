@@ -61,8 +61,10 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote& layer, Platf
     creationProperties.layerID = layerID;
     creationProperties.type = type;
 
-    if (layer.isPlatformCALayerRemoteCustom())
+    if (layer.isPlatformCALayerRemoteCustom()) {
         creationProperties.hostingContextID = layer.hostingContextID();
+        creationProperties.hostingDeviceScaleFactor = deviceScaleFactor();
+    }
 
     m_createdLayers.append(creationProperties);
     m_liveLayers.add(layerID, &layer);
