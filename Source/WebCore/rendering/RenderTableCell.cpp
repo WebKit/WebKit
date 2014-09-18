@@ -178,7 +178,7 @@ void RenderTableCell::computePreferredLogicalWidths()
     if (element() && style().autoWrap()) {
         // See if nowrap was set.
         Length w = styleOrColLogicalWidth();
-        String nowrap = element()->getAttribute(nowrapAttr);
+        const AtomicString& nowrap = element()->fastGetAttribute(nowrapAttr);
         if (!nowrap.isNull() && w.isFixed())
             // Nowrap is set, but we didn't actually use it because of the
             // fixed width set on the cell.  Even so, it is a WinIE/Moz trait

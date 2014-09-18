@@ -197,16 +197,16 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     }
 }
 
-String HTMLImageElement::altText() const
+const AtomicString& HTMLImageElement::altText() const
 {
     // lets figure out the alt text.. magic stuff
     // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
     // also heavily discussed by Hixie on bugzilla
-    String alt = getAttribute(altAttr);
+    const AtomicString& alt = fastGetAttribute(altAttr);
+    if (!alt.isNull())
+        return alt;
     // fall back to title attribute
-    if (alt.isNull())
-        alt = getAttribute(titleAttr);
-    return alt;
+    return fastGetAttribute(titleAttr);
 }
 
 RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(PassRef<RenderStyle> style)
@@ -393,13 +393,13 @@ bool HTMLImageElement::matchesLowercasedUsemap(const AtomicStringImpl& name) con
 
 const AtomicString& HTMLImageElement::alt() const
 {
-    return getAttribute(altAttr);
+    return fastGetAttribute(altAttr);
 }
 
 bool HTMLImageElement::draggable() const
 {
     // Image elements are draggable by default.
-    return !equalIgnoringCase(getAttribute(draggableAttr), "false");
+    return !equalIgnoringCase(fastGetAttribute(draggableAttr), "false");
 }
 
 void HTMLImageElement::setHeight(int value)
@@ -409,7 +409,7 @@ void HTMLImageElement::setHeight(int value)
 
 URL HTMLImageElement::src() const
 {
-    return document().completeURL(getAttribute(srcAttr));
+    return document().completeURL(fastGetAttribute(srcAttr));
 }
 
 void HTMLImageElement::setSrc(const String& value)
@@ -455,7 +455,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
     addSubresourceURL(urls, src());
     // FIXME: What about when the usemap attribute begins with "#"?
-    addSubresourceURL(urls, document().completeURL(getAttribute(usemapAttr)));
+    addSubresourceURL(urls, document().completeURL(fastGetAttribute(usemapAttr)));
 }
 
 void HTMLImageElement::didMoveToNewDocument(Document* oldDocument)

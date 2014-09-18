@@ -356,7 +356,7 @@ bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const
 
 const AtomicString& HTMLObjectElement::imageSourceURL() const
 {
-    return getAttribute(dataAttr);
+    return fastGetAttribute(dataAttr);
 }
 
 void HTMLObjectElement::renderFallbackContent()
@@ -479,11 +479,11 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document().completeURL(getAttribute(dataAttr)));
+    addSubresourceURL(urls, document().completeURL(fastGetAttribute(dataAttr)));
 
     // FIXME: Passing a string that starts with "#" to the completeURL function does
     // not seem like it would work. The image element has similar but not identical code.
-    const AtomicString& useMap = getAttribute(usemapAttr);
+    const AtomicString& useMap = fastGetAttribute(usemapAttr);
     if (useMap.startsWith('#'))
         addSubresourceURL(urls, document().completeURL(useMap));
 }

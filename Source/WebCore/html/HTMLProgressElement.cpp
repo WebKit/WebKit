@@ -110,7 +110,7 @@ void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
 
 double HTMLProgressElement::max() const
 {
-    double max = parseToDoubleForNumberType(getAttribute(maxAttr));
+    double max = parseToDoubleForNumberType(fastGetAttribute(maxAttr));
     return !std::isfinite(max) || max <= 0 ? 1 : max;
 }
 

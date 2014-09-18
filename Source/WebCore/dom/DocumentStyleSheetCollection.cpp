@@ -282,7 +282,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
 #endif
         } else if ((node->isHTMLElement() && (toHTMLElement(*node).hasTagName(linkTag) || toHTMLElement(*node).hasTagName(styleTag))) || (node->isSVGElement() && toSVGElement(*node).hasTagName(SVGNames::styleTag))) {
             Element& element = toElement(*node);
-            AtomicString title = element.getAttribute(titleAttr);
+            AtomicString title = element.fastGetAttribute(titleAttr);
             bool enabledViaScript = false;
             if (isHTMLLinkElement(element)) {
                 // <LINK> element

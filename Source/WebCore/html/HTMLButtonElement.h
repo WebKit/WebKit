@@ -34,7 +34,7 @@ public:
 
     void setType(const AtomicString&);
     
-    String value() const;
+    const AtomicString& value() const;
 
     virtual bool willRespondToMouseClickEvents() override;
 

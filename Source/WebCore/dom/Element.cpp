@@ -1305,7 +1305,7 @@ URL Element::baseURI() const
 
 const AtomicString& Element::imageSourceURL() const
 {
-    return getAttribute(srcAttr);
+    return fastGetAttribute(srcAttr);
 }
 
 bool Element::rendererIsNeeded(const RenderStyle& style)
@@ -2045,7 +2045,7 @@ String Element::title() const
 
 const AtomicString& Element::pseudo() const
 {
-    return getAttribute(pseudoAttr);
+    return fastGetAttribute(pseudoAttr);
 }
 
 void Element::setPseudo(const AtomicString& value)
@@ -2455,7 +2455,7 @@ void Element::requestPointerLock()
 
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {
-    const AtomicString& value = getAttribute(HTMLNames::spellcheckAttr);
+    const AtomicString& value = fastGetAttribute(HTMLNames::spellcheckAttr);
     if (value == nullAtom)
         return SpellcheckAttributeDefault;
     if (equalIgnoringCase(value, "true") || equalIgnoringCase(value, ""))

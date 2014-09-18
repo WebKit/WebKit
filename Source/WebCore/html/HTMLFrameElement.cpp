@@ -61,7 +61,7 @@ RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(PassRef<RenderS
 
 bool HTMLFrameElement::noResize() const
 {
-    return hasAttribute(noresizeAttr);
+    return fastHasAttribute(noresizeAttr);
 }
 
 void HTMLFrameElement::didAttachRenderers()

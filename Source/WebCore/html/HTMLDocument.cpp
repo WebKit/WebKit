@@ -107,10 +107,9 @@ int HTMLDocument::height()
 
 String HTMLDocument::dir()
 {
-    HTMLElement* b = body();
-    if (!b)
-        return String();
-    return b->getAttribute(dirAttr);
+    if (auto* body = this->body())
+        return body->fastGetAttribute(dirAttr);
+    return String();
 }
 
 void HTMLDocument::setDir(const String& value)

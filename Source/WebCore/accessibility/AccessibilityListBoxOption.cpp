@@ -70,7 +70,7 @@ bool AccessibilityListBoxOption::isEnabled() const
     if (equalIgnoringCase(getAttribute(aria_disabledAttr), "true"))
         return false;
 
-    if (m_optionElement->hasAttribute(disabledAttr))
+    if (m_optionElement->fastHasAttribute(disabledAttr))
         return false;
     
     return true;

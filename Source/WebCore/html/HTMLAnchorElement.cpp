@@ -286,7 +286,7 @@ bool HTMLAnchorElement::canStartSelection() const
 bool HTMLAnchorElement::draggable() const
 {
     // Should be draggable if we have an href attribute.
-    const AtomicString& value = getAttribute(draggableAttr);
+    const AtomicString& value = fastGetAttribute(draggableAttr);
     if (equalIgnoringCase(value, "true"))
         return true;
     if (equalIgnoringCase(value, "false"))
@@ -512,10 +512,10 @@ bool HTMLAnchorElement::isLiveLink() const
 
 void HTMLAnchorElement::sendPings(const URL& destinationURL)
 {
-    if (!hasAttribute(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
+    if (!fastHasAttribute(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
         return;
 
-    SpaceSplitString pingURLs(getAttribute(pingAttr), false);
+    SpaceSplitString pingURLs(fastGetAttribute(pingAttr), false);
     for (unsigned i = 0; i < pingURLs.size(); i++)
         PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
 }

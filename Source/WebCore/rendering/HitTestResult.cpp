@@ -274,7 +274,7 @@ String HitTestResult::altDisplayString() const
     
     if (isHTMLImageElement(m_innerNonSharedNode.get())) {
         HTMLImageElement* image = toHTMLImageElement(m_innerNonSharedNode.get());
-        return displayString(image->getAttribute(altAttr), m_innerNonSharedNode.get());
+        return displayString(image->fastGetAttribute(altAttr), m_innerNonSharedNode.get());
     }
     
     if (isHTMLInputElement(m_innerNonSharedNode.get())) {

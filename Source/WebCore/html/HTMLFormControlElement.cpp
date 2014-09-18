@@ -103,7 +103,7 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 {
     Element* previousAncestor = nullptr;
     for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (isHTMLFieldSetElement(ancestor) && ancestor->hasAttribute(disabledAttr)) {
+        if (isHTMLFieldSetElement(ancestor) && ancestor->fastHasAttribute(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = toHTMLFieldSetElement(*ancestor);
             bool isInFirstLegend = previousAncestor && isHTMLLegendElement(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
             return !isInFirstLegend;

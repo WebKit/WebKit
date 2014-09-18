@@ -1,5 +1,142 @@
 2014-09-18  Chris Dumez  <cdumez@apple.com>
 
+        Use fastHasAttribute() / fastGetAttribute() when possible
+        https://bugs.webkit.org/show_bug.cgi?id=136900
+
+        Reviewed by Benjamin Poulain.
+
+        Use fastHasAttribute() / fastGetAttribute() when possible, that is when
+        the attribute is not SVG-animated or the |style| attribute, to avoid
+        synchronizing attributes unnecessarily.
+
+        Also avoid calling hasAttribute(xxxAttr) then getAttribute(xxxAttr) as
+        it causes 2 linear searches. It is best to call getAttribute(xxxAttr)
+        directly and check if it returns the nullAtom.
+
+        No new tests, no behavior change. Element::fastAttributeLookupAllowed()
+        is there as a safety set for debug builds.
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isEnabled):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeTextForWebArea):
+        (WebCore::AccessibilityNodeObject::hierarchicalLevel):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::contentEditableAttributeIsEnabled):
+        * dom/Document.cpp:
+        (WebCore::Document::hasManifest):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesLabelForAttribute):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * dom/Element.cpp:
+        (WebCore::Element::imageSourceURL):
+        (WebCore::Element::pseudo):
+        (WebCore::Element::spellcheckAttributeState):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLAttributeEquivalent::attributeValueAsCSSValue):
+        (WebCore::HTMLFontSizeEquivalent::attributeValueAsCSSValue):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doUnapply):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::draggable):
+        (WebCore::HTMLAnchorElement::sendPings):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::addSubresourceAttributeURLs):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::value):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::dir):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::imageSourceURL):
+        (WebCore::HTMLEmbedElement::addSubresourceAttributeURLs):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::~HTMLFieldSetElement):
+        (WebCore::updateFromControlElementsAncestorDisabledStateUnder):
+        (WebCore::HTMLFieldSetElement::disabledAttributeChanged):
+        (WebCore::HTMLFieldSetElement::disabledStateChanged):
+        (WebCore::HTMLFieldSetElement::childrenChanged):
+        (WebCore::HTMLFieldSetElement::didMoveToNewDocument):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::computeIsDisabledByFieldsetAncestor):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::action):
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::noResize):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::location):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::altText):
+        (WebCore::HTMLImageElement::alt):
+        (WebCore::HTMLImageElement::draggable):
+        (WebCore::HTMLImageElement::src):
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::finishParsingChildren):
+        (WebCore::HTMLInputElement::altText):
+        (WebCore::HTMLInputElement::reset):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::rel):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::content):
+        (WebCore::HTMLMetaElement::httpEquiv):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::imageSourceURL):
+        (WebCore::HTMLObjectElement::addSubresourceAttributeURLs):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::groupLabelText):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::max):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::sourceAttributeValue):
+        (WebCore::HTMLScriptElement::charsetAttributeValue):
+        (WebCore::HTMLScriptElement::languageAttributeValue):
+        (WebCore::HTMLScriptElement::forAttributeValue):
+        (WebCore::HTMLScriptElement::eventAttributeValue):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::addSubresourceAttributeURLs):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rules):
+        (WebCore::HTMLTableElement::summary):
+        (WebCore::HTMLTableElement::addSubresourceAttributeURLs):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::align):
+        (WebCore::HTMLTableSectionElement::ch):
+        (WebCore::HTMLTableSectionElement::vAlign):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::maxLength):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::searchEventsShouldBeDispatched):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * page/Frame.cpp:
+        (WebCore::Frame::matchLabelsAgainstElement):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImageToDataObject):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::autosaveName):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+
+2014-09-18  Chris Dumez  <cdumez@apple.com>
+
         Have LiveNodeLists / HTMLCollections's elementMatches() take a reference
         https://bugs.webkit.org/show_bug.cgi?id=136902
 

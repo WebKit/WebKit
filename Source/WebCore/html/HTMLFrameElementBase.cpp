@@ -169,7 +169,7 @@ URL HTMLFrameElementBase::location() const
 {
     if (fastHasAttribute(srcdocAttr))
         return URL(ParsedURLString, "about:srcdoc");
-    return document().completeURL(getAttribute(srcAttr));
+    return document().completeURL(fastGetAttribute(srcAttr));
 }
 
 void HTMLFrameElementBase::setLocation(const String& str)

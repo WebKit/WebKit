@@ -660,7 +660,7 @@ bool HTMLFormElement::noValidate() const
 // (Darin Adler) removed this, someone added it back, so I am leaving it in for now.
 String HTMLFormElement::action() const
 {
-    return getAttribute(actionAttr);
+    return fastGetAttribute(actionAttr);
 }
 
 void HTMLFormElement::setAction(const String &value)

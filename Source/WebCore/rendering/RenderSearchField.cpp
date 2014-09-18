@@ -191,7 +191,7 @@ EVisibility RenderSearchField::visibilityForCancelButton() const
 
 const AtomicString& RenderSearchField::autosaveName() const
 {
-    return inputElement().getAttribute(autosaveAttr);
+    return inputElement().fastGetAttribute(autosaveAttr);
 }
 
 // PopupMenuClient methods

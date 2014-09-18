@@ -69,7 +69,7 @@ inline bool keyMatchesLowercasedUsemap(const AtomicStringImpl& key, const Elemen
 
 inline bool keyMatchesLabelForAttribute(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLLabelElement(element) && element.getAttribute(forAttr).impl() == &key;
+    return isHTMLLabelElement(element) && element.fastGetAttribute(forAttr).impl() == &key;
 }
 
 inline bool keyMatchesWindowNamedItem(const AtomicStringImpl& key, const Element& element)

@@ -189,7 +189,7 @@ void HTMLLinkElement::process()
     if (m_disabledState != Disabled && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css")))
         && document().frame() && url.isValid()) {
         
-        String charset = getAttribute(charsetAttr);
+        AtomicString charset = fastGetAttribute(charsetAttr);
         if (charset.isEmpty() && document().frame())
             charset = document().charset();
         
@@ -401,9 +401,9 @@ URL HTMLLinkElement::href() const
     return document().completeURL(getAttribute(hrefAttr));
 }
 
-String HTMLLinkElement::rel() const
+const AtomicString& HTMLLinkElement::rel() const
 {
-    return getAttribute(relAttr);
+    return fastGetAttribute(relAttr);
 }
 
 String HTMLLinkElement::target() const
@@ -411,7 +411,7 @@ String HTMLLinkElement::target() const
     return getAttribute(targetAttr);
 }
 
-String HTMLLinkElement::type() const
+const AtomicString& HTMLLinkElement::type() const
 {
     return getAttribute(typeAttr);
 }

@@ -48,11 +48,11 @@ public:
     virtual ~HTMLLinkElement();
 
     URL href() const;
-    String rel() const;
+    const AtomicString& rel() const;
 
     virtual String target() const override;
 
-    String type() const;
+    const AtomicString& type() const;
 
     IconType iconType() const;
 

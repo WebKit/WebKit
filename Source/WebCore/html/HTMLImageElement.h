@@ -54,7 +54,7 @@ public:
 
     bool isServerMap() const;
 
-    String altText() const;
+    const AtomicString& altText() const;
 
     CompositeOperator compositeOperator() const { return m_compositeOperator; }
 

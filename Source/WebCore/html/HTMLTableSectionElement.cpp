@@ -105,42 +105,42 @@ int HTMLTableSectionElement::numRows() const
     return rows;
 }
 
-String HTMLTableSectionElement::align() const
+const AtomicString& HTMLTableSectionElement::align() const
 {
-    return getAttribute(alignAttr);
+    return fastGetAttribute(alignAttr);
 }
 
-void HTMLTableSectionElement::setAlign(const String &value)
+void HTMLTableSectionElement::setAlign(const AtomicString& value)
 {
     setAttribute(alignAttr, value);
 }
 
-String HTMLTableSectionElement::ch() const
+const AtomicString& HTMLTableSectionElement::ch() const
 {
-    return getAttribute(charAttr);
+    return fastGetAttribute(charAttr);
 }
 
-void HTMLTableSectionElement::setCh(const String &value)
+void HTMLTableSectionElement::setCh(const AtomicString& value)
 {
     setAttribute(charAttr, value);
 }
 
-String HTMLTableSectionElement::chOff() const
+const AtomicString& HTMLTableSectionElement::chOff() const
 {
     return getAttribute(charoffAttr);
 }
 
-void HTMLTableSectionElement::setChOff(const String &value)
+void HTMLTableSectionElement::setChOff(const AtomicString& value)
 {
     setAttribute(charoffAttr, value);
 }
 
-String HTMLTableSectionElement::vAlign() const
+const AtomicString& HTMLTableSectionElement::vAlign() const
 {
-    return getAttribute(valignAttr);
+    return fastGetAttribute(valignAttr);
 }
 
-void HTMLTableSectionElement::setVAlign(const String &value)
+void HTMLTableSectionElement::setVAlign(const AtomicString& value)
 {
     setAttribute(valignAttr, value);
 }

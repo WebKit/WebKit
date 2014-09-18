@@ -46,7 +46,7 @@ inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Do
 
 HTMLFieldSetElement::~HTMLFieldSetElement()
 {
-    if (hasAttribute(disabledAttr))
+    if (fastHasAttribute(disabledAttr))
         document().removeDisabledFieldsetElement();
 }
 
@@ -65,7 +65,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     while (control) {
         control->setAncestorDisabled(isDisabled);
         // Don't call setAncestorDisabled(false) on form contorls inside disabled fieldsets.
-        if (isHTMLFieldSetElement(control) && control->hasAttribute(disabledAttr))
+        if (isHTMLFieldSetElement(control) && control->fastHasAttribute(disabledAttr))
             control = Traversal<HTMLFormControlElement>::nextSkippingChildren(control, &startNode);
         else
             control = Traversal<HTMLFormControlElement>::next(control, &startNode);
@@ -74,7 +74,7 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
 
 void HTMLFieldSetElement::disabledAttributeChanged()
 {
-    if (hasAttribute(disabledAttr))
+    if (fastHasAttribute(disabledAttr))
         document().addDisabledFieldsetElement();
     else
         document().removeDisabledFieldsetElement();
@@ -90,7 +90,7 @@ void HTMLFieldSetElement::disabledStateChanged()
     if (disabledByAncestorFieldset())
         return;
 
-    bool thisFieldsetIsDisabled = hasAttribute(disabledAttr);
+    bool thisFieldsetIsDisabled = fastHasAttribute(disabledAttr);
     bool hasSeenFirstLegendElement = false;
     for (HTMLElement* control = Traversal<HTMLElement>::firstChild(this); control; control = Traversal<HTMLElement>::nextSibling(control)) {
         if (!hasSeenFirstLegendElement && isHTMLLegendElement(control)) {
@@ -105,7 +105,7 @@ void HTMLFieldSetElement::disabledStateChanged()
 void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 {
     HTMLFormControlElement::childrenChanged(change);
-    if (!hasAttribute(disabledAttr))
+    if (!fastHasAttribute(disabledAttr))
         return;
 
     HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(this);
@@ -121,7 +121,7 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 void HTMLFieldSetElement::didMoveToNewDocument(Document* oldDocument)
 {
     HTMLFormControlElement::didMoveToNewDocument(oldDocument);
-    if (hasAttribute(disabledAttr)) {
+    if (fastHasAttribute(disabledAttr)) {
         if (oldDocument)
             oldDocument->removeDisabledFieldsetElement();
         document().addDisabledFieldsetElement();

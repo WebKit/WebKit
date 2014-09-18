@@ -1456,7 +1456,7 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     
     // Check if the HTML element has an aria-label for the webpage.
     if (Element* documentElement = document->documentElement()) {
-        const AtomicString& ariaLabel = documentElement->getAttribute(aria_labelAttr);
+        const AtomicString& ariaLabel = documentElement->fastGetAttribute(aria_labelAttr);
         if (!ariaLabel.isEmpty())
             return ariaLabel;
     }
@@ -1563,7 +1563,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     if (!node || !node->isElementNode())
         return 0;
     Element* element = toElement(node);
-    String ariaLevel = element->getAttribute(aria_levelAttr);
+    const AtomicString& ariaLevel = element->fastGetAttribute(aria_levelAttr);
     if (!ariaLevel.isEmpty())
         return ariaLevel.toInt();
     

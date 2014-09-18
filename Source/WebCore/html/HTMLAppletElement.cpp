@@ -125,11 +125,11 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
     Vector<String> paramValues;
 
     paramNames.append("code");
-    paramValues.append(getAttribute(codeAttr).string());
+    paramValues.append(fastGetAttribute(codeAttr).string());
 
-    const AtomicString& codeBase = getAttribute(codebaseAttr);
+    const AtomicString& codeBase = fastGetAttribute(codebaseAttr);
     if (!codeBase.isNull()) {
-        paramNames.append("codeBase");
+        paramNames.append(ASCIILiteral("codeBase"));
         paramValues.append(codeBase.string());
     }
 
@@ -139,18 +139,18 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
         paramValues.append(name.string());
     }
 
-    const AtomicString& archive = getAttribute(archiveAttr);
+    const AtomicString& archive = fastGetAttribute(archiveAttr);
     if (!archive.isNull()) {
-        paramNames.append("archive");
+        paramNames.append(ASCIILiteral("archive"));
         paramValues.append(archive.string());
     }
 
-    paramNames.append("baseURL");
+    paramNames.append(ASCIILiteral("baseURL"));
     paramValues.append(document().baseURL().string());
 
-    const AtomicString& mayScript = getAttribute(mayscriptAttr);
+    const AtomicString& mayScript = fastGetAttribute(mayscriptAttr);
     if (!mayScript.isNull()) {
-        paramNames.append("mayScript");
+        paramNames.append(ASCIILiteral("mayScript"));
         paramValues.append(mayScript.string());
     }
 

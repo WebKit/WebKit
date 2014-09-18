@@ -89,17 +89,17 @@ void HTMLMetaElement::process()
         document().processHttpEquiv(httpEquivValue, contentValue);
 }
 
-String HTMLMetaElement::content() const
+const AtomicString& HTMLMetaElement::content() const
 {
-    return getAttribute(contentAttr);
+    return fastGetAttribute(contentAttr);
 }
 
-String HTMLMetaElement::httpEquiv() const
+const AtomicString& HTMLMetaElement::httpEquiv() const
 {
-    return getAttribute(http_equivAttr);
+    return fastGetAttribute(http_equivAttr);
 }
 
-String HTMLMetaElement::name() const
+const AtomicString& HTMLMetaElement::name() const
 {
     return getNameAttribute();
 }

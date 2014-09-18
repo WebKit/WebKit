@@ -226,7 +226,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
             renderer = useElement.rendererClipChild();
             if (!renderer)
                 continue;
-            if (!useElement.hasAttribute(SVGNames::clip_ruleAttr))
+            if (!useElement.fastHasAttribute(SVGNames::clip_ruleAttr))
                 newClipRule = renderer->style().svgStyle().clipRule();
         }
 

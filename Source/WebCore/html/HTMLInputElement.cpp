@@ -718,7 +718,7 @@ void HTMLInputElement::finishParsingChildren()
     m_parsingInProgress = false;
     HTMLTextFormControlElement::finishParsingChildren();
     if (!m_stateRestored) {
-        bool checked = hasAttribute(checkedAttr);
+        bool checked = fastHasAttribute(checkedAttr);
         if (checked)
             setChecked(checked);
         m_reflectsCheckedAttribute = true;
@@ -767,7 +767,7 @@ String HTMLInputElement::altText() const
     if (alt.isNull())
         alt = getAttribute(titleAttr);
     if (alt.isNull())
-        alt = getAttribute(valueAttr);
+        alt = fastGetAttribute(valueAttr);
     if (alt.isEmpty())
         alt = inputElementAltText();
     return alt;
@@ -801,7 +801,7 @@ void HTMLInputElement::reset()
         setValue(String());
 
     setAutofilled(false);
-    setChecked(hasAttribute(checkedAttr));
+    setChecked(fastHasAttribute(checkedAttr));
     m_reflectsCheckedAttribute = true;
 }
 

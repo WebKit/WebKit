@@ -194,9 +194,9 @@ bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attribute);
 }
 
-String HTMLButtonElement::value() const
+const AtomicString& HTMLButtonElement::value() const
 {
-    return getAttribute(valueAttr);
+    return fastGetAttribute(valueAttr);
 }
 
 bool HTMLButtonElement::recalcWillValidate() const

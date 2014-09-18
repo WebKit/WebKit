@@ -232,7 +232,7 @@ void PageSerializer::serializeFrame(Frame* frame)
 
         if (isHTMLImageElement(element)) {
             HTMLImageElement* imageElement = toHTMLImageElement(element);
-            URL url = document->completeURL(imageElement->getAttribute(HTMLNames::srcAttr));
+            URL url = document->completeURL(imageElement->fastGetAttribute(HTMLNames::srcAttr));
             CachedImage* cachedImage = imageElement->cachedImage();
             addImageToResources(cachedImage, imageElement->renderer(), url);
         } else if (element->hasTagName(HTMLNames::linkTag)) {
