@@ -1,3 +1,19 @@
+2014-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid divide by zero when we get an empty rect while snapshotting a node
+        https://bugs.webkit.org/show_bug.cgi?id=136932
+        rdar://problem/18383473
+
+        Reviewed by Dean Jackson.
+        
+        renderer()->paintingRootRect() can return an empty rect for some inline configurations,
+        for example an <a> containing a floated <span>
+        
+        When this occurs, avoid a divide by zero and return a null snapshot image.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotNode):
+
 2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Incorrect pending API request URL when loading an HTML string
