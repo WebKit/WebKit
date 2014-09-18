@@ -1,3 +1,27 @@
+2014-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Text laid out with the SVG -> OTF font converter does not have the same metrics as with the SVG font code path
+        https://bugs.webkit.org/show_bug.cgi?id=136907
+
+        Reviewed by Darin Adler.
+
+        There are three things that are causing text laid out with the SVG -> OTF font converter to not have metrics that
+        measure our existing SVG codepath. They are:
+
+        1. Creating a font with a 0 ascent or descent makes OS X think that something is wrong with the font, and take
+        a different codepath when trying to parse ascent and descent information. This patch checks for this condition
+        and sets the ascent/descent to 1 FUnit instead (which is generally much smaller than a pixel).
+        2. Our SVG font codepath hardcodes a line gap of 1/10th of the font size for every font. This patch makes the
+        font converter obey this.
+        3. The converter was not allowing for default glyph advances as per the SVG font specification. This patch
+        does so.
+
+        No new tests yet, but they will come soon! I promise!
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendHHEATable):
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter):
+
 2014-09-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r168921): SVG elements may be unnecessarily rebuilt

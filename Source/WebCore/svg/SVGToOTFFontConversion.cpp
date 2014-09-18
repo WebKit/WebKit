@@ -213,10 +213,21 @@ void SVGToOTFFontConverter::appendHHEATable(Vector<char>& result) const
         descent = m_fontFaceElement->descent();
     }
 
+    // Many platforms will assume that a 0 ascent or descent means that the platform should synthesize a font
+    // based on a heuristic. However, many SVG fonts legitimitely have a 0 ascent or descent. Therefore,
+    // we should specify a single FUnit instead, which is as close as we can get to 0 without actually being
+    // it.
+    if (!ascent)
+        ascent = 1;
+    if (!descent)
+        descent = 1;
+
     write32(result, 0x00010000); // Version
     write16(result, ascent);
     write16(result, descent);
-    write16(result, 0); // Line gap
+    // WebKit's SVG codepath hardcodes the line gap to be 1/10th of the font size (see r29719). Matching that
+    // allows us to have consistent renderings between the two paths.
+    write16(result, unitsPerEm / 10); // Line gap
     write16(result, clampTo<uint16_t, float>(m_advanceWidthMax));
     write16(result, clampTo<int16_t, float>(m_boundingBox.x())); // Minimum left side bearing
     write16(result, clampTo<int16_t, float>(m_minRightSideBearing)); // Minimum right side bearing
@@ -670,6 +681,12 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     , m_weight(5)
     , m_italic(false)
 {
+    bool ok = true;
+    float defaultAdvance = fontElement.fastGetAttribute(SVGNames::horiz_adv_xAttr).toFloat(&ok);
+    if (!ok)
+        defaultAdvance = 0;
+    m_advanceWidthMax = std::max(m_advanceWidthMax, defaultAdvance);
+
     // FIXME: Use the missingGlyph info
     Vector<char, 1> notdefCharString;
     notdefCharString.append(endChar);
@@ -679,16 +696,11 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         auto& unicodeAttribute = glyph.fastGetAttribute(SVGNames::unicodeAttr);
         // Only support Basic Multilingual Plane w/o ligatures for now
         if (unicodeAttribute.length() == 1) {
-            float effectiveAdvance = 0;
-            auto& advanceAttribute = glyph.fastGetAttribute(SVGNames::horiz_adv_xAttr);
-            if (!advanceAttribute.isEmpty()) {
-                bool ok = true;
-                float advance = advanceAttribute.toFloat(&ok);
-                if (ok) {
-                    effectiveAdvance = advance;
-                    m_advanceWidthMax = std::max(m_advanceWidthMax, advance);
-                }
-            }
+            bool ok = true;
+            float effectiveAdvance = glyph.fastGetAttribute(SVGNames::horiz_adv_xAttr).toFloat(&ok);
+            if (!ok)
+                effectiveAdvance = defaultAdvance;
+            m_advanceWidthMax = std::max(m_advanceWidthMax, effectiveAdvance);
 
             FloatRect glyphBoundingBox;
             const auto& path = transcodeGlyphPaths(effectiveAdvance, glyph, glyphBoundingBox);
