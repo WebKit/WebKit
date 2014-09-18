@@ -1,3 +1,60 @@
+2014-09-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        GMainLoopSource is exposed to race conditions
+        https://bugs.webkit.org/show_bug.cgi?id=135800
+
+        Reviewed by Carlos Garcia Campos.
+
+        GMainLoopSource objects can be dispatching tasks on one thread
+        while having a new task scheduled on a different thread. This
+        can for instance occur in WebKitVideoSink, where the timeout
+        callback can be called on main thread while at the same time
+        it is being rescheduled on a different thread (created through
+        GStreamer).
+
+        The initial solution is to use GMutex to prevent parallel data
+        access from different threads. In the future I plan to look at
+        the possibility of creating thread-specific GMainLoopSource
+        objects that wouldn't require the use of GMutex.
+
+        GSource, GCancellable and std::function<> objects are now packed
+        into an internal Context structure. Using the C++11 move semantics
+        it's simple to, at the time of dispatch, move the current context
+        out of the GMainLoopSource object in case the dispatch causes a
+        rescheduling on that same object.
+
+        Also added in the Context struct is a new GCancellable. The pointer
+        of that object is shared with the GMainLoopSource before the Context
+        is moved out for the callback dispatch. This makes it safe to cancel
+        or even delete the GMainLoopSource during the dispatch and prevents
+        use-after-delete on GMainLoopSource once the dispatch is done in
+        the GMainLoopSource::*Callback() methods.
+
+        All the schedule*() methods and the cancelWithoutLocking() method
+        callers now lock the GMutex to ensure no one else is accessing the
+        data at that moment. Similar goes for the dispatch methods, but those
+        do the dispatch and possible destruction duties with the mutex unlocked.
+        The dispatch can cause rescheduling on the same GMainLoopSource object,
+        which must not be done with a locked mutex.
+
+        * wtf/gobject/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::GMainLoopSource):
+        (WTF::GMainLoopSource::~GMainLoopSource):
+        (WTF::GMainLoopSource::cancel):
+        (WTF::GMainLoopSource::cancelWithoutLocking):
+        (WTF::GMainLoopSource::scheduleIdleSource):
+        (WTF::GMainLoopSource::schedule):
+        (WTF::GMainLoopSource::scheduleTimeoutSource):
+        (WTF::GMainLoopSource::scheduleAfterDelay):
+        (WTF::GMainLoopSource::voidCallback):
+        (WTF::GMainLoopSource::boolCallback):
+        (WTF::GMainLoopSource::socketCallback):
+        (WTF::GMainLoopSource::socketSourceCallback):
+        (WTF::GMainLoopSource::Context::destroySource):
+        (WTF::GMainLoopSource::reset): Deleted.
+        (WTF::GMainLoopSource::destroy): Deleted.
+        * wtf/gobject/GMainLoopSource.h:
+
 2014-09-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r173695.

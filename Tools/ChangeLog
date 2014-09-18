@@ -1,3 +1,37 @@
+2014-09-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        GMainLoopSource is exposed to race conditions
+        https://bugs.webkit.org/show_bug.cgi?id=135800
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add unit tests for GMainLoopSource.
+
+        The tests check correct behavior of GMainLoopSource in various conditions --
+        from the most simple rescheduling to rescheduling during dispatch, cancelling
+        or destroying the GMainLoopSource during dispatch, proper destroy callback
+        dispatching etc.
+
+        Scheduling both void (one-time) and bool (repeatable) callbacks is tested.
+        State of the GMainLoopSource object (either ready, sheduled or active) is
+        thoroughly tested throughout the lifetime of that object.
+
+        Still missing are tests for socket callbacks, which are a bit trickier because
+        they rely on a GSocket object. The delete-on-destroy GMainLoopSource objects
+        are also not tested thoroughly, simply because it is at the moment impossible
+        to test that the objects are actually destroyed when the corresponding source
+        is finally deleted.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WTF/gobject/GMainLoopSource.cpp: Added.
+        (TestWebKitAPI::GMainLoopSourceTest::GMainLoopSourceTest):
+        (TestWebKitAPI::GMainLoopSourceTest::~GMainLoopSourceTest):
+        (TestWebKitAPI::GMainLoopSourceTest::runLoop):
+        (TestWebKitAPI::GMainLoopSourceTest::delayedFinish):
+        (TestWebKitAPI::GMainLoopSourceTest::finish):
+        (TestWebKitAPI::GMainLoopSourceTest::source):
+        (TestWebKitAPI::TEST):
+
 2014-09-17  Ryuan Choi  <ryuan.choi@gmail.com>
 
         Unreviewed, Update my email in contributors.json
