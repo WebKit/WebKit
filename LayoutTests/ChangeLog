@@ -1,5 +1,11 @@
 2014-09-18  Roger Fong  <roger_fong@apple.com>
 
+        Don’t skip all the media tests on Windows.
+
+        * platform/win/TestExpectations:
+
+2014-09-18  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows rebaselining to account for subpixel layout Part 3.
 
         * platform/win/css1/box_properties/acid_test-expected.txt: Added.
