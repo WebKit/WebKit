@@ -63,6 +63,11 @@
 #include <windows.h>
 #endif
 
+#if OS(DARWIN)
+#include <sys/sysctl.h>
+#include <unistd.h>
+#endif
+
 #if OS(DARWIN) || (OS(LINUX) && !defined(__UCLIBC__))
 #include <cxxabi.h>
 #include <dlfcn.h>
@@ -382,6 +387,20 @@ void WTFInstallReportBacktraceOnCrashHook()
     // in case we hit an assertion.
     WTFSetCrashHook(&resetSignalHandlersForFatalErrors);
     installSignalHandlersForFatalErrors(&dumpBacktraceSignalHandler);
+#endif
+}
+
+bool WTFIsDebuggerAttached()
+{
+#if OS(DARWIN)
+    struct kinfo_proc info;
+    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid() };
+    size_t size = sizeof(info);
+    if (sysctl(mib, sizeof(mib) / sizeof(mib[0]), &info, &size, nullptr, 0) != 0)
+        return false;
+    return (info.kp_proc.p_flag & P_TRACED) != 0;
+#else
+    return false;
 #endif
 }
 

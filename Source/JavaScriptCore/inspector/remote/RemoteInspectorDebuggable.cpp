@@ -28,6 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "EventLoop.h"
 #include "InspectorFrontendChannel.h"
 #include "RemoteInspector.h"
 
@@ -61,7 +62,10 @@ void RemoteInspectorDebuggable::setRemoteDebuggingAllowed(bool allowed)
 
     m_allowed = allowed;
 
-    update();
+    if (m_allowed && automaticInspectionAllowed())
+        RemoteInspector::shared().updateDebuggableAutomaticInspectCandidate(this);
+    else
+        RemoteInspector::shared().updateDebuggable(this);
 }
 
 RemoteInspectorDebuggableInfo RemoteInspectorDebuggable::info() const
@@ -74,6 +78,17 @@ RemoteInspectorDebuggableInfo RemoteInspectorDebuggable::info() const
     info.hasLocalDebugger = hasLocalDebugger();
     info.remoteDebuggingAllowed = remoteDebuggingAllowed();
     return info;
+}
+
+void RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection()
+{
+    ASSERT(m_identifier);
+    ASSERT(m_allowed);
+    ASSERT(automaticInspectionAllowed());
+
+    EventLoop loop;
+    while (RemoteInspector::shared().waitingForAutomaticInspection(identifier()) && !loop.ended())
+        loop.cycle();
 }
 
 } // namespace Inspector

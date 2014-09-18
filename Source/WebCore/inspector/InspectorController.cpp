@@ -230,7 +230,7 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
-void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel)
+void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel, bool)
 {
     ASSERT(frontendChannel);
     ASSERT(m_inspectorClient);
@@ -285,7 +285,7 @@ void InspectorController::show()
     else {
         InspectorFrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this);
         if (frontendChannel)
-            connectFrontend(frontendChannel);
+            connectFrontend(frontendChannel, false);
     }
 }
 

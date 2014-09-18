@@ -1,3 +1,18 @@
+2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed
+        https://bugs.webkit.org/show_bug.cgi?id=136893
+
+        Reviewed by Timothy Hatcher.
+
+        Currently automatic inspection only happens in processes that have a
+        debugger attached. That condition may change in the future, but this
+        function can stand on its own in WTF. It may be useful in the future
+        to perhaps continue though ASSERTs if you have a debugger attached.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2014-09-18  Zan Dobersek  <zdobersek@igalia.com>
 
         GMainLoopSource is exposed to race conditions

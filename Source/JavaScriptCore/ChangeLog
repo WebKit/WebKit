@@ -1,3 +1,82 @@
+2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed
+        https://bugs.webkit.org/show_bug.cgi?id=136893
+
+        Reviewed by Timothy Hatcher.
+
+        Adds new remote inspector protocol handling for automatic inspection.
+        Debuggers can signal they have enabled automatic inspection, and
+        when debuggables are created the current application will pause to
+        see if the debugger will inspect or decline to inspect the debuggable.
+
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::globalAutomaticInspectionState):
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::start):
+        When first starting, check the global "is there an auto-inspect" debugger state.
+        This is necessary so that the current application knows if it should pause or
+        not when a debuggable is created, even without having connected to webinspectord yet.
+
+        (Inspector::RemoteInspector::updateDebuggableAutomaticInspectCandidate):
+        When a debuggable has enabled remote inspection, take this path to propose
+        it as an automatic inspection candidate if there is an auto-inspect debugger.
+
+        (Inspector::RemoteInspector::sendAutomaticInspectionCandidateMessage):
+        Send the automatic inspection candidate message.
+
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupSucceeded):
+        After attempting to open an inspector, unpause if it was for the
+        automatic inspection candidate.
+
+        (Inspector::RemoteInspector::waitingForAutomaticInspection):
+        When running a nested runloop, check if we should remain paused.
+
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        If by the time we connect to webinspectord we have a candidate, then
+        immediately send the candidate message.
+
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        In error cases, clear our state.
+
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::receivedAutomaticInspectionConfigurationMessage):
+        (Inspector::RemoteInspector::receivedAutomaticInspectionRejectMessage):
+        Update state when receiving new messages.
+
+
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggable.cpp:
+        (Inspector::RemoteInspectorDebuggable::setRemoteDebuggingAllowed):
+        Special case when a debuggable is newly allowed to be debuggable.
+
+        (Inspector::RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection):
+        Run a nested run loop while this is an automatic inspection candidate.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        When the inspector starts via automatic inspection automatically pause.
+        We plan on removing this condition by having the frontend signal to the
+        backend when it is completely initialized.
+        
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+        Pass on the flag of whether or not this was automatic inspection.
+
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::pauseWaitingForAutomaticInspection):
+        When pausing in a JSGlobalObject we need to release the API lock.
+
 2014-09-18  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         Fix "Tools/Scripts/build-webkit --efl --no-inspector" build
