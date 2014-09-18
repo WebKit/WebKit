@@ -84,7 +84,7 @@ public:
     NSString *connectionIdentifier() const;
     unsigned identifier() const { return m_identifier; }
 
-    bool setup(bool isAutomaticInspection);
+    bool setup();
 
     void close();
     void closeFromDebuggable();

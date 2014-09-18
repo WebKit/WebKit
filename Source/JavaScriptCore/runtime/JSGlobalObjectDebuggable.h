@@ -51,12 +51,9 @@ public:
     virtual String name() const override;
     virtual bool hasLocalDebugger() const override { return false; }
 
-    virtual void connect(Inspector::InspectorFrontendChannel*, bool automaticInspection) override;
+    virtual void connect(Inspector::InspectorFrontendChannel*) override;
     virtual void disconnect() override;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
-
-    virtual bool automaticInspectionAllowed() const override { return true; }
-    virtual void pauseWaitingForAutomaticInspection() override;
 
 private:
     JSGlobalObject& m_globalObject;

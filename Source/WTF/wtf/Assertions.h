@@ -38,7 +38,6 @@
 
 #include <inttypes.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stddef.h>
 
 #ifdef NDEBUG
@@ -145,8 +144,6 @@ WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 typedef void (*WTFCrashHookFunction)();
 WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);
 WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
-
-WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 
 #ifdef __cplusplus
 }

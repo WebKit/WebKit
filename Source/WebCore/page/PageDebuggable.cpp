@@ -68,7 +68,7 @@ bool PageDebuggable::hasLocalDebugger() const
     return m_page.inspectorController().hasLocalFrontend();
 }
 
-void PageDebuggable::connect(Inspector::InspectorFrontendChannel* channel, bool isAutomaticInspection)
+void PageDebuggable::connect(Inspector::InspectorFrontendChannel* channel)
 {
     if (!m_page.settings().developerExtrasEnabled()) {
         m_forcedDeveloperExtrasEnabled = true;
@@ -78,7 +78,7 @@ void PageDebuggable::connect(Inspector::InspectorFrontendChannel* channel, bool 
 
     InspectorController& inspectorController = m_page.inspectorController();
     inspectorController.setHasRemoteFrontend(true);
-    inspectorController.connectFrontend(reinterpret_cast<WebCore::InspectorFrontendChannel*>(channel), isAutomaticInspection);
+    inspectorController.connectFrontend(reinterpret_cast<WebCore::InspectorFrontendChannel*>(channel));
 }
 
 void PageDebuggable::disconnect()

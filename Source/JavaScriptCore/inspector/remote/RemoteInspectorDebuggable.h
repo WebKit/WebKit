@@ -62,13 +62,10 @@ public:
     virtual String url() const { return String(); } // Web
     virtual bool hasLocalDebugger() const = 0;
 
-    virtual void connect(InspectorFrontendChannel*, bool isAutomaticInspection) = 0;
+    virtual void connect(InspectorFrontendChannel*) = 0;
     virtual void disconnect() = 0;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) = 0;
     virtual void setIndicating(bool) { } // Default is to do nothing.
-
-    virtual bool automaticInspectionAllowed() const { return false; }
-    virtual void pauseWaitingForAutomaticInspection();
 
 private:
     unsigned m_identifier;

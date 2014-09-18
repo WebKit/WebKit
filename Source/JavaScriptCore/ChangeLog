@@ -1,5 +1,43 @@
 2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed rollout r173731. Broke multiple builds.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::globalAutomaticInspectionState): Deleted.
+        (Inspector::RemoteInspector::updateDebuggableAutomaticInspectCandidate): Deleted.
+        (Inspector::RemoteInspector::sendAutomaticInspectionCandidateMessage): Deleted.
+        (Inspector::RemoteInspector::setupSucceeded): Deleted.
+        (Inspector::RemoteInspector::waitingForAutomaticInspection): Deleted.
+        (Inspector::RemoteInspector::receivedAutomaticInspectionConfigurationMessage): Deleted.
+        (Inspector::RemoteInspector::receivedAutomaticInspectionRejectMessage): Deleted.
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/RemoteInspectorDebuggable.cpp:
+        (Inspector::RemoteInspectorDebuggable::setRemoteDebuggingAllowed):
+        (Inspector::RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection): Deleted.
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::pauseWaitingForAutomaticInspection): Deleted.
+        * runtime/JSGlobalObjectDebuggable.h:
+
+2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed
         https://bugs.webkit.org/show_bug.cgi?id=136893
 

@@ -93,7 +93,7 @@ public:
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
-    WEBCORE_EXPORT void connectFrontend(Inspector::InspectorFrontendChannel*, bool isAutomaticInspection);
+    WEBCORE_EXPORT void connectFrontend(Inspector::InspectorFrontendChannel*);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::InspectorDisconnectReason);
     void setProcessId(long);
 

@@ -1,3 +1,18 @@
+2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout r173731. Broke multiple builds.
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::show):
+        * inspector/InspectorController.h:
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::connect):
+        * page/PageDebuggable.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::openDummyInspectorFrontend):
+
 2014-09-18  Beth Dakin  <bdakin@apple.com>
 
         ASSERT in RenderBox::instrinsicScrollbarLogicalWidth opening the inspector

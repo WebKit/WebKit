@@ -28,7 +28,6 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "JSLock.h"
 #include "InspectorAgentBase.h"
 #include "InspectorFrontendChannel.h"
 #include "JSGlobalObject.h"
@@ -49,11 +48,11 @@ String JSGlobalObjectDebuggable::name() const
     return name.isEmpty() ? ASCIILiteral("JSContext") : name;
 }
 
-void JSGlobalObjectDebuggable::connect(InspectorFrontendChannel* frontendChannel, bool automaticInspection)
+void JSGlobalObjectDebuggable::connect(InspectorFrontendChannel* frontendChannel)
 {
     JSLockHolder locker(&m_globalObject.vm());
 
-    m_globalObject.inspectorController().connectFrontend(frontendChannel, automaticInspection);
+    m_globalObject.inspectorController().connectFrontend(frontendChannel);
 }
 
 void JSGlobalObjectDebuggable::disconnect()
@@ -68,12 +67,6 @@ void JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend(const String& m
     JSLockHolder locker(&m_globalObject.vm());
 
     m_globalObject.inspectorController().dispatchMessageFromFrontend(message);
-}
-
-void JSGlobalObjectDebuggable::pauseWaitingForAutomaticInspection()
-{
-    JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject.vm());
-    RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection();
 }
 
 } // namespace JSC
