@@ -75,7 +75,7 @@ inline static Ewk_Event_Modifiers toEwkEventModifiers(WKEventModifiers modifiers
     if (modifiers & kWKEventModifiersShiftKey)
         keys |= EWK_EVENT_MODIFIER_SHIFT;
     if (modifiers & kWKEventModifiersControlKey)
-        keys |= kWKEventModifiersControlKey;
+        keys |= EWK_EVENT_MODIFIER_CTRL;
     if (modifiers & kWKEventModifiersAltKey)
         keys |= EWK_EVENT_MODIFIER_ALT;
     if (modifiers & kWKEventModifiersMetaKey)

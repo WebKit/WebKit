@@ -1,3 +1,13 @@
+2014-09-17  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][WK2] Use the correct enum for control key in Ewk_Event_Modifiers in ewk_navigation_policy_decision.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=136740
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (toEwkEventModifiers):
+
 2014-09-17  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r173695.
