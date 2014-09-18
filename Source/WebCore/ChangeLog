@@ -1,3 +1,18 @@
+2014-09-18  Beth Dakin  <bdakin@apple.com>
+
+        ASSERT in RenderBox::instrinsicScrollbarLogicalWidth opening the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=136929
+
+        Reviewed by Simon Fraser.
+
+        This is a regression from http://trac.webkit.org/changeset/173668 
+        This code is wrong after that change because it assumes that overflow:scroll will 
+        always have a scrollbar. That is no longer the case. We need to check to make sure 
+        it’s an overflow:scroll that does NOT have overflow:auto behavior.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::instrinsicScrollbarLogicalWidth):
+
 2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should be able to attach a debugger to a JSContext before anything is executed

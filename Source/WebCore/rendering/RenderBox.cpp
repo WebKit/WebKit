@@ -763,12 +763,12 @@ int RenderBox::instrinsicScrollbarLogicalWidth() const
     if (!hasOverflowClip())
         return 0;
 
-    if (isHorizontalWritingMode() && style().overflowY() == OSCROLL) {
+    if (isHorizontalWritingMode() && (style().overflowY() == OSCROLL && !hasVerticalScrollbarWithAutoBehavior())) {
         ASSERT(layer()->hasVerticalScrollbar());
         return verticalScrollbarWidth();
     }
 
-    if (!isHorizontalWritingMode() && style().overflowX() == OSCROLL) {
+    if (!isHorizontalWritingMode() && (style().overflowX() == OSCROLL && !hasHorizontalScrollbarWithAutoBehavior())) {
         ASSERT(layer()->hasHorizontalScrollbar());
         return horizontalScrollbarHeight();
     }
