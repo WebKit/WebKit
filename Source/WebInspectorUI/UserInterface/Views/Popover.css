@@ -71,7 +71,7 @@
 
 .popover > .container.center {
     display: flex;
-    -webkit-justify-content: center;
+    justify-content: center;
     align-items: center;
 }
 

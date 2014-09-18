@@ -80,7 +80,7 @@ body.mac-platform.legacy .layer-tree.panel .bottom-bar > div {
 }
 
 .layer-tree.panel .layers-memory-label {
-    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
 }
 
 .layer-tree-popover {

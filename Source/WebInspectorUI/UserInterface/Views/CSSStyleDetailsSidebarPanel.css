@@ -52,13 +52,13 @@ body.mac-platform.legacy .sidebar > .panel.details.css-style > .content {
 
     display: flex;
     flex-flow: row wrap;
-    -webkit-justify-content: space-around;
+    justify-content: space-around;
 }
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes > .group {
-    display: -webkit-inline-flex;
+    display: inline-flex;
     flex-flow: row wrap;
-    -webkit-justify-content: space-around;
+    justify-content: space-around;
     flex: 1;
 }
 

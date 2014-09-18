@@ -179,7 +179,7 @@ body.mac-platform.legacy #split-content-browser > .navigation-bar {
     padding-left: 20%;
     padding-right: 20%;
 
-    -webkit-justify-content: center;
+    justify-content: center;
     align-items: center;
 
     line-height: 20px;

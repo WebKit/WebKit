@@ -38,7 +38,7 @@ body.javascript .toolbar .dashboard.default > .resourcesCount {
 .toolbar .dashboard.default {
     display: flex;
     flex-flow: row nowrap;
-    -webkit-justify-content: space-between;
+    justify-content: space-between;
 }
 
 .toolbar .dashboard.default > .item {
@@ -50,7 +50,7 @@ body.javascript .toolbar .dashboard.default > .resourcesCount {
 
     min-width: 45px;
 
-    -webkit-justify-content: center;
+    justify-content: center;
     align-items: center;
 
     border-radius: 4px;

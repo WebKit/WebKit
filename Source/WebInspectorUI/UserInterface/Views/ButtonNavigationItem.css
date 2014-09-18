@@ -39,7 +39,7 @@
     text-align: center;
     height: auto;
 
-    -webkit-justify-content: center;
+    justify-content: center;
 }
 
 body.mac-platform.legacy .navigation-bar .item.button.text-only {

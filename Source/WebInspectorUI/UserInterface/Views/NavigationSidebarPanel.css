@@ -91,7 +91,7 @@ body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow.top {
 
     display: flex;
 
-    -webkit-justify-content: center;
+    justify-content: center;
     align-items: center;
 }
 

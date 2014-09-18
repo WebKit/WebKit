@@ -25,7 +25,7 @@
 .toolbar .dashboard.debugger {
     display: flex;
     flex-wrap: nowrap;
-    -webkit-justify-content: center;
+    justify-content: center;
     align-items: center;
 
     text-align: center;

@@ -25,7 +25,7 @@
 
 .toolbar .item.control {
     align-items: center;
-    -webkit-justify-content: center;
+    justify-content: center;
 
     padding: 3px 2px;
 
