@@ -1,3 +1,21 @@
+2014-09-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix countFailures of RunLLINTCLoopTests and Run32bitJSCTests (II)
+        https://bugs.webkit.org/show_bug.cgi?id=136856
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunLLINTCLoopTests.countFailures):
+        (Run32bitJSCTests.countFailures):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunLLINTCLoopTestsTest.test_failures):
+        (RunLLINTCLoopTestsTest.test_failure):
+        (RunLLINTCLoopTestsTest.test_no_failure):
+        (Run32bitJSCTestsTest.test_failures):
+        (Run32bitJSCTestsTest.test_failure):
+        (Run32bitJSCTestsTest.test_no_failure):
+
 2014-09-18  Zan Dobersek  <zdobersek@igalia.com>
 
         GMainLoopSource is exposed to race conditions

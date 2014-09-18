@@ -154,13 +154,13 @@ class RunLLINTCLoopTestsTest(unittest.TestCase):
         self.assertEqual(actual_text, expected_text)
 
     def test_failures(self):
-        self.assertResults(FAILURE, ['5 regressions found.'], 1,  '5 regressions found.')
+        self.assertResults(FAILURE, ['5 regressions found.'], 1,  '    5 regressions found.')
 
     def test_failure(self):
-        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '1 regression found.')
+        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '    1 regression found.')
 
     def test_no_failure(self):
-        self.assertResults(SUCCESS, ['webkit-jsc-cloop-test'], 0,  '0 regressions found.')
+        self.assertResults(SUCCESS, ['webkit-jsc-cloop-test'], 0,  '    0 regressions found.')
 
 
 class Run32bitJSCTestsTest(unittest.TestCase):
@@ -175,13 +175,13 @@ class Run32bitJSCTestsTest(unittest.TestCase):
         self.assertEqual(actual_text, expected_text)
 
     def test_failures(self):
-        self.assertResults(FAILURE, ['5 regressions found.'], 1,  '5 failures found.')
+        self.assertResults(FAILURE, ['5 regressions found.'], 1,  '    5 failures found.')
 
     def test_failure(self):
-        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '1 failure found.')
+        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '    1 failure found.')
 
     def test_no_failure(self):
-        self.assertResults(SUCCESS, ['webkit-32bit-jsc-test'], 0,  '0 failures found.')
+        self.assertResults(SUCCESS, ['webkit-32bit-jsc-test'], 0,  '    0 failures found.')
 
 
 class RunUnitTestsTest(unittest.TestCase):
