@@ -1,5 +1,15 @@
 2014-09-17  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Use a power-of-2 image size instead so that WebGL tests won’t complain.
+
+        * fast/canvas/image-potential-subsample.html:
+        * fast/canvas/resources/image-6400x6400.jpg: Copied from fast/canvas/resources/image-8000x8000.jpg.
+        * fast/canvas/resources/image-8000x8000.jpg: Removed.
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-potentially-subsampled-image.js:
+        (.init):
+
+2014-09-17  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows rebaselining to account for subpixel layout Part 2.
 
         * platform/win/editing/apply-style-iframe-crash-expected.txt: Added.

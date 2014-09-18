@@ -30,7 +30,7 @@ function generateTest(pixelFormat, pixelType, pathToTestRoot, prologue) {
 
         textureLoc = gl.getUniformLocation(program, "tex");
 
-        wtu.loadTexture(gl, pathToTestRoot + "/../resources/image-8000x8000.jpg", runTest);
+        wtu.loadTexture(gl, pathToTestRoot + "/../resources/image-6400x6400.jpg", runTest);
     }
 
     function runOneIteration(image, useTexSubImage2D, flipY, topColor, middleColor, bottomColor)
