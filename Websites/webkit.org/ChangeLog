@@ -1,3 +1,15 @@
+2014-09-18  Dean Jackson  <dino@apple.com>
+
+        Expand the srcset demo to have 3x and 4x images.
+
+        Unreviewed.
+
+        * demos/srcset/image-1x.png:
+        * demos/srcset/image-2x.png:
+        * demos/srcset/image-3x.png: Added.
+        * demos/srcset/image-4x.png: Added.
+        * demos/srcset/index.html:
+
 2014-08-27  Conrad Shultz  <conrad_shultz@apple.com>
 
         webkit.org is inconsistent in uses of "OS X" vs. "Mac OS X"

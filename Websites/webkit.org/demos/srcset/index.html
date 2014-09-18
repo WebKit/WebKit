@@ -45,18 +45,20 @@
     of images to 400x400px. On browsers without <code>srcset</code> support, the value of
     the <code>src</code> attribute will be used as the image src [<a href="image-src.png">default image</a>].
     On regular resolution displays, the 1x variant of the <code>srcset</code> will be used
-    [<a href="image-1x.png">1x image</a>]. On high resolution displays (at least 2 device pixels per CSS pixel),
-    the 2x variant of the <code>srcset</code> will be used [<a href="image-2x.png">2x image</a>].
+    [<a href="image-1x.png">1x image</a>]. On displays with 2 device pixels per CSS pixel,
+    the 2x variant of the <code>srcset</code> will be used [<a href="image-2x.png">2x image</a>]. Similarly,
+    there is a <a href="image-3x.png">3x image</a>, and a <a href="image-4x.png">4x image</a>.
 </p>
 
-<img src="image-src.png" srcset="image-1x.png 1x, image-2x.png 2x" alt="Example of the srcset attribute. Image contains a coloured striped pattern with some inline text that indicates which of the candidate images were selected.">
+<img src="image-src.png" srcset="image-1x.png 1x, image-2x.png 2x, image-3x.png 3x, image-4x.png 4x" alt="Example of the srcset attribute. Image contains a coloured striped pattern with some inline text that indicates which of the candidate images were selected.">
 
 <p>
     The HTML for the above image is:
 </p>
 
 <pre>
-&lt;img src="image-src.png" srcset="image-1x.png 1x, image-2x.png 2x"&gt;
+&lt;img src="image-src.png" srcset="image-1x.png 1x, image-2x.png 2x,
+                                 image-3x.png 3x, image-4x.png 4x"&gt;
 </pre>
 </body>
 </html>
