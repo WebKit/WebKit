@@ -9,6 +9,9 @@ li+li+:nth-child(-5n+7)+li+li+li~li+li+li~li {
 ul>[foo=bar]:nth-child(-3n+3)+li+li+li~li+li+li~li>span.first>span.second a {
     background-color:rgb(1,2,3);
 }
+ul>:nth-child(-3n+3)>*>* a {
+    opacity: 0.5;
+}
 </style>
 </head>
 <body>
@@ -57,12 +60,18 @@ shouldBe('document.querySelectorAll("ul>[foo=bar]:nth-child(-3n+3)+li+li+li~li+l
 var allLinks = document.querySelectorAll('a');
 shouldBe('allLinks.length', '20');
 var backgroundColoredCount = 0;
+var nonOpaqueCount = 0;
 for (var i = 0; i < allLinks.length; ++i) {
-    if (getComputedStyle(allLinks[i]).backgroundColor === 'rgb(1, 2, 3)')
+    var computedStyle = getComputedStyle(allLinks[i]);
+    if (computedStyle.backgroundColor === 'rgb(1, 2, 3)')
         backgroundColoredCount++;
+    if (computedStyle.opacity === '0.5')
+        ++nonOpaqueCount;
 }
 shouldBe('backgroundColoredCount', '11');
 
+shouldBe('document.querySelectorAll("ul>:nth-child(-3n+3)>*>* a").length', '1');
+shouldBe('nonOpaqueCount', '1');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </html>

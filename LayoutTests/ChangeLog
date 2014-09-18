@@ -1,3 +1,16 @@
+2014-09-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        CSS JIT: The backtracking register can be ignored from the minimumRegisterRequirements
+        https://bugs.webkit.org/show_bug.cgi?id=136906
+        rdar://problem/18368294
+
+        Reviewed by Darin Adler.
+
+        * fast/selectors/nth-child-with-backtracking-expected.txt:
+        * fast/selectors/nth-child-with-backtracking.html:
+        The use case is well covered by existing tests. This is updating the backtracking test
+        with a simpler selector similar to the one in the bug report.
+
 2014-09-18  Roger Fong  <roger_fong@apple.com>
 
         Don’t skip all the media tests on Windows.
