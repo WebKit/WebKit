@@ -1,5 +1,12 @@
 2014-09-17  Roger Fong  <roger_fong@apple.com>
 
+        [Windows] Unreviewed rebaselining of some failing JS tests.
+
+        * platform/win/js/dom/deep-recursion-test-expected.txt: Added.
+        * platform/win/js/dom/global-constructors-attributes-shared-worker-expected.txt:
+
+2014-09-17  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Use a power-of-2 image size instead so that WebGL tests won’t complain.
 
         * fast/canvas/image-potential-subsample.html:
