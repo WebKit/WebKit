@@ -1,3 +1,10 @@
+2014-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * gtest/msvc/gtest-md.vcxproj: Make sure we use static linking for gtest on
+        normal debug build to match the rest of WebKit.
+
 2014-09-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Disable the "unreachable-code" warning
