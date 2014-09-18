@@ -28,12 +28,11 @@
 #import "SimpleFontData.h"
 
 #import "BlockExceptions.h"
-#import "CGFontInfoSPI.h"
-#import "CGFontRenderingSPI.h"
 #import "Font.h"
 #import "FontCache.h"
 #import "FontDescription.h"
 #import "FontServicesIOS.h"
+#import <CoreGraphics/CGFontInfo.h>
 #import <CoreText/CoreText.h>
 #import <float.h>
 #import <unicode/uchar.h>

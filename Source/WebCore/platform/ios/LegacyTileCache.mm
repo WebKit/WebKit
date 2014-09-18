@@ -28,8 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#include "CALayerSPI.h"
-#include "CGSRegionSPI.h"
 #include "LegacyTileGrid.h"
 #include "LegacyTileGridTile.h"
 #include "LegacyTileLayer.h"
@@ -42,6 +40,7 @@
 #include "WebCoreSystemInterface.h"
 #include "WebCoreThreadRun.h"
 #include <QuartzCore/QuartzCore.h>
+#include <QuartzCore/QuartzCorePrivate.h>
 #include <wtf/CurrentTime.h>
 
 @interface WAKView (WebViewExtras)

@@ -29,7 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "ViewSnapshotStore.h"
-#import <WebCore/DispatchSPI.h>
+#import <dispatch/private.h>
 
 namespace WebKit {
 

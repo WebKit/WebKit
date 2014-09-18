@@ -30,10 +30,10 @@
 #import "FrameView.h"
 #import "HostWindow.h"
 #import "IntRect.h"
-#import "MobileGestaltSPI.h"
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import "Widget.h"
+#import <MobileGestalt.h>
 
 namespace WebCore {
 

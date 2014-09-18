@@ -241,8 +241,8 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMGestureEvent.h
 endif
 
-WEBCORE_HEADER_REPLACE_RULES = 's/<WebCore/<WebKitLegacy/ if m|<WebCore/([^>]+)>| && $$1 !~ /SPI.h$$/; s/DOMDOMImplementation/DOMImplementation/; s/^(\s*)WEBCORE_EXPORT /$$1/;'
-WEBCORE_HEADER_MIGRATE_CMD = perl -p -e $(WEBCORE_HEADER_REPLACE_RULES) $< > $@
+WEBCORE_HEADER_REPLACE_RULES = -e s/\<WebCore/\<WebKitLegacy/ -e s/DOMDOMImplementation/DOMImplementation/ -e "s/(^ *)WEBCORE_EXPORT /\1/"
+WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@
 
 $(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)

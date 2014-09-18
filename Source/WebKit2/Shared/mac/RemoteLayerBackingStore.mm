@@ -34,7 +34,6 @@
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/CALayerSPI.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/IOSurfacePool.h>
@@ -43,6 +42,14 @@
 #if USE(IOSURFACE)
 #import <mach/mach_port.h>
 #endif
+
+#if __has_include(<QuartzCore/CALayerPrivate.h>)
+#import <QuartzCore/CALayerPrivate.h>
+#endif
+
+@interface CALayer (Details)
+@property BOOL contentsOpaque;
+@end
 
 using namespace WebCore;
 

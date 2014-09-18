@@ -28,9 +28,8 @@
 
 #if PLATFORM(IOS)
 
-#import "CGContextSPI.h"
-#import "Font.h"
 #import "WebCoreSystemInterface.h"
+#import "Font.h"
 #import "WebCoreThread.h"
 #import <ImageIO/ImageIO.h>
 #import <wtf/StdLibExtras.h>

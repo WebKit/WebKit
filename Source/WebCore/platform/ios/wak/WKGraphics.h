@@ -28,8 +28,8 @@
 
 #if TARGET_OS_IPHONE
 
-#import <WebCore/CGContextSPI.h>
-#import <WebCore/CGFontRenderingSPI.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <CoreGraphics/CoreGraphicsPrivate.h>
 
 #ifdef __cplusplus
 extern "C" {

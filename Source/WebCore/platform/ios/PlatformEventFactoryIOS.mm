@@ -26,12 +26,11 @@
 #import "config.h"
 #import "PlatformEventFactoryIOS.h"
 
-#import "NSGeometrySPI.h"
+#import <Foundation/NSGeometry.h>
 #import <IntPoint.h>
 #import <KeyEventCocoa.h>
 #import <Logging.h>
 #import <WebEvent.h>
-#import <wtf/CurrentTime.h>
 
 namespace WebCore {
 

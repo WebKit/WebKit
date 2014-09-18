@@ -28,8 +28,6 @@
 #import "SimpleFontData.h"
 
 #import "BlockExceptions.h"
-#import "CGFontGlyphSupportSPI.h"
-#import "CTFontDescriptorSPI.h"
 #import "Color.h"
 #import "FloatRect.h"
 #import "Font.h"
@@ -46,8 +44,20 @@
 #import <float.h>
 #import <unicode/uchar.h>
 #import <wtf/Assertions.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/RetainPtr.h>
+
+#if defined(__has_include) && __has_include(<CoreText/CTFontDescriptorPriv.h>)
+#import <CoreText/CTFontDescriptorPriv.h>
+#endif
+extern "C" bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
+
+#if defined(__has_include) && __has_include(<CoreGraphics/CGFontGlyphSupport.h>)
+#import <CoreGraphics/CGFontGlyphSupport.h>
+#endif
+extern "C" bool CGFontGetGlyphAdvancesForStyle(CGFontRef font,
+    const CGAffineTransform *t, CGFontRenderingStyle style,
+    const CGGlyph glyphs[], size_t count, CGSize advances[]);
 
 #if !PLATFORM(IOS)
 @interface NSFont (WebAppKitSecretAPI)

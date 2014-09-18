@@ -30,7 +30,6 @@
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKeywords.h"
-#import "CTFontDescriptorSPI.h"
 #import "DateComponents.h"
 #import "Document.h"
 #import "FloatRoundedRect.h"
@@ -59,7 +58,8 @@
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import "WebCoreThreadRun.h"
-#import <CoreGraphics/CoreGraphics.h>
+#import <CoreGraphics/CGPathPrivate.h>
+#import <CoreText/CTFontDescriptorPriv.h>
 #import <objc/runtime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
@@ -80,6 +80,14 @@ SOFT_LINK_CONSTANT(UIKit, UIContentSizeCategoryDidChangeNotification, CFStringRe
 
 @implementation WebCoreRenderThemeBundle
 @end
+
+// This is a temporary hack to build on iOS. Should be removed as soon as CT fixes the header files.
+extern const CFStringRef kCTUIFontTextStyleShortHeadline CT_AVAILABLE(10_10, 7_0);
+extern const CFStringRef kCTUIFontTextStyleShortBody CT_AVAILABLE(10_10, 7_0);
+extern const CFStringRef kCTUIFontTextStyleShortSubhead CT_AVAILABLE(10_10, 7_0);
+extern const CFStringRef kCTUIFontTextStyleShortFootnote CT_AVAILABLE(10_10, 7_0);
+extern const CFStringRef kCTUIFontTextStyleShortCaption1 CT_AVAILABLE(10_10, 7_0);
+extern const CFStringRef kCTUIFontTextStyleTallBody CT_AVAILABLE(10_10, 7_0);
 
 namespace WebCore {
 

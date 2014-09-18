@@ -1,3 +1,16 @@
+2014-09-17  Daniel Bates  <dabates@apple.com>
+
+        Unreviewed, rolling out r173695.
+
+        Broke building third-party Legacy WebKit apps; will
+        investigate offline
+
+        Reverted changeset:
+
+        "[iOS] Make WebCore build with public iOS SDK"
+        https://bugs.webkit.org/show_bug.cgi?id=136487
+        http://trac.webkit.org/changeset/173695
+
 2014-09-17  Roger Fong  <roger_fong@apple.com>
 
         Speculative fix for a fast\dom\html-collections-named-getter failing only in Debug builds.

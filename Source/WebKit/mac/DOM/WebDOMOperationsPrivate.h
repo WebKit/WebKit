@@ -30,7 +30,7 @@
 #import <JavaScriptCore/JSBase.h>
 
 #if TARGET_OS_IPHONE
-#import <WebCore/NSGeometrySPI.h>
+#import <Foundation/NSGeometry.h>
 #else
 #import <AppKit/NSEvent.h>
 #import <WebKitLegacy/DOMWheelEvent.h>

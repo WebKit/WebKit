@@ -45,6 +45,7 @@
 #import <wtf/Threading.h>
 #import <wtf/text/AtomicString.h>
 
+#import <CoreFoundation/CFPriv.h>
 #import <Foundation/NSInvocation.h>
 #import <libkern/OSAtomic.h>
 #import <objc/runtime.h>

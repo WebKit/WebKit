@@ -29,7 +29,6 @@
 #import "WebFixedPositionContentInternal.h"
 
 #import "WebViewInternal.h"
-#import <WebCore/CGFloatSPI.h>
 #import <WebCore/ChromeClient.h>
 #import <WebCore/Frame.h>
 #import <WebCore/IntSize.h>
@@ -41,8 +40,9 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 
-#import <Foundation/Foundation.h>
+#import <CoreGraphics/CGFloat.h>
 #import <QuartzCore/QuartzCore.h>
+#import <Foundation/Foundation.h>
 #import <algorithm>
 
 using namespace WebCore;

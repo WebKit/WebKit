@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 
 #if TARGET_OS_IPHONE
-#import <WebCore/NSGeometrySPI.h>
+#import <Foundation/NSGeometry.h>
 #endif
 
 @class WebFrame;

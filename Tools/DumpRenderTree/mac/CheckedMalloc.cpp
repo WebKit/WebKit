@@ -31,8 +31,8 @@
 #import "config.h" 
 #import "CheckedMalloc.h"
 
-#import <WebCore/MachVMSPI.h>
 #import <mach/mach_init.h>
+#import <mach/mach_vm.h>
 #import <mach/vm_region.h>
 #import <malloc/malloc.h>
 #import <unistd.h>
