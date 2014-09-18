@@ -2302,7 +2302,9 @@
       },
       "Ryuan Choi" : {
          "emails" : [
-            "ryuan.choi@gmail.com"
+            "ryuan.choi@gmail.com",
+            "ryuan.choi@navercorp.com",
+            "ryuan.choi@webkit.org"
          ],
          "expertise" : "The EFLWebKit Port",
          "nicks" : [
