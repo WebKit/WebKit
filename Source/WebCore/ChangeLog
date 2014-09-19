@@ -1,3 +1,10 @@
+2014-09-19  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; pass duration into the lambda.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged):
+
 2014-09-19  Dean Jackson  <dino@apple.com>
 
         Multithreaded WebGL is a bad idea - remove it
