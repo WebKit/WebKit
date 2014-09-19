@@ -1,3 +1,30 @@
+2014-09-19  Chris Dumez  <cdumez@apple.com>
+
+        Optimize MarkupAccumulator::appendText()
+        https://bugs.webkit.org/show_bug.cgi?id=136935
+
+        Reviewed by Benjamin Poulain.
+
+        MarkupAccumulator::appendText() was calling the generic appendNodeValue()
+        method to append the text. appendNodeValue() supports any kind of Node and
+        thus calls the Node::nodeValue() virtual function.
+
+        Since appendText() is the only caller to appendNodeValue(), this patch
+        inlines the code in appendText() and makes it specific to Text Node, and
+        thus more efficient. The code now calls CharacterData::data() instead of
+        the Node::nodeValue() virtual function. This patch also updates
+        CharacterData::data() to return a const reference to avoid copying the
+        return value.
+
+        No new tests, no behavior change.
+
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::data):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendText):
+        (WebCore::MarkupAccumulator::appendNodeValue): Deleted.
+        * editing/MarkupAccumulator.h:
+
 2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Dot not allow to create delete-on-destroy GMainLoopSources

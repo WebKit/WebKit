@@ -87,7 +87,6 @@ protected:
     void appendEndMarkup(StringBuilder&, const Node&);
 
     void appendAttributeValue(StringBuilder&, const String&, bool);
-    void appendNodeValue(StringBuilder&, const Node&, const Range*, EntityMask);
     void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     void appendXMLDeclaration(StringBuilder&, const Document&);
     void appendDocumentType(StringBuilder&, const DocumentType&);

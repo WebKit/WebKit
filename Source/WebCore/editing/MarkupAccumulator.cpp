@@ -255,24 +255,6 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, con
     result.append(quoteChar);
 }
 
-void MarkupAccumulator::appendNodeValue(StringBuilder& result, const Node& node, const Range* range, EntityMask entityMask)
-{
-    const String str = node.nodeValue();
-    unsigned length = str.length();
-    unsigned start = 0;
-
-    if (range) {
-        if (&node == range->endContainer())
-            length = range->endOffset();
-        if (&node == range->startContainer()) {
-            start = range->startOffset();
-            length -= start;
-        }
-    }
-
-    appendCharactersReplacingEntities(result, str, start, length, entityMask);
-}
-
 bool MarkupAccumulator::shouldAddNamespaceElement(const Element& element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
@@ -359,7 +341,20 @@ EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
 
 void MarkupAccumulator::appendText(StringBuilder& result, const Text& text)
 {
-    appendNodeValue(result, text, m_range, entityMaskForText(text));
+    const String& textData = text.data();
+    unsigned start = 0;
+    unsigned length = textData.length();
+
+    if (m_range) {
+        if (&text == m_range->endContainer())
+            length = m_range->endOffset();
+        if (&text == m_range->startContainer()) {
+            start = m_range->startOffset();
+            length -= start;
+        }
+    }
+
+    appendCharactersReplacingEntities(result, textData, start, length, entityMaskForText(text));
 }
 
 static void appendComment(StringBuilder& result, const String& comment)

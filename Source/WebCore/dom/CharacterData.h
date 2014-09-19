@@ -30,7 +30,7 @@ namespace WebCore {
 
 class CharacterData : public Node {
 public:
-    String data() const { return m_data; }
+    const String& data() const { return m_data; }
     static ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(CharacterData, m_data); }
 
     WEBCORE_EXPORT void setData(const String&, ExceptionCode&);
