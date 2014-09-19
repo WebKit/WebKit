@@ -1180,8 +1180,10 @@ String RenderThemeSafari::mediaControlsStyleSheet()
 String RenderThemeSafari::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (m_mediaControlsScript.isEmpty())
-        m_mediaControlsScript = RenderThemeWin::stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("js"));
+    StringBuilder scriptBuilder;
+    scriptBuilder.append(RenderThemeWin::stringWithContentsOfFile(CFSTR("mediaControlsLocalizedStrings"), CFSTR("js")));
+    scriptBuilder.append(RenderThemeWin::stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("js")));
+    m_mediaControlsScript = scriptBuilder.toString();
     return m_mediaControlsScript;
 #else
     return emptyString();
