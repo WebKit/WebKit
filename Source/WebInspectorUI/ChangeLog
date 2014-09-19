@@ -1,3 +1,15 @@
+2014-09-19  Daniel Bates  <dabates@apple.com>
+
+        Always assume internal SDK when building configuration Production
+        https://bugs.webkit.org/show_bug.cgi?id=136925
+        <rdar://problem/18362399>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/DebugRelease.xcconfig: Also move #include of HaveInternalSDK.xcconfig from DebugRelease.xcconfig
+        to Base.xcconfig so as to be consistent with the format of other Base.xcconfig/DebugRelease.xcconfig files
+        (e.g. Source/WebCore/Configurations/Base.xcconfig and Source/WebCore/Configurations/DebugRelease.xcconfig).
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Webkitgtk 2.5.3: tarball contains APPLE LICENSE file - stating not distributable

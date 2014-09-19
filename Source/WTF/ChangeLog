@@ -1,3 +1,13 @@
+2014-09-19  Daniel Bates  <dabates@apple.com>
+
+        Always assume internal SDK when building configuration Production
+        https://bugs.webkit.org/show_bug.cgi?id=136925
+        <rdar://problem/18362399>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2014-09-19  Diego Pino Garcia  <dpino@igalia.com>
 
         Simple ES6 feature:String prototype additions
