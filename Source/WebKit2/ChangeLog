@@ -1,3 +1,23 @@
+2014-09-19  Dana Burkart  <dburkart@apple.com>
+        
+        Merge r173722.
+
+    2014-09-18  Tim Horton  <timothy_horton@apple.com>
+
+            Occasional unreproducible crashes in MessageReceiverMap::dispatchMessage
+            https://bugs.webkit.org/show_bug.cgi?id=136909
+            <rdar://problem/17758325>
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView dealloc]):
+            We're seeing some messages dispatched on the WebContext that end up
+            attempting to call dispatchMessage on a freed MessageReceiver.
+            The WKRemoteObjectRegistry message receiver is added to the WebContext
+            message receiver map, but never removed, despite the WebContext easily
+            outliving the WKWebView that owns the remote object registry.
+
 2014-09-17  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173702.

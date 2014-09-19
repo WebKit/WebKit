@@ -351,6 +351,9 @@ static int32_t deviceOrientation()
 
 - (void)dealloc
 {
+    if (_remoteObjectRegistry)
+        _page->process().context().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
+
     _page->close();
 
     [_remoteObjectRegistry _invalidate];
