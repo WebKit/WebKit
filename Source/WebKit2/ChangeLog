@@ -1,3 +1,19 @@
+2014-09-18  Dana Burkart  <dburkart@apple.com>
+
+        Merge r172989. <rdar://problem/18144282>
+
+    2014-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+            FileReader cannot read files selected with <input type="file"> in iOS 8
+            https://bugs.webkit.org/show_bug.cgi?id=136117
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            Correct an overzealous deny that was accidentally denying all
+            com.apple.app-sandbox.read extensions instead of just the ones
+            in Application bundles it was trying to deny.
+
 2014-08-07  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172238. <rdar://problem/17940220>
