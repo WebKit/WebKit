@@ -1,3 +1,24 @@
+2014-09-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        Simple ES6 feature:String prototype additions
+        https://bugs.webkit.org/show_bug.cgi?id=131704
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF::equalInner): Added.
+        (WTF::StringImpl::startsWith): Add implementation that supports
+        'startOffset' parameter.
+        (WTF::StringImpl::endsWith): Add implementation that supports
+        'endOffset' parameter.
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::contains): Modify current implementation to allow
+        setting a startOffset, 0 by default.
+        (WTF::String::startsWith):
+        (WTF::String::endsWith):
+
 2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Dot not allow to create delete-on-destroy GMainLoopSources

@@ -1,3 +1,16 @@
+2014-09-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        Simple ES6 feature:String prototype additions
+        https://bugs.webkit.org/show_bug.cgi?id=131704
+
+        Reviewed by Darin Adler.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncStartsWith): Added.
+        (JSC::stringProtoFuncEndsWith): Added.
+        (JSC::stringProtoFuncContains): Added.
+
 2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r173731. Broke multiple builds.

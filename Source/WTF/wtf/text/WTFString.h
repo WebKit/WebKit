@@ -256,8 +256,10 @@ public:
     WTF_EXPORT_STRING_API UChar32 characterStartingAt(unsigned) const; // Ditto.
     
     bool contains(UChar c) const { return find(c) != notFound; }
-    bool contains(const LChar* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
-    bool contains(const String& str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
+    bool contains(const LChar* str, bool caseSensitive = true, unsigned startOffset = 0) const 
+        { return find(str, startOffset, caseSensitive) != notFound; }
+    bool contains(const String& str, bool caseSensitive = true, unsigned startOffset = 0) const 
+        { return find(str, startOffset, caseSensitive) != notFound; }
 
     bool startsWith(const String& s) const
         { return m_impl ? m_impl->startsWith(s.impl()) : s.isEmpty(); }
@@ -268,6 +270,8 @@ public:
     template<unsigned matchLength>
     bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
         { return m_impl ? m_impl->startsWith<matchLength>(prefix, caseSensitive) : !matchLength; }
+    bool startsWith(String& prefix, unsigned startOffset, bool caseSensitive) const
+        { return m_impl && prefix.impl() ? m_impl->startsWith(*prefix.impl(), startOffset, caseSensitive) : false; }
 
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->endsWith(s.impl(), caseSensitive) : s.isEmpty(); }
@@ -277,6 +281,8 @@ public:
     template<unsigned matchLength>
     bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
         { return m_impl ? m_impl->endsWith<matchLength>(prefix, caseSensitive) : !matchLength; }
+    bool endsWith(String& suffix, unsigned endOffset, bool caseSensitive) const
+        { return m_impl && suffix.impl() ? m_impl->endsWith(*suffix.impl(), endOffset, caseSensitive) : false; }
 
     WTF_EXPORT_STRING_API void append(const String&);
     WTF_EXPORT_STRING_API void append(LChar);

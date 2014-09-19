@@ -673,12 +673,14 @@ public:
     WTF_EXPORT_STRING_API bool startsWith(const char*, unsigned matchLength, bool caseSensitive) const;
     template<unsigned matchLength>
     bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return startsWith(prefix, matchLength - 1, caseSensitive); }
+    WTF_EXPORT_STRING_API bool startsWith(StringImpl&, unsigned startOffset, bool caseSensitive) const;
 
     WTF_EXPORT_STRING_API bool endsWith(StringImpl*, bool caseSensitive = true);
     WTF_EXPORT_STRING_API bool endsWith(UChar) const;
     WTF_EXPORT_STRING_API bool endsWith(const char*, unsigned matchLength, bool caseSensitive) const;
     template<unsigned matchLength>
     bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return endsWith(prefix, matchLength - 1, caseSensitive); }
+    WTF_EXPORT_STRING_API bool endsWith(StringImpl&, unsigned endOffset, bool caseSensitive) const;
 
     WTF_EXPORT_STRING_API PassRef<StringImpl> replace(UChar, UChar);
     WTF_EXPORT_STRING_API PassRef<StringImpl> replace(UChar, StringImpl*);

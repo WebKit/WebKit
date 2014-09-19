@@ -82,6 +82,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncContains(ExecState*);
 
 const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, CREATE_METHOD_TABLE(StringPrototype) };
 
@@ -131,6 +134,9 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("trim", stringProtoFuncTrim, DontEnum, 0);
     JSC_NATIVE_FUNCTION("trimLeft", stringProtoFuncTrimLeft, DontEnum, 0);
     JSC_NATIVE_FUNCTION("trimRight", stringProtoFuncTrimRight, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("startsWith", stringProtoFuncStartsWith, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("endsWith", stringProtoFuncEndsWith, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("contains", stringProtoFuncContains, DontEnum, 0);
 
     // The constructor will be added later, after StringConstructor has been built
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
@@ -1546,6 +1552,77 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     return JSValue::encode(trimString(exec, thisValue, TrimRight));
 }
-    
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
+
+    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue a0 = exec->argument(0);
+    if (jsDynamicCast<RegExpObject*>(a0))
+        return throwVMTypeError(exec);
+
+    unsigned start = std::max(0, exec->argument(1).toInt32(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    String matchString = a0.toString(exec)->value(exec);
+
+    return JSValue::encode(jsBoolean(stringToSearchIn.startsWith(matchString, start, true)));
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
+
+    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue a0 = exec->argument(0);
+    if (jsDynamicCast<RegExpObject*>(a0))
+        return throwVMTypeError(exec);
+
+    unsigned length = stringToSearchIn.length();
+    JSValue a1 = exec->argument(1);
+    int pos = a1.isUndefined() ? length : a1.toInt32(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    unsigned end = std::min<unsigned>(std::max(pos, 0), length);
+
+    String matchString = a0.toString(exec)->value(exec);
+
+    return JSValue::encode(jsBoolean(stringToSearchIn.endsWith(matchString, end, true)));
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncContains(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
+
+    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue a0 = exec->argument(0);
+    if (jsDynamicCast<RegExpObject*>(a0))
+        return throwVMTypeError(exec);
+
+    unsigned start = std::max(0, exec->argument(1).toInt32(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    String matchString = a0.toString(exec)->value(exec);
+
+    return JSValue::encode(jsBoolean(stringToSearchIn.contains(matchString, true, start)));
+}
     
 } // namespace JSC
