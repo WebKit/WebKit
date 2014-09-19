@@ -1,3 +1,25 @@
+2014-09-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove generator/yield terminology in RenderInline's GeneratorContext
+        https://bugs.webkit.org/show_bug.cgi?id=119278
+
+        Reviewed by Sam Weinig.
+        
+        Get rid of the icky Generator/yield syntax used for collecting rects in RenderInline.
+        Just replace the operator() with an explicit addRect().
+        
+        Also some drive-by nullptr cleanup, and removing default arguments from
+        addChildIgnoringContinuation() calls.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::addChildToContinuation):
+        (WebCore::RenderInline::generateLineBoxRects):
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        * rendering/RenderInline.h:
+
 2014-09-18  Jeremy Jones  <jeremyj@apple.com>
 
         Improve fullscreen video rotation animation.

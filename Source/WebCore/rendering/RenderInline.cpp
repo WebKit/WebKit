@@ -87,7 +87,7 @@ void RenderInline::willBeDestroyed()
     RenderBoxModelObject* continuation = this->continuation();
     if (continuation) {
         continuation->destroy();
-        setContinuation(0);
+        setContinuation(nullptr);
     }
     
     if (!documentBeingDestroyed()) {
@@ -184,7 +184,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     RenderInline* continuation = inlineElementContinuation();
     for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
         RenderBoxModelObject* nextCont = currCont->continuation();
-        currCont->setContinuation(0);
+        currCont->setContinuation(nullptr);
         currCont->setStyle(newStyle);
         currCont->setContinuation(nextCont);
     }
@@ -373,7 +373,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         RenderObject* tmp = o;
         o = tmp->nextSibling();
         removeChildInternal(*tmp, NotifyChildren);
-        cloneInline->addChildIgnoringContinuation(tmp, 0);
+        cloneInline->addChildIgnoringContinuation(tmp);
         tmp->setNeedsLayoutAndPrefWidthsRecalc();
     }
 
@@ -400,7 +400,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             cloneInline = toRenderInline(curr)->clone();
 
             // Insert our child clone as the first child.
-            cloneInline->addChildIgnoringContinuation(cloneChild.leakPtr(), 0);
+            cloneInline->addChildIgnoringContinuation(cloneChild.leakPtr());
 
             // Hook the clone up as a continuation of |curr|.
             RenderInline* inlineCurr = toRenderInline(curr);
@@ -415,7 +415,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
                 RenderObject* tmp = o;
                 o = tmp->nextSibling();
                 inlineCurr->removeChildInternal(*tmp, NotifyChildren);
-                cloneInline->addChildIgnoringContinuation(tmp, 0);
+                cloneInline->addChildIgnoringContinuation(tmp);
                 tmp->setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
@@ -537,7 +537,7 @@ void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* 
         if (childInline == bcpInline)
             return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
         else if (flowInline == childInline)
-            return flow->addChildIgnoringContinuation(newChild, 0); // Just treat like an append.
+            return flow->addChildIgnoringContinuation(newChild); // Just treat like an append.
         else
             return beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
     }
@@ -549,22 +549,22 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 }
 
 template<typename GeneratorContext>
-void RenderInline::generateLineBoxRects(GeneratorContext& yield) const
+void RenderInline::generateLineBoxRects(GeneratorContext& context) const
 {
     if (!alwaysCreateLineBoxes())
-        generateCulledLineBoxRects(yield, this);
+        generateCulledLineBoxRects(context, this);
     else if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
-            yield(FloatRect(curr->topLeft(), curr->size()));
+            context.addRect(FloatRect(curr->topLeft(), curr->size()));
     } else
-        yield(FloatRect());
+        context.addRect(FloatRect());
 }
 
 template<typename GeneratorContext>
-void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const RenderInline* container) const
+void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const RenderInline* container) const
 {
     if (!culledInlineFirstLineBox()) {
-        yield(FloatRect());
+        context.addRect(FloatRect());
         return;
     }
 
@@ -584,31 +584,32 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
                 int logicalHeight = containerStyle.font().fontMetrics().height();
                 if (isHorizontal)
-                    yield(FloatRect(currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), logicalTop, currBox->width() + currBox->horizontalMarginExtent(), logicalHeight));
+                    context.addRect(FloatRect(currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), logicalTop, currBox->width() + currBox->horizontalMarginExtent(), logicalHeight));
                 else
-                    yield(FloatRect(logicalTop, currBox->inlineBoxWrapper()->y() - currBox->marginTop(), logicalHeight, currBox->height() + currBox->verticalMarginExtent()));
+                    context.addRect(FloatRect(logicalTop, currBox->inlineBoxWrapper()->y() - currBox->marginTop(), logicalHeight, currBox->height() + currBox->verticalMarginExtent()));
             }
         } else if (curr->isRenderInline()) {
             // If the child doesn't need line boxes either, then we can recur.
             RenderInline* currInline = toRenderInline(curr);
             if (!currInline->alwaysCreateLineBoxes())
-                currInline->generateCulledLineBoxRects(yield, container);
+                currInline->generateCulledLineBoxRects(context, container);
             else {
                 for (InlineFlowBox* childLine = currInline->firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
                     const RootInlineBox& rootBox = childLine->root();
                     const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                     int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
                     int logicalHeight = containerStyle.fontMetrics().height();
-                    if (isHorizontal)
-                        yield(FloatRect(childLine->x() - childLine->marginLogicalLeft(),
+                    if (isHorizontal) {
+                        context.addRect(FloatRect(childLine->x() - childLine->marginLogicalLeft(),
                             logicalTop,
                             childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight(),
                             logicalHeight));
-                    else
-                        yield(FloatRect(logicalTop,
+                    } else {
+                        context.addRect(FloatRect(logicalTop,
                             childLine->y() - childLine->marginLogicalLeft(),
                             logicalHeight,
                             childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight()));
+                    }
                 }
             }
         } else if (curr->isText()) {
@@ -619,9 +620,9 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
                 int logicalHeight = containerStyle.font().fontMetrics().height();
                 if (isHorizontal)
-                    yield(FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight));
+                    context.addRect(FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight));
                 else
-                    yield(FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth()));
+                    context.addRect(FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth()));
             }
         } else if (curr->isLineBreak()) {
             if (InlineBox* inlineBox = toRenderLineBreak(curr)->inlineBoxWrapper()) {
@@ -631,9 +632,9 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontMetrics().height();
                 if (isHorizontal)
-                    yield(FloatRect(inlineBox->x(), logicalTop, inlineBox->logicalWidth(), logicalHeight));
+                    context.addRect(FloatRect(inlineBox->x(), logicalTop, inlineBox->logicalWidth(), logicalHeight));
                 else
-                    yield(FloatRect(logicalTop, inlineBox->y(), logicalHeight, inlineBox->logicalWidth()));
+                    context.addRect(FloatRect(logicalTop, inlineBox->y(), logicalHeight, inlineBox->logicalWidth()));
             }
         }
     }
@@ -647,7 +648,7 @@ public:
         : m_rects(rects)
         , m_accumulatedOffset(accumulatedOffset) { }
 
-    void operator()(const FloatRect& rect)
+    void addRect(const FloatRect& rect)
     {
         IntRect intRect = enclosingIntRect(rect);
         intRect.move(m_accumulatedOffset.x(), m_accumulatedOffset.y());
@@ -683,10 +684,10 @@ public:
         : m_quads(quads)
         , m_geometryMap()
     {
-        m_geometryMap.pushMappingsToAncestor(renderer, 0);
+        m_geometryMap.pushMappingsToAncestor(renderer, nullptr);
     }
 
-    void operator()(const FloatRect& rect)
+    void addRect(const FloatRect& rect)
     {
         m_quads.append(m_geometryMap.absoluteRect(rect));
     }
@@ -805,13 +806,20 @@ namespace {
 
 class HitTestCulledInlinesGeneratorContext {
 public:
-    HitTestCulledInlinesGeneratorContext(Region& region, const HitTestLocation& location) : m_intersected(false), m_region(region), m_location(location) { }
-    void operator()(const FloatRect& rect)
+    HitTestCulledInlinesGeneratorContext(Region& region, const HitTestLocation& location)
+        : m_intersected(false)
+        , m_region(region)
+        , m_location(location)
+    { }
+
+    void addRect(const FloatRect& rect)
     {
         m_intersected = m_intersected || m_location.intersects(rect);
         m_region.unite(enclosingIntRect(rect));
     }
+
     bool intersected() const { return m_intersected; }
+
 private:
     bool m_intersected;
     Region& m_region;
@@ -870,7 +878,8 @@ namespace {
 class LinesBoundingBoxGeneratorContext {
 public:
     LinesBoundingBoxGeneratorContext(FloatRect& rect) : m_rect(rect) { }
-    void operator()(const FloatRect& rect)
+
+    void addRect(const FloatRect& rect)
     {
         m_rect.uniteIfNonZero(rect);
     }
