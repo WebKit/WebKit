@@ -33,7 +33,7 @@
 
 namespace WTF {
 
-GMainLoopSource& GMainLoopSource::createAndDeleteOnDestroy()
+GMainLoopSource& GMainLoopSource::create()
 {
     return *new GMainLoopSource(DeleteOnDestroy);
 }
@@ -76,13 +76,14 @@ void GMainLoopSource::cancel()
 
 void GMainLoopSource::cancelWithoutLocking()
 {
+    // Delete-on-destroy GMainLoopSource objects can't be cancelled.
+    if (m_deleteOnDestroy == DeleteOnDestroy)
+        return;
+
     // A valid context should only be present if GMainLoopSource is in the Scheduled or Dispatching state.
     ASSERT(!m_context.source || m_status == Scheduled || m_status == Dispatching);
     // The general cancellable object should only be present if we're currently dispatching this GMainLoopSource.
     ASSERT(!m_cancellable || m_status == Dispatching);
-    // Delete-on-destroy GMainLoopSource objects can only be cancelled when there's callback either scheduled
-    // or in the middle of dispatch. At that point cancellation will have no effect.
-    ASSERT(m_deleteOnDestroy != DeleteOnDestroy || (m_status == Ready && !m_context.source));
 
     m_status = Ready;
 
@@ -152,9 +153,6 @@ void GMainLoopSource::schedule(const char* name, std::function<bool (GIOConditio
 {
     GMutexLocker locker(m_mutex);
     cancelWithoutLocking();
-
-    // Don't allow scheduling GIOCondition callbacks on delete-on-destroy GMainLoopSources.
-    ASSERT(m_deleteOnDestroy == DoNotDeleteOnDestroy);
 
     ASSERT(!m_context.source);
     GCancellable* socketCancellable = g_cancellable_new();
@@ -257,6 +255,36 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(boolSourceCallback), priority, context);
+}
+
+void GMainLoopSource::scheduleAndDeleteOnDestroy(const char* name, std::function<void()> function, int priority, std::function<void()> destroyFunction, GMainContext* context)
+{
+    create().schedule(name, function, priority, destroyFunction, context);
+}
+
+void GMainLoopSource::scheduleAndDeleteOnDestroy(const char* name, std::function<bool()> function, int priority, std::function<void()> destroyFunction, GMainContext* context)
+{
+    create().schedule(name, function, priority, destroyFunction, context);
+}
+
+void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()> function, std::chrono::milliseconds delay, int priority, std::function<void()> destroyFunction, GMainContext* context)
+{
+    create().scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+}
+
+void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()> function, std::chrono::milliseconds delay, int priority, std::function<void()> destroyFunction, GMainContext* context)
+{
+    create().scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+}
+
+void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()> function, std::chrono::seconds delay, int priority, std::function<void()> destroyFunction, GMainContext* context)
+{
+    create().scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
+}
+
+void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()> function, std::chrono::seconds delay, int priority, std::function<void()> destroyFunction, GMainContext* context)
+{
+    create().scheduleAfterDelay(name, function, delay, priority, destroyFunction, context);
 }
 
 void GMainLoopSource::voidCallback()

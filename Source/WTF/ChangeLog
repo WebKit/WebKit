@@ -1,3 +1,34 @@
+2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Dot not allow to create delete-on-destroy GMainLoopSources
+        https://bugs.webkit.org/show_bug.cgi?id=136923
+
+        Reviewed by Gustavo Noronha Silva.
+
+        We have several asserts to ensure that delete-on-destroy sources
+        are not misused, like not scheduling socket sources on a
+        delete-on-destroy GMainLoopSource or not allowing to cancel them
+        before they have been dispatched. It's better to ensure all those
+        things at compile time, using static methods to schedule sources
+        creating a delete-on-destroy GMainLoopSource that is not returned
+        to the user.
+
+        * wtf/gobject/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::create): Private static method to create a
+        delete-on-destroy GMainLoopSource.
+        (WTF::GMainLoopSource::cancelWithoutLocking): Return early in case
+        of delete-on-destroy source, since they can't be cancelled.
+        (WTF::GMainLoopSource::schedule): Remove assertion to ensure
+        socket sources are not scheduled on a delete-on-destroy GMainLoopSource.
+        (WTF::GMainLoopSource::scheduleAndDeleteOnDestroy):
+        (WTF::GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy):
+        (WTF::GMainLoopSource::createAndDeleteOnDestroy): Deleted.
+        * wtf/gobject/GMainLoopSource.h:
+        * wtf/gtk/MainThreadGtk.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread): Use GMainLoopSource::scheduleAndDeleteOnDestroy()
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::wakeUp): Ditto.
+
 2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r173731. Broke multiple builds.

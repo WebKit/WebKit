@@ -424,8 +424,7 @@ TEST(WTF_GMainLoopSource, DeleteOnDestroySources)
 {
     // Testing the delete-on-destroy sources is very limited. There's no good way
     // of testing that the GMainLoopSource objects are deleted when their GSource
-    // is destroyed, and the socket callbacks shouldn't be scheduled on these types
-    // of GMainLoopSources (as we aggressively assert to prevent that).
+    // is destroyed.
 
     struct TestingContext {
         GMainLoopSourceTest test;
@@ -436,23 +435,14 @@ TEST(WTF_GMainLoopSource, DeleteOnDestroySources)
     {
         TestingContext context;
 
-        // We take a reference to the GMainLoopSource just to perform additional
-        // tests on its status. We shouldn't use the reference after the main loop
-        // exists since at that point the GMainLoopSource will be destroyed and
-        // the reference pointing to an invalid piece of memory.
-        GMainLoopSource& source = GMainLoopSource::createAndDeleteOnDestroy();
-        EXPECT_TRUE(!source.isActive());
-        source.schedule("[Test] DeleteOnDestroy",
+        GMainLoopSource::scheduleAndDeleteOnDestroy("[Test] DeleteOnDestroy",
             [&] {
-                EXPECT_TRUE(source.isActive() && !source.isScheduled());
                 context.callbackCallCount++;
             }, G_PRIORITY_DEFAULT,
             [&] {
-                EXPECT_TRUE(!source.isActive());
                 EXPECT_FALSE(context.destroyCallbackCalled);
                 context.destroyCallbackCalled = true;
             });
-        EXPECT_TRUE(source.isScheduled());
 
         context.test.delayedFinish();
         context.test.runLoop();
@@ -463,21 +453,15 @@ TEST(WTF_GMainLoopSource, DeleteOnDestroySources)
     {
         TestingContext context;
 
-        // As in the previous scope, we need a reference to the GMainLoopSource.
-        GMainLoopSource& source = GMainLoopSource::createAndDeleteOnDestroy();
-        EXPECT_TRUE(!source.isActive());
-        source.schedule("[Test] DeleteOnDestroy",
+        GMainLoopSource::scheduleAndDeleteOnDestroy("[Test] DeleteOnDestroy",
             std::function<bool ()>([&] {
-                EXPECT_TRUE(source.isActive() && !source.isScheduled());
                 context.callbackCallCount++;
                 return context.callbackCallCount != 3;
             }), G_PRIORITY_DEFAULT,
             [&] {
-                EXPECT_TRUE(!source.isActive());
                 EXPECT_FALSE(context.destroyCallbackCalled);
                 context.destroyCallbackCalled = true;
             });
-        EXPECT_TRUE(source.isScheduled());
 
         context.test.delayedFinish();
         context.test.runLoop();

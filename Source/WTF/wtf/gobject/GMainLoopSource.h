@@ -40,8 +40,6 @@ class GMainLoopSource {
     WTF_MAKE_NONCOPYABLE(GMainLoopSource);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static GMainLoopSource& createAndDeleteOnDestroy();
-
     WTF_EXPORT_PRIVATE GMainLoopSource();
     WTF_EXPORT_PRIVATE ~GMainLoopSource();
 
@@ -60,7 +58,16 @@ public:
     WTF_EXPORT_PRIVATE void scheduleAfterDelay(const char* name, std::function<bool()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
     WTF_EXPORT_PRIVATE void cancel();
 
+    static void scheduleAndDeleteOnDestroy(const char* name, std::function<void()>, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    static void scheduleAndDeleteOnDestroy(const char* name, std::function<bool()>, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    static void scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    static void scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()>, std::chrono::milliseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    static void scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+    static void scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()>, std::chrono::seconds, int priority = G_PRIORITY_DEFAULT, std::function<void()> destroyFunction = nullptr, GMainContext* = nullptr);
+
 private:
+    static GMainLoopSource& create();
+
     enum DeleteOnDestroyType { DeleteOnDestroy, DoNotDeleteOnDestroy };
     GMainLoopSource(DeleteOnDestroyType);
 

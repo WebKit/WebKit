@@ -1,3 +1,14 @@
+2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Dot not allow to create delete-on-destroy GMainLoopSources
+        https://bugs.webkit.org/show_bug.cgi?id=136923
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * TestWebKitAPI/Tests/WTF/gobject/GMainLoopSource.cpp:
+        (TestWebKitAPI::TEST): Use the new API that doesn't allow to use
+        the source.
+
 2014-09-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix countFailures of RunLLINTCLoopTests and Run32bitJSCTests (II)

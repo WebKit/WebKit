@@ -1,3 +1,14 @@
+2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Dot not allow to create delete-on-destroy GMainLoopSources
+        https://bugs.webkit.org/show_bug.cgi?id=136923
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::dispatch): Use GMainLoopSource::scheduleAndDeleteOnDestroy().
+        (WorkQueue::dispatchAfter): Use GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy().
+
 2014-09-18  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL][CoordinatedGraphics] Remove setBackgroundColor message
