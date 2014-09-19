@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="16"
+   height="16"
+   id="svg3551">
+  <defs
+     id="defs3553">
+    <linearGradient
+       id="linearGradient4015-7-7-4-9-3-3-4-4-4-6-9-0">
+      <stop
+         id="stop4017-0-8-9-9-0-6-7-8-8-9-4-4"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop4019-0-7-6-9-1-1-6-75-0-6-4-6"
+         style="stop-color:#d3d7cf;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4390-1-2-7-2-2-9-8-8">
+      <stop
+         id="stop4392-5-4-1-97-3-2-5-2"
+         style="stop-color:#babdb6;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop4394-6-5-9-7-9-6-7-9"
+         style="stop-color:#555753;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="372.38617"
+       y1="232.81923"
+       x2="372.38617"
+       y2="229.91768"
+       id="linearGradient7597"
+       xlink:href="#linearGradient7159-6"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.2857142,0,0,1,-107.42854,0)" />
+    <linearGradient
+       id="linearGradient7159-6">
+      <stop
+         id="stop7161-0"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop7163-2"
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="314.9375"
+       y1="75.4375"
+       x2="314.9375"
+       y2="87.873909"
+       id="linearGradient3661"
+       xlink:href="#linearGradient4390-1-2-7-2-2-9-8-8"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.52380958,0,0,0.35087741,879.38094,-76.201768)" />
+    <linearGradient
+       x1="372.38617"
+       y1="232.81923"
+       x2="372.38617"
+       y2="229.91768"
+       id="linearGradient3663"
+       xlink:href="#linearGradient7159-6"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.2857142,0,0,1,-107.42854,0)" />
+    <radialGradient
+       cx="320"
+       cy="57.5"
+       r="13"
+       fx="320"
+       fy="57.5"
+       id="radialGradient3665"
+       xlink:href="#linearGradient4015-7-7-4-9-3-3-4-4-4-6-9-0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.64889975,0,0,0.40561314,162.69993,207.17725)" />
+  </defs>
+  <metadata
+     id="metadata3556">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+        <dc:title></dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       d="m 4.34375,9 c -0.1048131,0.041893 -0.1945648,0.1204254 -0.25,0.21875 l -1,1.5 C 2.9765858,10.852612 3,10.929871 3,11.21875 2.9987,11.23956 2.9987,11.26044 3,11.28125 L 3,15 13,15 13,11.3125 13,11.25 c 0,-0.379494 0.03493,-0.391559 -0.09375,-0.53125 l -1,-1.5 C 11.800608,9.0579129 11.596071,8.9684278 11.40625,9 11.07899,9.0631144 10.900296,9.5098498 11.09375,9.78125 L 11.90625,11 4.09375,11 4.90625,9.78125 C 5.1357115,9.4586386 4.7953084,8.9267587 4.40625,9 4.385444,8.9987 4.364556,8.9987 4.34375,9 z m 2,3.4375 c 0.0208,-10e-4 0.0417,-10e-4 0.0625,0 0.29096,-0.0556 0.59898,0.20383 0.59375,0.5 L 7,13 9,13 9,12.9375 c -0.004,-0.26416 0.23582,-0.5 0.5,-0.5 0.26418,0 0.50373,0.23584 0.5,0.5 L 10,13 c 0,0.54535 -0.45465,1 -1,1 L 7,14 C 6.45465,14 6,13.54535 6,13 l 0,-0.0625 c -0.0108,-0.21706 0.13723,-0.43234 0.34375,-0.5 z"
+       id="rect4390-9"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#bebebe;fill-opacity:1;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+    <path
+       d="M 7,1 7,6.5625 5.71875,5.28125 C 5.53059,5.0931 5.2653,5.00001 5,5 L 4,5 4,6 c 10e-6,0.2653 0.0931,0.53058 0.28125,0.71875 l 3,3 L 7.5625,10 l 0.875,0 0.28125,-0.28125 3,-3 C 11.90694,6.53058 11.99999,6.2653 12,6 l 0,-1 -1,0 c -0.2653,10e-6 -0.53059,0.0931 -0.71875,0.28125 L 9,6.5625 9,1 z"
+       id="path3613"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
+  </g>
+</svg>

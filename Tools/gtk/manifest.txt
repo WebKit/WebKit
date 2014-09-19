@@ -30,6 +30,7 @@ exclude \.props$
 exclude \.pyc$
 exclude \.pyo$
 exclude \.rej$
+exclude \.rtf$
 exclude \.sb$
 exclude \.sb\.in$
 exclude \.settings$
@@ -57,6 +58,9 @@ exclude Source/cmake/OptionsWinCE.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$
 exclude Source/cmake/OptionsEfl.cmake$
 exclude Source/cmake/eflsymbols.filter$
+exclude Source/WebInspectorUI/UserInterface/Images
+
+directory Source/WebInspectorUI/UserInterface/Images/gtk
 
 # Most of the files in Source/WebKit are not necessary to build GTK+ and
 # the directory includes lots of images, so we're a bit more picky here.

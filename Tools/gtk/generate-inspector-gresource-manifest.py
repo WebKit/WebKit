@@ -56,6 +56,8 @@ if __name__ == "__main__":
         line = '            <file'
         if is_compressible(filename):
             line += ' compressed="true"'
+        if 'Images/gtk/' in filename:
+            line += ' alias="%s"' % filename.replace('gtk/', '')
         line += '>%s</file>\n' % filename
 
         args.output.write(line)
