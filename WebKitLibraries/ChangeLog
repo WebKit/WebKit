@@ -1,3 +1,18 @@
+2014-09-19  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r173768. <rdar://problem/173768>
+
+    2014-09-19  Brent Fulgham  <bfulgham@apple.com>
+    
+            [Win] Turn off SSE Instructions for 32-bit Builds
+            https://bugs.webkit.org/show_bug.cgi?id=136959
+            <rdar://problem/18375370>
+    
+            Reviewed by Dean Jackson.
+    
+            * win/tools/vsprops/common.props: Conditionally exclude the enhanced (SSE) instruction
+            set when building for 32-bit Windows. Otherwise, continue using SSE.
+    
 2014-08-26  Dana Burkart  <dburkart@apple.com>
 
         Merge r172982. <rdar://problem/18141695>
