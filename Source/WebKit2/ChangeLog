@@ -1,3 +1,10 @@
+2014-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Mac Mavericks build. Only iOS cares about fencing.
+
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Missing inspector files in the tarball
