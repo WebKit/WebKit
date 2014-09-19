@@ -632,11 +632,23 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
     MediaTime duration = m_mediaSourcePrivate->duration();
     auto weakThis = createWeakPtr();
     NSArray* times = @[[NSValue valueWithCMTime:toCMTime(duration)]];
+
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::durationChanged(%p) - duration = %s", this, toString(duration).utf8().data());
+
     m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis] {
-        if (weakThis) {
-            weakThis->pauseInternal();
-            weakThis->m_player->timeChanged();
+        if (!weakThis)
+            return;
+
+        MediaTime now = weakThis->currentMediaTime();
+        LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::durationChanged(%p) - boundary time observer called, now = %s", weakThis.get(), toString(now).utf8().data());
+
+        weakThis->pauseInternal();
+        if (now < duration) {
+            LOG(MediaSource, "   ERROR: boundary time observer called before duration!", weakThis.get());
+            [weakThis->m_synchronizer setRate:0 time:toCMTime(duration)];
         }
+        weakThis->m_player->timeChanged();
+
     }];
 
     if (m_playing && duration <= currentMediaTime())

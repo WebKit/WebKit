@@ -1,3 +1,17 @@
+2014-09-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE][Mac] work around AVSampleBufferRenderSynchronizer early callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=136958
+
+        Reviewed by Jer Noble.
+
+        No new tests, we have been unable to come up with a test case that reproduces
+        this issue reliably.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged): Set the synchronizer
+            time to duration when the duration time observer is called early. Add more logging.
+
 2014-09-19  Benjamin Poulain  <bpoulain@apple.com>
 
         CSS JIT: allocate the minimum required register count in debug
