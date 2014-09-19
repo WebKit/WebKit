@@ -45,7 +45,6 @@ public:
     virtual ~CoordinatedLayerTreeHostProxy();
 
     void commitCoordinatedGraphicsState(const WebCore::CoordinatedGraphicsState&);
-    void setBackgroundColor(const WebCore::Color&);
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);
     WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene() const { return m_scene.get(); }

@@ -4763,7 +4763,7 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
     m_pageCount = pageCount;
 }
 
-void WebPageProxy::pageExtendedBackgroundColorDidChange(Color backgroundColor)
+void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& backgroundColor)
 {
     m_pageExtendedBackgroundColor = backgroundColor;
 }

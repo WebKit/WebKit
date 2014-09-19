@@ -250,11 +250,6 @@ void CoordinatedLayerTreeHost::scheduleAnimation()
 }
 #endif
 
-void CoordinatedLayerTreeHost::setBackgroundColor(const WebCore::Color& color)
-{
-    m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::SetBackgroundColor(color));
-}
-
 void CoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
 {
     m_coordinator->commitScrollOffset(layerID, offset);

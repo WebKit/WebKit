@@ -3383,18 +3383,6 @@ void WebPage::mainFrameDidLayout()
         m_cachedPageCount = pageCount;
     }
 
-#if USE(TILED_BACKING_STORE)
-    if (m_drawingArea && m_drawingArea->layerTreeHost()) {
-        double red, green, blue, alpha;
-        m_mainFrame->getDocumentBackgroundColor(&red, &green, &blue, &alpha);
-        RGBA32 rgba = makeRGBA32FromFloats(red, green, blue, alpha);
-        if (m_backgroundColor.rgb() != rgba) {
-            m_backgroundColor.setRGB(rgba);
-            m_drawingArea->layerTreeHost()->setBackgroundColor(m_backgroundColor);
-        }
-    }
-#endif
-
 #if PLATFORM(MAC)
     m_viewGestureGeometryCollector.mainFrameDidLayout();
 #endif

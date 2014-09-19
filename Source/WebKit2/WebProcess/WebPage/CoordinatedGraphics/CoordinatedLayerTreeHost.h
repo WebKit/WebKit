@@ -69,7 +69,6 @@ public:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() override;
 #endif
-    virtual void setBackgroundColor(const WebCore::Color&) override;
 
     static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 

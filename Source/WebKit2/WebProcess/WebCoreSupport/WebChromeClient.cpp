@@ -978,7 +978,7 @@ Color WebChromeClient::underlayColor() const
 
 void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor) const
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(EFL)
     m_page->send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(backgroundColor));
 #else
     UNUSED_PARAM(backgroundColor);

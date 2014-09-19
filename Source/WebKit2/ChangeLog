@@ -1,3 +1,50 @@
+2014-09-18  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][CoordinatedGraphics] Remove setBackgroundColor message
+        https://bugs.webkit.org/show_bug.cgi?id=136824
+
+        Reviewed by Gyuyoung Kim.
+
+        CoordinatedGraphics used setBackgroundColor() to draw the background of contents
+        although tiles are not ready.
+
+        This patch removes setBackgroundColor() and uses pageExtendedBackgroundColor()
+        which provides similar functionality.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        Enables or disables WKPageSetBackgroundExtendsBeyondPage to use pageExtendedBackgroundColor()
+        (EwkView::EwkView):
+        (EwkView::setBackgroundColor):
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        (WebCore::CoordinatedGraphicsScene::paintToCurrentGLContext): Passed pageExtendedBackgroundColor.
+        (WebCore::CoordinatedGraphicsScene::paintToGraphicsContext): Ditto.
+        (WebCore::CoordinatedGraphicsScene::setBackgroundColor): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        (WebCore::CoordinatedGraphicsScene::setDrawsBackground): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::setBackgroundColor): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::paintToCurrentGLContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageExtendedBackgroundColorDidChange):
+        Refactored to use const reference for the Color parameter.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::paintToCairoSurface):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::pageExtendedBackgroundColorDidChange):
+        Added PLATFORM(EFL) to pass PageExtendedBackgroundColorDidChange message.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::setBackgroundColor): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setBackgroundColor): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameDidLayout):
+
 2014-09-18  Jeremy Jones  <jeremyj@apple.com>
 
         Improve fullscreen video rotation animation.

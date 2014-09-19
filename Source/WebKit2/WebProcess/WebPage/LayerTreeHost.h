@@ -81,7 +81,6 @@ public:
     virtual void resumeRendering() { }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
-    virtual void setBackgroundColor(const WebCore::Color&) { }
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;

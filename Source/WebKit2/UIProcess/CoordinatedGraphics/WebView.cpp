@@ -152,11 +152,9 @@ void WebView::paintToCurrentGLContext()
     if (!scene)
         return;
 
-    // FIXME: We need to clean up this code as it is split over CoordGfx and Page.
-    scene->setDrawsBackground(m_page->drawsBackground());
     const FloatRect& viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_size));
 
-    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), m_opacity, viewport);
+    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), m_opacity, viewport, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground());
 }
 
 void WebView::setDrawsBackground(bool drawsBackground)

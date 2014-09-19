@@ -84,7 +84,7 @@ void WebViewEfl::paintToCairoSurface(cairo_surface_t* surface)
 
     cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - position.x() * m_page->deviceScaleFactor(), - position.y() * m_page->deviceScaleFactor() };
     cairo_set_matrix(context.cr(), &transform);
-    scene->paintToGraphicsContext(&context);
+    scene->paintToGraphicsContext(&context, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground());
 }
 
 PassRefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy* page)

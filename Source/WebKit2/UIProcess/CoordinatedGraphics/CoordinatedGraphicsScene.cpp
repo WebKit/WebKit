@@ -50,9 +50,7 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
     : m_client(client)
     , m_isActive(false)
     , m_rootLayerID(InvalidCoordinatedLayerID)
-    , m_backgroundColor(Color::white)
     , m_viewBackgroundColor(Color::white)
-    , m_setDrawsBackground(false)
 {
     ASSERT(isMainThread());
 }
@@ -61,7 +59,7 @@ CoordinatedGraphicsScene::~CoordinatedGraphicsScene()
 {
 }
 
-void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
+void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, TextureMapper::PaintFlags PaintFlags)
 {
     if (!m_textureMapper) {
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
@@ -81,10 +79,10 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
-    if (m_setDrawsBackground) {
-        RGBA32 rgba = makeRGBA32FromFloats(m_backgroundColor.red(),
-            m_backgroundColor.green(), m_backgroundColor.blue(),
-            m_backgroundColor.alpha() * opacity);
+    if (drawsBackground) {
+        RGBA32 rgba = makeRGBA32FromFloats(backgroundColor.red(),
+            backgroundColor.green(), backgroundColor.blue(),
+            backgroundColor.alpha() * opacity);
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba));
     } else {
         GraphicsContext3D* context = static_cast<TextureMapperGL*>(m_textureMapper.get())->graphicsContext3D();
@@ -110,7 +108,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     }
 }
 
-void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* platformContext)
+void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* platformContext, const Color& backgroundColor, bool drawsBackground)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
@@ -126,8 +124,8 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* p
     m_textureMapper->beginPainting();
 
     IntRect clipRect = graphicsContext.clipBounds();
-    if (m_setDrawsBackground)
-        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_backgroundColor);
+    if (drawsBackground)
+        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), backgroundColor);
     else
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_viewBackgroundColor);
 
@@ -711,11 +709,6 @@ void CoordinatedGraphicsScene::setActive(bool active)
             protector->renderNextFrame();
         });
     }
-}
-
-void CoordinatedGraphicsScene::setBackgroundColor(const Color& color)
-{
-    m_backgroundColor = color;
 }
 
 TextureMapperLayer* CoordinatedGraphicsScene::findScrollableContentsLayerAt(const FloatPoint& point)

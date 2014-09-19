@@ -22,6 +22,5 @@
 messages -> CoordinatedLayerTreeHostProxy {
 
     CommitCoordinatedGraphicsState(WebCore::CoordinatedGraphicsState state)
-    SetBackgroundColor(WebCore::Color color)
 }
 #endif

@@ -97,14 +97,6 @@ void CoordinatedLayerTreeHostProxy::purgeBackingStores()
     m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page().pageID());
 }
 
-void CoordinatedLayerTreeHostProxy::setBackgroundColor(const Color& color)
-{
-    RefPtr<CoordinatedGraphicsScene> sceneProtector(m_scene);
-    dispatchUpdate([=] {
-        sceneProtector->setBackgroundColor(color);
-    });
-}
-
 void CoordinatedLayerTreeHostProxy::commitScrollOffset(uint32_t layerID, const IntSize& offset)
 {
     m_drawingAreaProxy->page().process().send(Messages::CoordinatedLayerTreeHost::CommitScrollOffset(layerID, offset), m_drawingAreaProxy->page().pageID());

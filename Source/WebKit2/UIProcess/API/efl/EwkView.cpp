@@ -330,6 +330,8 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 #endif
     WKPreferencesSetInteractiveFormValidationEnabled(wkPreferences, true);
 
+    WKPageSetBackgroundExtendsBeyondPage(wkPage(), true);
+
     // Enable mouse events by default
     setMouseEventsEnabled(true);
 
@@ -1400,10 +1402,13 @@ bool EwkView::scrollBy(const IntSize& offset)
 
 void EwkView::setBackgroundColor(int red, int green, int blue, int alpha)
 {
-    if (red == 255 && green == 255 && blue == 255 && alpha == 255)
+    if (red == 255 && green == 255 && blue == 255 && alpha == 255) {
         WKViewSetDrawsBackground(wkView(), true);
-    else
+        WKPageSetBackgroundExtendsBeyondPage(wkPage(), true);
+    } else {
         WKViewSetDrawsBackground(wkView(), false);
+        WKPageSetBackgroundExtendsBeyondPage(wkPage(), false);
+    }
 
     int objectAlpha;
     Evas_Object* image = smartData()->image;
