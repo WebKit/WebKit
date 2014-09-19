@@ -294,17 +294,28 @@ on_mouse_wheel(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info
     const Evas_Modifier *mod = evas_key_modifier_get(e);
     Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel *)event_info;
     Eina_Bool shiftPressed = evas_key_modifier_is_set(mod, "Shift");
+    Eina_Bool ctrlPressed = evas_key_modifier_is_set(mod, "Control");
 
-    if (!shiftPressed)
+    if (!shiftPressed && !ctrlPressed)
         return;
 
-    /* navigate based on mouse wheel scroll direction when shift key is pressed */
-    if (ev->z == -1 && ewk_view_forward_possible(window->ewk_view)) {
-        ewk_view_forward(window->ewk_view);
-        elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(window->ewk_view));
-    } else if (ev->z == 1 && ewk_view_back_possible(window->ewk_view)) {
-        ewk_view_back(window->ewk_view);
-        elm_object_disabled_set(window->back_button, !ewk_view_back_possible(window->ewk_view));       
+    /* navigate history or zoom web page based on mouse wheel scroll action with shift or control key */
+    if (shiftPressed) {
+        if (ev->z == -1 && ewk_view_forward_possible(ewk_view)) {
+            ewk_view_forward(ewk_view);
+            elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(ewk_view));
+        } else if (ev->z == 1 && ewk_view_back_possible(ewk_view)) {
+            ewk_view_back(ewk_view);
+            elm_object_disabled_set(window->back_button, !ewk_view_back_possible(ewk_view));       
+        }
+    } else if (ctrlPressed) {
+        if (ev->z == -1 && zoom_level_set(ewk_view, window->current_zoom_level + 1)) {
+            window->current_zoom_level++;
+            info("Zoom in (Ctrl + 'scroll up') was pressed, zoom level became %.2f", zoomLevels[window->current_zoom_level]);
+        } else if (ev->z == 1 && zoom_level_set(ewk_view, window->current_zoom_level - 1)) {
+            window->current_zoom_level--;
+            info("Zoom out (Ctrl + 'scroll down') was pressed, zoom level became %.2f", zoomLevels[window->current_zoom_level]);
+        }
     }
 }
 
