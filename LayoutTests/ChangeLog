@@ -1,3 +1,13 @@
+2014-09-19  Jer Noble  <jer.noble@apple.com>
+
+        Videos with controls enabled never receive 'dragstart' events.
+        https://bugs.webkit.org/show_bug.cgi?id=136837
+
+        Reviewed by Sam Weinig.
+
+        * media/video-controls-drag-expected.txt: Added.
+        * media/video-controls-drag.html: Added.
+
 2014-09-19  Diego Pino Garcia  <dpino@igalia.com>
 
         Simple ES6 feature:String prototype additions
