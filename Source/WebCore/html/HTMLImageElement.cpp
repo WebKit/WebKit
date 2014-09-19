@@ -143,11 +143,11 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (renderer() && renderer()->isRenderImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        ImageCandidate candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr)
+        unsigned sourceSize = 0;
 #if ENABLE(PICTURE_SIZES)
-            , SourceSizeList::parseSizesAttribute(fastGetAttribute(sizesAttr), document().renderView(), document().frame())
+        sourceSize = SourceSizeList::parseSizesAttribute(fastGetAttribute(sizesAttr), document().renderView(), document().frame());
 #endif
-        );
+        ImageCandidate candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr), sourceSize);
         setBestFitURLAndDPRFromImageCandidate(candidate);
         m_imageLoader.updateFromElementIgnoringPreviousError();
     } else if (name == usemapAttr) {
