@@ -23,10 +23,38 @@
 
 namespace WTF {
 
-    template <typename T> inline T* getPtr(T* p)
-    {
-        return p;
-    }
+template <typename T> inline T* getPtr(T* p) { return p; }
+
+template <typename T> struct IsSmartPtr {
+    static const bool value = false;
+};
+
+template <typename T, bool isSmartPtr>
+struct GetPtrHelper;
+
+template <typename T>
+struct GetPtrHelper<T, false /* isSmartPtr */> {
+    typedef T* PtrType;
+    static T* getPtr(T& p) { return &p; }
+};
+
+template <typename T>
+struct GetPtrHelper<T, true /* isSmartPtr */> {
+    typedef typename T::PtrType PtrType;
+    static PtrType getPtr(const T& p) { return p.get(); }
+};
+
+template <typename T>
+inline typename GetPtrHelper<T, IsSmartPtr<T>::value>::PtrType getPtr(T& p)
+{
+    return GetPtrHelper<T, IsSmartPtr<T>::value>::getPtr(p);
+}
+
+template <typename T>
+inline typename GetPtrHelper<T, IsSmartPtr<T>::value>::PtrType getPtr(const T& p)
+{
+    return GetPtrHelper<T, IsSmartPtr<T>::value>::getPtr(p);
+}
 
 } // namespace WTF
 

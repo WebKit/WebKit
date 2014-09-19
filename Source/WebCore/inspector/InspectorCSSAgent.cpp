@@ -681,9 +681,9 @@ void InspectorCSSAgent::getAllStyleSheets(ErrorString*, RefPtr<Inspector::Protoc
     styleInfos = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSStyleSheetHeader>::create();
     Vector<Document*> documents = m_domAgent->documents();
     for (Vector<Document*>::iterator it = documents.begin(); it != documents.end(); ++it) {
-        StyleSheetList* list = (*it)->styleSheets();
-        for (unsigned i = 0; i < list->length(); ++i) {
-            StyleSheet& styleSheet = *list->item(i);
+        StyleSheetList& list = (*it)->styleSheets();
+        for (unsigned i = 0; i < list.length(); ++i) {
+            StyleSheet& styleSheet = *list.item(i);
             if (styleSheet.isCSSStyleSheet())
                 collectStyleSheets(&toCSSStyleSheet(styleSheet), styleInfos.get());
         }
@@ -862,7 +862,7 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int doc
 
     m_namedFlowCollectionsRequested.add(documentNodeId);
 
-    Vector<RefPtr<WebKitNamedFlow>> namedFlowsVector = document->namedFlows()->namedFlows();
+    Vector<RefPtr<WebKitNamedFlow>> namedFlowsVector = document->namedFlows().namedFlows();
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>> namedFlows = Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>::create();
 
     for (Vector<RefPtr<WebKitNamedFlow>>::iterator it = namedFlowsVector.begin(); it != namedFlowsVector.end(); ++it)

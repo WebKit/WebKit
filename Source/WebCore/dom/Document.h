@@ -408,7 +408,7 @@ public:
 
     DocumentType* doctype() const;
 
-    DOMImplementation* implementation();
+    DOMImplementation& implementation();
     
     Element* documentElement() const
     {
@@ -441,7 +441,7 @@ public:
     PassRefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif
 
-    NamedFlowCollection* namedFlows();
+    NamedFlowCollection& namedFlows();
 
     Element* elementFromPoint(int x, int y) const;
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);
@@ -492,7 +492,7 @@ public:
     bool hidden() const;
 
 #if ENABLE(CSP_NEXT)
-    DOMSecurityPolicy* securityPolicy();
+    DOMSecurityPolicy& securityPolicy();
 #endif
 
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
@@ -543,7 +543,7 @@ public:
     bool haveStylesheetsLoaded() const;
 
     // This is a DOM function.
-    StyleSheetList* styleSheets();
+    StyleSheetList& styleSheets();
 
     DocumentStyleSheetCollection& styleSheetCollection() { return m_styleSheetCollection; }
 
@@ -1177,7 +1177,7 @@ public:
 #endif
 
 #if ENABLE(WEB_TIMING)
-    const DocumentTiming* timing() const { return &m_documentTiming; }
+    const DocumentTiming& timing() const { return m_documentTiming; }
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

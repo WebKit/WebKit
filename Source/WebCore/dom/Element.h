@@ -454,9 +454,9 @@ public:
     bool matches(const String& selectors, ExceptionCode&);
     virtual bool shouldAppearIndeterminate() const;
 
-    DOMTokenList* classList();
+    DOMTokenList& classList();
 
-    DatasetDOMStringMap* dataset();
+    DatasetDOMStringMap& dataset();
 
 #if ENABLE(VIDEO)
     virtual bool isMediaElement() const { return false; }
