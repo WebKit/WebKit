@@ -431,9 +431,6 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasE
     attributes.shareResources = false;
     attributes.preferDiscreteGPU = true;
 
-    if (frame->settings().multithreadedWebGLEnabled())
-        attributes.multithreaded = true;
-
     if (frame->settings().forceSoftwareWebGLRendering())
         attributes.forceSoftwareRenderer = true;
 
