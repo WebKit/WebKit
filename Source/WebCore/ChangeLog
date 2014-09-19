@@ -1,5 +1,29 @@
 2014-09-19  Benjamin Poulain  <bpoulain@apple.com>
 
+        CSS JIT: allocate the minimum required register count in debug
+        https://bugs.webkit.org/show_bug.cgi?id=136933
+
+        Reviewed by Andreas Kling.
+
+        It is hard to catch bugs of minimumRegisterRequirements() because every CPU has a different
+        number of registers available by default.
+
+        This patch aims at improving testing by creating artificial register pressure when running
+        in debug. When running in debug, we no longer allocate all the available registers right away.
+        Instead, we allocate just enough to satisfy minimumRegisterRequirements().
+
+        The expectation with this is that under-allocation would be detected quicker since they would
+        crash debug builds.
+
+        * cssjit/RegisterAllocator.h:
+        (WebCore::RegisterAllocator::RegisterAllocator):
+        (WebCore::RegisterAllocator::reserveCallerSavedRegisters):
+        (WebCore::RegisterAllocator::availableRegisterCount): Deleted.
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+
+2014-09-19  Benjamin Poulain  <bpoulain@apple.com>
+
         Add a size check for CSSSelector
         https://bugs.webkit.org/show_bug.cgi?id=136882
 

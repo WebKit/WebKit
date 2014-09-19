@@ -102,7 +102,7 @@ typedef Vector<JSC::MacroAssembler::RegisterID, maximumRegisterCount> RegisterVe
 
 class RegisterAllocator {
 public:
-    RegisterAllocator();
+    RegisterAllocator() { }
     ~RegisterAllocator();
 
     unsigned availableRegisterCount() const { return m_registers.size(); }
@@ -152,6 +152,19 @@ public:
         for (auto unallocatedRegister : m_registers)
             RELEASE_ASSERT(unallocatedRegister != registerID);
         m_registers.append(registerID);
+    }
+
+    unsigned reserveCallerSavedRegisters(unsigned count)
+    {
+#ifdef NDEBUG
+        UNUSED_PARAM(count);
+        unsigned numberToAllocate = WTF_ARRAY_LENGTH(callerSavedRegisters);
+#else
+        unsigned numberToAllocate = std::min<unsigned>(WTF_ARRAY_LENGTH(callerSavedRegisters), count);
+#endif
+        for (unsigned i = 0; i < numberToAllocate; ++i)
+            m_registers.append(callerSavedRegisters[i]);
+        return numberToAllocate;
     }
 
     const Vector<JSC::MacroAssembler::RegisterID, calleeSavedRegisterCount>& reserveCalleeSavedRegisters(unsigned count)
@@ -247,12 +260,6 @@ public:
     {
     }
 };
-    
-inline RegisterAllocator::RegisterAllocator()
-{
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(callerSavedRegisters); ++i)
-        m_registers.append(callerSavedRegisters[i]);
-}
 
 inline RegisterAllocator::~RegisterAllocator()
 {
