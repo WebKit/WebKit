@@ -1,3 +1,9 @@
+2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.5.90 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2014-09-17  Renato Nagy  <rnagy@inf.u-szeged.hu>
 
         [EFL][GTK] Remove WebKit1 related codes

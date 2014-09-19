@@ -1,4 +1,24 @@
 =================
+WebKitGTK+ 2.5.90
+=================
+
+What's new in WebKitGTK+ 2.5.90?
+
+  - Use free icons for the web inspector.
+  - Change WebKitWebView::load-failed-with-tls-errors signal to pass
+    the failing URI as signal argument instead of the host.
+  - Add new API to allow overwrite existing files when downloading a file.
+  - Add webkit_uri_response_get_http_headers() API.
+  - Improve the UI of the HTTP authentication dialog.
+  - Fix a crash when navigating away from a web page containing an ogg video.
+  - Fix race condition when downloading a file due to the intermediate
+    temporary file.
+  - Fix toggle buttons rendering with recent GTK+ versions.
+  - Fix selection rendering when unfocused with recent GTK+ versions.
+  - Make the GStreamer media backend not send the transferMode HTTP header.
+  - Translation updates: Assamese
+
+=================
 WebKitGTK+  2.5.3
 =================
 
