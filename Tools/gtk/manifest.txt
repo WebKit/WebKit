@@ -73,6 +73,7 @@ exclude Source/WebKit2/gtk/NEWS$
 file Source/WebKit2/gtk/NEWS NEWS
 
 file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js
+file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
 
 # Include only the resources we actually build
 file Source/WebCore/Resources/deleteButton.png
