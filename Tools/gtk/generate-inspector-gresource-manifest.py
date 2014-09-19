@@ -16,28 +16,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import argparse
-import glob
 import os
 import sys
 
-ALLOWED_EXTENSIONS = ['.html', '.js', '.css', '.png', '.svg']
 COMPRESSIBLE_EXTENSIONS = ['.html', '.js', '.css', '.svg']
+BASE_DIR = 'WebInspectorUI/'
 
 
-def find_all_files_in_directory(directory):
-    directory = os.path.abspath(directory) + os.path.sep
-    to_return = []
+def get_filenames(args):
+    filenames = []
 
-    def select_file(name):
-        return os.path.splitext(name)[1] in ALLOWED_EXTENSIONS
-
-    for root, dirs, files in os.walk(directory):
-        files = filter(select_file, files)
-        for file_name in files:
-            file_name = os.path.abspath(os.path.join(root, file_name))
-            to_return.append(file_name.replace(directory, ''))
-
-    return to_return
+    for filename in args:
+        base_dir_index = filename.rfind(BASE_DIR)
+        if base_dir_index != -1:
+            filenames.append(filename[base_dir_index + len(BASE_DIR):])
+    return filenames
 
 
 def is_compressible(filename):
@@ -48,25 +41,26 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a GResources file for the inspector.')
     parser.add_argument('--output', nargs='?', type=argparse.FileType('w'), default=sys.stdout,
                         help='the output file')
+    parser.add_argument('filenames', metavar='FILES', nargs='+',
+                        help='the list of files to include')
 
-    arguments, extra_args = parser.parse_known_args(sys.argv)
+    args = parser.parse_args(sys.argv[1:])
 
-    arguments.output.write(\
+    args.output.write(\
     """<?xml version=1.0 encoding=UTF-8?>
     <gresources>
         <gresource prefix="/org/webkitgtk/inspector">
 """)
 
-    for directory in extra_args[1:]:
-        for filename in find_all_files_in_directory(directory):
-            line = '            <file'
-            if is_compressible(filename):
-                line += ' compressed="true"'
-            line += '>%s</file>\n' % filename
+    for filename in get_filenames(args.filenames):
+        line = '            <file'
+        if is_compressible(filename):
+            line += ' compressed="true"'
+        line += '>%s</file>\n' % filename
 
-            arguments.output.write(line)
+        args.output.write(line)
 
-    arguments.output.write(\
+    args.output.write(\
     """    </gresource>
 </gresources>
 """)
