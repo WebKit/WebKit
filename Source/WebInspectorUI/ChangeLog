@@ -1,3 +1,71 @@
+2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Webkitgtk 2.5.3: tarball contains APPLE LICENSE file - stating not distributable
+        https://bugs.webkit.org/show_bug.cgi?id=136632
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add free icons for the GTK port. These icons are from the GNOME
+        project, some of them adapted by Andres Gomez for the inspector.
+        This is only a subset of the icons, since we still don't have a
+        free replacement for all of them, but at least it makes the
+        inspector kind of usable.
+
+        * UserInterface/Images/gtk/AUTHORS: Added.
+        * UserInterface/Images/gtk/BackArrow.svg: Added.
+        * UserInterface/Images/gtk/BreakpointActionAdd.svg: Added.
+        * UserInterface/Images/gtk/BreakpointActionRemove.svg: Added.
+        * UserInterface/Images/gtk/BreakpointButton.svg: Added.
+        * UserInterface/Images/gtk/BreakpointInactiveButton.svg: Added.
+        * UserInterface/Images/gtk/Breakpoints.svg: Added.
+        * UserInterface/Images/gtk/COPYING: Added.
+        * UserInterface/Images/gtk/Close.svg: Added.
+        * UserInterface/Images/gtk/CloseWhite.svg: Added.
+        * UserInterface/Images/gtk/ContentFlow.svg: Added.
+        * UserInterface/Images/gtk/Crosshair.svg: Added.
+        * UserInterface/Images/gtk/DOMCharacterData.svg: Added.
+        * UserInterface/Images/gtk/DOMComment.svg: Added.
+        * UserInterface/Images/gtk/DOMDocument.svg: Added.
+        * UserInterface/Images/gtk/DOMDocumentType.svg: Added.
+        * UserInterface/Images/gtk/DOMElement.svg: Added.
+        * UserInterface/Images/gtk/DOMNode.svg: Added.
+        * UserInterface/Images/gtk/DOMTextNode.svg: Added.
+        * UserInterface/Images/gtk/DOMTree.svg: Added.
+        * UserInterface/Images/gtk/DisclosureTriangleSmallClosed.svg: Added.
+        * UserInterface/Images/gtk/DisclosureTriangleSmallOpen.svg: Added.
+        * UserInterface/Images/gtk/DisclosureTriangleTinyClosed.svg: Added.
+        * UserInterface/Images/gtk/DisclosureTriangleTinyOpen.svg: Added.
+        * UserInterface/Images/gtk/DockBottom.svg: Added.
+        * UserInterface/Images/gtk/DockRight.svg: Added.
+        * UserInterface/Images/gtk/DocumentCSS.png: Added.
+        * UserInterface/Images/gtk/DocumentCSS@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentFont.png: Added.
+        * UserInterface/Images/gtk/DocumentFont@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentGeneric.png: Added.
+        * UserInterface/Images/gtk/DocumentGeneric@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentImage.png: Added.
+        * UserInterface/Images/gtk/DocumentImage@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentJS.png: Added.
+        * UserInterface/Images/gtk/DocumentJS@2x.png: Added.
+        * UserInterface/Images/gtk/DocumentMarkup.png: Added.
+        * UserInterface/Images/gtk/DocumentMarkup@2x.png: Added.
+        * UserInterface/Images/gtk/DownloadArrow.svg: Added.
+        * UserInterface/Images/gtk/Error.svg: Added.
+        * UserInterface/Images/gtk/Errors.svg: Added.
+        * UserInterface/Images/gtk/ErrorsEnabled.svg: Added.
+        * UserInterface/Images/gtk/EventListener.svg: Added.
+        * UserInterface/Images/gtk/Exception.svg: Added.
+        * UserInterface/Images/gtk/FilterFieldGlyph.svg: Added.
+        * UserInterface/Images/gtk/FolderGeneric.png: Added.
+        * UserInterface/Images/gtk/FolderGeneric@2x.png: Added.
+        * UserInterface/Images/gtk/ForwardArrow.svg: Added.
+        * UserInterface/Images/gtk/Function.svg: Added.
+        * UserInterface/Images/gtk/GoToArrow.svg: Added.
+        * UserInterface/Images/gtk/Resources.svg: Added.
+        * UserInterface/Images/gtk/SortIndicatorDownArrow.svg: Added.
+        * UserInterface/Images/gtk/SortIndicatorUpArrow.svg: Added.
+        * UserInterface/Images/gtk/UpDownArrows.svg: Added.
+
 2014-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unnecessary prefixes in WebInspectorUI CSS

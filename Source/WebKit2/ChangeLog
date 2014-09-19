@@ -1,5 +1,14 @@
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Webkitgtk 2.5.3: tarball contains APPLE LICENSE file - stating not distributable
+        https://bugs.webkit.org/show_bug.cgi?id=136632
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Use only the icons from the gtk directory since they are free.
+
+2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] generate-inspector-gresource-manifest.py should receive the list of files from the makefile
         https://bugs.webkit.org/show_bug.cgi?id=136943
 

@@ -383,8 +383,8 @@ file(GLOB InspectorFiles
     ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Protocol/*.js
     ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Views/*.css
     ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Views/*.js
-    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Images/*.png
-    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Images/*.svg
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Images/gtk/*.png
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Images/gtk/*.svg
     ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorJSBackendCommands.js
     ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorWebBackendCommands.js
 )
