@@ -1,5 +1,15 @@
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Missing inspector files in the tarball
+        https://bugs.webkit.org/show_bug.cgi?id=136952
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Use APPEND instead of GLOB to add individual
+        and generated files to the list of inspector files.
+
+2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Webkitgtk 2.5.3: tarball contains APPLE LICENSE file - stating not distributable
         https://bugs.webkit.org/show_bug.cgi?id=136632
 
