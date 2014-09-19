@@ -44,7 +44,7 @@ public:
 
     typedef unsigned HitTestRequestType;
 
-    HitTestRequest(HitTestRequestType requestType)
+    HitTestRequest(HitTestRequestType requestType = ReadOnly | Active | DisallowShadowContent)
         : m_requestType(requestType)
     {
     }

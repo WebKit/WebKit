@@ -240,9 +240,8 @@ Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
     if (!visibleRect.contains(point))
         return nullptr;
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     HitTestResult result(point);
-    document->renderView()->hitTest(request, result);
+    document->renderView()->hitTest(HitTestRequest(), result);
 
     if (localPoint)
         *localPoint = result.localPoint();
