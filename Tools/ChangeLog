@@ -1,3 +1,15 @@
+2014-09-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WTR and DRT didReceiveAuthenticationChallengeInFrame should print messages consistently
+        https://bugs.webkit.org/show_bug.cgi?id=136847
+
+        Added protection space host and port logging to WTR didReceiveAuthenticationChallengeInFrame.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveAuthenticationChallengeInFrame):
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Missing inspector files in the tarball

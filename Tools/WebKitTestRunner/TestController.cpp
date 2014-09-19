@@ -1276,11 +1276,13 @@ void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WK
         return;
     }
 
-    String message;
+    std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
+    int port = WKProtectionSpaceGetPort(protectionSpace);
+    String message = String::format("%s:%d - didReceiveAuthenticationChallenge - ", host.c_str(), port);
     if (!m_handlesAuthenticationChallenges)
-        message = "didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n";
+        message.append("Simulating cancelled authentication sheet\n");
     else
-        message = String::format("didReceiveAuthenticationChallenge - Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data());
+        message.append(String::format("Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data()));
     m_currentInvocation->outputText(message);
 
     if (!m_handlesAuthenticationChallenges) {

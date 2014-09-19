@@ -1,3 +1,35 @@
+2014-09-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WTR and DRT didReceiveAuthenticationChallengeInFrame should print messages consistently
+        https://bugs.webkit.org/show_bug.cgi?id=136847
+
+        Updated WK2 expected.txt files according new logging of didReceiveAuthenticationChallengeInFrame.
+        Factorized efl/gtk platform specific expected files as WK2 expected files. 
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/gtk/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt: Removed.
+        * platform/gtk/http/tests/loading/basic-credentials-sent-automatically-expected.txt: Removed.
+        * platform/gtk/http/tests/media/video-auth-expected.txt: Removed.
+        * platform/gtk/http/tests/misc/401-alternative-content-expected.txt: Removed.
+        * platform/gtk/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt: Removed.
+        * platform/gtk/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt: Removed.
+        * platform/gtk/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt: Removed.
+        * platform/gtk/http/tests/security/401-logout/401-logout-expected.txt: Removed.
+        * platform/gtk/http/tests/xmlhttprequest/failed-auth-expected.txt: Removed.
+        * platform/gtk/http/tests/xmlhttprequest/remember-bad-password-expected.txt: Removed.
+        * platform/wk2/http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials-expected.txt:
+        * platform/wk2/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt:
+        * platform/wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+        * platform/wk2/http/tests/media/video-auth-expected.txt: Renamed from LayoutTests/platform/efl/http/tests/media/video-auth-expected.txt.
+        * platform/wk2/http/tests/misc/401-alternative-content-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt:
+        * platform/wk2/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt:
+        * platform/wk2/http/tests/security/401-logout/401-logout-expected.txt:
+        * platform/wk2/http/tests/xmlhttprequest/failed-auth-expected.txt:
+        * platform/wk2/http/tests/xmlhttprequest/remember-bad-password-expected.txt:
+
 2014-09-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r168921): SVG elements may be unnecessarily rebuilt

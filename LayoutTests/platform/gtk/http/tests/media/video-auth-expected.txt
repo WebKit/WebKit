@@ -1,6 +1,0 @@
-didReceiveAuthenticationChallenge - Responding with username:password
- 
-Tests that the media player sends authorization credentials when requesting a media file.  
-EVENT(canplay)
-END OF TEST
-
