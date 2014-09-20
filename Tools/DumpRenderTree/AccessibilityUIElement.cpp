@@ -275,6 +275,8 @@ static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectR
     JSRetainPtr<JSStringRef> result(Adopt, toAXElement(thisObject)->selectTextWithCriteria(context, ambiguityResolution.get(), searchStrings, replacementString, activityString));
     if (replacementString)
         JSStringRelease(replacementString);
+    if (activityString)
+        JSStringRelease(activityString);
     return JSValueMakeString(context, result.get());
 }
 

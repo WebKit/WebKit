@@ -1,3 +1,14 @@
+2014-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSStringRef leak on the leaks bot allocation under selectTextWithCriteriaCallback
+        https://bugs.webkit.org/show_bug.cgi?id=136974
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (selectTextWithCriteriaCallback):
+        Be sure to release the string if it was allocated.
+
 2014-09-19  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Pending builds don't show up when there is a commit with no comments
