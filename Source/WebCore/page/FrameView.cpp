@@ -2181,7 +2181,9 @@ bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
 #if ENABLE(ASYNC_SCROLLING)
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->prepopulateRect(FloatRect(position, visibleContentRect().size()));
+#endif
 
+#if ENABLE(ASYNC_SCROLLING) || USE(TILED_BACKING_STORE)
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             return scrollingCoordinator->requestScrollPositionUpdate(this, position);

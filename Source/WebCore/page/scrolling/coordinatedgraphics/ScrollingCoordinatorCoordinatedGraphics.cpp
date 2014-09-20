@@ -31,6 +31,7 @@
 
 #include "CoordinatedGraphicsLayer.h"
 #include "FrameView.h"
+#include "HostWindow.h"
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -110,6 +111,16 @@ void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(Scrollab
         return;
 
     layer->setScrollableArea(0);
+}
+
+bool ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
+{
+    if (!frameView->delegatesScrolling())
+        return false;
+
+    frameView->setFixedVisibleContentRect(IntRect(scrollPosition, frameView->visibleContentRect().size()));
+    frameView->hostWindow()->delegatedScrollRequested(scrollPosition);
+    return true;
 }
 
 } // namespace WebCore

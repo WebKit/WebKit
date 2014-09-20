@@ -105,6 +105,7 @@ set(test_webkit2_api_BINARIES
     CoordinatedGraphics/WKViewRestoreZoomAndScrollBackForward
     CoordinatedGraphics/WKViewUserViewportToContents
     efl/WKViewClientWebProcessCallbacks
+    efl/WKViewScrollTo
 )
 
 set(test_webkit2_api_fail_BINARIES

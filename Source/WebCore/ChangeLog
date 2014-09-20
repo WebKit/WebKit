@@ -1,3 +1,20 @@
+2014-09-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CoordinatedGraphics][EFL] window.scrollTo(x, y) doesn't work when fixed layout is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=136917
+
+        Reviewed by Darin Adler.
+
+        When fixed layout is enabled, scrollTo doesn't work on EFL port with coordinated graphics.
+        Since updateScrollbars() doesn't update scroll position when delegatesScrolling() is enabled. 
+        To fix this issue, EFL port should update scroll position based on WK2 port. This patch
+        update scroll position in FrameView::requestScrollPositionUpdate() as Mac port.
+
+        TestWebKitAPI: Tools/TestWebKitAPI/Tests/WebKit2/efl/WKViewScrollTo
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::requestScrollPositionUpdate):
+
 2014-09-19  Brent Fulgham  <bfulgham@apple.com>
 
         Latching in iframes is not working as expected
