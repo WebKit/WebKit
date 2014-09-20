@@ -357,6 +357,7 @@ bool StructureSet::addOutOfLine(Structure* structure)
     for (unsigned i = list->m_length; i--;)
         newList->list()[i] = list->list()[i];
     newList->list()[list->m_length] = structure;
+    OutOfLineList::destroy(list);
     set(newList);
     return true;
 }
