@@ -122,7 +122,7 @@ static void compileStub(
     }
 
     // Save all state from wherever the exit data tells us it was, into the appropriate place in
-    // the scratch buffer. This doesn't rebox any values yet.
+    // the scratch buffer. This also does the reboxing.
     
     for (unsigned index = exit.m_values.size(); index--;) {
         ExitValue value = exit.m_values[index];
@@ -196,6 +196,9 @@ static void compileStub(
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+        
+        reboxAccordingToFormat(
+            value.valueFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         
         jit.store64(GPRInfo::regT0, scratch + index);
     }
@@ -338,15 +341,12 @@ static void compileStub(
     
     arityReturnPCReady.link(&jit);
     
-    // Now get state out of the scratch buffer and place it back into the stack. This part does
-    // all reboxing.
+    // Now get state out of the scratch buffer and place it back into the stack. The values are
+    // already reboxed so we just move them.
     for (unsigned index = exit.m_values.size(); index--;) {
         int operand = exit.m_values.operandForIndex(index);
-        ExitValue value = exit.m_values[index];
         
         jit.load64(scratch + index, GPRInfo::regT0);
-        reboxAccordingToFormat(
-            value.valueFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(static_cast<VirtualRegister>(operand)));
     }
     

@@ -1,3 +1,18 @@
+2014-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL OSR exit should do reboxing and value recovery in the same pass
+        https://bugs.webkit.org/show_bug.cgi?id=136977
+
+        Reviewed by Oliver Hunt.
+        
+        It's conceptually simpler to have all of the logic in one place. After the
+        recover-and-rebox loop is done, all of the exit values are in the form that the baseline
+        JIT would want them to be in; the only remaining task is to move them into the right
+        place on the stack after we do all of the necessary stack adjustments.
+
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2014-09-19  Filip Pizlo  <fpizlo@apple.com>
 
         StorageAccessData should be referenced in a sensible way
