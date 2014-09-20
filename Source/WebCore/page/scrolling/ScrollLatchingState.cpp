@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,66 +24,50 @@
  */
 
 #include "config.h"
-#include "MainFrame.h"
-
 #include "ScrollLatchingState.h"
-#include "WheelEventDeltaTracker.h"
+
+#include "Element.h"
 
 namespace WebCore {
 
-inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
-    : Frame(page, nullptr, client)
-    , m_selfOnlyRefCount(0)
-#if PLATFORM(MAC)
-    , m_latchingState(std::make_unique<ScrollLatchingState>())
-#endif
-    , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
+ScrollLatchingState::ScrollLatchingState()
+    : m_frame(nullptr)
+    , m_widgetIsLatched(false)
+    , m_startedGestureAtScrollLimit(false)
+{
+}
+    
+ScrollLatchingState::~ScrollLatchingState()
 {
 }
 
-MainFrame::~MainFrame()
+void ScrollLatchingState::clear()
 {
+    m_wheelEventElement = nullptr;
+    m_frame = nullptr;
+    m_scrollableContainer = nullptr;
+    m_widgetIsLatched = false;
+    m_previousWheelScrolledElement = nullptr;
 }
 
-RefPtr<MainFrame> MainFrame::create(Page& page, FrameLoaderClient& client)
+void ScrollLatchingState::setWheelEventElement(PassRefPtr<Element> element)
 {
-    return adoptRef(new MainFrame(page, client));
+    m_wheelEventElement = element;
 }
 
-void MainFrame::selfOnlyRef()
+void ScrollLatchingState::setWidgetIsLatched(bool isOverWidget)
 {
-    if (m_selfOnlyRefCount++)
-        return;
-
-    ref();
+    m_widgetIsLatched = isOverWidget;
 }
 
-void MainFrame::selfOnlyDeref()
+void ScrollLatchingState::setPreviousWheelScrolledElement(PassRefPtr<Element> element)
 {
-    ASSERT(m_selfOnlyRefCount);
-    if (--m_selfOnlyRefCount)
-        return;
-
-    if (hasOneRef())
-        dropChildren();
-
-    deref();
+    m_previousWheelScrolledElement = element;
 }
 
-void MainFrame::dropChildren()
+void ScrollLatchingState::setScrollableContainer(PassRefPtr<ContainerNode> node)
 {
-    while (Frame* child = tree().firstChild())
-        tree().removeChild(child);
+    m_scrollableContainer = node;
 }
-
-#if PLATFORM(MAC)
-void MainFrame::resetLatchingState()
-{
-    if (!m_latchingState)
-        return;
-
-    m_latchingState->clear();
-}
-#endif
 
 }

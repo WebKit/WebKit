@@ -83,6 +83,7 @@
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "ScrollAnimator.h"
+#include "ScrollLatchingState.h"
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -401,12 +402,9 @@ EventHandler::EventHandler(Frame& frame)
 #endif
     , m_mousePositionIsUnknown(true)
     , m_mouseDownTimestamp(0)
-    , m_recentWheelEventDeltaTracker(std::make_unique<WheelEventDeltaTracker>())
-    , m_widgetIsLatched(false)
 #if PLATFORM(COCOA)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
-    , m_startedGestureAtScrollLimit(false)
 #if !PLATFORM(IOS)
     , m_activationEventNumber(-1)
 #endif // !PLATFORM(IOS)
@@ -490,11 +488,9 @@ void EventHandler::clear()
     m_mousePressed = false;
     m_capturesDragging = false;
     m_capturingMouseEventsElement = nullptr;
-    m_latchedWheelEventElement = nullptr;
-#if PLATFORM(COCOA)
-    m_latchedScrollableContainer = nullptr;
+#if PLATFORM(MAC)
+    m_frame.mainFrame().resetLatchingState();
 #endif
-    m_previousWheelScrolledElement = nullptr;
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
     m_originatingTouchPointDocument.clear();
@@ -2644,7 +2640,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, cons
 
 void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& event)
 {
-    m_recentWheelEventDeltaTracker->recordWheelEventDelta(event);
+    m_frame.mainFrame().wheelEventDeltaTracker()->recordWheelEventDelta(event);
 }
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, Element*, ContainerNode*, ScrollableArea*)
@@ -2689,13 +2685,12 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     bool isOverWidget = result.isOverWidget();
     platformPrepareForWheelEvents(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone)
-#endif
     {
-        m_latchedWheelEventElement = nullptr;
-        m_previousWheelScrolledElement = nullptr;
+        m_frame.mainFrame().latchingState()->clear();
     }
+#endif
 
     // FIXME: It should not be necessary to do this mutation here.
     // Instead, the handlers should know convert vertical scrolls appropriately.
@@ -2740,12 +2735,10 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
 void EventHandler::clearLatchedState()
 {
-    m_latchedWheelEventElement = nullptr;
-#if PLATFORM(COCOA)
-    m_latchedScrollableContainer = nullptr;
+#if PLATFORM(MAC)
+    m_frame.mainFrame().latchingState()->clear();
 #endif
-    m_widgetIsLatched = false;
-    m_previousWheelScrolledElement = nullptr;
+    m_frame.mainFrame().wheelEventDeltaTracker()->endTrackingDeltas();
 }
 
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)
@@ -2753,13 +2746,18 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     if (!startNode || !wheelEvent)
         return;
     
-    Element* stopElement = m_previousWheelScrolledElement.get();
     DominantScrollGestureDirection dominantDirection = DominantScrollGestureDirection::None;
 
+#if PLATFORM(MAC)
+    ScrollLatchingState* latchedState = m_frame.mainFrame().latchingState();
+    ASSERT(latchedState);
+    Element* stopElement = latchedState->previousWheelScrolledElement();
+
     // Workaround for scrolling issues <rdar://problem/14758615>.
-#if PLATFORM(COCOA)
-    if (m_recentWheelEventDeltaTracker->isTrackingDeltas())
-        dominantDirection = m_recentWheelEventDeltaTracker->dominantScrollGestureDirection();
+    if (m_frame.mainFrame().wheelEventDeltaTracker()->isTrackingDeltas())
+        dominantDirection = m_frame.mainFrame().wheelEventDeltaTracker()->dominantScrollGestureDirection();
+#else
+    Element* stopElement = nullptr;
 #endif
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
@@ -2770,8 +2768,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     if (dominantDirection != DominantScrollGestureDirection::Horizontal && handleWheelEventInAppropriateEnclosingBoxForSingleAxis(startNode, wheelEvent, &stopElement, ScrollEventAxis::Vertical))
         wheelEvent->setDefaultHandled();
     
-    if (!m_latchedWheelEventElement)
-        m_previousWheelScrolledElement = stopElement;
+#if PLATFORM(MAC)
+    if (!latchedState->wheelEventElement())
+        latchedState->setPreviousWheelScrolledElement(stopElement);
+#endif
 }
 
 #if ENABLE(CONTEXT_MENUS)

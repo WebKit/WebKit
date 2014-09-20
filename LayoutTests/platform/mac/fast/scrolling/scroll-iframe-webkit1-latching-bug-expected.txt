@@ -1,0 +1,13 @@
+
+Tests that iframe doesn't pass wheel events to main frame when scrolling at bottom
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+iframe display height = 150
+Mouse moved to (28, 116)
+PASS iframe received wheel events.
+
