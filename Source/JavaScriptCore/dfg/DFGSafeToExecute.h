@@ -311,7 +311,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         StructureAbstractValue& value = state.forNode(node->child1()).m_structure;
         if (value.isTop())
             return false;
-        PropertyOffset offset = graph.m_storageAccessData[node->storageAccessDataIndex()].offset;
+        PropertyOffset offset = node->storageAccessData().offset;
         for (unsigned i = value.size(); i--;) {
             if (!value[i]->isValidOffset(offset))
                 return false;

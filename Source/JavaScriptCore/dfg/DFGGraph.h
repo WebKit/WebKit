@@ -55,11 +55,6 @@ class ExecState;
 
 namespace DFG {
 
-struct StorageAccessData {
-    PropertyOffset offset;
-    unsigned identifierNumber;
-};
-
 struct InlineVariableData {
     InlineCallFrame* inlineCallFrame;
     unsigned argumentPositionStart;
@@ -730,7 +725,7 @@ public:
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
     Bag<FrozenValue> m_frozenValues;
     
-    Vector<StorageAccessData> m_storageAccessData;
+    Bag<StorageAccessData> m_storageAccessData;
     Vector<Node*, 8> m_arguments;
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;

@@ -3251,8 +3251,7 @@ private:
     
     void compileGetByOffset()
     {
-        StorageAccessData& data =
-            m_graph.m_storageAccessData[m_node->storageAccessDataIndex()];
+        StorageAccessData& data = m_node->storageAccessData();
         
         setJSValue(loadProperty(
             lowStorage(m_node->child1()), data.identifierNumber, data.offset));
@@ -3337,8 +3336,7 @@ private:
     
     void compilePutByOffset()
     {
-        StorageAccessData& data =
-            m_graph.m_storageAccessData[m_node->storageAccessDataIndex()];
+        StorageAccessData& data = m_node->storageAccessData();
         
         storeProperty(
             lowJSValue(m_node->child3()),

@@ -1606,7 +1606,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetByOffset: {
-        StorageAccessData data = m_graph.m_storageAccessData[node->storageAccessDataIndex()];
+        StorageAccessData& data = node->storageAccessData();
         JSValue result = m_graph.tryGetConstantProperty(forNode(node->child2()), data.offset);
         if (result) {
             setConstant(node, *m_graph.freeze(result));
@@ -1618,7 +1618,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetGetterSetterByOffset: {
-        StorageAccessData data = m_graph.m_storageAccessData[node->storageAccessDataIndex()];
+        StorageAccessData& data = node->storageAccessData();
         JSValue result = m_graph.tryGetConstantProperty(forNode(node->child2()), data.offset);
         if (result && jsDynamicCast<GetterSetter*>(result)) {
             setConstant(node, *m_graph.freeze(result));

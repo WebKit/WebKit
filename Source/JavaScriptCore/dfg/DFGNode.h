@@ -55,6 +55,11 @@ namespace JSC { namespace DFG {
 class Graph;
 struct BasicBlock;
 
+struct StorageAccessData {
+    PropertyOffset offset;
+    unsigned identifierNumber;
+};
+
 struct MultiGetByOffsetData {
     unsigned identifierNumber;
     Vector<GetByIdVariant, 2> variants;
@@ -456,10 +461,10 @@ struct Node {
         children.reset();
     }
     
-    void convertToGetByOffset(unsigned storageAccessDataIndex, Edge storage)
+    void convertToGetByOffset(StorageAccessData& data, Edge storage)
     {
         ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == MultiGetByOffset);
-        m_opInfo = storageAccessDataIndex;
+        m_opInfo = bitwise_cast<uintptr_t>(&data);
         children.setChild2(children.child1());
         children.child2().setUseKind(KnownCellUse);
         children.setChild1(storage);
@@ -476,10 +481,10 @@ struct Node {
         m_flags &= ~NodeClobbersWorld;
     }
     
-    void convertToPutByOffset(unsigned storageAccessDataIndex, Edge storage)
+    void convertToPutByOffset(StorageAccessData& data, Edge storage)
     {
         ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset);
-        m_opInfo = storageAccessDataIndex;
+        m_opInfo = bitwise_cast<uintptr_t>(&data);
         children.setChild3(children.child2());
         children.setChild2(children.child1());
         children.setChild1(storage);
@@ -1153,10 +1158,10 @@ struct Node {
         return op() == GetByOffset || op() == GetGetterSetterByOffset || op() == PutByOffset;
     }
     
-    unsigned storageAccessDataIndex()
+    StorageAccessData& storageAccessData()
     {
         ASSERT(hasStorageAccessData());
-        return m_opInfo;
+        return *bitwise_cast<StorageAccessData*>(m_opInfo);
     }
     
     bool hasMultiGetByOffsetData()

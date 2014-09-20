@@ -673,8 +673,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         
     case GetByOffset:
     case GetGetterSetterByOffset: {
-        unsigned identifierNumber =
-            graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber;
+        unsigned identifierNumber = node->storageAccessData().identifierNumber;
         AbstractHeap heap(NamedProperties, identifierNumber);
         read(heap);
         def(HeapLocation(NamedPropertyLoc, heap, node->child2()), node);
@@ -704,8 +703,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     }
         
     case PutByOffset: {
-        unsigned identifierNumber =
-            graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber;
+        unsigned identifierNumber = node->storageAccessData().identifierNumber;
         AbstractHeap heap(NamedProperties, identifierNumber);
         write(heap);
         def(HeapLocation(NamedPropertyLoc, heap, node->child2()), node->child3().node());

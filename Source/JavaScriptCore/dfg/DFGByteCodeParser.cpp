@@ -1984,12 +1984,12 @@ Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, c
         propertyStorage = base;
     else
         propertyStorage = addToGraph(GetButterfly, base);
-    Node* getByOffset = addToGraph(op, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), propertyStorage, base);
-
-    StorageAccessData storageAccessData;
-    storageAccessData.offset = offset;
-    storageAccessData.identifierNumber = identifierNumber;
-    m_graph.m_storageAccessData.append(storageAccessData);
+    
+    StorageAccessData* data = m_graph.m_storageAccessData.add();
+    data->offset = offset;
+    data->identifierNumber = identifierNumber;
+    
+    Node* getByOffset = addToGraph(op, OpInfo(data), OpInfo(prediction), propertyStorage, base);
 
     return getByOffset;
 }
@@ -2001,13 +2001,13 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
         propertyStorage = base;
     else
         propertyStorage = addToGraph(GetButterfly, base);
-    Node* result = addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, base, value);
     
-    StorageAccessData storageAccessData;
-    storageAccessData.offset = offset;
-    storageAccessData.identifierNumber = identifier;
-    m_graph.m_storageAccessData.append(storageAccessData);
-
+    StorageAccessData* data = m_graph.m_storageAccessData.add();
+    data->offset = offset;
+    data->identifierNumber = identifier;
+    
+    Node* result = addToGraph(PutByOffset, OpInfo(data), propertyStorage, base, value);
+    
     return result;
 }
 
@@ -2215,17 +2215,16 @@ void ByteCodeParser::handlePutById(
 
         addToGraph(PutStructure, OpInfo(transition), base);
 
+        StorageAccessData* data = m_graph.m_storageAccessData.add();
+        data->offset = variant.offset();
+        data->identifierNumber = identifierNumber;
+        
         addToGraph(
             PutByOffset,
-            OpInfo(m_graph.m_storageAccessData.size()),
+            OpInfo(data),
             propertyStorage,
             base,
             value);
-
-        StorageAccessData storageAccessData;
-        storageAccessData.offset = variant.offset();
-        storageAccessData.identifierNumber = identifierNumber;
-        m_graph.m_storageAccessData.append(storageAccessData);
 
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedPutById();

@@ -486,12 +486,11 @@ private:
                 indexInBlock, SpecNone, GetButterfly, origin, childEdge));
         }
         
-        node->convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
+        StorageAccessData& data = *m_graph.m_storageAccessData.add();
+        data.offset = variant.offset();
+        data.identifierNumber = identifierNumber;
         
-        StorageAccessData storageAccessData;
-        storageAccessData.offset = variant.offset();
-        storageAccessData.identifierNumber = identifierNumber;
-        m_graph.m_storageAccessData.append(storageAccessData);
+        node->convertToGetByOffset(data, propertyStorage);
     }
 
     void emitPutByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const PutByIdVariant& variant, unsigned identifierNumber)
@@ -544,15 +543,14 @@ private:
             m_insertionSet.insert(indexInBlock, putStructure);
         }
 
-        node->convertToPutByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
+        StorageAccessData& data = *m_graph.m_storageAccessData.add();
+        data.offset = variant.offset();
+        data.identifierNumber = identifierNumber;
+        
+        node->convertToPutByOffset(data, propertyStorage);
         m_insertionSet.insertNode(
             indexInBlock, SpecNone, StoreBarrier, origin, 
             Edge(node->child2().node(), KnownCellUse));
-
-        StorageAccessData storageAccessData;
-        storageAccessData.offset = variant.offset();
-        storageAccessData.identifierNumber = identifierNumber;
-        m_graph.m_storageAccessData.append(storageAccessData);
     }
     
     void addBaseCheck(
