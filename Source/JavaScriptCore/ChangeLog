@@ -1,5 +1,20 @@
 2014-09-20  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL OSRExit construction should be based on methods that return ExitValues rather than methods that add ExitValues to OSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=136978
+
+        Reviewed by Dean Jackson.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::LowerDFGToLLVM::exitArgument):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::tryToSetConstantExitArgument): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::addExitArgument): Deleted.
+
+2014-09-20  Filip Pizlo  <fpizlo@apple.com>
+
         FTL OSR exit should do reboxing and value recovery in the same pass
         https://bugs.webkit.org/show_bug.cgi?id=136977
 

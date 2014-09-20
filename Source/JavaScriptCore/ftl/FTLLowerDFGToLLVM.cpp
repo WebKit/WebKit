@@ -6408,7 +6408,7 @@ private:
             case DeadFlush:
             case ConflictingFlush:
                 if (availability.hasNode()) {
-                    addExitArgumentForNode(exit, arguments, i, availability.node());
+                    exit.m_values[i] = exitValueForNode(arguments, availability.node());
                     break;
                 }
                 
@@ -6459,93 +6459,73 @@ private:
         m_out.call(m_out.stackmapIntrinsic(), arguments);
     }
     
-    void addExitArgumentForNode(
-        OSRExit& exit, ExitArgumentList& arguments, unsigned index, Node* node)
+    ExitValue exitValueForNode(ExitArgumentList& arguments, Node* node)
     {
         ASSERT(node->shouldGenerate());
         ASSERT(node->hasResult());
 
-        if (tryToSetConstantExitArgument(exit, index, node))
-            return;
+        if (node) {
+            switch (node->op()) {
+            case JSConstant:
+            case Int52Constant:
+            case DoubleConstant:
+                return ExitValue::constant(node->asJSValue());
+                
+            case PhantomArguments:
+                return ExitValue::argumentsObjectThatWasNotCreated();
+                
+            default:
+                break;
+            }
+        }
         
         for (unsigned i = 0; i < m_availableRecoveries.size(); ++i) {
             AvailableRecovery recovery = m_availableRecoveries[i];
             if (recovery.node() != node)
                 continue;
             
-            exit.m_values[index] = ExitValue::recovery(
+            ExitValue result = ExitValue::recovery(
                 recovery.opcode(), arguments.size(), arguments.size() + 1,
                 recovery.format());
             arguments.append(recovery.left());
             arguments.append(recovery.right());
-            return;
+            return result;
         }
         
         LoweredNodeValue value = m_int32Values.get(node);
-        if (isValid(value)) {
-            addExitArgument(exit, arguments, index, ValueFormatInt32, value.value());
-            return;
-        }
+        if (isValid(value))
+            return exitArgument(arguments, ValueFormatInt32, value.value());
         
         value = m_int52Values.get(node);
-        if (isValid(value)) {
-            addExitArgument(exit, arguments, index, ValueFormatInt52, value.value());
-            return;
-        }
+        if (isValid(value))
+            return exitArgument(arguments, ValueFormatInt52, value.value());
         
         value = m_strictInt52Values.get(node);
-        if (isValid(value)) {
-            addExitArgument(exit, arguments, index, ValueFormatStrictInt52, value.value());
-            return;
-        }
+        if (isValid(value))
+            return exitArgument(arguments, ValueFormatStrictInt52, value.value());
         
         value = m_booleanValues.get(node);
         if (isValid(value)) {
             LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
-            addExitArgument(exit, arguments, index, ValueFormatBoolean, valueToPass);
-            return;
+            return exitArgument(arguments, ValueFormatBoolean, valueToPass);
         }
         
         value = m_jsValueValues.get(node);
-        if (isValid(value)) {
-            addExitArgument(exit, arguments, index, ValueFormatJSValue, value.value());
-            return;
-        }
+        if (isValid(value))
+            return exitArgument(arguments, ValueFormatJSValue, value.value());
         
         value = m_doubleValues.get(node);
-        if (isValid(value)) {
-            addExitArgument(exit, arguments, index, ValueFormatDouble, value.value());
-            return;
-        }
+        if (isValid(value))
+            return exitArgument(arguments, ValueFormatDouble, value.value());
 
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
     }
     
-    bool tryToSetConstantExitArgument(OSRExit& exit, unsigned index, Node* node)
+    ExitValue exitArgument(ExitArgumentList& arguments, ValueFormat format, LValue value)
     {
-        if (!node)
-            return false;
-        
-        switch (node->op()) {
-        case JSConstant:
-        case Int52Constant:
-        case DoubleConstant:
-            exit.m_values[index] = ExitValue::constant(node->asJSValue());
-            return true;
-        case PhantomArguments:
-            exit.m_values[index] = ExitValue::argumentsObjectThatWasNotCreated();
-            return true;
-        default:
-            return false;
-        }
-    }
-    
-    void addExitArgument(
-        OSRExit& exit, ExitArgumentList& arguments, unsigned index, ValueFormat format,
-        LValue value)
-    {
-        exit.m_values[index] = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
+        ExitValue result = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
         arguments.append(value);
+        return result;
     }
     
     bool doesKill(Edge edge)
