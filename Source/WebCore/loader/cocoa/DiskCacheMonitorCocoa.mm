@@ -43,6 +43,10 @@
 #endif
 #endif
 
+#if USE(WEB_THREAD)
+#include "WebCoreThreadRun.h"
+#endif
+
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
 
 typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
@@ -88,6 +92,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
     // Set up the disk caching callback to create the ShareableResource and send it to the WebProcess.
     CFCachedURLResponseCallBackBlock block = ^(CFCachedURLResponseRef cachedResponse)
     {
+        ASSERT(isMainThread());
         // If the monitor isn't there then it timed out before this resource was cached to disk.
         if (!rawMonitor)
             return;
@@ -102,7 +107,17 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID ses
         monitor->resourceBecameFileBacked(fileBackedBuffer);
     };
 
-    _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, block, dispatch_get_main_queue());
+#if USE(WEB_THREAD)
+    CFCachedURLResponseCallBackBlock blockToRun = ^ (const CFCachedURLResponseRef response)
+    {
+        WebThreadRun(^ {
+            block(response);
+        });
+    };
+#else
+    CFCachedURLResponseCallBackBlock blockToRun = block;
+#endif
+    _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, blockToRun, dispatch_get_main_queue());
 }
 
 void DiskCacheMonitor::resourceBecameFileBacked(PassRefPtr<SharedBuffer> fileBackedBuffer)

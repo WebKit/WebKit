@@ -1,3 +1,19 @@
+2014-09-19  Pratik Solanki  <psolanki@apple.com>
+
+        [iOS] ASSERTION FAILED: WTF::isMainThread() in WebCore::memoryCache() when using WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=136962
+        <rdar://problem/18342344>
+
+        Reviewed by Geoffrey Garen.
+
+        The disk cache monitor callback code was being executed on the main thread. This is wrong
+        when the web thread is being used in WebKit1 on iOS. The code needs to run on the web
+        thread. Use WebThreadRun to dispatch the block to the web thread. This works for WebKit2 as
+        well since when web thread is not being used, WebThreadRun invokes the block directly.
+
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor):
+
 2014-09-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; pass duration into the lambda.
