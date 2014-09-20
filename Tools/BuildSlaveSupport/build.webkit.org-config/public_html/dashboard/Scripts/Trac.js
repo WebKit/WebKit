@@ -102,7 +102,7 @@ Trac.prototype = {
         parsedDescription.innerHTML = description;
 
         var location = "";
-        if (parsedDescription.firstChild.className === "changes") {
+        if (parsedDescription.firstChild && parsedDescription.firstChild.className === "changes") {
             // We can extract branch information when trac.ini contains "changeset_show_files=location".
             location = doc.evaluate("//strong", parsedDescription.firstChild, null, XPathResult.STRING_TYPE).stringValue
             parsedDescription.removeChild(parsedDescription.firstChild);
@@ -110,7 +110,7 @@ Trac.prototype = {
 
         // The feed contains a <title>, but it's not parsed as well as what we are getting from description.
         var title = document.createElement("div");
-        var node = parsedDescription.firstChild.firstChild;
+        var node = parsedDescription.firstChild ? parsedDescription.firstChild.firstChild : null;
         while (node && node.tagName != "BR") {
             title.appendChild(node.cloneNode(true));
             node = node.nextSibling;
