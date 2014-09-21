@@ -78,19 +78,6 @@ inline unsigned nextPowerOf2(unsigned v)
     return v;
 }
 
-struct PropertyMapEntry {
-    StringImpl* key;
-    PropertyOffset offset;
-    unsigned attributes;
-
-    PropertyMapEntry(StringImpl* key, PropertyOffset offset, unsigned attributes)
-        : key(key)
-        , offset(offset)
-        , attributes(attributes)
-    {
-    }
-};
-
 class PropertyTable : public JSCell {
 
     // This is the implementation for 'iterator' and 'const_iterator',

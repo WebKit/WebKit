@@ -852,33 +852,32 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm)
 
 PropertyOffset Structure::getConcurrently(StringImpl* uid, unsigned& attributes)
 {
-    Vector<Structure*, 8> structures;
-    Structure* structure;
-    PropertyTable* table;
+    PropertyOffset result = invalidOffset;
     
-    findStructuresAndMapForMaterialization(structures, structure, table);
+    forEachPropertyConcurrently(
+        [&] (const PropertyMapEntry& candidate) -> bool {
+            if (candidate.key != uid)
+                return true;
+            
+            result = candidate.offset;
+            attributes = candidate.attributes;
+            return false;
+        });
     
-    if (table) {
-        PropertyMapEntry* entry = table->get(uid);
-        if (entry) {
-            attributes = entry->attributes;
-            PropertyOffset result = entry->offset;
-            structure->m_lock.unlock();
-            return result;
-        }
-        structure->m_lock.unlock();
-    }
+    return result;
+}
+
+Vector<PropertyMapEntry> Structure::getPropertiesConcurrently()
+{
+    Vector<PropertyMapEntry> result;
+
+    forEachPropertyConcurrently(
+        [&] (const PropertyMapEntry& entry) -> bool {
+            result.append(entry);
+            return true;
+        });
     
-    for (unsigned i = structures.size(); i--;) {
-        structure = structures[i];
-        if (structure->m_nameInPrevious.get() != uid)
-            continue;
-        
-        attributes = structure->attributesInPrevious();
-        return structure->m_offset;
-    }
-    
-    return invalidOffset;
+    return result;
 }
 
 PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes)
@@ -1110,30 +1109,13 @@ void Structure::dump(PrintStream& out) const
 {
     out.print(RawPointer(this), ":[", classInfo()->className, ", {");
     
-    Vector<Structure*, 8> structures;
-    Structure* structure;
-    PropertyTable* table;
-    
-    const_cast<Structure*>(this)->findStructuresAndMapForMaterialization(
-        structures, structure, table);
-    
     CommaPrinter comma;
     
-    if (table) {
-        PropertyTable::iterator iter = table->begin();
-        PropertyTable::iterator end = table->end();
-        for (; iter != end; ++iter)
-            out.print(comma, iter->key, ":", static_cast<int>(iter->offset));
-        
-        structure->m_lock.unlock();
-    }
-    
-    for (unsigned i = structures.size(); i--;) {
-        Structure* structure = structures[i];
-        if (!structure->m_nameInPrevious)
-            continue;
-        out.print(comma, structure->m_nameInPrevious.get(), ":", static_cast<int>(structure->m_offset));
-    }
+    const_cast<Structure*>(this)->forEachPropertyConcurrently(
+        [&] (const PropertyMapEntry& entry) -> bool {
+            out.print(comma, entry.key, ":", static_cast<int>(entry.offset));
+            return true;
+        });
     
     out.print("}, ", IndexingTypeDump(indexingType()));
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +102,35 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
 
     attributes = entry->attributes;
     return entry->offset;
+}
+
+template<typename Functor>
+void Structure::forEachPropertyConcurrently(const Functor& functor)
+{
+    Vector<Structure*, 8> structures;
+    Structure* structure;
+    PropertyTable* table;
+    
+    findStructuresAndMapForMaterialization(structures, structure, table);
+    
+    if (table) {
+        for (auto& entry : *table) {
+            if (!functor(entry)) {
+                structure->m_lock.unlock();
+                return;
+            }
+        }
+        structure->m_lock.unlock();
+    }
+    
+    for (unsigned i = structures.size(); i--;) {
+        structure = structures[i];
+        if (!structure->m_nameInPrevious)
+            continue;
+        
+        if (!functor(PropertyMapEntry(structure->m_nameInPrevious.get(), structure->m_offset, structure->attributesInPrevious())))
+            return;
+    }
 }
 
 inline PropertyOffset Structure::getConcurrently(StringImpl* uid)

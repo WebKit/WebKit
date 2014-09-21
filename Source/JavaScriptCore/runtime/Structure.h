@@ -73,6 +73,26 @@ static const unsigned initialOutOfLineCapacity = 4;
 // initial allocation.
 static const unsigned outOfLineGrowthFactor = 2;
 
+struct PropertyMapEntry {
+    StringImpl* key;
+    PropertyOffset offset;
+    unsigned attributes;
+
+    PropertyMapEntry()
+        : key(nullptr)
+        , offset(invalidOffset)
+        , attributes(0)
+    {
+    }
+    
+    PropertyMapEntry(StringImpl* key, PropertyOffset offset, unsigned attributes)
+        : key(key)
+        , offset(offset)
+        , attributes(attributes)
+    {
+    }
+};
+
 class Structure : public JSCell {
 public:
     friend class StructureTransitionTable;
@@ -262,8 +282,17 @@ public:
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, PropertyName, unsigned& attributes);
 
+    // This is a somewhat internalish method. It will call your functor while possibly holding the
+    // Structure's lock. There is no guarantee whether the lock is held or not in any particular
+    // call. So, you have to assume the worst. Also, the functor returns true if it wishes for you
+    // to continue or false if it's done.
+    template<typename Functor>
+    void forEachPropertyConcurrently(const Functor&);
+    
     PropertyOffset getConcurrently(StringImpl* uid);
     PropertyOffset getConcurrently(StringImpl* uid, unsigned& attributes);
+    
+    Vector<PropertyMapEntry> getPropertiesConcurrently();
     
     void setHasGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {
