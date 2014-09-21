@@ -535,7 +535,7 @@ class Port(object):
         all_platform_dirs = [path for path in fs.glob(fs.join(self.layout_tests_dir(), 'platform', '*')) if fs.isdir(path)]
         for path in paths:
             expanded_paths.append(path)
-            if self.test_isdir(path) and not path.startswith('platform'):
+            if self.test_isdir(path) and not path.startswith('platform') and not fs.isabs(path):
                 for platform_dir in all_platform_dirs:
                     if fs.isdir(fs.join(platform_dir, path)) and platform_dir in self.baseline_search_path():
                         expanded_paths.append(self.relative_test_filename(fs.join(platform_dir, path)))

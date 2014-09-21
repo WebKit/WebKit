@@ -1,3 +1,13 @@
+2014-09-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        run-webkit-tests should count tests submitted as absolute paths once
+        https://bugs.webkit.org/show_bug.cgi?id=136848
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._expanded_paths): In case of absolute path, do not search for platform specific tests.
+
 2014-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSStringRef leak on the leaks bot allocation under selectTextWithCriteriaCallback
