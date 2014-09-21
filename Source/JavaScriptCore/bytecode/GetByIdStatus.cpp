@@ -84,8 +84,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         return GetByIdStatus(NoInformation, false);
 
     unsigned attributesIgnored;
-    PropertyOffset offset = structure->getConcurrently(
-        *profiledBlock->vm(), uid, attributesIgnored);
+    PropertyOffset offset = structure->getConcurrently(uid, attributesIgnored);
     if (!isValidOffset(offset))
         return GetByIdStatus(NoInformation, false);
     
@@ -150,8 +149,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             return GetByIdStatus(slowPathState, true);
         unsigned attributesIgnored;
         GetByIdVariant variant;
-        variant.m_offset = structure->getConcurrently(
-            *profiledBlock->vm(), uid, attributesIgnored);
+        variant.m_offset = structure->getConcurrently(uid, attributesIgnored);
         if (!isValidOffset(variant.m_offset))
             return GetByIdStatus(slowPathState, true);
         
@@ -263,7 +261,7 @@ GetByIdStatus GetByIdStatus::computeFor(
     return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
 }
 
-GetByIdStatus GetByIdStatus::computeFor(VM& vm, const StructureSet& set, StringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, StringImpl* uid)
 {
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.
@@ -286,7 +284,7 @@ GetByIdStatus GetByIdStatus::computeFor(VM& vm, const StructureSet& set, StringI
             return GetByIdStatus(TakesSlowPath);
         
         unsigned attributes;
-        PropertyOffset offset = structure->getConcurrently(vm, uid, attributes);
+        PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(offset))
             return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
         if (attributes & Accessor)

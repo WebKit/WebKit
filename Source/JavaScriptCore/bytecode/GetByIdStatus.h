@@ -68,7 +68,7 @@ public:
     }
     
     static GetByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, StringImpl* uid);
-    static GetByIdStatus computeFor(VM&, const StructureSet&, StringImpl* uid);
+    static GetByIdStatus computeFor(const StructureSet&, StringImpl* uid);
     
     static GetByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, StringImpl* uid);
     

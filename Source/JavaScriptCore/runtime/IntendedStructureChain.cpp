@@ -103,11 +103,11 @@ bool IntendedStructureChain::matches(StructureChain* chain) const
     return true;
 }
 
-bool IntendedStructureChain::mayInterceptStoreTo(VM& vm, StringImpl* uid)
+bool IntendedStructureChain::mayInterceptStoreTo(StringImpl* uid)
 {
     for (unsigned i = 0; i < m_vector.size(); ++i) {
         unsigned attributes;
-        PropertyOffset offset = m_vector[i]->getConcurrently(vm, uid, attributes);
+        PropertyOffset offset = m_vector[i]->getConcurrently(uid, attributes);
         if (!isValidOffset(offset))
             continue;
         if (attributes & (ReadOnly | Accessor))

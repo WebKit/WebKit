@@ -1,3 +1,47 @@
+2014-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure::getConcurrently() doesn't need to take a VM& argument.
+
+        Rubber stamped by Dan Bernstein.
+        
+        Removed the extra argument, and then removed similar arguments from other methods until
+        I could build successfully again. It turned out that many methods took a VM& argument
+        just for calling getConcurrently().
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::dumpStructure):
+        (JSC::dumpChain):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printPutByIdCacheStatus):
+        * bytecode/ComplexGetStatus.cpp:
+        (JSC::ComplexGetStatus::computeFor):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::isStringPrototypeMethodSane):
+        * runtime/IntendedStructureChain.cpp:
+        (JSC::IntendedStructureChain::mayInterceptStoreTo):
+        * runtime/IntendedStructureChain.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::getConcurrently):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::getConcurrently):
+
 2014-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         FTL OSRExit construction should be based on methods that return ExitValues rather than methods that add ExitValues to OSRExit

@@ -291,19 +291,19 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     it += 4; // Increment up to the value profiler.
 }
 
-static void dumpStructure(PrintStream& out, const char* name, ExecState* exec, Structure* structure, const Identifier& ident)
+static void dumpStructure(PrintStream& out, const char* name, Structure* structure, const Identifier& ident)
 {
     if (!structure)
         return;
     
     out.printf("%s = %p", name, structure);
     
-    PropertyOffset offset = structure->getConcurrently(exec->vm(), ident.impl());
+    PropertyOffset offset = structure->getConcurrently(ident.impl());
     if (offset != invalidOffset)
         out.printf(" (offset = %d)", offset);
 }
 
-static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, const Identifier& ident)
+static void dumpChain(PrintStream& out, StructureChain* chain, const Identifier& ident)
 {
     out.printf("chain = %p: [", chain);
     bool first = true;
@@ -314,7 +314,7 @@ static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, 
             first = false;
         else
             out.printf(", ");
-        dumpStructure(out, "struct", exec, currentStructure->get(), ident);
+        dumpStructure(out, "struct", currentStructure->get(), ident);
     }
     out.printf("]");
 }
@@ -331,7 +331,7 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         out.printf(" llint(array_length)");
     else if (Structure* structure = instruction[4].u.structure.get()) {
         out.printf(" llint(");
-        dumpStructure(out, "struct", exec, structure, ident);
+        dumpStructure(out, "struct", structure, ident);
         out.printf(")");
     }
 
@@ -368,17 +368,17 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
             
             if (baseStructure) {
                 out.printf(", ");
-                dumpStructure(out, "struct", exec, baseStructure, ident);
+                dumpStructure(out, "struct", baseStructure, ident);
             }
             
             if (prototypeStructure) {
                 out.printf(", ");
-                dumpStructure(out, "prototypeStruct", exec, baseStructure, ident);
+                dumpStructure(out, "prototypeStruct", baseStructure, ident);
             }
             
             if (chain) {
                 out.printf(", ");
-                dumpChain(out, exec, chain, ident);
+                dumpChain(out, chain, ident);
             }
             
             if (list) {
@@ -387,10 +387,10 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                     if (i)
                         out.printf(", ");
                     out.printf("(");
-                    dumpStructure(out, "base", exec, list->at(i).structure(), ident);
+                    dumpStructure(out, "base", list->at(i).structure(), ident);
                     if (list->at(i).chain()) {
                         out.printf(", ");
-                        dumpChain(out, exec, list->at(i).chain(), ident);
+                        dumpChain(out, list->at(i).chain(), ident);
                     }
                     out.printf(")");
                 }
@@ -417,7 +417,7 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         case op_put_by_id:
         case op_put_by_id_out_of_line:
             out.print(" llint(");
-            dumpStructure(out, "struct", exec, structure, ident);
+            dumpStructure(out, "struct", structure, ident);
             out.print(")");
             break;
             
@@ -426,12 +426,12 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         case op_put_by_id_transition_direct_out_of_line:
         case op_put_by_id_transition_normal_out_of_line:
             out.print(" llint(");
-            dumpStructure(out, "prev", exec, structure, ident);
+            dumpStructure(out, "prev", structure, ident);
             out.print(", ");
-            dumpStructure(out, "next", exec, instruction[6].u.structure.get(), ident);
+            dumpStructure(out, "next", instruction[6].u.structure.get(), ident);
             if (StructureChain* chain = instruction[7].u.structureChain.get()) {
                 out.print(", ");
-                dumpChain(out, exec, chain, ident);
+                dumpChain(out, chain, ident);
             }
             out.print(")");
             break;
@@ -454,17 +454,17 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
             switch (stubInfo.accessType) {
             case access_put_by_id_replace:
                 out.print("replace, ");
-                dumpStructure(out, "struct", exec, stubInfo.u.putByIdReplace.baseObjectStructure.get(), ident);
+                dumpStructure(out, "struct", stubInfo.u.putByIdReplace.baseObjectStructure.get(), ident);
                 break;
             case access_put_by_id_transition_normal:
             case access_put_by_id_transition_direct:
                 out.print("transition, ");
-                dumpStructure(out, "prev", exec, stubInfo.u.putByIdTransition.previousStructure.get(), ident);
+                dumpStructure(out, "prev", stubInfo.u.putByIdTransition.previousStructure.get(), ident);
                 out.print(", ");
-                dumpStructure(out, "next", exec, stubInfo.u.putByIdTransition.structure.get(), ident);
+                dumpStructure(out, "next", stubInfo.u.putByIdTransition.structure.get(), ident);
                 if (StructureChain* chain = stubInfo.u.putByIdTransition.chain.get()) {
                     out.print(", ");
-                    dumpChain(out, exec, chain, ident);
+                    dumpChain(out, chain, ident);
                 }
                 break;
             case access_put_by_id_list: {
@@ -477,21 +477,21 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                     
                     if (access.isReplace()) {
                         out.print("replace, ");
-                        dumpStructure(out, "struct", exec, access.oldStructure(), ident);
+                        dumpStructure(out, "struct", access.oldStructure(), ident);
                     } else if (access.isSetter()) {
                         out.print("setter, ");
-                        dumpStructure(out, "struct", exec, access.oldStructure(), ident);
+                        dumpStructure(out, "struct", access.oldStructure(), ident);
                     } else if (access.isCustom()) {
                         out.print("custom, ");
-                        dumpStructure(out, "struct", exec, access.oldStructure(), ident);
+                        dumpStructure(out, "struct", access.oldStructure(), ident);
                     } else if (access.isTransition()) {
                         out.print("transition, ");
-                        dumpStructure(out, "prev", exec, access.oldStructure(), ident);
+                        dumpStructure(out, "prev", access.oldStructure(), ident);
                         out.print(", ");
-                        dumpStructure(out, "next", exec, access.newStructure(), ident);
+                        dumpStructure(out, "next", access.newStructure(), ident);
                         if (access.chain()) {
                             out.print(", ");
-                            dumpChain(out, exec, access.chain(), ident);
+                            dumpChain(out, access.chain(), ident);
                         }
                     } else
                         out.print("unknown");

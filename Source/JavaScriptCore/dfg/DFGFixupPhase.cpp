@@ -1372,7 +1372,7 @@ private:
     {
         unsigned attributesUnused;
         PropertyOffset offset =
-            stringPrototypeStructure->getConcurrently(vm(), uid, attributesUnused);
+            stringPrototypeStructure->getConcurrently(uid, attributesUnused);
         if (!isValidOffset(offset))
             return false;
         

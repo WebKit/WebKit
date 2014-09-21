@@ -104,10 +104,10 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
     return entry->offset;
 }
 
-inline PropertyOffset Structure::getConcurrently(VM& vm, StringImpl* uid)
+inline PropertyOffset Structure::getConcurrently(StringImpl* uid)
 {
     unsigned attributesIgnored;
-    return getConcurrently(vm, uid, attributesIgnored);
+    return getConcurrently(uid, attributesIgnored);
 }
 
 inline bool Structure::hasIndexingHeader(const JSCell* cell) const

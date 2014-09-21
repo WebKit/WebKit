@@ -251,7 +251,7 @@ private:
                     break;
                 
                 GetByIdStatus status = GetByIdStatus::computeFor(
-                    vm(), baseValue.m_structure.set(), m_graph.identifiers()[identifierNumber]);
+                    baseValue.m_structure.set(), m_graph.identifiers()[identifierNumber]);
                 if (!status.isSimple())
                     break;
                 
@@ -300,7 +300,6 @@ private:
                     break;
                 
                 PutByIdStatus status = PutByIdStatus::computeFor(
-                    vm(),
                     m_graph.globalObjectFor(origin.semantic),
                     baseValue.m_structure.set(),
                     m_graph.identifiers()[identifierNumber],

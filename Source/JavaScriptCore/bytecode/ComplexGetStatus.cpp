@@ -62,11 +62,9 @@ ComplexGetStatus ComplexGetStatus::computeFor(
         
         ASSERT_UNUSED(currentObject, currentObject);
         
-        result.m_offset = currentStructure->getConcurrently(
-            *profiledBlock->vm(), uid, result.m_attributes);
+        result.m_offset = currentStructure->getConcurrently(uid, result.m_attributes);
     } else {
-        result.m_offset = headStructure->getConcurrently(
-            *profiledBlock->vm(), uid, result.m_attributes);
+        result.m_offset = headStructure->getConcurrently(uid, result.m_attributes);
     }
     
     if (!isValidOffset(result.m_offset))

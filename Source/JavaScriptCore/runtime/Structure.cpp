@@ -850,7 +850,7 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm)
     return PropertyTable::create(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
 }
 
-PropertyOffset Structure::getConcurrently(VM&, StringImpl* uid, unsigned& attributes)
+PropertyOffset Structure::getConcurrently(StringImpl* uid, unsigned& attributes)
 {
     Vector<Structure*, 8> structures;
     Structure* structure;

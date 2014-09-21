@@ -262,8 +262,8 @@ public:
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, PropertyName, unsigned& attributes);
 
-    PropertyOffset getConcurrently(VM&, StringImpl* uid);
-    PropertyOffset getConcurrently(VM&, StringImpl* uid, unsigned& attributes);
+    PropertyOffset getConcurrently(StringImpl* uid);
+    PropertyOffset getConcurrently(StringImpl* uid, unsigned& attributes);
     
     void setHasGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {
