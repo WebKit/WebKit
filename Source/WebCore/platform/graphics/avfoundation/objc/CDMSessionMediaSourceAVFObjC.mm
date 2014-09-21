@@ -39,6 +39,7 @@
 #import <CoreMedia/CMBase.h>
 #import <objc/objc-runtime.h>
 #import <wtf/NeverDestroyed.h>
+#import <runtime/TypedArrayInlines.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser);
