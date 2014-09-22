@@ -666,11 +666,37 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context) const
                 if (context.resolvingMode == Mode::ResolvingStyle)
                     element->setStyleIsAffectedByPreviousSibling();
 
-                int count = 1 + countElementsBefore(element, context.resolvingMode == Mode::ResolvingStyle);
+                int count = 1;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+                if (const CSSSelectorList* selectorList = selector->selectorList()) {
+                    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+                        if (context.resolvingMode == Mode::ResolvingStyle)
+                            sibling->setAffectsNextSiblingElementStyle();
+
+                        for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+                            CheckingContextWithStatus subcontext(context);
+                            subcontext.element = sibling;
+                            subcontext.selector = subselector;
+                            subcontext.inFunctionalPseudoClass = true;
+                            subcontext.firstSelectorOfTheFragment = subselector;
+                            PseudoId ignoreDynamicPseudo = NOPSEUDO;
+                            if (matchRecursively(subcontext, ignoreDynamicPseudo) == SelectorMatches) {
+                                ASSERT(ignoreDynamicPseudo == NOPSEUDO);
+                                ++count;
+                                break;
+                            }
+                        }
+                    }
+                } else
+#endif
+                {
+                    count += countElementsBefore(element, context.resolvingMode == Mode::ResolvingStyle);
+                    if (context.resolvingMode == Mode::ResolvingStyle)
+                        element->setChildIndex(count);
+                }
+
                 if (context.resolvingMode == Mode::ResolvingStyle) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    element->setChildIndex(count);
-                    if (childStyle)
+                    if (RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle())
                         childStyle->setUnique();
                 }
 

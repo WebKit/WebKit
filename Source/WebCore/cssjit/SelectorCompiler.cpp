@@ -552,6 +552,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             if (!selector.parseNth())
                 return FunctionType::CannotMatchAnything;
 
+            if (selector.selectorList())
+                return FunctionType::CannotCompile;
+
             int a = selector.nthA();
             int b = selector.nthB();
 

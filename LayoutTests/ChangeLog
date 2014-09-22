@@ -1,3 +1,32 @@
+2014-09-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the baseline implementation of :nth-child(An+B of selector-list)
+        https://bugs.webkit.org/show_bug.cgi?id=136975
+
+        Reviewed by Darin Adler.
+
+        * fast/css/nth-child-of-classname-expected.html: Added.
+        * fast/css/nth-child-of-classname.html: Added.
+        * fast/css/nth-child-of-complex-selector-expected.html: Added.
+        * fast/css/nth-child-of-complex-selector.html: Added.
+        * fast/css/nth-child-of-compound-selector-expected.html: Added.
+        * fast/css/nth-child-of-compound-selector.html: Added.
+        * fast/css/nth-child-of-tagname-expected.html: Added.
+        * fast/css/nth-child-of-tagname.html: Added.
+        Cover basic styling and style sharing.
+
+        * fast/selectors/nth-child-of-basics-expected.txt: Added.
+        * fast/selectors/nth-child-of-basics.html: Added.
+        * fast/selectors/nth-child-of-complex-selectors-expected.txt: Added.
+        * fast/selectors/nth-child-of-complex-selectors.html: Added.
+        * fast/selectors/nth-child-of-selector-list-expected.txt: Added.
+        * fast/selectors/nth-child-of-selector-list.html: Added.
+        Cover querySelector and styling of various cases.
+
+        * fast/selectors/nth-child-of-class-style-update-expected.txt: Added.
+        * fast/selectors/nth-child-of-class-style-update.html: Added.
+        Basic case of style invalidation.
+
 2014-09-22  David Hyatt  <hyatt@apple.com>
 
         Bad cast in isValidColumnSpanner.
