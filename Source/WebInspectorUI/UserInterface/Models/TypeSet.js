@@ -47,6 +47,7 @@ WebInspector.TypeSet = function(runtimeTypeDescriptionPayload)
     if (typeSet.isObject)
         bitString |= WebInspector.TypeSet.TypeBit.Object;
 
+    console.assert(bitString);
     this._bitString = bitString;
 };
 
