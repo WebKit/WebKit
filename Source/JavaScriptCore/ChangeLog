@@ -1,3 +1,15 @@
+2014-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leak of mallocs under StructureSet::OutOfLineList::create
+        https://bugs.webkit.org/show_bug.cgi?id=136970
+
+        Reviewed by Filip Pizlo.
+
+        addOutOfLine should free the old list when expanding the capacity.
+
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::addOutOfLine):
+
 2014-09-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r173731. Broke multiple builds.
