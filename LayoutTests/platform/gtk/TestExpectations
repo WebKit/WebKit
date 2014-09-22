@@ -1028,6 +1028,8 @@ webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Sl
 
 webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 
+Bug(GTK) http/tests/media/hls/video-cookie.html [ Pass Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
 #////////////////////////////////////////////////////////////////////////////////////////
