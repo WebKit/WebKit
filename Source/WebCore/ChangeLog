@@ -1,3 +1,28 @@
+2014-09-21  Christophe Dumez  <cdumez@apple.com>
+
+        Fix post-mortem nits for r173724
+        https://bugs.webkit.org/show_bug.cgi?id=136986
+
+        Reviewed by Darin Adler.
+
+        Fix post-mortem nits for r173724.
+
+        No new tests, no behavior change.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLAttributeEquivalent::attributeValueAsCSSValue):
+        (WebCore::HTMLFontSizeEquivalent::attributeValueAsCSSValue):
+        Use nullptr instead of 0.
+
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doUnapply):
+        Use getIdAttribute() / setIdAttribute().
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        Use fastHasAttribute() for nowrap and do an early return to avoid
+        calling styleOrColLogicalWidth() if the nowrap attribute is missing.
+
 2014-09-19  Eva Balazsfalvi  <evab.u-szeged@partner.samsung.com>
 
         REGRESSION(r173464): It broke the !ENABLE(PICTURE_SIZES) build
