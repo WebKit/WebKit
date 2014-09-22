@@ -1,3 +1,16 @@
+2014-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Leak: WebNotificationPrivate ObjC leaks seen on leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=136972
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebNotification.h:
+        * WebView/WebNotification.mm:
+        (-[WebNotification initWithCoreNotification:notificationID:]):
+        Switch to RetainPtr and adopt into _private to ensure when we are
+        deallocated that _private will get deallocated.
+
 2014-09-19  Dean Jackson  <dino@apple.com>
 
         Multithreaded WebGL is a bad idea - remove it

@@ -39,8 +39,6 @@
 using namespace WebCore;
 #endif
 
-OBJC_CLASS WebNotificationInternal;
-
 @interface WebNotificationPrivate : NSObject
 {
 @public
@@ -67,7 +65,7 @@ Notification* core(WebNotification *notification)
 {
     if (!(self = [super init]))
         return nil;
-    _private = [[WebNotificationPrivate alloc] init];
+    _private = adoptNS([[WebNotificationPrivate alloc] init]);
     _private->_internal = coreNotification;
     _private->_notificationID = notificationID;
     return self;
