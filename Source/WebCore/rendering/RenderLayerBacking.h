@@ -80,7 +80,7 @@ public:
     void updateGeometry();
 
     // Update state the requires that descendant layers have been updated.
-    void updateAfterDescendents();
+    void updateAfterDescendants();
 
     // Update contents and clipping structure.
     void updateDrawsContent();
