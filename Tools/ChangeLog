@@ -1,3 +1,14 @@
+2014-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test /webkit2/WebKitWebView/can-show-mime-type fails if evince browser plugin is installed
+        https://bugs.webkit.org/show_bug.cgi?id=136998
+
+        Reviewed by Philippe Normand.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewCanShowMIMEType): Remove the check of PDF as
+        unsupported MIME type.
+
 2014-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Missing inspector files in the tarball
