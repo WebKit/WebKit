@@ -1,3 +1,15 @@
+2014-09-22  Youenn Fablet  <youennf@gmail.com>
+
+        W3C importer should import html files within resources folders
+        https://bugs.webkit.org/show_bug.cgi?id=127548
+
+        Reviewed by Ryosuke Niwa.
+        
+        Import HTML files in any folder named "resources" even if file is not detected as a HTML test file 
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.find_importable_tests):
+
 2014-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebView/can-show-mime-type fails if evince browser plugin is installed

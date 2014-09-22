@@ -192,6 +192,9 @@ class TestImporter(object):
                 test_parser = TestParser(vars(self.options), filename=fullpath)
                 test_info = test_parser.analyze_test()
                 if test_info is None:
+                    # If html file is in a "resources" folder, it should be copied anyway
+                    if os.path.basename(os.path.dirname(fullpath)) == "resources":
+                        copy_list.append({'src': fullpath, 'dest': filename})
                     continue
 
                 if 'reference' in test_info.keys():
