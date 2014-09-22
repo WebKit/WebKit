@@ -279,7 +279,7 @@ PassRefPtr<CSSValue> HTMLAttributeEquivalent::attributeValueAsCSSValue(Element* 
     ASSERT(element);
     const AtomicString& value = element->getAttribute(m_attrName);
     if (value.isNull())
-        return 0;
+        return nullptr;
     
     RefPtr<MutableStyleProperties> dummyStyle;
     dummyStyle = MutableStyleProperties::create();
@@ -304,10 +304,10 @@ PassRefPtr<CSSValue> HTMLFontSizeEquivalent::attributeValueAsCSSValue(Element* e
     ASSERT(element);
     const AtomicString& value = element->getAttribute(m_attrName);
     if (value.isNull())
-        return 0;
+        return nullptr;
     CSSValueID size;
     if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
-        return 0;
+        return nullptr;
     return CSSPrimitiveValue::createIdentifier(size);
 }
 

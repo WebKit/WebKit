@@ -175,17 +175,17 @@ void RenderTableCell::computePreferredLogicalWidths()
     table()->recalcSectionsIfNeeded();
 
     RenderBlockFlow::computePreferredLogicalWidths();
-    if (element() && style().autoWrap()) {
-        // See if nowrap was set.
-        Length w = styleOrColLogicalWidth();
-        const AtomicString& nowrap = element()->fastGetAttribute(nowrapAttr);
-        if (!nowrap.isNull() && w.isFixed())
-            // Nowrap is set, but we didn't actually use it because of the
-            // fixed width set on the cell.  Even so, it is a WinIE/Moz trait
-            // to make the minwidth of the cell into the fixed width.  They do this
-            // even in strict mode, so do not make this a quirk.  Affected the top
-            // of hiptop.com.
-            m_minPreferredLogicalWidth = std::max<LayoutUnit>(w.value(), m_minPreferredLogicalWidth);
+    if (!element() || !style().autoWrap() || !element()->fastHasAttribute(nowrapAttr))
+        return;
+
+    Length w = styleOrColLogicalWidth();
+    if (w.isFixed()) {
+        // Nowrap is set, but we didn't actually use it because of the
+        // fixed width set on the cell. Even so, it is a WinIE/Moz trait
+        // to make the minwidth of the cell into the fixed width. They do this
+        // even in strict mode, so do not make this a quirk. Affected the top
+        // of hiptop.com.
+        m_minPreferredLogicalWidth = std::max<LayoutUnit>(w.value(), m_minPreferredLogicalWidth);
     }
 }
 

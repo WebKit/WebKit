@@ -91,9 +91,9 @@ void SplitElementCommand::doUnapply()
         m_element2->insertBefore(children[i].get(), refChild.get(), IGNORE_EXCEPTION);
 
     // Recover the id attribute of the original element.
-    const AtomicString& id = m_element1->fastGetAttribute(HTMLNames::idAttr);
+    const AtomicString& id = m_element1->getIdAttribute();
     if (!id.isNull())
-        m_element2->setAttribute(HTMLNames::idAttr, id);
+        m_element2->setIdAttribute(id);
 
     m_element1->remove(IGNORE_EXCEPTION);
 }
