@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls.js></script>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setAlwaysAcceptCookies(true);
+                testRunner.waitUntilDone();
+            }
+
+            function start() {
+                video = document.getElementById('video');
+                waitForEventAndEnd('play');
+                waitForEventAndFail('stalled');
+                video.src = "../resources/hls/playlist-with-cookie.m3u8";
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video" autoplay></video>
+    </body>
+</html>

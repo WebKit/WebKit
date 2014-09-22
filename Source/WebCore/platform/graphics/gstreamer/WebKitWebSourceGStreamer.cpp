@@ -464,6 +464,7 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
+    request.setFirstPartyForCookies(url);
 
     if (priv->player)
         request.setHTTPReferrer(priv->player->referrer());

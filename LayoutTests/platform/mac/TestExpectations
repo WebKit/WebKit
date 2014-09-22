@@ -1387,3 +1387,5 @@ webkit.org/b/135390 fast/css/fontloader-multiple-faces.html [ Pass ]
 webkit.org/b/135390 fast/css/fontloader-multiple-families.html [ Pass ]
 webkit.org/b/135390 fast/css/fontloader-page-cache.html [ Pass ]
 webkit.org/b/135390 http/tests/webfont/fontloader-loading-attribute.html [ Pass ]
+
+webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]

@@ -1,3 +1,21 @@
+2014-09-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Cannot play Vimeo video
+        https://bugs.webkit.org/show_bug.cgi?id=134969
+
+        Reviewed by Sergio Villar Senin.
+
+        Ensure the GStreamer HTTP source element also sends cookies when
+        it's sending its requests. Some streaming platforms such as Vimeo
+        do server-side cookie checks on incoming requests before serving
+        media data.
+
+        Test: http/tests/media/hls/video-cookie.html
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart): Set first-party cookie URL to the request so
+        the ResourceLoader properly sets cookies in the HTTP request.
+
 2014-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Dot not allow to create delete-on-destroy GMainLoopSources
